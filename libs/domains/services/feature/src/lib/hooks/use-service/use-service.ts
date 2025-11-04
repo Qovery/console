@@ -12,6 +12,8 @@ import {
   type Job,
   type JobType,
   type ServiceType,
+  type Terraform,
+  type TerraformType,
 } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 import { useServiceType } from '../use-service-type/use-service-type'
@@ -57,7 +59,9 @@ export function useService<
               ? Job
               : T extends HelmType
                 ? Helm
-                : never,
+                : T extends TerraformType
+                  ? Terraform
+                  : never,
 >(props: { serviceId: string; serviceType: T }): UseQueryResult<R>
 export function useService({ serviceId, ...props }: UseServiceProps) {
   const { data: serviceType } = useServiceType({

@@ -2,14 +2,20 @@ import {
   type ApplicationGitRepository,
   type GitProviderEnum,
   type GitTokenResponse,
+  TerraformEngineEnum,
   type TerraformRequest,
 } from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { useProjects } from '@qovery/domains/projects/feature'
+import { IconEnum } from '@qovery/shared/enums'
 import { APPLICATION_URL, APPLICATION_VARIABLES_URL } from '@qovery/shared/routes'
 import { Callout, Heading, Icon, InputSelect, InputText, Link, RadioGroup, Section } from '@qovery/shared/ui'
 import useTerraformAvailableVersions from '../hooks/use-terraform-available-versions/use-terraform-available-versions'
+
+export const terraformEngines = [
+  { name: 'Terraform', value: TerraformEngineEnum.TERRAFORM, icon: <Icon name={IconEnum.TERRAFORM} /> },
+  { name: 'Open Tofu', value: TerraformEngineEnum.OPEN_TOFU, icon: <Icon name={IconEnum.OPEN_TOFU} /> },
+]
 
 export interface TerraformGeneralData
   extends Omit<TerraformRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec' | 'provider'> {
@@ -55,6 +61,32 @@ export const TerraformConfigurationSettings = ({
           <p className="text-sm text-neutral-350">Basic Terraform setup and state management settings.</p>
         </div>
 
+        <Controller
+          name="engine"
+          control={methods.control}
+          render={({ field }) => (
+            <InputSelect
+              label="Terraform Engine"
+              className="capitalize"
+              value={field.value}
+              onChange={field.onChange}
+              options={terraformEngines.map((v) => ({ label: v.name, value: v.value, icon: v.icon }))}
+              hint="Select the Terraform engine to use for the service"
+            />
+          )}
+        />
+
+        {methods.formState.dirtyFields.engine && isSettings && (
+          <Callout.Root color="yellow">
+            <Callout.Icon>
+              <Icon iconName="info-circle" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              Changing the terraform engine will require to reconfigure your existing backend/state.
+            </Callout.Text>
+          </Callout.Root>
+        )}
+
         {isSettings ? (
           <Controller
             name="provider_version.explicit_version"
@@ -88,7 +120,9 @@ export const TerraformConfigurationSettings = ({
                 value={field.value}
                 isLoading={isTerraformVersionLoading}
                 onChange={field.onChange}
-                options={versions.map((v) => ({ label: v.version, value: v.version }))}
+                options={versions
+                  .filter((v) => v.engine === methods.watch('engine'))
+                  .map((v) => ({ label: v.version, value: v.version }))}
                 hint="Select the Terraform version to use for the service"
               />
             )}

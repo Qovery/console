@@ -74,8 +74,9 @@ export function StepGeneralFeature() {
                   },
                   terraform_variables_source: {
                     tf_var_file_paths: [],
+                    tf_vars: [],
                   },
-                  provider: 'TERRAFORM',
+                  engine: 'TERRAFORM',
                   provider_version: {
                     read_from_terraform_block: false,
                     explicit_version: '1.13',

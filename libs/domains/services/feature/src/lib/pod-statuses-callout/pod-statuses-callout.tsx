@@ -132,7 +132,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     <>
       {callouts
         .filter((_, index) => index === activeIndex)
-        .map(({ id, icon, color, children, title, description: description }) => (
+        .map(({ id, icon, color, children, title, description }) => (
           <Callout.Root color={color} key={id}>
             <Callout.Icon>
               <Icon iconName={icon} iconStyle="regular" />
