@@ -129,6 +129,10 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     setSelectedRows(selectedRows.filter((row) => !selectedRows.includes(row)))
   }
 
+  useEffect(() => {
+    setTfVarFiles(tfVarFilesResponse.map(transformTfVarsFile))
+  }, [tfVarFilesResponse, setTfVarFiles])
+
   const value: TerraformVariablesContextType = {
     selectedRows,
     onSelectRow,
