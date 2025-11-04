@@ -82,6 +82,7 @@ export function EnableObservabilityButtonContactUs({
     <Button
       color="brand"
       variant="solid"
+      type="button"
       size="md"
       onClick={() => {
         callback?.()
@@ -94,7 +95,8 @@ export function EnableObservabilityButtonContactUs({
 }
 
 export function EnableObservabilityModal() {
-  const { closeModal } = useModal()
+  const { closeModal, enableAlertClickOutside } = useModal()
+  enableAlertClickOutside(false)
 
   return (
     <div className="relative flex flex-col gap-6 overflow-hidden pb-[104px]">
