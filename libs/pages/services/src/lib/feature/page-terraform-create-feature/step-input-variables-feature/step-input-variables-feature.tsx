@@ -203,7 +203,7 @@ const TfvarItem = ({
 
   return (
     <div
-      className="grid grid-cols-[1fr_40px] items-center justify-between border-b border-neutral-200 px-4 py-3 last:border-b-0"
+      className="grid grid-cols-[1fr_40px] items-center justify-between border-b border-neutral-200 px-4 py-3 last:rounded-b-lg last:border-b-0 hover:bg-neutral-100"
       onMouseEnter={() => setHoveredRow(file.source)}
       onMouseLeave={() => setHoveredRow(undefined)}
     >
@@ -363,64 +363,79 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
   )
   const isCustom = useMemo(() => !!customVariable && !customVariable.source, [customVariable])
   const isOverride = useMemo(() => !!customVariable && !!customVariable.source, [customVariable])
+  const customVarHasValue = useMemo(() => !!customVariable && !!customVariable.value, [customVariable])
 
   return (
-    <div
-      className={twMerge(
-        'grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center border-b border-neutral-200',
-        hoveredRow === row.source && 'bg-neutral-100'
-      )}
-    >
-      <div className="flex h-full items-center justify-center border-r border-neutral-200">
-        <Checkbox checked={isRowSelected(row.key)} onCheckedChange={() => onSelectRow(row.key)} disabled={!isCustom} />
-      </div>
-      <div className="flex h-full items-center border-r border-neutral-200">
-        {isCustom ? (
-          <input
-            name="key"
-            value={row.key}
-            onChange={(e) => {
-              setCustomVariable(row.key, { ...row, key: e.target.value })
-            }}
-            className="h-full w-full bg-transparent px-4 text-sm"
-            placeholder="Variable name"
+    <div className="w-full border-b border-neutral-200">
+      <div
+        className={twMerge(
+          'grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center',
+          hoveredRow ? (hoveredRow === row.source ? 'opacity-100' : 'opacity-50') : 'opacity-100'
+        )}
+      >
+        <div className="flex h-full items-center justify-center border-r border-neutral-200">
+          <Checkbox
+            checked={isRowSelected(row.key)}
+            onCheckedChange={() => onSelectRow(row.key)}
+            disabled={!isCustom}
           />
-        ) : (
-          <span className="px-4 text-sm text-neutral-400">{row.key}</span>
-        )}
+        </div>
+        <div className="flex h-full items-center border-r border-neutral-200 has-[input:focus]:bg-neutral-150">
+          {isCustom ? (
+            <input
+              name="key"
+              value={row.key}
+              onChange={(e) => {
+                setCustomVariable(row.key, { ...row, key: e.target.value })
+              }}
+              className="peer h-full w-full bg-transparent px-4 text-sm outline-none"
+              placeholder="Variable name"
+              spellCheck={false}
+            />
+          ) : (
+            <span className="px-4 text-sm text-neutral-400">{row.key}</span>
+          )}
+        </div>
+        <div
+          className={twMerge(
+            'flex h-full cursor-text items-center border-r border-neutral-200 hover:bg-neutral-100 has-[input:focus]:bg-neutral-150',
+            customVarHasValue && (isOverride || isCustom) && 'bg-neutral-100'
+          )}
+        >
+          <input
+            name="value"
+            value={row.value}
+            onChange={(e) => {
+              setCustomVariable(row.key, { ...row, value: e.target.value })
+            }}
+            className="h-full w-full bg-transparent px-4 text-sm outline-none"
+            spellCheck={false}
+            placeholder="Variable value"
+          />
+          {customVariable && isOverride && (
+            <button
+              type="button"
+              onClick={() => resetCustomVariable(customVariable.key)}
+              className="pl-0 pr-4 text-neutral-300 hover:text-neutral-400"
+            >
+              <Icon iconName="rotate-left" iconStyle="regular" />
+            </button>
+          )}
+        </div>
+        <div className="flex h-full items-center border-r border-neutral-200 px-4">
+          <Badge color={getSourceBadgeColor(row, customVariable)} className="text-xs">
+            {isOverride ? 'Override from ' : ''}
+            {row.source?.split('/').pop() || 'Custom'}
+          </Badge>
+        </div>
+        <span className="flex items-center justify-center text-center text-sm text-neutral-400">
+          <Icon
+            iconName="lock-keyhole-open"
+            iconStyle="regular"
+            className={twMerge(row.secret ? 'text-brand-500' : 'text-neutral-300')}
+          />
+        </span>
       </div>
-      <div className="flex h-full cursor-text items-center border-r border-neutral-200 hover:bg-neutral-100">
-        <input
-          name="value"
-          value={row.value}
-          onChange={(e) => {
-            setCustomVariable(row.key, { ...row, value: e.target.value })
-          }}
-          className="h-full w-full bg-transparent px-4 text-sm"
-          placeholder="Variable value"
-        />
-        {customVariable && isOverride && (
-          <button type="button" onClick={() => resetCustomVariable(customVariable.key)} className="pl-0 pr-4">
-            <Icon iconName="rotate-left" iconStyle="regular" />
-          </button>
-        )}
-      </div>
-      <div className="flex h-full items-center border-r border-neutral-200 px-4">
-        <Badge variant="surface" color={getSourceBadgeColor(row, customVariable)} className="text-sm">
-          {isOverride ? 'Override from ' : ''}
-          {row.source?.split('/').pop() || 'Custom'}
-        </Badge>
-      </div>
-      <span className="flex items-center justify-center text-center text-sm text-neutral-400">
-        <InputToggle
-          value={row.secret}
-          onChange={(value) => {
-            console.log(value)
-          }}
-          forceAlignTop
-          small
-        />
-      </span>
     </div>
   )
 }
