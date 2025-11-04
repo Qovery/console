@@ -38,8 +38,10 @@ type TerraformVariablesContextType = {
   hoveredRow: string | undefined
   setHoveredRow: (hoveredRow: string | undefined) => void
   customVariables: VariableRowItem[]
-  setCustomVariable: (variable: VariableRowItem) => void
+  setCustomVariable: (key: string, variable: VariableRowItem) => void
   resetCustomVariable: (key: string) => void
+  addCustomVariable: () => void
+  deleteSelectedRows: () => void
 }
 
 type VariableRowItem = {
@@ -91,7 +93,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
         vars.set(fileKey, { key: fileKey, value, source: file.source, secret: false }) // TODO [QOV-1266] Are we keeping 'secret' here?
       })
     })
-    return [...vars.values()]
+    return [...vars.values(), ...customVariables]
   }, [tfVarFiles, customVariables])
 
   const [selectedRows, setSelectedRows] = useState<TerraformVariablesContextType['selectedRows']>([])
@@ -106,11 +108,25 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const isRowSelected = (key: string) => {
     return selectedRows.includes(key)
   }
-  const setCustomVariable = (variable: VariableRowItem) => {
-    setCustomVariables([...customVariables.filter((customVariable) => customVariable.key !== variable.key), variable])
+  const setCustomVariable = (key: string, variable: VariableRowItem) => {
+    setCustomVariables(
+      customVariables.map((customVariable) => (customVariable.key === key ? variable : customVariable))
+    )
   }
   const resetCustomVariable = (key: string) => {
     setCustomVariables(customVariables.filter((customVariable) => customVariable.key !== key))
+  }
+  const addCustomVariable = () => {
+    let newKey = 'custom_' + (variableRows.length + 1)
+    const doesExist = (key: string) => customVariables.find((customVariable) => customVariable.key === key)
+    while (doesExist(newKey)) {
+      newKey = 'custom_' + (Number(newKey.split('_')[1]) + 1)
+    }
+    setCustomVariables([...customVariables, { key: newKey, value: '' }])
+  }
+  const deleteSelectedRows = () => {
+    setCustomVariables(customVariables.filter((customVariable) => !selectedRows.includes(customVariable.key)))
+    setSelectedRows(selectedRows.filter((row) => !selectedRows.includes(row)))
   }
 
   const value: TerraformVariablesContextType = {
@@ -126,6 +142,8 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     setCustomVariable,
     resetCustomVariable,
     setTfVarFiles,
+    addCustomVariable,
+    deleteSelectedRows,
   }
 
   return <TerraformVariablesContext.Provider value={value}>{children}</TerraformVariablesContext.Provider>
@@ -310,7 +328,10 @@ const TerraformVariablesEmptyState = () => {
 }
 
 const getSourceBadgeColor = (row: VariableRowItem, customVariable: VariableRowItem | undefined) => {
-  if (customVariable) {
+  if (customVariable && !customVariable.source) {
+    return 'neutral'
+  }
+  if (customVariable && customVariable.source) {
     return 'yellow'
   }
   // TODO [QOV-1266] Manage colors for most common sources
@@ -334,33 +355,40 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
         <Checkbox checked={isRowSelected(row.key)} onCheckedChange={() => onSelectRow(row.key)} />
       </div>
       <div className="flex h-full items-center border-r border-neutral-200">
-        <span className="px-4 text-sm text-neutral-400">{row.key}</span>
+        {customVariable && !customVariable.source ? (
+          <input
+            name="key"
+            value={row.key}
+            onChange={(e) => {
+              setCustomVariable(row.key, { ...row, key: e.target.value })
+            }}
+            className="h-full w-full bg-transparent px-4 text-sm"
+            placeholder="Variable name"
+          />
+        ) : (
+          <span className="px-4 text-sm text-neutral-400">{row.key}</span>
+        )}
       </div>
       <div className="flex h-full cursor-text items-center border-r border-neutral-200 hover:bg-neutral-100">
         <input
           name="value"
           value={row.value}
           onChange={(e) => {
-            setCustomVariable({ ...row, value: e.target.value })
+            setCustomVariable(row.key, { ...row, value: e.target.value })
           }}
           className="h-full w-full bg-transparent px-4 text-sm"
+          placeholder="Variable value"
         />
-        {customVariable && (
-          <Button
-            size="md"
-            variant="plain"
-            color="neutral"
-            type="button"
-            onClick={() => resetCustomVariable(customVariable.key)}
-          >
+        {customVariable && customVariable.source && (
+          <button type="button" onClick={() => resetCustomVariable(customVariable.key)} className="pl-0 pr-4">
             <Icon iconName="rotate-left" iconStyle="regular" />
-          </Button>
+          </button>
         )}
       </div>
       <div className="flex h-full items-center border-r border-neutral-200 px-4">
         <Badge variant="surface" color={getSourceBadgeColor(row, customVariable)} className="text-sm">
-          {customVariable ? 'Override from file' : ''}
-          {row.source}
+          {customVariable && customVariable.source ? 'Override from ' : ''}
+          {row.source || 'Custom'}
         </Badge>
       </div>
       <span className="flex items-center justify-center text-center text-sm text-neutral-400">
@@ -400,8 +428,8 @@ const TerraformVariablesRows = () => {
         </span>
       </div>
 
-      {variableRows.map((row) => (
-        <VariableRow key={row.key} row={row} />
+      {variableRows.map((row, index) => (
+        <VariableRow key={index} row={row} />
       ))}
     </div>
   )
@@ -422,7 +450,7 @@ const TerraformVariablesLoadingState = () => {
 }
 
 const TerraformVariablesTable = () => {
-  const { selectedRows, areTfVarsFilesLoading } = useTerraformVariablesContext()
+  const { selectedRows, areTfVarsFilesLoading, addCustomVariable, deleteSelectedRows } = useTerraformVariablesContext()
 
   return (
     <div className="flex flex-col rounded-lg border border-neutral-200">
@@ -438,12 +466,12 @@ const TerraformVariablesTable = () => {
         className={twMerge('flex items-center px-4 py-3', selectedRows.length > 0 ? 'justify-between' : 'justify-end')}
       >
         {selectedRows.length > 0 && (
-          <Button size="md" variant="solid" color="red" className="gap-1.5" type="button">
+          <Button size="md" variant="solid" color="red" className="gap-1.5" type="button" onClick={deleteSelectedRows}>
             <Icon iconName="trash-can" iconStyle="regular" />
             Delete selected
           </Button>
         )}
-        <Button size="md" variant="surface" className="gap-1.5" type="button">
+        <Button size="md" variant="surface" className="gap-1.5" type="button" onClick={addCustomVariable}>
           Add variable
           <Icon iconName="plus" iconStyle="regular" />
         </Button>
