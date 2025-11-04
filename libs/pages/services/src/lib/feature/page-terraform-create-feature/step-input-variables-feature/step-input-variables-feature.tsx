@@ -1,4 +1,5 @@
-import { GitProviderEnum } from 'qovery-typescript-axios'
+import { type CheckedState } from '@radix-ui/react-checkbox'
+import { GitProviderEnum, type TfVarsFileResponse } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Controller, FormProvider, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -31,21 +32,14 @@ type TerraformVariablesContextType = {
   onSelectRow: (key: string) => void
   isRowSelected: (key: string) => boolean
   areTfVarsFilesLoading: boolean
-  setAreTfVarsFilesLoading: (areTfVarsFilesLoading: boolean) => void
-  tfVarFiles: TfVarFile[]
-  setTfVarFiles: (tfVarFiles: TfVarFile[]) => void
+  tfVarFiles: TfVarsFile[]
+  setTfVarFiles: (tfVarFiles: TfVarsFile[]) => void
   variableRows: VariableRowItem[]
   hoveredRow: string | undefined
   setHoveredRow: (hoveredRow: string | undefined) => void
   customVariables: VariableRowItem[]
   setCustomVariable: (variable: VariableRowItem) => void
   resetCustomVariable: (key: string) => void
-}
-
-type TfVarFile = {
-  source: string
-  variables: Record<string, string>[]
-  enabled: boolean
 }
 
 type VariableRowItem = {
@@ -55,26 +49,51 @@ type VariableRowItem = {
   secret?: boolean
 }
 
+type TfVarsFile = TfVarsFileResponse & {
+  enabled: boolean
+}
+
 const TerraformVariablesContext = createContext<TerraformVariablesContextType | undefined>(undefined)
 
+const transformTfVarsFile = (tfVarFile: TfVarsFileResponse): TfVarsFile => {
+  return {
+    ...tfVarFile,
+    enabled: true,
+  }
+}
+
 export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
+  const { generalForm } = useTerraformCreateContext()
+  const { organizationId = '' } = useParams()
+  const { data: tfVarFilesResponse = [], isLoading: areTfVarsFilesLoading } = useListTfVarsFilesFromGitRepo({
+    organizationId,
+    repository: {
+      url: generalForm.getValues().git_repository?.url ?? '',
+      branch: generalForm.getValues().branch ?? '',
+      root_path: generalForm.getValues().root_path ?? '',
+      git_token_id: generalForm.getValues().git_repository?.git_token_id ?? '',
+      provider: generalForm.getValues().provider ?? GitProviderEnum.GITHUB,
+    },
+    mode: {
+      type: 'AutoDiscover',
+    },
+    enabled: true,
+  })
   const [customVariables, setCustomVariables] = useState<TerraformVariablesContextType['customVariables']>([])
-  const [areTfVarsFilesLoading, setAreTfVarsFilesLoading] =
-    useState<TerraformVariablesContextType['areTfVarsFilesLoading']>(false)
-  const [tfVarFiles, setTfVarFiles] = useState<TerraformVariablesContextType['tfVarFiles']>([])
+  const [tfVarFiles, setTfVarFiles] = useState<TfVarsFile[]>(tfVarFilesResponse.map(transformTfVarsFile))
   const variableRows: TerraformVariablesContextType['variableRows'] = useMemo(() => {
     const vars = new Map<string, VariableRowItem>()
     const files = [...tfVarFiles.filter((file) => file.enabled)].reverse()
     files.forEach((file) => {
-      file.variables.forEach((variable) => {
-        const key = Object.keys(variable)[0]
-        const customVariable = customVariables.find((customVariable) => customVariable.key === key)
-        const value = customVariable?.value ?? Object.values(variable)[0]
-        vars.set(key, { key, value, source: file.source, secret: false }) // TODO [QOV-1266] Are we keeping 'secret' here?
+      Object.entries(file.variables).forEach(([fileKey, fileValue]) => {
+        const customVariable = customVariables.find((customVariable) => customVariable.key === fileKey)
+        const value = customVariable?.value ?? fileValue
+        vars.set(fileKey, { key: fileKey, value, source: file.source, secret: false }) // TODO [QOV-1266] Are we keeping 'secret' here?
       })
     })
     return [...vars.values()]
   }, [tfVarFiles, customVariables])
+
   const [selectedRows, setSelectedRows] = useState<TerraformVariablesContextType['selectedRows']>([])
   const [hoveredRow, setHoveredRow] = useState<TerraformVariablesContextType['hoveredRow']>(undefined)
   const onSelectRow = (key: string) => {
@@ -99,15 +118,14 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     onSelectRow,
     isRowSelected,
     areTfVarsFilesLoading,
-    setAreTfVarsFilesLoading,
     tfVarFiles,
-    setTfVarFiles,
     variableRows,
     hoveredRow,
     setHoveredRow,
     customVariables,
     setCustomVariable,
     resetCustomVariable,
+    setTfVarFiles,
   }
 
   return <TerraformVariablesContext.Provider value={value}>{children}</TerraformVariablesContext.Provider>
@@ -126,20 +144,22 @@ const TfvarItem = ({
   index,
   onIndexChange,
 }: {
-  file: TfVarFile
+  file: TfVarsFile
   index: number
-  onIndexChange: (file: TfVarFile, index: number) => void
+  onIndexChange: (file: TfVarsFile, index: number) => void
 }) => {
-  const { tfVarFiles, setHoveredRow, setTfVarFiles } = useTerraformVariablesContext()
+  const { setHoveredRow, tfVarFiles, setTfVarFiles } = useTerraformVariablesContext()
   const [currentIndex, setCurrentIndex] = useState<string | undefined>(index.toString())
 
   const onCheckedChange = useCallback(
-    (checked: boolean) => {
-      setTfVarFiles(
-        tfVarFiles.map((currentFile) =>
-          currentFile.source === file.source ? { ...currentFile, enabled: checked } : currentFile
-        )
-      )
+    (checked: CheckedState) => {
+      const newFiles = [...tfVarFiles]
+      const fileIndex = newFiles.findIndex((tfVarFile) => tfVarFile.source === file.source)
+      if (fileIndex !== -1) {
+        newFiles[fileIndex] = { ...newFiles[fileIndex], enabled: checked ? true : false }
+      }
+
+      setTfVarFiles(newFiles)
     },
     [tfVarFiles, file.source, setTfVarFiles]
   )
@@ -164,7 +184,7 @@ const TfvarItem = ({
         />
         <label className="flex flex-col gap-0.5 text-sm" htmlFor={file.source}>
           <span className="text-neutral-400">{file.source}</span>
-          <span className="text-xs text-neutral-350">{file.variables.length} variables</span>
+          <span className="text-xs text-neutral-350">{Object.keys(file.variables).length} variables</span>
         </label>
       </div>
       <div className="flex items-center gap-1.5">
@@ -193,39 +213,41 @@ const TfvarsFilesPopover = () => {
   const { control } = useFormContext()
   const { tfVarFiles, setTfVarFiles } = useTerraformVariablesContext()
 
-  const onIndexChange = (path: TfVarFile, newIndex: number) => {
-    const currentIndex = tfVarFiles.indexOf(path)
-    const newPaths = [...tfVarFiles]
-    const element = newPaths[currentIndex]
-    newPaths.splice(currentIndex, 1)
-    newPaths.splice(newIndex, 0, element)
-    setTfVarFiles(newPaths)
+  const onIndexChange = (file: TfVarsFile, newIndex: number) => {
+    const currentIndex = tfVarFiles.indexOf(file)
+    const newFiles = [...tfVarFiles]
+    const element = newFiles[currentIndex]
+    newFiles.splice(currentIndex, 1)
+    newFiles.splice(newIndex, 0, element)
+    setTfVarFiles(newFiles)
   }
 
   return (
     <Popover.Root>
       <Popover.Trigger>
-        {tfVarFiles.length > 0 ? (
-          <Indicator
-            align="start"
-            side="left"
-            content={
-              <span className="relative right-0 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-400 text-sm font-bold leading-[0] text-white">
-                {tfVarFiles.length ?? 0}
-              </span>
-            }
-          >
-            <Button size="md" variant="outline" className="gap-1.5" type="button">
+        <div>
+          {tfVarFiles.filter((file) => file.enabled).length > 0 ? (
+            <Indicator
+              align="start"
+              side="left"
+              content={
+                <span className="relative right-0 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-400 text-sm font-bold leading-[0] text-white">
+                  {tfVarFiles.filter((file) => file.enabled).length ?? 0}
+                </span>
+              }
+            >
+              <Button size="md" variant="outline" className="gap-1.5" type="button">
+                <Icon iconName="file-lines" iconStyle="regular" />
+                .tfvars files
+              </Button>
+            </Indicator>
+          ) : (
+            <Button size="md" variant="solid" className="gap-1.5" type="button">
               <Icon iconName="file-lines" iconStyle="regular" />
               .tfvars files
             </Button>
-          </Indicator>
-        ) : (
-          <Button size="md" variant="solid" className="gap-1.5" type="button">
-            <Icon iconName="file-lines" iconStyle="regular" />
-            .tfvars files
-          </Button>
-        )}
+          )}
+        </div>
       </Popover.Trigger>
       <Popover.Content side="right" className="flex w-[340px] flex-col rounded-lg border border-neutral-200 p-0">
         <div className="flex items-center justify-between px-3 py-2">
@@ -400,38 +422,7 @@ const TerraformVariablesLoadingState = () => {
 }
 
 const TerraformVariablesTable = () => {
-  const { selectedRows, setTfVarFiles, setAreTfVarsFilesLoading } = useTerraformVariablesContext()
-  const { generalForm } = useTerraformCreateContext()
-  const { organizationId = '' } = useParams()
-
-  const { data: tfVarsFiles = [], isLoading: areTfVarsFilesLoading } = useListTfVarsFilesFromGitRepo({
-    organizationId,
-    repository: {
-      url: generalForm.getValues().git_repository?.url ?? '',
-      branch: generalForm.getValues().branch ?? '',
-      root_path: generalForm.getValues().root_path ?? '',
-      git_token_id: generalForm.getValues().git_repository?.git_token_id ?? '',
-      provider: generalForm.getValues().provider ?? GitProviderEnum.GITHUB,
-    },
-    mode: {
-      type: 'AutoDiscover',
-    },
-    enabled: true,
-  })
-
-  useEffect(() => {
-    setTfVarFiles(
-      tfVarsFiles.map(({ variables, source }) => ({
-        source: source,
-        variables: Object.entries(variables).map(([key, value]) => ({ [key]: value })),
-        enabled: true,
-      }))
-    )
-  }, [tfVarsFiles, setTfVarFiles])
-
-  useEffect(() => {
-    setAreTfVarsFilesLoading(areTfVarsFilesLoading)
-  }, [areTfVarsFilesLoading, setAreTfVarsFilesLoading])
+  const { selectedRows, areTfVarsFilesLoading } = useTerraformVariablesContext()
 
   return (
     <div className="flex flex-col rounded-lg border border-neutral-200">
