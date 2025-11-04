@@ -1,15 +1,10 @@
+import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { useNavigate, useParams } from 'react-router-dom'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, Icon, InputSelectSmall, InputTextSmall } from '@qovery/shared/ui'
-import { type AlertConfiguration } from './bulk-creation-flow.types'
-
-interface MetricConfigurationStepProps {
-  metricCategory: string
-  serviceName: string
-  initialData?: AlertConfiguration
-  onNext: (data: AlertConfiguration) => void
-  onSkip: () => void
-}
+import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
+import { type AlertConfiguration } from '../bulk-creation-flow.types'
 
 const METRIC_TYPE_OPTIONS: Record<string, Value[]> = {
   cpu: [
@@ -52,13 +47,19 @@ const SEVERITY_OPTIONS: Value[] = [
   { label: 'Critical', value: 'critical' },
 ]
 
-export function MetricConfigurationStep({
-  metricCategory,
-  serviceName,
-  initialData,
-  onNext,
-  onSkip,
-}: MetricConfigurationStepProps) {
+export function MetricConfigurationStep() {
+  const navigate = useNavigate()
+  const { metricIndex } = useParams<{ metricIndex: string }>()
+  const { selectedMetrics, serviceName, setCurrentStepIndex, alerts, setAlerts } = useAlertingCreationFlowContext()
+
+  const index = parseInt(metricIndex || '0')
+  const metricCategory = selectedMetrics[index]
+  const initialData = alerts[index]
+
+  useEffect(() => {
+    setCurrentStepIndex(index)
+  }, [index, setCurrentStepIndex])
+
   const methods = useForm<AlertConfiguration>({
     mode: 'onChange',
     defaultValues: initialData || {
@@ -80,9 +81,48 @@ export function MetricConfigurationStep({
     },
   })
 
+  const handleNext = (data: AlertConfiguration) => {
+    const newAlerts = [...alerts]
+    newAlerts[index] = { ...data, skipped: false }
+    setAlerts(newAlerts)
+
+    const isLastMetric = index === selectedMetrics.length - 1
+    if (isLastMetric) {
+      navigate('../summary')
+    } else {
+      navigate(`../metric/${index + 1}`)
+    }
+  }
+
+  const handleSkip = () => {
+    const newAlerts = [...alerts]
+    newAlerts[index] = {
+      metricCategory: selectedMetrics[index],
+      metricType: '',
+      condition: { operator: '', threshold: '', duration: '' },
+      autoResolve: { operator: '', threshold: '', duration: '' },
+      name: '',
+      severity: '',
+      notificationChannels: [],
+      skipped: true,
+    }
+    setAlerts(newAlerts)
+
+    const isLastMetric = index === selectedMetrics.length - 1
+    if (isLastMetric) {
+      navigate('../summary')
+    } else {
+      navigate(`../metric/${index + 1}`)
+    }
+  }
+
   const onSubmit = methods.handleSubmit((data) => {
-    onNext(data)
+    handleNext(data)
   })
+
+  if (index >= selectedMetrics.length) {
+    return null
+  }
 
   const watchCondition = methods.watch('condition')
   const watchMetricType = methods.watch('metricType')
@@ -272,7 +312,7 @@ export function MetricConfigurationStep({
           </Button>
           <button
             type="button"
-            onClick={onSkip}
+            onClick={handleSkip}
             className="text-sm font-medium text-neutral-350 hover:text-neutral-400"
           >
             Skip this alert

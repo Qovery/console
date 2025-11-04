@@ -16,11 +16,3 @@ export interface AlertConfiguration {
   notificationChannels: string[]
   skipped?: boolean
 }
-
-export interface BulkCreationFlowProps {
-  selectedMetrics: string[]
-  serviceId: string
-  serviceName: string
-  onClose: () => void
-  onComplete: (alerts: AlertConfiguration[]) => void
-}

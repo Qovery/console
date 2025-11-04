@@ -1,14 +1,25 @@
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button, Icon } from '@qovery/shared/ui'
-import { type AlertConfiguration } from './bulk-creation-flow.types'
+import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 
-interface SummaryStepProps {
-  alerts: AlertConfiguration[]
-  serviceName: string
-  onConfirm: () => void
-  onEdit: (index: number) => void
-}
+export function SummaryStep() {
+  const navigate = useNavigate()
+  const { serviceName, setCurrentStepIndex, alerts, onComplete, selectedMetrics } = useAlertingCreationFlowContext()
 
-export function SummaryStep({ alerts, serviceName, onConfirm, onEdit }: SummaryStepProps) {
+  useEffect(() => {
+    setCurrentStepIndex(selectedMetrics.length)
+  }, [selectedMetrics.length, setCurrentStepIndex])
+
+  const handleEdit = (index: number) => {
+    navigate(`../metric/${index}`)
+  }
+
+  const handleConfirm = () => {
+    const activeAlerts = alerts.filter((alert) => !alert.skipped)
+    onComplete(activeAlerts)
+  }
+
   const activeAlerts = alerts.filter((alert) => !alert.skipped)
   const skippedCount = alerts.length - activeAlerts.length
 
@@ -74,7 +85,7 @@ export function SummaryStep({ alerts, serviceName, onConfirm, onEdit }: SummaryS
                   variant="outline"
                   color="neutral"
                   size="sm"
-                  onClick={() => onEdit(index)}
+                  onClick={() => handleEdit(index)}
                   className="ml-4 gap-1.5"
                 >
                   <Icon iconName="pen" iconStyle="regular" className="text-xs" />
@@ -87,7 +98,7 @@ export function SummaryStep({ alerts, serviceName, onConfirm, onEdit }: SummaryS
       </div>
 
       <div className="border-t border-neutral-250 bg-white px-10 py-4">
-        <Button size="lg" onClick={onConfirm}>
+        <Button size="lg" onClick={handleConfirm}>
           Create {activeAlerts.length} alert{activeAlerts.length !== 1 ? 's' : ''}
         </Button>
       </div>
