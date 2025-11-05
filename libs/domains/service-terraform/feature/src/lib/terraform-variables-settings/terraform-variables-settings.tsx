@@ -4,6 +4,7 @@ import { type PropsWithChildren, createContext, useCallback, useContext, useEffe
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useListTfVarsFilesFromGitRepo } from '@qovery/domains/organizations/feature'
+import { DropdownVariable } from '@qovery/domains/variables/feature'
 import {
   Badge,
   Button,
@@ -490,7 +491,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
             spellCheck={false}
             placeholder="Variable value"
           />
-          {/* <DropdownVariable
+          <DropdownVariable
             environmentId={environmentId}
             onChange={(varValue) => {
               setCustomVariable(row.key, { ...row, value: varValue })
@@ -504,7 +505,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
             >
               <Icon className="text-sm" iconName="wand-magic-sparkles" />
             </button>
-          </DropdownVariable> */}
+          </DropdownVariable>
           {customVariable && isOverride && (
             <button
               type="button"
