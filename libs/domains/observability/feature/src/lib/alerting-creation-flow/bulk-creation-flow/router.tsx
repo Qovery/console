@@ -7,13 +7,16 @@ export interface RouteType {
   component: ReactNode
 }
 
+export const ALERTING_CREATION_METRIC = (metricIndex = ':metricIndex') => `/metric/${metricIndex}`
+export const ALERTING_CREATION_SUMMARY = '/summary'
+
 export const ROUTER_ALERTING_CREATION: RouteType[] = [
   {
-    path: '/metric/:metricIndex',
+    path: ALERTING_CREATION_METRIC(),
     component: <MetricConfigurationStep />,
   },
   {
-    path: '/summary',
+    path: ALERTING_CREATION_SUMMARY,
     component: <SummaryStep />,
   },
 ]
