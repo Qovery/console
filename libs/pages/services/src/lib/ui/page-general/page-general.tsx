@@ -17,7 +17,12 @@ export function PageGeneral() {
   })
 
   const hasMetrics = useMemo(() => {
-    if (cluster?.cloud_provider === 'AWS' || cluster?.cloud_provider === 'SCW' || cluster?.cloud_provider === 'GCP') {
+    if (
+      cluster?.cloud_provider === 'AWS' ||
+      cluster?.cloud_provider === 'SCW' ||
+      cluster?.cloud_provider === 'GCP' ||
+      cluster?.cloud_provider === 'AZURE'
+    ) {
       return cluster?.metrics_parameters?.enabled
     }
     return false
