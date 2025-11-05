@@ -23,29 +23,15 @@ const PLANS: OrganizationPlan[] = [
     name: PlanEnum.TEAM,
     title: 'Team plan',
     text: 'Ideal for teams',
-    price: 29,
-    list: [
-      'All FREE features',
-      'Up to 100 users',
-      'Up to 5 Self-Managed clusters',
-      'Up to 200 services',
-      '1,000 free deployment minutes',
-      '24/5 support (email and chat)',
-    ],
+    price: 899,
+    list: ['Include 10 users', 'Include 2 managed clusters', '5,000 free deployment minutes', 'Standard support'],
   },
   {
     name: PlanEnum.ENTERPRISE,
     title: 'Enterprise plan',
     text: 'Tailored for your organization',
     price: 899,
-    list: [
-      'All TEAM features',
-      'Custom limits',
-      'Role-Based Access Control',
-      'Extended security and compliance',
-      'Usage Report',
-      'Custom support',
-    ],
+    list: ['All TEAM features', 'Deploy on-premises', 'Custom limits', 'Custom support'],
   },
 ]
 

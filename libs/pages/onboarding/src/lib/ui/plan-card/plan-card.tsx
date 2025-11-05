@@ -21,7 +21,7 @@ export function PlanCard(props: PlanCardProps) {
       <p className="mb-4 flex items-center text-xs text-neutral-400">
         {name !== PlanEnum.ENTERPRISE ? (
           <>
-            <span className="h5 mr-2 block">${price}</span> per user/month
+            <span className="h5 mr-2 block">${price}</span> per month
           </>
         ) : (
           <span className="h5">Custom</span>
