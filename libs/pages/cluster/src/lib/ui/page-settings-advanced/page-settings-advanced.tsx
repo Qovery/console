@@ -15,7 +15,7 @@ import {
   type TableEditionRow,
   Tooltip,
 } from '@qovery/shared/ui'
-import { twMerge } from '@qovery/shared/util-js'
+import { generateAdvancedSettingDocUrl, twMerge } from '@qovery/shared/util-js'
 
 export interface PageSettingsAdvancedProps {
   keys?: string[]
@@ -66,7 +66,14 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
             {
               content: (
                 <Tooltip classNameTrigger="truncate" content={key}>
-                  <div>{key}</div>
+                  <a
+                    href={generateAdvancedSettingDocUrl(key, 'cluster')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block truncate hover:underline"
+                  >
+                    {key}
+                  </a>
                 </Tooltip>
               ),
               className: 'font-medium',
