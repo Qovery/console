@@ -14,11 +14,11 @@ import useTerraformAvailableVersions from '../hooks/use-terraform-available-vers
 
 export const terraformEngines = [
   { name: 'Terraform', value: TerraformEngineEnum.TERRAFORM, icon: <Icon name={IconEnum.TERRAFORM} /> },
-  { name: 'Open Tofu', value: TerraformEngineEnum.OPEN_TOFU, icon: <Icon name={IconEnum.OPEN_TOFU} /> },
+  { name: 'OpenTofu', value: TerraformEngineEnum.OPEN_TOFU, icon: <Icon name={IconEnum.OPEN_TOFU} /> },
 ]
 
 export interface TerraformGeneralData
-  extends Omit<TerraformRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec' | 'provider'> {
+  extends Omit<TerraformRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec'> {
   source_provider: 'GIT'
   repository: string
   git_repository?: ApplicationGitRepository
@@ -114,18 +114,22 @@ export const TerraformConfigurationSettings = ({
           <Controller
             name="provider_version.explicit_version"
             control={methods.control}
-            render={({ field }) => (
-              <InputSelect
-                label="Terraform version"
-                value={field.value}
-                isLoading={isTerraformVersionLoading}
-                onChange={field.onChange}
-                options={versions
-                  .filter((v) => v.engine === methods.watch('engine'))
-                  .map((v) => ({ label: v.version, value: v.version }))}
-                hint="Select the Terraform version to use for the service"
-              />
-            )}
+            render={({ field }) => {
+              const versionOptions = versions
+                .filter((v) => v.engine === methods.watch('engine'))
+                .map((v) => ({ label: v.version, value: v.version }))
+
+              return (
+                <InputSelect
+                  label="Terraform version"
+                  value={field.value}
+                  isLoading={isTerraformVersionLoading}
+                  onChange={field.onChange}
+                  options={versionOptions}
+                  hint="Select the Terraform version to use for the service"
+                />
+              )
+            }}
           />
         )}
 
