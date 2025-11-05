@@ -1,31 +1,31 @@
 import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { type Value } from '@qovery/shared/interfaces'
-import { Button, Icon, InputSelectSmall, InputTextSmall } from '@qovery/shared/ui'
+import { Button, ExternalLink, Heading, Icon, InputSelectSmall, InputTextSmall, Section } from '@qovery/shared/ui'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration } from '../bulk-creation-flow.types'
 
 const METRIC_TYPE_OPTIONS: Record<string, Value[]> = {
   cpu: [
-    { label: 'Average', value: 'avg' },
-    { label: 'Maximum', value: 'max' },
-    { label: 'Minimum', value: 'min' },
+    { label: 'AVERAGE', value: 'avg' },
+    { label: 'MAXIMUM', value: 'max' },
+    { label: 'MINIMUM', value: 'min' },
   ],
   memory: [
-    { label: 'Average', value: 'avg' },
-    { label: 'Maximum', value: 'max' },
-    { label: 'Minimum', value: 'min' },
+    { label: 'AVERAGE', value: 'avg' },
+    { label: 'MAXIMUM', value: 'max' },
+    { label: 'MINIMUM', value: 'min' },
   ],
-  instances: [{ label: 'Count', value: 'count' }],
-  k8s_event: [{ label: 'Count', value: 'count' }],
+  instances: [{ label: 'COUNT', value: 'count' }],
+  k8s_event: [{ label: 'COUNT', value: 'count' }],
   network: [
-    { label: 'Throughput', value: 'throughput' },
-    { label: 'Latency', value: 'latency' },
+    { label: 'THROUGHPUT', value: 'throughput' },
+    { label: 'LATENCY', value: 'latency' },
   ],
   logs: [
-    { label: 'Error rate', value: 'error_rate' },
-    { label: 'Count', value: 'count' },
+    { label: 'ERROR RATE', value: 'error_rate' },
+    { label: 'COUNT', value: 'count' },
   ],
 }
 
@@ -49,12 +49,16 @@ const SEVERITY_OPTIONS: Value[] = [
 
 export function MetricConfigurationStep() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { metricIndex } = useParams<{ metricIndex: string }>()
   const { selectedMetrics, serviceName, setCurrentStepIndex, alerts, setAlerts } = useAlertingCreationFlowContext()
 
-  const index = parseInt(metricIndex || '0')
-  const metricCategory = selectedMetrics[index]
+  const metricCategory = metricIndex || selectedMetrics[0]
+  const index = selectedMetrics.indexOf(metricCategory)
   const initialData = alerts[index]
+
+  const basePathMatch = location.pathname.match(/(.+)\/metric\/[^/]+$/)
+  const basePath = basePathMatch ? basePathMatch[1] : ''
 
   useEffect(() => {
     setCurrentStepIndex(index)
@@ -88,9 +92,9 @@ export function MetricConfigurationStep() {
 
     const isLastMetric = index === selectedMetrics.length - 1
     if (isLastMetric) {
-      navigate('../summary')
+      navigate(`${basePath}/summary`)
     } else {
-      navigate(`../metric/${index + 1}`)
+      navigate(`${basePath}/metric/${selectedMetrics[index + 1]}`)
     }
   }
 
@@ -110,9 +114,9 @@ export function MetricConfigurationStep() {
 
     const isLastMetric = index === selectedMetrics.length - 1
     if (isLastMetric) {
-      navigate('../summary')
+      navigate(`${basePath}/summary`)
     } else {
-      navigate(`../metric/${index + 1}`)
+      navigate(`${basePath}/metric/${selectedMetrics[index + 1]}`)
     }
   }
 
@@ -120,7 +124,7 @@ export function MetricConfigurationStep() {
     handleNext(data)
   })
 
-  if (index >= selectedMetrics.length) {
+  if (index === -1 || index >= selectedMetrics.length) {
     return null
   }
 
@@ -129,33 +133,31 @@ export function MetricConfigurationStep() {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={onSubmit} className="flex min-h-0 flex-1">
-        <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto bg-white px-10 py-8">
-          <div className="flex flex-col gap-6">
+      <form onSubmit={onSubmit} className="container mx-auto mt-6 flex min-h-0 flex-1 justify-center gap-6">
+        <div className="flex w-1/2 flex-col gap-6">
+          <Section className="flex flex-col gap-4 rounded-lg border border-neutral-250 p-4">
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-base font-medium text-neutral-400">Alert conditions</h2>
-                <a
-                  href="#"
-                  className="flex items-center gap-1 text-sm text-brand-500 hover:text-brand-600"
-                  target="_blank"
-                  rel="noopener noreferrer"
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col ">
+                  <Heading>Alert conditions</Heading>
+                  <p className="text-sm text-neutral-350">Set the metric and condition that will trigger this alert</p>
+                </div>
+                <ExternalLink
+                  className="shrink-0"
+                  href="https://hub.qovery.com/docs/using-qovery/configuration/observability/alerting/#alert-conditions"
+                  size="sm"
                 >
                   Conditions guide
-                  <Icon iconName="arrow-up-right-from-square" iconStyle="regular" className="text-xs" />
-                </a>
+                </ExternalLink>
               </div>
-              <p className="text-sm text-neutral-350">Set the metric and condition that will trigger this alert</p>
 
-              <div className="mt-2 flex flex-col gap-4 rounded-lg border border-neutral-250 bg-neutral-100 p-5">
-                <div>
-                  <p className="mb-3 text-xs font-medium uppercase text-neutral-350">Main condition</p>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm">Main condition</p>
+                <div className="rounded-md border border-neutral-250 bg-neutral-100 p-3 text-sm">
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-neutral-350">IF</span>
-                      <span className="rounded bg-brand-50 px-2 py-1 text-sm font-medium uppercase text-brand-500">
-                        {metricCategory}
-                      </span>
+                      <span className="font-code text-xs text-blue-500">IF</span>
+                      <span className="text-sm font-medium uppercase">{metricCategory}</span>
                       <Controller
                         name="metricType"
                         control={methods.control}
@@ -165,7 +167,6 @@ export function MetricConfigurationStep() {
                             items={METRIC_TYPE_OPTIONS[metricCategory] || []}
                             defaultValue={field.value}
                             onChange={(value) => field.onChange(value)}
-                            inputClassName="h-8 uppercase"
                           />
                         )}
                       />
@@ -194,7 +195,7 @@ export function MetricConfigurationStep() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-neutral-350">IS</span>
+                      <span className="font-code text-xs text-blue-500">OF</span>
                       <Controller
                         name="condition.operator"
                         control={methods.control}
@@ -204,7 +205,7 @@ export function MetricConfigurationStep() {
                             items={OPERATOR_OPTIONS}
                             defaultValue={field.value}
                             onChange={(value) => field.onChange(value)}
-                            inputClassName="h-8 uppercase"
+                            className="w-32"
                           />
                         )}
                       />
@@ -213,15 +214,15 @@ export function MetricConfigurationStep() {
                         control={methods.control}
                         render={({ field }) => (
                           <InputTextSmall
-                            label=""
+                            label="Threshold"
                             name="threshold"
                             value={field.value}
                             onChange={(value) => field.onChange(value)}
-                            inputClassName="h-8 w-24"
+                            inputClassName="w-6"
                           />
                         )}
                       />
-                      <span className="text-sm text-neutral-350">DURING THE LAST</span>
+                      <span className="font-code text-xs text-blue-500">DURING THE LAST</span>
                       <Controller
                         name="condition.duration"
                         control={methods.control}
@@ -238,18 +239,21 @@ export function MetricConfigurationStep() {
                     </div>
                   </div>
                 </div>
-
-                <div>
-                  <p className="mb-3 text-xs font-medium uppercase text-neutral-350">Auto resolve condition</p>
-                  <p className="text-sm text-neutral-350">
-                    SEND A NOTIFICATION WHEN {metricCategory.toUpperCase()} {watchMetricType.toUpperCase()} IS BELOW{' '}
+              </div>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm">Auto resolve condition</p>
+                <div className="rounded-md border border-neutral-250 bg-neutral-100 p-3 text-sm">
+                  <p className="text-xs text-neutral-350">
+                    SEND A NOTIFICATION WHEN {metricCategory?.toUpperCase()} {watchMetricType?.toUpperCase()} IS BELOW{' '}
                     <span className="font-medium text-brand-500">{watchCondition.threshold}%</span> DURING THE LAST{' '}
                     <span className="font-medium text-brand-500">{watchCondition.duration}</span>
                   </p>
                 </div>
               </div>
             </div>
+          </Section>
 
+          <Section>
             <div className="flex flex-col gap-4">
               <h2 className="text-base font-medium text-neutral-400">Configuration</h2>
 
@@ -294,16 +298,7 @@ export function MetricConfigurationStep() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div className="w-[400px] shrink-0 border-l border-neutral-250 bg-white">
-          <div className="flex h-full flex-col p-6">
-            <h3 className="mb-4 text-base font-medium text-neutral-400">Preview</h3>
-            <div className="flex flex-1 items-center justify-center rounded-lg border border-neutral-250 bg-neutral-100">
-              <p className="text-sm text-neutral-350">Preview placeholder</p>
-            </div>
-          </div>
+          </Section>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between border-t border-neutral-250 bg-white px-10 py-4">

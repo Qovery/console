@@ -79,7 +79,7 @@ export const ROUTER_APPLICATION_MONITORING: Route[] = [
     component: <PageMonitoringDashboardFeature />,
   },
   {
-    path: APPLICATION_MONITORING_ALERTS_CREATION_URL,
+    path: `${APPLICATION_MONITORING_ALERTS_CREATION_URL}/*`,
     component: <PageAlertingCreateFeature />,
   },
   {

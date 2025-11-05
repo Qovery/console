@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AlertingCreationFlow } from '@qovery/domains/observability/feature'
 import { useService } from '@qovery/domains/services/feature'
@@ -8,14 +9,24 @@ export function PageAlertingCreateFeature() {
   const navigate = useNavigate()
   const { data: service } = useService({ environmentId, serviceId: applicationId })
   const { state } = useLocation()
-  if (!service) return null
 
-  console.log(state)
+  const selectedMetrics = useMemo(() => {
+    if (state?.metricCategories?.length > 0) {
+      return state.metricCategories
+    }
+
+    return ['cpu']
+  }, [state?.metricCategories])
+
+  console.log('state', state)
+  console.log('selectedMetrics', selectedMetrics)
+
+  if (!service || selectedMetrics.length === 0) return null
 
   return (
     <AlertingCreationFlow
       service={service}
-      selectedMetrics={state?.metricCategories ?? []}
+      selectedMetrics={selectedMetrics}
       onComplete={(alerts) => {
         console.log(alerts)
       }}
