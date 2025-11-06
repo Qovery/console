@@ -36,7 +36,6 @@ export default function PageSettingsTerraformConfigurationFeature() {
             git_token_id: service.terraform_files_source?.git?.git_repository?.git_token_id ?? '',
           },
         },
-        engine: 'TERRAFORM',
         terraform_variables_source: {
           tf_vars: [],
           tf_var_file_paths: [],

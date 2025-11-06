@@ -99,7 +99,7 @@ export function MetricConfigurationStep({
         duration: '5m',
       },
       name: '',
-      severity: 'WARNING',
+      severity: 'MEDIUM',
       notificationChannels: [],
     },
   })
@@ -128,7 +128,7 @@ export function MetricConfigurationStep({
         duration: '5m',
       },
       name: '',
-      severity: 'WARNING',
+      severity: 'MEDIUM',
       notificationChannels: [],
     }
     methods.reset(formData)
@@ -160,7 +160,7 @@ export function MetricConfigurationStep({
       condition: { operator: '', threshold: '', duration: '' },
       autoResolve: { operator: '', threshold: '', duration: '' },
       name: '',
-      severity: 'WARNING',
+      severity: 'MEDIUM',
       notificationChannels: [],
       skipped: true,
     }

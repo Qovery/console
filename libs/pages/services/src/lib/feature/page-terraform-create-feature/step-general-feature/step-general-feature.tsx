@@ -73,7 +73,6 @@ export function StepGeneralFeature() {
                     kubernetes: {},
                   },
                   terraform_variables_source: {
-                    tf_vars: [],
                     tf_var_file_paths: [],
                     tf_vars: [],
                   },
