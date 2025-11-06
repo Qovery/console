@@ -458,14 +458,18 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
   const isCustom = useMemo(() => !!customVariable && !customVariable.source, [customVariable])
   const isOverride = useMemo(() => !!customVariable && !!customVariable.source, [customVariable])
   const customVarHasValue = useMemo(() => !!customVariable && !!customVariable.value, [customVariable])
-  const isCellFocused = useMemo(() => focusedCell === row.key, [focusedCell, row.key])
+  const isCellFocused = useCallback(
+    (cell: 'key' | 'value') => focusedCell === `${row.key}-${cell}`,
+    [focusedCell, row.key]
+  )
 
   return (
     <div className="w-full border-b border-neutral-200">
       <div
         className={twMerge(
           'grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center',
-          hoveredRow ? (hoveredRow === row.source ? 'opacity-100' : 'opacity-50') : 'opacity-100'
+          hoveredRow ? (hoveredRow === row.source ? 'bg-neutral-100' : 'bg-white') : 'bg-white',
+          isRowSelected(row.key) && 'bg-neutral-150 hover:bg-neutral-150'
         )}
       >
         <div className="flex h-full items-center justify-center border-r border-neutral-200">
@@ -483,19 +487,23 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
               onChange={(e) => {
                 setCustomVariable(row.key, { ...row, key: e.target.value })
               }}
-              className="peer h-full w-full bg-transparent px-4 text-sm outline-none"
+              className={twMerge(
+                'peer h-full w-full bg-transparent px-4 text-sm outline-none',
+                isCellFocused('key') && 'bg-neutral-150 hover:bg-neutral-150'
+              )}
+              onFocus={() => setFocusedCell(`${row.key}-key`)}
               placeholder="Variable name"
               spellCheck={false}
             />
           ) : (
-            <span className="px-4 text-sm text-neutral-400">{row.key}</span>
+            <span className="px-4 text-sm text-neutral-350">{row.key}</span>
           )}
         </div>
         <div
           className={twMerge(
             'group flex h-full cursor-text items-center border-r border-neutral-200 hover:bg-neutral-100',
-            isCellFocused && 'bg-neutral-150 hover:bg-neutral-150',
-            customVarHasValue && (isOverride || isCustom) && 'bg-neutral-100'
+            customVarHasValue && (isOverride || isCustom) && 'bg-neutral-100',
+            isCellFocused('value') && 'bg-neutral-150 hover:bg-neutral-150'
           )}
         >
           <input
@@ -504,8 +512,8 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
             onChange={(e) => {
               setCustomVariable(row.key, { ...row, value: e.target.value })
             }}
-            onFocus={() => setFocusedCell(row.key)}
-            className="h-full w-full bg-transparent px-4 text-sm outline-none"
+            onFocus={() => setFocusedCell(`${row.key}-value`)}
+            className="h-full w-full bg-transparent px-4 text-sm text-neutral-400 outline-none"
             spellCheck={false}
             placeholder="Variable value"
           />
@@ -518,7 +526,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
             <button
               className={twMerge(
                 'mr-4 hidden justify-center border-none bg-transparent text-neutral-300 hover:text-neutral-400',
-                isCellFocused && 'block'
+                isCellFocused('value') && 'block'
               )}
             >
               <Icon className="text-sm" iconName="wand-magic-sparkles" />
