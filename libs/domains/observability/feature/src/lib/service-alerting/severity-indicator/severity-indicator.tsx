@@ -17,11 +17,25 @@ interface SeverityConfig {
 
 function getSeverityConfig(severity: AlertSeverity): SeverityConfig {
   return match(severity)
-    .with('WARNING', () => ({
+    .with('LOW', () => ({
+      label: 'Low',
+      bars: 2,
+      textColor: 'text-neutral-600',
+      barColor: 'bg-neutral-600',
+      emptyBarColor: 'bg-neutral-200',
+    }))
+    .with('MEDIUM', () => ({
       label: 'Medium',
       bars: 3,
       textColor: 'text-yellow-600',
       barColor: 'bg-yellow-500',
+      emptyBarColor: 'bg-neutral-200',
+    }))
+    .with('HIGH', () => ({
+      label: 'High',
+      bars: 4,
+      textColor: 'text-red-600',
+      barColor: 'bg-red-600',
       emptyBarColor: 'bg-neutral-200',
     }))
     .with('CRITICAL', () => ({
@@ -31,13 +45,7 @@ function getSeverityConfig(severity: AlertSeverity): SeverityConfig {
       barColor: 'bg-red-600',
       emptyBarColor: 'bg-neutral-200',
     }))
-    .otherwise(() => ({
-      label: 'Unknown',
-      bars: 0,
-      textColor: 'text-neutral-350',
-      barColor: 'bg-neutral-350',
-      emptyBarColor: 'bg-neutral-300',
-    }))
+    .exhaustive()
 }
 
 export function SeverityIndicator({ severity, className = '' }: SeverityIndicatorProps) {
