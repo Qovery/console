@@ -4,10 +4,16 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { useModal } from '@qovery/shared/ui'
 import { ServiceRemoveModal } from '../service-remove-modal'
 
+export type ServiceRemoveModalData = {
+  action: string
+  name: string
+  skipDestroy: boolean
+}
+
 export interface ActionItem {
   id: string // Also used as the text the user has to type to confirm
   title: string
-  callback: () => void
+  callback: (data: ServiceRemoveModalData) => void
   description?: ReactNode
   icon?: IconName
   color?: 'brand' | 'red' | 'yellow' | 'green' | 'neutral'
@@ -22,6 +28,7 @@ export interface UseServiceRemoveModalProps {
   mode?: keyof typeof EnvironmentModeEnum | string | undefined
   warning?: ReactNode
   isDelete?: boolean
+  hasSkipDestroy?: boolean
 }
 
 export function useServiceRemoveModal() {
@@ -35,6 +42,7 @@ export function useServiceRemoveModal() {
           <ServiceRemoveModal
             title={serviceRemoveModal.title}
             actions={serviceRemoveModal.actions}
+            hasSkipDestroy={serviceRemoveModal.hasSkipDestroy}
             entities={serviceRemoveModal.entities}
             description={serviceRemoveModal.description}
             name={serviceRemoveModal.name}

@@ -854,7 +854,15 @@ export const mutations = {
     const response = await environmentActionApi.deleteSelectedServices(environment.id, payload)
     return response.data
   },
-  async deleteService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+  async deleteService({
+    serviceId,
+    serviceType,
+    skipDestroy,
+  }: {
+    serviceId: string
+    serviceType: ServiceType
+    skipDestroy?: boolean
+  }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
         mutation: applicationMainCallsApi.deleteApplication.bind(applicationMainCallsApi),
@@ -874,7 +882,12 @@ export const mutations = {
       }))
       .with('HELM', (serviceType) => ({ mutation: helmMainCallsApi.deleteHelm.bind(helmMainCallsApi), serviceType }))
       .with('TERRAFORM', (serviceType) => ({
-        mutation: terraformMainCallsApi.deleteTerraform.bind(terraformMainCallsApi),
+        mutation: (serviceId: string) =>
+          terraformMainCallsApi.deleteTerraform.bind(terraformMainCallsApi)(
+            serviceId,
+            undefined,
+            skipDestroy ? 'SKIP_DESTROY' : undefined
+          ),
         serviceType,
       }))
       .exhaustive()
@@ -1057,7 +1070,15 @@ export const mutations = {
     const response = await mutation(serviceId)
     return response.data
   },
-  async uninstallService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+  async uninstallService({
+    serviceId,
+    serviceType,
+    skipDestroy,
+  }: {
+    serviceId: string
+    serviceType: ServiceType
+    skipDestroy?: boolean
+  }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
         mutation: applicationActionsApi.uninstallApplication.bind(applicationActionsApi),
@@ -1077,7 +1098,11 @@ export const mutations = {
       }))
       .with('HELM', (serviceType) => ({ mutation: helmActionsApi.uninstallHelm.bind(helmActionsApi), serviceType }))
       .with('TERRAFORM', (serviceType) => ({
-        mutation: terraformActionsApi.uninstallTerraform.bind(jobActionsApi),
+        mutation: (serviceId: string) =>
+          terraformActionsApi.uninstallTerraform.bind(terraformActionsApi)(
+            serviceId,
+            skipDestroy ? 'SKIP_DESTROY' : undefined
+          ),
         serviceType,
       }))
       .exhaustive()
