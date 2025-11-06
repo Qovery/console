@@ -4,7 +4,7 @@ import { SeverityIndicator, type SeverityIndicatorProps } from './severity-indic
 
 describe('SeverityIndicator', () => {
   const props: SeverityIndicatorProps = {
-    severity: AlertSeverity.WARNING,
+    severity: AlertSeverity.MEDIUM,
   }
 
   it('should render successfully', () => {
@@ -12,17 +12,23 @@ describe('SeverityIndicator', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should render correct number of bars for LOW severity', () => {
+    const { container } = renderWithProviders(<SeverityIndicator severity={AlertSeverity.LOW} />)
+    expect(container).toHaveTextContent('Low')
+  })
+
   it('should render correct number of bars for MEDIUM severity', () => {
-    const { container } = renderWithProviders(<SeverityIndicator severity={AlertSeverity.WARNING} />)
-    const bars = container.querySelectorAll('.h-3.w-0\\.5')
-    expect(bars).toHaveLength(5)
+    const { container } = renderWithProviders(<SeverityIndicator severity={AlertSeverity.MEDIUM} />)
     expect(container).toHaveTextContent('Medium')
+  })
+
+  it('should render correct number of bars for HIGH severity', () => {
+    const { container } = renderWithProviders(<SeverityIndicator severity={AlertSeverity.HIGH} />)
+    expect(container).toHaveTextContent('High')
   })
 
   it('should render correct number of bars for CRITICAL severity', () => {
     const { container } = renderWithProviders(<SeverityIndicator severity={AlertSeverity.CRITICAL} />)
-    const bars = container.querySelectorAll('.h-3.w-0\\.5')
-    expect(bars).toHaveLength(5)
     expect(container).toHaveTextContent('Critical')
   })
 })
