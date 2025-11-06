@@ -12,6 +12,7 @@ export const APPLICATION_MONITORING_URL = '/monitoring'
 export const APPLICATION_MONITORING_GENERAL_URL = '/dashboard'
 export const APPLICATION_MONITORING_ALERTS_URL = '/alerts'
 export const APPLICATION_MONITORING_ALERTS_CREATION_URL = '/create/alerts'
+export const APPLICATION_MONITORING_ALERT_EDIT_URL = (alertId = ':alertId') => `/alerts/${alertId}/edit`
 
 export const APPLICATION_SETTINGS_GENERAL_URL = '/general'
 export const APPLICATION_SETTINGS_RESOURCES_URL = '/resources'

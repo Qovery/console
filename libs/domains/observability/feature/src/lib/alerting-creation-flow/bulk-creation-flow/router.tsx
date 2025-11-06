@@ -8,11 +8,16 @@ export interface RouteType {
 }
 
 export const ALERTING_CREATION_METRIC = (metricIndex = ':metricIndex') => `/metric/${metricIndex}`
+export const ALERTING_CREATION_EDIT = (alertId = ':alertId') => `/edit/${alertId}`
 export const ALERTING_CREATION_SUMMARY = '/summary'
 
 export const ROUTER_ALERTING_CREATION: RouteType[] = [
   {
     path: ALERTING_CREATION_METRIC(),
+    component: <MetricConfigurationStep />,
+  },
+  {
+    path: ALERTING_CREATION_EDIT(),
     component: <MetricConfigurationStep />,
   },
   {

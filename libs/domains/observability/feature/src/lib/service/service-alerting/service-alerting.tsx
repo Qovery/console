@@ -1,15 +1,26 @@
-import { type AlertRuleState } from 'qovery-typescript-axios'
+import type { AlertRuleResponse, AlertRuleState } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
 import {
-  APPLICATION_MONITORING_ALERTS_CREATION_URL,
+  APPLICATION_MONITORING_ALERT_EDIT_URL,
   APPLICATION_MONITORING_URL,
   APPLICATION_URL,
 } from '@qovery/shared/routes'
-import { Badge, Button, Heading, Icon, Section, TablePrimitives, Tooltip, useModal } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  Heading,
+  Icon,
+  Section,
+  TablePrimitives,
+  Tooltip,
+  useModal,
+  useModalConfirmation,
+} from '@qovery/shared/ui'
 import { CreateKeyAlertsModal } from '../../alerting-creation-flow/create-key-alerts-modal/create-key-alerts-modal'
 import { useAlertRules } from '../../hooks/use-alert-rules/use-alert-rules'
+import { useDeleteAlertRule } from '../../hooks/use-delete-alert-rule/use-delete-alert-rule'
 import { useEnvironment } from '../../hooks/use-environment/use-environment'
 import { SeverityIndicator } from './severity-indicator/severity-indicator'
 
@@ -40,12 +51,15 @@ function getStatusConfig(state: AlertRuleState) {
 }
 
 export function ServiceAlerting() {
-  const { environmentId = '', applicationId = '' } = useParams()
-  const navigate = useNavigate()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
+  const navigate = useNavigate()
 
   const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
+  const { mutate: deleteAlertRule } = useDeleteAlertRule({ organizationId: environment?.organization.id ?? '' })
+
   const { data: alertRules = [], isFetched: isAlertRulesFetched } = useAlertRules({
     organizationId: environment?.organization.id ?? '',
     serviceId: applicationId,
@@ -59,22 +73,32 @@ export function ServiceAlerting() {
         <CreateKeyAlertsModal
           onClose={closeModal}
           service={service}
-          onSubmit={(data) => {
-            closeModal()
-            navigate(
-              APPLICATION_URL(environment.organization.id, environment.project.id, environmentId, applicationId) +
-                APPLICATION_MONITORING_URL +
-                APPLICATION_MONITORING_ALERTS_CREATION_URL,
-              {
-                state: data,
-              }
-            )
-          }}
+          organizationId={environment.organization.id}
+          projectId={environment.project.id}
         />
       ),
       options: {
         width: 488,
       },
+    })
+  }
+
+  const editAlertRule = (alertRule: AlertRuleResponse) => {
+    navigate(
+      APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
+        APPLICATION_MONITORING_URL +
+        APPLICATION_MONITORING_ALERT_EDIT_URL(alertRule.id)
+    )
+  }
+
+  const deleteAlertRuleModal = (alertRule: AlertRuleResponse) => {
+    openModalConfirmation({
+      title: 'Confirm delete alert rule',
+      description: 'To confirm the deletion of your alert rule, please type the name:',
+      confirmationMethod: 'name',
+      confirmationAction: 'delete',
+      name: alertRule.name,
+      action: () => deleteAlertRule({ alertRuleId: alertRule.id }),
     })
   }
 
@@ -106,11 +130,13 @@ export function ServiceAlerting() {
         <div className="mt-8 overflow-hidden rounded-md border border-neutral-250">
           <Table.Root className="divide-y divide-neutral-250">
             <Table.Header>
-              <Table.Row className="divide-x divide-neutral-250">
-                <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Severity</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="text-right">Actions</Table.ColumnHeaderCell>
+              <Table.Row className="font-code text-xs">
+                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Name</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Status</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Severity</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="h-9 text-right font-normal text-neutral-350">
+                  Actions
+                </Table.ColumnHeaderCell>
               </Table.Row>
             </Table.Header>
 
@@ -120,7 +146,7 @@ export function ServiceAlerting() {
                 const isMuted = !alertRule.enabled
 
                 return (
-                  <Table.Row key={alertRule.id} className="divide-x divide-neutral-250">
+                  <Table.Row key={alertRule.id}>
                     <Table.RowHeaderCell>
                       <div className="flex items-center justify-between gap-3">
                         <span className="text-sm text-neutral-400">{alertRule.name}</span>
@@ -131,7 +157,7 @@ export function ServiceAlerting() {
                         )}
                       </div>
                     </Table.RowHeaderCell>
-                    <Table.Cell>
+                    <Table.Cell className="h-11">
                       <Badge
                         color={statusConfig.color}
                         variant="surface"
@@ -143,19 +169,31 @@ export function ServiceAlerting() {
                         {statusConfig.label}
                       </Badge>
                     </Table.Cell>
-                    <Table.Cell>
+                    <Table.Cell className="h-11">
                       <SeverityIndicator severity={alertRule.severity} />
                     </Table.Cell>
-                    <Table.Cell>
+                    <Table.Cell className="h-11">
                       <div className="flex items-center justify-end gap-2">
                         <Tooltip content="Edit">
-                          <Button variant="outline" color="neutral" size="xs" className="w-6 justify-center">
+                          <Button
+                            variant="outline"
+                            color="neutral"
+                            size="xs"
+                            className="w-6 justify-center"
+                            onClick={() => editAlertRule(alertRule)}
+                          >
                             <Icon iconName="pen" iconStyle="regular" className="text-xs" />
                           </Button>
                         </Tooltip>
-                        <Tooltip content="More options">
-                          <Button variant="outline" color="neutral" size="xs" className="w-6 justify-center">
-                            <Icon iconName="ellipsis" iconStyle="regular" className="text-xs" />
+                        <Tooltip content="Delete alert rule">
+                          <Button
+                            variant="outline"
+                            color="neutral"
+                            size="xs"
+                            className="w-6 justify-center"
+                            onClick={() => deleteAlertRuleModal(alertRule)}
+                          >
+                            <Icon iconName="trash-can" iconStyle="regular" className="text-xs" />
                           </Button>
                         </Tooltip>
                       </div>

@@ -1,108 +1,261 @@
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Button, Icon } from '@qovery/shared/ui'
+import { type AlertSeverity, type AlertTargetType } from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useEnvironment } from '@qovery/domains/environments/feature'
+import { useService } from '@qovery/domains/services/feature'
+import { Button, FunnelFlowBody, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { useCreateAlertRule } from '../../../hooks/use-create-alert-rule/use-create-alert-rule'
+import SeverityIndicator from '../../../service-alerting/severity-indicator/severity-indicator'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
+
+const { Table } = TablePrimitives
+
+interface AlertSummary {
+  name: string
+  metricCategory: string
+  severity: AlertSeverity
+  skipped?: boolean
+}
+
+interface AlertsSummaryTableProps {
+  alerts: AlertSummary[]
+  onEdit?: (index: number) => void
+  onToggleSkip?: (index: number) => void
+  showExcludeButton?: boolean
+  showIncludeButton?: boolean
+}
+
+function AlertsSummaryTable({
+  alerts,
+  onEdit,
+  onToggleSkip,
+  showExcludeButton = false,
+  showIncludeButton = false,
+}: AlertsSummaryTableProps) {
+  return (
+    <div className="-mt-2 overflow-hidden rounded-lg border border-neutral-250 bg-white">
+      <Table.Root className="divide-y divide-neutral-250">
+        <Table.Header>
+          <Table.Row className="font-code text-xs">
+            <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Alert name</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Metric</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Severity</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">
+              Notification channels
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="h-9 text-right font-normal text-neutral-350">
+              Actions
+            </Table.ColumnHeaderCell>
+          </Table.Row>
+        </Table.Header>
+
+        <Table.Body className="divide-y divide-neutral-250">
+          {alerts?.map((alert, index) => (
+            <Table.Row key={index} className="h-11">
+              <Table.RowHeaderCell>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-sm text-neutral-400">{alert.name}</span>
+                </div>
+              </Table.RowHeaderCell>
+              <Table.Cell className="h-11">{alert.metricCategory}</Table.Cell>
+              <Table.Cell className="h-11">
+                <SeverityIndicator severity={alert.severity} />
+              </Table.Cell>
+              <Table.Cell className="h-11">Slack</Table.Cell>
+              <Table.Cell className="h-11">
+                <div className="flex items-center justify-end gap-1">
+                  {showExcludeButton && (
+                    <Tooltip content="Exclude from creation">
+                      <Button
+                        variant="outline"
+                        color="neutral"
+                        size="xs"
+                        className="w-6 justify-center"
+                        onClick={() => onToggleSkip?.(index)}
+                      >
+                        <Icon iconName="circle-minus" iconStyle="regular" className="text-xs" />
+                      </Button>
+                    </Tooltip>
+                  )}
+                  {showIncludeButton && (
+                    <Tooltip content="Include in creation">
+                      <Button
+                        variant="outline"
+                        color="neutral"
+                        size="xs"
+                        className="w-6 justify-center"
+                        onClick={() => onToggleSkip?.(index)}
+                      >
+                        <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
+                      </Button>
+                    </Tooltip>
+                  )}
+                  <Tooltip content="Edit alert">
+                    <Button
+                      variant="outline"
+                      color="neutral"
+                      size="xs"
+                      className="w-6 justify-center"
+                      onClick={() => onEdit?.(index)}
+                    >
+                      <Icon iconName="pen" iconStyle="regular" className="text-xs" />
+                    </Button>
+                  </Tooltip>
+                </div>
+              </Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table.Root>
+    </div>
+  )
+}
+
+function convertDurationToISO8601(duration: string): string {
+  const match = duration.match(/^(\d+)m$/)
+  if (match) {
+    return `PT${match[1]}M`
+  }
+  return duration
+}
 
 export function SummaryStep() {
   const navigate = useNavigate()
-  const { serviceName, setCurrentStepIndex, alerts, onComplete, selectedMetrics } = useAlertingCreationFlowContext()
+  const { organizationId = '', applicationId = '' } = useParams()
+
+  const { data: service } = useService({ serviceId: applicationId })
+  const { data: environment } = useEnvironment({ environmentId: service?.environment.id })
+  const { mutateAsync: createAlertRule } = useCreateAlertRule({ organizationId })
+
+  const [isCreatingAlertRule, setIsCreatingAlertRule] = useState(false)
+
+  const { serviceName, setCurrentStepIndex, alerts, setAlerts, onComplete, selectedMetrics } =
+    useAlertingCreationFlowContext()
 
   useEffect(() => {
     setCurrentStepIndex(selectedMetrics.length)
   }, [selectedMetrics.length, setCurrentStepIndex])
 
-  const handleEdit = (index: number) => {
-    navigate(`../metric/${index}`)
+  const handleEdit = (alertId: string) => {
+    navigate(`../edit/${alertId}`)
   }
 
-  const handleConfirm = () => {
+  const handleToggleSkip = (index: number, isCurrentlySkipped: boolean) => {
+    const updatedAlerts = [...alerts]
+    updatedAlerts[index] = {
+      ...updatedAlerts[index],
+      skipped: !isCurrentlySkipped,
+    }
+    setAlerts(updatedAlerts)
+  }
+
+  const handleConfirm = async () => {
     const activeAlerts = alerts.filter((alert) => !alert.skipped)
+
+    if (!service || !environment) return
+
+    try {
+      setIsCreatingAlertRule(true)
+      for (const alert of activeAlerts) {
+        await createAlertRule({
+          payload: {
+            organization_id: organizationId,
+            cluster_id: environment.cluster_id,
+            target: {
+              target_id: service.id,
+              target_type: service.serviceType as AlertTargetType,
+            },
+            name: alert.name,
+            description: alert.metricCategory,
+            promql_expr: `${alert.condition.operator}(${alert.condition.threshold})`,
+            for_duration: convertDurationToISO8601(alert.condition.duration),
+            severity: alert.severity,
+            enabled: true,
+            // alert_receiver_ids: alert.notificationChannels,
+            alert_receiver_ids: ['e52c83f5-c9a8-41c2-9fb3-0f103d8811aa'],
+            presentation: {},
+          },
+        })
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsCreatingAlertRule(false)
+    }
+
     onComplete(activeAlerts)
   }
 
-  const activeAlerts = alerts.filter((alert) => !alert.skipped)
-  const skippedCount = alerts.length - activeAlerts.length
+  const activeAlertsWithIndex = alerts
+    .map((alert, index) => ({ alert, originalIndex: index }))
+    .filter(({ alert }) => !alert.skipped)
+
+  const skippedAlertsWithIndex = alerts
+    .map((alert, index) => ({ alert, originalIndex: index }))
+    .filter(({ alert }) => alert.skipped)
+
+  const activeAlerts = activeAlertsWithIndex.map(({ alert }) => alert)
+  const skippedAlerts = skippedAlertsWithIndex.map(({ alert }) => alert)
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex-1 overflow-y-auto bg-white px-10 py-8">
-        <div className="mb-8">
-          <h1 className="mb-2 text-2xl font-medium text-neutral-400">Review your alerts</h1>
-          <p className="text-sm text-neutral-350">
-            Review the {activeAlerts.length} alert{activeAlerts.length !== 1 ? 's' : ''} you've configured for{' '}
-            <span className="font-medium text-neutral-400">{serviceName}</span>
-            {skippedCount > 0 && <span className="text-neutral-350"> ({skippedCount} skipped)</span>}
-          </p>
+    <FunnelFlowBody>
+      <Section className="flex flex-col gap-4">
+        <Heading>Summary</Heading>
+
+        <div className="flex justify-between rounded-lg border border-neutral-250 p-4 text-sm">
+          <p className="font-medium">Target service</p>
+          <div>
+            <span>{serviceName}</span>
+          </div>
         </div>
 
-        <div className="space-y-4">
-          {alerts.map((alert, index) => {
-            if (alert.skipped) return null
+        {activeAlerts.length > 0 && (
+          <div>
+            <div className="overflow-hidden rounded-t-lg border border-neutral-250 bg-neutral-100 p-4 pb-5 text-sm">
+              <p className="flex items-center gap-1.5 font-medium">
+                <Icon iconName="circle-plus" iconStyle="regular" className="text-green-600" />
+                Alerts included in creation ({activeAlerts.length})
+              </p>
+              <span className=" text-neutral-350">
+                Alert we will automatically create and activate as soon as you confirm the creation
+              </span>
+            </div>
+            <AlertsSummaryTable
+              alerts={activeAlerts}
+              onEdit={(localIndex) => handleEdit(activeAlertsWithIndex[localIndex].alert.id)}
+              onToggleSkip={(localIndex) => handleToggleSkip(activeAlertsWithIndex[localIndex].originalIndex, false)}
+              showExcludeButton
+            />
+          </div>
+        )}
 
-            return (
-              <div
-                key={index}
-                className="flex items-start justify-between rounded-lg border border-neutral-250 bg-white p-5 transition-colors hover:border-neutral-300"
-              >
-                <div className="flex flex-1 flex-col gap-3">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-base font-medium text-neutral-400">{alert.name}</h3>
-                    <span
-                      className={`rounded px-2 py-0.5 text-xs font-medium ${
-                        alert.severity === 'critical' ? 'bg-red-50 text-red-600' : 'bg-yellow-50 text-yellow-600'
-                      }`}
-                    >
-                      {alert.severity === 'critical' ? 'Critical' : 'Warning'}
-                    </span>
-                  </div>
+        {skippedAlerts.length > 0 && (
+          <div>
+            <div className="overflow-hidden rounded-t-lg border border-neutral-250 bg-neutral-100 p-4 pb-5 text-sm">
+              <p className="flex items-center gap-1.5 font-medium">
+                <Icon iconName="circle-minus" iconStyle="regular" className="text-red-600" />
+                Alerts excluded from creation ({skippedAlerts.length})
+              </p>
+              <span className=" text-neutral-350">
+                Alert we will automatically create and activate as soon as you confirm the creation
+              </span>
+            </div>
+            <AlertsSummaryTable
+              alerts={skippedAlerts}
+              onEdit={(localIndex) => handleEdit(skippedAlertsWithIndex[localIndex].alert.id)}
+              onToggleSkip={(localIndex) => handleToggleSkip(skippedAlertsWithIndex[localIndex].originalIndex, true)}
+              showIncludeButton
+            />
+          </div>
+        )}
 
-                  <div className="flex flex-col gap-1 text-sm text-neutral-350">
-                    <p>
-                      <span className="font-medium uppercase text-neutral-400">{alert.metricCategory}</span>{' '}
-                      <span className="uppercase">{alert.metricType}</span> is{' '}
-                      <span className="font-medium">{alert.condition.operator}</span>{' '}
-                      <span className="font-medium text-brand-500">{alert.condition.threshold}%</span> during the last{' '}
-                      <span className="font-medium">{alert.condition.duration}</span>
-                    </p>
-                    <p className="text-xs">
-                      Auto-resolve: {alert.autoResolve.operator} {alert.autoResolve.threshold}% for{' '}
-                      {alert.autoResolve.duration}
-                    </p>
-                  </div>
-
-                  {alert.notificationChannels.length > 0 && (
-                    <div className="flex items-center gap-2">
-                      <Icon iconName="bell" iconStyle="regular" className="text-xs text-neutral-350" />
-                      <span className="text-xs text-neutral-350">
-                        {alert.notificationChannels.length} notification channel
-                        {alert.notificationChannels.length !== 1 ? 's' : ''}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <Button
-                  variant="outline"
-                  color="neutral"
-                  size="sm"
-                  onClick={() => handleEdit(index)}
-                  className="ml-4 gap-1.5"
-                >
-                  <Icon iconName="pen" iconStyle="regular" className="text-xs" />
-                  Edit
-                </Button>
-              </div>
-            )
-          })}
+        <div className="flex w-full justify-end">
+          <Button size="lg" onClick={handleConfirm} disabled={isCreatingAlertRule} loading={isCreatingAlertRule}>
+            Confirm and create
+          </Button>
         </div>
-      </div>
-
-      <div className="border-t border-neutral-250 bg-white px-10 py-4">
-        <Button size="lg" onClick={handleConfirm}>
-          Create {activeAlerts.length} alert{activeAlerts.length !== 1 ? 's' : ''}
-        </Button>
-      </div>
-    </div>
+      </Section>
+    </FunnelFlowBody>
   )
 }
 

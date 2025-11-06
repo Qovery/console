@@ -1,4 +1,7 @@
+import type { AlertSeverity } from 'qovery-typescript-axios'
+
 export interface AlertConfiguration {
+  id: string
   metricCategory: string
   metricType: string
   condition: {
@@ -12,7 +15,7 @@ export interface AlertConfiguration {
     duration: string
   }
   name: string
-  severity: string
+  severity: AlertSeverity
   notificationChannels: string[]
   skipped?: boolean
 }

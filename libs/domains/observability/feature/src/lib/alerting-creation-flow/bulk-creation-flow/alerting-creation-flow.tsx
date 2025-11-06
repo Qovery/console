@@ -1,12 +1,9 @@
 import { createContext, useContext, useState } from 'react'
-import { Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { Navigate, Route, Routes, useSearchParams } from 'react-router-dom'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { APPLICATION_URL } from '@qovery/shared/routes'
-import { APPLICATION_MONITORING_ALERTS_CREATION_URL } from '@qovery/shared/routes'
-import { APPLICATION_MONITORING_URL } from '@qovery/shared/routes'
 import { ErrorBoundary, FunnelFlow } from '@qovery/shared/ui'
 import { type AlertConfiguration } from './bulk-creation-flow.types'
-import { ALERTING_CREATION_METRIC, ROUTER_ALERTING_CREATION, type RouteType } from './router'
+import { ROUTER_ALERTING_CREATION, type RouteType } from './router'
 
 const METRIC_LABELS: Record<string, string> = {
   cpu: 'CPU',
@@ -47,7 +44,7 @@ interface AlertingCreationFlowProps {
 }
 
 export function AlertingCreationFlow({ selectedMetrics, service, onClose, onComplete }: AlertingCreationFlowProps) {
-  const { organizationId = '', projectId = '' } = useParams()
+  const [searchParams] = useSearchParams()
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [alerts, setAlerts] = useState<AlertConfiguration[]>([])
 
@@ -70,10 +67,7 @@ export function AlertingCreationFlow({ selectedMetrics, service, onClose, onComp
     }
   }
 
-  // const pathAlerts =
-  //   APPLICATION_URL(organizationId, projectId, service.environment.id, service.id) +
-  //   APPLICATION_MONITORING_URL +
-  //   APPLICATION_MONITORING_ALERTS_CREATION_URL
+  const preserveQueryString = searchParams.toString() ? `?${searchParams.toString()}` : ''
 
   return (
     <AlertingCreationFlowContext.Provider
@@ -96,18 +90,16 @@ export function AlertingCreationFlow({ selectedMetrics, service, onClose, onComp
         currentTitle={getCurrentTitle()}
         onExit={handleExit}
       >
-        <div className="w-full bg-white">
-          <Routes>
-            {ROUTER_ALERTING_CREATION.map((route: RouteType) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={<ErrorBoundary key={route.path}>{route.component}</ErrorBoundary>}
-              />
-            ))}
-            <Route path="*" element={<Navigate replace to={`metric/${selectedMetrics[0]}`} />} />
-          </Routes>
-        </div>
+        <Routes>
+          {ROUTER_ALERTING_CREATION.map((route: RouteType) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={<ErrorBoundary key={route.path}>{route.component}</ErrorBoundary>}
+            />
+          ))}
+          <Route path="*" element={<Navigate replace to={`metric/${selectedMetrics[0]}${preserveQueryString}`} />} />
+        </Routes>
       </FunnelFlow>
     </AlertingCreationFlowContext.Provider>
   )
