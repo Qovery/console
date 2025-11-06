@@ -19,9 +19,9 @@ export function useListTfVarsFilesFromGitRepo({
     ...queries.organizations.listTfVarsFilesFromGitRepo({ organizationId, repository, mode }),
     enabled,
     meta: {
-      notifyOnError: true,
+      notifyOnError: false,
     },
     refetchOnWindowFocus: false,
-    staleTime: 0,
+    retry: false,
   })
 }

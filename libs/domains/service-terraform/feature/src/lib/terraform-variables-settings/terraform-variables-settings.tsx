@@ -41,6 +41,7 @@ type TerraformVariablesContextType = {
   setFileListOrder: (fileListOrder: string[]) => void
   focusedCell: string | undefined
   setFocusedCell: (focusedCell: string | undefined) => void
+  fetchTfVarsFiles: () => void
 }
 
 type VariableRowItem = {
@@ -71,7 +72,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const formValues = getValues()
   const repositoryConfig = useMemo(() => {
     return {
-      url: formValues.git_repository?.url ?? '',
+      url: formValues.git_repository?.url ?? formValues.repository ?? '',
       branch: formValues.branch ?? '',
       root_path: formValues.root_path ?? '',
       git_token_id: formValues.git_repository?.git_token_id ?? '',
@@ -79,13 +80,17 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     }
   }, [formValues])
 
-  const { data: tfVarFilesResponse = [], isLoading: areTfVarsFilesLoading } = useListTfVarsFilesFromGitRepo({
+  const {
+    refetch: fetchTfVarsFiles,
+    data: tfVarFilesResponse = [],
+    isLoading: areTfVarsFilesLoading,
+  } = useListTfVarsFilesFromGitRepo({
     organizationId,
     repository: repositoryConfig,
     mode: {
       type: 'AutoDiscover',
     },
-    enabled: !!repositoryConfig.url,
+    enabled: false,
   })
   const [customVariables, setCustomVariables] = useState<TerraformVariablesContextType['customVariables']>([])
 
@@ -224,6 +229,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       setFileListOrder,
       focusedCell,
       setFocusedCell,
+      fetchTfVarsFiles,
     }),
     [
       selectedRows,
@@ -244,6 +250,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       setFileListOrder,
       focusedCell,
       setFocusedCell,
+      fetchTfVarsFiles,
     ]
   )
 
@@ -605,8 +612,12 @@ const TerraformVariablesLoadingState = () => {
 }
 
 export const TerraformVariablesTable = () => {
-  const { selectedRows, areTfVarsFilesLoading, addCustomVariable, deleteSelectedRows, variableRows } =
+  const { selectedRows, areTfVarsFilesLoading, addCustomVariable, deleteSelectedRows, variableRows, fetchTfVarsFiles } =
     useTerraformVariablesContext()
+
+  useEffect(() => {
+    fetchTfVarsFiles()
+  }, [])
 
   return (
     <div className="flex flex-col rounded-lg border border-neutral-200">
