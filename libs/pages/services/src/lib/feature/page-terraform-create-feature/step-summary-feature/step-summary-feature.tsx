@@ -3,7 +3,7 @@ import { type TerraformRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { terraformEngines } from '@qovery/domains/service-terraform/feature'
+import { terraformEngines, useTerraformVariablesContext } from '@qovery/domains/service-terraform/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
@@ -23,9 +23,9 @@ export function StepSummaryFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const navigate = useNavigate()
 
-  const { generalForm, inputVariablesForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
+  const { generalForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
   const generalData = generalForm.getValues()
-  const inputVariablesData = inputVariablesForm.getValues()
+  const { tfVarFilePaths, tfVars } = useTerraformVariablesContext()
 
   useEffect(() => {
     setCurrentStep(4)
@@ -62,8 +62,8 @@ export function StepSummaryFeature() {
         },
       },
       terraform_variables_source: {
-        tf_var_file_paths: inputVariablesData.tf_var_file_paths,
-        tf_vars: inputVariablesData.tf_vars,
+        tf_var_file_paths: tfVarFilePaths,
+        tf_vars: tfVars,
       },
       provider_version: {
         read_from_terraform_block: generalData.provider_version.read_from_terraform_block,
@@ -219,7 +219,7 @@ export function StepSummaryFeature() {
                 <li>
                   <span className="font-medium">Variables:</span>
                   <ul>
-                    {inputVariablesData.tf_vars.map((variable) => (
+                    {tfVars.map((variable) => (
                       <li key={variable.key}>
                         {variable.key}: {variable.value}
                       </li>
@@ -227,7 +227,7 @@ export function StepSummaryFeature() {
                   </ul>
                 </li>
                 <li>
-                  <span className="font-medium">File paths:</span> {inputVariablesData.tf_var_file_paths.join(', ')}
+                  <span className="font-medium">File paths:</span> {tfVarFilePaths.join(', ')}
                 </li>
               </ul>
             </Section>

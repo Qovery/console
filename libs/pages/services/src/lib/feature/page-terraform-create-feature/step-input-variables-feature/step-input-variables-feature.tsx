@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { TerraformVariablesProvider, TerraformVariablesSettings } from '@qovery/domains/service-terraform/feature'
+import { TerraformVariablesSettings } from '@qovery/domains/service-terraform/feature'
 import {
   SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL,
   SERVICES_TERRAFORM_CREATION_SUMMARY_URL,
@@ -27,30 +27,28 @@ export const StepInputVariablesFeature = () => {
   return (
     <FunnelFlowBody customContentWidth="max-w-[794px]">
       <FormProvider {...inputVariablesForm} {...generalForm}>
-        <TerraformVariablesProvider>
-          <Section>
-            <form onSubmit={onSubmit} className="w-full">
-              <TerraformVariablesSettings />
+        <Section>
+          <form onSubmit={onSubmit} className="w-full">
+            <TerraformVariablesSettings />
 
-              <div className="mt-10 flex justify-between">
-                <Button
-                  type="button"
-                  size="lg"
-                  variant="plain"
-                  color="neutral"
-                  onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL)}
-                >
-                  Back
+            <div className="mt-10 flex justify-between">
+              <Button
+                type="button"
+                size="lg"
+                variant="plain"
+                color="neutral"
+                onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL)}
+              >
+                Back
+              </Button>
+              <div className="flex gap-3">
+                <Button type="submit" size="lg" onClick={onSubmit}>
+                  Continue
                 </Button>
-                <div className="flex gap-3">
-                  <Button type="submit" size="lg" onClick={onSubmit} disabled={!inputVariablesForm.formState.isValid}>
-                    Continue
-                  </Button>
-                </div>
               </div>
-            </form>
-          </Section>
-        </TerraformVariablesProvider>
+            </div>
+          </form>
+        </Section>
       </FormProvider>
     </FunnelFlowBody>
   )
