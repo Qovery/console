@@ -7,12 +7,12 @@ describe('PlanCard', () => {
 
   beforeEach(() => {
     props = {
-      name: PlanEnum.FREE,
-      title: 'Free',
-      text: 'Adapted for personnal project',
+      name: PlanEnum.TEAM_2025,
+      title: 'Team',
+      text: 'Ideal for teams',
       onClick: jest.fn(),
       loading: '',
-      price: 200,
+      price: 29,
       list: ['test'],
     }
   })
@@ -31,11 +31,20 @@ describe('PlanCard', () => {
     expect(baseElement).toHaveTextContent(new RegExp(props.list[0]))
   })
 
-  it('should Custom text for Enterprise plan', () => {
-    props.name = PlanEnum.ENTERPRISE
+  it('should show Custom text for Enterprise plan', () => {
+    props.name = PlanEnum.ENTERPRISE_2025
+    props.price = 'custom'
 
     const { baseElement } = render(<PlanCard {...props} />)
 
     expect(baseElement).toHaveTextContent(/Custom/)
+  })
+
+  it('should show Free text for free plan (price = 0)', () => {
+    props.price = 0
+
+    const { baseElement } = render(<PlanCard {...props} />)
+
+    expect(baseElement).toHaveTextContent(/Free/)
   })
 })

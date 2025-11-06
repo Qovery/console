@@ -1,11 +1,16 @@
+import { PlanEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { PlanEnum, type PlanEnum as PlanEnumType } from '@qovery/domains/organizations/data-access'
 import { Button, RadioGroup } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
-// Only these plans are selectable
-const SELECTABLE_PLANS = [PlanEnum.TEAM, PlanEnum.ENTERPRISE] as const
+// All 2025 plans are selectable
+const SELECTABLE_PLANS = [
+  PlanEnum.USER_2025,
+  PlanEnum.TEAM_2025,
+  PlanEnum.BUSINESS_2025,
+  PlanEnum.ENTERPRISE_2025,
+] as const
 
 export interface PlanSelectionModalProps {
   onClose: () => void
@@ -18,7 +23,7 @@ export interface PlanSelectionModalProps {
 export function PlanSelectionModal(props: PlanSelectionModalProps) {
   const { control } = useFormContext()
 
-  const isCurrentPlan = (plan: PlanEnumType) => {
+  const isCurrentPlan = (plan: PlanEnum) => {
     return props.currentPlan?.toUpperCase().includes(plan)
   }
 

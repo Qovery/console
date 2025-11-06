@@ -27,7 +27,7 @@ describe('PageOrganizationBillingSummary', () => {
   it('should display 6 boxes', () => {
     renderWithProviders(<PageOrganizationBillingSummary {...props} />)
     screen.getByText('Current plan')
-    screen.getByText('Enterprise plan')
+    screen.getByText('Enterprise plan (Legacy)')
 
     screen.getByText('Current bill')
     screen.getByText('$56,000')
