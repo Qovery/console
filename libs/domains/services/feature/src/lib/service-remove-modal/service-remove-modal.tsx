@@ -1,8 +1,8 @@
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Button, Callout, Icon, InputTextSmall, RadioGroup, useModal } from '@qovery/shared/ui'
+import { Button, Callout, Checkbox, Icon, InputTextSmall, RadioGroup, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import { type ActionItem } from './use-service-remove-modal/use-service-remove-modal'
+import { type ActionItem, type ServiceRemoveModalData } from './use-service-remove-modal/use-service-remove-modal'
 
 export interface ServiceRemoveModalProps extends PropsWithChildren {
   title: string
@@ -11,6 +11,7 @@ export interface ServiceRemoveModalProps extends PropsWithChildren {
   name?: string
   warning?: ReactNode
   entities?: ReactNode[]
+  hasSkipDestroy?: boolean
 }
 
 export function ServiceRemoveModal({
@@ -21,17 +22,19 @@ export function ServiceRemoveModal({
   warning,
   children,
   entities,
+  hasSkipDestroy,
 }: ServiceRemoveModalProps) {
   const {
     handleSubmit,
     control,
     watch,
     formState: { isValid },
-  } = useForm({
+  } = useForm<ServiceRemoveModalData>({
     mode: 'onChange',
     defaultValues: {
       name: '',
       action: actions[0]?.id,
+      skipDestroy: false,
     },
   })
   const { closeModal } = useModal()
@@ -42,7 +45,7 @@ export function ServiceRemoveModal({
   const onSubmit = handleSubmit((data) => {
     if (data) {
       closeModal()
-      selectedAction?.callback?.()
+      selectedAction?.callback?.(data)
     }
   })
 
@@ -92,6 +95,32 @@ export function ServiceRemoveModal({
               )}
             />
           </div>
+
+          {hasSkipDestroy && (
+            <div className="flex flex-col gap-1.5">
+              <Controller
+                name="skipDestroy"
+                control={control}
+                render={({ field }) => (
+                  <div className="flex gap-3">
+                    <Checkbox
+                      id={field.name}
+                      className="h-4 w-4 min-w-4"
+                      name={field.name}
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                    <label className="relative -top-1 flex flex-col gap-1 text-sm" htmlFor={field.name}>
+                      <span className="font-medium text-neutral-400">Skip Terraform destroy execution</span>
+                      <span className="text-neutral-350">
+                        Use this if you want to skip the `terraform destroy` execution
+                      </span>
+                    </label>
+                  </div>
+                )}
+              />
+            </div>
+          )}
 
           <div className="flex flex-col gap-1.5">
             <div>

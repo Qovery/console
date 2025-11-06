@@ -763,9 +763,9 @@ function MenuOtherActions({
           ),
           icon: 'box-taped',
           color: 'brand',
-          callback: async () => {
+          callback: async ({ skipDestroy }) => {
             try {
-              await uninstallService({ serviceId: service.id, serviceType: service.serviceType })
+              await uninstallService({ serviceId: service.id, serviceType: service.serviceType, skipDestroy })
             } catch (error) {
               console.error(error)
             }
@@ -795,9 +795,13 @@ function MenuOtherActions({
           ),
           icon: 'trash-can',
           color: 'red',
-          callback: async () => {
+          callback: async ({ skipDestroy }) => {
             try {
-              await deleteService({ serviceId: service.id, serviceType: service.serviceType })
+              await deleteService({
+                serviceId: service.id,
+                serviceType: service.serviceType,
+                skipDestroy,
+              })
               navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
             } catch (error) {
               console.error(error)
@@ -805,6 +809,7 @@ function MenuOtherActions({
           },
         },
       ],
+      hasSkipDestroy: service.serviceType === 'TERRAFORM',
       isDelete: true,
     })
   }
