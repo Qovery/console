@@ -137,7 +137,11 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   }, [accumulatedLogs, hasMoreLogs, isPaginationLoading])
 
   const normalizedLogs = useMemo(() => {
-    return accumulatedLogs.map(normalizeServiceLog).sort((a, b) => Number(a.timestamp) - Number(b.timestamp))
+    // Filter unique logs by the combination of timestamp and message to ensure more accurate deduplication
+    const uniqLogsByTimestamp = Array.from(
+      new Map(accumulatedLogs.map((log) => [`${log.timestamp}|${log.message}`, log])).values()
+    )
+    return uniqLogsByTimestamp.map(normalizeServiceLog).sort((a, b) => Number(a.timestamp) - Number(b.timestamp))
   }, [accumulatedLogs])
 
   // Reset when query params change significantly
