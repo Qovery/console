@@ -1,13 +1,20 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import {
+  APPLICATION_MONITORING_ALERTS_CREATION_URL,
+  APPLICATION_MONITORING_URL,
+  APPLICATION_URL,
+} from '@qovery/shared/routes'
 import { Icon, InputTextSmall, ModalCrud } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
 interface CreateKeyAlertsModalProps {
   onClose: () => void
   service?: AnyService
-  onSubmit: (data: CreateKeyAlertsFormData) => void
+  projectId: string
+  organizationId: string
 }
 
 interface CreateKeyAlertsFormData {
@@ -30,7 +37,9 @@ const METRIC_CATEGORIES: MetricCategory[] = [
   { id: 'logs', label: 'Logs', iconName: 'file-lines' },
 ]
 
-export function CreateKeyAlertsModal({ onClose, service, onSubmit: onSubmitProp }: CreateKeyAlertsModalProps) {
+export function CreateKeyAlertsModal({ onClose, service, organizationId, projectId }: CreateKeyAlertsModalProps) {
+  const navigate = useNavigate()
+
   const methods = useForm<CreateKeyAlertsFormData>({
     mode: 'onChange',
     defaultValues: {
@@ -53,7 +62,14 @@ export function CreateKeyAlertsModal({ onClose, service, onSubmit: onSubmitProp 
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    onSubmitProp(data)
+    const templatesParam = data.metricCategories.join(',')
+    const basePath =
+      APPLICATION_URL(organizationId, projectId, service?.environment?.id, service?.id) +
+      APPLICATION_MONITORING_URL +
+      APPLICATION_MONITORING_ALERTS_CREATION_URL
+
+    onClose()
+    navigate(`${basePath}/metric/${data.metricCategories[0]}?templates=${templatesParam}`)
   })
 
   const watchMetricCategories = methods.watch('metricCategories')
