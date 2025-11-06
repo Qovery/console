@@ -1,4 +1,5 @@
 import { differenceInHours } from 'date-fns'
+import posthog from 'posthog-js'
 import { type Cluster, type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
@@ -128,6 +129,29 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
       setPauseLogs(false)
     }
   }, [isLiveMode, serviceEnabled, setNewLogsAvailable, setPauseLogs])
+
+  posthog.capture('service-logs', {
+    is_live_mode: isLiveMode,
+    metrics_enabled: hasMetricsEnabled,
+    filters: {
+      level: queryParams.level,
+      instance: queryParams.instance,
+      message: queryParams.message,
+      search: queryParams.search,
+      version: queryParams.version,
+      nginx: queryParams.nginx,
+      start_date: queryParams.startDate,
+      end_date: queryParams.endDate,
+      container: queryParams.container,
+    },
+    service: {
+      organization_id: environment.organization.id,
+      project_id: environment.project.id,
+      environment_id: environment.id,
+      service_id: serviceId,
+      service_name: service?.name ?? '',
+    },
+  })
 
   const logs = isLiveMode ? liveLogs : historyLogs
 
