@@ -1,5 +1,5 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
-import { GitProviderEnum, type TfVarsFileResponse } from 'qovery-typescript-axios'
+import { GitProviderEnum, type TerraformVarKeyValue, type TfVarsFileResponse } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
@@ -27,6 +27,8 @@ type TerraformVariablesContextType = {
   isRowSelected: (key: string) => boolean
   areTfVarsFilesLoading: boolean
   tfVarFiles: TfVarsFile[]
+  tfVarFilePaths: string[]
+  tfVars: TerraformVarKeyValue[]
   setTfVarFiles: (tfVarFiles: TfVarsFile[]) => void
   variableRows: VariableRowItem[]
   hoveredRow: string | undefined
@@ -66,8 +68,8 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const { organizationId = '' } = useParams()
 
   // Memoize the repository config to prevent unnecessary re-renders and refetches
+  const formValues = getValues()
   const repositoryConfig = useMemo(() => {
-    const formValues = getValues()
     return {
       url: formValues.git_repository?.url ?? '',
       branch: formValues.branch ?? '',
@@ -75,7 +77,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       git_token_id: formValues.git_repository?.git_token_id ?? '',
       provider: formValues.provider ?? GitProviderEnum.GITHUB,
     }
-  }, [getValues])
+  }, [formValues])
 
   const { data: tfVarFilesResponse = [], isLoading: areTfVarsFilesLoading } = useListTfVarsFilesFromGitRepo({
     organizationId,
@@ -83,7 +85,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     mode: {
       type: 'AutoDiscover',
     },
-    enabled: true,
+    enabled: !!repositoryConfig.url,
   })
   const [customVariables, setCustomVariables] = useState<TerraformVariablesContextType['customVariables']>([])
 
@@ -136,6 +138,18 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const [selectedRows, setSelectedRows] = useState<TerraformVariablesContextType['selectedRows']>([])
   const [hoveredRow, setHoveredRow] = useState<TerraformVariablesContextType['hoveredRow']>(undefined)
   const [focusedCell, setFocusedCell] = useState<string | undefined>(undefined)
+
+  const tfVarFilePaths: TerraformVariablesContextType['tfVarFilePaths'] = useMemo(() => {
+    return tfVarFiles.filter((tfVarFile) => tfVarFile.enabled).map((tfVarFile) => tfVarFile.source ?? '')
+  }, [tfVarFiles])
+
+  const tfVars: TerraformVariablesContextType['tfVars'] = useMemo(() => {
+    return variableRows.map(({ key, value, secret }) => ({
+      key,
+      value,
+      secret,
+    }))
+  }, [variableRows])
 
   const isRowSelected = useCallback(
     (key: string) => {
@@ -196,6 +210,8 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       isRowSelected,
       areTfVarsFilesLoading,
       tfVarFiles,
+      tfVarFilePaths,
+      tfVars,
       variableRows,
       hoveredRow,
       setHoveredRow,
@@ -215,12 +231,14 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       isRowSelected,
       areTfVarsFilesLoading,
       tfVarFiles,
+      tfVarFilePaths,
       variableRows,
       hoveredRow,
       customVariables,
       setCustomVariable,
       resetCustomVariable,
       setTfVarFiles,
+      tfVars,
       addCustomVariable,
       deleteSelectedRows,
       setFileListOrder,
@@ -235,7 +253,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
 export function useTerraformVariablesContext() {
   const context = useContext(TerraformVariablesContext)
   if (context === undefined) {
-    throw new Error('useTerraformVariablesContext must be used within an TerraformVariablesContext')
+    throw new Error('useTerraformVariablesContext must be used within a TerraformVariablesProvider')
   }
   return context
 }
