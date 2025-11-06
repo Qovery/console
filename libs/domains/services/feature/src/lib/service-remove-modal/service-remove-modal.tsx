@@ -66,7 +66,7 @@ export function ServiceRemoveModal({
       </div>
 
       <form onSubmit={onSubmit}>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
           <div className="flex w-full flex-col gap-4">
             <Controller
               name="action"
@@ -119,6 +119,17 @@ export function ServiceRemoveModal({
                   </div>
                 )}
               />
+              {watch('skipDestroy') && watch('action') === 'uninstall' && (
+                <Callout.Root color="yellow">
+                  <Callout.Icon>
+                    <Icon iconName="circle-info" iconStyle="regular" />
+                  </Callout.Icon>
+                  <Callout.Text>
+                    Please note that the resources deployed by this Terraform configuration will not be automatically
+                    deleted. If they haven't been deleted already, you will need to remove them manually.
+                  </Callout.Text>
+                </Callout.Root>
+              )}
             </div>
           )}
 
