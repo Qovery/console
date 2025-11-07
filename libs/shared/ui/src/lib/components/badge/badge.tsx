@@ -16,6 +16,9 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'text-xs',
       green: ['text-green-500'],
       yellow: ['text-yellow-900'],
       brand: ['text-brand-500'],
+      tf_custom: ['text-[#65636D]'],
+      tf_override: ['text-[#AB6400]'],
+      tf_main: ['text-[#0D74CE]'],
     },
     variant: {
       outline: ['border'],
@@ -27,6 +30,21 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'text-xs',
     },
   },
   compoundVariants: [
+    {
+      variant: 'surface',
+      color: 'tf_custom',
+      className: ['bg-[#F2EFF3]', 'border-[#D0CDD780]'],
+    },
+    {
+      variant: 'surface',
+      color: 'tf_override',
+      className: ['bg-[#FFF7C2]', 'border-[#DC9B004D]'],
+    },
+    {
+      variant: 'surface',
+      color: 'tf_main',
+      className: ['bg-[#E6F4FE]', 'border-[#0083EB33]'],
+    },
     {
       variant: 'surface',
       color: 'neutral',
