@@ -476,6 +476,7 @@ const TfvarsFilesPopover = () => {
               }}
               inputClassName={newPath.length > 0 ? 'pr-9' : undefined}
               disabled={areTfVarsFilesLoading}
+              spellCheck={false}
             />
             {areTfVarsFilesLoading && newPath.length > 0 ? (
               <div className="absolute right-0 top-0 flex h-full w-9 items-center justify-center">
