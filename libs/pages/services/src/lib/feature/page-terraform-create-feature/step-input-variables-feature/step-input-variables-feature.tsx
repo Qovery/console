@@ -25,7 +25,7 @@ export const StepInputVariablesFeature = () => {
   })
 
   return (
-    <FunnelFlowBody customContentWidth="max-w-[794px]">
+    <FunnelFlowBody customContentWidth="max-w-[1024px]">
       <FormProvider {...inputVariablesForm} {...generalForm}>
         <Section>
           <form onSubmit={onSubmit} className="w-full">
