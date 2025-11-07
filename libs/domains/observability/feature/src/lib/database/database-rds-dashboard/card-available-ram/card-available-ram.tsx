@@ -1,6 +1,6 @@
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
-import { CardRdsMetric } from '../card-rds-metric/card-rds-metric'
+import { CardMetric } from '../card-metric/card-metric'
 
 interface CardAvailableRamProps {
   clusterId: string
@@ -8,7 +8,9 @@ interface CardAvailableRamProps {
 }
 
 const queryAvailableRam = (timeRange: string, dbInstance: string) => `
-avg_over_time(aws_rds_freeable_memory_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}])
+  avg_over_time(
+    aws_rds_freeable_memory_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}]
+  )
 `
 
 export function CardAvailableRam({ clusterId, dbInstance }: CardAvailableRamProps) {
@@ -24,21 +26,22 @@ export function CardAvailableRam({ clusterId, dbInstance }: CardAvailableRamProp
     metricShortName: 'available_ram',
   })
 
-  // Extract the value from metrics response (in bytes)
-  const value = metrics?.data?.result?.[0]?.values?.[0][1]
-  // Convert bytes to GB
-  const gbValue = value ? parseFloat(value) / (1024 * 1024 * 1024) : undefined
+  const series = metrics?.data?.result?.[0]?.values as [number, string][] | undefined
+  const lastValueStr = series && series.length > 0 ? series[series.length - 1][1] : undefined
+  const numValue = lastValueStr !== undefined ? parseFloat(lastValueStr) : undefined
+  const isValid = Number.isFinite(numValue as number)
+
+  const gbValue = isValid ? (numValue as number) / (1024 * 1024 * 1024) : undefined
   const formattedValue = gbValue !== undefined ? gbValue.toFixed(2) : '--'
 
   return (
-    <CardRdsMetric
-      title="Available RAM on Instances"
+    <CardMetric
+      title="Available RAM"
       value={formattedValue}
       unit="GB"
-      description="free memory available"
-      status={undefined}
+      valueDescription="avg free memory"
+      description="Average free memory available over the selected time range."
       isLoading={isLoading}
-      icon="memory"
     />
   )
 }

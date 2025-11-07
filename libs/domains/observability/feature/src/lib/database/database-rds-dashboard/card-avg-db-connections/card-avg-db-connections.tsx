@@ -1,6 +1,6 @@
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
-import { CardRdsMetric } from '../card-rds-metric/card-rds-metric'
+import { CardMetric } from '../card-metric/card-metric'
 
 interface CardAvgDbConnectionsProps {
   clusterId: string
@@ -8,7 +8,9 @@ interface CardAvgDbConnectionsProps {
 }
 
 const queryAvgDbConnections = (timeRange: string, dbInstance: string) => `
-avg_over_time(aws_rds_database_connections_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}])
+  avg_over_time(
+    aws_rds_database_connections_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}]
+  )
 `
 
 export function CardAvgDbConnections({ clusterId, dbInstance }: CardAvgDbConnectionsProps) {
@@ -24,17 +26,18 @@ export function CardAvgDbConnections({ clusterId, dbInstance }: CardAvgDbConnect
     metricShortName: 'avg_db_connections',
   })
 
-  // Extract the value from metrics response
-  const value = metrics?.data?.result?.[0]?.values?.[0][1]
-  const formattedValue = value ? Math.round(parseFloat(value)).toLocaleString() : '--'
+  const series = metrics?.data?.result?.[0]?.values as [number, string][] | undefined
+  const lastValueStr = series && series.length > 0 ? series[series.length - 1][1] : undefined
+  const numValue = lastValueStr !== undefined ? parseFloat(lastValueStr) : undefined
+  const isValid = Number.isFinite(numValue as number)
 
-  // Determine status based on value (connections thresholds)
+  const formattedValue = isValid ? Math.round(numValue as number).toLocaleString() : '--'
+
   let status: 'GREEN' | 'YELLOW' | 'RED' | undefined
-  if (value !== undefined) {
-    const numValue = parseFloat(value)
-    if (numValue < 80) {
+  if (isValid) {
+    if ((numValue as number) < 80) {
       status = 'GREEN'
-    } else if (numValue < 150) {
+    } else if ((numValue as number) < 150) {
       status = 'YELLOW'
     } else {
       status = 'RED'
@@ -42,13 +45,14 @@ export function CardAvgDbConnections({ clusterId, dbInstance }: CardAvgDbConnect
   }
 
   return (
-    <CardRdsMetric
-      title="avg Database Connections"
+    <CardMetric
+      title="Database Connections"
       value={formattedValue}
-      description="average active connections"
+      valueDescription="avg active connections"
+      description="Average number of active database connections over the selected time range."
       status={status}
+      statusDescription="Higher averages can indicate rising load or connection saturation."
       isLoading={isLoading}
-      icon="link"
     />
   )
 }

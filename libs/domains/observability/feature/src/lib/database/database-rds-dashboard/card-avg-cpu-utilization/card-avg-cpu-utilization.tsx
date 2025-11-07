@@ -1,6 +1,6 @@
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
-import { CardRdsMetric } from '../card-rds-metric/card-rds-metric'
+import { CardMetric } from '../card-metric/card-metric'
 
 interface CardAvgCpuUtilizationProps {
   clusterId: string
@@ -8,7 +8,9 @@ interface CardAvgCpuUtilizationProps {
 }
 
 const queryAvgCpuUtilization = (timeRange: string, dbInstance: string) => `
-avg_over_time  (aws_rds_cpuutilization_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}])
+  avg_over_time(
+    aws_rds_cpuutilization_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}]
+  )
 `
 
 export function CardAvgCpuUtilization({ clusterId, dbInstance }: CardAvgCpuUtilizationProps) {
@@ -24,17 +26,18 @@ export function CardAvgCpuUtilization({ clusterId, dbInstance }: CardAvgCpuUtili
     metricShortName: 'avg_cpu_utilization',
   })
 
-  // Extract the value from metrics response
-  const value = metrics?.data?.result?.[0]?.values?.[0][1]
-  const formattedValue = value ? parseFloat(value).toFixed(1) : '--'
+  const series = metrics?.data?.result?.[0]?.values as [number, string][] | undefined
+  const lastValueStr = series && series.length > 0 ? series[series.length - 1][1] : undefined
+  const numValue = lastValueStr !== undefined ? parseFloat(lastValueStr) : undefined
+  const isValid = Number.isFinite(numValue as number)
 
-  // Determine status based on value (CPU thresholds)
+  const formattedValue = isValid ? (numValue as number).toFixed(1) : '--'
+
   let status: 'GREEN' | 'YELLOW' | 'RED' | undefined
-  if (value !== undefined) {
-    const numValue = parseFloat(value)
-    if (numValue < 70) {
+  if (isValid) {
+    if ((numValue as number) < 70) {
       status = 'GREEN'
-    } else if (numValue < 85) {
+    } else if ((numValue as number) < 85) {
       status = 'YELLOW'
     } else {
       status = 'RED'
@@ -42,14 +45,15 @@ export function CardAvgCpuUtilization({ clusterId, dbInstance }: CardAvgCpuUtili
   }
 
   return (
-    <CardRdsMetric
-      title="avg CPU Utilization"
+    <CardMetric
+      title="CPU Utilization"
       value={formattedValue}
       unit="%"
-      description="average CPU usage"
+      valueDescription="avg CPU usage"
+      description="Average CPU utilization over the selected time range."
       status={status}
+      statusDescription="Higher averages may indicate increased workload or CPU saturation."
       isLoading={isLoading}
-      icon="microchip" // TODO why?
     />
   )
 }
