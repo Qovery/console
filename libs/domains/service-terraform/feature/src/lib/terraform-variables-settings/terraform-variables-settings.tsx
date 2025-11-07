@@ -361,7 +361,7 @@ const TfvarItem = ({
 
   return (
     <div
-      className="grid grid-cols-[1fr_40px] items-center justify-between border-b border-neutral-200 px-4 py-3 last:rounded-b-lg last:border-b-0 hover:bg-neutral-100"
+      className="grid grid-cols-[1fr_40px] items-center justify-between border-b border-neutral-250 px-4 py-3 last:rounded-b-lg last:border-b-0 hover:bg-neutral-100"
       onMouseEnter={() => setHoveredRow(file.source)}
       onMouseLeave={() => setHoveredRow(undefined)}
     >
@@ -453,7 +453,7 @@ const TfvarsFilesPopover = () => {
           )}
         </div>
       </Popover.Trigger>
-      <Popover.Content side="right" className="flex w-[340px] flex-col rounded-lg border border-neutral-200 p-0">
+      <Popover.Content side="right" className="flex w-[340px] flex-col rounded-lg border border-neutral-250 p-0">
         <div className="flex items-center justify-between px-3 py-2">
           <span className="px-1 py-1 text-sm font-medium text-neutral-400">Add and order .tfvars files</span>
           <Popover.Close>
@@ -462,7 +462,7 @@ const TfvarsFilesPopover = () => {
             </button>
           </Popover.Close>
         </div>
-        <div className="flex flex-col gap-2 border-t border-neutral-200 px-4 py-3">
+        <div className="flex flex-col gap-2 border-t border-neutral-250 px-4 py-3">
           <div className="relative">
             <InputTextSmall
               name="path"
@@ -490,7 +490,7 @@ const TfvarsFilesPopover = () => {
           </div>
           {newPathErrorMessage && <div className="text-xs text-red-500">{newPathErrorMessage}</div>}
         </div>
-        <div className="flex items-center justify-between border-t border-neutral-200 bg-neutral-100 px-4 py-1">
+        <div className="flex items-center justify-between border-t border-neutral-250 bg-neutral-100 px-4 py-1">
           <span className="text-xs text-neutral-350">File order defines override priority.</span>
           <Tooltip
             classNameContent="max-w-[230px]"
@@ -502,7 +502,7 @@ const TfvarsFilesPopover = () => {
             </span>
           </Tooltip>
         </div>
-        <div className="flex flex-col border-t border-neutral-200">
+        <div className="flex flex-col border-t border-neutral-250">
           {tfVarFiles.map((file, index) => (
             <TfvarItem key={file.source} file={file} index={index} onIndexChange={onIndexChange} />
           ))}
@@ -514,7 +514,7 @@ const TfvarsFilesPopover = () => {
 
 const TerraformVariablesEmptyState = () => {
   return (
-    <div className="flex items-center justify-center border-b border-t border-neutral-200 bg-neutral-100 p-4">
+    <div className="flex items-center justify-center border-b border-t border-neutral-250 bg-neutral-100 p-4">
       <div className="flex flex-col items-center gap-2 py-4">
         <Icon iconName="key" iconStyle="regular" className="text-lg text-neutral-300" />
         <span className="text-center text-sm text-neutral-350">
@@ -529,13 +529,13 @@ const TerraformVariablesEmptyState = () => {
 
 const getSourceBadgeColor = (row: VariableRowItem, customVariable: VariableRowItem | undefined) => {
   if (customVariable && !customVariable.source) {
-    return 'neutral'
+    return 'tf_custom'
   }
   if (customVariable && customVariable.source) {
-    return 'yellow'
+    return 'tf_override'
   }
   // TODO [QOV-1266] Manage colors for most common sources
-  return 'sky'
+  return 'tf_main'
 }
 
 const VariableRow = ({ row }: { row: VariableRowItem }) => {
@@ -563,7 +563,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
   )
 
   return (
-    <div className="w-full border-b border-neutral-200">
+    <div className="w-full border-b border-neutral-250">
       <div
         className={twMerge(
           'grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center',
@@ -571,26 +571,34 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
           isRowSelected(row.key) && 'bg-neutral-150 hover:bg-neutral-150'
         )}
       >
-        <div className="flex h-full items-center justify-center border-r border-neutral-200">
+        <div className="flex h-full items-center justify-center border-r border-neutral-250">
           <Checkbox
             checked={isRowSelected(row.key)}
             onCheckedChange={() => onSelectRow(row.key)}
             disabled={!isCustom}
           />
         </div>
-        <div className="flex h-full items-center border-r border-neutral-200">
+        <div
+          className={twMerge(
+            'flex h-full items-center border-r border-neutral-250 transition-all duration-100 hover:bg-neutral-100',
+            (isCellFocused('key') || isRowSelected(row.key)) && 'bg-neutral-150 hover:bg-neutral-150'
+          )}
+        >
           {isCustom ? (
             <input
               name="key"
               value={row.key}
               onChange={(e) => {
-                setCustomVariable(row.key, { ...row, key: e.target.value })
+                const newKey = e.target.value
+                setCustomVariable(row.key, { ...row, key: newKey })
+                setFocusedCell(`${newKey}-key`)
               }}
               className={twMerge(
                 'peer h-full w-full bg-transparent px-4 text-sm outline-none',
                 isCellFocused('key') && 'bg-neutral-150 hover:bg-neutral-150'
               )}
               onFocus={() => setFocusedCell(`${row.key}-key`)}
+              onBlur={() => setFocusedCell(undefined)}
               placeholder="Variable name"
               spellCheck={false}
             />
@@ -600,9 +608,8 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
         </div>
         <div
           className={twMerge(
-            'group flex h-full cursor-text items-center border-r border-neutral-200 hover:bg-neutral-100',
-            customVarHasValue && (isOverride || isCustom) && 'bg-neutral-100',
-            isCellFocused('value') && 'bg-neutral-150 hover:bg-neutral-150'
+            'group relative flex h-full cursor-text items-center border-r border-neutral-250 transition-all duration-100 hover:bg-neutral-100',
+            (isCellFocused('value') || isRowSelected(row.key)) && 'bg-neutral-150 hover:bg-neutral-150'
           )}
         >
           <input
@@ -612,37 +619,46 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
               setCustomVariable(row.key, { ...row, value: e.target.value })
             }}
             onFocus={() => setFocusedCell(`${row.key}-value`)}
+            onBlur={() => setFocusedCell(undefined)}
             className="h-full w-full bg-transparent px-4 text-sm text-neutral-400 outline-none"
             spellCheck={false}
             placeholder="Variable value"
           />
-          <DropdownVariable
-            environmentId={environmentId}
-            onChange={(varValue) => {
-              setCustomVariable(row.key, { ...row, value: varValue })
-            }}
+          <div
+            className={twMerge(
+              'absolute right-0 top-0 flex h-full items-center bg-neutral-100 pl-3 opacity-0 transition-all duration-100 group-hover:opacity-100',
+              customVarHasValue && (isOverride || isCustom) && 'bg-neutral-100',
+              isCellFocused('value') && 'bg-neutral-150 group-hover:bg-neutral-150'
+            )}
           >
-            <button
-              className={twMerge(
-                'mr-4 hidden justify-center border-none bg-transparent text-neutral-300 hover:text-neutral-400',
-                isCellFocused('value') && 'block'
-              )}
+            <DropdownVariable
+              environmentId={environmentId}
+              onChange={(varValue) => {
+                setCustomVariable(row.key, { ...row, value: varValue })
+              }}
             >
-              <Icon className="text-sm" iconName="wand-magic-sparkles" />
-            </button>
-          </DropdownVariable>
-          {customVariable && isOverride && (
-            <button
-              type="button"
-              onClick={() => resetCustomVariable(customVariable.key)}
-              className="pl-0 pr-4 text-neutral-300 hover:text-neutral-400"
-            >
-              <Icon iconName="rotate-left" iconStyle="regular" />
-            </button>
-          )}
+              <button
+                className={twMerge(
+                  'mr-4 justify-center border-none bg-transparent text-neutral-350 hover:text-neutral-400'
+                )}
+                type="button"
+              >
+                <Icon className="text-sm" iconName="wand-magic-sparkles" />
+              </button>
+            </DropdownVariable>
+            {customVariable && isOverride && (
+              <button
+                type="button"
+                onClick={() => resetCustomVariable(customVariable.key)}
+                className="pl-0 pr-4 text-neutral-350 hover:text-neutral-400"
+              >
+                <Icon iconName="rotate-left" iconStyle="regular" />
+              </button>
+            )}
+          </div>
         </div>
-        <div className="flex h-full items-center border-r border-neutral-200 px-4">
-          <Badge color={getSourceBadgeColor(row, customVariable)} className="text-xs">
+        <div className="flex h-full items-center border-r border-neutral-250 px-4">
+          <Badge color={getSourceBadgeColor(row, customVariable)} variant="surface" className="text-xs">
             {isOverride ? 'Override from ' : ''}
             {row.source?.split('/').pop() || 'Custom'}
           </Badge>
@@ -663,23 +679,20 @@ const TerraformVariablesRows = () => {
   const { variableRows } = useTerraformVariablesContext()
 
   return (
-    <div className="flex flex-col items-center justify-center border-t border-neutral-200">
-      <div className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center border-b border-neutral-200 bg-neutral-100">
-        <div className="flex h-full items-center justify-center border-r border-neutral-200">
+    <div className="flex flex-col items-center justify-center border-t border-neutral-250">
+      <div className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center border-b border-neutral-250 bg-neutral-100">
+        <div className="flex h-full items-center justify-center border-r border-neutral-250">
           <Checkbox disabled />
         </div>
-        <div className="flex h-full items-center border-r border-neutral-200">
+        <div className="flex h-full items-center border-r border-neutral-250">
           <span className="px-4 text-sm text-neutral-400">Variable</span>
         </div>
-        <div className="flex h-full items-center border-r border-neutral-200">
+        <div className="flex h-full items-center border-r border-neutral-250">
           <span className="px-4 text-sm text-neutral-400">Value</span>
         </div>
-        <div className="flex h-full items-center border-r border-neutral-200">
+        <div className="flex h-full items-center border-r border-neutral-250">
           <span className="px-4 text-sm text-neutral-400">Source</span>
         </div>
-        <span className="text-center text-sm text-neutral-400">
-          <Icon iconName="lock" iconStyle="regular" />
-        </span>
       </div>
 
       {variableRows.map((row, index) => (
@@ -691,7 +704,7 @@ const TerraformVariablesRows = () => {
 
 const TerraformVariablesLoadingState = () => {
   return (
-    <div className="flex items-center justify-center border-b border-t border-neutral-200 bg-neutral-100 p-4">
+    <div className="flex items-center justify-center border-b border-t border-neutral-250 bg-neutral-100 p-4">
       <div className="flex flex-col items-center gap-4 py-4">
         <LoaderSpinner classWidth="w-6" theme="light" />
         <div className="flex flex-col items-center gap-1">
@@ -719,7 +732,7 @@ export const TerraformVariablesTable = () => {
   }, [])
 
   return (
-    <div className="flex flex-col rounded-lg border border-neutral-200">
+    <div className="flex flex-col rounded-lg border border-neutral-250">
       <div className="flex items-center justify-between px-4 py-3">
         <span className="text-sm font-medium text-neutral-400">Variable configuration</span>
         <TfvarsFilesPopover />
