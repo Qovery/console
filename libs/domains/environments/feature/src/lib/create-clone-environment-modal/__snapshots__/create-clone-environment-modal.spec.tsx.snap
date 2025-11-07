@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
 <body>
@@ -92,13 +92,13 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                 class="css-1f43avz-a11yText-A11yText"
               />
               <div
-                class="input-select__control css-13cymwt-control"
+                class="input-select__control css-1s2u09g-control"
               >
                 <div
-                  class="input-select__value-container css-1fdsijx-ValueContainer"
+                  class="input-select__value-container css-319lph-ValueContainer"
                 >
                   <div
-                    class="input-select__placeholder css-1jqq78o-placeholder"
+                    class="input-select__placeholder css-14el2xx-placeholder"
                     id="react-select-4-placeholder"
                   >
                     Select...
@@ -121,11 +121,11 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                   class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
                 >
                   <span
-                    class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                    class="input-select__indicator-separator css-1okebmr-indicatorSeparator"
                   />
                   <div
                     aria-hidden="true"
-                    class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                    class="input-select__indicator input-select__dropdown-indicator css-tlfecz-indicatorContainer"
                   >
                     <svg
                       aria-hidden="true"
@@ -201,10 +201,10 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                 class="css-1f43avz-a11yText-A11yText"
               />
               <div
-                class="input-select__control css-13cymwt-control"
+                class="input-select__control css-1s2u09g-control"
               >
                 <div
-                  class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                  class="input-select__value-container input-select__value-container--has-value css-319lph-ValueContainer"
                 >
                   <span
                     class="mr-1 text-sm text-neutral-400"
@@ -228,11 +228,11 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                   class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
                 >
                   <span
-                    class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                    class="input-select__indicator-separator css-1okebmr-indicatorSeparator"
                   />
                   <div
                     aria-hidden="true"
-                    class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                    class="input-select__indicator input-select__dropdown-indicator css-tlfecz-indicatorContainer"
                   >
                     <svg
                       aria-hidden="true"
