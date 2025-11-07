@@ -24,7 +24,7 @@ export function StepConfigurationFeature() {
   }
 
   return (
-    <FunnelFlowBody>
+    <FunnelFlowBody customContentWidth="max-w-[1024px]">
       <FormProvider {...generalForm}>
         <TerraformConfigurationSettings methods={generalForm} />
 

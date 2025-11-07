@@ -108,7 +108,7 @@ export function StepSummaryFeature() {
   }
 
   return (
-    <FunnelFlowBody>
+    <FunnelFlowBody customContentWidth="max-w-[1024px]">
       <Section>
         <Heading className="mb-2">Ready to create your Terraform service</Heading>
 
