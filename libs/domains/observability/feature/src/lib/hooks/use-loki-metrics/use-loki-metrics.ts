@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { observability } from '@qovery/domains/observability/data-access'
-import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
+import { useDashboardContext } from '../../util-filter/dashboard-context'
 
 interface UseLokiMetricsProps {
   clusterId: string
@@ -12,7 +12,7 @@ interface UseLokiMetricsProps {
 // Helper hook to safely get live update setting from context
 function useLiveUpdateSetting(): boolean {
   try {
-    const context = useServiceOverviewContext()
+    const context = useDashboardContext()
     // Pause live updates when charts are zoomed or when the date picker is open
     return context.isLiveUpdateEnabled && !context.isAnyChartZoomed && !context.isDatePickerOpen
   } catch {

@@ -8,7 +8,7 @@ import {
   EnableObservabilityButtonContactUs,
   EnableObservabilityContent,
   EnableObservabilityVideo,
-  ServiceOverview,
+  ServiceDashboard,
 } from '@qovery/domains/observability/feature'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { Heading, Icon, Section } from '@qovery/shared/ui'
@@ -92,7 +92,7 @@ export function PageMonitoringDashboardFeature() {
       </div>
     </div>
   ) : (
-    <ServiceOverview />
+    <ServiceDashboard />
   )
 }
 

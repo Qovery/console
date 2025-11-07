@@ -4,10 +4,10 @@ import { useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
+  DatabaseRdsDashboard,
   EnableObservabilityButtonContactUs,
   EnableObservabilityContent,
   EnableObservabilityVideo,
-  RdsManagedDbOverview,
 } from '@qovery/domains/observability/feature'
 import { type Database } from '@qovery/domains/services/data-access'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
@@ -82,7 +82,7 @@ export function PageMonitoringFeature() {
       </div>
     </div>
   ) : (
-    <RdsManagedDbOverview />
+    <DatabaseRdsDashboard />
   )
 }
 

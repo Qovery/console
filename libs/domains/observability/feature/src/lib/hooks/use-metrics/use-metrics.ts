@@ -1,28 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { observability } from '@qovery/domains/observability/data-access'
-import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
-import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
+import { useDashboardContext } from '../../util-filter/dashboard-context'
+import { type TimeRangeOption } from '../../util-filter/time-range'
 import { alignEndSec, alignStartSec, resolutionByRetention } from './align-timestamp'
 import { alignedRangeInMinutes } from './grafana-util'
 
 export interface MetricData {
   metric: {
-    container: string
-    cpu: string
-    endpoint: string
-    id: string
-    image: string
-    instance: string
-    job: string
-    metrics_path: string
-    name: string
-    namespace: string
-    node: string
-    pod: string
-    prometheus: string
-    service: string
-    reason?: string
+    [key: string]: string
   }
   values: [number, string][]
 }
@@ -35,12 +21,12 @@ interface UseMetricsProps {
   timeRange?: TimeRangeOption
   isLiveUpdateEnabled?: boolean
   overriddenMaxPoints?: number
-  boardShortName: 'service_overview'
+  boardShortName: 'service_overview' | 'rds_overview'
   metricShortName: string
 }
 
 function useLiveUpdateSetting(): boolean {
-  const context = useServiceOverviewContext()
+  const context = useDashboardContext()
   // Pause live updates when charts are zoomed or when the date picker is open
   return context.isLiveUpdateEnabled && !context.isAnyChartZoomed && !context.isDatePickerOpen
 }
@@ -58,7 +44,7 @@ export function useMetrics({
   metricShortName,
 }: UseMetricsProps) {
   // Get context and live update setting, but allow override
-  const context = useServiceOverviewContext()
+  const context = useDashboardContext()
   const contextLiveUpdate = useLiveUpdateSetting()
   const finalLiveUpdateEnabled = overrideLiveUpdate ?? contextLiveUpdate
 

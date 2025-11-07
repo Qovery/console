@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { observability } from '@qovery/domains/observability/data-access'
-import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
-import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
+import { useDashboardContext } from '../../util-filter/dashboard-context'
+import { type TimeRangeOption } from '../../util-filter/time-range'
 import { alignEndSec, alignStartSec, resolutionByRetention } from '../use-metrics/align-timestamp'
 import { alignedRangeInMinutes } from '../use-metrics/grafana-util'
 
@@ -21,7 +21,7 @@ interface UseInstantMetricsProps {
 // Helper hook to safely get live update setting from context
 function useLiveUpdateSetting(): boolean {
   try {
-    const context = useServiceOverviewContext()
+    const context = useDashboardContext()
     // Pause live updates when charts are zoomed or when the date picker is open
     return context.isLiveUpdateEnabled && !context.isAnyChartZoomed && !context.isDatePickerOpen
   } catch {
@@ -47,7 +47,7 @@ export function useInstantMetrics({
   // Get live update setting from context, but allow override
   const contextLiveUpdate = useLiveUpdateSetting()
   const finalLiveUpdateEnabled = overrideLiveUpdate ?? contextLiveUpdate
-  const context = useServiceOverviewContext()
+  const context = useDashboardContext()
 
   const alignedStart = alignStartSec(startTimestamp)
   const alignedEnd = alignEndSec(endTimestamp)
