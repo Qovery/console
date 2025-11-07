@@ -408,7 +408,10 @@ export const organizations = createQueryKeys('organizations', {
       return response.data
     },
   }),
-  listTfVarsFilesFromGitRepo: ({
+})
+
+export const mutations = {
+  async listTfVarsFilesFromGitRepo({
     organizationId,
     repository,
     mode,
@@ -416,19 +419,13 @@ export const organizations = createQueryKeys('organizations', {
     organizationId: string
     repository: ApplicationGitRepositoryRequest
     mode: TfVarsDiscoveryMode
-  }) => ({
-    queryKey: [organizationId, repository, mode],
-    async queryFn() {
-      const response = await organizationApi.listTfVarsFilesFromGitRepo(organizationId, {
-        git_repository: repository,
-        mode,
-      })
-      return response.data.results
-    },
-  }),
-})
-
-export const mutations = {
+  }) {
+    const response = await organizationApi.listTfVarsFilesFromGitRepo(organizationId, {
+      git_repository: repository,
+      mode,
+    })
+    return response.data.results
+  },
   async deleteAnnotationsGroup({
     organizationId,
     annotationsGroupId,

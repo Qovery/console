@@ -1,7 +1,8 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
+import { type AxiosError } from 'axios'
 import { GitProviderEnum, type TerraformVarKeyValue, type TfVarsFileResponse } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useListTfVarsFilesFromGitRepo } from '@qovery/domains/organizations/feature'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
@@ -42,6 +43,11 @@ type TerraformVariablesContextType = {
   focusedCell: string | undefined
   setFocusedCell: (focusedCell: string | undefined) => void
   fetchTfVarsFiles: () => void
+  newPath: string
+  setNewPath: (newPath: string) => void
+  submitNewPath: () => void
+  newPathErrorMessage: string | undefined
+  setNewPathErrorMessage: (newPathErrorMessage: string | undefined) => void
 }
 
 type VariableRowItem = {
@@ -80,18 +86,37 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     }
   }, [formValues])
 
-  const {
-    refetch: fetchTfVarsFiles,
-    data: tfVarFilesResponse = [],
-    isLoading: areTfVarsFilesLoading,
-  } = useListTfVarsFilesFromGitRepo({
-    organizationId,
-    repository: repositoryConfig,
-    mode: {
-      type: 'AutoDiscover',
-    },
-    enabled: false,
-  })
+  const [tfVarFilesResponse, setTfVarFilesResponse] = useState<TfVarsFileResponse[]>([])
+  const [newPath, setNewPath] = useState<TerraformVariablesContextType['newPath']>('')
+  const [newPathErrorMessage, setNewPathErrorMessage] = useState<string | undefined>(undefined)
+
+  const { mutateAsync: fetchTfVars, status: tfVarsFilesStatus } = useListTfVarsFilesFromGitRepo()
+
+  const fetchTfVarsFiles = useCallback(async () => {
+    try {
+      setNewPathErrorMessage(undefined)
+      await fetchTfVars(
+        {
+          organizationId,
+          repository: repositoryConfig,
+          mode: {
+            type: 'AutoDiscover',
+          },
+        },
+        {
+          onSuccess: (data) => {
+            if (data && newPath.length === 0) {
+              setTfVarFilesResponse(data)
+            }
+          },
+        }
+      )
+    } catch (error) {
+      console.error(error)
+    }
+  }, [fetchTfVars, organizationId, repositoryConfig, newPath])
+
+  const areTfVarsFilesLoading = useMemo(() => tfVarsFilesStatus === 'loading', [tfVarsFilesStatus])
   const [customVariables, setCustomVariables] = useState<TerraformVariablesContextType['customVariables']>([])
 
   // Transform the response data and memoize based on content, not reference
@@ -142,7 +167,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
 
   const [selectedRows, setSelectedRows] = useState<TerraformVariablesContextType['selectedRows']>([])
   const [hoveredRow, setHoveredRow] = useState<TerraformVariablesContextType['hoveredRow']>(undefined)
-  const [focusedCell, setFocusedCell] = useState<string | undefined>(undefined)
+  const [focusedCell, setFocusedCell] = useState<TerraformVariablesContextType['focusedCell']>(undefined)
 
   const tfVarFilePaths: TerraformVariablesContextType['tfVarFilePaths'] = useMemo(() => {
     return tfVarFiles.filter((tfVarFile) => tfVarFile.enabled).map((tfVarFile) => tfVarFile.source ?? '')
@@ -208,6 +233,36 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     setSelectedRows([])
   }, [selectedRows])
 
+  const submitNewPath = useCallback(async () => {
+    try {
+      await fetchTfVars(
+        {
+          organizationId,
+          repository: repositoryConfig,
+          mode: {
+            type: 'SpecificPaths',
+            paths: [newPath],
+          },
+        },
+        {
+          onSuccess: (data) => {
+            if (data) {
+              setTfVarFilesResponse((prevTfVarFilesResponse) => [...prevTfVarFilesResponse, ...data])
+              setNewPath('')
+              setNewPathErrorMessage(undefined)
+            }
+          },
+          onError: (error) => {
+            console.log('ERROR:', error)
+            setNewPathErrorMessage((error as AxiosError).message)
+          },
+        }
+      )
+    } catch (error) {
+      console.error(error)
+    }
+  }, [fetchTfVars, organizationId, repositoryConfig, newPath])
+
   const value: TerraformVariablesContextType = useMemo(
     () => ({
       selectedRows,
@@ -230,6 +285,11 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       focusedCell,
       setFocusedCell,
       fetchTfVarsFiles,
+      newPath,
+      setNewPath,
+      submitNewPath,
+      newPathErrorMessage,
+      setNewPathErrorMessage,
     }),
     [
       selectedRows,
@@ -251,6 +311,11 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       focusedCell,
       setFocusedCell,
       fetchTfVarsFiles,
+      newPath,
+      setNewPath,
+      submitNewPath,
+      newPathErrorMessage,
+      setNewPathErrorMessage,
     ]
   )
 
@@ -336,8 +401,16 @@ const TfvarItem = ({
 }
 
 const TfvarsFilesPopover = () => {
-  const { control } = useFormContext()
-  const { tfVarFiles, setFileListOrder } = useTerraformVariablesContext()
+  const {
+    tfVarFiles,
+    setFileListOrder,
+    newPath,
+    setNewPath,
+    submitNewPath,
+    areTfVarsFilesLoading,
+    newPathErrorMessage,
+    setNewPathErrorMessage,
+  } = useTerraformVariablesContext()
 
   const onIndexChange = (file: TfVarsFile, newIndex: number) => {
     const currentIndex = tfVarFiles.indexOf(file)
@@ -347,6 +420,11 @@ const TfvarsFilesPopover = () => {
     newFiles.splice(newIndex, 0, element)
     setFileListOrder(newFiles.map((file) => file.source))
   }
+
+  const onInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewPath(e.target.value)
+    setNewPathErrorMessage(undefined)
+  }, [])
 
   return (
     <Popover.Root>
@@ -384,19 +462,32 @@ const TfvarsFilesPopover = () => {
             </button>
           </Popover.Close>
         </div>
-        <div className="border-t border-neutral-200 px-4 py-3">
-          <Controller
-            name="path"
-            control={control}
-            render={({ field }) => (
-              <InputTextSmall
-                name={field.name}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Path of .tfvar file"
-              />
+        <div className="flex flex-col gap-2 border-t border-neutral-200 px-4 py-3">
+          <div className="relative">
+            <InputTextSmall
+              name="path"
+              value={newPath}
+              onChange={onInputChange}
+              placeholder="Path of .tfvar file"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  submitNewPath()
+                }
+              }}
+              inputClassName={newPath.length > 0 ? 'pr-9' : undefined}
+              disabled={areTfVarsFilesLoading}
+            />
+            {areTfVarsFilesLoading && newPath.length > 0 ? (
+              <div className="absolute right-0 top-0 flex h-full w-9 items-center justify-center">
+                <LoaderSpinner />
+              </div>
+            ) : (
+              <button className="absolute right-0 top-0 h-full w-9" type="button" onClick={submitNewPath}>
+                <Icon iconName="plus" className="text-lg font-normal leading-4 text-neutral-350" />
+              </button>
             )}
-          />
+          </div>
+          {newPathErrorMessage && <div className="text-xs text-red-500">{newPathErrorMessage}</div>}
         </div>
         <div className="flex items-center justify-between border-t border-neutral-200 bg-neutral-100 px-4 py-1">
           <span className="text-xs text-neutral-350">File order defines override priority.</span>
@@ -612,8 +703,15 @@ const TerraformVariablesLoadingState = () => {
 }
 
 export const TerraformVariablesTable = () => {
-  const { selectedRows, areTfVarsFilesLoading, addCustomVariable, deleteSelectedRows, variableRows, fetchTfVarsFiles } =
-    useTerraformVariablesContext()
+  const {
+    selectedRows,
+    areTfVarsFilesLoading,
+    addCustomVariable,
+    deleteSelectedRows,
+    variableRows,
+    fetchTfVarsFiles,
+    newPath,
+  } = useTerraformVariablesContext()
 
   useEffect(() => {
     fetchTfVarsFiles()
@@ -626,7 +724,7 @@ export const TerraformVariablesTable = () => {
         <TfvarsFilesPopover />
       </div>
 
-      {areTfVarsFilesLoading ? (
+      {areTfVarsFilesLoading && newPath.length === 0 ? (
         <TerraformVariablesLoadingState />
       ) : variableRows.length > 0 ? (
         <TerraformVariablesRows />
