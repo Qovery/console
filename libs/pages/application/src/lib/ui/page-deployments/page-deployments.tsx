@@ -7,6 +7,43 @@ export interface PageDeploymentsProps {
   isLoading?: boolean
 }
 
+// Move static table configuration outside component to avoid recreation on every render
+const TABLE_HEAD_CONFIG = [
+  {
+    title: 'Execution ID',
+    className: 'px-4 py-2 bg-white h-full',
+    filter: [
+      {
+        search: true,
+        title: 'Filter by id',
+        key: 'id',
+      },
+    ],
+  },
+  {
+    title: 'Status',
+    className: 'px-4 py-2 bg-white h-full',
+    filter: [
+      {
+        search: true,
+        title: 'Filter by status',
+        key: 'status',
+      },
+    ],
+  },
+  {
+    title: 'Update',
+    className: 'px-4 py-2 bg-white h-full flex items-center',
+    sort: {
+      key: 'updated_at',
+    },
+  },
+  {
+    title: 'Version',
+    className: 'px-4 py-2 border-b-neutral-200 border-l h-full bg-white',
+  },
+]
+
 export function Deployments(props: PageDeploymentsProps) {
   const { deployments = [], isLoading = true } = props
 
@@ -16,42 +53,6 @@ export function Deployments(props: PageDeploymentsProps) {
   useEffect(() => {
     deployments && setData(deployments)
   }, [deployments])
-
-  const tableHead = [
-    {
-      title: 'Execution ID',
-      className: 'px-4 py-2 bg-white h-full',
-      filter: [
-        {
-          search: true,
-          title: 'Filter by id',
-          key: 'id',
-        },
-      ],
-    },
-    {
-      title: 'Status',
-      className: 'px-4 py-2 bg-white h-full',
-      filter: [
-        {
-          search: true,
-          title: 'Filter by status',
-          key: 'status',
-        },
-      ],
-    },
-    {
-      title: 'Update',
-      className: 'px-4 py-2 bg-white h-full flex items-center',
-      sort: {
-        key: 'updated_at',
-      },
-    },
-    {
-      title: 'Version',
-      className: 'px-4 py-2 border-b-neutral-200 border-l h-full bg-white',
-    },
-  ]
 
   if (!isLoading && deployments.length === 0)
     return (
@@ -65,14 +66,14 @@ export function Deployments(props: PageDeploymentsProps) {
     )
 
   return (
-    <Table dataHead={tableHead} data={deployments} setFilter={setFilter} filter={filter} setDataSort={setData}>
+    <Table dataHead={TABLE_HEAD_CONFIG} data={deployments} setFilter={setFilter} filter={filter} setDataSort={setData}>
       <div>
         {data?.map((currentData, index) => (
           <TableRowDeployment
             key={index}
             data={currentData as DeploymentHistoryApplication}
             filter={filter}
-            dataHead={tableHead}
+            dataHead={TABLE_HEAD_CONFIG}
             isLoading={isLoading}
             fromService
           />

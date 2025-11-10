@@ -53,6 +53,13 @@ function ConfirmationModal({
   const count = impactedRows.length
   const selectedRowsCount = selectedRows.length
 
+  // Optimize: Create a Set of impacted IDs for O(1) lookup instead of O(n) find() for each item
+  const impactedIds = useMemo(() => new Set(impactedRows.map(({ id }) => id)), [impactedRows])
+  const unimpactedServices = useMemo(
+    () => selectedRows.filter(({ id }) => !impactedIds.has(id)),
+    [selectedRows, impactedIds]
+  )
+
   return (
     <div className="p-6">
       <h2 className="h4 max-w-sm truncate text-neutral-400">Confirm</h2>
@@ -68,11 +75,9 @@ function ConfirmationModal({
             <Callout.TextHeading>Some services will not be impacted:</Callout.TextHeading>
             <Callout.TextDescription>
               <ul className="list-disc pl-4">
-                {selectedRows
-                  .filter(({ id: selectedId }) => !impactedRows.find(({ id }) => id === selectedId))
-                  .map(({ id, name }) => (
-                    <li key={id}>{name}</li>
-                  ))}
+                {unimpactedServices.map(({ id, name }) => (
+                  <li key={id}>{name}</li>
+                ))}
               </ul>
             </Callout.TextDescription>
           </Callout.Text>
