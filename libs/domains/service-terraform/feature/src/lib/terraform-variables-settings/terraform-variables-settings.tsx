@@ -48,6 +48,8 @@ type TerraformVariablesContextType = {
   submitNewPath: () => void
   newPathErrorMessage: string | undefined
   setNewPathErrorMessage: (newPathErrorMessage: string | undefined) => void
+  hoveredCell: string | undefined
+  setHoveredCell: (hoveredCell: string | undefined) => void
 }
 
 type VariableRowItem = {
@@ -168,6 +170,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const [selectedRows, setSelectedRows] = useState<TerraformVariablesContextType['selectedRows']>([])
   const [hoveredRow, setHoveredRow] = useState<TerraformVariablesContextType['hoveredRow']>(undefined)
   const [focusedCell, setFocusedCell] = useState<TerraformVariablesContextType['focusedCell']>(undefined)
+  const [hoveredCell, setHoveredCell] = useState<TerraformVariablesContextType['hoveredCell']>(undefined)
 
   const tfVarFilePaths: TerraformVariablesContextType['tfVarFilePaths'] = useMemo(() => {
     return tfVarFiles.filter((tfVarFile) => tfVarFile.enabled).map((tfVarFile) => tfVarFile.source ?? '')
@@ -290,6 +293,8 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       submitNewPath,
       newPathErrorMessage,
       setNewPathErrorMessage,
+      hoveredCell,
+      setHoveredCell,
     }),
     [
       selectedRows,
@@ -316,6 +321,8 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       submitNewPath,
       newPathErrorMessage,
       setNewPathErrorMessage,
+      hoveredCell,
+      setHoveredCell,
     ]
   )
 
@@ -548,6 +555,8 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
     resetCustomVariable,
     focusedCell,
     setFocusedCell,
+    hoveredCell,
+    setHoveredCell,
   } = useTerraformVariablesContext()
   const { environmentId = '' } = useParams()
   const customVariable = useMemo(
@@ -556,11 +565,11 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
   )
   const isCustom = useMemo(() => !!customVariable && !customVariable.source, [customVariable])
   const isOverride = useMemo(() => !!customVariable && !!customVariable.source, [customVariable])
-  const customVarHasValue = useMemo(() => !!customVariable && !!customVariable.value, [customVariable])
   const isCellFocused = useCallback(
     (cell: 'key' | 'value') => focusedCell === `${row.key}-${cell}`,
     [focusedCell, row.key]
   )
+  const isCellHovered = useMemo(() => hoveredCell === row.key, [hoveredCell, row.key])
 
   return (
     <div className="w-full border-b border-neutral-250">
@@ -578,9 +587,11 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
             disabled={!isCustom}
           />
         </div>
+        {/* Variable name cell */}
         <div
           className={twMerge(
-            'flex h-full items-center border-r border-neutral-250 transition-all duration-100 hover:bg-neutral-100',
+            'flex h-full items-center border-r border-neutral-250 transition-all duration-100',
+            isCustom && 'hover:bg-neutral-100',
             (isCellFocused('key') || isRowSelected(row.key)) && 'bg-neutral-150 hover:bg-neutral-150'
           )}
         >
@@ -606,63 +617,89 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
             <span className="px-4 text-sm text-neutral-350">{row.key}</span>
           )}
         </div>
+        {/* Variable value cell */}
         <div
-          className={twMerge(
-            'group relative flex h-full cursor-text items-center border-r border-neutral-250 transition-all duration-100 hover:bg-neutral-100',
-            (isCellFocused('value') || isRowSelected(row.key)) && 'bg-neutral-150 hover:bg-neutral-150'
-          )}
+          className="group relative flex h-full cursor-text items-center border-r border-neutral-250"
+          onMouseEnter={() => setHoveredCell(row.key)}
+          onMouseLeave={(e) => {
+            if (e.relatedTarget === window) {
+              return
+            }
+            setHoveredCell(undefined)
+          }}
         >
-          <input
-            name="value"
-            value={row.value}
-            onChange={(e) => {
-              setCustomVariable(row.key, { ...row, value: e.target.value })
-            }}
-            onFocus={() => setFocusedCell(`${row.key}-value`)}
-            onBlur={() => setFocusedCell(undefined)}
-            className="h-full w-full bg-transparent px-4 text-sm text-neutral-400 outline-none"
-            spellCheck={false}
-            placeholder="Variable value"
-          />
+          {/* Background */}
           <div
             className={twMerge(
-              'absolute right-0 top-0 flex h-full items-center bg-neutral-100 pl-3 opacity-0 transition-all duration-100 group-hover:opacity-100',
-              customVarHasValue && (isOverride || isCustom) && 'bg-neutral-100',
+              'absolute bottom-0 left-0 right-0 top-0 h-full w-full transition-all duration-100 group-hover:bg-neutral-100',
               isCellFocused('value') && 'bg-neutral-150 group-hover:bg-neutral-150'
             )}
-          >
-            <DropdownVariable
-              environmentId={environmentId}
-              onChange={(varValue) => {
-                setCustomVariable(row.key, { ...row, value: varValue })
+          />
+          {/* Cell content */}
+          <div className="z-10 h-full w-full">
+            <input
+              name="value"
+              value={row.value}
+              onChange={(e) => {
+                setCustomVariable(row.key, { ...row, value: e.target.value })
               }}
+              onFocus={() => setFocusedCell(`${row.key}-value`)}
+              onBlur={() => setFocusedCell(undefined)}
+              className="h-full w-full bg-transparent px-4 text-sm text-neutral-400 outline-none"
+              spellCheck={false}
+              placeholder="Variable value"
+            />
+            <div
+              className={twMerge(
+                'absolute right-0 top-0 flex h-full items-center pl-3 opacity-0 transition-all duration-100 group-hover:bg-neutral-100',
+                isCellFocused('value') && 'bg-neutral-150 group-hover:bg-neutral-150',
+                isCellHovered && 'opacity-100'
+              )}
             >
-              <button
-                className={twMerge(
-                  'mr-4 justify-center border-none bg-transparent text-neutral-350 hover:text-neutral-400'
-                )}
-                type="button"
+              <DropdownVariable
+                environmentId={environmentId}
+                onChange={(varValue) => {
+                  setCustomVariable(row.key, { ...row, value: varValue })
+                }}
+                onOpenChange={(open) => {
+                  if (open) {
+                    setHoveredCell(row.key)
+                    setFocusedCell(undefined)
+                  } else {
+                    setHoveredCell(undefined)
+                    setFocusedCell(undefined)
+                  }
+                }}
               >
-                <Icon className="text-sm" iconName="wand-magic-sparkles" />
-              </button>
-            </DropdownVariable>
-            {customVariable && isOverride && (
-              <button
-                type="button"
-                onClick={() => resetCustomVariable(customVariable.key)}
-                className="pl-0 pr-4 text-neutral-350 hover:text-neutral-400"
-              >
-                <Icon iconName="rotate-left" iconStyle="regular" />
-              </button>
-            )}
+                <button
+                  className={twMerge(
+                    'mr-4 justify-center border-none bg-transparent px-1 text-neutral-350 hover:text-neutral-400'
+                  )}
+                  type="button"
+                >
+                  <Icon className="text-sm" iconName="wand-magic-sparkles" />
+                </button>
+              </DropdownVariable>
+              {customVariable && isOverride && (
+                <button
+                  type="button"
+                  onClick={() => resetCustomVariable(customVariable.key)}
+                  className="pl-0 pr-4 text-neutral-350 hover:text-neutral-400"
+                >
+                  <Icon iconName="rotate-left" iconStyle="regular" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
+        {/* Source badge */}
         <div className="flex h-full items-center border-r border-neutral-250 px-4">
           <Badge color={getSourceBadgeColor(row, customVariable)} variant="surface" className="text-xs">
             {isOverride ? 'Override from ' : ''}
             {row.source?.split('/').pop() || 'Custom'}
           </Badge>
         </div>
+        {/* Secret toggle */}
         <span className="flex items-center justify-center text-center text-sm text-neutral-400">
           <Icon
             iconName="lock-keyhole-open"

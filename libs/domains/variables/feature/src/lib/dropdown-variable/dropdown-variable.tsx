@@ -1,5 +1,5 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { type PropsWithChildren, useState } from 'react'
+import { type PropsWithChildren, useCallback, useState } from 'react'
 import { Icon, InputSearch, Popover, Tooltip, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
@@ -7,9 +7,10 @@ import { useVariables } from '../hooks/use-variables/use-variables'
 export interface DropdownVariableProps extends PropsWithChildren {
   environmentId: string
   onChange: (value: string) => void
+  onOpenChange?: (open: boolean) => void
 }
 
-export function DropdownVariable({ environmentId, onChange, children }: DropdownVariableProps) {
+export function DropdownVariable({ environmentId, onChange, children, onOpenChange }: DropdownVariableProps) {
   const { data: variables = [] } = useVariables({
     parentId: environmentId,
     scope: 'ENVIRONMENT',
@@ -21,6 +22,14 @@ export function DropdownVariable({ environmentId, onChange, children }: Dropdown
     variable.key.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  const _onOpenChange = useCallback(
+    (open: boolean) => {
+      setOpen(open)
+      onOpenChange?.(open)
+    },
+    [onOpenChange]
+  )
+
   // XXX: https://github.com/radix-ui/primitives/issues/1342
   // We are waiting for radix combobox primitives
   // So we are using DropdownMenu.Root in combination of Popover.Root
@@ -28,8 +37,8 @@ export function DropdownVariable({ environmentId, onChange, children }: Dropdown
   // DropdownMenu.Root for entries.
   // So both open state should be sync
   return (
-    <DropdownMenu.Root open={open} onOpenChange={(open) => setOpen(open)}>
-      <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
+    <DropdownMenu.Root open={open} onOpenChange={_onOpenChange}>
+      <Popover.Root open={open} onOpenChange={_onOpenChange}>
         <Popover.Trigger>{children}</Popover.Trigger>
         <DropdownMenu.Content asChild>
           <Popover.Content className="flex max-h-60 w-[248px] min-w-[248px] flex-col p-2">
