@@ -15,6 +15,7 @@ import {
   Indicator,
   InputTextSmall,
   LoaderSpinner,
+  PasswordShowHide,
   Popover,
   Section,
   Tooltip,
@@ -50,6 +51,8 @@ type TerraformVariablesContextType = {
   setNewPathErrorMessage: (newPathErrorMessage: string | undefined) => void
   hoveredCell: string | undefined
   setHoveredCell: (hoveredCell: string | undefined) => void
+  isVariableCustom: (key: string) => boolean
+  isVariableOverride: (key: string) => boolean
 }
 
 type VariableRowItem = {
@@ -158,7 +161,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
           key,
           value: customVar?.value ?? value, // If an override is set, use the override value
           source: file.source,
-          secret: false, // TODO [QOV-1266] Are we keeping 'secret' here?
+          secret: customVar?.secret ?? false,
         })
       })
     })
@@ -266,6 +269,23 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     }
   }, [fetchTfVars, organizationId, repositoryConfig, newPath])
 
+  const isVariableCustom = useCallback(
+    (key: string) => {
+      const customVariable = customVariables.find((customVariable) => customVariable.key === key)
+      return !!customVariable && !customVariable.source
+    },
+    [customVariables]
+  )
+
+  const isVariableOverride = useCallback(
+    (key: string) => {
+      const customVariable = customVariables.find((customVariable) => customVariable.key === key)
+      const initialValue = tfVarFiles.find((tfVarFile) => tfVarFile.source === customVariable?.source)?.variables[key]
+      return !!customVariable && !!customVariable.source && customVariable.value !== initialValue
+    },
+    [customVariables, tfVarFiles]
+  )
+
   const value: TerraformVariablesContextType = useMemo(
     () => ({
       selectedRows,
@@ -295,6 +315,8 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       setNewPathErrorMessage,
       hoveredCell,
       setHoveredCell,
+      isVariableCustom,
+      isVariableOverride,
     }),
     [
       selectedRows,
@@ -323,6 +345,8 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       setNewPathErrorMessage,
       hoveredCell,
       setHoveredCell,
+      isVariableCustom,
+      isVariableOverride,
     ]
   )
 
@@ -534,14 +558,13 @@ const TerraformVariablesEmptyState = () => {
   )
 }
 
-const getSourceBadgeColor = (row: VariableRowItem, customVariable: VariableRowItem | undefined) => {
-  if (customVariable && !customVariable.source) {
+const getSourceBadgeColor = (row: VariableRowItem, isOverride: boolean, isCustom: boolean) => {
+  if (isCustom) {
     return 'tf_custom'
   }
-  if (customVariable && customVariable.source) {
+  if (isOverride) {
     return 'tf_override'
   }
-  // TODO [QOV-1266] Manage colors for most common sources
   return 'tf_main'
 }
 
@@ -557,14 +580,14 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
     setFocusedCell,
     hoveredCell,
     setHoveredCell,
+    isVariableCustom,
+    isVariableOverride,
   } = useTerraformVariablesContext()
   const { environmentId = '' } = useParams()
   const customVariable = useMemo(
     () => customVariables.find((customVar) => customVar.key === row.key),
     [customVariables, row.key]
   )
-  const isCustom = useMemo(() => !!customVariable && !customVariable.source, [customVariable])
-  const isOverride = useMemo(() => !!customVariable && !!customVariable.source, [customVariable])
   const isCellFocused = useCallback(
     (cell: 'key' | 'value') => focusedCell === `${row.key}-${cell}`,
     [focusedCell, row.key]
@@ -584,18 +607,18 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
           <Checkbox
             checked={isRowSelected(row.key)}
             onCheckedChange={() => onSelectRow(row.key)}
-            disabled={!isCustom}
+            disabled={!isVariableCustom(row.key)}
           />
         </div>
         {/* Variable name cell */}
         <div
           className={twMerge(
             'flex h-full items-center border-r border-neutral-250 transition-all duration-100',
-            isCustom && 'hover:bg-neutral-100',
+            isVariableCustom(row.key) && 'hover:bg-neutral-100',
             (isCellFocused('key') || isRowSelected(row.key)) && 'bg-neutral-150 hover:bg-neutral-150'
           )}
         >
-          {isCustom ? (
+          {isVariableCustom(row.key) ? (
             <input
               name="key"
               value={row.key}
@@ -637,23 +660,35 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
           />
           {/* Cell content */}
           <div className="z-10 h-full w-full">
-            <input
-              name="value"
-              value={row.value}
-              onChange={(e) => {
-                setCustomVariable(row.key, { ...row, value: e.target.value })
-              }}
-              onFocus={() => setFocusedCell(`${row.key}-value`)}
-              onBlur={() => setFocusedCell(undefined)}
-              className="h-full w-full bg-transparent px-4 text-sm text-neutral-400 outline-none"
-              spellCheck={false}
-              placeholder="Variable value"
-            />
+            {row.secret ? (
+              <PasswordShowHide
+                value={row.value}
+                canCopy={false}
+                onChange={(e) => {
+                  setCustomVariable(row.key, { ...row, value: e.target.value })
+                }}
+                canEdit
+                className="h-full w-full bg-transparent px-4 text-sm text-neutral-400 outline-none"
+              />
+            ) : (
+              <input
+                name="value"
+                value={row.value}
+                onChange={(e) => {
+                  setCustomVariable(row.key, { ...row, value: e.target.value })
+                }}
+                onFocus={() => setFocusedCell(`${row.key}-value`)}
+                onBlur={() => setFocusedCell(undefined)}
+                className="h-full w-full bg-transparent px-4 text-sm text-neutral-400 outline-none"
+                spellCheck={false}
+                placeholder="Variable value"
+              />
+            )}
             <div
               className={twMerge(
-                'absolute right-0 top-0 flex h-full items-center pl-3 opacity-0 transition-all duration-100 group-hover:bg-neutral-100',
+                'absolute right-0 top-0 flex h-full translate-x-1 items-center pl-3 opacity-0 transition-all duration-100 group-hover:bg-neutral-100',
                 isCellFocused('value') && 'bg-neutral-150 group-hover:bg-neutral-150',
-                isCellHovered && 'opacity-100'
+                isCellHovered && 'translate-x-0 opacity-100'
               )}
             >
               <DropdownVariable
@@ -680,7 +715,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
                   <Icon className="text-sm" iconName="wand-magic-sparkles" />
                 </button>
               </DropdownVariable>
-              {customVariable && isOverride && (
+              {customVariable && isVariableOverride(row.key) && (
                 <button
                   type="button"
                   onClick={() => resetCustomVariable(customVariable.key)}
@@ -694,19 +729,27 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
         </div>
         {/* Source badge */}
         <div className="flex h-full items-center border-r border-neutral-250 px-4">
-          <Badge color={getSourceBadgeColor(row, customVariable)} variant="surface" className="text-xs">
-            {isOverride ? 'Override from ' : ''}
+          <Badge
+            color={getSourceBadgeColor(row, isVariableOverride(row.key), isVariableCustom(row.key))}
+            variant="surface"
+            className="text-xs"
+          >
+            {isVariableOverride(row.key) ? 'Override from ' : ''}
             {row.source?.split('/').pop() || 'Custom'}
           </Badge>
         </div>
         {/* Secret toggle */}
-        <span className="flex items-center justify-center text-center text-sm text-neutral-400">
+        <button
+          className="flex items-center justify-center text-center text-sm text-neutral-400"
+          type="button"
+          onClick={() => setCustomVariable(row.key, { ...row, secret: !row.secret })}
+        >
           <Icon
-            iconName="lock-keyhole-open"
+            iconName={row.secret ? 'lock-keyhole' : 'lock-keyhole-open'}
             iconStyle="regular"
-            className={twMerge(row.secret ? 'text-brand-500' : 'text-neutral-300')}
+            className={row.secret ? 'text-neutral-400' : 'text-neutral-300'}
           />
-        </span>
+        </button>
       </div>
     </div>
   )
