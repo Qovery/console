@@ -16,7 +16,6 @@ export const terraformFactoryMock = (howMany: number): Terraform[] =>
     description: chance.sentence(),
     auto_approve: false,
     auto_deploy: false,
-    engine: 'TERRAFORM',
     backend: {
       kubernetes: {},
     },
@@ -37,7 +36,7 @@ export const terraformFactoryMock = (howMany: number): Terraform[] =>
       tf_vars: [],
       tf_var_file_paths: [],
     },
-    provider: 'TERRAFORM',
+    engine: 'TERRAFORM',
     provider_version: {
       read_from_terraform_block: false,
       explicit_version: '1.13.2',
