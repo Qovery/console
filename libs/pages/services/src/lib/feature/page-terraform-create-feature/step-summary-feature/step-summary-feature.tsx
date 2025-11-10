@@ -221,7 +221,7 @@ export function StepSummaryFeature() {
                   <ul>
                     {tfVars.map((variable) => (
                       <li key={variable.key}>
-                        {variable.key}: {variable.value}
+                        {variable.key}: {variable.secret ? '********' : variable.value}
                       </li>
                     ))}
                   </ul>
