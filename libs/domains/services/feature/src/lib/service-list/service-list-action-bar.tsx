@@ -1,4 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
+import { useMemo } from 'react'
 import { Badge, Button, Callout, DropdownMenu, Icon, Tooltip, useModal } from '@qovery/shared/ui'
 import {
   isDeleteAvailable,
@@ -17,6 +18,24 @@ import { type useServices } from '../hooks/use-services/use-services'
 import { useStopAllServices } from '../hooks/use-stop-all-services/use-stop-all-services'
 import useUninstallAllServices from '../hooks/use-uninstall-all-services/use-uninstall-all-services'
 import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
+
+/**
+ * Helper function to group services by type in a single pass
+ * Avoids multiple filter operations on the same array
+ */
+function groupServicesByType<T extends { serviceType: string; id: string }>(services: T[]) {
+  return services.reduce(
+    (acc, service) => {
+      const type = service.serviceType
+      if (!acc[type]) {
+        acc[type] = []
+      }
+      acc[type].push(service)
+      return acc
+    },
+    {} as Record<string, T[]>
+  )
+}
 
 function ConfirmationModal({
   verb,
@@ -108,6 +127,9 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
   )
 
   const handleDeployAllServices = () => {
+    // Group services by type in a single pass to avoid multiple filter operations
+    const deployableByType = useMemo(() => groupServicesByType(deployableServices), [deployableServices])
+
     openModal({
       content: (
         <ConfirmationModal
@@ -119,19 +141,11 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
               await deployAllServices({
                 environment,
                 payload: {
-                  applications: deployableServices
-                    .filter(({ serviceType }) => serviceType === 'APPLICATION')
-                    .map(({ id }) => ({ application_id: id })),
-                  containers: deployableServices
-                    .filter(({ serviceType }) => serviceType === 'CONTAINER')
-                    .map(({ id }) => ({ id })),
-                  databases: deployableServices
-                    .filter(({ serviceType }) => serviceType === 'DATABASE')
-                    .map(({ id }) => id),
-                  jobs: deployableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => ({ id })),
-                  helms: deployableServices
-                    .filter(({ serviceType }) => serviceType === 'HELM')
-                    .map(({ id }) => ({ id })),
+                  applications: (deployableByType['APPLICATION'] || []).map(({ id }) => ({ application_id: id })),
+                  containers: (deployableByType['CONTAINER'] || []).map(({ id }) => ({ id })),
+                  databases: (deployableByType['DATABASE'] || []).map(({ id }) => id),
+                  jobs: (deployableByType['JOB'] || []).map(({ id }) => ({ id })),
+                  helms: (deployableByType['HELM'] || []).map(({ id }) => ({ id })),
                 },
               })
               resetRowSelection()
@@ -146,8 +160,11 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
     })
   }
 
-  const handleRestartAllServices = () =>
-    openModal({
+  const handleRestartAllServices = () => {
+    // Group services by type in a single pass to avoid multiple filter operations
+    const restartableByType = useMemo(() => groupServicesByType(restartableServices), [restartableServices])
+
+    return openModal({
       content: (
         <ConfirmationModal
           verb="restart"
@@ -158,15 +175,9 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
               await restartAllServices({
                 environment,
                 payload: {
-                  application_ids: restartableServices
-                    .filter(({ serviceType }) => serviceType === 'APPLICATION')
-                    .map(({ id }) => id),
-                  container_ids: restartableServices
-                    .filter(({ serviceType }) => serviceType === 'CONTAINER')
-                    .map(({ id }) => id),
-                  database_ids: restartableServices
-                    .filter(({ serviceType }) => serviceType === 'DATABASE')
-                    .map(({ id }) => id),
+                  application_ids: (restartableByType['APPLICATION'] || []).map(({ id }) => id),
+                  container_ids: (restartableByType['CONTAINER'] || []).map(({ id }) => id),
+                  database_ids: (restartableByType['DATABASE'] || []).map(({ id }) => id),
                 },
               })
               resetRowSelection()
@@ -179,9 +190,13 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
         />
       ),
     })
+  }
 
-  const handleStopAllServices = () =>
-    openModal({
+  const handleStopAllServices = () => {
+    // Group services by type in a single pass to avoid multiple filter operations
+    const stoppableByType = useMemo(() => groupServicesByType(stoppableServices), [stoppableServices])
+
+    return openModal({
       content: (
         <ConfirmationModal
           verb="stop"
@@ -192,20 +207,12 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
               await stopAllServices({
                 environment,
                 payload: {
-                  application_ids: stoppableServices
-                    .filter(({ serviceType }) => serviceType === 'APPLICATION')
-                    .map(({ id }) => id),
-                  container_ids: stoppableServices
-                    .filter(({ serviceType }) => serviceType === 'CONTAINER')
-                    .map(({ id }) => id),
-                  database_ids: stoppableServices
-                    .filter(({ serviceType }) => serviceType === 'DATABASE')
-                    .map(({ id }) => id),
-                  helm_ids: stoppableServices.filter(({ serviceType }) => serviceType === 'HELM').map(({ id }) => id),
-                  job_ids: stoppableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => id),
-                  terraform_ids: stoppableServices
-                    .filter(({ serviceType }) => serviceType === 'TERRAFORM')
-                    .map(({ id }) => id),
+                  application_ids: (stoppableByType['APPLICATION'] || []).map(({ id }) => id),
+                  container_ids: (stoppableByType['CONTAINER'] || []).map(({ id }) => id),
+                  database_ids: (stoppableByType['DATABASE'] || []).map(({ id }) => id),
+                  helm_ids: (stoppableByType['HELM'] || []).map(({ id }) => id),
+                  job_ids: (stoppableByType['JOB'] || []).map(({ id }) => id),
+                  terraform_ids: (stoppableByType['TERRAFORM'] || []).map(({ id }) => id),
                 },
               })
               resetRowSelection()
@@ -218,6 +225,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
         />
       ),
     })
+  }
 
   const handleDeleteAllServices = () => {
     openServiceRemoveModal({
@@ -258,26 +266,19 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
           icon: 'box-taped',
           color: 'brand',
           callback: async () => {
+            // Group services by type in a single pass to avoid multiple filter operations
+            const uninstallableByType = groupServicesByType(uninstallableServices)
+
             try {
               await uninstallAllServices({
                 environment,
                 payload: {
-                  application_ids: uninstallableServices
-                    .filter(({ serviceType }) => serviceType === 'APPLICATION')
-                    .map(({ id }) => id),
-                  container_ids: uninstallableServices
-                    .filter(({ serviceType }) => serviceType === 'CONTAINER')
-                    .map(({ id }) => id),
-                  database_ids: uninstallableServices
-                    .filter(({ serviceType }) => serviceType === 'DATABASE')
-                    .map(({ id }) => id),
-                  helm_ids: uninstallableServices
-                    .filter(({ serviceType }) => serviceType === 'HELM')
-                    .map(({ id }) => id),
-                  job_ids: uninstallableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => id),
-                  terraform_ids: uninstallableServices
-                    .filter(({ serviceType }) => serviceType === 'TERRAFORM')
-                    .map(({ id }) => id),
+                  application_ids: (uninstallableByType['APPLICATION'] || []).map(({ id }) => id),
+                  container_ids: (uninstallableByType['CONTAINER'] || []).map(({ id }) => id),
+                  database_ids: (uninstallableByType['DATABASE'] || []).map(({ id }) => id),
+                  helm_ids: (uninstallableByType['HELM'] || []).map(({ id }) => id),
+                  job_ids: (uninstallableByType['JOB'] || []).map(({ id }) => id),
+                  terraform_ids: (uninstallableByType['TERRAFORM'] || []).map(({ id }) => id),
                 },
               })
               resetRowSelection()
@@ -312,24 +313,19 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
           icon: 'trash-can',
           color: 'red',
           callback: async () => {
+            // Group services by type in a single pass to avoid multiple filter operations
+            const deletableByType = groupServicesByType(deletableServices)
+
             try {
               await deleteAllServices({
                 environment,
                 payload: {
-                  application_ids: deletableServices
-                    .filter(({ serviceType }) => serviceType === 'APPLICATION')
-                    .map(({ id }) => id),
-                  container_ids: deletableServices
-                    .filter(({ serviceType }) => serviceType === 'CONTAINER')
-                    .map(({ id }) => id),
-                  database_ids: deletableServices
-                    .filter(({ serviceType }) => serviceType === 'DATABASE')
-                    .map(({ id }) => id),
-                  helm_ids: deletableServices.filter(({ serviceType }) => serviceType === 'HELM').map(({ id }) => id),
-                  job_ids: deletableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => id),
-                  terraform_ids: deletableServices
-                    .filter(({ serviceType }) => serviceType === 'TERRAFORM')
-                    .map(({ id }) => id),
+                  application_ids: (deletableByType['APPLICATION'] || []).map(({ id }) => id),
+                  container_ids: (deletableByType['CONTAINER'] || []).map(({ id }) => id),
+                  database_ids: (deletableByType['DATABASE'] || []).map(({ id }) => id),
+                  helm_ids: (deletableByType['HELM'] || []).map(({ id }) => id),
+                  job_ids: (deletableByType['JOB'] || []).map(({ id }) => id),
+                  terraform_ids: (deletableByType['TERRAFORM'] || []).map(({ id }) => id),
                 },
               })
               resetRowSelection()

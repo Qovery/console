@@ -58,9 +58,17 @@ export function PageSettingsValuesOverrideArgumentsFeature() {
       return
     }
 
-    const getValuesByType = (type: ArgumentTypes) => {
-      return data['arguments'].filter((a) => a.type === type).map((a) => [a.key, a.json ?? a.value])
-    }
+    // Optimize: Group arguments by type in a single pass instead of multiple filter().map() operations
+    const valuesByType = data['arguments'].reduce(
+      (acc, arg) => {
+        if (!acc[arg.type]) {
+          acc[arg.type] = []
+        }
+        acc[arg.type].push([arg.key, arg.json ?? arg.value])
+        return acc
+      },
+      {} as Record<ArgumentTypes, [string, string][]>
+    )
 
     editService({
       serviceId: applicationId,
@@ -68,9 +76,9 @@ export function PageSettingsValuesOverrideArgumentsFeature() {
         service,
         request: {
           values_override: {
-            set: getValuesByType('--set'),
-            set_string: getValuesByType('--set-string'),
-            set_json: getValuesByType('--set-json'),
+            set: valuesByType['--set'] || [],
+            set_string: valuesByType['--set-string'] || [],
+            set_json: valuesByType['--set-json'] || [],
             file: service.values_override.file,
           },
         },

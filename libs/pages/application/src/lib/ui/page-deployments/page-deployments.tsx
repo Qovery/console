@@ -83,14 +83,26 @@ export function Deployments(props: PageDeploymentsProps) {
 }
 
 export const PageDeployments = memo(Deployments, (prevProps, nextProps) => {
-  const prevDeployment = prevProps.deployments?.map((deployment) => ({
-    id: deployment.id,
-    status: deployment.status,
-  }))
-  const nextDeployment = nextProps.deployments?.map((deployment) => ({
-    id: deployment.id,
-    status: deployment.status,
-  }))
+  // Check if loading state changed
+  if (prevProps.isLoading !== nextProps.isLoading) {
+    return false
+  }
 
-  return JSON.stringify(prevDeployment) === JSON.stringify(nextDeployment)
+  const prevDeployments = prevProps.deployments
+  const nextDeployments = nextProps.deployments
+
+  // Check array reference or length
+  if (prevDeployments === nextDeployments) {
+    return true
+  }
+
+  if (!prevDeployments || !nextDeployments || prevDeployments.length !== nextDeployments.length) {
+    return false
+  }
+
+  // Compare id and status for each deployment
+  return prevDeployments.every(
+    (prevDep, index) =>
+      prevDep.id === nextDeployments[index].id && prevDep.status === nextDeployments[index].status
+  )
 })
