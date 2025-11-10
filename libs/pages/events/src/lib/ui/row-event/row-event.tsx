@@ -4,6 +4,7 @@ import {
   OrganizationEventTargetType,
   OrganizationEventType,
 } from 'qovery-typescript-axios'
+import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dark } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
@@ -62,6 +63,15 @@ export const getSourceIcon = (origin?: OrganizationEventOrigin) => {
 export function RowEvent(props: RowEventProps) {
   const { event, expanded, setExpanded, isPlaceholder, columnsWidth } = props
   const { organizationId = '' } = useParams()
+
+  // Memoize the formatted JSON to avoid re-parsing on every render when expanded
+  const formattedChange = useMemo(() => {
+    try {
+      return JSON.stringify(JSON.parse(event.change || '{}'), null, 2)
+    } catch {
+      return event.change || '{}'
+    }
+  }, [event.change])
 
   const renderLink = (targetType: OrganizationEventTargetType) => {
     const { event_type, target_name, project_id, environment_id, target_id } = event
@@ -280,7 +290,7 @@ export function RowEvent(props: RowEventProps) {
             }}
             wrapLines
           >
-            {JSON.stringify(JSON.parse(event.change || ''), null, 2)}
+            {formattedChange}
           </SyntaxHighlighter>
           <div className="absolute top-9 flex w-full justify-end">
             <CopyButton className="mr-7" content={event.change || ''} />
