@@ -1,12 +1,13 @@
 import { type AlertSeverity, type AlertTargetType } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { Button, FunnelFlowBody, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { useCreateAlertRule } from '../../../hooks/use-create-alert-rule/use-create-alert-rule'
 import { SeverityIndicator } from '../../../service/service-alerting/severity-indicator/severity-indicator'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
+import { ALERTING_CREATION_METRIC } from '../router'
 
 const { Table } = TablePrimitives
 
@@ -121,6 +122,8 @@ function convertDurationToISO8601(duration: string): string {
 
 export function SummaryStep() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
   const { organizationId = '', applicationId = '' } = useParams()
 
   const { data: service } = useService({ serviceId: applicationId })
@@ -129,7 +132,7 @@ export function SummaryStep() {
 
   const [isCreatingAlertRule, setIsCreatingAlertRule] = useState(false)
 
-  const { serviceName, setCurrentStepIndex, alerts, setAlerts, onComplete, selectedMetrics } =
+  const { serviceName, currentStepIndex, setCurrentStepIndex, alerts, setAlerts, onComplete, selectedMetrics } =
     useAlertingCreationFlowContext()
 
   useEffect(() => {
@@ -184,6 +187,12 @@ export function SummaryStep() {
     }
 
     onComplete(activeAlerts)
+  }
+
+  const handlePrevious = () => {
+    const basePath = location.pathname.replace(/\/summary$/, '')
+    const queryString = searchParams.toString() ? `?${searchParams.toString()}` : ''
+    navigate(`${basePath}${ALERTING_CREATION_METRIC(selectedMetrics[currentStepIndex - 1])}${queryString}`)
   }
 
   const activeAlertsWithIndex = alerts
@@ -249,7 +258,18 @@ export function SummaryStep() {
           </div>
         )}
 
-        <div className="flex w-full justify-end">
+        <div className="flex w-full justify-between gap-2">
+          <Button
+            type="button"
+            variant="plain"
+            color="neutral"
+            size="lg"
+            onClick={handlePrevious}
+            disabled={isCreatingAlertRule}
+            loading={isCreatingAlertRule}
+          >
+            Previous
+          </Button>
           <Button size="lg" onClick={handleConfirm} disabled={isCreatingAlertRule} loading={isCreatingAlertRule}>
             Confirm and create
           </Button>
