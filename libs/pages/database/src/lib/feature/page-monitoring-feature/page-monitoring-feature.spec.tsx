@@ -34,7 +34,7 @@ jest.mock('@qovery/domains/observability/feature', () => ({
   EnableObservabilityButtonContactUs: () => <div>Enable Button</div>,
   EnableObservabilityContent: () => <div>Enable Content</div>,
   EnableObservabilityVideo: () => <div>Enable Video</div>,
-  RdsManagedDbOverview: () => <div>RDS Overview</div>,
+  DatabaseRdsDashboard: () => <div>Database RDS Dashboard</div>,
 }))
 
 jest.mock('./placeholder-monitoring', () => ({
@@ -96,7 +96,10 @@ describe('PageMonitoringFeature', () => {
     mockUseCluster.mockReturnValue({
       data: {
         cloud_provider: 'AWS',
-        metrics_parameters: { enabled: true },
+        metrics_parameters: {
+          enabled: true,
+          configuration: { cloud_watch_export_config: { enabled: true } },
+        },
       },
       isFetched: true,
     })
@@ -115,14 +118,17 @@ describe('PageMonitoringFeature', () => {
     mockUseCluster.mockReturnValue({
       data: {
         cloud_provider: 'AWS',
-        metrics_parameters: { enabled: true },
+        metrics_parameters: {
+          enabled: true,
+          configuration: { cloud_watch_export_config: { enabled: true } },
+        },
       },
       isFetched: true,
     })
     mockUseDeploymentStatus.mockReturnValue({ data: { state: 'RUNNING' } })
 
     render(<PageMonitoringFeature />)
-    expect(screen.getByText('RDS Overview')).toBeInTheDocument()
+    expect(screen.getByText('Database RDS Dashboard')).toBeInTheDocument()
   })
 
   it('should not show monitoring for non-AWS providers', () => {
@@ -151,7 +157,10 @@ describe('PageMonitoringFeature', () => {
     mockUseCluster.mockReturnValue({
       data: {
         cloud_provider: 'AWS',
-        metrics_parameters: { enabled: true },
+        metrics_parameters: {
+          enabled: true,
+          configuration: { cloud_watch_export_config: { enabled: true } },
+        },
       },
       isFetched: true,
     })
