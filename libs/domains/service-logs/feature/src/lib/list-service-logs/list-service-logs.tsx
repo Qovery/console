@@ -130,28 +130,47 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
     }
   }, [isLiveMode, serviceEnabled, setNewLogsAvailable, setPauseLogs])
 
-  posthog.capture('service-logs', {
-    is_live_mode: isLiveMode,
-    metrics_enabled: hasMetricsEnabled,
-    filters: {
-      level: queryParams.level,
-      instance: queryParams.instance,
-      message: queryParams.message,
-      search: queryParams.search,
-      version: queryParams.version,
-      nginx: queryParams.nginx,
-      start_date: queryParams.startDate,
-      end_date: queryParams.endDate,
-      container: queryParams.container,
-    },
-    service: {
-      organization_id: environment.organization.id,
-      project_id: environment.project.id,
-      environment_id: environment.id,
-      service_id: serviceId,
-      service_name: service?.name ?? '',
-    },
-  })
+  useEffect(() => {
+    posthog.capture('service-logs', {
+      is_live_mode: isLiveMode,
+      metrics_enabled: hasMetricsEnabled,
+      filters: {
+        level: queryParams.level,
+        instance: queryParams.instance,
+        message: queryParams.message,
+        search: queryParams.search,
+        version: queryParams.version,
+        nginx: queryParams.nginx,
+        start_date: queryParams.startDate,
+        end_date: queryParams.endDate,
+        container: queryParams.container,
+      },
+      service: {
+        organization_id: environment.organization.id,
+        project_id: environment.project.id,
+        environment_id: environment.id,
+        service_id: serviceId,
+        service_name: service?.name ?? '',
+      },
+    })
+  }, [
+    environment.id,
+    environment.organization.id,
+    environment.project.id,
+    hasMetricsEnabled,
+    isLiveMode,
+    queryParams.container,
+    queryParams.endDate,
+    queryParams.instance,
+    queryParams.level,
+    queryParams.message,
+    queryParams.nginx,
+    queryParams.search,
+    queryParams.startDate,
+    queryParams.version,
+    service?.name,
+    serviceId,
+  ])
 
   const logs = isLiveMode ? liveLogs : historyLogs
 
