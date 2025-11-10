@@ -3,10 +3,10 @@ import { useQueryParam } from 'use-query-params'
 import { render, screen } from '@qovery/shared/util-tests'
 import { SelectTimeRange } from './select-time-range'
 
-const mockUseServiceOverviewContext = jest.fn()
+const mockUseDashboardContext = jest.fn()
 
-jest.mock('../util-filter/service-dashboard-context', () => ({
-  useServiceOverviewContext: () => mockuseDashboardContext(),
+jest.mock('../../../util-filter/dashboard-context', () => ({
+  useDashboardContext: () => mockUseDashboardContext(),
 }))
 
 jest.mock('use-query-params', () => ({
@@ -18,7 +18,7 @@ jest.mock('date-fns', () => ({
   subDays: jest.fn((date, days) => new Date(date.getTime() - days * 24 * 60 * 60 * 1000)),
 }))
 
-jest.mock('../util-filter/time-range', () => ({
+jest.mock('../../../util-filter/time-range', () => ({
   timeRangeOptions: [
     { value: '5m', label: 'Last 5 minutes' },
     { value: '15m', label: 'Last 15 minutes' },
@@ -62,7 +62,7 @@ describe('SelectTimeRange', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     ;(useQueryParam as jest.Mock).mockReturnValue(['1h', jest.fn()])
-    mockUseServiceOverviewContext.mockReturnValue(defaultContext)
+    mockUseDashboardContext.mockReturnValue(defaultContext)
   })
 
   it('should render successfully', () => {

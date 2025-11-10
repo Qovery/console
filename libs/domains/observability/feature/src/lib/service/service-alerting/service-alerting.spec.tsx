@@ -11,11 +11,11 @@ jest.mock('react-router-dom', () => ({
   useParams: () => mockUseParams(),
 }))
 
-jest.mock('../hooks/use-alert-rules/use-alert-rules', () => ({
+jest.mock('../../hooks/use-alert-rules/use-alert-rules', () => ({
   useAlertRules: (params: unknown) => mockUseAlertRules(params),
 }))
 
-jest.mock('../hooks/use-environment/use-environment', () => ({
+jest.mock('../../hooks/use-environment/use-environment', () => ({
   useEnvironment: (params: unknown) => mockUseEnvironment(params),
 }))
 

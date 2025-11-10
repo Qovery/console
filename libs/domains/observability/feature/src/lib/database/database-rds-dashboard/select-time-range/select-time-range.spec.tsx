@@ -18,7 +18,7 @@ jest.mock('date-fns', () => ({
   subDays: jest.fn((date, days) => new Date(date.getTime() - days * 24 * 60 * 60 * 1000)),
 }))
 
-jest.mock('../../service-overview/util-filter/time-range', () => ({
+jest.mock('../../../util-filter/time-range', () => ({
   timeRangeOptions: [
     { value: '5m', label: 'Last 5 minutes' },
     { value: '15m', label: 'Last 15 minutes' },

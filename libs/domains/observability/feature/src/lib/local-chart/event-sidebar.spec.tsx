@@ -2,7 +2,7 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { EventSidebar } from './event-sidebar'
 import type { ReferenceLineEvent } from './local-chart'
 
-jest.mock('../../../util-filter/dashboard-context', () => ({
+jest.mock('../util-filter/dashboard-context', () => ({
   useDashboardContext: () => ({
     useLocalTime: false,
     hoveredEventKey: null,
@@ -10,7 +10,7 @@ jest.mock('../../../util-filter/dashboard-context', () => ({
   }),
 }))
 
-jest.mock('../../../util-chart/format-timestamp', () => ({
+jest.mock('../util-chart/format-timestamp', () => ({
   formatTimestamp: (timestamp: number) => ({
     fullTimeString: new Date(timestamp).toLocaleString(),
     timeString: new Date(timestamp).toLocaleTimeString(),

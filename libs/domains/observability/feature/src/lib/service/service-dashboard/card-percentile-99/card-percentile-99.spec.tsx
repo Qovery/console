@@ -3,7 +3,7 @@ import * as useInstantMetricsImport from '../../../hooks/use-instant-metrics/use
 import { DashboardProvider } from '../../../util-filter/dashboard-context'
 import { CardPercentile99 } from './card-percentile-99'
 
-jest.mock('../../hooks/use-instant-metrics/use-instant-metrics')
+jest.mock('../../../hooks/use-instant-metrics/use-instant-metrics')
 const useInstantMetrics = useInstantMetricsImport.useInstantMetrics as jest.MockedFunction<
   typeof useInstantMetricsImport.useInstantMetrics
 >

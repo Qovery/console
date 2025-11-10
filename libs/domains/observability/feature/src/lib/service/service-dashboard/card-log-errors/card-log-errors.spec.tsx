@@ -11,8 +11,8 @@ jest.mock('react-router-dom', () => ({
   useLocation: () => ({ pathname: '/test' }),
 }))
 
-jest.mock('../../hooks/use-instant-metrics/use-instant-metrics')
-jest.mock('../../hooks/use-loki-metrics/use-loki-metrics')
+jest.mock('../../../hooks/use-instant-metrics/use-instant-metrics')
+jest.mock('../../../hooks/use-loki-metrics/use-loki-metrics')
 
 const useInstantMetrics = useInstantMetricsImport.useInstantMetrics as jest.MockedFunction<
   typeof useInstantMetricsImport.useInstantMetrics

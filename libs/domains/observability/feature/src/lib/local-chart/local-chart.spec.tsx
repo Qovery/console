@@ -2,7 +2,7 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ChartContent, type ReferenceLineEvent } from './local-chart'
 import type { UnitType } from './tooltip'
 
-jest.mock('../../../util-filter/dashboard-context', () => ({
+jest.mock('../util-filter/dashboard-context', () => ({
   useDashboardContext: () => ({
     startTimestamp: '1640994000',
     endTimestamp: '1640994600',

@@ -7,7 +7,7 @@ jest.mock('../../../util-filter/dashboard-context', () => ({
   useDashboardContext: () => mockUseDashboardContext(),
 }))
 
-jest.mock('../../select-time-range/select-time-range', () => ({
+jest.mock('../select-time-range/select-time-range', () => ({
   SelectTimeRange: () => <div data-testid="select-time-range">SelectTimeRange</div>,
 }))
 

@@ -1,10 +1,11 @@
+import type { ReactNode } from 'react'
 import { act, renderHook } from '@qovery/shared/util-tests'
 
-const mockUseServiceOverviewContext = jest.fn()
+const mockUseDashboardContext = jest.fn()
 
-jest.mock('./util-filter/service-dashboard-context', () => ({
-  useServiceOverviewContext: () => mockuseDashboardContext(),
-  DashboardProvider: ({ children }: { children: React.ReactNode }) => children,
+jest.mock('../../util-filter/dashboard-context', () => ({
+  useDashboardContext: () => mockUseDashboardContext(),
+  DashboardProvider: ({ children }: { children: ReactNode }) => children,
 }))
 
 jest.mock('./select-time-range/select-time-range', () => ({
@@ -46,11 +47,11 @@ describe('Zoom and DatePicker Integration', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUseServiceOverviewContext.mockReturnValue(defaultMockContext)
+    mockUseDashboardContext.mockReturnValue(defaultMockContext)
   })
 
   it('should synchronize hasCalendarValue with zoom and time range states', () => {
-    const { result } = renderHook(() => mockuseDashboardContext())
+    const { result } = renderHook(() => mockUseDashboardContext())
 
     // Simulate user selecting custom dates (like from datepicker)
     act(() => {
@@ -74,7 +75,7 @@ describe('Zoom and DatePicker Integration', () => {
 
     let currentZoomState = false
 
-    mockUseServiceOverviewContext.mockReturnValue({
+    mockUseDashboardContext.mockReturnValue({
       ...defaultMockContext,
       registerZoomReset: jest.fn(() => mockZoomReset),
       resetChartZoom: mockResetChartZoom,
@@ -82,7 +83,7 @@ describe('Zoom and DatePicker Integration', () => {
       setIsAnyChartZoomed: mockSetIsAnyChartZoomed.mockImplementation((value) => {
         currentZoomState = value
         // Update the mock return value
-        mockUseServiceOverviewContext.mockReturnValue({
+        mockUseDashboardContext.mockReturnValue({
           ...defaultMockContext,
           registerZoomReset: jest.fn(() => mockZoomReset),
           resetChartZoom: mockResetChartZoom,
@@ -92,7 +93,7 @@ describe('Zoom and DatePicker Integration', () => {
       }),
     })
 
-    const { result } = renderHook(() => mockuseDashboardContext())
+    const { result } = renderHook(() => mockUseDashboardContext())
 
     // Register a zoom reset function
     act(() => {
@@ -127,7 +128,7 @@ describe('Zoom and DatePicker Integration', () => {
   })
 
   it('should handle zoom time range changes from chart interactions', () => {
-    const { result } = renderHook(() => mockuseDashboardContext())
+    const { result } = renderHook(() => mockUseDashboardContext())
 
     // Start with preset time range
     expect(result.current.timeRange).toBe('1h')
@@ -152,7 +153,7 @@ describe('Zoom and DatePicker Integration', () => {
 
     let currentTimeRange = '1h'
 
-    mockUseServiceOverviewContext.mockReturnValue({
+    mockUseDashboardContext.mockReturnValue({
       ...defaultMockContext,
       registerZoomReset: jest.fn(() => mockZoomReset1),
       resetChartZoom: mockResetChartZoom,
@@ -160,7 +161,7 @@ describe('Zoom and DatePicker Integration', () => {
       handleTimeRangeChange: mockHandleTimeRangeChange.mockImplementation((range) => {
         currentTimeRange = range
         // Update the mock return value
-        mockUseServiceOverviewContext.mockReturnValue({
+        mockUseDashboardContext.mockReturnValue({
           ...defaultMockContext,
           registerZoomReset: jest.fn(() => mockZoomReset1),
           resetChartZoom: mockResetChartZoom,
@@ -170,7 +171,7 @@ describe('Zoom and DatePicker Integration', () => {
       }),
     })
 
-    const { result } = renderHook(() => mockuseDashboardContext())
+    const { result } = renderHook(() => mockUseDashboardContext())
 
     // Register multiple zoom functions (simulating multiple charts)
     act(() => {
@@ -216,13 +217,13 @@ describe('Zoom and DatePicker Integration', () => {
     const mockZoomReset = jest.fn()
     const mockResetChartZoom = jest.fn()
 
-    mockUseServiceOverviewContext.mockReturnValue({
+    mockUseDashboardContext.mockReturnValue({
       ...defaultMockContext,
       registerZoomReset: jest.fn(() => mockZoomReset),
       resetChartZoom: mockResetChartZoom,
     })
 
-    const { result } = renderHook(() => mockuseDashboardContext())
+    const { result } = renderHook(() => mockUseDashboardContext())
 
     // Test that we can register and the function gets called
     act(() => {

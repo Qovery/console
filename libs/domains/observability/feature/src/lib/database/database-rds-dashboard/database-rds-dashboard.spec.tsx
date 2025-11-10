@@ -1,10 +1,11 @@
+import type { ReactNode } from 'react'
 import { renderHook } from '@qovery/shared/util-tests'
 
 const mockUseDashboardContext = jest.fn()
 
 jest.mock('../../util-filter/dashboard-context', () => ({
   useDashboardContext: () => mockUseDashboardContext(),
-  DashboardProvider: ({ children }: { children: React.ReactNode }) => children,
+  DashboardProvider: ({ children }: { children: ReactNode }) => children,
 }))
 
 jest.mock('./select-time-range/select-time-range', () => ({
@@ -15,7 +16,7 @@ jest.mock('@qovery/domains/services/feature', () => ({
   useService: jest.fn(() => ({ data: { serviceType: 'DATABASE' } })),
 }))
 
-jest.mock('../hooks/use-environment/use-environment', () => ({
+jest.mock('../../hooks/use-environment/use-environment', () => ({
   useEnvironment: jest.fn(() => ({ data: { cluster_id: 'cluster-1' } })),
 }))
 

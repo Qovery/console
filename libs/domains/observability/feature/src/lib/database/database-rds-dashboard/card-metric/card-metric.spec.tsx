@@ -1,17 +1,22 @@
+import type { ReactNode } from 'react'
 import { render, screen } from '@qovery/shared/util-tests'
 import { CardMetric } from './card-metric'
 
 jest.mock('@qovery/shared/ui', () => ({
-  Badge: ({ children }: { children: React.ReactNode }) => <span data-testid="badge">{children}</span>,
-  Button: ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
+  Badge: ({ children }: { children: ReactNode }) => <span data-testid="badge">{children}</span>,
+  Button: ({ children, onClick }: { children: ReactNode; onClick?: () => void }) => (
     <button onClick={onClick}>{children}</button>
   ),
-  Heading: ({ children }: { children: React.ReactNode }) => <h3>{children}</h3>,
+  Heading: ({ children }: { children: ReactNode }) => <h3>{children}</h3>,
   Icon: ({ iconName }: { iconName: string }) => <i data-testid={`icon-${iconName}`}>icon</i>,
-  Section: ({ children }: { children: React.ReactNode }) => <section>{children}</section>,
-  Skeleton: ({ children, show }: { children: React.ReactNode; show?: boolean }) =>
+  Section: ({ children }: { children: ReactNode }) => <section>{children}</section>,
+  Skeleton: ({ children, show }: { children: ReactNode; show?: boolean }) =>
     show ? <div>Loading...</div> : <div>{children}</div>,
-  Tooltip: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Tooltip: ({ children, content }: { children: ReactNode; content?: ReactNode }) => (
+    <div data-testid="tooltip" data-content={typeof content === 'string' ? content : ''}>
+      {children}
+    </div>
+  ),
 }))
 
 jest.mock('@qovery/shared/util-js', () => ({
@@ -31,13 +36,12 @@ describe('CardMetric', () => {
 
   it('should render value with unit', () => {
     render(<CardMetric title="CPU Usage" value={85} unit="%" />)
-    expect(screen.getByText('85')).toBeInTheDocument()
-    expect(screen.getByText('%')).toBeInTheDocument()
+    expect(screen.getByText(/85/)).toHaveTextContent('85 %')
   })
 
   it('should render description', () => {
     render(<CardMetric title="Test" description="Test description" />)
-    expect(screen.getByText('Test description')).toBeInTheDocument()
+    expect(screen.getAllByTestId('tooltip')[0]).toHaveAttribute('data-content', 'Test description')
   })
 
   it('should render GREEN status badge', () => {
