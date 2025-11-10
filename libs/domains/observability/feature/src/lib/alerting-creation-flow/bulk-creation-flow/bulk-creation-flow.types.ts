@@ -3,14 +3,14 @@ import type { AlertSeverity } from 'qovery-typescript-axios'
 export interface AlertConfiguration {
   id: string
   metricCategory: string
-  metricType: string
+  metricType: 'avg' | 'max' | 'min' | 'count' | 'throughput' | 'latency' | 'error_rate'
   condition: {
-    operator: string
+    operator: 'above' | 'below'
     threshold: string
     duration: string
   }
   autoResolve: {
-    operator: string
+    operator: 'above' | 'below'
     threshold: string
     duration: string
   }

@@ -95,8 +95,8 @@ export function ServiceAlerting() {
     openModalConfirmation({
       title: 'Confirm delete alert rule',
       description: 'To confirm the deletion of your alert rule, please type the name:',
-      confirmationMethod: 'name',
-      confirmationAction: 'delete',
+      confirmationMethod: 'action',
+      confirmationAction: 'Delete',
       name: alertRule.name,
       action: () => deleteAlertRule({ alertRuleId: alertRule.id }),
     })

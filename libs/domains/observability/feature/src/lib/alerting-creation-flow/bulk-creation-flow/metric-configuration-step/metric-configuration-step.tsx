@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { AlertSeverity } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { v4 as uuid } from 'uuid'
@@ -18,6 +18,7 @@ import {
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration } from '../bulk-creation-flow.types'
+import { ALERTING_CREATION_METRIC, ALERTING_CREATION_SUMMARY } from '../router'
 
 const METRIC_TYPE_OPTIONS: Record<string, Value[]> = {
   cpu: [
@@ -82,9 +83,15 @@ export function MetricConfigurationStep({
   const basePath = basePathMatch ? basePathMatch[1] : ''
   const queryString = searchParams.toString() ? `?${searchParams.toString()}` : ''
 
-  const methods = useForm<AlertConfiguration>({
-    mode: 'onChange',
-    defaultValues: {
+  const defaultValues = useMemo<AlertConfiguration>(() => {
+    if (initialData) {
+      return {
+        ...initialData,
+        notificationChannels: initialData.notificationChannels ?? [],
+      }
+    }
+
+    return {
       id: uuid(),
       metricCategory,
       metricType: 'avg',
@@ -98,10 +105,15 @@ export function MetricConfigurationStep({
         threshold: '80',
         duration: '5m',
       },
-      name: '',
+      name: metricCategory ? `${metricCategory.replace(/_/g, ' ').toUpperCase()} alert` : '',
       severity: 'MEDIUM',
       notificationChannels: [],
-    },
+    }
+  }, [initialData, metricCategory])
+
+  const methods = useForm<AlertConfiguration>({
+    mode: 'onChange',
+    defaultValues: defaultValues as AlertConfiguration,
   })
 
   useEffect(() => {
@@ -113,26 +125,8 @@ export function MetricConfigurationStep({
   }, [isEdit, index, selectedMetrics.length, setCurrentStepIndex])
 
   useEffect(() => {
-    const formData = initialData || {
-      id: uuid(),
-      metricCategory,
-      metricType: 'avg',
-      condition: {
-        operator: 'above',
-        threshold: '80',
-        duration: '5m',
-      },
-      autoResolve: {
-        operator: 'below',
-        threshold: '80',
-        duration: '5m',
-      },
-      name: '',
-      severity: 'MEDIUM',
-      notificationChannels: [],
-    }
-    methods.reset(formData)
-  }, [index, metricCategory, initialData, methods])
+    methods.reset(defaultValues)
+  }, [methods, defaultValues])
 
   const handleNext = (data: AlertConfiguration) => {
     const newAlerts = [...alerts]
@@ -144,9 +138,9 @@ export function MetricConfigurationStep({
     } else {
       const isLastMetric = index === selectedMetrics.length - 1
       if (isLastMetric) {
-        navigate(`${basePath}/summary${queryString}`)
+        navigate(`${basePath}${ALERTING_CREATION_SUMMARY}${queryString}`)
       } else {
-        navigate(`${basePath}/metric/${selectedMetrics[index + 1]}${queryString}`)
+        navigate(`${basePath}${ALERTING_CREATION_METRIC(selectedMetrics[index + 1])}${queryString}`)
       }
     }
   }
@@ -156,9 +150,9 @@ export function MetricConfigurationStep({
     newAlerts[index] = {
       id: uuid(),
       metricCategory: selectedMetrics[index],
-      metricType: '',
-      condition: { operator: '', threshold: '', duration: '' },
-      autoResolve: { operator: '', threshold: '', duration: '' },
+      metricType: 'avg',
+      condition: { operator: 'above', threshold: '', duration: '' },
+      autoResolve: { operator: 'above', threshold: '', duration: '' },
       name: '',
       severity: 'MEDIUM',
       notificationChannels: [],
@@ -168,10 +162,18 @@ export function MetricConfigurationStep({
 
     const isLastMetric = index === selectedMetrics.length - 1
     if (isLastMetric) {
-      navigate(`${basePath}/summary${queryString}`)
+      navigate(`${basePath}${ALERTING_CREATION_SUMMARY}${queryString}`)
     } else {
-      navigate(`${basePath}/metric/${selectedMetrics[index + 1]}${queryString}`)
+      navigate(`${basePath}${ALERTING_CREATION_METRIC(selectedMetrics[index + 1])}${queryString}`)
     }
+  }
+
+  const handlePrevious = () => {
+    if (isEdit || index <= 0) {
+      return
+    }
+
+    navigate(`${basePath}${ALERTING_CREATION_METRIC(selectedMetrics[index - 1])}${queryString}`)
   }
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -301,16 +303,21 @@ export function MetricConfigurationStep({
                         },
                       }}
                       render={({ field, fieldState: { error } }) => (
-                        <InputTextSmall
-                          label="Threshold"
-                          name="threshold"
-                          type="number"
-                          placeholder="Threshold"
-                          value={field.value}
-                          onChange={(e) => field.onChange(e.target.value)}
-                          className={clsx('w-40', error ? 'border-red-500' : '')}
-                          inputClassName="bg-transparent"
-                        />
+                        <div className="relative w-40">
+                          <InputTextSmall
+                            label="Threshold"
+                            name="threshold"
+                            type="number"
+                            placeholder="00"
+                            value={field.value}
+                            onChange={(e) => field.onChange(e.target.value)}
+                            className={clsx('w-full', error ? 'border-red-500' : '')}
+                            inputClassName="bg-transparent pr-6"
+                          />
+                          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-350">
+                            %
+                          </span>
+                        </div>
                       )}
                     />
                   </div>
@@ -423,16 +430,23 @@ export function MetricConfigurationStep({
             </div>
           </Section>
 
-          <div className="flex justify-between">
+          <div className="sticky bottom-0 left-0 right-0 z-10 flex items-center justify-between gap-4 border-t border-neutral-250 bg-white py-4">
             {!isEdit && (
-              <Button type="button" variant="plain" color="neutral" size="lg" onClick={handleSkip}>
-                Skip this alert
-              </Button>
+              <div className="flex items-center gap-2">
+                {index > 0 && (
+                  <Button type="button" variant="plain" color="neutral" size="lg" onClick={handlePrevious}>
+                    Previous
+                  </Button>
+                )}
+                <Button type="button" variant="plain" color="neutral" size="lg" onClick={handleSkip}>
+                  Skip this alert
+                </Button>
+              </div>
             )}
             <Button
               size="lg"
               onClick={onSubmit}
-              disabled={!methods.formState.isDirty}
+              disabled={!methods.formState.isValid}
               className={isEdit ? 'ml-auto' : ''}
               loading={isEdit && isLoadingEditAlertRule}
             >
