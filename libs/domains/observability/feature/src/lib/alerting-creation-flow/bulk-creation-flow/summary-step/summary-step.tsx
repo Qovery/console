@@ -5,7 +5,7 @@ import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { Button, FunnelFlowBody, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { useCreateAlertRule } from '../../../hooks/use-create-alert-rule/use-create-alert-rule'
-import SeverityIndicator from '../../../service-alerting/severity-indicator/severity-indicator'
+import { SeverityIndicator } from '../../../service/service-alerting/severity-indicator/severity-indicator'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 
 const { Table } = TablePrimitives
