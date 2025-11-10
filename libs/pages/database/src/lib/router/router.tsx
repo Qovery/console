@@ -1,6 +1,7 @@
 import {
   DATABASE_DEPLOYMENTS_URL,
   DATABASE_GENERAL_URL,
+  DATABASE_MONITORING_URL,
   DATABASE_SETTINGS_DANGER_ZONE_URL,
   DATABASE_SETTINGS_GENERAL_URL,
   DATABASE_SETTINGS_RESOURCES_URL,
@@ -9,6 +10,7 @@ import {
 } from '@qovery/shared/routes'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
+import PageMonitoringFeature from '../feature/page-monitoring-feature/page-monitoring-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import PageSettingsFeature from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
@@ -22,6 +24,10 @@ export const ROUTER_DATABASE: Route[] = [
   {
     path: DATABASE_DEPLOYMENTS_URL,
     component: <PageDeploymentsFeature />,
+  },
+  {
+    path: DATABASE_MONITORING_URL,
+    component: <PageMonitoringFeature />,
   },
   {
     path: `${DATABASE_SETTINGS_URL}/*`,

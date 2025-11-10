@@ -1,26 +1,26 @@
-import posthog from 'posthog-js'
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
+  DatabaseRdsDashboard,
   EnableObservabilityButtonContactUs,
   EnableObservabilityContent,
   EnableObservabilityVideo,
-  ServiceDashboard,
 } from '@qovery/domains/observability/feature'
+import { type Database } from '@qovery/domains/services/data-access'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { PlaceholderMonitoring } from './placeholder-monitoring'
 
-export function PageMonitoringDashboardFeature() {
-  const { applicationId = '', environmentId = '' } = useParams()
+export function PageMonitoringFeature() {
+  const { databaseId = '', environmentId = '' } = useParams()
 
   const { data: environment } = useEnvironment({ environmentId })
-  const { data: serviceStatus } = useDeploymentStatus({ environmentId, serviceId: applicationId })
-  const { data: service, isFetched: isServiceFetched } = useService({ environmentId, serviceId: applicationId })
+  const { data: serviceStatus } = useDeploymentStatus({ environmentId, serviceId: databaseId })
+  const { data: service, isFetched: isServiceFetched } = useService({ environmentId, serviceId: databaseId })
   const { data: cluster, isFetched: isClusterFetched } = useCluster({
     organizationId: environment?.organization.id ?? '',
     clusterId: environment?.cluster_id ?? '',
@@ -30,16 +30,17 @@ export function PageMonitoringDashboardFeature() {
 
   const hasMetrics = useMemo(
     () =>
-      ((cluster?.cloud_provider === 'AWS' ||
-        cluster?.cloud_provider === 'SCW' ||
-        cluster?.cloud_provider === 'GCP' ||
-        cluster?.cloud_provider === 'AZURE') &&
-        cluster?.metrics_parameters?.enabled &&
-        match(service?.serviceType)
-          .with('APPLICATION', 'CONTAINER', () => true)
-          .otherwise(() => false)) ||
-      false,
-    [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]
+      cluster?.cloud_provider === 'AWS' &&
+      cluster?.metrics_parameters?.enabled &&
+      cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled &&
+      service?.serviceType === 'DATABASE' &&
+      (service as Database)?.mode === DatabaseModeEnum.MANAGED,
+    [
+      cluster?.cloud_provider,
+      cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled,
+      cluster?.metrics_parameters?.enabled,
+      service,
+    ]
   )
 
   const noMetricsAvailable = useMemo(
@@ -49,22 +50,11 @@ export function PageMonitoringDashboardFeature() {
 
   if (!isClusterFetched || !isServiceFetched) return null
 
-  posthog.capture('service-monitoring', {
-    metrics_enabled: hasMetrics,
-    service: {
-      organization_id: environment?.organization.id ?? '',
-      project_id: environment?.project.id ?? '',
-      environment_id: environmentId,
-      service_id: applicationId,
-      service_name: service?.name ?? '',
-    },
-  })
-
   if (!hasMetrics)
     return (
       <div className="relative">
         <Section className="relative h-full w-full gap-4 border-t border-neutral-250 p-8 pt-10">
-          <Heading weight="medium">Service health check</Heading>
+          <Heading weight="medium">Database health check</Heading>
           <PlaceholderMonitoring />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-white"></div>
         </Section>
@@ -88,12 +78,12 @@ export function PageMonitoringDashboardFeature() {
       <div className="flex flex-col items-center gap-1 rounded border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
         <Icon className="text-md text-neutral-300" iconStyle="regular" iconName="circle-question" />
         <span className="font-medium">Monitoring is not available</span>
-        <span>Deploy this service to view monitoring data</span>
+        <span>Deploy this database to view monitoring data</span>
       </div>
     </div>
   ) : (
-    <ServiceDashboard />
+    <DatabaseRdsDashboard />
   )
 }
 
-export default PageMonitoringDashboardFeature
+export default PageMonitoringFeature

@@ -1,5 +1,5 @@
 import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useContext } from 'react'
+import { type PropsWithChildren, useContext, useMemo } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -18,10 +18,12 @@ import {
   CLUSTER_URL,
   DATABASE_DEPLOYMENTS_URL,
   DATABASE_GENERAL_URL,
+  DATABASE_MONITORING_URL,
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
 } from '@qovery/shared/routes'
 import {
+  Badge,
   Button,
   ErrorBoundary,
   Header,
@@ -46,6 +48,15 @@ export function Container({ service, environment, children }: PropsWithChildren<
   const { closeModal, openModal } = useModal()
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id || '' })
+
+  const hasMetrics = useMemo(
+    () =>
+      cluster?.cloud_provider === 'AWS' &&
+      cluster?.metrics_parameters?.enabled && // TODO check cloudwatch exporter is enabled
+      service?.serviceType === 'DATABASE' &&
+      (service as Database)?.mode === DatabaseModeEnum.MANAGED,
+    [cluster?.cloud_provider, cluster?.metrics_parameters?.enabled, service]
+  )
 
   const headerActions = (
     <div className="flex flex-row items-center gap-4">
@@ -115,6 +126,30 @@ export function Container({ service, environment, children }: PropsWithChildren<
         DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
       link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
     },
+    ...(hasMetrics
+      ? [
+          {
+            name: (
+              <span className="flex items-center gap-2 text-sm font-medium">
+                <Icon iconName="chart-line" iconStyle="regular" /> Monitoring
+                <Badge
+                  radius="full"
+                  variant="surface"
+                  color="purple"
+                  size="sm"
+                  className="h-4 border-transparent bg-purple-200 px-1 text-[8px] font-bold text-purple-600"
+                >
+                  NEW
+                </Badge>
+              </span>
+            ),
+            active:
+              location.pathname ===
+              DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_MONITORING_URL,
+            link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_MONITORING_URL,
+          },
+        ]
+      : []),
     {
       icon: <Icon iconName="gear" iconStyle="regular" />,
       name: 'Settings',
