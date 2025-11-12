@@ -2,28 +2,26 @@ import { useInstantMetrics } from '../../../hooks/use-instant-metrics/use-instan
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 import { CardMetric } from '../card-metric/card-metric'
 
-interface CardAvgDbConnectionsProps {
+interface CardSwapUsageProps {
   clusterId: string
   dbInstance: string
 }
 
-const queryAvgDbConnections = (timeRange: string, dbInstance: string) => `
-  avg_over_time(
-    aws_rds_database_connections_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}]
-  )
+const queryMaxSwapUsage = (timeRange: string, dbInstance: string) => `
+  max_over_time(aws_rds_swap_usage_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}])
 `
 
-export function CardAvgDbConnections({ clusterId, dbInstance }: CardAvgDbConnectionsProps) {
+export function CardSwapUsage({ clusterId, dbInstance }: CardSwapUsageProps) {
   const { startTimestamp, endTimestamp, timeRange } = useDashboardContext()
 
   const { data: metrics, isLoading } = useInstantMetrics({
     clusterId,
-    query: queryAvgDbConnections(timeRange, dbInstance),
+    query: queryMaxSwapUsage(timeRange, dbInstance),
     startTimestamp,
     endTimestamp,
     timeRange,
     boardShortName: 'rds_overview',
-    metricShortName: 'avg_db_connections',
+    metricShortName: 'max_swap_usage',
   })
 
   const series = metrics?.data?.result?.[0]?.value as [number, string] | undefined
@@ -31,30 +29,34 @@ export function CardAvgDbConnections({ clusterId, dbInstance }: CardAvgDbConnect
   const numValue = lastValueStr !== undefined ? parseFloat(lastValueStr) : undefined
   const isValid = Number.isFinite(numValue as number)
 
-  const formattedValue = isValid ? Math.round(numValue as number).toLocaleString() : '--'
+  const kbValue = isValid ? (numValue as number) / 1024 : undefined
+  const formattedValue = kbValue !== undefined ? kbValue.toFixed(0) : '--'
 
   let status: 'GREEN' | 'YELLOW' | 'RED' | undefined
   if (isValid) {
-    if ((numValue as number) < 80) {
+    if ((kbValue as number) < 65536) {
+      // < 64 MiB
       status = 'GREEN'
-    } else if ((numValue as number) < 150) {
+    } else if ((kbValue as number) < 524288) {
+      // 64–512 MiB
       status = 'YELLOW'
     } else {
-      status = 'RED'
+      status = 'RED' // > 512 MiB
     }
   }
 
   return (
     <CardMetric
-      title="Database Connections"
+      title="Swap Usage"
       value={formattedValue}
-      valueDescription="avg active connections"
-      description="Average number of active database connections over the selected time range."
+      unit="KiB"
+      valueDescription="Max Swap Usage"
+      description="Maximum swap usage on the database instance's disk."
       status={status}
-      statusDescription="Higher averages can indicate rising load or connection saturation."
+      statusDescription="High swap usage typically means the instance has exhausted most of its available memory and has started moving data from RAM to disk."
       isLoading={isLoading}
     />
   )
 }
 
-export default CardAvgDbConnections
+export default CardSwapUsage

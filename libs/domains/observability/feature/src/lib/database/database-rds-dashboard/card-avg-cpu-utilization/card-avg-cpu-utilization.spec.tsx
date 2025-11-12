@@ -2,15 +2,15 @@ import { render } from '@qovery/shared/util-tests'
 import { CardAvgCpuUtilization } from './card-avg-cpu-utilization'
 
 const mockUseDashboardContext = jest.fn()
-const mockUseMetrics = jest.fn()
+const mockUseInstantMetrics = jest.fn()
 const mockCardMetric = jest.fn(() => <div data-testid="card-metric" />)
 
 jest.mock('../../../util-filter/dashboard-context', () => ({
   useDashboardContext: () => mockUseDashboardContext(),
 }))
 
-jest.mock('../../../hooks/use-metrics/use-metrics', () => ({
-  useMetrics: (params: unknown) => mockUseMetrics(params),
+jest.mock('../../../hooks/use-instant-metrics/use-instant-metrics', () => ({
+  useInstantMetrics: (params: unknown) => mockUseInstantMetrics(params),
 }))
 
 jest.mock('../card-metric/card-metric', () => ({
@@ -27,7 +27,7 @@ describe('CardAvgCpuUtilization', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockUseDashboardContext.mockReturnValue(defaultContext)
-    mockUseMetrics.mockReturnValue({
+    mockUseInstantMetrics.mockReturnValue({
       data: undefined,
       isLoading: false,
     })
@@ -52,15 +52,12 @@ describe('CardAvgCpuUtilization', () => {
   })
 
   it('should format value and set GREEN status when average CPU is below threshold', () => {
-    mockUseMetrics.mockReturnValue({
+    mockUseInstantMetrics.mockReturnValue({
       data: {
         data: {
           result: [
             {
-              values: [
-                [1, '60'],
-                [2, '68.42'],
-              ],
+              value: [1, '68.42'],
             },
           ],
         },
@@ -79,15 +76,12 @@ describe('CardAvgCpuUtilization', () => {
   })
 
   it('should set RED status when CPU utilization is high', () => {
-    mockUseMetrics.mockReturnValue({
+    mockUseInstantMetrics.mockReturnValue({
       data: {
         data: {
           result: [
             {
-              values: [
-                [1, '82'],
-                [2, '91.5'],
-              ],
+              value: [1, '91.5'],
             },
           ],
         },

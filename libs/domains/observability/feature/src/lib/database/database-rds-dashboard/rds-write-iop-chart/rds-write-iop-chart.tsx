@@ -1,15 +1,28 @@
 import { useMemo } from 'react'
 import { Line } from 'recharts'
 import { Chart } from '@qovery/shared/ui'
+import { useInstantMetrics } from '../../../hooks/use-instant-metrics/use-instant-metrics'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
-import LocalChart from '../../../local-chart/local-chart'
+import { LocalChart } from '../../../local-chart/local-chart'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
-const queryFreeableMemory = (dbInstance: string) => `
-  max by (dimension_DBInstanceIdentifier) (aws_rds_freeable_memory_average{dimension_DBInstanceIdentifier="${dbInstance}"})
+const queryWriteIops = (dbInstance: string) => `
+  max by (dimension_DBInstanceIdentifier) (
+    aws_rds_write_iops_average{
+      dimension_DBInstanceIdentifier=~"${dbInstance}"
+    }
+  )
 `
 
-export function RdsRamChart({
+const queryAverageWriteIops = (timeRange: string, dbInstance: string) => `
+  avg_over_time (
+    aws_rds_write_iops_average{
+      dimension_DBInstanceIdentifier=~"${dbInstance}"
+    }[${timeRange}]
+)
+`
+
+export function RdsWriteIopChart({
   serviceId,
   clusterId,
   dbInstance,
@@ -20,15 +33,27 @@ export function RdsRamChart({
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
 
-  const { data: metrics, isLoading } = useMetrics({
+  const { data: metrics, isLoading: isLoadingMetric } = useMetrics({
     clusterId,
-    query: queryFreeableMemory(dbInstance),
+    query: queryWriteIops(dbInstance),
     startTimestamp,
     endTimestamp,
     timeRange,
     boardShortName: 'rds_overview',
-    metricShortName: 'ram_chart',
+    metricShortName: 'write_iops_chart',
   })
+
+  const { data: metricsAvg, isLoading: isLoadingAvg } = useInstantMetrics({
+    clusterId,
+    query: queryAverageWriteIops(timeRange, dbInstance),
+    startTimestamp,
+    endTimestamp,
+    timeRange,
+    boardShortName: 'rds_overview',
+    metricShortName: 'avg_write_iops_chart',
+  })
+
+  const isLoading = isLoadingMetric || isLoadingAvg
 
   const chartData = useMemo(() => {
     if (!metrics?.data?.result?.[0]?.values) {
@@ -42,34 +67,39 @@ export function RdsRamChart({
       const date = new Date(timestampMs)
       const timeStr = useLocalTime ? date.toLocaleTimeString() : date.toUTCString().split(' ')[4] // HH:MM:SS in UTC
 
-      // Convert bytes to GB
-      const gbValue = parseFloat(value) / (1024 * 1024 * 1024)
-
       return {
         timestamp: timestampMs,
         time: timeStr,
         fullTime: useLocalTime ? date.toLocaleString() : date.toUTCString(),
-        'Available RAM': parseFloat(gbValue.toFixed(2)),
+        'Write IOPS': parseFloat(value),
       }
     })
   }, [metrics, useLocalTime])
+
+  const avgWriteIopMetrics = useMemo(() => {
+    const value = metricsAvg?.data?.result?.[0]?.value as [number, string] | undefined
+    if (!value?.[1]) return '--'
+
+    const numValue = parseFloat(value[1])
+    return Number.isFinite(numValue) ? numValue.toFixed(2) : '--'
+  }, [metricsAvg])
 
   return (
     <LocalChart
       data={chartData}
       isLoading={isLoading}
       isEmpty={chartData.length === 0}
-      label="Available RAM (GB)"
-      description="Free memory available over time"
-      tooltipLabel="RAM"
-      unit="GB"
+      label="Write IOPS"
+      description={`Write IOPS over time (avg: ${avgWriteIopMetrics})`}
+      tooltipLabel="Write IOPS"
+      unit="ops"
       serviceId={serviceId}
     >
       <Line
-        dataKey="Available RAM"
-        name="Available RAM"
+        dataKey="Write IOPS"
+        name="Write IOPS"
         type="linear"
-        stroke="var(--color-green-500)"
+        stroke="var(--color-brand-500)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -77,7 +107,7 @@ export function RdsRamChart({
       />
       {!isLoading && chartData.length > 0 && (
         <Chart.Legend
-          name="ram"
+          name="write IOPS"
           className="w-[calc(100%-0.5rem)] pb-1 pt-2"
           content={(props) => <Chart.LegendContent {...props} />}
         />
@@ -86,4 +116,4 @@ export function RdsRamChart({
   )
 }
 
-export default RdsRamChart
+export default RdsWriteIopChart

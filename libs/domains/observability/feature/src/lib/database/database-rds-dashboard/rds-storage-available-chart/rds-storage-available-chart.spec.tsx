@@ -1,5 +1,5 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import { RdsDiskQueueDepthChart } from './rds-disk-queue-depth-chart'
+import { RdsStorageAvailableChart } from './rds-storage-available-chart'
 
 const mockUseDashboardContext = jest.fn()
 const mockUseMetrics = jest.fn()
@@ -17,7 +17,7 @@ jest.mock('../../../hooks/use-instant-metrics/use-instant-metrics', () => ({
   useInstantMetrics: () => mockUseInstantMetrics(),
 }))
 
-describe('RdsDiskQueueDepthChart', () => {
+describe('RdsStorageAvailableChart', () => {
   beforeEach(() => {
     mockUseDashboardContext.mockReturnValue({
       startTimestamp: '1698834400',
@@ -45,12 +45,20 @@ describe('RdsDiskQueueDepthChart', () => {
 
   it('should render successfully', () => {
     const { container } = renderWithProviders(
-      <RdsDiskQueueDepthChart serviceId="service-1" clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />
+      <RdsStorageAvailableChart
+        serviceId="service-1"
+        clusterId="cluster-1"
+        dbInstance="zb4b3b048-postgresql"
+        storageResourceInGiB={100}
+      />
     )
     expect(container).toBeTruthy()
   })
 
   it('should render with metrics data', () => {
+    const storageGiB = 100
+    const freeBytes = storageGiB * 0.5 * 1024 * 1024 * 1024 // 50% free
+
     mockUseMetrics.mockReturnValue({
       data: {
         data: {
@@ -58,8 +66,8 @@ describe('RdsDiskQueueDepthChart', () => {
             {
               metric: {},
               values: [
-                [1698834400, '2.5'],
-                [1698834460, '1.8'],
+                [1698834400, freeBytes.toString()],
+                [1698834460, (freeBytes * 0.9).toString()],
               ],
             },
           ],
@@ -73,7 +81,7 @@ describe('RdsDiskQueueDepthChart', () => {
         data: {
           result: [
             {
-              value: [1698834400, '2.1'],
+              value: [1698834400, freeBytes.toString()],
             },
           ],
         },
@@ -82,7 +90,33 @@ describe('RdsDiskQueueDepthChart', () => {
     })
 
     const { container } = renderWithProviders(
-      <RdsDiskQueueDepthChart serviceId="service-1" clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />
+      <RdsStorageAvailableChart
+        serviceId="service-1"
+        clusterId="cluster-1"
+        dbInstance="zb4b3b048-postgresql"
+        storageResourceInGiB={storageGiB}
+      />
+    )
+    expect(container).toBeTruthy()
+  })
+
+  it('should handle missing storageResourceInGiB', () => {
+    mockUseMetrics.mockReturnValue({
+      data: {
+        data: {
+          result: [
+            {
+              metric: {},
+              values: [[1698834400, '50000000000']],
+            },
+          ],
+        },
+      },
+      isLoading: false,
+    })
+
+    const { container } = renderWithProviders(
+      <RdsStorageAvailableChart serviceId="service-1" clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />
     )
     expect(container).toBeTruthy()
   })

@@ -52,7 +52,8 @@ export function Container({ service, environment, children }: PropsWithChildren<
   const hasMetrics = useMemo(
     () =>
       cluster?.cloud_provider === 'AWS' &&
-      cluster?.metrics_parameters?.enabled && // TODO check cloudwatch exporter is enabled
+      cluster?.metrics_parameters?.enabled &&
+      cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled &&
       service?.serviceType === 'DATABASE' &&
       (service as Database)?.mode === DatabaseModeEnum.MANAGED,
     [cluster?.cloud_provider, cluster?.metrics_parameters?.enabled, service]

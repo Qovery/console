@@ -6,7 +6,7 @@ import { LocalChart } from '../../../local-chart/local-chart'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 const queryCpuUtilization = (dbInstance: string) => `
-  aws_rds_cpuutilization_average{dimension_DBInstanceIdentifier="${dbInstance}"}
+  max by (dimension_DBInstanceIdentifier) (aws_rds_cpuutilization_average{dimension_DBInstanceIdentifier="${dbInstance}"})
 `
 
 export function RdsCpuChart({

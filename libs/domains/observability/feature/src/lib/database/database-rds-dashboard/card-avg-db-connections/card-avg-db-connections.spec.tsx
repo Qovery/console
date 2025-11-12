@@ -2,15 +2,15 @@ import { render } from '@qovery/shared/util-tests'
 import { CardAvgDbConnections } from './card-avg-db-connections'
 
 const mockUseDashboardContext = jest.fn()
-const mockUseMetrics = jest.fn()
+const mockUseInstantMetrics = jest.fn()
 const mockCardMetric = jest.fn(() => <div data-testid="card-metric" />)
 
 jest.mock('../../../util-filter/dashboard-context', () => ({
   useDashboardContext: () => mockUseDashboardContext(),
 }))
 
-jest.mock('../../../hooks/use-metrics/use-metrics', () => ({
-  useMetrics: (params: unknown) => mockUseMetrics(params),
+jest.mock('../../../hooks/use-instant-metrics/use-instant-metrics', () => ({
+  useInstantMetrics: (params: unknown) => mockUseInstantMetrics(params),
 }))
 
 jest.mock('../card-metric/card-metric', () => ({
@@ -27,7 +27,7 @@ describe('CardAvgDbConnections', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockUseDashboardContext.mockReturnValue(defaultContext)
-    mockUseMetrics.mockReturnValue({
+    mockUseInstantMetrics.mockReturnValue({
       data: undefined,
       isLoading: false,
     })
@@ -50,15 +50,12 @@ describe('CardAvgDbConnections', () => {
   })
 
   it('should round value and set GREEN status for low connection counts', () => {
-    mockUseMetrics.mockReturnValue({
+    mockUseInstantMetrics.mockReturnValue({
       data: {
         data: {
           result: [
             {
-              values: [
-                [1, '74.6'],
-                [2, '79.4'],
-              ],
+              value: [1, '79.4'],
             },
           ],
         },
@@ -77,15 +74,12 @@ describe('CardAvgDbConnections', () => {
   })
 
   it('should set RED status when connections exceed critical threshold', () => {
-    mockUseMetrics.mockReturnValue({
+    mockUseInstantMetrics.mockReturnValue({
       data: {
         data: {
           result: [
             {
-              values: [
-                [1, '120'],
-                [2, '175'],
-              ],
+              value: [1, '175'],
             },
           ],
         },

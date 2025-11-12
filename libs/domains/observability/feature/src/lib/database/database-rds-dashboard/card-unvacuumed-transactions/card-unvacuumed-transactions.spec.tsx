@@ -2,15 +2,15 @@ import { render } from '@qovery/shared/util-tests'
 import { CardUnvacuumedTransactions } from './card-unvacuumed-transactions'
 
 const mockUseDashboardContext = jest.fn()
-const mockUseMetrics = jest.fn()
+const mockUseInstantMetrics = jest.fn()
 const mockCardMetric = jest.fn(() => <div data-testid="card-metric" />)
 
 jest.mock('../../../util-filter/dashboard-context', () => ({
   useDashboardContext: () => mockUseDashboardContext(),
 }))
 
-jest.mock('../../../hooks/use-metrics/use-metrics', () => ({
-  useMetrics: (params: unknown) => mockUseMetrics(params),
+jest.mock('../../../hooks/use-instant-metrics/use-instant-metrics', () => ({
+  useInstantMetrics: (params: unknown) => mockUseInstantMetrics(params),
 }))
 
 jest.mock('../card-metric/card-metric', () => ({
@@ -27,7 +27,7 @@ describe('CardUnvacuumedTransactions', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockUseDashboardContext.mockReturnValue(defaultContext)
-    mockUseMetrics.mockReturnValue({
+    mockUseInstantMetrics.mockReturnValue({
       data: undefined,
       isLoading: false,
     })
@@ -49,15 +49,12 @@ describe('CardUnvacuumedTransactions', () => {
   })
 
   it('should format values using short number notation and compute status', () => {
-    mockUseMetrics.mockReturnValue({
+    mockUseInstantMetrics.mockReturnValue({
       data: {
         data: {
           result: [
             {
-              values: [
-                [1, `${450_000_000}`],
-                [2, `${525_000_000}`],
-              ],
+              value: [1, `${525_000_000}`],
             },
           ],
         },
@@ -76,15 +73,12 @@ describe('CardUnvacuumedTransactions', () => {
   })
 
   it('should surface RED status when transaction backlog is critical', () => {
-    mockUseMetrics.mockReturnValue({
+    mockUseInstantMetrics.mockReturnValue({
       data: {
         data: {
           result: [
             {
-              values: [
-                [1, `${900_000_000}`],
-                [2, `${1_250_000_000}`],
-              ],
+              value: [1, `${1_250_000_000}`],
             },
           ],
         },

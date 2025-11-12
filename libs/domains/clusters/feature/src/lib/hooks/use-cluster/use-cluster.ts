@@ -3,7 +3,7 @@ import { queries } from '@qovery/state/util-queries'
 
 interface UseClusterProps {
   organizationId: string
-  clusterId: string
+  clusterId?: string
   enabled?: boolean
 }
 
@@ -13,7 +13,7 @@ export function useCluster({ organizationId, clusterId, enabled }: UseClusterPro
     select(clusters) {
       return clusters?.find(({ id }) => clusterId === id)
     },
-    enabled,
+    enabled: Boolean(organizationId) && Boolean(clusterId) && enabled,
   })
 }
 

@@ -3,18 +3,22 @@ import { Line } from 'recharts'
 import { Chart } from '@qovery/shared/ui'
 import { useInstantMetrics } from '../../../hooks/use-instant-metrics/use-instant-metrics'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
-import LocalChart from '../../../local-chart/local-chart'
+import { LocalChart } from '../../../local-chart/local-chart'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
-const queryDiskQueueDepth = (dbInstance: string) => `
-  max by(dimension_DBInstanceIdentifier) (aws_rds_disk_queue_depth_average{dimension_DBInstanceIdentifier="${dbInstance}"})
+const queryReadLatency = (dbInstance: string) => `
+  max by (dimension_DBInstanceIdentifier) (
+    aws_rds_read_latency_average{
+      dimension_DBInstanceIdentifier=~"${dbInstance}"
+    }
+  )
 `
 
-const queryDiskQueueDepthAvg = (timeRange: string, dbInstance: string) => `
-  avg_over_time (aws_rds_disk_queue_depth_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}])
+const queryMaxReadLatency = (timeRange: string, dbInstance: string) => `
+  max_over_time (aws_rds_read_latency_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}])
 `
 
-export function RdsDiskQueueDepthChart({
+export function RdsReadLatencyChart({
   serviceId,
   clusterId,
   dbInstance,
@@ -25,35 +29,27 @@ export function RdsDiskQueueDepthChart({
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
 
-  const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
+  const { data: metrics, isLoading: isLoadingMetric } = useMetrics({
     clusterId,
-    query: queryDiskQueueDepth(dbInstance),
+    query: queryReadLatency(dbInstance),
     startTimestamp,
     endTimestamp,
     timeRange,
     boardShortName: 'rds_overview',
-    metricShortName: 'disk_queue_depth_chart',
+    metricShortName: 'read_latency_chart',
   })
 
-  const { data: metricsAvg, isLoading: isLoadingAvg } = useInstantMetrics({
+  const { data: maxMetrics, isLoading: isLoadingMax } = useInstantMetrics({
     clusterId,
-    query: queryDiskQueueDepthAvg(timeRange, dbInstance),
+    query: queryMaxReadLatency(timeRange, dbInstance),
     startTimestamp,
     endTimestamp,
     timeRange,
     boardShortName: 'rds_overview',
-    metricShortName: 'avg_disk_queue_depth_chart',
+    metricShortName: 'read_max_latency_chart',
   })
 
-  const isLoading = isLoadingMetrics || isLoadingAvg
-
-  const diskQueueDepthAvg = useMemo(() => {
-    const value = metricsAvg?.data?.result?.[0]?.value as [number, string] | undefined
-    if (!value?.[1]) return '--'
-
-    const numValue = parseFloat(value[1])
-    return Number.isFinite(numValue) ? numValue.toFixed(2) : '--'
-  }, [metricsAvg])
+  const isLoading = isLoadingMetric || isLoadingMax
 
   const chartData = useMemo(() => {
     if (!metrics?.data?.result?.[0]?.values) {
@@ -71,27 +67,35 @@ export function RdsDiskQueueDepthChart({
         timestamp: timestampMs,
         time: timeStr,
         fullTime: useLocalTime ? date.toLocaleString() : date.toUTCString(),
-        'Disk Queue Depth': parseFloat(value),
+        'Read Latency': parseFloat(value) * 1000,
       }
     })
   }, [metrics, useLocalTime])
 
+  const maxReadLatencyMetrics = useMemo(() => {
+    const value = maxMetrics?.data?.result?.[0]?.value as [number, string] | undefined
+    if (!value?.[1]) return '--'
+
+    const numValue = parseFloat(value[1]) * 1000 // Convert seconds to milliseconds
+    return Number.isFinite(numValue) ? numValue.toFixed(2) : '--'
+  }, [maxMetrics])
+
   return (
     <LocalChart
       data={chartData}
-      isLoading={isLoading || isLoadingAvg}
+      isLoading={isLoading}
       isEmpty={chartData.length === 0}
-      label="Disk Queue Depth"
-      description={`Number of outstanding I/O operations waiting to access the disk (Avg: ${diskQueueDepthAvg} reqs)`}
-      tooltipLabel="Disk Queue"
-      unit="requests"
+      label="Read Latency"
+      description={`Read latency over time (max: ${maxReadLatencyMetrics} ms)`}
+      tooltipLabel="Read Latency"
+      unit="ms"
       serviceId={serviceId}
     >
       <Line
-        dataKey="Disk Queue Depth"
-        name="Disk Queue Depth"
+        dataKey="Read Latency"
+        name="Read Latency"
         type="linear"
-        stroke="var(--color-purple-500)"
+        stroke="var(--color-brand-500)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -99,7 +103,7 @@ export function RdsDiskQueueDepthChart({
       />
       {!isLoading && chartData.length > 0 && (
         <Chart.Legend
-          name="disk-queue"
+          name="read latency"
           className="w-[calc(100%-0.5rem)] pb-1 pt-2"
           content={(props) => <Chart.LegendContent {...props} />}
         />
@@ -108,4 +112,4 @@ export function RdsDiskQueueDepthChart({
   )
 }
 
-export default RdsDiskQueueDepthChart
+export default RdsReadLatencyChart
