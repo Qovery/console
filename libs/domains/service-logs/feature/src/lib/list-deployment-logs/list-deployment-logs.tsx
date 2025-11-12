@@ -347,7 +347,10 @@ export function ListDeploymentLogs({
             as="button"
             className="gap-1.5"
             variant="surface"
-            to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id) + SERVICE_LOGS_URL(serviceId)}
+            to={
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id) +
+              SERVICE_LOGS_URL(serviceId, undefined, versionId, isDeploymentProgressing ? 'live' : 'history')
+            }
           >
             {match(service)
               .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')

@@ -23,6 +23,7 @@ export interface LogFilters {
   container?: string
   namespace?: string
   search?: string
+  deploymentId?: string
 }
 
 export function buildLokiQuery(filters: LogFilters, isNginx = false): string {
@@ -52,7 +53,11 @@ export function buildLokiQuery(filters: LogFilters, isNginx = false): string {
     labels.push(`app="${filters.version}"`)
   }
 
-  let query = isNginx ? `(${labels.join(', ')})` : `{${labels.join(', ')}}`
+  if (filters.deploymentId) {
+    labels.push(`qovery_com_deployment_id="${filters.deploymentId}"`)
+  }
+
+  let query = isNginx ? `(${labels.join(',')})` : `{${labels.join(',')}}`
 
   if (filters.message || filters.search) {
     query += ` |= "${filters.message ? filters.message : ''}${filters.search ? `${filters.search}` : ''}"`
@@ -245,7 +250,24 @@ export const serviceLogs = createQueryKeys('serviceLogs', {
         `/loki/api/v1/label/${path}/values`,
         `{qovery_com_service_id="${serviceId}"}`
       )
-      return response.data.response ? (JSON.parse(response.data.response).data as string[]) : []
+      if (!response.data.response) {
+        return []
+      }
+
+      try {
+        const parsedResponse =
+          typeof response.data.response === 'string' ? JSON.parse(response.data.response) : response.data.response
+        const values = parsedResponse?.data
+
+        if (Array.isArray(values)) {
+          return values
+        }
+
+        return []
+      } catch (error) {
+        console.error('Failed to parse Loki label response:', error)
+        return []
+      }
     },
   }),
 })

@@ -126,6 +126,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
       message: queryParams.message || undefined,
       version: queryParams.version || undefined,
       search: queryParams.search || undefined,
+      deploymentId: queryParams.deploymentId || undefined,
     })
   }, [
     serviceId,
@@ -135,6 +136,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     queryParams.message,
     queryParams.version,
     queryParams.search,
+    queryParams.deploymentId,
   ])
 
   const dynamicQueryNginx = useMemo(() => {

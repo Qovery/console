@@ -116,6 +116,7 @@ export function ServiceLogsPlaceholder({
                 version: undefined,
                 container: undefined,
                 nginx: undefined,
+                deploymentId: undefined,
               })
 
               setShowPlaceholder(false)
@@ -175,6 +176,7 @@ export function ServiceLogsPlaceholder({
                     version: undefined,
                     container: undefined,
                     nginx: undefined,
+                    deploymentId: undefined,
                   })
 
                   setShowPlaceholder(false)

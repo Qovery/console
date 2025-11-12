@@ -37,6 +37,10 @@ function buildValueOptions(queryParams: DecodedValueMap<typeof queryParamsServic
     const value = 'nginx:true'
     options.push({ value, label: value })
   }
+  if (queryParams.deploymentId) {
+    const value = `deploymentId:${queryParams.deploymentId}`
+    options.push({ value, label: value })
+  }
   if (queryParams.search) {
     const value = queryParams.search
     options.push({ value, label: value })
@@ -56,6 +60,8 @@ function buildQueryParams(value: string) {
     message: undefined,
     nginx: undefined,
     search: undefined,
+    deploymentId: undefined,
+    mode: undefined,
   }
 
   if (matches) {
@@ -88,11 +94,9 @@ export function SearchServiceLogs({
   service,
   clusterId,
   serviceId,
-  isLoading,
 }: {
   clusterId: string
   serviceId: string
-  isLoading: boolean
   service?: AnyService
 }) {
   const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
@@ -166,6 +170,11 @@ export function SearchServiceLogs({
         value: `instance:${instance}`,
         label: instance,
       })),
+    },
+    {
+      value: 'deploymentId:',
+      label: 'deploymentId:',
+      description: '[id of your deployment id]',
     },
     ...(serviceType === 'HELM'
       ? [
