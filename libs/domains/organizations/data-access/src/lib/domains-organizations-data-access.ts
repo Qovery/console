@@ -35,19 +35,10 @@ import {
   PlanEnum,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import {
-  formatPlanDisplay,
-  formatPlanName,
-  is2025Plan,
-  refactoOrganizationCustomRolePayload,
-  refactoOrganizationPayload,
-} from '@qovery/shared/util-js'
+import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/util-js'
 
 // Re-export PlanEnum for convenience
 export { PlanEnum }
-
-// Re-export plan utility functions for convenience
-export { formatPlanDisplay, formatPlanName, is2025Plan }
 
 const annotationsGroupApi = new OrganizationAnnotationsGroupApi()
 const labelsGroupApi = new OrganizationLabelsGroupApi()

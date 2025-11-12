@@ -1,11 +1,10 @@
 import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
 import { type CardImages } from 'react-payment-inputs/images'
 import { useParams } from 'react-router-dom'
-import { formatPlanDisplay } from '@qovery/domains/organizations/data-access'
 import { SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { Button, ExternalLink, Heading, Icon, Link, Section, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
-import { costToHuman } from '@qovery/shared/util-js'
+import { costToHuman, formatPlanDisplay } from '@qovery/shared/util-js'
 import InvoicesListFeature from '../../feature/page-organization-billing-summary-feature/invoices-list-feature/invoices-list-feature'
 
 export interface PageOrganizationBillingSummaryProps {
