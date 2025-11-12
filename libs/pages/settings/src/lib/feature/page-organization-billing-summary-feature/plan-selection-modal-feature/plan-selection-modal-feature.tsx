@@ -15,11 +15,11 @@ export interface PlanSelectionModalFeatureProps {
 /**
  * Normalizes the current plan to match the 2025 plan enum values
  * Only returns a value if the current plan is already a 2025 plan
- * Returns empty string for legacy plans to avoid pre-selection
+ * Returns undefined for legacy plans to avoid pre-selection
  */
-function normalizePlanSelection(currentPlan?: string): PlanEnum | '' {
+function normalizePlanSelection(currentPlan?: string): PlanEnum | undefined {
   if (!is2025Plan(currentPlan)) {
-    return '' as PlanEnum
+    return undefined
   }
 
   return match(currentPlan?.toUpperCase())
@@ -27,13 +27,13 @@ function normalizePlanSelection(currentPlan?: string): PlanEnum | '' {
     .with(P.string.includes('TEAM'), () => PlanEnum.TEAM_2025)
     .with(P.string.includes('BUSINESS'), () => PlanEnum.BUSINESS_2025)
     .with(P.string.includes('ENTERPRISE'), () => PlanEnum.ENTERPRISE_2025)
-    .otherwise(() => '' as PlanEnum)
+    .otherwise(() => undefined)
 }
 
 export function PlanSelectionModalFeature({ organizationId, closeModal, currentPlan }: PlanSelectionModalFeatureProps) {
   const normalizedPlan = normalizePlanSelection(currentPlan)
 
-  const methods = useForm<{ plan: PlanEnum }>({ defaultValues: { plan: normalizedPlan }, mode: 'all' })
+  const methods = useForm<{ plan: PlanEnum }>({ defaultValues: { plan: normalizedPlan as PlanEnum }, mode: 'all' })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { mutateAsync: changePlan } = useChangePlan()
 
