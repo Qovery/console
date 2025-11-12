@@ -654,12 +654,12 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
           {/* Background */}
           <div
             className={twMerge(
-              'absolute bottom-0 left-0 right-0 top-0 h-full w-full transition-all duration-100 group-hover:bg-neutral-100',
+              'pointer-events-none absolute bottom-0 left-0 right-0 top-0 h-full w-full transition-all duration-100 group-hover:bg-neutral-100',
               isCellFocused('value') && 'bg-neutral-150 group-hover:bg-neutral-150'
             )}
           />
           {/* Cell content */}
-          <div className="z-10 h-full w-full">
+          <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full">
             {row.secret ? (
               <PasswordShowHide
                 value={row.value}
