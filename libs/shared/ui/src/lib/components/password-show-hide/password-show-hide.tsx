@@ -28,7 +28,7 @@ export function PasswordShowHide({
 
   return isSecret ? (
     <span className={twMerge('flex items-center gap-2 text-sm text-neutral-300', className)} {...props}>
-      <Tooltip content="Secret variable" classNameContent="z-20">
+      <Tooltip content="Secret variable">
         <span>
           <Icon className="block w-4" iconName="lock-keyhole" iconStyle="regular" />
         </span>
@@ -39,7 +39,7 @@ export function PasswordShowHide({
     </span>
   ) : (
     <span className={twMerge('flex items-center gap-2 text-sm', className)} {...props}>
-      <Tooltip content={visible ? 'Hide variable' : 'View variable'} classNameContent="z-20">
+      <Tooltip content={visible ? 'Hide variable' : 'View variable'}>
         <button
           type="button"
           className="w-4 text-brand-500"
@@ -68,7 +68,7 @@ export function PasswordShowHide({
           {canCopy && Boolean(value) && <CopyToClipboardButtonIcon content={value!} iconClassName="text-brand-500" />}
         </>
       ) : (
-        <Tooltip content={value} classNameContent="z-20">
+        <Tooltip content={value}>
           <span className="pt-1.5 text-xl font-medium tracking-widest text-neutral-350" data-testid="hide_value">
             *************
           </span>
