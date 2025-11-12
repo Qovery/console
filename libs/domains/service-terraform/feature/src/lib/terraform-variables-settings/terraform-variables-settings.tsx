@@ -86,7 +86,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       url: formValues.git_repository?.url ?? formValues.repository ?? '',
       branch: formValues.branch ?? '',
       root_path: formValues.root_path ?? '',
-      git_token_id: formValues.git_repository?.git_token_id ?? '',
+      git_token_id: formValues.git_token_id ?? '',
       provider: formValues.provider ?? GitProviderEnum.GITHUB,
     }
   }, [formValues])
