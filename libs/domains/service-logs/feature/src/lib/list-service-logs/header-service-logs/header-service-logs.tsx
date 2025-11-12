@@ -36,6 +36,7 @@ export function HeaderServiceLogs({ logs, isLiveMode }: HeaderServiceLogsProps) 
 
   const startDate = queryParams.startDate ? new Date(queryParams.startDate) : undefined
   const endDate = queryParams.endDate ? new Date(queryParams.endDate) : undefined
+  const hasDeploymentId = Boolean(queryParams.deploymentId)
 
   const clearDate = useCallback(() => {
     setQueryParams({
@@ -137,10 +138,18 @@ export function HeaderServiceLogs({ logs, isLiveMode }: HeaderServiceLogsProps) 
                 type="button"
                 size="md"
                 onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}
-                className="min-w-[337px]"
+                className={clsx('min-w-[337px]', {
+                  'min-w-max': hasDeploymentId,
+                })}
               >
-                from: {dateYearMonthDayHourMinuteSecond(startDate ?? new Date(), true, false)} - to:{' '}
-                {dateYearMonthDayHourMinuteSecond(endDate ?? new Date(), true, false)}
+                {hasDeploymentId && startDate && !endDate ? (
+                  dateYearMonthDayHourMinuteSecond(startDate, true, false)
+                ) : (
+                  <>
+                    from: {dateYearMonthDayHourMinuteSecond(startDate ?? new Date(), true, false)} - to:{' '}
+                    {dateYearMonthDayHourMinuteSecond(endDate ?? new Date(), true, false)}
+                  </>
+                )}
                 <span
                   data-testid="clear-timestamp"
                   className="relative left-1 px-1 py-1"
