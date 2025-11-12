@@ -20,7 +20,8 @@ This document provides guidelines for AI agents (Claude, GitHub Copilot, Cursor,
 
    - Should contain only API calls, data fetching logic, and domain-specific data transformations
    - Should NOT contain utility functions that could be reused across domains
-   - Can re-export utility functions from shared libraries for convenience
+   - **Avoid unnecessary re-exports:** Import utility functions directly from `shared/util-js` in consuming files instead of re-exporting them through data-access layers
+   - Only re-export domain-specific types (like enums) when they're tightly coupled to the domain's API
 
 3. **Domain-specific utilities**:
    - If a utility function is truly domain-specific and tightly coupled to domain logic, it can live in the domain's feature or data-access layer
@@ -40,16 +41,16 @@ export function is2025Plan(plan?: string): boolean {
 ✅ **Correct** - Placing utility functions in shared/util-js:
 
 ```typescript
-// libs/domains/organizations/data-access/src/lib/domains-organizations-data-access.ts
+// libs/pages/settings/src/lib/feature/plan-selection-modal-feature.tsx
 import { is2025Plan } from '@qovery/shared/util-js'
 
 // libs/shared/util-js/src/lib/format-plan-display.ts
 export function is2025Plan(plan?: string): boolean {
   return plan?.toUpperCase().includes('2025') ?? false
 }
-
-export { is2025Plan } // Re-export for convenience
 ```
+
+**Note:** Import utility functions directly from `@qovery/shared/util-js` in consuming files rather than re-exporting them through data-access layers. This makes the architecture clearer and more explicit about where shared utilities come from.
 
 ### Pattern Matching with ts-pattern
 
