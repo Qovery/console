@@ -72,33 +72,25 @@ export function ServiceLogsPlaceholder({
   }, [queryParams])
 
   const deploymentId = useMemo(() => {
-    const paramDeploymentId = Number(queryParams.deploymentId)
-
-    if (!paramDeploymentId || deploymentIds.length === 0) {
-      return deploymentIds.length > 0 ? deploymentIds[0].toString() : ''
+    const currentDeploymentId = queryParams.deploymentId
+    if (!currentDeploymentId) {
+      return undefined
     }
+    const currentNumber = parseInt(currentDeploymentId.split('-').pop() || '0', 10)
+    const lowerDeployments = deploymentIds
+      .filter((id) => {
+        const number = parseInt(id.split('-').pop() || '0', 10)
+        return number < currentNumber
+      })
+      .sort((a, b) => {
+        const numA = parseInt(a.split('-').pop() || '0', 10)
+        const numB = parseInt(b.split('-').pop() || '0', 10)
+        return numB - numA
+      })
 
-    const numericDeployments = deploymentIds
-      .map((id) => Number(id))
-      .filter((id) => !isNaN(id))
-      .sort((a, b) => a - b)
-
-    const lowerOrEqual = numericDeployments.filter((id) => id <= paramDeploymentId)
-
-    if (lowerOrEqual.length > 0) {
-      // Pick the greatest lower or equal value
-      return lowerOrEqual[lowerOrEqual.length - 1].toString()
-    }
-
-    // If none are lower or equal, return the closest, if the list is not empty
-    if (numericDeployments.length > 0) {
-      const closest = numericDeployments.reduce((a, b) =>
-        Math.abs(b - paramDeploymentId) < Math.abs(a - paramDeploymentId) ? b : a
-      )
-      return closest.toString()
-    }
-    return undefined
-  }, [queryParams.deploymentId, deploymentIds])
+    // Return the first one (highest of the lower ones) or undefined
+    return lowerDeployments[0]
+  }, [deploymentIds, queryParams.deploymentId])
 
   const hasDeploymentIdFilter = useMemo(() => {
     return Boolean(queryParams.deploymentId)
@@ -136,7 +128,7 @@ export function ServiceLogsPlaceholder({
       <div className="flex flex-col items-center justify-center gap-4">
         <div className="flex flex-col gap-1">
           {hasDeploymentIdFilter ? (
-            <p className="text-neutral-50">No logs found for the selected deployment</p>
+            <p className="text-neutral-50">No logs found for the selected deployment id</p>
           ) : (
             <p className="text-neutral-50">
               {hasFilters
@@ -176,7 +168,7 @@ export function ServiceLogsPlaceholder({
             </Button>
           )}
           {deploymentId && (
-            <Tooltip content={deploymentId}>
+            <Tooltip content={deploymentId} side="bottom">
               <Link
                 as="button"
                 size="sm"
@@ -187,7 +179,7 @@ export function ServiceLogsPlaceholder({
                   SERVICE_LOGS_URL(serviceId, undefined, deploymentId, 'history', subDays(new Date(), 28).toISOString())
                 }
               >
-                Go to the nearest service logs
+                Go to previous deployment with service logs associated
               </Link>
             </Tooltip>
           )}
