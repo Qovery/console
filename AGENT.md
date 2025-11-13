@@ -2,6 +2,41 @@
 
 This document provides guidelines for AI agents (Claude, GitHub Copilot, Cursor, etc.) when working on this codebase to ensure consistency with team practices and architectural decisions.
 
+## Project Overview
+
+This project uses:
+
+- **Nx monorepo** with apps/ and libs/
+- **React 18** with TypeScript
+- **TailwindCSS** for styling
+- **React Query** for state management
+- **Jest** for testing
+- **ESLint** with strict rules
+- **Yarn Berry (v3+)** for package management
+
+### Directory Organization
+
+```
+libs/
+├── domains/         # Business logic by domain
+│   ├── */data-access/  # API calls and data fetching
+│   ├── */feature/      # Business components
+│   └── */ui/           # Domain-specific UI components
+├── pages/           # Application pages/routes
+├── shared/          # Shared code
+│   ├── ui/          # Reusable UI components
+│   ├── util-*/      # Specialized utilities
+│   └── interfaces/  # Shared types
+```
+
+**Important Notes:**
+
+- Respect Nx architecture (no circular imports)
+- Use Nx generators to create new components/libs
+- `data-access` libs contain API logic only
+- `feature` libs contain business components
+- `ui` libs contain reusable components
+
 ## Architecture Guidelines
 
 ### Utility Functions Location
@@ -129,7 +164,38 @@ When adding new utility functions:
 2. Test edge cases (undefined, null, empty strings)
 3. Document expected behavior in tests
 
-## TypeScript Best Practices
+## React & TypeScript Standards
+
+### Import Rules
+
+- **ALWAYS use inline type imports:** `import { type MyType, myFunction } from './module'`
+- Respect import order according to `.eslintrc.json`
+- Use `@qovery/*` aliases defined in `tsconfig.base.json`
+- DO NOT import directly from `react` (destructure React)
+- Use `@qovery/shared/util-tests` instead of `@testing-library/react`
+
+### React Components
+
+- **Functional components only** (no class components)
+- **No explicit `React.FC`** type annotation
+- **Destructure props directly** in function parameters
+- Use `clsx` or `twMerge` from `@qovery/shared/util-js` for conditional classes
+- Prefer Radix UI components when available for accessibility
+
+### Component Structure
+
+- Export components as named exports
+- Props interface should match component name + `Props` suffix
+- Use descriptive, self-documenting names
+- Avoid abbreviations unless commonly understood
+
+### State Management
+
+- Use React Query for API calls and server state
+- Use `React.memo()` for expensive components
+- Use `useCallback` and `useMemo` only when necessary (avoid premature optimization)
+
+### TypeScript Best Practices
 
 1. **Use proper types over type assertions**
 
@@ -166,6 +232,93 @@ const methods = useForm<{ plan: PlanEnum }>({
 3. **Use discriminated unions** for complex conditional types
 
 4. **Prefer readonly types** for constants and configuration
+
+## Naming Conventions
+
+### File Naming
+
+- **Components**: Snake case (`user-profile.tsx`)
+- **Hooks**: Snake case with `use` prefix (`use-user.ts`)
+- **Utilities**: Snake case (`format-date.ts`)
+- **Test files**: Match source file name with `.spec.ts` or `.spec.tsx` extension
+
+### Variable Naming
+
+- **Variables**: camelCase
+- **Functions**: camelCase
+- **Classes**: PascalCase
+- **Types/Interfaces**: PascalCase
+  - Props interfaces: Component name + `Props` suffix (e.g., `UserProfileProps`)
+  - Type aliases: PascalCase with `Type` suffix if needed
+- **Enums**: PascalCase
+- **Constants**: UPPER_SNAKE_CASE
+- **Private members**: Prefix with underscore `_privateMember`
+
+### Comments
+
+- Avoid comments unless absolutely necessary (code should be self-documenting)
+- Comments in English only
+- Use JSDoc for exported functions and complex logic
+
+## Styling Standards
+
+### TailwindCSS Usage
+
+- **TailwindCSS only** (no CSS modules or styled-components in new code)
+- Use utilities from `@qovery/shared/ui` when available
+- **Mobile-first responsive design**
+- Use `clsx` or `twMerge` from `@qovery/shared/util-js` for conditional classes
+
+### Component Styling
+
+- Prefer Radix UI components for accessibility
+- Consistent spacing using Tailwind scale
+- Use CSS variables for theme colors
+- Avoid inline styles
+
+### Responsive Design
+
+- Mobile-first approach
+- Use Tailwind breakpoints: `sm:`, `md:`, `lg:`, `xl:`
+- Test on multiple screen sizes
+- Ensure touch-friendly interfaces
+
+### Accessibility
+
+- Follow `jsx-a11y` rules
+- Use semantic HTML elements
+- Provide proper ARIA labels
+- Test with screen readers
+- Ensure keyboard navigation works
+
+## Testing Standards
+
+### Test Setup
+
+- Use `renderWithProviders` from `@qovery/shared/util-tests`
+- Prefer `userEvent` over `fireEvent` for user interactions
+- Unit tests are mandatory for business logic
+- Snapshots for complex UI components
+
+### Test Structure
+
+- **Arrange-Act-Assert pattern**
+- Descriptive test names (describe what the test does)
+- Group related tests with `describe` blocks
+- Use `beforeEach` for common setup
+
+### Mocking
+
+- Mock external dependencies appropriately
+- Avoid over-mocking - test real behavior when possible
+- Mock API calls using React Query's testing utilities
+
+### Coverage
+
+- Focus on critical paths and edge cases
+- Test user interactions, not implementation details
+- Ensure error states are covered
+- All tests must pass before committing
 
 ## Package Management
 
@@ -301,31 +454,131 @@ Co-Authored-By: Claude <noreply@anthropic.com>
    git checkout -b feat/your-feature-name
    ```
 
-### Before Committing
+### Daily Development Commands
 
-1. **Format code:**
+```bash
+# Start development server
+yarn start                    # Start console app
+yarn storybook               # Start Storybook
 
-   ```bash
-   npx nx format:check
-   npx nx format:write  # if needed
-   ```
+# Code quality
+yarn test                    # Run all tests
+npx nx format:write          # Format code
+npx nx run-many --all --target=lint --parallel  # Lint all projects
 
-2. **Run linter:**
+# Build
+yarn build                   # Production build
+```
 
-   ```bash
-   npx nx affected --target=lint
-   ```
+### Nx Commands
 
-3. **Run tests:**
+```bash
+# Generate new components/libs
+npx nx generate @nx/react:component MyComponent
+npx nx generate @nx/react:library my-lib
 
-   ```bash
-   npx nx affected --target=test
-   ```
+# Run specific project commands
+npx nx test my-project
+npx nx lint my-project
+npx nx build my-project
 
-4. **Check TypeScript:**
-   ```bash
-   npx nx affected --target=build
-   ```
+# Dependency graph
+npx nx graph
+
+# Run affected projects only
+npx nx affected --target=lint
+npx nx affected --target=test
+npx nx affected --target=build
+```
+
+### Git Workflow
+
+- **Conventional commits** required (enforced by semantic-release)
+- Create feature branches from `staging`
+- Use descriptive commit messages
+- Squash commits when merging PRs
+
+## Pre-commit Verification Workflow
+
+This project uses **semantic-release** with conventional commit format. Follow these steps before every commit:
+
+### Required Checks Before Commit
+
+#### 1. Format Check
+
+```bash
+npx nx format:check
+```
+
+If failed: Run `npx nx format:write` to fix formatting
+
+#### 2. Tests
+
+```bash
+yarn test --passWithNoTests
+```
+
+All tests must pass before committing
+
+#### 3. Snapshot Verification
+
+```bash
+git diff --name-only --cached | grep -E '\.snap$'
+```
+
+Review any snapshot changes carefully - they must be intentional
+
+#### 4. Lint Check
+
+```bash
+npx nx run-many --all --target=lint --parallel
+```
+
+Fix all linting errors before committing
+
+### Complete Pre-commit Script
+
+```bash
+#!/bin/bash
+
+# 1. Format check
+npx nx format:check
+if [ $? -ne 0 ]; then
+  echo "❌ Format check failed. Run 'npx nx format:write' to fix."
+  exit 1
+fi
+
+# 2. Tests
+yarn test --passWithNoTests
+if [ $? -ne 0 ]; then
+  echo "❌ Tests failed. Fix failing tests before committing."
+  exit 1
+fi
+
+# 3. Snapshot check
+git diff --name-only --cached | grep -E '\.snap$'
+if [ $? -eq 0 ]; then
+  echo "⚠️  Snapshot files detected. Review changes carefully."
+  echo "Updated snapshots:"
+  git diff --name-only --cached | grep -E '\.snap$'
+fi
+
+# 4. Lint check
+npx nx run-many --all --target=lint --parallel
+if [ $? -ne 0 ]; then
+  echo "❌ Lint failed. Fix linting errors before committing."
+  exit 1
+fi
+
+echo "✅ All pre-commit checks passed!"
+```
+
+### Quality Standards
+
+- No linting errors allowed
+- All tests must pass
+- Code must be properly formatted
+- Snapshot changes must be intentional and reviewed
 
 ### Common Issues and Solutions
 
@@ -358,17 +611,57 @@ yarn install
 
 Before submitting code, verify:
 
-- [ ] Utility functions are in the appropriate shared library
+### Architecture & Code Organization
+
+- [ ] Utility functions are in the appropriate shared library (`shared/util-js`)
+- [ ] No circular imports (respect Nx architecture)
+- [ ] Proper separation of concerns is maintained (UI/Feature/Data-access layers)
 - [ ] Complex conditional logic uses `ts-pattern` instead of nested ternaries
+
+### Naming & Style
+
+- [ ] File names use snake-case (`user-profile.tsx`)
+- [ ] Component names use PascalCase
+- [ ] Props interfaces have `Props` suffix
 - [ ] Functions have clear, descriptive names
-- [ ] JSDoc comments are added for exported functions
-- [ ] Proper separation of concerns is maintained
+- [ ] Constants use UPPER_SNAKE_CASE
+
+### React & TypeScript
+
+- [ ] Inline type imports used: `import { type MyType, myFunction }`
+- [ ] Functional components only (no class components, no React.FC)
 - [ ] Type safety is preserved without excessive `as` assertions
+- [ ] Used `undefined` for optional values (not empty strings)
+- [ ] JSDoc comments added for exported functions
+
+### Styling
+
+- [ ] TailwindCSS only (no inline styles or CSS modules)
+- [ ] Mobile-first responsive design
+- [ ] Accessibility standards followed (ARIA labels, keyboard navigation)
+- [ ] Used `clsx` or `twMerge` for conditional classes
+
+### Testing
+
+- [ ] Unit tests added for business logic
+- [ ] Tests use `renderWithProviders` from `@qovery/shared/util-tests`
+- [ ] Tests use `userEvent` instead of `fireEvent`
+- [ ] All tests pass (`yarn test --passWithNoTests`)
+- [ ] Snapshot changes are intentional and reviewed
+
+### Code Quality
+
 - [ ] Code is formatted (`npx nx format:check` passes)
-- [ ] Linter passes (`npx nx affected --target=lint` passes)
-- [ ] Tests pass (`npx nx affected --target=test` passes)
+- [ ] Linter passes (`npx nx run-many --all --target=lint --parallel`)
+- [ ] No ESLint errors or warnings
 - [ ] Used `yarn` (not `npm`) for all package operations
+
+### Git & Commits
+
 - [ ] Commit messages follow conventional commits format
+- [ ] Commit type is accurate (feat/fix/refactor/docs/test/chore)
+- [ ] Commit scope is meaningful
+- [ ] Branch created from `staging`
 
 ## Resources
 
