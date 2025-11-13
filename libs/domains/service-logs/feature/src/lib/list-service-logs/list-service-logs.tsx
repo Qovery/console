@@ -23,6 +23,7 @@ const { Table } = TablePrimitives
 const MemoizedRowServiceLogs = memo(RowServiceLogs)
 
 function Placeholder({
+  environment,
   hasMetricsEnabled,
   type,
   isLogsFetched,
@@ -30,6 +31,7 @@ function Placeholder({
   itemsLength,
   databaseMode,
 }: {
+  environment: Environment
   hasMetricsEnabled?: boolean
   type: 'live' | 'history'
   isLogsFetched: boolean
@@ -57,6 +59,7 @@ function Placeholder({
         serviceName={serviceName}
         itemsLength={itemsLength}
         databaseMode={databaseMode}
+        environment={environment}
       />
     )
   }
@@ -226,6 +229,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
           <div className="h-[calc(100vh-176px)] border-r border-neutral-500 bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">
               <Placeholder
+                environment={environment}
                 hasMetricsEnabled={hasMetricsEnabled}
                 type={isLiveMode ? 'live' : 'history'}
                 isLogsFetched={isLogsFetched}
@@ -247,6 +251,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
         {isLogsLoading && isLiveMode ? (
           <div className="flex h-full flex-col items-center justify-center pb-[68px]">
             <Placeholder
+              environment={environment}
               hasMetricsEnabled={hasMetricsEnabled}
               type="live"
               isLogsFetched={isLogsFetched}

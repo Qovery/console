@@ -4,6 +4,7 @@ import { useQueryParams } from 'use-query-params'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Kbd, MultipleSelector, type MultipleSelectorRef, type Option } from '@qovery/shared/ui'
 import { useFormatHotkeys } from '@qovery/shared/util-hooks'
+import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
 import { useServiceInstances } from '../hooks/use-service-instances/use-service-instances'
 import { useServiceLevels } from '../hooks/use-service-levels/use-service-levels'
 import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
@@ -118,6 +119,12 @@ export function SearchServiceLogs({
     enabled: Boolean(clusterId) && Boolean(serviceId),
   })
 
+  const { data: deploymentIds = [], isFetched: isFetchedDeploymentIds } = useServiceDeploymentId({
+    clusterId,
+    serviceId,
+    enabled: Boolean(clusterId) && Boolean(serviceId),
+  })
+
   // Sync the input value with query params only when query params change
   useEffect(() => {
     setOptions(buildValueOptions(queryParams))
@@ -175,6 +182,10 @@ export function SearchServiceLogs({
       value: 'deploymentId:',
       label: 'deploymentId:',
       description: '[id of your deployment id]',
+      subOptions: deploymentIds.map((deploymentId) => ({
+        value: `deploymentId:${deploymentId}`,
+        label: deploymentId,
+      })),
     },
     ...(serviceType === 'HELM'
       ? [
@@ -194,7 +205,7 @@ export function SearchServiceLogs({
 
   return (
     <div className="relative w-full">
-      {isFetchedLevels && isFetchedInstances && (
+      {isFetchedLevels && isFetchedInstances && isFetchedDeploymentIds && (
         <>
           <MultipleSelector
             ref={searchRef}
