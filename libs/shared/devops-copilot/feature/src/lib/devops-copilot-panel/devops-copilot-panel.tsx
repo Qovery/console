@@ -103,7 +103,7 @@ export interface DevopsCopilotPanelProps {
   style?: React.CSSProperties
 }
 
-const StreamingMermaidChart = ({ code, index }: { code: string, index: number }) => {
+const StreamingMermaidChart = ({ code, index }: { code: string; index: number }) => {
   const memoizedCode = useMemo(() => code, [code])
   return <MermaidChart key={`mermaid-${index}`} code={memoizedCode} />
 }
@@ -126,7 +126,9 @@ const renderStreamingMessageWithMermaid = (input: string) => {
         parts.push(<RenderMarkdown key={'md-' + lastIndex}>{textPart}</RenderMarkdown>)
       }
     }
-    parts.push(<StreamingMermaidChart key={`streaming-mermaid-${mermaidIndex}`} code={mermaidCode} index={mermaidIndex} />)
+    parts.push(
+      <StreamingMermaidChart key={`streaming-mermaid-${mermaidIndex}`} code={mermaidCode} index={mermaidIndex} />
+    )
     mermaidIndex++
     lastIndex = end
   }
@@ -356,7 +358,9 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                       setLoadingText(description.charAt(0).toUpperCase() + description.slice(1))
                       setPlan((prev) =>
                         prev.map((step) =>
-                          step.description.toLowerCase().includes(description.toLowerCase()) ? { ...step, status } : step
+                          step.description.toLowerCase().includes(description.toLowerCase())
+                            ? { ...step, status }
+                            : step
                         )
                       )
                     }

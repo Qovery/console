@@ -5,8 +5,18 @@ const isLikelyCompleteDiagram = (code: string): boolean => {
   const trimmed = code.trim()
   if (!trimmed) return false
 
-  const validStarts = ['graph', 'flowchart', 'sequenceDiagram', 'classDiagram', 'stateDiagram', 'erDiagram', 'gantt', 'pie', 'gitGraph']
-  const hasValidStart = validStarts.some(start => trimmed.startsWith(start))
+  const validStarts = [
+    'graph',
+    'flowchart',
+    'sequenceDiagram',
+    'classDiagram',
+    'stateDiagram',
+    'erDiagram',
+    'gantt',
+    'pie',
+    'gitGraph',
+  ]
+  const hasValidStart = validStarts.some((start) => trimmed.startsWith(start))
   if (!hasValidStart) return false
 
   if (trimmed.startsWith('graph') || trimmed.startsWith('flowchart')) {
@@ -51,7 +61,7 @@ export const MermaidChart = ({ code }: { code: string }) => {
     } catch (e) {
       if (containerRef.current) {
         containerRef.current.innerHTML = ''
-        setLastRenderedCode(trimmedCode) 
+        setLastRenderedCode(trimmedCode)
       }
     }
   }, [code, lastRenderedCode])
