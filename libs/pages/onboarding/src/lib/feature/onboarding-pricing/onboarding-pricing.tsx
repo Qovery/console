@@ -14,24 +14,56 @@ export interface OrganizationPlan {
   name: PlanEnum
   title: string
   text: string
-  price: number
+  price: number | 'custom'
   list: string[]
 }
 
 const PLANS: OrganizationPlan[] = [
   {
-    name: PlanEnum.TEAM,
+    name: PlanEnum.USER_2025,
+    title: 'User plan',
+    text: 'Perfect for small team',
+    price: 299,
+    list: [
+      'Deploy on your own cloud',
+      'Include 2 users',
+      'Include 1 managed cluster',
+      'Include 1000 deployment minutes',
+      'Standard support',
+    ],
+  },
+  {
+    name: PlanEnum.TEAM_2025,
     title: 'Team plan',
     text: 'Ideal for teams',
     price: 899,
-    list: ['Include 10 users', 'Include 2 managed clusters', '5,000 free deployment minutes', 'Standard support'],
+    list: [
+      'Deploy on your own cloud',
+      'Include 10 users',
+      'Include 2 managed cluster',
+      'Include 5000 deployment minutes',
+      'Standard support',
+    ],
   },
   {
-    name: PlanEnum.ENTERPRISE,
+    name: PlanEnum.BUSINESS_2025,
+    title: 'Business plan',
+    text: 'For growing businesses',
+    price: 2099,
+    list: [
+      'Deploy on your own cloud',
+      'Include 30 users',
+      'Include 3 managed cluster',
+      'Include 10000 deployment minutes',
+      'Business support with SLAs',
+    ],
+  },
+  {
+    name: PlanEnum.ENTERPRISE_2025,
     title: 'Enterprise plan',
     text: 'Tailored for your organization',
-    price: 899,
-    list: ['All TEAM features', 'Deploy on-premises', 'Custom limits', 'Custom support'],
+    price: 'custom',
+    list: ['All BUSINESS features', 'Deploy on-premise or private cloud', 'Custom limits', 'Custom support'],
   },
 ]
 
@@ -53,7 +85,7 @@ export function OnboardingPricing() {
       const organization = await createOrganization({
         organizationRequest: {
           name: organization_name,
-          plan: plan,
+          plan,
           admin_emails: admin_email ? [admin_email] : user && user.email ? [user.email] : [],
         },
       })

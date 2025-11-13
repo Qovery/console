@@ -14,10 +14,10 @@ export function StepPricing(props: StepPricingProps) {
   const { onSubmit, plans, loading } = props
 
   return (
-    <div className="pb-10">
+    <div className="w-full pb-10">
       <h1 className="h3 mb-3 text-center text-neutral-400">Simple, transparent pricing</h1>
       <p className="mb-10 text-center text-sm text-neutral-400">
-        14 days trial with no credit card required for all paid plans
+        14 days trial for all plans
         <a
           href="https://qovery.com/pricing"
           target="_blank"
@@ -28,10 +28,12 @@ export function StepPricing(props: StepPricingProps) {
           <Icon name="icon-solid-arrow-up-right-from-square" className="ml-1" />
         </a>
       </p>
-      <form>
-        <div className="grid gap-5 md:grid-cols-2">
+      <form className="mx-auto max-w-7xl px-8">
+        <div className="flex flex-col gap-5 md:flex-row">
           {plans.map((plan: OrganizationPlan) => (
-            <PlanCard key={plan.name} onClick={() => onSubmit(plan.name)} loading={loading} {...plan} />
+            <div key={plan.name} className="flex-1">
+              <PlanCard onClick={() => onSubmit(plan.name)} loading={loading} {...plan} />
+            </div>
           ))}
         </div>
         <div className="mt-10 flex justify-between border-t border-neutral-200 pt-5">

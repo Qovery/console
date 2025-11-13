@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { Button, ExternalLink, Heading, Icon, Link, Section, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
-import { costToHuman, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { costToHuman, formatPlanDisplay } from '@qovery/shared/util-js'
 import InvoicesListFeature from '../../feature/page-organization-billing-summary-feature/invoices-list-feature/invoices-list-feature'
 
 export interface PageOrganizationBillingSummaryProps {
@@ -61,9 +61,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <div className="mb-1 text-xs font-medium text-neutral-350">Current plan</div>
             <div className="mb-1 text-sm font-bold text-neutral-400">
               <Skeleton height={20} width={100} show={!props.currentCost?.plan}>
-                <div className="h-5">
-                  {props.currentCost?.plan ? upperCaseFirstLetter(props.currentCost?.plan) : 'N/A'} plan
-                </div>
+                <div className="h-5">{formatPlanDisplay(props.currentCost?.plan)}</div>
               </Skeleton>
             </div>
             <ExternalLink href="https://www.qovery.com/pricing" size="xs">
