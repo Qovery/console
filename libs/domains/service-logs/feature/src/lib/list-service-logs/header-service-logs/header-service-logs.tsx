@@ -143,7 +143,7 @@ export function HeaderServiceLogs({ logs, isLiveMode }: HeaderServiceLogsProps) 
                 })}
               >
                 {hasDeploymentId && startDate && !endDate ? (
-                  dateYearMonthDayHourMinuteSecond(startDate, true, false)
+                  <>from: {dateYearMonthDayHourMinuteSecond(startDate, true, false)}</>
                 ) : (
                   <>
                     from: {dateYearMonthDayHourMinuteSecond(startDate ?? new Date(), true, false)} - to:{' '}
