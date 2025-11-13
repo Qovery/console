@@ -167,7 +167,7 @@ describe('CardLogErrors', () => {
 
     expect(mockedNavigate).toHaveBeenCalledWith(
       expect.stringContaining(
-        '/organization/test-org-id/project/test-project-id/environment/test-env-id/logs/test-service-id/service-logs?startDate='
+        `/organization/${defaultProps.organizationId}/project/${defaultProps.projectId}/environment/${defaultProps.environmentId}/logs/${defaultProps.serviceId}/service-logs?mode=history&startDate=`
       ),
       {
         state: { prevUrl: '/test' },

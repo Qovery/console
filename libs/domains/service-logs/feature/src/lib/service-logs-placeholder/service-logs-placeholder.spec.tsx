@@ -1,10 +1,15 @@
-import { DatabaseModeEnum, StateEnum } from 'qovery-typescript-axios'
+import { DatabaseModeEnum, type Environment, StateEnum } from 'qovery-typescript-axios'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
 import { LoaderPlaceholder, ServiceLogsPlaceholder } from './service-logs-placeholder'
 
 jest.mock('@qovery/domains/services/feature', () => ({
   useDeploymentStatus: jest.fn(),
+}))
+
+jest.mock('../hooks/use-service-deployment-id/use-service-deployment-id', () => ({
+  useServiceDeploymentId: jest.fn(),
 }))
 
 jest.mock('react-router-dom', () => ({
@@ -18,6 +23,12 @@ jest.mock('react-router-dom', () => ({
 }))
 
 const mockUseDeploymentStatus = useDeploymentStatus as jest.Mock
+const mockUseServiceDeploymentId = useServiceDeploymentId as jest.Mock
+
+const environmentMock = {
+  id: 'env-123',
+  cluster_id: 'cluster-123',
+} as Environment
 
 describe('LoaderPlaceholder', () => {
   it('renders with default title', () => {
@@ -41,6 +52,9 @@ describe('ServiceLogsPlaceholder', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     jest.useFakeTimers()
+    mockUseServiceDeploymentId.mockReturnValue({
+      data: [],
+    })
   })
 
   afterEach(() => {
@@ -58,6 +72,7 @@ describe('ServiceLogsPlaceholder', () => {
 
       renderWithProviders(
         <ServiceLogsPlaceholder
+          environment={environmentMock}
           type="live"
           serviceName="my-db"
           databaseMode={DatabaseModeEnum.MANAGED}
@@ -83,6 +98,7 @@ describe('ServiceLogsPlaceholder', () => {
 
       renderWithProviders(
         <ServiceLogsPlaceholder
+          environment={environmentMock}
           type="live"
           serviceName="my-app"
           databaseMode={DatabaseModeEnum.CONTAINER}
@@ -101,6 +117,7 @@ describe('ServiceLogsPlaceholder', () => {
 
       renderWithProviders(
         <ServiceLogsPlaceholder
+          environment={environmentMock}
           type="live"
           serviceName="my-app"
           databaseMode={DatabaseModeEnum.CONTAINER}
@@ -128,6 +145,7 @@ describe('ServiceLogsPlaceholder', () => {
 
       renderWithProviders(
         <ServiceLogsPlaceholder
+          environment={environmentMock}
           type="live"
           serviceName="my-app"
           databaseMode={DatabaseModeEnum.CONTAINER}
@@ -146,6 +164,7 @@ describe('ServiceLogsPlaceholder', () => {
 
       renderWithProviders(
         <ServiceLogsPlaceholder
+          environment={environmentMock}
           type="live"
           serviceName="my-app"
           databaseMode={DatabaseModeEnum.CONTAINER}
@@ -172,6 +191,7 @@ describe('ServiceLogsPlaceholder', () => {
 
       renderWithProviders(
         <ServiceLogsPlaceholder
+          environment={environmentMock}
           type="live"
           serviceName="my-service"
           databaseMode={DatabaseModeEnum.CONTAINER}
@@ -199,6 +219,7 @@ describe('ServiceLogsPlaceholder', () => {
 
       renderWithProviders(
         <ServiceLogsPlaceholder
+          environment={environmentMock}
           type="history"
           serviceName="my-app"
           databaseMode={DatabaseModeEnum.CONTAINER}
@@ -217,6 +238,7 @@ describe('ServiceLogsPlaceholder', () => {
 
       renderWithProviders(
         <ServiceLogsPlaceholder
+          environment={environmentMock}
           type="history"
           serviceName="my-app"
           databaseMode={DatabaseModeEnum.CONTAINER}
@@ -243,6 +265,7 @@ describe('ServiceLogsPlaceholder', () => {
 
       renderWithProviders(
         <ServiceLogsPlaceholder
+          environment={environmentMock}
           type="live"
           serviceName="my-app"
           databaseMode={DatabaseModeEnum.CONTAINER}

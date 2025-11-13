@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { subDays, subHours } from 'date-fns'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useQueryParams } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
@@ -15,10 +15,10 @@ import { queryParamsServiceLogs } from '../service-logs-context/service-logs-con
 
 export interface HeaderServiceLogsProps {
   logs: NormalizedServiceLog[]
-  isLoading: boolean
+  isLiveMode: boolean
 }
 
-export function HeaderServiceLogs({ logs, isLoading }: HeaderServiceLogsProps) {
+export function HeaderServiceLogs({ logs, isLiveMode }: HeaderServiceLogsProps) {
   const {
     environment,
     serviceId,
@@ -34,18 +34,15 @@ export function HeaderServiceLogs({ logs, isLoading }: HeaderServiceLogsProps) {
 
   const { data: service } = useService({ environmentId: environment.id, serviceId })
 
-  const isLiveMode = useMemo(
-    () => !queryParams.startDate && !queryParams.endDate,
-    [queryParams.startDate, queryParams.endDate]
-  )
-
   const startDate = queryParams.startDate ? new Date(queryParams.startDate) : undefined
   const endDate = queryParams.endDate ? new Date(queryParams.endDate) : undefined
+  const hasDeploymentId = Boolean(queryParams.deploymentId)
 
   const clearDate = useCallback(() => {
     setQueryParams({
       startDate: undefined,
       endDate: undefined,
+      mode: 'live',
     })
   }, [setQueryParams])
 
@@ -87,12 +84,13 @@ export function HeaderServiceLogs({ logs, isLoading }: HeaderServiceLogsProps) {
             })}
             onClick={() => {
               if (!isLiveMode) {
-                setQueryParams({ startDate: undefined, endDate: undefined })
+                setQueryParams({ startDate: undefined, endDate: undefined, mode: 'live' })
               } else {
                 const now = new Date()
                 setQueryParams({
                   startDate: subHours(now, 1),
                   endDate: now,
+                  mode: 'history',
                 })
               }
             }}
@@ -111,6 +109,7 @@ export function HeaderServiceLogs({ logs, isLoading }: HeaderServiceLogsProps) {
               setQueryParams({
                 startDate,
                 endDate,
+                mode: 'history',
               })
               setIsOpenDatePicker(false)
             }}
@@ -139,10 +138,18 @@ export function HeaderServiceLogs({ logs, isLoading }: HeaderServiceLogsProps) {
                 type="button"
                 size="md"
                 onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}
-                className="min-w-[337px]"
+                className={clsx('min-w-[337px]', {
+                  'min-w-max': hasDeploymentId,
+                })}
               >
-                from: {dateYearMonthDayHourMinuteSecond(startDate ?? new Date(), true, false)} - to:{' '}
-                {dateYearMonthDayHourMinuteSecond(endDate ?? new Date(), true, false)}
+                {hasDeploymentId && startDate && !endDate ? (
+                  <>from: {dateYearMonthDayHourMinuteSecond(startDate, true, false)}</>
+                ) : (
+                  <>
+                    from: {dateYearMonthDayHourMinuteSecond(startDate ?? new Date(), true, false)} - to:{' '}
+                    {dateYearMonthDayHourMinuteSecond(endDate ?? new Date(), true, false)}
+                  </>
+                )}
                 <span
                   data-testid="clear-timestamp"
                   className="relative left-1 px-1 py-1"
@@ -197,12 +204,7 @@ export function HeaderServiceLogs({ logs, isLoading }: HeaderServiceLogsProps) {
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
-          <SearchServiceLogs
-            service={service}
-            clusterId={environment.cluster_id}
-            serviceId={serviceId}
-            isLoading={isLoading}
-          />
+          <SearchServiceLogs service={service} clusterId={environment.cluster_id} serviceId={serviceId} />
         </div>
         <Tooltip
           content={Object.values(queryParams).some((value) => value) ? 'Download filtered logs' : 'Download logs'}

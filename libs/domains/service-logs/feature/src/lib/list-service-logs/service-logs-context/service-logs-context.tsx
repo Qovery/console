@@ -36,6 +36,8 @@ export const queryParamsServiceLogs = {
   level: StringParam,
   search: StringParam,
   nginx: BooleanParam,
+  deploymentId: StringParam,
+  mode: StringParam,
 }
 
 export const ServiceLogsContext = createContext<ServiceLogsContextType | undefined>(undefined)

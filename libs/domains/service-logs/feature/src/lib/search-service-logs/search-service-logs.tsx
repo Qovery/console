@@ -4,6 +4,7 @@ import { useQueryParams } from 'use-query-params'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Kbd, MultipleSelector, type MultipleSelectorRef, type Option } from '@qovery/shared/ui'
 import { useFormatHotkeys } from '@qovery/shared/util-hooks'
+import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
 import { useServiceInstances } from '../hooks/use-service-instances/use-service-instances'
 import { useServiceLevels } from '../hooks/use-service-levels/use-service-levels'
 import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
@@ -37,6 +38,10 @@ function buildValueOptions(queryParams: DecodedValueMap<typeof queryParamsServic
     const value = 'nginx:true'
     options.push({ value, label: value })
   }
+  if (queryParams.deploymentId) {
+    const value = `deploymentId:${queryParams.deploymentId}`
+    options.push({ value, label: value })
+  }
   if (queryParams.search) {
     const value = queryParams.search
     options.push({ value, label: value })
@@ -56,6 +61,8 @@ function buildQueryParams(value: string) {
     message: undefined,
     nginx: undefined,
     search: undefined,
+    deploymentId: undefined,
+    mode: undefined,
   }
 
   if (matches) {
@@ -88,11 +95,9 @@ export function SearchServiceLogs({
   service,
   clusterId,
   serviceId,
-  isLoading,
 }: {
   clusterId: string
   serviceId: string
-  isLoading: boolean
   service?: AnyService
 }) {
   const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
@@ -109,6 +114,12 @@ export function SearchServiceLogs({
   })
 
   const { data: instances = [], isFetched: isFetchedInstances } = useServiceInstances({
+    clusterId,
+    serviceId,
+    enabled: Boolean(clusterId) && Boolean(serviceId),
+  })
+
+  const { data: deploymentIds = [], isFetched: isFetchedDeploymentIds } = useServiceDeploymentId({
     clusterId,
     serviceId,
     enabled: Boolean(clusterId) && Boolean(serviceId),
@@ -167,6 +178,15 @@ export function SearchServiceLogs({
         label: instance,
       })),
     },
+    {
+      value: 'deploymentId:',
+      label: 'deploymentId:',
+      description: '[id of your deployment id]',
+      subOptions: deploymentIds.map((deploymentId) => ({
+        value: `deploymentId:${deploymentId}`,
+        label: deploymentId,
+      })),
+    },
     ...(serviceType === 'HELM'
       ? [
           {
@@ -185,7 +205,7 @@ export function SearchServiceLogs({
 
   return (
     <div className="relative w-full">
-      {isFetchedLevels && isFetchedInstances && (
+      {isFetchedLevels && isFetchedInstances && isFetchedDeploymentIds && (
         <>
           <MultipleSelector
             ref={searchRef}

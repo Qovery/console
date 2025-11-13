@@ -14,12 +14,16 @@ export const ENVIRONMENT_STAGES_URL = (versionId?: string) => (versionId ? `/sta
 export const SERVICE_LOGS_URL = (
   serviceId = ':serviceId',
   instance = '',
+  deploymentId = '',
+  mode: 'live' | 'history' = 'live',
   startDate?: string,
   endDate?: string,
   level?: string
 ) => {
   const params = new URLSearchParams()
   if (instance) params.append('instance', instance)
+  if (deploymentId) params.append('deploymentId', deploymentId)
+  if (mode && mode !== 'live') params.append('mode', mode)
   if (startDate) params.append('startDate', startDate)
   if (endDate) params.append('endDate', endDate)
   if (level) params.append('level', level)

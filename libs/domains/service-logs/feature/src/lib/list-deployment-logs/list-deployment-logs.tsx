@@ -6,6 +6,7 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { format } from 'date-fns'
 import download from 'downloadjs'
 import {
   type Environment,
@@ -298,6 +299,8 @@ export function ListDeploymentLogs({
         .otherwise(() => false)
     : false
 
+  const lastLogTimestamp = logs.length > 0 ? logs[logs.length - 1]?.timestamp : undefined
+
   function HeaderLogsComponent() {
     return (
       <HeaderLogs
@@ -347,7 +350,18 @@ export function ListDeploymentLogs({
             as="button"
             className="gap-1.5"
             variant="surface"
-            to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id) + SERVICE_LOGS_URL(serviceId)}
+            to={
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id) +
+              SERVICE_LOGS_URL(
+                serviceId,
+                undefined,
+                versionId,
+                isDeploymentProgressing ? 'live' : 'history',
+                isDeploymentProgressing || !lastLogTimestamp
+                  ? undefined
+                  : format(new Date(lastLogTimestamp), 'yyyy-MM-dd HH:mm:ss')
+              )
+            }
           >
             {match(service)
               .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')

@@ -72,7 +72,7 @@ export function CardLogErrors({
       onClick={() =>
         navigate(
           ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-            SERVICE_LOGS_URL(serviceId, undefined, startDate, endDate, 'error'),
+            SERVICE_LOGS_URL(serviceId, undefined, undefined, 'history', startDate, endDate, 'error'),
           {
             state: { prevUrl: pathname },
           }

@@ -1,11 +1,13 @@
-import { DatabaseModeEnum } from 'qovery-typescript-axios'
+import { subDays } from 'date-fns'
+import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useQueryParams } from 'use-query-params'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Button, Icon, Link, LoaderDots } from '@qovery/shared/ui'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
+import { Button, Icon, Link, LoaderDots, Tooltip } from '@qovery/shared/ui'
+import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
 import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 export function LoaderPlaceholder({
@@ -27,6 +29,7 @@ export function LoaderPlaceholder({
 }
 
 export interface ServiceLogsPlaceholderProps {
+  environment: Environment
   type: 'live' | 'history'
   isFetched?: boolean
   serviceName?: string
@@ -35,6 +38,7 @@ export interface ServiceLogsPlaceholderProps {
 }
 
 export function ServiceLogsPlaceholder({
+  environment,
   type = 'live',
   isFetched = false,
   serviceName,
@@ -48,6 +52,12 @@ export function ServiceLogsPlaceholder({
   const [isLoading, setIsLoading] = useState(true)
   const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
 
+  const { data: deploymentIds = [] } = useServiceDeploymentId({
+    clusterId: environment.cluster_id ?? '',
+    serviceId: serviceId ?? '',
+    enabled: Boolean(environment.cluster_id) && Boolean(serviceId),
+  })
+
   const hasFilters = useMemo(() => {
     return Object.values(queryParams).some((value) => value !== undefined && value !== '')
   }, [queryParams])
@@ -60,6 +70,31 @@ export function ServiceLogsPlaceholder({
     ).some((value) => value !== undefined && value !== '')
     return filteredValues
   }, [queryParams])
+
+  const deploymentId = useMemo(() => {
+    const currentDeploymentId = queryParams.deploymentId
+    if (!currentDeploymentId) {
+      return undefined
+    }
+    const currentNumber = parseInt(currentDeploymentId.split('-').pop() || '0', 10)
+    const lowerDeployments = deploymentIds
+      .filter((id) => {
+        const number = parseInt(id.split('-').pop() || '0', 10)
+        return number < currentNumber
+      })
+      .sort((a, b) => {
+        const numA = parseInt(a.split('-').pop() || '0', 10)
+        const numB = parseInt(b.split('-').pop() || '0', 10)
+        return numB - numA
+      })
+
+    // Return the first one (highest of the lower ones) or undefined
+    return lowerDeployments[0]
+  }, [deploymentIds, queryParams.deploymentId])
+
+  const hasDeploymentIdFilter = useMemo(() => {
+    return Boolean(queryParams.deploymentId)
+  }, [queryParams.deploymentId])
 
   useEffect(() => {
     // Hide the placeholder after x seconds if no logs are found
@@ -82,48 +117,73 @@ export function ServiceLogsPlaceholder({
     serviceName,
     databaseMode,
     hasFilters,
+    hasDeploymentIdFilter,
   }: {
     serviceName?: string
     databaseMode?: DatabaseModeEnum
     hasFilters?: boolean
+    hasDeploymentIdFilter?: boolean
   }) {
     return (
       <div className="flex flex-col items-center justify-center gap-4">
         <div className="flex flex-col gap-1">
-          <p className="text-neutral-50">
-            {hasFilters
-              ? 'No logs found for the selected filters'
-              : `No logs are available for your service ${serviceName}`}
-          </p>
+          {hasDeploymentIdFilter ? (
+            <p className="text-neutral-50">No logs found for the selected deployment id</p>
+          ) : (
+            <p className="text-neutral-50">
+              {hasFilters
+                ? 'No logs found for the selected filters'
+                : `No logs are available for your service ${serviceName}`}
+            </p>
+          )}
           {databaseMode === DatabaseModeEnum.MANAGED && (
             <p className="text-sm text-neutral-350">
               Managed databases are handled by your cloud provider. Logs are accessible in your cloud provider console
             </p>
           )}
         </div>
-        {hasFilters && type === 'history' && (
-          <Button
-            size="sm"
-            variant="surface"
-            color="neutral"
-            className="max-w-max"
-            onClick={() => {
-              setQueryParams({
-                level: undefined,
-                instance: undefined,
-                message: undefined,
-                search: undefined,
-                version: undefined,
-                container: undefined,
-                nginx: undefined,
-              })
+        <div className="flex gap-2">
+          {hasFilters && type === 'history' && (
+            <Button
+              size="sm"
+              variant="surface"
+              color="neutral"
+              className="max-w-max"
+              onClick={() => {
+                setQueryParams({
+                  level: undefined,
+                  instance: undefined,
+                  message: undefined,
+                  search: undefined,
+                  version: undefined,
+                  container: undefined,
+                  nginx: undefined,
+                  deploymentId: undefined,
+                })
 
-              setShowPlaceholder(false)
-            }}
-          >
-            Reset filters
-          </Button>
-        )}
+                setShowPlaceholder(false)
+              }}
+            >
+              Reset filters
+            </Button>
+          )}
+          {deploymentId && (
+            <Tooltip content={deploymentId} side="bottom">
+              <Link
+                as="button"
+                size="sm"
+                color="brand"
+                className="max-w-max"
+                to={
+                  ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id) +
+                  SERVICE_LOGS_URL(serviceId, undefined, deploymentId, 'history', subDays(new Date(), 28).toISOString())
+                }
+              >
+                Go to previous deployment with service logs associated
+              </Link>
+            </Tooltip>
+          )}
+        </div>
       </div>
     )
   }
@@ -175,6 +235,7 @@ export function ServiceLogsPlaceholder({
                     version: undefined,
                     container: undefined,
                     nginx: undefined,
+                    deploymentId: undefined,
                   })
 
                   setShowPlaceholder(false)
@@ -219,10 +280,21 @@ export function ServiceLogsPlaceholder({
       if (!isLoading && isFetched) {
         if (type === 'history') {
           return (
-            <NoLogsPlaceholder serviceName={serviceName} databaseMode={databaseMode} hasFilters={hasFilterHistory} />
+            <NoLogsPlaceholder
+              serviceName={serviceName}
+              databaseMode={databaseMode}
+              hasFilters={hasFilterHistory}
+              hasDeploymentIdFilter={hasDeploymentIdFilter}
+            />
           )
         } else {
-          return <NoLogsPlaceholder serviceName={serviceName} databaseMode={databaseMode} />
+          return (
+            <NoLogsPlaceholder
+              serviceName={serviceName}
+              databaseMode={databaseMode}
+              hasDeploymentIdFilter={hasDeploymentIdFilter}
+            />
+          )
         }
       }
 

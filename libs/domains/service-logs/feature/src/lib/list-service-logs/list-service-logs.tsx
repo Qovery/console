@@ -23,6 +23,7 @@ const { Table } = TablePrimitives
 const MemoizedRowServiceLogs = memo(RowServiceLogs)
 
 function Placeholder({
+  environment,
   hasMetricsEnabled,
   type,
   isLogsFetched,
@@ -30,6 +31,7 @@ function Placeholder({
   itemsLength,
   databaseMode,
 }: {
+  environment: Environment
   hasMetricsEnabled?: boolean
   type: 'live' | 'history'
   isLogsFetched: boolean
@@ -57,6 +59,7 @@ function Placeholder({
         serviceName={serviceName}
         itemsLength={itemsLength}
         databaseMode={databaseMode}
+        environment={environment}
       />
     )
   }
@@ -69,8 +72,20 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   const [queryParams] = useQueryParams(queryParamsServiceLogs)
 
   const isLiveMode = useMemo(() => {
+    if (queryParams.mode === 'live') {
+      return true
+    }
+
+    if (queryParams.mode === 'history') {
+      return false
+    }
+
+    if (queryParams.deploymentId) {
+      return true
+    }
+
     return !queryParams.startDate && !queryParams.endDate
-  }, [queryParams.startDate, queryParams.endDate])
+  }, [queryParams.mode, queryParams.deploymentId, queryParams.startDate, queryParams.endDate])
 
   const hasMetricsEnabled =
     useMemo(() => {
@@ -144,6 +159,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
         start_date: queryParams.startDate,
         end_date: queryParams.endDate,
         container: queryParams.container,
+        deployment_id: queryParams.deploymentId,
       },
       service: {
         organization_id: environment.organization.id,
@@ -162,6 +178,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
     queryParams.container,
     queryParams.endDate,
     queryParams.instance,
+    queryParams.deploymentId,
     queryParams.level,
     queryParams.message,
     queryParams.nginx,
@@ -208,10 +225,11 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
     return (
       <div className="w-full p-1">
         <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
-          <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} />
+          <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} />
           <div className="h-[calc(100vh-176px)] border-r border-neutral-500 bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">
               <Placeholder
+                environment={environment}
                 hasMetricsEnabled={hasMetricsEnabled}
                 type={isLiveMode ? 'live' : 'history'}
                 isLogsFetched={isLogsFetched}
@@ -229,10 +247,11 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   return (
     <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
       <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
-        <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} />
+        <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} />
         {isLogsLoading && isLiveMode ? (
           <div className="flex h-full flex-col items-center justify-center pb-[68px]">
             <Placeholder
+              environment={environment}
               hasMetricsEnabled={hasMetricsEnabled}
               type="live"
               isLogsFetched={isLogsFetched}

@@ -24,6 +24,8 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   // Counter to force re-accumulation when reset occurs (handles React Query cache returning same data reference)
   const [resetCounter, setResetCounter] = useState(0)
 
+  const isHistoryMode = useMemo(() => queryParams.mode === 'history', [queryParams.mode])
+
   const startDate = useMemo(
     () => (queryParams.startDate ? new Date(queryParams.startDate) : undefined),
     [queryParams.startDate]
@@ -48,8 +50,16 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       message: queryParams.message || undefined,
       search: queryParams.search || undefined,
       version: queryParams.version || undefined,
+      deploymentId: queryParams.deploymentId || undefined,
     }),
-    [queryParams.level, queryParams.instance, queryParams.message, queryParams.search, queryParams.version]
+    [
+      queryParams.level,
+      queryParams.instance,
+      queryParams.message,
+      queryParams.search,
+      queryParams.version,
+      queryParams.deploymentId,
+    ]
   )
 
   const {
@@ -67,7 +77,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       direction: 'backward',
       limit: LOGS_PER_BATCH,
     }),
-    enabled: Boolean(clusterId) && Boolean(serviceId) && Boolean(currentEndDate) && enabled,
+    enabled: Boolean(clusterId) && Boolean(serviceId) && isHistoryMode && enabled,
   })
 
   const {
@@ -86,7 +96,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       limit: LOGS_PER_BATCH,
       isNginx: Boolean(queryParams.nginx) ?? false,
     }),
-    enabled: Boolean(clusterId) && Boolean(serviceId) && Boolean(currentEndDate) && enabled,
+    enabled: Boolean(clusterId) && Boolean(serviceId) && isHistoryMode && enabled,
   })
 
   const isFetched = isFetchedLogs || isNginxFetched
