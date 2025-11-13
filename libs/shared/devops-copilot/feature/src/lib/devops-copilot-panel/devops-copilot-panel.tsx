@@ -3,7 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import mermaid from 'mermaid'
-import { type ComponentProps, forwardRef, useEffect, useRef, useState } from 'react'
+import { type ComponentProps, forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import { AnimatedGradientText, Button, DropdownMenu, Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
@@ -103,11 +103,17 @@ export interface DevopsCopilotPanelProps {
   style?: React.CSSProperties
 }
 
+const StreamingMermaidChart = ({ code, index }: { code: string, index: number }) => {
+  const memoizedCode = useMemo(() => code, [code])
+  return <MermaidChart key={`mermaid-${index}`} code={memoizedCode} />
+}
+
 const renderStreamingMessageWithMermaid = (input: string) => {
   const parts = []
   let lastIndex = 0
   const regex = /\[start mermaid block\]([\s\S]*?)\[end mermaid block\]/g
   let match
+  let mermaidIndex = 0
 
   while ((match = regex.exec(input)) !== null) {
     const start = match.index
@@ -117,17 +123,18 @@ const renderStreamingMessageWithMermaid = (input: string) => {
     if (start > lastIndex) {
       const textPart = input.slice(lastIndex, start)
       if (textPart) {
-        parts.push(<RenderMarkdown key={'md-' + lastIndex}>{normalizeMermaid(textPart)}</RenderMarkdown>)
+        parts.push(<RenderMarkdown key={'md-' + lastIndex}>{textPart}</RenderMarkdown>)
       }
     }
-    parts.push(<MermaidChart key={'mermaid-' + start} code={mermaidCode} />)
+    parts.push(<StreamingMermaidChart key={`streaming-mermaid-${mermaidIndex}`} code={mermaidCode} index={mermaidIndex} />)
+    mermaidIndex++
     lastIndex = end
   }
 
   if (lastIndex < input.length) {
     const textPart = input.slice(lastIndex)
     if (textPart) {
-      parts.push(<RenderMarkdown key={'md-' + lastIndex}>{normalizeMermaid(textPart)}</RenderMarkdown>)
+      parts.push(<RenderMarkdown key={'md-' + lastIndex}>{textPart}</RenderMarkdown>)
     }
   }
   return parts
@@ -339,14 +346,20 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   setLoadingText('Generating a new plan...')
                 } else if (parsed.content.includes('__stepPlan__:')) {
                   try {
-                    const stepObj = JSON.parse(parsed.content.replace('__stepPlan__:', ''))
+                    const stepPlanContent = parsed.content.replace('__stepPlan__:', '').trim()
+                    if (!stepPlanContent || !stepPlanContent.startsWith('{')) {
+                      return
+                    }
+                    const stepObj = JSON.parse(stepPlanContent)
                     const { description, status } = stepObj
-                    setLoadingText(description.charAt(0).toUpperCase() + description.slice(1))
-                    setPlan((prev) =>
-                      prev.map((step) =>
-                        step.description.toLowerCase().includes(description.toLowerCase()) ? { ...step, status } : step
+                    if (description && status) {
+                      setLoadingText(description.charAt(0).toUpperCase() + description.slice(1))
+                      setPlan((prev) =>
+                        prev.map((step) =>
+                          step.description.toLowerCase().includes(description.toLowerCase()) ? { ...step, status } : step
+                        )
                       )
-                    )
+                    }
                   } catch (e) {
                     console.error('Failed to parse stepPlan object', e)
                   }
@@ -421,27 +434,82 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     if (streamingMessage.length === 0 || streamingMessage.length <= displayedStreamingMessage.length) {
       return
     }
-    let currentIndex = displayedStreamingMessage.length
 
-    const typingInterval = setInterval(() => {
-      const nextChar = streamingMessage[currentIndex]
+    let animationFrameId: number
+    let lastTimestamp = performance.now()
+    let isPaused = false
 
-      if (nextChar === undefined) {
-        clearInterval(typingInterval)
+    const animate = (timestamp: number) => {
+      if (isPaused) {
+        animationFrameId = requestAnimationFrame(animate)
         return
       }
 
+      const elapsed = timestamp - lastTimestamp
+
       setDisplayedStreamingMessage((prev) => {
-        if (!streamingMessage.startsWith(prev + nextChar)) {
-          clearInterval(typingInterval)
+        const remaining = streamingMessage.length - prev.length
+
+        if (remaining <= 0) {
           return streamingMessage
         }
-        currentIndex++
-        return prev + nextChar
-      })
-    }, 1)
 
-    return () => clearInterval(typingInterval)
+        let chunkSize = 1
+        const currentLength = prev.length
+
+        let baseChunkSize = 2
+        if (currentLength > 6000) {
+          baseChunkSize = 5
+        } else if (currentLength > 4000) {
+          baseChunkSize = 4
+        } else if (currentLength > 2000) {
+          baseChunkSize = 3
+        }
+
+        if (elapsed > 100) {
+          chunkSize = Math.min(100, remaining)
+        } else if (elapsed > 16) {
+          chunkSize = Math.min(baseChunkSize * 2, remaining)
+        } else {
+          chunkSize = Math.min(baseChunkSize, remaining)
+        }
+
+        const nextContent = streamingMessage.slice(0, prev.length + chunkSize)
+
+        if (!streamingMessage.startsWith(nextContent)) {
+          return streamingMessage
+        }
+
+        return nextContent
+      })
+
+      lastTimestamp = timestamp
+
+      if (displayedStreamingMessage.length < streamingMessage.length) {
+        animationFrameId = requestAnimationFrame(animate)
+      }
+    }
+
+    // Handle visibility change: show all content immediately when tab becomes visible
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        isPaused = true
+      } else {
+        isPaused = false
+        // Catch up immediately when tab becomes visible
+        setDisplayedStreamingMessage(streamingMessage)
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    animationFrameId = requestAnimationFrame(animate)
+
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId)
+      }
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }, [streamingMessage, displayedStreamingMessage])
 
   useEffect(() => {
