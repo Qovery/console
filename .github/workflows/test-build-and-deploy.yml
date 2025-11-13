@@ -131,30 +131,16 @@ jobs:
     runs-on: ubuntu-latest
     name: Code Coverage
     needs: [nx-main]
-    if: success() || failure()
     steps:
       - uses: actions/checkout@v4
-      - name: Download artifacts
-        id: download
-        uses: actions/download-artifact@v4
-        continue-on-error: true
+      - uses: actions/download-artifact@v4
         with:
           name: dist-and-coverage-artifacts
           path: coverage
           merge-multiple: true
-      - name: Check download result
-        run: |
-          if [ "${{ steps.download.outcome }}" == "success" ]; then
-            echo "✅ Artifacts downloaded successfully"
-          else
-            echo "ℹ️ No artifacts found - this is expected for documentation-only changes"
-          fi
       - name: Display structure of downloaded files
-        if: steps.download.outcome == 'success'
         run: ls -R
-      - name: Upload coverage to Codecov
-        if: steps.download.outcome == 'success'
-        uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v4
         with:
           directory: ./coverage/coverage
           flags: unittests # optional
@@ -170,28 +156,14 @@ jobs:
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v4
-      - name: Download artifacts
-        id: download
-        uses: actions/download-artifact@v4
-        continue-on-error: true
+      - uses: actions/download-artifact@v4
         with:
           name: dist-and-coverage-artifacts
           path: dist/
           merge-multiple: true
-      - name: Check if dist exists
-        id: check-dist
-        run: |
-          if [ -d "./dist/dist/apps/console" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "⚠️ No dist folder found - skipping deployment (no affected apps to build)"
-          fi
       - name: Copy assets to S3
-        if: steps.check-dist.outputs.exists == 'true'
         run: |
           AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/ s3://${{ secrets.s3-bucket-name }}/  --recursive --exclude "index.html"
       - name: Copy index.html to S3 last
-        if: steps.check-dist.outputs.exists == 'true'
         run: |
           AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/index.html s3://${{ secrets.s3-bucket-name }}/
