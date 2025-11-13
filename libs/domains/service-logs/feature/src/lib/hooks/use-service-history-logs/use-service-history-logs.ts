@@ -24,12 +24,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   // Counter to force re-accumulation when reset occurs (handles React Query cache returning same data reference)
   const [resetCounter, setResetCounter] = useState(0)
 
-  const isHistoryMode = useMemo(() => {
-    if (queryParams.mode === 'history') {
-      return true
-    }
-    return false
-  }, [queryParams.mode])
+  const isHistoryMode = useMemo(() => queryParams.mode === 'history', [queryParams.mode])
 
   const startDate = useMemo(
     () => (queryParams.startDate ? new Date(queryParams.startDate) : undefined),
