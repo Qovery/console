@@ -121,6 +121,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const { data: variablesResponse } = useParseTerraformVariablesFromGitRepo({
     organizationId,
     repository: repositoryConfig,
+    enabled: Boolean(repositoryConfig.branch),
   })
 
   const [tfVarFilesResponse, setTfVarFilesResponse] = useState<TfVarsFileResponse[]>([])
