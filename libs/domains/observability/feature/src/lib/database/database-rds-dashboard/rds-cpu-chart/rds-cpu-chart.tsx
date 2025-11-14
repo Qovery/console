@@ -63,8 +63,8 @@ export function RdsCpuChart({
       serviceId={serviceId}
     >
       <Line
-        dataKey="CPU Utilization"
-        name="CPU Utilization"
+        dataKey="CPU Usage"
+        name="CPU Usage"
         type="linear"
         stroke="var(--color-brand-500)"
         strokeWidth={2}

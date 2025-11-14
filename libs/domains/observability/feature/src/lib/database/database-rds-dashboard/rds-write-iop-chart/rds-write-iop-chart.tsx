@@ -90,7 +90,12 @@ export function RdsWriteIopChart({
       isLoading={isLoading}
       isEmpty={chartData.length === 0}
       label="Write IOPS"
-      description={`Write IOPS over time (average: ${avgWriteIopMetrics} ops)`}
+      description="Write IOPS over time"
+      descriptionRight={
+        <>
+          Average: <span className="font-medium">{avgWriteIopMetrics} ops</span>
+        </>
+      }
       tooltipLabel="Write IOPS"
       unit="ops"
       serviceId={serviceId}

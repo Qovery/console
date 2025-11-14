@@ -1,6 +1,6 @@
 import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
-import { type ElementRef, type PropsWithChildren, forwardRef, memo, useState } from 'react'
+import { type ElementRef, type PropsWithChildren, type ReactNode, forwardRef, memo, useState } from 'react'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import {
   Button,
@@ -224,7 +224,8 @@ export interface LocalChartProps extends PropsWithChildren {
   isLoading: boolean
   serviceId: string
   label?: string
-  description?: string
+  description?: ReactNode
+  descriptionRight?: ReactNode
   className?: string
   tooltipLabel?: string
   yDomain?: [number | string, number | string]
@@ -243,6 +244,7 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
     label,
     tooltipLabel,
     description,
+    descriptionRight,
     className,
     children,
     serviceId,
@@ -273,9 +275,10 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
           <div className="flex w-full justify-between gap-1 p-4 pb-0">
             <div>
               <Heading className="flex items-center">{label}</Heading>
-              <p className="text-ssm text-neutral-350">{description}</p>
+              <p className="max-w-2/3 text-ssm text-neutral-350">{description}</p>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex gap-1">
+              {descriptionRight && <span className="mr-1 mt-0.5 text-ssm text-neutral-400">{descriptionRight}</span>}
               {handleResetLegend && (
                 <Tooltip content="Reset filter">
                   <Button

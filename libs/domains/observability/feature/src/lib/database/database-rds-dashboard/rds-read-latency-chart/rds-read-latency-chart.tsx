@@ -90,7 +90,12 @@ export function RdsReadLatencyChart({
       isLoading={isLoading}
       isEmpty={chartData.length === 0}
       label="Read Latency"
-      description={`Read latency over time (maximum: ${maxReadLatencyMetrics} ms)`}
+      description="Read latency over time"
+      descriptionRight={
+        <>
+          Maximum: <span className="font-medium">{maxReadLatencyMetrics} ms</span>
+        </>
+      }
       tooltipLabel="Read Latency"
       unit="ms"
       serviceId={serviceId}

@@ -95,7 +95,12 @@ export function RdsStorageAvailableChart({
       isLoading={isLoading}
       isEmpty={chartData.length === 0}
       label="Storage Available"
-      description={`Storage Available over time (average: ${avgFreeStorage}%)`}
+      description="Storage Available over time"
+      descriptionRight={
+        <>
+          Average: <span className="font-medium">{avgFreeStorage}%</span>
+        </>
+      }
       tooltipLabel="Storage Available"
       unit="%"
       serviceId={serviceId}
