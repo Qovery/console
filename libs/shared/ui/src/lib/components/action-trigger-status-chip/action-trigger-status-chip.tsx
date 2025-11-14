@@ -44,12 +44,10 @@ const statusChipVariants = cva(['relative', 'rounded-full', 'bg-white', 'dark:bg
 
 export function TriggerActionIcon({
   triggerAction,
-  triggerLink,
   className,
 }: {
   triggerAction: DeploymentHistoryTriggerAction | undefined
   className?: string
-  triggerLink?: string
 }) {
   return (
     <span className={className}>
@@ -60,10 +58,10 @@ export function TriggerActionIcon({
         .with('DEPLOY', () => <Icon iconStyle="solid" iconName="play" />)
         .with('RESTART', () => <Icon iconStyle="solid" iconName="arrow-rotate-right" />)
         .with('STOP', () => <Icon iconStyle="solid" iconName="stop" />)
-        .with('DEPLOY_DRY_RUN,', () => <Icon iconStyle="solid" iconName="play" />)
-        .with('TERRAFORM_FORCE_UNLOCK,', () => <Icon iconStyle="regular" iconName="question-circle" />)
-        .with('TERRAFORM_MIGRATE_STATE,', () => <Icon iconStyle="regular" iconName="question-circle" />)
-        .with('DELETE_RESOURCES_ONLY,', () => <Icon iconStyle="solid" iconName="trash-can-xmark" />)
+        .with('DEPLOY_DRY_RUN', () => <Icon iconStyle="solid" iconName="play" />)
+        .with('TERRAFORM_FORCE_UNLOCK', () => <Icon iconStyle="regular" iconName="question-circle" />)
+        .with('TERRAFORM_MIGRATE_STATE', () => <Icon iconStyle="regular" iconName="question-circle" />)
+        .with('DELETE_RESOURCES_ONLY', () => <Icon iconStyle="solid" iconName="trash-can-xmark" />)
         .exhaustive()}
     </span>
   )
@@ -82,11 +80,7 @@ export function ActionTriggerStatusChip({ size, status, triggerAction, statusLin
   return (
     <div className="relative">
       <Indicator align="end" side="right" content={statusLink ? <Link to={statusLink}>{statusChip}</Link> : statusChip}>
-        <TriggerActionIcon
-          triggerAction={triggerAction}
-          triggerLink={statusLink}
-          className={triggerActionVariants({ size })}
-        />
+        <TriggerActionIcon triggerAction={triggerAction} className={triggerActionVariants({ size })} />
       </Indicator>
     </div>
   )
