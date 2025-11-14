@@ -32,6 +32,7 @@ import {
   SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL,
   SERVICES_TERRAFORM_CREATION_GENERAL_URL,
   SERVICES_TERRAFORM_CREATION_INPUT_VARIABLES_URL,
+  SERVICES_TERRAFORM_CREATION_SUMMARY_URL,
   SERVICES_VARIABLES_URL,
 } from '@qovery/shared/routes'
 import { StepGeneralFeature as ApplicationStepGeneralFeature } from '../feature/page-application-create-feature/step-general-feature/step-general-feature'
@@ -239,7 +240,7 @@ export const ROUTER_SERVICE_TERRAFORM_CREATION: Route[] = [
     component: <TerraformStepInputVariablesFeature />,
   },
   {
-    path: SERVICES_HELM_CREATION_SUMMARY_URL,
+    path: SERVICES_TERRAFORM_CREATION_SUMMARY_URL,
     component: <TerraformStepSummaryFeature />,
   },
 ]

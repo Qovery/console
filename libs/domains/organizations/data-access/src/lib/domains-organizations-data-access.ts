@@ -33,6 +33,7 @@ import {
   OrganizationWebhookApi,
   type OrganizationWebhookCreateRequest,
   PlanEnum,
+  type TfVarsDiscoveryMode,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/util-js'
@@ -404,12 +405,27 @@ export const organizations = createQueryKeys('organizations', {
       const response = await organizationApi.parseTerraformVariablesFromGitRepo(organizationId, {
         git_repository: repository,
       })
-      return response.data
+      return response.data.results
     },
   }),
 })
 
 export const mutations = {
+  async listTfVarsFilesFromGitRepo({
+    organizationId,
+    repository,
+    mode,
+  }: {
+    organizationId: string
+    repository: ApplicationGitRepositoryRequest
+    mode: TfVarsDiscoveryMode
+  }) {
+    const response = await organizationApi.listTfVarsFilesFromGitRepo(organizationId, {
+      git_repository: repository,
+      mode,
+    })
+    return response.data.results
+  },
   async deleteAnnotationsGroup({
     organizationId,
     annotationsGroupId,
