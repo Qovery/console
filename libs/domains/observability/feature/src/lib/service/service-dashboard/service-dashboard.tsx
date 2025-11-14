@@ -55,21 +55,30 @@ function ServiceDashboardContent() {
 
   const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
 
+  const now = new Date()
+  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
+
   const { data: containerName, isFetched: isFetchedContainerName } = useContainerName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: applicationId,
     resourceType: hasStorage ? 'statefulset' : 'deployment',
+    start: oneHourAgo.toISOString(),
+    end: now.toISOString(),
   })
 
   const { data: namespace, isFetched: isFetchedNamespace } = useNamespace({
     clusterId: environment?.cluster_id ?? '',
     serviceId: applicationId,
+    start: oneHourAgo.toISOString(),
+    end: now.toISOString(),
   })
 
   const { data: ingressName = '' } = useIngressName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: applicationId,
     enabled: hasPublicPort,
+    start: oneHourAgo.toISOString(),
+    end: now.toISOString(),
   })
 
   if ((!containerName && isFetchedContainerName) || (!namespace && isFetchedNamespace)) {
