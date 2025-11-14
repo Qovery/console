@@ -179,10 +179,16 @@ export function PageSettingsGeneral({
               </>
             ))
             .with({ serviceType: 'TERRAFORM' }, () => (
-              <Section className="gap-4">
-                <Heading>Source</Heading>
-                <EditGitRepositorySettingsFeature />
-              </Section>
+              <>
+                <Section className="gap-4">
+                  <Heading>Source</Heading>
+                  <EditGitRepositorySettingsFeature />
+                </Section>
+                <Section className="gap-4">
+                  <Heading>Build and deploy</Heading>
+                  <AutoDeploySetting source="TERRAFORM" />
+                </Section>
+              </>
             ))
             .with({ serviceType: 'CONTAINER' }, () => (
               <>

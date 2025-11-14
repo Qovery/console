@@ -222,6 +222,7 @@ export const handleTerraformSubmit = (data: TerraformGeneralData, terraform: Ter
   ...terraform,
   name: data.name,
   description: data.description,
+  auto_deploy: data.auto_deploy ?? false,
   terraform_files_source: {
     git_repository: {
       url: match(data.is_public_repository)
@@ -326,6 +327,9 @@ export function PageSettingsGeneralFeature() {
       allow_cluster_wide_resources: service.allow_cluster_wide_resources,
       timeout_sec: service.timeout_sec,
       arguments: joinArgsWithQuotes(service.arguments),
+    }))
+    .with({ serviceType: 'TERRAFORM' }, (service) => ({
+      auto_deploy: service.auto_deploy,
     }))
     .otherwise(() => undefined)
 
