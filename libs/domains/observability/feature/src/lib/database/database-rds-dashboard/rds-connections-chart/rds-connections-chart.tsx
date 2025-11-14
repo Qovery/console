@@ -61,7 +61,7 @@ export function RdsConnectionsChart({
       isLoading={isLoading}
       isEmpty={chartData.length === 0}
       label="Database Connections"
-      description="Number of active database connections over time"
+      description="Active database connections over time"
       tooltipLabel="Connections"
       unit="connections"
       serviceId={serviceId}

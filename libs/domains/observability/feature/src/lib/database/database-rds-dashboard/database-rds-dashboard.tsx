@@ -131,7 +131,7 @@ function DatabaseRdsDashboardContent() {
 
         <Section className="gap-4">
           <Heading weight="medium">Resources</Heading>
-          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
+          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded border border-neutral-250">
               <RdsCpuChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
@@ -153,7 +153,7 @@ function DatabaseRdsDashboardContent() {
 
         <Section className="gap-4">
           <Heading weight="medium">Query Performance</Heading>
-          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
+          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded border border-neutral-250">
               <RdsWriteLatencyChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
@@ -165,7 +165,7 @@ function DatabaseRdsDashboardContent() {
 
         <Section className="gap-4">
           <Heading weight="medium">Storage & I/O</Heading>
-          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
+          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded border border-neutral-250">
               <RdsWriteIopChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
