@@ -1,6 +1,6 @@
 import posthog from 'posthog-js'
 import { type TerraformRequest } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { terraformEngines, useTerraformVariablesContext } from '@qovery/domains/service-terraform/feature'
@@ -25,7 +25,7 @@ export function StepSummaryFeature() {
 
   const { generalForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
   const generalData = generalForm.getValues()
-  const { tfVarFilePaths, tfVars } = useTerraformVariablesContext()
+  const { tfVarFiles, overrides } = useTerraformVariablesContext()
 
   useEffect(() => {
     setCurrentStep(4)
@@ -35,6 +35,18 @@ export function StepSummaryFeature() {
   const { mutateAsync: deployService } = useDeployService({ organizationId, projectId, environmentId })
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
   const [isLoadingCreateAndPlan, setIsLoadingCreateAndPlan] = useState(false)
+
+  const tfVarsFilePaths = useMemo(() => {
+    return [...tfVarFiles].reverse().map((file) => file.source)
+  }, [tfVarFiles])
+
+  const tfVars = useMemo(() => {
+    return overrides.map((override) => ({
+      key: override.key,
+      value: override.value,
+      secret: override.secret,
+    }))
+  }, [overrides])
 
   const onSubmit = async (withPlan: boolean) => {
     if (withPlan) {
@@ -62,7 +74,7 @@ export function StepSummaryFeature() {
         },
       },
       terraform_variables_source: {
-        tf_var_file_paths: tfVarFilePaths,
+        tf_var_file_paths: tfVarsFilePaths,
         tf_vars: tfVars,
       },
       provider_version: {
@@ -219,15 +231,15 @@ export function StepSummaryFeature() {
                 <li>
                   <span className="font-medium">Variables:</span>
                   <ul>
-                    {tfVars.map((variable) => (
-                      <li key={variable.key}>
-                        {variable.key}: {variable.secret ? '********' : variable.value}
+                    {tfVars.map(({ key, value, secret }) => (
+                      <li key={key}>
+                        {key}: {secret ? '********' : value}
                       </li>
                     ))}
                   </ul>
                 </li>
                 <li>
-                  <span className="font-medium">File paths:</span> {tfVarFilePaths.join(', ')}
+                  <span className="font-medium">File paths:</span> {[...tfVarsFilePaths].reverse().join(', ')}
                 </li>
               </ul>
             </Section>
