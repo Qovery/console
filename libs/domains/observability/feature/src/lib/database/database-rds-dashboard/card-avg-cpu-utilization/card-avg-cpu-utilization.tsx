@@ -46,7 +46,7 @@ export function CardAvgCpuUtilization({ clusterId, dbInstance }: CardAvgCpuUtili
 
   return (
     <CardMetric
-      title="CPU Utilization"
+      title="CPU Usage"
       value={formattedValue}
       unit="%"
       valueDescription="Average CPU usage"

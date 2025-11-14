@@ -90,7 +90,7 @@ export function RdsWriteLatencyChart({
       isLoading={isLoading}
       isEmpty={chartData.length === 0}
       label="Write Latency"
-      description={`Write latency over time (max: ${maxWriteLatencyMetrics} ms)`}
+      description={`Write latency over time (maximum: ${maxWriteLatencyMetrics} ms)`}
       tooltipLabel="Write Latency"
       unit="ms"
       serviceId={serviceId}

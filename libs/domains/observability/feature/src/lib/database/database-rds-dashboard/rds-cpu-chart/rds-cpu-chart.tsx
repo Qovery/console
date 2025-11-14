@@ -46,7 +46,7 @@ export function RdsCpuChart({
         timestamp: timestampMs,
         time: timeStr,
         fullTime: useLocalTime ? date.toLocaleString() : date.toUTCString(),
-        'CPU Utilization': parseFloat(value),
+        'CPU Usage': parseFloat(value),
       }
     })
   }, [metrics, useLocalTime])
@@ -56,7 +56,7 @@ export function RdsCpuChart({
       data={chartData}
       isLoading={isLoading}
       isEmpty={chartData.length === 0}
-      label="CPU Utilization (%)"
+      label="CPU Usage (%)"
       description="Average CPU usage over time"
       tooltipLabel="CPU"
       unit="%"

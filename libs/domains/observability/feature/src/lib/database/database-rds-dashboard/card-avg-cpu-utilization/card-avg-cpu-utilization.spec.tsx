@@ -41,7 +41,7 @@ describe('CardAvgCpuUtilization', () => {
     expect(container).toBeTruthy()
     expect(mockCardMetric).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'CPU Utilization',
+        title: 'CPU Usage',
         value: '--',
         unit: '%',
         valueDescription: 'Average CPU usage',
