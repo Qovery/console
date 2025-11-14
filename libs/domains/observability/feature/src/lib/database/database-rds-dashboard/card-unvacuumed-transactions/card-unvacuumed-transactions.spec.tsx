@@ -42,7 +42,7 @@ describe('CardUnvacuumedTransactions', () => {
       expect.objectContaining({
         title: 'Unvacuumed Transactions',
         value: '--',
-        valueDescription: 'pending cleanup operations',
+        valueDescription: 'Pending cleanup operations',
         isLoading: false,
       })
     )
