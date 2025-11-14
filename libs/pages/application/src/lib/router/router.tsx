@@ -18,6 +18,7 @@ import {
   APPLICATION_SETTINGS_STORAGE_URL,
   APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
   APPLICATION_SETTINGS_TERRAFORM_CONFIGURATION_URL,
+  APPLICATION_SETTINGS_TERRAFORM_VARIABLES_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_SETTINGS_VALUES_OVERRIDE_ARGUMENTS_URL,
   APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL,
@@ -44,6 +45,7 @@ import PageSettingsResourcesFeature from '../feature/page-settings-resources-fea
 import PageSettingsStorageFeature from '../feature/page-settings-storage-feature/page-settings-storage-feature'
 import { PageSettingsTerraformArgumentsFeature } from '../feature/page-settings-terraform-arguments-feature/page-settings-terraform-arguments-feature'
 import PageSettingsTerraformConfigurationFeature from '../feature/page-settings-terraform-configuration-feature/page-settings-terraform-configuration-feature'
+import { PageSettingsTerraformVariablesFeature } from '../feature/page-settings-terraform-variables/page-settings-terraform-variables'
 import PageSettingsValuesOverrideArgumentsFeature from '../feature/page-settings-values-override-arguments-feature/page-settings-values-override-arguments-feature'
 import PageSettingsValuesOverrideFileFeature from '../feature/page-settings-values-override-file-feature/page-settings-values-override-file-feature'
 import PageVariablesFeature from '../feature/page-variables-feature/page-variables-feature'
@@ -146,5 +148,9 @@ export const ROUTER_APPLICATION_SETTINGS: Route[] = [
   {
     path: APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
     component: <PageSettingsTerraformArgumentsFeature />,
+  },
+  {
+    path: APPLICATION_SETTINGS_TERRAFORM_VARIABLES_URL,
+    component: <PageSettingsTerraformVariablesFeature />,
   },
 ]

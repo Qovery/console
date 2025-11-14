@@ -17,6 +17,7 @@ import {
   APPLICATION_SETTINGS_STORAGE_URL,
   APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
   APPLICATION_SETTINGS_TERRAFORM_CONFIGURATION_URL,
+  APPLICATION_SETTINGS_TERRAFORM_VARIABLES_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_SETTINGS_VALUES_OVERRIDE_ARGUMENTS_URL,
   APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL,
@@ -144,6 +145,12 @@ export function PageSettingsFeature() {
     url: pathSettings + APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
   }
 
+  const terraformVariablesSetting = {
+    title: 'Terraform variables',
+    iconName: 'key' as const,
+    url: pathSettings + APPLICATION_SETTINGS_TERRAFORM_VARIABLES_URL,
+  }
+
   const links = match(service)
     .returnType<NavigationLeftLinkProps[]>()
     .with({ serviceType: 'APPLICATION' }, () => [
@@ -179,6 +186,7 @@ export function PageSettingsFeature() {
     .with({ serviceType: 'TERRAFORM' }, () => [
       generalSettings,
       terraformConfigurationSetting,
+      terraformVariablesSetting,
       terraformArgumentsSetting,
       resourcesSettings,
       deploymentRestrictionsSettings,

@@ -34,7 +34,7 @@ export function PasswordShowHide({
         </span>
       </Tooltip>
       <span className="pt-1.5 text-xl font-medium tracking-widest" data-testid="hide_value_secret">
-        *************
+        ********
       </span>
     </span>
   ) : (
@@ -70,7 +70,7 @@ export function PasswordShowHide({
       ) : (
         <Tooltip content={value}>
           <span className="pt-1.5 text-xl font-medium tracking-widest text-neutral-350" data-testid="hide_value">
-            *************
+            ********
           </span>
         </Tooltip>
       )}

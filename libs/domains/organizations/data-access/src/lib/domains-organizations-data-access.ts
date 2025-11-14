@@ -405,7 +405,7 @@ export const organizations = createQueryKeys('organizations', {
       const response = await organizationApi.parseTerraformVariablesFromGitRepo(organizationId, {
         git_repository: repository,
       })
-      return response.data
+      return response.data.results
     },
   }),
 })
