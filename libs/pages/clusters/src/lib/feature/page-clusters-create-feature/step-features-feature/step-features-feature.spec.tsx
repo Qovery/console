@@ -11,7 +11,7 @@ const mockNavigate = jest.fn()
 
 const mockFeatures: ClusterFeatureResponse[] = [
   {
-    id: 'FEATURE',
+    id: 'EXISTING_VPC',
     title: 'feature-1',
     cost_per_month: 23,
     value_object: {
@@ -99,7 +99,7 @@ describe('StepFeaturesFeature', () => {
     expect(button).toBeEnabled()
     await userEvent.click(button)
 
-    const FEATURE = 'FEATURE'
+    const FEATURE = 'EXISTING_VPC'
 
     expect(mockSetFeaturesData).toHaveBeenCalledWith({
       vpc_mode: 'DEFAULT',

@@ -117,7 +117,7 @@ export function CardClusterFeature({
                       }
                       onChange={field.onChange}
                       value={field.value}
-                      label="VPC Subnet address"
+                      label={feature.id === 'EXISTING_VPC' ? 'VPC Subnet address' : feature.title}
                       isSearchable
                       disabled={!currentDisabled}
                       portal
@@ -134,7 +134,7 @@ export function CardClusterFeature({
                     })) || []
                   }
                   value={feature.value_object.value}
-                  label="VPC Subnet address"
+                  label={feature.id === 'EXISTING_VPC' ? 'VPC Subnet address' : feature.title}
                   disabled
                 />
               )}

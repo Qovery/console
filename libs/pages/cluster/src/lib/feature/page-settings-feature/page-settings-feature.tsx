@@ -100,6 +100,7 @@ export function PageSettingsFeature() {
       credentialsLink,
       resourcesLink,
       imageRegistryLink,
+      networkLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])

@@ -33,7 +33,7 @@ export function StepResourcesFeature() {
         navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
       })
       .with('SCW', () => {
-        navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)
+        // Set control plane feature data
         if (resourcesData) {
           setFeaturesData({
             vpc_mode: 'DEFAULT',
@@ -47,6 +47,8 @@ export function StepResourcesFeature() {
             },
           })
         }
+        // Navigate to features step for network configuration
+        navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
       })
       .otherwise(() => {
         navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)

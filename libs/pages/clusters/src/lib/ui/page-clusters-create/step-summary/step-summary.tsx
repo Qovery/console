@@ -1,6 +1,10 @@
 import { type ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { CONTROL_PLANE_LABELS, KarpenterInstanceTypePreview } from '@qovery/domains/cloud-providers/feature'
+import {
+  CONTROL_PLANE_LABELS,
+  KarpenterInstanceTypePreview,
+  SCW_CONTROL_PLANE_FEATURE_ID,
+} from '@qovery/domains/cloud-providers/feature'
 import {
   type ClusterFeaturesData,
   type ClusterGeneralData,
@@ -58,9 +62,20 @@ export function StepSummary(props: StepSummaryProps) {
     return feature.length > 0
   }
 
+  const checkIfScwNetworkFeaturesAvailable = () => {
+    if (!props.featuresData?.features) return false
+
+    // Check if any network features (excluding control plane) are enabled
+    return Object.keys(props.featuresData.features).some((id) => {
+      if (id === SCW_CONTROL_PLANE_FEATURE_ID) return false
+      const feature = props.featuresData!.features[id]
+      return feature.value || feature.extendedValue
+    })
+  }
+
   const showFeaturesSection = match(props.generalData.cloud_provider)
     .with('AWS', 'GCP', () => checkIfFeaturesAvailable())
-    .with('SCW', () => false)
+    .with('SCW', () => checkIfScwNetworkFeaturesAvailable())
     .otherwise(() => false)
 
   return (
@@ -515,7 +530,10 @@ export function StepSummary(props: StepSummaryProps) {
                 {Object.keys(props.featuresData.features).map((id: string) => {
                   const currentFeature = props.featuresData && props.featuresData.features[id]
 
-                  if (!currentFeature?.value) return null
+                  // Skip control plane feature for SCW (shown in Resources section)
+                  if (id === SCW_CONTROL_PLANE_FEATURE_ID) return null
+                  // Show feature if either value is true or extendedValue exists (e.g., NAT Gateway type)
+                  if (!currentFeature?.value && !currentFeature?.extendedValue) return null
 
                   return (
                     <li key={id}>
