@@ -2,15 +2,15 @@ import { render } from '@qovery/shared/util-tests'
 import { CardAvailableRam } from './card-available-ram'
 
 const mockUseDashboardContext = jest.fn()
-const mockUseMetrics = jest.fn()
+const mockUseInstantMetrics = jest.fn()
 const mockCardMetric = jest.fn(() => <div data-testid="card-metric" />)
 
 jest.mock('../../../util-filter/dashboard-context', () => ({
   useDashboardContext: () => mockUseDashboardContext(),
 }))
 
-jest.mock('../../../hooks/use-metrics/use-metrics', () => ({
-  useMetrics: (params: unknown) => mockUseMetrics(params),
+jest.mock('../../../hooks/use-instant-metrics/use-instant-metrics', () => ({
+  useInstantMetrics: (params: unknown) => mockUseInstantMetrics(params),
 }))
 
 jest.mock('../card-metric/card-metric', () => ({
@@ -27,7 +27,7 @@ describe('CardAvailableRam', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockUseDashboardContext.mockReturnValue(defaultContext)
-    mockUseMetrics.mockReturnValue({
+    mockUseInstantMetrics.mockReturnValue({
       data: undefined,
       isLoading: false,
     })
@@ -43,7 +43,7 @@ describe('CardAvailableRam', () => {
         title: 'Available RAM',
         value: '--',
         unit: 'GB',
-        valueDescription: 'avg free memory',
+        valueDescription: 'Average free memory',
         description: 'Average free memory available over the selected time range.',
         isLoading: false,
       })
@@ -51,15 +51,12 @@ describe('CardAvailableRam', () => {
   })
 
   it('should convert bytes to gigabytes and format value', () => {
-    mockUseMetrics.mockReturnValue({
+    mockUseInstantMetrics.mockReturnValue({
       data: {
         data: {
           result: [
             {
-              values: [
-                [1, `${2 * 1024 * 1024 * 1024}`],
-                [2, `${4.25 * 1024 * 1024 * 1024}`],
-              ],
+              value: [1, `${4.25 * 1024 * 1024 * 1024}`],
             },
           ],
         },
@@ -77,7 +74,7 @@ describe('CardAvailableRam', () => {
   })
 
   it('should forward loading state', () => {
-    mockUseMetrics.mockReturnValue({
+    mockUseInstantMetrics.mockReturnValue({
       data: undefined,
       isLoading: true,
     })

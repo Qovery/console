@@ -11,7 +11,7 @@ interface UseInstantMetricsProps {
   query: string
   startTimestamp: string
   endTimestamp: string
-  boardShortName: 'service_overview'
+  boardShortName: 'service_overview' | 'rds_overview'
   metricShortName: string
   timeRange?: TimeRangeOption
   isLiveUpdateEnabled?: boolean

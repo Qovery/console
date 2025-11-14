@@ -8,10 +8,17 @@ import { DashboardProvider, useDashboardContext } from '../../util-filter/dashbo
 import { CardAvailableRam } from './card-available-ram/card-available-ram'
 import { CardAvgCpuUtilization } from './card-avg-cpu-utilization/card-avg-cpu-utilization'
 import { CardAvgDbConnections } from './card-avg-db-connections/card-avg-db-connections'
+import CardMaxSwapUsage from './card-max-swap-usage/card-max-swap-usage'
 import { CardUnvacuumedTransactions } from './card-unvacuumed-transactions/card-unvacuumed-transactions'
+import RdsConnectionsChart from './rds-connections-chart/rds-connections-chart'
 import { RdsCpuChart } from './rds-cpu-chart/rds-cpu-chart'
 import { RdsDiskQueueDepthChart } from './rds-disk-queue-depth-chart/rds-disk-queue-depth-chart'
 import { RdsRamChart } from './rds-ram-chart/rds-ram-chart'
+import RdsReadIopChart from './rds-read-iop-chart/rds-read-iop-chart'
+import RdsReadLatencyChart from './rds-read-latency-chart/rds-read-latency-chart'
+import RdsStorageAvailableChart from './rds-storage-available-chart/rds-storage-available-chart'
+import RdsWriteIopChart from './rds-write-iop-chart/rds-write-iop-chart'
+import RdsWriteLatencyChart from './rds-write-latency-chart/rds-write-latency-chart'
 import { SelectTimeRange } from './select-time-range/select-time-range'
 import { generateDbInstance } from './util/generate-db-instance'
 
@@ -113,17 +120,18 @@ function DatabaseRdsDashboardContent() {
       <div className="space-y-10 px-8 py-10">
         <Section className="gap-4">
           <Heading weight="medium">Overview</Heading>
-          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-4')}>
+          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-3')}>
             <CardUnvacuumedTransactions clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvgDbConnections clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvgCpuUtilization clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvailableRam clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            <CardMaxSwapUsage clusterId={environment.cluster_id} dbInstance={dbInstance} />
           </div>
         </Section>
 
         <Section className="gap-4">
           <Heading weight="medium">Resources</Heading>
-          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
+          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded border border-neutral-250">
               <RdsCpuChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
@@ -137,40 +145,41 @@ function DatabaseRdsDashboardContent() {
                 dbInstance={dbInstance}
               />
             </div>
+            <div className="overflow-hidden rounded border border-neutral-250">
+              <RdsConnectionsChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            </div>
           </div>
         </Section>
 
         <Section className="gap-4">
-          <Heading weight="medium">Storage & IOPS</Heading>
-          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
-            <Callout.Root color="sky">
-              <Callout.Icon>
-                <Icon iconName="circle-info" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>Storage & IOPS Metrics</Callout.TextHeading>
-                <Callout.TextDescription>
-                  Storage usage, IOPS, and throughput metrics will be displayed here.
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
+          <Heading weight="medium">Query Performance</Heading>
+          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
+            <div className="overflow-hidden rounded border border-neutral-250">
+              <RdsWriteLatencyChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            </div>
+            <div className="overflow-hidden rounded border border-neutral-250">
+              <RdsReadLatencyChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            </div>
           </div>
         </Section>
 
         <Section className="gap-4">
-          <Heading weight="medium">Network</Heading>
-          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
-            <Callout.Root color="sky">
-              <Callout.Icon>
-                <Icon iconName="circle-info" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>Network Metrics</Callout.TextHeading>
-                <Callout.TextDescription>
-                  Network throughput and connection metrics will be available here.
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
+          <Heading weight="medium">Storage & I/O</Heading>
+          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
+            <div className="overflow-hidden rounded border border-neutral-250">
+              <RdsWriteIopChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            </div>
+            <div className="overflow-hidden rounded border border-neutral-250">
+              <RdsReadIopChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            </div>
+            <div className="overflow-hidden rounded border border-neutral-250">
+              <RdsStorageAvailableChart
+                serviceId={databaseId}
+                clusterId={environment.cluster_id}
+                dbInstance={dbInstance}
+                storageResourceInGiB={(service as Database).storage}
+              />
+            </div>
           </div>
         </Section>
       </div>

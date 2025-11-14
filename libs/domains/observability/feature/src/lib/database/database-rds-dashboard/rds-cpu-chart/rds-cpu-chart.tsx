@@ -6,7 +6,7 @@ import { LocalChart } from '../../../local-chart/local-chart'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 const queryCpuUtilization = (dbInstance: string) => `
-  aws_rds_cpuutilization_average{dimension_DBInstanceIdentifier="${dbInstance}"}
+  max by (dimension_DBInstanceIdentifier) (aws_rds_cpuutilization_average{dimension_DBInstanceIdentifier="${dbInstance}"})
 `
 
 export function RdsCpuChart({
@@ -46,7 +46,7 @@ export function RdsCpuChart({
         timestamp: timestampMs,
         time: timeStr,
         fullTime: useLocalTime ? date.toLocaleString() : date.toUTCString(),
-        'CPU Utilization': parseFloat(value),
+        'CPU Usage': parseFloat(value),
       }
     })
   }, [metrics, useLocalTime])
@@ -56,15 +56,15 @@ export function RdsCpuChart({
       data={chartData}
       isLoading={isLoading}
       isEmpty={chartData.length === 0}
-      label="CPU Utilization (%)"
+      label="CPU Usage (%)"
       description="Average CPU usage over time"
       tooltipLabel="CPU"
       unit="%"
       serviceId={serviceId}
     >
       <Line
-        dataKey="CPU Utilization"
-        name="CPU Utilization"
+        dataKey="CPU Usage"
+        name="CPU Usage"
         type="linear"
         stroke="var(--color-brand-500)"
         strokeWidth={2}

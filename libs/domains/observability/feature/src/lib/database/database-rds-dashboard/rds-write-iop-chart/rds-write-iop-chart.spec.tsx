@@ -1,5 +1,5 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import { RdsDiskQueueDepthChart } from './rds-disk-queue-depth-chart'
+import { RdsWriteIopChart } from './rds-write-iop-chart'
 
 const mockUseDashboardContext = jest.fn()
 const mockUseMetrics = jest.fn()
@@ -17,7 +17,7 @@ jest.mock('../../../hooks/use-instant-metrics/use-instant-metrics', () => ({
   useInstantMetrics: () => mockUseInstantMetrics(),
 }))
 
-describe('RdsDiskQueueDepthChart', () => {
+describe('RdsWriteIopChart', () => {
   beforeEach(() => {
     mockUseDashboardContext.mockReturnValue({
       startTimestamp: '1698834400',
@@ -45,7 +45,7 @@ describe('RdsDiskQueueDepthChart', () => {
 
   it('should render successfully', () => {
     const { container } = renderWithProviders(
-      <RdsDiskQueueDepthChart serviceId="service-1" clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />
+      <RdsWriteIopChart serviceId="service-1" clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />
     )
     expect(container).toBeTruthy()
   })
@@ -58,8 +58,8 @@ describe('RdsDiskQueueDepthChart', () => {
             {
               metric: {},
               values: [
-                [1698834400, '2.5'],
-                [1698834460, '1.8'],
+                [1698834400, '85.3'],
+                [1698834460, '92.1'],
               ],
             },
           ],
@@ -73,7 +73,7 @@ describe('RdsDiskQueueDepthChart', () => {
         data: {
           result: [
             {
-              value: [1698834400, '2.1'],
+              value: [1698834400, '88.7'],
             },
           ],
         },
@@ -82,7 +82,7 @@ describe('RdsDiskQueueDepthChart', () => {
     })
 
     const { container } = renderWithProviders(
-      <RdsDiskQueueDepthChart serviceId="service-1" clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />
+      <RdsWriteIopChart serviceId="service-1" clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />
     )
     expect(container).toBeTruthy()
   })

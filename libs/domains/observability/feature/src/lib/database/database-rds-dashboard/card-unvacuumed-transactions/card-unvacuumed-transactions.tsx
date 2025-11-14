@@ -1,4 +1,4 @@
-import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
+import { useInstantMetrics } from '../../../hooks/use-instant-metrics/use-instant-metrics'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 import { CardMetric } from '../card-metric/card-metric'
 import { formatNumberShort } from '../util/format-number-short'
@@ -9,15 +9,17 @@ interface CardUnvacuumedTransactionsProps {
 }
 
 const queryUnvacuumedTransactions = (timeRange: string, dbInstance: string) => `
-  max_over_time(
-    aws_rds_maximum_used_transaction_ids_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}]
-  )
+ max_over_time(
+  max by (dimension_DBInstanceIdentifier) (
+    aws_rds_maximum_used_transaction_ids_average{dimension_DBInstanceIdentifier="${dbInstance}"}
+  )[${timeRange}:]
+)
 `
 
 export function CardUnvacuumedTransactions({ clusterId, dbInstance }: CardUnvacuumedTransactionsProps) {
   const { startTimestamp, endTimestamp, timeRange } = useDashboardContext()
 
-  const { data: metrics, isLoading } = useMetrics({
+  const { data: metrics, isLoading } = useInstantMetrics({
     clusterId,
     query: queryUnvacuumedTransactions(timeRange, dbInstance),
     startTimestamp,
@@ -27,8 +29,8 @@ export function CardUnvacuumedTransactions({ clusterId, dbInstance }: CardUnvacu
     metricShortName: 'card_unvacuumed_transactions',
   })
 
-  const series = metrics?.data?.result?.[0]?.values as [number, string][] | undefined
-  const lastValueStr = series && series.length > 0 ? series[series.length - 1][1] : undefined
+  const series = metrics?.data?.result?.[0]?.value as [number, string] | undefined
+  const lastValueStr = series && series.length > 0 ? series[1] : undefined
   const numValue = lastValueStr !== undefined ? parseFloat(lastValueStr) : undefined
   const isValid = Number.isFinite(numValue as number)
 
@@ -53,7 +55,7 @@ export function CardUnvacuumedTransactions({ clusterId, dbInstance }: CardUnvacu
     <CardMetric
       title="Unvacuumed Transactions"
       value={formattedValue}
-      valueDescription="pending cleanup operations"
+      valueDescription="Pending cleanup operations"
       description={
         <>
           Shows the backlog of PostgreSQL transactions awaiting VACUUM cleanup. <br />

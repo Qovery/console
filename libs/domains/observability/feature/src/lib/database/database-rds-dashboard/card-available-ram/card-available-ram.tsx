@@ -1,4 +1,4 @@
-import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
+import { useInstantMetrics } from '../../../hooks/use-instant-metrics/use-instant-metrics'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 import { CardMetric } from '../card-metric/card-metric'
 
@@ -16,7 +16,7 @@ const queryAvailableRam = (timeRange: string, dbInstance: string) => `
 export function CardAvailableRam({ clusterId, dbInstance }: CardAvailableRamProps) {
   const { startTimestamp, endTimestamp, timeRange } = useDashboardContext()
 
-  const { data: metrics, isLoading } = useMetrics({
+  const { data: metrics, isLoading } = useInstantMetrics({
     clusterId,
     query: queryAvailableRam(timeRange, dbInstance),
     startTimestamp,
@@ -26,8 +26,8 @@ export function CardAvailableRam({ clusterId, dbInstance }: CardAvailableRamProp
     metricShortName: 'available_ram',
   })
 
-  const series = metrics?.data?.result?.[0]?.values as [number, string][] | undefined
-  const lastValueStr = series && series.length > 0 ? series[series.length - 1][1] : undefined
+  const series = metrics?.data?.result?.[0]?.value as [number, string] | undefined
+  const lastValueStr = series && series.length > 0 ? series[1] : undefined
   const numValue = lastValueStr !== undefined ? parseFloat(lastValueStr) : undefined
   const isValid = Number.isFinite(numValue as number)
 
@@ -39,7 +39,7 @@ export function CardAvailableRam({ clusterId, dbInstance }: CardAvailableRamProp
       title="Available RAM"
       value={formattedValue}
       unit="GB"
-      valueDescription="avg free memory"
+      valueDescription="Average free memory"
       description="Average free memory available over the selected time range."
       isLoading={isLoading}
     />

@@ -40,9 +40,14 @@ export function CardMetric({
               width={170}
               height={16}
             >
-              <Tooltip content={description}>
-                <Heading className="font-normal text-neutral-350">{title}</Heading>
-              </Tooltip>
+              <Heading className="flex items-center gap-1 font-normal text-neutral-350">
+                {title}
+                <Tooltip content={description}>
+                  <span>
+                    <Icon iconName="info-circle" iconStyle="regular" className="text-xs text-neutral-350" />
+                  </span>
+                </Tooltip>
+              </Heading>
               {status && (
                 <Tooltip content={statusDescription}>
                   <Badge

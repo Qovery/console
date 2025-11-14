@@ -39,7 +39,7 @@ export function Container({ children }: ContainerProps) {
 
   const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
-  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
+  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id })
 
   const { setOpen } = useContext(ServiceTerminalContext)
 

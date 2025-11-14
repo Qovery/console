@@ -1,4 +1,4 @@
-import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
+import { useInstantMetrics } from '../../../hooks/use-instant-metrics/use-instant-metrics'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 import { CardMetric } from '../card-metric/card-metric'
 
@@ -16,7 +16,7 @@ const queryAvgCpuUtilization = (timeRange: string, dbInstance: string) => `
 export function CardAvgCpuUtilization({ clusterId, dbInstance }: CardAvgCpuUtilizationProps) {
   const { startTimestamp, endTimestamp, timeRange } = useDashboardContext()
 
-  const { data: metrics, isLoading } = useMetrics({
+  const { data: metrics, isLoading } = useInstantMetrics({
     clusterId,
     query: queryAvgCpuUtilization(timeRange, dbInstance),
     startTimestamp,
@@ -26,8 +26,8 @@ export function CardAvgCpuUtilization({ clusterId, dbInstance }: CardAvgCpuUtili
     metricShortName: 'avg_cpu_utilization',
   })
 
-  const series = metrics?.data?.result?.[0]?.values as [number, string][] | undefined
-  const lastValueStr = series && series.length > 0 ? series[series.length - 1][1] : undefined
+  const series = metrics?.data?.result?.[0]?.value as [number, string] | undefined
+  const lastValueStr = series && series.length > 0 ? series[1] : undefined
   const numValue = lastValueStr !== undefined ? parseFloat(lastValueStr) : undefined
   const isValid = Number.isFinite(numValue as number)
 
@@ -46,10 +46,10 @@ export function CardAvgCpuUtilization({ clusterId, dbInstance }: CardAvgCpuUtili
 
   return (
     <CardMetric
-      title="CPU Utilization"
+      title="CPU Usage"
       value={formattedValue}
       unit="%"
-      valueDescription="avg CPU usage"
+      valueDescription="Average CPU usage"
       description="Average CPU utilization over the selected time range."
       status={status}
       statusDescription="Higher averages may indicate increased workload or CPU saturation."

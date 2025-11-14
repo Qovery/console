@@ -1,9 +1,8 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import { RdsDiskQueueDepthChart } from './rds-disk-queue-depth-chart'
+import { RdsConnectionsChart } from './rds-connections-chart'
 
 const mockUseDashboardContext = jest.fn()
 const mockUseMetrics = jest.fn()
-const mockUseInstantMetrics = jest.fn()
 
 jest.mock('../../../util-filter/dashboard-context', () => ({
   useDashboardContext: () => mockUseDashboardContext(),
@@ -13,11 +12,7 @@ jest.mock('../../../hooks/use-metrics/use-metrics', () => ({
   useMetrics: () => mockUseMetrics(),
 }))
 
-jest.mock('../../../hooks/use-instant-metrics/use-instant-metrics', () => ({
-  useInstantMetrics: () => mockUseInstantMetrics(),
-}))
-
-describe('RdsDiskQueueDepthChart', () => {
+describe('RdsConnectionsChart', () => {
   beforeEach(() => {
     mockUseDashboardContext.mockReturnValue({
       startTimestamp: '1698834400',
@@ -36,16 +31,11 @@ describe('RdsDiskQueueDepthChart', () => {
       data: null,
       isLoading: false,
     })
-
-    mockUseInstantMetrics.mockReturnValue({
-      data: null,
-      isLoading: false,
-    })
   })
 
   it('should render successfully', () => {
     const { container } = renderWithProviders(
-      <RdsDiskQueueDepthChart serviceId="service-1" clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />
+      <RdsConnectionsChart serviceId="service-1" clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />
     )
     expect(container).toBeTruthy()
   })
@@ -58,8 +48,8 @@ describe('RdsDiskQueueDepthChart', () => {
             {
               metric: {},
               values: [
-                [1698834400, '2.5'],
-                [1698834460, '1.8'],
+                [1698834400, '25'],
+                [1698834460, '30'],
               ],
             },
           ],
@@ -68,21 +58,8 @@ describe('RdsDiskQueueDepthChart', () => {
       isLoading: false,
     })
 
-    mockUseInstantMetrics.mockReturnValue({
-      data: {
-        data: {
-          result: [
-            {
-              value: [1698834400, '2.1'],
-            },
-          ],
-        },
-      },
-      isLoading: false,
-    })
-
     const { container } = renderWithProviders(
-      <RdsDiskQueueDepthChart serviceId="service-1" clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />
+      <RdsConnectionsChart serviceId="service-1" clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />
     )
     expect(container).toBeTruthy()
   })

@@ -239,7 +239,7 @@ function ServiceDashboardContent() {
         </Section>
         <Section className="gap-4">
           <Heading weight="medium">Resources</Heading>
-          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
+          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded border border-neutral-250">
               <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
             </div>
@@ -256,7 +256,7 @@ function ServiceDashboardContent() {
         {hasPublicPort && (
           <Section className="gap-4">
             <Heading weight="medium">Network</Heading>
-            <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
+            <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
               <div className="overflow-hidden rounded border border-neutral-250">
                 <NetworkRequestStatusChart
                   clusterId={environment.cluster_id}
@@ -284,7 +284,7 @@ function ServiceDashboardContent() {
         {hasOnlyPrivatePorts && (
           <Section className="gap-4">
             <Heading weight="medium">Network</Heading>
-            <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
+            <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
               <div className="overflow-hidden rounded border border-neutral-250">
                 <PrivateNetworkRequestStatusChart
                   clusterId={environment.cluster_id}
