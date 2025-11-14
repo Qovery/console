@@ -9,14 +9,14 @@ export const observability = createQueryKeys('observability', {
     clusterId,
     serviceId,
     resourceType = 'deployment',
-    start,
-    end,
+    startDate,
+    endDate,
   }: {
     clusterId: string
     serviceId: string
     resourceType?: 'deployment' | 'statefulset'
-    start: string
-    end: string
+    startDate: string
+    endDate: string
   }) => ({
     queryKey: ['containerName', clusterId, serviceId, resourceType],
     async queryFn() {
@@ -30,8 +30,8 @@ export const observability = createQueryKeys('observability', {
         clusterId,
         endpoint,
         '',
-        start,
-        end,
+        startDate,
+        endDate,
         undefined,
         undefined,
         undefined,
@@ -49,13 +49,13 @@ export const observability = createQueryKeys('observability', {
   ingressName: ({
     clusterId,
     serviceId,
-    start,
-    end,
+    startDate,
+    endDate,
   }: {
     clusterId: string
     serviceId: string
-    start: string
-    end: string
+    startDate: string
+    endDate: string
   }) => ({
     queryKey: ['ingressName', clusterId, serviceId],
     async queryFn() {
@@ -64,8 +64,8 @@ export const observability = createQueryKeys('observability', {
         clusterId,
         endpoint,
         '',
-        start,
-        end,
+        startDate,
+        endDate,
         undefined,
         undefined,
         undefined,
@@ -84,14 +84,14 @@ export const observability = createQueryKeys('observability', {
     clusterId,
     serviceId,
     resourceType = 'deployment',
-    start,
-    end,
+    startDate,
+    endDate,
   }: {
     clusterId: string
     serviceId: string
     resourceType?: 'deployment' | 'statefulset'
-    start: string
-    end: string
+    startDate: string
+    endDate: string
   }) => ({
     queryKey: ['namespace', clusterId, serviceId, resourceType],
     async queryFn() {
@@ -104,8 +104,8 @@ export const observability = createQueryKeys('observability', {
         clusterId,
         endpoint,
         '',
-        start,
-        end,
+        startDate,
+        endDate,
         undefined,
         undefined,
         undefined,

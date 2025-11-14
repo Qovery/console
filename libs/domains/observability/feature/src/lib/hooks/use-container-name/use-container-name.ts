@@ -5,14 +5,14 @@ export interface UseContainerNameProps {
   clusterId: string
   serviceId: string
   resourceType: 'deployment' | 'statefulset'
-  start: string
-  end: string
+  startDate: string
+  endDate: string
 }
 
 // Retrieves the container name associated with a specific service
-export function useContainerName({ clusterId, serviceId, resourceType, start, end }: UseContainerNameProps) {
+export function useContainerName({ clusterId, serviceId, resourceType, startDate, endDate }: UseContainerNameProps) {
   return useQuery({
-    ...observability.containerName({ clusterId, serviceId, resourceType, start, end }),
+    ...observability.containerName({ clusterId, serviceId, resourceType, startDate, endDate }),
     enabled: Boolean(clusterId && serviceId),
   })
 }
