@@ -9,16 +9,16 @@ import { useDashboardContext } from '../../../util-filter/dashboard-context'
 const queryWriteIops = (dbInstance: string) => `
   max by (dimension_DBInstanceIdentifier) (
     aws_rds_write_iops_average{
-      dimension_DBInstanceIdentifier=~"${dbInstance}"
+      dimension_DBInstanceIdentifier="${dbInstance}"
     }
   )
 `
 
 const queryAverageWriteIops = (timeRange: string, dbInstance: string) => `
-  avg_over_time (
-    aws_rds_write_iops_average{
-      dimension_DBInstanceIdentifier=~"${dbInstance}"
-    }[${timeRange}]
+  avg_over_time(
+    max by (dimension_DBInstanceIdentifier) (
+      aws_rds_write_iops_average{dimension_DBInstanceIdentifier="${dbInstance}"}
+    )[${timeRange}:]
 )
 `
 

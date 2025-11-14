@@ -8,7 +8,11 @@ interface CardSwapUsageProps {
 }
 
 const queryMaxSwapUsage = (timeRange: string, dbInstance: string) => `
-  max_over_time(aws_rds_swap_usage_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}])
+ max_over_time(
+  max by (dimension_DBInstanceIdentifier) (
+    aws_rds_swap_usage_average{dimension_DBInstanceIdentifier="${dbInstance}"}
+  )[${timeRange}:]
+)
 `
 
 export function CardSwapUsage({ clusterId, dbInstance }: CardSwapUsageProps) {

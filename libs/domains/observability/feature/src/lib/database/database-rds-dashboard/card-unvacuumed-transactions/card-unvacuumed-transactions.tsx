@@ -9,9 +9,11 @@ interface CardUnvacuumedTransactionsProps {
 }
 
 const queryUnvacuumedTransactions = (timeRange: string, dbInstance: string) => `
-  max_over_time(
-    aws_rds_maximum_used_transaction_ids_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}]
-  )
+ max_over_time(
+  max by (dimension_DBInstanceIdentifier) (
+    aws_rds_maximum_used_transaction_ids_average{dimension_DBInstanceIdentifier="${dbInstance}"}
+  )[${timeRange}:]
+)
 `
 
 export function CardUnvacuumedTransactions({ clusterId, dbInstance }: CardUnvacuumedTransactionsProps) {

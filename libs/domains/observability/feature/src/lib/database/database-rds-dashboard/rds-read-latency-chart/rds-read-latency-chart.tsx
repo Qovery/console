@@ -9,13 +9,17 @@ import { useDashboardContext } from '../../../util-filter/dashboard-context'
 const queryReadLatency = (dbInstance: string) => `
   max by (dimension_DBInstanceIdentifier) (
     aws_rds_read_latency_average{
-      dimension_DBInstanceIdentifier=~"${dbInstance}"
+      dimension_DBInstanceIdentifier="${dbInstance}"
     }
   )
 `
 
 const queryMaxReadLatency = (timeRange: string, dbInstance: string) => `
-  max_over_time (aws_rds_read_latency_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}])
+ max_over_time(
+    max by (dimension_DBInstanceIdentifier) (
+      aws_rds_read_latency_average{dimension_DBInstanceIdentifier="${dbInstance}"}
+    )[${timeRange}:]
+)
 `
 
 export function RdsReadLatencyChart({

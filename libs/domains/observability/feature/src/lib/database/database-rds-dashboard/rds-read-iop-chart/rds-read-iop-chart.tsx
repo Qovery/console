@@ -9,16 +9,16 @@ import { useDashboardContext } from '../../../util-filter/dashboard-context'
 const queryReadIops = (dbInstance: string) => `
   max by (dimension_DBInstanceIdentifier) (
     aws_rds_read_iops_average{
-      dimension_DBInstanceIdentifier=~"${dbInstance}"
+      dimension_DBInstanceIdentifier="${dbInstance}"
     }
 )
 `
 
 const queryAverageReadIops = (timeRange: string, dbInstance: string) => `
-  avg_over_time (
-    aws_rds_read_iops_average{
-      dimension_DBInstanceIdentifier=~"${dbInstance}"
-    }[${timeRange}]
+  avg_over_time(
+    max by (dimension_DBInstanceIdentifier) (
+      aws_rds_read_iops_average{dimension_DBInstanceIdentifier="${dbInstance}"}
+    )[${timeRange}:]
 )
 `
 

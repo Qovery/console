@@ -9,16 +9,16 @@ import { useDashboardContext } from '../../../util-filter/dashboard-context'
 const queryFreeStorageSpace = (dbInstance: string) => `
   sum by (dimension_DBInstanceIdentifier) (
     aws_rds_free_storage_space_average{
-      dimension_DBInstanceIdentifier=~"${dbInstance}"
+      dimension_DBInstanceIdentifier="${dbInstance}"
     }
 )
 `
 
 const queryAvgFreeStorageSpace = (timeRange: string, dbInstance: string) => `
-  avg_over_time (
-    aws_rds_free_storage_space_average{
-      dimension_DBInstanceIdentifier=~"${dbInstance}"
-    }[${timeRange}]
+  avg_over_time(
+    max by (dimension_DBInstanceIdentifier) (
+      aws_rds_free_storage_space_average{dimension_DBInstanceIdentifier="${dbInstance}"}
+    )[${timeRange}:]
 )
 `
 

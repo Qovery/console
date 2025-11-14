@@ -9,13 +9,17 @@ import { useDashboardContext } from '../../../util-filter/dashboard-context'
 const queryWriteLatency = (dbInstance: string) => `
   avg by (dimension_DBInstanceIdentifier) (
     aws_rds_write_latency_average{
-      dimension_DBInstanceIdentifier=~"${dbInstance}"
+      dimension_DBInstanceIdentifier="${dbInstance}"
     }
   )
 `
 
 const queryMaxWriteLatency = (timeRange: string, dbInstance: string) => `
-  max_over_time (aws_rds_write_latency_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}])
+  max_over_time(
+    max by (dimension_DBInstanceIdentifier) (
+      aws_rds_write_latency_average{dimension_DBInstanceIdentifier="${dbInstance}"}
+    )[${timeRange}:]
+)
 `
 
 export function RdsWriteLatencyChart({

@@ -9,7 +9,9 @@ interface CardAvgDbConnectionsProps {
 
 const queryAvgDbConnections = (timeRange: string, dbInstance: string) => `
   avg_over_time(
-    aws_rds_database_connections_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}]
+    max by (dimension_DBInstanceIdentifier) (
+      aws_rds_database_connections_average{dimension_DBInstanceIdentifier="${dbInstance}"}
+    )[${timeRange}:]
   )
 `
 
@@ -31,7 +33,12 @@ export function CardAvgDbConnections({ clusterId, dbInstance }: CardAvgDbConnect
   const numValue = lastValueStr !== undefined ? parseFloat(lastValueStr) : undefined
   const isValid = Number.isFinite(numValue as number)
 
-  const formattedValue = isValid ? Math.round(numValue as number).toLocaleString() : '--'
+  const formattedValue = isValid
+    ? (numValue as number).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    : '--'
 
   let status: 'GREEN' | 'YELLOW' | 'RED' | undefined
   if (isValid) {
