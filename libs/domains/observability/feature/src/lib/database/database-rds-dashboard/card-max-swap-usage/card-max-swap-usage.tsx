@@ -54,7 +54,7 @@ export function CardSwapUsage({ clusterId, dbInstance }: CardSwapUsageProps) {
       title="Swap Usage"
       value={formattedValue}
       unit="KiB"
-      valueDescription="Max Swap Usage"
+      valueDescription="Max swap usage"
       description="Maximum swap usage on the database instance's disk."
       status={status}
       statusDescription="High swap usage typically means the instance has exhausted most of its available memory and has started moving data from RAM to disk."

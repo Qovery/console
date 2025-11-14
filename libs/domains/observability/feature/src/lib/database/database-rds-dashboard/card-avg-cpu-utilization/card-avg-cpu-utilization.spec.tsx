@@ -44,7 +44,7 @@ describe('CardAvgCpuUtilization', () => {
         title: 'CPU Utilization',
         value: '--',
         unit: '%',
-        valueDescription: 'avg CPU usage',
+        valueDescription: 'Average CPU usage',
         description: 'Average CPU utilization over the selected time range.',
         isLoading: false,
       })

@@ -33,10 +33,10 @@ export function CardAvgDbConnections({ clusterId, dbInstance }: CardAvgDbConnect
   const numValue = lastValueStr !== undefined ? parseFloat(lastValueStr) : undefined
   const isValid = Number.isFinite(numValue as number)
 
+  const roundedValue = isValid ? Math.round(numValue as number) : undefined
   const formattedValue = isValid
-    ? (numValue as number).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+    ? (roundedValue as number).toLocaleString(undefined, {
+        maximumFractionDigits: 0,
       })
     : '--'
 
@@ -55,7 +55,7 @@ export function CardAvgDbConnections({ clusterId, dbInstance }: CardAvgDbConnect
     <CardMetric
       title="Database Connections"
       value={formattedValue}
-      valueDescription="avg active connections"
+      valueDescription="Average active connections"
       description="Average number of active database connections over the selected time range."
       status={status}
       statusDescription="Higher averages can indicate rising load or connection saturation."

@@ -90,7 +90,7 @@ export function RdsReadIopChart({
       isLoading={isLoading}
       isEmpty={chartData.length === 0}
       label="Read IOPS"
-      description={`Read IOPS over time (avg: ${avgReadIopMetrics})`}
+      description={`Read IOPS over time (average: ${avgReadIopMetrics} ops)`}
       tooltipLabel="Read IOPS"
       unit="ops"
       serviceId={serviceId}

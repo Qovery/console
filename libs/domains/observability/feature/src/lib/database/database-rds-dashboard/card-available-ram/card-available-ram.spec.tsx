@@ -43,7 +43,7 @@ describe('CardAvailableRam', () => {
         title: 'Available RAM',
         value: '--',
         unit: 'GB',
-        valueDescription: 'avg free memory',
+        valueDescription: 'Average free memory',
         description: 'Average free memory available over the selected time range.',
         isLoading: false,
       })

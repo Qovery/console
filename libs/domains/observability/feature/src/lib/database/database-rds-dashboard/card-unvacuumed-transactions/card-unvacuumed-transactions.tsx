@@ -55,7 +55,7 @@ export function CardUnvacuumedTransactions({ clusterId, dbInstance }: CardUnvacu
     <CardMetric
       title="Unvacuumed Transactions"
       value={formattedValue}
-      valueDescription="pending cleanup operations"
+      valueDescription="Pending cleanup operations"
       description={
         <>
           Shows the backlog of PostgreSQL transactions awaiting VACUUM cleanup. <br />

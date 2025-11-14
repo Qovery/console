@@ -42,7 +42,7 @@ describe('CardAvgDbConnections', () => {
       expect.objectContaining({
         title: 'Database Connections',
         value: '--',
-        valueDescription: 'avg active connections',
+        valueDescription: 'Average active connections',
         description: 'Average number of active database connections over the selected time range.',
         isLoading: false,
       })

@@ -49,7 +49,7 @@ export function CardAvgCpuUtilization({ clusterId, dbInstance }: CardAvgCpuUtili
       title="CPU Utilization"
       value={formattedValue}
       unit="%"
-      valueDescription="avg CPU usage"
+      valueDescription="Average CPU usage"
       description="Average CPU utilization over the selected time range."
       status={status}
       statusDescription="Higher averages may indicate increased workload or CPU saturation."

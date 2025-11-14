@@ -43,7 +43,7 @@ describe('CardSwapUsage', () => {
         title: 'Swap Usage',
         value: '--',
         unit: 'KiB',
-        valueDescription: 'Max Swap Usage',
+        valueDescription: 'Max swap usage',
         description: "Maximum swap usage on the database instance's disk.",
         isLoading: false,
       })

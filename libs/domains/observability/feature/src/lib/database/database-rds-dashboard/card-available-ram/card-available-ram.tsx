@@ -39,7 +39,7 @@ export function CardAvailableRam({ clusterId, dbInstance }: CardAvailableRamProp
       title="Available RAM"
       value={formattedValue}
       unit="GB"
-      valueDescription="avg free memory"
+      valueDescription="Average free memory"
       description="Average free memory available over the selected time range."
       isLoading={isLoading}
     />

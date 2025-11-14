@@ -82,7 +82,7 @@ export function RdsDiskQueueDepthChart({
       isLoading={isLoading || isLoadingAvg}
       isEmpty={chartData.length === 0}
       label="Disk Queue Depth"
-      description={`Number of outstanding I/O operations waiting to access the disk (Avg: ${diskQueueDepthAvg} reqs)`}
+      description={`Number of outstanding I/O operations waiting to access the disk (average: ${diskQueueDepthAvg} reqs)`}
       tooltipLabel="Disk Queue"
       unit="requests"
       serviceId={serviceId}

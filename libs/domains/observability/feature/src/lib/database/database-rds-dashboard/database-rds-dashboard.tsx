@@ -120,7 +120,7 @@ function DatabaseRdsDashboardContent() {
       <div className="space-y-10 px-8 py-10">
         <Section className="gap-4">
           <Heading weight="medium">Overview</Heading>
-          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-4')}>
+          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-3')}>
             <CardUnvacuumedTransactions clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvgDbConnections clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvgCpuUtilization clusterId={environment.cluster_id} dbInstance={dbInstance} />
