@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { subHours } from 'date-fns'
 import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
 import { Button, Callout, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
@@ -55,21 +56,30 @@ function ServiceDashboardContent() {
 
   const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
 
+  const now = new Date()
+  const oneHourAgo = subHours(now, 1)
+
   const { data: containerName, isFetched: isFetchedContainerName } = useContainerName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: applicationId,
     resourceType: hasStorage ? 'statefulset' : 'deployment',
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
   })
 
   const { data: namespace, isFetched: isFetchedNamespace } = useNamespace({
     clusterId: environment?.cluster_id ?? '',
     serviceId: applicationId,
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
   })
 
   const { data: ingressName = '' } = useIngressName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: applicationId,
     enabled: hasPublicPort,
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
   })
 
   if ((!containerName && isFetchedContainerName) || (!namespace && isFetchedNamespace)) {
