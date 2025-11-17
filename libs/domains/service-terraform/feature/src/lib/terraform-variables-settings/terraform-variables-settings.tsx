@@ -1,10 +1,10 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
 import { type AxiosError } from 'axios'
-import { GitProviderEnum, type TerraformVarKeyValue, type TfVarsFileResponse } from 'qovery-typescript-axios'
+import { GitProviderEnum, type TfVarsFileResponse } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { P, match } from 'ts-pattern'
+import { match } from 'ts-pattern'
 import {
   useListTfVarsFilesFromGitRepo,
   useParseTerraformVariablesFromGitRepo,
@@ -221,27 +221,8 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
             const value =
               'default' in variable ? variable.default ?? '' : 'value' in variable ? variable.value ?? '' : ''
 
-            // if (!value) {
-            //   return undefined
-            // }
-
             // Source: if the current variable has a source, use it, otherwise set to custom
             const source = 'source' in variable ? variable.source : CUSTOM_SOURCE
-            // const source =
-            //   'source' in variable
-            //     ? variable.source === CUSTOM_SOURCE &&
-            //       previousVariable &&
-            //       'source' in previousVariable &&
-            //       previousVariable.source !== CUSTOM_SOURCE
-            //       ? `Override from ${previousVariable.source}`
-            //       : variable.source
-            //     : CUSTOM_SOURCE
-            // const source =
-            //   'source' in variable
-            //     ? variable.source
-            //     : previousVariable && 'source' in previousVariable
-            //       ? `Override from ${previousVariable.source}`
-            //       : 'Custom'
 
             return {
               value,
@@ -273,27 +254,6 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     setFileEnabledOverrides(overrides)
   }, [])
 
-  // const variableRows: TerraformVariablesContextType['variableRows'] = useMemo(() => {
-  //   const vars = new Map<string, VariableRowItem>()
-  //   const files = [...tfVarFiles.filter((file) => file.enabled)].reverse()
-  //   // Add variables from .tfvars files
-  //   files.forEach((file) => {
-  //     Object.entries(file.variables).forEach(([key, value]) => {
-  //       const customVar = customVariables.find((customVariable) => customVariable.key === key)
-  //       vars.set(key, {
-  //         key,
-  //         value: customVar?.value ?? value, // If an override is set, use the override value
-  //         initialValue: customVar?.initialValue ?? value,
-  //         source: file.source,
-  //         secret: customVar?.secret ?? false,
-  //       })
-  //     })
-  //   })
-  //   // Add custom variables
-  //   customVariables.forEach((v) => !vars.has(v.key) && vars.set(v.key, v))
-  //   return [...vars.values()]
-  // }, [tfVarFiles, customVariables])
-
   const variableRows: TerraformVariablesContextType['variableRows'] = useMemo(() => {
     return Array.from(combinedVariables.values())
   }, [combinedVariables])
@@ -306,14 +266,6 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const tfVarFilePaths: TerraformVariablesContextType['tfVarFilePaths'] = useMemo(() => {
     return tfVarFiles.filter((tfVarFile) => tfVarFile.enabled).map((tfVarFile) => tfVarFile.source ?? '')
   }, [tfVarFiles])
-
-  // const tfVars: TerraformVariablesContextType['tfVars'] = useMemo(() => {
-  //   return variableRows.map(({ key, value, secret }) => ({
-  //     key,
-  //     value,
-  //     secret,
-  //   }))
-  // }, [variableRows])
 
   const isRowSelected = useCallback(
     (key: string) => {
@@ -371,14 +323,6 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
 
         return currentSource
       }
-
-      // if (isVariableOverride(key)) {
-      //   return 'Override from ' + (variable?.values?.[variable?.values.length - 1]?.source?.split('/').pop() ?? '')
-      // }
-
-      // if (isCustomVariable(key)) {
-      //   return 'Custom'
-      // }
 
       return currentVar?.source ?? ''
     },
@@ -465,29 +409,6 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     setOverrides((prevCustomVariables) => prevCustomVariables.filter((customVariable) => customVariable.key !== key))
   }, [])
 
-  // const setCustomVariable = useCallback((key: string, variable: VariableRowItem) => {
-  //   console.log('setCustomVariable called with key:', key, 'and variable:', variable)
-
-  //   setCustomVariables((prevCustomVariables) => {
-  //     if (prevCustomVariables.find((customVariable) => customVariable.key === key)) {
-  //       return prevCustomVariables.map((customVariable) => (customVariable.key === key ? variable : customVariable))
-  //     } else {
-  //       return [...prevCustomVariables, variable]
-  //     }
-  //   })
-  // }, [])
-
-  // const resetCustomVariable = useCallback((key: string) => {
-  //   // const customVariable = customVariables.find((customVariable) => customVariable.key === key)
-  //   // if (customVariable) {
-  //   //   setCustomVariables((prevCustomVariables) =>
-  //   //     prevCustomVariables.map((customVariable) =>
-  //   //       customVariable.key === key ? { ...customVariable, value: customVariable.initialValue } : customVariable
-  //   //     )
-  //   //   )
-  //   // }
-  // }, [])
-
   const addCustomVariable = useCallback(() => {
     setOverrides((prevCustomVariables) => {
       const currentCount = prevCustomVariables.length
@@ -507,16 +428,6 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
         },
       ]
     })
-
-    // setCustomVariables((prevCustomVariables) => {
-    //   const currentCount = prevCustomVariables.length
-    //   let newKey = 'custom_' + (currentCount + 1)
-    //   const doesExist = (key: string) => prevCustomVariables.find((customVariable) => customVariable.key === key)
-    //   while (doesExist(newKey)) {
-    //     newKey = 'custom_' + (Number(newKey.split('_')[1]) + 1)
-    //   }
-    //   return [...prevCustomVariables, { key: newKey, value: '',  }]
-    // })
   }, [])
 
   const deleteSelectedRows = useCallback(() => {
