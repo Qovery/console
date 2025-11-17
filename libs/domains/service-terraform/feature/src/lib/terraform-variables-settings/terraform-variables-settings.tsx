@@ -24,6 +24,7 @@ import {
   Popover,
   Section,
   Tooltip,
+  Truncate,
 } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { type TerraformGeneralData } from '../terraform-configuration-settings/terraform-configuration-settings'
@@ -941,7 +942,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
             variant="surface"
             className="text-xs"
           >
-            {getVariableSource(row.key)}
+            <Truncate text={getVariableSource(row.key)} truncateLimit={40} />
           </Badge>
         </div>
         {/* Secret toggle */}
