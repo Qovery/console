@@ -377,22 +377,25 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     (key: string, isSecret: boolean) => {
       const currentOverride = overrides.find((o) => o.key === key)
       const currentValue = getVariableValue(key)
+      const currentSource = getVariableSource(key)
 
       if (currentOverride) {
-        if (isSecret) {
+        // If the variable is a secret or a custom variable, update the secret state
+        if (isSecret || currentSource === CUSTOM_SOURCE) {
           setOverrides((prevOverrides) => prevOverrides.map((o) => (o.key === key ? { ...o, secret: isSecret } : o)))
         } else {
-          // Removing existing override
+          // Otherwise, remove the existing override
           setOverrides((prevOverrides) => prevOverrides.filter((o) => o.key !== key))
         }
       } else {
+        // If the variable is not an override, add a new override
         setOverrides((prevOverrides) => [
           ...prevOverrides,
           { key, value: currentValue, secret: isSecret, source: CUSTOM_SOURCE },
         ])
       }
     },
-    [overrides, getVariableValue]
+    [overrides, getVariableValue, getVariableSource]
   )
 
   // Reset the override for a specific key by removing the override from the overrides array
