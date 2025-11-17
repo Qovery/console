@@ -828,6 +828,11 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
               )}
               onFocus={() => setFocusedCell(`${row.key}-key`)}
               onBlur={() => setFocusedCell(undefined)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                }
+              }}
               placeholder="Variable name"
               spellCheck={false}
             />
@@ -871,6 +876,11 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
                 }}
                 onFocus={() => setFocusedCell(`${row.key}-value`)}
                 onBlur={() => setFocusedCell(undefined)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                  }
+                }}
                 className="h-full w-full bg-transparent px-4 text-sm text-neutral-400 outline-none"
                 spellCheck={false}
                 placeholder="Variable value"
