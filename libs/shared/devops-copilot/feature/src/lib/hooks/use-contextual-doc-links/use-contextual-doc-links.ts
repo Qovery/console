@@ -101,33 +101,33 @@ import {
 const mapping = {
   '/organization/:organizationId/settings/general': [
     {
-      link: 'https://www.qovery.com/docs/configuration/organization/#general-information',
+      link: 'https://www.qovery.com/docs/configuration/organization#general-information',
       label: 'Configure my organization',
     },
   ],
   '/organization/:organizationId/settings/members': [
     {
-      link: 'https://www.qovery.com/docs/configuration/organization/members-rbac/',
+      link: 'https://www.qovery.com/docs/configuration/organization/members-rbac',
       label: 'Manage the members of your organization (add / remove)',
     },
   ],
   '/organization/:organizationId/settings/roles': [
     {
-      link: 'https://www.qovery.com/docs/configuration/organization/members-rbac/',
+      link: 'https://www.qovery.com/docs/configuration/organization/members-rbac',
       label:
         'Control the access to your cluster and environment resources by defining and assigning roles to your users',
     },
   ],
   '/organization/:organizationId/settings/billing-summary': [
     {
-      link: 'https://www.qovery.com/docs/configuration/organization/#billing',
+      link: 'https://www.qovery.com/docs/configuration/organization#billing',
       label: 'Retrieve your invoices and manage your plan',
     },
     { link: 'https://www.qovery.com/pricing/', label: 'Check pricing and compare plans' },
   ],
   '/organization/:organizationId/settings/billing-detail': [
     {
-      link: 'https://www.qovery.com/docs/configuration/organization/#billing',
+      link: 'https://www.qovery.com/docs/configuration/organization#billing',
       label: 'Manage the credit card used for the payments',
     },
     { link: 'https://www.qovery.com/pricing/', label: 'Check pricing and compare plans' },
@@ -156,12 +156,12 @@ const mapping = {
   ],
   '/organization/:organizationId/settings/webhooks': [
     {
-      link: 'https://www.qovery.com/docs/configuration/integrations/webhook',
+      link: 'https://www.qovery.com/docs/configuration/integrations/webhooks',
       label:
         'Create webhooks to get notified on external applications when event happens on an environment within your organization',
     },
     {
-      link: 'https://www.qovery.com/docs/configuration/integrations/notifications/slack',
+      link: 'https://www.qovery.com/docs/configuration/integrations/slack',
       label: 'Automatically notify your team on a Slack workspace whenever a change has occurred on your apps',
     },
   ],
@@ -204,7 +204,10 @@ const mapping = {
     },
   ],
   '/organization/:organizationId/audit-logs/general': [
-    { link: 'https://www.qovery.com/docs/observability/audit-logs', label: 'How to access my Audit logs?' },
+    {
+      link: 'https://www.qovery.com/docs/getting-started/security-and-compliance/audit-logs#audit-logs',
+      label: 'How to access my Audit logs?',
+    },
   ],
   '/organization/:organizationId/project/:projectId/environments/general': [
     { link: 'https://www.qovery.com/docs/configuration/environment', label: 'What is an environment?' },
@@ -224,33 +227,33 @@ const mapping = {
   '/organization/:organizationId/project/:projectId/environment/:environmentId/services/general': [
     { link: 'https://www.qovery.com/docs/configuration/environment', label: 'What is an environment?' },
     {
-      link: 'https://www.qovery.com/docs/configuration/deployment/running-and-deployment-statuses/',
+      link: 'https://www.qovery.com/docs/configuration/deployment/statuses',
       label: 'Monitor the running and deployment status of your environments and services',
     },
     {
-      link: 'https://www.qovery.com/docs/configuration/deployment/deployment-pipeline/',
+      link: 'https://www.qovery.com/docs/configuration/deployment/pipeline',
       label: 'How do I manage the deployment order of my services?',
     },
     {
-      link: 'https://www.qovery.com/docs/configuration/deployment/deployment-actions/',
+      link: 'https://www.qovery.com/docs/configuration/deployment/actions',
       label: 'Manage the deployment lifecycle of your services and environments',
     },
     {
-      link: 'https://www.qovery.com/docs/configuration/deployment/logs/',
+      link: 'https://www.qovery.com/docs/configuration/deployment/logs',
       label: 'Check my deployments and application logs',
     },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/services/deployments': [
     {
-      link: 'https://www.qovery.com/docs/configuration/deployment/',
+      link: 'https://www.qovery.com/docs/configuration/deployment/overview',
       label: 'All the information about the deployment management with Qovery',
     },
     {
-      link: 'https://www.qovery.com/docs/configuration/deployment/deployment-actions/',
+      link: 'https://www.qovery.com/docs/configuration/deployment/actions',
       label: 'Manage the deployment lifecycle of your services and environments',
     },
     {
-      link: 'https://www.qovery.com/docs/configuration/deployment/deployment-history/',
+      link: 'https://www.qovery.com/docs/configuration/deployment/history',
       label: 'Access the deployments history of your environment or service',
     },
   ],
@@ -262,20 +265,20 @@ const mapping = {
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/services/settings/services/rules': [
     {
-      link: 'https://www.qovery.com/docs/configuration/environment#deployment-rule',
+      link: 'https://www.qovery.com/docs/configuration/deployment-rule',
       label: 'Reduct your costs by setting deployment rules',
     },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/services/settings/services/pipeline': [
     {
-      link: 'https://www.qovery.com/docs/configuration/environment#deployment-pipeline',
+      link: 'https://www.qovery.com/docs/configuration/deployment/pipeline',
       label: 'How do I manage the deployment order of my services?',
     },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/services/settings/services/preview-environments':
     [
       {
-        link: 'https://www.qovery.com/docs/configuration/environment#preview-environment',
+        link: 'https://www.qovery.com/docs/getting-started/guides/use-cases/preview-environments',
         label: 'Create a dedicated environment for each of your pull requests',
       },
     ],
@@ -297,7 +300,7 @@ const mapping = {
     [{ link: 'https://www.qovery.com/docs/configuration/application', label: 'What is an application?' }],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/variables': [
     {
-      link: 'https://www.qovery.com/docs/configuration/environment-variable',
+      link: 'https://www.qovery.com/docs/configuration/environment-variables#environment-variables',
       label: 'How to manage my environment variables?',
     },
   ],
@@ -308,7 +311,7 @@ const mapping = {
         label: 'Configure my application',
       },
       {
-        link: 'https://www.qovery.com/docs/configuration/database/#general',
+        link: 'https://www.qovery.com/docs/configuration/database/',
         label: 'Configure my database',
       },
       { link: 'https://www.qovery.com/docs/configuration/helm/#general', label: 'Configure my helm' },
@@ -382,7 +385,7 @@ const mapping = {
   '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/domain':
     [
       {
-        link: 'https://www.qovery.com/docs/configuration/application/#domains',
+        link: 'https://www.qovery.com/docs/configuration/application#custom-domains',
         label: 'Customize the domain used to reach your application',
       },
       {
@@ -418,14 +421,14 @@ const mapping = {
   '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/advanced-settings':
     [
       {
-        link: 'https://www.qovery.com/docs/configuration/advanced-settings/',
+        link: 'https://www.qovery.com/docs/configuration/service-advanced-settings',
         label: 'Fine-tune your service using advanced settings',
       },
     ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/danger-zone':
     [
       {
-        link: 'https://www.qovery.com/docs/configuration/application/#delete-an-application',
+        link: 'https://www.qovery.com/docs/configuration/application#delete-application',
         label: 'How to delete my application?',
       },
       {
@@ -433,13 +436,20 @@ const mapping = {
         label: 'How to delete my database?',
       },
       {
-        link: 'https://www.qovery.com/docs/configuration/helm/#delete-a-helm',
+        link: 'https://www.qovery.com/docs/configuration/helm#delete-service',
         label: 'How to delete my helm?',
+      },
+    ],
+  '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/terraform-arguments':
+    [
+      {
+        link: 'https://developer.hashicorp.com/terraform/cli/commands',
+        label: 'Terraform CLI documentation',
       },
     ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/general': [
     {
-      link: 'https://www.qovery.com/docs/configuration/application/#create-an-application',
+      link: 'https://www.qovery.com/docs/configuration/application#creating-an-application',
       label: 'Create a new application',
     },
     {
@@ -447,7 +457,7 @@ const mapping = {
       label: 'Add persistent local storage for your application',
     },
     {
-      link: 'https://www.qovery.com/docs/configuration/deployment/deploying-with-auto-deploy/',
+      link: 'https://www.qovery.com/docs/configuration/deployment/auto-deploy#auto-deploy',
       label: 'Automatically update the applications to the latest version of your git branch',
     },
     {
@@ -457,7 +467,7 @@ const mapping = {
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/resources': [
     {
-      link: 'https://www.qovery.com/docs/configuration/application/#create-an-application',
+      link: 'https://www.qovery.com/docs/configuration/application#creating-an-application',
       label: 'Create a new application',
     },
     {
@@ -467,7 +477,7 @@ const mapping = {
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/ports': [
     {
-      link: 'https://www.qovery.com/docs/configuration/application/#create-an-application',
+      link: 'https://www.qovery.com/docs/configuration/application#creating-an-application',
       label: 'Create a new application',
     },
     {
@@ -477,7 +487,7 @@ const mapping = {
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/health-checks': [
     {
-      link: 'https://www.qovery.com/docs/configuration/application/#create-an-application',
+      link: 'https://www.qovery.com/docs/configuration/application#creating-an-application',
       label: 'Create a new application',
     },
     {
@@ -487,7 +497,7 @@ const mapping = {
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/post': [
     {
-      link: 'https://www.qovery.com/docs/configuration/application/#create-an-application',
+      link: 'https://www.qovery.com/docs/configuration/application#creating-an-application',
       label: 'Create a new application',
     },
   ],
@@ -495,22 +505,6 @@ const mapping = {
     {
       link: 'https://www.qovery.com/docs/configuration/database/#create-a-database',
       label: 'Create a new database',
-    },
-    {
-      link: 'https://www.qovery.com/docs/configuration/database/postgresql/',
-      label: 'Create a postgreSQL database',
-    },
-    {
-      link: 'https://www.qovery.com/docs/configuration/database/mysql/',
-      label: 'Create a mySQL database',
-    },
-    {
-      link: 'https://www.qovery.com/docs/configuration/database/mongodb/',
-      label: 'Create a mongoDB database',
-    },
-    {
-      link: 'https://www.qovery.com/docs/configuration/database/redis/',
-      label: 'Create a redis database',
     },
     {
       link: 'https://www.qovery.com/docs/configuration/organization/labels-annotations/',
@@ -535,7 +529,7 @@ const mapping = {
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/create/lifecyle-job/general': [
     {
-      link: 'https://www.qovery.com/docs/configuration/lifecycle-job/#create-a-job',
+      link: 'https://www.qovery.com/docs/configuration/lifecycle-job#creating-a-lifecycle-job',
       label: 'Create a new lifecycle job',
     },
     {
@@ -557,19 +551,19 @@ const mapping = {
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/create/lifecyle-job/variable': [
     {
-      link: 'https://www.qovery.com/docs/configuration/environment-variable/',
+      link: 'https://www.qovery.com/docs/configuration/environment-variables#environment-variables',
       label: 'How to manage my environment variables?',
     },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/create/lifecyle-job/post': [
     {
-      link: 'https://www.qovery.com/docs/configuration/lifecycle-job/#create-a-job',
+      link: 'https://www.qovery.com/docs/configuration/lifecycle-job#creating-a-lifecycle-job',
       label: 'Create a new lifecycle job',
     },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/create/cron-job/general': [
     {
-      link: 'https://www.qovery.com/docs/configuration/cronjob/#create-a-cronjob',
+      link: 'https://www.qovery.com/docs/configuration/cronjob#creating-a-cron-job',
       label: 'Create a new cronjob',
     },
     {
@@ -591,19 +585,19 @@ const mapping = {
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/create/cron-job/variable': [
     {
-      link: 'https://www.qovery.com/docs/configuration/cronjob/#environment-variable',
+      link: 'https://www.qovery.com/docs/configuration/environment-variables#environment-variables',
       label: 'How to manage my environment variables?',
     },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/create/cron-job/post': [
     {
-      link: 'https://www.qovery.com/docs/configuration/cronjob/#create-a-cronjob',
+      link: 'https://www.qovery.com/docs/configuration/cronjob#creating-a-cron-job',
       label: 'Create a new cronjob',
     },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/create/helm/general': [
     {
-      link: 'https://www.qovery.com/docs/configuration/helm/#create-a-helm',
+      link: 'https://www.qovery.com/docs/configuration/helm#creating-a-helm-service',
       label: 'Create a new helm service',
     },
     {
@@ -615,37 +609,40 @@ const mapping = {
       label: 'Kubernetes observability and monitoring with Datadog',
     },
     {
-      link: 'https://www.qovery.com/docs/configuration/deployment/deploying-with-auto-deploy/',
+      link: 'https://www.qovery.com/docs/configuration/deployment/auto-deploy#auto-deploy',
       label: 'Automatically update the applications to the latest version of your git branch',
     },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/create/helm/values-override/repository-and-yaml':
     [
       {
-        link: 'https://www.qovery.com/docs/configuration/helm/#values',
+        link: 'https://www.qovery.com/docs/configuration/helm#values-override',
         label: 'Override the values of your chart with a file or a raw yaml',
       },
       {
-        link: 'https://www.qovery.com/docs/configuration/deployment/deploying-with-auto-deploy/',
+        link: 'https://www.qovery.com/docs/configuration/deployment/auto-deploy#auto-deploy',
         label: 'Automatically update the applications to the latest version of your git branch',
       },
     ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/create/helm/values-override/arguments': [
     {
-      link: 'https://www.qovery.com/docs/configuration/helm/#values',
+      link: 'https://www.qovery.com/docs/configuration/helm#values-override',
       label: 'Override the values of your chart with arguments',
     },
   ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/create/helm/summary': [
     {
-      link: 'https://www.qovery.com/docs/configuration/helm/#create-a-helm',
+      link: 'https://www.qovery.com/docs/configuration/helm#creating-a-helm-service',
       label: 'Create a new helm service',
     },
   ],
   '/organization/:organizationId/clusters/general': [
     { link: 'https://www.qovery.com/docs/getting-started/basic-concepts', label: 'Qovery basic concepts' },
     { link: 'https://www.qovery.com/docs/getting-started/quickstart', label: 'How to install Qovery?' },
-    { link: 'https://www.qovery.com/docs/getting-started/guides/getting-started/deploy-your-first-application', label: 'Deploy my first application' },
+    {
+      link: 'https://www.qovery.com/docs/getting-started/guides/getting-started/deploy-your-first-application',
+      label: 'Deploy my first application',
+    },
     { link: 'https://www.qovery.com/docs/configuration/clusters/', label: 'What is a cluster?' },
     {
       link: 'https://www.qovery.com/docs/configuration/clusters/#updating-a-cluster',
@@ -670,7 +667,7 @@ const mapping = {
       label: 'How to use my own Kubernetes cluster?',
     },
     {
-      link: 'https://www.qovery.com/docs/getting-started/quickstart#managed-cluster-by-qovery-vs-self-managed---what-to-choose',
+      link: 'https://www.qovery.com/docs/configuration/clusters#comparison',
       label: 'What is the differences between clusters managed by Qovery or self-managed?',
     },
     {
@@ -699,22 +696,17 @@ const mapping = {
       label: 'How to use my own Kubernetes cluster?',
     },
     {
-      link: 'https://www.qovery.com/docs/getting-started/quickstart#managed-cluster-by-qovery-vs-self-managed---what-to-choose',
+      link: 'https://www.qovery.com/docs/configuration/clusters#comparison',
       label: 'What is the differences between clusters managed by Qovery or self-managed?',
     },
   ],
   '/organization/:organizationId/cluster/:clusterId/settings/general': [
     {
-      link: 'https://www.qovery.com/docs/configuration/clusters/#credentials',
+      link: 'https://www.qovery.com/docs/configuration/organization/cloud-credentials#cloud-credentials',
       label: 'Manage the cloud provider credentials associated to your cluster',
     },
   ],
-  '/organization/:organizationId/cluster/:clusterId/settings/resources': [
-    {
-      link: 'https://www.qovery.com/docs/configuration/clusters/#resources',
-      label: 'How to configure the resources allocated to your cluster?',
-    },
-  ],
+  '/organization/:organizationId/cluster/:clusterId/settings/resources': [],
   '/organization/:organizationId/cluster/:clusterId/settings/image-registry': [
     {
       link: 'https://www.qovery.com/docs/configuration/deployment/image-mirroring/',
@@ -727,16 +719,11 @@ const mapping = {
       label: 'How to custom my cluster network (static ip, custom VPC, …)?',
     },
   ],
-  '/organization/:organizationId/cluster/:clusterId/settings/network': [
-    {
-      link: 'https://www.qovery.com/docs/configuration/clusters/#network',
-      label: 'Perform VPC peering by updating your Qovery VPC route table',
-    },
-  ],
+  '/organization/:organizationId/cluster/:clusterId/settings/network': [],
   '/organization/:organizationId/cluster/:clusterId/settings/kubeconfig': [],
   '/organization/:organizationId/cluster/:clusterId/settings/credentials': [
     {
-      link: 'https://www.qovery.com/docs/configuration/clusters/',
+      link: 'https://www.qovery.com/docs/configuration/clusters#what-is-a-cluster',
       label: 'What is a cluster?',
     },
     {
@@ -761,13 +748,15 @@ const mapping = {
     },
   ],
   '/onboarding/project': [
-    { link: 'https://www.qovery.com/docs/getting-started/quickstart', label: 'What is Qovery?' },
+    { link: 'https://www.qovery.com/docs/getting-started/introduction', label: 'What is Qovery?' },
+    { link: 'https://www.qovery.com/docs/getting-started/quickstart', label: 'Get started' },
     { link: 'https://www.qovery.com/docs/getting-started/how-it-works', label: 'How Qovery works?' },
     { link: 'https://www.qovery.com/docs/getting-started/basic-concepts', label: 'Qovery basic concepts' },
   ],
   '/onboarding/pricing': [{ link: 'https://www.qovery.com/pricing/', label: 'Check pricing and compare plans' }],
   '/onboarding/personalize': [
-    { link: 'https://www.qovery.com/docs/getting-started/quickstart', label: 'What is Qovery?' },
+    { link: 'https://www.qovery.com/docs/getting-started/introduction', label: 'What is Qovery?' },
+    { link: 'https://www.qovery.com/docs/getting-started/quickstart', label: 'Get started' },
     { link: 'https://www.qovery.com/docs/getting-started/how-it-works', label: 'How Qovery works?' },
     { link: 'https://www.qovery.com/docs/getting-started/basic-concepts', label: 'Qovery basic concepts' },
     { link: 'https://www.qovery.com/pricing/', label: 'Check pricing and compare plans' },
