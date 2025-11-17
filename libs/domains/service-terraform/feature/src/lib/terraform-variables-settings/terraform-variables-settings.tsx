@@ -922,7 +922,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
                 <button
                   type="button"
                   onClick={() => resetOverride(row.key)}
-                  className="mx-4 px-1 text-neutral-350 hover:text-neutral-400"
+                  className="px-1 text-neutral-350 hover:text-neutral-400"
                 >
                   <Icon iconName="rotate-left" iconStyle="regular" />
                 </button>
