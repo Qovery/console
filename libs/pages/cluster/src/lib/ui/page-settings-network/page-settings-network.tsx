@@ -1,11 +1,10 @@
 import { type Cluster, type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
-import { type Control, type FieldValues, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { ScalewayStaticIp } from '@qovery/domains/clusters/feature'
 import { CardClusterFeature, SettingsHeading } from '@qovery/shared/console-shared'
 import { BlockContent, Button, Icon, LoaderSpinner, Section, Tooltip } from '@qovery/shared/ui'
-import AWSExistingVPC from './aws-existing-vpc/aws-existing-vpc'
-import GcpExistingVPC from './gcp-existing-vpc/gcp-existing-vpc'
-import ScalewayStaticIp from './scaleway-static-ip/scaleway-static-ip'
+import { AWSExistingVPC } from './aws-existing-vpc/aws-existing-vpc'
+import { GcpExistingVPC } from './gcp-existing-vpc/gcp-existing-vpc'
 
 export interface PageSettingsNetworkProps {
   routes?: ClusterRoutingTableResultsInner[]
@@ -14,9 +13,6 @@ export interface PageSettingsNetworkProps {
   onDelete: (currentRoute: ClusterRoutingTableResultsInner) => void
   isLoading: boolean
   cluster: Cluster | undefined
-  control?: Control<FieldValues>
-  watch?: UseFormWatch<FieldValues>
-  setValue?: UseFormSetValue<FieldValues>
   onSubmit?: () => void
 }
 
@@ -27,9 +23,6 @@ export function PageSettingsNetwork({
   onAddRoute,
   onEdit,
   onDelete,
-  control,
-  watch,
-  setValue,
   onSubmit,
 }: PageSettingsNetworkProps) {
   const featureExistingVpc = cluster?.features?.find(({ id }) => id === 'EXISTING_VPC')
@@ -37,7 +30,7 @@ export function PageSettingsNetwork({
   const canEditRoutes =
     cluster?.cloud_provider === 'AWS' && cluster?.kubernetes === 'MANAGED' && !featureExistingVpcValue
   const isScalewayCluster = cluster?.cloud_provider === 'SCW'
-  const canEditFeatures = isScalewayCluster && control && watch && setValue
+  const canEditFeatures = isScalewayCluster
 
   const featureExistingVpcContent = match(featureExistingVpcValue)
     .with({ type: 'AWS_USER_PROVIDED_NETWORK' }, (f) => <AWSExistingVPC feature={f.value} />)
@@ -129,9 +122,6 @@ export function PageSettingsNetwork({
                   <ScalewayStaticIp
                     staticIpFeature={cluster?.features?.find(({ id }) => id === 'STATIC_IP')}
                     natGatewayFeature={cluster?.features?.find(({ id }) => id === 'NAT_GATEWAY')}
-                    control={canEditFeatures ? control : undefined}
-                    watch={canEditFeatures ? watch : undefined}
-                    setValue={canEditFeatures ? setValue : undefined}
                     disabled={!canEditFeatures}
                   />
                   {canEditFeatures && onSubmit && (

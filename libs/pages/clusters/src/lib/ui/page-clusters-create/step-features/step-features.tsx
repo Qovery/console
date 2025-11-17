@@ -2,13 +2,13 @@ import { type CloudProviderEnum, type ClusterFeatureResponse } from 'qovery-type
 import { type FormEventHandler, cloneElement } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { ScalewayStaticIp } from '@qovery/domains/clusters/feature'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
 import { type ClusterFeaturesData } from '@qovery/shared/interfaces'
 import { Button, Callout, ExternalLink, Heading, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import AWSVpcFeature from './aws-vpc-feature/aws-vpc-feature'
 import GCPVpcFeature from './gcp-vpc-feature/gcp-vpc-feature'
-import ScalewayStaticIp from './scaleway-static-ip/scaleway-static-ip'
 
 const Qovery = '/assets/logos/logo-icon.svg'
 

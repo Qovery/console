@@ -34,7 +34,7 @@ export function PageSettingsNetworkFeature() {
   const isScalewayCluster = cluster?.cloud_provider === 'SCW'
 
   // Initialize form with cluster features for Scaleway
-  const { control, watch, setValue, handleSubmit, reset } = useForm({
+  const { handleSubmit, reset } = useForm({
     mode: 'onChange',
   })
 
@@ -100,14 +100,18 @@ export function PageSettingsNetworkFeature() {
       return feature
     })
 
-    await editCluster({
-      organizationId,
-      clusterId,
-      clusterRequest: {
-        ...cluster,
-        features,
-      },
-    })
+    try {
+      await editCluster({
+        organizationId,
+        clusterId,
+        clusterRequest: {
+          ...cluster,
+          features,
+        },
+      })
+    } catch (error) {
+      console.error(error)
+    }
   })
 
   return (
@@ -115,9 +119,6 @@ export function PageSettingsNetworkFeature() {
       cluster={cluster}
       isLoading={isLoading}
       routes={clusterRoutingTable}
-      control={isScalewayCluster ? control : undefined}
-      watch={isScalewayCluster ? watch : undefined}
-      setValue={isScalewayCluster ? setValue : undefined}
       onSubmit={isScalewayCluster ? onSubmit : undefined}
       onAddRoute={() => {
         openModal({
@@ -149,14 +150,18 @@ export function PageSettingsNetworkFeature() {
           title: 'Delete Network',
           confirmationMethod: 'action',
           name: route.target,
-          action: () => {
-            if (clusterRoutingTable && clusterRoutingTable.length > 0) {
-              const cloneRoutes = deleteRoutes(clusterRoutingTable, route.destination)
-              editRoutingTable({
-                clusterId,
-                organizationId,
-                routingTableRequest: { routes: cloneRoutes },
-              })
+          action: async () => {
+            try {
+              if (clusterRoutingTable && clusterRoutingTable.length > 0) {
+                const cloneRoutes = deleteRoutes(clusterRoutingTable, route.destination)
+                await editRoutingTable({
+                  clusterId,
+                  organizationId,
+                  routingTableRequest: { routes: cloneRoutes },
+                })
+              }
+            } catch (error) {
+              console.error(error)
             }
           },
         })

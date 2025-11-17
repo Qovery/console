@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderFeatures } from '@qovery/domains/cloud-providers/feature'
+import { useCloudProviderFeatures } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterFeaturesData, type Subnets } from '@qovery/shared/interfaces'
 import {
   CLUSTERS_CREATION_GENERAL_URL,
@@ -115,7 +115,7 @@ export function StepFeaturesFeature() {
     // Handle SCW features - keep existing control plane, add network features
     if (generalData?.cloud_provider === 'SCW') {
       // Start with existing features (includes SCW_CONTROL_PLANE from Resources step)
-      const cloneData: Record<string, any> = { ...featuresData?.features }
+      const cloneData: ClusterFeaturesData['features'] = { ...featuresData?.features }
 
       // Add network features (STATIC_IP, NAT_GATEWAY)
       if (data.features) {
@@ -125,9 +125,9 @@ export function StepFeaturesFeature() {
 
           cloneData[id] = {
             id,
-            title: featureData?.title,
+            title: featureData?.title ?? '',
             value: currentFeature?.value || false,
-            extendedValue: currentFeature?.extendedValue || false,
+            extendedValue: currentFeature?.extendedValue,
           }
         }
       }

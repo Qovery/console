@@ -85,11 +85,11 @@ export function ScalewayStaticIp({
                     href={staticIpFeature.cloud_provider_feature_documentation ?? undefined}
                     className="gap-1 px-1.5"
                     color="neutral"
-                    variant="solid"
+                    variant="surface"
                     size="xs"
                     radius="full"
                   >
-                    <Icon iconName="dollar-sign" iconStyle="solid" className="text-xs text-white" />
+                    <Icon iconName="dollar-sign" iconStyle="solid" className="text-xs" />
                     <Icon name="SCW" height="16" width="16" pathColor="#FFFFFF" />
                   </ExternalLink>
                 </Tooltip>
@@ -113,7 +113,15 @@ export function ScalewayStaticIp({
                   const value = natGatewayFeature.value_object?.value
                   // Handle object format: {"nat_gateway_type": {"provider": "scaleway", "type": "VPC-GP-M"}}
                   if (value && typeof value === 'object' && 'nat_gateway_type' in value) {
-                    return (value as any).nat_gateway_type?.type || SCALEWAY_NAT_GATEWAY_TYPES[0].value
+                    return (
+                      (
+                        value as {
+                          nat_gateway_type: {
+                            type: string
+                          }
+                        }
+                      ).nat_gateway_type?.type || SCALEWAY_NAT_GATEWAY_TYPES[0].value
+                    )
                   }
                   // Handle string format
                   return typeof value === 'string' ? value : SCALEWAY_NAT_GATEWAY_TYPES[0].value
@@ -126,11 +134,11 @@ export function ScalewayStaticIp({
                       field.onChange(value)
                       // Auto-enable static IP when NAT Gateway type is selected
                       if (staticIpFeature?.id && value) {
-                        setValue(`features.${staticIpFeature.id}.value`, true)
+                        setValue && setValue(`features.${staticIpFeature.id}.value`, true)
                       }
                       // Mark NAT_GATEWAY as enabled when type is selected
                       if (natGatewayFeature.id && value) {
-                        setValue(`features.${natGatewayFeature.id}.value`, true)
+                        setValue && setValue(`features.${natGatewayFeature.id}.value`, true)
                       }
                     }}
                     value={field.value}
@@ -147,7 +155,15 @@ export function ScalewayStaticIp({
                   const value = natGatewayFeature.value_object?.value
                   // Handle object format: {"nat_gateway_type": {"provider": "scaleway", "type": "VPC-GP-M"}}
                   if (value && typeof value === 'object' && 'nat_gateway_type' in value) {
-                    return (value as any).nat_gateway_type?.type
+                    return (
+                      (
+                        value as {
+                          nat_gateway_type: {
+                            type: string
+                          }
+                        }
+                      ).nat_gateway_type?.type || SCALEWAY_NAT_GATEWAY_TYPES[0].value
+                    )
                   }
                   // Handle string format
                   return typeof value === 'string' ? value : undefined
