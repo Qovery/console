@@ -19,10 +19,8 @@ const isLikelyCompleteDiagram = (code: string): boolean => {
   const hasValidStart = validStarts.some((start) => trimmed.startsWith(start))
   if (!hasValidStart) return false
 
-  if (trimmed.startsWith('graph') || trimmed.startsWith('flowchart')) {
-    const hasCompleteNode = /[A-Z]\[.+?\]/.test(trimmed)
-    if (!hasCompleteNode) return false
-  }
+  const lines = trimmed.split('\n').filter((line) => line.trim().length > 0)
+  if (lines.length < 2) return false
 
   return true
 }
