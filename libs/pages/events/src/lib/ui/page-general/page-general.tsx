@@ -42,6 +42,9 @@ const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     className: 'pl-9',
   },
   {
+    title: '',
+  },
+  {
     title: 'Event',
     filter: [
       {
@@ -59,9 +62,6 @@ const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
   },
   {
     title: 'Target',
-  },
-  {
-    title: 'Change',
   },
   {
     title: 'User',
@@ -90,7 +90,7 @@ const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
   },
 ]
 
-const columnsWidth = '18% 11% 10% 15% 10% 20% 16%'
+const columnsWidth = '15% 3% 15% 25% 10% 15% 10%'
 
 export function PageGeneral({
   isLoading,
@@ -118,14 +118,14 @@ export function PageGeneral({
       </div>
 
       <Table
-        dataHead={dataHead}
-        data={events}
-        filter={filter}
-        setFilter={setFilter}
-        className="rounded border border-neutral-200"
-        classNameHead="rounded-t"
-        columnsWidth={columnsWidth}
-      >
+          dataHead={dataHead}
+          data={events}
+          filter={filter}
+          setFilter={setFilter}
+          className="rounded border border-neutral-200"
+          classNameHead="rounded-t"
+          columnsWidth={columnsWidth}
+        >
         <div>
           {isLoading ? (
             placeholderEvents?.map((event) => (
