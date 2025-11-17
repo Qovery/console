@@ -783,6 +783,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
     overrideKey,
   } = useTerraformVariablesContext()
   const { environmentId = '' } = useParams()
+  const [isVariablePopoverOpen, setIsVariablePopoverOpen] = useState(false)
   const isCellFocused = useCallback(
     (cell: 'key' | 'value') => focusedCell === `${row.key}-${cell}`,
     [focusedCell, row.key]
@@ -888,9 +889,10 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
             )}
             <div
               className={twMerge(
-                'absolute right-0 top-0 flex h-full translate-x-1 items-center pl-3 opacity-0 transition-all duration-100 group-hover:bg-neutral-100',
+                'absolute right-0 top-0 mr-4 flex h-full translate-x-1 items-center gap-2 pl-3 opacity-0 transition-all duration-100 group-hover:bg-neutral-100',
                 isCellFocused('value') && 'bg-neutral-150 group-hover:bg-neutral-150',
-                isCellHovered && 'translate-x-0 opacity-100'
+                isCellHovered && 'translate-x-0 opacity-100',
+                isVariablePopoverOpen && 'bg-white'
               )}
             >
               {!row.secret && (
@@ -907,11 +909,12 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
                       setHoveredCell(undefined)
                       setFocusedCell(undefined)
                     }
+                    setIsVariablePopoverOpen(open)
                   }}
                 >
                   <button
                     className={twMerge(
-                      'mr-4 justify-center border-none bg-transparent px-1 text-neutral-350 hover:text-neutral-400'
+                      'justify-center border-none bg-transparent px-1 text-neutral-350 hover:text-neutral-400'
                     )}
                     type="button"
                   >
@@ -923,7 +926,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
                 <button
                   type="button"
                   onClick={() => resetCustomVariable(row.key)}
-                  className="pl-0 pr-4 text-neutral-350 hover:text-neutral-400"
+                  className="mx-4 px-1 text-neutral-350 hover:text-neutral-400"
                 >
                   <Icon iconName="rotate-left" iconStyle="regular" />
                 </button>
