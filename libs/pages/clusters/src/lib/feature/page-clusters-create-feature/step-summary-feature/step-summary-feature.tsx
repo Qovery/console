@@ -93,6 +93,7 @@ export function StepSummaryFeature() {
     return match(generalData?.cloud_provider)
       .with('AWS', () => goToFeatures())
       .with('GCP', () => goToFeatures())
+      .with('SCW', () => goToFeatures())
       .otherwise(() => goToResources())
   }
 
@@ -265,25 +266,57 @@ export function StepSummaryFeature() {
           region: generalData.region,
           cloud_provider_credentials,
         }))
-        .with('SCW', () => ({
-          name: generalData.name,
-          description: generalData.description || '',
-          production: generalData.production,
-          cloud_provider: generalData.cloud_provider,
-          region: generalData.region,
-          min_running_nodes: resourcesData.nodes[0],
-          max_running_nodes: resourcesData.nodes[1],
-          disk_size: resourcesData.disk_size,
-          instance_type: resourcesData.instance_type,
-          kubernetes: resourcesData.cluster_type as KubernetesEnum,
-          cloud_provider_credentials,
-          features: [
+        .with('SCW', () => {
+          // Build features array with control plane and network features
+          const scwFeatures: ClusterRequestFeaturesInner[] = [
             {
               id: SCW_CONTROL_PLANE_FEATURE_ID,
               value: resourcesData.scw_control_plane,
             },
-          ],
-        }))
+          ]
+
+          // Add STATIC_IP and NAT_GATEWAY features if they exist
+          if (featuresData?.features) {
+            Object.keys(featuresData.features).forEach((featureId) => {
+              if (featureId !== SCW_CONTROL_PLANE_FEATURE_ID) {
+                const featureData = featuresData.features[featureId]
+                if (featureId === 'NAT_GATEWAY' && featureData.extendedValue) {
+                  // Special format for NAT_GATEWAY - backend accepts Record<string, unknown>
+                  scwFeatures.push({
+                    id: featureId,
+                    value: {
+                      nat_gateway_type: {
+                        provider: 'scaleway',
+                        type: featureData.extendedValue,
+                      },
+                    } as unknown as ClusterRequestFeaturesInner['value'],
+                  })
+                } else if (featureData.value) {
+                  // Standard format for other features like STATIC_IP
+                  scwFeatures.push({
+                    id: featureId,
+                    value: featureData.extendedValue || featureData.value,
+                  })
+                }
+              }
+            })
+          }
+
+          return {
+            name: generalData.name,
+            description: generalData.description || '',
+            production: generalData.production,
+            cloud_provider: generalData.cloud_provider,
+            region: generalData.region,
+            min_running_nodes: resourcesData.nodes[0],
+            max_running_nodes: resourcesData.nodes[1],
+            disk_size: resourcesData.disk_size,
+            instance_type: resourcesData.instance_type,
+            kubernetes: resourcesData.cluster_type as KubernetesEnum,
+            cloud_provider_credentials,
+            features: scwFeatures,
+          }
+        })
         .otherwise(() => {
           if (resourcesData.karpenter?.enabled) {
             return {

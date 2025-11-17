@@ -29,6 +29,7 @@ export function StepFeaturesFeature() {
   const goToBack = () => {
     match(generalData?.cloud_provider)
       .with('GCP', () => navigate(creationFlowUrl + CLUSTERS_CREATION_GENERAL_URL))
+      .with('SCW', 'AWS', () => navigate(creationFlowUrl + CLUSTERS_CREATION_RESOURCES_URL))
       .otherwise(() => {
         navigate(creationFlowUrl + CLUSTERS_CREATION_RESOURCES_URL)
       })
@@ -109,6 +110,32 @@ export function StepFeaturesFeature() {
           })
         }
       }
+    }
+
+    // Handle SCW features - keep existing control plane, add network features
+    if (generalData?.cloud_provider === 'SCW') {
+      // Start with existing features (includes SCW_CONTROL_PLANE from Resources step)
+      const cloneData: ClusterFeaturesData['features'] = { ...featuresData?.features }
+
+      // Add network features (STATIC_IP, NAT_GATEWAY)
+      if (data.features) {
+        for (const id of Object.keys(data.features)) {
+          const featureData = features?.find((f) => f.id === id)
+          const currentFeature = data.features[id]
+
+          cloneData[id] = {
+            id,
+            title: featureData?.title ?? '',
+            value: currentFeature?.value || false,
+            extendedValue: currentFeature?.extendedValue,
+          }
+        }
+      }
+
+      setFeaturesData({
+        vpc_mode: 'DEFAULT',
+        features: cloneData,
+      })
     }
 
     navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)

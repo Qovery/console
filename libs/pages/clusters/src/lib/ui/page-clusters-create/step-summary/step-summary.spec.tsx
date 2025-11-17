@@ -32,13 +32,11 @@ const props: StepSummaryProps = {
       },
     },
   },
-  remoteData: {
-    ssh_key: 'ssh_key',
-  },
   goToFeatures: jest.fn(),
   goToGeneral: jest.fn(),
   goToResources: jest.fn(),
-  goToRemote: jest.fn(),
+  goToKubeconfig: jest.fn(),
+  goToEksConfig: jest.fn(),
   isLoadingCreate: false,
   isLoadingCreateAndDeploy: false,
   onPrevious: jest.fn(),
@@ -118,6 +116,149 @@ describe('StepSummary', () => {
       expect(eksAnywhereSection).toHaveTextContent('Publish status address: test-address')
       expect(eksAnywhereSection).toHaveTextContent('Annotation IPs: test-ips')
       expect(eksAnywhereSection).toHaveTextContent('Annotation external DNS target: test-target')
+    })
+  })
+
+  describe('Scaleway cluster', () => {
+    const scwProps: StepSummaryProps = {
+      ...props,
+      generalData: {
+        ...props.generalData,
+        cloud_provider: CloudProviderEnum.SCW,
+      },
+      resourcesData: {
+        cluster_type: 'MANAGED',
+        instance_type: 'DEV1-L',
+        nodes: [3, 10],
+        disk_size: 50,
+        scw_control_plane: 'KAPSULE',
+      },
+      featuresData: {
+        vpc_mode: 'DEFAULT',
+        features: {
+          SCW_CONTROL_PLANE_TYPE: {
+            id: 'SCW_CONTROL_PLANE_TYPE',
+            title: 'Control Plane',
+            value: true,
+            extendedValue: 'mutualized',
+          },
+          STATIC_IP: {
+            id: 'STATIC_IP',
+            title: 'Static IP',
+            value: true,
+          },
+          NAT_GATEWAY: {
+            id: 'NAT_GATEWAY',
+            title: 'NAT Gateway',
+            value: true,
+            extendedValue: 'VPC-GW-M',
+          },
+        },
+      },
+    }
+
+    it('should render successfully with resources section showing control plane', () => {
+      renderWithProviders(wrapWithReactHookForm(<StepSummary {...scwProps} />))
+
+      const resourcesSection = screen.getByTestId('summary-resources')
+      expect(resourcesSection).toBeInTheDocument()
+      expect(resourcesSection).toHaveTextContent('Control plane type: Mutualized')
+    })
+
+    it('should render network configuration section with Static IP and NAT Gateway', () => {
+      renderWithProviders(wrapWithReactHookForm(<StepSummary {...scwProps} />))
+
+      const featuresSection = screen.getByTestId('summary-features')
+      expect(featuresSection).toBeInTheDocument()
+      expect(featuresSection).toHaveTextContent('Network configuration')
+      expect(featuresSection).toHaveTextContent('Static IP: true')
+      expect(featuresSection).toHaveTextContent('NAT Gateway: VPC-GW-M')
+    })
+
+    it('should not show control plane in network configuration section', () => {
+      renderWithProviders(wrapWithReactHookForm(<StepSummary {...scwProps} />))
+
+      const featuresSection = screen.getByTestId('summary-features')
+      // Control plane should not appear twice - only in Resources section
+      const controlPlaneMatches = featuresSection.textContent?.match(/Control Plane/g)
+      expect(controlPlaneMatches).toBeNull()
+    })
+
+    it('should not render network section when only control plane feature exists', () => {
+      const propsWithoutNetworkFeatures = {
+        ...scwProps,
+        featuresData: {
+          vpc_mode: 'DEFAULT',
+          features: {
+            SCW_CONTROL_PLANE_TYPE: {
+              id: 'SCW_CONTROL_PLANE_TYPE',
+              title: 'Control Plane',
+              value: true,
+              extendedValue: 'mutualized',
+            },
+          },
+        },
+      }
+      renderWithProviders(wrapWithReactHookForm(<StepSummary {...propsWithoutNetworkFeatures} />))
+
+      expect(screen.queryByTestId('summary-features')).not.toBeInTheDocument()
+    })
+
+    it('should render network section when only Static IP is enabled', () => {
+      const propsWithStaticIpOnly = {
+        ...scwProps,
+        featuresData: {
+          vpc_mode: 'DEFAULT',
+          features: {
+            SCW_CONTROL_PLANE_TYPE: {
+              id: 'SCW_CONTROL_PLANE_TYPE',
+              title: 'Control Plane',
+              value: true,
+              extendedValue: 'mutualized',
+            },
+            STATIC_IP: {
+              id: 'STATIC_IP',
+              title: 'Static IP',
+              value: true,
+            },
+          },
+        },
+      }
+      renderWithProviders(wrapWithReactHookForm(<StepSummary {...propsWithStaticIpOnly} />))
+
+      const featuresSection = screen.getByTestId('summary-features')
+      expect(featuresSection).toBeInTheDocument()
+      expect(featuresSection).toHaveTextContent('Static IP: true')
+      expect(featuresSection).not.toHaveTextContent('NAT Gateway')
+    })
+
+    it('should render network section when only NAT Gateway is enabled', () => {
+      const propsWithNatGatewayOnly = {
+        ...scwProps,
+        featuresData: {
+          vpc_mode: 'DEFAULT',
+          features: {
+            SCW_CONTROL_PLANE_TYPE: {
+              id: 'SCW_CONTROL_PLANE_TYPE',
+              title: 'Control Plane',
+              value: true,
+              extendedValue: 'mutualized',
+            },
+            NAT_GATEWAY: {
+              id: 'NAT_GATEWAY',
+              title: 'NAT Gateway',
+              value: false,
+              extendedValue: 'VPC-GW-L',
+            },
+          },
+        },
+      }
+      renderWithProviders(wrapWithReactHookForm(<StepSummary {...propsWithNatGatewayOnly} />))
+
+      const featuresSection = screen.getByTestId('summary-features')
+      expect(featuresSection).toBeInTheDocument()
+      expect(featuresSection).toHaveTextContent('NAT Gateway: VPC-GW-L')
+      expect(featuresSection).not.toHaveTextContent('Static IP')
     })
   })
 })

@@ -52,7 +52,7 @@ describe('StepFeatures', () => {
     await userEvent.click(input)
 
     // all because we have two inputs on the inputs select with search
-    screen.getByDisplayValue('true')
+    expect(screen.getByDisplayValue('true')).toBeInTheDocument()
   })
 
   it('should submit the form on click', async () => {
@@ -79,5 +79,78 @@ describe('StepFeatures', () => {
 
     expect(button).toBeEnabled()
     expect(props.onSubmit).toHaveBeenCalled()
+  })
+
+  describe('Scaleway', () => {
+    const scwProps: StepFeaturesProps = {
+      ...props,
+      cloudProvider: CloudProviderEnum.SCW,
+      features: [
+        {
+          id: 'STATIC_IP',
+          title: 'Static IP',
+          description: 'Enable static IP addresses',
+          value_object: {
+            type: 'BOOLEAN',
+            value: true,
+          },
+          is_cloud_provider_paying_feature: true,
+          cloud_provider_feature_documentation: 'https://www.scaleway.com/en/docs/',
+        },
+        {
+          id: 'NAT_GATEWAY',
+          title: 'NAT Gateway',
+          description: 'Enable NAT Gateway',
+          value_object: {
+            type: 'STRING',
+            value: 'VPC-GW-S',
+          },
+          is_cloud_provider_paying_feature: true,
+        },
+      ],
+    }
+
+    it('should render Scaleway specific description', () => {
+      renderWithProviders(wrapWithReactHookForm(<StepFeatures {...scwProps} />))
+      expect(screen.getByText('Configure network features for your Scaleway cluster.')).toBeInTheDocument()
+    })
+
+    it('should not render VPC mode selection for Scaleway', () => {
+      renderWithProviders(wrapWithReactHookForm(<StepFeatures {...scwProps} />))
+      expect(screen.queryByText('Qovery managed')).not.toBeInTheDocument()
+      expect(screen.queryByText('Self-managed')).not.toBeInTheDocument()
+    })
+
+    it('should render Scaleway features component with merged Static IP / Nat Gateways', () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<StepFeatures {...scwProps} />, {
+          defaultValues: {
+            features: {
+              STATIC_IP: { value: false },
+              NAT_GATEWAY: { value: false, extendedValue: 'VPC-GW-S' },
+            },
+          },
+        })
+      )
+      expect(screen.getByRole('heading', { name: 'Static IP / Nat Gateways' })).toBeInTheDocument()
+      expect(screen.getByText('NAT Gateway Type')).toBeInTheDocument()
+    })
+
+    it('should render submit button for Scaleway', () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<StepFeatures {...scwProps} />, {
+          defaultValues: {
+            vpc_mode: 'DEFAULT',
+            features: {
+              STATIC_IP: { value: true },
+              NAT_GATEWAY: { value: true, extendedValue: 'VPC-GW-M' },
+            },
+          },
+        })
+      )
+
+      const button = screen.getByTestId('button-submit')
+      expect(button).toBeInTheDocument()
+    })
   })
 })
