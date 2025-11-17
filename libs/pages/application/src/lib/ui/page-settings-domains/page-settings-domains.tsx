@@ -181,7 +181,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                 type="button"
                 variant="outline"
                 color="neutral"
-                href="https://hub.qovery.com/docs/using-qovery/configuration/application/#custom-domains"
+                href="https://www.qovery.com/docs/configuration/application#custom-domains"
               >
                 Learn more
               </ExternalLink>

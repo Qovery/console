@@ -43,7 +43,7 @@ export function CrudModal({ customDomain, onSubmit, onClose, loading, isEdit, li
               manages the certificate for you and the traffic is proxied by the CDN to the Qovery domain.
             </li>
           </ol>
-          <ExternalLink className="mt-2 " href="https://hub.qovery.com/guides/getting-started/setting-custom-domain">
+          <ExternalLink className="mt-2 " href="https://www.qovery.com/docs/configuration/application#custom-domains">
             Documentation
           </ExternalLink>
         </>

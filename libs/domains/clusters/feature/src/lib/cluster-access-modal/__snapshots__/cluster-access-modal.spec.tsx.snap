@@ -37,11 +37,11 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
           </p>
           <a
             class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
-            href="https://hub.qovery.com/docs/using-qovery/interface/cli/#install"
+            href="https://www.qovery.com/docs/cli/overview#installation"
             rel="noopener noreferrer"
             target="_blank"
           >
-            https://hub.qovery.com/docs/using-qovery/interface/cli/#install
+            https://www.qovery.com/docs/cli/overview#installation
             <i
               aria-hidden="true"
               class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
@@ -218,11 +218,11 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
           </p>
           <a
             class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
-            href="https://hub.qovery.com/docs/using-qovery/interface/cli/#install"
+            href="https://www.qovery.com/docs/cli/overview#installation"
             rel="noopener noreferrer"
             target="_blank"
           >
-            https://hub.qovery.com/docs/using-qovery/interface/cli/#install
+            https://www.qovery.com/docs/cli/overview#installation
             <i
               aria-hidden="true"
               class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"

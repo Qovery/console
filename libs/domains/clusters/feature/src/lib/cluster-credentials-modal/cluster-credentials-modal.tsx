@@ -353,15 +353,10 @@ export function ClusterCredentialsModal({
             {((watchType === 'STS' && cloudProviderLocal === 'AWS') || cloudProviderLocal === 'GCP') && (
               <ExternalLink
                 href={match(cloudProviderLocal)
-                  .with(
-                    'AWS',
-                    () =>
-                      'https://hub.qovery.com/docs/getting-started/install-qovery/aws/cluster-managed-by-qovery/create-credentials'
-                  )
+                  .with('AWS', () => 'https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster')
                   .with(
                     'GCP',
-                    () =>
-                      'https://hub.qovery.com/docs/getting-started/install-qovery/gcp/cluster-managed-by-qovery/create-credentials/'
+                    () => 'https://www.qovery.com/docs/getting-started/installation/gcp#generate-installation-command'
                   )
                   .exhaustive()}
                 size="sm"
@@ -408,7 +403,7 @@ export function ClusterCredentialsModal({
                   <h2 className="text-sm font-medium text-neutral-400">1. Create a user for Qovery</h2>
                   <p className="text-sm text-neutral-350">Follow the instructions available on this page</p>
                   <ExternalLink
-                    href="https://hub.qovery.com/docs/getting-started/install-qovery/aws/cluster-managed-by-qovery/create-credentials"
+                    href="https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster"
                     size="sm"
                   >
                     How to create new credentials
@@ -449,7 +444,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   <h2 className="text-sm font-medium text-neutral-400">1. Generate Access key Id/Secret Access Key</h2>
                   <p className="text-sm text-neutral-350">Follow the instructions available on this page</p>
                   <ExternalLink
-                    href="https://hub.qovery.com/docs/getting-started/install-qovery/scaleway/cluster-managed-by-qovery/create-credentials"
+                    href="https://www.qovery.com/docs/getting-started/installation/scaleway#step-1%3A-create-scaleway-credentials"
                     size="sm"
                   >
                     How to create new credentials

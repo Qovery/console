@@ -115,7 +115,7 @@ export function ClusterMigrationModal({ onClose, onSubmit }: ClusterMigrationMod
                       If you have Daemonsets deployed via Helm, follow our guide before enabling Karpenter migration.
                     </span>
                   </label>
-                  <ExternalLink href="https://hub.qovery.com/guides/advanced/deploy-daemonset-with-karpenter/">
+                  <ExternalLink href="http://qovery.com/docs/getting-started/guides/advanced-tutorials/deploy-daemonset-karpenter">
                     Documentation link
                   </ExternalLink>
                 </div>
