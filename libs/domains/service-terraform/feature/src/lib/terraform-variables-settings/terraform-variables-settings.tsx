@@ -33,7 +33,8 @@ const CUSTOM_SOURCE = 'Custom'
 
 type TerraformVariablesContextType = {
   selectedRows: string[]
-  onSelectRow: (key: string) => void
+  setSelectedRows: (selectedRows: string[]) => void
+  selectRow: (key: string) => void
   isRowSelected: (key: string) => boolean
   areTfVarsFilesLoading: boolean
   tfVarFiles: TfVarsFile[]
@@ -274,7 +275,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     [selectedRows]
   )
 
-  const onSelectRow = useCallback((key: string) => {
+  const selectRow = useCallback((key: string) => {
     setSelectedRows((prevSelectedRows) => {
       if (prevSelectedRows.includes(key)) {
         return prevSelectedRows.filter((row) => row !== key)
@@ -469,7 +470,8 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const value: TerraformVariablesContextType = useMemo(
     () => ({
       selectedRows,
-      onSelectRow,
+      setSelectedRows,
+      selectRow,
       isRowSelected,
       areTfVarsFilesLoading,
       tfVarFiles,
@@ -503,7 +505,8 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     }),
     [
       selectedRows,
-      onSelectRow,
+      setSelectedRows,
+      selectRow,
       isRowSelected,
       areTfVarsFilesLoading,
       tfVarFiles,
@@ -756,7 +759,7 @@ const getSourceBadgeColor = (isOverride: boolean, isCustom: boolean) => {
 
 const VariableRow = ({ row }: { row: VariableRowItem }) => {
   const {
-    onSelectRow,
+    selectRow,
     isRowSelected,
     hoveredRow,
     resetOverride,
@@ -792,7 +795,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
         <div className="flex h-full items-center justify-center border-r border-neutral-250">
           <Checkbox
             checked={isRowSelected(row.key)}
-            onCheckedChange={() => onSelectRow(row.key)}
+            onCheckedChange={() => selectRow(row.key)}
             disabled={!isCustomVariable(row.key)}
           />
         </div>
@@ -954,13 +957,34 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
 }
 
 const TerraformVariablesRows = () => {
-  const { variableRows } = useTerraformVariablesContext()
+  const { variableRows, overrides, isCustomVariable, setSelectedRows, selectedRows } = useTerraformVariablesContext()
+  const customVariables = useMemo(() => overrides.filter((o) => isCustomVariable(o.key)), [overrides, isCustomVariable])
+  const isAllSelected = useMemo(
+    () => selectedRows.length === customVariables.length && customVariables.length > 0,
+    [selectedRows, customVariables]
+  )
+  const isSelectAllCheckboxEnabled = useMemo(() => customVariables.length > 0, [customVariables])
+
+  const onSelectAllToggle = useCallback(
+    (checked: boolean) => {
+      if (checked) {
+        setSelectedRows(customVariables.map((o) => o.key))
+      } else {
+        setSelectedRows([])
+      }
+    },
+    [customVariables, setSelectedRows]
+  )
 
   return (
     <div className="flex flex-col items-center justify-center border-t border-neutral-250">
       <div className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center border-b border-neutral-250 bg-neutral-100">
         <div className="flex h-full items-center justify-center border-r border-neutral-250">
-          <Checkbox disabled />
+          <Checkbox
+            disabled={!isSelectAllCheckboxEnabled}
+            onCheckedChange={onSelectAllToggle}
+            checked={isAllSelected}
+          />
         </div>
         <div className="flex h-full items-center border-r border-neutral-250">
           <span className="px-4 text-sm text-neutral-400">Variable</span>
