@@ -256,7 +256,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                       )}
                       <ExternalLink
                         className={props.isProduction || props.fromDetail ? 'ml-11' : ''}
-                        href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#managing-your-clusters-with-qovery"
+                        href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed"
                       >
                         Documentation link
                       </ExternalLink>
@@ -307,7 +307,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                     <Callout.TextDescription>
                                       Before deploying your cluster, update the IAM permissions of the Qovery user, make
                                       sure to use the{' '}
-                                      <ExternalLink size="sm" href="https://hub.qovery.com/files/qovery-iam-aws.json">
+                                      <ExternalLink size="sm" href="https://qovery.com/docs/files/qovery-iam-aws.json">
                                         latest version here
                                       </ExternalLink>{' '}
                                       (adding the permission on SQS)
@@ -394,7 +394,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                       database to avoid this risk.{' '}
                                       <ExternalLink
                                         size="sm"
-                                        href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/aws-with-karpenter/#assigning-specific-instances-to-services"
+                                        href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#define-if-your-service-can-run-on-an-on-demand-instance"
                                       >
                                         See documentation
                                       </ExternalLink>
@@ -486,7 +486,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                   settings to force the use of on-demand instances for your service to avoid this.{' '}
                                   <ExternalLink
                                     size="sm"
-                                    href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/aws-with-karpenter/#assigning-specific-instances-to-services"
+                                    href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#define-if-your-service-can-run-on-an-on-demand-instance"
                                   >
                                     See documentation
                                   </ExternalLink>

@@ -433,7 +433,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
             <ul className="mx-auto grid max-w-sm grid-cols-3 gap-16">
               <li className="flex items-center justify-center">
                 <a
-                  href="https://hub.qovery.com/docs/security-and-compliance/soc2/"
+                  href="https://www.qovery.com/docs/getting-started/security-and-compliance/soc2"
                   className="transition-opacity hover:opacity-80"
                   target="_blank"
                   rel="noreferrer"

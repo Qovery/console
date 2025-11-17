@@ -62,7 +62,7 @@ export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...p
               <Tooltip content="Documentation">
                 <a
                   className="ml-auto text-sm"
-                  href="https://hub.qovery.com/docs/using-qovery/integration/secret-manager/doppler/"
+                  href="https://www.qovery.com/docs/configuration/integrations/secret-managers/doppler#doppler"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
