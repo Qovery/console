@@ -1,6 +1,8 @@
 import { type ClusterFeatureResponse } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
-import { type Control, Controller, type FieldValues, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
+import { Controller } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
+import { type ClusterFeaturesData } from '@qovery/shared/interfaces'
 import { BlockContent, ExternalLink, Icon, InputSelect, InputToggle, Tooltip } from '@qovery/shared/ui'
 
 // Hardcoded Scaleway NAT Gateway types
@@ -14,24 +16,15 @@ const SCALEWAY_NAT_GATEWAY_TYPES = [
 export interface ScalewayStaticIpProps {
   staticIpFeature?: ClusterFeatureResponse
   natGatewayFeature?: ClusterFeatureResponse
-  control?: Control<FieldValues>
-  watch?: UseFormWatch<FieldValues>
-  setValue?: UseFormSetValue<FieldValues>
   disabled?: boolean
 }
 
-export function ScalewayStaticIp({
-  staticIpFeature,
-  natGatewayFeature,
-  control,
-  watch,
-  setValue,
-  disabled = false,
-}: ScalewayStaticIpProps) {
-  const isEditable = !disabled && control && watch && setValue
-  const staticIpEnabled = watch && staticIpFeature?.id ? watch(`features.${staticIpFeature.id}.value`) : false
-  const natGatewayType =
-    watch && natGatewayFeature?.id ? watch(`features.${natGatewayFeature.id}.extendedValue`) : undefined
+export function ScalewayStaticIp({ staticIpFeature, natGatewayFeature, disabled = false }: ScalewayStaticIpProps) {
+  const { control, watch, setValue } = useFormContext<ClusterFeaturesData>()
+
+  const isEditable = !disabled
+  const staticIpEnabled = staticIpFeature?.id ? watch(`features.${staticIpFeature.id}.value`) : false
+  const natGatewayType = natGatewayFeature?.id ? watch(`features.${natGatewayFeature.id}.extendedValue`) : undefined
 
   // When Static IP is disabled, also disable NAT_GATEWAY
   useEffect(() => {
@@ -43,16 +36,13 @@ export function ScalewayStaticIp({
   return (
     <BlockContent title="Static IP / Nat Gateways" classNameContent="p-4">
       <div className="flex flex-col gap-4">
-        {/* Static IP Toggle */}
         <div className="flex items-start gap-3">
-          {isEditable && staticIpFeature ? (
-            <Controller
-              name={`features.${staticIpFeature.id}.value`}
-              control={control}
-              render={({ field }) => (
+          <Controller
+            name={`features.${staticIpFeature?.id}.value`}
+            control={control}
+            render={({ field }) => (
+              <div className="flex gap-2">
                 <InputToggle
-                  small
-                  className="relative top-[2px]"
                   value={field.value}
                   onChange={(value) => {
                     field.onChange(value)
@@ -64,45 +54,32 @@ export function ScalewayStaticIp({
                     }
                   }}
                   disabled={disabled}
+                  title="Static IP / Nat Gateways"
+                  description="Your cluster will only be visible from a fixed number of public IP. On Scaleway, Nat Gateways and Elastic IPs will be setup."
+                  forceAlignTop
+                  small
                 />
-              )}
-            />
-          ) : (
-            <InputToggle
-              small
-              className="relative top-[2px]"
-              value={Boolean(staticIpFeature?.value_object?.value)}
-              disabled
-            />
-          )}
-          <div className="flex-1">
-            <h4 className="mb-1 flex justify-between text-sm font-medium text-neutral-400">
-              <span>{staticIpFeature?.title || 'Static IP / Nat Gateways'}</span>
-              {staticIpFeature?.is_cloud_provider_paying_feature && (
-                <Tooltip content="Billed by Scaleway">
-                  <ExternalLink
-                    as="button"
-                    href={staticIpFeature.cloud_provider_feature_documentation ?? undefined}
-                    className="gap-1 px-1.5"
-                    color="neutral"
-                    variant="surface"
-                    size="xs"
-                    radius="full"
-                  >
-                    <Icon iconName="dollar-sign" iconStyle="solid" className="text-xs" />
-                    <Icon name="SCW" height="16" width="16" pathColor="#FFFFFF" />
-                  </ExternalLink>
-                </Tooltip>
-              )}
-            </h4>
-            <p className="text-xs text-neutral-350">
-              {staticIpFeature?.description ||
-                'Your cluster will only be visible from a fixed number of public IP. On Scaleway, Nat Gateways and Elastic IPs will be setup.'}
-            </p>
-          </div>
+                {staticIpFeature?.is_cloud_provider_paying_feature && (
+                  <Tooltip content="Billed by Scaleway">
+                    <ExternalLink
+                      as="button"
+                      href={staticIpFeature.cloud_provider_feature_documentation ?? undefined}
+                      className="relative -top-1 gap-1 px-1.5"
+                      color="neutral"
+                      variant="surface"
+                      size="xs"
+                      radius="full"
+                    >
+                      <Icon iconName="dollar-sign" iconStyle="solid" className="text-xs" />
+                      <Icon name="SCW" height="16" width="16" pathColor="#FFFFFF" />
+                    </ExternalLink>
+                  </Tooltip>
+                )}
+              </div>
+            )}
+          />
         </div>
 
-        {/* NAT Gateway Type Select */}
         {natGatewayFeature && (
           <div className="ml-8">
             {isEditable ? (
@@ -134,11 +111,11 @@ export function ScalewayStaticIp({
                       field.onChange(value)
                       // Auto-enable static IP when NAT Gateway type is selected
                       if (staticIpFeature?.id && value) {
-                        setValue && setValue(`features.${staticIpFeature.id}.value`, true)
+                        setValue(`features.${staticIpFeature.id}.value`, true)
                       }
                       // Mark NAT_GATEWAY as enabled when type is selected
                       if (natGatewayFeature.id && value) {
-                        setValue && setValue(`features.${natGatewayFeature.id}.value`, true)
+                        setValue(`features.${natGatewayFeature.id}.value`, true)
                       }
                     }}
                     value={field.value}

@@ -1,4 +1,5 @@
 import { type Cluster, type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
+import { type FormEventHandler } from 'react'
 import { match } from 'ts-pattern'
 import { ScalewayStaticIp } from '@qovery/domains/clusters/feature'
 import { CardClusterFeature, SettingsHeading } from '@qovery/shared/console-shared'
@@ -8,22 +9,24 @@ import { GcpExistingVPC } from './gcp-existing-vpc/gcp-existing-vpc'
 
 export interface PageSettingsNetworkProps {
   routes?: ClusterRoutingTableResultsInner[]
+  onSubmit: FormEventHandler<HTMLFormElement>
   onAddRoute: () => void
   onEdit: (currentRoute: ClusterRoutingTableResultsInner) => void
   onDelete: (currentRoute: ClusterRoutingTableResultsInner) => void
   isLoading: boolean
+  isEditClusterLoading: boolean
   cluster: Cluster | undefined
-  onSubmit?: () => void
 }
 
 export function PageSettingsNetwork({
   cluster,
   isLoading,
+  isEditClusterLoading,
   routes,
+  onSubmit,
   onAddRoute,
   onEdit,
   onDelete,
-  onSubmit,
 }: PageSettingsNetworkProps) {
   const featureExistingVpc = cluster?.features?.find(({ id }) => id === 'EXISTING_VPC')
   const featureExistingVpcValue = featureExistingVpc?.value_object
@@ -45,110 +48,116 @@ export function PageSettingsNetwork({
           description="The Network tab in your cluster settings allows you to view your VPC configuration. You can also update the Qovery VPC route table from this interface to set up VPC peering."
         />
 
-        <div className="mt-2 flex flex-col gap-5">
-          {isLoading ? (
-            <div className="flex justify-center">
-              <LoaderSpinner className="w-4" />
-            </div>
-          ) : (
-            <>
-              {canEditRoutes && (
-                <BlockContent classNameContent="p-0" title="Routes">
-                  {routes?.map((currentRoute, i) => (
-                    <div
-                      key={i}
-                      className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 p-5"
-                      data-testid="form-row"
-                    >
-                      <div className="flex flex-col	">
-                        <p data-testid="form-row-target" className="mb-1 text-xs text-neutral-350">
-                          Target: <span className="font-medium text-neutral-400">{currentRoute.target}</span>
-                        </p>
-                        <p data-testid="form-row-destination" className="text-xs text-neutral-350">
-                          Destination: <span className="font-medium text-neutral-400">{currentRoute.destination}</span>
-                        </p>
+        <form onSubmit={onSubmit}>
+          <div className="mt-2 flex flex-col gap-5">
+            {isLoading ? (
+              <div className="flex justify-center">
+                <LoaderSpinner className="w-4" />
+              </div>
+            ) : (
+              <>
+                {canEditRoutes && (
+                  <BlockContent classNameContent="p-0" title="Routes">
+                    {routes?.map((currentRoute, i) => (
+                      <div
+                        key={i}
+                        className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 p-5"
+                        data-testid="form-row"
+                      >
+                        <div className="flex flex-col	">
+                          <p data-testid="form-row-target" className="mb-1 text-xs text-neutral-350">
+                            Target: <span className="font-medium text-neutral-400">{currentRoute.target}</span>
+                          </p>
+                          <p data-testid="form-row-destination" className="text-xs text-neutral-350">
+                            Destination:{' '}
+                            <span className="font-medium text-neutral-400">{currentRoute.destination}</span>
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {currentRoute.description && (
+                            <Tooltip side="top" content={currentRoute.description}>
+                              <div className="mr-1 flex items-center">
+                                <Icon iconName="circle-info" className="text-sm text-neutral-400" iconStyle="regular" />
+                              </div>
+                            </Tooltip>
+                          )}
+                          <Button
+                            data-testid="edit-button"
+                            variant="surface"
+                            type="button"
+                            color="neutral"
+                            size="md"
+                            className="h-9 w-9 justify-center"
+                            onClick={() => onEdit(currentRoute)}
+                          >
+                            <Icon iconName="gear" iconStyle="regular" />
+                          </Button>
+                          <Button
+                            data-testid="delete-button"
+                            variant="surface"
+                            type="button"
+                            color="neutral"
+                            size="md"
+                            className="h-9 w-9 justify-center"
+                            onClick={() => onDelete(currentRoute)}
+                          >
+                            <Icon iconName="trash" iconStyle="regular" />
+                          </Button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {currentRoute.description && (
-                          <Tooltip side="top" content={currentRoute.description}>
-                            <div className="mr-1 flex items-center">
-                              <Icon iconName="circle-info" className="text-sm text-neutral-400" />
-                            </div>
-                          </Tooltip>
-                        )}
-                        <Button
-                          data-testid="edit-button"
-                          variant="surface"
-                          color="neutral"
-                          size="md"
-                          className="h-9 w-9 justify-center"
-                          onClick={() => onEdit(currentRoute)}
-                        >
-                          <Icon iconName="gear" />
-                        </Button>
-                        <Button
-                          data-testid="delete-button"
-                          variant="surface"
-                          color="neutral"
-                          size="md"
-                          className="h-9 w-9 justify-center"
-                          onClick={() => onDelete(currentRoute)}
-                        >
-                          <Icon iconName="trash" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
 
-                  <div className="flex w-full items-center justify-end gap-3 px-5 py-2">
-                    <Button
-                      data-testid="add-button"
-                      size="sm"
-                      variant="solid"
-                      color="brand"
-                      onClick={() => onAddRoute()}
-                    >
-                      Add route
-                      <Icon iconName="circle-plus" iconStyle="regular" className="ml-1" />
-                    </Button>
-                  </div>
-                </BlockContent>
-              )}
-
-              {featureExistingVpcValue ? (
-                featureExistingVpcContent
-              ) : isScalewayCluster ? (
-                <>
-                  <ScalewayStaticIp
-                    staticIpFeature={cluster?.features?.find(({ id }) => id === 'STATIC_IP')}
-                    natGatewayFeature={cluster?.features?.find(({ id }) => id === 'NAT_GATEWAY')}
-                    disabled={!canEditFeatures}
-                  />
-                  {canEditFeatures && onSubmit && (
-                    <div className="flex justify-end">
-                      <Button data-testid="submit-button" onClick={onSubmit} size="lg">
-                        Save
+                    <div className="flex w-full items-center justify-end gap-3 px-5 py-2">
+                      <Button
+                        data-testid="add-button"
+                        size="sm"
+                        variant="solid"
+                        color="brand"
+                        onClick={() => onAddRoute()}
+                        type="button"
+                      >
+                        Add route
+                        <Icon iconName="circle-plus" iconStyle="regular" className="ml-1" />
                       </Button>
                     </div>
-                  )}
-                </>
-              ) : (
-                <BlockContent title="Configured network features" classNameContent="p-0">
-                  {cluster?.features
-                    ?.filter(({ id }) => id !== 'EXISTING_VPC' && id !== 'KARPENTER')
-                    .map((feature) => (
-                      <CardClusterFeature
-                        key={feature.id}
-                        feature={feature}
-                        cloudProvider={cluster?.cloud_provider}
-                        disabled
-                      />
-                    ))}
-                </BlockContent>
-              )}
-            </>
-          )}
-        </div>
+                  </BlockContent>
+                )}
+
+                {featureExistingVpcValue ? (
+                  featureExistingVpcContent
+                ) : isScalewayCluster ? (
+                  <>
+                    <ScalewayStaticIp
+                      staticIpFeature={cluster?.features?.find(({ id }) => id === 'STATIC_IP')}
+                      natGatewayFeature={cluster?.features?.find(({ id }) => id === 'NAT_GATEWAY')}
+                      disabled={!canEditFeatures}
+                    />
+                    {canEditFeatures && (
+                      <div className="flex justify-end">
+                        <Button data-testid="submit-button" type="submit" size="lg" loading={isEditClusterLoading}>
+                          Save
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <BlockContent title="Configured network features" classNameContent="p-0">
+                    {cluster?.features
+                      ?.filter(({ id }) => id !== 'EXISTING_VPC' && id !== 'KARPENTER')
+                      .map((feature) => (
+                        <CardClusterFeature
+                          key={feature.id}
+                          feature={feature}
+                          cloudProvider={cluster?.cloud_provider}
+                          disabled
+                        />
+                      ))}
+                  </BlockContent>
+                )}
+              </>
+            )}
+          </div>
+        </form>
       </Section>
     </div>
   )

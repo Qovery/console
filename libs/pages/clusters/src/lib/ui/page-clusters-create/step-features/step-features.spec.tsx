@@ -52,7 +52,7 @@ describe('StepFeatures', () => {
     await userEvent.click(input)
 
     // all because we have two inputs on the inputs select with search
-    screen.getByDisplayValue('true')
+    expect(screen.getByDisplayValue('true')).toBeInTheDocument()
   })
 
   it('should submit the form on click', async () => {
@@ -103,7 +103,7 @@ describe('StepFeatures', () => {
           description: 'Enable NAT Gateway',
           value_object: {
             type: 'STRING',
-            value: false,
+            value: 'VPC-GW-S',
           },
           is_cloud_provider_paying_feature: true,
         },
@@ -132,7 +132,7 @@ describe('StepFeatures', () => {
           },
         })
       )
-      expect(screen.getByText('Static IP / Nat Gateways')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Static IP / Nat Gateways' })).toBeInTheDocument()
       expect(screen.getByText('NAT Gateway Type')).toBeInTheDocument()
     })
 

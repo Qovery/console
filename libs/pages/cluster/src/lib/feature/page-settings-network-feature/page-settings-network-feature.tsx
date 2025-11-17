@@ -1,6 +1,6 @@
 import { type ClusterRequestFeaturesInner, type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import {
   useCluster,
@@ -26,7 +26,7 @@ export function PageSettingsNetworkFeature() {
   })
   const isLoading = isClusterLoading || isClusterRoutingTableLoading
   const { mutateAsync: editRoutingTable } = useEditRoutingTable()
-  const { mutateAsync: editCluster } = useEditCluster()
+  const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -34,7 +34,7 @@ export function PageSettingsNetworkFeature() {
   const isScalewayCluster = cluster?.cloud_provider === 'SCW'
 
   // Initialize form with cluster features for Scaleway
-  const { handleSubmit, reset } = useForm({
+  const methods = useForm({
     mode: 'onChange',
   })
 
@@ -46,7 +46,7 @@ export function PageSettingsNetworkFeature() {
         if (feature.id) {
           // Special handling for NAT_GATEWAY - extract type from object format
           if (feature.id === 'NAT_GATEWAY' && feature.value_object?.value) {
-            const natGatewayValue = feature.value_object.value as any
+            const natGatewayValue = feature.value_object.value as unknown as { nat_gateway_type: { type: string } }
             const natGatewayType =
               natGatewayValue?.nat_gateway_type?.type ||
               (typeof natGatewayValue === 'string' ? natGatewayValue : undefined)
@@ -62,11 +62,11 @@ export function PageSettingsNetworkFeature() {
           }
         }
       })
-      reset({ features: featuresData })
+      methods.reset({ features: featuresData })
     }
-  }, [cluster, isScalewayCluster, reset])
+  }, [cluster, isScalewayCluster, methods])
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (!cluster) return
 
     const features = cluster.features?.map((feature) => {
@@ -115,58 +115,61 @@ export function PageSettingsNetworkFeature() {
   })
 
   return (
-    <PageSettingsNetwork
-      cluster={cluster}
-      isLoading={isLoading}
-      routes={clusterRoutingTable}
-      onSubmit={isScalewayCluster ? onSubmit : undefined}
-      onAddRoute={() => {
-        openModal({
-          content: (
-            <CrudModalFeature
-              onClose={closeModal}
-              clusterId={clusterId}
-              organizationId={organizationId}
-              routes={clusterRoutingTable}
-            />
-          ),
-        })
-      }}
-      onEdit={(route: ClusterRoutingTableResultsInner) => {
-        openModal({
-          content: (
-            <CrudModalFeature
-              onClose={closeModal}
-              clusterId={clusterId}
-              organizationId={organizationId}
-              route={route}
-              routes={clusterRoutingTable}
-            />
-          ),
-        })
-      }}
-      onDelete={(route: ClusterRoutingTableResultsInner) => {
-        openModalConfirmation({
-          title: 'Delete Network',
-          confirmationMethod: 'action',
-          name: route.target,
-          action: async () => {
-            try {
-              if (clusterRoutingTable && clusterRoutingTable.length > 0) {
-                const cloneRoutes = deleteRoutes(clusterRoutingTable, route.destination)
-                await editRoutingTable({
-                  clusterId,
-                  organizationId,
-                  routingTableRequest: { routes: cloneRoutes },
-                })
+    <FormProvider {...methods}>
+      <PageSettingsNetwork
+        cluster={cluster}
+        isLoading={isLoading}
+        isEditClusterLoading={isEditClusterLoading}
+        routes={clusterRoutingTable}
+        onSubmit={onSubmit}
+        onAddRoute={() => {
+          openModal({
+            content: (
+              <CrudModalFeature
+                onClose={closeModal}
+                clusterId={clusterId}
+                organizationId={organizationId}
+                routes={clusterRoutingTable}
+              />
+            ),
+          })
+        }}
+        onEdit={(route: ClusterRoutingTableResultsInner) => {
+          openModal({
+            content: (
+              <CrudModalFeature
+                onClose={closeModal}
+                clusterId={clusterId}
+                organizationId={organizationId}
+                route={route}
+                routes={clusterRoutingTable}
+              />
+            ),
+          })
+        }}
+        onDelete={(route: ClusterRoutingTableResultsInner) => {
+          openModalConfirmation({
+            title: 'Delete Network',
+            confirmationMethod: 'action',
+            name: route.target,
+            action: async () => {
+              try {
+                if (clusterRoutingTable && clusterRoutingTable.length > 0) {
+                  const cloneRoutes = deleteRoutes(clusterRoutingTable, route.destination)
+                  await editRoutingTable({
+                    clusterId,
+                    organizationId,
+                    routingTableRequest: { routes: cloneRoutes },
+                  })
+                }
+              } catch (error) {
+                console.error(error)
               }
-            } catch (error) {
-              console.error(error)
-            }
-          },
-        })
-      }}
-    />
+            },
+          })
+        }}
+      />
+    </FormProvider>
   )
 }
 
