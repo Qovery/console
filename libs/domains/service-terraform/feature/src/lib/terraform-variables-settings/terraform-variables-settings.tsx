@@ -43,7 +43,7 @@ type TerraformVariablesContextType = {
   hoveredRow: string | undefined
   setHoveredRow: (hoveredRow: string | undefined) => void
   overrideValue: (key: string, value: string) => void
-  resetCustomVariable: (key: string) => void
+  resetOverride: (key: string) => void
   addCustomVariable: () => void
   deleteSelectedRows: () => void
   setFileListOrder: (fileListOrder: string[]) => void
@@ -98,7 +98,6 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const service = match(serviceResponse)
     .with({ serviceType: 'TERRAFORM' }, (s) => s)
     .otherwise(() => null)
-  console.log('🚀 ~ TerraformVariablesProvider ~ service:', service)
 
   // Memoize the repository config to prevent unnecessary re-renders and refetches.
   // If we're in the context of the settings page, we use the service data to get the repository config.
@@ -211,7 +210,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const allVariables = useMemo(() => [...parsedVars, ...filesVars, ...overrides], [parsedVars, filesVars, overrides])
   const keys = useMemo(() => allVariables.map((variable) => variable.key ?? ''), [allVariables])
 
-  // Combine variables coming from the tfVarFilesFromResponse and the service into a Map
+  // Combine variables coming from the parsed variables (from the git repo), files vars (tfvars files) and overrides (manual overrides or custom variables)
   const combinedVariables: Map<string, VariableRowItem> = useMemo(() => {
     return new Map(
       keys.map((key) => {
@@ -374,53 +373,44 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   }, [])
 
   const toggleSecret = useCallback(
-    (key: string, value: boolean) => {
-      const customVar = overrides.find((customVariable) => customVariable.key === key)
-      const lastValue = getVariableValue(key)
+    (key: string, isSecret: boolean) => {
+      const currentOverride = overrides.find((o) => o.key === key)
+      const currentValue = getVariableValue(key)
 
-      if (customVar) {
-        if (value) {
-          setOverrides((prevCustomVariables) =>
-            prevCustomVariables.map((customVariable) =>
-              customVariable.key === key ? { ...customVariable, secret: value } : customVariable
-            )
-          )
+      if (currentOverride) {
+        if (isSecret) {
+          setOverrides((prevOverrides) => prevOverrides.map((o) => (o.key === key ? { ...o, secret: isSecret } : o)))
         } else {
           // Removing existing override
-          setOverrides((prevCustomVariables) =>
-            prevCustomVariables.filter((customVariable) => customVariable.key !== key)
-          )
+          setOverrides((prevOverrides) => prevOverrides.filter((o) => o.key !== key))
         }
       } else {
-        setOverrides((prevCustomVariables) => [
-          ...prevCustomVariables,
-          {
-            key,
-            value: lastValue,
-            secret: value,
-            source: CUSTOM_SOURCE,
-          },
+        setOverrides((prevOverrides) => [
+          ...prevOverrides,
+          { key, value: currentValue, secret: isSecret, source: CUSTOM_SOURCE },
         ])
       }
     },
     [overrides, getVariableValue]
   )
 
-  const resetCustomVariable = useCallback((key: string) => {
-    setOverrides((prevCustomVariables) => prevCustomVariables.filter((customVariable) => customVariable.key !== key))
+  // Reset the override for a specific key by removing the override from the overrides array
+  const resetOverride = useCallback((key: string) => {
+    setOverrides((prevOverrides) => prevOverrides.filter((o) => o.key !== key))
   }, [])
 
+  // Add a new custom variable to the overrides array
   const addCustomVariable = useCallback(() => {
-    setOverrides((prevCustomVariables) => {
-      const currentCount = prevCustomVariables.length
+    setOverrides((prevOverrides) => {
+      const currentCount = prevOverrides.length
       let newKey = 'custom_' + (currentCount + 1)
-      const doesExist = (key: string) => prevCustomVariables.find((customVariable) => customVariable.key === key)
+      const doesExist = (key: string) => prevOverrides.find((o) => o.key === key)
       while (doesExist(newKey)) {
         newKey = 'custom_' + (Number(newKey.split('_')[1]) + 1)
       }
 
       return [
-        ...prevCustomVariables,
+        ...prevOverrides,
         {
           key: newKey,
           value: '',
@@ -431,10 +421,9 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     })
   }, [])
 
+  // Delete the selected rows from the overrides array and clear the selected rows
   const deleteSelectedRows = useCallback(() => {
-    setOverrides((prevCustomVariables) =>
-      prevCustomVariables.filter((customVariable) => !selectedRows.includes(customVariable.key))
-    )
+    setOverrides((prevOverrides) => prevOverrides.filter((o) => !selectedRows.includes(o.key)))
     setSelectedRows([])
   }, [selectedRows, setOverrides, setSelectedRows])
 
@@ -458,7 +447,6 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
             }
           },
           onError: (error) => {
-            console.log('ERROR:', error)
             setNewPathErrorMessage((error as AxiosError).message)
           },
         }
@@ -468,9 +456,10 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     }
   }, [fetchTfVars, organizationId, repositoryConfig, newPath])
 
+  // Check if the variable is a custom variable by checking if the override exists and the source is CUSTOM_SOURCE
   const isCustomVariable = useCallback(
     (key: string): boolean => {
-      const override = overrides.find((customVariable) => customVariable.key === key)
+      const override = overrides.find((o) => o.key === key)
       const source = getVariableSource(key)
       return !!override && source === CUSTOM_SOURCE
     },
@@ -488,9 +477,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       variableRows,
       hoveredRow,
       setHoveredRow,
-      resetCustomVariable,
       setTfVarFiles,
-      addCustomVariable,
       deleteSelectedRows,
       setFileListOrder,
       focusedCell,
@@ -503,14 +490,16 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       setNewPathErrorMessage,
       hoveredCell,
       setHoveredCell,
-      isVariableOverride,
       getVariableValue,
-      overrideValue,
       getVariableSource,
+      addCustomVariable,
       isCustomVariable,
       toggleSecret,
       overrides,
       overrideKey,
+      overrideValue,
+      resetOverride,
+      isVariableOverride,
     }),
     [
       selectedRows,
@@ -521,7 +510,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       tfVarFilePaths,
       variableRows,
       hoveredRow,
-      resetCustomVariable,
+      resetOverride,
       setTfVarFiles,
       addCustomVariable,
       deleteSelectedRows,
@@ -770,7 +759,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
     onSelectRow,
     isRowSelected,
     hoveredRow,
-    resetCustomVariable,
+    resetOverride,
     focusedCell,
     setFocusedCell,
     hoveredCell,
@@ -926,7 +915,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
               {!isCustomVariable(row.key) && isVariableOverride(row.key) && (
                 <button
                   type="button"
-                  onClick={() => resetCustomVariable(row.key)}
+                  onClick={() => resetOverride(row.key)}
                   className="mx-4 px-1 text-neutral-350 hover:text-neutral-400"
                 >
                   <Icon iconName="rotate-left" iconStyle="regular" />
