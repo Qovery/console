@@ -69,36 +69,49 @@ export function PageSettingsNetworkFeature() {
   const onSubmit = methods.handleSubmit(async (data) => {
     if (!cluster) return
 
-    const features = cluster.features?.map((feature) => {
-      const formFeature = data['features']?.[feature.id || '']
+    const staticIpFeature = data['features']?.['STATIC_IP']
+    const staticIpEnabled = staticIpFeature?.value === true
 
-      if (feature.id === 'STATIC_IP' && formFeature) {
-        return {
-          ...feature,
-          value: formFeature.value,
+    const features = cluster.features
+      ?.filter((feature) => {
+        if (feature.id === 'NAT_GATEWAY' && isScalewayCluster && !staticIpEnabled) {
+          return false
         }
-      }
+        return true
+      })
+      .map((feature) => {
+        const formFeature = data['features']?.[feature.id || '']
 
-      if (feature.id === 'NAT_GATEWAY' && formFeature && isScalewayCluster) {
-        if (formFeature.extendedValue) {
+        if (feature.id === 'STATIC_IP' && formFeature) {
           return {
             ...feature,
-            value: {
-              nat_gateway_type: {
-                provider: 'scaleway',
-                type: formFeature.extendedValue,
-              },
-            } as unknown as ClusterRequestFeaturesInner['value'],
+            value: formFeature.value,
+            value_object: {
+              value: formFeature.value,
+            },
           }
         }
-        return {
-          ...feature,
-          value: null,
-        }
-      }
 
-      return feature
-    })
+        if (feature.id === 'NAT_GATEWAY' && formFeature && isScalewayCluster) {
+          if (formFeature.extendedValue) {
+            return {
+              ...feature,
+              value: {
+                nat_gateway_type: {
+                  provider: 'scaleway',
+                  type: formFeature.extendedValue,
+                },
+              } as unknown as ClusterRequestFeaturesInner['value'],
+            }
+          }
+          return {
+            ...feature,
+            value: null,
+          }
+        }
+
+        return feature
+      })
 
     try {
       await editCluster({

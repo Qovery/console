@@ -30,6 +30,7 @@ export function ScalewayStaticIp({ staticIpFeature, natGatewayFeature, disabled 
   useEffect(() => {
     if (isEditable && !staticIpEnabled && natGatewayFeature?.id && setValue) {
       setValue(`features.${natGatewayFeature.id}.value`, false)
+      setValue(`features.${natGatewayFeature.id}.extendedValue`, undefined)
     }
   }, [staticIpEnabled, isEditable, natGatewayFeature?.id, setValue])
 
