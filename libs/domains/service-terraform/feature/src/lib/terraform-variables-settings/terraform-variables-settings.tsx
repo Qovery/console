@@ -895,7 +895,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
                 <DropdownVariable
                   environmentId={environmentId}
                   onChange={(val) => {
-                    overrideValue(row.key, val)
+                    overrideValue(row.key, `{{${val}}}`)
                   }}
                   onOpenChange={(open) => {
                     if (open) {
