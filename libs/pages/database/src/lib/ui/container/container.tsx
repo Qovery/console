@@ -55,8 +55,14 @@ export function Container({ service, environment, children }: PropsWithChildren<
       cluster?.metrics_parameters?.enabled &&
       cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled &&
       service?.serviceType === 'DATABASE' &&
+      (service?.type === 'POSTGRESQL' || service?.type === 'MYSQL') &&
       (service as Database)?.mode === DatabaseModeEnum.MANAGED,
-    [cluster?.cloud_provider, cluster?.metrics_parameters?.enabled, service]
+    [
+      cluster?.cloud_provider,
+      cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled,
+      cluster?.metrics_parameters?.enabled,
+      service,
+    ]
   )
 
   const headerActions = (
