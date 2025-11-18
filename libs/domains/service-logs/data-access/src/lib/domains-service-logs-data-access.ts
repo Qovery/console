@@ -225,16 +225,14 @@ export const serviceLogs = createQueryKeys('serviceLogs', {
         try {
           const parsedResponse =
             typeof response.data.response === 'string' ? JSON.parse(response.data.response) : response.data.response
+          const result = parsedResponse.data?.result as LogStream[]
 
-          const result = parsedResponse.data.result as LogStream[]
-
-          if (result.length > 0) {
+          if (result && Array.isArray(result) && result.length > 0) {
             return formatLogs(result)
           }
 
           return []
         } catch (error) {
-          console.error('Failed to parse Loki response:', error)
           return []
         }
       }

@@ -128,6 +128,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   // Historical logs hook - only enabled when in historical mode
   const {
     data: historyLogs = [],
+    refetch: refetchHistoryLogs,
     isFetched: isHistoryLogsFetched,
     loadPreviousLogs,
     hasMoreLogs,
@@ -225,7 +226,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
     return (
       <div className="w-full p-1">
         <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
-          <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} />
+          <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
           <div className="h-[calc(100vh-176px)] border-r border-neutral-500 bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">
               <Placeholder
@@ -247,7 +248,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   return (
     <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
       <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
-        <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} />
+        <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
         {isLogsLoading && isLiveMode ? (
           <div className="flex h-full flex-col items-center justify-center pb-[68px]">
             <Placeholder

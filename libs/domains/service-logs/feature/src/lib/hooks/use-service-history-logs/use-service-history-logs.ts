@@ -21,10 +21,13 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   const [currentEndDate, setCurrentEndDate] = useState<Date | null>(null)
   const [hasMoreLogs, setHasMoreLogs] = useState(true)
   const [isPaginationLoading, setIsPaginationLoading] = useState(false)
-  // Counter to force re-accumulation when reset occurs (handles React Query cache returning same data reference)
   const [resetCounter, setResetCounter] = useState(0)
 
-  const isHistoryMode = useMemo(() => queryParams.mode === 'history', [queryParams.mode])
+  const isHistoryMode = useMemo(() => {
+    if (queryParams.mode === 'history') return true
+    if (queryParams.mode === 'live') return false
+    return Boolean(queryParams.startDate || queryParams.endDate)
+  }, [queryParams.mode, queryParams.startDate, queryParams.endDate])
 
   const startDate = useMemo(
     () => (queryParams.startDate ? new Date(queryParams.startDate) : undefined),
@@ -66,8 +69,8 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     data: logs = [],
     isFetched: isFetchedLogs,
     isFetching: isLoadingLogs,
+    refetch: refetchLogs,
   } = useQuery({
-    keepPreviousData: true,
     ...serviceLogs.serviceLogs({
       clusterId,
       serviceId,
@@ -84,8 +87,8 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     data: nginxLogs = [],
     isFetched: isNginxFetched,
     isFetching: isNginxLoading,
+    refetch: refetchNginxLogs,
   } = useQuery({
-    keepPreviousData: true,
     ...serviceLogs.serviceLogs({
       clusterId,
       serviceId,
@@ -101,75 +104,98 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
 
   const isFetched = isFetchedLogs || isNginxFetched
 
-  // Accumulate logs when new data arrives
   useEffect(() => {
     if (isFetched && (logs.length > 0 || nginxLogs.length > 0)) {
       setAccumulatedLogs((prev) => {
-        const existingTimestamps = new Set(prev.map((log) => log.timestamp))
-        const newLogs = logs.filter((log) => !existingTimestamps.has(log.timestamp))
-        const newNginxLogs = nginxLogs.filter((log) => !existingTimestamps.has(log.timestamp))
+        const existingKeys = new Set(prev.map((log) => `${log.timestamp}|${log.message}`))
+        const newLogs = logs.filter((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
+        const newNginxLogs = nginxLogs.filter((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
         return [...newLogs, ...newNginxLogs, ...prev]
       })
       setIsPaginationLoading(false)
     }
   }, [isFetched, logs, nginxLogs, resetCounter])
 
-  // Check if we have no more logs to load
   useEffect(() => {
-    if (isFetched && logs.length === 0 && isPaginationLoading) {
-      setHasMoreLogs(false)
-      setIsPaginationLoading(false)
+    if (isFetched && isPaginationLoading) {
+      if (logs.length === 0 && nginxLogs.length === 0) {
+        setHasMoreLogs(false)
+        setIsPaginationLoading(false)
+        return
+      }
+
+      if (logs.length > 0 || nginxLogs.length > 0) {
+        const existingKeys = new Set(accumulatedLogs.map((log) => `${log.timestamp}|${log.message}`))
+        const hasNewAppLogs = logs.some((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
+        const hasNewNginxLogs = nginxLogs.some((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
+
+        if (!hasNewAppLogs && !hasNewNginxLogs) {
+          setHasMoreLogs(false)
+          setIsPaginationLoading(false)
+        }
+      }
     }
-  }, [isFetched, logs.length, isPaginationLoading])
+  }, [isFetched, logs, nginxLogs, accumulatedLogs, isPaginationLoading])
+
+  const refetch = useCallback(() => {
+    refetchLogs()
+    if (queryParams.nginx) {
+      refetchNginxLogs()
+    }
+  }, [refetchLogs, refetchNginxLogs, queryParams.nginx])
 
   const loadPreviousLogs = useCallback(async () => {
     if (accumulatedLogs.length === 0 || !hasMoreLogs || isPaginationLoading) return
+
     setIsPaginationLoading(true)
 
     try {
-      const timestampValue = accumulatedLogs[0]?.timestamp
-      if (!timestampValue) return
+      const uniqueTimestamps = Array.from(
+        new Set(
+          accumulatedLogs.map((log) =>
+            typeof log.timestamp === 'string' ? parseInt(log.timestamp, 10) : log.timestamp
+          )
+        )
+      ).sort((a, b) => a - b)
 
-      const timestampNum = typeof timestampValue === 'string' ? parseInt(timestampValue, 10) : timestampValue
+      if (uniqueTimestamps.length === 0) {
+        setIsPaginationLoading(false)
+        return
+      }
 
-      // Use the oldest log timestamp as the new end date (minus 1ms to avoid duplicates)
-      const newEndDate = new Date(timestampNum - 1)
+      const oldestTimestamp = uniqueTimestamps[0]
+      const timeOffset = uniqueTimestamps.length === 1 ? 1000 : 1
+      const newEndDate = new Date(oldestTimestamp - timeOffset)
+
       setCurrentEndDate(newEndDate)
 
-      // XXX: This is a workaround to avoid the pagination loading state from being stuck
       setTimeout(() => {
-        setIsPaginationLoading(false)
-      }, 10000)
+        refetch()
+      }, 100)
     } catch (error) {
       setIsPaginationLoading(false)
-      console.error('Error in loadPreviousLogs:', error)
     }
-  }, [accumulatedLogs, hasMoreLogs, isPaginationLoading])
+  }, [accumulatedLogs, hasMoreLogs, isPaginationLoading, refetch])
 
   const normalizedLogs = useMemo(() => {
-    // Filter unique logs by the combination of timestamp and message to ensure more accurate deduplication
     const uniqLogsByTimestamp = Array.from(
       new Map(accumulatedLogs.map((log) => [`${log.timestamp}|${log.message}`, log])).values()
     )
     return uniqLogsByTimestamp.map(normalizeServiceLog).sort((a, b) => Number(a.timestamp) - Number(b.timestamp))
   }, [accumulatedLogs])
 
-  // Reset when query params change significantly
   useEffect(() => {
     setCurrentEndDate(endDate || null)
     setHasMoreLogs(true)
     setAccumulatedLogs([])
     setIsPaginationLoading(false)
-    // Increment counter to trigger re-accumulation of cached logs
     setResetCounter((prev) => prev + 1)
 
-    // Invalidate all service logs queries
     queryClient.invalidateQueries({
       queryKey: queries.serviceLogs.serviceLogs._def,
     })
   }, [clusterId, serviceId, startDate, endDate, filters, queryClient])
 
-  // Set hasMoreLogs appropriately when we first get data
   useEffect(() => {
     if (isFetched && logs.length > 0 && accumulatedLogs.length === logs.length) {
       setHasMoreLogs(logs.length === LOGS_PER_BATCH)
@@ -178,6 +204,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
 
   return {
     data: normalizedLogs,
+    refetch,
     isFetched,
     isLoading: isLoadingLogs || isNginxLoading || isPaginationLoading,
     loadPreviousLogs,
