@@ -115,7 +115,6 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
               className="absolute left-2 top-1/2 mt-[1px] -translate-y-1/2 text-sm text-neutral-350"
             />
           </div>
-
           <div className="flex flex-col gap-4">
             <div className="flex flex-col text-sm">
               <h3 className="text-sm font-medium text-neutral-400">Metric categories</h3>
@@ -139,14 +138,13 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
                       }
                     }}
                     className={twMerge(
-                      'group flex flex-col items-center justify-center gap-2 rounded-lg border p-4 outline-none transition-colors hover:border-brand-500 focus:border-brand-500 focus:ring-0',
+                      'group flex flex-col items-center justify-center gap-2 rounded-lg border p-4 outline-none transition-colors hover:border-brand-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-100',
                       isSelected ? 'border-brand-500' : 'border-neutral-200 bg-white'
                     )}
-                    autoFocus={false}
                   >
                     <div
                       className={twMerge(
-                        'flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-150 text-neutral-400 transition-colors group-hover:bg-brand-50 group-hover:text-brand-500 group-focus:bg-brand-50 group-focus:text-brand-500',
+                        'flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-150 text-neutral-400 transition-colors group-hover:bg-brand-50 group-hover:text-brand-500',
                         isSelected ? 'bg-brand-50 text-brand-500' : 'bg-neutral-150 text-neutral-400'
                       )}
                     >

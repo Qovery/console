@@ -1,7 +1,10 @@
+import { subHours } from 'date-fns'
+import { type Environment } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useSearchParams } from 'react-router-dom'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ErrorBoundary, FunnelFlow } from '@qovery/shared/ui'
+import useContainerName from '../../hooks/use-container-name/use-container-name'
 import { type AlertConfiguration } from './bulk-creation-flow.types'
 import { ROUTER_ALERTING_CREATION, type RouteType } from './router'
 
@@ -24,6 +27,7 @@ interface AlertingCreationFlowContextInterface {
   setAlerts: (alerts: AlertConfiguration[]) => void
   onComplete: (alerts: AlertConfiguration[]) => void
   totalSteps: number
+  containerName?: string
 }
 
 export const AlertingCreationFlowContext = createContext<AlertingCreationFlowContextInterface | undefined>(undefined)
@@ -37,16 +41,36 @@ export const useAlertingCreationFlowContext = () => {
 }
 
 interface AlertingCreationFlowProps {
+  environment: Environment
   service: AnyService
   selectedMetrics: string[]
   onClose: () => void
   onComplete: (alerts: AlertConfiguration[]) => void
 }
 
-export function AlertingCreationFlow({ selectedMetrics, service, onClose, onComplete }: AlertingCreationFlowProps) {
+export function AlertingCreationFlow({
+  selectedMetrics,
+  environment,
+  service,
+  onClose,
+  onComplete,
+}: AlertingCreationFlowProps) {
   const [searchParams] = useSearchParams()
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [alerts, setAlerts] = useState<AlertConfiguration[]>([])
+
+  const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
+
+  const now = new Date()
+  const oneHourAgo = subHours(now, 1)
+
+  const { data: containerName } = useContainerName({
+    clusterId: environment.cluster_id,
+    serviceId: service.id,
+    resourceType: hasStorage ? 'statefulset' : 'deployment',
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+  })
 
   const serviceId = service.id
   const serviceName = service.name
@@ -81,6 +105,7 @@ export function AlertingCreationFlow({ selectedMetrics, service, onClose, onComp
         setAlerts,
         onComplete,
         totalSteps,
+        containerName,
       }}
     >
       <FunnelFlow

@@ -1,10 +1,15 @@
+import { subHours } from 'date-fns'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import {
   type AlertConfiguration,
   AlertingCreationFlowContext,
   MetricConfigurationStep,
+  QUERY_CPU,
+  QUERY_MEMORY,
   useAlertRules,
+  useContainerName,
   useEditAlertRule,
   useEnvironment,
 } from '@qovery/domains/observability/feature'
@@ -22,6 +27,19 @@ export function PageAlertingEditFeature() {
     serviceId: applicationId,
   })
   const { mutateAsync: editAlertRule, isLoading: isLoadingEditAlertRule } = useEditAlertRule({ organizationId })
+
+  const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
+
+  const now = new Date()
+  const oneHourAgo = subHours(now, 1)
+
+  const { data: containerName } = useContainerName({
+    clusterId: environment?.cluster_id ?? '',
+    serviceId: service?.id ?? '',
+    resourceType: hasStorage ? 'statefulset' : 'deployment',
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+  })
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [alerts, setAlerts] = useState<AlertConfiguration[]>([])
@@ -50,14 +68,19 @@ export function PageAlertingEditFeature() {
 
   const handleComplete = async (updatedAlerts?: AlertConfiguration[]) => {
     const updatedAlert = updatedAlerts ? updatedAlerts[0] : alerts[0]
-    if (updatedAlert && environment) {
+    const threshold = parseInt(updatedAlert.condition.threshold, 10) / 100
+
+    if (updatedAlert && environment && containerName) {
       try {
         await editAlertRule({
           alertRuleId: alertId,
           payload: {
             name: updatedAlert.name,
             description: updatedAlert.metricCategory,
-            promql_expr: `${updatedAlert.condition.operator}(${updatedAlert.condition.threshold})`,
+            promql_expr: match(updatedAlert.metricCategory)
+              .with('cpu', () => QUERY_CPU(containerName, threshold))
+              .with('memory', () => QUERY_MEMORY(containerName, threshold))
+              .otherwise(() => ''),
             for_duration: updatedAlert.forDuration,
             severity: updatedAlert.severity,
             enabled: true,
@@ -65,16 +88,15 @@ export function PageAlertingEditFeature() {
             presentation: {},
           },
         })
+        navigate(
+          APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
+            APPLICATION_MONITORING_URL +
+            APPLICATION_MONITORING_ALERTS_URL
+        )
       } catch (error) {
         console.error('Error updating alert:', error)
       }
     }
-
-    navigate(
-      APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
-        APPLICATION_MONITORING_URL +
-        APPLICATION_MONITORING_ALERTS_URL
-    )
   }
 
   const handleExit = () => {

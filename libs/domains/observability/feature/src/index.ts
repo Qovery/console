@@ -8,6 +8,8 @@ export * from './lib/alerting-creation-flow/create-key-alerts-modal/create-key-a
 export * from './lib/alerting-creation-flow/bulk-creation-flow/alerting-creation-flow'
 export * from './lib/alerting-creation-flow/bulk-creation-flow/metric-configuration-step/metric-configuration-step'
 export * from './lib/alerting-creation-flow/bulk-creation-flow/bulk-creation-flow.types'
+export * from './lib/alerting-creation-flow/bulk-creation-flow/summary-step/alert-queries'
 export * from './lib/hooks/use-edit-alert-rule/use-edit-alert-rule'
 export * from './lib/hooks/use-alert-rules/use-alert-rules'
 export * from './lib/hooks/use-environment/use-environment'
+export * from './lib/hooks/use-container-name/use-container-name'

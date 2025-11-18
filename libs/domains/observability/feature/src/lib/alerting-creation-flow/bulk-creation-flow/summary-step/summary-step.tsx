@@ -1,13 +1,15 @@
 import { type AlertSeverity, type AlertTargetType } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { Button, FunnelFlowBody, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { useCreateAlertRule } from '../../../hooks/use-create-alert-rule/use-create-alert-rule'
 import { SeverityIndicator } from '../../../service/service-alerting/severity-indicator/severity-indicator'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
-import { ALERTING_CREATION_METRIC } from '../router'
+import { ALERTING_CREATION_EDIT, ALERTING_CREATION_METRIC } from '../router'
+import { QUERY_CPU, QUERY_MEMORY } from './alert-queries'
 
 const { Table } = TablePrimitives
 
@@ -124,15 +126,23 @@ export function SummaryStep() {
 
   const [isCreatingAlertRule, setIsCreatingAlertRule] = useState(false)
 
-  const { serviceName, currentStepIndex, setCurrentStepIndex, alerts, setAlerts, onComplete, selectedMetrics } =
-    useAlertingCreationFlowContext()
+  const {
+    serviceName,
+    currentStepIndex,
+    setCurrentStepIndex,
+    alerts,
+    setAlerts,
+    onComplete,
+    selectedMetrics,
+    containerName,
+  } = useAlertingCreationFlowContext()
 
   useEffect(() => {
     setCurrentStepIndex(selectedMetrics.length)
   }, [selectedMetrics.length, setCurrentStepIndex])
 
   const handleEdit = (alertId: string) => {
-    navigate(`../edit/${alertId}`)
+    navigate(`../${ALERTING_CREATION_EDIT(alertId)}`)
   }
 
   const handleToggleSkip = (index: number, isCurrentlySkipped: boolean) => {
@@ -147,11 +157,12 @@ export function SummaryStep() {
   const handleConfirm = async () => {
     const activeAlerts = alerts.filter((alert) => !alert.skipped)
 
-    if (!service || !environment) return
+    if (!service || !environment || !containerName) return
 
     try {
       setIsCreatingAlertRule(true)
       for (const alert of activeAlerts) {
+        const threshold = parseInt(alert.condition.threshold, 10) / 100
         await createAlertRule({
           payload: {
             organization_id: organizationId,
@@ -162,7 +173,10 @@ export function SummaryStep() {
             },
             name: alert.name,
             description: alert.metricCategory,
-            promql_expr: `${alert.condition.operator}(${alert.condition.threshold})`,
+            promql_expr: match(alert.metricCategory)
+              .with('cpu', () => QUERY_CPU(containerName, threshold))
+              .with('memory', () => QUERY_MEMORY(containerName, threshold))
+              .otherwise(() => ''),
             for_duration: alert.forDuration,
             severity: alert.severity,
             enabled: true,

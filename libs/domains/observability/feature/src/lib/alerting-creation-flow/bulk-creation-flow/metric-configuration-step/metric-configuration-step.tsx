@@ -78,8 +78,6 @@ export function MetricConfigurationStep({
   const metricCategory = isEdit ? alerts[0]?.metricCategory || '' : metricIndex || selectedMetrics[0] || ''
   const index = isEdit ? alerts.findIndex((alert) => alert.id === alertId) : selectedMetrics.indexOf(metricCategory)
 
-  console.log(alerts)
-
   const initialData = alerts[index]
 
   const basePathMatch = location.pathname.match(/(.+)\/(metric|edit)\/[^/]+$/)
@@ -148,17 +146,10 @@ export function MetricConfigurationStep({
   }
 
   const handleSkip = () => {
+    const currentFormValues = methods.getValues()
     const newAlerts = [...alerts]
     newAlerts[index] = {
-      id: uuid(),
-      metricCategory: selectedMetrics[index],
-      metricType: 'avg',
-      condition: { operator: 'above', threshold: '' },
-      autoResolve: { operator: 'above', threshold: '' },
-      forDuration: 'PT5M',
-      name: '',
-      severity: 'MEDIUM',
-      notificationChannels: [],
+      ...currentFormValues,
       skipped: true,
     }
     setAlerts(newAlerts)

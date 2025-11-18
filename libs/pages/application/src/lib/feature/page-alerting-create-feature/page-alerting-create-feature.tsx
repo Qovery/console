@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { AlertingCreationFlow } from '@qovery/domains/observability/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { APPLICATION_MONITORING_ALERTS_URL, APPLICATION_MONITORING_URL, APPLICATION_URL } from '@qovery/shared/routes'
@@ -8,6 +9,7 @@ export function PageAlertingCreateFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
 
   const selectedMetrics = useMemo(() => {
@@ -20,10 +22,11 @@ export function PageAlertingCreateFeature() {
     return ['new']
   }, [searchParams])
 
-  if (!service || selectedMetrics.length === 0) return null
+  if (!environment || !service || selectedMetrics.length === 0) return null
 
   return (
     <AlertingCreationFlow
+      environment={environment}
       service={service}
       selectedMetrics={selectedMetrics}
       onComplete={() => {
