@@ -19,7 +19,7 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { CreateKeyAlertsModal } from '../../alerting-creation-flow/create-key-alerts-modal/create-key-alerts-modal'
+import { CreateKeyAlertsModal } from '../../alerting/create-key-alerts-modal/create-key-alerts-modal'
 import { useAlertRules } from '../../hooks/use-alert-rules/use-alert-rules'
 import { useDeleteAlertRule } from '../../hooks/use-delete-alert-rule/use-delete-alert-rule'
 import { useEnvironment } from '../../hooks/use-environment/use-environment'

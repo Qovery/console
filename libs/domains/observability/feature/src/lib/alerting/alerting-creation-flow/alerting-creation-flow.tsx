@@ -5,7 +5,7 @@ import { Navigate, Route, Routes, useSearchParams } from 'react-router-dom'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ErrorBoundary, FunnelFlow } from '@qovery/shared/ui'
 import useContainerName from '../../hooks/use-container-name/use-container-name'
-import { type AlertConfiguration } from './bulk-creation-flow.types'
+import { type AlertConfiguration } from './alerting-creation-flow.types'
 import { ROUTER_ALERTING_CREATION, type RouteType } from './router'
 
 const METRIC_LABELS: Record<string, string> = {

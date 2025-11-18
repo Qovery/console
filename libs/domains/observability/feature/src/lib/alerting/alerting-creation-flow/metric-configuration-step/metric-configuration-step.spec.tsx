@@ -2,7 +2,7 @@ import { type AlertSeverity } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { AlertingCreationFlowContext } from '../alerting-creation-flow'
-import { type AlertConfiguration } from '../bulk-creation-flow.types'
+import { type AlertConfiguration } from '../alerting-creation-flow.types'
 import { MetricConfigurationStep } from './metric-configuration-step'
 
 const mockNavigate = jest.fn()

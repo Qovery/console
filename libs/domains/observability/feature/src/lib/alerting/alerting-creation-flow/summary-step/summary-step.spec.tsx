@@ -2,7 +2,7 @@ import { type AlertSeverity } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AlertingCreationFlowContext } from '../alerting-creation-flow'
-import { type AlertConfiguration } from '../bulk-creation-flow.types'
+import { type AlertConfiguration } from '../alerting-creation-flow.types'
 import { SummaryStep } from './summary-step'
 
 const mockMutateAsync = jest.fn()

@@ -17,7 +17,7 @@ import {
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
-import { type AlertConfiguration } from '../bulk-creation-flow.types'
+import { type AlertConfiguration } from '../alerting-creation-flow.types'
 import { ALERTING_CREATION_METRIC, ALERTING_CREATION_SUMMARY } from '../router'
 
 const METRIC_TYPE_OPTIONS: Record<string, Value[]> = {
