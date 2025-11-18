@@ -4,9 +4,8 @@ import {
   OrganizationEventTargetType,
   OrganizationEventType,
 } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { dark } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -23,7 +22,7 @@ import {
   SETTINGS_URL,
   SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
+import { CodeDiffEditor, CodeEditor, Icon, IconAwesomeEnum, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import CopyButton from '../copy-button/copy-button'
@@ -62,6 +61,7 @@ export const getSourceIcon = (origin?: OrganizationEventOrigin) => {
 export function RowEvent(props: RowEventProps) {
   const { event, expanded, setExpanded, isPlaceholder, columnsWidth } = props
   const { organizationId = '' } = useParams()
+  const [hideUnchangedRegions, setHideUnchangedRegions] = useState(true)
 
   const renderLink = (targetType: OrganizationEventTargetType) => {
     const { event_type, target_name, project_id, environment_id, target_id } = event
@@ -270,34 +270,51 @@ export function RowEvent(props: RowEventProps) {
           </Skeleton>
         </div>
       </div>
-      {expanded && (
-        <div
-          className="relative flex max-h-[388px] flex-col-reverse overflow-y-auto bg-neutral-700"
-          data-testid="expanded-panel"
-        >
-          <SyntaxHighlighter
+      {expanded && event.event_type === OrganizationEventType.UPDATE && event.original_change && event.change ? (
+        <div className="relative flex flex-col bg-white" data-testid="expanded-panel">
+          <div className="flex h-7 items-center justify-between bg-neutral-550 px-4 text-xs text-neutral-100">
+            <span>Changes (Original vs Modified)</span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setHideUnchangedRegions(!hideUnchangedRegions)
+              }}
+              className="flex items-center gap-1.5 rounded px-2 py-0.5 transition hover:bg-neutral-600"
+            >
+              <Icon iconName={hideUnchangedRegions ? 'eye' : 'eye-slash'} />
+              <span>{hideUnchangedRegions ? 'Show all lines' : 'Show only changes'}</span>
+            </button>
+          </div>
+          <CodeDiffEditor
+            key={event.timestamp}
+            original={JSON.stringify(JSON.parse(event.original_change), null, 2)}
+            modified={JSON.stringify(JSON.parse(event.change), null, 2)}
             language="json"
-            style={dark}
-            customStyle={{
-              padding: '1rem',
-              borderRadius: '0.25rem',
-              backgroundColor: 'transparent',
-              fontSize: '12px',
-              marginTop: '28px',
-            }}
-            wrapLines
-          >
-            {JSON.stringify(JSON.parse(event.change || ''), null, 2)}
-          </SyntaxHighlighter>
-          <div className="absolute top-9 flex w-full justify-end">
-            <CopyButton className="mr-7" content={event.change || ''} />
-          </div>
-          <div className="absolute top-0 w-full">
-            <div className="flex h-7 items-center bg-neutral-550 px-4 text-xs text-neutral-100">
-              Object Status after request (here you can find the JSON returned by our API)
-            </div>
-          </div>
+            height="400px"
+            hideUnchangedRegions={hideUnchangedRegions}
+          />
         </div>
+      ) : (
+        expanded && (
+          <div className="relative flex flex-col bg-white" data-testid="expanded-panel">
+            <div className="flex h-7 items-center justify-between bg-neutral-550 px-4 text-xs text-neutral-100">
+              <span>Object Status after request (here you can find the JSON returned by our API)</span>
+              <CopyButton content={event.change || ''} />
+            </div>
+            <CodeEditor
+              key={event.timestamp}
+              value={JSON.stringify(JSON.parse(event.change || ''), null, 2)}
+              language="json"
+              height="400px"
+              readOnly
+              options={{
+                scrollBeyondLastLine: false,
+                automaticLayout: true,
+                lineNumbers: 'on',
+              }}
+            />
+          </div>
+        )
       )}
     </>
   )
