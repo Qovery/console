@@ -137,6 +137,13 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     }
   }, [isFetched, logs, nginxLogs, accumulatedLogs, isPaginationLoading])
 
+  const refetch = useCallback(() => {
+    refetchLogs()
+    if (queryParams.nginx) {
+      refetchNginxLogs()
+    }
+  }, [refetchLogs, refetchNginxLogs, queryParams.nginx])
+
   const loadPreviousLogs = useCallback(async () => {
     if (accumulatedLogs.length === 0 || !hasMoreLogs || isPaginationLoading) return
 
@@ -163,15 +170,12 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       setCurrentEndDate(newEndDate)
 
       setTimeout(() => {
-        refetchLogs()
-        if (queryParams.nginx) {
-          refetchNginxLogs()
-        }
+        refetch()
       }, 100)
     } catch (error) {
       setIsPaginationLoading(false)
     }
-  }, [accumulatedLogs, hasMoreLogs, isPaginationLoading, refetchLogs, refetchNginxLogs, queryParams.nginx])
+  }, [accumulatedLogs, hasMoreLogs, isPaginationLoading, refetch])
 
   const normalizedLogs = useMemo(() => {
     const uniqLogsByTimestamp = Array.from(
@@ -197,13 +201,6 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       setHasMoreLogs(logs.length === LOGS_PER_BATCH)
     }
   }, [isFetched, logs.length, accumulatedLogs.length])
-
-  const refetch = useCallback(() => {
-    refetchLogs()
-    if (queryParams.nginx) {
-      refetchNginxLogs()
-    }
-  }, [refetchLogs, refetchNginxLogs, queryParams.nginx])
 
   return {
     data: normalizedLogs,
