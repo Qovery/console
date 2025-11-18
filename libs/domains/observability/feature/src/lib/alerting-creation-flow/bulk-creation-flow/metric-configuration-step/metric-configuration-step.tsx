@@ -49,11 +49,11 @@ const OPERATOR_OPTIONS: Value[] = [
 ]
 
 const DURATION_OPTIONS: Value[] = [
-  { label: 'Last 1 minute', value: '1m' },
-  { label: 'Last 5 minutes', value: '5m' },
-  { label: 'Last 10 minutes', value: '10m' },
-  { label: 'Last 15 minutes', value: '15m' },
-  { label: 'Last 30 minutes', value: '30m' },
+  { label: 'Last 1 minute', value: 'PT1M' },
+  { label: 'Last 5 minutes', value: 'PT5M' },
+  { label: 'Last 10 minutes', value: 'PT10M' },
+  { label: 'Last 15 minutes', value: 'PT15M' },
+  { label: 'Last 30 minutes', value: 'PT30M' },
 ]
 
 const SEVERITY_OPTIONS: Value[] = Object.values(AlertSeverity).map((severity) => ({
@@ -77,6 +77,9 @@ export function MetricConfigurationStep({
 
   const metricCategory = isEdit ? alerts[0]?.metricCategory || '' : metricIndex || selectedMetrics[0] || ''
   const index = isEdit ? alerts.findIndex((alert) => alert.id === alertId) : selectedMetrics.indexOf(metricCategory)
+
+  console.log(alerts)
+
   const initialData = alerts[index]
 
   const basePathMatch = location.pathname.match(/(.+)\/(metric|edit)\/[^/]+$/)
@@ -98,13 +101,12 @@ export function MetricConfigurationStep({
       condition: {
         operator: 'above',
         threshold: '80',
-        duration: '5m',
       },
       autoResolve: {
         operator: 'below',
         threshold: '80',
-        duration: '5m',
       },
+      forDuration: 'PT5M',
       name: metricCategory ? `${metricCategory.replace(/_/g, ' ').toUpperCase()} alert` : '',
       severity: 'MEDIUM',
       notificationChannels: [],
@@ -151,8 +153,9 @@ export function MetricConfigurationStep({
       id: uuid(),
       metricCategory: selectedMetrics[index],
       metricType: 'avg',
-      condition: { operator: 'above', threshold: '', duration: '' },
-      autoResolve: { operator: 'above', threshold: '', duration: '' },
+      condition: { operator: 'above', threshold: '' },
+      autoResolve: { operator: 'above', threshold: '' },
+      forDuration: 'PT5M',
       name: '',
       severity: 'MEDIUM',
       notificationChannels: [],
@@ -185,6 +188,7 @@ export function MetricConfigurationStep({
   }
 
   const watchCondition = methods.watch('condition')
+  const watchForDuration = methods.watch('forDuration')
 
   return (
     <FunnelFlowBody>
@@ -327,11 +331,11 @@ export function MetricConfigurationStep({
                   <p className="text-sm">Duration</p>
                   <div className="flex items-center gap-2">
                     <Controller
-                      name="condition.duration"
+                      name="forDuration"
                       control={methods.control}
                       render={({ field }) => (
                         <InputSelectSmall
-                          name="duration"
+                          name="forDuration"
                           items={DURATION_OPTIONS}
                           defaultValue={field.value}
                           onChange={(value) => field.onChange(value)}
@@ -359,7 +363,7 @@ export function MetricConfigurationStep({
                       IS <span className="text-neutral-900">{watchCondition.operator}</span>{' '}
                       <span className="text-red-600">{watchCondition.threshold}%</span> DURING THE{' '}
                       <span className="text-neutral-900">
-                        {DURATION_OPTIONS.find((option) => option.value === watchCondition.duration)?.label}
+                        {DURATION_OPTIONS.find((option) => option.value === watchForDuration)?.label}
                       </span>
                     </span>
                   </p>
@@ -376,7 +380,7 @@ export function MetricConfigurationStep({
                       IS <span className="text-neutral-900">{watchCondition.operator}</span>{' '}
                       <span className="text-red-600">{watchCondition.threshold}%</span> DURING THE{' '}
                       <span className="text-neutral-900">
-                        {DURATION_OPTIONS.find((option) => option.value === watchCondition.duration)?.label}
+                        {DURATION_OPTIONS.find((option) => option.value === watchForDuration)?.label}
                       </span>
                     </span>
                   </p>

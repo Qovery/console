@@ -112,14 +112,6 @@ function AlertsSummaryTable({
   )
 }
 
-function convertDurationToISO8601(duration: string): string {
-  const match = duration.match(/^(\d+)m$/)
-  if (match) {
-    return `PT${match[1]}M`
-  }
-  return duration
-}
-
 export function SummaryStep() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -171,7 +163,7 @@ export function SummaryStep() {
             name: alert.name,
             description: alert.metricCategory,
             promql_expr: `${alert.condition.operator}(${alert.condition.threshold})`,
-            for_duration: convertDurationToISO8601(alert.condition.duration),
+            for_duration: alert.forDuration,
             severity: alert.severity,
             enabled: true,
             // alert_receiver_ids: alert.notificationChannels,
@@ -218,25 +210,39 @@ export function SummaryStep() {
           </div>
         </div>
 
-        {activeAlerts.length > 0 && (
-          <div>
-            <div className="overflow-hidden rounded-t-lg border border-neutral-250 bg-neutral-100 p-4 pb-5 text-sm">
-              <p className="flex items-center gap-1.5 font-medium">
-                <Icon iconName="circle-plus" iconStyle="regular" className="text-green-600" />
-                Alerts included in creation ({activeAlerts.length})
-              </p>
-              <span className=" text-neutral-350">
-                Alert we will automatically create and activate as soon as you confirm the creation
-              </span>
-            </div>
+        <div>
+          <div className="overflow-hidden rounded-t-lg border border-neutral-250 bg-neutral-100 p-4 pb-5 text-sm">
+            <p className="flex items-center gap-1.5 font-medium">
+              <Icon iconName="circle-plus" iconStyle="regular" className="text-green-600" />
+              Alerts included in creation ({activeAlerts.length})
+            </p>
+            <span className=" text-neutral-350">
+              Alert we will automatically create and activate as soon as you confirm the creation
+            </span>
+          </div>
+          {activeAlerts.length > 0 ? (
             <AlertsSummaryTable
               alerts={activeAlerts}
               onEdit={(localIndex) => handleEdit(activeAlertsWithIndex[localIndex].alert.id)}
               onToggleSkip={(localIndex) => handleToggleSkip(activeAlertsWithIndex[localIndex].originalIndex, false)}
               showExcludeButton
             />
-          </div>
-        )}
+          ) : (
+            <div className="-mt-2 flex flex-col items-center justify-center gap-3 overflow-hidden rounded-lg border border-neutral-250 bg-white p-8 text-sm">
+              <div className="flex h-8 w-8 items-center justify-center rounded border border-neutral-250 p-2">
+                <Icon iconName="bell-slash" iconStyle="regular" className="text-base" />
+              </div>
+              <p className="text-center text-neutral-350">
+                <span className="mb-1 block font-medium text-neutral-800">
+                  No alerts included in creation
+                  <br />
+                </span>
+                All alerts were skipped during setup <br />
+                You can include some below or return to the monitoring dashboard
+              </p>
+            </div>
+          )}
+        </div>
 
         {skippedAlerts.length > 0 && (
           <div>
@@ -265,12 +271,11 @@ export function SummaryStep() {
             color="neutral"
             size="lg"
             onClick={handlePrevious}
-            disabled={isCreatingAlertRule}
             loading={isCreatingAlertRule}
           >
             Previous
           </Button>
-          <Button size="lg" onClick={handleConfirm} disabled={isCreatingAlertRule} loading={isCreatingAlertRule}>
+          <Button size="lg" onClick={handleConfirm} disabled={activeAlerts.length === 0} loading={isCreatingAlertRule}>
             Confirm and create
           </Button>
         </div>

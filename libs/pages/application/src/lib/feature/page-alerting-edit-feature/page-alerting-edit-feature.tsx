@@ -12,14 +12,6 @@ import { useService } from '@qovery/domains/services/feature'
 import { APPLICATION_MONITORING_ALERTS_URL, APPLICATION_MONITORING_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 
-function convertDurationToISO8601(duration: string): string {
-  const match = duration.match(/^(\d+)m$/)
-  if (match) {
-    return `PT${match[1]}M`
-  }
-  return duration
-}
-
 export function PageAlertingEditFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '', alertId = '' } = useParams()
   const navigate = useNavigate()
@@ -42,16 +34,9 @@ export function PageAlertingEditFeature() {
         id: alertRule.id,
         metricCategory: alertRule.description || 'custom',
         metricType: 'avg',
-        condition: {
-          operator: 'above',
-          threshold: '80',
-          duration: alertRule.for_duration || 'PT5M',
-        },
-        autoResolve: {
-          operator: 'below',
-          threshold: '80',
-          duration: 'PT5M',
-        },
+        forDuration: alertRule.for_duration || 'PT5M',
+        condition: { operator: 'above', threshold: '80' },
+        autoResolve: { operator: 'below', threshold: '80' },
         name: alertRule.name,
         severity: alertRule.severity,
         notificationChannels: alertRule.alert_receiver_ids || [],
@@ -73,7 +58,7 @@ export function PageAlertingEditFeature() {
             name: updatedAlert.name,
             description: updatedAlert.metricCategory,
             promql_expr: `${updatedAlert.condition.operator}(${updatedAlert.condition.threshold})`,
-            for_duration: convertDurationToISO8601(updatedAlert.condition.duration),
+            for_duration: updatedAlert.forDuration,
             severity: updatedAlert.severity,
             enabled: true,
             alert_receiver_ids: updatedAlert.notificationChannels,

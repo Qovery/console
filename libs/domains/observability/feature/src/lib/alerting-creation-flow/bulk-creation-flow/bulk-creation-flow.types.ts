@@ -4,15 +4,14 @@ export interface AlertConfiguration {
   id: string
   metricCategory: string
   metricType: 'avg' | 'max' | 'min' | 'count' | 'throughput' | 'latency' | 'error_rate'
+  forDuration: string
   condition: {
     operator: 'above' | 'below'
     threshold: string
-    duration: string
   }
   autoResolve: {
     operator: 'above' | 'below'
     threshold: string
-    duration: string
   }
   name: string
   severity: AlertSeverity
