@@ -39,7 +39,7 @@ export function dateDifference(firstDate: Date, secondDate: Date) {
   return `${addZero(hoursDifference)}:${addZero(minutesDifference)}:${addZero(secondsDifference)}`
 }
 
-const formatInTimeZone = (date: Date, fmt: string, tz: string) =>
+export const formatInTimeZone = (date: Date, fmt: string, tz: string) =>
   format(utcToZonedTime(date, tz), fmt, { timeZone: tz })
 
 // 10:10

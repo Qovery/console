@@ -9,7 +9,7 @@ import { useServiceInstances } from '../hooks/use-service-instances/use-service-
 import { useServiceLevels } from '../hooks/use-service-levels/use-service-levels'
 import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
-const VALID_FILTER_KEYS = ['level', 'instance', 'message', 'nginx', 'search']
+const VALID_FILTER_KEYS = ['level', 'instance', 'message', 'nginx', 'search', 'deploymentId']
 
 function buildValueOptions(queryParams: DecodedValueMap<typeof queryParamsServiceLogs>): Option[] {
   const options: Option[] = []
@@ -95,9 +95,11 @@ export function SearchServiceLogs({
   service,
   clusterId,
   serviceId,
+  refetchHistoryLogs,
 }: {
   clusterId: string
   serviceId: string
+  refetchHistoryLogs: () => void
   service?: AnyService
 }) {
   const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
@@ -150,9 +152,13 @@ export function SearchServiceLogs({
   const handleChange = useCallback(
     (options: Option[]) => {
       setOptions(options)
-      setQueryParams(buildQueryParams(options.map((option) => option.value).join(' ')))
+      const query = buildQueryParams(options.map((option) => option.value).join(' '))
+      setQueryParams(query)
+      if (queryParams.startDate || queryParams.endDate || queryParams.mode === 'history') {
+        refetchHistoryLogs()
+      }
     },
-    [setQueryParams]
+    [setQueryParams, refetchHistoryLogs, queryParams.startDate, queryParams.endDate, queryParams.mode]
   )
 
   const defaultFilters = [

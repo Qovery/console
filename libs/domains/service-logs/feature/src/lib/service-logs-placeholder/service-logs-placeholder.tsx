@@ -179,7 +179,7 @@ export function ServiceLogsPlaceholder({
                   SERVICE_LOGS_URL(serviceId, undefined, deploymentId, 'history', subDays(new Date(), 28).toISOString())
                 }
               >
-                Go to previous deployment with service logs associated
+                Previous deployment with service logs associated
               </Link>
             </Tooltip>
           )}

@@ -15,10 +15,11 @@ import { queryParamsServiceLogs } from '../service-logs-context/service-logs-con
 
 export interface HeaderServiceLogsProps {
   logs: NormalizedServiceLog[]
+  refetchHistoryLogs: () => void
   isLiveMode: boolean
 }
 
-export function HeaderServiceLogs({ logs, isLiveMode }: HeaderServiceLogsProps) {
+export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: HeaderServiceLogsProps) {
   const {
     environment,
     serviceId,
@@ -204,7 +205,12 @@ export function HeaderServiceLogs({ logs, isLiveMode }: HeaderServiceLogsProps) 
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
-          <SearchServiceLogs service={service} clusterId={environment.cluster_id} serviceId={serviceId} />
+          <SearchServiceLogs
+            service={service}
+            clusterId={environment.cluster_id}
+            serviceId={serviceId}
+            refetchHistoryLogs={refetchHistoryLogs}
+          />
         </div>
         <Tooltip
           content={Object.values(queryParams).some((value) => value) ? 'Download filtered logs' : 'Download logs'}
