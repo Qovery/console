@@ -10,6 +10,7 @@ import {
 import {
   Badge,
   Button,
+  Chart,
   Heading,
   Icon,
   Section,
@@ -58,14 +59,19 @@ export function ServiceAlerting() {
 
   const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
-  const { mutate: deleteAlertRule } = useDeleteAlertRule({ organizationId: environment?.organization.id ?? '' })
+  const { mutate: deleteAlertRule } = useDeleteAlertRule({ organizationId })
 
   const { data: alertRules = [], isFetched: isAlertRulesFetched } = useAlertRules({
-    organizationId: environment?.organization.id ?? '',
+    organizationId,
     serviceId: applicationId,
   })
 
-  if (!environment || !isAlertRulesFetched) return null
+  if (!environment || !isAlertRulesFetched)
+    return (
+      <div className="flex h-full w-full items-center justify-center p-5">
+        <Chart.Loader />
+      </div>
+    )
 
   const createKeyAlertsModal = () => {
     openModal({
@@ -96,7 +102,7 @@ export function ServiceAlerting() {
       title: 'Confirm delete alert rule',
       description: 'To confirm the deletion of your alert rule, please type the name:',
       confirmationMethod: 'action',
-      confirmationAction: 'Delete',
+      confirmationAction: 'delete',
       name: alertRule.name,
       action: () => deleteAlertRule({ alertRuleId: alertRule.id }),
     })
@@ -134,6 +140,7 @@ export function ServiceAlerting() {
                 <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Name</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Status</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Severity</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Available</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="h-9 text-right font-normal text-neutral-350">
                   Actions
                 </Table.ColumnHeaderCell>
@@ -171,6 +178,19 @@ export function ServiceAlerting() {
                     </Table.Cell>
                     <Table.Cell className="h-11">
                       <SeverityIndicator severity={alertRule.severity} />
+                    </Table.Cell>
+                    <Table.Cell className="h-11">
+                      {alertRule.is_up_to_date ? (
+                        <Badge color="green" variant="surface" radius="full" className="font-medium" size="sm">
+                          Yes
+                        </Badge>
+                      ) : (
+                        <Tooltip content="Alert rule is not deployed, you need to reploy your cluster to apply it">
+                          <Badge color="red" variant="surface" radius="full" className="font-medium" size="sm">
+                            No
+                          </Badge>
+                        </Tooltip>
+                      )}
                     </Table.Cell>
                     <Table.Cell className="h-11">
                       <div className="flex items-center justify-end gap-2">
