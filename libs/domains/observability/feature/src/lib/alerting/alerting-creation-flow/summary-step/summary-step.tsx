@@ -156,7 +156,7 @@ export function SummaryStep() {
     try {
       setIsCreatingAlertRule(true)
       for (const alert of activeAlerts) {
-        const threshold = alert.condition.threshold ?? 0 / 100
+        const threshold = (alert.condition.threshold ?? 0) / 100
         const operator = alert.condition.operator ?? 'ABOVE'
         const func = alert.condition.function ?? 'NONE'
 

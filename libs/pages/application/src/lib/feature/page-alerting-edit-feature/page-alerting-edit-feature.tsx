@@ -56,7 +56,7 @@ export function PageAlertingEditFeature() {
           kind: alertRule.condition.kind || 'BUILT',
           function: alertRule.condition.function || 'AVG',
           operator: alertRule.condition.operator || 'ABOVE',
-          threshold: alertRule.condition.threshold || 80,
+          threshold: (alertRule.condition.threshold ?? 0) * 100 || 80,
           promql: alertRule.condition.promql || '',
         },
         name: alertRule.name,
@@ -73,7 +73,7 @@ export function PageAlertingEditFeature() {
   const handleComplete = async (updatedAlerts?: AlertConfiguration[]) => {
     const updatedAlert = updatedAlerts ? updatedAlerts[0] : alerts[0]
 
-    const threshold = updatedAlert.condition.threshold ?? 0 / 100
+    const threshold = (updatedAlert.condition.threshold ?? 0) / 100
     const operator = updatedAlert.condition.operator ?? 'ABOVE'
     const func = updatedAlert.condition.function ?? 'NONE'
 
