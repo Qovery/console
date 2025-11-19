@@ -67,6 +67,7 @@ export type ClusterFeaturesData = {
   vpc_mode: 'DEFAULT' | 'EXISTING_VPC' | undefined
   aws_existing_vpc?: {
     aws_vpc_eks_id: string
+    eks_create_nodes_in_private_subnet: boolean
     eks_subnets?: Subnets[]
     eks_karpenter_fargate_subnets?: Subnets[]
     mongodb_subnets?: Subnets[]
