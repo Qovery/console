@@ -1,4 +1,4 @@
-import { type AlertSeverity, type AlertTargetType } from 'qovery-typescript-axios'
+import { type AlertTargetType } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -8,20 +8,14 @@ import { Button, FunnelFlowBody, Heading, Icon, Section, TablePrimitives, Toolti
 import { useCreateAlertRule } from '../../../hooks/use-create-alert-rule/use-create-alert-rule'
 import { SeverityIndicator } from '../../../service/service-alerting/severity-indicator/severity-indicator'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
+import { type AlertConfiguration } from '../alerting-creation-flow.types'
 import { ALERTING_CREATION_EDIT, ALERTING_CREATION_METRIC } from '../router'
 import { QUERY_CPU, QUERY_MEMORY } from './alert-queries'
 
 const { Table } = TablePrimitives
 
-interface AlertSummary {
-  name: string
-  metricCategory: string
-  severity: AlertSeverity
-  skipped?: boolean
-}
-
 interface AlertsSummaryTableProps {
-  alerts: AlertSummary[]
+  alerts: AlertConfiguration[]
   onEdit?: (index: number) => void
   onToggleSkip?: (index: number) => void
   showExcludeButton?: boolean
@@ -60,7 +54,7 @@ function AlertsSummaryTable({
                   <span className="text-sm text-neutral-400">{alert.name}</span>
                 </div>
               </Table.RowHeaderCell>
-              <Table.Cell className="h-11">{alert.metricCategory}</Table.Cell>
+              <Table.Cell className="h-11">{alert.tag}</Table.Cell>
               <Table.Cell className="h-11">
                 <SeverityIndicator severity={alert.severity} />
               </Table.Cell>
@@ -162,7 +156,10 @@ export function SummaryStep() {
     try {
       setIsCreatingAlertRule(true)
       for (const alert of activeAlerts) {
-        const threshold = parseInt(alert.condition.threshold, 10) / 100
+        const threshold = alert.condition.threshold ?? 0 / 100
+        const operator = alert.condition.operator ?? 'ABOVE'
+        const func = alert.condition.function ?? 'NONE'
+
         await createAlertRule({
           payload: {
             organization_id: organizationId,
@@ -172,12 +169,19 @@ export function SummaryStep() {
               target_type: service.serviceType as AlertTargetType,
             },
             name: alert.name,
-            description: alert.metricCategory,
-            promql_expr: match(alert.metricCategory)
-              .with('cpu', () => QUERY_CPU(containerName, threshold))
-              .with('memory', () => QUERY_MEMORY(containerName, threshold))
-              .otherwise(() => ''),
-            for_duration: alert.forDuration,
+            tag: alert.tag,
+            description: alert.tag,
+            condition: {
+              kind: 'BUILT',
+              function: func,
+              operator,
+              threshold,
+              promql: match(alert.tag)
+                .with('cpu', () => QUERY_CPU(containerName))
+                .with('memory', () => QUERY_MEMORY(containerName))
+                .otherwise(() => ''),
+            },
+            for_duration: alert.for_duration,
             severity: alert.severity,
             enabled: true,
             // alert_receiver_ids: alert.notificationChannels,
@@ -185,14 +189,13 @@ export function SummaryStep() {
             presentation: {},
           },
         })
+        onComplete(activeAlerts)
       }
     } catch (error) {
       console.error(error)
     } finally {
       setIsCreatingAlertRule(false)
     }
-
-    onComplete(activeAlerts)
   }
 
   const handlePrevious = () => {
@@ -279,14 +282,7 @@ export function SummaryStep() {
         )}
 
         <div className="flex w-full justify-between gap-2">
-          <Button
-            type="button"
-            variant="plain"
-            color="neutral"
-            size="lg"
-            onClick={handlePrevious}
-            loading={isCreatingAlertRule}
-          >
+          <Button type="button" variant="plain" color="neutral" size="lg" onClick={handlePrevious}>
             Previous
           </Button>
           <Button size="lg" onClick={handleConfirm} disabled={activeAlerts.length === 0} loading={isCreatingAlertRule}>

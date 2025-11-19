@@ -50,14 +50,18 @@ export function PageAlertingEditFeature() {
     if (alertRule && alerts.length === 0) {
       const alertConfig: AlertConfiguration = {
         id: alertRule.id,
-        metricCategory: alertRule.description || 'custom',
-        metricType: 'avg',
-        forDuration: alertRule.for_duration || 'PT5M',
-        condition: { operator: 'above', threshold: '80' },
-        autoResolve: { operator: 'below', threshold: '80' },
+        tag: alertRule.description || '',
+        for_duration: alertRule.for_duration || 'PT5M',
+        condition: {
+          kind: alertRule.condition.kind || 'BUILT',
+          function: alertRule.condition.function || 'AVG',
+          operator: alertRule.condition.operator || 'ABOVE',
+          threshold: alertRule.condition.threshold || 80,
+          promql: alertRule.condition.promql || '',
+        },
         name: alertRule.name,
         severity: alertRule.severity,
-        notificationChannels: alertRule.alert_receiver_ids || [],
+        alert_receiver_ids: alertRule.alert_receiver_ids || [],
         skipped: false,
       }
       setAlerts([alertConfig])
@@ -68,7 +72,10 @@ export function PageAlertingEditFeature() {
 
   const handleComplete = async (updatedAlerts?: AlertConfiguration[]) => {
     const updatedAlert = updatedAlerts ? updatedAlerts[0] : alerts[0]
-    const threshold = parseInt(updatedAlert.condition.threshold, 10) / 100
+
+    const threshold = updatedAlert.condition.threshold ?? 0 / 100
+    const operator = updatedAlert.condition.operator ?? 'ABOVE'
+    const func = updatedAlert.condition.function ?? 'NONE'
 
     if (updatedAlert && environment && containerName) {
       try {
@@ -76,15 +83,22 @@ export function PageAlertingEditFeature() {
           alertRuleId: alertId,
           payload: {
             name: updatedAlert.name,
-            description: updatedAlert.metricCategory,
-            promql_expr: match(updatedAlert.metricCategory)
-              .with('cpu', () => QUERY_CPU(containerName, threshold))
-              .with('memory', () => QUERY_MEMORY(containerName, threshold))
-              .otherwise(() => ''),
-            for_duration: updatedAlert.forDuration,
+            tag: updatedAlert.tag,
+            description: updatedAlert.tag,
+            condition: {
+              kind: 'BUILT',
+              function: func,
+              operator,
+              threshold,
+              promql: match(updatedAlert.tag)
+                .with('cpu', () => QUERY_CPU(containerName))
+                .with('memory', () => QUERY_MEMORY(containerName))
+                .otherwise(() => ''),
+            },
+            for_duration: updatedAlert.for_duration,
             severity: updatedAlert.severity,
             enabled: true,
-            alert_receiver_ids: updatedAlert.notificationChannels,
+            alert_receiver_ids: updatedAlert.alert_receiver_ids,
             presentation: {},
           },
         })

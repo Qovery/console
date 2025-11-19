@@ -42,13 +42,11 @@ jest.mock('../../../hooks/use-create-alert-rule/use-create-alert-rule', () => ({
 const createAlert = (overrides: Partial<AlertConfiguration> = {}): AlertConfiguration => ({
   id: 'alert-1',
   name: 'CPU Alert',
-  metricCategory: 'cpu',
-  metricType: 'avg',
-  forDuration: '5m',
-  condition: { operator: 'above', threshold: '80' },
-  autoResolve: { operator: 'below', threshold: '70' },
+  tag: 'CPU',
+  for_duration: 'PT5M',
+  condition: { kind: 'BUILT', function: 'AVG', operator: 'ABOVE', threshold: 80, promql: '' },
   severity: 'CRITICAL' as AlertSeverity,
-  notificationChannels: ['channel-1'],
+  alert_receiver_ids: ['channel-1'],
   skipped: false,
   ...overrides,
 })
@@ -102,8 +100,8 @@ describe('SummaryStep', () => {
   it('should render multiple alerts', () => {
     renderWithContext(
       [
-        createAlert({ id: 'alert-1', name: 'CPU Alert', metricCategory: 'cpu' }),
-        createAlert({ id: 'alert-2', name: 'Memory Alert', metricCategory: 'memory' }),
+        createAlert({ id: 'alert-1', name: 'CPU Alert', tag: 'cpu' }),
+        createAlert({ id: 'alert-2', name: 'Memory Alert', tag: 'memory' }),
       ],
       ['cpu', 'memory']
     )

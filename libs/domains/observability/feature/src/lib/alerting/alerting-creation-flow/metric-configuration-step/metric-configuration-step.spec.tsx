@@ -20,13 +20,11 @@ jest.mock('react-router-dom', () => ({
 const createAlert = (overrides: Partial<AlertConfiguration> = {}): AlertConfiguration => ({
   id: 'alert-1',
   name: 'CPU Alert',
-  metricCategory: 'cpu',
-  metricType: 'avg',
-  forDuration: 'PT5M',
-  condition: { operator: 'above', threshold: '80' },
-  autoResolve: { operator: 'below', threshold: '70' },
+  tag: 'CPU',
+  for_duration: 'PT5M',
+  condition: { kind: 'BUILT', function: 'AVG', operator: 'ABOVE', threshold: 80, promql: '' },
   severity: 'MEDIUM' as AlertSeverity,
-  notificationChannels: [],
+  alert_receiver_ids: [],
   skipped: false,
   ...overrides,
 })

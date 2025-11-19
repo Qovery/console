@@ -22,14 +22,14 @@ import { ALERTING_CREATION_METRIC, ALERTING_CREATION_SUMMARY } from '../router'
 
 const METRIC_TYPE_OPTIONS: Record<string, Value[]> = {
   cpu: [
-    { label: 'Average', value: 'avg' },
-    { label: 'Maximum', value: 'max' },
-    { label: 'Minimum', value: 'min' },
+    { label: 'Average', value: 'AVG' },
+    { label: 'Maximum', value: 'MAX' },
+    { label: 'Minimum', value: 'MIN' },
   ],
   memory: [
-    { label: 'Average', value: 'avg' },
-    { label: 'Maximum', value: 'max' },
-    { label: 'Minimum', value: 'min' },
+    { label: 'Average', value: 'AVG' },
+    { label: 'Maximum', value: 'MAX' },
+    { label: 'Minimum', value: 'MIN' },
   ],
   instances: [{ label: 'Count', value: 'count' }],
   k8s_event: [{ label: 'Count', value: 'count' }],
@@ -44,8 +44,8 @@ const METRIC_TYPE_OPTIONS: Record<string, Value[]> = {
 }
 
 const OPERATOR_OPTIONS: Value[] = [
-  { label: 'Above', value: 'above' },
-  { label: 'Below', value: 'below' },
+  { label: 'Above', value: 'ABOVE' },
+  { label: 'Below', value: 'BELOW' },
 ]
 
 const DURATION_OPTIONS: Value[] = [
@@ -75,7 +75,7 @@ export function MetricConfigurationStep({
   const { selectedMetrics, serviceName, setCurrentStepIndex, alerts, setAlerts, onComplete } =
     useAlertingCreationFlowContext()
 
-  const metricCategory = isEdit ? alerts[0]?.metricCategory || '' : metricIndex || selectedMetrics[0] || ''
+  const metricCategory = isEdit ? alerts[0]?.tag || '' : metricIndex || selectedMetrics[0] || ''
   const index = isEdit ? alerts.findIndex((alert) => alert.id === alertId) : selectedMetrics.indexOf(metricCategory)
 
   const initialData = alerts[index]
@@ -86,28 +86,23 @@ export function MetricConfigurationStep({
 
   const defaultValues = useMemo<AlertConfiguration>(() => {
     if (initialData) {
-      return {
-        ...initialData,
-        notificationChannels: initialData.notificationChannels ?? [],
-      }
+      return initialData
     }
 
     return {
       id: uuid(),
-      metricCategory,
-      metricType: 'avg',
+      tag: metricCategory,
       condition: {
-        operator: 'above',
-        threshold: '80',
+        kind: 'BUILT',
+        function: 'AVG',
+        operator: 'ABOVE',
+        threshold: 80,
+        promql: '',
       },
-      autoResolve: {
-        operator: 'below',
-        threshold: '80',
-      },
-      forDuration: 'PT5M',
+      for_duration: 'PT5M',
       name: metricCategory ? `${metricCategory.replace(/_/g, ' ').toUpperCase()} alert` : '',
       severity: 'MEDIUM',
-      notificationChannels: [],
+      alert_receiver_ids: [],
     }
   }, [initialData, metricCategory])
 
@@ -179,7 +174,10 @@ export function MetricConfigurationStep({
   }
 
   const watchCondition = methods.watch('condition')
-  const watchForDuration = methods.watch('forDuration')
+  const watchForDuration = methods.watch('for_duration')
+  const functionLabel = METRIC_TYPE_OPTIONS[metricCategory]?.find(
+    (option) => option.value === watchCondition?.function
+  )?.label
 
   return (
     <FunnelFlowBody key={index}>
@@ -208,11 +206,11 @@ export function MetricConfigurationStep({
                   <p className="text-sm">Metric</p>
                   <div className="flex gap-2">
                     <Controller
-                      name="metricCategory"
+                      name="tag"
                       control={methods.control}
                       render={({ field }) => (
                         <InputSelectSmall
-                          name="metricCategory"
+                          name="tag"
                           items={Object.keys(METRIC_TYPE_OPTIONS).map((key) => ({
                             label: key.replace(/_/g, ' ').toUpperCase(),
                             value: key,
@@ -225,11 +223,11 @@ export function MetricConfigurationStep({
                       )}
                     />
                     <Controller
-                      name="metricType"
+                      name="condition.function"
                       control={methods.control}
                       render={({ field }) => (
                         <InputSelectSmall
-                          name="metricType"
+                          name="condition.function"
                           items={METRIC_TYPE_OPTIONS[metricCategory] || []}
                           defaultValue={field.value}
                           onChange={(value) => field.onChange(value)}
@@ -244,19 +242,13 @@ export function MetricConfigurationStep({
                 <div className="flex flex-col gap-1">
                   <p className="text-sm">Target service</p>
                   <div className="relative">
-                    <Controller
-                      name="condition.operator"
-                      control={methods.control}
-                      render={() => (
-                        <InputTextSmall
-                          label="Target service"
-                          name="service"
-                          inputClassName="pl-7 text-neutral-350"
-                          value={serviceName}
-                          placeholder="Search service"
-                          disabled
-                        />
-                      )}
+                    <InputTextSmall
+                      label="Target service"
+                      name="service"
+                      inputClassName="pl-7 text-neutral-350"
+                      value={serviceName}
+                      placeholder="Search service"
+                      disabled
                     />
                     <Icon
                       iconName="search"
@@ -287,7 +279,8 @@ export function MetricConfigurationStep({
                       name="condition.threshold"
                       control={methods.control}
                       rules={{
-                        validate: (value) => {
+                        validate: (v) => {
+                          const value = v?.toString()
                           if (value === '') {
                             return 'Threshold is required'
                           }
@@ -301,11 +294,11 @@ export function MetricConfigurationStep({
                         <div className="relative w-40">
                           <InputTextSmall
                             label="Threshold"
-                            name="threshold"
+                            name={field.name}
                             type="number"
                             placeholder="00"
-                            value={field.value}
-                            onChange={(e) => field.onChange(e.target.value)}
+                            value={field.value?.toString()}
+                            onChange={field.onChange}
                             className={clsx('w-full', error ? 'border-red-500' : '')}
                             inputClassName="bg-transparent pr-6"
                           />
@@ -322,11 +315,11 @@ export function MetricConfigurationStep({
                   <p className="text-sm">Duration</p>
                   <div className="flex items-center gap-2">
                     <Controller
-                      name="forDuration"
+                      name="for_duration"
                       control={methods.control}
                       render={({ field }) => (
                         <InputSelectSmall
-                          name="forDuration"
+                          name={field.name}
                           items={DURATION_OPTIONS}
                           defaultValue={field.value}
                           onChange={(value) => field.onChange(value)}
@@ -345,10 +338,9 @@ export function MetricConfigurationStep({
                 <div className="rounded border border-neutral-250 bg-neutral-100 p-3 font-code text-sm">
                   <p className="flex flex-col gap-1 text-xs uppercase text-blue-500">
                     <span>
-                      SEND A NOTIFICATION WHEN <span className="text-neutral-400">{metricCategory}</span>{' '}
-                    </span>
-                    <span>
-                      OF <span className="text-neutral-900">{serviceName}</span>
+                      SEND A NOTIFICATION WHEN THE <span className="text-neutral-900">{functionLabel}</span> OF{' '}
+                      <span className="text-neutral-400">{metricCategory}</span> FOR{' '}
+                      <span className="text-neutral-900">{serviceName}</span>
                     </span>
                     <span>
                       IS <span className="text-neutral-900">{watchCondition.operator}</span>{' '}

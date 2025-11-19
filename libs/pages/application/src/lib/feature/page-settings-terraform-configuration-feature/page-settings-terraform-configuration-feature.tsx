@@ -28,19 +28,7 @@ export default function PageSettingsTerraformConfigurationFeature() {
     if (service.serviceType === 'TERRAFORM') {
       const payload = {
         ...data,
-        serviceType: 'TERRAFORM',
-        terraform_files_source: {
-          git_repository: {
-            url: service.terraform_files_source?.git?.git_repository?.url ?? '',
-            branch: service.terraform_files_source?.git?.git_repository?.branch ?? '',
-            git_token_id: service.terraform_files_source?.git?.git_repository?.git_token_id ?? '',
-          },
-        },
-        terraform_variables_source: {
-          tf_vars: [],
-          tf_var_file_paths: [],
-        },
-        timeout_sec: Number(data.timeout_sec),
+        timeout_sec: Number(data.timeout_sec ?? service.timeout_sec),
       }
 
       editService({
