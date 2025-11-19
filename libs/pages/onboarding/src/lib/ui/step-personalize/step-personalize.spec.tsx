@@ -1,6 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { type TypeOfUseEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import StepPersonalize, { type StepPersonalizeProps } from './step-personalize'
 
@@ -9,8 +8,8 @@ describe('StepPersonalize', () => {
 
   beforeEach(() => {
     props = {
-      dataTypes: [{ label: 'some-label', value: 'some-value' }],
       dataCloudProviders: [{ label: 'some-label', value: 'some-value', icon: <div>some-icon</div> }],
+      dataQoveryUsage: [{ label: 'some-label', value: 'some-value' }],
       onSubmit: jest.fn(),
       authLogout: jest.fn(),
     }
@@ -20,7 +19,9 @@ describe('StepPersonalize', () => {
         first_name: string
         last_name: string
         user_email: string
-        type_of_use: TypeOfUseEnum
+        company_name?: string
+        qovery_usage: string
+        qovery_usage_other?: string
         infrastructure_hosting: string
       }>({ mode: 'all' })
 
@@ -41,7 +42,9 @@ describe('StepPersonalize', () => {
           first_name: '',
           last_name: '',
           user_email: '',
-          type_of_use: undefined,
+          company_name: '',
+          qovery_usage: '',
+          qovery_usage_other: '',
           infrastructure_hosting: '',
         },
       })

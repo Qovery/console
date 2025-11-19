@@ -1,49 +1,9 @@
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
-import { type Value } from '@qovery/shared/interfaces'
 import { ONBOARDING_PROJECT_URL, ONBOARDING_THANKS_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { StepMore } from '../../ui/step-more/step-more'
-
-const dataQuestions: Value[] = [
-  {
-    label: 'Spin up testing/dev/QA environments',
-    value: 'i-want-to-easily-spin-up-testing-dev-qa-environments',
-  },
-  {
-    label: 'Simplify my deployment pipeline',
-    value: 'i-want-to-simplify-my-deployment-pipeline',
-  },
-  {
-    label: 'Automate my deployment pipeline',
-    value: 'i-want-to-automate-my-deployment-pipeline',
-  },
-  {
-    label: 'Deploy my new project',
-    value: 'i-want-to-easily-deploy-my-new-project',
-  },
-  {
-    label: 'Migrate my apps from Heroku',
-    value: 'i-want-to-easily-migrate-my-apps-from-heroku',
-  },
-  {
-    label: 'Find a better alternative to Heroku',
-    value: 'i-want-to-find-a-better-alternative-to-heroku',
-  },
-  {
-    label: 'Spin up and manage my Kubernetes cluster',
-    value: 'i-want-to-easily-spin-up-and-manage-my-kubernetes-cluster',
-  },
-  {
-    label: 'Deploy my apps on my Kubernetes cluster',
-    value: 'i-want-to-easily-deploy-my-apps-on-my-kubernetes-cluster',
-  },
-  {
-    label: 'Other',
-    value: 'other',
-  },
-]
 
 export function OnboardingMore() {
   useDocumentTitle('Onboarding Tell us more - Qovery')
@@ -51,31 +11,19 @@ export function OnboardingMore() {
   const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
 
-  const { handleSubmit, control, watch } = useForm<{
+  const { handleSubmit, control } = useForm<{
     user_questions?: string
-    qovery_usage: string
-    qovery_usage_other?: string
-    where_to_deploy?: string
   }>({
     defaultValues: {
       user_questions: userSignUp?.user_questions ?? undefined,
-      qovery_usage: userSignUp?.qovery_usage,
-      qovery_usage_other: userSignUp?.qovery_usage_other ?? undefined,
-      where_to_deploy: userSignUp?.qovery_usage_other ?? undefined,
     },
   })
   const navigate = useNavigate()
-  const displayQoveryUsageOther = watch('qovery_usage') === 'other'
 
   const onSubmit = handleSubmit(async (data) => {
     if (!userSignUp) return
 
     if (data) {
-      // reset qovery usage other
-      if (data['qovery_usage'] !== 'other') {
-        delete data['qovery_usage_other']
-      }
-
       try {
         await createUserSignUp({
           ...userSignUp,
@@ -96,14 +44,7 @@ export function OnboardingMore() {
     }
   })
 
-  return (
-    <StepMore
-      dataQuestions={dataQuestions}
-      control={control}
-      onSubmit={onSubmit}
-      displayQoveryUsageOther={displayQoveryUsageOther}
-    />
-  )
+  return <StepMore control={control} onSubmit={onSubmit} />
 }
 
 export default OnboardingMore

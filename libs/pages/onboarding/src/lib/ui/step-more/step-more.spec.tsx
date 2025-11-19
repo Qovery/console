@@ -7,17 +7,12 @@ describe('StepMore', () => {
 
   beforeEach(() => {
     props = {
-      dataQuestions: [{ label: 'some-label', value: 'some-value' }],
       onSubmit: jest.fn(),
-      displayQoveryUsageOther: false,
     }
 
     const Wrapper = () => {
       const { control } = useForm<{
         user_questions?: string
-        qovery_usage: string
-        qovery_usage_other?: string
-        where_to_deploy?: string
       }>()
 
       props.control = control
