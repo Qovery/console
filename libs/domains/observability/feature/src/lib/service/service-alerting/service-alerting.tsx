@@ -1,4 +1,5 @@
 import type { AlertRuleResponse, AlertRuleState } from 'qovery-typescript-axios'
+import { type PropsWithChildren } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
@@ -44,6 +45,11 @@ function getStatusConfig(state: AlertRuleState) {
       color: 'neutral' as const,
       icon: 'triangle-exclamation' as const,
     }))
+    .with('UNDEPLOYED', () => ({
+      label: 'Undeployed',
+      color: 'neutral' as const,
+      icon: 'circle-exclamation' as const,
+    }))
     .otherwise(() => ({
       label: 'Monitoring',
       color: 'green' as const,
@@ -51,7 +57,7 @@ function getStatusConfig(state: AlertRuleState) {
     }))
 }
 
-export function ServiceAlerting() {
+export function ServiceAlerting({ children }: PropsWithChildren) {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -108,6 +114,10 @@ export function ServiceAlerting() {
     })
   }
 
+  const findAlertRuleNotDeployed = alertRules.find(
+    (alertRule) => alertRule.state === 'UNDEPLOYED' || alertRule.is_up_to_date === false
+  )
+
   return (
     <Section className="w-full px-8 py-6">
       <div className="border-b border-neutral-250">
@@ -133,96 +143,97 @@ export function ServiceAlerting() {
           </Button>
         </div>
       ) : (
-        <div className="mt-8 overflow-hidden rounded-md border border-neutral-250">
-          <Table.Root className="divide-y divide-neutral-250">
-            <Table.Header>
-              <Table.Row className="font-code text-xs">
-                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Name</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Status</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Severity</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Available</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="h-9 text-right font-normal text-neutral-350">
-                  Actions
-                </Table.ColumnHeaderCell>
-              </Table.Row>
-            </Table.Header>
+        <div className="mt-8 flex flex-col gap-6">
+          {findAlertRuleNotDeployed && children}
 
-            <Table.Body className="divide-y divide-neutral-250">
-              {alertRules?.map((alertRule) => {
-                const statusConfig = getStatusConfig(alertRule.state)
-                const isMuted = !alertRule.enabled
+          <div className="overflow-hidden rounded-md border border-neutral-250">
+            <Table.Root className="divide-y divide-neutral-250">
+              <Table.Header>
+                <Table.Row className="font-code text-xs">
+                  <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Name</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Status</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Severity</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell className="h-9 text-right font-normal text-neutral-350">
+                    Actions
+                  </Table.ColumnHeaderCell>
+                </Table.Row>
+              </Table.Header>
 
-                return (
-                  <Table.Row key={alertRule.id}>
-                    <Table.RowHeaderCell>
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="text-sm text-neutral-400">{alertRule.name}</span>
-                        {isMuted && (
-                          <Tooltip content="Alert is muted">
-                            <Icon iconName="bell-slash" iconStyle="regular" className="text-xs text-neutral-350" />
-                          </Tooltip>
-                        )}
-                      </div>
-                    </Table.RowHeaderCell>
-                    <Table.Cell className="h-11">
-                      <Badge
-                        color={statusConfig.color}
-                        variant="surface"
-                        radius="full"
-                        className="gap-1 font-medium"
-                        size="sm"
-                      >
-                        <Icon iconName={statusConfig.icon} iconStyle="regular" className="text-xs" />
-                        {statusConfig.label}
-                      </Badge>
-                    </Table.Cell>
-                    <Table.Cell className="h-11">
-                      <SeverityIndicator severity={alertRule.severity} />
-                    </Table.Cell>
-                    <Table.Cell className="h-11">
-                      {alertRule.is_up_to_date ? (
-                        <Badge color="green" variant="surface" radius="full" className="font-medium" size="sm">
-                          Yes
+              <Table.Body className="divide-y divide-neutral-250">
+                {alertRules?.map((alertRule) => {
+                  const statusConfig = getStatusConfig(alertRule.state)
+                  const isMuted = !alertRule.enabled
+
+                  return (
+                    <Table.Row key={alertRule.id}>
+                      <Table.RowHeaderCell>
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="flex items-center gap-1.5 text-sm text-neutral-400">
+                            {alertRule.name}
+                            {alertRule.is_up_to_date ? (
+                              <Icon iconName="circle-check" iconStyle="regular" className="text-green-500" />
+                            ) : (
+                              <Tooltip content="To apply this change redeploy your cluster">
+                                <span>
+                                  <Icon iconName="circle-exclamation" iconStyle="regular" className="text-yellow-500" />
+                                </span>
+                              </Tooltip>
+                            )}
+                          </span>
+                          {isMuted && (
+                            <Tooltip content="Alert is muted">
+                              <Icon iconName="bell-slash" iconStyle="regular" className="text-xs text-neutral-350" />
+                            </Tooltip>
+                          )}
+                        </div>
+                      </Table.RowHeaderCell>
+                      <Table.Cell className="h-11">
+                        <Badge
+                          color={statusConfig.color}
+                          variant="surface"
+                          radius="full"
+                          className="gap-1 font-medium"
+                          size="sm"
+                        >
+                          <Icon iconName={statusConfig.icon} iconStyle="regular" className="text-xs" />
+                          {statusConfig.label}
                         </Badge>
-                      ) : (
-                        <Tooltip content="Alert rule is not deployed, you need to reploy your cluster to apply it">
-                          <Badge color="red" variant="surface" radius="full" className="font-medium" size="sm">
-                            No
-                          </Badge>
-                        </Tooltip>
-                      )}
-                    </Table.Cell>
-                    <Table.Cell className="h-11">
-                      <div className="flex items-center justify-end gap-2">
-                        <Tooltip content="Edit">
-                          <Button
-                            variant="outline"
-                            color="neutral"
-                            size="xs"
-                            className="w-6 justify-center"
-                            onClick={() => editAlertRule(alertRule)}
-                          >
-                            <Icon iconName="pen" iconStyle="regular" className="text-xs" />
-                          </Button>
-                        </Tooltip>
-                        <Tooltip content="Delete alert rule">
-                          <Button
-                            variant="outline"
-                            color="neutral"
-                            size="xs"
-                            className="w-6 justify-center"
-                            onClick={() => deleteAlertRuleModal(alertRule)}
-                          >
-                            <Icon iconName="trash-can" iconStyle="regular" className="text-xs" />
-                          </Button>
-                        </Tooltip>
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-                )
-              })}
-            </Table.Body>
-          </Table.Root>
+                      </Table.Cell>
+                      <Table.Cell className="h-11">
+                        <SeverityIndicator severity={alertRule.severity} />
+                      </Table.Cell>
+                      <Table.Cell className="h-11">
+                        <div className="flex items-center justify-end gap-2">
+                          <Tooltip content="Edit">
+                            <Button
+                              variant="outline"
+                              color="neutral"
+                              size="xs"
+                              className="w-6 justify-center"
+                              onClick={() => editAlertRule(alertRule)}
+                            >
+                              <Icon iconName="pen" iconStyle="regular" className="text-xs" />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip content="Delete alert rule">
+                            <Button
+                              variant="outline"
+                              color="neutral"
+                              size="xs"
+                              className="w-6 justify-center"
+                              onClick={() => deleteAlertRuleModal(alertRule)}
+                            >
+                              <Icon iconName="trash-can" iconStyle="regular" className="text-xs" />
+                            </Button>
+                          </Tooltip>
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                  )
+                })}
+              </Table.Body>
+            </Table.Root>
+          </div>
         </div>
       )}
     </Section>

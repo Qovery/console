@@ -428,7 +428,7 @@ export function MetricConfigurationStep({
               className={isEdit ? 'ml-auto' : ''}
               loading={isEdit && isLoadingEditAlertRule}
             >
-              {isEdit ? 'Save' : 'Continue'}
+              {isEdit ? 'Save' : 'Include'}
             </Button>
           </div>
         </form>
