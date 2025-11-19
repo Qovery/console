@@ -398,25 +398,25 @@ export function StepSummary(props: StepSummaryProps) {
                         </ul>
                       </li>
                     )}
-                    {props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets &&
-                      props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets?.length !== 0 && (
+                    {props.featuresData.aws_existing_vpc.eks_private_subnets &&
+                      props.featuresData.aws_existing_vpc.eks_private_subnets?.length !== 0 && (
                         <li className="mb-3">
                           <strong className="font-medium">EKS private subnet IDs: </strong>
                           <ul className="ml-4 list-disc">
                             <SubnetsList
                               title="zone A:"
                               index="A"
-                              subnets={props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets}
+                              subnets={props.featuresData.aws_existing_vpc.eks_private_subnets}
                             />
                             <SubnetsList
                               title="zone B:"
                               index="B"
-                              subnets={props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets}
+                              subnets={props.featuresData.aws_existing_vpc.eks_private_subnets}
                             />
                             <SubnetsList
                               title="zone C:"
                               index="C"
-                              subnets={props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets}
+                              subnets={props.featuresData.aws_existing_vpc.eks_private_subnets}
                             />
                           </ul>
                         </li>

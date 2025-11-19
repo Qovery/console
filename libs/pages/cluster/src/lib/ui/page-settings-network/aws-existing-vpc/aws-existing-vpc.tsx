@@ -44,9 +44,9 @@ export function AWSExistingVPC({ feature }: AWSExistingVPCProps) {
             EKS private subnet IDs
           </span>
           <ul className="grid grid-cols-3 gap-4">
-            <Subnets title="Zone A:" value={feature.eks_karpenter_fargate_subnets_zone_a_ids} />
-            <Subnets title="Zone B:" value={feature.eks_karpenter_fargate_subnets_zone_b_ids} />
-            <Subnets title="Zone C:" value={feature.eks_karpenter_fargate_subnets_zone_c_ids} />
+            <Subnets title="Zone A:" value={feature.eks_private_subnets_zone_a_ids} />
+            <Subnets title="Zone B:" value={feature.eks_private_subnets_zone_b_ids} />
+            <Subnets title="Zone C:" value={feature.eks_private_subnets_zone_c_ids} />
           </ul>
         </li>
 
