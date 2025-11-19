@@ -1,5 +1,8 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  type AlertReceiverCreationRequest,
+  type AlertReceiverEditRequest,
+  AlertReceiversApi,
   type AlertRuleCreationRequest,
   type AlertRuleEditRequest,
   AlertRulesApi,
@@ -8,6 +11,7 @@ import {
 
 const clusterApi = new ClustersApi()
 const alertRulesApi = new AlertRulesApi()
+const alertReceiversApi = new AlertReceiversApi()
 
 export const observability = createQueryKeys('observability', {
   containerName: ({
@@ -206,6 +210,13 @@ export const observability = createQueryKeys('observability', {
       return response.data.results
     },
   }),
+  alertReceivers: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await alertReceiversApi.getAlertReceivers(organizationId)
+      return response.data.results
+    },
+  }),
 })
 
 export const mutations = {
@@ -219,6 +230,24 @@ export const mutations = {
   },
   async deleteAlertRule({ alertRuleId }: { alertRuleId: string }) {
     const response = await alertRulesApi.deleteAlertRule(alertRuleId)
+    return response.data
+  },
+  async createAlertReceiver({ payload }: { payload: AlertReceiverCreationRequest }) {
+    const response = await alertReceiversApi.createAlertReceiver(payload)
+    return response.data
+  },
+  async editAlertReceiver({
+    alertReceiverId,
+    payload,
+  }: {
+    alertReceiverId: string
+    payload: AlertReceiverEditRequest
+  }) {
+    const response = await alertReceiversApi.editAlertReceiver(alertReceiverId, payload)
+    return response.data
+  },
+  async deleteAlertReceiver({ alertReceiverId }: { alertReceiverId: string }) {
+    const response = await alertReceiversApi.deleteAlertReceiver(alertReceiverId)
     return response.data
   },
 }
