@@ -125,7 +125,7 @@ describe('MetricConfigurationStep', () => {
     await renderWithContext()
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /continue/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /include/i })).toBeInTheDocument()
       expect(screen.getByRole('button', { name: /skip this alert/i })).toBeInTheDocument()
     })
   })
@@ -154,7 +154,7 @@ describe('MetricConfigurationStep', () => {
     await renderWithContext()
 
     await waitFor(() => {
-      const continueButton = screen.getByRole('button', { name: /continue/i })
+      const continueButton = screen.getByRole('button', { name: /include/i })
       expect(continueButton).toBeEnabled()
     })
   })
