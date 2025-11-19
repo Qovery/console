@@ -52,7 +52,12 @@ export function HelmRepositoryCreateEditModal({
   const loading = isEditHelmRepositoryLoading || isCreateHelmRepositoryLoading
 
   const methods = useForm<
-    HelmRepositoryRequest & { config: { login_type: 'ACCOUNT' | 'ANONYMOUS' } } & { id?: string }
+    HelmRepositoryRequest & {
+      config: {
+        login_type: 'ACCOUNT' | 'ANONYMOUS'
+        aws_auth_type?: 'STS' | 'STATIC'
+      }
+    } & { id?: string }
   >({
     defaultValues: {
       id: repository?.id,
@@ -66,6 +71,7 @@ export function HelmRepositoryCreateEditModal({
         password: undefined,
         region: repository?.config?.region,
         access_key_id: repository?.config?.access_key_id,
+        role_arn: repository?.config?.role_arn,
         scaleway_project_id: repository?.config?.scaleway_project_id,
         scaleway_access_key: repository?.config?.scaleway_access_key,
         scaleway_secret_key: undefined,
@@ -73,6 +79,7 @@ export function HelmRepositoryCreateEditModal({
         azure_tenant_id: repository?.config?.azure_tenant_id,
         azure_subscription_id: repository?.config?.azure_subscription_id,
         login_type: repository?.config?.username ? 'ACCOUNT' : 'ANONYMOUS',
+        aws_auth_type: repository?.config?.role_arn ? 'STS' : 'STATIC',
       },
     },
     mode: 'onChange',
@@ -82,6 +89,7 @@ export function HelmRepositoryCreateEditModal({
 
   const watchKind = methods.watch('kind')
   const watchLoginType = methods.watch('config.login_type')
+  const watchAwsAuthType = methods.watch('config.aws_auth_type')
 
   const onSubmit = methods.handleSubmit(async (helmRepositoryRequest) => {
     // Close without edit when no changes
@@ -90,8 +98,20 @@ export function HelmRepositoryCreateEditModal({
       return
     }
 
-    // Omit `login_type` in the request
-    const { login_type, ...config } = helmRepositoryRequest.config
+    // Omit `login_type` and `aws_auth_type` in the request (they're local UI state)
+    const { login_type, aws_auth_type, ...config } = helmRepositoryRequest.config
+
+    // For OCI_ECR STATIC auth, remove role_arn if present
+    // For OCI_ECR STS auth, remove access_key_id and secret_access_key
+    if (helmRepositoryRequest.kind === 'OCI_ECR') {
+      if (aws_auth_type === 'STATIC') {
+        delete config.role_arn
+      } else if (aws_auth_type === 'STS') {
+        delete config.access_key_id
+        delete config.secret_access_key
+      }
+    }
+
     try {
       if (repository) {
         const response = await editHelmRepository({
@@ -442,6 +462,39 @@ export function HelmRepositoryCreateEditModal({
           {watchKind === 'OCI_ECR' && (
             <>
               <Controller
+                name="config.aws_auth_type"
+                control={methods.control}
+                rules={{
+                  required: 'Please select an authentication method.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputSelect
+                    onChange={(value) => {
+                      field.onChange(value)
+                      // Clear auth-specific fields when switching methods
+                      methods.setValue('config.access_key_id', '')
+                      methods.setValue('config.secret_access_key', '')
+                      methods.setValue('config.role_arn', '')
+                      methods.clearErrors(['config.access_key_id', 'config.secret_access_key', 'config.role_arn'])
+                    }}
+                    value={field.value}
+                    label="Authentication method"
+                    error={error?.message}
+                    options={[
+                      {
+                        label: 'Static credentials',
+                        value: 'STATIC',
+                      },
+                      {
+                        label: 'Assume role via STS (preferred)',
+                        value: 'STS',
+                      },
+                    ]}
+                    portal
+                  />
+                )}
+              />
+              <Controller
                 name="config.region"
                 control={methods.control}
                 rules={{
@@ -459,46 +512,77 @@ export function HelmRepositoryCreateEditModal({
                   />
                 )}
               />
-              <Controller
-                name="config.access_key_id"
-                control={methods.control}
-                rules={{
-                  required: 'Please enter an access key.',
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    dataTestId="input-access_key_id"
-                    type="text"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    label="Access key"
-                    error={error?.message}
-                  />
-                )}
-              />
-              {isEditDirty && (
+              {watchAwsAuthType === 'STATIC' && (
                 <>
-                  <hr />
-                  <span className="text-sm text-neutral-350">Confirm your secret key</span>
+                  <Controller
+                    name="config.access_key_id"
+                    control={methods.control}
+                    rules={{
+                      required: 'Please enter an access key.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        dataTestId="input-access_key_id"
+                        type="text"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Access key"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                  {isEditDirty && (
+                    <>
+                      <hr />
+                      <span className="text-sm text-neutral-350">Confirm your secret key</span>
+                    </>
+                  )}
+                  {(!isEdit || isEditDirty) && (
+                    <Controller
+                      name="config.secret_access_key"
+                      control={methods.control}
+                      rules={{
+                        required: 'Please enter a secret key.',
+                      }}
+                      render={({ field, fieldState: { error } }) => (
+                        <InputText
+                          dataTestId="input-secret_access_key"
+                          type="password"
+                          name={field.name}
+                          onChange={field.onChange}
+                          value={field.value}
+                          label="Secret key"
+                          error={error?.message}
+                        />
+                      )}
+                    />
+                  )}
                 </>
               )}
-              {(!isEdit || isEditDirty) && (
+              {watchAwsAuthType === 'STS' && (
                 <Controller
-                  name="config.secret_access_key"
+                  name="config.role_arn"
                   control={methods.control}
                   rules={{
-                    required: 'Please enter a secret key.',
+                    required: 'Please enter a role ARN.',
+                    pattern: {
+                      value: /^arn:aws:iam::\d{12}:role\/[\w+=,.@-]+$/,
+                      message:
+                        'Please enter a valid AWS IAM role ARN (e.g., arn:aws:iam::123456789012:role/MyRole)',
+                    },
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <InputText
-                      dataTestId="input-secret_access_key"
-                      type="password"
+                      dataTestId="input-role_arn"
+                      type="text"
                       name={field.name}
                       onChange={field.onChange}
                       value={field.value}
-                      label="Secret key"
+                      label="Role ARN"
+                      placeholder="arn:aws:iam::123456789012:role/MyRole"
                       error={error?.message}
+                      hint="Enter the ARN of the AWS IAM role to assume for authentication"
                     />
                   )}
                 />
