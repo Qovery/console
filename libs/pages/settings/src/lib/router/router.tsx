@@ -2,6 +2,7 @@ import { NotificationChannelOverview } from '@qovery/domains/observability/featu
 import {
   ALERTING_NOTIFICATION_CHANNEL_URL,
   type Route,
+  SETTINGS_AI_COPILOT_URL,
   SETTINGS_API_URL,
   SETTINGS_BILLING_SUMMARY_URL,
   SETTINGS_BILLING_URL,
@@ -20,6 +21,7 @@ import {
   SETTINGS_ROLES_URL,
   SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
+import PageOrganizationAICopilotFeature from '../feature/page-organization-ai-copilot-feature/page-organization-ai-copilot-feature'
 import PageOrganizationApiFeature from '../feature/page-organization-api-feature/page-organization-api-feature'
 import PageOrganizationBillingFeature from '../feature/page-organization-billing-feature/page-organization-billing-feature'
 import PageOrganizationBillingSummaryFeature from '../feature/page-organization-billing-summary-feature/page-organization-billing-summary-feature'
@@ -89,6 +91,10 @@ export const ROUTER_SETTINGS: Route[] = [
   {
     path: SETTINGS_GIT_REPOSITORY_ACCESS_URL,
     component: <PageOrganizationGithubRepositoryAccessFeature />,
+  },
+  {
+    path: SETTINGS_AI_COPILOT_URL,
+    component: <PageOrganizationAICopilotFeature />,
   },
   {
     path: SETTINGS_DANGER_ZONE_URL,

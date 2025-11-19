@@ -35,6 +35,17 @@ export const devopsCopilot = createQueryKeys('devopsCopilot', {
       return response.data
     },
   }),
+  recurringTasks: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId, 'recurring-tasks'],
+    async queryFn() {
+      console.log(organizationId)
+
+      const response = await devopsCopilotAxios.get(`/organization/${organizationId}/recurring-tasks`)
+      console.log(response)
+
+      return response.data
+    },
+  }),
 })
 
 export const mutations = {
@@ -128,5 +139,31 @@ export const mutations = {
     )
 
     return response
+  },
+
+  toggleRecurringTask: async ({ organizationId, taskId }: { organizationId: string; taskId: string }) => {
+    const response = await devopsCopilotAxios.post(`/organization/${organizationId}/recurring-tasks/${taskId}/toggle`)
+
+    return response.data
+  },
+
+  updateOrgConfig: async ({
+    organizationId,
+    enabled,
+    readOnly,
+    instructions,
+  }: {
+    organizationId: string
+    enabled: boolean
+    readOnly: boolean
+    instructions?: string
+  }) => {
+    const response = await devopsCopilotAxios.put(`/organization/${organizationId}/config/org`, {
+      enabled,
+      read_only: readOnly,
+      instructions: instructions || '',
+    })
+
+    return response.data
   },
 }
