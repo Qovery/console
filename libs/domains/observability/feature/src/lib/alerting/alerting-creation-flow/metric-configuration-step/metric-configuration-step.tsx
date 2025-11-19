@@ -182,7 +182,7 @@ export function MetricConfigurationStep({
   const watchForDuration = methods.watch('forDuration')
 
   return (
-    <FunnelFlowBody>
+    <FunnelFlowBody key={index}>
       <FormProvider {...methods}>
         <form onSubmit={onSubmit} className="flex w-full flex-1 flex-col gap-6">
           <Section className="flex flex-col rounded-lg border border-neutral-250">
@@ -349,23 +349,6 @@ export function MetricConfigurationStep({
                     </span>
                     <span>
                       OF <span className="text-neutral-900">{serviceName}</span>
-                    </span>
-                    <span>
-                      IS <span className="text-neutral-900">{watchCondition.operator}</span>{' '}
-                      <span className="text-red-600">{watchCondition.threshold}%</span> DURING THE{' '}
-                      <span className="text-neutral-900">
-                        {DURATION_OPTIONS.find((option) => option.value === watchForDuration)?.label}
-                      </span>
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col gap-1">
-                <p className="text-sm">Auto resolve condition</p>
-                <div className="rounded border border-neutral-250 bg-neutral-100 p-3 font-code text-sm">
-                  <p className="gap-1 text-xs uppercase text-blue-500">
-                    <span>
-                      SEND A NOTIFICATION WHEN <span className="text-neutral-400">{metricCategory}</span>{' '}
                     </span>
                     <span>
                       IS <span className="text-neutral-900">{watchCondition.operator}</span>{' '}
