@@ -270,7 +270,7 @@ export function RowEvent(props: RowEventProps) {
           </Skeleton>
         </div>
       </div>
-      {expanded && event.event_type === OrganizationEventType.UPDATE && event.original_change && event.change ? (
+      {expanded && event.event_type === OrganizationEventType.UPDATE && event.original_change && event.change && event.original_change !== event.change ? (
         <div className="relative flex flex-col bg-white" data-testid="expanded-panel">
           <div className="flex h-7 items-center justify-between bg-neutral-550 px-4 text-xs text-neutral-100">
             <span>Changes (Original vs Modified)</span>
