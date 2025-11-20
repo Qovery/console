@@ -2,6 +2,7 @@ import { type AlertReceiverResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import {
   Button,
+  Chart,
   Heading,
   Icon,
   Section,
@@ -21,16 +22,14 @@ export function NotificationChannelOverview() {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  const { data: alertReceivers = [] } = useAlertReceivers({
+  const { data: alertReceivers = [], isLoading: isLoadingAlertReceivers } = useAlertReceivers({
     organizationId,
   })
   const { mutateAsync: deleteAlertReceiver } = useDeleteAlertReceiver({ organizationId })
 
-  console.log(alertReceivers)
-
   const createNotificationChannelModal = () => {
     openModal({
-      content: <NotificationChannelModal onClose={closeModal} organizationId={organizationId} />,
+      content: <NotificationChannelModal type="SLACK" onClose={closeModal} organizationId={organizationId} />,
     })
   }
 
@@ -53,6 +52,14 @@ export function NotificationChannelOverview() {
     })
   }
 
+  if (isLoadingAlertReceivers) {
+    return (
+      <div className="flex h-full w-full items-center justify-center p-5">
+        <Chart.Loader />
+      </div>
+    )
+  }
+
   return (
     <Section className="w-full px-8 py-6">
       <div className="border-b border-neutral-250">
@@ -65,8 +72,14 @@ export function NotificationChannelOverview() {
           <Icon name="SLACK" className="mb-2.5 text-xl text-neutral-350" width={20} height={20} />
           <p className="font-medium">No slack channel added yet</p>
           <p className="mb-3 text-sm text-neutral-350">Add your first channel to start sending notifications</p>
-          <Button size="md" className="gap-1.5" onClick={createNotificationChannelModal}>
-            <Icon iconName="plus-large" iconStyle="regular" className="text-xs" />
+          <Button
+            size="md"
+            variant="outline"
+            color="neutral"
+            className="gap-1.5"
+            onClick={createNotificationChannelModal}
+          >
+            <Icon iconName="plus-large" className="text-xs" />
             Add channel
           </Button>
         </div>
@@ -74,20 +87,23 @@ export function NotificationChannelOverview() {
         <div className="mt-8 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <Heading level={2}>Slack channels</Heading>
-            <Button size="md" className="gap-1.5" onClick={createNotificationChannelModal}>
-              New channel <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
+            <Button
+              variant="plain"
+              color="brand"
+              size="md"
+              className="gap-1.5"
+              onClick={createNotificationChannelModal}
+            >
+              <Icon iconName="circle-plus" iconStyle="regular" />
+              Add channel
             </Button>
           </div>
           <div className="overflow-hidden rounded-md border border-neutral-250">
             <Table.Root className="divide-y divide-neutral-250">
               <Table.Header>
                 <Table.Row className="font-code text-xs">
-                  <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Channel</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">
                     Display name
-                  </Table.ColumnHeaderCell>
-                  <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">
-                    Workspace
                   </Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell className="h-9 text-right font-normal text-neutral-350">
                     Actions
@@ -99,13 +115,7 @@ export function NotificationChannelOverview() {
                 {alertReceivers?.map((alertReceiver) => {
                   return (
                     <Table.Row key={alertReceiver.id}>
-                      <Table.RowHeaderCell>
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="flex items-center gap-1.5 text-sm text-neutral-400">{alertReceiver.id}</span>
-                        </div>
-                      </Table.RowHeaderCell>
-                      <Table.Cell>{alertReceiver.name}</Table.Cell>
-                      <Table.Cell>{alertReceiver.type}</Table.Cell>
+                      <Table.RowHeaderCell>{alertReceiver.name}</Table.RowHeaderCell>
                       <Table.Cell>
                         <div className="flex items-center justify-end gap-2">
                           <Tooltip content="Edit">

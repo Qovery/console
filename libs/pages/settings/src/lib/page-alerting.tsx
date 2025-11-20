@@ -3,6 +3,8 @@ import { ALERTING_NOTIFICATION_CHANNEL_URL, ALERTING_URL } from '@qovery/shared/
 import { ErrorBoundary, NavigationLeft, type NavigationLeftLinkProps } from '@qovery/shared/ui'
 import { ROUTER_ALERTING } from './router/router'
 
+// NOTE: Alerting is located in the Settings page library to avoid creating a new library,
+// as these types of libraries will be removed soon with the upcoming navigation changes.
 export function PageAlerting() {
   const { organizationId = '' } = useParams()
 
