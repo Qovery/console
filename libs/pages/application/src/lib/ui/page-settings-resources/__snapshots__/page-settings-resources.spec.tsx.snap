@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`PageSettingsResources should render warning box and icon for cpu 1`] = `
 <div>
@@ -236,7 +236,52 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
           <p
             class="text-xs text-neutral-350"
           >
-            Application auto-scaling is based on real-time CPU consumption. When your app goes above 60% (default) of CPU consumption for 5 minutes, your app will be auto-scaled and more instances will be added.
+            <div
+              class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 mt-3"
+              data-accent-color="sky"
+              data-testid="banner-box"
+            >
+              <div
+                class="-order-2 text-lg leading-6"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-circle-exclamation "
+                />
+              </div>
+              <div
+                class="-order-1 mr-auto gap-x-3 text-neutral-400"
+              >
+                Auto-scaling adds instances when your application's average CPU usage exceeds 60% (default) for a continuous 5-minute period. Scaling stops once the Maximum Instances limit is reached.
+              </div>
+            </div>
+            <div
+              class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700 mt-3"
+              data-accent-color="yellow"
+              data-testid="banner-box"
+            >
+              <div
+                class="-order-2 text-lg leading-6"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-triangle-exclamation "
+                />
+              </div>
+              <div
+                class="-order-1 mr-auto gap-x-3 text-neutral-400"
+              >
+                <p>
+                  Always assume one instance may fail due to node maintenance or issues.
+                </p>
+                <p>
+                  To ensure high availability, set Minimum Instances to 2 if your app can run on 1 instance.
+                </p>
+                <p>
+                  If your application requires more than one instance to handle necessary traffic, set the minimum to 3 or higher to guarantee redundancy during a single failure.
+                </p>
+              </div>
+            </div>
           </p>
         </section>
         <div
