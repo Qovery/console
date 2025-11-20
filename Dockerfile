@@ -1,55 +1,51 @@
-FROM node:16-alpine AS builder
+# syntax=docker/dockerfile:1.4
+FROM node:20-alpine AS builder
 
 # Add a work directory
 WORKDIR /app
 
+# Define all build arguments and environment variables
 ARG NODE_ENV
-ENV NODE_ENV $NODE_ENV
-
 ARG NX_PUBLIC_QOVERY_API
-ENV NX_PUBLIC_QOVERY_API $NX_PUBLIC_QOVERY_API
-
 ARG NX_PUBLIC_QOVERY_WS
-ENV NX_PUBLIC_QOVERY_WS $NX_PUBLIC_QOVERY_WS
-
 ARG NX_PUBLIC_OAUTH_DOMAIN
-ENV NX_PUBLIC_OAUTH_DOMAIN $NX_PUBLIC_OAUTH_DOMAIN
-
 ARG NX_PUBLIC_OAUTH_KEY
-ENV NX_PUBLIC_OAUTH_KEY $NX_PUBLIC_OAUTH_KEY
-
 ARG NX_PUBLIC_OAUTH_AUDIENCE
-ENV NX_PUBLIC_OAUTH_AUDIENCE $NX_PUBLIC_OAUTH_AUDIENCE
-
 ARG NX_PUBLIC_INTERCOM
-ENV NX_PUBLIC_INTERCOM $NX_PUBLIC_INTERCOM
-
 ARG NX_PUBLIC_POSTHOG
-ENV NX_PUBLIC_POSTHOG $NX_PUBLIC_POSTHOG
-
 ARG NX_PUBLIC_POSTHOG_APIHOST
-ENV NX_PUBLIC_POSTHOG_APIHOST $NX_PUBLIC_POSTHOG_APIHOST
-
 ARG NX_PUBLIC_GTM
-ENV NX_PUBLIC_GTM $NX_PUBLIC_GTM
-
 ARG NX_PUBLIC_ONBOARDING
-ENV NX_PUBLIC_ONBOARDING $NX_PUBLIC_ONBOARDING
+ARG NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY
 
-# Cache and Install dependencies
-COPY package.json .
-COPY yarn.lock .
+ENV NODE_ENV=$NODE_ENV \
+    NX_PUBLIC_QOVERY_API=$NX_PUBLIC_QOVERY_API \
+    NX_PUBLIC_QOVERY_WS=$NX_PUBLIC_QOVERY_WS \
+    NX_PUBLIC_OAUTH_DOMAIN=$NX_PUBLIC_OAUTH_DOMAIN \
+    NX_PUBLIC_OAUTH_KEY=$NX_PUBLIC_OAUTH_KEY \
+    NX_PUBLIC_OAUTH_AUDIENCE=$NX_PUBLIC_OAUTH_AUDIENCE \
+    NX_PUBLIC_INTERCOM=$NX_PUBLIC_INTERCOM \
+    NX_PUBLIC_POSTHOG=$NX_PUBLIC_POSTHOG \
+    NX_PUBLIC_POSTHOG_APIHOST=$NX_PUBLIC_POSTHOG_APIHOST \
+    NX_PUBLIC_GTM=$NX_PUBLIC_GTM \
+    NX_PUBLIC_ONBOARDING=$NX_PUBLIC_ONBOARDING \
+    NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY=$NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY
+
+# Install dependencies with cache mount for faster rebuilds
+COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn .yarn
-COPY .yarnrc.yml .yarnrc.yml
-RUN yarn install --immutable
+RUN --mount=type=cache,target=/root/.yarn \
+    yarn install --immutable
 
-# Copy app files
+# Copy source files (use .dockerignore to exclude unnecessary files)
 COPY . .
-# Build the app
-RUN yarn build
+
+# Build with NX cache mount for faster rebuilds
+RUN --mount=type=cache,target=/app/node_modules/.cache/nx \
+    yarn build
 
 # Bundle static assets with nginx
-FROM nginx:latest
+FROM nginx:1.25-alpine
 # Copy built assets from builder
 COPY --from=builder /app/dist/apps/* /usr/share/nginx/html
 # Add your nginx.conf
