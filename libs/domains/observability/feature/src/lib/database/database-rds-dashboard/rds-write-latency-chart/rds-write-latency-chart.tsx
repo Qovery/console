@@ -89,7 +89,7 @@ export function RdsWriteLatencyChart({
       data={chartData}
       isLoading={isLoading}
       isEmpty={chartData.length === 0}
-      label="Write Latency"
+      label="Write Latency (ms)"
       description="Write latency over time"
       descriptionRight={
         <>
