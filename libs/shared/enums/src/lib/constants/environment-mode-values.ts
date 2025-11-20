@@ -13,4 +13,8 @@ export const environmentModeValues = [
     label: 'Staging',
     value: EnvironmentModeEnum.STAGING,
   },
+  {
+    label: 'Preview',
+    value: EnvironmentModeEnum.PREVIEW,
+  },
 ]

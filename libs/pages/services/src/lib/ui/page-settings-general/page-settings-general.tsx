@@ -13,7 +13,8 @@ export interface PageSettingsGeneralProps {
 
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
   const { clusters, onSubmit, loading } = props
-  const { control, formState } = useFormContext()
+  const { control, formState, watch } = useFormContext()
+  const modeValue = watch('mode')
 
   const clustersList: Value[] = clusters
     ? clusters?.map((cluster) => {
@@ -24,6 +25,9 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
         return item
       })
     : []
+
+  // Filter out PREVIEW from options unless it's the current value
+  const modeOptions = environmentModeValues.filter((option) => option.value !== 'PREVIEW' || modeValue === 'PREVIEW')
 
   return (
     <div className="flex w-full flex-col justify-between">
@@ -53,11 +57,12 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               render={({ field, fieldState: { error } }) => (
                 <InputSelect
                   label="Mode"
-                  options={environmentModeValues}
+                  options={modeOptions}
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}
                   className="mb-3"
+                  disabled={modeValue === 'PREVIEW'}
                 />
               )}
             />
