@@ -620,8 +620,15 @@ const TfvarsFilesPopover = () => {
     setFileListOrder(newFiles.map((file) => file.source))
   }
 
+  const onOpenChange = (open: boolean) => {
+    if (!open) {
+      setNewPath('')
+      setNewPathErrorMessage(undefined)
+    }
+  }
+
   return (
-    <Popover.Root defaultOpen={true}>
+    <Popover.Root defaultOpen={true} onOpenChange={onOpenChange}>
       <Popover.Trigger>
         <div>
           {tfVarFiles.filter((file) => file.enabled).length > 0 ? (
@@ -677,7 +684,11 @@ const TfvarsFilesPopover = () => {
                 <LoaderSpinner />
               </div>
             ) : (
-              <button className="absolute right-0 top-0 h-full w-9" type="button" onClick={submitNewPath}>
+              <button
+                className="absolute right-0 top-0 flex h-full w-9 items-center justify-center"
+                type="button"
+                onClick={submitNewPath}
+              >
                 <Icon iconName="plus" className="text-lg font-normal leading-4 text-neutral-350" />
               </button>
             )}
@@ -720,7 +731,7 @@ const TfvarsFilesPopover = () => {
                     value={file}
                     initial={{ cursor: 'grab' }}
                     exit={{ cursor: 'grab' }}
-                    whileDrag={{ cursor: 'grabbing', borderColor: '#44C979', borderWidth: '2px' }}
+                    whileDrag={{ cursor: 'grabbing', borderColor: '#642DFF', borderWidth: '2px' }}
                     className={twMerge('flex w-full items-center border-b border-neutral-250')}
                   >
                     <TfvarItem key={file.source} file={file} index={index} onIndexChange={onIndexChange} />
