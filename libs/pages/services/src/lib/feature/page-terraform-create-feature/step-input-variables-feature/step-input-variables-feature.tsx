@@ -14,20 +14,20 @@ export const StepInputVariablesFeature = () => {
   useDocumentTitle('General - Terraform configuration')
 
   const navigate = useNavigate()
-  const { generalForm, setCurrentStep, inputVariablesForm, creationFlowUrl } = useTerraformCreateContext()
+  const { generalForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
   const { errors } = useTerraformVariablesContext()
 
   useEffect(() => {
     setCurrentStep(3)
   }, [setCurrentStep])
 
-  const onSubmit = inputVariablesForm.handleSubmit(() => {
+  const onSubmit = generalForm.handleSubmit(() => {
     navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_SUMMARY_URL)
   })
 
   return (
     <FunnelFlowBody customContentWidth="max-w-[1024px]">
-      <FormProvider {...inputVariablesForm} {...generalForm}>
+      <FormProvider {...generalForm}>
         <Section>
           <form onSubmit={onSubmit} className="w-full">
             <TerraformVariablesSettings />

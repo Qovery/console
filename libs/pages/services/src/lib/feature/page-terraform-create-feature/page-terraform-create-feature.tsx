@@ -20,20 +20,10 @@ export const steps: { title: string }[] = [
   { title: 'Summary' },
 ]
 
-export interface TerraformInputVariablesData {
-  tf_vars: {
-    key: string
-    value: string
-    secret: boolean
-  }[]
-  tf_var_file_paths: string[]
-}
-
 interface TerraformCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalForm: UseFormReturn<TerraformGeneralData>
-  inputVariablesForm: UseFormReturn<TerraformInputVariablesData>
   creationFlowUrl?: string
 }
 
@@ -78,15 +68,6 @@ export function PageTerraformCreateFeature() {
     },
   })
 
-  // TODO [QOV-1266] Get rid of this
-  const inputVariablesForm = useForm<TerraformInputVariablesData>({
-    mode: 'onChange',
-    defaultValues: {
-      tf_vars: [],
-      tf_var_file_paths: [],
-    },
-  })
-
   const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_TERRAFORM_CREATION_URL
 
   return (
@@ -95,7 +76,6 @@ export function PageTerraformCreateFeature() {
         currentStep,
         setCurrentStep,
         generalForm,
-        inputVariablesForm,
         creationFlowUrl,
       }}
     >
