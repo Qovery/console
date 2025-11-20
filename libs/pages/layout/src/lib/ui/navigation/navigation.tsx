@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { useMemo } from 'react'
 import { Link as RouterLink, useLocation, useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
@@ -26,11 +27,13 @@ export interface NavigationProps {
 export function Navigation({ defaultOrganizationId, clusterNotification }: NavigationProps) {
   const { organizationId = defaultOrganizationId, clusterId = '', projectId } = useParams()
   const { pathname } = useLocation()
+  const isAlertingFeatureFlagEnabled = useFeatureFlagVariantKey('alerting')
 
   const { data: clusters = [] } = useClusters({ organizationId })
-  const hasAlerting = useMemo(() => {
-    return clusters.some((cluster) => cluster.metrics_parameters?.enabled)
-  }, [clusters])
+  const hasAlerting =
+    useMemo(() => {
+      return clusters.some((cluster) => cluster.metrics_parameters?.enabled)
+    }, [clusters]) && isAlertingFeatureFlagEnabled
 
   const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
   const matchOrganizationRoute = pathname.includes(ORGANIZATION_URL(organizationId) + ORGANIZATION_PROJECT_URL)
