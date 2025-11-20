@@ -579,7 +579,6 @@ export function HelmRepositoryCreateEditModal({
                       onChange={field.onChange}
                       value={field.value}
                       label="Role ARN"
-                      placeholder="arn:aws:iam::123456789012:role/MyRole"
                       error={error?.message}
                       hint="Enter the ARN of the AWS IAM role to assume for authentication"
                     />
