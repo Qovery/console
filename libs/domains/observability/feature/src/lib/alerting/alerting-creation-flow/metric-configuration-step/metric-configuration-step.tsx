@@ -394,9 +394,38 @@ export function MetricConfigurationStep({
               />
             </div>
 
-            <div className="flex flex-col gap-1">
-              <p className="text-sm">Notification channels</p>
-              <span className="text-xs text-neutral-350">Search for a notification channel</span>
+            <div className="flex flex-col">
+              <Controller
+                name="alert_receiver_ids"
+                control={methods.control}
+                render={({ field }) => (
+                  <InputSelect
+                    options={alertReceivers?.map((receiver) => ({
+                      label: (
+                        <span className="flex items-center gap-1">
+                          {match(receiver.type)
+                            .with('SLACK', (v) => <Icon name={v} iconStyle="regular" width={14} height={14} />)
+                            .otherwise(() => (
+                              <Icon iconName="webhook" iconStyle="regular" className="text-xs" />
+                            ))}
+                          {receiver.name}
+                        </span>
+                      ),
+                      value: receiver.id,
+                    }))}
+                    menuListButton={{
+                      title: 'Select notification channel',
+                      label: 'New notification channel',
+                      onClick: () => handleAddNotificationChannel(),
+                    }}
+                    value={field.value}
+                    onChange={field.onChange}
+                    label="Notification channels"
+                    className="w-full"
+                    isMulti
+                  />
+                )}
+              />
             </div>
           </Section>
 
