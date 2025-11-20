@@ -36,6 +36,9 @@
         },
         {
           "env": "NX_PUBLIC_QOVERY_WS"
+        },
+        {
+          "env": "NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY"
         }
       ],
       "cache": true

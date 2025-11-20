@@ -1874,6 +1874,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chargebee/chargebee-js-types@npm:^1.0.8":
+  version: 1.0.8
+  resolution: "@chargebee/chargebee-js-types@npm:1.0.8"
+  checksum: 16379ce2732e258362e49e2c643613df8129f1ba4028d17a97925a28d332ab82d032d259740a5647977184db102106a63fd1ebea902d057a1caab9667e16d778
+  languageName: node
+  linkType: hard
+
 "@chevrotain/cst-dts-gen@npm:11.0.3":
   version: 11.0.3
   resolution: "@chevrotain/cst-dts-gen@npm:11.0.3"
@@ -5557,6 +5564,7 @@ __metadata:
     "@awesome.me/kit-c4457d1be4": latest
     "@babel/core": ^7.18.13
     "@babel/preset-react": ^7.14.5
+    "@chargebee/chargebee-js-types": ^1.0.8
     "@docsearch/react": ^3.6.0
     "@elgorditosalsero/react-gtm-hook": ^2.6.0
     "@fortawesome/fontawesome-svg-core": ^6.5.2
@@ -5679,7 +5687,7 @@ __metadata:
     prettier: ^3.2.5
     prettier-plugin-tailwindcss: ^0.5.14
     pretty-quick: ^4.0.0
-    qovery-typescript-axios: ^1.1.748
+    qovery-typescript-axios: ^1.1.759
     qovery-ws-typescript-axios: ^0.1.420
     react: 18.3.1
     react-country-flag: ^3.0.2
@@ -24585,12 +24593,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qovery-typescript-axios@npm:^1.1.748":
-  version: 1.1.748
-  resolution: "qovery-typescript-axios@npm:1.1.748"
+"qovery-typescript-axios@npm:^1.1.759":
+  version: 1.1.759
+  resolution: "qovery-typescript-axios@npm:1.1.759"
   dependencies:
     axios: 1.12.2
-  checksum: 8d06cc9ed027be4892b73dea6ff945216a749c23e28926bb51bb0c33d44e78da717212dadc0ca36591be29ca54aea221eee2ce662216860697ff7d2dec70f1d5
+  checksum: 4c016ce8ca887f7be137ccc1f8e066de82a61682f2af60fceac403b2cf2ae84191abe444e367bf46211e91d330a28cfffb223063b2a6c7014353a4a0324b143f
   languageName: node
   linkType: hard
 
