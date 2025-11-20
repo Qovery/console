@@ -1874,16 +1874,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chargebee/chargebee-js-react-wrapper@npm:^0.6.9":
-  version: 0.6.9
-  resolution: "@chargebee/chargebee-js-react-wrapper@npm:0.6.9"
-  peerDependencies:
-    react: ^19.0.0 || ^18.0.0 || ^17.0.0
-    react-dom: ^19.0.0 || ^18.0.0 || ^17.0.0
-  checksum: 829677d29a5df6f48240dcb9599326c585fb02d6b5409a678ba7d815b0fb754cafde5d36b518904901780cf8b282f1f615c4c9e7f4e2fb2aed6677e3bb5d20eb
-  languageName: node
-  linkType: hard
-
 "@chargebee/chargebee-js-types@npm:^1.0.8":
   version: 1.0.8
   resolution: "@chargebee/chargebee-js-types@npm:1.0.8"
@@ -5574,7 +5564,6 @@ __metadata:
     "@awesome.me/kit-c4457d1be4": latest
     "@babel/core": ^7.18.13
     "@babel/preset-react": ^7.14.5
-    "@chargebee/chargebee-js-react-wrapper": ^0.6.9
     "@chargebee/chargebee-js-types": ^1.0.8
     "@docsearch/react": ^3.6.0
     "@elgorditosalsero/react-gtm-hook": ^2.6.0
