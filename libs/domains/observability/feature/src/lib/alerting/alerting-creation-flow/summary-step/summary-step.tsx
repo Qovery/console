@@ -136,7 +136,7 @@ export function SummaryStep() {
   }, [selectedMetrics.length, setCurrentStepIndex])
 
   const handleEdit = (alertId: string) => {
-    navigate(`../${ALERTING_CREATION_EDIT(alertId)}`)
+    navigate(`..${ALERTING_CREATION_EDIT(alertId)}`)
   }
 
   const handleToggleSkip = (index: number, isCurrentlySkipped: boolean) => {
