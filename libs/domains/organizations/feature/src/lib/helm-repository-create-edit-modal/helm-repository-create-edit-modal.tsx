@@ -568,8 +568,7 @@ export function HelmRepositoryCreateEditModal({
                     required: 'Please enter a role ARN.',
                     pattern: {
                       value: /^arn:aws:iam::\d{12}:role\/[\w+=,.@-]+$/,
-                      message:
-                        'Please enter a valid AWS IAM role ARN (e.g., arn:aws:iam::123456789012:role/MyRole)',
+                      message: 'Please enter a valid AWS IAM role ARN (e.g., arn:aws:iam::123456789012:role/MyRole)',
                     },
                   }}
                   render={({ field, fieldState: { error } }) => (
