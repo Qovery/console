@@ -3,6 +3,7 @@ import { AlertSeverity } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { v4 as uuid } from 'uuid'
 import { type Value } from '@qovery/shared/interfaces'
 import {
@@ -11,11 +12,15 @@ import {
   FunnelFlowBody,
   Heading,
   Icon,
+  InputSelect,
   InputSelectSmall,
   InputTextSmall,
   Section,
+  useModal,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { useAlertReceivers } from '../../../hooks/use-alert-receivers/use-alert-receivers'
+import { NotificationChannelModal } from '../../notification-channel-modal/notification-channel-modal'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration } from '../alerting-creation-flow.types'
 import { ALERTING_CREATION_METRIC, ALERTING_CREATION_SUMMARY } from '../router'
@@ -69,11 +74,15 @@ export function MetricConfigurationStep({
   isLoadingEditAlertRule?: boolean
 }) {
   const navigate = useNavigate()
+  const { organizationId = '' } = useParams()
   const location = useLocation()
+  const { openModal, closeModal } = useModal()
   const [searchParams] = useSearchParams()
   const { metricIndex, alertId } = useParams<{ metricIndex?: string; alertId?: string }>()
   const { selectedMetrics, serviceName, setCurrentStepIndex, alerts, setAlerts, onComplete } =
     useAlertingCreationFlowContext()
+
+  const { data: alertReceivers = [] } = useAlertReceivers({ organizationId })
 
   const metricCategory = isEdit ? alerts[0]?.tag || '' : metricIndex || selectedMetrics[0] || ''
   const index = isEdit ? alerts.findIndex((alert) => alert.id === alertId) : selectedMetrics.indexOf(metricCategory)
@@ -163,6 +172,12 @@ export function MetricConfigurationStep({
     }
 
     navigate(`${basePath}${ALERTING_CREATION_METRIC(selectedMetrics[index - 1])}${queryString}`)
+  }
+
+  const handleAddNotificationChannel = () => {
+    openModal({
+      content: <NotificationChannelModal organizationId={organizationId} onClose={closeModal} />,
+    })
   }
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -394,13 +409,42 @@ export function MetricConfigurationStep({
               />
             </div>
 
-            <div className="flex flex-col gap-1">
-              <p className="text-sm">Notification channels</p>
-              <span className="text-xs text-neutral-350">Search for a notification channel</span>
+            <div className="flex flex-col">
+              <Controller
+                name="alert_receiver_ids"
+                control={methods.control}
+                render={({ field }) => (
+                  <InputSelect
+                    options={alertReceivers?.map((receiver) => ({
+                      label: (
+                        <span className="flex items-center gap-1">
+                          {match(receiver.type)
+                            .with('SLACK', (v) => <Icon name={v} iconStyle="regular" width={14} height={14} />)
+                            .otherwise(() => (
+                              <Icon iconName="webhook" iconStyle="regular" className="text-xs" />
+                            ))}
+                          {receiver.name}
+                        </span>
+                      ),
+                      value: receiver.id,
+                    }))}
+                    menuListButton={{
+                      title: 'Select notification channel',
+                      label: 'New notification channel',
+                      onClick: () => handleAddNotificationChannel(),
+                    }}
+                    value={field.value}
+                    onChange={field.onChange}
+                    label="Notification channels"
+                    className="w-full"
+                    isMulti
+                  />
+                )}
+              />
             </div>
           </Section>
 
-          <div className="sticky bottom-0 left-0 right-0 z-10 flex items-center justify-between gap-4 border-t border-neutral-250 bg-white py-4">
+          <div className="sticky bottom-0 left-0 right-0 flex items-center justify-between gap-4 border-t border-neutral-250 bg-white py-4">
             {!isEdit && (
               <div className="flex items-center gap-2">
                 {index > 0 && (
