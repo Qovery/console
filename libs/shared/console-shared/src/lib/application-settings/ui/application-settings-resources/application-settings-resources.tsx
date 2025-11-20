@@ -314,8 +314,28 @@ export function ApplicationSettingsResources({
                 {runningStatuses.pods.length > 1 ? 's' : ''}
               </span>
             )}
-            Application auto-scaling is based on real-time CPU consumption. When your app goes above 60% (default) of
-            CPU consumption for 5 minutes, your app will be auto-scaled and more instances will be added.
+            <Callout.Root color="sky" className="mt-3" data-testid="banner-box">
+              <Callout.Icon>
+                <Icon iconName="circle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                Auto-scaling adds instances when your application's average CPU usage exceeds 60% (default) for a
+                continuous 5-minute period. Scaling stops once the Maximum Instances limit is reached.
+              </Callout.Text>
+            </Callout.Root>
+            <Callout.Root color="yellow" className="mt-3" data-testid="banner-box">
+              <Callout.Icon>
+                <Icon iconName="triangle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <p>Always assume one instance may fail due to node maintenance or issues.</p>
+                <p>To ensure high availability, set Minimum Instances to 2 if your app can run on 1 instance.</p>
+                <p>
+                  If your application requires more than one instance to handle necessary traffic, set the minimum to 3
+                  or higher to guarantee redundancy during a single failure.
+                </p>
+              </Callout.Text>
+            </Callout.Root>
           </p>
           {environmentMode === EnvironmentModeEnum.PRODUCTION && minRunningInstances === 1 && (
             <Callout.Root color="yellow" className="mt-3" data-testid="banner-box">
