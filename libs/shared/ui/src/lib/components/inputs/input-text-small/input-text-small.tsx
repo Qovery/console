@@ -53,7 +53,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
     disabled = false,
     label,
     dataTestId = 'input-value',
-    spellCheck = true,
+    spellCheck = false,
   } = props
 
   const [focused, setFocused] = useState(false)
