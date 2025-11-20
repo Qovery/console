@@ -11,10 +11,12 @@ export interface StepProjectProps {
   }>
   authLogout: () => void
   backButton?: boolean
+  loading?: boolean
+  onFirstStepBack?: () => void
 }
 
 export function StepProject(props: StepProjectProps) {
-  const { onSubmit, control, authLogout, backButton } = props
+  const { onSubmit, control, authLogout, backButton, loading, onFirstStepBack } = props
   const navigate = useNavigate()
 
   return (
@@ -68,10 +70,10 @@ export function StepProject(props: StepProjectProps) {
               color="neutral"
               variant="surface"
               className="gap-2"
-              onClick={() => authLogout()}
+              onClick={() => (onFirstStepBack ? onFirstStepBack() : authLogout())}
             >
               <Icon name="icon-solid-arrow-left" />
-              Disconnect
+              {onFirstStepBack ? 'Back' : 'Disconnect'}
             </Button>
           ) : (
             <Button
@@ -95,8 +97,8 @@ export function StepProject(props: StepProjectProps) {
               Back
             </Button>
           )}
-          <Button type="submit" size="lg">
-            Continue
+          <Button type="submit" size="lg" loading={loading} disabled={loading}>
+            {loading ? 'Creating...' : 'Continue'}
           </Button>
         </div>
       </form>

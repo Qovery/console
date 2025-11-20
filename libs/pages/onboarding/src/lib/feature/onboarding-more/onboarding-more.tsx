@@ -1,24 +1,125 @@
-import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { PlanEnum } from 'qovery-typescript-axios'
+import { useContext } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { Link, useNavigate } from 'react-router-dom'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
-import { ONBOARDING_PROJECT_URL, ONBOARDING_THANKS_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { type CreditCardFormValues } from '@qovery/shared/console-shared'
+import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { ExternalLink, Icon, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import PlanCard from '../../ui/plan-card/plan-card'
 import { StepMore } from '../../ui/step-more/step-more'
+import { ContextOnboarding } from '../container/container'
+
+const PLANS = [
+  {
+    name: PlanEnum.USER_2025,
+    title: 'User plan',
+    text: 'Perfect for small team',
+    price: 299,
+    list: [
+      'Deploy on your own cloud',
+      'Include 2 users',
+      'Include 1 managed cluster',
+      'Include 1,000 deployment minutes',
+      'Standard support',
+    ],
+  },
+  {
+    name: PlanEnum.TEAM_2025,
+    title: 'Team plan',
+    text: 'Ideal for teams',
+    price: 899,
+    list: [
+      'Deploy on your own cloud',
+      'Include 10 users',
+      'Include 2 managed cluster',
+      'Include 5,000 deployment minutes',
+      'Standard support',
+    ],
+  },
+  {
+    name: PlanEnum.BUSINESS_2025,
+    title: 'Business plan',
+    text: 'For growing businesses',
+    price: 2099,
+    list: [
+      'Deploy on your own cloud',
+      'Include 30 users',
+      'Include 3 managed cluster',
+      'Include 10,000 deployment minutes',
+      'Business support with SLAs',
+    ],
+  },
+  {
+    name: PlanEnum.ENTERPRISE_2025,
+    title: 'Enterprise plan',
+    text: 'Tailored for your organization',
+    price: 'custom' as const,
+    list: ['All BUSINESS features', 'Deploy on-premise or private cloud', 'Custom limits', 'Custom support'],
+  },
+]
 
 export function OnboardingMore() {
-  useDocumentTitle('Onboarding Tell us more - Qovery')
+  useDocumentTitle('Onboarding Free trial activation - Qovery')
 
   const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
+  const { openModal, closeModal } = useModal()
+  const { selectedPlan, setContextValue } = useContext(ContextOnboarding)
 
-  const { handleSubmit, control } = useForm<{
-    user_questions?: string
-  }>({
+  const methods = useForm<CreditCardFormValues>({
+    mode: 'onChange',
     defaultValues: {
-      user_questions: userSignUp?.user_questions ?? undefined,
+      card_number: '',
+      cvc: '',
+      expiry: '',
     },
   })
+  const { handleSubmit, control } = methods
   const navigate = useNavigate()
+  const plan = PLANS.find((plan) => plan.name === selectedPlan) ?? PLANS[0]
+  const selectablePlans = PLANS.filter((planOption) => planOption.name !== PlanEnum.ENTERPRISE_2025)
+
+  const handlePlanSelect = (planName: PlanEnum) => {
+    setContextValue?.({ selectedPlan: planName })
+    closeModal()
+  }
+
+  const openPlanSelectionModal = () => {
+    openModal({
+      content: (
+        <div className="flex h-full flex-col p-8">
+          <div>
+            <h3 className="mb-1 text-lg text-neutral-400">Change your plan</h3>
+            <p className="mb-6 text-sm text-neutral-350">Choose the plan that suits you the best.</p>
+          </div>
+          <div className="mb-8 flex flex-col gap-5 md:flex-row">
+            {selectablePlans.map((planOption) => (
+              <div key={planOption.name} className="flex-1">
+                <PlanCard {...planOption} loading={''} onClick={() => handlePlanSelect(planOption.name)} />
+              </div>
+            ))}
+          </div>
+          <div className="mt-auto flex items-center justify-between">
+            <p className="text-sm text-neutral-400">
+              You have specific needs? Book a demo with us and unlock a trial that truly suits you.
+            </p>
+            <ExternalLink
+              href="https://qovery.com/contact"
+              color="brand"
+              withIcon={false}
+              className="gap-1 text-sm font-semibold"
+            >
+              Book a demo
+              <Icon name="icon-solid-chevron-right" className="text-xs" />
+            </ExternalLink>
+          </div>
+        </div>
+      ),
+      options: { fullScreen: true },
+    })
+  }
 
   const onSubmit = handleSubmit(async (data) => {
     if (!userSignUp) return
@@ -29,22 +130,19 @@ export function OnboardingMore() {
           ...userSignUp,
           ...data,
         })
-        const { data: newUserSignUp } = await refetchUserSignUp()
-
-        if (newUserSignUp?.dx_auth) {
-          navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
-        } else if (!userSignUp?.dx_auth) {
-          // redirect to Thanks page if user not authorized by the dx team
-          // dx_auth must be updated in the bdd
-          navigate(`${ONBOARDING_URL}${ONBOARDING_THANKS_URL}`)
-        }
+        await refetchUserSignUp()
+        navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
       } catch (error) {
         console.error(error)
       }
     }
   })
 
-  return <StepMore control={control} onSubmit={onSubmit} />
+  return (
+    <FormProvider {...methods}>
+      <StepMore control={control} onSubmit={onSubmit} selectedPlan={plan} onChangePlan={openPlanSelectionModal} />
+    </FormProvider>
+  )
 }
 
 export default OnboardingMore
