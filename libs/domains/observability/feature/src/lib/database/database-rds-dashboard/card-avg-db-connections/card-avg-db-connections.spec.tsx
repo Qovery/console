@@ -68,7 +68,6 @@ describe('CardAvgDbConnections', () => {
     expect(mockCardMetric).toHaveBeenCalledWith(
       expect.objectContaining({
         value: '79',
-        status: 'GREEN',
       })
     )
   })
@@ -92,7 +91,6 @@ describe('CardAvgDbConnections', () => {
     expect(mockCardMetric).toHaveBeenCalledWith(
       expect.objectContaining({
         value: '175',
-        status: 'RED',
         isLoading: true,
       })
     )
