@@ -1,5 +1,10 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
-import { AlertRulesApi, ClustersApi } from 'qovery-typescript-axios'
+import {
+  type AlertRuleCreationRequest,
+  type AlertRuleEditRequest,
+  AlertRulesApi,
+  ClustersApi,
+} from 'qovery-typescript-axios'
 
 const clusterApi = new ClustersApi()
 const alertRulesApi = new AlertRulesApi()
@@ -202,3 +207,18 @@ export const observability = createQueryKeys('observability', {
     },
   }),
 })
+
+export const mutations = {
+  async createAlertRule({ payload }: { payload: AlertRuleCreationRequest }) {
+    const response = await alertRulesApi.createAlertRule(payload)
+    return response.data
+  },
+  async editAlertRule({ alertRuleId, payload }: { alertRuleId: string; payload: AlertRuleEditRequest }) {
+    const response = await alertRulesApi.editAlertRule(alertRuleId, payload)
+    return response.data
+  },
+  async deleteAlertRule({ alertRuleId }: { alertRuleId: string }) {
+    const response = await alertRulesApi.deleteAlertRule(alertRuleId)
+    return response.data
+  },
+}
