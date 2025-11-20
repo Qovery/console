@@ -1,26 +1,10 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
 import { type AxiosError } from 'axios'
-import { Reorder } from 'framer-motion'
-import {
-  GitProviderEnum,
-  type TerraformVarKeyValue,
-  type TerraformVariableDefinition,
-  type TfVarsFileResponse,
-} from 'qovery-typescript-axios'
-import {
-  type PropsWithChildren,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { GitProviderEnum, type TfVarsFileResponse } from 'qovery-typescript-axios'
+import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { v4 as uuidv4 } from 'uuid'
 import {
   useListTfVarsFilesFromGitRepo,
   useParseTerraformVariablesFromGitRepo,
@@ -38,9 +22,7 @@ import {
   LoaderSpinner,
   PasswordShowHide,
   Popover,
-  ScrollShadowWrapper,
   Section,
-  Skeleton,
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
@@ -49,86 +31,68 @@ import { type TerraformGeneralData } from '../terraform-configuration-settings/t
 
 const CUSTOM_SOURCE = 'Custom'
 
-type UIVariable = {
-  id: string
+type TerraformVariablesContextType = {
+  selectedRows: string[]
+  setSelectedRows: (selectedRows: string[]) => void
+  selectRow: (key: string) => void
+  isRowSelected: (key: string) => boolean
+  areTfVarsFilesLoading: boolean
+  tfVarFiles: TfVarsFile[]
+  tfVarFilePaths: string[]
+  setTfVarFiles: (tfVarFiles: TfVarsFile[]) => void
+  variableRows: VariableRowItem[]
+  hoveredRow: string | undefined
+  setHoveredRow: (hoveredRow: string | undefined) => void
+  overrideValue: (key: string, value: string) => void
+  resetOverride: (key: string) => void
+  addCustomVariable: () => void
+  deleteSelectedRows: () => void
+  setFileListOrder: (fileListOrder: string[]) => void
+  focusedCell: string | undefined
+  setFocusedCell: (focusedCell: string | undefined) => void
+  fetchTfVarsFiles: () => void
+  newPath: string
+  setNewPath: (newPath: string) => void
+  submitNewPath: () => void
+  newPathErrorMessage: string | undefined
+  setNewPathErrorMessage: (newPathErrorMessage: string | undefined) => void
+  hoveredCell: string | undefined
+  setHoveredCell: (hoveredCell: string | undefined) => void
+  isVariableOverride: (key: string) => boolean
+  getVariableValue: (key: string) => string
+  getVariableSource: (key: string) => string
+  isCustomVariable: (key: string) => boolean
+  toggleSecret: (key: string, value: boolean) => void
+  overrides: OverrittenVariable[]
+  overrideKey: (key: string, newKey: string) => void
+}
+
+type VariableRowItem = {
+  key: string
+  values: { value: string; source: string }[]
+  secret: boolean
+}
+type OverrittenVariable = {
   key: string
   value: string
-  source: string
-  // current secret flag shown in UI
   secret: boolean
-  // originals (used to detect changes)
-  originalKey?: string
-  originalValue?: string
-  originalSecret?: boolean
-  // metadata
-  isNew?: boolean // created by user in UI (always treated as changed)
+  source: string
 }
 
 type TfVarsFile = TfVarsFileResponse & {
   enabled: boolean
 }
 
-type TerraformVariablesContextType = {
-  vars: UIVariable[]
-  addVariable: (key?: string, value?: string) => void
-  updateKey: (id: string, key: string) => void
-  updateValue: (id: string, value: string) => void
-  toggleSecret: (id: string) => void
-  revertValue: (id: string) => void
-  removeVariable: (id: string) => void
-  serializeForApi: () => { key?: string; value?: string; secret?: boolean }[]
-
-  // TFVARS-related
-  fetchTfVarsFiles: () => void
-  tfVarFiles: TfVarsFile[]
-  setTfVarFiles: (tfVarFiles: TfVarsFile[]) => void
-  newPath: string
-  setNewPath: (newPath: string) => void
-  submitNewPath: () => void
-  areTfVarsFilesLoading: boolean
-  newPathErrorMessage: string | undefined
-  setNewPathErrorMessage: (newPathErrorMessage: string | undefined) => void
-  setFileListOrder: (fileListOrder: string[]) => void
-
-  // Table-related
-  selectedRows: string[]
-  setSelectedRows: (selectedRows: string[]) => void
-  deleteSelectedRows: () => void
-  isRowSelected: (id: string) => boolean
-  selectRow: (id: string) => void
-  hoveredRow: string | undefined
-  setHoveredRow: (hoveredRow: string | undefined) => void
-}
-
 const TerraformVariablesContext = createContext<TerraformVariablesContextType | undefined>(undefined)
 
-const isVariableChanged = (v: UIVariable): boolean => {
-  // New variables are always considered changed
-  if (v.isNew) return true
-
-  // If originals are undefined (defensive), treat as changed
-  const origKey = v.originalKey ?? undefined
-  const origVal = v.originalValue ?? undefined
-  const origSecret = v.originalSecret ?? undefined
-
-  // Compare key, value and secret strictly
-  const keyChanged = v.key !== origKey
-  const valueChanged = v.value !== origVal
-  const secretChanged = v.secret !== origSecret
-
-  return keyChanged || valueChanged || secretChanged
-}
-
-const formatSource = (v: UIVariable) => {
-  return isVariableChanged(v) && v.source !== CUSTOM_SOURCE ? `Override from ${v.source}` : v.source
-}
-
-const isCustomVariable = (v: UIVariable) => {
-  return v.source === CUSTOM_SOURCE
+const transformTfVarsFile = (tfVarFile: TfVarsFileResponse): TfVarsFile => {
+  return {
+    ...tfVarFile,
+    enabled: true,
+  }
 }
 
 export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
-  // Initial data fetching...
   const { getValues } = useFormContext<TerraformGeneralData>()
   const { organizationId = '', applicationId = '' } = useParams()
   const { data: serviceResponse } = useService({ serviceId: applicationId })
@@ -162,7 +126,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   })
 
   const [tfVarFilesResponse, setTfVarFilesResponse] = useState<TfVarsFileResponse[]>([])
-  const [newPath, setNewPath] = useState<string>('')
+  const [newPath, setNewPath] = useState<TerraformVariablesContextType['newPath']>('')
   const [newPathErrorMessage, setNewPathErrorMessage] = useState<string | undefined>(undefined)
 
   const { mutateAsync: fetchTfVars, status: tfVarsFilesStatus } = useListTfVarsFilesFromGitRepo()
@@ -199,6 +163,273 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   }, [fetchTfVars, organizationId, repositoryConfig, newPath, service?.terraform_variables_source.tf_var_file_paths])
 
   const areTfVarsFilesLoading = useMemo(() => tfVarsFilesStatus === 'loading', [tfVarsFilesStatus])
+  const serviceVars = useMemo(() => service?.terraform_variables_source.tf_vars ?? [], [service])
+  const parsedVars = useMemo(() => variablesResponse ?? [], [variablesResponse])
+
+  // Save list order
+  const [fileListOrder, setFileListOrder] = useState<string[]>([])
+
+  // Transform the response data and memoize based on content, not reference
+  const tfVarFilesFromResponse = useMemo(() => tfVarFilesResponse.map(transformTfVarsFile), [tfVarFilesResponse])
+
+  // Allow manual override of file enabled state
+  const [fileEnabledOverrides, setFileEnabledOverrides] = useState<Record<string, boolean>>({})
+
+  const tfVarFiles: TfVarsFile[] = useMemo(() => {
+    return tfVarFilesFromResponse
+      .sort((a, b) => fileListOrder.indexOf(a.source) - fileListOrder.indexOf(b.source))
+      .map((file) => ({
+        ...file,
+        enabled: fileEnabledOverrides[file.source] ?? file.enabled,
+      }))
+  }, [tfVarFilesFromResponse, fileEnabledOverrides, fileListOrder])
+
+  const filteredTfVarFiles = [...tfVarFiles.filter((file) => file.enabled)].reverse()
+  const filesVars = useMemo(
+    () => [
+      ...new Map(
+        filteredTfVarFiles.flatMap((file) =>
+          Object.entries(file.variables).map(([key, value]) => [
+            key,
+            { key, value, source: file.source, secret: false },
+          ])
+        )
+      ).values(),
+    ],
+    [filteredTfVarFiles]
+  )
+
+  const [overrides, setOverrides] = useState<OverrittenVariable[]>(
+    serviceVars.map((variable) => ({
+      key: variable.key ?? '',
+      value: variable.value ?? '',
+      secret: variable.secret ?? false,
+      source: CUSTOM_SOURCE,
+    }))
+  )
+
+  const allVariables = useMemo(() => [...parsedVars, ...filesVars, ...overrides], [parsedVars, filesVars, overrides])
+  const keys = useMemo(() => allVariables.map((variable) => variable.key ?? ''), [allVariables])
+
+  // Combine variables coming from the parsed variables (from the git repo), files vars (tfvars files) and overrides (manual overrides or custom variables)
+  const combinedVariables: Map<string, VariableRowItem> = useMemo(() => {
+    return new Map(
+      keys.map((key) => {
+        // Find all associated variables for a given key
+        const variables = allVariables.filter((variable) => variable.key === key)
+        const values: VariableRowItem['values'] = variables
+          .map((variable) => {
+            const value =
+              'default' in variable ? variable.default ?? '' : 'value' in variable ? variable.value ?? '' : ''
+
+            // Source: if the current variable has a source, use it, otherwise set to custom
+            const source = 'source' in variable ? variable.source : CUSTOM_SOURCE
+
+            return {
+              value,
+              source,
+            }
+          })
+          .filter((value) => value !== undefined)
+        const secret = variables.some((variable) => {
+          return 'sensitive' in variable ? variable.sensitive : 'secret' in variable ? variable.secret : false
+        })
+
+        return [
+          key,
+          {
+            key,
+            values,
+            secret,
+          },
+        ]
+      })
+    )
+  }, [allVariables, keys])
+
+  const setTfVarFiles = useCallback((newFiles: TfVarsFile[]) => {
+    const overrides: Record<string, boolean> = {}
+    newFiles.forEach((file) => {
+      overrides[file.source] = file.enabled
+    })
+    setFileEnabledOverrides(overrides)
+  }, [])
+
+  const variableRows: TerraformVariablesContextType['variableRows'] = useMemo(() => {
+    return Array.from(combinedVariables.values())
+  }, [combinedVariables])
+
+  const [selectedRows, setSelectedRows] = useState<TerraformVariablesContextType['selectedRows']>([])
+  const [hoveredRow, setHoveredRow] = useState<TerraformVariablesContextType['hoveredRow']>(undefined)
+  const [focusedCell, setFocusedCell] = useState<TerraformVariablesContextType['focusedCell']>(undefined)
+  const [hoveredCell, setHoveredCell] = useState<TerraformVariablesContextType['hoveredCell']>(undefined)
+
+  const tfVarFilePaths: TerraformVariablesContextType['tfVarFilePaths'] = useMemo(() => {
+    return tfVarFiles.filter((tfVarFile) => tfVarFile.enabled).map((tfVarFile) => tfVarFile.source ?? '')
+  }, [tfVarFiles])
+
+  const isRowSelected = useCallback(
+    (key: string) => {
+      return selectedRows.includes(key)
+    },
+    [selectedRows]
+  )
+
+  const selectRow = useCallback((key: string) => {
+    setSelectedRows((prevSelectedRows) => {
+      if (prevSelectedRows.includes(key)) {
+        return prevSelectedRows.filter((row) => row !== key)
+      } else {
+        return [...prevSelectedRows, key]
+      }
+    })
+  }, [])
+
+  const getLastVariableItem = useCallback(
+    (
+      key: string
+    ):
+      | {
+          value: string
+          source: string
+        }
+      | undefined => {
+      const variable = variableRows.find((variableRow) => variableRow.key === key)
+      return variable?.values?.[variable?.values.length - 1] ?? undefined
+    },
+    [variableRows]
+  )
+
+  const getVariableValue = useCallback(
+    (key: string): string => {
+      const variable = getLastVariableItem(key)
+      // Get the last value for the variable
+      return variable?.value ?? ''
+    },
+    [getLastVariableItem]
+  )
+
+  const getVariableSource = useCallback(
+    (key: string): string => {
+      const currentVar = getLastVariableItem(key)
+      const currentSource = currentVar?.source
+
+      if (currentSource === CUSTOM_SOURCE && currentVar) {
+        const allVars = variableRows.find((variableRow) => variableRow.key === key)
+        const previousVarSource = allVars?.values[allVars?.values.indexOf(currentVar) - 1]?.source
+
+        if (previousVarSource) {
+          return `Override from ${previousVarSource}`
+        }
+
+        return currentSource
+      }
+
+      return currentVar?.source ?? ''
+    },
+    [variableRows, getLastVariableItem]
+  )
+
+  const isVariableOverride = useCallback(
+    (key: string): boolean => {
+      return getVariableSource(key).startsWith('Override from') ? true : false
+    },
+    [getVariableSource]
+  )
+
+  const overrideValue = useCallback(
+    (key: string, value: string) => {
+      const variable = overrides.find((customVariable) => customVariable.key === key)
+
+      if (variable) {
+        setOverrides((prevCustomVariables) =>
+          prevCustomVariables.map((customVariable) =>
+            customVariable.key === key ? { ...customVariable, value } : customVariable
+          )
+        )
+      } else {
+        setOverrides((prevCustomVariables) => [
+          ...prevCustomVariables,
+          {
+            key,
+            value,
+            secret: false,
+            source: CUSTOM_SOURCE,
+          },
+        ])
+      }
+    },
+    [overrides]
+  )
+
+  const overrideKey = useCallback((key: string, newKey: string) => {
+    setOverrides((prevOverrides) => {
+      const hasOverride = prevOverrides.find((override) => override.key === key)
+      if (hasOverride) {
+        return prevOverrides.map((o) => (o.key === key ? { ...o, key: newKey } : o))
+      } else {
+        return [...prevOverrides, { key: newKey, value: '', secret: false, source: CUSTOM_SOURCE }]
+      }
+    })
+  }, [])
+
+  const toggleSecret = useCallback(
+    (key: string, isSecret: boolean) => {
+      const currentOverride = overrides.find((o) => o.key === key)
+      const currentValue = getVariableValue(key)
+      const currentSource = getVariableSource(key)
+
+      if (currentOverride) {
+        // If the variable is a secret or a custom variable, update the secret state
+        if (isSecret || currentSource === CUSTOM_SOURCE) {
+          setOverrides((prevOverrides) => prevOverrides.map((o) => (o.key === key ? { ...o, secret: isSecret } : o)))
+        } else {
+          // Otherwise, remove the existing override
+          setOverrides((prevOverrides) => prevOverrides.filter((o) => o.key !== key))
+        }
+      } else {
+        // If the variable is not an override, add a new override
+        setOverrides((prevOverrides) => [
+          ...prevOverrides,
+          { key, value: currentValue, secret: isSecret, source: CUSTOM_SOURCE },
+        ])
+      }
+    },
+    [overrides, getVariableValue, getVariableSource]
+  )
+
+  // Reset the override for a specific key by removing the override from the overrides array
+  const resetOverride = useCallback((key: string) => {
+    setOverrides((prevOverrides) => prevOverrides.filter((o) => o.key !== key))
+  }, [])
+
+  // Add a new custom variable to the overrides array
+  const addCustomVariable = useCallback(() => {
+    setOverrides((prevOverrides) => {
+      const currentCount = prevOverrides.length
+      let newKey = 'custom_' + (currentCount + 1)
+      const doesExist = (key: string) => prevOverrides.find((o) => o.key === key)
+      while (doesExist(newKey)) {
+        newKey = 'custom_' + (Number(newKey.split('_')[1]) + 1)
+      }
+
+      return [
+        ...prevOverrides,
+        {
+          key: newKey,
+          value: '',
+          secret: false,
+          source: 'Custom',
+        },
+      ]
+    })
+  }, [])
+
+  // Delete the selected rows from the overrides array and clear the selected rows
+  const deleteSelectedRows = useCallback(() => {
+    setOverrides((prevOverrides) => prevOverrides.filter((o) => !selectedRows.includes(o.key)))
+    setSelectedRows([])
+  }, [selectedRows, setOverrides, setSelectedRows])
 
   const submitNewPath = useCallback(async () => {
     try {
@@ -229,263 +460,85 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     }
   }, [fetchTfVars, organizationId, repositoryConfig, newPath])
 
-  // Save list order
-  const [fileListOrder, setFileListOrder] = useState<string[]>([])
-
-  // Transform the response data and memoize based on content, not reference
-  const tfVarFilesFromResponse = useMemo(() => {
-    const serviceTfPaths = service?.terraform_variables_source.tf_var_file_paths
-    return tfVarFilesResponse.map((file) => ({
-      ...file,
-      enabled: serviceTfPaths?.includes(file.source) ?? false,
-    }))
-  }, [tfVarFilesResponse, service?.terraform_variables_source.tf_var_file_paths])
-
-  // Allow manual override of file enabled state
-  const [fileEnabledOverrides, setFileEnabledOverrides] = useState<Record<string, boolean>>({})
-
-  const setTfVarFiles = useCallback((newFiles: TfVarsFile[]) => {
-    const overrides: Record<string, boolean> = {}
-    newFiles.forEach((file) => {
-      overrides[file.source] = file.enabled
-    })
-    setFileEnabledOverrides(overrides)
-  }, [])
-
-  const tfVarFiles: TfVarsFile[] = useMemo(() => {
-    return tfVarFilesFromResponse
-      .sort((a, b) => fileListOrder.indexOf(a.source) - fileListOrder.indexOf(b.source))
-      .map((file) => ({
-        ...file,
-        enabled: fileEnabledOverrides[file.source] ?? file.enabled,
-      }))
-  }, [tfVarFilesFromResponse, fileEnabledOverrides, fileListOrder])
-
-  const filteredTfVarFiles = [...tfVarFiles.filter((file) => file.enabled)].reverse()
-  const filesVars = useMemo(
-    () => [
-      ...new Map(
-        filteredTfVarFiles.flatMap((file) =>
-          Object.entries(file.variables).map(([key, value]) => [
-            key,
-            { key, value, source: file.source, secret: false },
-          ])
-        )
-      ).values(),
-    ],
-    [filteredTfVarFiles]
-  )
-
-  const groupedInitialVars = useMemo(
-    () => [...(variablesResponse ?? []), ...filesVars, ...(service?.terraform_variables_source?.tf_vars ?? [])],
-    [variablesResponse, service?.terraform_variables_source?.tf_vars, filesVars]
-  )
-
-  const variableByKey = useMemo(() => {
-    return [...(variablesResponse ?? []), ...filesVars].reduce(
-      (acc, variable) => {
-        if (variable) {
-          acc[variable.key ?? ''] = variable
-        }
-        return acc
-      },
-      {} as Record<string, TerraformVariableDefinition | TerraformVarKeyValue>
-    )
-  }, [variablesResponse, filesVars])
-
-  // initialVars regroups variables from the git repo and the service's tf_vars. It is used to populate the initial state of the variables. Each variable key must be unique. If a variable key is present in both the git repo and the service's tf_vars, the value from the service's tf_vars is used.
-  const initialVars: UIVariable[] = useMemo(() => {
-    const uniqueVars = new Map<string, UIVariable>()
-    groupedInitialVars?.forEach((variable) => {
-      const currentVariable = variableByKey[variable.key ?? '']
-      const originalValue =
-        currentVariable && 'value' in currentVariable
-          ? currentVariable.value ?? ''
-          : currentVariable && 'default' in currentVariable
-            ? currentVariable.default ?? ''
-            : ''
-      const source = currentVariable && 'source' in currentVariable ? currentVariable.source : CUSTOM_SOURCE
-      const value = 'value' in variable ? variable.value ?? '' : 'default' in variable ? variable.default ?? '' : ''
-      uniqueVars.set(variable.key ?? '', {
-        id: uuidv4(),
-        key: variable.key ?? '',
-        value,
-        originalKey: variable.key,
-        originalValue,
-        originalSecret:
-          'sensitive' in variable ? variable.sensitive : 'secret' in variable ? Boolean(variable.secret) : false,
-        source,
-        secret: 'sensitive' in variable ? variable.sensitive : 'secret' in variable ? Boolean(variable.secret) : false,
-        isNew: false,
-      })
-    })
-    return Array.from(uniqueVars.values())
-  }, [groupedInitialVars, variableByKey])
-
-  const [vars, setVars] = useState<UIVariable[]>([])
-
-  // Create a stable signature from the actual variable data (excluding IDs which change every render)
-  const initialVarsSignature = useMemo(() => {
-    return JSON.stringify(
-      groupedInitialVars?.map((v) => ({
-        key: v.key,
-        value: 'default' in v ? v.default : 'value' in v ? v.value : '',
-        source: 'source' in v ? v.source : '',
-        secret: 'sensitive' in v ? v.sensitive : 'secret' in v ? Boolean(v.secret) : false,
-      })) ?? []
-    )
-  }, [groupedInitialVars])
-  const previousSignatureRef = useRef<string>('')
-
-  const [selectedRows, setSelectedRows] = useState<string[]>([])
-  const [hoveredRow, setHoveredRow] = useState<string | undefined>(undefined)
-
-  const isRowSelected = useCallback(
-    (id: string) => {
-      return selectedRows.includes(id)
+  // Check if the variable is a custom variable by checking if the override exists and the source is CUSTOM_SOURCE
+  const isCustomVariable = useCallback(
+    (key: string): boolean => {
+      const override = overrides.find((o) => o.key === key)
+      const source = getVariableSource(key)
+      return !!override && source === CUSTOM_SOURCE
     },
-    [selectedRows]
+    [overrides, getVariableSource]
   )
-
-  const selectRow = useCallback((id: string) => {
-    setSelectedRows((prevSelectedRows) => {
-      if (prevSelectedRows.includes(id)) {
-        return prevSelectedRows.filter((row) => row !== id)
-      } else {
-        return [...prevSelectedRows, id]
-      }
-    })
-  }, [])
-
-  // Delete the selected rows from the overrides array and clear the selected rows
-  const deleteSelectedRows = useCallback(() => {
-    setVars((prev) => prev.filter((v) => !selectedRows.includes(v.id)))
-    setSelectedRows([])
-  }, [selectedRows])
-
-  const serializeForApi = useCallback(
-    () =>
-      vars
-        .filter((v) => isVariableChanged(v) || isCustomVariable(v)) // Only serialize variables that are changed or custom
-        .map((v) => ({
-          key: v.key,
-          value: v.value,
-          secret: v.secret,
-        })),
-    [vars]
-  )
-
-  useEffect(() => {
-    // Only initialize vars when the actual variable data changes (not just reference changes)
-    if (initialVars.length > 0 && initialVarsSignature !== previousSignatureRef.current) {
-      setVars(initialVars)
-      previousSignatureRef.current = initialVarsSignature
-    }
-  }, [initialVars, initialVarsSignature])
-
-  const addVariable = useCallback((key = '', value = '') => {
-    const newVar: UIVariable = {
-      id: uuidv4(),
-      key,
-      value,
-      source: CUSTOM_SOURCE,
-      secret: false,
-      // no originals for new items (or explicitly undefined) — treated as changed
-      originalKey: undefined,
-      originalValue: undefined,
-      originalSecret: undefined,
-      isNew: true,
-    }
-    setVars((prev) => [...prev, newVar])
-  }, [])
-
-  const updateKey = useCallback((id: string, key: string) => {
-    setVars((prev) => prev.map((v) => (v.id === id ? { ...v, key } : v)))
-  }, [])
-
-  const updateValue = useCallback((id: string, value: string) => {
-    setVars((prev) => prev.map((v) => (v.id === id ? { ...v, value } : v)))
-  }, [])
-
-  const toggleSecret = useCallback((id: string) => {
-    setVars((prev) => prev.map((v) => (v.id === id ? { ...v, secret: !v.secret } : v)))
-  }, [])
-
-  const revertValue = useCallback((id: string) => {
-    setVars((prev) =>
-      prev.map((v) =>
-        v.id === id
-          ? {
-              ...v,
-              value: v.originalValue ?? '',
-              isOverridden: false,
-            }
-          : v
-      )
-    )
-  }, [])
-
-  const removeVariable = useCallback((id: string) => {
-    setVars((prev) => prev.filter((v) => v.id !== id))
-  }, [])
 
   const value: TerraformVariablesContextType = useMemo(
     () => ({
-      // Variables-related
-      vars,
-      addVariable,
-      updateKey,
-      updateValue,
-      toggleSecret,
-      revertValue,
-      removeVariable,
-      serializeForApi,
-      // Tfvars-related
-      fetchTfVarsFiles,
+      selectedRows,
+      setSelectedRows,
+      selectRow,
+      isRowSelected,
+      areTfVarsFilesLoading,
       tfVarFiles,
+      tfVarFilePaths,
+      variableRows,
+      hoveredRow,
+      setHoveredRow,
       setTfVarFiles,
+      deleteSelectedRows,
+      setFileListOrder,
+      focusedCell,
+      setFocusedCell,
+      fetchTfVarsFiles,
       newPath,
       setNewPath,
       submitNewPath,
-      areTfVarsFilesLoading,
       newPathErrorMessage,
       setNewPathErrorMessage,
-      setFileListOrder,
-      // Table-related
-      selectedRows,
-      setSelectedRows,
-      isRowSelected,
-      selectRow,
-      deleteSelectedRows,
-      hoveredRow,
-      setHoveredRow,
+      hoveredCell,
+      setHoveredCell,
+      getVariableValue,
+      getVariableSource,
+      addCustomVariable,
+      isCustomVariable,
+      toggleSecret,
+      overrides,
+      overrideKey,
+      overrideValue,
+      resetOverride,
+      isVariableOverride,
     }),
     [
-      vars,
-      addVariable,
-      updateKey,
-      updateValue,
-      toggleSecret,
-      revertValue,
-      removeVariable,
-      fetchTfVarsFiles,
+      selectedRows,
+      setSelectedRows,
+      selectRow,
+      isRowSelected,
+      areTfVarsFilesLoading,
       tfVarFiles,
+      tfVarFilePaths,
+      variableRows,
+      hoveredRow,
+      resetOverride,
       setTfVarFiles,
+      addCustomVariable,
+      deleteSelectedRows,
+      setFileListOrder,
+      focusedCell,
+      setFocusedCell,
+      fetchTfVarsFiles,
       newPath,
       setNewPath,
       submitNewPath,
-      areTfVarsFilesLoading,
       newPathErrorMessage,
       setNewPathErrorMessage,
-      setFileListOrder,
-      serializeForApi,
-      selectedRows,
-      setSelectedRows,
-      isRowSelected,
-      selectRow,
-      deleteSelectedRows,
-      hoveredRow,
-      setHoveredRow,
+      hoveredCell,
+      setHoveredCell,
+      isVariableOverride,
+      getVariableValue,
+      overrideValue,
+      getVariableSource,
+      isCustomVariable,
+      toggleSecret,
+      overrides,
+      overrideKey,
     ]
   )
 
@@ -509,7 +562,7 @@ const TfvarItem = ({
   index: number
   onIndexChange: (file: TfVarsFile, index: number) => void
 }) => {
-  const { tfVarFiles, setTfVarFiles, setHoveredRow } = useTerraformVariablesContext()
+  const { setHoveredRow, tfVarFiles, setTfVarFiles } = useTerraformVariablesContext()
   const [currentIndex, setCurrentIndex] = useState<string | undefined>(index.toString())
 
   const onCheckedChange = useCallback(
@@ -531,7 +584,7 @@ const TfvarItem = ({
 
   return (
     <div
-      className="grid w-full grid-cols-[1fr_70px] items-center justify-between border-b border-neutral-250 px-4 py-3 last:rounded-b-lg last:border-b-0 hover:bg-neutral-100"
+      className="grid grid-cols-[1fr_40px] items-center justify-between border-b border-neutral-250 px-4 py-3 last:rounded-b-lg last:border-b-0 hover:bg-neutral-100"
       onMouseEnter={() => setHoveredRow(file.source)}
       onMouseLeave={() => setHoveredRow(undefined)}
     >
@@ -548,26 +601,23 @@ const TfvarItem = ({
           <span className="text-xs text-neutral-350">{Object.keys(file.variables).length} variables</span>
         </label>
       </div>
-      <div className="flex items-center justify-between">
-        <Icon iconName="grip-lines" iconStyle="regular" className="text-neutral-350" />
-        <div className="flex items-center gap-1.5">
-          <span className="text-md leading-3 text-neutral-300">#</span>
-          <InputTextSmall
-            name="order"
-            value={currentIndex}
-            onChange={(e) => {
-              setCurrentIndex(e.target.value ?? '')
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                onIndexChange(file, Number(currentIndex ?? 0))
-              }
-            }}
-            onBlur={() => {
+      <div className="flex items-center gap-1.5">
+        <span className="text-md leading-3 text-neutral-350">#</span>
+        <InputTextSmall
+          name="order"
+          value={currentIndex}
+          onChange={(e) => {
+            setCurrentIndex(e.target.value ?? '')
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
               onIndexChange(file, Number(currentIndex ?? 0))
-            }}
-          />
-        </div>
+            }
+          }}
+          onBlur={() => {
+            onIndexChange(file, Number(currentIndex ?? 0))
+          }}
+        />
       </div>
     </div>
   )
@@ -585,29 +635,22 @@ const TfvarsFilesPopover = () => {
     setNewPathErrorMessage,
   } = useTerraformVariablesContext()
 
-  const onIndexChange = useCallback(
-    (file: TfVarsFile, newIndex: number) => {
-      const currentIndex = tfVarFiles.indexOf(file)
-      const newFiles = [...tfVarFiles]
-      const element = newFiles[currentIndex]
-      newFiles.splice(currentIndex, 1)
-      newFiles.splice(newIndex, 0, element)
-      setFileListOrder(newFiles.map((file) => file.source))
-    },
-    [tfVarFiles, setFileListOrder]
-  )
-
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewPath(e.target.value)
-    setNewPathErrorMessage(undefined)
-  }
-
-  const onReorder = (newFiles: TfVarsFile[]) => {
+  const onIndexChange = (file: TfVarsFile, newIndex: number) => {
+    const currentIndex = tfVarFiles.indexOf(file)
+    const newFiles = [...tfVarFiles]
+    const element = newFiles[currentIndex]
+    newFiles.splice(currentIndex, 1)
+    newFiles.splice(newIndex, 0, element)
     setFileListOrder(newFiles.map((file) => file.source))
   }
 
+  const onInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewPath(e.target.value)
+    setNewPathErrorMessage(undefined)
+  }, [])
+
   return (
-    <Popover.Root defaultOpen={true}>
+    <Popover.Root>
       <Popover.Trigger>
         <div>
           {tfVarFiles.filter((file) => file.enabled).length > 0 ? (
@@ -637,7 +680,7 @@ const TfvarsFilesPopover = () => {
         <div className="flex items-center justify-between px-3 py-2">
           <span className="px-1 py-1 text-sm font-medium text-neutral-400">Add and order .tfvars files</span>
           <Popover.Close>
-            <button type="button" className="flex items-center justify-center px-1 py-1">
+            <button type="button" className="px-1 py-1">
               <Icon iconName="xmark" className="text-lg font-normal leading-4 text-neutral-350" />
             </button>
           </Popover.Close>
@@ -683,38 +726,9 @@ const TfvarsFilesPopover = () => {
           </Tooltip>
         </div>
         <div className="flex flex-col border-t border-neutral-250">
-          {areTfVarsFilesLoading && tfVarFiles.length === 0 ? (
-            <>
-              {Array.from({ length: 2 }).map((_, index) => (
-                <div key={index} className="flex w-full items-center gap-4 border-b border-neutral-250 px-4 py-4">
-                  <div className="flex items-center">
-                    <Skeleton height={16} width={16} />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <Skeleton height={14} width={200} />
-                    <Skeleton height={8} width={90} />
-                  </div>
-                </div>
-              ))}
-            </>
-          ) : (
-            <ScrollShadowWrapper className="max-h-[500px]">
-              <Reorder.Group axis="y" values={tfVarFiles} onReorder={onReorder}>
-                {tfVarFiles?.map((file, index) => (
-                  <Reorder.Item
-                    key={file.source}
-                    value={file}
-                    initial={{ cursor: 'grab' }}
-                    exit={{ cursor: 'grab' }}
-                    whileDrag={{ cursor: 'grabbing', borderColor: '#44C979', borderWidth: '2px' }}
-                    className={twMerge('flex w-full items-center border-b border-neutral-250')}
-                  >
-                    <TfvarItem key={file.source} file={file} index={index} onIndexChange={onIndexChange} />
-                  </Reorder.Item>
-                ))}
-              </Reorder.Group>
-            </ScrollShadowWrapper>
-          )}
+          {tfVarFiles.map((file, index) => (
+            <TfvarItem key={file.source} file={file} index={index} onIndexChange={onIndexChange} />
+          ))}
         </div>
       </Popover.Content>
     </Popover.Root>
@@ -737,60 +751,79 @@ const TerraformVariablesEmptyState = () => {
 }
 
 const getSourceBadgeColor = (isOverride: boolean, isCustom: boolean) => {
-  if (isCustom) {
-    return 'tf_custom'
-  }
   if (isOverride) {
     return 'tf_override'
+  }
+  if (isCustom) {
+    return 'tf_custom'
   }
   return 'tf_main'
 }
 
-const VariableRow = ({ variable }: { variable: UIVariable }) => {
-  const { updateKey, updateValue, toggleSecret, revertValue, isRowSelected, selectRow, hoveredRow } =
-    useTerraformVariablesContext()
+const VariableRow = ({ row }: { row: VariableRowItem }) => {
+  const {
+    selectRow,
+    isRowSelected,
+    hoveredRow,
+    resetOverride,
+    focusedCell,
+    setFocusedCell,
+    hoveredCell,
+    setHoveredCell,
+    isCustomVariable,
+    isVariableOverride,
+    getVariableValue,
+    overrideValue,
+    getVariableSource,
+    toggleSecret,
+    overrideKey,
+  } = useTerraformVariablesContext()
   const { environmentId = '' } = useParams()
   const [isVariablePopoverOpen, setIsVariablePopoverOpen] = useState(false)
-  const [isCellHovered, setIsCellHovered] = useState(false)
-  const [focusedCell, setFocusedCell] = useState<string | undefined>(undefined)
-  const isCellFocused = useCallback((cell: 'key' | 'value') => focusedCell === cell, [focusedCell])
+  const isCellFocused = useCallback(
+    (cell: 'key' | 'value') => focusedCell === `${row.key}-${cell}`,
+    [focusedCell, row.key]
+  )
+  const isCellHovered = useMemo(() => hoveredCell === row.key, [hoveredCell, row.key])
 
   return (
     <div className="w-full border-b border-neutral-250">
       <div
         className={twMerge(
           'grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center',
-          hoveredRow ? (hoveredRow === variable.source ? 'bg-neutral-100' : 'bg-white') : 'bg-white',
-          isRowSelected(variable.id) && 'bg-neutral-150 hover:bg-neutral-150'
+          hoveredRow ? (hoveredRow === getVariableSource(row.key) ? 'bg-neutral-100' : 'bg-white') : 'bg-white',
+          isRowSelected(row.key) && 'bg-neutral-150 hover:bg-neutral-150'
         )}
       >
         <div className="flex h-full items-center justify-center border-r border-neutral-250">
           <Checkbox
-            checked={isRowSelected(variable.id)}
-            onCheckedChange={() => selectRow(variable.id)}
-            disabled={!isCustomVariable(variable)}
+            checked={isRowSelected(row.key)}
+            onCheckedChange={() => selectRow(row.key)}
+            disabled={!isCustomVariable(row.key)}
           />
         </div>
         {/* Variable name cell */}
         <div
           className={twMerge(
             'flex h-full items-center border-r border-neutral-250 transition-all duration-100',
-            isCustomVariable(variable) && 'hover:bg-neutral-100',
-            (isCellFocused('key') || isRowSelected(variable.id)) && 'bg-neutral-150 hover:bg-neutral-150'
+            isCustomVariable(row.key) && 'hover:bg-neutral-100',
+            (isCellFocused('key') || isRowSelected(row.key)) && 'bg-neutral-150 hover:bg-neutral-150'
           )}
         >
-          {variable.isNew ? (
+          {isCustomVariable(row.key) ? (
             <input
               name="key"
-              value={variable.key}
+              value={row.key}
               onChange={(e) => {
-                updateKey(variable.id, e.target.value)
+                const newKey = e.target.value
+                overrideKey(row.key, newKey)
+                setFocusedCell(`${newKey}-key`)
               }}
               className={twMerge(
                 'peer h-full w-full bg-transparent px-4 text-sm outline-none',
                 isCellFocused('key') && 'bg-neutral-150 hover:bg-neutral-150'
               )}
-              onFocus={() => setFocusedCell('key')}
+              onFocus={() => setFocusedCell(`${row.key}-key`)}
               onBlur={() => setFocusedCell(undefined)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
@@ -801,20 +834,18 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
               spellCheck={false}
             />
           ) : (
-            <span className="px-4 text-sm text-neutral-350">{variable.key}</span>
+            <span className="px-4 text-sm text-neutral-350">{row.key}</span>
           )}
         </div>
         {/* Variable value cell */}
         <div
           className="group relative flex h-full cursor-text items-center border-r border-neutral-250"
-          onMouseEnter={() => {
-            setIsCellHovered(true)
-          }}
+          onMouseEnter={() => setHoveredCell(row.key)}
           onMouseLeave={(e) => {
             if (e.relatedTarget === window) {
               return
             }
-            setIsCellHovered(false)
+            setHoveredCell(undefined)
           }}
         >
           {/* Background */}
@@ -826,7 +857,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
           />
           {/* Cell content */}
           <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full">
-            {variable.secret ? (
+            {row.secret ? (
               <PasswordShowHide
                 value=""
                 isSecret={true}
@@ -836,11 +867,11 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
             ) : (
               <input
                 name="value"
-                value={variable.value}
+                value={getVariableValue(row.key)}
                 onChange={(e) => {
-                  updateValue(variable.id, e.target.value)
+                  overrideValue(row.key, e.target.value)
                 }}
-                onFocus={() => setFocusedCell('value')}
+                onFocus={() => setFocusedCell(`${row.key}-value`)}
                 onBlur={() => setFocusedCell(undefined)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
@@ -860,18 +891,18 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 isVariablePopoverOpen && 'bg-white'
               )}
             >
-              {!variable.secret && (
+              {!row.secret && (
                 <DropdownVariable
                   environmentId={environmentId}
                   onChange={(val) => {
-                    updateValue(variable.id, `{{${val}}}`)
+                    overrideValue(row.key, val)
                   }}
                   onOpenChange={(open) => {
                     if (open) {
-                      setIsCellHovered(true)
+                      setHoveredCell(row.key)
                       setFocusedCell(undefined)
                     } else {
-                      setIsCellHovered(false)
+                      setHoveredCell(undefined)
                       setFocusedCell(undefined)
                     }
                     setIsVariablePopoverOpen(open)
@@ -887,11 +918,10 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                   </button>
                 </DropdownVariable>
               )}
-
-              {isVariableChanged(variable) && (
+              {!isCustomVariable(row.key) && isVariableOverride(row.key) && (
                 <button
                   type="button"
-                  onClick={() => revertValue(variable.id)}
+                  onClick={() => resetOverride(row.key)}
                   className="px-1 text-neutral-350 hover:text-neutral-400"
                 >
                   <Icon iconName="rotate-left" iconStyle="regular" />
@@ -903,11 +933,11 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
         {/* Source badge */}
         <div className="flex h-full items-center border-r border-neutral-250 px-4">
           <Badge
-            color={getSourceBadgeColor(isVariableChanged(variable), isCustomVariable(variable))}
+            color={getSourceBadgeColor(isVariableOverride(row.key), isCustomVariable(row.key))}
             variant="surface"
             className="text-xs"
           >
-            <Truncate text={formatSource(variable)} truncateLimit={40} />
+            <Truncate text={getVariableSource(row.key)} truncateLimit={40} />
           </Badge>
         </div>
         {/* Secret toggle */}
@@ -915,13 +945,13 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
           className="flex items-center justify-center text-center text-sm text-neutral-400"
           type="button"
           onClick={() => {
-            toggleSecret(variable.id)
+            toggleSecret(row.key, !row.secret)
           }}
         >
           <Icon
-            iconName={variable.secret ? 'lock-keyhole' : 'lock-keyhole-open'}
+            iconName={row.secret ? 'lock-keyhole' : 'lock-keyhole-open'}
             iconStyle="regular"
-            className={variable.secret ? 'text-neutral-400' : 'text-neutral-300'}
+            className={row.secret ? 'text-neutral-400' : 'text-neutral-300'}
           />
         </button>
       </div>
@@ -930,8 +960,8 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
 }
 
 const TerraformVariablesRows = () => {
-  const { vars, selectedRows, setSelectedRows } = useTerraformVariablesContext()
-  const customVariables = useMemo(() => vars.filter((v) => isCustomVariable(v)), [vars])
+  const { variableRows, overrides, isCustomVariable, setSelectedRows, selectedRows } = useTerraformVariablesContext()
+  const customVariables = useMemo(() => overrides.filter((o) => isCustomVariable(o.key)), [overrides, isCustomVariable])
   const isAllSelected = useMemo(
     () => selectedRows.length === customVariables.length && customVariables.length > 0,
     [selectedRows, customVariables]
@@ -941,7 +971,7 @@ const TerraformVariablesRows = () => {
   const onSelectAllToggle = useCallback(
     (checked: boolean) => {
       if (checked) {
-        setSelectedRows(customVariables.map((v) => v.id))
+        setSelectedRows(customVariables.map((o) => o.key))
       } else {
         setSelectedRows([])
       }
@@ -970,8 +1000,8 @@ const TerraformVariablesRows = () => {
         </div>
       </div>
 
-      {vars.map((variable, index) => (
-        <VariableRow key={index} variable={variable} />
+      {variableRows.map((row, index) => (
+        <VariableRow key={index} row={row} />
       ))}
     </div>
   )
@@ -992,16 +1022,19 @@ const TerraformVariablesLoadingState = () => {
 }
 
 export const TerraformVariablesTable = () => {
-  const { addVariable, fetchTfVarsFiles, areTfVarsFilesLoading, vars, newPath, selectedRows, deleteSelectedRows } =
-    useTerraformVariablesContext()
+  const {
+    selectedRows,
+    areTfVarsFilesLoading,
+    addCustomVariable,
+    deleteSelectedRows,
+    variableRows,
+    fetchTfVarsFiles,
+    newPath,
+  } = useTerraformVariablesContext()
 
   useEffect(() => {
     fetchTfVarsFiles()
   }, [])
-
-  const onAddVariable = useCallback(() => {
-    addVariable('new_variable', 'value')
-  }, [addVariable])
 
   return (
     <div className="flex flex-col rounded-lg border border-neutral-250">
@@ -1012,7 +1045,7 @@ export const TerraformVariablesTable = () => {
 
       {areTfVarsFilesLoading && newPath.length === 0 ? (
         <TerraformVariablesLoadingState />
-      ) : vars.length > 0 ? (
+      ) : variableRows.length > 0 ? (
         <TerraformVariablesRows />
       ) : (
         <TerraformVariablesEmptyState />
@@ -1027,7 +1060,7 @@ export const TerraformVariablesTable = () => {
             Delete selected
           </Button>
         )}
-        <Button size="md" variant="surface" className="gap-1.5" type="button" onClick={onAddVariable}>
+        <Button size="md" variant="surface" className="gap-1.5" type="button" onClick={addCustomVariable}>
           Add variable
           <Icon iconName="plus" iconStyle="regular" />
         </Button>

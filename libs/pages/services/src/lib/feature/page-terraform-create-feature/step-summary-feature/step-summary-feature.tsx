@@ -25,7 +25,7 @@ export function StepSummaryFeature() {
 
   const { generalForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
   const generalData = generalForm.getValues()
-  const { tfVarFiles, overrides } = useTerraformVariablesContext()
+  const { serializeForApi, tfVarFiles } = useTerraformVariablesContext()
 
   useEffect(() => {
     setCurrentStep(4)
@@ -37,16 +37,8 @@ export function StepSummaryFeature() {
   const [isLoadingCreateAndPlan, setIsLoadingCreateAndPlan] = useState(false)
 
   const tfVarsFilePaths = useMemo(() => {
-    return [...tfVarFiles].reverse().map((file) => file.source)
+    return [...tfVarFiles.filter((file) => file.enabled)].reverse().map((file) => file.source)
   }, [tfVarFiles])
-
-  const tfVars = useMemo(() => {
-    return overrides.map((override) => ({
-      key: override.key,
-      value: override.value,
-      secret: override.secret,
-    }))
-  }, [overrides])
 
   const onSubmit = async (withPlan: boolean) => {
     if (withPlan) {
@@ -75,7 +67,7 @@ export function StepSummaryFeature() {
       },
       terraform_variables_source: {
         tf_var_file_paths: tfVarsFilePaths,
-        tf_vars: tfVars,
+        tf_vars: serializeForApi(),
       },
       provider_version: {
         read_from_terraform_block: generalData.provider_version.read_from_terraform_block,
@@ -231,7 +223,7 @@ export function StepSummaryFeature() {
                 <li>
                   <span className="font-medium">Variables:</span>
                   <ul>
-                    {tfVars.map(({ key, value, secret }) => (
+                    {serializeForApi().map(({ key, value, secret }) => (
                       <li key={key}>
                         {key}: {secret ? '********' : value}
                       </li>
