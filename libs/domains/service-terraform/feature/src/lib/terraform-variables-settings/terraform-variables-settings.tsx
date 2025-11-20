@@ -761,14 +761,17 @@ const TerraformVariablesEmptyState = () => {
   )
 }
 
-const getSourceBadgeColor = (isOverride: boolean, isCustom: boolean) => {
-  if (isCustom) {
+const getSourceBadgeColor = (variable: UIVariable) => {
+  if (isCustomVariable(variable)) {
     return 'tf_custom'
   }
-  if (isOverride) {
+  if (isVariableChanged(variable)) {
     return 'tf_override'
   }
-  return 'tf_main'
+  if (variable.source.includes('.tfvars')) {
+    return 'tfvars_file'
+  }
+  return 'tf_file'
 }
 
 const VariableRow = ({ variable }: { variable: UIVariable }) => {
@@ -941,11 +944,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
         </div>
         {/* Source badge */}
         <div className="flex h-full items-center border-r border-neutral-250 px-4">
-          <Badge
-            color={getSourceBadgeColor(isVariableChanged(variable), isCustomVariable(variable))}
-            variant="surface"
-            className="text-xs"
-          >
+          <Badge color={getSourceBadgeColor(variable)} variant="surface" className="text-xs">
             <Truncate text={formatSource(variable)} truncateLimit={40} />
           </Badge>
         </div>
