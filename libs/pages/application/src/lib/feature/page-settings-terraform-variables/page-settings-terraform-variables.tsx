@@ -16,7 +16,7 @@ import { buildEditServicePayload } from '@qovery/shared/util-services'
 const TerraformVariablesSettingsForm = () => {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { handleSubmit } = useFormContext<TerraformGeneralData>()
-  const { serializeForApi, tfVarFiles } = useTerraformVariablesContext()
+  const { serializeForApi, tfVarFiles, errors } = useTerraformVariablesContext()
   const { data: service } = useService({ serviceId: applicationId })
   const { mutate: replaceAllTerraformVariables, isLoading: isLoadingReplaceVariables } = useTerraformEditVariables()
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
@@ -63,7 +63,7 @@ const TerraformVariablesSettingsForm = () => {
       <TerraformVariablesSettings />
 
       <div className="mt-10 flex justify-end">
-        <Button type="submit" size="lg" onClick={onSubmit} loading={isLoading}>
+        <Button type="submit" size="lg" onClick={onSubmit} loading={isLoading} disabled={errors.size > 0}>
           Save
         </Button>
       </div>

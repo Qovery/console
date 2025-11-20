@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { TerraformVariablesSettings } from '@qovery/domains/service-terraform/feature'
+import { TerraformVariablesSettings, useTerraformVariablesContext } from '@qovery/domains/service-terraform/feature'
 import {
   SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL,
   SERVICES_TERRAFORM_CREATION_SUMMARY_URL,
@@ -15,6 +15,7 @@ export const StepInputVariablesFeature = () => {
 
   const navigate = useNavigate()
   const { generalForm, setCurrentStep, inputVariablesForm, creationFlowUrl } = useTerraformCreateContext()
+  const { errors } = useTerraformVariablesContext()
 
   useEffect(() => {
     setCurrentStep(3)
@@ -42,7 +43,7 @@ export const StepInputVariablesFeature = () => {
                 Back
               </Button>
               <div className="flex gap-3">
-                <Button type="submit" size="lg" onClick={onSubmit}>
+                <Button type="submit" size="lg" onClick={onSubmit} disabled={errors.size > 0}>
                   Continue
                 </Button>
               </div>

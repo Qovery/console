@@ -98,6 +98,7 @@ type TerraformVariablesContextType = {
   selectRow: (id: string) => void
   hoveredRow: string | undefined
   setHoveredRow: (hoveredRow: string | undefined) => void
+  errors: Map<string, string>
 }
 
 const TerraformVariablesContext = createContext<TerraformVariablesContextType | undefined>(undefined)
@@ -340,6 +341,17 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const [selectedRows, setSelectedRows] = useState<string[]>([])
   const [hoveredRow, setHoveredRow] = useState<string | undefined>(undefined)
 
+  const errors = useMemo(() => {
+    const newErrors = new Map<string, string>()
+    vars.forEach((v) => {
+      const duplicate = vars.find((v2) => v.key === v2.key && v.id !== v2.id && v.isNew)
+      if (duplicate) {
+        newErrors.set(v.id, `Variable "${v.key}" already exists`)
+      }
+    })
+    return newErrors
+  }, [vars])
+
   const isRowSelected = useCallback(
     (id: string) => {
       return selectedRows.includes(id)
@@ -440,6 +452,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       revertValue,
       removeVariable,
       serializeForApi,
+      errors,
       // Tfvars-related
       fetchTfVarsFiles,
       tfVarFiles,
@@ -486,6 +499,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       deleteSelectedRows,
       hoveredRow,
       setHoveredRow,
+      errors,
     ]
   )
 
@@ -747,7 +761,7 @@ const getSourceBadgeColor = (isOverride: boolean, isCustom: boolean) => {
 }
 
 const VariableRow = ({ variable }: { variable: UIVariable }) => {
-  const { updateKey, updateValue, toggleSecret, revertValue, isRowSelected, selectRow, hoveredRow } =
+  const { updateKey, updateValue, toggleSecret, revertValue, isRowSelected, selectRow, hoveredRow, errors } =
     useTerraformVariablesContext()
   const { environmentId = '' } = useParams()
   const [isVariablePopoverOpen, setIsVariablePopoverOpen] = useState(false)
@@ -774,35 +788,49 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
         {/* Variable name cell */}
         <div
           className={twMerge(
-            'flex h-full items-center border-r border-neutral-250 transition-all duration-100',
+            'h-full border-r border-neutral-250 transition-all duration-100',
             isCustomVariable(variable) && 'hover:bg-neutral-100',
             (isCellFocused('key') || isRowSelected(variable.id)) && 'bg-neutral-150 hover:bg-neutral-150'
           )}
         >
-          {variable.isNew ? (
-            <input
-              name="key"
-              value={variable.key}
-              onChange={(e) => {
-                updateKey(variable.id, e.target.value)
-              }}
-              className={twMerge(
-                'peer h-full w-full bg-transparent px-4 text-sm outline-none',
-                isCellFocused('key') && 'bg-neutral-150 hover:bg-neutral-150'
-              )}
-              onFocus={() => setFocusedCell('key')}
-              onBlur={() => setFocusedCell(undefined)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                }
-              }}
-              placeholder="Variable name"
-              spellCheck={false}
-            />
-          ) : (
-            <span className="px-4 text-sm text-neutral-350">{variable.key}</span>
-          )}
+          <div
+            className={twMerge(
+              'flex h-full w-full items-center border border-transparent',
+              errors.get(variable.id) && 'border-red-500'
+            )}
+          >
+            {variable.isNew ? (
+              <input
+                name="key"
+                value={variable.key}
+                onChange={(e) => {
+                  updateKey(variable.id, e.target.value)
+                }}
+                className={twMerge(
+                  'peer h-full w-full bg-transparent px-4 text-sm outline-none',
+                  isCellFocused('key') && 'bg-neutral-150 hover:bg-neutral-150'
+                )}
+                onFocus={() => setFocusedCell('key')}
+                onBlur={() => setFocusedCell(undefined)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                  }
+                }}
+                placeholder="Variable name"
+                spellCheck={false}
+              />
+            ) : (
+              <span className="px-4 text-sm text-neutral-350">{variable.key}</span>
+            )}
+            {errors.get(variable.id) && (
+              <Tooltip content={errors.get(variable.id)}>
+                <div className="mr-4">
+                  <Icon iconName="circle-exclamation" iconStyle="regular" className="text-red-500" />
+                </div>
+              </Tooltip>
+            )}
+          </div>
         </div>
         {/* Variable value cell */}
         <div
