@@ -79,7 +79,12 @@ export function HelmRepositoryCreateEditModal({
         azure_tenant_id: repository?.config?.azure_tenant_id,
         azure_subscription_id: repository?.config?.azure_subscription_id,
         login_type: repository?.config?.username ? 'ACCOUNT' : 'ANONYMOUS',
-        aws_auth_type: repository?.config?.role_arn ? 'STS' : 'STATIC',
+        aws_auth_type:
+          repository?.kind === 'OCI_ECR' && repository?.config?.role_arn
+            ? 'STS'
+            : repository?.kind === 'OCI_ECR'
+              ? 'STATIC'
+              : undefined,
       },
     },
     mode: 'onChange',
