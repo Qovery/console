@@ -138,7 +138,7 @@ export function ServiceAlerting({ children }: PropsWithChildren) {
             keep your service under control.
           </p>
           <Button size="md" className="gap-1.5" onClick={createKeyAlertsModal}>
-            <Icon iconName="plus-large" iconStyle="regular" className="text-xs" />
+            <Icon iconName="plus-large" className="text-xs" />
             Create key alerts
           </Button>
         </div>
