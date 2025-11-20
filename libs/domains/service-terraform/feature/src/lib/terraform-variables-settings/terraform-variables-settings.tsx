@@ -78,7 +78,7 @@ type TerraformVariablesContextType = {
   removeVariable: (id: string) => void
   serializeForApi: () => { key?: string; value?: string; secret?: boolean }[]
 
-  // TFVARS-related
+  // tfVars-related
   fetchTfVarsFiles: () => void
   tfVarFiles: TfVarsFile[]
   setTfVarFiles: (tfVarFiles: TfVarsFile[]) => void
@@ -90,7 +90,7 @@ type TerraformVariablesContextType = {
   setNewPathErrorMessage: (newPathErrorMessage: string | undefined) => void
   setFileListOrder: (fileListOrder: string[]) => void
 
-  // Table-related
+  // Table-management-related
   selectedRows: string[]
   setSelectedRows: (selectedRows: string[]) => void
   deleteSelectedRows: () => void
@@ -230,10 +230,10 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     }
   }, [fetchTfVars, organizationId, repositoryConfig, newPath])
 
-  // Save list order
+  // Save tfVars file list order
   const [fileListOrder, setFileListOrder] = useState<string[]>([])
 
-  // Transform the response data and memoize based on content, not reference
+  // Transform the tfVars file response data and memoize based on content, not reference
   const tfVarFilesFromResponse = useMemo(() => {
     const serviceTfPaths = service?.terraform_variables_source.tf_var_file_paths
     return tfVarFilesResponse.map((file) => ({
@@ -242,7 +242,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     }))
   }, [tfVarFilesResponse, service?.terraform_variables_source.tf_var_file_paths])
 
-  // Allow manual override of file enabled state
+  // Allow manual override of tfVars file enabled state
   const [fileEnabledOverrides, setFileEnabledOverrides] = useState<Record<string, boolean>>({})
 
   const setTfVarFiles = useCallback((newFiles: TfVarsFile[]) => {
@@ -325,7 +325,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
 
   const [vars, setVars] = useState<UIVariable[]>([])
 
-  // Create a stable signature from the actual variable data (excluding IDs which change every render)
+  // Create a stable signature from the initial variable data (excluding IDs which change every render)
   const initialVarsSignature = useMemo(() => {
     return JSON.stringify(
       groupedInitialVars?.map((v) => ({
@@ -369,7 +369,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     })
   }, [])
 
-  // Delete the selected rows from the overrides array and clear the selected rows
+  // Delete the selected rows from the variables array and clear the selected rows
   const deleteSelectedRows = useCallback(() => {
     setVars((prev) => prev.filter((v) => !selectedRows.includes(v.id)))
     setSelectedRows([])
@@ -388,7 +388,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   )
 
   useEffect(() => {
-    // Only initialize vars when the actual variable data changes (not just reference changes)
+    // Only initialize vars when the initial variable data changes (not just reference changes)
     if (initialVars.length > 0 && initialVarsSignature !== previousSignatureRef.current) {
       setVars(initialVars)
       previousSignatureRef.current = initialVarsSignature
@@ -402,7 +402,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       value,
       source: CUSTOM_SOURCE,
       secret: false,
-      // no originals for new items (or explicitly undefined) — treated as changed
+      // no originals for new variables (or explicitly undefined) — treated as changed
       originalKey: undefined,
       originalValue: undefined,
       originalSecret: undefined,
