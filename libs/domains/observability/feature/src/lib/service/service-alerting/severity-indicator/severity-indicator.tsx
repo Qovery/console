@@ -20,8 +20,8 @@ function getSeverityConfig(severity: AlertSeverity): SeverityConfig {
     .with('LOW', () => ({
       label: 'Low',
       bars: 2,
-      textColor: 'text-neutral-600',
-      barColor: 'bg-neutral-600',
+      textColor: 'text-neutral-400',
+      barColor: 'bg-neutral-350',
       emptyBarColor: 'bg-neutral-200',
     }))
     .with('MEDIUM', () => ({
@@ -62,7 +62,7 @@ export function SeverityIndicator({ severity, className = '' }: SeverityIndicato
           />
         ))}
       </div>
-      <span className={`text-sm font-medium ${config.textColor}`}>{config.label}</span>
+      <span className={`relative -top-[0.5px] text-sm font-medium ${config.textColor}`}>{config.label}</span>
     </div>
   )
 }

@@ -1,8 +1,17 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
-import { AlertRulesApi, ClustersApi } from 'qovery-typescript-axios'
+import {
+  type AlertReceiverCreationRequest,
+  type AlertReceiverEditRequest,
+  AlertReceiversApi,
+  type AlertRuleCreationRequest,
+  type AlertRuleEditRequest,
+  AlertRulesApi,
+  ClustersApi,
+} from 'qovery-typescript-axios'
 
 const clusterApi = new ClustersApi()
 const alertRulesApi = new AlertRulesApi()
+const alertReceiversApi = new AlertReceiversApi()
 
 export const observability = createQueryKeys('observability', {
   containerName: ({
@@ -201,4 +210,44 @@ export const observability = createQueryKeys('observability', {
       return response.data.results
     },
   }),
+  alertReceivers: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await alertReceiversApi.getAlertReceivers(organizationId)
+      return response.data.results
+    },
+  }),
 })
+
+export const mutations = {
+  async createAlertRule({ payload }: { payload: AlertRuleCreationRequest }) {
+    const response = await alertRulesApi.createAlertRule(payload)
+    return response.data
+  },
+  async editAlertRule({ alertRuleId, payload }: { alertRuleId: string; payload: AlertRuleEditRequest }) {
+    const response = await alertRulesApi.editAlertRule(alertRuleId, payload)
+    return response.data
+  },
+  async deleteAlertRule({ alertRuleId }: { alertRuleId: string }) {
+    const response = await alertRulesApi.deleteAlertRule(alertRuleId)
+    return response.data
+  },
+  async createAlertReceiver({ payload }: { payload: AlertReceiverCreationRequest }) {
+    const response = await alertReceiversApi.createAlertReceiver(payload)
+    return response.data
+  },
+  async editAlertReceiver({
+    alertReceiverId,
+    payload,
+  }: {
+    alertReceiverId: string
+    payload: AlertReceiverEditRequest
+  }) {
+    const response = await alertReceiversApi.editAlertReceiver(alertReceiverId, payload)
+    return response.data
+  },
+  async deleteAlertReceiver({ alertReceiverId }: { alertReceiverId: string }) {
+    const response = await alertReceiversApi.deleteAlertReceiver(alertReceiverId)
+    return response.data
+  },
+}

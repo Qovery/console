@@ -5,6 +5,7 @@ import { ServiceAlerting } from './service-alerting'
 const mockUseParams = jest.fn()
 const mockUseAlertRules = jest.fn()
 const mockUseEnvironment = jest.fn()
+const mockUseService = jest.fn()
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -19,6 +20,10 @@ jest.mock('../../hooks/use-environment/use-environment', () => ({
   useEnvironment: (params: unknown) => mockUseEnvironment(params),
 }))
 
+jest.mock('@qovery/domains/services/feature', () => ({
+  useService: (params: unknown) => mockUseService(params),
+}))
+
 describe('ServiceAlerting', () => {
   const defaultEnvironment = {
     id: 'env-123',
@@ -26,6 +31,10 @@ describe('ServiceAlerting', () => {
     organization: {
       id: 'org-123',
       name: 'Test Org',
+    },
+    project: {
+      id: 'project-123',
+      name: 'Test Project',
     },
   }
 
@@ -44,11 +53,16 @@ describe('ServiceAlerting', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockUseParams.mockReturnValue({
+      organizationId: 'org-123',
+      projectId: 'project-123',
       environmentId: 'env-123',
       applicationId: 'app-123',
     })
     mockUseEnvironment.mockReturnValue({
       data: defaultEnvironment,
+    })
+    mockUseService.mockReturnValue({
+      data: { id: 'app-123', name: 'Test App' },
     })
     mockUseAlertRules.mockReturnValue({
       data: [],
@@ -56,25 +70,14 @@ describe('ServiceAlerting', () => {
     })
   })
 
-  it('should render null when environment is not loaded', () => {
+  it('should render loader when environment is not loaded', () => {
     mockUseEnvironment.mockReturnValue({
       data: undefined,
     })
 
     const { container } = renderWithProviders(<ServiceAlerting />)
 
-    expect(container).toBeEmptyDOMElement()
-  })
-
-  it('should render null when alert rules are not fetched', () => {
-    mockUseAlertRules.mockReturnValue({
-      data: [],
-      isFetched: false,
-    })
-
-    const { container } = renderWithProviders(<ServiceAlerting />)
-
-    expect(container).toBeEmptyDOMElement()
+    expect(container.querySelector('.animate-spin')).toBeInTheDocument()
   })
 
   it('should render empty state when no alerts exist', () => {

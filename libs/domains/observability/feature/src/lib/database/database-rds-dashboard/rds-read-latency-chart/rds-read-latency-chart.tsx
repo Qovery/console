@@ -89,7 +89,7 @@ export function RdsReadLatencyChart({
       data={chartData}
       isLoading={isLoading}
       isEmpty={chartData.length === 0}
-      label="Read Latency"
+      label="Read Latency (ms)"
       description="Read latency over time"
       descriptionRight={
         <>

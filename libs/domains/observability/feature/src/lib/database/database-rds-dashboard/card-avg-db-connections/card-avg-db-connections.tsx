@@ -40,24 +40,12 @@ export function CardAvgDbConnections({ clusterId, dbInstance }: CardAvgDbConnect
       })
     : '--'
 
-  let status: 'GREEN' | 'YELLOW' | 'RED' | undefined
-  if (isValid) {
-    if ((numValue as number) < 80) {
-      status = 'GREEN'
-    } else if ((numValue as number) < 150) {
-      status = 'YELLOW'
-    } else {
-      status = 'RED'
-    }
-  }
-
   return (
     <CardMetric
       title="Database Connections"
       value={formattedValue}
       valueDescription="Average active connections"
       description="Average number of active database connections over the selected time range."
-      status={status}
       statusDescription="Higher averages can indicate rising load or connection saturation."
       isLoading={isLoading}
     />

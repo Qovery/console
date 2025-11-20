@@ -1,6 +1,10 @@
 import clsx from 'clsx'
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
+import { useMemo } from 'react'
 import { Link as RouterLink, useLocation, useParams } from 'react-router-dom'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import {
+  ALERTING_URL,
   AUDIT_LOGS_URL,
   CLUSTERS_URL,
   CLUSTER_URL,
@@ -23,10 +27,18 @@ export interface NavigationProps {
 export function Navigation({ defaultOrganizationId, clusterNotification }: NavigationProps) {
   const { organizationId = defaultOrganizationId, clusterId = '', projectId } = useParams()
   const { pathname } = useLocation()
+  const isAlertingFeatureFlagEnabled = useFeatureFlagVariantKey('alerting')
+
+  const { data: clusters = [] } = useClusters({ organizationId })
+  const hasAlerting =
+    useMemo(() => {
+      return clusters.some((cluster) => cluster.metrics_parameters?.enabled)
+    }, [clusters]) && isAlertingFeatureFlagEnabled
 
   const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
   const matchOrganizationRoute = pathname.includes(ORGANIZATION_URL(organizationId) + ORGANIZATION_PROJECT_URL)
   const matchEventsRoute = pathname.includes(ORGANIZATION_URL(organizationId) + ORGANIZATION_AUDIT_LOGS_URL)
+  const matchAlertingRoute = pathname.includes(ALERTING_URL(organizationId))
   const matchSettingsRoute = pathname.includes(`${SETTINGS_URL(organizationId)}`)
   const matchClusterRoute =
     pathname.includes(CLUSTERS_URL(organizationId)) ||
@@ -111,6 +123,26 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
               </Link>
             </div>
           </Tooltip>
+          {hasAlerting && (
+            <Tooltip content="Alerting" side="right">
+              <div>
+                <Link
+                  as="button"
+                  color="neutral"
+                  variant="plain"
+                  className={clsx(
+                    'h-11 w-11 justify-center hover:!border-transparent hover:!bg-neutral-100 hover:!text-brand-500 dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
+                    {
+                      'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchAlertingRoute,
+                    }
+                  )}
+                  to={ALERTING_URL(organizationId)}
+                >
+                  <Icon iconName="bell" className="text-[18px]" />
+                </Link>
+              </div>
+            </Tooltip>
+          )}
         </div>
         <div>
           <div className="flex flex-col gap-3">

@@ -131,7 +131,7 @@ export function PageSettings() {
             element={<ErrorBoundary key={route.path}>{route.component}</ErrorBoundary>}
           />
         ))}
-        <Route path="*" element={<Navigate replace to={pathSettings + SETTINGS_GENERAL_URL} />} />
+        <Route path="*" element={<Navigate to={pathSettings + SETTINGS_GENERAL_URL} />} />
       </Routes>
     </Container>
   )
