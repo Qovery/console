@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`LabelCreateEditModal should match with snatpshot 1`] = `
 <body>
@@ -110,6 +110,7 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                       class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
                       data-testid="labels.0.key"
                       name="labels.0.key"
+                      spellcheck="false"
                       type="text"
                       value=""
                     />
@@ -130,6 +131,7 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                       class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
                       data-testid="labels.0.value"
                       name="labels.0.value"
+                      spellcheck="false"
                       type="text"
                       value=""
                     />
