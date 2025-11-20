@@ -16,7 +16,7 @@ import { buildEditServicePayload } from '@qovery/shared/util-services'
 const TerraformVariablesSettingsForm = () => {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { handleSubmit } = useFormContext<TerraformGeneralData>()
-  const { overrides, tfVarFiles } = useTerraformVariablesContext()
+  const { serializeForApi, tfVarFiles } = useTerraformVariablesContext()
   const { data: service } = useService({ serviceId: applicationId })
   const { mutate: replaceAllTerraformVariables, isLoading: isLoadingReplaceVariables } = useTerraformEditVariables()
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
@@ -39,11 +39,7 @@ const TerraformVariablesSettingsForm = () => {
     replaceAllTerraformVariables({
       serviceId: applicationId,
       payload: {
-        variables: overrides.map((override) => ({
-          key: override.key,
-          value: override.value,
-          secret: override.secret,
-        })),
+        variables: serializeForApi(),
       },
     })
     // Update the service with the order of tfvars files
@@ -52,7 +48,7 @@ const TerraformVariablesSettingsForm = () => {
       request: {
         terraform_variables_source: {
           ...service.terraform_variables_source,
-          tf_var_file_paths: [...tfVarFiles].reverse().map((file) => file.source),
+          tf_var_file_paths: [...tfVarFiles.filter((file) => file.enabled)].reverse().map((file) => file.source),
         },
       },
     })
