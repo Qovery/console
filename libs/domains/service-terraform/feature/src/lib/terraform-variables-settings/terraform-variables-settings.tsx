@@ -1068,7 +1068,7 @@ export const TerraformVariablesSettings = () => {
   return (
     <div className="space-y-10">
       <Section className="space-y-2">
-        <Heading level={1}>Configure Terrafrom Variables</Heading>
+        <Heading level={1}>Configure Terraform Variables</Heading>
         <p className="text-sm text-neutral-350">
           Select .tfvars files and configure variable values for your Terraform deployment
         </p>
