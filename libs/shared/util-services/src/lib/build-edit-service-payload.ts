@@ -101,6 +101,7 @@ function refactoTerraform({ service, request = {} }: terraformProps): TerraformR
         url: service.terraform_files_source?.git?.git_repository?.url ?? '',
         branch: service.terraform_files_source?.git?.git_repository?.branch ?? '',
         git_token_id: service.terraform_files_source?.git?.git_repository?.git_token_id ?? '',
+        root_path: service.terraform_files_source?.git?.git_repository?.root_path ?? '',
       },
     },
     timeout_sec: Number(request.timeout_sec ?? service.timeout_sec),
