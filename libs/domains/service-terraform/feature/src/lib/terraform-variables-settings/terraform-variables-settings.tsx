@@ -541,9 +541,9 @@ const TfvarItem = ({
           id={file.source}
           checked={file.enabled}
           onCheckedChange={onCheckedChange}
-          className="ml-1"
+          className="ml-1 cursor-pointer"
         />
-        <label className="flex flex-col gap-0.5 text-sm" htmlFor={file.source}>
+        <label className="flex cursor-pointer flex-col gap-0.5 text-sm" htmlFor={file.source}>
           <span className="text-neutral-400">{file.source}</span>
           <span className="text-xs text-neutral-350">{Object.keys(file.variables).length} variables</span>
         </label>
