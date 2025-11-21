@@ -1,17 +1,19 @@
 import { CardCVV, CardComponent, CardExpiry, CardNumber, Provider } from '@chargebee/chargebee-js-react-wrapper'
+import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
+import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { type FormEvent, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ModalCrud } from '@qovery/shared/ui'
 
 export interface AddCreditCardModalProps {
   closeModal: () => void
-  onSubmit: (cardRef: any) => Promise<void>
+  onSubmit: (cardRef: FieldContainer) => Promise<void>
   loading?: boolean
-  cbInstance: any
+  cbInstance: CbInstance | null
 }
 
 export function AddCreditCardModal(props: AddCreditCardModalProps) {
-  const cardRef = useRef<any>(null)
+  const cardRef = useRef<FieldContainer>(null)
   const [isReady, setIsReady] = useState(false)
 
   // ModalCrud requires react-hook-form context, even though we're not using it

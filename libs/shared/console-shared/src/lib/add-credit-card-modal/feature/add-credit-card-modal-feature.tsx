@@ -1,3 +1,5 @@
+import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
+import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { useEffect, useState } from 'react'
 import { useAddCreditCard } from '@qovery/domains/organizations/feature'
 import { useModal } from '@qovery/shared/ui'
@@ -11,7 +13,7 @@ export interface AddCreditCardModalFeatureProps {
 export function AddCreditCardModalFeature({ organizationId }: AddCreditCardModalFeatureProps) {
   const { closeModal } = useModal()
   const [loading, setLoading] = useState(false)
-  const [cbInstance, setCbInstance] = useState<any>(null)
+  const [cbInstance, setCbInstance] = useState<CbInstance | null>(null)
   const { mutateAsync: addCreditCard } = useAddCreditCard()
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export function AddCreditCardModalFeature({ organizationId }: AddCreditCardModal
     }
   }, [])
 
-  const onSubmit = async (cardRef: any) => {
+  const onSubmit = async (cardRef: FieldContainer) => {
     if (!cardRef || !organizationId) {
       return
     }
@@ -48,7 +50,7 @@ export function AddCreditCardModalFeature({ organizationId }: AddCreditCardModal
 
     try {
       // Tokenize card data using Chargebee component
-      const data = await cardRef.tokenize()
+      const data = await cardRef.tokenize({})
 
       if (!data.token) {
         throw new Error('No token returned from Chargebee')

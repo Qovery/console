@@ -3,8 +3,36 @@
  * Provides functions to load and interact with Chargebee.js for secure payment processing
  * Chargebee handles the payment gateway (Stripe) tokenization internally
  */
+import type { Component } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/base-types'
+import type { CbToken } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/types'
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { CHARGEBEE_PUBLISHABLE_KEY } from '@qovery/shared/util-node-env'
+
+/**
+ * Extended types for Chargebee field components
+ * These types extend the base Component interface for individual field usage
+ */
+interface ChargebeeFieldComponent {
+  mount(selector: string): Promise<void>
+  on(event: string, callback: () => void): void
+  destroy?(): void
+}
+
+/**
+ * Result from tokenizing Chargebee card fields
+ */
+interface ChargebeeTokenizeResult extends CbToken {
+  card?: {
+    last4: string
+    brand: string
+    expiry_month: number
+    expiry_year: number
+  }
+}
+
+type ChargebeeGlobal = {
+  init(config: { site: string; publishableKey: string }): CbInstance
+}
 
 const CHARGEBEE_SITE = 'qovery'
 
@@ -28,8 +56,7 @@ export function loadChargebee(): Promise<CbInstance> {
 
   chargebeeLoadPromise = new Promise((resolve, reject) => {
     // Check if Chargebee is already loaded globally
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const chargebeeGlobal = (window as any).Chargebee
+    const chargebeeGlobal = (window as Window & { Chargebee?: ChargebeeGlobal }).Chargebee
     if (chargebeeGlobal) {
       chargebeeInstance = chargebeeGlobal.init({
         site: CHARGEBEE_SITE,
@@ -40,8 +67,7 @@ export function loadChargebee(): Promise<CbInstance> {
         return
       }
       // Load components module for React wrapper
-      const instanceAsAny = chargebeeInstance as any
-      instanceAsAny
+      chargebeeInstance
         .load('components')
         .then(() => {
           resolve(chargebeeInstance!)
@@ -58,8 +84,7 @@ export function loadChargebee(): Promise<CbInstance> {
     script.async = true
 
     script.onload = () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const chargebeeGlobal = (window as any).Chargebee
+      const chargebeeGlobal = (window as Window & { Chargebee?: ChargebeeGlobal }).Chargebee
       if (!chargebeeGlobal) {
         reject(new Error('Chargebee.js failed to load'))
         return
@@ -74,8 +99,7 @@ export function loadChargebee(): Promise<CbInstance> {
         return
       }
       // Load components module for React wrapper
-      const instanceAsAny = chargebeeInstance as any
-      instanceAsAny
+      chargebeeInstance
         .load('components')
         .then(() => {
           resolve(chargebeeInstance!)
@@ -135,7 +159,14 @@ export async function createIndividualCardFields(
   expiryContainerId: string,
   cvvContainerId: string,
   currency = 'USD'
-): Promise<any> {
+): Promise<{
+  numberField: ChargebeeFieldComponent
+  expiryField: ChargebeeFieldComponent
+  cvvField: ChargebeeFieldComponent
+  tokenize: () => Promise<ChargebeeTokenizeResult>
+  on: (event: string, callback: () => void) => void
+  destroy: () => void
+}> {
   const cbInstance = await loadChargebee()
 
   if (!cbInstance) {
@@ -143,8 +174,7 @@ export async function createIndividualCardFields(
   }
 
   // Load the components module before creating components
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (cbInstance as any).load('components')
+  await cbInstance.load('components')
 
   // Common styles for all fields to match your design system
   const fieldStyles = {
@@ -170,31 +200,36 @@ export async function createIndividualCardFields(
   }
 
   // Create card number field
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const numberField = (cbInstance as any).createComponent('cardNumber', {
-    currency: currency,
-    styles: fieldStyles,
-    placeholder: '1234 1234 1234 1234',
-    locale: 'en',
-  })
+  // Note: 'cardNumber', 'cardExpiry', 'cardCvv' are valid component types at runtime
+  // but not defined in ComponentTypeRaw, so we use type assertion
+  const numberField = cbInstance.createComponent(
+    'cardNumber' as 'card',
+    {
+      currency: currency,
+      style: fieldStyles,
+      locale: 'en',
+    } as Parameters<CbInstance['createComponent']>[1]
+  ) as Component & ChargebeeFieldComponent
 
   // Create expiry field
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const expiryField = (cbInstance as any).createComponent('cardExpiry', {
-    currency: currency,
-    styles: fieldStyles,
-    placeholder: 'MM / YY',
-    locale: 'en',
-  })
+  const expiryField = cbInstance.createComponent(
+    'cardExpiry' as 'card',
+    {
+      currency: currency,
+      style: fieldStyles,
+      locale: 'en',
+    } as Parameters<CbInstance['createComponent']>[1]
+  ) as Component & ChargebeeFieldComponent
 
   // Create CVV field
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cvvField = (cbInstance as any).createComponent('cardCvv', {
-    currency: currency,
-    styles: fieldStyles,
-    placeholder: 'CVV',
-    locale: 'en',
-  })
+  const cvvField = cbInstance.createComponent(
+    'cardCvv' as 'card',
+    {
+      currency: currency,
+      style: fieldStyles,
+      locale: 'en',
+    } as Parameters<CbInstance['createComponent']>[1]
+  ) as Component & ChargebeeFieldComponent
 
   // Mount all fields
   await numberField.mount(`#${numberContainerId}`)
@@ -202,15 +237,13 @@ export async function createIndividualCardFields(
   await cvvField.mount(`#${cvvContainerId}`)
 
   // Create a combined component object for easier management
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const combinedComponent: any = {
+  const combinedComponent = {
     numberField,
     expiryField,
     cvvField,
     // Combined tokenize method - Chargebee requires calling tokenize on the instance, not individual fields
-    tokenize: () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (cbInstance as any).tokenize()
+    tokenize: (): Promise<ChargebeeTokenizeResult> => {
+      return cbInstance.tokenize(numberField)
     },
     // Combined ready event handler
     on: (event: string, callback: () => void) => {
@@ -246,7 +279,7 @@ export async function createIndividualCardFields(
  * @param currency - Currency code in ISO 4217 format (e.g., 'USD', 'EUR'). Defaults to 'USD'
  * @returns Promise with the card component instance
  */
-export async function createCardComponent(containerId: string, currency = 'USD'): Promise<any> {
+export async function createCardComponent(containerId: string, currency = 'USD'): Promise<Component> {
   const cbInstance = await loadChargebee()
 
   if (!cbInstance) {
@@ -255,16 +288,14 @@ export async function createCardComponent(containerId: string, currency = 'USD')
 
   // Load the components module before creating components
   // This is required by Chargebee.js v2 to avoid "modules not loaded" error
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (cbInstance as any).load('components')
+  await cbInstance.load('components')
 
   // Create a card component with currency configuration
   // Currency is required to determine which gateway configuration to use
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cardComponent = (cbInstance as any).createComponent('card', {
-    currency: currency,
+  const cardComponent = cbInstance.createComponent('card', {
+    currency,
     // Styling options to match the design system
-    styles: {
+    style: {
       base: {
         color: '#383E50', // neutral-400
         fontWeight: '400',
@@ -273,11 +304,6 @@ export async function createCardComponent(containerId: string, currency = 'USD')
         lineHeight: '1.25rem',
         letterSpacing: '0.0025em',
         fontSmoothing: 'antialiased',
-        '-webkit-font-smoothing': 'antialiased',
-        '-moz-osx-font-smoothing': 'grayscale',
-        // Remove default padding/margin
-        padding: '0',
-        margin: '0',
         '::placeholder': {
           color: '#67778E', // neutral-350
         },
@@ -297,15 +323,10 @@ export async function createCardComponent(containerId: string, currency = 'USD')
     },
     // Classes to style the container to match input design
     classes: {
-      base: 'chargebee-field-base',
       focus: 'chargebee-field-focus',
       invalid: 'chargebee-field-invalid',
       empty: 'chargebee-field-empty',
       complete: 'chargebee-field-complete',
-    },
-    // Layout configuration - set to stacked for vertical alignment
-    layout: {
-      type: 'stacked',
     },
     // Locale and placeholder options
     locale: 'en',
@@ -329,19 +350,26 @@ export async function createCardComponent(containerId: string, currency = 'USD')
  * @param cardComponent - The mounted Chargebee card component instance
  * @returns Promise with the tokenization result
  */
-export async function tokenizeCardComponent(cardComponent: any): Promise<ChargebeeTokenResult> {
+export async function tokenizeCardComponent(cardComponent: Component): Promise<ChargebeeTokenResult> {
   return new Promise((resolve, reject) => {
+    if (!cardComponent.tokenize) {
+      reject(new Error('Tokenize method not available on component'))
+      return
+    }
+
     cardComponent
       .tokenize()
-      .then((data: any) => {
+      .then((data: CbToken) => {
         if (data.token) {
+          // Type assertion for card data since CbToken doesn't include card details
+          const tokenData = data as ChargebeeTokenizeResult
           resolve({
-            token: data.token,
+            token: tokenData.token,
             card: {
-              lastFourDigits: data.card?.last4 || '',
-              brand: data.card?.brand || '',
-              expiryMonth: data.card?.expiry_month || 0,
-              expiryYear: data.card?.expiry_year || 0,
+              lastFourDigits: tokenData.card?.last4 || '',
+              brand: tokenData.card?.brand || '',
+              expiryMonth: tokenData.card?.expiry_month || 0,
+              expiryYear: tokenData.card?.expiry_year || 0,
             },
           })
         } else {
