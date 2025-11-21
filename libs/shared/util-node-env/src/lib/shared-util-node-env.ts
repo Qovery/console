@@ -38,4 +38,4 @@ export const NODE_ENV = process.env.NODE_ENV,
   ALGOLIA_APP_ID = process.env.NX_PUBLIC_ALGOLIA_APP_ID,
   ALGOLIA_API_KEY = process.env.NX_PUBLIC_ALGOLIA_API_KEY,
   CARGO_API_TOKEN = process.env.NX_PUBLIC_CARGO_API_TOKEN,
-  DEVOPS_COPILOT_API_BASE_URL = process.env.NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL || 'https://api-ai-dev.qovery.com'
+  DEVOPS_COPILOT_API_BASE_URL = process.env.NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL || 'https://p8080-z3fab61fb-z5591f6a0-gtw.z6d9f665a.rustrocks.space'
