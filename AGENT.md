@@ -199,7 +199,7 @@ When adding new utility functions:
 
 1. **Avoid `any` types**
 
-   - **Never use `any` type** - it defeats TypeScript's type safety
+   - **Avoid using `any` type** – it defeats TypeScript's type safety
    - Always use proper types from packages or define custom types
    - Use `unknown` for truly unknown types (then narrow with type guards)
    - Avoid `as any` casts - they bypass all type checking
