@@ -130,6 +130,7 @@ export function PageSettingsNetwork({
                     <ScalewayStaticIp
                       staticIpFeature={cluster?.features?.find(({ id }) => id === 'STATIC_IP')}
                       natGatewayFeature={cluster?.features?.find(({ id }) => id === 'NAT_GATEWAY')}
+                      production={cluster?.production || false}
                       disabled={!canEditFeatures}
                     />
                     {canEditFeatures && (

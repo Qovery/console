@@ -199,6 +199,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                 <ScalewayStaticIp
                   staticIpFeature={features.find(({ id }) => id === 'STATIC_IP')}
                   natGatewayFeature={features.find(({ id }) => id === 'NAT_GATEWAY')}
+                  production={isProduction || false}
                 />
               ) : (
                 <div className="mt-2 flex justify-center">
