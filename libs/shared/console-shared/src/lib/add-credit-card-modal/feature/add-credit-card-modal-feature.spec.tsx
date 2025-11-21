@@ -1,3 +1,5 @@
+import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
+import type { ReactNode } from 'react'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as chargebeeUtils from '../../chargebee/chargebee-utils'
@@ -14,8 +16,8 @@ const props: AddCreditCardModalFeatureProps = {
 
 // Mock Chargebee React wrapper
 jest.mock('@chargebee/chargebee-js-react-wrapper', () => ({
-  Provider: ({ children }: any) => children,
-  CardComponent: ({ onReady, children }: any) => {
+  Provider: ({ children }: { children: ReactNode }) => children,
+  CardComponent: ({ onReady, children }: { onReady?: () => void; children: ReactNode }) => {
     // Simulate ready event
     setTimeout(() => onReady?.(), 0)
     return <div data-testid="chargebee-card-component">{children}</div>
@@ -26,7 +28,7 @@ jest.mock('@chargebee/chargebee-js-react-wrapper', () => ({
 }))
 
 describe('AddCreditCardModalFeature', () => {
-  let mockChargebeeInstance: any
+  let mockChargebeeInstance: Pick<CbInstance, 'load'>
 
   beforeEach(() => {
     useAddCreditCardSpy.mockReturnValue({
