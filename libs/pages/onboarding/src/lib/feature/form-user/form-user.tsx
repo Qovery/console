@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { TypeOfUseEnum } from 'qovery-typescript-axios'
-import { type Dispatch, type SetStateAction, useContext } from 'react'
+import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
@@ -9,22 +9,6 @@ import { IconEnum } from '@qovery/shared/enums'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { Icon } from '@qovery/shared/ui'
 import { StepPersonalize } from '../../ui/step-personalize/step-personalize'
-import { ContextOnboarding } from '../container/container'
-
-const dataTypes = [
-  {
-    label: 'Personal',
-    value: TypeOfUseEnum.PERSONAL,
-  },
-  {
-    label: 'Work',
-    value: TypeOfUseEnum.WORK,
-  },
-  {
-    label: 'School',
-    value: TypeOfUseEnum.SCHOOL,
-  },
-]
 
 const dataCloudProviders = [
   {
@@ -54,12 +38,46 @@ const dataCloudProviders = [
   },
 ]
 
-export interface FormUserProps {
-  setStepCompany: Dispatch<SetStateAction<boolean>>
-}
+const dataQoveryUsage = [
+  {
+    label: 'Spin up testing/dev/QA environments',
+    value: 'i-want-to-easily-spin-up-testing-dev-qa-environments',
+  },
+  {
+    label: 'Simplify my deployment pipeline',
+    value: 'i-want-to-simplify-my-deployment-pipeline',
+  },
+  {
+    label: 'Automate my deployment pipeline',
+    value: 'i-want-to-automate-my-deployment-pipeline',
+  },
+  {
+    label: 'Deploy my new project',
+    value: 'i-want-to-easily-deploy-my-new-project',
+  },
+  {
+    label: 'Migrate my apps from Heroku',
+    value: 'i-want-to-easily-migrate-my-apps-from-heroku',
+  },
+  {
+    label: 'Find a better alternative to Heroku',
+    value: 'i-want-to-find-a-better-alternative-to-heroku',
+  },
+  {
+    label: 'Spin up and manage my Kubernetes cluster',
+    value: 'i-want-to-easily-spin-up-and-manage-my-kubernetes-cluster',
+  },
+  {
+    label: 'Deploy my apps on my Kubernetes cluster',
+    value: 'i-want-to-easily-deploy-my-apps-on-my-kubernetes-cluster',
+  },
+  {
+    label: 'Other',
+    value: 'other',
+  },
+]
 
-export function FormUser(props: FormUserProps) {
-  const { setStepCompany } = props
+export function FormUser() {
   const navigate = useNavigate()
   const { user } = useAuth0()
   const { authLogout } = useAuth()
@@ -71,6 +89,9 @@ export function FormUser(props: FormUserProps) {
     first_name: string
     last_name: string
     user_email: string
+    company_name?: string
+    qovery_usage: string
+    qovery_usage_other?: string
     type_of_use: TypeOfUseEnum
     infrastructure_hosting: string
   }>({
@@ -79,55 +100,45 @@ export function FormUser(props: FormUserProps) {
       first_name: userSignUp?.first_name ? userSignUp.first_name : user?.name?.split(' ')[0],
       last_name: userSignUp?.last_name ? userSignUp.last_name : user?.name?.split(' ')[1],
       user_email: userSignUp?.user_email ? userSignUp.user_email : user?.email,
+      company_name: userSignUp?.company_name ?? undefined,
+      qovery_usage: userSignUp?.qovery_usage ?? undefined,
+      qovery_usage_other: userSignUp?.qovery_usage_other ?? undefined,
       type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.PERSONAL,
       infrastructure_hosting: userSignUp?.infrastructure_hosting ?? 'AWS',
     },
   })
-  const { organization_name, project_name, setContextValue } = useContext(ContextOnboarding)
+
+  useEffect(() => {
+    // Always set type_of_use to WORK since onboarding now targets company users only.
+    methods.register('type_of_use')
+    methods.setValue('type_of_use', userSignUp?.type_of_use ?? TypeOfUseEnum.WORK)
+  }, [methods, userSignUp?.type_of_use])
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    if (data) {
-      const checkIfCompany = data['type_of_use'] === TypeOfUseEnum.WORK
+    if (!data) return
 
-      if (checkIfCompany) {
-        setStepCompany(true)
+    const normalizedData = { ...data }
 
-        await createUserSignUp({
-          qovery_usage: userSignUp?.qovery_usage ?? '',
-          ...userSignUp,
-          ...data,
-        })
-      } else {
-        navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
+    if (normalizedData.qovery_usage !== 'other') {
+      delete normalizedData.qovery_usage_other
+    }
 
-        const resetCompany = {
-          company_name: undefined,
-          company_size: undefined,
-          user_role: undefined,
-        }
-
-        setContextValue &&
-          setContextValue({
-            organization_name,
-            project_name,
-            admin_email: data['user_email'],
-          })
-
-        await createUserSignUp({
-          qovery_usage: userSignUp?.qovery_usage ?? '',
-          ...userSignUp,
-          ...data,
-          ...resetCompany,
-        })
-      }
+    try {
+      await createUserSignUp({
+        ...userSignUp,
+        ...normalizedData,
+      })
+      navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
+    } catch (error) {
+      console.error(error)
     }
   })
 
   return (
     <FormProvider {...methods}>
       <StepPersonalize
-        dataTypes={dataTypes}
         dataCloudProviders={dataCloudProviders}
+        dataQoveryUsage={dataQoveryUsage}
         onSubmit={onSubmit}
         authLogout={authLogout}
       />

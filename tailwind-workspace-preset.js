@@ -164,6 +164,7 @@ module.exports = {
           'linear-gradient(180deg,hsla(0,0%,100%,0) 40%,hsla(0,0%,100%,0)),radial-gradient(farthest-side at 50% 0,rgba(0,0,0,.13),transparent)',
         'scroll-shadow-up':
           'radial-gradient(farthest-side at 50% 0,rgba(0,0,0,.13),transparent),linear-gradient(180deg,hsla(0,0%,100%,0) 40%,hsla(0,0%,100%,0))',
+        'mesh-gradient': "url('/assets/images/mesh-gradient-light.svg')",
       },
       colors: {
         brand: colorsIndigo,

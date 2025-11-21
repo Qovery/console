@@ -1,95 +1,153 @@
-import { useForm } from 'react-hook-form'
+import { PlanEnum } from 'qovery-typescript-axios'
+import { useContext, useEffect, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
-import { type Value } from '@qovery/shared/interfaces'
-import { ONBOARDING_PROJECT_URL, ONBOARDING_THANKS_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { type CreditCardFormValues } from '@qovery/shared/console-shared'
+import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { ExternalLink, Icon, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useAuth } from '@qovery/shared/auth'
+import PlanCard from '../../ui/plan-card/plan-card'
 import { StepMore } from '../../ui/step-more/step-more'
+import { ContextOnboarding } from '../container/container'
 
-const dataQuestions: Value[] = [
+const PLANS = [
   {
-    label: 'Spin up testing/dev/QA environments',
-    value: 'i-want-to-easily-spin-up-testing-dev-qa-environments',
+    name: PlanEnum.USER_2025,
+    title: 'User plan',
+    text: 'Perfect for small team',
+    price: 299,
+    list: [
+      'Deploy on your own cloud',
+      'Include 2 users',
+      'Include 1 managed cluster',
+      'Include 1,000 deployment minutes',
+      'Standard support',
+    ],
   },
   {
-    label: 'Simplify my deployment pipeline',
-    value: 'i-want-to-simplify-my-deployment-pipeline',
+    name: PlanEnum.TEAM_2025,
+    title: 'Team plan',
+    text: 'Ideal for teams',
+    price: 899,
+    list: [
+      'Deploy on your own cloud',
+      'Include 10 users',
+      'Include 2 managed cluster',
+      'Include 5,000 deployment minutes',
+      'Standard support',
+    ],
   },
   {
-    label: 'Automate my deployment pipeline',
-    value: 'i-want-to-automate-my-deployment-pipeline',
+    name: PlanEnum.BUSINESS_2025,
+    title: 'Business plan',
+    text: 'For growing businesses',
+    price: 2099,
+    list: [
+      'Deploy on your own cloud',
+      'Include 30 users',
+      'Include 3 managed cluster',
+      'Include 10,000 deployment minutes',
+      'Business support with SLAs',
+    ],
   },
   {
-    label: 'Deploy my new project',
-    value: 'i-want-to-easily-deploy-my-new-project',
-  },
-  {
-    label: 'Migrate my apps from Heroku',
-    value: 'i-want-to-easily-migrate-my-apps-from-heroku',
-  },
-  {
-    label: 'Find a better alternative to Heroku',
-    value: 'i-want-to-find-a-better-alternative-to-heroku',
-  },
-  {
-    label: 'Spin up and manage my Kubernetes cluster',
-    value: 'i-want-to-easily-spin-up-and-manage-my-kubernetes-cluster',
-  },
-  {
-    label: 'Deploy my apps on my Kubernetes cluster',
-    value: 'i-want-to-easily-deploy-my-apps-on-my-kubernetes-cluster',
-  },
-  {
-    label: 'Other',
-    value: 'other',
+    name: PlanEnum.ENTERPRISE_2025,
+    title: 'Enterprise plan',
+    text: 'Tailored for your organization',
+    price: 'custom' as const,
+    list: ['All BUSINESS features', 'Deploy on-premise or private cloud', 'Custom limits', 'Custom support'],
   },
 ]
 
 export function OnboardingMore() {
-  useDocumentTitle('Onboarding Tell us more - Qovery')
+  useDocumentTitle('Onboarding Free trial activation - Qovery')
 
   const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
+  const { openModal, closeModal } = useModal()
+  const { selectedPlan, setContextValue } = useContext(ContextOnboarding)
+  const { authLogout } = useAuth()
+  const { data: organizations = [] } = useOrganizations()
+  const [backButton, setBackButton] = useState<boolean>(false)
 
-  const { handleSubmit, control, watch } = useForm<{
-    user_questions?: string
-    qovery_usage: string
-    qovery_usage_other?: string
-    where_to_deploy?: string
-  }>({
+  const methods = useForm<CreditCardFormValues>({
+    mode: 'onChange',
     defaultValues: {
-      user_questions: userSignUp?.user_questions ?? undefined,
-      qovery_usage: userSignUp?.qovery_usage,
-      qovery_usage_other: userSignUp?.qovery_usage_other ?? undefined,
-      where_to_deploy: userSignUp?.qovery_usage_other ?? undefined,
+      card_number: '',
+      cvc: '',
+      expiry: '',
     },
   })
+  const { handleSubmit, control } = methods
   const navigate = useNavigate()
-  const displayQoveryUsageOther = watch('qovery_usage') === 'other'
+  const plan = PLANS.find((plan) => plan.name === selectedPlan) ?? PLANS[0]
+  const selectablePlans = PLANS.filter((planOption) => planOption.name !== PlanEnum.ENTERPRISE_2025)
+
+  useEffect(() => {
+    async function fetchOrganizations() {
+      if (organizations.length === 0) {
+        setBackButton(false)
+      } else {
+        setBackButton(true)
+      }
+    }
+    fetchOrganizations()
+  }, [organizations])
+
+  const handlePlanSelect = (planName: PlanEnum) => {
+    setContextValue?.({ selectedPlan: planName })
+    closeModal()
+  }
+
+  const openPlanSelectionModal = () => {
+    openModal({
+      content: (
+        <div className="flex h-full flex-col p-8">
+          <div>
+            <h3 className="mb-1 text-lg text-neutral-400">Change your plan</h3>
+            <p className="mb-6 text-sm text-neutral-350">Choose the plan that suits you the best.</p>
+          </div>
+          <div className="mb-8 flex flex-col gap-5 md:flex-row">
+            {selectablePlans.map((planOption) => (
+              <div key={planOption.name} className="flex-1">
+                <PlanCard {...planOption} loading={''} onClick={() => handlePlanSelect(planOption.name)} />
+              </div>
+            ))}
+          </div>
+          <div className="mt-auto flex items-center justify-between">
+            <p className="text-sm text-neutral-400">
+              You have specific needs? Book a demo with us and unlock a trial that truly suits you.
+            </p>
+            <ExternalLink
+              href="https://qovery.com/contact"
+              color="brand"
+              withIcon={false}
+              className="gap-1 text-sm font-semibold"
+            >
+              Book a demo
+              <Icon name="icon-solid-chevron-right" className="text-xs" />
+            </ExternalLink>
+          </div>
+        </div>
+      ),
+      options: { fullScreen: true },
+    })
+  }
 
   const onSubmit = handleSubmit(async (data) => {
     if (!userSignUp) return
 
     if (data) {
-      // reset qovery usage other
-      if (data['qovery_usage'] !== 'other') {
-        delete data['qovery_usage_other']
-      }
-
       try {
         await createUserSignUp({
           ...userSignUp,
           ...data,
         })
-        const { data: newUserSignUp } = await refetchUserSignUp()
-
-        if (newUserSignUp?.dx_auth) {
-          navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
-        } else if (!userSignUp?.dx_auth) {
-          // redirect to Thanks page if user not authorized by the dx team
-          // dx_auth must be updated in the bdd
-          navigate(`${ONBOARDING_URL}${ONBOARDING_THANKS_URL}`)
-        }
+        await refetchUserSignUp()
+        navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
       } catch (error) {
         console.error(error)
       }
@@ -97,12 +155,16 @@ export function OnboardingMore() {
   })
 
   return (
-    <StepMore
-      dataQuestions={dataQuestions}
-      control={control}
-      onSubmit={onSubmit}
-      displayQoveryUsageOther={displayQoveryUsageOther}
-    />
+    <FormProvider {...methods}>
+      <StepMore
+        control={control}
+        onSubmit={onSubmit}
+        selectedPlan={plan}
+        onChangePlan={openPlanSelectionModal}
+        authLogout={authLogout}
+        backButton={backButton}
+      />
+    </FormProvider>
   )
 }
 

@@ -4,14 +4,12 @@ import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { Container } from './feature/container/container'
-import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from './router/router'
+import { ROUTER_ONBOARDING } from './router/router'
 
 export function PageOnboarding() {
   const navigate = useNavigate()
   const params = useParams()
   const { refetch: refetchUserSignUp } = useUserSignUp({ enabled: false })
-
-  const firstStep = !!ROUTER_ONBOARDING_STEP_1.find((currentRoute) => currentRoute.path === `/${params['*']}`)
 
   useEffect(() => {
     async function fetchData() {
@@ -31,12 +29,9 @@ export function PageOnboarding() {
   }
 
   return (
-    <Container firstStep={firstStep} params={params}>
+    <Container params={params}>
       <Routes>
-        {ROUTER_ONBOARDING_STEP_1.map((route) => (
-          <Route key={route.path} path={route.path} element={route.component} />
-        ))}
-        {ROUTER_ONBOARDING_STEP_2.map((route) => (
+        {ROUTER_ONBOARDING.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
         ))}
       </Routes>
