@@ -79,7 +79,10 @@ export function useRedirectIfLogged() {
           return
         }
 
-        if (currentOrganization && currentProject) {
+        // Only honor cached org/project IDs when the freshly fetched organizations still contain the stored org.
+        // This prevents redirecting to deleted organizations (e.g. after wiping the user's last org).
+        const storedOrgExists = organizations.some((organization) => organization.id === currentOrganization)
+        if (currentOrganization && currentProject && storedOrgExists) {
           navigate(OVERVIEW_URL(currentOrganization, currentProject))
           return
         }
