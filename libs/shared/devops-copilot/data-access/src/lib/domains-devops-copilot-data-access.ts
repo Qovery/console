@@ -38,8 +38,6 @@ export const devopsCopilot = createQueryKeys('devopsCopilot', {
   recurringTasks: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId, 'recurring-tasks'],
     async queryFn() {
-      console.log(organizationId)
-
       const response = await devopsCopilotAxios.get(`/organization/${organizationId}/recurring-tasks`)
       console.log(response)
 
