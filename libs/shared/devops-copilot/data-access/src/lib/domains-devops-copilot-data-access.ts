@@ -106,13 +106,16 @@ export const mutations = {
     userSub,
     organizationId,
     message,
+    readOnly = true,
   }: {
     userSub: string
     organizationId: string
     message: string
+    readOnly?: boolean
   }) => {
     const response = await devopsCopilotAxios.post(`/owner/${userSub}/organization/${organizationId}/thread`, {
       title: message.substring(0, 50),
+      read_only: readOnly,
     })
 
     return response
@@ -143,6 +146,12 @@ export const mutations = {
 
   toggleRecurringTask: async ({ organizationId, taskId }: { organizationId: string; taskId: string }) => {
     const response = await devopsCopilotAxios.post(`/organization/${organizationId}/recurring-tasks/${taskId}/toggle`)
+
+    return response.data
+  },
+
+  deleteRecurringTask: async ({ organizationId, taskId }: { organizationId: string; taskId: string }) => {
+    const response = await devopsCopilotAxios.delete(`/organization/${organizationId}/recurring-tasks/${taskId}`)
 
     return response.data
   },

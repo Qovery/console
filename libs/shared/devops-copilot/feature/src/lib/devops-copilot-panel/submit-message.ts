@@ -13,6 +13,7 @@ type Context = {
         execution_id?: string
       }
     | undefined
+  readOnly?: boolean
 }
 
 export const submitMessage = async (
@@ -34,7 +35,12 @@ export const submitMessage = async (
     // First, create a new thread
     let _threadId = threadId
     if (!threadId) {
-      const response = await mutations.addThread({ userSub, organizationId, message })
+      const response = await mutations.addThread({
+        userSub,
+        organizationId,
+        message,
+        readOnly: context?.readOnly ?? true,
+      })
       const responseJson = response.data
       _threadId = responseJson.id
     }

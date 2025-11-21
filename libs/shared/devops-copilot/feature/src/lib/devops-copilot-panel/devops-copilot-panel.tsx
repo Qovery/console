@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import mermaid from 'mermaid'
 import { type ComponentProps, forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
-import { AnimatedGradientText, Button, DropdownMenu, Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
+import { AnimatedGradientText, Button, Callout, DropdownMenu, Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -56,6 +56,7 @@ const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, stop, load
       <div className="flex items-end justify-end p-2">
         <Tooltip content={loading ? 'Stop generation' : 'Send now'} delayDuration={400} classNameContent="z-10">
           <Button
+            disabled={props.disabled}
             type="button"
             variant="surface"
             radius="full"
@@ -167,7 +168,8 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     organizationId: context?.organization?.id ?? '',
   })
 
-  const isReadOnly = readOnlyData?.org_config?.read_only ?? true
+  const [isReadOnly, setIsReadOnly] = useState(true)
+  const isCopilotEnabled = readOnlyData?.org_config?.enabled ?? false
 
   const [plan, setPlan] = useState<
     {
@@ -314,7 +316,9 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
           trimmedInputMessage,
           token,
           threadId,
-          withContext ? context : { organization: context.organization },
+          withContext
+            ? { ...context, readOnly: isReadOnly }
+            : { organization: context.organization, readOnly: isReadOnly },
           (chunk) => {
             try {
               const parsed = JSON.parse(chunk)
@@ -659,14 +663,61 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
           )}
           <div className="flex h-full w-full flex-col justify-between">
             <div className="flex animate-[fadein_0.22s_ease-in-out_forwards] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 opacity-0 dark:border-neutral-500">
-              <div className="flex items-center font-bold">
-                <span className="text-sm text-neutral-500 dark:text-white">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-neutral-500 dark:text-white">
                   {!threadId || threads.length === 0
                     ? 'New conversation'
                     : currentThreadHistoryTitle.length >= 45
                       ? currentThreadHistoryTitle + '...'
                       : currentThreadHistoryTitle}
                 </span>
+                {readOnlyData?.org_config?.read_only === false && (
+                  <>
+                    <div className="mx-1 h-5 w-[1px] bg-neutral-200 dark:bg-neutral-500"></div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-neutral-400 dark:text-neutral-250">
+                        {isReadOnly ? 'Read-only' : 'Read-write'}
+                      </span>
+                      <Tooltip
+                        content={
+                          thread.length > 0
+                            ? 'Mode cannot be changed after the conversation has started'
+                            : isReadOnly
+                              ? 'Enable read-write mode'
+                              : 'Disable read-write mode'
+                        }
+                        delayDuration={400}
+                        classNameContent="z-10"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => thread.length === 0 && setIsReadOnly(!isReadOnly)}
+                          disabled={thread.length > 0}
+                          className={clsx(
+                            'relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
+                            {
+                              'bg-orange-500': !isReadOnly && thread.length === 0,
+                              'bg-orange-300': !isReadOnly && thread.length > 0,
+                              'bg-neutral-300 dark:bg-neutral-400': isReadOnly && thread.length === 0,
+                              'bg-neutral-200 dark:bg-neutral-500': isReadOnly && thread.length > 0,
+                              'cursor-not-allowed opacity-60': thread.length > 0,
+                            }
+                          )}
+                        >
+                          <span
+                            className={clsx(
+                              'inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform',
+                              {
+                                'translate-x-[18px]': !isReadOnly,
+                                'translate-x-0.5': isReadOnly,
+                              }
+                            )}
+                          />
+                        </button>
+                      </Tooltip>
+                    </div>
+                  </>
+                )}
               </div>
               <div className="flex items-center gap-1">
                 <DropdownMenu.Root>
@@ -768,11 +819,46 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
               </div>
             </div>
             <div className="flex grow flex-col">
+              {!isReadOnly && (
+                <div className="animate-[fadein_0.22s_ease-in-out_forwards] px-4 pb-2 pt-4 opacity-0">
+                  <Callout.Root color="yellow">
+                    <Callout.Icon>
+                      <Icon iconName="triangle-exclamation" />
+                    </Callout.Icon>
+                    <Callout.Text>
+                      <Callout.TextHeading>Read-write mode enabled</Callout.TextHeading>
+                      <Callout.TextDescription>
+                        The copilot can perform actions on your infrastructure.
+                        {thread.length == 0 && ' Mode cannot be changed after the conversation has started.'}
+                      </Callout.TextDescription>
+                    </Callout.Text>
+                  </Callout.Root>
+                </div>
+              )}
               {thread.length === 0 && (
                 <span className="mx-auto w-full max-w-[430px] animate-[fadein_0.22s_ease-in-out_forwards_0.05s] py-4 text-center text-ssm opacity-0">
-                  I'm your <span className="font-medium text-brand-500">DevOps AI Copilot</span> - I can help you to fix
-                  your deployments, optimize your infrastructure costs, audit your security and do everything you would
-                  expect from a complete DevOps Engineering team.
+                  {isCopilotEnabled ? (
+                    <>
+                      I'm your <span className="font-medium text-brand-500">DevOps AI Copilot</span> - I can help you to
+                      fix your deployments, optimize your infrastructure costs, audit your security and do everything
+                      you would expect from a complete DevOps Engineering team.
+                    </>
+                  ) : (
+                    <>
+                      I'm your <span className="font-medium text-brand-500">DevOps AI Copilot</span> - I can help you to
+                      fix your deployments, optimize your infrastructure costs, audit your security and do everything
+                      you would expect from a complete DevOps Engineering team.<br></br>
+                      <br></br>
+                      I'm not enabled yet,{' '}
+                      <a
+                        href={`/organization/${context?.organization?.id}/settings/ai-copilot`}
+                        className="font-medium text-brand-500 underline"
+                      >
+                        configure me in your organization settings
+                      </a>{' '}
+                      to get started.
+                    </>
+                  )}
                 </span>
               )}
               <ScrollArea
@@ -784,7 +870,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   })
                 )}
               >
-                {thread.length === 0 && docLinks.length > 0 && expand && (
+                {thread.length === 0 && docLinks.length > 0 && expand && isCopilotEnabled && (
                   <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col gap-2 text-center">
                     <Icon
                       iconName="sparkles"
@@ -1055,14 +1141,14 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     </div>
                   )}
                   <Input
-                    disabled={appStatus?.status !== 'OPERATIONAL'}
+                    disabled={appStatus?.status !== 'OPERATIONAL' || !isCopilotEnabled}
                     ref={inputRef}
                     value={inputMessage}
                     rows={1}
                     onChange={(e) => setInputMessage(e.target.value)}
                     onClick={handleSendMessage}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey && !isLoading) {
+                      if (e.key === 'Enter' && !e.shiftKey && !isLoading && isCopilotEnabled) {
                         e.preventDefault()
                         handleSendMessage()
                       } else {

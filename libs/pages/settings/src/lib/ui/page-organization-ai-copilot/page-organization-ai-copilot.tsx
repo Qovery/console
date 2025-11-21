@@ -2,7 +2,18 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { type Organization } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { devopsCopilot, mutations } from '@qovery/shared/devops-copilot/data-access'
-import { Button, Checkbox, Heading, Icon, IconAwesomeEnum, InputSelect, LoaderSpinner, Section, ToastEnum, toast } from '@qovery/shared/ui'
+import {
+  Button,
+  Checkbox,
+  Heading,
+  Icon,
+  IconAwesomeEnum,
+  InputSelect,
+  LoaderSpinner,
+  Section,
+  ToastEnum,
+  toast,
+} from '@qovery/shared/ui'
 
 export interface PageOrganizationAICopilotProps {
   organization?: Organization
@@ -57,6 +68,27 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
       queryClient.invalidateQueries({
         queryKey: devopsCopilot.recurringTasks({ organizationId: organization?.id ?? '' }).queryKey,
       })
+      toast(ToastEnum.SUCCESS, 'Task status updated successfully')
+    },
+    onError: () => {
+      toast(ToastEnum.ERROR, 'Failed to update task status', 'Please try again later')
+    },
+  })
+
+  const deleteTaskMutation = useMutation({
+    mutationFn: ({ taskId }: { taskId: string }) =>
+      mutations.deleteRecurringTask({
+        organizationId: organization?.id ?? '',
+        taskId,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: devopsCopilot.recurringTasks({ organizationId: organization?.id ?? '' }).queryKey,
+      })
+      toast(ToastEnum.SUCCESS, 'Task deleted successfully')
+    },
+    onError: () => {
+      toast(ToastEnum.ERROR, 'Failed to delete task', 'Please try again later')
     },
   })
 
@@ -144,12 +176,7 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
           <div className="space-y-6">
             <div className="space-y-3">
               <Heading className="text-neutral-400">AI Copilot</Heading>
-              <p className="text-xs text-neutral-400">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-                ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat nulla pariatur.
-              </p>
+              <p className="text-xs text-neutral-400">Configure your Copilot</p>
             </div>
             <div className="flex items-center justify-center p-12">
               <LoaderSpinner className="w-8" />
@@ -166,12 +193,7 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
         <div className="space-y-6">
           <div className="space-y-3">
             <Heading className="text-neutral-400">AI Copilot</Heading>
-            <p className="text-xs text-neutral-400">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-              ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-              fugiat nulla pariatur.
-            </p>
+            <p className="text-xs text-neutral-400">Configure your Copilot</p>
           </div>
 
           {!isEnabled && (
@@ -189,9 +211,7 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
                   </div>
 
                   <div className="max-h-80 overflow-y-auto rounded border border-neutral-250 bg-white p-4">
-                    <h3 className="mb-3 text-sm font-semibold text-neutral-400">
-                      AI Copilot Terms of Service and Data Processing Agreement
-                    </h3>
+                    <h3 className="mb-3 text-sm font-semibold text-neutral-400">AI Copilot Terms of Service</h3>
                     <div className="space-y-3 text-xs text-neutral-350">
                       <div>
                         <p className="mb-1 font-medium text-neutral-400">1. Data Collection and Usage</p>
@@ -294,7 +314,7 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
                       className="mt-0.5 flex-shrink-0"
                     />
                     <span className="text-sm text-neutral-400">
-                      I have read and accept the AI Copilot Terms of Service and Data Processing Agreement
+                      I have read and accept the AI Copilot Terms of Service
                     </span>
                   </label>
 
@@ -349,12 +369,7 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
 
               {hasUnsavedChanges && (
                 <div className="flex items-center gap-3">
-                  <Button
-                    size="md"
-                    color="brand"
-                    onClick={handleSaveMode}
-                    loading={updateConfigMutation.isLoading}
-                  >
+                  <Button size="md" color="brand" onClick={handleSaveMode} loading={updateConfigMutation.isLoading}>
                     <Icon iconName="check" className="mr-2" />
                     Save changes
                   </Button>
@@ -421,6 +436,22 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
                       >
                         <Icon iconName={task.enabled ? 'pause' : 'play'} className="mr-1" />
                         {task.enabled ? 'Pause' : 'Resume'}
+                      </Button>
+                      <Button
+                        size="sm"
+                        color="red"
+                        variant="outline"
+                        onClick={() => {
+                          if (
+                            window.confirm('Are you sure you want to delete this task? This action cannot be undone.')
+                          ) {
+                            deleteTaskMutation.mutate({ taskId: task.id })
+                          }
+                        }}
+                        loading={deleteTaskMutation.isLoading}
+                      >
+                        <Icon iconName="trash" className="mr-1" />
+                        Delete
                       </Button>
                       <span
                         className={`rounded px-2 py-1 text-xs font-medium ${
