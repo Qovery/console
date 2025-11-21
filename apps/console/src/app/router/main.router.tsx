@@ -17,11 +17,12 @@ import {
   PageServices,
   PageTerraformCreateFeature,
 } from '@qovery/pages/services'
-import { PageSettings } from '@qovery/pages/settings'
+import { PageAlerting, PageSettings } from '@qovery/pages/settings'
 import { PageUser } from '@qovery/pages/user'
 import { AcceptInvitationFeature, GithubApplicationCallbackFeature } from '@qovery/shared/console-shared'
 import {
   ACCEPT_INVITATION_URL,
+  ALERTING_URL,
   APPLICATION_URL,
   AUDIT_LOGS_URL,
   CLUSTERS_CREATION_URL,
@@ -238,5 +239,12 @@ export const ROUTER: RouterProps[] = [
     layout: true,
     darkMode: true,
     spotlight: false,
+  },
+  {
+    path: `${ALERTING_URL()}/*`,
+    component: <PageAlerting />,
+    protected: true,
+    layout: true,
+    topBar: true,
   },
 ]

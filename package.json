@@ -103,6 +103,7 @@
   "devDependencies": {
     "@babel/core": "^7.18.13",
     "@babel/preset-react": "^7.14.5",
+    "@chargebee/chargebee-js-react-wrapper": "^0.6.9",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@juggle/resize-observer": "^3.4.0",
     "@nx/cypress": "21.6.3",

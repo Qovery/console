@@ -43,7 +43,7 @@ export interface InputSelectProps {
   autoFocus?: boolean
   placeholder?: string
   menuPlacement?: MenuPlacement
-  filterOption?: 'fuzzy' | 'startsWith' | ((option: any, inputValue: string) => boolean)
+  filterOption?: 'fuzzy' | 'startsWith' | ((option: Value, inputValue: string) => boolean)
   isCreatable?: boolean
   isLoading?: boolean
   minInputLength?: number

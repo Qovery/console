@@ -1,4 +1,6 @@
+import { NotificationChannelOverview } from '@qovery/domains/observability/feature'
 import {
+  ALERTING_NOTIFICATION_CHANNEL_URL,
   type Route,
   SETTINGS_API_URL,
   SETTINGS_BILLING_SUMMARY_URL,
@@ -99,5 +101,12 @@ export const ROUTER_SETTINGS: Route[] = [
   {
     path: SETTINGS_PROJECT_URL() + SETTINGS_PROJECT_DANGER_ZONE_URL,
     component: <PageProjectDangerZoneFeature />,
+  },
+]
+
+export const ROUTER_ALERTING: Route[] = [
+  {
+    path: ALERTING_NOTIFICATION_CHANNEL_URL,
+    component: <NotificationChannelOverview />,
   },
 ]

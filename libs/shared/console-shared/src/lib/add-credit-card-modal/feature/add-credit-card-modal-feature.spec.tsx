@@ -1,20 +1,44 @@
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import * as chargebeeUtils from '../../chargebee/chargebee-utils'
 import AddCreditCardModalFeature, { type AddCreditCardModalFeatureProps } from './add-credit-card-modal-feature'
 
 import SpyInstance = jest.SpyInstance
 
 const useAddCreditCardSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useAddCreditCard')
+const loadChargebeeSpy: SpyInstance = jest.spyOn(chargebeeUtils, 'loadChargebee')
 
 const props: AddCreditCardModalFeatureProps = {
   organizationId: '1',
 }
 
+// Mock Chargebee React wrapper
+jest.mock('@chargebee/chargebee-js-react-wrapper', () => ({
+  Provider: ({ children }: any) => children,
+  CardComponent: ({ onReady, children }: any) => {
+    // Simulate ready event
+    setTimeout(() => onReady?.(), 0)
+    return <div data-testid="chargebee-card-component">{children}</div>
+  },
+  CardNumber: () => <div data-testid="card-number-field" />,
+  CardExpiry: () => <div data-testid="card-expiry-field" />,
+  CardCVV: () => <div data-testid="card-cvv-field" />,
+}))
+
 describe('AddCreditCardModalFeature', () => {
+  let mockChargebeeInstance: any
+
   beforeEach(() => {
     useAddCreditCardSpy.mockReturnValue({
       mutateAsync: jest.fn(),
     })
+
+    // Mock Chargebee instance
+    mockChargebeeInstance = {
+      load: jest.fn().mockResolvedValue(undefined),
+    }
+
+    loadChargebeeSpy.mockResolvedValue(mockChargebeeInstance)
   })
 
   it('should render successfully', () => {
@@ -22,30 +46,16 @@ describe('AddCreditCardModalFeature', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should dispatch addCreditCard action', async () => {
-    const { userEvent } = renderWithProviders(<AddCreditCardModalFeature organizationId="1" />)
+  it('should initialize Chargebee and show loading state', async () => {
+    renderWithProviders(<AddCreditCardModalFeature organizationId="1" />)
 
-    const button = screen.getByTestId('submit-button')
-    const cardNumberInput = screen.getByLabelText('Card number')
-    const cardExpiryInput = screen.getByLabelText('Expiration date')
-    const cardCVCInput = screen.getByLabelText('CVC')
-
-    await userEvent.type(cardNumberInput, '4444444444444444')
-    await userEvent.type(cardExpiryInput, '0320')
-    await userEvent.type(cardCVCInput, '032')
-
-    expect(button).toBeEnabled()
-
-    await userEvent.click(button)
-
-    expect(useAddCreditCardSpy().mutateAsync).toHaveBeenCalledWith({
-      organizationId: '1',
-      creditCardRequest: {
-        cvv: '032',
-        number: '4444 4444 4444 4444',
-        expiry_year: 20,
-        expiry_month: 3,
-      },
+    // Wait for Chargebee to load
+    await waitFor(() => {
+      expect(loadChargebeeSpy).toHaveBeenCalled()
     })
+
+    // Check that submit button is initially disabled (loading state)
+    const button = screen.getByTestId('submit-button')
+    expect(button).toHaveClass('pointer-events-none')
   })
 })
