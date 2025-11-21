@@ -194,17 +194,17 @@ export function StepSummaryFeature() {
                   eks_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.eks_subnets)!,
                   eks_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.eks_subnets)!,
                   eks_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.eks_subnets)!,
-                  eks_karpenter_fargate_subnets_zone_a_ids: getValueByKey(
+                  eks_private_subnets_zone_a_ids: getValueByKey(
                     'A',
-                    featuresData?.aws_existing_vpc?.eks_karpenter_fargate_subnets
+                    featuresData?.aws_existing_vpc?.eks_private_subnets
                   )!,
-                  eks_karpenter_fargate_subnets_zone_b_ids: getValueByKey(
+                  eks_private_subnets_zone_b_ids: getValueByKey(
                     'B',
-                    featuresData?.aws_existing_vpc?.eks_karpenter_fargate_subnets
+                    featuresData?.aws_existing_vpc?.eks_private_subnets
                   )!,
-                  eks_karpenter_fargate_subnets_zone_c_ids: getValueByKey(
+                  eks_private_subnets_zone_c_ids: getValueByKey(
                     'C',
-                    featuresData?.aws_existing_vpc?.eks_karpenter_fargate_subnets
+                    featuresData?.aws_existing_vpc?.eks_private_subnets
                   )!,
                   // Those are the name that AWS give them
                   // MongoDB => documentdb

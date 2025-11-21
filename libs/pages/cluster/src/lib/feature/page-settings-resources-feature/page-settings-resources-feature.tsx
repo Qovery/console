@@ -134,9 +134,9 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
             organizationId: cluster.organization.id,
             clusterId: cluster.id,
             clusterKarpenterPrivateSubnetIdsPutRequest: {
-              eks_karpenter_fargate_subnets_zone_a_ids: getValueByKey('A', data?.aws_existing_vpc?.eks_subnets)!,
-              eks_karpenter_fargate_subnets_zone_b_ids: getValueByKey('B', data?.aws_existing_vpc?.eks_subnets)!,
-              eks_karpenter_fargate_subnets_zone_c_ids: getValueByKey('C', data?.aws_existing_vpc?.eks_subnets)!,
+              eks_private_subnets_zone_a_ids: getValueByKey('A', data?.aws_existing_vpc?.eks_subnets)!,
+              eks_private_subnets_zone_b_ids: getValueByKey('B', data?.aws_existing_vpc?.eks_subnets)!,
+              eks_private_subnets_zone_c_ids: getValueByKey('C', data?.aws_existing_vpc?.eks_subnets)!,
             },
           })
           await updateCluster()
