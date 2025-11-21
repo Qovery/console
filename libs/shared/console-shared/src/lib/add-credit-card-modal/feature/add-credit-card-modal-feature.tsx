@@ -23,6 +23,7 @@ export function AddCreditCardModalFeature({ organizationId }: AddCreditCardModal
         await addCreditCard({
           organizationId,
           creditCardRequest: {
+            token: null,
             cvv: data.cvc,
             number: data.card_number,
             expiry_year: Number(data.expiry.split('/')[1]),
