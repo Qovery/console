@@ -40,7 +40,8 @@ export function loadChargebee(): Promise<CbInstance> {
         return
       }
       // Load components module for React wrapper
-      ;(chargebeeInstance as any)
+      const instanceAsAny = chargebeeInstance as any
+      instanceAsAny
         .load('components')
         .then(() => {
           resolve(chargebeeInstance!)
@@ -73,7 +74,8 @@ export function loadChargebee(): Promise<CbInstance> {
         return
       }
       // Load components module for React wrapper
-      ;(chargebeeInstance as any)
+      const instanceAsAny = chargebeeInstance as any
+      instanceAsAny
         .load('components')
         .then(() => {
           resolve(chargebeeInstance!)
