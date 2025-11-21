@@ -210,68 +210,6 @@ describe('HelmRepositoryCreateEditModal', () => {
     expect(props.onClose).toHaveBeenCalled()
   })
 
-  // TODO: These tests need to be fixed - the component doesn't render form fields
-  // when a repository with OCI_ECR is provided. This appears to be a React Hook Form
-  // initialization timing issue where watch() doesn't return default values immediately.
-  // it('should render the form with OCI_ECR STATIC authentication', async () => {
-  //   renderWithProviders(
-  //     <HelmRepositoryCreateEditModal
-  //       repository={{
-  //         id: '1111-1111-1111',
-  //         created_at: '',
-  //         updated_at: '',
-  //         name: 'my-ecr-repo',
-  //         description: 'ECR repository',
-  //         url: 'oci://123456789012.dkr.ecr.us-east-1.amazonaws.com',
-  //         kind: 'OCI_ECR',
-  //         config: {
-  //           region: 'us-east-1',
-  //           access_key_id: 'AKIAIOSFODNN7EXAMPLE',
-  //         },
-  //       }}
-  //       {...props}
-  //       />
-  //   )
-  //
-  //   await screen.findByLabelText('Kind')
-  //   await screen.findByDisplayValue('my-ecr-repo')
-  //   screen.getByDisplayValue('ECR repository')
-  //   screen.getByDisplayValue('oci://123456789012.dkr.ecr.us-east-1.amazonaws.com')
-  //   await screen.findByLabelText('Authentication method')
-  //   screen.getByLabelText('Region')
-  //   screen.getByLabelText('Access key')
-  // })
-  //
-  // it('should render the form with OCI_ECR STS authentication', async () => {
-  //   renderWithProviders(
-  //     <HelmRepositoryCreateEditModal
-  //       repository={{
-  //         id: '1111-1111-1111',
-  //         created_at: '',
-  //         updated_at: '',
-  //         name: 'my-ecr-repo-sts',
-  //         description: 'ECR repository with STS',
-  //         url: 'oci://123456789012.dkr.ecr.us-east-1.amazonaws.com',
-  //         kind: 'OCI_ECR',
-  //         config: {
-  //           region: 'us-east-1',
-  //           role_arn: 'arn:aws:iam::123456789012:role/MyRole',
-  //         },
-  //       }}
-  //       {...props}
-  //     />
-  //   )
-  //
-  //   await screen.findByLabelText('Kind')
-  //   await screen.findByDisplayValue('my-ecr-repo-sts')
-  //   screen.getByDisplayValue('ECR repository with STS')
-  //   screen.getByDisplayValue('oci://123456789012.dkr.ecr.us-east-1.amazonaws.com')
-  //   await screen.findByLabelText('Authentication method')
-  //   screen.getByLabelText('Region')
-  //   await screen.findByLabelText('Role ARN')
-  //   screen.getByDisplayValue('arn:aws:iam::123456789012:role/MyRole')
-  // })
-
   it('should create helm repository with OCI_ECR STATIC credentials', async () => {
     props.repository = undefined
 
@@ -372,31 +310,31 @@ describe('HelmRepositoryCreateEditModal', () => {
     })
   })
 
-  // TODO: This test is also affected by the same issue - commenting out for now
-  // it('should switch between STATIC and STS authentication methods', async () => {
-  //   props.repository = undefined
-  //
-  //   const { userEvent } = renderWithProviders(<HelmRepositoryCreateEditModal {...props} />)
-  //
-  //   const selectType = screen.getByLabelText('Kind')
-  //   await selectEvent.select(selectType, 'OCI_ECR', { container: document.body })
-  //
-  //   // Initially select STATIC
-  //   const selectAuthType = screen.getByLabelText('Authentication method')
-  //   await selectEvent.select(selectAuthType, 'Static credentials', { container: document.body })
-  //
-  //   // Should show access key and secret key fields
-  //   expect(screen.getByLabelText('Access key')).toBeInTheDocument()
-  //   expect(screen.getByLabelText('Secret key')).toBeInTheDocument()
-  //   expect(screen.queryByLabelText('Role ARN')).not.toBeInTheDocument()
-  //
-  //   // Switch to STS
-  //   await selectEvent.select(selectAuthType, 'Assume role via STS (preferred)', { container: document.body })
-  //
-  //   // Should show role ARN field
-  //   await screen.findByLabelText('Role ARN')
-  //   expect(screen.getByLabelText('Role ARN')).toBeInTheDocument()
-  //   expect(screen.queryByLabelText('Access key')).not.toBeInTheDocument()
-  //   expect(screen.queryByLabelText('Secret key')).not.toBeInTheDocument()
-  // })
+  it('should switch between STATIC and STS authentication methods', async () => {
+    props.repository = undefined
+
+    const { userEvent } = renderWithProviders(<HelmRepositoryCreateEditModal {...props} />)
+
+    const selectType = screen.getByLabelText('Kind')
+    await selectEvent.select(selectType, 'OCI_ECR', { container: document.body })
+
+    // Initially select STATIC
+    const selectAuthType = await screen.findByLabelText('Authentication method')
+    await selectEvent.select(selectAuthType, 'Static credentials', { container: document.body })
+
+    // Should show access key and secret key fields
+    await screen.findByLabelText('Access key')
+    expect(screen.getByLabelText('Access key')).toBeInTheDocument()
+    expect(screen.getByLabelText('Secret key')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Role ARN')).not.toBeInTheDocument()
+
+    // Switch to STS
+    await selectEvent.select(selectAuthType, 'Assume role via STS (preferred)', { container: document.body })
+
+    // Should show role ARN field
+    await screen.findByLabelText('Role ARN')
+    expect(screen.getByLabelText('Role ARN')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Access key')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Secret key')).not.toBeInTheDocument()
+  })
 })

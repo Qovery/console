@@ -106,14 +106,12 @@ export function HelmRepositoryCreateEditModal({
     // Omit `login_type` and `aws_auth_type` in the request (they're local UI state)
     const { login_type, aws_auth_type, ...config } = helmRepositoryRequest.config
 
-    // For OCI_ECR STATIC auth, remove role_arn if present
-    // For OCI_ECR STS auth, remove access_key_id and secret_access_key
     if (helmRepositoryRequest.kind === 'OCI_ECR') {
       if (aws_auth_type === 'STATIC') {
-        delete config.role_arn
+        config.role_arn = undefined
       } else if (aws_auth_type === 'STS') {
-        delete config.access_key_id
-        delete config.secret_access_key
+        config.access_key_id = undefined
+        config.secret_access_key = undefined
       }
     }
 
