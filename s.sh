@@ -10,4 +10,5 @@ echo $nx'OAUTH_KEY=S4fQF5rkTng'$e >> $file
 echo $nx'OAUTH_AUDIENCE=https://core.qovery.com' >> $file
 echo $nx'POSTHOG=__test__posthog__token' >> $file
 echo $nx'POSTHOG_APIHOST=__test__environment__posthog__apihost' >> $file
+echo $nx'CHARGEBEE_PUBLISHABLE_KEY=__test__chargebee__publishable__key' >> $file
 cat $file

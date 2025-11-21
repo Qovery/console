@@ -1,2 +1,64 @@
+# Version control
 .git
+.gitignore
+.gitattributes
+
+# Dependencies (handled by package.json)
 node_modules
+
+# Build outputs
+dist
+build
+.next
+out
+
+# IDE and editor files
+.vscode
+.idea
+.vscode-server
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Testing
+coverage
+.nyc_output
+*.test.js.snap
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Cache directories
+.cache
+.parcel-cache
+.nx/cache
+tmp
+temp
+
+# Documentation
+*.md
+docs
+README*
+CHANGELOG*
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.circleci
+.travis.yml
+
+# Development
+.turbo
+tsconfig.tsbuildinfo
