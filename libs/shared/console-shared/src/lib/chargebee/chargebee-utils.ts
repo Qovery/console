@@ -40,7 +40,6 @@ export function loadChargebee(): Promise<CbInstance> {
         return
       }
       // Load components module for React wrapper
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(chargebeeInstance as any)
         .load('components')
         .then(() => {
@@ -74,7 +73,6 @@ export function loadChargebee(): Promise<CbInstance> {
         return
       }
       // Load components module for React wrapper
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(chargebeeInstance as any)
         .load('components')
         .then(() => {
