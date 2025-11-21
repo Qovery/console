@@ -1,5 +1,12 @@
 import clsx from 'clsx'
-import { type ChangeEventHandler, forwardRef, useEffect, useState } from 'react'
+import {
+  type ChangeEventHandler,
+  type FocusEventHandler,
+  type KeyboardEventHandler,
+  forwardRef,
+  useEffect,
+  useState,
+} from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
@@ -9,6 +16,8 @@ export interface InputTextSmallProps {
   name: string
   type?: string
   onChange?: ChangeEventHandler<HTMLInputElement>
+  onKeyDown?: KeyboardEventHandler<HTMLInputElement>
+  onBlur?: FocusEventHandler<HTMLInputElement>
   value?: string
   placeholder?: string
   error?: string
@@ -20,6 +29,7 @@ export interface InputTextSmallProps {
   errorMessagePosition?: 'left' | 'bottom'
   hasShowPasswordButton?: boolean
   disabled?: boolean
+  spellCheck?: boolean
 }
 
 export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(function InputTextSmall(
@@ -33,6 +43,8 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
     error,
     warning,
     onChange,
+    onKeyDown,
+    onBlur,
     type = 'text',
     className = '',
     inputClassName = '',
@@ -41,6 +53,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
     disabled = false,
     label,
     dataTestId = 'input-value',
+    spellCheck = false,
   } = props
 
   const [focused, setFocused] = useState(false)
@@ -96,8 +109,13 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
           disabled={disabled}
           id={label}
           onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onBlur={(e) => {
+            setFocused(false)
+            onBlur?.(e)
+          }}
           data-testid={dataTestId}
+          onKeyDown={onKeyDown}
+          spellCheck={spellCheck}
         />
         {hasShowPasswordButton && (
           <div

@@ -64,6 +64,7 @@ describe('PageSettingsTerraformArgumentsFeature', () => {
             url: mockService.terraform_files_source?.git?.git_repository?.url ?? '',
             branch: mockService.terraform_files_source?.git?.git_repository?.branch ?? '',
             git_token_id: mockService.terraform_files_source?.git?.git_repository?.git_token_id ?? '',
+            root_path: mockService.terraform_files_source?.git?.git_repository?.root_path ?? '',
           },
         },
         action_extra_arguments: {

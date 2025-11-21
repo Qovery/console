@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ClusterDeleteModal should match snapshot 1`] = `
 <body>
@@ -37,6 +37,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
               data-testid="input-value"
               name="name"
               placeholder="Enter "delete""
+              spellcheck="false"
               type="text"
               value=""
             />

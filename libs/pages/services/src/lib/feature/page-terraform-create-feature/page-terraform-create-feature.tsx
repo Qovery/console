@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react'
-import { type UseFormReturn, useForm } from 'react-hook-form'
+import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { type TerraformGeneralData } from '@qovery/domains/service-terraform/feature'
+import { type TerraformGeneralData, TerraformVariablesProvider } from '@qovery/domains/service-terraform/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   SERVICES_NEW_URL,
@@ -20,20 +20,10 @@ export const steps: { title: string }[] = [
   { title: 'Summary' },
 ]
 
-export interface TerraformInputVariablesData {
-  tf_vars: {
-    key: string
-    value: string
-    secret: boolean
-  }[]
-  tf_var_file_paths: string[]
-}
-
 interface TerraformCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalForm: UseFormReturn<TerraformGeneralData>
-  inputVariablesForm: UseFormReturn<TerraformInputVariablesData>
   creationFlowUrl?: string
 }
 
@@ -78,14 +68,6 @@ export function PageTerraformCreateFeature() {
     },
   })
 
-  const inputVariablesForm = useForm<TerraformInputVariablesData>({
-    mode: 'onChange',
-    defaultValues: {
-      tf_vars: [],
-      tf_var_file_paths: [],
-    },
-  })
-
   const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_TERRAFORM_CREATION_URL
 
   return (
@@ -94,34 +76,37 @@ export function PageTerraformCreateFeature() {
         currentStep,
         setCurrentStep,
         generalForm,
-        inputVariablesForm,
         creationFlowUrl,
       }}
     >
-      <FunnelFlow
-        onExit={() => {
-          if (window.confirm('Do you really want to leave?')) {
-            const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`
-            navigate(link)
-          }
-        }}
-        totalSteps={steps.length}
-        currentStep={currentStep}
-        currentTitle={steps[currentStep - 1].title}
-      >
-        <Routes>
-          {ROUTER_SERVICE_TERRAFORM_CREATION.map((route) => (
-            <Route key={route.path} path={route.path} element={route.component} />
-          ))}
-          {creationFlowUrl && (
-            <Route
-              path="*"
-              element={<Navigate replace to={`${creationFlowUrl}${SERVICES_TERRAFORM_CREATION_GENERAL_URL}`} />}
-            />
-          )}
-        </Routes>
-        <AssistantTrigger defaultOpen />
-      </FunnelFlow>
+      <FormProvider {...generalForm}>
+        <TerraformVariablesProvider>
+          <FunnelFlow
+            onExit={() => {
+              if (window.confirm('Do you really want to leave?')) {
+                const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`
+                navigate(link)
+              }
+            }}
+            totalSteps={steps.length}
+            currentStep={currentStep}
+            currentTitle={steps[currentStep - 1].title}
+          >
+            <Routes>
+              {ROUTER_SERVICE_TERRAFORM_CREATION.map((route) => (
+                <Route key={route.path} path={route.path} element={route.component} />
+              ))}
+              {creationFlowUrl && (
+                <Route
+                  path="*"
+                  element={<Navigate replace to={`${creationFlowUrl}${SERVICES_TERRAFORM_CREATION_GENERAL_URL}`} />}
+                />
+              )}
+            </Routes>
+            <AssistantTrigger defaultOpen />
+          </FunnelFlow>
+        </TerraformVariablesProvider>
+      </FormProvider>
     </TerraformCreateContext.Provider>
   )
 }

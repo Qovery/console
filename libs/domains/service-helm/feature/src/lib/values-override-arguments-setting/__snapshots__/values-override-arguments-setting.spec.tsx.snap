@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
 <body>
@@ -128,6 +128,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
                     data-testid="input-value"
                     name="arguments.0.key"
+                    spellcheck="false"
                     type="text"
                     value="test"
                   />
@@ -151,6 +152,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                       class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350 pr-11"
                       data-testid="input-value"
                       name="arguments.0.value"
+                      spellcheck="false"
                       type="text"
                       value="test"
                     />
@@ -231,6 +233,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
                     data-testid="input-value"
                     name="arguments.1.key"
+                    spellcheck="false"
                     type="text"
                     value="test2"
                   />
@@ -339,6 +342,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
                     data-testid="input-value"
                     name="arguments.2.key"
+                    spellcheck="false"
                     type="text"
                     value="test3"
                   />
@@ -362,6 +366,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                       class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350 pr-11"
                       data-testid="input-value"
                       name="arguments.2.value"
+                      spellcheck="false"
                       type="text"
                       value="test"
                     />
