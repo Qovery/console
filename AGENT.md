@@ -197,13 +197,22 @@ When adding new utility functions:
 
 ### TypeScript Best Practices
 
-1. **Use proper types over type assertions**
+1. **Avoid `any` types**
+
+   - **Never use `any` type** - it defeats TypeScript's type safety
+   - Always use proper types from packages or define custom types
+   - Use `unknown` for truly unknown types (then narrow with type guards)
+   - Avoid `as any` casts - they bypass all type checking
+   - When integrating third-party libraries, check for `@types` packages or define custom interfaces
+   - Example: Use `CbInstance` from `@chargebee/chargebee-js-types` instead of `any`
+
+2. **Use proper types over type assertions**
 
    - Prefer `undefined` over empty string (`''`) for optional values
    - Use `undefined` for react-hook-form's optional form fields
    - Only use `as` type assertions when absolutely necessary
 
-2. **Example:**
+3. **Example:**
 
 ❌ **Avoid:**
 
@@ -630,6 +639,7 @@ Before submitting code, verify:
 
 - [ ] Inline type imports used: `import { type MyType, myFunction }`
 - [ ] Functional components only (no class components, no React.FC)
+- [ ] No `any` types used (check for proper types from packages or define custom types)
 - [ ] Type safety is preserved without excessive `as` assertions
 - [ ] Used `undefined` for optional values (not empty strings)
 - [ ] JSDoc comments added for exported functions
