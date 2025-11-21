@@ -33,11 +33,19 @@ export function StepThanks(props: StepThanksProps) {
       </p>
       <p className="mb-5 text-sm text-neutral-400">
         In the meantime, have a look at{' '}
-        <ExternalLink size="sm" href="https://hub.qovery.com/guides/" withIcon>
+        <ExternalLink
+          size="sm"
+          href="https://www.qovery.com/docs/getting-started/guides/use-cases/production-environment-management"
+          withIcon
+        >
           our guide
         </ExternalLink>{' '}
         and{' '}
-        <ExternalLink size="sm" href="https://hub.qovery.com/guides/tutorial/" withIcon>
+        <ExternalLink
+          size="sm"
+          href="https://www.qovery.com/docs/getting-started/guides/getting-started/deploy-your-first-application"
+          withIcon
+        >
           tutorial
         </ExternalLink>{' '}
         sections on our website, they will show you what you can achieve with Qovery and guide you step by step in your

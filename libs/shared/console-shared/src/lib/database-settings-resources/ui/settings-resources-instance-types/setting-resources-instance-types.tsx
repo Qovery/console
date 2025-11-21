@@ -43,7 +43,7 @@ export function SettingsResourcesInstanceTypes({
             maintenance window. Moreover, the operation might cause a service interruption.{' '}
             <ExternalLink
               className="mt-1"
-              href="https://hub.qovery.com/docs/using-qovery/configuration/database/#applying-changes-to-a-managed-database"
+              href="https://www.qovery.com/docs/configuration/database#applying-changes-to-a-managed-database"
             >
               Have a look at the documentation first
             </ExternalLink>

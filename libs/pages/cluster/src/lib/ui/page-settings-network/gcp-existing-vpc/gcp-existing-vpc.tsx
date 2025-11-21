@@ -12,7 +12,7 @@ export function GcpExistingVPC({ feature }: GcpExistingVPCProps) {
         <h4 className="text-sm font-medium text-neutral-400">Deploy on an existing VPC</h4>
         <ExternalLink
           size="xs"
-          href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
+          href="https://www.qovery.com/docs/configuration/integrations/kubernetes/gke/managed#use-existing-vpc"
         >
           How to configure your VPC
         </ExternalLink>

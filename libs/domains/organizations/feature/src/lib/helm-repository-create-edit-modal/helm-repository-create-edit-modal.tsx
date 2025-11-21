@@ -166,7 +166,7 @@ export function HelmRepositoryCreateEditModal({
             </ul>
             <ExternalLink
               className="mt-2"
-              href="https://hub.qovery.com/docs/using-qovery/configuration/organization/helm-repository/"
+              href="https://www.qovery.com/docs/configuration/organization/helm-repository"
             >
               More information here
             </ExternalLink>

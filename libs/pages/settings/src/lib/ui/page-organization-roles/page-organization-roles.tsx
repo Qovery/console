@@ -121,7 +121,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           variant="surface"
                           color="neutral"
                           size="md"
-                          href="https://hub.qovery.com/docs/using-qovery/configuration/organization/#roles-based-access-control-rbac"
+                          href="https://www.qovery.com/docs/configuration/organization/members-rbac"
                         >
                           <Icon iconName="book" iconStyle="regular" />
                         </ExternalLink>

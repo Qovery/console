@@ -98,10 +98,7 @@ export function StepSummary(props: StepSummaryProps) {
                 <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
                 drift in the configuration.
                 <br />
-                <ExternalLink
-                  size="sm"
-                  href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#how-does-qovery-handle-cluster-updates-and-upgrades"
-                >
+                <ExternalLink size="sm" href="https://www.qovery.com/docs/configuration/clusters#faq">
                   Click here for more details
                 </ExternalLink>
               </Callout.TextDescription>

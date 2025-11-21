@@ -27,7 +27,7 @@ export function BenefitsCard() {
       <div className="hidden p-8">
         <p className="mb-5 text-sm text-neutral-400">You may find these links useful</p>
         <a
-          href="https://hub.qovery.com/docs/using-qovery/configuration/environment/"
+          href="https://www.qovery.com/docs/configuration/environment"
           target="_blank"
           rel="noreferrer"
           className="link mb-3 block text-sm text-sky-500"
@@ -35,7 +35,7 @@ export function BenefitsCard() {
           How to configure an environment <Icon name="icon-solid-arrow-up-right-from-square" />
         </a>
         <a
-          href="https://hub.qovery.com/docs/using-qovery/configuration/environment/"
+          href="https://www.qovery.com/docs/configuration/environment"
           target="_blank"
           rel="noreferrer"
           className="link block text-sm text-sky-500"
