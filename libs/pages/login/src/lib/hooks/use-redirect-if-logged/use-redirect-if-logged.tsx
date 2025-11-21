@@ -20,11 +20,6 @@ import {
   getRedirectLoginUriFromStorage,
 } from './utils/utils'
 
-const extractOrganizationIdFromPath = (path: string) => {
-  const match = path.match(/\/organization\/([^/]+)/)
-  return match?.[1]
-}
-
 export function useRedirectIfLogged() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -79,26 +74,12 @@ export function useRedirectIfLogged() {
 
       if (currentProvider === user?.sub) {
         if (redirectLoginUri) {
-          const organizationIdFromRedirect = extractOrganizationIdFromPath(redirectLoginUri)
-          const organizationExists =
-            !organizationIdFromRedirect ||
-            organizations.some((organization) => organization.id === organizationIdFromRedirect)
-
-          if (organizationExists) {
-            navigate(redirectLoginUri)
-            localStorage.removeItem('redirectLoginUri')
-            return
-          }
-
-          // The stored redirect points to an organization that no longer exists (e.g. last org deleted),
-          // so we drop it and rely on the standard routing logic instead of looping back to a dead URL.
+          navigate(redirectLoginUri)
           localStorage.removeItem('redirectLoginUri')
+          return
         }
 
-        // Only honor cached org/project IDs when the freshly fetched organizations still contain the stored org.
-        // This prevents redirecting to deleted organizations (e.g. after wiping the user's last org).
-        const storedOrgExists = organizations.some((organization) => organization.id === currentOrganization)
-        if (currentOrganization && currentProject && storedOrgExists) {
+        if (currentOrganization && currentProject) {
           navigate(OVERVIEW_URL(currentOrganization, currentProject))
           return
         }

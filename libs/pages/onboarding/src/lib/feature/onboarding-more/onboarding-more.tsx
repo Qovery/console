@@ -1,12 +1,14 @@
 import { PlanEnum } from 'qovery-typescript-axios'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { type CreditCardFormValues } from '@qovery/shared/console-shared'
 import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { ExternalLink, Icon, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useAuth } from '@qovery/shared/auth'
 import PlanCard from '../../ui/plan-card/plan-card'
 import { StepMore } from '../../ui/step-more/step-more'
 import { ContextOnboarding } from '../container/container'
@@ -67,6 +69,9 @@ export function OnboardingMore() {
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
   const { openModal, closeModal } = useModal()
   const { selectedPlan, setContextValue } = useContext(ContextOnboarding)
+  const { authLogout } = useAuth()
+  const { data: organizations = [] } = useOrganizations()
+  const [backButton, setBackButton] = useState<boolean>(false)
 
   const methods = useForm<CreditCardFormValues>({
     mode: 'onChange',
@@ -80,6 +85,17 @@ export function OnboardingMore() {
   const navigate = useNavigate()
   const plan = PLANS.find((plan) => plan.name === selectedPlan) ?? PLANS[0]
   const selectablePlans = PLANS.filter((planOption) => planOption.name !== PlanEnum.ENTERPRISE_2025)
+
+  useEffect(() => {
+    async function fetchOrganizations() {
+      if (organizations.length === 0) {
+        setBackButton(false)
+      } else {
+        setBackButton(true)
+      }
+    }
+    fetchOrganizations()
+  }, [organizations])
 
   const handlePlanSelect = (planName: PlanEnum) => {
     setContextValue?.({ selectedPlan: planName })
@@ -140,7 +156,14 @@ export function OnboardingMore() {
 
   return (
     <FormProvider {...methods}>
-      <StepMore control={control} onSubmit={onSubmit} selectedPlan={plan} onChangePlan={openPlanSelectionModal} />
+      <StepMore
+        control={control}
+        onSubmit={onSubmit}
+        selectedPlan={plan}
+        onChangePlan={openPlanSelectionModal}
+        authLogout={authLogout}
+        backButton={backButton}
+      />
     </FormProvider>
   )
 }

@@ -1,8 +1,8 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { useAuth0 } from '@auth0/auth0-react'
-import { useOrganizations, useCreateOrganization } from '@qovery/domains/organizations/feature'
+import { useCreateOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
@@ -20,21 +20,8 @@ export function OnboardingProject() {
   const { mutateAsync: createProject } = useCreateProject()
   const { handleSubmit, control, setValue } = useForm<{ project_name: string; organization_name: string }>()
   const { data: organizations = [] } = useOrganizations()
-  const [backButton, setBackButton] = useState<boolean>()
-
   const { organization_name, project_name, admin_email, selectedPlan, setContextValue } = useContext(ContextOnboarding)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  useEffect(() => {
-    async function fetchOrganizations() {
-      if (organizations.length === 0) {
-        setBackButton(false)
-      } else {
-        setBackButton(true)
-      }
-    }
-    fetchOrganizations()
-  }, [organizations])
 
   useEffect(() => {
     setValue('organization_name', organization_name)
@@ -78,20 +65,7 @@ export function OnboardingProject() {
     }
   })
 
-  const handleFirstStepBack = () => {
-    navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
-  }
-
-  return (
-    <StepProject
-      onSubmit={onSubmit}
-      control={control}
-      authLogout={authLogout}
-      backButton={backButton}
-      loading={isSubmitting}
-      onFirstStepBack={!backButton ? handleFirstStepBack : undefined}
-    />
-  )
+  return <StepProject onSubmit={onSubmit} control={control} authLogout={authLogout} loading={isSubmitting} />
 }
 
 export default OnboardingProject

@@ -2,7 +2,8 @@ import { type PropsWithChildren, createContext, useEffect, useState } from 'reac
 import { type Params, useNavigate } from 'react-router-dom'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
-import { type Route } from '@qovery/shared/routes'
+import { useOrganizations } from '@qovery/domains/organizations/feature'
+import { ONBOARDING_PROJECT_URL, type Route } from '@qovery/shared/routes'
 import { FunnelFlow, FunnelFlowBody } from '@qovery/shared/ui'
 import { ROUTER_ONBOARDING } from '../../router/router'
 import OnboardingRightContent from '../../ui/onboarding-right-content/onboarding-right-content'
@@ -34,6 +35,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const navigate = useNavigate()
   const [step, setStep] = useState(params['*'])
   const [contextValue, setContextValue] = useState(defaultContext)
+  const { data: organizations = [] } = useOrganizations()
 
   useEffect(() => {
     setStep(params['*'])
@@ -50,6 +52,14 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const stepProject = currentPath === projectRoutePath
   const shouldUseFullWidth = currentRouteIndex === 1
 
+  const hasExistingOrganization = organizations.length > 0
+  const totalSteps = hasExistingOrganization ? 2 : ROUTER_ONBOARDING.length
+  const currentStep = hasExistingOrganization
+    ? currentPath === ONBOARDING_PROJECT_URL
+      ? 2
+      : 1
+    : currentStepPosition(ROUTER_ONBOARDING)
+
   return (
     <ContextOnboarding.Provider
       value={{
@@ -57,12 +67,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         setContextValue: (data) => setContextValue((previous) => ({ ...previous, ...data })),
       }}
     >
-      <FunnelFlow
-        totalSteps={ROUTER_ONBOARDING.length}
-        currentStep={currentStepPosition(ROUTER_ONBOARDING)}
-        currentTitle={currentTitle}
-        portal
-      >
+      <FunnelFlow totalSteps={totalSteps} currentStep={currentStep} currentTitle={currentTitle} portal>
         <FunnelFlowBody
           helpSectionClassName="!p-0 !bg-transparent !border-transparent"
           helpSection={stepProject && <OnboardingRightContent step={step} />}

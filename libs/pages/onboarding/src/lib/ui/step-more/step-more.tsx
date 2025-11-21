@@ -1,7 +1,8 @@
 import { type Control } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { CreditCardForm, type CreditCardFormValues } from '@qovery/shared/console-shared'
-import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { Button, Icon, Link } from '@qovery/shared/ui'
+import { ENVIRONMENTS_URL, ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { Button, Icon } from '@qovery/shared/ui'
 
 export interface SelectedPlanSummary {
   title: string
@@ -14,10 +15,13 @@ export interface StepMoreProps {
   control: Control<CreditCardFormValues>
   selectedPlan: SelectedPlanSummary
   onChangePlan: () => void
+  authLogout: () => void
+  backButton?: boolean
 }
 
 export function StepMore(props: StepMoreProps) {
-  const { onSubmit, control, selectedPlan, onChangePlan } = props
+  const { onSubmit, control, selectedPlan, onChangePlan, authLogout, backButton } = props
+  const navigate = useNavigate()
 
   const getSelectedPlanPrice = () => {
     if (selectedPlan.price === 'custom') return 'Custom pricing'
@@ -57,18 +61,42 @@ export function StepMore(props: StepMoreProps) {
               with us and unlock a trial that truly suits you.
             </p>
             <div className="mt-4 flex justify-between border-t border-neutral-200 pt-5">
-              <Link
-                as="button"
-                to={`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`}
-                className="gap-2"
-                type="button"
-                color="neutral"
-                variant="surface"
-                size="lg"
-              >
-                <Icon name="icon-solid-arrow-left" />
-                Back
-              </Link>
+              {!backButton ? (
+                <Button
+                  type="button"
+                  size="lg"
+                  color="neutral"
+                  variant="surface"
+                  className="gap-2"
+                  onClick={() => navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)}
+                >
+                  <Icon name="icon-solid-arrow-left" />
+                  Back
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  size="lg"
+                  color="neutral"
+                  variant="surface"
+                  className="gap-2"
+                  onClick={() => {
+                    if (localStorage['currentOrganizationId']) {
+                      navigate(
+                        ENVIRONMENTS_URL(
+                          localStorage['currentOrganizationId'] || '',
+                          localStorage['currentProjectId'] || ''
+                        )
+                      )
+                    } else {
+                      navigate(-1)
+                    }
+                  }}
+                >
+                  <Icon name="icon-solid-arrow-left" />
+                  Back
+                </Button>
+              )}
               <Button type="submit" size="lg">
                 Start my 14-days free trial
               </Button>
@@ -79,7 +107,7 @@ export function StepMore(props: StepMoreProps) {
       <div className="hidden flex-1 rounded-lg border border-brand-200 bg-mesh-gradient bg-cover lg:block">
         <div className="p-8">
           <h2 className="h4 mb-6 text-center text-neutral-400">
-            Make the most out of Qovery with our <span className="text-brand-500">4-days free trial</span>
+            Make the most out of Qovery with our <span className="text-brand-500">14-days free trial</span>
           </h2>
           <div className="rounded-md border border-brand-200 bg-white">
             <div className="flex border-b p-6">
