@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
+  SETTINGS_AI_COPILOT_URL,
   SETTINGS_API_URL,
   SETTINGS_BILLING_SUMMARY_URL,
   SETTINGS_BILLING_URL,
@@ -99,6 +100,11 @@ export function PageSettings() {
       title: 'API Token',
       icon: IconAwesomeEnum.CLOUD_ARROW_UP,
       url: pathSettings + SETTINGS_API_URL,
+    },
+    {
+      title: 'AI Copilot',
+      icon: IconAwesomeEnum.TERMINAL,
+      url: pathSettings + SETTINGS_AI_COPILOT_URL,
     },
     {
       title: 'Danger zone',

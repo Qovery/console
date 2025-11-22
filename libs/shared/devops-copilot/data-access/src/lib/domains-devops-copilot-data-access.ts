@@ -35,6 +35,14 @@ export const devopsCopilot = createQueryKeys('devopsCopilot', {
       return response.data
     },
   }),
+  recurringTasks: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId, 'recurring-tasks'],
+    async queryFn() {
+      const response = await devopsCopilotAxios.get(`/organization/${organizationId}/recurring-tasks`)
+
+      return response.data
+    },
+  }),
 })
 
 export const mutations = {
@@ -95,13 +103,16 @@ export const mutations = {
     userSub,
     organizationId,
     message,
+    readOnly = true,
   }: {
     userSub: string
     organizationId: string
     message: string
+    readOnly?: boolean
   }) => {
     const response = await devopsCopilotAxios.post(`/owner/${userSub}/organization/${organizationId}/thread`, {
       title: message.substring(0, 50),
+      read_only: readOnly,
     })
 
     return response
@@ -128,5 +139,37 @@ export const mutations = {
     )
 
     return response
+  },
+
+  toggleRecurringTask: async ({ organizationId, taskId }: { organizationId: string; taskId: string }) => {
+    const response = await devopsCopilotAxios.post(`/organization/${organizationId}/recurring-tasks/${taskId}/toggle`)
+
+    return response.data
+  },
+
+  deleteRecurringTask: async ({ organizationId, taskId }: { organizationId: string; taskId: string }) => {
+    const response = await devopsCopilotAxios.delete(`/organization/${organizationId}/recurring-tasks/${taskId}`)
+
+    return response.data
+  },
+
+  updateOrgConfig: async ({
+    organizationId,
+    enabled,
+    readOnly,
+    instructions,
+  }: {
+    organizationId: string
+    enabled: boolean
+    readOnly: boolean
+    instructions?: string
+  }) => {
+    const response = await devopsCopilotAxios.put(`/organization/${organizationId}/config/org`, {
+      enabled,
+      read_only: readOnly,
+      instructions: instructions || '',
+    })
+
+    return response.data
   },
 }
