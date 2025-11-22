@@ -1141,7 +1141,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     </div>
                   )}
                   <Input
-                    disabled={appStatus?.status !== 'OPERATIONAL' || !isCopilotEnabled}
+                    disabled={!isCopilotEnabled}
                     ref={inputRef}
                     value={inputMessage}
                     rows={1}
