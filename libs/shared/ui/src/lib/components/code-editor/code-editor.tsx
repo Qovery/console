@@ -13,6 +13,7 @@ export function CodeEditor({ readOnly, options, ...props }: CodeEditorProps) {
       options={{
         minimap: { enabled: false },
         readOnly,
+        selectOnLineNumbers: false,
         ...options,
       }}
       {...props}
