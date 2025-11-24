@@ -88,6 +88,7 @@ const TfvarItem = ({
             onBlur={() => {
               onIndexChange(file, Number(currentIndex ?? 0))
             }}
+            dataTestId="index-input"
           />
         </div>
       </div>
@@ -149,7 +150,10 @@ export const TfvarsFilesPopover = () => {
               align="start"
               side="left"
               content={
-                <span className="relative right-0 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-400 text-sm font-bold leading-[0] text-white">
+                <span
+                  className="relative right-0 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-400 text-sm font-bold leading-[0] text-white"
+                  data-testid="enabled-files-count"
+                >
                   {enabledFilesCount}
                 </span>
               }
@@ -248,6 +252,7 @@ export const TfvarsFilesPopover = () => {
                     exit={{ cursor: 'grab' }}
                     whileDrag={{ cursor: 'grabbing', borderColor: '#642DFF', borderWidth: '2px' }}
                     className={twMerge('flex w-full items-center border-b border-neutral-250')}
+                    data-testid="tfvar-item"
                   >
                     <TfvarItem key={file.source} file={file} index={index} onIndexChange={onIndexChange} />
                   </Reorder.Item>
