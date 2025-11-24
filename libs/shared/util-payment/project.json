@@ -1,0 +1,9 @@
+{
+  "name": "shared-util-payment",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/util-payment/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project util-payment --web",
+  "targets": {}
+}
