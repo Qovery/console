@@ -83,3 +83,4 @@ export * from './lib/hooks/use-container-registry-associated-services/use-contai
 export * from './lib/hooks/use-organization-credentials/use-organization-credentials'
 export * from './lib/hooks/use-parse-terraform-variables-from-git-repo/use-parse-terraform-variables-from-git-repo'
 export * from './lib/invoice-banner/invoice-banner'
+export * from './lib/free-trial-banner/free-trial-banner'

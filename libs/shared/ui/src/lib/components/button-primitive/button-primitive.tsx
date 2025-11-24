@@ -201,6 +201,30 @@ const _buttonVariants = cva(
           'disabled:bg-red-100',
         ],
       },
+      {
+        variant: 'solid',
+        color: 'yellow',
+        className: [
+          'bg-yellow-500',
+          'active:bg-yellow-600',
+          'hover:bg-yellow-400',
+          'text-black',
+          'disabled:text-yellow-300',
+          'disabled:bg-yellow-100',
+        ],
+      },
+      {
+        variant: 'solid',
+        color: 'sky',
+        className: [
+          'bg-sky-500',
+          'active:bg-sky-600',
+          'hover:bg-sky-400',
+          'text-black',
+          'disabled:text-sky-300',
+          'disabled:bg-sky-100',
+        ],
+      },
     ],
     defaultVariants: {
       variant: 'solid',
