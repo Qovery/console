@@ -7,10 +7,10 @@ import { BlockContent, ExternalLink, Icon, InputSelect, InputToggle, Tooltip } f
 
 // Hardcoded Scaleway NAT Gateway types
 const SCALEWAY_NAT_GATEWAY_TYPES = [
-  { label: 'VPC-GW-S', value: 'VPC-GW-S' },
-  { label: 'VPC-GW-M', value: 'VPC-GW-M' },
-  { label: 'VPC-GW-L', value: 'VPC-GW-L' },
-  { label: 'VPC-GW-XL', value: 'VPC-GW-XL' },
+  { label: 'VPC-GW-S (100 Mbps)', value: 'VPC-GW-S' },
+  { label: 'VPC-GW-M (1 Gbps)', value: 'VPC-GW-M' },
+  { label: 'VPC-GW-L (3 Gbps)', value: 'VPC-GW-L' },
+  { label: 'VPC-GW-XL (10 Gbps)', value: 'VPC-GW-XL' },
 ]
 
 export interface ScalewayStaticIpProps {
