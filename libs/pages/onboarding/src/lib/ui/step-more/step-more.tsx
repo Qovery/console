@@ -171,13 +171,7 @@ export function StepMore(props: StepMoreProps) {
             )}
             {showCardFields && (
               <Provider cbInstance={cbInstance}>
-                <CardComponent
-                  ref={cardRef}
-                  styles={fieldStyles}
-                  locale="en"
-                  currency="USD"
-                  onReady={onCardReady}
-                >
+                <CardComponent ref={cardRef} styles={fieldStyles} locale="en" currency="USD" onReady={onCardReady}>
                   <div className="chargebee-field-wrapper">
                     <label className="chargebee-field-label">Card Number</label>
                     <CardNumber placeholder="1234 1234 1234 1234" />
