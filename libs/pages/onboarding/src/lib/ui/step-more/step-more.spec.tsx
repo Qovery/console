@@ -1,6 +1,6 @@
+import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import { render } from '__tests__/utils/setup-jest'
-import { type CreditCardFormValues } from '@qovery/shared/console-shared'
-import { FormProvider, useForm } from 'react-hook-form'
+import { type MutableRefObject } from 'react'
 import StepMore, { type StepMoreProps } from './step-more'
 
 describe('StepMore', () => {
@@ -14,46 +14,18 @@ describe('StepMore', () => {
         price: 299,
       },
       onChangePlan: jest.fn(),
+      authLogout: jest.fn(),
+      cbInstance: null,
+      cardRef: { current: null } as MutableRefObject<FieldContainer | null>,
+      onCardReady: jest.fn(),
+      isCardReady: false,
+      isSubmitting: false,
     }
-
-    const Wrapper = () => {
-      const methods = useForm<CreditCardFormValues>({
-        defaultValues: {
-          card_number: '',
-          cvc: '',
-          expiry: '',
-        },
-      })
-      props.control = methods.control
-
-      return (
-        <FormProvider {...methods}>
-          <StepMore {...(props as StepMoreProps)} />
-        </FormProvider>
-      )
-    }
-
-    render(<Wrapper />)
+    render(<StepMore {...(props as StepMoreProps)} />)
   })
 
   it('should render successfully', () => {
-    const TestComponent = () => {
-      const methods = useForm<CreditCardFormValues>({
-        defaultValues: {
-          card_number: '',
-          cvc: '',
-          expiry: '',
-        },
-      })
-
-      return (
-        <FormProvider {...methods}>
-          <StepMore {...(props as StepMoreProps)} control={methods.control} />
-        </FormProvider>
-      )
-    }
-
-    const { baseElement } = render(<TestComponent />)
+    const { baseElement } = render(<StepMore {...(props as StepMoreProps)} />)
     expect(baseElement).toBeTruthy()
   })
 })

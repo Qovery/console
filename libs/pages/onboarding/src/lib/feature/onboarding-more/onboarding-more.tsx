@@ -1,14 +1,16 @@
-import { PlanEnum } from 'qovery-typescript-axios'
-import { useContext, useEffect, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
+import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
+import { type SignUpRequest, PlanEnum } from 'qovery-typescript-axios'
+import { type FormEvent, useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
-import { type CreditCardFormValues } from '@qovery/shared/console-shared'
-import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { ExternalLink, Icon, useModal } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useAuth } from '@qovery/shared/auth'
+import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { ExternalLink, Icon, toastError, useModal } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { loadChargebee } from '@qovery/shared/util-payment'
+import { type SerializedError } from '@qovery/shared/utils'
 import PlanCard from '../../ui/plan-card/plan-card'
 import { StepMore } from '../../ui/step-more/step-more'
 import { ContextOnboarding } from '../container/container'
@@ -68,23 +70,42 @@ export function OnboardingMore() {
   const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
   const { openModal, closeModal } = useModal()
+  const cardRef = useRef<FieldContainer>(null)
+  const [cbInstance, setCbInstance] = useState<CbInstance | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isCardReady, setIsCardReady] = useState(false)
   const { selectedPlan, setContextValue } = useContext(ContextOnboarding)
   const { authLogout } = useAuth()
   const { data: organizations = [] } = useOrganizations()
   const [backButton, setBackButton] = useState<boolean>(false)
 
-  const methods = useForm<CreditCardFormValues>({
-    mode: 'onChange',
-    defaultValues: {
-      card_number: '',
-      cvc: '',
-      expiry: '',
-    },
-  })
-  const { handleSubmit, control } = methods
   const navigate = useNavigate()
   const plan = PLANS.find((plan) => plan.name === selectedPlan) ?? PLANS[0]
   const selectablePlans = PLANS.filter((planOption) => planOption.name !== PlanEnum.ENTERPRISE_2025)
+
+  useEffect(() => {
+    let mounted = true
+
+    const initializeChargebee = async () => {
+      try {
+        const instance = await loadChargebee()
+
+        if (!mounted) {
+          return
+        }
+
+        setCbInstance(instance)
+      } catch (error) {
+        console.error('Failed to initialize Chargebee:', error)
+      }
+    }
+
+    initializeChargebee()
+
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   useEffect(() => {
     async function fetchOrganizations() {
@@ -137,34 +158,74 @@ export function OnboardingMore() {
     })
   }
 
-  const onSubmit = handleSubmit(async (data) => {
-    if (!userSignUp) return
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
 
-    if (data) {
-      try {
-        await createUserSignUp({
-          ...userSignUp,
-          ...data,
-        })
-        await refetchUserSignUp()
-        navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
-      } catch (error) {
-        console.error(error)
+    if (!userSignUp) return
+    if (!cardRef.current || !isCardReady || !cbInstance) return
+
+    setIsSubmitting(true)
+
+    try {
+      const tokenizedCard = await cardRef.current.tokenize({})
+
+      if (!tokenizedCard.token) {
+        throw new Error('No token returned from Chargebee')
       }
+
+      setContextValue?.({
+        cardToken: tokenizedCard.token,
+        cardLast4: tokenizedCard.card?.last4 ?? null,
+        cardExpiryMonth: tokenizedCard.card?.expiry_month ?? null,
+        cardExpiryYear: tokenizedCard.card?.expiry_year ?? null,
+      })
+
+      const hasRequiredSignUpFields =
+        !!userSignUp?.first_name && !!userSignUp?.last_name && !!userSignUp?.user_email && !!userSignUp?.qovery_usage
+
+      if (hasRequiredSignUpFields) {
+        const signUpPayload: SignUpRequest = {
+          first_name: userSignUp.first_name,
+          last_name: userSignUp.last_name,
+          user_email: userSignUp.user_email,
+          type_of_use: userSignUp.type_of_use,
+          qovery_usage: userSignUp.qovery_usage,
+          company_name: userSignUp.company_name ?? undefined,
+          company_size: userSignUp.company_size ?? undefined,
+          user_role: userSignUp.user_role ?? undefined,
+          qovery_usage_other: userSignUp.qovery_usage_other ?? undefined,
+          user_questions: userSignUp.user_questions ?? undefined,
+          current_step: 'billing',
+          dx_auth: userSignUp.dx_auth ?? undefined,
+          infrastructure_hosting: userSignUp.infrastructure_hosting ?? undefined,
+        }
+
+        await createUserSignUp(signUpPayload)
+      }
+
+      await refetchUserSignUp()
+      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
+    } catch (error) {
+      console.error(error)
+      toastError(error as unknown as SerializedError)
+    } finally {
+      setIsSubmitting(false)
     }
-  })
+  }
 
   return (
-    <FormProvider {...methods}>
-      <StepMore
-        control={control}
-        onSubmit={onSubmit}
-        selectedPlan={plan}
-        onChangePlan={openPlanSelectionModal}
-        authLogout={authLogout}
-        backButton={backButton}
-      />
-    </FormProvider>
+    <StepMore
+      onSubmit={onSubmit}
+      selectedPlan={plan}
+      onChangePlan={openPlanSelectionModal}
+      authLogout={authLogout}
+      backButton={backButton}
+      cbInstance={cbInstance}
+      cardRef={cardRef}
+      onCardReady={() => setIsCardReady(true)}
+      isCardReady={isCardReady}
+      isSubmitting={isSubmitting}
+    />
   )
 }
 

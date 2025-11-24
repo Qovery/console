@@ -13,6 +13,10 @@ interface DefaultContextProps {
   project_name: string
   admin_email: string
   selectedPlan: PlanEnum
+  cardToken?: string | null
+  cardLast4?: string | null
+  cardExpiryMonth?: number | null
+  cardExpiryYear?: number | null
   setContextValue?: (data: Partial<Omit<DefaultContextProps, 'setContextValue'>>) => void
 }
 
@@ -21,6 +25,10 @@ const defaultContext: DefaultContextProps = {
   project_name: '',
   admin_email: '',
   selectedPlan: PlanEnum.USER_2025,
+  cardToken: null,
+  cardLast4: null,
+  cardExpiryMonth: null,
+  cardExpiryYear: null,
 }
 
 export const ContextOnboarding = createContext<DefaultContextProps>(defaultContext)
