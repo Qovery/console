@@ -13,6 +13,7 @@ import {
   Section,
   ToastEnum,
   toast,
+  useModalConfirmation,
 } from '@qovery/shared/ui'
 
 export interface PageOrganizationAICopilotProps {
@@ -39,6 +40,7 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false)
   const [selectedMode, setSelectedMode] = useState<'read-only' | 'read-write' | null>(null)
   const queryClient = useQueryClient()
+  const { openModalConfirmation } = useModalConfirmation()
 
   const { data: configData, isLoading: isLoadingConfig } = useQuery({
     ...devopsCopilot.config({ organizationId: organization?.id ?? '' }),
@@ -442,11 +444,13 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
                         color="red"
                         variant="outline"
                         onClick={() => {
-                          if (
-                            window.confirm('Are you sure you want to delete this task? This action cannot be undone.')
-                          ) {
-                            deleteTaskMutation.mutate({ taskId: task.id })
-                          }
+                          openModalConfirmation({
+                            title: 'Delete Task',
+                            description: 'Are you sure you want to delete this task? This action cannot be undone.',
+                            confirmationMethod: 'action',
+                            confirmationAction: 'delete',
+                            action: () => deleteTaskMutation.mutate({ taskId: task.id }),
+                          })
                         }}
                         loading={deleteTaskMutation.isLoading}
                       >
