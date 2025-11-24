@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import { APPLICATION_URL, APPLICATION_VARIABLES_URL } from '@qovery/shared/routes'
 import { Callout, Heading, Icon, InputSelect, InputText, Link, RadioGroup, Section } from '@qovery/shared/ui'
-import useTerraformAvailableVersions from '../hooks/use-terraform-available-versions/use-terraform-available-versions'
+import useTerraformAvailableVersions from '../../hooks/use-terraform-available-versions/use-terraform-available-versions'
 
 export const terraformEngines = [
   { name: 'Terraform', value: TerraformEngineEnum.TERRAFORM, icon: <Icon name={IconEnum.TERRAFORM} /> },
