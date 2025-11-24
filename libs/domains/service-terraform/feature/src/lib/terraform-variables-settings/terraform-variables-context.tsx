@@ -1,11 +1,20 @@
-import { AxiosError } from 'axios'
+import { type AxiosError } from 'axios'
 import {
   GitProviderEnum,
-  TerraformVarKeyValue,
-  TerraformVariableDefinition,
+  type TerraformVarKeyValue,
+  type TerraformVariableDefinition,
   type TfVarsFileResponse,
 } from 'qovery-typescript-axios'
-import { PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  type PropsWithChildren,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -15,7 +24,7 @@ import {
   useParseTerraformVariablesFromGitRepo,
 } from '@qovery/domains/organizations/feature'
 import { useService } from '@qovery/domains/services/feature'
-import { TerraformGeneralData } from './terraform-configuration-settings/terraform-configuration-settings'
+import { type TerraformGeneralData } from './terraform-configuration-settings/terraform-configuration-settings'
 import { isCustomVariable, isVariableChanged } from './terraform-variables-utils'
 
 export type UIVariable = {
