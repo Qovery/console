@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
 <body>
@@ -259,21 +259,9 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
             <div
               class="relative mt-3 overflow-hidden rounded border border-neutral-250"
             >
-              <section
-                style="display: flex; position: relative; text-align: initial; width: 100%; height: 496px;"
-              >
-                <div
-                  style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
-                >
-                  <div
-                    class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
-                    data-testid="spinner"
-                  />
-                </div>
-                <div
-                  style="width: 100%; display: none;"
-                />
-              </section>
+              <textarea>
+                {"test": "test"}
+              </textarea>
               <button
                 aria-controls="radix-:rc:"
                 aria-expanded="false"
@@ -396,8 +384,5 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
       </form>
     </section>
   </div>
-  <script
-    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs/loader.js"
-  />
 </body>
 `;
