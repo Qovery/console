@@ -40,44 +40,6 @@ export function OnboardingProject() {
     setValue('project_name', project_name || 'main')
   }, [organization_name, project_name, setValue])
 
-  const onSubmit = handleSubmit(async (data) => {
-    if (!data) return
-
-    const currentData = {
-      organization_name: data.organization_name,
-      project_name: data.project_name,
-      admin_email,
-    }
-    setContextValue && setContextValue(currentData)
-
-    setIsSubmitting(true)
-    try {
-      const organization = await createOrganization({
-        organizationRequest: {
-          name: data.organization_name,
-          plan: selectedPlan,
-          admin_emails: admin_email ? [admin_email] : user?.email ? [user.email] : [],
-        },
-      })
-      await getAccessTokenSilently({ cacheMode: 'off' })
-      const project = await createProject({
-        organizationId: organization.id,
-        projectRequest: {
-          name: data.project_name,
-        },
-      })
-
-      if (project) {
-        navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
-      }
-    } catch (error) {
-      console.error(error)
-      toastError(error as Error)
-    } finally {
-      setIsSubmitting(false)
-    }
-  })
-
   const addCardIfPresent = async (organizationId: string) => {
     if (!cardToken) return
 
@@ -96,7 +58,7 @@ export function OnboardingProject() {
       toastError(error as Error)
       throw error
     }
-  })
+  }
 
   const onSubmit = handleSubmit(async (data) => {
     if (!data) return

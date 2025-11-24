@@ -15,6 +15,10 @@ describe('OnboardingPricing', () => {
             admin_email: '',
             selectedPlan: PlanEnum.USER_2025,
             setContextValue: jest.fn(),
+            cardToken: null,
+            cardLast4: null,
+            cardExpiryMonth: null,
+            cardExpiryYear: null,
           }}
         >
           <OnboardingPricing />
