@@ -1,7 +1,7 @@
 import { CardCVV, CardComponent, CardExpiry, CardNumber, Provider } from '@chargebee/chargebee-js-react-wrapper'
 import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
-import { type FormEvent, useRef, useState } from 'react'
+import { type FormEvent, useMemo, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ModalCrud } from '@qovery/shared/ui'
 
@@ -21,8 +21,6 @@ export function AddCreditCardModal(props: AddCreditCardModalProps) {
     defaultValues: {},
   })
 
-  const formState = isReady ? { ...methods.formState, isValid: true } : methods.formState
-
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (cardRef.current) {
@@ -36,29 +34,41 @@ export function AddCreditCardModal(props: AddCreditCardModalProps) {
 
   const isLoading = !props.cbInstance || !isReady
 
-  const fieldStyles = {
-    base: {
-      color: 'var(--color-neutral-400)',
-      fontWeight: '400',
-      fontFamily: 'Roboto, Helvetica, sans-serif',
-      fontSize: '14px',
-      lineHeight: '1.25rem',
-      letterSpacing: '0.0025em',
-      fontSmoothing: 'antialiased',
-      '::placeholder': {
-        color: 'var(--color-neutral-350)',
-      },
-      ':focus': {
-        color: 'var(--color-neutral-400)',
-      },
-    },
-    invalid: {
-      color: 'var(--color-red-500)',
-      ':focus': {
-        color: 'var(--color-red-500)',
-      },
-    },
+  const getCSSVariable = (variableName: string): string => {
+    if (typeof window === 'undefined') return ''
+    const value = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim()
+    return value || ''
   }
+
+  const fieldStyles = useMemo(() => {
+    const neutral400 = getCSSVariable('--color-neutral-400')
+    const neutral350 = getCSSVariable('--color-neutral-350')
+    const red500 = getCSSVariable('--color-red-500')
+
+    return {
+      base: {
+        color: neutral400,
+        fontWeight: '400',
+        fontFamily: 'Roboto, Helvetica, sans-serif',
+        fontSize: '14px',
+        lineHeight: '1.25rem',
+        letterSpacing: '0.0025em',
+        fontSmoothing: 'antialiased',
+        '::placeholder': {
+          color: neutral350,
+        },
+        ':focus': {
+          color: neutral400,
+        },
+      },
+      invalid: {
+        color: red500,
+        ':focus': {
+          color: red500,
+        },
+      },
+    }
+  }, [])
 
   return (
     <FormProvider {...methods}>
