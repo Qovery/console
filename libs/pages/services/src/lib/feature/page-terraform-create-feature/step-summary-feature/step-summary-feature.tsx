@@ -3,7 +3,7 @@ import { type TerraformRequest } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useTerraformVariablesContext } from '@qovery/domains/service-terraform/feature'
+import { terraformEngines, useTerraformVariablesContext } from '@qovery/domains/service-terraform/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
@@ -15,7 +15,6 @@ import {
 import { Button, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
-import { terraformEngines } from '../../../../../../../domains/service-terraform/feature/src/lib/terraform-variables-settings/terraform-configuration-settings/terraform-configuration-settings'
 import { useTerraformCreateContext } from '../page-terraform-create-feature'
 
 export function StepSummaryFeature() {

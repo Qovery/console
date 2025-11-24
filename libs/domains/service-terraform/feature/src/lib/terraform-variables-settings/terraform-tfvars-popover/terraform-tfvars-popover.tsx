@@ -1,6 +1,12 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
 import { Reorder } from 'framer-motion'
 import { useCallback, useEffect, useState } from 'react'
+import { useMatch } from 'react-router-dom'
+import {
+  APPLICATION_SETTINGS_TERRAFORM_VARIABLES_URL,
+  APPLICATION_SETTINGS_URL,
+  APPLICATION_URL,
+} from '@qovery/shared/routes'
 import {
   Button,
   Checkbox,
@@ -90,6 +96,9 @@ const TfvarItem = ({
 }
 
 export const TfvarsFilesPopover = () => {
+  const isSettings = Boolean(
+    useMatch(APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_TERRAFORM_VARIABLES_URL)
+  )
   const {
     tfVarFiles,
     setFileListOrder,
@@ -132,7 +141,7 @@ export const TfvarsFilesPopover = () => {
   const enabledFilesCount = tfVarFiles.filter((file) => file.enabled).length
 
   return (
-    <Popover.Root defaultOpen={true} onOpenChange={onOpenChange}>
+    <Popover.Root defaultOpen={!isSettings} onOpenChange={onOpenChange}>
       <Popover.Trigger>
         <div>
           {enabledFilesCount > 0 ? (
