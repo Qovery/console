@@ -129,17 +129,19 @@ export const TfvarsFilesPopover = () => {
     }
   }
 
+  const enabledFilesCount = tfVarFiles.filter((file) => file.enabled).length
+
   return (
     <Popover.Root defaultOpen={true} onOpenChange={onOpenChange}>
       <Popover.Trigger>
         <div>
-          {tfVarFiles.filter((file) => file.enabled).length > 0 ? (
+          {enabledFilesCount > 0 ? (
             <Indicator
               align="start"
               side="left"
               content={
                 <span className="relative right-0 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-400 text-sm font-bold leading-[0] text-white">
-                  {tfVarFiles.filter((file) => file.enabled).length ?? 0}
+                  {enabledFilesCount}
                 </span>
               }
             >
@@ -149,7 +151,7 @@ export const TfvarsFilesPopover = () => {
               </Button>
             </Indicator>
           ) : (
-            <Button size="md" variant="solid" className="gap-1.5" type="button">
+            <Button size="md" variant="solid" className="gap-1.5 px-[13px]" type="button">
               <Icon iconName="file-lines" iconStyle="regular" />
               .tfvars files
             </Button>
