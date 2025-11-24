@@ -25,15 +25,15 @@ export const isCustomVariable = (v: UIVariable) => {
   return v.source === CUSTOM_SOURCE
 }
 
-export const getSourceBadgeColor = (variable: UIVariable) => {
+export const getSourceBadgeClassName = (variable: UIVariable) => {
   if (isCustomVariable(variable)) {
-    return 'tf_custom'
+    return 'text-[#65636D] bg-[#F2EFF3] border-[#D0CDD780]'
   }
   if (isVariableChanged(variable)) {
-    return 'tf_override'
+    return 'text-[#AB6400] bg-[#FFF7C2] border-[#DC9B004D]'
   }
   if (variable.source.includes('.tfvars')) {
-    return 'tfvars_file'
+    return 'text-[#218358] bg-[#E6F6EB] border-[#008F3E33]'
   }
-  return 'tf_file'
+  return 'text-[#0D74CE] bg-[#E6F4FE] border-[#0083EB33]'
 }

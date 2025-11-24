@@ -5,7 +5,20 @@ import { Badge, Button, Checkbox, Icon, LoaderSpinner, PasswordShowHide, Tooltip
 import { twMerge } from '@qovery/shared/util-js'
 import { TfvarsFilesPopover } from '../terraform-tfvars-popover/terraform-tfvars-popover'
 import { type UIVariable, useTerraformVariablesContext } from '../terraform-variables-context'
-import { formatSource, getSourceBadgeColor, isCustomVariable, isVariableChanged } from '../terraform-variables-utils'
+import {
+  formatSource,
+  getSourceBadgeClassName,
+  isCustomVariable,
+  isVariableChanged,
+} from '../terraform-variables-utils'
+
+const SourceBadge = ({ variable }: { variable: UIVariable }) => {
+  return (
+    <Badge className={twMerge(getSourceBadgeClassName(variable), 'font-medium')} variant="surface">
+      <Truncate text={formatSource(variable)} truncateLimit={40} />
+    </Badge>
+  )
+}
 
 const VariableRow = ({ variable }: { variable: UIVariable }) => {
   const { updateKey, updateValue, toggleSecret, revertValue, isRowSelected, selectRow, hoveredRow, errors } =
@@ -177,9 +190,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
         </div>
         {/* Source badge */}
         <div className="flex h-full items-center border-r border-neutral-250 px-4">
-          <Badge color={getSourceBadgeColor(variable)} variant="surface" className="text-xs">
-            <Truncate text={formatSource(variable)} truncateLimit={40} />
-          </Badge>
+          <SourceBadge variable={variable} />
         </div>
         {/* Secret toggle */}
         <button
