@@ -5644,7 +5644,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": 7.18.0
     "@typescript-eslint/parser": 7.18.0
     "@uidotdev/usehooks": ^2.4.1
-    "@xterm/addon-attach": ^0.10.0
+    "@xterm/addon-attach": ^0.11.0
     "@xterm/addon-fit": ^0.9.0
     "@xterm/xterm": ^5.5.0
     algoliasearch: ^4.23.3
@@ -10108,12 +10108,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xterm/addon-attach@npm:^0.10.0":
-  version: 0.10.0
-  resolution: "@xterm/addon-attach@npm:0.10.0"
+"@xterm/addon-attach@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@xterm/addon-attach@npm:0.11.0"
   peerDependencies:
     "@xterm/xterm": ^5.0.0
-  checksum: e9238294c16334dcdc58d7cbafc56837cb5b523ec03755c4d14226931ba94ec2303ca912c441d471e8fcfb8b05a02f5a3988dc5f24c305f2340b21f86491e296
+  checksum: f11e7ba68b8b1064ce545ecbf2beeaf3ebc94622fa3ca77e0ca0b8e8834964f634ee3897c031376abc7242ddfd305a40b10aa7b3e8056bfa59055967251523b5
   languageName: node
   linkType: hard
 
