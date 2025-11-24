@@ -25,7 +25,7 @@
 
 ## Getting Started
 
-First use
+st useeeeeee
 
     yarn && yarn setup
 
