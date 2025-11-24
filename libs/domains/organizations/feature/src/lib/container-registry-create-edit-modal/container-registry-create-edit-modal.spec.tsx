@@ -131,6 +131,33 @@ describe('ContainerRegistryCreateEditModal', () => {
     screen.getByLabelText('Secret key')
   })
 
+  it('should render the form with ECR and STS credentials', async () => {
+    renderWithProviders(
+      <ContainerRegistryCreateEditModal
+        registry={{
+          id: '1111-1111-1111',
+          created_at: '',
+          updated_at: '',
+          name: 'hello',
+          url: 'https://qovery.com',
+          kind: ContainerRegistryKindEnum.ECR,
+          config: {
+            region: 'us-east-1',
+            role_arn: 'arn:aws:iam::123456789012:role/MyRole',
+          },
+        }}
+        {...props}
+      />
+    )
+    screen.getByDisplayValue('hello')
+    screen.getByDisplayValue('https://qovery.com')
+    screen.getByDisplayValue('us-east-1')
+    screen.getByDisplayValue('arn:aws:iam::123456789012:role/MyRole')
+
+    screen.getByLabelText('Region')
+    screen.getByLabelText('Role ARN')
+  })
+
   it('should render the form with PUBLIC_ECR', async () => {
     renderWithProviders(
       <ContainerRegistryCreateEditModal
