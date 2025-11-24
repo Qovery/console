@@ -1,4 +1,5 @@
-export * from './lib/chargebee/chargebee-utils'
+// This library is deprecated and will be removed in the future
+// Please use util or domain libraries instead
 export * from './lib/credit-card-form/ui/credit-card-form'
 export * from './lib/github-application-callback/github-application-callback-feature/github-application-callback-feature'
 export * from './lib/cluster-settings/feature/cluster-resources-settings-feature/cluster-resources-settings-feature'

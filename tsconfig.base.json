@@ -86,6 +86,7 @@
       "@qovery/shared/util-tests": ["libs/shared/util-tests/src/index.ts"],
       "@qovery/shared/util-types": ["libs/shared/util-types/src/index.ts"],
       "@qovery/shared/util-web-sockets": ["libs/shared/util-web-sockets/src/index.ts"],
+      "@qovery/shared/util-payment": ["libs/shared/util-payment/src/index.ts"],
       "@qovery/shared/utils": ["libs/shared/utils/src/index.ts"],
       "@qovery/state/util-queries": ["libs/state/util-queries/src/index.ts"]
     }

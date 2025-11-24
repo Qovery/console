@@ -2,8 +2,9 @@ import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/comp
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { useEffect, useState } from 'react'
 import { useAddCreditCard } from '@qovery/domains/organizations/feature'
-import { useModal } from '@qovery/shared/ui'
-import { loadChargebee } from '../../chargebee/chargebee-utils'
+import { toastError, useModal } from '@qovery/shared/ui'
+import { loadChargebee } from '@qovery/shared/util-payment'
+import { type SerializedError } from '@qovery/shared/utils'
 import AddCreditCardModal from '../ui/add-credit-card-modal'
 
 export interface AddCreditCardModalFeatureProps {
@@ -21,7 +22,6 @@ export function AddCreditCardModalFeature({ organizationId }: AddCreditCardModal
 
     const initializeChargebee = async () => {
       try {
-        // Load Chargebee instance for React wrapper
         const instance = await loadChargebee()
 
         if (!mounted) {
@@ -71,9 +71,7 @@ export function AddCreditCardModalFeature({ organizationId }: AddCreditCardModal
       })
       closeModal()
     } catch (error) {
-      console.error(error)
-      // Re-throw to show error notification from the hook
-      throw error
+      toastError(error as unknown as SerializedError)
     } finally {
       setLoading(false)
     }

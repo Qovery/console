@@ -1,26 +1,9 @@
-/**
- * Chargebee.js integration utilities
- * Provides functions to load and interact with Chargebee.js for secure payment processing
- * Chargebee handles the payment gateway (Stripe) tokenization internally
- */
 import type { Component } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/base-types'
+import type { Events } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/enums'
 import type { CbToken } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/types'
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { CHARGEBEE_PUBLISHABLE_KEY } from '@qovery/shared/util-node-env'
 
-/**
- * Extended types for Chargebee field components
- * These types extend the base Component interface for individual field usage
- */
-interface ChargebeeFieldComponent {
-  mount(selector: string): Promise<void>
-  on(event: string, callback: () => void): void
-  destroy?(): void
-}
-
-/**
- * Result from tokenizing Chargebee card fields
- */
 interface ChargebeeTokenizeResult extends CbToken {
   card?: {
     last4: string
@@ -70,15 +53,16 @@ export function loadChargebee(): Promise<CbInstance> {
       chargebeeInstance
         .load('components')
         .then(() => {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           resolve(chargebeeInstance!)
         })
-        .catch((error: Error) => {
+        .catch(() => {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           resolve(chargebeeInstance!)
         })
       return
     }
 
-    // Load Chargebee.js script
     const script = document.createElement('script')
     script.src = 'https://js.chargebee.com/v2/chargebee.js'
     script.async = true
@@ -102,10 +86,12 @@ export function loadChargebee(): Promise<CbInstance> {
       chargebeeInstance
         .load('components')
         .then(() => {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           resolve(chargebeeInstance!)
         })
         .catch((error: Error) => {
           console.warn('Failed to load Chargebee components module:', error)
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           resolve(chargebeeInstance!)
         })
     }
@@ -160,11 +146,11 @@ export async function createIndividualCardFields(
   cvvContainerId: string,
   currency = 'USD'
 ): Promise<{
-  numberField: ChargebeeFieldComponent
-  expiryField: ChargebeeFieldComponent
-  cvvField: ChargebeeFieldComponent
+  numberField: Component
+  expiryField: Component
+  cvvField: Component
   tokenize: () => Promise<ChargebeeTokenizeResult>
-  on: (event: string, callback: () => void) => void
+  on: (event: Events, callback: () => void) => void
   destroy: () => void
 }> {
   const cbInstance = await loadChargebee()
@@ -176,25 +162,24 @@ export async function createIndividualCardFields(
   // Load the components module before creating components
   await cbInstance.load('components')
 
-  // Common styles for all fields to match your design system
   const fieldStyles = {
     base: {
-      color: '#333333',
+      color: 'var(--color-neutral-400)',
       fontWeight: '400',
       fontFamily: 'system-ui, -apple-system, sans-serif',
       fontSize: '14px',
       fontSmoothing: 'antialiased',
       '::placeholder': {
-        color: '#9CA3AF',
+        color: 'var(--color-neutral-350)',
       },
       ':focus': {
-        color: '#333333',
+        color: 'var(--color-neutral-400)',
       },
     },
     invalid: {
-      color: '#EF4444',
+      color: 'var(--color-red-500)',
       ':focus': {
-        color: '#EF4444',
+        color: 'var(--color-red-500)',
       },
     },
   }
@@ -209,9 +194,8 @@ export async function createIndividualCardFields(
       style: fieldStyles,
       locale: 'en',
     } as Parameters<CbInstance['createComponent']>[1]
-  ) as Component & ChargebeeFieldComponent
+  ) as Component
 
-  // Create expiry field
   const expiryField = cbInstance.createComponent(
     'cardExpiry' as 'card',
     {
@@ -219,9 +203,8 @@ export async function createIndividualCardFields(
       style: fieldStyles,
       locale: 'en',
     } as Parameters<CbInstance['createComponent']>[1]
-  ) as Component & ChargebeeFieldComponent
+  ) as Component
 
-  // Create CVV field
   const cvvField = cbInstance.createComponent(
     'cardCvv' as 'card',
     {
@@ -229,24 +212,20 @@ export async function createIndividualCardFields(
       style: fieldStyles,
       locale: 'en',
     } as Parameters<CbInstance['createComponent']>[1]
-  ) as Component & ChargebeeFieldComponent
+  ) as Component
 
-  // Mount all fields
   await numberField.mount(`#${numberContainerId}`)
   await expiryField.mount(`#${expiryContainerId}`)
   await cvvField.mount(`#${cvvContainerId}`)
 
-  // Create a combined component object for easier management
   const combinedComponent = {
     numberField,
     expiryField,
     cvvField,
-    // Combined tokenize method - Chargebee requires calling tokenize on the instance, not individual fields
     tokenize: (): Promise<ChargebeeTokenizeResult> => {
       return cbInstance.tokenize(numberField)
     },
-    // Combined ready event handler
-    on: (event: string, callback: () => void) => {
+    on: (event: Events, callback: () => void) => {
       // Only fire callback when all fields are ready
       let readyCount = 0
       const fireWhenAllReady = () => {
@@ -256,11 +235,10 @@ export async function createIndividualCardFields(
         }
       }
 
-      numberField.on(event, fireWhenAllReady)
-      expiryField.on(event, fireWhenAllReady)
-      cvvField.on(event, fireWhenAllReady)
+      numberField.on?.(event, fireWhenAllReady)
+      expiryField.on?.(event, fireWhenAllReady)
+      cvvField.on?.(event, fireWhenAllReady)
     },
-    // Combined destroy method
     destroy: () => {
       numberField.destroy?.()
       expiryField.destroy?.()
@@ -286,49 +264,42 @@ export async function createCardComponent(containerId: string, currency = 'USD')
     throw new Error('Failed to load Chargebee instance')
   }
 
-  // Load the components module before creating components
-  // This is required by Chargebee.js v2 to avoid "modules not loaded" error
   await cbInstance.load('components')
 
-  // Create a card component with currency configuration
-  // Currency is required to determine which gateway configuration to use
   const cardComponent = cbInstance.createComponent('card', {
     currency,
-    // Styling options to match the design system
     style: {
       base: {
-        color: '#383E50', // neutral-400
+        color: 'var(--color-neutral-400)',
         fontWeight: '400',
         fontFamily: 'Roboto, Helvetica, sans-serif',
-        fontSize: '14px', // text-sm
+        fontSize: '14px',
         lineHeight: '1.25rem',
         letterSpacing: '0.0025em',
         fontSmoothing: 'antialiased',
         '::placeholder': {
-          color: '#67778E', // neutral-350
+          color: 'var(--color-neutral-350)',
         },
         ':focus': {
-          color: '#383E50', // neutral-400
+          color: 'var(--color-neutral-400)',
         },
         ':hover': {
-          color: '#383E50',
+          color: 'var(--color-neutral-400)',
         },
       },
       invalid: {
-        color: '#FF6240', // red-500
+        color: 'var(--color-red-500)',
         ':focus': {
-          color: '#FF6240',
+          color: 'var(--color-red-500)',
         },
       },
     },
-    // Classes to style the container to match input design
     classes: {
       focus: 'chargebee-field-focus',
       invalid: 'chargebee-field-invalid',
       empty: 'chargebee-field-empty',
       complete: 'chargebee-field-complete',
     },
-    // Locale and placeholder options
     locale: 'en',
     placeholder: {
       number: '4111 1111 1111 1111',
@@ -337,7 +308,6 @@ export async function createCardComponent(containerId: string, currency = 'USD')
     },
   })
 
-  // Mount the component to the specified container
   await cardComponent.mount(`#${containerId}`)
 
   return cardComponent

@@ -16,14 +16,11 @@ export function AddCreditCardModal(props: AddCreditCardModalProps) {
   const cardRef = useRef<FieldContainer>(null)
   const [isReady, setIsReady] = useState(false)
 
-  // ModalCrud requires react-hook-form context, even though we're not using it
-  // The actual form validation is handled by Chargebee's component
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {},
   })
 
-  // Override form state to mark as valid when Chargebee is ready
   const formState = isReady ? { ...methods.formState, isValid: true } : methods.formState
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -37,13 +34,11 @@ export function AddCreditCardModal(props: AddCreditCardModalProps) {
     setIsReady(true)
   }
 
-  // Show loading state until Chargebee instance is loaded and fields are ready
   const isLoading = !props.cbInstance || !isReady
 
-  // Custom styles to match InputText design
   const fieldStyles = {
     base: {
-      color: '#383E50',
+      color: 'var(--color-neutral-400)',
       fontWeight: '400',
       fontFamily: 'Roboto, Helvetica, sans-serif',
       fontSize: '14px',
@@ -51,22 +46,22 @@ export function AddCreditCardModal(props: AddCreditCardModalProps) {
       letterSpacing: '0.0025em',
       fontSmoothing: 'antialiased',
       '::placeholder': {
-        color: '#67778E',
+        color: 'var(--color-neutral-350)',
       },
       ':focus': {
-        color: '#383E50',
+        color: 'var(--color-neutral-400)',
       },
     },
     invalid: {
-      color: '#FF6240',
+      color: 'var(--color-red-500)',
       ':focus': {
-        color: '#FF6240',
+        color: 'var(--color-red-500)',
       },
     },
   }
 
   return (
-    <FormProvider {...methods} formState={formState}>
+    <FormProvider {...methods}>
       <ModalCrud
         title="Add credit card"
         description="Card information is securely processed by Chargebee."
@@ -82,7 +77,7 @@ export function AddCreditCardModal(props: AddCreditCardModalProps) {
               min-height: 52px;
               cursor: pointer;
               border-radius: 0.25rem;
-              border: 1px solid #C6D3E7;
+              border: 1px solid var(--color-neutral-250);
               background-color: white;
               padding: 0.5rem 0.75rem;
               transition: all 120ms cubic-bezier(0.4, 0, 0.2, 1), 0s outline;
@@ -91,14 +86,14 @@ export function AddCreditCardModal(props: AddCreditCardModalProps) {
 
             /* Hover state */
             .chargebee-field-wrapper:hover {
-              border-color: #5B50D6;
+              border-color: var(--color-brand-500);
               box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
             }
 
             /* Focus state */
             .chargebee-field-wrapper.chargebee-field-focus {
-              border-color: #5B50D6;
-              outline: 3px solid #E0DDFC;
+              border-color: var(--color-brand-500);
+              outline: 3px solid var(--color-brand-100);
               box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
             }
 
@@ -108,7 +103,7 @@ export function AddCreditCardModal(props: AddCreditCardModalProps) {
               font-size: 0.75rem;
               line-height: 1rem;
               letter-spacing: 0.002em;
-              color: #67778E;
+              color: var(--color-neutral-350);
               font-family: Roboto, Helvetica, sans-serif;
               font-weight: 400;
               margin-bottom: 0.25rem;
@@ -145,7 +140,6 @@ export function AddCreditCardModal(props: AddCreditCardModalProps) {
 
           `}
         </style>
-        {/* Chargebee fields - only render when instance is ready */}
         {props.cbInstance && (
           <Provider cbInstance={props.cbInstance}>
             <CardComponent ref={cardRef} styles={fieldStyles} locale="en" currency="USD" onReady={handleReady}>
