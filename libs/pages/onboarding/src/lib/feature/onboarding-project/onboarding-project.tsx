@@ -2,7 +2,12 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { useCreateOrganization, useOrganizations, useAddCreditCard } from '@qovery/domains/organizations/feature'
+import {
+  useCreateOrganization,
+  useOrganizations,
+  useAddCreditCard,
+  useDeleteOrganization,
+} from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
@@ -20,6 +25,7 @@ export function OnboardingProject() {
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject()
   const { mutateAsync: addCreditCard } = useAddCreditCard()
+  const { mutateAsync: deleteOrganization } = useDeleteOrganization()
   const { handleSubmit, control, setValue } = useForm<{ project_name: string; organization_name: string }>()
   const { data: organizations = [] } = useOrganizations()
   const {
@@ -71,6 +77,8 @@ export function OnboardingProject() {
     setContextValue && setContextValue(currentData)
 
     setIsSubmitting(true)
+    let createdOrganizationId: string | null = null
+
     try {
       const organization = await createOrganization({
         organizationRequest: {
@@ -79,6 +87,7 @@ export function OnboardingProject() {
           admin_emails: admin_email ? [admin_email] : user?.email ? [user.email] : [],
         },
       })
+      createdOrganizationId = organization.id
       await getAccessTokenSilently({ cacheMode: 'off' })
 
       if (organization.id) {
@@ -98,6 +107,14 @@ export function OnboardingProject() {
     } catch (error) {
       console.error(error)
       toastError(error as Error)
+      if (createdOrganizationId) {
+        try {
+          await deleteOrganization({ organizationId: createdOrganizationId })
+        } catch (cleanupError) {
+          console.error('Failed to clean up organization after card failure', cleanupError)
+        }
+      }
+      navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
     } finally {
       setIsSubmitting(false)
     }
