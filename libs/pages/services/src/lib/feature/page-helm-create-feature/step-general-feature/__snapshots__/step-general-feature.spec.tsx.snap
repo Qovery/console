@@ -235,10 +235,10 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                           class="css-1f43avz-a11yText-A11yText"
                         />
                         <div
-                          class="input-select__control css-13cymwt-control"
+                          class="input-select__control css-1s2u09g-control"
                         >
                           <div
-                            class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                            class="input-select__value-container input-select__value-container--has-value css-319lph-ValueContainer"
                           >
                             <span
                               class="mr-1 text-sm text-neutral-400"
@@ -262,11 +262,11 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                             class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
                           >
                             <span
-                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                              class="input-select__indicator-separator css-1okebmr-indicatorSeparator"
                             />
                             <div
                               aria-hidden="true"
-                              class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                              class="input-select__indicator input-select__dropdown-indicator css-tlfecz-indicatorContainer"
                             >
                               <svg
                                 aria-hidden="true"
@@ -335,19 +335,19 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                           class="css-1f43avz-a11yText-A11yText"
                         />
                         <div
-                          class="input-select__control css-13cymwt-control"
+                          class="input-select__control css-1s2u09g-control"
                         >
                           <div
-                            class="input-select__value-container css-1fdsijx-ValueContainer"
+                            class="input-select__value-container css-319lph-ValueContainer"
                           >
                             <div
-                              class="input-select__placeholder css-1jqq78o-placeholder"
+                              class="input-select__placeholder css-14el2xx-placeholder"
                               id="react-select-5-placeholder"
                             >
                               Select...
                             </div>
                             <div
-                              class="input-select__input-container css-qbdosj-Input"
+                              class="input-select__input-container css-6j8wv5-Input"
                               data-value=""
                             >
                               <input
@@ -373,11 +373,11 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                             class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
                           >
                             <span
-                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                              class="input-select__indicator-separator css-1okebmr-indicatorSeparator"
                             />
                             <div
                               aria-hidden="true"
-                              class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                              class="input-select__indicator input-select__dropdown-indicator css-tlfecz-indicatorContainer"
                             >
                               <svg
                                 aria-hidden="true"
@@ -885,10 +885,10 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                           class="css-1f43avz-a11yText-A11yText"
                         />
                         <div
-                          class="input-select__control css-13cymwt-control"
+                          class="input-select__control css-1s2u09g-control"
                         >
                           <div
-                            class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                            class="input-select__value-container input-select__value-container--has-value css-319lph-ValueContainer"
                           >
                             <span
                               class="mr-1 text-sm text-neutral-400"
@@ -912,11 +912,11 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                             class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
                           >
                             <span
-                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                              class="input-select__indicator-separator css-1okebmr-indicatorSeparator"
                             />
                             <div
                               aria-hidden="true"
-                              class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                              class="input-select__indicator input-select__dropdown-indicator css-tlfecz-indicatorContainer"
                             >
                               <svg
                                 aria-hidden="true"
@@ -1402,10 +1402,10 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                           class="css-1f43avz-a11yText-A11yText"
                         />
                         <div
-                          class="input-select__control css-13cymwt-control"
+                          class="input-select__control css-1s2u09g-control"
                         >
                           <div
-                            class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                            class="input-select__value-container input-select__value-container--has-value css-319lph-ValueContainer"
                           >
                             <span
                               class="mr-1 text-sm text-neutral-400"
@@ -1429,11 +1429,11 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                             class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
                           >
                             <span
-                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                              class="input-select__indicator-separator css-1okebmr-indicatorSeparator"
                             />
                             <div
                               aria-hidden="true"
-                              class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                              class="input-select__indicator input-select__dropdown-indicator css-tlfecz-indicatorContainer"
                             >
                               <svg
                                 aria-hidden="true"
@@ -1513,10 +1513,10 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                           class="css-1f43avz-a11yText-A11yText"
                         />
                         <div
-                          class="input-select__control css-13cymwt-control"
+                          class="input-select__control css-1s2u09g-control"
                         >
                           <div
-                            class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                            class="input-select__value-container input-select__value-container--has-value css-319lph-ValueContainer"
                           >
                             <span
                               class="mr-1 text-sm text-neutral-400"
@@ -1524,7 +1524,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                               Public repository (Github, Gitlab, Bitbucket)
                             </span>
                             <div
-                              class="input-select__input-container css-qbdosj-Input"
+                              class="input-select__input-container css-6j8wv5-Input"
                               data-value=""
                             >
                               <input
@@ -1549,11 +1549,11 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                             class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
                           >
                             <span
-                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                              class="input-select__indicator-separator css-1okebmr-indicatorSeparator"
                             />
                             <div
                               aria-hidden="true"
-                              class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                              class="input-select__indicator input-select__dropdown-indicator css-tlfecz-indicatorContainer"
                             >
                               <svg
                                 aria-hidden="true"
