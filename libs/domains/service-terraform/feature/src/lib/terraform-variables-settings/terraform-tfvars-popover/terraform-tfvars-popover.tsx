@@ -208,18 +208,20 @@ export const TfvarsFilesPopover = () => {
           </div>
           {newPathErrorMessage && <div className="text-xs text-red-500">{newPathErrorMessage}</div>}
         </div>
-        <div className="flex items-center justify-between border-t border-neutral-250 bg-neutral-100 px-4 py-1">
-          <span className="text-xs text-neutral-350">File order defines override priority.</span>
-          <Tooltip
-            classNameContent="max-w-[230px]"
-            content="Files higher in the list override variables from lower ones."
-            side="left"
-          >
-            <span className="text-sm text-neutral-350">
-              <Icon iconName="info-circle" iconStyle="regular" />
-            </span>
-          </Tooltip>
-        </div>
+        {!areTfVarsFilesLoading && tfVarFiles.length !== 0 && (
+          <div className="flex items-center justify-between border-t border-neutral-250 bg-neutral-100 px-4 py-1">
+            <span className="text-xs text-neutral-350">File order defines override priority.</span>
+            <Tooltip
+              classNameContent="max-w-[230px]"
+              content="Files higher in the list override variables from lower ones."
+              side="left"
+            >
+              <span className="text-sm text-neutral-350">
+                <Icon iconName="info-circle" iconStyle="regular" />
+              </span>
+            </Tooltip>
+          </div>
+        )}
         <div className="flex flex-col border-t border-neutral-250">
           {areTfVarsFilesLoading && tfVarFiles.length === 0 ? (
             <>
@@ -235,8 +237,8 @@ export const TfvarsFilesPopover = () => {
                 </div>
               ))}
             </>
-          ) : (
-            <ScrollShadowWrapper className="max-h-[500px]">
+          ) : tfVarFiles.length > 0 ? (
+            <ScrollShadowWrapper className="max-h-[300px]">
               <Reorder.Group axis="y" values={tfVarFiles} onReorder={onReorder}>
                 {tfVarFiles?.map((file, index) => (
                   <Reorder.Item
@@ -252,7 +254,7 @@ export const TfvarsFilesPopover = () => {
                 ))}
               </Reorder.Group>
             </ScrollShadowWrapper>
-          )}
+          ) : null}
         </div>
       </Popover.Content>
     </Popover.Root>
