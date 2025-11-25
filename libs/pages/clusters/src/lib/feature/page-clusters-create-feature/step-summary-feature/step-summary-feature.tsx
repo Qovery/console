@@ -4,16 +4,11 @@ import {
   type ClusterRequestFeaturesInner,
   type KubernetesEnum,
 } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
-import {
-  useClusters,
-  useCreateCluster,
-  useDeployCluster,
-  useEditCloudProviderInfo,
-} from '@qovery/domains/clusters/feature'
+import { useCreateCluster, useDeployCluster, useEditCloudProviderInfo } from '@qovery/domains/clusters/feature'
 import {
   CLUSTERS_CREATION_EKS_URL,
   CLUSTERS_CREATION_FEATURES_URL,
@@ -23,13 +18,10 @@ import {
   CLUSTERS_GENERAL_URL,
   CLUSTERS_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody, useModal } from '@qovery/shared/ui'
+import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepSummary from '../../../ui/page-clusters-create/step-summary/step-summary'
-import NotificationPermissionsModal from '../../../ui/page-clusters-create/step-summary/notification-permissions-modal'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
-
-const CLUSTER_NOTIFICATION_PERMISSIONS_PROMPT_KEY = 'cluster-notification-permissions-prompt'
 
 export function getValueByKey(key: string, data: { [key: string]: string }[] = []): string[] {
   return data.reduce((result: string[], obj) => {
@@ -44,8 +36,6 @@ export function StepSummaryFeature() {
     useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
-  const { openModal, closeModal } = useModal()
-  const { data: clusters } = useClusters({ organizationId, enabled: Boolean(organizationId) })
 
   const { mutateAsync: createCluster, isLoading: isCreateClusterLoading } = useCreateCluster()
   const { mutateAsync: editCloudProviderInfo } = useEditCloudProviderInfo({ silently: true })
@@ -74,11 +64,6 @@ export function StepSummaryFeature() {
       .otherwise(() => ({ enabled: false }))
   )
   const detailInstanceType = cloudProviderInstanceTypes?.find(({ type }) => type === resourcesData?.instance_type)
-
-  const hasSeenNotificationPromptRef = useRef(
-    typeof window !== 'undefined' && localStorage.getItem(CLUSTER_NOTIFICATION_PERMISSIONS_PROMPT_KEY) === 'true'
-  )
-  const shouldPromptForPermissions = !hasSeenNotificationPromptRef.current && (clusters?.length ?? 0) === 0
 
   const goToKubeconfig = useCallback(() => {
     navigate(creationFlowUrl + CLUSTERS_CREATION_KUBECONFIG_URL)
@@ -116,80 +101,6 @@ export function StepSummaryFeature() {
     !generalData?.name && navigate(creationFlowUrl + CLUSTERS_CREATION_GENERAL_URL)
   }, [creationFlowUrl, generalData, navigate])
 
-  const askBrowserNotificationPermission = useCallback(async () => {
-    if (typeof window === 'undefined' || typeof Notification === 'undefined') return
-    if (Notification.permission === 'default') {
-      try {
-        await Notification.requestPermission()
-      } catch (error) {
-        console.error(error)
-      }
-    }
-  }, [])
-
-  const askSoundPermission = useCallback(async () => {
-    if (typeof window === 'undefined') return
-    const AudioContextConstructor =
-      (window as typeof window & { webkitAudioContext?: typeof AudioContext }).AudioContext ||
-      (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
-
-    if (!AudioContextConstructor) return
-
-    try {
-      const audioContext = new AudioContextConstructor()
-      const oscillator = audioContext.createOscillator()
-      const gainNode = audioContext.createGain()
-
-      gainNode.gain.value = 0.001
-      oscillator.connect(gainNode)
-      gainNode.connect(audioContext.destination)
-
-      await audioContext.resume()
-      oscillator.start()
-      oscillator.stop(audioContext.currentTime + 0.05)
-      oscillator.onended = () => {
-        audioContext.close()
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }, [])
-
-  const openNotificationPermissionModal = useCallback(() => {
-    if (hasSeenNotificationPromptRef.current) return
-    hasSeenNotificationPromptRef.current = true
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(CLUSTER_NOTIFICATION_PERMISSIONS_PROMPT_KEY, 'true')
-    }
-
-    openModal({
-      options: {
-        width: 520,
-      },
-      content: (
-        <NotificationPermissionsModal
-          onClose={closeModal}
-          onConfirm={async ({ enableBrowserNotifications, enableSound }) => {
-            if (enableBrowserNotifications) {
-              await askBrowserNotificationPermission()
-            }
-            if (enableSound) {
-              await askSoundPermission()
-            }
-            closeModal()
-          }}
-        />
-      ),
-    })
-  }, [askBrowserNotificationPermission, askSoundPermission, closeModal, openModal])
-
-  const handlePostCreation = (callback: () => void) => {
-    if (shouldPromptForPermissions) {
-      openNotificationPermissionModal()
-    }
-    callback()
-  }
-
   const onSubmit = async (withDeploy: boolean) => {
     if (!generalData) {
       throw new Error('Invalid generalData')
@@ -223,12 +134,10 @@ export function StepSummaryFeature() {
           clusterId: cluster.id,
           cloudProviderInfoRequest: cloud_provider_credentials,
         })
-        handlePostCreation(() =>
-          navigate({
-            pathname: creationFlowUrl + CLUSTERS_GENERAL_URL,
-            search: '?show-self-managed-guide',
-          })
-        )
+        navigate({
+          pathname: creationFlowUrl + CLUSTERS_GENERAL_URL,
+          search: '?show-self-managed-guide',
+        })
       } catch (e) {
         console.error(e)
       }
@@ -253,7 +162,7 @@ export function StepSummaryFeature() {
           },
         })
 
-        handlePostCreation(() => navigate(CLUSTERS_URL(organizationId)))
+        navigate(CLUSTERS_URL(organizationId))
       } catch (e) {
         console.error(e)
       }
@@ -452,7 +361,7 @@ export function StepSummaryFeature() {
         if (withDeploy) {
           await deployCluster({ clusterId: cluster.id, organizationId })
         }
-        handlePostCreation(() => navigate(CLUSTERS_URL(organizationId)))
+        navigate(CLUSTERS_URL(organizationId))
       } catch (e) {
         console.error(e)
       }

@@ -43,8 +43,6 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ organizationId: '1' }),
   useNavigate: () => mockNavigate,
 }))
-const useDeployClusterMockSpy = jest.spyOn(clustersDomain, 'useDeployCluster') as jest.Mock
-const useClustersMockSpy = jest.spyOn(clustersDomain, 'useClusters') as jest.Mock
 
 const STATIC_IP = 'STATIC_IP'
 
@@ -100,29 +98,16 @@ const ContextWrapper = (props: { installation_type?: 'MANAGED' | 'SELF_MANAGED';
 describe('StepSummaryFeature', () => {
   const createCluster = jest.fn()
   const editCloudProviderInfo = jest.fn()
-  const deployCluster = jest.fn()
   beforeEach(() => {
-    createCluster.mockReset()
-    editCloudProviderInfo.mockReset()
-    deployCluster.mockReset()
-    mockNavigate.mockReset()
     useCreateClusterMockSpy.mockReturnValue({
       mutateAsync: createCluster,
     })
     useEditCloudProviderInfoMockSpy.mockReturnValue({
       mutateAsync: editCloudProviderInfo,
     })
-    useDeployClusterMockSpy.mockReturnValue({
-      mutateAsync: deployCluster,
-      isLoading: false,
-    })
     useCloudProviderInstanceTypesMockSpy.mockReturnValue({
       data: mockInstanceType,
       isLoading: false,
-    })
-    useClustersMockSpy.mockReturnValue({
-      data: [],
-      isFetched: true,
     })
   })
 
