@@ -19,7 +19,8 @@ exports[`OutputVariables when serviceType is JOB should match snapshot 1`] = `
                 class="flex items-center gap-1 cursor-pointer select-none"
                 type="button"
               >
-                Job output variables
+                Job
+                 output variables
                 <span
                   class=""
                   data-state="closed"
@@ -111,7 +112,8 @@ exports[`OutputVariables when serviceType is TERRAFORM should match snapshot 1`]
                 class="flex items-center gap-1 cursor-pointer select-none"
                 type="button"
               >
-                Terraform output variables
+                Terraform
+                 output variables
                 <span
                   class=""
                   data-state="closed"

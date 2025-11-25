@@ -41,7 +41,7 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
       columnHelper.accessor('key', {
         header: () => (
           <>
-            {`${scopeName} output variables`}
+            {scopeName} output variables
             <Tooltip
               content={
                 <>
