@@ -36,7 +36,7 @@ export function InputCheckbox(props: InputCheckboxProps) {
   } = props
 
   const [check, setCheck] = useState(isChecked)
-  const bigClasses = big ? 'mr-6 before:w-5 before:h-5' : 'mr-5 before:w-4 before:h-4'
+  const bigClasses = big ? 'mr-6 w-5 h-5 before:w-5 before:h-5' : 'mr-5 w-4 h-4 before:w-4 before:h-4'
 
   useEffect(() => {
     setCheck(isChecked)
@@ -62,7 +62,7 @@ export function InputCheckbox(props: InputCheckboxProps) {
         checked={check}
         disabled={disabled}
         onChange={(e) => inputChange(e.currentTarget.checked, e)}
-        className={`input-checkbox relative h-0 w-0 appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:-translate-y-1/2 before:items-center before:justify-center before:rounded-sm before:bg-white before:text-white dark:before:bg-neutral-500 ${bigClasses} ${
+        className={`input-checkbox relative appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:items-center before:justify-center before:rounded-sm before:bg-white before:text-white dark:before:bg-neutral-500 ${bigClasses} ${
           disabled
             ? 'before:border-neutral-250 dark:before:border-neutral-350'
             : 'cursor-pointer before:border-neutral-350'
@@ -71,14 +71,14 @@ export function InputCheckbox(props: InputCheckboxProps) {
       {label && (
         <label
           htmlFor={id}
-          className={`h-5 cursor-pointer text-sm leading-5 text-neutral-400 dark:text-neutral-300 ${
+          className={`h-5 cursor-pointer select-none text-sm leading-5 text-neutral-400 dark:text-neutral-300 ${
             big ? 'font-medium' : ''
           } ${disabled ? '' : 'cursor-pointer'}`}
         >
           {label}
         </label>
       )}
-      {check && <Icon iconName="check" className={`absolute text-2xs text-white ${big ? 'left-1.5' : 'left-1'}`} />}
+      {check && <Icon iconName="check" className={`pointer-events-none absolute text-2xs text-white ${big ? 'left-1.5' : 'left-1'}`} />}
     </div>
   )
 }

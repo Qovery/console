@@ -39,25 +39,25 @@ export function EnableBox(props: EnableBoxProps) {
   return (
     <div
       data-testid={dataTestId}
-      className={`rounded border p-4 transition-all ${checkedClasses} ${className}`}
-      onClick={() => {
-        if (!currentChecked) setCurrentChecked(!currentChecked)
-      }}
+      className={`cursor-pointer rounded border p-4 transition-all ${checkedClasses} ${className}`}
+      onClick={() => setCurrentChecked(!currentChecked)}
     >
       <div>
-        <InputCheckbox
-          className="mb-1"
-          onChange={(e) => setCurrentChecked((e as FormEvent<HTMLInputElement>).currentTarget.checked)}
-          name={name}
-          label={title}
-          value={name}
-          isChecked={currentChecked}
-          big
-        />
+        <div onClick={(e) => e.stopPropagation()}>
+          <InputCheckbox
+            className="mb-1"
+            onChange={(e) => setCurrentChecked((e as FormEvent<HTMLInputElement>).currentTarget.checked)}
+            name={name}
+            label={title}
+            value={name}
+            isChecked={currentChecked}
+            big
+          />
+        </div>
         {description && <p className="ml-8 text-sm text-neutral-400">{description}</p>}
       </div>
 
-      {currentChecked && children}
+      {currentChecked && <div onClick={(e) => e.stopPropagation()}>{children}</div>}
     </div>
   )
 }
