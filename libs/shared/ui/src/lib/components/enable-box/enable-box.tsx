@@ -1,5 +1,5 @@
-import { type FormEvent, type ReactNode, useEffect, useState } from 'react'
-import InputCheckbox from '../inputs/input-checkbox/input-checkbox'
+import { type ReactNode, useEffect, useState } from 'react'
+import { Checkbox } from '../checkbox/checkbox'
 
 export interface EnableBoxProps {
   checked: boolean | undefined
@@ -39,25 +39,25 @@ export function EnableBox(props: EnableBoxProps) {
   return (
     <div
       data-testid={dataTestId}
-      className={`rounded border p-4 transition-all ${checkedClasses} ${className}`}
-      onClick={() => {
-        if (!currentChecked) setCurrentChecked(!currentChecked)
-      }}
+      className={`cursor-pointer rounded border p-4 transition-all ${checkedClasses} ${className}`}
+      onClick={() => !currentChecked && setCurrentChecked(true)}
     >
       <div>
-        <InputCheckbox
-          className="mb-1"
-          onChange={(e) => setCurrentChecked((e as FormEvent<HTMLInputElement>).currentTarget.checked)}
-          name={name}
-          label={title}
-          value={name}
-          isChecked={currentChecked}
-          big
-        />
+        <div className="mb-1 flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+          <Checkbox
+            id={name}
+            name={name}
+            checked={currentChecked ?? false}
+            onCheckedChange={(checked) => setCurrentChecked(checked as boolean)}
+          />
+          <label htmlFor={name} className="cursor-pointer select-none text-sm font-medium text-neutral-400">
+            {title}
+          </label>
+        </div>
         {description && <p className="ml-8 text-sm text-neutral-400">{description}</p>}
       </div>
 
-      {currentChecked && children}
+      {currentChecked && <div onClick={(e) => e.stopPropagation()}>{children}</div>}
     </div>
   )
 }
