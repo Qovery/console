@@ -1,12 +1,6 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
 import { Reorder } from 'framer-motion'
 import { useCallback, useEffect, useState } from 'react'
-import { useMatch } from 'react-router-dom'
-import {
-  APPLICATION_SETTINGS_TERRAFORM_VARIABLES_URL,
-  APPLICATION_SETTINGS_URL,
-  APPLICATION_URL,
-} from '@qovery/shared/routes'
 import {
   Button,
   Checkbox,
@@ -97,9 +91,6 @@ const TfvarItem = ({
 }
 
 export const TfvarsFilesPopover = () => {
-  const isSettings = Boolean(
-    useMatch(APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_TERRAFORM_VARIABLES_URL)
-  )
   const {
     tfVarFiles,
     setFileListOrder,
@@ -142,7 +133,7 @@ export const TfvarsFilesPopover = () => {
   const enabledFilesCount = tfVarFiles.filter((file) => file.enabled).length
 
   return (
-    <Popover.Root defaultOpen={!isSettings} onOpenChange={onOpenChange}>
+    <Popover.Root onOpenChange={onOpenChange}>
       <Popover.Trigger>
         <div>
           {enabledFilesCount > 0 ? (
@@ -158,13 +149,25 @@ export const TfvarsFilesPopover = () => {
                 </span>
               }
             >
-              <Button size="md" variant="outline" className="gap-1.5" type="button">
+              <Button
+                size="md"
+                variant="outline"
+                className="gap-1.5"
+                type="button"
+                data-testid="open-tfvars-files-button"
+              >
                 <Icon iconName="file-lines" iconStyle="regular" />
                 .tfvars files
               </Button>
             </Indicator>
           ) : (
-            <Button size="md" variant="solid" className="gap-1.5 px-[13px]" type="button">
+            <Button
+              size="md"
+              variant="solid"
+              className="gap-1.5 px-[13px]"
+              type="button"
+              data-testid="open-tfvars-files-button"
+            >
               <Icon iconName="file-lines" iconStyle="regular" />
               .tfvars files
             </Button>

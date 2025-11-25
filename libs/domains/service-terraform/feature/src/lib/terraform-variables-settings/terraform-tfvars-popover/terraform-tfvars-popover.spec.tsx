@@ -59,8 +59,8 @@ describe('TerraformTfvarsPopover', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render the tfvars files in the list', () => {
-    renderWithProviders(
+  it('should render the tfvars files in the list', async () => {
+    const { userEvent } = renderWithProviders(
       <WrapperComponent
         overrideValues={{
           tfVarFiles: [
@@ -80,6 +80,10 @@ describe('TerraformTfvarsPopover', () => {
         <TfvarsFilesPopover />
       </WrapperComponent>
     )
+
+    const openTfvarsFilesButton = screen.getByTestId('open-tfvars-files-button')
+    await userEvent.click(openTfvarsFilesButton)
+
     expect(screen.getAllByTestId('tfvar-item')).toHaveLength(2) // 2 files, 1 enabled, 1 disabled
   })
 
@@ -130,6 +134,9 @@ describe('TerraformTfvarsPopover', () => {
         <TfvarsFilesPopover />
       </WrapperComponent>
     )
+
+    const openTfvarsFilesButton = screen.getByTestId('open-tfvars-files-button')
+    await userEvent.click(openTfvarsFilesButton)
 
     const varRow = screen.getAllByTestId('tfvar-item')[0]
     const indexInput = within(varRow).getByTestId('index-input')
