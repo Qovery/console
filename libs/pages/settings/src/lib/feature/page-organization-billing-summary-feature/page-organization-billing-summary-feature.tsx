@@ -17,7 +17,7 @@ export function PageOrganizationBillingSummaryFeature() {
 
   const { data: creditCards = [], isLoading: isLoadingCreditCards } = useCreditCards({ organizationId })
   const { data: currentCost } = useCurrentCost({ organizationId })
-  const { showChat } = useSupportChat()
+  const { showChat, showPylonForm } = useSupportChat()
   const { isQoveryAdminUser } = useUserRole()
 
   const openPromoCodeModal = () => {
@@ -52,14 +52,22 @@ export function PageOrganizationBillingSummaryFeature() {
     }
   }
 
+  const handleCancelTrialClick = () => {
+    showPylonForm('cancel-free-trial')
+    // Fallback for onboarding/intercom contexts
+    showChat()
+  }
+
   return (
     <PageOrganizationBillingSummary
       currentCost={currentCost}
       creditCard={creditCards[0]}
       creditCardLoading={isLoadingCreditCards}
+      hasCreditCard={creditCards.length > 0}
       onPromoCodeClick={openPromoCodeModal}
       onShowUsageClick={openShowUsageModal}
       onChangePlanClick={handleChangePlanClick}
+      onCancelTrialClick={handleCancelTrialClick}
     />
   )
 }

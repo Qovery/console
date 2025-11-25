@@ -1,6 +1,6 @@
 import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
 import { type CardImages } from 'react-payment-inputs/images'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   Button,
@@ -21,9 +21,11 @@ export interface PageOrganizationBillingSummaryProps {
   currentCost?: OrganizationCurrentCost
   creditCard?: CreditCard
   creditCardLoading?: boolean
+  hasCreditCard?: boolean
   onPromoCodeClick?: () => void
   onShowUsageClick?: () => void
   onChangePlanClick?: () => void
+  onCancelTrialClick?: () => void
 }
 
 // This function is used to get the billing recurrence word to display based on the renewal date.
@@ -42,6 +44,7 @@ function getBillingRecurrenceStr(renewalAt: string | null | undefined): string {
 
 export function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryProps) {
   const { organizationId = '' } = useParams()
+  const navigate = useNavigate()
 
   // Get the billing recurrence word to display based on the renewal date.
   // It's not so accurate, but it's a good enough approximation for now
@@ -49,27 +52,39 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
   const isTrial = true
   const remainingTrialDay = props.currentCost?.remaining_trial_day
   const showTrialCallout = isTrial && remainingTrialDay !== undefined
+  const hasCreditCard = props.hasCreditCard ?? Boolean(props.creditCard)
 
   return (
     <div className="flex w-full max-w-[832px] flex-col justify-between">
       <Section className="p-8">
         {showTrialCallout && (
-          <Callout.Root
-            color={remainingTrialDay !== undefined && remainingTrialDay <= 2 ? 'yellow' : 'sky'}
-            className="mb-6 items-center"
-          >
+          <Callout.Root color={hasCreditCard ? 'yellow' : 'red'} className="mb-8 items-center">
             <Callout.Text>
-              <Callout.TextHeading>Your free trial plan expires 10 days from now</Callout.TextHeading>
-              You have contracted a free 14-days trial on November 25, 2025. At the end of this plan your user
-              subscription will start unless you cancel your trial
+              <Callout.TextHeading>
+                {hasCreditCard
+                  ? `Your free trial plan expires ${remainingTrialDay} days from now`
+                  : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay} days`}
+              </Callout.TextHeading>
+              {hasCreditCard ? (
+                <>
+                  You have contracted a free 14-days trial on November 25, 2025. At the end of this plan your user
+                  subscription will start unless you cancel your trial
+                </>
+              ) : (
+                <>Add a payment method to avoid service interruption at the end of your trial.</>
+              )}
             </Callout.Text>
             <Button
               size="sm"
               variant="solid"
-              color={remainingTrialDay !== undefined && remainingTrialDay <= 2 ? 'yellow' : 'neutral'}
-              onClick={props.onChangePlanClick}
+              color={hasCreditCard ? 'yellow' : 'red'}
+              onClick={() =>
+                hasCreditCard
+                  ? props.onCancelTrialClick?.()
+                  : navigate(SETTINGS_URL(organizationId) + SETTINGS_BILLING_URL)
+              }
             >
-              Cancel free trial
+              {hasCreditCard ? 'Cancel free trial' : 'Add credit card'}
             </Button>
           </Callout.Root>
         )}

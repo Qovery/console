@@ -9,14 +9,18 @@ export function FreeTrialBanner() {
   const navigate = useNavigate()
   const { data: currentCost } = useCurrentCost({ organizationId })
 
-  // Testing assumption: always behave as if we are < 2 days before trial end
-  const remainingTrialDays = 1
+  const remainingTrialDays = currentCost?.remaining_trial_day
 
   const isOnOrganizationBillingSummaryPage = pathname.includes(
     SETTINGS_URL(organizationId) + SETTINGS_BILLING_SUMMARY_URL
   )
 
-  if (remainingTrialDays <= 0 || remainingTrialDays > 2 || isOnOrganizationBillingSummaryPage) {
+  if (
+    remainingTrialDays === undefined ||
+    remainingTrialDays < 0 ||
+    remainingTrialDays > 2 ||
+    isOnOrganizationBillingSummaryPage
+  ) {
     return null
   }
 
