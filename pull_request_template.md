@@ -14,6 +14,7 @@ Before opening the PR:
 **Issue**: <!-- QOV-1234 -->
 
 <!-- Brief description of what this PR does -->
+<!-- step-by-step instructions for reviewers -->
 
 ## What
 
@@ -30,13 +31,9 @@ Before opening the PR:
 ## Testing
 
 - [ ] Changes tested locally in the relevant Console or Storybook
-- [ ] `yarn test` or `yarn test -u` if you need to regenerate snapshots
-- [ ] `npx nx format:check`
-- [ ] Additional targeted tests (specify below)
-
-### Test Instructions
-
-1. <!-- step-by-step instructions for reviewers -->
+- [ ] `yarn test` or `yarn test -u` (if you need to regenerate snapshots)
+- [ ] `yarn format`
+- [ ] `yarn lint`
 
 ## Screenshots / Recordings
 
@@ -52,11 +49,11 @@ Before opening the PR:
 
 ## PR Checklist
 
-- [ ] Code follows naming, styling, and TypeScript rules (see `.cursor/rules`)
-- [ ] Self-review performed (diff inspected, dead code removed)
-- [ ] PR title follows [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#commit-message-with-scope) with a scope when possible (e.g., `feat(service): add new Terraform service`) - required for semantic-release
-- [ ] Comments added only where necessary and in English (be careful with useless AI comment)
-- [ ] UI changes validated with a designer if you are not a designer
-- [ ] New business logic covered by tests (unit/UI)
-- [ ] All green with the CI (note: if Codecov red can be accepted)
-- [ ] If AI assistance was used, the generated code was reviewed and executed locally
+- [ ] I followed naming, styling, and TypeScript rules (see `.cursor/rules`)
+- [ ] I performed a self-review (diff inspected, dead code removed)
+- [ ] I titled the PR using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#commit-message-with-scope) with a scope when possible (e.g. `feat(service): add new Terraform service`) - required for semantic-release
+- [ ] I only kept comments that are necessary and in English (watch for useless AI comments)
+- [ ] I involved a designer to validate UI changes if I am not a designer
+- [ ] I covered new business logic with tests (unit)
+- [ ] I confirmed CI is green (Codecov red can be accepted)
+- [ ] I reviewed and executed locally any AI-assisted code
