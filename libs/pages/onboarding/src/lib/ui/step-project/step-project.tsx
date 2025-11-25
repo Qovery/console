@@ -9,13 +9,12 @@ export interface StepProjectProps {
     organization_name: string
     project_name: string
   }>
-  authLogout: () => void
   loading?: boolean
   onFirstStepBack?: () => void
 }
 
 export function StepProject(props: StepProjectProps) {
-  const { onSubmit, control, authLogout, loading } = props
+  const { onSubmit, control, loading } = props
   const navigate = useNavigate()
 
   return (

@@ -2,25 +2,6 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, Icon, InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
 
-const FREE_EMAIL_DOMAINS = [
-  'gmail.com',
-  'yahoo.com',
-  'outlook.com',
-  'hotmail.com',
-  'hotmail.fr',
-  'protonmail.com',
-  'zoho.com',
-  'aol.com',
-  'icloud.com',
-  'gmx.com',
-]
-
-const isFreeEmail = (email: string): boolean => {
-  if (!email || !email.includes('@')) return false
-  const domain = email.split('@')[1]?.toLowerCase()
-  return domain ? FREE_EMAIL_DOMAINS.includes(domain) : false
-}
-
 export interface StepPersonalizeProps {
   dataCloudProviders: Array<Value>
   dataQoveryUsage: Array<Value>
@@ -81,9 +62,6 @@ export function StepPersonalize(props: StepPersonalizeProps) {
             },
           }}
           render={({ field, fieldState: { error } }) => {
-            const isUsingFreeEmail = isFreeEmail(field.value)
-            const emailDomain = field.value?.includes('@') ? '@' + field.value.split('@')[1] : ''
-
             return (
               <InputText
                 className="mb-3"

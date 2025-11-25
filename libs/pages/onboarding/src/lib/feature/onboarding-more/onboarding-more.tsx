@@ -1,6 +1,6 @@
 import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
-import { type SignUpRequest, PlanEnum } from 'qovery-typescript-axios'
+import { PlanEnum, type SignUpRequest } from 'qovery-typescript-axios'
 import { type FormEvent, useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
@@ -134,7 +134,7 @@ export function OnboardingMore() {
           <div className="mb-8 flex flex-col gap-5 md:flex-row">
             {selectablePlans.map((planOption) => (
               <div key={planOption.name} className="flex-1">
-                <PlanCard {...planOption} loading={''} onClick={() => handlePlanSelect(planOption.name)} />
+                <PlanCard {...planOption} loading="" onClick={() => handlePlanSelect(planOption.name)} />
               </div>
             ))}
           </div>

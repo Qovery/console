@@ -3,16 +3,15 @@ import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import {
-  useCreateOrganization,
-  useOrganizations,
   useAddCreditCard,
+  useCreateOrganization,
   useDeleteOrganization,
 } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { toastError } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { StepProject } from '../../ui/step-project/step-project'
 import { ContextOnboarding } from '../container/container'
 
@@ -21,13 +20,12 @@ export function OnboardingProject() {
 
   const navigate = useNavigate()
   const { user } = useAuth0()
-  const { authLogout, getAccessTokenSilently } = useAuth()
+  const { getAccessTokenSilently } = useAuth()
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject()
   const { mutateAsync: addCreditCard } = useAddCreditCard()
   const { mutateAsync: deleteOrganization } = useDeleteOrganization()
   const { handleSubmit, control, setValue } = useForm<{ project_name: string; organization_name: string }>()
-  const { data: organizations = [] } = useOrganizations()
   const {
     organization_name,
     project_name,
@@ -120,7 +118,7 @@ export function OnboardingProject() {
     }
   })
 
-  return <StepProject onSubmit={onSubmit} control={control} authLogout={authLogout} loading={isSubmitting} />
+  return <StepProject onSubmit={onSubmit} control={control} loading={isSubmitting} />
 }
 
 export default OnboardingProject

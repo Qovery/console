@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
-import { IntercomProvider } from 'react-use-intercom'
 import { PlanEnum } from 'qovery-typescript-axios'
+import { IntercomProvider } from 'react-use-intercom'
 import { ContextOnboarding } from '../container/container'
 import OnboardingPricing from './onboarding-pricing'
 
