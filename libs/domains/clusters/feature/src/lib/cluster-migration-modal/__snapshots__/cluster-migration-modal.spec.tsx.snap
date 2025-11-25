@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ClusterMigrationModal should match snapshot 1`] = `
 <body>
@@ -165,7 +165,7 @@ exports[`ClusterMigrationModal should match snapshot 1`] = `
               </label>
               <a
                 class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
-                href="http://qovery.com/docs/getting-started/guides/advanced-tutorials/deploy-daemonset-karpenter"
+                href="https://www.qovery.com/docs/getting-started/guides/advanced-tutorials/deploy-daemonset-karpenter"
                 rel="noopener noreferrer"
                 target="_blank"
               >
