@@ -16,10 +16,6 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   children: string
 }
 
-export const normalizeMermaid = (text: string) => {
-  return text.replace(/\[start mermaid block\]/g, '```mermaid').replace(/\[end mermaid block\]/g, '```')
-}
-
 export const RenderMarkdown: FC<Props> = ({ children, ...props }) => (
   <Markdown
     remarkPlugins={[remarkGfm]}
