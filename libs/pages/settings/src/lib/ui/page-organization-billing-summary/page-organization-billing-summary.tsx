@@ -51,7 +51,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
   const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
   const isTrial = true
   const remainingTrialDay = props.currentCost?.remaining_trial_day
-  const showTrialCallout = isTrial && remainingTrialDay !== undefined
+  const showTrialCallout = isTrial && remainingTrialDay !== undefined && !props.creditCardLoading
   const hasCreditCard = props.hasCreditCard ?? Boolean(props.creditCard)
 
   return (
