@@ -3,6 +3,7 @@ import {
   type DeploymentHistoryActionStatus,
   type DeploymentHistoryTriggerAction,
   type ServiceActionEnum,
+  type ServiceSubActionEnum,
   type StateEnum,
 } from 'qovery-typescript-axios'
 import { Link } from 'react-router-dom'
@@ -46,7 +47,7 @@ export function TriggerActionIcon({
   triggerAction,
   className,
 }: {
-  triggerAction: DeploymentHistoryTriggerAction | undefined
+  triggerAction: DeploymentHistoryTriggerAction | Exclude<ServiceSubActionEnum, 'NONE'> | undefined
   className?: string
 }) {
   return (
@@ -59,9 +60,13 @@ export function TriggerActionIcon({
         .with('RESTART', () => <Icon iconStyle="solid" iconName="arrow-rotate-right" />)
         .with('STOP', () => <Icon iconStyle="solid" iconName="stop" />)
         .with('DEPLOY_DRY_RUN', () => <Icon iconStyle="solid" iconName="play" />)
-        .with('TERRAFORM_FORCE_UNLOCK', () => <Icon iconStyle="regular" iconName="question-circle" />)
-        .with('TERRAFORM_MIGRATE_STATE', () => <Icon iconStyle="regular" iconName="question-circle" />)
+        .with('TERRAFORM_FORCE_UNLOCK', () => <Icon iconStyle="regular" iconName="circle-play" />)
+        .with('TERRAFORM_MIGRATE_STATE', () => <Icon iconStyle="regular" iconName="circle-play" />)
         .with('DELETE_RESOURCES_ONLY', () => <Icon iconStyle="solid" iconName="trash-can-xmark" />)
+        .with('TERRAFORM_PLAN_ONLY', () => <Icon iconStyle="regular" iconName="circle-play" />)
+        .with('TERRAFORM_PLAN_AND_APPLY', () => <Icon iconStyle="regular" iconName="circle-play" />)
+        .with('TERRAFORM_DESTROY', () => <Icon iconStyle="regular" iconName="fire" />)
+        .with('TERRAFORM_FORCE_UNLOCK_STATE', () => <Icon iconStyle="regular" iconName="lock-keyhole-open" />)
         .exhaustive()}
     </span>
   )
@@ -69,7 +74,7 @@ export function TriggerActionIcon({
 
 export interface ActionTriggerStatusChipInterface {
   size: 'sm' | 'md'
-  triggerAction: DeploymentHistoryTriggerAction | undefined
+  triggerAction: DeploymentHistoryTriggerAction | Exclude<ServiceSubActionEnum, 'NONE'> | undefined
   status?: StateEnum | DeploymentHistoryActionStatus | ServiceActionEnum
   statusLink?: string
 }
