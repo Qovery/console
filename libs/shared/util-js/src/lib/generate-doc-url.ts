@@ -6,20 +6,20 @@
  *
  * @example
  * generateAdvancedSettingDocUrl("allow_service_cpu_overcommit", "cluster")
- * // Returns: "https://hub.qovery.com/docs/using-qovery/configuration/cluster-advanced-settings/#allow_service_cpu_overcommit"
+ * // Returns: "https://www.qovery.com/docs/configuration/cluster-advanced-settings#allow-service-cpu-overcommit"
  *
  * @example
  * generateAdvancedSettingDocUrl("aws.eks.ec2.ami", "cluster")
- * // Returns: "https://hub.qovery.com/docs/using-qovery/configuration/cluster-advanced-settings/#awseksec2ami"
+ * // Returns: "https://www.qovery.com/docs/configuration/cluster-advanced-settings#aws-eks-ec2-ami"
  *
  * @example
  * generateAdvancedSettingDocUrl("build.timeout_max_sec", "service")
- * // Returns: "https://hub.qovery.com/docs/using-qovery/configuration/advanced-settings/#buildtimeout_max_sec"
+ * // Returns: "https://www.qovery.com/docs/configuration/service-advanced-settings#build-timeout-max-sec"
  */
 export function generateAdvancedSettingDocUrl(key: string, type: 'cluster' | 'service'): string {
-  const baseUrl = 'https://hub.qovery.com/docs/using-qovery/configuration'
-  const path = type === 'cluster' ? 'cluster-advanced-settings' : 'advanced-settings'
-  const anchor = key.replace(/\./g, '') // Remove all dots from the key
+  const baseUrl = 'https://www.qovery.com/docs/configuration'
+  const path = type === 'cluster' ? 'cluster-advanced-settings' : 'service-advanced-settings'
+  const anchor = key.replace(/[._]/g, '-') // Replace dots and underscores with hyphens
 
-  return `${baseUrl}/${path}/#${anchor}`
+  return `${baseUrl}/${path}#${anchor}`
 }
