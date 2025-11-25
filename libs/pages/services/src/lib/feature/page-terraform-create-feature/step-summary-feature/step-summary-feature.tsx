@@ -1,9 +1,9 @@
 import posthog from 'posthog-js'
 import { type TerraformRequest } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { terraformEngines } from '@qovery/domains/service-terraform/feature'
+import { terraformEngines, useTerraformVariablesContext } from '@qovery/domains/service-terraform/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
@@ -23,9 +23,9 @@ export function StepSummaryFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const navigate = useNavigate()
 
-  const { generalForm, inputVariablesForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
+  const { generalForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
   const generalData = generalForm.getValues()
-  const inputVariablesData = inputVariablesForm.getValues()
+  const { serializeForApi, tfVarFiles } = useTerraformVariablesContext()
 
   useEffect(() => {
     setCurrentStep(4)
@@ -35,6 +35,10 @@ export function StepSummaryFeature() {
   const { mutateAsync: deployService } = useDeployService({ organizationId, projectId, environmentId })
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
   const [isLoadingCreateAndPlan, setIsLoadingCreateAndPlan] = useState(false)
+
+  const tfVarsFilePaths = useMemo(() => {
+    return [...tfVarFiles.filter((file) => file.enabled)].reverse().map((file) => file.source)
+  }, [tfVarFiles])
 
   const onSubmit = async (withPlan: boolean) => {
     if (withPlan) {
@@ -62,8 +66,8 @@ export function StepSummaryFeature() {
         },
       },
       terraform_variables_source: {
-        tf_var_file_paths: inputVariablesData.tf_var_file_paths,
-        tf_vars: inputVariablesData.tf_vars,
+        tf_var_file_paths: tfVarsFilePaths,
+        tf_vars: serializeForApi(),
       },
       provider_version: {
         read_from_terraform_block: generalData.provider_version.read_from_terraform_block,
@@ -108,7 +112,7 @@ export function StepSummaryFeature() {
   }
 
   return (
-    <FunnelFlowBody>
+    <FunnelFlowBody customContentWidth="max-w-[1024px]">
       <Section>
         <Heading className="mb-2">Ready to create your Terraform service</Heading>
 
@@ -219,15 +223,15 @@ export function StepSummaryFeature() {
                 <li>
                   <span className="font-medium">Variables:</span>
                   <ul>
-                    {inputVariablesData.tf_vars.map((variable) => (
-                      <li key={variable.key}>
-                        {variable.key}: {variable.value}
+                    {serializeForApi().map(({ key, value, secret }) => (
+                      <li key={key}>
+                        {key}: {secret ? '********' : value}
                       </li>
                     ))}
                   </ul>
                 </li>
                 <li>
-                  <span className="font-medium">File paths:</span> {inputVariablesData.tf_var_file_paths.join(', ')}
+                  <span className="font-medium">File paths:</span> {[...tfVarsFilePaths].reverse().join(', ')}
                 </li>
               </ul>
             </Section>

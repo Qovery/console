@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OutputVariables should match snapshot 1`] = `
 <body>
@@ -80,7 +80,7 @@ exports[`OutputVariables should match snapshot 1`] = `
                   class="pt-1.5 text-xl font-medium tracking-widest"
                   data-testid="hide_value_secret"
                 >
-                  *************
+                  ********
                 </span>
               </span>
             </td>
@@ -126,7 +126,7 @@ exports[`OutputVariables should match snapshot 1`] = `
                   data-state="closed"
                   data-testid="hide_value"
                 >
-                  *************
+                  ********
                 </span>
               </span>
             </td>
