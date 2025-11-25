@@ -53,6 +53,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
   const remainingTrialDay = props.currentCost?.remaining_trial_day
   const showTrialCallout = isTrial && remainingTrialDay !== undefined && !props.creditCardLoading
   const hasCreditCard = props.hasCreditCard ?? Boolean(props.creditCard)
+  const trialDayLabel = remainingTrialDay === 1 ? 'day' : 'days'
 
   return (
     <div className="flex w-full max-w-[832px] flex-col justify-between">
@@ -62,8 +63,8 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <Callout.Text>
               <Callout.TextHeading>
                 {hasCreditCard
-                  ? `Your free trial plan expires ${remainingTrialDay} days from now`
-                  : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay} days`}
+                  ? `Your free trial plan expires ${remainingTrialDay} ${trialDayLabel} from now`
+                  : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay} ${trialDayLabel}`}
               </Callout.TextHeading>
               {hasCreditCard ? (
                 <>

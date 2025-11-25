@@ -39,6 +39,27 @@ export function StepMore(props: StepMoreProps) {
   } = props
   const navigate = useNavigate()
 
+  const dateFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat('en-US', {
+        month: 'long',
+        day: 'numeric',
+      }),
+    []
+  )
+
+  const trialReminderDate = useMemo(() => {
+    const date = new Date()
+    date.setDate(date.getDate() + 12)
+    return dateFormatter.format(date)
+  }, [dateFormatter])
+
+  const welcomeOnboardDate = useMemo(() => {
+    const date = new Date()
+    date.setDate(date.getDate() + 14)
+    return dateFormatter.format(date)
+  }, [dateFormatter])
+
   const getSelectedPlanPrice = () => {
     if (selectedPlan.price === 'custom') return 'Custom pricing'
     if (selectedPlan.price === 0) return 'Free'
@@ -286,13 +307,13 @@ export function StepMore(props: StepMoreProps) {
                   </p>
                 </div>
                 <div className="mb-8">
-                  <h3 className="mb-1 text-sm font-medium text-neutral-400">November 22: Trial reminder </h3>
+                  <h3 className="mb-1 text-sm font-medium text-neutral-400">{trialReminderDate}: Trial reminder </h3>
                   <p className="text-ssm font-normal text-neutral-350">
                     We’ll remind you via an email and on the product two days before the end.
                   </p>
                 </div>
                 <div>
-                  <h3 className="mb-1 text-sm font-medium text-neutral-400">November 24: Welcome onboard! </h3>
+                  <h3 className="mb-1 text-sm font-medium text-neutral-400">{welcomeOnboardDate}: Welcome onboard! </h3>
                   <p className="text-ssm font-normal text-neutral-350">
                     Your subscription will start automatically. You can cancel at anytime.{' '}
                   </p>
