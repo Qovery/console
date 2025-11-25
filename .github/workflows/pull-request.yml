@@ -20,3 +20,4 @@ jobs:
       api-token: ${{ secrets.QOVERY_API_TOKEN }}
       nx-cloud-access-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
       codecov-token: ${{ secrets.CODECOV_TOKEN }}
+      chargebee-publishable-key: ${{ secrets.CHARGEBEE_PUBLISHABLE_KEY }}

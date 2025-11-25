@@ -31,3 +31,6 @@ jobs:
       # Qovery secrets
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
       api-token: ${{ secrets.QOVERY_API_TOKEN }}
+
+      # Chargebee
+      chargebee-publishable-key: ${{ secrets.CHARGEBEE_PUBLISHABLE_KEY }}

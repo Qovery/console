@@ -50,6 +50,10 @@ on:
       api-token:
         required: true
 
+      # Chargebee
+      chargebee-publishable-key:
+        required: false
+
 # Define a concurrency group at the branch level for the current workflows..
 # Trigerred workflow will be queued and cancel the previous ones.
 concurrency:
@@ -66,10 +70,13 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       variables: ${{ steps.var.outputs.variables }}
+      chargebee-key: ${{ steps.var.outputs.chargebee-key }}
     steps:
       - name: Setting global variables
         uses: actions/github-script@v7
         id: var
+        env:
+          CHARGEBEE_KEY: ${{ secrets.chargebee-publishable-key }}
         with:
           script: |
             const varsFromJSON = ${{ toJSON(vars) }}
@@ -78,6 +85,7 @@ jobs:
               variables.push(v + '=' + varsFromJSON[v])
             }
             core.setOutput('variables', variables.join('\n'))
+            core.setOutput('chargebee-key', process.env.CHARGEBEE_KEY || '')
 
   nx-main:
     needs: [env-vars]
@@ -93,6 +101,7 @@ jobs:
         NX_CI_EXECUTION_ID=${{ github.run_id }}
         NX_HEAD_SHA=${{ github.sha }}
         NX_BASE_SHA=${{ github.event.pull_request.base.sha || github.event.before }}
+        NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY=${{ needs.env-vars.outputs.chargebee-key }}
       # NOTE: Here we are using the special `nx-cloud record` command to ensure that any commands we run that do not go through the cloud task runner natively
       # (i.e. anything that starts with `nx run`/`nx run-many`/`nx affected --target`), are still captured in the Nx Cloud UI and Github App comment for
       # easier troubleshooting. See more here: https://nx.dev/nx-cloud/set-up/record-commands#recording-non-nx-commands
@@ -126,6 +135,7 @@ jobs:
         NX_CI_EXECUTION_ID=${{ github.run_id }}
         NX_HEAD_SHA=${{ github.sha }}
         NX_BASE_SHA=${{ github.event.pull_request.base.sha || github.event.before }}
+        NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY=${{ needs.env-vars.outputs.chargebee-key }}
 
   codecoverage:
     runs-on: ubuntu-latest
