@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
 <body>
@@ -55,7 +55,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 class="relative flex items-center gap-2 mr-4"
               >
                 <input
-                  class="input-checkbox relative h-0 w-0 appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:-translate-y-1/2 before:items-center before:justify-center before:rounded-sm before:bg-white before:text-white dark:before:bg-neutral-500 mr-5 before:w-4 before:h-4 cursor-pointer before:border-neutral-350 before:border-2 before:text-xs before:font-black before:leading-none before:transition-all before:content-[''] checked:before:border-brand-500 checked:before:bg-brand-500"
+                  class="input-checkbox relative appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:items-center before:justify-center before:rounded-sm before:bg-white before:text-white dark:before:bg-neutral-500 mr-5 w-4 h-4 before:w-4 before:h-4 cursor-pointer before:border-neutral-350 before:border-2 before:text-xs before:font-black before:leading-none before:transition-all before:content-[''] checked:before:border-brand-500 checked:before:bg-brand-500"
                   data-testid="input-checkbox"
                   id="0"
                   name="0"
@@ -64,7 +64,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 />
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-check absolute text-2xs text-white left-1"
+                  class="fa-solid fa-check pointer-events-none absolute text-2xs text-white left-1"
                 />
               </div>
               Amy Maxwell
@@ -169,7 +169,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 class="relative flex items-center gap-2 mr-4"
               >
                 <input
-                  class="input-checkbox relative h-0 w-0 appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:-translate-y-1/2 before:items-center before:justify-center before:rounded-sm before:bg-white before:text-white dark:before:bg-neutral-500 mr-5 before:w-4 before:h-4 cursor-pointer before:border-neutral-350 before:border-2 before:text-xs before:font-black before:leading-none before:transition-all before:content-[''] checked:before:border-brand-500 checked:before:bg-brand-500"
+                  class="input-checkbox relative appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:items-center before:justify-center before:rounded-sm before:bg-white before:text-white dark:before:bg-neutral-500 mr-5 w-4 h-4 before:w-4 before:h-4 cursor-pointer before:border-neutral-350 before:border-2 before:text-xs before:font-black before:leading-none before:transition-all before:content-[''] checked:before:border-brand-500 checked:before:bg-brand-500"
                   data-testid="input-checkbox"
                   id="1"
                   name="1"
@@ -279,7 +279,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 class="relative flex items-center gap-2 mr-4"
               >
                 <input
-                  class="input-checkbox relative h-0 w-0 appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:-translate-y-1/2 before:items-center before:justify-center before:rounded-sm before:bg-white before:text-white dark:before:bg-neutral-500 mr-5 before:w-4 before:h-4 cursor-pointer before:border-neutral-350 before:border-2 before:text-xs before:font-black before:leading-none before:transition-all before:content-[''] checked:before:border-brand-500 checked:before:bg-brand-500"
+                  class="input-checkbox relative appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:items-center before:justify-center before:rounded-sm before:bg-white before:text-white dark:before:bg-neutral-500 mr-5 w-4 h-4 before:w-4 before:h-4 cursor-pointer before:border-neutral-350 before:border-2 before:text-xs before:font-black before:leading-none before:transition-all before:content-[''] checked:before:border-brand-500 checked:before:bg-brand-500"
                   data-testid="input-checkbox"
                   id="2"
                   name="2"
