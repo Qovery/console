@@ -4,6 +4,7 @@ import { useUserRole } from '@qovery/shared/iam/feature'
 import { useModal } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import PageOrganizationBillingSummary from '../../ui/page-organization-billing-summary/page-organization-billing-summary'
+import { AddCreditCardModalFeature } from '@qovery/shared/console-shared'
 import PlanSelectionModalFeature from './plan-selection-modal-feature/plan-selection-modal-feature'
 import PromoCodeModalFeature from './promo-code-modal-feature/promo-code-modal-feature'
 import ShowUsageModalFeature from './show-usage-modal-feature/show-usage-modal-feature'
@@ -56,6 +57,12 @@ export function PageOrganizationBillingSummaryFeature() {
     showChat()
   }
 
+  const handleAddCreditCardClick = () => {
+    openModal({
+      content: <AddCreditCardModalFeature organizationId={organizationId} />,
+    })
+  }
+
   return (
     <PageOrganizationBillingSummary
       currentCost={currentCost}
@@ -66,6 +73,7 @@ export function PageOrganizationBillingSummaryFeature() {
       onShowUsageClick={openShowUsageModal}
       onChangePlanClick={handleChangePlanClick}
       onCancelTrialClick={handleCancelTrialClick}
+      onAddCreditCardClick={handleAddCreditCardClick}
     />
   )
 }

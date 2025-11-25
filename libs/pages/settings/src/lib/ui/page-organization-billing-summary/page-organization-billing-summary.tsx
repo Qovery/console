@@ -1,6 +1,6 @@
 import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
 import { type CardImages } from 'react-payment-inputs/images'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   Button,
@@ -26,6 +26,7 @@ export interface PageOrganizationBillingSummaryProps {
   onShowUsageClick?: () => void
   onChangePlanClick?: () => void
   onCancelTrialClick?: () => void
+  onAddCreditCardClick?: () => void
 }
 
 // This function is used to get the billing recurrence word to display based on the renewal date.
@@ -44,7 +45,6 @@ function getBillingRecurrenceStr(renewalAt: string | null | undefined): string {
 
 export function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryProps) {
   const { organizationId = '' } = useParams()
-  const navigate = useNavigate()
 
   // Get the billing recurrence word to display based on the renewal date.
   // It's not so accurate, but it's a good enough approximation for now
@@ -78,11 +78,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
               size="sm"
               variant="solid"
               color={hasCreditCard ? 'yellow' : 'red'}
-              onClick={() =>
-                hasCreditCard
-                  ? props.onCancelTrialClick?.()
-                  : navigate(SETTINGS_URL(organizationId) + SETTINGS_BILLING_URL)
-              }
+              onClick={() => (hasCreditCard ? props.onCancelTrialClick?.() : props.onAddCreditCardClick?.())}
             >
               {hasCreditCard ? 'Cancel free trial' : 'Add credit card'}
             </Button>
