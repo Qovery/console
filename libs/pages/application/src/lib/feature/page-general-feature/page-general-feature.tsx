@@ -29,14 +29,17 @@ export function PageGeneralFeature() {
     [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]
   )
 
+  if (!service) {
+    return null
+  }
+
   return (
     <>
       {Boolean(applicationId) && Boolean(environmentId) && (
         <PageGeneral
           serviceId={applicationId}
           environmentId={environmentId}
-          isCronJob={service?.serviceType === 'JOB' && service.job_type === 'CRON'}
-          isLifecycleJob={service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE'}
+          service={service}
           hasNoMetrics={hasNoMetrics}
         />
       )}
