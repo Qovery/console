@@ -11,6 +11,7 @@ const bannerVariants = cva('flex h-10 items-center justify-center text-sm font-m
       brand: ['bg-brand-500', 'text-white'],
       yellow: ['bg-yellow-500', 'text-yellow-900'],
       purple: ['bg-purple-500', 'text-white'],
+      red: ['bg-red-500', 'text-white'],
     },
   },
 })
@@ -21,6 +22,7 @@ const buttonVariants = cva('ml-4', {
       brand: ['!bg-brand-400/50', 'hover:!bg-brand-400/75', '!text-white'],
       yellow: ['!bg-yellow-600/50', 'hover:!bg-yellow-600/75', '!text-yellow-900'],
       purple: ['!bg-purple-400', 'hover:!bg-purple-600', '!text-white'],
+      red: ['!bg-red-400', 'hover:!bg-red-600', '!text-white'],
     },
   },
 })
