@@ -358,7 +358,7 @@ export function PageNewFeature() {
         ? [
             {
               title: 'Terraform',
-              description: 'Deploy a Terraform configuration on your Kubernetes cluster.',
+              description: 'Deploy external cloud resources directly from your Terraform configuration.',
               icon: <Icon name="TERRAFORM" width={32} height={32} />,
               link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_TERRAFORM_CREATION_URL,
               cloud_provider: cloudProvider,
@@ -451,7 +451,7 @@ export function PageNewFeature() {
         />
         <ExternalLink
           className="mx-auto"
-          href="https://hub.qovery.com/docs/getting-started/basic-concepts/#service"
+          href="https://www.qovery.com/docs/getting-started/basic-concepts#services"
           size="xs"
         >
           See documentation

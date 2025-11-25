@@ -41,10 +41,10 @@ describe('EnableBox', () => {
   it('should uncheck when you click on the checkbox', async () => {
     const { baseElement } = render(<EnableBox {...props} checked={true} />)
     const box = getByTestId(baseElement, 'enabled-box')
-    const checkbox = getByTestId(box, 'input-checkbox')
+    const checkbox = box.querySelector('button[role="checkbox"]')
 
     await act(() => {
-      checkbox.click()
+      checkbox?.click()
     })
 
     expect(props.setChecked).toHaveBeenCalledWith(false)

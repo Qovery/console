@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion'
+import { useMemo } from 'react'
 import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { Button, ExternalLink, Icon, useModal } from '@qovery/shared/ui'
@@ -8,8 +10,7 @@ import { useLocalStorage } from '@qovery/shared/util-hooks'
 export interface PageGeneralProps {
   serviceId: string
   environmentId: string
-  isCronJob: boolean
-  isLifecycleJob: boolean
+  service: AnyService
   hasNoMetrics: boolean
 }
 
@@ -167,7 +168,13 @@ function ObservabilityCallout() {
   )
 }
 
-export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJob, hasNoMetrics }: PageGeneralProps) {
+export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }: PageGeneralProps) {
+  const isLifecycleJobOrTerraform = useMemo(
+    () => (service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE') || service?.serviceType === 'TERRAFORM',
+    [service]
+  )
+  const isCronJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'CRON', [service])
+
   return (
     <div className="flex grow flex-row">
       <div className="flex min-h-0 flex-1 grow flex-col gap-6 overflow-y-auto px-10 py-7">
@@ -183,14 +190,14 @@ export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJo
               </p>
               <ExternalLink
                 className="text-xs"
-                href="https://hub.qovery.com/docs/using-qovery/configuration/advanced-settings/#cronjobfailed_job_history_limit"
+                href="https://www.qovery.com/docs/configuration/service-advanced-settings#cronjob-failed-jobs-history-limit"
               >
                 See documentation
               </ExternalLink>
             </div>
           )}
         </PodsMetrics>
-        {isLifecycleJob && <OutputVariables serviceId={serviceId} />}
+        {isLifecycleJobOrTerraform && <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} />}
       </div>
       <ServiceDetails
         className="w-1/4 max-w-[360px] flex-1 border-l"

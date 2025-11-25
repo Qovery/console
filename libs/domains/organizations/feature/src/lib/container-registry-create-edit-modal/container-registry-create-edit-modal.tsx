@@ -43,6 +43,7 @@ export function ContainerRegistryCreateEditModal({
         region: registry?.config?.region,
         access_key_id: registry?.config?.access_key_id,
         secret_access_key: undefined,
+        role_arn: registry?.config?.role_arn,
         scaleway_project_id: registry?.config?.scaleway_project_id,
         scaleway_access_key: registry?.config?.scaleway_access_key,
         scaleway_secret_key: undefined,
@@ -156,7 +157,7 @@ export function ContainerRegistryCreateEditModal({
             </p>
             <ExternalLink
               className="mt-2"
-              href="https://hub.qovery.com/docs/using-qovery/configuration/organization/container-registry/"
+              href="https://www.qovery.com/docs/configuration/organization/container-registry"
             >
               More information here
             </ExternalLink>

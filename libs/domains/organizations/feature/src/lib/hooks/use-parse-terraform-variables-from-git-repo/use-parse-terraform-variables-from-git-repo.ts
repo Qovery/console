@@ -17,7 +17,7 @@ export function useParseTerraformVariablesFromGitRepo({
     ...queries.organizations.parseTerraformVariablesFromGitRepo({ organizationId, repository }),
     enabled,
     meta: {
-      notifyOnError: true,
+      notifyOnError: false,
     },
     refetchOnWindowFocus: false,
     staleTime: 0,

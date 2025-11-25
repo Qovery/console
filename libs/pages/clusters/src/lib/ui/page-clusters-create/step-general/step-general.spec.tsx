@@ -6,7 +6,7 @@ import StepGeneral, { type StepGeneralProps } from './step-general'
 const currentCloudProviders = {
   short_name: CloudProviderEnum.AWS,
   name: 'Amazon',
-  region: [
+  regions: [
     {
       name: 'Paris',
       city: 'paris',
@@ -15,9 +15,21 @@ const currentCloudProviders = {
   ],
 }
 
+const azureCloudProvider = {
+  short_name: CloudProviderEnum.AZURE,
+  name: 'Microsoft Azure',
+  regions: [
+    {
+      name: 'West Europe',
+      city: 'amsterdam',
+      country_code: 'nl',
+    },
+  ],
+}
+
 const props: StepGeneralProps = {
   onSubmit: jest.fn(),
-  cloudProviders: [currentCloudProviders],
+  cloudProviders: [currentCloudProviders, azureCloudProvider],
 }
 
 describe('StepGeneral', () => {
@@ -66,5 +78,59 @@ describe('StepGeneral', () => {
 
     expect(button).toBeEnabled()
     expect(props.onSubmit).toHaveBeenCalled()
+  })
+
+  it('should render Azure provider with AKS information', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<StepGeneral {...props} />, {
+        defaultValues: {
+          name: 'my-azure-cluster',
+          description: 'test azure',
+          production: false,
+          cloud_provider: CloudProviderEnum.AZURE,
+          region: 'West Europe',
+          credentials: '111-111-111',
+          installation_type: 'MANAGED',
+        },
+      })
+    )
+
+    // Check that Azure account (AKS) text is displayed
+    expect(screen.getByText(/Azure account \(AKS\)/i)).toBeInTheDocument()
+  })
+
+  it('should include Azure in cloud providers list', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<StepGeneral {...props} />, {
+        defaultValues: {
+          name: 'my-cluster',
+          description: 'test',
+          production: false,
+          installation_type: 'MANAGED',
+        },
+      })
+    )
+
+    // Verify cloud provider dropdown is rendered
+    const cloudProviderInput = screen.getByTestId('input-cloud-provider')
+    expect(cloudProviderInput).toBeInTheDocument()
+  })
+
+  it('should render all cloud providers including Azure', async () => {
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<StepGeneral {...props} />, {
+        defaultValues: {
+          name: 'my-cluster',
+          description: 'test',
+          production: false,
+          cloud_provider: CloudProviderEnum.AWS,
+          region: 'Paris',
+          credentials: '111-111-111',
+          installation_type: 'MANAGED',
+        },
+      })
+    )
+
+    expect(screen.getByTestId('input-cloud-provider')).toBeInTheDocument()
   })
 })

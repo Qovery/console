@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`OutputVariables should match snapshot 1`] = `
+exports[`OutputVariables when serviceType is JOB should match snapshot 1`] = `
 <body>
   <div>
     <div
@@ -19,7 +19,8 @@ exports[`OutputVariables should match snapshot 1`] = `
                 class="flex items-center gap-1 cursor-pointer select-none"
                 type="button"
               >
-                Job output variables
+                Job
+                 output variables
                 <span
                   class=""
                   data-state="closed"
@@ -80,11 +81,61 @@ exports[`OutputVariables should match snapshot 1`] = `
                   class="pt-1.5 text-xl font-medium tracking-widest"
                   data-testid="hide_value_secret"
                 >
-                  *************
+                  ********
                 </span>
               </span>
             </td>
           </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`OutputVariables when serviceType is TERRAFORM should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="overflow-hidden rounded border"
+    >
+      <table
+        class="min-w-full divide-y divide-neutral-200 text-neutral-400 w-full text-xs"
+      >
+        <thead>
+          <tr>
+            <th
+              class="h-11 px-4 text-left font-medium"
+              style="width: 50%;"
+            >
+              <button
+                class="flex items-center gap-1 cursor-pointer select-none"
+                type="button"
+              >
+                Terraform
+                 output variables
+                <span
+                  class=""
+                  data-state="closed"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-circle-info text-neutral-350"
+                  />
+                </span>
+              </button>
+            </th>
+            <th
+              class="h-11 px-4 text-left font-medium"
+              style="width: 50%;"
+            >
+              Value
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-neutral-200"
+        >
           <tr
             class="h-12"
           >
@@ -126,7 +177,7 @@ exports[`OutputVariables should match snapshot 1`] = `
                   data-state="closed"
                   data-testid="hide_value"
                 >
-                  *************
+                  ********
                 </span>
               </span>
             </td>

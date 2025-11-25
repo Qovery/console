@@ -117,7 +117,7 @@ export function CreateCloneEnvironmentModal({
               </div>
               <ExternalLink
                 className="mt-2"
-                href="https://hub.qovery.com/docs/using-qovery/configuration/environment/#clone-environment"
+                href="https://www.qovery.com/docs/configuration/environment#clone-environment"
               >
                 Documentation
               </ExternalLink>
@@ -139,7 +139,7 @@ export function CreateCloneEnvironmentModal({
               </ol>
               <ExternalLink
                 className="mt-2"
-                href="https://hub.qovery.com/docs/using-qovery/configuration/environment/#create-an-environment"
+                href="https://www.qovery.com/docs/configuration/environment#create-an-environment"
               >
                 Documentation
               </ExternalLink>

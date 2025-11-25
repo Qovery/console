@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ModalConfirmation should match confirm mode with description 1`] = `
 <div>
@@ -44,6 +44,7 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
             data-testid="input-value"
             name="name"
             placeholder="Enter the current name"
+            spellcheck="false"
             type="text"
             value=""
           />
@@ -114,6 +115,7 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
             data-testid="input-value"
             name="name"
             placeholder="Enter the current name"
+            spellcheck="false"
             type="text"
             value=""
           />
@@ -183,6 +185,7 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
             data-testid="input-value"
             name="name"
             placeholder="Enter the current name"
+            spellcheck="false"
             type="text"
             value=""
           />

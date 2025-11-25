@@ -8,6 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { type VariableResponse as Variable } from 'qovery-typescript-axios'
+import { type ServiceType } from 'qovery-ws-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { Icon, PasswordShowHide, TablePrimitives, Tooltip } from '@qovery/shared/ui'
@@ -18,12 +19,15 @@ const { Table } = TablePrimitives
 
 interface JobOutputVariablesProps extends ComponentProps<typeof Table.Root> {
   serviceId: string
+  serviceType: ServiceType
 }
 
-export function OutputVariables({ serviceId, className, ...props }: JobOutputVariablesProps) {
-  const { data = [] } = useVariables({ parentId: serviceId, scope: 'JOB' })
+export function OutputVariables({ serviceId, serviceType, className, ...props }: JobOutputVariablesProps) {
+  const scope = useMemo(() => (serviceType === 'JOB' ? 'JOB' : 'TERRAFORM'), [serviceType])
+  const { data = [] } = useVariables({ parentId: serviceId, scope })
   const [sorting, setSorting] = useState<SortingState>([])
-  const keyPrefix = `QOVERY_OUTPUT_JOB_Z${serviceId.split('-')[0].toUpperCase()}_`
+  const keyPrefix = `QOVERY_OUTPUT_${scope.toUpperCase()}_Z${serviceId.split('-')[0].toUpperCase()}_`
+  const scopeName = scope.charAt(0).toUpperCase() + scope.toLowerCase().slice(1)
 
   const variables: Variable[] = useMemo(() => {
     return data
@@ -37,11 +41,11 @@ export function OutputVariables({ serviceId, className, ...props }: JobOutputVar
       columnHelper.accessor('key', {
         header: () => (
           <>
-            Job output variables
+            {scopeName} output variables
             <Tooltip
               content={
                 <>
-                  The Job output is injected as environment variables <br />
+                  The {scopeName} output is injected as environment variables <br />
                   to any service within this environment
                 </>
               }

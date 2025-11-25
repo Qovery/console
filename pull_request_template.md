@@ -1,15 +1,44 @@
-# What does this PR do?
+<!--
+Thanks for contributing to the Qovery Console.
 
-> Link to the JIRA ticket
+Before opening the PR:
+- A JIRA ticket exists and you are assigned to it (unless it is a trivial fix)
+- Changes were tested locally (app and/or Storybook as relevant)
+- The code follows the rules under `.cursor/rules`
+-->
 
-Put description here
+## Summary
 
-> Screenshot of the feature
+**Issue**: <!-- QOV-1234 -->
 
----
+<!-- Brief description of what this PR does -->
+<!-- step-by-step instructions for reviewers -->
+<!-- bullet list of changes -->
+<!-- reasons / problems solved -->
+<!-- highlight the key implementation details -->
+
+## Screenshots / Recordings
+
+<!--
+| Before                              | After                      |
+| ----------------------------------- | -------------------------- |
+| drag & drop image optional | drag & drop image |
+-->
+
+## Testing
+
+- [ ] Changes tested locally in the relevant Console's pages and Storybooks
+- [ ] `yarn test` or `yarn test -u` (if you need to regenerate snapshots)
+- [ ] `yarn format`
+- [ ] `yarn lint`
 
 ## PR Checklist
 
-- [ ] This PR introduces breaking change(s) and has been labeled as such
-- [ ] This PR introduces new store changes
-- [ ] I made sure the code is type safe (no any)
+- [ ] I followed naming, styling, and TypeScript rules (see `.cursor/rules`)
+- [ ] I performed a self-review (diff inspected, dead code removed)
+- [ ] I titled the PR using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#commit-message-with-scope) with a scope when possible (e.g. `feat(service): add new Terraform service`) - required for semantic-release
+- [ ] I only kept necessary comments, written in English (watch for useless AI comments)
+- [ ] I involved a designer to validate UI changes if I am not a designer
+- [ ] I covered new business logic with tests (unit)
+- [ ] I confirmed CI is green (Codecov red can be accepted)
+- [ ] I reviewed and executed locally any AI-assisted code

@@ -104,7 +104,7 @@ export function AWSVpcFeature({ isKarpenter = false }: AWSVpcFeatureProps) {
             <InputText label="VPC ID" name={field.name} value={field.value} onChange={field.onChange} />
             <ExternalLink
               size="xs"
-              href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
+              href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#use-existing-vpc"
               className="mb-4 ml-4 mt-1"
             >
               How to configure your VPC

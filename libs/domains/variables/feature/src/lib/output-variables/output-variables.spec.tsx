@@ -396,7 +396,7 @@ jest.mock('../hooks/use-variables/use-variables', () => ({
         id: 'ade79b9c-8515-47f2-8069-83c1e8c35c4d',
         created_at: '2023-10-25T09:58:34.202571Z',
         updated_at: '2024-02-07T16:24:04.904214Z',
-        key: 'QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME',
+        key: 'QOVERY_OUTPUT_TERRAFORM_Z33962E52_DB_USERNAME',
         value: 'admin2',
         mount_path: null,
         scope: 'BUILT_IN',
@@ -405,7 +405,7 @@ jest.mock('../hooks/use-variables/use-variables', () => ({
         variable_type: 'BUILT_IN',
         service_id: '33962e52-7883-42fd-8613-85e04229a9b6',
         service_name: 'seed_script',
-        service_type: 'JOB',
+        service_type: 'TERRAFORM',
         owned_by: 'QOVERY',
         is_secret: false,
       },
@@ -414,20 +414,20 @@ jest.mock('../hooks/use-variables/use-variables', () => ({
         created_at: '2023-10-25T09:58:34.216404Z',
         updated_at: '2023-10-25T09:58:34.216407Z',
         key: 'DB_USERNAME',
-        value: 'QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME',
+        value: 'QOVERY_OUTPUT_TERRAFORM_Z33962E52_DB_USERNAME',
         mount_path: null,
         scope: 'ENVIRONMENT',
         overridden_variable: null,
         aliased_variable: {
           id: 'ade79b9c-8515-47f2-8069-83c1e8c35c4d',
-          key: 'QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME',
+          key: 'QOVERY_OUTPUT_TERRAFORM_Z33962E52_DB_USERNAME',
           value: 'admin2',
           scope: 'BUILT_IN',
           variable_type: 'BUILT_IN',
           mount_path: null,
         },
         variable_type: 'ALIAS',
-        service_id: null,
+        service_id: '33962e52-7883-42fd-8613-85e04229a9b6',
         service_name: null,
         service_type: null,
         owned_by: 'QOVERY',
@@ -626,11 +626,27 @@ jest.mock('../hooks/use-variables/use-variables', () => ({
 
 describe('OutputVariables', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<OutputVariables serviceId="33962e52-7883-42fd-8613-85e04229a9b6" />)
+    const { baseElement } = renderWithProviders(
+      <OutputVariables serviceId="33962e52-7883-42fd-8613-85e04229a9b6" serviceType="JOB" />
+    )
     expect(baseElement).toBeTruthy()
   })
-  it('should match snapshot', () => {
-    const { baseElement } = renderWithProviders(<OutputVariables serviceId="33962e52-7883-42fd-8613-85e04229a9b6" />)
-    expect(baseElement).toMatchSnapshot()
+
+  describe('when serviceType is TERRAFORM', () => {
+    it('should match snapshot', () => {
+      const { baseElement } = renderWithProviders(
+        <OutputVariables serviceId="33962e52-7883-42fd-8613-85e04229a9b6" serviceType="TERRAFORM" />
+      )
+      expect(baseElement).toMatchSnapshot()
+    })
+  })
+
+  describe('when serviceType is JOB', () => {
+    it('should match snapshot', () => {
+      const { baseElement } = renderWithProviders(
+        <OutputVariables serviceId="33962e52-7883-42fd-8613-85e04229a9b6" serviceType="JOB" />
+      )
+      expect(baseElement).toMatchSnapshot()
+    })
   })
 })

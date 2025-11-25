@@ -43,7 +43,7 @@ export function StepGeneralFeature() {
   const isGitSettingsValid = watchFieldProvider === 'GIT' ? generalForm.watch('branch') : true
 
   return (
-    <FunnelFlowBody>
+    <FunnelFlowBody customContentWidth="max-w-[1024px]">
       <FormProvider {...generalForm}>
         <Section>
           <>

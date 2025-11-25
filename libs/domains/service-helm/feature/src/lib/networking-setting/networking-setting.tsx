@@ -129,7 +129,7 @@ export function NetworkingSetting({
                   providing the service name (as defined within the chart) and the port you want to expose. Qovery will
                   take care of assigning a domain and configure the TLS for you.
                 </p>
-                <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#ports">
+                <ExternalLink href="https://www.qovery.com/docs/configuration/helm#network-configuration">
                   Documentation
                 </ExternalLink>
                 <Popover.Close className="absolute right-4 top-4">

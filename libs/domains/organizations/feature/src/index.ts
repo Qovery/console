@@ -82,5 +82,6 @@ export * from './lib/hooks/use-helm-repository-associated-services/use-helm-repo
 export * from './lib/hooks/use-container-registry-associated-services/use-container-registry-associated-services'
 export * from './lib/hooks/use-organization-credentials/use-organization-credentials'
 export * from './lib/hooks/use-parse-terraform-variables-from-git-repo/use-parse-terraform-variables-from-git-repo'
+export * from './lib/hooks/use-list-tfvars-files-from-git-repo/use-list-tfvars-files-from-git-repo'
 export * from './lib/invoice-banner/invoice-banner'
 export * from './lib/free-trial-banner/free-trial-banner'

@@ -51,8 +51,8 @@ export function ClusterAccessModal({ clusterId, type }: ClusterAccessModalProps)
           <p className="text-neutral-350">
             Download and install the Qovery CLI (or update its version to the latest version)
           </p>
-          <ExternalLink href="https://hub.qovery.com/docs/using-qovery/interface/cli/#install">
-            https://hub.qovery.com/docs/using-qovery/interface/cli/#install
+          <ExternalLink href="https://www.qovery.com/docs/cli/overview#installation">
+            https://www.qovery.com/docs/cli/overview#installation
           </ExternalLink>
         </Step>
 

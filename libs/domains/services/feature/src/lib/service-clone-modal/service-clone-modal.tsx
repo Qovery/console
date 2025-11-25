@@ -78,25 +78,19 @@ export function ServiceCloneModal({ onClose, organizationId, projectId, serviceI
   }
 
   const documentationLink = match(service)
-    .with(
-      { serviceType: 'APPLICATION' },
-      () => 'https://hub.qovery.com/docs/using-qovery/configuration/application/#clone'
-    )
-    .with({ serviceType: 'DATABASE' }, () => 'https://hub.qovery.com/docs/using-qovery/configuration/database/#clone')
-    .with(
-      { serviceType: 'CONTAINER' },
-      () => 'https://hub.qovery.com/docs/using-qovery/configuration/application/#clone'
-    )
+    .with({ serviceType: 'APPLICATION' }, () => 'https://www.qovery.com/docs/configuration/application#clone-service')
+    .with({ serviceType: 'DATABASE' }, () => 'https://www.qovery.com/docs/configuration/database#clone-database')
+    .with({ serviceType: 'CONTAINER' }, () => 'https://www.qovery.com/docs/configuration/application#clone-service')
     .with(
       { serviceType: 'JOB', job_type: 'CRON' },
-      () => 'https://hub.qovery.com/docs/using-qovery/configuration/cronjob/#clone'
+      () => 'https://www.qovery.com/docs/configuration/cronjob#clone-service'
     )
     .with(
       { serviceType: 'JOB', job_type: 'LIFECYCLE' },
-      () => 'https://hub.qovery.com/docs/using-qovery/configuration/lifecylejob/#clone'
+      () => 'https://www.qovery.com/docs/configuration/lifecycle-job#clone-service'
     )
-    .with({ serviceType: 'HELM' }, () => 'https://hub.qovery.com/docs/using-qovery/configuration/helm/#clone')
-    .with({ serviceType: 'TERRAFORM' }, () => 'https://hub.qovery.com/docs/using-qovery/configuration/terraform/#clone') // TODO [QOV-821] replace URL with new doc path
+    .with({ serviceType: 'HELM' }, () => 'https://www.qovery.com/docs/configuration/helm#clone-service')
+    .with({ serviceType: 'TERRAFORM' }, () => 'https://www.qovery.com/docs/configuration/terraform#clone-service')
     .exhaustive()
 
   return (
@@ -141,7 +135,7 @@ export function ServiceCloneModal({ onClose, organizationId, projectId, serviceI
               <Callout.TextDescription>
                 The cloned helm chart won’t be exposed over the internet. Please configure it again within the “Network”
                 section.
-                <ExternalLink size="sm" href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#network">
+                <ExternalLink size="sm" href="https://www.qovery.com/docs/configuration/helm#network-configuration">
                   Click here for more details
                 </ExternalLink>
               </Callout.TextDescription>
