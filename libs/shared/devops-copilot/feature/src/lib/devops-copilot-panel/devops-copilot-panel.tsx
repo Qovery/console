@@ -213,8 +213,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   }
 
   const hasMermaidChart = (messages: Message[], streamingText?: string) =>
-    messages.some((msg) => msg.text.includes('```mermaid')) ||
-    (streamingText?.includes('```mermaid') ?? false)
+    messages.some((msg) => msg.text.includes('```mermaid')) || (streamingText?.includes('```mermaid') ?? false)
 
   useEffect(() => {
     if (hasMermaidChart(thread, displayedStreamingMessage)) {
@@ -861,10 +860,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                         )}
                         {(() => {
                           if (!mermaidRenderCache.current.has(thread.id)) {
-                            mermaidRenderCache.current.set(
-                              thread.id,
-                              <RenderMarkdown>{thread.text}</RenderMarkdown>
-                            )
+                            mermaidRenderCache.current.set(thread.id, <RenderMarkdown>{thread.text}</RenderMarkdown>)
                           }
                           return mermaidRenderCache.current.get(thread.id)
                         })()}{' '}
