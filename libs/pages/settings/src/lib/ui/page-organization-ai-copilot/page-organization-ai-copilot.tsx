@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Organization } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { devopsCopilot, mutations } from '@qovery/shared/devops-copilot/data-access'
@@ -41,6 +42,7 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
   const [selectedMode, setSelectedMode] = useState<'read-only' | 'read-write' | null>(null)
   const queryClient = useQueryClient()
   const { openModalConfirmation } = useModalConfirmation()
+  const isFeatureFlagPanel = useFeatureFlagVariantKey('devops-copilot-config-panel')
 
   const { data: configData, isLoading: isLoadingConfig } = useQuery({
     ...devopsCopilot.config({ organizationId: organization?.id ?? '' }),
@@ -170,6 +172,10 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
     { label: 'Read-Only', value: 'read-only' },
     { label: 'Read-Write', value: 'read-write' },
   ]
+
+  if (!isFeatureFlagPanel) {
+    return null
+  }
 
   if (isLoading) {
     return (

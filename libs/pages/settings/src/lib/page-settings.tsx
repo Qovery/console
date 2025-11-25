@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -27,6 +28,7 @@ import { Container } from './ui/container/container'
 
 export function PageSettings() {
   const { organizationId = '' } = useParams()
+  const isFeatureFlagPanel = useFeatureFlagVariantKey('devops-copilot-config-panel')
 
   const pathSettings = SETTINGS_URL(organizationId)
   const { data: projects = [] } = useProjects({ organizationId })
@@ -101,11 +103,15 @@ export function PageSettings() {
       icon: IconAwesomeEnum.CLOUD_ARROW_UP,
       url: pathSettings + SETTINGS_API_URL,
     },
-    {
-      title: 'AI Copilot',
-      icon: IconAwesomeEnum.TERMINAL,
-      url: pathSettings + SETTINGS_AI_COPILOT_URL,
-    },
+    ...(isFeatureFlagPanel
+      ? [
+          {
+            title: 'AI Copilot',
+            icon: IconAwesomeEnum.TERMINAL,
+            url: pathSettings + SETTINGS_AI_COPILOT_URL,
+          },
+        ]
+      : []),
     {
       title: 'Danger zone',
       icon: IconAwesomeEnum.SKULL,
