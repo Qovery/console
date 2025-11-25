@@ -27,7 +27,7 @@ Before opening the PR:
 
 ## Testing
 
-- [ ] Changes tested locally in the relevant Console or Storybook
+- [ ] Changes tested locally in the relevant Console's pages and Storybooks
 - [ ] `yarn test` or `yarn test -u` (if you need to regenerate snapshots)
 - [ ] `yarn format`
 - [ ] `yarn lint`
