@@ -4,8 +4,6 @@ Thanks for contributing to the Qovery Console.
 Before opening the PR:
 - A JIRA ticket exists and you are assigned to it (unless it is a trivial fix)
 - Changes were tested locally (app and/or Storybook as relevant)
-- `yarn test` passes
-- `npx nx format:check` pass
 - The code follows the rules under `.cursor/rules`
 -->
 
@@ -15,25 +13,9 @@ Before opening the PR:
 
 <!-- Brief description of what this PR does -->
 <!-- step-by-step instructions for reviewers -->
-
-## What
-
-- <!-- bullet list of changes -->
-
-## Why
-
-- <!-- reasons / problems solved -->
-
-## How
-
-- <!-- highlight the key implementation details -->
-
-## Testing
-
-- [ ] Changes tested locally in the relevant Console or Storybook
-- [ ] `yarn test` or `yarn test -u` (if you need to regenerate snapshots)
-- [ ] `yarn format`
-- [ ] `yarn lint`
+<!-- bullet list of changes -->
+<!-- reasons / problems solved -->
+<!-- highlight the key implementation details -->
 
 ## Screenshots / Recordings
 
@@ -43,9 +25,12 @@ Before opening the PR:
 | drag & drop image optional | drag & drop image |
 -->
 
-## Additional Notes
+## Testing
 
-<!-- Optional extra context, rollout plan, feature flags, etc. -->
+- [ ] Changes tested locally in the relevant Console or Storybook
+- [ ] `yarn test` or `yarn test -u` (if you need to regenerate snapshots)
+- [ ] `yarn format`
+- [ ] `yarn lint`
 
 ## PR Checklist
 
