@@ -37,7 +37,7 @@ Before opening the PR:
 - [ ] I followed naming, styling, and TypeScript rules (see `.cursor/rules`)
 - [ ] I performed a self-review (diff inspected, dead code removed)
 - [ ] I titled the PR using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#commit-message-with-scope) with a scope when possible (e.g. `feat(service): add new Terraform service`) - required for semantic-release
-- [ ] I only kept comments that are necessary and in English (watch for useless AI comments)
+- [ ] I only kept necessary comments, written in English (watch for useless AI comments)
 - [ ] I involved a designer to validate UI changes if I am not a designer
 - [ ] I covered new business logic with tests (unit)
 - [ ] I confirmed CI is green (Codecov red can be accepted)
