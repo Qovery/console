@@ -46,7 +46,6 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
   const { organizationId = '' } = useParams()
   const { showPylonForm } = useSupportChat()
 
-  const isAzureFeatureFlag = useFeatureFlagEnabled('cluster-azure')
   const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
 
   const renderIcon = (className?: string) => {
@@ -63,30 +62,11 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
         {title}
         {recommended && (
           <span>
-            {match({ selectedCloudProvider, isAzureFeatureFlag })
-              .with({ selectedCloudProvider: 'AZURE', isAzureFeatureFlag: false }, () => (
-                <Tooltip
-                  content={
-                    <span>
-                      Follow the release on our{' '}
-                      <ExternalLink size="xs" href="https://roadmap.qovery.com/p/support-aks-as-a-managed-cluster">
-                        product roadmap
-                      </ExternalLink>
-                    </span>
-                  }
-                >
-                  <span className="absolute right-5 top-5 h-5 rounded-lg border border-neutral-200 px-1.5 text-[11px] leading-[17px] text-neutral-350">
-                    coming soon
-                  </span>
-                </Tooltip>
-              ))
-              .with({ selectedCloudProvider: 'AZURE', isAzureFeatureFlag: true }, () => (
+            {match({ selectedCloudProvider })
+              .with({ selectedCloudProvider: 'AZURE' }, () => (
                 <div className="absolute right-5 top-5 flex h-5 gap-2">
                   <span className="rounded-lg bg-brand-500 px-1.5 text-[11px] font-semibold leading-5 text-neutral-50">
                     recommended
-                  </span>
-                  <span className="rounded-lg bg-brand-500 px-1.5 text-[11px] font-semibold leading-5 text-neutral-50">
-                    beta
                   </span>
                 </div>
               ))
@@ -129,28 +109,16 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
         </span>
       </button>
     ))
-    .with({ selectedInstallationType: 'managed' }, ({ selectedInstallationType }) =>
-      !isAzureFeatureFlag && selectedCloudProvider === 'AZURE' ? (
-        <div
-          className={twMerge(
-            baseClassNames,
-            'cursor-default shadow-none hover:border-neutral-200 hover:outline-transparent'
-          )}
-        >
-          {renderIcon()}
-          {renderContent()}
-        </div>
-      ) : (
-        <NavLink
-          to={CLUSTERS_URL(organizationId) + CLUSTERS_TEMPLATE_CREATION_URL(selectedCloudProvider)}
-          className={baseClassNames}
-          onClick={() => handleAnalytics(selectedInstallationType)}
-        >
-          {renderIcon()}
-          {renderContent()}
-        </NavLink>
-      )
-    )
+    .with({ selectedInstallationType: 'managed' }, ({ selectedInstallationType }) => (
+      <NavLink
+        to={CLUSTERS_URL(organizationId) + CLUSTERS_TEMPLATE_CREATION_URL(selectedCloudProvider)}
+        className={baseClassNames}
+        onClick={() => handleAnalytics(selectedInstallationType)}
+      >
+        {renderIcon()}
+        {renderContent()}
+      </NavLink>
+    ))
     .with({ selectedInstallationType: 'partially-managed' }, ({ selectedInstallationType }) => {
       return match({ isEksAnywhereEnabled })
         .with({ isEksAnywhereEnabled: true }, () => (

@@ -24,22 +24,18 @@ export function StepGeneral(props: StepGeneralProps) {
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
 
-  const isAzureFeatureFlag = useFeatureFlagEnabled('cluster-azure')
-
   const [currentProvider, setCurrentProvider] = useState<CloudProvider | undefined>(
     cloudProviders.filter((cloudProvider: CloudProvider) => cloudProvider.short_name === currentCloudProvider)[0]
   )
 
   const buildCloudProviders: Value[] = useMemo(
     () =>
-      cloudProviders
-        .map((value) => ({
-          label: upperCaseFirstLetter(value.name),
-          value: value.short_name || '',
-          icon: <Icon name={value.short_name || CloudProviderEnum.AWS} className="w-4" />,
-        }))
-        .filter((c) => isAzureFeatureFlag || c.value !== 'AZURE'),
-    [cloudProviders, isAzureFeatureFlag]
+      cloudProviders.map((value) => ({
+        label: upperCaseFirstLetter(value.name),
+        value: value.short_name || '',
+        icon: <Icon name={value.short_name || CloudProviderEnum.AWS} className="w-4" />,
+      })),
+    [cloudProviders]
   )
 
   const buildRegions: Value[] = useMemo(
