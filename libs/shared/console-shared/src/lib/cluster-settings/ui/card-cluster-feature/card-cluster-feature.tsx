@@ -143,7 +143,7 @@ export function CardClusterFeature({
           <ExternalLink
             onClick={(e) => e.stopPropagation()}
             size="xs"
-            href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features"
+            href="https://www.qovery.com/docs/configuration/clusters"
           >
             Documentation link
           </ExternalLink>

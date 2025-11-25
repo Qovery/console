@@ -96,7 +96,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
               </li>
             </ol>
             <p className="mb-2">A workspace is necessary for bitbucket tokens</p>
-            <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/organization/git-repository-access">
+            <ExternalLink href="https://www.qovery.com/docs/configuration/organization/git-repository-access">
               Documentation
             </ExternalLink>
           </>

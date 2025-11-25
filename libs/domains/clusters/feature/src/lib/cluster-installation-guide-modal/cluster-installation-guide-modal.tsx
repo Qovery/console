@@ -75,10 +75,7 @@ export function ClusterInstallationGuideModal({ type, onClose, ...props }: Clust
             <li className="text-sm font-medium">
               <span>Make sure you meet the requirements described here</span>
               <br />
-              <ExternalLink
-                className="mt-2"
-                href="https://hub.qovery.com/docs/getting-started/install-qovery/kubernetes/quickstart/"
-              >
+              <ExternalLink className="mt-2" href="https://www.qovery.com/docs/getting-started/installation/kubernetes">
                 Documentation
               </ExternalLink>
             </li>

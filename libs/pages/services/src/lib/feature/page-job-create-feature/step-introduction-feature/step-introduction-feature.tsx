@@ -223,10 +223,7 @@ export function StepIntroductionFeature() {
                   Don’t show it again
                 </label>
               </div>
-              <ExternalLink
-                className="ml-4"
-                href="https://hub.qovery.com/docs/using-qovery/configuration/lifecycle-job/"
-              >
+              <ExternalLink className="ml-4" href="https://www.qovery.com/docs/configuration/lifecycle-job">
                 Learn more
               </ExternalLink>
             </div>

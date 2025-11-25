@@ -183,7 +183,7 @@ export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJo
               </p>
               <ExternalLink
                 className="text-xs"
-                href="https://hub.qovery.com/docs/using-qovery/configuration/advanced-settings/#cronjobfailed_job_history_limit"
+                href="https://www.qovery.com/docs/configuration/service-advanced-settings#cronjob-failed-jobs-history-limit"
               >
                 See documentation
               </ExternalLink>

@@ -23,8 +23,8 @@ export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) 
           <p className="mb-2 font-normal text-neutral-350">
             Download and install the Qovery CLI (or update its version to the latest version).
           </p>
-          <ExternalLink href="https://hub.qovery.com/docs/using-qovery/interface/cli/#install">
-            https://hub.qovery.com/docs/using-qovery/interface/cli/#install
+          <ExternalLink href="https://www.qovery.com/docs/cli/overview#installation">
+            https://www.qovery.com/docs/cli/overview#installation
           </ExternalLink>
         </li>
         <li className="rounded border border-neutral-200 p-3">

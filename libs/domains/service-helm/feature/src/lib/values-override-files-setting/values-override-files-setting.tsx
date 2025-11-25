@@ -93,7 +93,7 @@ export function ValuesOverrideFilesSetting({
                     automatically injected in some of the Kubernetes objects deployed within your helm.
                   </li>
                 </ul>
-                <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#values">
+                <ExternalLink href="https://www.qovery.com/docs/configuration/helm#values-override">
                   Documentation
                 </ExternalLink>
                 <Popover.Close className="absolute right-4 top-4">

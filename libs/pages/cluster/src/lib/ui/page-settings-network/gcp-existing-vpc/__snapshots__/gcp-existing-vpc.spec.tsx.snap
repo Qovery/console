@@ -14,7 +14,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         </h4>
         <a
           class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs"
-          href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
+          href="https://www.qovery.com/docs/configuration/integrations/kubernetes/gke/managed#use-existing-vpc"
           rel="noopener noreferrer"
           target="_blank"
         >

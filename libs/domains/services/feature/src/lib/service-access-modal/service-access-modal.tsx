@@ -288,8 +288,8 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
               <p className="text-neutral-350">
                 Download and install the Qovery CLI (or update its version to the latest version)
               </p>
-              <ExternalLink href="https://hub.qovery.com/docs/using-qovery/interface/cli/#install">
-                https://hub.qovery.com/docs/using-qovery/interface/cli/#install
+              <ExternalLink href="https://www.qovery.com/docs/cli/overview#installation">
+                https://www.qovery.com/docs/cli/overview#installation
               </ExternalLink>
             </div>
             <div className="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm">
@@ -298,7 +298,7 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                 {serviceType === 'DATABASE' ? (
                   <>
                     Run the following command from your terminal. <br />
-                    <ExternalLink href="https://hub.qovery.com/docs/using-qovery/interface/cli/#port-forward-on-a-managed-database">
+                    <ExternalLink href="https://www.qovery.com/docs/cli/commands/port-forward#examples">
                       Learn more
                     </ExternalLink>
                   </>

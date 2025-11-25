@@ -17,7 +17,7 @@ export function GCPVpcFeature() {
         <div>
           <h4 className="mb-1 text-sm font-medium text-neutral-400">Deploy on an existing VPC</h4>
           <ExternalLink
-            href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#use-existing-vpc"
+            href="https://www.qovery.com/docs/configuration/integrations/kubernetes/gke/managed#use-existing-vpc"
             className="mb-4"
           >
             How to configure existing VPC

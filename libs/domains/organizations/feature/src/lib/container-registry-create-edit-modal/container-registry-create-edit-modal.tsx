@@ -156,7 +156,7 @@ export function ContainerRegistryCreateEditModal({
             </p>
             <ExternalLink
               className="mt-2"
-              href="https://hub.qovery.com/docs/using-qovery/configuration/organization/container-registry/"
+              href="https://www.qovery.com/docs/configuration/organization/container-registry"
             >
               More information here
             </ExternalLink>

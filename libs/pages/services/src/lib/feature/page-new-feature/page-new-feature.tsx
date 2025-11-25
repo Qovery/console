@@ -451,7 +451,7 @@ export function PageNewFeature() {
         />
         <ExternalLink
           className="mx-auto"
-          href="https://hub.qovery.com/docs/getting-started/basic-concepts/#service"
+          href="https://www.qovery.com/docs/getting-started/basic-concepts#services"
           size="xs"
         >
           See documentation
