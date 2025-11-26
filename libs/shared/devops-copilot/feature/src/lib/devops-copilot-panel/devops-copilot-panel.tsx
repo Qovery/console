@@ -3,8 +3,8 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import mermaid from 'mermaid'
-import { type ComponentProps, forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
+import { type ComponentProps, forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import { AnimatedGradientText, Button, Callout, DropdownMenu, Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
@@ -839,9 +839,9 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
               )}
               {thread.length === 0 && (
                 <span className="mx-auto w-full max-w-[430px] animate-[fadein_0.22s_ease-in-out_forwards_0.05s] py-4 text-center text-ssm opacity-0">
-                  I'm your <span className="font-medium text-brand-500">DevOps AI Copilot</span> - I can help you to
-                  fix your deployments, optimize your infrastructure costs, audit your security and do everything
-                  you would expect from a complete DevOps Engineering team.
+                  I'm your <span className="font-medium text-brand-500">DevOps AI Copilot</span> - I can help you to fix
+                  your deployments, optimize your infrastructure costs, audit your security and do everything you would
+                  expect from a complete DevOps Engineering team.
                   {isFeatureFlagPanel && !isCopilotEnabled && (
                     <>
                       <br></br>

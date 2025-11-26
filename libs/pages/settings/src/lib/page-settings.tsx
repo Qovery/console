@@ -1,5 +1,5 @@
-import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
+import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
