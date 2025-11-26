@@ -1050,16 +1050,40 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                       )}
                     {(() => {
                       const input = displayedStreamingMessage
-                      const startMatches = [...input.matchAll(/```mermaid/g)]
-                      const endMatches = [...input.matchAll(/```(?!mermaid)/g)]
                       let renderInput = input
+
+                      // Trouve le dernier bloc ``` qui pourrait être incomplet
+                      const allBackticks = [...input.matchAll(/```/g)]
+                      if (allBackticks.length > 0) {
+                        const lastBacktick = allBackticks.at(-1)
+                        if (lastBacktick && lastBacktick.index !== undefined) {
+                          const afterBackticks = input.slice(lastBacktick.index + 3)
+
+                          // Si après ``` il n'y a pas encore de newline ou que c'est le début de "mermaid"
+                          // on coupe avant les ``` pour éviter le flash de rendu markdown
+                          if (!afterBackticks.includes('\n') && afterBackticks.length < 10) {
+                            // Check si c'est potentiellement du mermaid en cours
+                            if ('mermaid'.startsWith(afterBackticks.trim()) && afterBackticks.trim().length > 0) {
+                              renderInput = input.slice(0, lastBacktick.index) + 'Generating charts…'
+                            } else if (afterBackticks.trim().length === 0 || afterBackticks.match(/^[a-z]*$/)) {
+                              // Coupe juste avant les ``` pour éviter le rendu markdown incomplet
+                              renderInput = input.slice(0, lastBacktick.index)
+                            }
+                          }
+                        }
+                      }
+
+                      // Gère aussi les blocs mermaid déjà détectés mais incomplets
+                      const startMatches = [...renderInput.matchAll(/```mermaid/g)]
+                      const endMatches = [...renderInput.matchAll(/```(?!mermaid)/g)]
                       if (startMatches.length > endMatches.length) {
                         const lastStart = startMatches.at(-1)
                         if (lastStart) {
-                          const cutoffIndex = lastStart.index ?? input.length
-                          renderInput = input.slice(0, cutoffIndex) + 'Generating charts…'
+                          const cutoffIndex = lastStart.index ?? renderInput.length
+                          renderInput = renderInput.slice(0, cutoffIndex) + 'Generating charts…'
                         }
                       }
+
                       return renderStreamingMessageWithMermaid(renderInput)
                     })()}
                   </div>
