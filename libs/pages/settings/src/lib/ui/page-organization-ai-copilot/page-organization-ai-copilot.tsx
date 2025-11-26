@@ -4,6 +4,7 @@ import { type Organization } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { devopsCopilot, mutations } from '@qovery/shared/devops-copilot/data-access'
 import {
+  BlockContent,
   Button,
   Checkbox,
   Heading,
@@ -177,34 +178,23 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
     return null
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex w-full flex-col justify-between">
-        <Section className="max-w-content-with-navigation-left p-8">
-          <div className="space-y-6">
-            <div className="space-y-3">
-              <Heading className="text-neutral-400">AI Copilot</Heading>
-              <p className="text-xs text-neutral-400">Configure your Copilot</p>
-            </div>
-            <div className="flex items-center justify-center p-12">
-              <LoaderSpinner className="w-8" />
-            </div>
-          </div>
-        </Section>
-      </div>
-    )
-  }
-
   return (
     <div className="flex w-full flex-col justify-between">
       <Section className="max-w-content-with-navigation-left p-8">
-        <div className="space-y-6">
+        <div className="mb-8 flex justify-between gap-2">
           <div className="space-y-3">
             <Heading className="text-neutral-400">AI Copilot</Heading>
             <p className="text-xs text-neutral-400">Configure your Copilot</p>
           </div>
-
-          {!isEnabled && (
+        </div>
+        <BlockContent title="Configuration" classNameContent="p-0">
+          {isLoading ? (
+            <div className="flex justify-center p-5">
+              <LoaderSpinner className="w-5" />
+            </div>
+          ) : (
+            <div className="space-y-6 p-6">
+              {!isEnabled && (
             <div className="space-y-4 rounded border border-brand-200 bg-brand-50 p-6">
               <div className="flex items-start gap-3">
                 <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-brand-500">
@@ -476,7 +466,9 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
               </div>
             </div>
           )}
-        </div>
+            </div>
+          )}
+        </BlockContent>
       </Section>
     </div>
   )
