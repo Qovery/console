@@ -10,7 +10,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
-import { type DeploymentHistoryService, type Environment, OrganizationEventOrigin } from 'qovery-typescript-axios'
+import {
+  type DeploymentHistoryService,
+  type DeploymentHistoryTriggerAction,
+  type Environment,
+  OrganizationEventOrigin,
+  type ServiceSubActionEnum,
+} from 'qovery-typescript-axios'
 import { useCallback, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
@@ -51,6 +57,18 @@ export interface ServiceDeploymentListProps {
 
 export const isDeploymentHistory = (data: unknown): data is DeploymentHistoryService => {
   return typeof data === 'object' && data !== null && 'status' in data && 'details' in data
+}
+
+const formatTriggerAction = (
+  actionTrigger: DeploymentHistoryTriggerAction | Exclude<ServiceSubActionEnum, 'NONE'> | undefined
+) => {
+  return match(actionTrigger)
+    .with('TERRAFORM_PLAN_ONLY', () => 'Plan')
+    .with('TERRAFORM_PLAN_AND_APPLY', () => 'Plan and apply')
+    .with('TERRAFORM_MIGRATE_STATE', () => 'Migrate state')
+    .with('TERRAFORM_FORCE_UNLOCK_STATE', () => 'Force unlock')
+    .with('TERRAFORM_DESTROY', () => 'Destroy')
+    .otherwise(() => upperCaseFirstLetter(actionTrigger ?? ''))
 }
 
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
@@ -222,7 +240,8 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         },
         cell: (info) => {
           const data = info.row.original
-          const triggerAction = data.status_details?.action
+          const subAction = data.status_details?.sub_action
+          const triggerAction = subAction !== 'NONE' ? subAction : data.status_details?.action
 
           return match(data)
             .with(P.when(isDeploymentHistory), (d) => {
@@ -244,7 +263,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                       .otherwise(() => undefined)}
                   />
                   <div className="flex flex-col gap-1">
-                    <span className="font-medium text-neutral-400">{upperCaseFirstLetter(triggerAction)}</span>
+                    <span className="font-medium text-neutral-400">{formatTriggerAction(triggerAction)}</span>
                     <span className="text-ssm text-neutral-350">{upperCaseFirstLetter(actionStatus)}</span>
                   </div>
                 </div>
@@ -254,7 +273,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
               <div className="flex items-center gap-4">
                 <ActionTriggerStatusChip size="md" status="QUEUED" triggerAction={triggerAction} />
                 <div className="flex flex-col gap-1">
-                  <span className="font-medium text-neutral-400">{upperCaseFirstLetter(triggerAction)}</span>
+                  <span className="font-medium text-neutral-400">{formatTriggerAction(triggerAction)}</span>
                   <span className="text-ssm text-neutral-350">In queue...</span>
                 </div>
               </div>
