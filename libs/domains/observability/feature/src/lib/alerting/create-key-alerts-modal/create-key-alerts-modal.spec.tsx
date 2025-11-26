@@ -5,6 +5,12 @@ import { CreateKeyAlertsModal } from './create-key-alerts-modal'
 const mockOnClose = jest.fn()
 
 describe('CreateKeyAlertsModal', () => {
+  const defaultProps = {
+    onClose: mockOnClose,
+    projectId: 'project-123',
+    organizationId: 'org-123',
+  }
+
   const defaultService = {
     id: 'service-123',
     name: 'My Service',
@@ -15,18 +21,18 @@ describe('CreateKeyAlertsModal', () => {
   })
 
   it('should render all metric categories', () => {
-    renderWithProviders(<CreateKeyAlertsModal onClose={mockOnClose} />)
+    renderWithProviders(<CreateKeyAlertsModal {...defaultProps} />)
 
-    expect(screen.getByText('Instances')).toBeInTheDocument()
-    expect(screen.getByText('k8s event')).toBeInTheDocument()
     expect(screen.getByText('CPU')).toBeInTheDocument()
     expect(screen.getByText('Memory')).toBeInTheDocument()
-    expect(screen.getByText('Network')).toBeInTheDocument()
-    expect(screen.getByText('Logs')).toBeInTheDocument()
+    expect(screen.getByText('HTTP error')).toBeInTheDocument()
+    expect(screen.getByText('Replicas number')).toBeInTheDocument()
+    expect(screen.getByText('k8s event')).toBeInTheDocument()
+    expect(screen.getByText('HPA issue')).toBeInTheDocument()
   })
 
   it('should pre-fill service name when service prop is provided', () => {
-    renderWithProviders(<CreateKeyAlertsModal onClose={mockOnClose} service={defaultService as AnyService} />)
+    renderWithProviders(<CreateKeyAlertsModal {...defaultProps} service={defaultService as AnyService} />)
 
     const input = screen.getByDisplayValue('My Service')
     expect(input).toBeInTheDocument()
@@ -34,7 +40,7 @@ describe('CreateKeyAlertsModal', () => {
   })
 
   it('should render submit button with correct label', () => {
-    renderWithProviders(<CreateKeyAlertsModal onClose={mockOnClose} />)
+    renderWithProviders(<CreateKeyAlertsModal {...defaultProps} />)
 
     expect(screen.getByText('Configure alerts')).toBeInTheDocument()
   })
