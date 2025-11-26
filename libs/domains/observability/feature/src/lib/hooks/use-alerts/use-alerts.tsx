@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { observability } from '@qovery/domains/observability/data-access'
 
-export function useAlertRules({ organizationId, serviceId }: { organizationId: string; serviceId?: string }) {
+export function useAlerts({ organizationId }: { organizationId: string }) {
   return useQuery({
     ...observability.alertRules({ organizationId }),
-    select: (data) => (serviceId ? data.filter((rule) => rule.target.target_id === serviceId) : data),
+    select: (data) => data.filter((rule) => rule.state === 'NOTIFIED'),
     enabled: Boolean(organizationId),
   })
 }
 
-export default useAlertRules
+export default useAlerts
