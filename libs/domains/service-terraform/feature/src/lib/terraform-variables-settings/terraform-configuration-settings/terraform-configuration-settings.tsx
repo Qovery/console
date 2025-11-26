@@ -250,66 +250,6 @@ export const TerraformConfigurationSettings = ({
           </Callout.Text>
         </Callout.Root>
       </Section>
-
-      {!isSettings && (
-        <Section className="gap-4">
-          <Heading level={2}>Job resources</Heading>
-          <Controller
-            name="job_resources.cpu_milli"
-            control={methods.control}
-            defaultValue={methods.getValues('job_resources.cpu_milli')}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="vCPU (milli)"
-                error={error?.message}
-                disabled={!isSettings}
-              />
-            )}
-          />
-          <Controller
-            name="job_resources.ram_mib"
-            control={methods.control}
-            defaultValue={methods.getValues('job_resources.ram_mib')}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Memory (mb)"
-                error={error?.message}
-                disabled={!isSettings}
-              />
-            )}
-          />
-          <Controller
-            name="job_resources.storage_gib"
-            control={methods.control}
-            defaultValue={methods.getValues('job_resources.storage_gib')}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Storage (gb)"
-                error={error?.message}
-                disabled={!isSettings}
-              />
-            )}
-          />
-          <Callout.Root color="sky">
-            <Callout.Icon>
-              <Icon iconName="info-circle" iconStyle="regular" />
-            </Callout.Icon>
-            <Callout.Text>
-              Resources at job creation are set by default. If adjustments are needed, update them manually in the job
-              settings after creation.
-            </Callout.Text>
-          </Callout.Root>
-        </Section>
-      )}
     </div>
   )
 }
