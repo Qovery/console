@@ -1,4 +1,5 @@
 import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
+import { type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
@@ -15,7 +16,7 @@ export interface NavigationLeftProps {
 }
 
 export type NavigationLeftLinkProps = {
-  title: string
+  title: ReactNode
 } & (
   | {
       url: string
@@ -90,13 +91,13 @@ export function NavigationLeft(props: NavigationLeftProps) {
           )}
         </div>
       )}
-      {links.map((link) =>
+      {links.map((link, index) =>
         'url' in link ? (
           <Link data-testid="link" key={link.url} to={link.url} className={linkClassName(link.url, pathname)}>
             <LinkContent link={link} />
           </Link>
         ) : (
-          <NavigationLeftSubLink key={link.title} link={link}>
+          <NavigationLeftSubLink key={index} link={link}>
             {link.subLinks.map((subLink) => (
               <Link
                 data-testid="sub-link"

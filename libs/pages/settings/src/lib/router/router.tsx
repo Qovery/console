@@ -1,5 +1,6 @@
-import { NotificationChannelOverview } from '@qovery/domains/observability/feature'
+import { IssueOverview, NotificationChannelOverview } from '@qovery/domains/observability/feature'
 import {
+  ALERTING_ISSUES_URL,
   ALERTING_NOTIFICATION_CHANNEL_URL,
   type Route,
   SETTINGS_API_URL,
@@ -105,6 +106,10 @@ export const ROUTER_SETTINGS: Route[] = [
 ]
 
 export const ROUTER_ALERTING: Route[] = [
+  {
+    path: ALERTING_ISSUES_URL,
+    component: <IssueOverview />,
+  },
   {
     path: ALERTING_NOTIFICATION_CHANNEL_URL,
     component: <NotificationChannelOverview />,

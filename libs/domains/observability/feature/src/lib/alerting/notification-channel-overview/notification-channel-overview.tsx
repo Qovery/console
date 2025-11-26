@@ -11,6 +11,7 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useAlertReceivers } from '../../hooks/use-alert-receivers/use-alert-receivers'
 import { useDeleteAlertReceiver } from '../../hooks/use-delete-alert-receiver/use-delete-alert-receiver'
 import { NotificationChannelModal } from '../notification-channel-modal/notification-channel-modal'
@@ -19,6 +20,7 @@ const { Table } = TablePrimitives
 
 export function NotificationChannelOverview() {
   const { organizationId = '' } = useParams()
+  useDocumentTitle('Notification channel - Alerting')
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 

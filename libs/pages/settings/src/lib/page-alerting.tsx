@@ -1,14 +1,35 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { ALERTING_NOTIFICATION_CHANNEL_URL, ALERTING_URL } from '@qovery/shared/routes'
+import { useAlerts } from '@qovery/domains/observability/feature'
+import { ALERTING_ISSUES_URL, ALERTING_NOTIFICATION_CHANNEL_URL, ALERTING_URL } from '@qovery/shared/routes'
 import { ErrorBoundary, NavigationLeft, type NavigationLeftLinkProps } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_ALERTING } from './router/router'
 
 // NOTE: Alerting is located in the Settings page library to avoid creating a new library,
 // as these types of libraries will be removed soon with the upcoming navigation changes.
 export function PageAlerting() {
   const { organizationId = '' } = useParams()
+  useDocumentTitle('Alerting')
+
+  const { data: alerts = [] } = useAlerts({ organizationId })
+  const issuesCount = alerts.length
 
   const alertingLinks: NavigationLeftLinkProps[] = [
+    {
+      title: (
+        <span className="flex w-full items-center justify-between">
+          Issues{' '}
+          {issuesCount > 0 && (
+            <span className="flex min-w-4 items-center justify-center rounded-full bg-brand-500 px-1 text-2xs text-white">
+              {issuesCount}
+            </span>
+          )}
+        </span>
+      ),
+      iconName: issuesCount > 0 ? 'light-emergency-on' : 'light-emergency',
+      iconStyle: 'regular',
+      url: ALERTING_URL(organizationId) + ALERTING_ISSUES_URL,
+    },
     {
       title: 'Notification channel',
       iconName: 'bullhorn',

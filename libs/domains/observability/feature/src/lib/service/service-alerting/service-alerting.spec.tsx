@@ -47,6 +47,11 @@ describe('ServiceAlerting', () => {
     target: {
       target_id: 'app-123',
     },
+    tag: 'cpu',
+    for_duration: 'PT5M',
+    condition: {
+      kind: 'CUSTOM',
+    },
     ...overrides,
   })
 
