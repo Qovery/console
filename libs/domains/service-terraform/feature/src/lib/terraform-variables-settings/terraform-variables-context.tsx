@@ -158,6 +158,11 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
 
   const submitNewPath = useCallback(async () => {
     try {
+      if (!newPath.endsWith('.tfvars')) {
+        setNewPathErrorMessage('The path must end with .tfvars')
+        return
+      }
+
       await fetchTfVars(
         {
           organizationId,
