@@ -65,6 +65,7 @@ export function PageTerraformCreateFeature() {
       },
       timeout_sec: '3600',
       use_cluster_credentials: true,
+      engine: 'TERRAFORM',
     },
   })
 
