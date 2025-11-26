@@ -227,7 +227,7 @@ export const TerraformConfigurationSettings = ({
                     </span>
                   )}
                 </p>
-                <div className="flex items-center justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
+                <div className="flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
                   <div>
                     <span className="select-none">$ </span>
                     {cliCommand}
