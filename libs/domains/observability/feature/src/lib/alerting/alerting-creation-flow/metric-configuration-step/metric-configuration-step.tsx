@@ -22,30 +22,22 @@ import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useAlertReceivers } from '../../../hooks/use-alert-receivers/use-alert-receivers'
 import { NotificationChannelModal } from '../../notification-channel-modal/notification-channel-modal'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
-import { type AlertConfiguration } from '../alerting-creation-flow.types'
+import { type AlertConfiguration, type MetricCategory } from '../alerting-creation-flow.types'
 import { ALERTING_CREATION_METRIC, ALERTING_CREATION_SUMMARY } from '../router'
 
-const METRIC_TYPE_OPTIONS: Record<string, Value[]> = {
-  cpu: [
-    { label: 'Average', value: 'AVG' },
-    { label: 'Maximum', value: 'MAX' },
-    { label: 'Minimum', value: 'MIN' },
-  ],
-  memory: [
-    { label: 'Average', value: 'AVG' },
-    { label: 'Maximum', value: 'MAX' },
-    { label: 'Minimum', value: 'MIN' },
-  ],
-  instances: [{ label: 'Count', value: 'count' }],
-  k8s_event: [{ label: 'Count', value: 'count' }],
-  network: [
-    { label: 'Throughput', value: 'throughput' },
-    { label: 'Latency', value: 'latency' },
-  ],
-  logs: [
-    { label: 'Error rate', value: 'error_rate' },
-    { label: 'Count', value: 'count' },
-  ],
+const VALUES_OPTIONS = [
+  { label: 'Average', value: 'AVG' },
+  { label: 'Maximum', value: 'MAX' },
+  { label: 'Minimum', value: 'MIN' },
+]
+
+const METRIC_TYPE_OPTIONS: Record<MetricCategory, Value[]> = {
+  cpu: VALUES_OPTIONS,
+  memory: VALUES_OPTIONS,
+  http_error: VALUES_OPTIONS,
+  replicas_number: VALUES_OPTIONS,
+  k8s_event: VALUES_OPTIONS,
+  hpa_issue: VALUES_OPTIONS,
 }
 
 const OPERATOR_OPTIONS: Value[] = [
@@ -54,6 +46,7 @@ const OPERATOR_OPTIONS: Value[] = [
 ]
 
 const DURATION_OPTIONS: Value[] = [
+  { label: 'Immediate', value: 'PT1S' },
   { label: 'Last 1 minute', value: 'PT1M' },
   { label: 'Last 5 minutes', value: 'PT5M' },
   { label: 'Last 10 minutes', value: 'PT10M' },
@@ -84,10 +77,10 @@ export function MetricConfigurationStep({
 
   const { data: alertReceivers = [] } = useAlertReceivers({ organizationId })
 
-  const metricCategory = isEdit ? alerts[0]?.tag || '' : metricIndex || selectedMetrics[0] || ''
-  const index = isEdit ? alerts.findIndex((alert) => alert.id === alertId) : selectedMetrics.indexOf(metricCategory)
-
-  const initialData = alerts[index]
+  const currentAlert = alertId ? alerts.find((alert) => alert.id === alertId) : isEdit ? alerts[0] : undefined
+  const metricCategory = (currentAlert?.tag || metricIndex || selectedMetrics[0] || 'cpu') as MetricCategory
+  const index = currentAlert ? alerts.indexOf(currentAlert) : selectedMetrics.indexOf(metricCategory)
+  const initialData = currentAlert ?? alerts[index]
 
   const basePathMatch = location.pathname.match(/(.+)\/(metric|edit)\/[^/]+$/)
   const basePath = basePathMatch ? basePathMatch[1] : ''
@@ -191,11 +184,11 @@ export function MetricConfigurationStep({
   const watchCondition = methods.watch('condition')
   const watchForDuration = methods.watch('for_duration')
   const functionLabel = METRIC_TYPE_OPTIONS[metricCategory]?.find(
-    (option) => option.value === watchCondition?.function
+    (option: Value) => option.value === watchCondition?.function
   )?.label
 
   return (
-    <FunnelFlowBody key={index}>
+    <FunnelFlowBody key={index} customContentWidth="max-w-[52rem]">
       <FormProvider {...methods}>
         <form onSubmit={onSubmit} className="flex w-full flex-1 flex-col gap-6">
           <Section className="flex flex-col rounded-lg border border-neutral-250">
@@ -359,10 +352,17 @@ export function MetricConfigurationStep({
                     </span>
                     <span>
                       IS <span className="text-neutral-900">{watchCondition.operator}</span>{' '}
-                      <span className="text-red-600">{watchCondition.threshold}%</span> DURING THE{' '}
-                      <span className="text-neutral-900">
-                        {DURATION_OPTIONS.find((option) => option.value === watchForDuration)?.label}
-                      </span>
+                      <span className="text-red-600">{watchCondition.threshold}%</span>{' '}
+                      {watchForDuration === 'PT0S' ? (
+                        'IMMEDIATELY'
+                      ) : (
+                        <>
+                          DURING THE{' '}
+                          <span className="text-neutral-900">
+                            {DURATION_OPTIONS.find((option) => option.value === watchForDuration)?.label}
+                          </span>
+                        </>
+                      )}
                     </span>
                   </p>
                 </div>

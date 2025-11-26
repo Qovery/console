@@ -4,17 +4,18 @@ import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useSearchParams } from 'react-router-dom'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ErrorBoundary, FunnelFlow } from '@qovery/shared/ui'
-import useContainerName from '../../hooks/use-container-name/use-container-name'
+import { useContainerName } from '../../hooks/use-container-name/use-container-name'
+import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
 import { type AlertConfiguration } from './alerting-creation-flow.types'
 import { ROUTER_ALERTING_CREATION, type RouteType } from './router'
 
 const METRIC_LABELS: Record<string, string> = {
   cpu: 'CPU',
   memory: 'Memory',
-  instances: 'Instances',
   k8s_event: 'k8s event',
-  network: 'Network',
-  logs: 'Logs',
+  hpa_issue: 'HPA issue',
+  qovery_http_error: 'HTTP error',
+  replicas_number: 'Replicas number',
 }
 
 interface AlertingCreationFlowContextInterface {
@@ -28,6 +29,7 @@ interface AlertingCreationFlowContextInterface {
   onComplete: (alerts: AlertConfiguration[]) => void
   totalSteps: number
   containerName?: string
+  ingressName?: string
 }
 
 export const AlertingCreationFlowContext = createContext<AlertingCreationFlowContextInterface | undefined>(undefined)
@@ -72,6 +74,13 @@ export function AlertingCreationFlow({
     endDate: now.toISOString(),
   })
 
+  const { data: ingressName } = useIngressName({
+    clusterId: environment.cluster_id,
+    serviceId: service.id,
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+  })
+
   const serviceId = service.id
   const serviceName = service.name
 
@@ -106,6 +115,7 @@ export function AlertingCreationFlow({
         onComplete,
         totalSteps,
         containerName,
+        ingressName,
       }}
     >
       <FunnelFlow

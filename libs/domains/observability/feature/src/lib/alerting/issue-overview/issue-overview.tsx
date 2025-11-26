@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { APPLICATION_MONITORING_GENERAL_URL, APPLICATION_MONITORING_URL, APPLICATION_URL } from '@qovery/shared/routes'
+import { APPLICATION_MONITORING_ALERTS_URL, APPLICATION_MONITORING_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { Chart, Heading, Icon, Link, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -90,7 +90,7 @@ export function IssueOverview() {
                             alert.target.service?.id
                           ) +
                           APPLICATION_MONITORING_URL +
-                          APPLICATION_MONITORING_GENERAL_URL
+                          APPLICATION_MONITORING_ALERTS_URL
                         }
                       >
                         <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-white">

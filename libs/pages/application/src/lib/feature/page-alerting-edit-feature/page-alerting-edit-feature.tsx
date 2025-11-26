@@ -50,7 +50,7 @@ export function PageAlertingEditFeature() {
     if (alertRule && alerts.length === 0) {
       const alertConfig: AlertConfiguration = {
         id: alertRule.id,
-        tag: alertRule.description || '',
+        tag: alertRule.tag ?? 'CPU',
         for_duration: alertRule.for_duration || 'PT5M',
         condition: {
           kind: alertRule.condition.kind || 'BUILT',

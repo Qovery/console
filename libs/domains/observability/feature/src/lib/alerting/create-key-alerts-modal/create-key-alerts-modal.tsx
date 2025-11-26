@@ -9,6 +9,7 @@ import {
 } from '@qovery/shared/routes'
 import { Icon, InputTextSmall, ModalCrud } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
+import { type MetricCategory } from '../alerting-creation-flow/alerting-creation-flow.types'
 
 interface CreateKeyAlertsModalProps {
   onClose: () => void
@@ -19,22 +20,22 @@ interface CreateKeyAlertsModalProps {
 
 interface CreateKeyAlertsFormData {
   targetedService: string
-  metricCategories: string[]
+  metrics: MetricCategory[]
 }
 
-interface MetricCategory {
-  id: string
+interface Metric {
+  id: MetricCategory
   label: string
   iconName: IconName
 }
 
-const METRIC_CATEGORIES: MetricCategory[] = [
-  { id: 'instances', label: 'Instances', iconName: 'cloud' },
-  { id: 'k8s_event', label: 'k8s event', iconName: 'cube' },
+const METRICS: Metric[] = [
   { id: 'cpu', label: 'CPU', iconName: 'microchip' },
   { id: 'memory', label: 'Memory', iconName: 'server' },
-  { id: 'network', label: 'Network', iconName: 'code' },
-  { id: 'logs', label: 'Logs', iconName: 'file-lines' },
+  { id: 'http_error', label: 'HTTP error', iconName: 'globe' },
+  { id: 'replicas_number', label: 'Replicas number', iconName: 'server' },
+  { id: 'k8s_event', label: 'k8s event', iconName: 'cube' },
+  { id: 'hpa_issue', label: 'HPA issue', iconName: 'scale-balanced' },
 ]
 
 export function CreateKeyAlertsModal({ onClose, service, organizationId, projectId }: CreateKeyAlertsModalProps) {
@@ -44,12 +45,12 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
     mode: 'onChange',
     defaultValues: {
       targetedService: service?.id ?? undefined,
-      metricCategories: [],
+      metrics: [],
     },
     resolver: (values) => {
       const errors: Record<string, { type: string; message: string }> = {}
-      if (!values.metricCategories || values.metricCategories.length === 0) {
-        errors['metricCategories'] = {
+      if (!values.metrics || values.metrics.length === 0) {
+        errors['metrics'] = {
           type: 'required',
           message: 'At least one category must be selected',
         }
@@ -62,25 +63,25 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    const templatesParam = data.metricCategories.join(',')
+    const templatesParam = data.metrics.join(',')
     const basePath =
       APPLICATION_URL(organizationId, projectId, service?.environment?.id, service?.id) +
       APPLICATION_MONITORING_URL +
       APPLICATION_MONITORING_ALERTS_CREATION_URL
 
     onClose()
-    navigate(`${basePath}/metric/${data.metricCategories[0]}?templates=${templatesParam}`)
+    navigate(`${basePath}/metric/${data.metrics[0]}?templates=${templatesParam}`)
   })
 
-  const watchMetricCategories = methods.watch('metricCategories')
+  const watchMetrics = methods.watch('metrics')
 
-  const toggleCategory = (categoryId: string) => {
-    const currentCategories = watchMetricCategories || []
-    const newCategories = currentCategories.includes(categoryId)
-      ? currentCategories.filter((id) => id !== categoryId)
-      : [...currentCategories, categoryId]
+  const toggleMetric = (metricId: MetricCategory) => {
+    const currentMetrics = watchMetrics || []
+    const newMetrics = currentMetrics.includes(metricId)
+      ? currentMetrics.filter((m) => m !== metricId)
+      : [...currentMetrics, metricId]
 
-    methods.setValue('metricCategories', newCategories, { shouldValidate: true })
+    methods.setValue('metrics', newMetrics, { shouldValidate: true })
   }
 
   return (
@@ -122,19 +123,19 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
             </div>
 
             <div className="mb-1 grid grid-cols-3 gap-2">
-              {METRIC_CATEGORIES.map((category) => {
-                const isSelected = watchMetricCategories?.includes(category.id)
+              {METRICS.map((metric) => {
+                const isSelected = watchMetrics?.includes(metric.id)
 
                 return (
                   <button
-                    key={category.id}
+                    key={metric.id}
                     type="button"
-                    onClick={() => toggleCategory(category.id)}
+                    onClick={() => toggleMetric(metric.id)}
                     onKeyDown={(event) => {
                       if (event.key === 'Enter' || event.key === ' ') {
                         event.preventDefault()
                         event.stopPropagation()
-                        toggleCategory(category.id)
+                        toggleMetric(metric.id)
                       }
                     }}
                     className={twMerge(
@@ -148,9 +149,9 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
                         isSelected ? 'bg-brand-50 text-brand-500' : 'bg-neutral-150 text-neutral-400'
                       )}
                     >
-                      <Icon iconName={category.iconName} iconStyle="regular" className="text-base" />
+                      <Icon iconName={metric.iconName} iconStyle="regular" className="text-base" />
                     </div>
-                    <span className="text-sm font-medium text-neutral-400">{category.label}</span>
+                    <span className="text-sm font-medium text-neutral-400">{metric.label}</span>
                   </button>
                 )
               })}
