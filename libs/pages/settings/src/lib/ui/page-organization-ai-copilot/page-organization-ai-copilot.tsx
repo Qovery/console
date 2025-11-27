@@ -197,254 +197,381 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
                   <LoaderSpinner className="w-5" />
                 </div>
               ) : (
-              <div className="space-y-4 rounded border border-brand-200 bg-brand-50 p-6">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-brand-500">
-                    <Icon iconName="robot" className="text-white" width="20px" height="20px" />
+                <div className="p-6">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-brand-500">
+                      <Icon iconName="robot" className="text-white" width="20px" height="20px" />
+                    </div>
+                    <div className="flex-1 space-y-4">
+                      <div>
+                        <p className="text-sm font-medium text-neutral-400">Opt-in to AI Copilot</p>
+                        <p className="mt-1 text-xs text-neutral-350">
+                          Please review and accept the following terms to enable AI Copilot for your organization.
+                        </p>
+                      </div>
+
+                      <div className="max-h-80 overflow-y-auto rounded border border-neutral-250 bg-white p-4">
+                        <h3 className="mb-3 text-sm font-semibold text-neutral-400">
+                          Qovery AI Copilot - Additional Terms of Service
+                        </h3>
+                        <div className="space-y-4 text-xs text-neutral-350">
+                          <div>
+                            <p className="mb-2 font-semibold text-neutral-400">1. Introduction</p>
+                            <p>
+                              These AI Copilot Additional Terms ("AI Terms") supplement and are incorporated into the
+                              Qovery Terms of Service. By enabling the AI Copilot feature, you agree to these AI Terms
+                              on behalf of your organization.
+                            </p>
+                            <p className="mt-2">
+                              The AI Copilot is an optional feature that leverages Anthropic's Claude AI model (Sonnet)
+                              to assist users with the Qovery platform through intelligent documentation retrieval and
+                              automated actions (subject to user confirmation).
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="mb-2 font-semibold text-neutral-400">2. Feature Description</p>
+                            <p className="mb-1">The AI Copilot provides:</p>
+                            <ul className="ml-4 list-disc space-y-1">
+                              <li>Intelligent assistance for using the Qovery service</li>
+                              <li>Execution of platform actions based on user instructions (after confirmation)</li>
+                              <li>Contextual documentation and guidance retrieval</li>
+                              <li>Integration with your Qovery organization's resources and configurations</li>
+                            </ul>
+                            <p className="mt-2">The AI Copilot operates in two modes:</p>
+                            <ul className="ml-4 list-disc space-y-1">
+                              <li>
+                                <span className="font-medium">Read-Only Mode:</span> The AI Copilot can view your
+                                infrastructure configuration, provide recommendations, and answer questions, but cannot
+                                make any modifications to your resources
+                              </li>
+                              <li>
+                                <span className="font-medium">Read-Write Mode:</span> The AI Copilot can view and modify
+                                your infrastructure configuration after explicit user confirmation for each action
+                              </li>
+                            </ul>
+                          </div>
+
+                          <div>
+                            <p className="mb-2 font-semibold text-neutral-400">3. Enablement and Authorization</p>
+                            <p className="mb-2">
+                              <span className="font-medium">3.1. Administrator Activation:</span> Only users with
+                              Administrator-level privileges may accept these AI Terms and enable the AI Copilot for
+                              their organization.
+                            </p>
+                            <p className="mb-2">
+                              <span className="font-medium">3.2. Organization-Wide Scope:</span> By enabling the AI
+                              Copilot, the Administrator activates the feature for all team members within the
+                              organization.
+                            </p>
+                            <p>
+                              <span className="font-medium">3.3. Voluntary Adoption:</span> Use of the AI Copilot is
+                              entirely optional and not required to use the Qovery platform.
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="mb-2 font-semibold text-neutral-400">4. Third-Party AI Services</p>
+                            <p className="mb-2">
+                              <span className="font-medium">4.1. Anthropic Integration:</span> The AI Copilot is powered
+                              by Anthropic's Claude AI model, subject to Anthropic's Commercial Terms.
+                            </p>
+                            <p>
+                              <span className="font-medium">4.2. Data Processing:</span> By enabling this feature, you
+                              acknowledge that your queries and relevant platform context may be processed by
+                              Anthropic's AI services in accordance with their terms and privacy policies.
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="mb-2 font-semibold text-neutral-400">
+                              5. User Responsibilities and Acceptable Use
+                            </p>
+                            <p className="mb-2">
+                              <span className="font-medium">5.1. Proper Usage:</span> You agree to use the AI Copilot
+                              solely for its intended purpose of assisting with legitimate Qovery platform operations.
+                            </p>
+                            <p className="mb-1">
+                              <span className="font-medium">5.2. Prohibited Activities:</span> You must not:
+                            </p>
+                            <ul className="ml-4 list-disc space-y-1">
+                              <li>Attempt to manipulate, jailbreak, or bypass the AI model's safety mechanisms</li>
+                              <li>Use the AI Copilot for purposes unrelated to the Qovery platform</li>
+                              <li>Exploit the feature to gain unauthorized access or perform malicious activities</li>
+                              <li>
+                                Share, distribute, or repurpose AI-generated content in ways that violate applicable
+                                laws or third-party rights
+                              </li>
+                            </ul>
+                            <p className="mt-2">
+                              <span className="font-medium">5.3. Confirmation of Actions:</span> You are responsible for
+                              reviewing and confirming all actions proposed by the AI Copilot before execution. The
+                              confirmation step is a critical safeguard that you must not circumvent.
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="mb-2 font-semibold text-neutral-400">6. Limitations of Liability</p>
+                            <p className="mb-2">
+                              <span className="font-medium">6.1. AI-Generated Responses:</span> The AI Copilot provides
+                              suggestions and executes actions based on AI-generated interpretations. Qovery makes no
+                              warranties regarding the accuracy, completeness, or appropriateness of AI-generated
+                              responses.
+                            </p>
+                            <p className="mb-1">
+                              <span className="font-medium">6.2. User Accountability:</span> You acknowledge and agree
+                              that:
+                            </p>
+                            <ul className="ml-4 list-disc space-y-1">
+                              <li>You bear sole responsibility for all actions taken using the AI Copilot</li>
+                              <li>
+                                Qovery is not liable for any damages, losses, or service disruptions resulting from AI
+                                Copilot usage, including but not limited to: misconfigured resources, unintended
+                                deletions or modifications, service interruptions, or data loss
+                              </li>
+                            </ul>
+                            <p className="mt-2">
+                              <span className="font-medium">6.3. No Guarantee of Safeguards:</span> While Qovery
+                              implements safeguards and confirmation mechanisms, you acknowledge that no system is
+                              infallible, and you assume all risk associated with using the AI Copilot.
+                            </p>
+                            <p className="mt-2">
+                              <span className="font-medium">6.4. AS-IS Provision:</span> THE AI COPILOT IS PROVIDED "AS
+                              IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED.
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="mb-2 font-semibold text-neutral-400">7. Suspension and Termination Rights</p>
+                            <p className="mb-2">
+                              <span className="font-medium">7.1. Qovery's Rights:</span> Qovery reserves the right, at
+                              its sole discretion and without prior notice, to suspend or revoke access to the AI
+                              Copilot feature for your organization, suspend or terminate your Qovery account and
+                              services, or investigate suspected violations of these AI Terms.
+                            </p>
+                            <p>
+                              <span className="font-medium">7.2. Grounds for Suspension:</span> Actions that may result
+                              in suspension or termination include, but are not limited to: attempts to jailbreak,
+                              manipulate, or bypass AI model constraints, abusive or malicious use, violations of
+                              applicable laws, or any violation of these AI Terms or the Qovery Terms of Service.
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="mb-2 font-semibold text-neutral-400">8. Changes to These Terms</p>
+                            <p>
+                              Qovery may modify these AI Terms at any time. Continued use of the AI Copilot after
+                              changes constitutes acceptance of the modified terms. Material changes will be
+                              communicated through the Qovery platform or via email.
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="mb-2 font-semibold text-neutral-400">9. Data and Privacy</p>
+                            <p className="mb-2">
+                              <span className="font-medium">9.1. Data Usage:</span> Information processed through the AI
+                              Copilot, including queries, commands, and platform context, may be used to provide the
+                              service and improve feature functionality.
+                            </p>
+                            <p>
+                              <span className="font-medium">9.2. Retention:</span> Conversation history and AI
+                              interactions are stored in accordance with Qovery's data retention policies and applicable
+                              privacy regulations.
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="mb-2 font-semibold text-neutral-400">10. Severability</p>
+                            <p>
+                              If any provision of these AI Terms is found to be unenforceable or invalid, that provision
+                              will be limited or eliminated to the minimum extent necessary, and the remaining
+                              provisions will remain in full force and effect.
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="mb-2 font-semibold text-neutral-400">11. Governing Law</p>
+                            <p>
+                              These AI Terms are governed by the same laws and jurisdiction provisions as the Qovery
+                              Terms of Service.
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="mb-2 font-semibold text-neutral-400">12. Contact</p>
+                            <p>
+                              For questions regarding these AI Terms, please contact:{' '}
+                              <a href="mailto:support@qovery.com" className="text-brand-500 hover:underline">
+                                support@qovery.com
+                              </a>
+                            </p>
+                          </div>
+
+                          <div className="border-t border-neutral-250 pt-4">
+                            <p className="font-medium text-neutral-400">
+                              By clicking "I Accept" and enabling the AI Copilot, you acknowledge that you:
+                            </p>
+                            <ul className="ml-4 mt-2 list-disc space-y-1">
+                              <li>Have read and understood these AI Copilot Additional Terms</li>
+                              <li>Have the authority to bind your organization to these terms</li>
+                              <li>Accept these terms on behalf of your organization and all its users</li>
+                              <li>Understand the risks associated with AI-assisted operations</li>
+                              <li>Agree to use the AI Copilot responsibly and in compliance with these terms</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+
+                      <label className="flex cursor-pointer items-start gap-3">
+                        <Checkbox
+                          checked={hasAcceptedTerms}
+                          onCheckedChange={(checked) => setHasAcceptedTerms(checked === true)}
+                          className="mt-0.5 flex-shrink-0"
+                        />
+                        <span className="text-sm text-neutral-400">
+                          I have read and accept the AI Copilot Terms of Service
+                        </span>
+                      </label>
+
+                      <Button
+                        size="md"
+                        color="brand"
+                        onClick={handleToggleCopilot}
+                        disabled={!hasAcceptedTerms}
+                        className="mt-4"
+                      >
+                        <Icon iconName="circle-check" className="mr-2" />
+                        Enable AI Copilot
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex-1 space-y-4">
-                    <div>
-                      <p className="text-sm font-medium text-neutral-400">Opt-in to AI Copilot</p>
-                      <p className="mt-1 text-xs text-neutral-350">
-                        Please review and accept the following terms to enable AI Copilot for your organization.
+                </div>
+              )}
+            </BlockContent>
+          )}
+
+          {isEnabled && (
+            <BlockContent title="Configuration" classNameContent="p-0">
+              {isLoading ? (
+                <div className="flex justify-center p-5">
+                  <LoaderSpinner className="w-5" />
+                </div>
+              ) : (
+                <div className="space-y-6 p-6">
+                  <div className="-mx-6 border-b border-neutral-250 px-6 pb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded bg-brand-500">
+                        <Icon iconName="robot" className="text-white" width="20px" height="20px" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-neutral-400">AI Copilot for {organization?.name}</p>
+                        <p className="text-xs text-neutral-350">AI-powered assistance is currently active</p>
+                      </div>
+                      <Button
+                        size="md"
+                        color="red"
+                        loading={updateConfigMutation.isLoading}
+                        onClick={() => {
+                          openModal({
+                            content: (
+                              <div className="p-6">
+                                <h2 className="h4 mb-2 text-neutral-400">Disable AI Copilot</h2>
+                                <p className="mb-6 text-sm text-neutral-350">
+                                  Are you sure you want to disable AI Copilot? This will stop all AI-powered assistance
+                                  for your organization.
+                                </p>
+                                <div className="flex justify-end gap-3">
+                                  <Button
+                                    type="button"
+                                    color="neutral"
+                                    variant="plain"
+                                    size="lg"
+                                    onClick={() => closeModal()}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    size="lg"
+                                    color="red"
+                                    onClick={() => {
+                                      closeModal()
+                                      handleToggleCopilot()
+                                    }}
+                                  >
+                                    Disable
+                                  </Button>
+                                </div>
+                              </div>
+                            ),
+                          })
+                        }}
+                      >
+                        Disable
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-neutral-400">Access Mode</label>
+                      <p className="text-xs text-neutral-350">
+                        Choose the level of access the AI Copilot will have on your organization
                       </p>
                     </div>
 
-                    <div className="max-h-80 overflow-y-auto rounded border border-neutral-250 bg-white p-4">
-                      <h3 className="mb-3 text-sm font-semibold text-neutral-400">AI Copilot Terms of Service</h3>
-                      <div className="space-y-3 text-xs text-neutral-350">
-                        <div>
-                          <p className="mb-1 font-medium text-neutral-400">1. Data Collection and Usage</p>
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-                            labore et dolore magna aliqua. By enabling AI Copilot, you acknowledge and agree that Qovery
-                            will collect, process, and analyze your organization's infrastructure configuration data,
-                            deployment metadata, application logs, and resource utilization metrics. Ut enim ad minim
-                            veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                          </p>
-                        </div>
+                    <InputSelect
+                      value={mode}
+                      onChange={(value) => handleModeSelect(value as 'read-write' | 'read-only')}
+                      options={modeOptions}
+                      portal
+                      label="Right access"
+                      disabled={updateConfigMutation.isLoading}
+                    />
 
-                        <div>
-                          <p className="mb-1 font-medium text-neutral-400">2. AI Processing and Analysis</p>
-                          <p>
-                            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                            pariatur. The collected data will be processed by artificial intelligence models to provide
-                            intelligent recommendations, automated troubleshooting, infrastructure optimization
-                            suggestions, and predictive analytics. Excepteur sint occaecat cupidatat non proident, sunt in
-                            culpa qui officia deserunt mollit anim id est laborum.
-                          </p>
-                        </div>
-
-                        <div>
-                          <p className="mb-1 font-medium text-neutral-400">3. Data Security and Privacy</p>
-                          <p>
-                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
-                            laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto
-                            beatae vitae dicta sunt explicabo. All data transmissions are encrypted using
-                            industry-standard protocols (TLS 1.3). Nemo enim ipsam voluptatem quia voluptas sit aspernatur
-                            aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi
-                            nesciunt.
-                          </p>
-                        </div>
-
-                        <div>
-                          <p className="mb-1 font-medium text-neutral-400">4. Data Retention and Deletion</p>
-                          <p>
-                            Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.
-                            Infrastructure data and AI analysis results will be retained for a period of 90 days for
-                            operational purposes and performance improvement. Sed quia non numquam eius modi tempora
-                            incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Upon disabling AI Copilot or
-                            terminating your account, all associated data will be permanently deleted within 30 days.
-                          </p>
-                        </div>
-
-                        <div>
-                          <p className="mb-1 font-medium text-neutral-400">5. Third-Party AI Services</p>
-                          <p>
-                            Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi
-                            ut aliquid ex ea commodi consequatur. AI Copilot may utilize third-party artificial
-                            intelligence services and large language models to process and analyze your data. Quis autem
-                            vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.
-                            These providers are contractually bound to maintain strict confidentiality and data protection
-                            standards.
-                          </p>
-                        </div>
-
-                        <div>
-                          <p className="mb-1 font-medium text-neutral-400">6. Access Control and Permissions</p>
-                          <p>
-                            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
-                            voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
-                            cupiditate non provident. The access mode you select (Read-Only or Read-Write) determines the
-                            level of permissions granted to AI Copilot. Similique sunt in culpa qui officia deserunt
-                            mollitia animi, id est laborum et dolorum fuga.
-                          </p>
-                        </div>
-
-                        <div>
-                          <p className="mb-1 font-medium text-neutral-400">7. Limitation of Liability</p>
-                          <p>
-                            Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis
-                            est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus.
-                            While AI Copilot strives to provide accurate recommendations, you acknowledge that
-                            AI-generated suggestions should be reviewed and validated before implementation. Omnis
-                            voluptas assumenda est, omnis dolor repellendus. Qovery shall not be liable for any damages
-                            resulting from the use or reliance on AI Copilot recommendations.
-                          </p>
-                        </div>
-
-                        <div>
-                          <p className="mb-1 font-medium text-neutral-400">8. Modifications to Terms</p>
-                          <p>
-                            Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut
-                            et voluptates repudiandae sint et molestiae non recusandae. Qovery reserves the right to
-                            modify these terms at any time. Itaque earum rerum hic tenetur a sapiente delectus, ut aut
-                            reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores
-                            repellat. You will be notified of material changes and continued use constitutes acceptance of
-                            modified terms.
-                          </p>
-                        </div>
+                    {hasUnsavedChanges && (
+                      <div className="flex items-center gap-3">
+                        <Button
+                          size="md"
+                          color="brand"
+                          onClick={handleSaveMode}
+                          loading={updateConfigMutation.isLoading}
+                        >
+                          <Icon iconName="check" className="mr-2" />
+                          Save changes
+                        </Button>
+                        <Button
+                          size="md"
+                          color="neutral"
+                          variant="outline"
+                          onClick={handleCancelMode}
+                          disabled={updateConfigMutation.isLoading}
+                        >
+                          Cancel
+                        </Button>
                       </div>
-                    </div>
+                    )}
 
-                    <label className="flex cursor-pointer items-start gap-3">
-                      <Checkbox
-                        checked={hasAcceptedTerms}
-                        onCheckedChange={(checked) => setHasAcceptedTerms(checked === true)}
-                        className="mt-0.5 flex-shrink-0"
-                      />
-                      <span className="text-sm text-neutral-400">
-                        I have read and accept the AI Copilot Terms of Service
-                      </span>
-                    </label>
-
-                    <Button
-                      size="md"
-                      color="brand"
-                      onClick={handleToggleCopilot}
-                      disabled={!hasAcceptedTerms}
-                      className="mt-4"
-                    >
-                      <Icon iconName="circle-check" className="mr-2" />
-                      Enable AI Copilot
-                    </Button>
+                    <Callout.Root color="sky" className="mt-4">
+                      <Callout.Icon>
+                        <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                      </Callout.Icon>
+                      <Callout.Text>
+                        <Callout.TextHeading>
+                          {mode === 'read-only' ? 'Read-Only Mode' : 'Read-Write Mode'}
+                        </Callout.TextHeading>
+                        <Callout.TextDescription>
+                          {mode === 'read-only'
+                            ? 'AI Copilot can view your infrastructure configuration but cannot make changes. Perfect for analysis and recommendations.'
+                            : 'AI Copilot can view and modify your infrastructure configuration. Use with caution as it has full access to your resources.'}
+                        </Callout.TextDescription>
+                      </Callout.Text>
+                    </Callout.Root>
                   </div>
                 </div>
-              </div>
-            )}
-          </BlockContent>
-        )}
-
-        {isEnabled && (
-          <BlockContent title="Configuration" classNameContent="p-0">
-            {isLoading ? (
-              <div className="flex justify-center p-5">
-                <LoaderSpinner className="w-5" />
-              </div>
-            ) : (
-              <div className="space-y-6 p-6">
-                <div className="-mx-6 border-b border-neutral-250 px-6 pb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded bg-brand-500">
-                      <Icon iconName="robot" className="text-white" width="20px" height="20px" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-neutral-400">AI Copilot for {organization?.name}</p>
-                      <p className="text-xs text-neutral-350">AI-powered assistance is currently active</p>
-                    </div>
-                    <Button
-                      size="md"
-                      color="red"
-                      loading={updateConfigMutation.isLoading}
-                      onClick={() => {
-                        openModal({
-                          content: (
-                            <div className="p-6">
-                              <h2 className="h4 mb-2 text-neutral-400">Disable AI Copilot</h2>
-                              <p className="mb-6 text-sm text-neutral-350">
-                                Are you sure you want to disable AI Copilot? This will stop all AI-powered assistance for your organization.
-                              </p>
-                              <div className="flex justify-end gap-3">
-                                <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
-                                  Cancel
-                                </Button>
-                                <Button
-                                  type="button"
-                                  size="lg"
-                                  color="red"
-                                  onClick={() => {
-                                    closeModal()
-                                    handleToggleCopilot()
-                                  }}
-                                >
-                                  Disable
-                                </Button>
-                              </div>
-                            </div>
-                          ),
-                        })
-                      }}
-                    >
-                      Disable
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-neutral-400">Access Mode</label>
-                    <p className="text-xs text-neutral-350">
-                      Choose the level of access the AI Copilot will have on your organization
-                    </p>
-                  </div>
-
-                  <InputSelect
-                    value={mode}
-                    onChange={(value) => handleModeSelect(value as 'read-write' | 'read-only')}
-                    options={modeOptions}
-                    portal
-                    label="Right access"
-                    disabled={updateConfigMutation.isLoading}
-                  />
-
-                  {hasUnsavedChanges && (
-                    <div className="flex items-center gap-3">
-                      <Button size="md" color="brand" onClick={handleSaveMode} loading={updateConfigMutation.isLoading}>
-                        <Icon iconName="check" className="mr-2" />
-                        Save changes
-                      </Button>
-                      <Button
-                        size="md"
-                        color="neutral"
-                        variant="outline"
-                        onClick={handleCancelMode}
-                        disabled={updateConfigMutation.isLoading}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  )}
-
-                  <Callout.Root color="sky" className="mt-4">
-                    <Callout.Icon>
-                      <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
-                    </Callout.Icon>
-                    <Callout.Text>
-                      <Callout.TextHeading>
-                        {mode === 'read-only' ? 'Read-Only Mode' : 'Read-Write Mode'}
-                      </Callout.TextHeading>
-                      <Callout.TextDescription>
-                        {mode === 'read-only'
-                          ? 'AI Copilot can view your infrastructure configuration but cannot make changes. Perfect for analysis and recommendations.'
-                          : 'AI Copilot can view and modify your infrastructure configuration. Use with caution as it has full access to your resources.'}
-                      </Callout.TextDescription>
-                    </Callout.Text>
-                  </Callout.Root>
-                </div>
-              </div>
-            )}
-          </BlockContent>
-        )}
+              )}
+            </BlockContent>
+          )}
         </Section>
 
         {isEnabled && tasks.length > 0 && (
@@ -506,7 +633,13 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
                                   Are you sure you want to delete this task? This action cannot be undone.
                                 </p>
                                 <div className="flex justify-end gap-3">
-                                  <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
+                                  <Button
+                                    type="button"
+                                    color="neutral"
+                                    variant="plain"
+                                    size="lg"
+                                    onClick={() => closeModal()}
+                                  >
                                     Cancel
                                   </Button>
                                   <Button
