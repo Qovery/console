@@ -137,7 +137,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   ])
 
   const hasExistingVPC = Boolean(props.cluster?.features?.find((f) => f.id === 'EXISTING_VPC')?.value_object?.value)
-  const hasStaticIP = props.cluster?.features?.find((f) => f.id === 'STATIC_IP')?.value_object?.value
 
   useEffect(() => {
     if (!props.fromDetail && props.isProduction && props.cloudProvider === 'AWS') {
@@ -241,11 +240,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                             title="Enable Karpenter"
                             description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
                             forceAlignTop
-                            disabled={
-                              props.fromDetail
-                                ? props.hasAlreadyKarpenter || (props.isProduction && !hasStaticIP && !hasExistingVPC)
-                                : false
-                            }
+                            disabled={props.fromDetail ? props.hasAlreadyKarpenter : false}
                             small
                           />
                         </ButtonPopoverSubnets>
@@ -260,19 +255,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                       >
                         Documentation link
                       </ExternalLink>
-                      {props.isProduction && !hasStaticIP && !hasExistingVPC && props.fromDetail && (
-                        <Callout.Root color="yellow" className="mt-5">
-                          <Callout.Icon>
-                            <Icon iconName="circle-info" iconStyle="regular" />
-                          </Callout.Icon>
-                          <Callout.Text>
-                            <Callout.TextDescription>
-                              Karpenter cannot be enabled on this production cluster because the Static IP/NAT Gateway
-                              feature is not activated.
-                            </Callout.TextDescription>
-                          </Callout.Text>
-                        </Callout.Root>
-                      )}
                     </div>
                     <img
                       src={KarpenterImage}
