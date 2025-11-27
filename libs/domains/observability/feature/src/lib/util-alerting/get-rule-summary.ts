@@ -45,6 +45,11 @@ export function formatDuration(duration?: string) {
   if (!matchDuration) return undefined
 
   const [, hours, minutes, seconds] = matchDuration
+
+  if (!hours && !minutes && seconds && (seconds === '0' || seconds === '1')) {
+    return 'immediately'
+  }
+
   const parts = []
 
   if (hours) parts.push(`${hours} hour${hours === '1' ? '' : 's'}`)
