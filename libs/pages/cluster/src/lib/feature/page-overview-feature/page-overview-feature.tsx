@@ -1,3 +1,5 @@
+import clsx from 'clsx'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   ClusterCardNodeUsage,
@@ -7,9 +9,11 @@ import {
   ClusterTableNodepool,
   useClusterMetrics,
 } from '@qovery/domains/cluster-metrics/feature'
-import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { useCluster, useClusterRunningStatus, useClusterStatus } from '@qovery/domains/clusters/feature'
+import { displayClusterDeploymentBanner } from '@qovery/pages/layout'
 import { Icon, Tooltip } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { DeploymentOngoingCard } from '../../ui/deployment-ongoing-card/deployment-ongoing-card'
 import { TableSkeleton } from './table-skeleton'
 
 function TableLegend() {
@@ -34,10 +38,86 @@ export function PageOverviewFeature() {
   const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
   const { data: runningStatus } = useClusterRunningStatus({ organizationId, clusterId })
   const { data: clusterMetrics } = useClusterMetrics({ organizationId, clusterId })
+  const { data: clusterStatus } = useClusterStatus({ organizationId, clusterId, refetchInterval: 5000 })
+  const [showDeploymentCard, setShowDeploymentCard] = useState(false)
+  const [renderDeploymentCard, setRenderDeploymentCard] = useState(false)
+  const [isDeploymentCardFading, setIsDeploymentCardFading] = useState(false)
+  const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const hasSeenDeploymentInProgress = useRef(false)
 
   const isLoading = isClusterLoading || !runningStatus || !clusterMetrics
-
   const isKarpenter = cluster?.features?.find((feature) => feature.id === 'KARPENTER')
+  const isDeploymentInProgress =
+    clusterStatus &&
+    displayClusterDeploymentBanner(clusterStatus?.status ?? cluster?.status) &&
+    !clusterStatus?.is_deployed
+
+  useEffect(() => {
+    if (isDeploymentInProgress) {
+      hasSeenDeploymentInProgress.current = true
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current)
+        hideTimeoutRef.current = null
+      }
+      setShowDeploymentCard(true)
+      return
+    }
+
+    if (hasSeenDeploymentInProgress.current && clusterStatus?.is_deployed) {
+      if (!hideTimeoutRef.current) {
+        hideTimeoutRef.current = setTimeout(() => {
+          setShowDeploymentCard(false)
+          hideTimeoutRef.current = null
+          hasSeenDeploymentInProgress.current = false
+        }, 10000)
+      }
+      setShowDeploymentCard(true)
+      return
+    }
+
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current)
+      hideTimeoutRef.current = null
+    }
+    hasSeenDeploymentInProgress.current = false
+    setShowDeploymentCard(false)
+  }, [clusterStatus?.is_deployed, isDeploymentInProgress])
+
+  useEffect(() => {
+    if (showDeploymentCard) {
+      if (fadeTimeoutRef.current) {
+        clearTimeout(fadeTimeoutRef.current)
+        fadeTimeoutRef.current = null
+      }
+      setIsDeploymentCardFading(false)
+      setRenderDeploymentCard(true)
+      return
+    }
+
+    if (renderDeploymentCard && !fadeTimeoutRef.current) {
+      setIsDeploymentCardFading(true)
+      fadeTimeoutRef.current = setTimeout(() => {
+        setRenderDeploymentCard(false)
+        setIsDeploymentCardFading(false)
+        fadeTimeoutRef.current = null
+      }, 300)
+    }
+  }, [renderDeploymentCard, showDeploymentCard])
+
+  useEffect(
+    () => () => {
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current)
+        hideTimeoutRef.current = null
+      }
+      if (fadeTimeoutRef.current) {
+        clearTimeout(fadeTimeoutRef.current)
+        fadeTimeoutRef.current = null
+      }
+    },
+    []
+  )
 
   if (typeof runningStatus === 'string') {
     return (
@@ -52,6 +132,16 @@ export function PageOverviewFeature() {
 
   return (
     <div className="flex flex-col gap-6 p-8">
+      {renderDeploymentCard && (
+        <div className={clsx(isDeploymentCardFading && 'animate-fadeout')}>
+          <DeploymentOngoingCard
+            organizationId={organizationId}
+            clusterId={clusterId}
+            clusterName={cluster?.name}
+            cloudProvider={cluster?.cloud_provider}
+          />
+        </div>
+      )}
       <div className="grid gap-6 md:grid-cols-3">
         <ClusterCardNodeUsage organizationId={organizationId} clusterId={clusterId} />
         <ClusterCardResources organizationId={organizationId} clusterId={clusterId} />
