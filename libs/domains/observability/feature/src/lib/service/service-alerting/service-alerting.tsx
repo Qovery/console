@@ -25,7 +25,6 @@ import { SeverityIndicator } from '../../alerting/severity-indicator/severity-in
 import { useAlertRules } from '../../hooks/use-alert-rules/use-alert-rules'
 import { useDeleteAlertRule } from '../../hooks/use-delete-alert-rule/use-delete-alert-rule'
 import { useEnvironment } from '../../hooks/use-environment/use-environment'
-import { getRuleSummary } from '../../util-alerting/get-rule-summary'
 
 const { Table } = TablePrimitives
 
@@ -151,7 +150,9 @@ export function ServiceAlerting({ children }: PropsWithChildren) {
             <Table.Root className="divide-y divide-neutral-250">
               <Table.Header>
                 <Table.Row className="font-code text-xs">
-                  <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Rule</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">
+                    Alert name
+                  </Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Status</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Severity</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell className="h-9 text-right font-normal text-neutral-350">
@@ -170,7 +171,7 @@ export function ServiceAlerting({ children }: PropsWithChildren) {
                       <Table.RowHeaderCell>
                         <div className="flex items-center justify-between gap-3">
                           <span className="flex items-center gap-1.5 text-sm text-neutral-400">
-                            {getRuleSummary(alertRule)}
+                            {alertRule.name}
                             {alertRule.is_up_to_date ? (
                               <Icon iconName="circle-check" iconStyle="regular" className="text-green-500" />
                             ) : (

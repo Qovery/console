@@ -15,7 +15,7 @@ const OPERATOR_SYMBOLS: Record<string, string> = {
   BELOW: '<',
 }
 
-function formatMetricLabel(tag?: string) {
+export function formatMetricLabel(tag?: string) {
   if (!tag) return undefined
   if (METRIC_LABEL_OVERRIDES[tag]) {
     return METRIC_LABEL_OVERRIDES[tag]
@@ -27,19 +27,19 @@ function formatMetricLabel(tag?: string) {
   return words.map((word) => (word.length <= 3 ? word.toUpperCase() : upperCaseFirstLetter(word))).join(' ')
 }
 
-function formatOperator(operator?: string) {
+export function formatOperator(operator?: string) {
   if (!operator) return undefined
   return OPERATOR_SYMBOLS[operator] ?? operator
 }
 
-function formatThreshold(threshold?: number) {
+export function formatThreshold(threshold?: number) {
   if (threshold === undefined || threshold === null) return undefined
   const normalized = threshold <= 1 ? threshold * 100 : threshold
   const formatted = Number.isInteger(normalized) ? normalized.toString() : normalized.toFixed(1).replace(/\.0$/, '')
   return `${formatted}%`
 }
 
-function formatDuration(duration?: string) {
+export function formatDuration(duration?: string) {
   if (!duration) return undefined
   const matchDuration = duration.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/)
   if (!matchDuration) return undefined

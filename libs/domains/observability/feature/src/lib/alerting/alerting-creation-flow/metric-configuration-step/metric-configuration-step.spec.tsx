@@ -20,11 +20,11 @@ jest.mock('react-router-dom', () => ({
 const createAlert = (overrides: Partial<AlertConfiguration> = {}): AlertConfiguration => ({
   id: 'alert-1',
   name: 'CPU Alert',
-  tag: 'CPU',
+  tag: 'cpu',
   for_duration: 'PT5M',
   condition: { kind: 'BUILT', function: 'AVG', operator: 'ABOVE', threshold: 80, promql: '' },
   severity: 'MEDIUM' as AlertSeverity,
-  alert_receiver_ids: [],
+  alert_receiver_ids: ['receiver-1'],
   skipped: false,
   ...overrides,
 })
@@ -149,7 +149,8 @@ describe('MetricConfigurationStep', () => {
   })
 
   it('should enable continue button when form is valid', async () => {
-    await renderWithContext()
+    const validAlert = createAlert({ tag: 'cpu' })
+    await renderWithContext([validAlert])
 
     await waitFor(() => {
       const continueButton = screen.getByRole('button', { name: /include/i })
@@ -160,9 +161,8 @@ describe('MetricConfigurationStep', () => {
   it('should pre-fill form with existing alert data in edit mode', async () => {
     const existingAlert = createAlert({
       id: 'alert-1',
-      name: 'Existing Alert',
-      metricCategory: 'cpu',
-      condition: { operator: 'below', threshold: '50' },
+      tag: 'cpu',
+      condition: { kind: 'BUILT', function: 'AVG', operator: 'BELOW', threshold: 50, promql: '' },
     })
 
     mockUseParams.mockReturnValue({ alertId: 'alert-1' })
@@ -170,8 +170,8 @@ describe('MetricConfigurationStep', () => {
     await renderWithContext([existingAlert], ['cpu'], { isEdit: true })
 
     await waitFor(() => {
-      const nameInput = screen.getByDisplayValue('Existing Alert')
-      expect(nameInput).toBeInTheDocument()
+      const thresholdInput = screen.getByDisplayValue('50')
+      expect(thresholdInput).toBeInTheDocument()
     })
   })
 })
