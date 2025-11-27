@@ -20,6 +20,12 @@ import {
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useAlertReceivers } from '../../../hooks/use-alert-receivers/use-alert-receivers'
+import {
+  formatDuration,
+  formatMetricLabel,
+  formatOperator,
+  formatThreshold,
+} from '../../../util-alerting/get-rule-summary'
 import { NotificationChannelModal } from '../../notification-channel-modal/notification-channel-modal'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration, type MetricCategory } from '../alerting-creation-flow.types'
@@ -125,6 +131,22 @@ export function MetricConfigurationStep({
     methods.reset(defaultValues)
   }, [methods, defaultValues])
 
+  const watchTag = methods.watch('tag')
+  const watchCondition = methods.watch('condition')
+  const watchForDuration = methods.watch('for_duration')
+
+  // Auto-generate alert name from conditions
+  useEffect(() => {
+    const metric = formatMetricLabel(watchTag)
+    const operator = formatOperator(watchCondition?.operator)
+    const threshold = formatThreshold(watchCondition?.threshold)
+    const duration = formatDuration(watchForDuration)
+
+    if (metric && operator && threshold && duration) {
+      methods.setValue('name', `${metric} ${operator} ${threshold} for ${duration}`)
+    }
+  }, [watchTag, watchCondition?.operator, watchCondition?.threshold, watchForDuration, methods])
+
   const handleNext = (data: AlertConfiguration) => {
     const newAlerts = [...alerts]
     newAlerts[index] = { ...data, skipped: false }
@@ -181,8 +203,6 @@ export function MetricConfigurationStep({
     return null
   }
 
-  const watchCondition = methods.watch('condition')
-  const watchForDuration = methods.watch('for_duration')
   const functionLabel = METRIC_TYPE_OPTIONS[metricCategory]?.find(
     (option: Value) => option.value === watchCondition?.function
   )?.label
@@ -353,7 +373,7 @@ export function MetricConfigurationStep({
                     <span>
                       IS <span className="text-neutral-900">{watchCondition.operator}</span>{' '}
                       <span className="text-red-600">{watchCondition.threshold}%</span>{' '}
-                      {watchForDuration === 'PT0S' ? (
+                      {watchForDuration === 'PT1S' ? (
                         'IMMEDIATELY'
                       ) : (
                         <>
@@ -413,7 +433,8 @@ export function MetricConfigurationStep({
               <Controller
                 name="alert_receiver_ids"
                 control={methods.control}
-                render={({ field }) => (
+                rules={{ required: 'Notification channels are required' }}
+                render={({ field, fieldState }) => (
                   <InputSelect
                     options={alertReceivers?.map((receiver) => ({
                       label: (
@@ -437,6 +458,7 @@ export function MetricConfigurationStep({
                     onChange={field.onChange}
                     label="Notification channels"
                     className="w-full"
+                    error={fieldState?.error?.message}
                     isMulti
                   />
                 )}
