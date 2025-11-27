@@ -365,7 +365,7 @@ export function MetricConfigurationStep({
                     <span>
                       IS <span className="text-neutral-900">{watchCondition.operator}</span>{' '}
                       <span className="text-red-600">{watchCondition.threshold}%</span>{' '}
-                      {watchForDuration === 'PT1S' ? (
+                      {watchForDuration === 'PT0S' ? (
                         'IMMEDIATELY'
                       ) : (
                         <>
