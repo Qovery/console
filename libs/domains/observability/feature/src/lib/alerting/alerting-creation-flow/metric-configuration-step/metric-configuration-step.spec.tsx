@@ -33,10 +33,11 @@ const createAlert = (overrides: Partial<AlertConfiguration> = {}): AlertConfigur
 const renderWithContext = async (
   alerts: AlertConfiguration[] = [],
   selectedMetrics: string[] = ['cpu'],
-  props: { isEdit?: boolean; isLoadingEditAlertRule?: boolean } = {}
+  props: { isEdit?: boolean } = {}
 ) => {
   const mockSetCurrentStepIndex = jest.fn()
   const mockSetAlerts = jest.fn()
+  const mockOnNavigateToMetric = jest.fn()
   const mockOnComplete = jest.fn()
 
   const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -49,9 +50,12 @@ const renderWithContext = async (
         setCurrentStepIndex: mockSetCurrentStepIndex,
         alerts,
         setAlerts: mockSetAlerts,
-        onComplete: mockOnComplete,
-        totalSteps: selectedMetrics.length + 1,
+        totalSteps: selectedMetrics.length,
         containerName: 'container-1',
+        ingressName: 'ingress-1',
+        onNavigateToMetric: mockOnNavigateToMetric,
+        onComplete: mockOnComplete,
+        isLoading: false,
       }}
     >
       {children}
@@ -120,8 +124,17 @@ describe('MetricConfigurationStep', () => {
     })
   })
 
-  it('should render continue button in normal mode', async () => {
+  it('should render save button in normal mode when on last metric', async () => {
     await renderWithContext()
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /skip this alert/i })).toBeInTheDocument()
+    })
+  })
+
+  it('should render include button in normal mode when more metrics remain', async () => {
+    await renderWithContext([], ['cpu', 'memory'])
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /include/i })).toBeInTheDocument()
@@ -149,13 +162,13 @@ describe('MetricConfigurationStep', () => {
     })
   })
 
-  it('should enable continue button when form is valid', async () => {
+  it('should enable save button when form is valid', async () => {
     const validAlert = createAlert({ tag: 'cpu' })
     await renderWithContext([validAlert])
 
     await waitFor(() => {
-      const continueButton = screen.getByRole('button', { name: /include/i })
-      expect(continueButton).toBeEnabled()
+      const saveButton = screen.getByRole('button', { name: /save/i })
+      expect(saveButton).toBeEnabled()
     })
   })
 
