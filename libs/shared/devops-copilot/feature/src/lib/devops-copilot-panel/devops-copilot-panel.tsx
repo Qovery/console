@@ -6,9 +6,10 @@ import mermaid from 'mermaid'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type ComponentProps, forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
-import { AnimatedGradientText, Button, Callout, DropdownMenu, Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
+import { AnimatedGradientText, Button, Callout, DropdownMenu, Icon, Link, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
+import { SETTINGS_AI_COPILOT_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { RenderMarkdown } from '../devops-render-markdown/devops-render-markdown'
@@ -843,18 +844,17 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   your deployments, optimize your infrastructure costs, audit your security and do everything you would
                   expect from a complete DevOps Engineering team.
                   {isFeatureFlagPanel && !isCopilotEnabled && (
-                    <>
-                      <br></br>
-                      <br></br>
+                    <span className="mt-4 block">
                       I'm not enabled yet,{' '}
-                      <a
-                        href={`/organization/${context?.organization?.id}/settings/ai-copilot`}
-                        className="font-medium text-brand-500 underline"
+                      <Link
+                        to={`${SETTINGS_URL(context?.organization?.id)}${SETTINGS_AI_COPILOT_URL}`}
+                        color="brand"
+                        underline
                       >
                         configure me in your organization settings
-                      </a>{' '}
+                      </Link>{' '}
                       to get started.
-                    </>
+                    </span>
                   )}
                 </span>
               )}
