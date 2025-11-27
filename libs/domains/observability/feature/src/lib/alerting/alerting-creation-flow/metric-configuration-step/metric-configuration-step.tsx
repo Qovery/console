@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import { AlertSeverity } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { v4 as uuid } from 'uuid'
 import { type Value } from '@qovery/shared/interfaces'
@@ -29,7 +29,6 @@ import {
 import { NotificationChannelModal } from '../../notification-channel-modal/notification-channel-modal'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration, type MetricCategory } from '../alerting-creation-flow.types'
-import { ALERTING_CREATION_METRIC, ALERTING_CREATION_SUMMARY } from '../router'
 
 const VALUES_OPTIONS = [
   { label: 'Average', value: 'AVG' },
@@ -67,30 +66,30 @@ const SEVERITY_OPTIONS: Value[] = Object.values(AlertSeverity).map((severity) =>
 
 export function MetricConfigurationStep({
   isEdit,
-  isLoadingEditAlertRule,
 }: {
   isEdit?: boolean
-  isLoadingEditAlertRule?: boolean
-}) {
-  const navigate = useNavigate()
+} = {}) {
   const { organizationId = '' } = useParams()
-  const location = useLocation()
   const { openModal, closeModal } = useModal()
-  const [searchParams] = useSearchParams()
-  const { metricIndex, alertId } = useParams<{ metricIndex?: string; alertId?: string }>()
-  const { selectedMetrics, serviceName, setCurrentStepIndex, alerts, setAlerts, onComplete } =
-    useAlertingCreationFlowContext()
+  const {
+    selectedMetrics,
+    serviceName,
+    alerts,
+    setAlerts,
+    currentStepIndex,
+    onNavigateToMetric,
+    onComplete,
+    isLoading,
+  } = useAlertingCreationFlowContext()
 
   const { data: alertReceivers = [] } = useAlertReceivers({ organizationId })
 
-  const currentAlert = alertId ? alerts.find((alert) => alert.id === alertId) : isEdit ? alerts[0] : undefined
-  const metricCategory = (currentAlert?.tag || metricIndex || selectedMetrics[0] || 'cpu') as MetricCategory
-  const index = currentAlert ? alerts.indexOf(currentAlert) : selectedMetrics.indexOf(metricCategory)
+  const index = currentStepIndex
+  const metricCategory = (selectedMetrics[index] || 'cpu') as MetricCategory
+  const currentAlert = isEdit ? alerts[0] : undefined
   const initialData = currentAlert ?? alerts[index]
-
-  const basePathMatch = location.pathname.match(/(.+)\/(metric|edit)\/[^/]+$/)
-  const basePath = basePathMatch ? basePathMatch[1] : ''
-  const queryString = searchParams.toString() ? `?${searchParams.toString()}` : ''
+  const isLastMetric = index === selectedMetrics.length - 1
+  const includedAlertsCount = alerts.filter((alert, i) => i !== index && !alert.skipped).length
 
   const defaultValues = useMemo<AlertConfiguration>(() => {
     if (initialData) {
@@ -121,14 +120,6 @@ export function MetricConfigurationStep({
   })
 
   useEffect(() => {
-    if (isEdit) {
-      setCurrentStepIndex(selectedMetrics.length)
-    } else {
-      setCurrentStepIndex(index)
-    }
-  }, [isEdit, index, selectedMetrics.length, setCurrentStepIndex])
-
-  useEffect(() => {
     methods.reset(defaultValues)
   }, [methods, defaultValues])
 
@@ -141,7 +132,7 @@ export function MetricConfigurationStep({
     const metric = formatMetricLabel(watchTag)
     const functionLabel = watchCondition?.function
     const operator = formatOperator(watchCondition?.operator)
-    const threshold = formatThreshold(watchCondition?.threshold)
+    const threshold = formatThreshold(parseFloat(watchCondition?.threshold?.toString() ?? '0'))
     const duration = formatDuration(watchForDuration)
 
     if (metric && operator && threshold && duration && functionLabel) {
@@ -156,24 +147,21 @@ export function MetricConfigurationStep({
     methods,
   ])
 
-  const handleNext = (data: AlertConfiguration) => {
+  const handleNext = async (data: AlertConfiguration) => {
     const newAlerts = [...alerts]
     newAlerts[index] = { ...data, skipped: false }
     setAlerts(newAlerts)
 
     if (isEdit) {
-      onComplete(newAlerts)
+      await onComplete(newAlerts)
+    } else if (isLastMetric) {
+      await onComplete(newAlerts)
     } else {
-      const isLastMetric = index === selectedMetrics.length - 1
-      if (isLastMetric) {
-        navigate(`${basePath}${ALERTING_CREATION_SUMMARY}${queryString}`)
-      } else {
-        navigate(`${basePath}${ALERTING_CREATION_METRIC(selectedMetrics[index + 1])}${queryString}`)
-      }
+      onNavigateToMetric(index + 1)
     }
   }
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     const currentFormValues = methods.getValues()
     const newAlerts = [...alerts]
     newAlerts[index] = {
@@ -182,11 +170,10 @@ export function MetricConfigurationStep({
     }
     setAlerts(newAlerts)
 
-    const isLastMetric = index === selectedMetrics.length - 1
     if (isLastMetric) {
-      navigate(`${basePath}${ALERTING_CREATION_SUMMARY}${queryString}`)
+      await onComplete(newAlerts)
     } else {
-      navigate(`${basePath}${ALERTING_CREATION_METRIC(selectedMetrics[index + 1])}${queryString}`)
+      onNavigateToMetric(index + 1)
     }
   }
 
@@ -195,7 +182,7 @@ export function MetricConfigurationStep({
       return
     }
 
-    navigate(`${basePath}${ALERTING_CREATION_METRIC(selectedMetrics[index - 1])}${queryString}`)
+    onNavigateToMetric(index - 1)
   }
 
   const handleAddNotificationChannel = () => {
@@ -207,10 +194,6 @@ export function MetricConfigurationStep({
   const onSubmit = methods.handleSubmit((data) => {
     handleNext(data)
   })
-
-  if (index === -1 || index >= selectedMetrics.length) {
-    return null
-  }
 
   const functionLabel = METRIC_TYPE_OPTIONS[metricCategory]?.find(
     (option: Value) => option.value === watchCondition?.function
@@ -503,20 +486,29 @@ export function MetricConfigurationStep({
                     Previous
                   </Button>
                 )}
-                <Button type="button" variant="plain" color="neutral" size="lg" onClick={handleSkip}>
-                  Skip this alert
-                </Button>
+                {!isLastMetric && (
+                  <Button type="button" variant="plain" color="neutral" size="lg" onClick={handleSkip}>
+                    Skip this alert
+                  </Button>
+                )}
               </div>
             )}
-            <Button
-              size="lg"
-              onClick={onSubmit}
-              disabled={!methods.formState.isValid}
-              className={isEdit ? 'ml-auto' : ''}
-              loading={isEdit && isLoadingEditAlertRule}
-            >
-              {isEdit ? 'Save' : 'Include'}
-            </Button>
+            <div className="flex items-center gap-2">
+              {!isEdit && isLastMetric && includedAlertsCount > 0 && (
+                <Button type="button" variant="outline" size="lg" onClick={handleSkip} loading={isLoading}>
+                  Skip and create others
+                </Button>
+              )}
+              <Button
+                size="lg"
+                onClick={onSubmit}
+                disabled={!methods.formState.isValid}
+                className={isEdit ? 'ml-auto' : ''}
+                loading={isLoading}
+              >
+                {isEdit ? 'Save' : isLastMetric ? 'Create' : 'Include'}
+              </Button>
+            </div>
           </div>
         </form>
       </FormProvider>

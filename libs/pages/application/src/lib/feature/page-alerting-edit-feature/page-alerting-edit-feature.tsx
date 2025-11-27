@@ -151,11 +151,16 @@ export function PageAlertingEditFeature() {
         alerts,
         setAlerts,
         onComplete: handleComplete,
+        isLoading: isLoadingEditAlertRule,
         totalSteps: 1,
+        containerName,
+        ingressName,
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onNavigateToMetric: () => {},
       }}
     >
       <FunnelFlow portal totalSteps={1} currentStep={1} currentTitle="Edit Alert" onExit={handleExit}>
-        <MetricConfigurationStep isEdit isLoadingEditAlertRule={isLoadingEditAlertRule} />
+        <MetricConfigurationStep isEdit />
       </FunnelFlow>
     </AlertingCreationFlowContext.Provider>
   )

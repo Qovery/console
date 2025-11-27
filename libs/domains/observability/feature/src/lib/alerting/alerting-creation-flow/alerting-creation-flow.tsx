@@ -1,13 +1,23 @@
 import { subHours } from 'date-fns'
-import { type Environment } from 'qovery-typescript-axios'
+import { type AlertTargetType, type Environment } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
-import { Navigate, Route, Routes, useSearchParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ErrorBoundary, FunnelFlow } from '@qovery/shared/ui'
 import { useContainerName } from '../../hooks/use-container-name/use-container-name'
+import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create-alert-rule'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
 import { type AlertConfiguration } from './alerting-creation-flow.types'
-import { ROUTER_ALERTING_CREATION, type RouteType } from './router'
+import { MetricConfigurationStep } from './metric-configuration-step/metric-configuration-step'
+import {
+  QOVERY_HTTP_ERROR,
+  QUERY_CPU,
+  QUERY_HPA_ISSUE,
+  QUERY_K8S_EVENT,
+  QUERY_MEMORY,
+  QUERY_REPLICAS_NUMBER,
+} from './summary-step/alert-queries'
 
 const METRIC_LABELS: Record<string, string> = {
   cpu: 'CPU',
@@ -26,10 +36,12 @@ interface AlertingCreationFlowContextInterface {
   setCurrentStepIndex: (index: number) => void
   alerts: AlertConfiguration[]
   setAlerts: (alerts: AlertConfiguration[]) => void
-  onComplete: (alerts: AlertConfiguration[]) => void
   totalSteps: number
   containerName?: string
   ingressName?: string
+  onNavigateToMetric: (index: number) => void
+  onComplete: (alerts: AlertConfiguration[]) => Promise<void>
+  isLoading: boolean
 }
 
 export const AlertingCreationFlowContext = createContext<AlertingCreationFlowContextInterface | undefined>(undefined)
@@ -57,9 +69,16 @@ export function AlertingCreationFlow({
   onClose,
   onComplete,
 }: AlertingCreationFlowProps) {
-  const [searchParams] = useSearchParams()
+  const { organizationId = '' } = useParams()
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [alerts, setAlerts] = useState<AlertConfiguration[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+
+  const { mutateAsync: createAlertRule } = useCreateAlertRule({ organizationId })
+
+  const handleNavigateToMetric = (index: number) => {
+    setCurrentStepIndex(index)
+  }
 
   const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
 
@@ -84,7 +103,7 @@ export function AlertingCreationFlow({
   const serviceId = service.id
   const serviceName = service.name
 
-  const totalSteps = selectedMetrics.length + 1
+  const totalSteps = selectedMetrics.length
 
   const getCurrentTitle = () => {
     const metricCategory = selectedMetrics[currentStepIndex]
@@ -100,7 +119,60 @@ export function AlertingCreationFlow({
     }
   }
 
-  const preserveQueryString = searchParams.toString() ? `?${searchParams.toString()}` : ''
+  const handleComplete = async (alertsToCreate: AlertConfiguration[]) => {
+    if (!containerName || !ingressName) return
+
+    const activeAlerts = alertsToCreate.filter((alert) => !alert.skipped)
+
+    try {
+      setIsLoading(true)
+      for (const alert of activeAlerts) {
+        const threshold = (alert.condition.threshold ?? 0) / 100
+        const operator = alert.condition.operator ?? 'ABOVE'
+        const func = alert.condition.function ?? 'NONE'
+
+        await createAlertRule({
+          payload: {
+            organization_id: organizationId,
+            cluster_id: environment.cluster_id,
+            target: {
+              target_id: service.id,
+              target_type: service.serviceType as AlertTargetType,
+            },
+            name: alert.name,
+            tag: alert.tag,
+            description: alert.tag,
+            condition: {
+              kind: 'BUILT',
+              function: func,
+              operator,
+              threshold,
+              promql: match(alert.tag)
+                .with('cpu', () => QUERY_CPU(containerName))
+                .with('memory', () => QUERY_MEMORY(containerName))
+                .with('replicas_number', () => QUERY_REPLICAS_NUMBER(containerName))
+                .with('hpa_issue', () => QUERY_HPA_ISSUE(service.id))
+                .with('k8s_event', () => QUERY_K8S_EVENT(service.id))
+                .with('http_error', () => QOVERY_HTTP_ERROR(ingressName))
+                .otherwise(() => ''),
+            },
+            for_duration: alert.for_duration,
+            severity: alert.severity,
+            enabled: true,
+            alert_receiver_ids: alert.alert_receiver_ids,
+            presentation: {
+              summary: alert.presentation.summary ?? undefined,
+            },
+          },
+        })
+      }
+      onComplete(activeAlerts)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <AlertingCreationFlowContext.Provider
@@ -112,10 +184,12 @@ export function AlertingCreationFlow({
         setCurrentStepIndex,
         alerts,
         setAlerts,
-        onComplete,
         totalSteps,
         containerName,
         ingressName,
+        onNavigateToMetric: handleNavigateToMetric,
+        onComplete: handleComplete,
+        isLoading,
       }}
     >
       <FunnelFlow
@@ -125,16 +199,9 @@ export function AlertingCreationFlow({
         currentTitle={getCurrentTitle()}
         onExit={handleExit}
       >
-        <Routes>
-          {ROUTER_ALERTING_CREATION.map((route: RouteType) => (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={<ErrorBoundary key={route.path}>{route.component}</ErrorBoundary>}
-            />
-          ))}
-          <Route path="*" element={<Navigate replace to={`metric/${selectedMetrics[0]}${preserveQueryString}`} />} />
-        </Routes>
+        <ErrorBoundary>
+          <MetricConfigurationStep />
+        </ErrorBoundary>
       </FunnelFlow>
     </AlertingCreationFlowContext.Provider>
   )
