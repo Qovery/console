@@ -197,7 +197,9 @@ export function SummaryStep() {
             severity: alert.severity,
             enabled: true,
             alert_receiver_ids: alert.alert_receiver_ids,
-            presentation: {},
+            presentation: {
+              summary: alert.presentation.summary ?? undefined,
+            },
           },
         })
         onComplete(activeAlerts)
