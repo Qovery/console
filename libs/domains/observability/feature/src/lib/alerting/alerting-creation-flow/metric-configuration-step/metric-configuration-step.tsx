@@ -52,7 +52,7 @@ const OPERATOR_OPTIONS: Value[] = [
 ]
 
 const DURATION_OPTIONS: Value[] = [
-  { label: 'Immediate', value: 'PT1S' },
+  { label: 'Immediate', value: 'PT0S' },
   { label: 'Last 1 minute', value: 'PT1M' },
   { label: 'Last 5 minutes', value: 'PT5M' },
   { label: 'Last 10 minutes', value: 'PT10M' },
@@ -102,7 +102,7 @@ export function MetricConfigurationStep({
       tag: metricCategory,
       condition: {
         kind: 'BUILT',
-        function: 'AVG',
+        function: 'MAX',
         operator: 'ABOVE',
         threshold: 80,
         promql: '',
@@ -139,14 +139,22 @@ export function MetricConfigurationStep({
   // Auto-generate alert name from conditions
   useEffect(() => {
     const metric = formatMetricLabel(watchTag)
+    const functionLabel = watchCondition?.function
     const operator = formatOperator(watchCondition?.operator)
     const threshold = formatThreshold(watchCondition?.threshold)
     const duration = formatDuration(watchForDuration)
 
-    if (metric && operator && threshold && duration) {
-      methods.setValue('name', `${metric} ${operator} ${threshold} for ${duration}`)
+    if (metric && operator && threshold && duration && functionLabel) {
+      methods.setValue('name', `${functionLabel} ${metric} ${operator} ${threshold} for ${duration}`)
     }
-  }, [watchTag, watchCondition?.operator, watchCondition?.threshold, watchForDuration, methods])
+  }, [
+    watchTag,
+    watchCondition?.function,
+    watchCondition?.operator,
+    watchCondition?.threshold,
+    watchForDuration,
+    methods,
+  ])
 
   const handleNext = (data: AlertConfiguration) => {
     const newAlerts = [...alerts]
