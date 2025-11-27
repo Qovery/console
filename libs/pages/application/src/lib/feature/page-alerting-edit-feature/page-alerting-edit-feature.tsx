@@ -116,7 +116,9 @@ export function PageAlertingEditFeature() {
             severity: updatedAlert.severity,
             enabled: true,
             alert_receiver_ids: updatedAlert.alert_receiver_ids,
-            presentation: {},
+            presentation: {
+              summary: updatedAlert.presentation.summary,
+            },
           },
         })
         navigate(

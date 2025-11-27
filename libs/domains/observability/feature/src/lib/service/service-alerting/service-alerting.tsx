@@ -119,7 +119,7 @@ export function ServiceAlerting({ children }: PropsWithChildren) {
   )
 
   return (
-    <Section className="w-full px-8 py-6">
+    <Section className="w-full px-8 py-6 pb-20">
       <div className="border-b border-neutral-250">
         <div className="flex w-full items-center justify-between pb-5">
           <Heading level={1}>Alerts</Heading>
