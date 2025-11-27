@@ -1,7 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Organization } from 'qovery-typescript-axios'
 import { devopsCopilot, mutations } from '@qovery/shared/devops-copilot/data-access'
+import { useConfig, useRecurringTasks } from '@qovery/shared/devops-copilot/feature'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import SectionAICopilotConfiguration from './section-ai-copilot-configuration/section-ai-copilot-configuration'
 import SectionAICopilotOptIn from './section-ai-copilot-opt-in/section-ai-copilot-opt-in'
@@ -16,14 +17,10 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
   const queryClient = useQueryClient()
   const isFeatureFlagPanel = useFeatureFlagVariantKey('devops-copilot-config-panel')
 
-  const { data: configData, isLoading: isLoadingConfig } = useQuery({
-    ...devopsCopilot.config({ organizationId: organization?.id ?? '' }),
-    enabled: !!organization?.id,
-  })
+  const { data: configData, isLoading: isLoadingConfig } = useConfig({ organizationId: organization?.id ?? '' })
 
-  const { data: recurringTasksData, isLoading: isLoadingTasks } = useQuery({
-    ...devopsCopilot.recurringTasks({ organizationId: organization?.id ?? '' }),
-    enabled: !!organization?.id,
+  const { data: recurringTasksData, isLoading: isLoadingTasks } = useRecurringTasks({
+    organizationId: organization?.id ?? '',
   })
 
   const tasks = (recurringTasksData?.tasks as RecurringTask[]) || []

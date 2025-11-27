@@ -1,3 +1,5 @@
 export * from './lib/devops-copilot-trigger/devops-copilot-trigger'
 export * from './lib/devops-copilot-context/devops-copilot-context'
 export * from './lib/devops-copilot-button/devops-copilot-button'
+export * from './lib/hooks/use-config/use-config'
+export * from './lib/hooks/use-recurring-tasks/use-recurring-tasks'

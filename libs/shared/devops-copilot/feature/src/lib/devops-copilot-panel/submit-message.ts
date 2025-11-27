@@ -26,13 +26,11 @@ export const submitMessage = async (
   signal?: AbortSignal
 ): Promise<{ id: string; messageId: string } | null> => {
   try {
-    // Ensure we have an organization ID
     const organizationId = context?.organization?.id
     if (!organizationId) {
       throw new Error('Organization ID is required but not provided in context')
     }
 
-    // First, create a new thread
     let _threadId = threadId
     if (!threadId) {
       const response = await mutations.addThread({
@@ -49,7 +47,6 @@ export const submitMessage = async (
       throw new Error('Failed to fetch thread')
     }
 
-    // Then, send the message to the thread
     const messageResponse = await mutations.addMessage({
       userSub,
       token,
