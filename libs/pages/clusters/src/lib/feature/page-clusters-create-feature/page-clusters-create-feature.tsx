@@ -62,6 +62,7 @@ export const steps = (clusterGeneralData?: ClusterGeneralData) => {
     .with({ installation_type: 'MANAGED', cloud_provider: 'SCW' }, () => [
       { title: 'Create new cluster', key: 'general' },
       { title: 'Resources', key: 'resources' },
+      { title: 'Network configuration', key: 'features' },
       { title: 'Ready to install', key: 'summary' },
     ])
     .with({ installation_type: 'MANAGED', cloud_provider: 'GCP' }, () => [
