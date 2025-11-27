@@ -6,12 +6,17 @@ import {
   type AlertConfiguration,
   AlertingCreationFlowContext,
   MetricConfigurationStep,
+  QOVERY_HTTP_ERROR,
   QUERY_CPU,
+  QUERY_HPA_ISSUE,
+  QUERY_K8S_EVENT,
   QUERY_MEMORY,
+  QUERY_REPLICAS_NUMBER,
   useAlertRules,
   useContainerName,
   useEditAlertRule,
   useEnvironment,
+  useIngressName,
 } from '@qovery/domains/observability/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { APPLICATION_MONITORING_ALERTS_URL, APPLICATION_MONITORING_URL, APPLICATION_URL } from '@qovery/shared/routes'
@@ -41,6 +46,13 @@ export function PageAlertingEditFeature() {
     endDate: now.toISOString(),
   })
 
+  const { data: ingressName } = useIngressName({
+    clusterId: environment?.cluster_id ?? '',
+    serviceId: service?.id ?? '',
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+  })
+
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [alerts, setAlerts] = useState<AlertConfiguration[]>([])
 
@@ -63,6 +75,7 @@ export function PageAlertingEditFeature() {
         severity: alertRule.severity,
         alert_receiver_ids: alertRule.alert_receiver_ids || [],
         skipped: false,
+        presentation: { summary: alertRule.presentation.summary },
       }
       setAlerts([alertConfig])
     }
@@ -77,7 +90,7 @@ export function PageAlertingEditFeature() {
     const operator = updatedAlert.condition.operator ?? 'ABOVE'
     const func = updatedAlert.condition.function ?? 'NONE'
 
-    if (updatedAlert && environment && containerName) {
+    if (updatedAlert && environment && containerName && ingressName) {
       try {
         await editAlertRule({
           alertRuleId: alertId,
@@ -93,6 +106,10 @@ export function PageAlertingEditFeature() {
               promql: match(updatedAlert.tag)
                 .with('cpu', () => QUERY_CPU(containerName))
                 .with('memory', () => QUERY_MEMORY(containerName))
+                .with('replicas_number', () => QUERY_REPLICAS_NUMBER(containerName))
+                .with('hpa_issue', () => QUERY_HPA_ISSUE(service.id))
+                .with('k8s_event', () => QUERY_K8S_EVENT(service.id))
+                .with('http_error', () => QOVERY_HTTP_ERROR(ingressName))
                 .otherwise(() => ''),
             },
             for_duration: updatedAlert.for_duration,
