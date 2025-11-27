@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
+import { type TerraformGeneralData } from '@qovery/domains/service-terraform/feature'
 import { renderHook, renderWithProviders } from '@qovery/shared/util-tests'
-import { type TerraformGeneralData, type TerraformInputVariablesData } from '../page-terraform-create-feature'
 import { TerraformCreateContext } from '../page-terraform-create-feature'
 import StepConfigurationFeature from './step-configuration-feature'
 
@@ -36,11 +36,9 @@ const generalDataDefaultValues: TerraformGeneralData = {
   branch: 'main',
   root_path: '/',
   name: 'terraform-service',
-}
-
-const inputVariablesDataDefaultValues: TerraformInputVariablesData = {
-  tf_vars: [],
-  tf_var_file_paths: [],
+  backend: {
+    kubernetes: {},
+  },
 }
 
 describe('StepConfigurationFeature', () => {
@@ -52,20 +50,12 @@ describe('StepConfigurationFeature', () => {
       })
     )
 
-    const { result: inputVariablesForm } = renderHook(() =>
-      useForm<TerraformInputVariablesData>({
-        mode: 'onChange',
-        defaultValues: inputVariablesDataDefaultValues,
-      })
-    )
-
     const { baseElement } = renderWithProviders(
       <TerraformCreateContext.Provider
         value={{
           currentStep: 1,
           setCurrentStep: jest.fn(),
           generalForm: generalForm.current,
-          inputVariablesForm: inputVariablesForm.current,
         }}
       >
         <StepConfigurationFeature />
