@@ -30,6 +30,7 @@ import {
   OAUTH_KEY,
   POSTHOG,
   POSTHOG_APIHOST,
+  POSTHOG_FLAGS_APIHOST,
 } from '@qovery/shared/util-node-env'
 import App from './app/app'
 
@@ -69,6 +70,7 @@ declare module '@tanstack/react-query' {
 // posthog init
 posthog.init(POSTHOG, {
   api_host: POSTHOG_APIHOST,
+  flags_api_host: POSTHOG_FLAGS_APIHOST,
 })
 
 const container = document.getElementById('root') || document.createElement('div')

@@ -12,6 +12,7 @@ declare global {
       NX_PUBLIC_INTERCOM: string
       NX_PUBLIC_POSTHOG: string
       NX_PUBLIC_POSTHOG_APIHOST: string
+      NX_PUBLIC_POSTHOG_FLAGS_APIHOST: string
       NX_PUBLIC_GTM: string
       NX_PUBLIC_INSTATUS_APP_ID: string
       NX_PUBLIC_ALGOLIA_APP_ID: string
@@ -34,6 +35,7 @@ export const NODE_ENV = process.env.NODE_ENV,
   INTERCOM = process.env.NX_PUBLIC_INTERCOM,
   POSTHOG = process.env.NX_PUBLIC_POSTHOG,
   POSTHOG_APIHOST = process.env.NX_PUBLIC_POSTHOG_APIHOST,
+  POSTHOG_FLAGS_APIHOST = process.env.NX_PUBLIC_POSTHOG_FLAGS_APIHOST,
   GTM = process.env.NX_PUBLIC_GTM,
   INSTATUS_APP_ID = process.env.NX_PUBLIC_INSTATUS_APP_ID,
   ALGOLIA_APP_ID = process.env.NX_PUBLIC_ALGOLIA_APP_ID,

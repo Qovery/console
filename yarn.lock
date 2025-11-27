@@ -5557,6 +5557,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@posthog/core@npm:1.6.0":
+  version: 1.6.0
+  resolution: "@posthog/core@npm:1.6.0"
+  dependencies:
+    cross-spawn: ^7.0.6
+  checksum: d0d9878b19f44187da015a8305750c7193f07e17b3052df03a8eab718660161a310d9c01e22be1181fbc67ed0ae8842e442e670a6aa0d9ac5f366337e052b42d
+  languageName: node
+  linkType: hard
+
 "@qovery/console@workspace:.":
   version: 0.0.0-use.local
   resolution: "@qovery/console@workspace:."
@@ -5685,7 +5694,7 @@ __metadata:
     msw: ^1.3.0
     nx: 21.6.3
     postcss: 8.4.38
-    posthog-js: ^1.260.1
+    posthog-js: ^1.298.1
     prettier: ^3.2.5
     prettier-plugin-tailwindcss: ^0.5.14
     pretty-quick: ^4.0.0
@@ -12820,6 +12829,17 @@ __metadata:
     shebang-command: ^2.0.0
     which: ^2.0.1
   checksum: 671cc7c7288c3a8406f3c69a3ae2fc85555c04169e9d611def9a675635472614f1c0ed0ef80955d5b6d4e724f6ced67f0ad1bb006c2ea643488fcfef994d7f52
+  languageName: node
+  linkType: hard
+
+"cross-spawn@npm:^7.0.6":
+  version: 7.0.6
+  resolution: "cross-spawn@npm:7.0.6"
+  dependencies:
+    path-key: ^3.1.0
+    shebang-command: ^2.0.0
+    which: ^2.0.1
+  checksum: 8d306efacaf6f3f60e0224c287664093fa9185680b2d195852ba9a863f85d02dcc737094c6e512175f8ee0161f9b87c73c6826034c2422e39de7d6569cf4503b
   languageName: node
   linkType: hard
 
@@ -24239,43 +24259,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"posthog-js@npm:1.260.1":
-  version: 1.260.1
-  resolution: "posthog-js@npm:1.260.1"
+"posthog-js@npm:1.298.1":
+  version: 1.298.1
+  resolution: "posthog-js@npm:1.298.1"
   dependencies:
+    "@posthog/core": 1.6.0
     core-js: ^3.38.1
     fflate: ^0.4.8
     preact: ^10.19.3
     web-vitals: ^4.2.4
-  peerDependencies:
-    "@rrweb/types": 2.0.0-alpha.17
-    rrweb-snapshot: 2.0.0-alpha.17
-  peerDependenciesMeta:
-    "@rrweb/types":
-      optional: true
-    rrweb-snapshot:
-      optional: true
-  checksum: 81f8af7f58457e555e333e284f0cd3189339ce18081ab295630f5f18aeb4bd2a43a4346a0204462d0cd1bb5df8690f2242476d00669f3d8846125e12cb955f9b
+  checksum: 3aa5d33be39593cecd6fde32dcd65e0f4bc3edb6b3ecbee0405530e249dbc6d4f25db12a1aa5eb7ab8a3726ef100cb8fd170a6432dd3db8e6f686d686ceb44be
   languageName: node
   linkType: hard
 
-"posthog-js@patch:posthog-js@npm%3A1.260.1#./.yarn/patches/posthog-js-npm-1.260.1-ec574bf323.patch::locator=%40qovery%2Fconsole%40workspace%3A.":
-  version: 1.260.1
-  resolution: "posthog-js@patch:posthog-js@npm%3A1.260.1#./.yarn/patches/posthog-js-npm-1.260.1-ec574bf323.patch::version=1.260.1&hash=82e246&locator=%40qovery%2Fconsole%40workspace%3A."
+"posthog-js@patch:posthog-js@npm%3A1.298.1#./.yarn/patches/posthog-js-npm-1.298.1-39db9fc395.patch::locator=%40qovery%2Fconsole%40workspace%3A.":
+  version: 1.298.1
+  resolution: "posthog-js@patch:posthog-js@npm%3A1.298.1#./.yarn/patches/posthog-js-npm-1.298.1-39db9fc395.patch::version=1.298.1&hash=b280fa&locator=%40qovery%2Fconsole%40workspace%3A."
   dependencies:
+    "@posthog/core": 1.6.0
     core-js: ^3.38.1
     fflate: ^0.4.8
     preact: ^10.19.3
     web-vitals: ^4.2.4
-  peerDependencies:
-    "@rrweb/types": 2.0.0-alpha.17
-    rrweb-snapshot: 2.0.0-alpha.17
-  peerDependenciesMeta:
-    "@rrweb/types":
-      optional: true
-    rrweb-snapshot:
-      optional: true
-  checksum: 2d826a7604e45dbdcb4d0e4c1b468914f017eaf56e1e17a48d10e8987f5c11fcf5362b90b64a6c34db17f9eec94aac15979170fb600d0c1d6aec2c6947c6c670
+  checksum: 02b10d8eeaa0cdb152565dfdae2904fbb3e1aa89926a043c4070d6ea806ed7c4c69c5dfff66de601fdb94a1a448ba1279be84328d519f10496086f682dd8aa34
   languageName: node
   linkType: hard
 
