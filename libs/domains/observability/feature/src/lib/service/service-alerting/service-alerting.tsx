@@ -1,5 +1,6 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import type { AlertRuleResponse, AlertRuleState } from 'qovery-typescript-axios'
-import { type PropsWithChildren } from 'react'
+import { type PropsWithChildren, type ReactNode } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
@@ -28,9 +29,14 @@ import { useEnvironment } from '../../hooks/use-environment/use-environment'
 
 const { Table } = TablePrimitives
 
-function getStatusConfig(state: AlertRuleState) {
+function getStatusConfig(state: AlertRuleState): {
+  label: string
+  color: 'red' | 'yellow' | 'neutral' | 'green'
+  icon: IconName
+  tooltip?: ReactNode
+} {
   return match(state)
-    .with('TRIGGERED', 'PENDING_NOTIFICATION', 'NOTIFIED', () => ({
+    .with('PENDING_NOTIFICATION', 'NOTIFIED', () => ({
       label: 'Firing',
       color: 'red' as const,
       icon: 'fire' as const,
@@ -49,6 +55,12 @@ function getStatusConfig(state: AlertRuleState) {
       label: 'Undeployed',
       color: 'neutral' as const,
       icon: 'circle-exclamation' as const,
+    }))
+    .with('TRIGGERED', () => ({
+      label: 'Triggered',
+      color: 'yellow' as const,
+      icon: 'bolt' as const,
+      tooltip: 'Triggered by PromQL condition, but not firing because the required "for" duration has not yet elapsed',
     }))
     .otherwise(() => ({
       label: 'Monitoring',
@@ -190,16 +202,18 @@ export function ServiceAlerting({ children }: PropsWithChildren) {
                         </div>
                       </Table.RowHeaderCell>
                       <Table.Cell className="h-11">
-                        <Badge
-                          color={statusConfig.color}
-                          variant="surface"
-                          radius="full"
-                          className="gap-1 font-medium"
-                          size="sm"
-                        >
-                          <Icon iconName={statusConfig.icon} iconStyle="regular" className="text-xs" />
-                          {statusConfig.label}
-                        </Badge>
+                        <Tooltip content={statusConfig.tooltip} disabled={!statusConfig.tooltip}>
+                          <Badge
+                            color={statusConfig.color}
+                            variant="surface"
+                            radius="full"
+                            className="gap-1 font-medium"
+                            size="sm"
+                          >
+                            <Icon iconName={statusConfig.icon} iconStyle="regular" className="text-xs" />
+                            {statusConfig.label}
+                          </Badge>
+                        </Tooltip>
                       </Table.Cell>
                       <Table.Cell className="h-11">
                         <SeverityIndicator severity={alertRule.severity} />
