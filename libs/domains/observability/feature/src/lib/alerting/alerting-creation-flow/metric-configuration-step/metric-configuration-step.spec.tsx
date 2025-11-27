@@ -25,6 +25,7 @@ const createAlert = (overrides: Partial<AlertConfiguration> = {}): AlertConfigur
   condition: { kind: 'BUILT', function: 'AVG', operator: 'ABOVE', threshold: 80, promql: '' },
   severity: 'MEDIUM' as AlertSeverity,
   alert_receiver_ids: ['receiver-1'],
+  presentation: { summary: 'My description' },
   skipped: false,
   ...overrides,
 })

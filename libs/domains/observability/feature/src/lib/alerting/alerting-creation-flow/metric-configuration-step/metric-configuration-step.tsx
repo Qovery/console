@@ -111,6 +111,7 @@ export function MetricConfigurationStep({
       name: metricCategory ? `${metricCategory.replace(/_/g, ' ').toUpperCase()} alert` : '',
       severity: 'MEDIUM',
       alert_receiver_ids: [],
+      presentation: { summary: undefined },
     }
   }, [initialData, metricCategory])
 
@@ -238,7 +239,7 @@ export function MetricConfigurationStep({
                       control={methods.control}
                       render={({ field }) => (
                         <InputSelectSmall
-                          name="tag"
+                          name={field.name}
                           items={Object.keys(METRIC_TYPE_OPTIONS).map((key) => ({
                             label: key.replace(/_/g, ' ').toUpperCase(),
                             value: key,
@@ -255,7 +256,7 @@ export function MetricConfigurationStep({
                       control={methods.control}
                       render={({ field }) => (
                         <InputSelectSmall
-                          name="condition.function"
+                          name={field.name}
                           items={METRIC_TYPE_OPTIONS[metricCategory] || []}
                           defaultValue={field.value}
                           onChange={(value) => field.onChange(value)}
@@ -294,7 +295,7 @@ export function MetricConfigurationStep({
                       control={methods.control}
                       render={({ field }) => (
                         <InputSelectSmall
-                          name="operator"
+                          name={field.name}
                           items={OPERATOR_OPTIONS}
                           defaultValue={field.value}
                           onChange={(value) => field.onChange(value)}
@@ -403,7 +404,7 @@ export function MetricConfigurationStep({
                   <InputTextSmall
                     label="Alert name"
                     placeholder="Your alert name"
-                    name="name"
+                    name={field.name}
                     value={field.value}
                     onChange={(value) => field.onChange(value)}
                     error={fieldState.error?.message}
@@ -413,13 +414,33 @@ export function MetricConfigurationStep({
             </div>
 
             <div className="flex flex-col gap-1">
+              <p className="text-sm">Notification text</p>
+              <div className="flex flex-col gap-1">
+                <Controller
+                  name="presentation.summary"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <InputTextSmall
+                      label="Notification text"
+                      placeholder="Your notification text (optional)"
+                      name={field.name}
+                      value={field.value ?? undefined}
+                      onChange={(value) => field.onChange(value)}
+                    />
+                  )}
+                />
+                <p className="pl-2 text-xs text-neutral-350">This message will be displayed in your notification.</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1">
               <p className="text-sm">Severity</p>
               <Controller
                 name="severity"
                 control={methods.control}
                 render={({ field }) => (
                   <InputSelectSmall
-                    name="severity"
+                    name={field.name}
                     items={SEVERITY_OPTIONS}
                     defaultValue={field.value}
                     onChange={(value) => field.onChange(value)}
