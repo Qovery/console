@@ -1240,19 +1240,6 @@ export const mutations = {
     const response = await environmentActionApi.cleanFailedJobs(environmentId, payload)
     return response.data
   },
-  async replaceAllTerraformVariables({
-    serviceId,
-    payload,
-  }: {
-    serviceId: string
-    payload: TerraformVariablesReplaceRequest
-  }) {
-    const response = await terraformConfigurationApi.replaceAllTerraformVariables.bind(terraformConfigurationApi)(
-      serviceId,
-      payload
-    )
-    return response.data
-  },
 }
 
 export type ServicesKeys = inferQueryKeys<typeof services>

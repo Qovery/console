@@ -80,6 +80,7 @@ export type TerraformVariablesContextType = {
 }
 
 export const CUSTOM_SOURCE = 'Custom'
+export const SECRET_UNCHANGED_VALUE = 'SECRET_VALUE_UNCHANGED'
 
 export const TerraformVariablesContext = createContext<TerraformVariablesContextType | undefined>(undefined)
 
@@ -265,18 +266,25 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
           : currentVariable && 'default' in currentVariable
             ? currentVariable.default ?? ''
             : ''
+      const originalSecret =
+        currentVariable && 'sensitive' in currentVariable
+          ? currentVariable.sensitive
+          : currentVariable && 'secret' in currentVariable
+            ? Boolean(currentVariable.secret)
+            : false
       const source = currentVariable && 'source' in currentVariable ? currentVariable.source : CUSTOM_SOURCE
       const value = 'value' in variable ? variable.value ?? '' : 'default' in variable ? variable.default ?? '' : ''
+      const secret =
+        'sensitive' in variable ? variable.sensitive : 'secret' in variable ? Boolean(variable.secret) : false
       uniqueVars.set(variable.key ?? '', {
         id: uuidv4(),
         key: variable.key ?? '',
         value,
         originalKey: variable.key,
         originalValue,
-        originalSecret:
-          'sensitive' in variable ? variable.sensitive : 'secret' in variable ? Boolean(variable.secret) : false,
+        originalSecret,
         source,
-        secret: 'sensitive' in variable ? variable.sensitive : 'secret' in variable ? Boolean(variable.secret) : false,
+        secret,
         isNew: false,
       })
     })
@@ -380,7 +388,18 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   }, [])
 
   const toggleSecret = useCallback((id: string) => {
-    setVars((prev) => prev.map((v) => (v.id === id ? { ...v, secret: !v.secret } : v)))
+    setVars((prev) =>
+      prev.map((v) =>
+        v.id === id
+          ? {
+              ...v,
+              secret: !v.secret,
+              // If it is currently a secret and the value is the unchanged value, set the value to an empty string
+              value: v.secret && v.value === SECRET_UNCHANGED_VALUE ? '' : v.value,
+            }
+          : v
+      )
+    )
   }, [])
 
   const revertValue = useCallback((id: string) => {
@@ -390,6 +409,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
           ? {
               ...v,
               value: v.originalValue ?? '',
+              secret: v.originalSecret ?? false,
               isOverridden: false,
             }
           : v
