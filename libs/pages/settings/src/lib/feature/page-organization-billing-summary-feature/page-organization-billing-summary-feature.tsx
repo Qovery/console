@@ -18,7 +18,7 @@ export function PageOrganizationBillingSummaryFeature() {
 
   const { data: creditCards = [], isLoading: isLoadingCreditCards } = useCreditCards({ organizationId })
   const { data: currentCost } = useCurrentCost({ organizationId })
-  const { showChat } = useSupportChat()
+  const { showChat, showPylonForm } = useSupportChat()
   const { isQoveryAdminUser } = useUserRole()
 
   const openPromoCodeModal = () => {
@@ -54,7 +54,7 @@ export function PageOrganizationBillingSummaryFeature() {
   }
 
   const handleCancelTrialClick = () => {
-    showChat()
+    showPylonForm('cancel-free-trial')
   }
 
   const handleAddCreditCardClick = () => {
