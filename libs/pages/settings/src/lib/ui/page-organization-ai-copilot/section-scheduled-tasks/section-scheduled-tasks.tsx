@@ -9,21 +9,9 @@ import {
   Section,
   useModal,
 } from '@qovery/shared/ui'
+import { type RecurringTask } from '@qovery/shared/devops-copilot/data-access'
 
-export interface RecurringTask {
-  id: string
-  user_id: string
-  user_intent: string
-  cron_expression: string
-  enabled: boolean
-  environment: string
-  created_at: string
-  updated_at: string
-  last_run_at?: string
-  next_run_at?: string
-  error_count: number
-  last_error?: string
-}
+export type { RecurringTask }
 
 export interface SectionScheduledTasksProps {
   tasks: RecurringTask[]
@@ -55,10 +43,8 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
               >
                 <div className="flex">
                   <Icon
-                    name={task.enabled ? IconAwesomeEnum.CLOCK : IconAwesomeEnum.PAUSE}
+                    iconName={task.enabled ? 'clock' : 'pause'}
                     className={task.enabled ? 'text-brand-500' : 'text-neutral-350'}
-                    width="20px"
-                    height="20px"
                   />
                   <div className="ml-4">
                     <p className="mb-1 flex text-xs font-medium text-neutral-400">{task.user_intent}</p>

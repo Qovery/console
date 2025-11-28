@@ -2,6 +2,25 @@ import { createQueryKeys } from '@lukemorales/query-key-factory'
 import axios from 'axios'
 import { DEVOPS_COPILOT_API_BASE_URL } from '@qovery/shared/util-node-env'
 
+export interface RecurringTask {
+  id: string
+  user_id: string
+  user_intent: string
+  cron_expression: string
+  enabled: boolean
+  environment: string
+  created_at: string
+  updated_at: string
+  last_run_at?: string
+  next_run_at?: string
+  error_count: number
+  last_error?: string
+}
+
+export interface RecurringTasksResponse {
+  tasks: RecurringTask[]
+}
+
 // Create a dedicated axios instance for DevOps Copilot
 export const devopsCopilotAxios = axios.create({
   baseURL: DEVOPS_COPILOT_API_BASE_URL,
@@ -37,8 +56,10 @@ export const devopsCopilot = createQueryKeys('devopsCopilot', {
   }),
   recurringTasks: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
-    async queryFn() {
-      const response = await devopsCopilotAxios.get(`/organization/${organizationId}/recurring-tasks`)
+    async queryFn(): Promise<RecurringTasksResponse> {
+      const response = await devopsCopilotAxios.get<RecurringTasksResponse>(
+        `/organization/${organizationId}/recurring-tasks`
+      )
 
       return response.data
     },

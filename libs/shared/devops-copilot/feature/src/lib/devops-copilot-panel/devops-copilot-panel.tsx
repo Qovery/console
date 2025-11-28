@@ -152,7 +152,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const docLinks = useContextualDocLinks()
   const { context, current } = useQoveryContext()
   const { user, getAccessTokenSilently } = useAuth0()
-  const isFeatureFlagPanel = useFeatureFlagVariantKey('devops-copilot-config-panel')
+  const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot-config-panel')
 
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -842,7 +842,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   I'm your <span className="font-medium text-brand-500">DevOps AI Copilot</span> - I can help you to fix
                   your deployments, optimize your infrastructure costs, audit your security and do everything you would
                   expect from a complete DevOps Engineering team.
-                  {isFeatureFlagPanel && !isCopilotEnabled && (
+                  {isDevopsCopilotPanelFeatureFlag && !isCopilotEnabled && (
                     <span className="mt-4 block">
                       I'm not enabled yet,{' '}
                       <Link

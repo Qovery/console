@@ -28,7 +28,7 @@ import { Container } from './ui/container/container'
 
 export function PageSettings() {
   const { organizationId = '' } = useParams()
-  const isFeatureFlagPanel = useFeatureFlagVariantKey('devops-copilot-config-panel')
+  const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot-config-panel')
 
   const pathSettings = SETTINGS_URL(organizationId)
   const { data: projects = [] } = useProjects({ organizationId })
@@ -103,7 +103,7 @@ export function PageSettings() {
       icon: IconAwesomeEnum.CLOUD_ARROW_UP,
       url: pathSettings + SETTINGS_API_URL,
     },
-    ...(isFeatureFlagPanel
+    ...(isDevopsCopilotPanelFeatureFlag
       ? [
           {
             title: 'AI Copilot',

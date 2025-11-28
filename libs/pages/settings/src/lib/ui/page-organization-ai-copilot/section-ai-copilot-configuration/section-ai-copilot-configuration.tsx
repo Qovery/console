@@ -71,7 +71,7 @@ export function SectionAICopilotConfiguration({
             <div className="-mx-6 border-b border-neutral-250 px-6 pb-6">
               <div className="flex items-center gap-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded bg-brand-500">
-                  <Icon iconName="robot" className="text-white" width="20px" height="20px" />
+                  <Icon iconName="robot" className="text-white"/>
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-neutral-400">AI Copilot for {organization?.name}</p>

@@ -1,5 +1,5 @@
 import { type Organization } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { BlockContent, Button, Checkbox, Heading, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
 
 export interface SectionAICopilotOptInProps {
@@ -8,25 +8,45 @@ export interface SectionAICopilotOptInProps {
   onEnable: () => void
 }
 
+interface OptInFormData {
+  hasAcceptedTerms: boolean
+}
+
 export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: SectionAICopilotOptInProps) {
-  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false)
+  const methods = useForm<OptInFormData>({
+    mode: 'onChange',
+    defaultValues: {
+      hasAcceptedTerms: false,
+    },
+  })
+
+  const {
+    control,
+    formState: { isValid },
+    handleSubmit,
+  } = methods
+
+  const onSubmit = handleSubmit(() => {
+    onEnable()
+  })
 
   return (
-    <Section>
-      <div className="mb-8">
-        <Heading>AI Copilot Configuration</Heading>
-        <p className="mt-3 text-xs text-neutral-400">Configure your Copilot</p>
-      </div>
-      <BlockContent title="Opt-in to AI Copilot" classNameContent="p-0">
-        {isLoading ? (
-          <div className="flex justify-center p-5">
-            <LoaderSpinner className="w-5" />
-          </div>
-        ) : (
-          <div className="p-6">
+    <FormProvider {...methods}>
+      <Section>
+        <div className="mb-8">
+          <Heading>AI Copilot Configuration</Heading>
+          <p className="mt-3 text-xs text-neutral-400">Configure your Copilot</p>
+        </div>
+        <BlockContent title="Opt-in to AI Copilot" classNameContent="p-0">
+          {isLoading ? (
+            <div className="flex justify-center p-5">
+              <LoaderSpinner className="w-5" />
+            </div>
+          ) : (
+            <form onSubmit={onSubmit} className="p-6">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-brand-500">
-                <Icon iconName="robot" className="text-white" width="20px" height="20px" />
+                <Icon iconName="robot" className="text-white" />
               </div>
               <div className="flex-1 space-y-4">
                 <div>
@@ -243,27 +263,35 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                   </div>
                 </div>
 
-                <label className="flex cursor-pointer items-start gap-3">
-                  <Checkbox
-                    checked={hasAcceptedTerms}
-                    onCheckedChange={(checked) => setHasAcceptedTerms(checked === true)}
-                    className="mt-0.5 flex-shrink-0"
-                  />
-                  <span className="text-sm text-neutral-400">
-                    I have read and accept the AI Copilot Terms of Service
-                  </span>
-                </label>
+                <Controller
+                  name="hasAcceptedTerms"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <label className="flex cursor-pointer items-start gap-3">
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={(checked) => field.onChange(checked === true)}
+                        className="mt-0.5 flex-shrink-0"
+                      />
+                      <span className="text-sm text-neutral-400">
+                        I have read and accept the AI Copilot Terms of Service
+                      </span>
+                    </label>
+                  )}
+                />
 
-                <Button size="md" color="brand" onClick={onEnable} disabled={!hasAcceptedTerms} className="mt-4">
+                <Button type="submit" size="md" color="brand" disabled={!isValid} className="mt-4">
                   <Icon iconName="circle-check" className="mr-2" />
                   Enable AI Copilot
                 </Button>
               </div>
             </div>
-          </div>
-        )}
-      </BlockContent>
-    </Section>
+            </form>
+          )}
+        </BlockContent>
+      </Section>
+    </FormProvider>
   )
 }
 
