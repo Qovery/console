@@ -1,5 +1,6 @@
 import clsx from 'clsx'
 import { AlertSeverity } from 'qovery-typescript-axios'
+import { AlertRuleConditionFunction } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
@@ -31,17 +32,21 @@ import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration, type MetricCategory } from '../alerting-creation-flow.types'
 
 const VALUES_OPTIONS = [
+  { label: 'Maximum', value: 'MAX' }, // default one
   { label: 'Average', value: 'AVG' },
-  { label: 'Maximum', value: 'MAX' },
   { label: 'Minimum', value: 'MIN' },
 ]
+
+const HTTP_ERROR_VALUES_OPTIONS = [{ label: 'Count', value: 'COUNT' }]
+const REPLICAS_NUMBER_VALUES_OPTIONS = [{ label: 'Count', value: 'COUNT' }]
 
 const METRIC_TYPE_OPTIONS: Record<MetricCategory, Value[]> = {
   cpu: VALUES_OPTIONS,
   memory: VALUES_OPTIONS,
-  http_error: VALUES_OPTIONS,
-  replicas_number: VALUES_OPTIONS,
-  k8s_event: VALUES_OPTIONS,
+  http_error: HTTP_ERROR_VALUES_OPTIONS,
+  http_latency: VALUES_OPTIONS,
+  missing_replicas: REPLICAS_NUMBER_VALUES_OPTIONS,
+  restart_reason: VALUES_OPTIONS,
   hpa_issue: VALUES_OPTIONS,
 }
 
@@ -49,8 +54,9 @@ const DEFAULT_THRESHOLDS: Record<MetricCategory, number> = {
   cpu: 80,
   memory: 80,
   http_error: 5,
-  replicas_number: 80,
-  k8s_event: 80,
+  http_latency: 200,
+  missing_replicas: 0,
+  restart_reason: 80,
   hpa_issue: 80,
 }
 
@@ -110,7 +116,7 @@ export function MetricConfigurationStep({
       tag: metricCategory,
       condition: {
         kind: 'BUILT',
-        function: 'MAX',
+        function: (METRIC_TYPE_OPTIONS[metricCategory][0].value ?? 'MAX') as AlertRuleConditionFunction,
         operator: 'ABOVE',
         threshold: DEFAULT_THRESHOLDS[metricCategory] ?? 80,
         promql: '',

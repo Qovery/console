@@ -11,12 +11,13 @@ import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
 import { type AlertConfiguration } from './alerting-creation-flow.types'
 import { MetricConfigurationStep } from './metric-configuration-step/metric-configuration-step'
 import {
-  QOVERY_HTTP_ERROR,
   QUERY_CPU,
   QUERY_HPA_ISSUE,
-  QUERY_K8S_EVENT,
+  QUERY_HTTP_ERROR,
+  QUERY_HTTP_LATENCY,
   QUERY_MEMORY,
   QUERY_REPLICAS_NUMBER,
+  QUERY_RESTART_REASON,
 } from './summary-step/alert-queries'
 
 const METRIC_LABELS: Record<string, string> = {
@@ -25,6 +26,7 @@ const METRIC_LABELS: Record<string, string> = {
   k8s_event: 'k8s event',
   hpa_issue: 'HPA issue',
   qovery_http_error: 'HTTP error',
+  qovery_http_latency: 'HTTP latency',
   replicas_number: 'Replicas number',
 }
 
@@ -152,8 +154,9 @@ export function AlertingCreationFlow({
                 .with('memory', () => QUERY_MEMORY(containerName))
                 .with('replicas_number', () => QUERY_REPLICAS_NUMBER(containerName))
                 .with('hpa_issue', () => QUERY_HPA_ISSUE(service.id))
-                .with('k8s_event', () => QUERY_K8S_EVENT(service.id))
-                .with('http_error', () => QOVERY_HTTP_ERROR(ingressName))
+                .with('restart_reason', () => QUERY_RESTART_REASON(containerName))
+                .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
+                .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
                 .otherwise(() => ''),
             },
             for_duration: alert.for_duration,

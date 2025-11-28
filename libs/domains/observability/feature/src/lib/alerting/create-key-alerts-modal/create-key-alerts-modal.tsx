@@ -33,27 +33,29 @@ const METRICS: Metric[] = [
   { id: 'cpu', label: 'CPU', iconName: 'microchip' },
   { id: 'memory', label: 'Memory', iconName: 'server' },
   { id: 'http_error', label: 'HTTP error', iconName: 'globe' },
-  { id: 'replicas_number', label: 'Replicas number', iconName: 'server' },
-  { id: 'k8s_event', label: 'k8s event', iconName: 'cube' },
+  { id: 'http_latency', label: 'HTTP latency', iconName: 'globe' },
+  { id: 'missing_replicas', label: 'Missing replicas', iconName: 'server' },
+  { id: 'restart_reason', label: 'instance restart', iconName: 'cube' },
   { id: 'hpa_issue', label: 'HPA issue', iconName: 'scale-balanced' },
 ]
 
 export function CreateKeyAlertsModal({ onClose, service, organizationId, projectId }: CreateKeyAlertsModalProps) {
   const navigate = useNavigate()
 
-  const hasPort =
+  const hasPublicPort =
     (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
-    (service?.ports || []).length > 0
+    (service?.ports || []).length > 0 &&
+    service?.ports?.some((p) => p.publicly_accessible)
 
   const hasEqualInstances =
     (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
     service?.min_running_instances === service?.max_running_instances
 
   const availableMetrics = METRICS.filter((metric) => {
-    if (!hasPort && (metric.id === 'http_error' || metric.id === 'hpa_issue')) {
+    if (!hasPublicPort && (metric.id === 'http_error' || metric.id === 'http_latency' || metric.id === 'hpa_issue')) {
       return false
     }
-    if (hasPort && hasEqualInstances && metric.id === 'hpa_issue') {
+    if (hasPublicPort && hasEqualInstances && metric.id === 'hpa_issue') {
       return false
     }
     return true
