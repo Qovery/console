@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { devopsCopilot } from '@qovery/shared/devops-copilot/data-access'
 
-export interface UseRecurringTasksProps {
+export interface UseAICopilotRecurringTasksProps {
   organizationId: string
 }
 
-export function useRecurringTasks({ organizationId }: UseRecurringTasksProps) {
+export function useAICopilotRecurringTasks({ organizationId }: UseAICopilotRecurringTasksProps) {
   return useQuery({
     ...devopsCopilot.recurringTasks({ organizationId }),
     enabled: !!organizationId,
   })
 }
 
-export default useRecurringTasks
+export default useAICopilotRecurringTasks

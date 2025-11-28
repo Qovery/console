@@ -2,12 +2,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { devopsCopilot, mutations } from '@qovery/shared/devops-copilot/data-access'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 
-export interface UseUpdateOrgConfigProps {
+export interface UseUpdateAICopilotConfigProps {
   organizationId: string
   instructions?: string
 }
 
-export function useUpdateOrgConfig({ organizationId, instructions }: UseUpdateOrgConfigProps) {
+export function useUpdateAICopilotConfig({ organizationId, instructions }: UseUpdateAICopilotConfigProps) {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -61,4 +61,4 @@ export function useUpdateOrgConfig({ organizationId, instructions }: UseUpdateOr
   })
 }
 
-export default useUpdateOrgConfig
+export default useUpdateAICopilotConfig

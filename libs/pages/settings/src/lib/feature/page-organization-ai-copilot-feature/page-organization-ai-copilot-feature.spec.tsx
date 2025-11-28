@@ -1,9 +1,9 @@
-import { render } from '__tests__/utils/setup-jest'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import PageOrganizationAICopilotFeature from './page-organization-ai-copilot-feature'
 
 describe('PageOrganizationAICopilotFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageOrganizationAICopilotFeature />)
+    const { baseElement } = renderWithProviders(<PageOrganizationAICopilotFeature />)
     expect(baseElement).toBeTruthy()
   })
 })

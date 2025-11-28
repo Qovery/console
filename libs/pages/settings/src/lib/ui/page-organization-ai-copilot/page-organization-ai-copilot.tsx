@@ -1,11 +1,11 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Organization } from 'qovery-typescript-axios'
 import {
-  useConfig,
-  useRecurringTasks,
-  useToggleRecurringTask,
-  useDeleteRecurringTask,
-  useUpdateOrgConfig,
+  useAICopilotConfig,
+  useAICopilotRecurringTasks,
+  useToggleAICopilotRecurringTask,
+  useDeleteAICopilotRecurringTask,
+  useUpdateAICopilotConfig,
 } from '@qovery/shared/devops-copilot/feature'
 import SectionAICopilotConfiguration from './section-ai-copilot-configuration/section-ai-copilot-configuration'
 import SectionAICopilotOptIn from './section-ai-copilot-opt-in/section-ai-copilot-opt-in'
@@ -19,9 +19,11 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
   const { organization } = props
   const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot-config-panel')
 
-  const { data: configData, isLoading: isLoadingConfig } = useConfig({ organizationId: organization?.id ?? '' })
+  const { data: configData, isLoading: isLoadingConfig } = useAICopilotConfig({
+    organizationId: organization?.id ?? '',
+  })
 
-  const { data: recurringTasksData, isLoading: isLoadingTasks } = useRecurringTasks({
+  const { data: recurringTasksData, isLoading: isLoadingTasks } = useAICopilotRecurringTasks({
     organizationId: organization?.id ?? '',
   })
 
@@ -30,9 +32,9 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
   const isEnabled = orgConfig?.enabled ?? false
   const currentMode = orgConfig?.read_only ? 'read-only' : 'read-write'
 
-  const toggleTaskMutation = useToggleRecurringTask({ organizationId: organization?.id ?? '' })
-  const deleteTaskMutation = useDeleteRecurringTask({ organizationId: organization?.id ?? '' })
-  const updateConfigMutation = useUpdateOrgConfig({
+  const toggleTaskMutation = useToggleAICopilotRecurringTask({ organizationId: organization?.id ?? '' })
+  const deleteTaskMutation = useDeleteAICopilotRecurringTask({ organizationId: organization?.id ?? '' })
+  const updateConfigMutation = useUpdateAICopilotConfig({
     organizationId: organization?.id ?? '',
     instructions: orgConfig?.instructions,
   })
