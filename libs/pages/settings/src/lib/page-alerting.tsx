@@ -1,6 +1,11 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { useAlerts } from '@qovery/domains/observability/feature'
-import { ALERTING_ISSUES_URL, ALERTING_NOTIFICATION_CHANNEL_URL, ALERTING_URL } from '@qovery/shared/routes'
+import {
+  ALERTING_ALERT_RULES_URL,
+  ALERTING_ISSUES_URL,
+  ALERTING_NOTIFICATION_CHANNEL_URL,
+  ALERTING_URL,
+} from '@qovery/shared/routes'
 import { ErrorBoundary, NavigationLeft, type NavigationLeftLinkProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_ALERTING } from './router/router'
@@ -29,6 +34,12 @@ export function PageAlerting() {
       iconName: issuesCount > 0 ? 'light-emergency-on' : 'light-emergency',
       iconStyle: 'regular',
       url: ALERTING_URL(organizationId) + ALERTING_ISSUES_URL,
+    },
+    {
+      title: 'Alert rules',
+      iconName: 'list-check',
+      iconStyle: 'solid',
+      url: ALERTING_URL(organizationId) + ALERTING_ALERT_RULES_URL,
     },
     {
       title: 'Notification channel',
