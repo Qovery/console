@@ -49,7 +49,6 @@ export function PageTerraformCreateFeature() {
       name: dataTemplate?.slug ?? '',
       icon_uri: dataTemplate?.icon_uri ?? 'app://qovery-console/terraform',
       source_provider: 'GIT',
-      state: 'kubernetes',
       provider_version: {
         read_from_terraform_block: false,
         explicit_version: '1.13',
