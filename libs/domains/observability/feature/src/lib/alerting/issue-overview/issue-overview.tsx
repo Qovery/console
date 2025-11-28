@@ -105,7 +105,7 @@ export function IssueOverview() {
                     <Table.Cell className="h-11">
                       <SeverityIndicator severity={alert.severity} />
                     </Table.Cell>
-                    <Table.Cell className="h-11">{timeAgo(new Date(alert.updated_at ?? ''))}</Table.Cell>
+                    <Table.Cell className="h-11">{timeAgo(new Date(alert.starts_at ?? ''))}</Table.Cell>
                   </Table.Row>
                 )
               })}
