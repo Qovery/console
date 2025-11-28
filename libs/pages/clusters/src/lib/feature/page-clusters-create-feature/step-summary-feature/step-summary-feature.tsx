@@ -9,13 +9,12 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import {
-  ClusterNotificationPermissionModal,
-  getNotificationModalSeen,
-  setNotificationModalSeen,
   useCreateCluster,
   useDeployCluster,
   useEditCloudProviderInfo,
 } from '@qovery/domains/clusters/feature'
+import { trackClusterInstall } from '@qovery/domains/clusters/feature'
+import { useNotificationPermissionModal } from '../../../../../../../domains/clusters/feature/src/lib/deployment-progress/cluster-notification-permission-modal'
 import {
   CLUSTERS_CREATION_EKS_URL,
   CLUSTERS_CREATION_FEATURES_URL,
@@ -25,7 +24,7 @@ import {
   CLUSTERS_GENERAL_URL,
   CLUSTERS_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody, useModal } from '@qovery/shared/ui'
+import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepSummary from '../../../ui/page-clusters-create/step-summary/step-summary'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
@@ -92,27 +91,7 @@ export function StepSummaryFeature() {
     navigate(creationFlowUrl + CLUSTERS_CREATION_EKS_URL)
   }
 
-  const { openModal, closeModal } = useModal()
-
-  const showNotificationModal = (onAfterClose: () => void) => {
-    if (getNotificationModalSeen()) {
-      onAfterClose()
-      return
-    }
-
-    setNotificationModalSeen()
-    openModal({
-      content: (
-        <ClusterNotificationPermissionModal
-          onClose={() => {
-            closeModal()
-            onAfterClose()
-          }}
-        />
-      ),
-      options: { width: 520 },
-    })
-  }
+  const { showNotificationPermissionModal } = useNotificationPermissionModal()
 
   const onBack = () => {
     if (generalData?.installation_type === 'SELF_MANAGED') {
@@ -158,12 +137,13 @@ export function StepSummaryFeature() {
             cloud_provider_credentials,
           },
         })
+        trackClusterInstall(cluster.id)
         await editCloudProviderInfo({
           organizationId,
           clusterId: cluster.id,
           cloudProviderInfoRequest: cloud_provider_credentials,
         })
-        showNotificationModal(() =>
+        showNotificationPermissionModal(() =>
           navigate({
             pathname: creationFlowUrl + CLUSTERS_GENERAL_URL,
             search: '?show-self-managed-guide',
@@ -178,7 +158,7 @@ export function StepSummaryFeature() {
     // EKS
     if (generalData.installation_type === 'PARTIALLY_MANAGED') {
       try {
-        await createCluster({
+        const cluster = await createCluster({
           organizationId,
           clusterRequest: {
             name: generalData.name,
@@ -192,8 +172,9 @@ export function StepSummaryFeature() {
             infrastructure_charts_parameters: resourcesData?.infrastructure_charts_parameters,
           },
         })
+        trackClusterInstall(cluster.id)
 
-        showNotificationModal(() => navigate(CLUSTERS_URL(organizationId)))
+        showNotificationPermissionModal(() => navigate(CLUSTERS_URL(organizationId)))
       } catch (e) {
         console.error(e)
       }
@@ -383,6 +364,7 @@ export function StepSummaryFeature() {
           organizationId,
           clusterRequest,
         })
+        trackClusterInstall(cluster.id)
         await editCloudProviderInfo({
           organizationId,
           clusterId: cluster.id,
@@ -392,7 +374,7 @@ export function StepSummaryFeature() {
         if (withDeploy) {
           await deployCluster({ clusterId: cluster.id, organizationId })
         }
-        showNotificationModal(() => navigate(CLUSTERS_URL(organizationId)))
+        showNotificationPermissionModal(() => navigate(CLUSTERS_URL(organizationId)))
       } catch (e) {
         console.error(e)
       }

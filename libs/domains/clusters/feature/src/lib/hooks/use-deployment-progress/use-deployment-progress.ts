@@ -18,6 +18,15 @@ export interface UseDeploymentProgressProps {
   cloudProvider?: string
 }
 
+type ProgressCacheEntry = {
+  highestStepIndex: number
+  installationComplete: boolean
+  lastTimestamp?: number
+}
+
+// Module-level cache to survive remounts within the same session
+const progressCache = new Map<string, ProgressCacheEntry>()
+
 export function useDeploymentProgress({
   organizationId,
   clusterId,
@@ -29,6 +38,7 @@ export function useDeploymentProgress({
   highestStepIndex: number
   progressValue: number
   currentStepLabel: string
+  creationFailed: boolean
 } {
   const { data: clusterLogs } = useClusterLogs({
     organizationId,
@@ -54,12 +64,25 @@ export function useDeploymentProgress({
   const [{ highestStepIndex, installationComplete }, setProgress] = useState<{
     highestStepIndex: number
     installationComplete: boolean
-  }>({ highestStepIndex: 0, installationComplete: false })
+  }>(() => progressCache.get(clusterId) ?? { highestStepIndex: 0, installationComplete: false })
+  const [creationFailed, setCreationFailed] = useState(false)
 
   useEffect(() => {
     if (!clusterLogs || clusterLogs.length === 0) return
     let maxIndex = 0
     let isComplete = false
+    let isFailed = false
+    const latestTimestamp = clusterLogs[clusterLogs.length - 1]?.timestamp
+
+    const cached = progressCache.get(clusterId) ?? { highestStepIndex: 0, installationComplete: false }
+    const startSteps = new Set([
+      'LoadConfiguration',
+      'Create',
+      'RetrieveClusterConfig',
+      'RetrieveClusterResources',
+      'ValidateSystemRequirements',
+    ])
+    const sawStartStep = clusterLogs.some((log) => log.step && startSteps.has(log.step))
 
     for (const log of clusterLogs) {
       const message =
@@ -70,6 +93,10 @@ export function useDeploymentProgress({
         maxIndex = DEPLOYMENT_STEPS.length - 1
         isComplete = true
         break
+      }
+
+      if (log.step === 'CreateError' || message.includes('CreateError')) {
+        isFailed = true
       }
 
       const triggers: { index: number; match: (msg: string) => boolean }[] = [
@@ -101,11 +128,24 @@ export function useDeploymentProgress({
       if (maxIndex === DEPLOYMENT_STEPS.length - 1) break
     }
 
+    const baseHighest = sawStartStep ? 0 : cached.highestStepIndex
+    const baseComplete = sawStartStep ? false : cached.installationComplete
+
+    const nextHighest = Math.max(baseHighest, maxIndex)
+    const nextComplete = baseComplete || isComplete
+
     setProgress((prev) => ({
-      highestStepIndex: Math.max(prev.highestStepIndex, maxIndex),
-      installationComplete: prev.installationComplete || isComplete,
+      highestStepIndex: Math.max(prev.highestStepIndex, nextHighest),
+      installationComplete: prev.installationComplete || nextComplete,
     }))
-  }, [clusterLogs, clusterName, providerCode])
+    setCreationFailed((prev) => (sawStartStep ? false : prev) || isFailed)
+
+    progressCache.set(clusterId, {
+      highestStepIndex: Math.max(cached.highestStepIndex, nextHighest),
+      installationComplete: cached.installationComplete || nextComplete,
+      lastTimestamp: latestTimestamp ? new Date(latestTimestamp).getTime() : cached.lastTimestamp,
+    })
+  }, [clusterLogs, clusterId, clusterName, providerCode])
 
   const steps = useMemo(() => {
     return DEPLOYMENT_STEPS.map((label, index) => {
@@ -136,6 +176,7 @@ export function useDeploymentProgress({
     highestStepIndex,
     progressValue,
     currentStepLabel,
+    creationFailed,
   }
 }
 

@@ -1,10 +1,14 @@
-import { useState } from 'react'
-import { Button, Icon, InputToggle } from '@qovery/shared/ui'
+import { useCallback, useState } from 'react'
+import { Button, Icon, InputToggle, useModal } from '@qovery/shared/ui'
 
-const NOTIFICATION_MODAL_SEEN_KEY = 'cluster-notification-permission-modal-seen'
+const NOTIFICATION_MODAL_SEEN_KEY = 'cluster-notification-permission-modal-v2-seen'
+const NOTIFICATION_ENABLED_KEY = 'cluster-notification-enabled'
+const SOUND_ENABLED_KEY = 'cluster-sound-enabled'
+
+const isBrowserNotificationSupported = () => typeof window !== 'undefined' && 'Notification' in window
 
 const requestNotificationPermission = async () => {
-  if (typeof window === 'undefined' || !('Notification' in window)) return
+  if (!isBrowserNotificationSupported()) return
   if (Notification.permission === 'default') {
     try {
       await Notification.requestPermission()
@@ -15,33 +19,13 @@ const requestNotificationPermission = async () => {
 }
 
 const requestSoundPermission = async () => {
-  if (typeof window === 'undefined') return
-  const AudioContextConstructor =
-    window.AudioContext ||
-    (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
-  if (!AudioContextConstructor) return
+  // Intentionally left blank: no sound is played, we only record the user's choice.
+  return
+}
 
-  const audioContext = new AudioContextConstructor()
-  if (audioContext.state === 'suspended') {
-    await audioContext.resume()
-  }
-
-  // Play a short, quiet tone to unlock audio playback after user confirmation.
-  const oscillator = audioContext.createOscillator()
-  const gainNode = audioContext.createGain()
-  oscillator.type = 'sine'
-  oscillator.frequency.setValueAtTime(880, audioContext.currentTime)
-  gainNode.gain.setValueAtTime(0.05, audioContext.currentTime)
-  oscillator.connect(gainNode)
-  gainNode.connect(audioContext.destination)
-
-  oscillator.start()
-  oscillator.stop(audioContext.currentTime + 0.12)
-  oscillator.onended = () => {
-    oscillator.disconnect()
-    gainNode.disconnect()
-    audioContext.close().catch(() => null)
-  }
+const getStoredBoolean = (key: string) => {
+  if (typeof window === 'undefined') return false
+  return localStorage.getItem(key) === 'true'
 }
 
 export const getNotificationModalSeen = () => {
@@ -54,16 +38,35 @@ export const setNotificationModalSeen = () => {
   localStorage.setItem(NOTIFICATION_MODAL_SEEN_KEY, 'true')
 }
 
+export const setClusterNotificationEnabled = (enabled: boolean) => {
+  if (typeof window === 'undefined') return
+  localStorage.setItem(NOTIFICATION_ENABLED_KEY, enabled ? 'true' : 'false')
+}
+
+export const setClusterSoundEnabled = (enabled: boolean) => {
+  if (typeof window === 'undefined') return
+  localStorage.setItem(SOUND_ENABLED_KEY, enabled ? 'true' : 'false')
+}
+
+export const isClusterNotificationEnabled = () =>
+  isBrowserNotificationSupported() && Notification.permission === 'granted' && getStoredBoolean(NOTIFICATION_ENABLED_KEY)
+
+export const isClusterSoundEnabled = () => getStoredBoolean(SOUND_ENABLED_KEY)
+
 export interface ClusterNotificationPermissionModalProps {
   onClose: () => void
 }
 
 export function ClusterNotificationPermissionModal({ onClose }: ClusterNotificationPermissionModalProps) {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false)
-  const [soundEnabled, setSoundEnabled] = useState(false)
+  const [notificationsEnabled, setNotificationsEnabled] = useState(() => getStoredBoolean(NOTIFICATION_ENABLED_KEY))
+  const [soundEnabled, setSoundEnabled] = useState(() => getStoredBoolean(SOUND_ENABLED_KEY))
   const [isConfirming, setIsConfirming] = useState(false)
 
   const handleConfirm = async () => {
+    setNotificationModalSeen()
+    setClusterNotificationEnabled(notificationsEnabled)
+    setClusterSoundEnabled(soundEnabled)
+
     if (!notificationsEnabled && !soundEnabled) {
       onClose()
       return
@@ -87,37 +90,43 @@ export function ClusterNotificationPermissionModal({ onClose }: ClusterNotificat
   }
 
   return (
-    <div className="flex w-full flex-col gap-6 p-6">
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 text-brand-600">
-          <Icon iconName="bell-on" iconStyle="regular" />
-        </div>
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold text-neutral-400">Stay informed while we install your cluster</h2>
-          <p className="text-sm text-neutral-350">
-            Enable alerts so we can notify you when installation completes. You can adjust these permissions in your
-            browser settings anytime.
-          </p>
-        </div>
+    <div className="w-full p-5">
+      <div>
+        <h2 className="h4 max-w-sm text-neutral-400">Get notified at completion</h2>
+        <p className="mt-2 text-sm text-neutral-350">
+          Choose how you want to be alerted when the installation completes.
+        </p>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="mt-3">
         <InputToggle
+          small
           value={notificationsEnabled}
           onChange={setNotificationsEnabled}
           title="Browser notifications"
-          description="Get a desktop notification when your cluster is ready."
+          description="Receive a browser notification when the installation completes"
+          className="border-b border-neutral-200 py-4"
         />
         <InputToggle
+          small
           value={soundEnabled}
           onChange={setSoundEnabled}
           title="Sound alert"
-          description="Play a short sound when the installation finishes."
+          description="Play a short sound when the installation completes"
+          className="py-4"
         />
       </div>
 
-      <div className="flex justify-end gap-3">
-        <Button size="lg" variant="plain" color="neutral" onClick={onClose}>
+      <div className="mt-6 flex justify-end gap-3">
+        <Button
+          size="lg"
+          variant="plain"
+          color="neutral"
+          onClick={() => {
+            setNotificationModalSeen()
+            onClose()
+          }}
+        >
           Not now
         </Button>
         <Button size="lg" onClick={handleConfirm} loading={isConfirming}>
@@ -126,6 +135,33 @@ export function ClusterNotificationPermissionModal({ onClose }: ClusterNotificat
       </div>
     </div>
   )
+}
+
+export function useNotificationPermissionModal() {
+  const { openModal, closeModal } = useModal()
+
+  const showNotificationPermissionModal = useCallback(
+    (onAfterClose?: () => void, force?: boolean) => {
+      if (!force && getNotificationModalSeen()) {
+        onAfterClose?.()
+        return
+      }
+
+      openModal({
+        content: (
+          <ClusterNotificationPermissionModal
+            onClose={() => {
+              closeModal()
+              onAfterClose?.()
+            }}
+          />
+        ),
+      })
+    },
+    [closeModal, openModal]
+  )
+
+  return { showNotificationPermissionModal }
 }
 
 export default ClusterNotificationPermissionModal

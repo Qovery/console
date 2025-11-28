@@ -1,9 +1,14 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useMemo } from 'react'
+import { type PropsWithChildren, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { FloatingDeploymentProgressCard, useClusterStatuses } from '@qovery/domains/clusters/feature'
+import {
+  FloatingDeploymentProgressCard,
+  useClusterInstallNotifications,
+  useClusterStatuses,
+} from '@qovery/domains/clusters/feature'
+import { getTrackedClusterInstallIds } from '@qovery/domains/clusters/feature'
 import { InvoiceBanner, useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton, DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
@@ -52,7 +57,15 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { organizationId = '' } = useParams()
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
+  const [shouldPollClusterStatuses, setShouldPollClusterStatuses] = useState(false)
+  const [activeDeploymentClusterIds, setActiveDeploymentClusterIds] = useState<string[]>([])
+  const [trackedClusterIds, setTrackedClusterIds] = useState<string[]>(getTrackedClusterInstallIds())
+  const removalTimersRef = useRef<Record<string, number>>({})
+  const { data: clusterStatuses } = useClusterStatuses({
+    organizationId,
+    enabled: !!organizationId,
+    refetchInterval: shouldPollClusterStatuses ? 5000 : undefined,
+  })
   const { data: organization } = useOrganization({ organizationId })
   const { roles, isQoveryAdminUser } = useUserRole()
   const isFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
@@ -71,12 +84,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
     !matchLogInfraRoute && clusters && displayClusterDeploymentBanner(firstClusterStatus?.status) && !clusterIsDeployed
 
   const deployingClusters =
-    clusters?.filter(({ id }) =>
-      clusterStatuses?.some(
-        ({ cluster_id, status, is_deployed }) =>
-          cluster_id === id && displayClusterDeploymentBanner(status) && !is_deployed
-      )
-    ) || []
+    clusters?.filter(({ id }) => activeDeploymentClusterIds.includes(id) && trackedClusterIds.includes(id)) || []
   const isOnClusterPage = pathname.includes('/cluster/')
   const showFloatingDeploymentCard = deployingClusters.length > 0 && !isOnClusterPage
 
@@ -114,6 +122,88 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
     }
     return false
   }, [roles, organizationId, isQoveryAdminUser])
+
+  useEffect(() => {
+    const hasDeployingCluster =
+      clusterStatuses?.some(
+        ({ status, is_deployed }) =>
+          displayClusterDeploymentBanner(status) && (is_deployed === false || is_deployed === undefined)
+      ) ?? false
+    setShouldPollClusterStatuses(hasDeployingCluster)
+    setTrackedClusterIds(getTrackedClusterInstallIds())
+  }, [clusterStatuses])
+
+  // Track deploying clusters and keep them visible briefly after completion
+  useEffect(() => {
+    if (!clusterStatuses) return
+    const installingIds =
+      clusterStatuses
+        .filter(
+          ({ status, is_deployed }) =>
+            displayClusterDeploymentBanner(status) && (is_deployed === false || is_deployed === undefined)
+        )
+        .map(({ cluster_id }) => cluster_id)
+        .filter((id): id is string => Boolean(id)) || []
+
+    if (installingIds.length) {
+      setActiveDeploymentClusterIds((prev) => {
+        const next = new Set(prev)
+        installingIds.forEach((id) => next.add(id))
+        return Array.from(next)
+      })
+    }
+  }, [clusterStatuses])
+
+  useEffect(() => {
+    if (!clusterStatuses) return
+    clusterStatuses.forEach(({ cluster_id, status, is_deployed }) => {
+      if (!cluster_id || !activeDeploymentClusterIds.includes(cluster_id)) return
+      const isInstalled =
+        is_deployed === true || status === ClusterStateEnum.DEPLOYED || status === ClusterStateEnum.READY
+      const isFailed =
+        status === ClusterStateEnum.DEPLOYMENT_ERROR ||
+        status === ClusterStateEnum.BUILD_ERROR ||
+        status === ClusterStateEnum.DELETE_ERROR
+      const alreadyScheduled = removalTimersRef.current[cluster_id]
+
+      if ((isInstalled || isFailed) && !alreadyScheduled) {
+        const timer = window.setTimeout(() => {
+          setActiveDeploymentClusterIds((prev) => prev.filter((id) => id !== cluster_id))
+          delete removalTimersRef.current[cluster_id]
+        }, 10000)
+        removalTimersRef.current[cluster_id] = timer
+      }
+    })
+
+    Object.entries(removalTimersRef.current).forEach(([clusterId, timer]) => {
+      if (!activeDeploymentClusterIds.includes(clusterId)) {
+        clearTimeout(timer)
+        delete removalTimersRef.current[clusterId]
+      }
+    })
+  }, [clusterStatuses, activeDeploymentClusterIds])
+
+  useEffect(
+    () => () => {
+      Object.values(removalTimersRef.current).forEach((timer) => clearTimeout(timer))
+      removalTimersRef.current = {}
+    },
+    []
+  )
+
+  useEffect(() => {
+    if (!clusters?.length) {
+      setActiveDeploymentClusterIds([])
+      return
+    }
+    setActiveDeploymentClusterIds((prev) => prev.filter((id) => clusters.some((cluster) => cluster.id === id)))
+  }, [clusters])
+
+  useClusterInstallNotifications({
+    organizationId,
+    clusters: clusters ?? [],
+    clusterStatuses,
+  })
 
   return (
     <>
@@ -162,16 +252,6 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 invalid.
               </Banner>
             )}
-            {clusterBanner && (
-              <Banner
-                color="brand"
-                onClickButton={() => navigate(INFRA_LOGS_URL(organizationId, firstCluster?.id))}
-                buttonLabel="See logs"
-              >
-                Installation of the cluster <span className="mx-1 block font-bold">{firstCluster?.name}</span> is
-                ongoing, you can follow it from logs
-              </Banner>
-            )}
             <InvoiceBanner />
             {topBar && (
               <TopBar>
@@ -184,10 +264,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
           </div>
         </div>
         {showFloatingDeploymentCard && organizationId && deployingClusters.length > 0 && (
-          <FloatingDeploymentProgressCard
-            organizationId={organizationId}
-            clusters={deployingClusters}
-          />
+          <FloatingDeploymentProgressCard organizationId={organizationId} clusters={deployingClusters} />
         )}
       </main>
     </>

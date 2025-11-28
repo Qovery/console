@@ -21,10 +21,12 @@ export * from './lib/hooks/use-edit-cluster-kubeconfig/use-edit-cluster-kubeconf
 export * from './lib/hooks/use-cluster-logs/use-cluster-logs'
 export * from './lib/hooks/use-cluster-status/use-cluster-status'
 export * from './lib/hooks/use-cluster-statuses/use-cluster-statuses'
+export * from './lib/hooks/use-cluster-install-notifications/use-cluster-install-notifications'
 export * from './lib/hooks/use-cluster/use-cluster'
 export * from './lib/hooks/use-clusters/use-clusters'
 export * from './lib/hooks/use-cluster-advanced-settings/use-cluster-advanced-settings'
 export * from './lib/hooks/use-default-advanced-settings/use-default-advanced-settings'
+export * from './lib/utils/cluster-install-tracking'
 export * from './lib/hooks/use-download-kubeconfig/use-download-kubeconfig'
 export * from './lib/hooks/use-create-cluster/use-create-cluster'
 export * from './lib/hooks/use-edit-cloud-provider-info/use-edit-cloud-provider-info'
@@ -39,11 +41,6 @@ export * from './lib/hooks/use-update-karpenter-private-fargate/use-update-karpe
 export * from './lib/hooks/use-cluster-running-status/use-cluster-running-status'
 export * from './lib/hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 export * from './lib/hooks/use-deployment-progress/use-deployment-progress'
-export {
-  ClusterNotificationPermissionModal,
-  getNotificationModalSeen,
-  setNotificationModalSeen,
-} from './lib/deployment-progress/cluster-notification-permission-modal'
 export { FloatingDeploymentProgressCard } from './lib/deployment-progress/floating-deployment-progress-card'
 export * from './lib/gpu-resources-settings/gpu-resources-settings'
 export * from './lib/utils/has-gpu-instance'

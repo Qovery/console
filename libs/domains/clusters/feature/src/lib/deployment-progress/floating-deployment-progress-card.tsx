@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { useState } from 'react'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { OVERVIEW_URL } from '@qovery/shared/routes'
+import { INFRA_LOGS_URL, OVERVIEW_URL } from '@qovery/shared/routes'
 import { Icon, Link } from '@qovery/shared/ui'
 import { useDeploymentProgress } from '../hooks/use-deployment-progress/use-deployment-progress'
 
@@ -28,7 +28,7 @@ function ClusterRow({
   isLast: boolean
 }) {
   const [expanded, setExpanded] = useState(false)
-  const { steps, installationComplete, progressValue, currentStepLabel } = useDeploymentProgress({
+  const { steps, installationComplete, progressValue, currentStepLabel, creationFailed } = useDeploymentProgress({
     organizationId,
     clusterId,
     clusterName,
@@ -40,6 +40,13 @@ function ClusterRow({
   const rowClasses = isSingle ? '' : clsx(!isLast && 'border-b border-neutral-200')
 
   const containerClasses = isSingle ? 'rounded-xl' : ''
+  const isDone = installationComplete || creationFailed
+  const targetLink = creationFailed
+    ? INFRA_LOGS_URL(organizationId, clusterId)
+    : projectTarget
+      ? OVERVIEW_URL(organizationId, projectTarget.id)
+      : undefined
+  const targetLabel = creationFailed ? 'See logs' : projectTarget ? 'Start deploying' : undefined
 
   return (
     <div className={rowClasses}>
@@ -47,9 +54,9 @@ function ClusterRow({
         className={`${containerClasses} relative z-10 flex w-full items-center justify-between gap-4 overflow-hidden bg-white p-4 text-sm shadow-sm`}
       >
         <div className="flex shrink-0 items-center gap-2 text-neutral-400">
-          {installationComplete ? (
-            <Icon iconName="check-circle" iconStyle="solid" className="text-green-500" />
-          ) : (
+          {installationComplete && <Icon iconName="check-circle" iconStyle="solid" className="text-green-500" />}
+          {creationFailed && <Icon iconName="circle-xmark" iconStyle="solid" className="text-red-500" />}
+          {!isDone && (
             <span aria-hidden="true" className="inline-flex h-[14px] w-[14px] items-center justify-center">
               <svg className="-rotate-90" width="14" height="14" viewBox="0 0 14 14" role="presentation">
                 <circle cx="7" cy="7" r={6.25} stroke="#E5E7EB" strokeWidth={1.5} fill="none" strokeLinecap="round" />
@@ -71,14 +78,9 @@ function ClusterRow({
           <span className="truncate">{clusterName ?? 'Cluster'}</span>
         </div>
         <div className="flex min-w-0 items-center gap-3">
-          {installationComplete && projectTarget && (
-            <Link
-              to={OVERVIEW_URL(organizationId, projectTarget.id)}
-              size="ssm"
-              color="current"
-              className="text-neutral-350 hover:text-neutral-400"
-            >
-              Start deploying
+          {targetLink && targetLabel && (
+            <Link to={targetLink} size="ssm" color="current" className="text-neutral-350 hover:text-neutral-400">
+              {targetLabel}
               <Icon iconName="chevron-right" iconStyle="regular" />
             </Link>
           )}
@@ -87,7 +89,9 @@ function ClusterRow({
             className="flex min-w-0 items-center gap-2 text-ssm text-neutral-350 hover:text-neutral-400"
             onClick={() => setExpanded((prev) => !prev)}
           >
-            <span className="truncate text-left">{installationComplete ? 'Cluster installed!' : currentStepLabel}</span>
+            <span className="truncate text-left">
+              {creationFailed ? 'Cluster install failed' : installationComplete ? 'Cluster installed!' : currentStepLabel}
+            </span>
             <Icon iconName={expanded ? 'chevron-up' : 'chevron-down'} iconStyle="regular" />
           </button>
         </div>

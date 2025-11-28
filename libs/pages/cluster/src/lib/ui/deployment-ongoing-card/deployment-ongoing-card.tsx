@@ -20,7 +20,7 @@ export function DeploymentOngoingCard({
 }: DeploymentOngoingCardProps) {
   const { pathname } = useLocation()
   const { data: projects = [] } = useProjects({ organizationId, enabled: !!organizationId })
-  const { steps, installationComplete, progressValue } = useDeploymentProgress({
+  const { steps, installationComplete, progressValue, creationFailed } = useDeploymentProgress({
     organizationId,
     clusterId,
     clusterName,
@@ -28,16 +28,27 @@ export function DeploymentOngoingCard({
   })
 
   const deploymentLink =
-    installationComplete && projects[0]
-      ? OVERVIEW_URL(organizationId, projects[0].id)
-      : INFRA_LOGS_URL(organizationId, clusterId)
-  const deploymentLinkLabel = installationComplete && projects[0] ? 'Start deploying' : 'Cluster logs'
+    creationFailed || !projects[0]
+      ? INFRA_LOGS_URL(organizationId, clusterId)
+      : installationComplete
+        ? OVERVIEW_URL(organizationId, projects[0].id)
+        : INFRA_LOGS_URL(organizationId, clusterId)
+  const deploymentLinkLabel = creationFailed
+    ? 'See logs'
+    : installationComplete && projects[0]
+      ? 'Start deploying'
+      : 'Cluster logs'
 
   return (
     <div className="rounded-lg border border-neutral-200 bg-neutral-100 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border-b border-neutral-200 bg-white p-4">
         <div className="flex items-center gap-2 text-sm font-medium text-neutral-400">
-          {installationComplete ? (
+          {creationFailed ? (
+            <>
+              <Icon iconName="circle-xmark" iconStyle="solid" className="text-red-500" />
+              Cluster install failed
+            </>
+          ) : installationComplete ? (
             <>
               <Icon iconName="check-circle" iconStyle="regular" className="text-green-500" />
               Cluster installed!
