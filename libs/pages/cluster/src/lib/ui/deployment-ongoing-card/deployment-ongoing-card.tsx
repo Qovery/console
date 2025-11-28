@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useClusterLogs } from '@qovery/domains/clusters/feature'
+import { useDeploymentProgress } from '@qovery/domains/clusters/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { OVERVIEW_URL } from '@qovery/shared/routes'
@@ -13,16 +12,6 @@ export interface DeploymentOngoingCardProps {
   cloudProvider?: string
 }
 
-type StepStatus = 'current' | 'pending' | 'done'
-
-const DEPLOYMENT_STEPS = [
-  'Validating config',
-  'Providing infra (on provider side)',
-  'Verifying provided infra',
-  'Installing Qovery stack',
-  'Verifying kube deprecation API calls',
-]
-
 export function DeploymentOngoingCard({
   organizationId,
   clusterId,
@@ -30,104 +19,13 @@ export function DeploymentOngoingCard({
   cloudProvider,
 }: DeploymentOngoingCardProps) {
   const { pathname } = useLocation()
-  const { data: clusterLogs } = useClusterLogs({
+  const { data: projects = [] } = useProjects({ organizationId, enabled: !!organizationId })
+  const { steps, installationComplete, progressValue } = useDeploymentProgress({
     organizationId,
     clusterId,
-    refetchInterval: 3000,
+    clusterName,
+    cloudProvider,
   })
-  const { data: projects = [] } = useProjects({ organizationId, enabled: !!organizationId })
-
-  const providerCode = useMemo(() => {
-    switch (cloudProvider) {
-      case 'AWS':
-        return 'EKS'
-      case 'GCP':
-        return 'GKE'
-      case 'AZURE':
-        return 'AKS'
-      case 'SCALEWAY':
-        return 'ScwKapsule'
-      default:
-        return ''
-    }
-  }, [cloudProvider])
-
-  const [{ highestStepIndex, installationComplete }, setProgress] = useState<{
-    highestStepIndex: number
-    installationComplete: boolean
-  }>({ highestStepIndex: 0, installationComplete: false })
-
-  useEffect(() => {
-    if (!clusterLogs || clusterLogs.length === 0) return
-    let maxIndex = 0
-    let isComplete = false
-
-    for (const log of clusterLogs) {
-      const message =
-        (log.error as { user_log_message?: string } | undefined)?.user_log_message ?? log.message?.safe_message ?? ''
-      if (!message) continue
-
-      if (message.includes('Kubernetes cluster successfully created')) {
-        maxIndex = DEPLOYMENT_STEPS.length - 1
-        isComplete = true
-        break
-      }
-
-      const triggers: { index: number; match: (msg: string) => boolean }[] = [
-        {
-          index: DEPLOYMENT_STEPS.length - 1,
-          match: (msg) => msg.includes('Check if cluster has calls to deprecated kubernetes API for version'),
-        },
-        {
-          index: 1,
-          match: (msg) =>
-            Boolean(clusterName && providerCode && msg.includes(`Deployment ${providerCode} cluster ${clusterName}`)),
-        },
-        {
-          index: 2,
-          match: (msg) => msg.includes('Saved the plan to: tf_plan'),
-        },
-        {
-          index: 3,
-          match: (msg) => msg.includes('Preparing Helm files on disk'),
-        },
-      ]
-
-      for (const trigger of triggers) {
-        if (trigger.match(message)) {
-          maxIndex = Math.max(maxIndex, trigger.index)
-        }
-      }
-
-      if (maxIndex === DEPLOYMENT_STEPS.length - 1) break
-    }
-
-    setProgress((prev) => ({
-      highestStepIndex: Math.max(prev.highestStepIndex, maxIndex),
-      installationComplete: prev.installationComplete || isComplete,
-    }))
-  }, [clusterLogs, clusterName, providerCode])
-
-  const steps = useMemo(() => {
-    return DEPLOYMENT_STEPS.map((label, index) => {
-      if (installationComplete) {
-        return { label, status: 'done' as StepStatus }
-      }
-      if (index < highestStepIndex) {
-        return { label, status: 'done' as StepStatus }
-      }
-      if (index === highestStepIndex) {
-        return { label, status: 'current' as StepStatus }
-      }
-      return { label, status: 'pending' as StepStatus }
-    })
-  }, [highestStepIndex, installationComplete])
-
-  const progressValue = useMemo(() => {
-    const stepsCount = DEPLOYMENT_STEPS.length
-    const filledSteps = installationComplete ? stepsCount : Math.max(0, highestStepIndex)
-    return Math.min(filledSteps / stepsCount, 1)
-  }, [highestStepIndex, installationComplete])
 
   const deploymentLink =
     installationComplete && projects[0]
@@ -138,7 +36,7 @@ export function DeploymentOngoingCard({
   return (
     <div className="rounded-lg border border-neutral-200 bg-neutral-100 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border-b border-neutral-200 bg-white p-4">
-        <div className="flex items-center gap-2 text-sm font-medium text-neutral-500">
+        <div className="flex items-center gap-2 text-sm font-medium text-neutral-400">
           {installationComplete ? (
             <>
               <Icon iconName="check-circle" iconStyle="regular" className="text-green-500" />
@@ -159,7 +57,7 @@ export function DeploymentOngoingCard({
                     strokeLinecap="round"
                     strokeDasharray={2 * Math.PI * 6.25}
                     strokeDashoffset={2 * Math.PI * 6.25 * (1 - progressValue)}
-                    className="transition duration-150 ease-in-out"
+                    className="transition-[stroke-dashoffset] duration-150 ease-in-out"
                   />
                 </svg>
               </span>
@@ -175,7 +73,7 @@ export function DeploymentOngoingCard({
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-3 p-4 text-ssm" role="list">
-        {steps.map(({ label, status }, index) => (
+        {steps.map(({ label, status }: { label: string; status: 'current' | 'pending' | 'done' }, index: number) => (
           <div key={label} className="flex items-center" role="listitem">
             {status === 'done' && (
               <Icon iconName="check-circle" iconStyle="regular" className="mr-2 text-ssm text-neutral-350" />

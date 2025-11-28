@@ -8,7 +8,14 @@ import { useCallback, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
-import { useCreateCluster, useDeployCluster, useEditCloudProviderInfo } from '@qovery/domains/clusters/feature'
+import {
+  ClusterNotificationPermissionModal,
+  getNotificationModalSeen,
+  setNotificationModalSeen,
+  useCreateCluster,
+  useDeployCluster,
+  useEditCloudProviderInfo,
+} from '@qovery/domains/clusters/feature'
 import {
   CLUSTERS_CREATION_EKS_URL,
   CLUSTERS_CREATION_FEATURES_URL,
@@ -18,7 +25,7 @@ import {
   CLUSTERS_GENERAL_URL,
   CLUSTERS_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody } from '@qovery/shared/ui'
+import { FunnelFlowBody, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepSummary from '../../../ui/page-clusters-create/step-summary/step-summary'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
@@ -85,6 +92,28 @@ export function StepSummaryFeature() {
     navigate(creationFlowUrl + CLUSTERS_CREATION_EKS_URL)
   }
 
+  const { openModal, closeModal } = useModal()
+
+  const showNotificationModal = (onAfterClose: () => void) => {
+    if (getNotificationModalSeen()) {
+      onAfterClose()
+      return
+    }
+
+    setNotificationModalSeen()
+    openModal({
+      content: (
+        <ClusterNotificationPermissionModal
+          onClose={() => {
+            closeModal()
+            onAfterClose()
+          }}
+        />
+      ),
+      options: { width: 520 },
+    })
+  }
+
   const onBack = () => {
     if (generalData?.installation_type === 'SELF_MANAGED') {
       goToKubeconfig()
@@ -134,10 +163,12 @@ export function StepSummaryFeature() {
           clusterId: cluster.id,
           cloudProviderInfoRequest: cloud_provider_credentials,
         })
-        navigate({
-          pathname: creationFlowUrl + CLUSTERS_GENERAL_URL,
-          search: '?show-self-managed-guide',
-        })
+        showNotificationModal(() =>
+          navigate({
+            pathname: creationFlowUrl + CLUSTERS_GENERAL_URL,
+            search: '?show-self-managed-guide',
+          })
+        )
       } catch (e) {
         console.error(e)
       }
@@ -162,7 +193,7 @@ export function StepSummaryFeature() {
           },
         })
 
-        navigate(CLUSTERS_URL(organizationId))
+        showNotificationModal(() => navigate(CLUSTERS_URL(organizationId)))
       } catch (e) {
         console.error(e)
       }
@@ -361,7 +392,7 @@ export function StepSummaryFeature() {
         if (withDeploy) {
           await deployCluster({ clusterId: cluster.id, organizationId })
         }
-        navigate(CLUSTERS_URL(organizationId))
+        showNotificationModal(() => navigate(CLUSTERS_URL(organizationId)))
       } catch (e) {
         console.error(e)
       }
