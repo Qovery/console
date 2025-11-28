@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { devopsCopilot, mutations } from '@qovery/shared/devops-copilot/data-access'
+import { type AICopilotConfigResponse, devopsCopilot, mutations } from '@qovery/shared/devops-copilot/data-access'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 
 export interface UseUpdateAICopilotConfigProps {
@@ -25,16 +25,18 @@ export function useUpdateAICopilotConfig({ organizationId, instructions }: UseUp
 
       const previousConfig = queryClient.getQueryData(devopsCopilot.config({ organizationId }).queryKey)
 
-      queryClient.setQueryData(devopsCopilot.config({ organizationId }).queryKey, (old: any) =>
-        old
-          ? {
-              ...old,
-              org_config: {
-                ...old?.org_config,
-                read_only: readOnly,
-              },
-            }
-          : old
+      queryClient.setQueryData(
+        devopsCopilot.config({ organizationId }).queryKey,
+        (old: AICopilotConfigResponse | undefined) =>
+          old
+            ? {
+                ...old,
+                org_config: {
+                  ...old.org_config,
+                  read_only: readOnly,
+                },
+              }
+            : old
       )
 
       return { previousConfig }

@@ -6,10 +6,19 @@ import mermaid from 'mermaid'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type ComponentProps, forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
-import { AnimatedGradientText, Button, Callout, DropdownMenu, Icon, Link, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
+import { SETTINGS_AI_COPILOT_URL, SETTINGS_URL } from '@qovery/shared/routes'
+import {
+  AnimatedGradientText,
+  Button,
+  Callout,
+  DropdownMenu,
+  Icon,
+  Link,
+  LoaderSpinner,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
-import { SETTINGS_AI_COPILOT_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { RenderMarkdown } from '../devops-render-markdown/devops-render-markdown'

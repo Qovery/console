@@ -3,8 +3,8 @@ import { type Organization } from 'qovery-typescript-axios'
 import {
   useAICopilotConfig,
   useAICopilotRecurringTasks,
-  useToggleAICopilotRecurringTask,
   useDeleteAICopilotRecurringTask,
+  useToggleAICopilotRecurringTask,
   useUpdateAICopilotConfig,
 } from '@qovery/shared/devops-copilot/feature'
 import SectionAICopilotConfiguration from './section-ai-copilot-configuration/section-ai-copilot-configuration'

@@ -1,3 +1,4 @@
+import { type RecurringTask } from '@qovery/shared/devops-copilot/data-access'
 import {
   BlockContent,
   Button,
@@ -9,7 +10,6 @@ import {
   Section,
   useModal,
 } from '@qovery/shared/ui'
-import { type RecurringTask } from '@qovery/shared/devops-copilot/data-access'
 
 export type { RecurringTask }
 

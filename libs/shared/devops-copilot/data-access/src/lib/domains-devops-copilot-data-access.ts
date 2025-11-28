@@ -21,6 +21,16 @@ export interface RecurringTasksResponse {
   tasks: RecurringTask[]
 }
 
+export interface AICopilotOrgConfig {
+  enabled: boolean
+  read_only: boolean
+  instructions?: string
+}
+
+export interface AICopilotConfigResponse {
+  org_config: AICopilotOrgConfig
+}
+
 // Create a dedicated axios instance for DevOps Copilot
 export const devopsCopilotAxios = axios.create({
   baseURL: DEVOPS_COPILOT_API_BASE_URL,
@@ -48,8 +58,8 @@ export const devopsCopilot = createQueryKeys('devopsCopilot', {
   }),
   config: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
-    async queryFn() {
-      const response = await devopsCopilotAxios.get(`/organization/${organizationId}/config`)
+    async queryFn(): Promise<AICopilotConfigResponse> {
+      const response = await devopsCopilotAxios.get<AICopilotConfigResponse>(`/organization/${organizationId}/config`)
 
       return response.data
     },
