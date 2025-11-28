@@ -493,7 +493,7 @@ export function MetricConfigurationStep({
                 )}
               </div>
             )}
-            <div className="flex w-full items-center gap-2">
+            <div className={clsx('flex items-center gap-2', isEdit ? 'w-full' : '')}>
               {!isEdit && isLastMetric && includedAlertsCount > 0 && (
                 <Button type="button" variant="outline" size="lg" onClick={handleSkip} loading={isLoading}>
                   Skip and create others

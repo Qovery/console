@@ -41,6 +41,24 @@ const METRICS: Metric[] = [
 export function CreateKeyAlertsModal({ onClose, service, organizationId, projectId }: CreateKeyAlertsModalProps) {
   const navigate = useNavigate()
 
+  const hasPort =
+    (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
+    (service?.ports || []).length > 0
+
+  const hasEqualInstances =
+    (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
+    service?.min_running_instances === service?.max_running_instances
+
+  const availableMetrics = METRICS.filter((metric) => {
+    if (!hasPort && (metric.id === 'http_error' || metric.id === 'hpa_issue')) {
+      return false
+    }
+    if (hasPort && hasEqualInstances && metric.id === 'hpa_issue') {
+      return false
+    }
+    return true
+  })
+
   const methods = useForm<CreateKeyAlertsFormData>({
     mode: 'onChange',
     defaultValues: {
@@ -123,7 +141,7 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
             </div>
 
             <div className="mb-1 grid grid-cols-3 gap-2">
-              {METRICS.map((metric) => {
+              {availableMetrics.map((metric) => {
                 const isSelected = watchMetrics?.includes(metric.id)
 
                 return (
