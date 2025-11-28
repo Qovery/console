@@ -62,10 +62,7 @@ export function PageAlerting() {
             {ROUTER_ALERTING.map((route) => (
               <Route key={route.path} path={route.path} element={route.component} />
             ))}
-            <Route
-              path="*"
-              element={<Navigate replace to={ALERTING_URL(organizationId) + ALERTING_NOTIFICATION_CHANNEL_URL} />}
-            />
+            <Route path="*" element={<Navigate replace to={ALERTING_URL(organizationId) + ALERTING_ISSUES_URL} />} />
           </Routes>
         </ErrorBoundary>
       </div>
