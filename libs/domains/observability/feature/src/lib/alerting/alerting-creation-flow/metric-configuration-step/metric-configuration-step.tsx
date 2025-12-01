@@ -147,7 +147,10 @@ export function MetricConfigurationStep({
     const metric = formatMetricLabel(watchTag)
     const functionLabel = watchCondition?.function
     const operator = formatOperator(watchCondition?.operator)
-    const threshold = formatThreshold(parseFloat(watchCondition?.threshold?.toString() ?? '0'))
+    const threshold = formatThreshold(
+      watchTag as MetricCategory,
+      parseFloat(watchCondition?.threshold?.toString() ?? '0')
+    )
     const duration = formatDuration(watchForDuration)
 
     if (metric && operator && threshold && duration && functionLabel) {
