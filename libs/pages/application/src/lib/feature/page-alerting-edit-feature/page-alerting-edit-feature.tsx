@@ -59,6 +59,9 @@ export function PageAlertingEditFeature() {
 
   useEffect(() => {
     if (alertRule && alerts.length === 0) {
+      const rawThreshold = alertRule.condition.threshold ?? 0
+      const threshold = alertRule.tag === 'http_latency' ? rawThreshold : rawThreshold * 100 || 80
+
       const alertConfig: AlertConfiguration = {
         id: alertRule.id,
         tag: alertRule.tag ?? 'CPU',
@@ -67,7 +70,7 @@ export function PageAlertingEditFeature() {
           kind: alertRule.condition.kind || 'BUILT',
           function: alertRule.condition.function || 'AVG',
           operator: alertRule.condition.operator || 'ABOVE',
-          threshold: (alertRule.condition.threshold ?? 0) * 100 || 80,
+          threshold,
           promql: alertRule.condition.promql || '',
         },
         name: alertRule.name,
