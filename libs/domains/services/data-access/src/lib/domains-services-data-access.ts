@@ -68,7 +68,6 @@ import {
   type TerraformDeploymentRestrictionRequest,
   TerraformMainCallsApi,
   type TerraformRequest,
-  type TerraformVariablesReplaceRequest,
   TerraformsApi,
   type Application as _Application,
   type CloneServiceRequest as _CloneServiceRequest,
