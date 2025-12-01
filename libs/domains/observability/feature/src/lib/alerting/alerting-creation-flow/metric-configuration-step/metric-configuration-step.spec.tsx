@@ -124,12 +124,11 @@ describe('MetricConfigurationStep', () => {
     })
   })
 
-  it('should render save button in normal mode when on last metric', async () => {
+  it('should render create button in normal mode when on last metric', async () => {
     await renderWithContext()
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /skip this alert/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /create/i })).toBeInTheDocument()
     })
   })
 
@@ -162,13 +161,13 @@ describe('MetricConfigurationStep', () => {
     })
   })
 
-  it('should enable save button when form is valid', async () => {
+  it('should enable create button when form is valid', async () => {
     const validAlert = createAlert({ tag: 'cpu' })
     await renderWithContext([validAlert])
 
     await waitFor(() => {
-      const saveButton = screen.getByRole('button', { name: /save/i })
-      expect(saveButton).toBeEnabled()
+      const createButton = screen.getByRole('button', { name: /create/i })
+      expect(createButton).toBeEnabled()
     })
   })
 

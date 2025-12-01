@@ -25,10 +25,8 @@ describe('CreateKeyAlertsModal', () => {
 
     expect(screen.getByText('CPU')).toBeInTheDocument()
     expect(screen.getByText('Memory')).toBeInTheDocument()
-    expect(screen.getByText('HTTP error')).toBeInTheDocument()
-    expect(screen.getByText('Replicas number')).toBeInTheDocument()
-    expect(screen.getByText('k8s event')).toBeInTheDocument()
-    expect(screen.getByText('HPA issue')).toBeInTheDocument()
+    expect(screen.getByText('Missing replicas')).toBeInTheDocument()
+    expect(screen.getByText('Instance restart')).toBeInTheDocument()
   })
 
   it('should pre-fill service name when service prop is provided', () => {

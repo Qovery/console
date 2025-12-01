@@ -35,7 +35,7 @@ const METRICS: Metric[] = [
   { id: 'http_error', label: 'HTTP error', iconName: 'globe' },
   { id: 'http_latency', label: 'HTTP latency', iconName: 'globe' },
   { id: 'missing_replicas', label: 'Missing replicas', iconName: 'server' },
-  { id: 'restart_reason', label: 'instance restart', iconName: 'cube' },
+  { id: 'restart_reason', label: 'Instance restart', iconName: 'cube' },
   { id: 'hpa_issue', label: 'HPA issue', iconName: 'scale-balanced' },
 ]
 
