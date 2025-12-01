@@ -151,7 +151,10 @@ export function MetricConfigurationStep({
     const duration = formatDuration(watchForDuration)
 
     if (metric && operator && threshold && duration && functionLabel) {
-      methods.setValue('name', `${functionLabel} ${metric} ${operator} ${threshold} for ${duration}`)
+      methods.setValue(
+        'name',
+        `${functionLabel} ${metric} ${operator} ${threshold} ${duration === 'immediately' ? 'immediately' : `for ${duration}`}`
+      )
     }
   }, [
     watchTag,
@@ -230,7 +233,7 @@ export function MetricConfigurationStep({
                   </div>
                   <ExternalLink
                     className="shrink-0"
-                    href="https://hub.qovery.com/docs/using-qovery/configuration/observability/alerting/#alert-conditions"
+                    href="https://www.qovery.com/docs/configuration/integrations/observability/qovery-observe"
                     size="sm"
                   >
                     Conditions guide

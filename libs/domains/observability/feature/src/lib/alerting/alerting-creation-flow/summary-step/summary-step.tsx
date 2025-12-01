@@ -29,6 +29,7 @@ interface AlertsSummaryTableProps {
   showIncludeButton?: boolean
 }
 
+// XXX: Not used for now but will be used in the future with flow bulk improvements
 function AlertsSummaryTable({
   alerts,
   onEdit,

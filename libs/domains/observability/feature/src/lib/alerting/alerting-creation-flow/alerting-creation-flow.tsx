@@ -25,8 +25,8 @@ const METRIC_LABELS: Record<string, string> = {
   memory: 'Memory',
   k8s_event: 'k8s event',
   hpa_issue: 'HPA issue',
-  qovery_http_error: 'HTTP error',
-  qovery_http_latency: 'HTTP latency',
+  http_error: 'HTTP error',
+  http_latency: 'HTTP latency',
   replicas_number: 'Replicas number',
 }
 
@@ -112,7 +112,8 @@ export function AlertingCreationFlow({
     if (!metricCategory) {
       return 'Alerts'
     }
-    return `${METRIC_LABELS[metricCategory] || metricCategory} alerts`
+    const metricLabel = METRIC_LABELS[metricCategory] || metricCategory
+    return `${metricLabel} alert`
   }
 
   const handleExit = () => {
