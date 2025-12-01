@@ -14,9 +14,9 @@ import {
   QOVERY_HTTP_ERROR,
   QUERY_CPU,
   QUERY_HPA_ISSUE,
-  QUERY_K8S_EVENT,
   QUERY_MEMORY,
   QUERY_REPLICAS_NUMBER,
+  QUERY_RESTART_REASON,
 } from './alert-queries'
 
 const { Table } = TablePrimitives
@@ -190,7 +190,7 @@ export function SummaryStep() {
                 .with('memory', () => QUERY_MEMORY(containerName))
                 .with('replicas_number', () => QUERY_REPLICAS_NUMBER(containerName))
                 .with('hpa_issue', () => QUERY_HPA_ISSUE(service.id))
-                .with('k8s_event', () => QUERY_K8S_EVENT(service.id))
+                .with('restart_reason', () => QUERY_RESTART_REASON(containerName))
                 .with('http_error', () => QOVERY_HTTP_ERROR(ingressName))
                 .otherwise(() => ''),
             },
