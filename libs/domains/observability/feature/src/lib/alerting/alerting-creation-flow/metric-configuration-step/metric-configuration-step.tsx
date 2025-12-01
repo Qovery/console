@@ -45,6 +45,15 @@ const METRIC_TYPE_OPTIONS: Record<MetricCategory, Value[]> = {
   hpa_issue: VALUES_OPTIONS,
 }
 
+const DEFAULT_THRESHOLDS: Record<MetricCategory, number> = {
+  cpu: 80,
+  memory: 80,
+  http_error: 5,
+  replicas_number: 80,
+  k8s_event: 80,
+  hpa_issue: 80,
+}
+
 const OPERATOR_OPTIONS: Value[] = [
   { label: 'Above', value: 'ABOVE' },
   { label: 'Below', value: 'BELOW' },
@@ -103,7 +112,7 @@ export function MetricConfigurationStep({
         kind: 'BUILT',
         function: 'MAX',
         operator: 'ABOVE',
-        threshold: 80,
+        threshold: DEFAULT_THRESHOLDS[metricCategory] ?? 80,
         promql: '',
       },
       for_duration: 'PT5M',
@@ -236,7 +245,11 @@ export function MetricConfigurationStep({
                             value: key,
                           }))}
                           defaultValue={field.value}
-                          onChange={(value) => field.onChange(value)}
+                          onChange={(value) => {
+                            field.onChange(value)
+                            const newThreshold = DEFAULT_THRESHOLDS[value as MetricCategory] ?? 80
+                            methods.setValue('condition.threshold', newThreshold)
+                          }}
                           className="w-full"
                           inputClassName="bg-transparent"
                         />

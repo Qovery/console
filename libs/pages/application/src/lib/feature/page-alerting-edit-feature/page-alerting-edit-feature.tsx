@@ -97,7 +97,7 @@ export function PageAlertingEditFeature() {
           payload: {
             name: updatedAlert.name,
             tag: updatedAlert.tag,
-            description: updatedAlert.tag,
+            description: alertRule.description,
             condition: {
               kind: 'BUILT',
               function: func,
