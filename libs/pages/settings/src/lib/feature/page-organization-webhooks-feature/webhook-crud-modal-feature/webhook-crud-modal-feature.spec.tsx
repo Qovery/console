@@ -138,4 +138,83 @@ describe('WebhookCrudModalFeature', () => {
       },
     })
   })
+
+  it('should trim URL with trailing whitespace on create', async () => {
+    const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} />)
+
+    const url = screen.getByLabelText('URL')
+    const kind = screen.getByLabelText('Kind')
+    const events = screen.getByLabelText('Events')
+
+    // Type URL with trailing whitespace
+    await userEvent.type(url, 'https://test.com   ')
+
+    await selectEvent.select(kind, ['Standard'], {
+      container: document.body,
+    })
+
+    await selectEvent.select(events, ['DEPLOYMENT_STARTED'], {
+      container: document.body,
+    })
+
+    const button = screen.getByTestId('submit-button')
+    await userEvent.click(button)
+
+    expect(useCreateWebhookMockSpy().mutateAsync).toHaveBeenCalledWith({
+      organizationId: '000-000-000',
+      webhookRequest: expect.objectContaining({
+        target_url: 'https://test.com',
+      }),
+    })
+  })
+
+  it('should trim URL with leading whitespace on create', async () => {
+    const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} />)
+
+    const url = screen.getByLabelText('URL')
+    const kind = screen.getByLabelText('Kind')
+    const events = screen.getByLabelText('Events')
+
+    // Type URL with leading whitespace
+    await userEvent.type(url, '   https://test.com')
+
+    await selectEvent.select(kind, ['Standard'], {
+      container: document.body,
+    })
+
+    await selectEvent.select(events, ['DEPLOYMENT_STARTED'], {
+      container: document.body,
+    })
+
+    const button = screen.getByTestId('submit-button')
+    await userEvent.click(button)
+
+    expect(useCreateWebhookMockSpy().mutateAsync).toHaveBeenCalledWith({
+      organizationId: '000-000-000',
+      webhookRequest: expect.objectContaining({
+        target_url: 'https://test.com',
+      }),
+    })
+  })
+
+  it('should trim URL with whitespace on edit', async () => {
+    const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhook} />)
+
+    const url = screen.getByLabelText('URL')
+
+    await userEvent.clear(url)
+    // Type URL with both leading and trailing whitespace
+    await userEvent.type(url, '  https://updated.com  ')
+
+    const button = screen.getByTestId('submit-button')
+    await userEvent.click(button)
+
+    expect(useEditWebhooksMockSpy().mutateAsync).toHaveBeenCalledWith({
+      organizationId: '000-000-000',
+      webhookId: mockWebhook.id,
+      webhookRequest: expect.objectContaining({
+        target_url: 'https://updated.com',
+      }),
+    })
+  })
 })

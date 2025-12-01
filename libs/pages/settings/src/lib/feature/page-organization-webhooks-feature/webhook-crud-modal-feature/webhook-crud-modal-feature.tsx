@@ -31,18 +31,22 @@ export function WebhookCrudModalFeature({ organizationId, closeModal, webhook }:
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const onSubmit = methods.handleSubmit(async (data) => {
+    const trimmedData = {
+      ...data,
+      target_url: data.target_url.trim(),
+    }
     try {
       if (webhook) {
         await editWebhook({
           organizationId,
           webhookId: webhook.id,
-          webhookRequest: { ...webhook, ...data },
+          webhookRequest: { ...webhook, ...trimmedData },
         })
         closeModal()
       } else {
         await createWebhook({
           organizationId,
-          webhookRequest: data,
+          webhookRequest: trimmedData,
         })
         closeModal()
       }
