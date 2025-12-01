@@ -19,6 +19,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ai-sdk/gateway@npm:2.0.17":
+  version: 2.0.17
+  resolution: "@ai-sdk/gateway@npm:2.0.17"
+  dependencies:
+    "@ai-sdk/provider": 2.0.0
+    "@ai-sdk/provider-utils": 3.0.18
+    "@vercel/oidc": 3.0.5
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 9badf63eb1c2a3b4bb9537df50282dcf9780c909bc53f347562decd03e574177dc0352268a0999398cb7f57ea6494ee0ddedbc03a9e572381c884481be807cd5
+  languageName: node
+  linkType: hard
+
+"@ai-sdk/provider-utils@npm:3.0.18":
+  version: 3.0.18
+  resolution: "@ai-sdk/provider-utils@npm:3.0.18"
+  dependencies:
+    "@ai-sdk/provider": 2.0.0
+    "@standard-schema/spec": ^1.0.0
+    eventsource-parser: ^3.0.6
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 0bd2a128289f917673e7bf2f6ac9f99dbe3d9f1c2c1883b68a90e93c7edf5fea6aa008bd4fa4bf958f38a73278e5a623f7320c83bb104d92d5184a4704459ed0
+  languageName: node
+  linkType: hard
+
+"@ai-sdk/provider@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@ai-sdk/provider@npm:2.0.0"
+  dependencies:
+    json-schema: ^0.4.0
+  checksum: 6068b327d48d37a5cb994652c29af4206f228c1fd1e5ab38f2db860b5b6ec3e1e7c75a2fab98e633fec59dc7f0ac6f115ce68aad66175264b263509928c67b91
+  languageName: node
+  linkType: hard
+
 "@algolia/autocomplete-core@npm:1.9.3":
   version: 1.9.3
   resolution: "@algolia/autocomplete-core@npm:1.9.3"
@@ -1760,7 +1795,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.12.0, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.22.15, @babel/runtime@npm:^7.22.6, @babel/runtime@npm:^7.3.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7":
+"@babel/runtime@npm:^7.12.0, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.22.15, @babel/runtime@npm:^7.22.6, @babel/runtime@npm:^7.3.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7":
   version: 7.24.7
   resolution: "@babel/runtime@npm:7.24.7"
   dependencies:
@@ -1769,7 +1804,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.7.2":
+"@babel/runtime@npm:^7.27.6, @babel/runtime@npm:^7.7.2":
   version: 7.28.4
   resolution: "@babel/runtime@npm:7.28.4"
   checksum: 934b0a0460f7d06637d93fcd1a44ac49adc33518d17253b5a0b55ff4cb90a45d8fe78bf034b448911dbec7aff2a90b918697559f78d21c99ff8dbadae9565b55
@@ -5323,6 +5358,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@opentelemetry/api@npm:1.9.0":
+  version: 1.9.0
+  resolution: "@opentelemetry/api@npm:1.9.0"
+  checksum: 9e88e59d53ced668f3daaecfd721071c5b85a67dd386f1c6f051d1be54375d850016c881f656ffbe9a03bedae85f7e89c2f2b635313f9c9b195ad033cdc31020
+  languageName: node
+  linkType: hard
+
 "@parcel/watcher-android-arm64@npm:2.5.1":
   version: 2.5.1
   resolution: "@parcel/watcher-android-arm64@npm:2.5.1"
@@ -5701,7 +5743,7 @@ __metadata:
     react-flat-providers: ^2.2.0
     react-hook-form: ^7.52.0
     react-hot-toast: ^2.4.0
-    react-instantsearch: ^7.7.1
+    react-instantsearch: ^7.20.0
     react-markdown: ^9.0.3
     react-payment-inputs: ^1.1.9
     react-refresh: ^0.14.0
@@ -8819,10 +8861,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/google.maps@npm:^3.45.3":
-  version: 3.55.7
-  resolution: "@types/google.maps@npm:3.55.7"
-  checksum: 0b34b39ccafed6af238fe0a0ff6a023ce95f370e77471f889317a1d34cf31439e63e1722d83655911670b4ab7887f4f389862aed604dbbd70b7b36d2aa2bc753
+"@types/google.maps@npm:^3.55.12":
+  version: 3.58.1
+  resolution: "@types/google.maps@npm:3.58.1"
+  checksum: 7ad5bd9566ffa0396485c432368e45c43e3fe1ecc2b89324f257a49d9abbe03dfe046a771d82ae1808fa0fb6e04e6ffca870c7f2295fef73a6015a678b067364
   languageName: node
   linkType: hard
 
@@ -9741,6 +9783,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vercel/oidc@npm:3.0.5":
+  version: 3.0.5
+  resolution: "@vercel/oidc@npm:3.0.5"
+  checksum: 6f6af61de135f7af999b2446d18274b2993606fdd6f8c46b4b6b20d4754c8ca4bee2da96b1e8b5ea1989694c5d7467b252b2345b1e0554e5bbd3efcc6cc18a99
+  languageName: node
+  linkType: hard
+
 "@vitest/expect@npm:3.2.4":
   version: 3.2.4
   resolution: "@vitest/expect@npm:3.2.4"
@@ -10319,6 +10368,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ai@npm:^5.0.18":
+  version: 5.0.105
+  resolution: "ai@npm:5.0.105"
+  dependencies:
+    "@ai-sdk/gateway": 2.0.17
+    "@ai-sdk/provider": 2.0.0
+    "@ai-sdk/provider-utils": 3.0.18
+    "@opentelemetry/api": 1.9.0
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: fc4c3e3aec10ae6246c08e620c73455273cdd279408bd8c94b9fa75b8359c4e4457b30f15c3c5cd909a073707b731f8f1d412281c2d7f26b1d08f67d848f1d20
+  languageName: node
+  linkType: hard
+
 "ajv-formats@npm:^2.1.1":
   version: 2.1.1
   resolution: "ajv-formats@npm:2.1.1"
@@ -10377,14 +10440,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"algoliasearch-helper@npm:3.17.0":
-  version: 3.17.0
-  resolution: "algoliasearch-helper@npm:3.17.0"
+"algoliasearch-helper@npm:3.26.1":
+  version: 3.26.1
+  resolution: "algoliasearch-helper@npm:3.26.1"
   dependencies:
     "@algolia/events": ^4.0.1
   peerDependencies:
     algoliasearch: ">= 3.1 < 6"
-  checksum: 66f3fdcc83a1b1bd08d58c72913936c9761bc40c1aa9e03e5ed8d99ebf0ca4603c30ec6cdd0add5170184acada089d6023ea43bf274e9f0ad606ee08e15705ca
+  checksum: 7198cc004f216403ce3ca71805831c779202a5ef7d249a65cdb0b01e6b612efd781f42ce647225e6b883cf425386f6c6858fbb0fbd6a68e13f11fd854de1fcbe
   languageName: node
   linkType: hard
 
@@ -15396,6 +15459,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eventsource-parser@npm:^3.0.6":
+  version: 3.0.6
+  resolution: "eventsource-parser@npm:3.0.6"
+  checksum: b90ec27f8d992afa7df171db202faaedb1782214f64e50690cbf78bc2629f7751575aa27a72d8ae447e5a7094938406b1a3ea1d89e5f0f2d6916cc8a694b6587
+  languageName: node
+  linkType: hard
+
 "execa@npm:4.1.0":
   version: 4.1.0
   resolution: "execa@npm:4.1.0"
@@ -17640,34 +17710,42 @@ __metadata:
   languageName: node
   linkType: hard
 
-"instantsearch-ui-components@npm:0.4.0":
-  version: 0.4.0
-  resolution: "instantsearch-ui-components@npm:0.4.0"
+"instantsearch-ui-components@npm:0.15.0":
+  version: 0.15.0
+  resolution: "instantsearch-ui-components@npm:0.15.0"
   dependencies:
-    "@babel/runtime": ^7.1.2
-  checksum: 1878547d4c7c26d3d96161a25f9830e39148acaee40322bc6c23ec85d80fc71f459112f6c6f2d1d582faa6f17dbbebf601cb1326dcb4df55513ca8b950ba7cb2
+    "@babel/runtime": ^7.27.6
+    ai: ^5.0.18
+    markdown-to-jsx: ^7.7.15
+    zod: ^3.25.76 || ^4
+    zod-to-json-schema: 3.24.6
+  checksum: c075041c7dfa75fd81987c10003cd80d2db7f2ec537f465abeda717023e7a6b228857bee61f57315f54549196ea2918f9ed14a851dcdeeec407b75cb200a8aef
   languageName: node
   linkType: hard
 
-"instantsearch.js@npm:4.66.1":
-  version: 4.66.1
-  resolution: "instantsearch.js@npm:4.66.1"
+"instantsearch.js@npm:4.84.0":
+  version: 4.84.0
+  resolution: "instantsearch.js@npm:4.84.0"
   dependencies:
     "@algolia/events": ^4.0.1
     "@types/dom-speech-recognition": ^0.0.1
-    "@types/google.maps": ^3.45.3
+    "@types/google.maps": ^3.55.12
     "@types/hogan.js": ^3.0.0
     "@types/qs": ^6.5.3
-    algoliasearch-helper: 3.17.0
+    ai: ^5.0.18
+    algoliasearch-helper: 3.26.1
     hogan.js: ^3.0.2
     htm: ^3.0.0
-    instantsearch-ui-components: 0.4.0
+    instantsearch-ui-components: 0.15.0
     preact: ^10.10.0
     qs: ^6.5.1 < 6.10
-    search-insights: ^2.13.0
+    react: ">= 0.14.0"
+    search-insights: ^2.17.2
+    zod: ^3.25.76 || ^4
+    zod-to-json-schema: 3.24.6
   peerDependencies:
     algoliasearch: ">= 3.1 < 6"
-  checksum: e82df6c80b58c36f6dc30687c8495157b66c96535511e816778e9b2a03f0700c32ab9b6c30c5a1e889e538107bae81833198088f4a724dc04efdc9363fba514a
+  checksum: 4be71d22c1a3e1d1ed717ed50039d9e8e4f849fbd7600eb9c0871f920be70604f6530e135ff60667013c79b343d3106b5f088e0aa937363c554ef9822c975338
   languageName: node
   linkType: hard
 
@@ -19574,7 +19652,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-schema@npm:0.4.0":
+"json-schema@npm:0.4.0, json-schema@npm:^0.4.0":
   version: 0.4.0
   resolution: "json-schema@npm:0.4.0"
   checksum: 66389434c3469e698da0df2e7ac5a3281bcff75e797a5c127db7c5b56270e01ae13d9afa3c03344f76e32e81678337a8c912bdbb75101c62e487dc3778461d72
@@ -20619,6 +20697,18 @@ __metadata:
   version: 3.0.4
   resolution: "markdown-table@npm:3.0.4"
   checksum: bc24b177cbb3ef170cb38c9f191476aa63f7236ebc8980317c5e91b5bf98c8fb471cf46d8920478c5e770d7f4337326f6b5b3efbf0687c2044fd332d7a64dfcb
+  languageName: node
+  linkType: hard
+
+"markdown-to-jsx@npm:^7.7.15":
+  version: 7.7.17
+  resolution: "markdown-to-jsx@npm:7.7.17"
+  peerDependencies:
+    react: ">= 0.14.0"
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: fd0c50f7ed11d036dd607b48e7d8283f86aea23028e4a0be0051e2717aa9da15967bd219a24b84480c5efb825d33b855f2f972de269720377a63bae810de5df9
   languageName: node
   linkType: hard
 
@@ -24906,34 +24996,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-instantsearch-core@npm:7.7.1":
-  version: 7.7.1
-  resolution: "react-instantsearch-core@npm:7.7.1"
+"react-instantsearch-core@npm:7.20.0":
+  version: 7.20.0
+  resolution: "react-instantsearch-core@npm:7.20.0"
   dependencies:
-    "@babel/runtime": ^7.1.2
-    algoliasearch-helper: 3.17.0
-    instantsearch.js: 4.66.1
+    "@babel/runtime": ^7.27.6
+    ai: ^5.0.18
+    algoliasearch-helper: 3.26.1
+    instantsearch.js: 4.84.0
     use-sync-external-store: ^1.0.0
+    zod: ^3.25.76 || ^4
+    zod-to-json-schema: 3.24.6
   peerDependencies:
-    algoliasearch: ">= 3.1 < 5"
-    react: ">= 16.8.0 < 19"
-  checksum: f356e2c227a3870da5158e85d7f30537242bfd7a0aaca4be3cac0cb96909c51b1587808074a38e1bcd0f0bde525b3c871df2ddcc473ceea7c2274582dfa2e36c
+    algoliasearch: ">= 3.1 < 6"
+    react: ">= 16.8.0 < 20"
+  checksum: ffa4b2691a9469ecdb839860033a71506d6285f7a390c4ddacf9e8c5d41baf479ed1426326f356f88e1fad4cbcbe3edee62f104fc5a832103d72a5bc5fdbce52
   languageName: node
   linkType: hard
 
-"react-instantsearch@npm:^7.7.1":
-  version: 7.7.1
-  resolution: "react-instantsearch@npm:7.7.1"
+"react-instantsearch@npm:^7.20.0":
+  version: 7.20.0
+  resolution: "react-instantsearch@npm:7.20.0"
   dependencies:
-    "@babel/runtime": ^7.1.2
-    instantsearch-ui-components: 0.4.0
-    instantsearch.js: 4.66.1
-    react-instantsearch-core: 7.7.1
+    "@babel/runtime": ^7.27.6
+    instantsearch-ui-components: 0.15.0
+    instantsearch.js: 4.84.0
+    react-instantsearch-core: 7.20.0
   peerDependencies:
-    algoliasearch: ">= 3.1 < 5"
-    react: ">= 16.8.0 < 19"
-    react-dom: ">= 16.8.0 < 19"
-  checksum: 142e64526ad17883bee4843d2916b18eba615392078c9bd3cd52e3108212041f14196bd93154521ad9782fcd30b36dc661f98bfd7953ffe48b452b7f151524da
+    algoliasearch: ">= 3.1 < 6"
+    react: ">= 16.8.0 < 20"
+    react-dom: ">= 16.8.0 < 20"
+  checksum: 44a8f28b9186cf83419600b593979330da0a68b05d955379090328756c7721aaeebf0dc02664e9feb93b30be3c87c40e2fc6ea100f8d532c4cc50e4320527c42
   languageName: node
   linkType: hard
 
@@ -25231,7 +25324,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
+"react@npm:>= 0.14.0, react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
   version: 19.2.0
   resolution: "react@npm:19.2.0"
   checksum: 33dd01bf699e1c5040eb249e0f552519adf7ee90b98c49d702a50bf23af6852ea46023a5f7f93966ab10acd7a45428fa0f193c686ecdaa7a75a03886e53ec3fe
@@ -26455,10 +26548,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"search-insights@npm:^2.13.0":
-  version: 2.13.0
-  resolution: "search-insights@npm:2.13.0"
-  checksum: 6d553606c879fe67f9ce1bbeb3c909cdb1401a336679d321656f065985a4999ba57882850fdabf4df6bef72d179b71e5ccb5f5f9a04143bc4da52dd8ba66fab3
+"search-insights@npm:^2.17.2":
+  version: 2.17.3
+  resolution: "search-insights@npm:2.17.3"
+  checksum: 1dcb291b766a55f14208bdef140dd0daac3e4f1c8fc20ff57e48208d2b14c9e11a2bd82cdeb9194554c658683f9228676c2680a9503131698e7fd2af7a29da88
   languageName: node
   linkType: hard
 
@@ -30132,6 +30225,22 @@ __metadata:
   version: 1.2.1
   resolution: "yocto-queue@npm:1.2.1"
   checksum: 0843d6c2c0558e5c06e98edf9c17942f25c769e21b519303a5c2adefd5b738c9b2054204dc856ac0cd9d134b1bc27d928ce84fd23c9e2423b7e013d5a6f50577
+  languageName: node
+  linkType: hard
+
+"zod-to-json-schema@npm:3.24.6":
+  version: 3.24.6
+  resolution: "zod-to-json-schema@npm:3.24.6"
+  peerDependencies:
+    zod: ^3.24.1
+  checksum: 5f4d29597cfd88d8fb8a539f0169affb8705d67ee9cbe478aa01bb1d2554e0540ca713fa4ddeb2fd834e87e7cdff61fa396f6d1925a9006de70afe6cd68bf7d2
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.25.76 || ^4":
+  version: 4.1.13
+  resolution: "zod@npm:4.1.13"
+  checksum: e5459280d46567df0adc188b0c687d425e616a206d4a73ee3bacf62d246f5546e24ef45790c7c4762d3ce7659c5e41052a29445d32d0d272410be9fe23162d03
   languageName: node
   linkType: hard
 
