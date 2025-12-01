@@ -130,7 +130,8 @@ export function AlertingCreationFlow({
     try {
       setIsLoading(true)
       for (const alert of activeAlerts) {
-        const threshold = (alert.condition.threshold ?? 0) / 100
+        const threshold =
+          alert.tag === 'http_latency' ? alert.condition.threshold ?? 0 : (alert.condition.threshold ?? 0) / 100
         const operator = alert.condition.operator ?? 'ABOVE'
         const func = alert.condition.function ?? 'NONE'
 

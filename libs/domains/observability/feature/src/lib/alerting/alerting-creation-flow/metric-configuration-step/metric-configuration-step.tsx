@@ -217,8 +217,7 @@ export function MetricConfigurationStep({
     (option: Value) => option.value === watchCondition?.function
   )?.label
 
-  const unit = match(metricCategory)
-    .with('http_error', () => 'ms')
+  const unit = match(watchTag)
     .with('http_latency', () => 'ms')
     .otherwise(() => '%')
 
@@ -331,7 +330,7 @@ export function MetricConfigurationStep({
                           if (value === '') {
                             return 'Threshold is required'
                           }
-                          if (Number(value) < 0 || Number(value) > 100) {
+                          if (watchTag !== 'http_latency' && (Number(value) < 0 || Number(value) > 100)) {
                             return 'Threshold must be between 0 and 100'
                           }
                           return true

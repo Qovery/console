@@ -20,10 +20,19 @@ export const QUERY_HTTP_ERROR = (ingressName: string) => `
       ingress="${ingressName}"
     }[1m])
   )
-)` // default:  fnc =max, for: 5m et  theshold 5%
+)`
 
 export const QUERY_HTTP_LATENCY = (ingressName: string) => `
-)` // default:  fnc =max, for: 5m et  theshold 5%
+ histogram_quantile(
+    0.99,
+    sum by (namespace, ingress, le) (
+      rate(
+        nginx_ingress_controller_request_duration_seconds_bucket{
+          ingress="${ingressName}",
+        }[1m]
+      )
+    )
+  )`
 
 export const QUERY_RESTART_REASON = (containerName: string) => `
   (
@@ -38,14 +47,14 @@ export const QUERY_RESTART_REASON = (containerName: string) => `
     container="${containerName}",
     reason=~"OOMKilled|Error|ContainerCannotRun|RunContainerError|StartError|DeadlineExceeded"
   }
-` // default:  fnc =count, for: imme diate et  theshold 0 (pas de %)
+`
 
 export const QUERY_REPLICAS_NUMBER = (containerName: string) => `
 (
   kube_deployment_status_replicas_available{deployment="${containerName}"}
 /
   kube_deployment_spec_replicas{deployment="${containerName}"}
-)` // default func = none, for: 5m and BELOW theshold 80%
+)`
 
 export const QUERY_HPA_ISSUE = (serviceId: string) => `
 sum by (label_qovery_com_service_id) (
