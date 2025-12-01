@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useClusterLogs } from '@qovery/domains/clusters/feature'
 
 export type StepStatus = 'current' | 'pending' | 'done'
+export type LifecycleState = 'idle' | 'installing' | 'succeeded' | 'failed'
 
 export const DEPLOYMENT_STEPS = [
   'Validating configuration',
@@ -23,6 +24,8 @@ type ProgressCacheEntry = {
   installationComplete: boolean
   lastTimestamp?: number
   creationFailed?: boolean
+  state?: LifecycleState
+  prevState?: LifecycleState
 }
 
 // Module-level cache to survive remounts within the same session
@@ -43,6 +46,9 @@ export function useDeploymentProgress({
   progressValue: number
   currentStepLabel: string
   creationFailed: boolean
+  state: LifecycleState
+  justSucceeded: boolean
+  justFailed: boolean
 } {
   const { data: clusterLogs } = useClusterLogs({
     organizationId,
@@ -71,6 +77,9 @@ export function useDeploymentProgress({
     installationComplete: boolean
   }>(() => progressCache.get(clusterId) ?? { highestStepIndex: 0, installationComplete: false })
   const [creationFailed, setCreationFailed] = useState(false)
+  const [state, setState] = useState<LifecycleState>(() => progressCache.get(clusterId)?.state ?? 'idle')
+  const [justSucceeded, setJustSucceeded] = useState(false)
+  const [justFailed, setJustFailed] = useState(false)
 
   useEffect(() => {
     if (!clusterLogs || clusterLogs.length === 0) return
@@ -144,23 +153,35 @@ export function useDeploymentProgress({
     const nextHighest = Math.max(baseHighest, maxIndex)
     const nextComplete = baseComplete || isComplete
 
-    setProgress((prev) => ({
-      highestStepIndex: Math.max(prev.highestStepIndex, nextHighest),
-      installationComplete: prev.installationComplete || nextComplete,
-    }))
+    const mergedHighest = Math.max(highestStepIndex, nextHighest)
+    const mergedComplete = installationComplete || nextComplete
     const nextFailed = (sawStartStep ? false : creationFailed) || isFailed
     if (nextFailed && !creationFailed) {
       console.log('[cluster] creation failed detected', { clusterId })
     }
+    const prevState = cached.state ?? state
+    const nextState: LifecycleState = nextFailed
+      ? 'failed'
+      : mergedComplete
+        ? 'succeeded'
+        : sawStartStep
+          ? 'installing'
+          : 'idle'
+
+    setProgress({ highestStepIndex: mergedHighest, installationComplete: mergedComplete })
     setCreationFailed(nextFailed)
+    setState(nextState)
+    setJustSucceeded(prevState !== 'succeeded' && nextState === 'succeeded')
+    setJustFailed(prevState !== 'failed' && nextState === 'failed')
 
     progressCache.set(clusterId, {
-      highestStepIndex: Math.max(cached.highestStepIndex, nextHighest),
-      installationComplete: cached.installationComplete || nextComplete,
+      highestStepIndex: Math.max(cached.highestStepIndex, mergedHighest),
+      installationComplete: cached.installationComplete || mergedComplete,
       creationFailed: (sawStartStep ? false : cached.creationFailed) || nextFailed,
       lastTimestamp: latestTimestamp ? new Date(latestTimestamp).getTime() : cached.lastTimestamp,
+      state: nextState,
     })
-  }, [clusterLogs, clusterId, clusterName, providerCode, creationFailed])
+  }, [clusterLogs, clusterId, clusterName, providerCode, creationFailed, highestStepIndex, installationComplete, state])
 
   const steps = useMemo(() => {
     return DEPLOYMENT_STEPS.map((label, index) => {
@@ -192,6 +213,9 @@ export function useDeploymentProgress({
     progressValue,
     currentStepLabel,
     creationFailed,
+    state,
+    justSucceeded,
+    justFailed,
   }
 }
 

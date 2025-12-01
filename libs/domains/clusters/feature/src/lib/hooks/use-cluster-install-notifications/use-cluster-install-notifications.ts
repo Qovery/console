@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { type Cluster, type ClusterStatus, ClusterStateEnum } from 'qovery-typescript-axios'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { CLUSTER_OVERVIEW_URL, CLUSTER_URL, INFRA_LOGS_URL, OVERVIEW_URL } from '@qovery/shared/routes'
@@ -10,7 +10,7 @@ import {
   clearTrackedClusterInstall,
   getTrackedClusterInstallIds,
 } from '../../utils/cluster-install-tracking'
-import { getCachedDeploymentProgress } from '../use-deployment-progress/use-deployment-progress'
+import { getCachedDeploymentProgress, type LifecycleState } from '../use-deployment-progress/use-deployment-progress'
 
 type ClusterStatusWithFlag = ClusterStatus
 
@@ -41,57 +41,45 @@ export function useClusterInstallNotifications({
 }) {
   const notifiedClustersRef = useRef<Set<string>>(new Set())
   const { data: projects = [] } = useProjects({ organizationId, enabled: !!organizationId })
-  const cycleRef = useRef<Map<string, { installing: boolean; notified: boolean }>>(new Map())
   const trackedIdsRef = useRef<Set<string>>(new Set(getTrackedClusterInstallIds()))
+  const prevStateRef = useRef<Map<string, LifecycleState>>(new Map())
 
-  const isInstallingStatus = (status?: ClusterStateEnum) =>
-    status === ClusterStateEnum.DEPLOYING ||
-    status === ClusterStateEnum.DEPLOYMENT_QUEUED ||
-    status === ClusterStateEnum.RESTARTING ||
-    status === ClusterStateEnum.RESTART_QUEUED
-
-  const isInstalledStatus = (status?: ClusterStateEnum) =>
-    status === ClusterStateEnum.DEPLOYED || status === ClusterStateEnum.READY
-  const isFailedStatus = (status?: ClusterStateEnum) =>
-    status === ClusterStateEnum.DEPLOYMENT_ERROR ||
-    status === ClusterStateEnum.BUILD_ERROR ||
-    status === ClusterStateEnum.DELETE_ERROR
-
-  const shouldTrackStatuses = useMemo(
-    () => clusterStatuses.some((status) => isInstallingStatus(status?.status) || status?.is_deployed === false),
-    [clusterStatuses]
-  )
+  const deriveStateFromStatus = (status?: ClusterStateEnum, is_deployed?: boolean): LifecycleState => {
+    if (
+      status === ClusterStateEnum.DEPLOYMENT_ERROR ||
+      status === ClusterStateEnum.BUILD_ERROR ||
+      status === ClusterStateEnum.DELETE_ERROR
+    ) {
+      return 'failed'
+    }
+    if (is_deployed || status === ClusterStateEnum.DEPLOYED || status === ClusterStateEnum.READY) return 'succeeded'
+    if (
+      status === ClusterStateEnum.DEPLOYING ||
+      status === ClusterStateEnum.DEPLOYMENT_QUEUED ||
+      status === ClusterStateEnum.RESTARTING ||
+      status === ClusterStateEnum.RESTART_QUEUED ||
+      is_deployed === false
+    )
+      return 'installing'
+    return 'idle'
+  }
 
   useEffect(() => {
-    if (!isClusterNotificationEnabled() || !shouldTrackStatuses) return
+    if (!isClusterNotificationEnabled()) return
     if (typeof window === 'undefined') return
 
     clusterStatuses.forEach((status) => {
       const clusterId = status?.cluster_id
-      if (!clusterId) return
-      if (!trackedIdsRef.current.has(clusterId)) return
+      if (!clusterId || !trackedIdsRef.current.has(clusterId)) return
 
-      const state = cycleRef.current.get(clusterId) ?? { installing: false, notified: false }
-      const nowInstalled = status?.is_deployed === true || isInstalledStatus(status?.status)
-      const nowInstalling = isInstallingStatus(status?.status) || status?.is_deployed === false
-      const cachedProgress = getCachedDeploymentProgress(clusterId)
-      const nowFailed = cachedProgress?.creationFailed || isFailedStatus(status?.status)
+      const cachedState = getCachedDeploymentProgress(clusterId)?.state
+      const derivedState = cachedState ?? deriveStateFromStatus(status?.status, status?.is_deployed)
+      const prevState = prevStateRef.current.get(clusterId) ?? 'idle'
 
-      // Entering an install/restart cycle
-      if (nowInstalling) {
-        cycleRef.current.set(clusterId, { installing: true, notified: false })
-        notifiedClustersRef.current.delete(clusterId)
-        return
-      }
+      const transitionedToSuccess = prevState !== 'succeeded' && derivedState === 'succeeded'
+      const transitionedToFailure = prevState !== 'failed' && derivedState === 'failed'
 
-      // Notify on failure at end of a cycle
-      if (nowFailed) {
-        if (!state.installing || state.notified || notifiedClustersRef.current.has(clusterId)) {
-          cycleRef.current.set(clusterId, state)
-          return
-        }
-
-        cycleRef.current.set(clusterId, { installing: false, notified: true })
+      if (transitionedToFailure) {
         notifiedClustersRef.current.add(clusterId)
         clearTrackedClusterInstall(clusterId)
         trackedIdsRef.current.delete(clusterId)
@@ -112,50 +100,42 @@ export function useClusterInstallNotifications({
         } catch (error) {
           console.error('Unable to show cluster installation failure notification', error)
         }
+      } else if (transitionedToSuccess && !notifiedClustersRef.current.has(clusterId)) {
+        notifiedClustersRef.current.add(clusterId)
+        clearTrackedClusterInstall(clusterId)
+        trackedIdsRef.current.delete(clusterId)
 
-        return
-      }
+        const clusterName = clusters.find((cluster) => cluster.id === clusterId)?.name ?? 'Cluster'
+        const firstProject = projects[0]
+        const body = firstProject?.name
+          ? `${clusterName} is ready. You can deploy your apps now in ${firstProject.name}.`
+          : `${clusterName} is ready. You can deploy your apps now.`
 
-      // Notify when a cycle completes
-      if (!nowInstalled || !state.installing || state.notified || notifiedClustersRef.current.has(clusterId)) {
-        cycleRef.current.set(clusterId, state)
-        return
-      }
+        try {
+          const notification = new Notification('Cluster installed', {
+            body,
+            tag: clusterId,
+          })
 
-      cycleRef.current.set(clusterId, { installing: false, notified: true })
-
-      notifiedClustersRef.current.add(clusterId)
-      clearTrackedClusterInstall(clusterId)
-      trackedIdsRef.current.delete(clusterId)
-
-      const clusterName = clusters.find((cluster) => cluster.id === clusterId)?.name ?? 'Cluster'
-      const firstProject = projects[0]
-      const body = firstProject?.name
-        ? `${clusterName} is ready. You can deploy your apps now in ${firstProject.name}.`
-        : `${clusterName} is ready. You can deploy your apps now.`
-
-      try {
-        const notification = new Notification('Cluster installed', {
-          body,
-          tag: clusterId,
-        })
-
-        notification.onclick = (event) => {
-          event.preventDefault()
-          window.focus()
-          if (firstProject?.id) {
-            window.location.href = OVERVIEW_URL(organizationId, firstProject.id)
-          } else {
-            window.location.href = CLUSTER_URL(organizationId, clusterId) + CLUSTER_OVERVIEW_URL
+          notification.onclick = (event) => {
+            event.preventDefault()
+            window.focus()
+            if (firstProject?.id) {
+              window.location.href = OVERVIEW_URL(organizationId, firstProject.id)
+            } else {
+              window.location.href = CLUSTER_URL(organizationId, clusterId) + CLUSTER_OVERVIEW_URL
+            }
           }
+        } catch (error) {
+          console.error('Unable to show cluster installation notification', error)
         }
-      } catch (error) {
-        console.error('Unable to show cluster installation notification', error)
+
+        playCompletionSound()
       }
 
-      playCompletionSound()
+      prevStateRef.current.set(clusterId, derivedState)
     })
-  }, [clusterStatuses, clusters, organizationId, projects, shouldTrackStatuses])
+  }, [clusterStatuses, clusters, organizationId, projects])
 }
 
 export default useClusterInstallNotifications

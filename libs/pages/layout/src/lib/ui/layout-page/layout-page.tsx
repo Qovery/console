@@ -1,10 +1,11 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useEffect, useMemo, useRef, useState } from 'react'
+import { type PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import {
   FloatingDeploymentProgressCard,
+  useActiveDeploymentClusters,
   useClusterInstallNotifications,
   useClusterStatuses,
 } from '@qovery/domains/clusters/feature'
@@ -58,15 +59,16 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const [shouldPollClusterStatuses, setShouldPollClusterStatuses] = useState(false)
-  const [activeDeploymentClusterIds, setActiveDeploymentClusterIds] = useState<string[]>([])
   const [trackedClusterIds, setTrackedClusterIds] = useState<string[]>(getTrackedClusterInstallIds())
-  const removalTimersRef = useRef<Record<string, number>>({})
-  const dismissedClusterIdsRef = useRef<Set<string>>(new Set())
   const { data: clusterStatuses } = useClusterStatuses({
     organizationId,
     enabled: !!organizationId,
     refetchInterval: shouldPollClusterStatuses ? 5000 : undefined,
     refetchIntervalInBackground: true,
+  })
+  const { activeIds: activeDeploymentClusterIds } = useActiveDeploymentClusters({
+    clusterStatuses,
+    trackedClusterIds,
   })
   const { data: organization } = useOrganization({ organizationId })
   const { roles, isQoveryAdminUser } = useUserRole()
@@ -134,87 +136,6 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
     setShouldPollClusterStatuses(hasDeployingCluster)
     setTrackedClusterIds(getTrackedClusterInstallIds())
   }, [clusterStatuses])
-
-  // Track deploying clusters and keep them visible briefly after completion
-  useEffect(() => {
-    if (!clusterStatuses) return
-    const isDeploying = ({ status, is_deployed }: { status?: ClusterStateEnum; is_deployed?: boolean }) =>
-      displayClusterDeploymentBanner(status) && (is_deployed === false || is_deployed === undefined)
-    const isTerminal = ({ status, is_deployed }: { status?: ClusterStateEnum; is_deployed?: boolean }) =>
-      is_deployed === true ||
-      status === ClusterStateEnum.DEPLOYED ||
-      status === ClusterStateEnum.READY ||
-      status === ClusterStateEnum.DEPLOYMENT_ERROR ||
-      status === ClusterStateEnum.BUILD_ERROR ||
-      status === ClusterStateEnum.DELETE_ERROR
-
-    // Allow re-adding a cluster if a new deployment starts
-    clusterStatuses.forEach(({ cluster_id, status, is_deployed }) => {
-      if (!cluster_id) return
-      if (isDeploying({ status, is_deployed })) {
-        dismissedClusterIdsRef.current.delete(cluster_id)
-      }
-    })
-    const idsToAdd =
-      clusterStatuses
-        .filter(({ status, is_deployed }) => isDeploying({ status, is_deployed }) || isTerminal({ status, is_deployed }))
-        .map(({ cluster_id }) => cluster_id ?? '')
-        .filter((id): id is string => Boolean(id) && !dismissedClusterIdsRef.current.has(id)) || []
-
-    if (idsToAdd.length > 0) {
-      setActiveDeploymentClusterIds((prev) => {
-        const next = new Set(prev)
-        idsToAdd.forEach((id) => next.add(id))
-        return Array.from(next)
-      })
-    }
-  }, [clusterStatuses])
-
-  useEffect(() => {
-    if (!clusterStatuses) return
-    clusterStatuses.forEach(({ cluster_id, status, is_deployed }) => {
-      if (!cluster_id || !activeDeploymentClusterIds.includes(cluster_id)) return
-      const isInstalled =
-        is_deployed === true || status === ClusterStateEnum.DEPLOYED || status === ClusterStateEnum.READY
-      const isFailed =
-        status === ClusterStateEnum.DEPLOYMENT_ERROR ||
-        status === ClusterStateEnum.BUILD_ERROR ||
-        status === ClusterStateEnum.DELETE_ERROR
-      const alreadyScheduled = removalTimersRef.current[cluster_id]
-
-      if ((isInstalled || isFailed) && !alreadyScheduled) {
-        const timer = window.setTimeout(() => {
-          setActiveDeploymentClusterIds((prev) => prev.filter((id) => id !== cluster_id))
-          delete removalTimersRef.current[cluster_id]
-          dismissedClusterIdsRef.current.add(cluster_id)
-        }, 10000)
-        removalTimersRef.current[cluster_id] = timer
-      }
-    })
-
-    Object.entries(removalTimersRef.current).forEach(([clusterId, timer]) => {
-      if (!activeDeploymentClusterIds.includes(clusterId)) {
-        clearTimeout(timer)
-        delete removalTimersRef.current[clusterId]
-      }
-    })
-  }, [clusterStatuses, activeDeploymentClusterIds])
-
-  useEffect(
-    () => () => {
-      Object.values(removalTimersRef.current).forEach((timer) => clearTimeout(timer))
-      removalTimersRef.current = {}
-    },
-    []
-  )
-
-  useEffect(() => {
-    if (!clusters?.length) {
-      setActiveDeploymentClusterIds([])
-      return
-    }
-    setActiveDeploymentClusterIds((prev) => prev.filter((id) => clusters.some((cluster) => cluster.id === id)))
-  }, [clusters])
 
   useClusterInstallNotifications({
     organizationId,

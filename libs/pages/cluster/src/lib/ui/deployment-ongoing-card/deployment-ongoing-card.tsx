@@ -20,35 +20,35 @@ export function DeploymentOngoingCard({
 }: DeploymentOngoingCardProps) {
   const { pathname } = useLocation()
   const { data: projects = [] } = useProjects({ organizationId, enabled: !!organizationId })
-  const { steps, installationComplete, progressValue, creationFailed } = useDeploymentProgress({
+  const { steps, progressValue, state } = useDeploymentProgress({
     organizationId,
     clusterId,
     clusterName,
     cloudProvider,
   })
 
+  const isInstalling = state === 'installing'
+  const isFailed = state === 'failed'
+  const isSucceeded = state === 'succeeded'
+
   const deploymentLink =
-    creationFailed || !projects[0]
+    isFailed || !projects[0]
       ? INFRA_LOGS_URL(organizationId, clusterId)
-      : installationComplete
+      : isSucceeded
         ? OVERVIEW_URL(organizationId, projects[0].id)
         : INFRA_LOGS_URL(organizationId, clusterId)
-  const deploymentLinkLabel = creationFailed
-    ? 'See logs'
-    : installationComplete && projects[0]
-      ? 'Start deploying'
-      : 'Cluster logs'
+  const deploymentLinkLabel = isFailed ? 'See logs' : isSucceeded && projects[0] ? 'Start deploying' : 'Cluster logs'
 
   return (
     <div className="rounded-lg border border-neutral-200 bg-neutral-100 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border-b border-neutral-200 bg-white p-4">
         <div className="flex items-center gap-2 text-sm font-medium text-neutral-400">
-          {creationFailed ? (
+          {isFailed ? (
             <>
               <Icon iconName="circle-xmark" iconStyle="regular" className="text-red-500" />
               Cluster install failed
             </>
-          ) : installationComplete ? (
+          ) : isSucceeded ? (
             <>
               <Icon iconName="check-circle" iconStyle="regular" className="text-green-500" />
               Cluster installed!
@@ -83,37 +83,39 @@ export function DeploymentOngoingCard({
           </Link>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-3 p-4 text-ssm" role="list">
-        {steps.map(({ label, status }: { label: string; status: 'current' | 'pending' | 'done' }, index: number) => (
-          <div key={label} className="flex items-center" role="listitem">
-            {status === 'done' && (
-              <Icon iconName="check-circle" iconStyle="regular" className="mr-2 text-ssm text-neutral-350" />
-            )}
-            {status === 'current' && (
-              <Icon iconName="loader" iconStyle="regular" className="mr-2 animate-spin text-ssm text-neutral-400" />
-            )}
-            {status === 'pending' && (
-              <Icon iconName="circle" iconStyle="regular" className="mr-2 text-ssm text-neutral-300" />
-            )}
-            <span
-              className={
-                status === 'done'
-                  ? 'mr-3 text-neutral-350'
-                  : status === 'current'
-                    ? 'mr-3 text-neutral-400'
-                    : 'mr-3 text-neutral-300'
-              }
-            >
-              {label}
-            </span>
-            {index < steps.length - 1 && (
-              <span className={status === 'done' ? 'text-neutral-350' : 'text-neutral-300'} aria-hidden>
-                ⸺
+      {isInstalling && (
+        <div className="flex flex-wrap items-center gap-3 p-4 text-ssm" role="list">
+          {steps.map(({ label, status }: { label: string; status: 'current' | 'pending' | 'done' }, index: number) => (
+            <div key={label} className="flex items-center" role="listitem">
+              {status === 'done' && (
+                <Icon iconName="check-circle" iconStyle="regular" className="mr-2 text-ssm text-neutral-350" />
+              )}
+              {status === 'current' && (
+                <Icon iconName="loader" iconStyle="regular" className="mr-2 animate-spin text-ssm text-neutral-400" />
+              )}
+              {status === 'pending' && (
+                <Icon iconName="circle" iconStyle="regular" className="mr-2 text-ssm text-neutral-300" />
+              )}
+              <span
+                className={
+                  status === 'done'
+                    ? 'mr-3 text-neutral-350'
+                    : status === 'current'
+                      ? 'mr-3 text-neutral-400'
+                      : 'mr-3 text-neutral-300'
+                }
+              >
+                {label}
               </span>
-            )}
-          </div>
-        ))}
-      </div>
+              {index < steps.length - 1 && (
+                <span className={status === 'done' ? 'text-neutral-350' : 'text-neutral-300'} aria-hidden>
+                  ⸺
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
