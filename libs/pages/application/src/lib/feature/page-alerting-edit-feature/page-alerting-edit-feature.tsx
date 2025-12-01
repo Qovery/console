@@ -7,11 +7,10 @@ import {
   AlertingCreationFlowContext,
   MetricConfigurationStep,
   QUERY_CPU,
-  QUERY_HPA_ISSUE,
   QUERY_HTTP_ERROR,
+  QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
   QUERY_REPLICAS_NUMBER,
-  QUERY_RESTART_REASON,
   useAlertRules,
   useContainerName,
   useEditAlertRule,
@@ -107,8 +106,7 @@ export function PageAlertingEditFeature() {
                 .with('cpu', () => QUERY_CPU(containerName))
                 .with('memory', () => QUERY_MEMORY(containerName))
                 .with('replicas_number', () => QUERY_REPLICAS_NUMBER(containerName))
-                .with('hpa_issue', () => QUERY_HPA_ISSUE(service.id))
-                .with('restart_reason', () => QUERY_RESTART_REASON(containerName))
+                .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
                 .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
                 .otherwise(() => ''),
             },

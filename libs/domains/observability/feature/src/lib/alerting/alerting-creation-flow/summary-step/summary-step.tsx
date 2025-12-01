@@ -11,12 +11,12 @@ import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration } from '../alerting-creation-flow.types'
 import { ALERTING_CREATION_EDIT, ALERTING_CREATION_METRIC } from '../router'
 import {
-  QOVERY_HTTP_ERROR,
   QUERY_CPU,
-  QUERY_HPA_ISSUE,
+  QUERY_HTTP_ERROR,
+  QUERY_HTTP_LATENCY,
+  QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
   QUERY_REPLICAS_NUMBER,
-  QUERY_RESTART_REASON,
 } from './alert-queries'
 
 const { Table } = TablePrimitives
@@ -189,9 +189,9 @@ export function SummaryStep() {
                 .with('cpu', () => QUERY_CPU(containerName))
                 .with('memory', () => QUERY_MEMORY(containerName))
                 .with('replicas_number', () => QUERY_REPLICAS_NUMBER(containerName))
-                .with('hpa_issue', () => QUERY_HPA_ISSUE(service.id))
-                .with('restart_reason', () => QUERY_RESTART_REASON(containerName))
-                .with('http_error', () => QOVERY_HTTP_ERROR(ingressName))
+                .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
+                .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
+                .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
                 .otherwise(() => ''),
             },
             for_duration: alert.for_duration,

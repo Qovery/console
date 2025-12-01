@@ -34,7 +34,7 @@ export const QUERY_HTTP_LATENCY = (ingressName: string) => `
     )
   )`
 
-export const QUERY_RESTART_REASON = (containerName: string) => `
+export const QUERY_INSTANCE_RESTART = (containerName: string) => `
   (
     increase(
       kube_pod_container_status_restarts_total{

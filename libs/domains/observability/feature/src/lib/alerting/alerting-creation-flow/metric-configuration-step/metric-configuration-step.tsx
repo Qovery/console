@@ -46,8 +46,7 @@ const METRIC_TYPE_OPTIONS: Record<MetricCategory, { label: string; value: AlertR
   http_error: HTTP_ERROR_VALUES_OPTIONS,
   http_latency: VALUES_OPTIONS,
   missing_replicas: REPLICAS_NUMBER_VALUES_OPTIONS,
-  restart_reason: VALUES_OPTIONS,
-  hpa_issue: VALUES_OPTIONS,
+  instance_restart: VALUES_OPTIONS,
 }
 
 const DEFAULT_THRESHOLDS: Record<MetricCategory, number> = {
@@ -56,8 +55,7 @@ const DEFAULT_THRESHOLDS: Record<MetricCategory, number> = {
   http_error: 5,
   http_latency: 200,
   missing_replicas: 0,
-  restart_reason: 80,
-  hpa_issue: 80,
+  instance_restart: 80,
 }
 
 const OPERATOR_OPTIONS: Value[] = [
@@ -145,7 +143,9 @@ export function MetricConfigurationStep({
   // Auto-generate alert name from conditions
   useEffect(() => {
     const metric = formatMetricLabel(watchTag)
-    const functionLabel = watchCondition?.function
+    const functionLabel = METRIC_TYPE_OPTIONS[watchTag as MetricCategory]?.find(
+      (option) => option.value === watchCondition?.function
+    )?.label
     const operator = formatOperator(watchCondition?.operator)
     const threshold = formatThreshold(
       watchTag as MetricCategory,

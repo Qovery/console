@@ -12,21 +12,19 @@ import { type AlertConfiguration, type MetricCategory } from './alerting-creatio
 import { MetricConfigurationStep } from './metric-configuration-step/metric-configuration-step'
 import {
   QUERY_CPU,
-  QUERY_HPA_ISSUE,
   QUERY_HTTP_ERROR,
   QUERY_HTTP_LATENCY,
+  QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
   QUERY_REPLICAS_NUMBER,
-  QUERY_RESTART_REASON,
 } from './summary-step/alert-queries'
 
 const METRIC_LABELS: Record<MetricCategory, string> = {
   cpu: 'CPU',
   memory: 'Memory',
-  hpa_issue: 'HPA issue',
   http_error: 'HTTP error',
   http_latency: 'HTTP latency',
-  restart_reason: 'Replicas number',
+  instance_restart: 'Instance restart',
   missing_replicas: 'Missing replicas',
 }
 
@@ -155,8 +153,7 @@ export function AlertingCreationFlow({
                 .with('cpu', () => QUERY_CPU(containerName))
                 .with('memory', () => QUERY_MEMORY(containerName))
                 .with('replicas_number', () => QUERY_REPLICAS_NUMBER(containerName))
-                .with('hpa_issue', () => QUERY_HPA_ISSUE(service.id))
-                .with('restart_reason', () => QUERY_RESTART_REASON(containerName))
+                .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
                 .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
                 .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
                 .otherwise(() => ''),
