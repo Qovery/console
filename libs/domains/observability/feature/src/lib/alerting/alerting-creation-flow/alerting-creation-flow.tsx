@@ -8,7 +8,7 @@ import { ErrorBoundary, FunnelFlow } from '@qovery/shared/ui'
 import { useContainerName } from '../../hooks/use-container-name/use-container-name'
 import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create-alert-rule'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
-import { type AlertConfiguration } from './alerting-creation-flow.types'
+import { type AlertConfiguration, type MetricCategory } from './alerting-creation-flow.types'
 import { MetricConfigurationStep } from './metric-configuration-step/metric-configuration-step'
 import {
   QUERY_CPU,
@@ -20,14 +20,14 @@ import {
   QUERY_RESTART_REASON,
 } from './summary-step/alert-queries'
 
-const METRIC_LABELS: Record<string, string> = {
+const METRIC_LABELS: Record<MetricCategory, string> = {
   cpu: 'CPU',
   memory: 'Memory',
-  k8s_event: 'k8s event',
   hpa_issue: 'HPA issue',
   http_error: 'HTTP error',
   http_latency: 'HTTP latency',
-  replicas_number: 'Replicas number',
+  restart_reason: 'Replicas number',
+  missing_replicas: 'Missing replicas',
 }
 
 interface AlertingCreationFlowContextInterface {
@@ -59,7 +59,7 @@ export const useAlertingCreationFlowContext = () => {
 interface AlertingCreationFlowProps {
   environment: Environment
   service: AnyService
-  selectedMetrics: string[]
+  selectedMetrics: MetricCategory[]
   onClose: () => void
   onComplete: (alerts: AlertConfiguration[]) => void
 }

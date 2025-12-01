@@ -8,6 +8,7 @@ export type MetricCategory =
   | 'missing_replicas'
   | 'restart_reason'
   | 'hpa_issue'
+
 export interface AlertConfiguration
   extends Omit<AlertRuleCreationRequest, 'organization_id' | 'cluster_id' | 'target' | 'enabled' | 'description'> {
   id: string

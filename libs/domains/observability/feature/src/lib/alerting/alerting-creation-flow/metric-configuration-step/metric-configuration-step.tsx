@@ -32,15 +32,15 @@ import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration, type MetricCategory } from '../alerting-creation-flow.types'
 
 const VALUES_OPTIONS = [
-  { label: 'Maximum', value: 'MAX' }, // default one
-  { label: 'Average', value: 'AVG' },
-  { label: 'Minimum', value: 'MIN' },
+  { label: 'Maximum', value: AlertRuleConditionFunction.MAX },
+  { label: 'Average', value: AlertRuleConditionFunction.AVG },
+  { label: 'Minimum', value: AlertRuleConditionFunction.MIN },
 ]
 
-const HTTP_ERROR_VALUES_OPTIONS = [{ label: 'Count', value: 'COUNT' }]
-const REPLICAS_NUMBER_VALUES_OPTIONS = [{ label: 'Count', value: 'COUNT' }]
+const HTTP_ERROR_VALUES_OPTIONS = [{ label: 'Count', value: AlertRuleConditionFunction.COUNT }]
+const REPLICAS_NUMBER_VALUES_OPTIONS = [{ label: 'Count', value: AlertRuleConditionFunction.COUNT }]
 
-const METRIC_TYPE_OPTIONS: Record<MetricCategory, Value[]> = {
+const METRIC_TYPE_OPTIONS: Record<MetricCategory, { label: string; value: AlertRuleConditionFunction }[]> = {
   cpu: VALUES_OPTIONS,
   memory: VALUES_OPTIONS,
   http_error: HTTP_ERROR_VALUES_OPTIONS,
@@ -116,7 +116,7 @@ export function MetricConfigurationStep({
       tag: metricCategory,
       condition: {
         kind: 'BUILT',
-        function: (METRIC_TYPE_OPTIONS[metricCategory][0].value ?? 'MAX') as AlertRuleConditionFunction,
+        function: METRIC_TYPE_OPTIONS[metricCategory][0].value ?? AlertRuleConditionFunction.MAX,
         operator: 'ABOVE',
         threshold: DEFAULT_THRESHOLDS[metricCategory] ?? 80,
         promql: '',
@@ -216,6 +216,11 @@ export function MetricConfigurationStep({
   const functionLabel = METRIC_TYPE_OPTIONS[metricCategory]?.find(
     (option: Value) => option.value === watchCondition?.function
   )?.label
+
+  const unit = match(metricCategory)
+    .with('http_error', () => 'ms')
+    .with('http_latency', () => 'ms')
+    .otherwise(() => '%')
 
   return (
     <FunnelFlowBody key={index} customContentWidth="max-w-[52rem]">
@@ -345,7 +350,7 @@ export function MetricConfigurationStep({
                             inputClassName="bg-transparent pr-6"
                           />
                           <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-350">
-                            %
+                            {unit}
                           </span>
                         </div>
                       )}
@@ -386,7 +391,10 @@ export function MetricConfigurationStep({
                     </span>
                     <span>
                       IS <span className="text-neutral-900">{watchCondition.operator}</span>{' '}
-                      <span className="text-red-600">{watchCondition.threshold}%</span>{' '}
+                      <span className="text-red-600">
+                        {watchCondition.threshold}
+                        {unit}
+                      </span>{' '}
                       {watchForDuration === 'PT0S' ? (
                         'IMMEDIATELY'
                       ) : (
