@@ -54,8 +54,8 @@ function ClusterRow({
         className={`${containerClasses} relative z-10 flex w-full items-center justify-between gap-4 overflow-hidden bg-white p-4 text-sm shadow-sm`}
       >
         <div className="flex shrink-0 items-center gap-2 text-neutral-400">
-          {installationComplete && <Icon iconName="check-circle" iconStyle="solid" className="text-green-500" />}
-          {creationFailed && <Icon iconName="circle-xmark" iconStyle="solid" className="text-red-500" />}
+          {installationComplete && <Icon iconName="check-circle" iconStyle="regular" className="text-green-500" />}
+          {creationFailed && <Icon iconName="circle-xmark" iconStyle="regular" className="text-red-500" />}
           {!isDone && (
             <span aria-hidden="true" className="inline-flex h-[14px] w-[14px] items-center justify-center">
               <svg className="-rotate-90" width="14" height="14" viewBox="0 0 14 14" role="presentation">
@@ -75,7 +75,9 @@ function ClusterRow({
               </svg>
             </span>
           )}
-          <span className="truncate">{clusterName ?? 'Cluster'}</span>
+          <span className="truncate">
+            {clusterName ?? 'Cluster'} {creationFailed ? 'creation failed' : installationComplete ? 'created' : ''}
+          </span>
         </div>
         <div className="flex min-w-0 items-center gap-3">
           {targetLink && targetLabel && (
@@ -84,19 +86,19 @@ function ClusterRow({
               <Icon iconName="chevron-right" iconStyle="regular" />
             </Link>
           )}
-          <button
-            type="button"
-            className="flex min-w-0 items-center gap-2 text-ssm text-neutral-350 hover:text-neutral-400"
-            onClick={() => setExpanded((prev) => !prev)}
-          >
-            <span className="truncate text-left">
-              {creationFailed ? 'Cluster install failed' : installationComplete ? 'Cluster installed!' : currentStepLabel}
-            </span>
-            <Icon iconName={expanded ? 'chevron-up' : 'chevron-down'} iconStyle="regular" />
-          </button>
+          {!isDone && (
+            <button
+              type="button"
+              className="flex min-w-0 items-center gap-2 text-ssm text-neutral-350 hover:text-neutral-400"
+              onClick={() => setExpanded((prev) => !prev)}
+            >
+              <span className="truncate text-left">{currentStepLabel}</span>
+              <Icon iconName={expanded ? 'chevron-up' : 'chevron-down'} iconStyle="regular" />
+            </button>
+          )}
         </div>
       </div>
-      {expanded && (
+      {expanded && !isDone && (
         <div className="bg-neutral-100 px-4 py-3 text-ssm">
           <ul className="flex flex-col gap-2">
             {steps.map(({ label, status }) => (

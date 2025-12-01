@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { type Cluster, type ClusterStatus, ClusterStateEnum } from 'qovery-typescript-axios'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { CLUSTER_OVERVIEW_URL, CLUSTER_URL, OVERVIEW_URL } from '@qovery/shared/routes'
+import { CLUSTER_OVERVIEW_URL, CLUSTER_URL, INFRA_LOGS_URL, OVERVIEW_URL } from '@qovery/shared/routes'
 import {
   isClusterNotificationEnabled,
   isClusterSoundEnabled,
@@ -10,6 +10,7 @@ import {
   clearTrackedClusterInstall,
   getTrackedClusterInstallIds,
 } from '../../utils/cluster-install-tracking'
+import { getCachedDeploymentProgress } from '../use-deployment-progress/use-deployment-progress'
 
 type ClusterStatusWithFlag = ClusterStatus
 
@@ -51,6 +52,10 @@ export function useClusterInstallNotifications({
 
   const isInstalledStatus = (status?: ClusterStateEnum) =>
     status === ClusterStateEnum.DEPLOYED || status === ClusterStateEnum.READY
+  const isFailedStatus = (status?: ClusterStateEnum) =>
+    status === ClusterStateEnum.DEPLOYMENT_ERROR ||
+    status === ClusterStateEnum.BUILD_ERROR ||
+    status === ClusterStateEnum.DELETE_ERROR
 
   const shouldTrackStatuses = useMemo(
     () => clusterStatuses.some((status) => isInstallingStatus(status?.status) || status?.is_deployed === false),
@@ -69,11 +74,45 @@ export function useClusterInstallNotifications({
       const state = cycleRef.current.get(clusterId) ?? { installing: false, notified: false }
       const nowInstalled = status?.is_deployed === true || isInstalledStatus(status?.status)
       const nowInstalling = isInstallingStatus(status?.status) || status?.is_deployed === false
+      const cachedProgress = getCachedDeploymentProgress(clusterId)
+      const nowFailed = cachedProgress?.creationFailed || isFailedStatus(status?.status)
 
       // Entering an install/restart cycle
       if (nowInstalling) {
         cycleRef.current.set(clusterId, { installing: true, notified: false })
         notifiedClustersRef.current.delete(clusterId)
+        return
+      }
+
+      // Notify on failure at end of a cycle
+      if (nowFailed) {
+        if (!state.installing || state.notified || notifiedClustersRef.current.has(clusterId)) {
+          cycleRef.current.set(clusterId, state)
+          return
+        }
+
+        cycleRef.current.set(clusterId, { installing: false, notified: true })
+        notifiedClustersRef.current.add(clusterId)
+        clearTrackedClusterInstall(clusterId)
+        trackedIdsRef.current.delete(clusterId)
+
+        const clusterName = clusters.find((cluster) => cluster.id === clusterId)?.name ?? 'Cluster'
+
+        try {
+          const notification = new Notification('Cluster installation failed', {
+            body: `${clusterName} installation failed. Check cluster logs for details.`,
+            tag: clusterId,
+          })
+
+          notification.onclick = (event) => {
+            event.preventDefault()
+            window.focus()
+            window.location.href = INFRA_LOGS_URL(organizationId, clusterId)
+          }
+        } catch (error) {
+          console.error('Unable to show cluster installation failure notification', error)
+        }
+
         return
       }
 

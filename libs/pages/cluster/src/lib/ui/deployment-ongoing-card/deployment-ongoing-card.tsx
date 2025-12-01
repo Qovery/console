@@ -45,7 +45,7 @@ export function DeploymentOngoingCard({
         <div className="flex items-center gap-2 text-sm font-medium text-neutral-400">
           {creationFailed ? (
             <>
-              <Icon iconName="circle-xmark" iconStyle="solid" className="text-red-500" />
+              <Icon iconName="circle-xmark" iconStyle="regular" className="text-red-500" />
               Cluster install failed
             </>
           ) : installationComplete ? (

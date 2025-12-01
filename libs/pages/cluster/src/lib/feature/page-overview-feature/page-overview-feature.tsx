@@ -1,5 +1,6 @@
 import clsx from 'clsx'
 import { useEffect, useRef, useState } from 'react'
+import { ClusterStateEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import {
   ClusterCardNodeUsage,
@@ -52,6 +53,12 @@ export function PageOverviewFeature() {
     clusterStatus &&
     displayClusterDeploymentBanner(clusterStatus?.status ?? cluster?.status) &&
     !clusterStatus?.is_deployed
+  const failureStatuses: ClusterStateEnum[] = [
+    ClusterStateEnum.DEPLOYMENT_ERROR,
+    ClusterStateEnum.BUILD_ERROR,
+    ClusterStateEnum.DELETE_ERROR,
+  ]
+  const isDeploymentFailed = clusterStatus ? failureStatuses.includes(clusterStatus.status as ClusterStateEnum) : false
 
   useEffect(() => {
     if (isDeploymentInProgress) {
@@ -64,7 +71,7 @@ export function PageOverviewFeature() {
       return
     }
 
-    if (hasSeenDeploymentInProgress.current && clusterStatus?.is_deployed) {
+    if (hasSeenDeploymentInProgress.current && (clusterStatus?.is_deployed || isDeploymentFailed)) {
       if (!hideTimeoutRef.current) {
         hideTimeoutRef.current = setTimeout(() => {
           setShowDeploymentCard(false)

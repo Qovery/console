@@ -22,10 +22,14 @@ type ProgressCacheEntry = {
   highestStepIndex: number
   installationComplete: boolean
   lastTimestamp?: number
+  creationFailed?: boolean
 }
 
 // Module-level cache to survive remounts within the same session
 const progressCache = new Map<string, ProgressCacheEntry>()
+
+export const getCachedDeploymentProgress = (clusterId: string): ProgressCacheEntry | undefined =>
+  progressCache.get(clusterId)
 
 export function useDeploymentProgress({
   organizationId,
@@ -44,6 +48,7 @@ export function useDeploymentProgress({
     organizationId,
     clusterId,
     refetchInterval: 3000,
+    refetchIntervalInBackground: true,
   })
 
   const providerCode = useMemo(() => {
@@ -85,18 +90,23 @@ export function useDeploymentProgress({
     const sawStartStep = clusterLogs.some((log) => log.step && startSteps.has(log.step))
 
     for (const log of clusterLogs) {
-      const message =
-        (log.error as { user_log_message?: string } | undefined)?.user_log_message ?? log.message?.safe_message ?? ''
-      if (!message) continue
+      const userLogMessage = (log.error as { user_log_message?: string } | undefined)?.user_log_message ?? ''
+      const safeMessage = log.message?.safe_message ?? ''
+      const message = userLogMessage || safeMessage
+      const normalizedMessage = message.toLowerCase()
 
-      if (message.includes('Kubernetes cluster successfully created')) {
+      if (normalizedMessage.includes('kubernetes cluster successfully created')) {
         maxIndex = DEPLOYMENT_STEPS.length - 1
         isComplete = true
         break
       }
 
-      if (log.step === 'CreateError' || message.includes('CreateError')) {
+      const isCreateError =
+        log.step === 'CreateError' || normalizedMessage.includes('createerror')
+
+      if (isCreateError) {
         isFailed = true
+        break
       }
 
       const triggers: { index: number; match: (msg: string) => boolean }[] = [
@@ -138,14 +148,19 @@ export function useDeploymentProgress({
       highestStepIndex: Math.max(prev.highestStepIndex, nextHighest),
       installationComplete: prev.installationComplete || nextComplete,
     }))
-    setCreationFailed((prev) => (sawStartStep ? false : prev) || isFailed)
+    const nextFailed = (sawStartStep ? false : creationFailed) || isFailed
+    if (nextFailed && !creationFailed) {
+      console.log('[cluster] creation failed detected', { clusterId })
+    }
+    setCreationFailed(nextFailed)
 
     progressCache.set(clusterId, {
       highestStepIndex: Math.max(cached.highestStepIndex, nextHighest),
       installationComplete: cached.installationComplete || nextComplete,
+      creationFailed: (sawStartStep ? false : cached.creationFailed) || nextFailed,
       lastTimestamp: latestTimestamp ? new Date(latestTimestamp).getTime() : cached.lastTimestamp,
     })
-  }, [clusterLogs, clusterId, clusterName, providerCode])
+  }, [clusterLogs, clusterId, clusterName, providerCode, creationFailed])
 
   const steps = useMemo(() => {
     return DEPLOYMENT_STEPS.map((label, index) => {
