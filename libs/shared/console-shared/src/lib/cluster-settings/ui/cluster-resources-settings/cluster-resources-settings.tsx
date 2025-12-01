@@ -178,7 +178,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       {props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
         <>
           <BlockContent
-            title={props.isProduction ? 'Reduce your costs with Karpenter' : 'Karpenter configuration'}
+            title={props.fromDetail ? 'Karpenter configuration' : 'Reduce your costs with Karpenter'}
             className="mb-0"
             classNameContent="p-0"
             headRight={
@@ -205,7 +205,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 <div className="flex flex-col">
                   <div className="relative overflow-hidden">
                     <div className="p-4">
-                      {props.isProduction || props.fromDetail ? (
+                      {props.fromDetail ? (
                         <ButtonPopoverSubnets disabled={!props.fromDetail || isKarpenter || !hasExistingVPC}>
                           <InputToggle
                             className="max-w-[70%]"
@@ -250,7 +250,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                         </p>
                       )}
                       <ExternalLink
-                        className={props.isProduction || props.fromDetail ? 'ml-11' : ''}
+                        className={props.fromDetail ? 'ml-11' : ''}
                         href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed"
                       >
                         Documentation link
