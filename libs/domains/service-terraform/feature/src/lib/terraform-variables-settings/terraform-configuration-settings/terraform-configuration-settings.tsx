@@ -41,7 +41,6 @@ export interface TerraformGeneralData
   chart_version?: string
   arguments: string
   timeout_sec: string
-  state: 'kubernetes'
   provider_version: {
     read_from_terraform_block: boolean
     explicit_version: string
@@ -144,27 +143,6 @@ export const TerraformConfigurationSettings = ({
             }}
           />
         )}
-
-        <Controller
-          name="state"
-          control={methods.control}
-          defaultValue={methods.getValues('state')}
-          render={({ field }) => (
-            <InputSelect
-              label="State management"
-              value={field.value}
-              onChange={field.onChange}
-              options={[
-                {
-                  label: 'Kubernetes (default)',
-                  value: 'kubernetes',
-                },
-              ]}
-              hint="Configure where the state should be located"
-              disabled={true}
-            />
-          )}
-        />
       </Section>
 
       <Section className="gap-4">

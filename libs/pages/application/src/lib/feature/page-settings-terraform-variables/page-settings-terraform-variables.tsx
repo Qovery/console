@@ -64,7 +64,7 @@ export const PageSettingsTerraformVariablesFeature = () => {
   const methods = useForm<TerraformGeneralData>({
     mode: 'onChange',
     defaultValues: match(service)
-      .with({ serviceType: 'TERRAFORM' }, (s) => ({ ...s, state: 'kubernetes' }))
+      .with({ serviceType: 'TERRAFORM' }, (s) => s)
       .otherwise(() => ({})),
   })
 
