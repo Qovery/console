@@ -5706,7 +5706,7 @@ __metadata:
     react-payment-inputs: ^1.1.9
     react-refresh: ^0.14.0
     react-router-dom: ^6.4.0
-    react-select: ^5.3.2
+    react-select: ^5.10.2
     react-select-event: ^5.5.1
     react-syntax-highlighter: ^15.6.1
     react-use-intercom: ^5.3.0
@@ -25126,9 +25126,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-select@npm:^5.3.2":
-  version: 5.7.3
-  resolution: "react-select@npm:5.7.3"
+"react-select@npm:^5.10.2":
+  version: 5.10.2
+  resolution: "react-select@npm:5.10.2"
   dependencies:
     "@babel/runtime": ^7.12.0
     "@emotion/cache": ^11.4.0
@@ -25138,11 +25138,11 @@ __metadata:
     memoize-one: ^6.0.0
     prop-types: ^15.6.0
     react-transition-group: ^4.3.0
-    use-isomorphic-layout-effect: ^1.1.2
+    use-isomorphic-layout-effect: ^1.2.0
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 9ffa75afb395e7077076521c529611494164ace0c6b1ceb249406991ac668947cfd0424812c15c2a45c792bb2794b22f2df93c4c2f2515962b7dfc7c91b029ec
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: cff720173a31c9e28680dbacfe46b074595b6180ff92be7cac087247f153adf9cd7d631bc67f878660c6e9c3854c925447023f195b7ddd5ed23c3553d54c227d
   languageName: node
   linkType: hard
 
@@ -29089,15 +29089,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-isomorphic-layout-effect@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "use-isomorphic-layout-effect@npm:1.1.2"
+"use-isomorphic-layout-effect@npm:^1.2.0":
+  version: 1.2.1
+  resolution: "use-isomorphic-layout-effect@npm:1.2.1"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: a6532f7fc9ae222c3725ff0308aaf1f1ddbd3c00d685ef9eee6714fd0684de5cb9741b432fbf51e61a784e2955424864f7ea9f99734a02f237b17ad3e18ea5cb
+  checksum: a52155ffa7d67a5107ef2033ae2c63f5290c3e3b198de30d4d4f78cd7921e1ab1ea31eeec387defb67ef61adb672d3b8d25b54b7dcc089bacc4f885abde96e9d
   languageName: node
   linkType: hard
 
