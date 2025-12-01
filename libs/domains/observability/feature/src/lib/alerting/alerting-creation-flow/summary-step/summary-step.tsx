@@ -191,6 +191,7 @@ export function SummaryStep() {
                 .with('hpa_issue', () => QUERY_HPA_ISSUE(service.id))
                 .with('restart_reason', () => QUERY_RESTART_REASON(containerName))
                 .with('http_error', () => QOVERY_HTTP_ERROR(ingressName))
+                .with('http_latency', () => QOVERY_HTTP_LATENCY(ingressName))
                 .otherwise(() => ''),
             },
             for_duration: alert.for_duration,

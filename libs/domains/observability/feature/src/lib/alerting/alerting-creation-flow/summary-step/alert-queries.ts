@@ -23,7 +23,16 @@ export const QUERY_HTTP_ERROR = (ingressName: string) => `
 )` // default:  fnc =max, for: 5m et  theshold 5%
 
 export const QUERY_HTTP_LATENCY = (ingressName: string) => `
-)` // default:  fnc =max, for: 5m et  theshold 5%
+ histogram_quantile(
+    0.99,
+    sum by (namespace, ingress, le) (
+      rate(
+        nginx_ingress_controller_request_duration_seconds_bucket{
+          ingress="${ingressName}",
+        }[1m]
+      )
+    )
+  )` // default:  fnc =max, for: 5m et  theshold 5%
 
 export const QUERY_RESTART_REASON = (containerName: string) => `
   (
