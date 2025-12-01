@@ -85,7 +85,10 @@ export function PageAlertingEditFeature() {
   const handleComplete = async (updatedAlerts?: AlertConfiguration[]) => {
     const updatedAlert = updatedAlerts ? updatedAlerts[0] : alerts[0]
 
-    const threshold = (updatedAlert.condition.threshold ?? 0) / 100
+    const threshold =
+      updatedAlert.tag === 'http_latency'
+        ? updatedAlert.condition.threshold ?? 0
+        : (updatedAlert.condition.threshold ?? 0) / 100
     const operator = updatedAlert.condition.operator ?? 'ABOVE'
     const func = updatedAlert.condition.function ?? 'NONE'
 
