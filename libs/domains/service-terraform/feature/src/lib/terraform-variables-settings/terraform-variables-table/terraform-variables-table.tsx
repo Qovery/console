@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
 import { Badge, Button, Checkbox, Icon, LoaderSpinner, PasswordShowHide, Tooltip, Truncate } from '@qovery/shared/ui'
@@ -28,14 +28,27 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
   const [isCellHovered, setIsCellHovered] = useState(false)
   const [focusedCell, setFocusedCell] = useState<string | undefined>(undefined)
   const isCellFocused = useCallback((cell: 'key' | 'value') => focusedCell === cell, [focusedCell])
+  const isMultiline = useMemo(() => variable.value.includes('\n') || variable.value.length > 30, [variable.value])
+  const textareaValueRef = useRef<HTMLTextAreaElement | null>(null)
+
+  const textareaMinHeight = useMemo(() => {
+    return isMultiline ? `${Math.min(Math.max(variable.value.split('\n').length * 20 + 24, 44), 120)}px` : 'auto'
+  }, [isMultiline, variable.value])
+
+  const focusValueTextarea = useCallback(() => {
+    if (textareaValueRef.current) {
+      textareaValueRef.current.focus()
+    }
+  }, [])
 
   return (
     <div className="w-full border-b border-neutral-250">
       <div
         className={twMerge(
-          'grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center',
+          'grid min-h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center',
           hoveredRow ? (hoveredRow === variable.source ? 'bg-neutral-100' : 'bg-white') : 'bg-white',
-          isRowSelected(variable.id) && 'bg-neutral-150 hover:bg-neutral-150'
+          isRowSelected(variable.id) && 'bg-neutral-150 hover:bg-neutral-150',
+          isMultiline && 'min-h-auto'
         )}
       >
         <div className="flex h-full items-center justify-center border-r border-neutral-250">
@@ -94,7 +107,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
         </div>
         {/* Variable value cell */}
         <div
-          className="group relative flex h-full cursor-text items-center border-r border-neutral-250"
+          className="group relative flex h-full min-h-[44px] cursor-text items-center border-r border-neutral-250"
           onMouseEnter={() => {
             setIsCellHovered(true)
           }}
@@ -105,15 +118,14 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
             setIsCellHovered(false)
           }}
         >
-          {/* Background */}
           <div
             className={twMerge(
-              'pointer-events-none absolute bottom-0 left-0 right-0 top-0 h-full w-full transition-all duration-100 group-hover:bg-neutral-100',
-              isCellFocused('value') && 'bg-neutral-150 group-hover:bg-neutral-150'
+              // Ensure the pseudo-element is behind by using after:-z-10
+              'relative z-0 flex h-full w-full items-center after:pointer-events-none after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:-z-10 after:h-full after:w-full after:transition-all after:duration-100 group-hover:after:bg-neutral-100',
+              isCellFocused('value') && 'after:bg-neutral-150 group-hover:after:bg-neutral-150'
             )}
-          />
-          {/* Cell content */}
-          <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full">
+            onClick={focusValueTextarea}
+          >
             {variable.secret ? (
               <PasswordShowHide
                 value=""
@@ -122,7 +134,8 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 className="h-full w-full px-4 text-sm text-neutral-400 outline-none"
               />
             ) : (
-              <input
+              <textarea
+                ref={textareaValueRef}
                 name="value"
                 value={variable.value}
                 onChange={(e) => {
@@ -130,12 +143,11 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 }}
                 onFocus={() => setFocusedCell('value')}
                 onBlur={() => setFocusedCell(undefined)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault()
-                  }
-                }}
-                className="h-full w-full bg-transparent px-4 text-sm text-neutral-400 outline-none"
+                className={twMerge(
+                  'vertical-align-middle h-5 w-full resize-none bg-transparent px-4 text-sm text-neutral-400 outline-none',
+                  isMultiline && 'h-full min-h-5 resize-y py-3'
+                )}
+                style={{ minHeight: textareaMinHeight }}
                 spellCheck={false}
                 placeholder="Variable value"
               />
@@ -175,7 +187,6 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                   </button>
                 </DropdownVariable>
               )}
-
               {isVariableChanged(variable) && (
                 <button
                   type="button"
