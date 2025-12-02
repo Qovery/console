@@ -8,6 +8,7 @@ import { ErrorBoundary, FunnelFlow } from '@qovery/shared/ui'
 import { useContainerName } from '../../hooks/use-container-name/use-container-name'
 import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create-alert-rule'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
+import { generateConditionDescription } from '../../util-alerting/generate-condition-description'
 import { type AlertConfiguration, type MetricCategory } from './alerting-creation-flow.types'
 import { MetricConfigurationStep } from './metric-configuration-step/metric-configuration-step'
 import {
@@ -132,41 +133,45 @@ export function AlertingCreationFlow({
           alert.tag === 'http_latency' ? alert.condition.threshold ?? 0 : (alert.condition.threshold ?? 0) / 100
         const operator = alert.condition.operator ?? 'ABOVE'
         const func = alert.condition.function ?? 'NONE'
+        // XXX: Generate description from function, operator, threshold and metric category for Notification
+        const description = generateConditionDescription(func, operator, threshold, alert.tag as MetricCategory)
 
-        await createAlertRule({
-          payload: {
-            organization_id: organizationId,
-            cluster_id: environment.cluster_id,
-            target: {
-              target_id: service.id,
-              target_type: service.serviceType as AlertTargetType,
-            },
-            name: alert.name,
-            tag: alert.tag,
-            description: alert.tag,
-            condition: {
-              kind: 'BUILT',
-              function: func,
-              operator,
-              threshold,
-              promql: match(alert.tag)
-                .with('cpu', () => QUERY_CPU(containerName))
-                .with('memory', () => QUERY_MEMORY(containerName))
-                .with('missing_replicas', () => QUERY_MISSING_REPLICAS(containerName))
-                .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
-                .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
-                .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
-                .otherwise(() => ''),
-            },
-            for_duration: alert.for_duration,
-            severity: alert.severity,
-            enabled: true,
-            alert_receiver_ids: alert.alert_receiver_ids,
-            presentation: {
-              summary: alert.presentation.summary ?? undefined,
-            },
-          },
-        })
+        console.log('description', description)
+
+        // await createAlertRule({
+        //   payload: {
+        //     organization_id: organizationId,
+        //     cluster_id: environment.cluster_id,
+        //     target: {
+        //       target_id: service.id,
+        //       target_type: service.serviceType as AlertTargetType,
+        //     },
+        //     name: alert.name,
+        //     tag: alert.tag,
+        //     description,
+        //     condition: {
+        //       kind: 'BUILT',
+        //       function: func,
+        //       operator,
+        //       threshold,
+        //       promql: match(alert.tag)
+        //         .with('cpu', () => QUERY_CPU(containerName))
+        //         .with('memory', () => QUERY_MEMORY(containerName))
+        //         .with('missing_replicas', () => QUERY_MISSING_REPLICAS(containerName))
+        //         .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
+        //         .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
+        //         .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
+        //         .otherwise(() => ''),
+        //     },
+        //     for_duration: alert.for_duration,
+        //     severity: alert.severity,
+        //     enabled: true,
+        //     alert_receiver_ids: alert.alert_receiver_ids,
+        //     presentation: {
+        //       summary: alert.presentation.summary ?? undefined,
+        //     },
+        //   },
+        // })
       }
       onComplete(activeAlerts)
     } catch (error) {

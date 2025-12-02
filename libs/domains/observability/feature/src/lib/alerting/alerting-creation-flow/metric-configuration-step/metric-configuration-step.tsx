@@ -26,7 +26,7 @@ import {
   formatMetricLabel,
   formatOperator,
   formatThreshold,
-} from '../../../util-alerting/get-rule-summary'
+} from '../../../util-alerting/generate-condition-description'
 import { NotificationChannelModal } from '../../notification-channel-modal/notification-channel-modal'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration, type MetricCategory } from '../alerting-creation-flow.types'
@@ -109,17 +109,22 @@ export function MetricConfigurationStep({
       return initialData
     }
 
+    const defaultThreshold = DEFAULT_THRESHOLDS[metricCategory] ?? 80
+    const defaultFunction = METRIC_TYPE_OPTIONS[metricCategory][0].value ?? AlertRuleConditionFunction.MAX
+    const defaultOperator = 'ABOVE'
+    const defaultDuration = 'PT5M'
+
     return {
       id: uuid(),
       tag: metricCategory,
       condition: {
         kind: 'BUILT',
-        function: METRIC_TYPE_OPTIONS[metricCategory][0].value ?? AlertRuleConditionFunction.MAX,
-        operator: 'ABOVE',
-        threshold: DEFAULT_THRESHOLDS[metricCategory] ?? 80,
+        function: defaultFunction,
+        operator: defaultOperator,
+        threshold: defaultThreshold,
         promql: '',
       },
-      for_duration: 'PT5M',
+      for_duration: defaultDuration,
       name: metricCategory ? `${metricCategory.replace(/_/g, ' ').toUpperCase()} alert` : '',
       severity: 'MEDIUM',
       alert_receiver_ids: [],
@@ -254,20 +259,13 @@ export function MetricConfigurationStep({
                       name="tag"
                       control={methods.control}
                       render={({ field }) => (
-                        <InputSelectSmall
-                          name={field.name}
-                          items={Object.keys(METRIC_TYPE_OPTIONS).map((key) => ({
-                            label: key.replace(/_/g, ' ').toUpperCase(),
-                            value: key,
-                          }))}
-                          defaultValue={field.value}
-                          onChange={(value) => {
-                            field.onChange(value)
-                            const newThreshold = DEFAULT_THRESHOLDS[value as MetricCategory] ?? 80
-                            methods.setValue('condition.threshold', newThreshold)
-                          }}
+                        <InputTextSmall
+                          label="Metric"
                           className="w-full"
-                          inputClassName="bg-transparent"
+                          name={field.name}
+                          inputClassName="text-neutral-350"
+                          value={field.value.replace(/_/g, ' ').toUpperCase()}
+                          disabled
                         />
                       )}
                     />

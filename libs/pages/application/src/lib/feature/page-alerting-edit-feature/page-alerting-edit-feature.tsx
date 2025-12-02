@@ -5,6 +5,7 @@ import { match } from 'ts-pattern'
 import {
   type AlertConfiguration,
   AlertingCreationFlowContext,
+  type MetricCategory,
   MetricConfigurationStep,
   QUERY_CPU,
   QUERY_HTTP_ERROR,
@@ -18,6 +19,7 @@ import {
   useEnvironment,
   useIngressName,
 } from '@qovery/domains/observability/feature'
+import { generateConditionDescription } from '@qovery/domains/observability/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { APPLICATION_MONITORING_ALERTS_URL, APPLICATION_MONITORING_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
@@ -108,7 +110,7 @@ export function PageAlertingEditFeature() {
           payload: {
             name: updatedAlert.name,
             tag: updatedAlert.tag,
-            description: alertRule.description,
+            description: generateConditionDescription(func, operator, threshold, updatedAlert.tag as MetricCategory),
             condition: {
               kind: 'BUILT',
               function: func,
