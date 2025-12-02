@@ -1,8 +1,9 @@
 import clsx from 'clsx'
 import { AlertSeverity } from 'qovery-typescript-axios'
+import { AlertRuleConditionFunction } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { v4 as uuid } from 'uuid'
 import { type Value } from '@qovery/shared/interfaces'
@@ -20,32 +21,41 @@ import {
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useAlertReceivers } from '../../../hooks/use-alert-receivers/use-alert-receivers'
+import {
+  formatDuration,
+  formatMetricLabel,
+  formatOperator,
+  formatThreshold,
+} from '../../../util-alerting/get-rule-summary'
 import { NotificationChannelModal } from '../../notification-channel-modal/notification-channel-modal'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
-import { type AlertConfiguration } from '../alerting-creation-flow.types'
-import { ALERTING_CREATION_METRIC, ALERTING_CREATION_SUMMARY } from '../router'
+import { type AlertConfiguration, type MetricCategory } from '../alerting-creation-flow.types'
 
-const METRIC_TYPE_OPTIONS: Record<string, Value[]> = {
-  cpu: [
-    { label: 'Average', value: 'AVG' },
-    { label: 'Maximum', value: 'MAX' },
-    { label: 'Minimum', value: 'MIN' },
-  ],
-  memory: [
-    { label: 'Average', value: 'AVG' },
-    { label: 'Maximum', value: 'MAX' },
-    { label: 'Minimum', value: 'MIN' },
-  ],
-  instances: [{ label: 'Count', value: 'count' }],
-  k8s_event: [{ label: 'Count', value: 'count' }],
-  network: [
-    { label: 'Throughput', value: 'throughput' },
-    { label: 'Latency', value: 'latency' },
-  ],
-  logs: [
-    { label: 'Error rate', value: 'error_rate' },
-    { label: 'Count', value: 'count' },
-  ],
+const VALUES_OPTIONS = [
+  { label: 'Maximum', value: AlertRuleConditionFunction.MAX },
+  { label: 'Average', value: AlertRuleConditionFunction.AVG },
+  { label: 'Minimum', value: AlertRuleConditionFunction.MIN },
+]
+
+const HTTP_ERROR_VALUES_OPTIONS = [{ label: 'Count', value: AlertRuleConditionFunction.COUNT }]
+const REPLICAS_NUMBER_VALUES_OPTIONS = [{ label: 'Count', value: AlertRuleConditionFunction.COUNT }]
+
+const METRIC_TYPE_OPTIONS: Record<MetricCategory, { label: string; value: AlertRuleConditionFunction }[]> = {
+  cpu: VALUES_OPTIONS,
+  memory: VALUES_OPTIONS,
+  http_error: HTTP_ERROR_VALUES_OPTIONS,
+  http_latency: VALUES_OPTIONS,
+  missing_replicas: REPLICAS_NUMBER_VALUES_OPTIONS,
+  instance_restart: VALUES_OPTIONS,
+}
+
+const DEFAULT_THRESHOLDS: Record<MetricCategory, number> = {
+  cpu: 80,
+  memory: 80,
+  http_error: 5,
+  http_latency: 200,
+  missing_replicas: 0,
+  instance_restart: 80,
 }
 
 const OPERATOR_OPTIONS: Value[] = [
@@ -54,6 +64,7 @@ const OPERATOR_OPTIONS: Value[] = [
 ]
 
 const DURATION_OPTIONS: Value[] = [
+  { label: 'Immediate', value: 'PT0S' },
   { label: 'Last 1 minute', value: 'PT1M' },
   { label: 'Last 5 minutes', value: 'PT5M' },
   { label: 'Last 10 minutes', value: 'PT10M' },
@@ -68,30 +79,30 @@ const SEVERITY_OPTIONS: Value[] = Object.values(AlertSeverity).map((severity) =>
 
 export function MetricConfigurationStep({
   isEdit,
-  isLoadingEditAlertRule,
 }: {
   isEdit?: boolean
-  isLoadingEditAlertRule?: boolean
-}) {
-  const navigate = useNavigate()
+} = {}) {
   const { organizationId = '' } = useParams()
-  const location = useLocation()
   const { openModal, closeModal } = useModal()
-  const [searchParams] = useSearchParams()
-  const { metricIndex, alertId } = useParams<{ metricIndex?: string; alertId?: string }>()
-  const { selectedMetrics, serviceName, setCurrentStepIndex, alerts, setAlerts, onComplete } =
-    useAlertingCreationFlowContext()
+  const {
+    selectedMetrics,
+    serviceName,
+    alerts,
+    setAlerts,
+    currentStepIndex,
+    onNavigateToMetric,
+    onComplete,
+    isLoading,
+  } = useAlertingCreationFlowContext()
 
   const { data: alertReceivers = [] } = useAlertReceivers({ organizationId })
 
-  const metricCategory = isEdit ? alerts[0]?.tag || '' : metricIndex || selectedMetrics[0] || ''
-  const index = isEdit ? alerts.findIndex((alert) => alert.id === alertId) : selectedMetrics.indexOf(metricCategory)
-
-  const initialData = alerts[index]
-
-  const basePathMatch = location.pathname.match(/(.+)\/(metric|edit)\/[^/]+$/)
-  const basePath = basePathMatch ? basePathMatch[1] : ''
-  const queryString = searchParams.toString() ? `?${searchParams.toString()}` : ''
+  const index = currentStepIndex
+  const metricCategory = (selectedMetrics[index] || 'cpu') as MetricCategory
+  const currentAlert = isEdit ? alerts[0] : undefined
+  const initialData = currentAlert ?? alerts[index]
+  const isLastMetric = index === selectedMetrics.length - 1
+  const includedAlertsCount = alerts.filter((alert, i) => i !== index && !alert.skipped).length
 
   const defaultValues = useMemo<AlertConfiguration>(() => {
     if (initialData) {
@@ -103,15 +114,16 @@ export function MetricConfigurationStep({
       tag: metricCategory,
       condition: {
         kind: 'BUILT',
-        function: 'AVG',
+        function: METRIC_TYPE_OPTIONS[metricCategory][0].value ?? AlertRuleConditionFunction.MAX,
         operator: 'ABOVE',
-        threshold: 80,
+        threshold: DEFAULT_THRESHOLDS[metricCategory] ?? 80,
         promql: '',
       },
       for_duration: 'PT5M',
       name: metricCategory ? `${metricCategory.replace(/_/g, ' ').toUpperCase()} alert` : '',
       severity: 'MEDIUM',
       alert_receiver_ids: [],
+      presentation: { summary: undefined },
     }
   }, [initialData, metricCategory])
 
@@ -121,35 +133,56 @@ export function MetricConfigurationStep({
   })
 
   useEffect(() => {
-    if (isEdit) {
-      setCurrentStepIndex(selectedMetrics.length)
-    } else {
-      setCurrentStepIndex(index)
-    }
-  }, [isEdit, index, selectedMetrics.length, setCurrentStepIndex])
-
-  useEffect(() => {
     methods.reset(defaultValues)
   }, [methods, defaultValues])
 
-  const handleNext = (data: AlertConfiguration) => {
+  const watchTag = methods.watch('tag')
+  const watchCondition = methods.watch('condition')
+  const watchForDuration = methods.watch('for_duration')
+
+  // Auto-generate alert name from conditions
+  useEffect(() => {
+    const metric = formatMetricLabel(watchTag)
+    const functionLabel = METRIC_TYPE_OPTIONS[watchTag as MetricCategory]?.find(
+      (option) => option.value === watchCondition?.function
+    )?.label
+    const operator = formatOperator(watchCondition?.operator)
+    const threshold = formatThreshold(
+      watchTag as MetricCategory,
+      parseFloat(watchCondition?.threshold?.toString() ?? '0')
+    )
+    const duration = formatDuration(watchForDuration)
+
+    if (metric && operator && threshold && duration && functionLabel) {
+      methods.setValue(
+        'name',
+        `${functionLabel} ${metric} ${operator} ${threshold} ${duration === 'immediately' ? 'immediately' : `for ${duration}`}`
+      )
+    }
+  }, [
+    watchTag,
+    watchCondition?.function,
+    watchCondition?.operator,
+    watchCondition?.threshold,
+    watchForDuration,
+    methods,
+  ])
+
+  const handleNext = async (data: AlertConfiguration) => {
     const newAlerts = [...alerts]
     newAlerts[index] = { ...data, skipped: false }
     setAlerts(newAlerts)
 
     if (isEdit) {
-      onComplete(newAlerts)
+      await onComplete(newAlerts)
+    } else if (isLastMetric) {
+      await onComplete(newAlerts)
     } else {
-      const isLastMetric = index === selectedMetrics.length - 1
-      if (isLastMetric) {
-        navigate(`${basePath}${ALERTING_CREATION_SUMMARY}${queryString}`)
-      } else {
-        navigate(`${basePath}${ALERTING_CREATION_METRIC(selectedMetrics[index + 1])}${queryString}`)
-      }
+      onNavigateToMetric(index + 1)
     }
   }
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     const currentFormValues = methods.getValues()
     const newAlerts = [...alerts]
     newAlerts[index] = {
@@ -158,11 +191,10 @@ export function MetricConfigurationStep({
     }
     setAlerts(newAlerts)
 
-    const isLastMetric = index === selectedMetrics.length - 1
     if (isLastMetric) {
-      navigate(`${basePath}${ALERTING_CREATION_SUMMARY}${queryString}`)
+      await onComplete(newAlerts)
     } else {
-      navigate(`${basePath}${ALERTING_CREATION_METRIC(selectedMetrics[index + 1])}${queryString}`)
+      onNavigateToMetric(index + 1)
     }
   }
 
@@ -171,7 +203,7 @@ export function MetricConfigurationStep({
       return
     }
 
-    navigate(`${basePath}${ALERTING_CREATION_METRIC(selectedMetrics[index - 1])}${queryString}`)
+    onNavigateToMetric(index - 1)
   }
 
   const handleAddNotificationChannel = () => {
@@ -184,18 +216,16 @@ export function MetricConfigurationStep({
     handleNext(data)
   })
 
-  if (index === -1 || index >= selectedMetrics.length) {
-    return null
-  }
-
-  const watchCondition = methods.watch('condition')
-  const watchForDuration = methods.watch('for_duration')
   const functionLabel = METRIC_TYPE_OPTIONS[metricCategory]?.find(
-    (option) => option.value === watchCondition?.function
+    (option: Value) => option.value === watchCondition?.function
   )?.label
 
+  const unit = match(watchTag)
+    .with('http_latency', () => 'ms')
+    .otherwise(() => '%')
+
   return (
-    <FunnelFlowBody key={index}>
+    <FunnelFlowBody key={index} customContentWidth="max-w-[52rem]">
       <FormProvider {...methods}>
         <form onSubmit={onSubmit} className="flex w-full flex-1 flex-col gap-6">
           <Section className="flex flex-col rounded-lg border border-neutral-250">
@@ -210,7 +240,7 @@ export function MetricConfigurationStep({
                   </div>
                   <ExternalLink
                     className="shrink-0"
-                    href="https://hub.qovery.com/docs/using-qovery/configuration/observability/alerting/#alert-conditions"
+                    href="https://www.qovery.com/docs/configuration/integrations/observability/qovery-observe"
                     size="sm"
                   >
                     Conditions guide
@@ -225,13 +255,17 @@ export function MetricConfigurationStep({
                       control={methods.control}
                       render={({ field }) => (
                         <InputSelectSmall
-                          name="tag"
+                          name={field.name}
                           items={Object.keys(METRIC_TYPE_OPTIONS).map((key) => ({
                             label: key.replace(/_/g, ' ').toUpperCase(),
                             value: key,
                           }))}
                           defaultValue={field.value}
-                          onChange={(value) => field.onChange(value)}
+                          onChange={(value) => {
+                            field.onChange(value)
+                            const newThreshold = DEFAULT_THRESHOLDS[value as MetricCategory] ?? 80
+                            methods.setValue('condition.threshold', newThreshold)
+                          }}
                           className="w-full"
                           inputClassName="bg-transparent"
                         />
@@ -242,7 +276,7 @@ export function MetricConfigurationStep({
                       control={methods.control}
                       render={({ field }) => (
                         <InputSelectSmall
-                          name="condition.function"
+                          name={field.name}
                           items={METRIC_TYPE_OPTIONS[metricCategory] || []}
                           defaultValue={field.value}
                           onChange={(value) => field.onChange(value)}
@@ -281,7 +315,7 @@ export function MetricConfigurationStep({
                       control={methods.control}
                       render={({ field }) => (
                         <InputSelectSmall
-                          name="operator"
+                          name={field.name}
                           items={OPERATOR_OPTIONS}
                           defaultValue={field.value}
                           onChange={(value) => field.onChange(value)}
@@ -299,7 +333,7 @@ export function MetricConfigurationStep({
                           if (value === '') {
                             return 'Threshold is required'
                           }
-                          if (Number(value) < 0 || Number(value) > 100) {
+                          if (watchTag !== 'http_latency' && (Number(value) < 0 || Number(value) > 100)) {
                             return 'Threshold must be between 0 and 100'
                           }
                           return true
@@ -318,7 +352,7 @@ export function MetricConfigurationStep({
                             inputClassName="bg-transparent pr-6"
                           />
                           <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-350">
-                            %
+                            {unit}
                           </span>
                         </div>
                       )}
@@ -359,10 +393,20 @@ export function MetricConfigurationStep({
                     </span>
                     <span>
                       IS <span className="text-neutral-900">{watchCondition.operator}</span>{' '}
-                      <span className="text-red-600">{watchCondition.threshold}%</span> DURING THE{' '}
-                      <span className="text-neutral-900">
-                        {DURATION_OPTIONS.find((option) => option.value === watchForDuration)?.label}
-                      </span>
+                      <span className="text-red-600">
+                        {watchCondition.threshold}
+                        {unit}
+                      </span>{' '}
+                      {watchForDuration === 'PT0S' ? (
+                        'IMMEDIATELY'
+                      ) : (
+                        <>
+                          DURING THE{' '}
+                          <span className="text-neutral-900">
+                            {DURATION_OPTIONS.find((option) => option.value === watchForDuration)?.label}
+                          </span>
+                        </>
+                      )}
                     </span>
                   </p>
                 </div>
@@ -383,7 +427,7 @@ export function MetricConfigurationStep({
                   <InputTextSmall
                     label="Alert name"
                     placeholder="Your alert name"
-                    name="name"
+                    name={field.name}
                     value={field.value}
                     onChange={(value) => field.onChange(value)}
                     error={fieldState.error?.message}
@@ -393,13 +437,33 @@ export function MetricConfigurationStep({
             </div>
 
             <div className="flex flex-col gap-1">
+              <p className="text-sm">Notification text</p>
+              <div className="flex flex-col gap-1">
+                <Controller
+                  name="presentation.summary"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <InputTextSmall
+                      label="Notification text"
+                      placeholder="Your notification text (optional)"
+                      name={field.name}
+                      value={field.value ?? undefined}
+                      onChange={(value) => field.onChange(value)}
+                    />
+                  )}
+                />
+                <p className="pl-2 text-xs text-neutral-350">This message will be displayed in your notification.</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1">
               <p className="text-sm">Severity</p>
               <Controller
                 name="severity"
                 control={methods.control}
                 render={({ field }) => (
                   <InputSelectSmall
-                    name="severity"
+                    name={field.name}
                     items={SEVERITY_OPTIONS}
                     defaultValue={field.value}
                     onChange={(value) => field.onChange(value)}
@@ -413,7 +477,8 @@ export function MetricConfigurationStep({
               <Controller
                 name="alert_receiver_ids"
                 control={methods.control}
-                render={({ field }) => (
+                rules={{ required: 'Notification channels are required' }}
+                render={({ field, fieldState }) => (
                   <InputSelect
                     options={alertReceivers?.map((receiver) => ({
                       label: (
@@ -437,6 +502,7 @@ export function MetricConfigurationStep({
                     onChange={field.onChange}
                     label="Notification channels"
                     className="w-full"
+                    error={fieldState?.error?.message}
                     isMulti
                   />
                 )}
@@ -452,20 +518,29 @@ export function MetricConfigurationStep({
                     Previous
                   </Button>
                 )}
-                <Button type="button" variant="plain" color="neutral" size="lg" onClick={handleSkip}>
-                  Skip this alert
-                </Button>
+                {!isLastMetric && (
+                  <Button type="button" variant="plain" color="neutral" size="lg" onClick={handleSkip}>
+                    Skip this alert
+                  </Button>
+                )}
               </div>
             )}
-            <Button
-              size="lg"
-              onClick={onSubmit}
-              disabled={!methods.formState.isValid}
-              className={isEdit ? 'ml-auto' : ''}
-              loading={isEdit && isLoadingEditAlertRule}
-            >
-              {isEdit ? 'Save' : 'Include'}
-            </Button>
+            <div className={clsx('flex items-center gap-2', isEdit ? 'w-full' : '')}>
+              {!isEdit && isLastMetric && includedAlertsCount > 0 && (
+                <Button type="button" variant="outline" size="lg" onClick={handleSkip} loading={isLoading}>
+                  Skip and create others
+                </Button>
+              )}
+              <Button
+                size="lg"
+                onClick={onSubmit}
+                disabled={!methods.formState.isValid}
+                className={isEdit ? 'ml-auto' : ''}
+                loading={isLoading}
+              >
+                {isEdit ? 'Save' : isLastMetric ? 'Create' : 'Include'}
+              </Button>
+            </div>
           </div>
         </form>
       </FormProvider>

@@ -7,11 +7,16 @@ import {
   AlertingCreationFlowContext,
   MetricConfigurationStep,
   QUERY_CPU,
+  QUERY_HTTP_ERROR,
+  QUERY_HTTP_LATENCY,
+  QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
+  QUERY_MISSING_REPLICAS,
   useAlertRules,
   useContainerName,
   useEditAlertRule,
   useEnvironment,
+  useIngressName,
 } from '@qovery/domains/observability/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { APPLICATION_MONITORING_ALERTS_URL, APPLICATION_MONITORING_URL, APPLICATION_URL } from '@qovery/shared/routes'
@@ -41,6 +46,13 @@ export function PageAlertingEditFeature() {
     endDate: now.toISOString(),
   })
 
+  const { data: ingressName } = useIngressName({
+    clusterId: environment?.cluster_id ?? '',
+    serviceId: service?.id ?? '',
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+  })
+
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [alerts, setAlerts] = useState<AlertConfiguration[]>([])
 
@@ -48,21 +60,30 @@ export function PageAlertingEditFeature() {
 
   useEffect(() => {
     if (alertRule && alerts.length === 0) {
+      const rawThreshold = alertRule.condition.threshold ?? 0
+      const threshold =
+        alertRule.tag === 'http_latency'
+          ? rawThreshold
+          : alertRule.condition.threshold != null
+            ? rawThreshold * 100
+            : 80
+
       const alertConfig: AlertConfiguration = {
         id: alertRule.id,
-        tag: alertRule.description || '',
+        tag: alertRule.tag ?? 'CPU',
         for_duration: alertRule.for_duration || 'PT5M',
         condition: {
           kind: alertRule.condition.kind || 'BUILT',
           function: alertRule.condition.function || 'AVG',
           operator: alertRule.condition.operator || 'ABOVE',
-          threshold: (alertRule.condition.threshold ?? 0) * 100 || 80,
+          threshold,
           promql: alertRule.condition.promql || '',
         },
         name: alertRule.name,
         severity: alertRule.severity,
         alert_receiver_ids: alertRule.alert_receiver_ids || [],
         skipped: false,
+        presentation: { summary: alertRule.presentation.summary },
       }
       setAlerts([alertConfig])
     }
@@ -73,18 +94,21 @@ export function PageAlertingEditFeature() {
   const handleComplete = async (updatedAlerts?: AlertConfiguration[]) => {
     const updatedAlert = updatedAlerts ? updatedAlerts[0] : alerts[0]
 
-    const threshold = (updatedAlert.condition.threshold ?? 0) / 100
+    const threshold =
+      updatedAlert.tag === 'http_latency'
+        ? updatedAlert.condition.threshold ?? 0
+        : (updatedAlert.condition.threshold ?? 0) / 100
     const operator = updatedAlert.condition.operator ?? 'ABOVE'
     const func = updatedAlert.condition.function ?? 'NONE'
 
-    if (updatedAlert && environment && containerName) {
+    if (updatedAlert && environment && containerName && ingressName) {
       try {
         await editAlertRule({
           alertRuleId: alertId,
           payload: {
             name: updatedAlert.name,
             tag: updatedAlert.tag,
-            description: updatedAlert.tag,
+            description: alertRule.description,
             condition: {
               kind: 'BUILT',
               function: func,
@@ -93,13 +117,19 @@ export function PageAlertingEditFeature() {
               promql: match(updatedAlert.tag)
                 .with('cpu', () => QUERY_CPU(containerName))
                 .with('memory', () => QUERY_MEMORY(containerName))
+                .with('missing_replicas', () => QUERY_MISSING_REPLICAS(containerName))
+                .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
+                .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
+                .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
                 .otherwise(() => ''),
             },
             for_duration: updatedAlert.for_duration,
             severity: updatedAlert.severity,
             enabled: true,
             alert_receiver_ids: updatedAlert.alert_receiver_ids,
-            presentation: {},
+            presentation: {
+              summary: updatedAlert.presentation.summary,
+            },
           },
         })
         navigate(
@@ -134,11 +164,16 @@ export function PageAlertingEditFeature() {
         alerts,
         setAlerts,
         onComplete: handleComplete,
+        isLoading: isLoadingEditAlertRule,
         totalSteps: 1,
+        containerName,
+        ingressName,
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onNavigateToMetric: () => {},
       }}
     >
       <FunnelFlow portal totalSteps={1} currentStep={1} currentTitle="Edit Alert" onExit={handleExit}>
-        <MetricConfigurationStep isEdit isLoadingEditAlertRule={isLoadingEditAlertRule} />
+        <MetricConfigurationStep isEdit />
       </FunnelFlow>
     </AlertingCreationFlowContext.Provider>
   )

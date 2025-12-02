@@ -1,5 +1,6 @@
 import { type AlertRuleResponse } from 'qovery-typescript-axios'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { type MetricCategory } from '../alerting/alerting-creation-flow/alerting-creation-flow.types'
 
 const METRIC_LABEL_OVERRIDES: Record<string, string> = {
   cpu: 'CPU',
@@ -15,7 +16,7 @@ const OPERATOR_SYMBOLS: Record<string, string> = {
   BELOW: '<',
 }
 
-function formatMetricLabel(tag?: string) {
+export function formatMetricLabel(tag?: string) {
   if (!tag) return undefined
   if (METRIC_LABEL_OVERRIDES[tag]) {
     return METRIC_LABEL_OVERRIDES[tag]
@@ -27,24 +28,29 @@ function formatMetricLabel(tag?: string) {
   return words.map((word) => (word.length <= 3 ? word.toUpperCase() : upperCaseFirstLetter(word))).join(' ')
 }
 
-function formatOperator(operator?: string) {
+export function formatOperator(operator?: string) {
   if (!operator) return undefined
   return OPERATOR_SYMBOLS[operator] ?? operator
 }
 
-function formatThreshold(threshold?: number) {
+export function formatThreshold(metric?: MetricCategory, threshold?: number) {
   if (threshold === undefined || threshold === null) return undefined
   const normalized = threshold <= 1 ? threshold * 100 : threshold
   const formatted = Number.isInteger(normalized) ? normalized.toString() : normalized.toFixed(1).replace(/\.0$/, '')
-  return `${formatted}%`
+  return metric === 'http_latency' ? `${threshold}ms` : `${formatted}%`
 }
 
-function formatDuration(duration?: string) {
+export function formatDuration(duration?: string) {
   if (!duration) return undefined
   const matchDuration = duration.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/)
   if (!matchDuration) return undefined
 
   const [, hours, minutes, seconds] = matchDuration
+
+  if (!hours && !minutes && seconds && (seconds === '0' || seconds === '1')) {
+    return 'immediately'
+  }
+
   const parts = []
 
   if (hours) parts.push(`${hours} hour${hours === '1' ? '' : 's'}`)
@@ -63,7 +69,7 @@ export function getRuleSummary(alert: AlertRuleResponse) {
 
   const metric = formatMetricLabel(alert.tag)
   const operator = formatOperator(alert.condition.operator)
-  const threshold = formatThreshold(alert.condition.threshold)
+  const threshold = formatThreshold(alert.tag as MetricCategory, alert.condition.threshold)
   const duration = formatDuration(alert.for_duration)
 
   if (!metric || !operator || !threshold || !duration) {

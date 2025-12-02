@@ -1,12 +1,11 @@
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { APPLICATION_MONITORING_GENERAL_URL, APPLICATION_MONITORING_URL, APPLICATION_URL } from '@qovery/shared/routes'
+import { APPLICATION_MONITORING_ALERTS_URL, APPLICATION_MONITORING_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { Chart, Heading, Icon, Link, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useAlerts } from '../../hooks/use-alerts/use-alerts'
-import { getRuleSummary } from '../../util-alerting/get-rule-summary'
-import SeverityIndicator from '../severity-indicator/severity-indicator'
+import { SeverityIndicator } from '../severity-indicator/severity-indicator'
 
 const { Table } = TablePrimitives
 
@@ -49,7 +48,7 @@ export function IssueOverview() {
           <Table.Root className="divide-y divide-neutral-250">
             <Table.Header>
               <Table.Row className="font-code text-xs">
-                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Rule</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Alert name</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Target</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Severity</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Age</Table.ColumnHeaderCell>
@@ -64,9 +63,7 @@ export function IssueOverview() {
                   <Table.Row key={alert.id}>
                     <Table.RowHeaderCell>
                       <div className="flex items-center justify-between gap-3">
-                        <span className="flex items-center gap-1.5 text-sm text-neutral-400">
-                          {getRuleSummary(alert)}
-                        </span>
+                        <span className="flex items-center gap-1.5 text-sm text-neutral-400">{alert.name}</span>
                         {isMuted && (
                           <Tooltip content="Alert is muted">
                             <Icon iconName="bell-slash" iconStyle="regular" className="text-xs text-neutral-350" />
@@ -90,7 +87,7 @@ export function IssueOverview() {
                             alert.target.service?.id
                           ) +
                           APPLICATION_MONITORING_URL +
-                          APPLICATION_MONITORING_GENERAL_URL
+                          APPLICATION_MONITORING_ALERTS_URL
                         }
                       >
                         <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-white">
@@ -108,7 +105,7 @@ export function IssueOverview() {
                     <Table.Cell className="h-11">
                       <SeverityIndicator severity={alert.severity} />
                     </Table.Cell>
-                    <Table.Cell className="h-11">{timeAgo(new Date(alert.updated_at ?? ''))}</Table.Cell>
+                    <Table.Cell className="h-11">{timeAgo(new Date(alert.starts_at ?? ''))}</Table.Cell>
                   </Table.Row>
                 )
               })}

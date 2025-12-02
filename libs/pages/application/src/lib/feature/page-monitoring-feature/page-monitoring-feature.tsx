@@ -1,5 +1,7 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
+import { useMemo } from 'react'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { useCluster } from '@qovery/domains/clusters/feature'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useService } from '@qovery/domains/services/feature'
 import {
   APPLICATION_MONITORING_ALERTS_URL,
@@ -13,7 +15,6 @@ import { ROUTER_APPLICATION_MONITORING } from '../../router/router'
 
 export function PageMonitoringFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
-  const isFeatureFlag = useFeatureFlagVariantKey('alerting')
 
   useDocumentTitle('Application - Monitoring')
 
@@ -24,7 +25,15 @@ export function PageMonitoringFeature() {
     applicationId
   )}${APPLICATION_MONITORING_URL}`
 
+  const { data: environment } = useEnvironment({ environmentId })
+  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
   const { data: service } = useService({ serviceId: applicationId })
+
+  const hasAlerting =
+    useMemo(
+      () => cluster?.metrics_parameters?.configuration?.alerting?.enabled,
+      [cluster?.metrics_parameters?.configuration?.alerting?.enabled]
+    ) ?? false
 
   const links: NavigationLeftLinkProps[] = [
     {
@@ -43,7 +52,7 @@ export function PageMonitoringFeature() {
 
   if (!service) return null
 
-  if (!isFeatureFlag) {
+  if (!hasAlerting) {
     return (
       <div className="flex flex-1 flex-col">
         <ErrorBoundary>

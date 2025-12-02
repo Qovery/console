@@ -1,6 +1,11 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { useAlerts } from '@qovery/domains/observability/feature'
-import { ALERTING_ISSUES_URL, ALERTING_NOTIFICATION_CHANNEL_URL, ALERTING_URL } from '@qovery/shared/routes'
+import {
+  ALERTING_ALERT_RULES_URL,
+  ALERTING_ISSUES_URL,
+  ALERTING_NOTIFICATION_CHANNEL_URL,
+  ALERTING_URL,
+} from '@qovery/shared/routes'
 import { ErrorBoundary, NavigationLeft, type NavigationLeftLinkProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_ALERTING } from './router/router'
@@ -31,6 +36,12 @@ export function PageAlerting() {
       url: ALERTING_URL(organizationId) + ALERTING_ISSUES_URL,
     },
     {
+      title: 'Alert rules',
+      iconName: 'list-check',
+      iconStyle: 'solid',
+      url: ALERTING_URL(organizationId) + ALERTING_ALERT_RULES_URL,
+    },
+    {
       title: 'Notification channel',
       iconName: 'bullhorn',
       iconStyle: 'regular',
@@ -51,10 +62,7 @@ export function PageAlerting() {
             {ROUTER_ALERTING.map((route) => (
               <Route key={route.path} path={route.path} element={route.component} />
             ))}
-            <Route
-              path="*"
-              element={<Navigate replace to={ALERTING_URL(organizationId) + ALERTING_NOTIFICATION_CHANNEL_URL} />}
-            />
+            <Route path="*" element={<Navigate replace to={ALERTING_URL(organizationId) + ALERTING_ISSUES_URL} />} />
           </Routes>
         </ErrorBoundary>
       </div>

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-import { AlertingCreationFlow } from '@qovery/domains/observability/feature'
+import { AlertingCreationFlow, type MetricCategory } from '@qovery/domains/observability/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { APPLICATION_MONITORING_ALERTS_URL, APPLICATION_MONITORING_URL, APPLICATION_URL } from '@qovery/shared/routes'
 
@@ -19,8 +19,8 @@ export function PageAlertingCreateFeature() {
       return templatesParam.split(',').filter(Boolean)
     }
 
-    return ['new']
-  }, [searchParams])
+    return ['custom']
+  }, [searchParams]) as MetricCategory[]
 
   if (!environment || !service || selectedMetrics.length === 0) return null
 
