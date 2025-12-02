@@ -34,8 +34,8 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
     <FormProvider {...methods}>
       <Section>
         <div className="mb-8">
-          <Heading>AI Copilot Configuration</Heading>
-          <p className="mt-3 text-xs text-neutral-400">Configure your Copilot</p>
+          <Heading className='mb-2'>AI Copilot Configuration</Heading>
+          <p className="text-xs text-neutral-400">Configure your Copilot</p>
         </div>
         <BlockContent title="Opt-in to AI Copilot" classNameContent="p-0">
           {isLoading ? (
@@ -45,12 +45,12 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
           ) : (
             <form onSubmit={onSubmit} className="p-6">
               <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-brand-500">
-                  <Icon iconName="robot" className="text-white" />
-                </div>
                 <div className="flex-1 space-y-4">
                   <div>
+                    <div className='flex items-center'>
+                  <Icon iconName="robot" className="text-brand-500 mr-2" />
                     <p className="text-sm font-medium text-neutral-400">Opt-in to AI Copilot</p>
+                    </div>
                     <p className="mt-1 text-xs text-neutral-350">
                       Please review and accept the following terms to enable AI Copilot for your organization.
                     </p>

@@ -1,11 +1,11 @@
 import { type RecurringTask } from '@qovery/shared/devops-copilot/data-access'
 import {
+  Badge,
   BlockContent,
   Button,
   Heading,
   Icon,
   IconAwesomeEnum,
-  InputToggle,
   LoaderSpinner,
   Section,
   useModal,
@@ -26,8 +26,8 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
   return (
     <Section>
       <div className="mb-8">
-        <Heading>Scheduled Tasks</Heading>
-        <p className="mt-3 text-xs text-neutral-400">Recurring tasks configured for your organization</p>
+        <Heading className='mb-2'>Scheduled Tasks</Heading>
+        <p className="text-xs text-neutral-400">Recurring tasks configured for your organization</p>
       </div>
       <BlockContent title="Tasks List" classNameContent="p-0">
         {isLoading ? (
@@ -41,13 +41,17 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
                 key={task.id}
                 className="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
               >
-                <div className="flex">
-                  <Icon
-                    iconName={task.enabled ? 'clock' : 'pause'}
-                    className={task.enabled ? 'text-brand-500' : 'text-neutral-350'}
-                  />
-                  <div className="ml-4">
-                    <p className="mb-1 flex text-xs font-medium text-neutral-400">{task.user_intent}</p>
+                  <div>
+                    <div className="mb-1 flex items-center gap-2">
+                      <p className="text-xs font-medium text-neutral-400">{task.user_intent}</p>
+                      <Badge
+                        variant="surface"
+                        color={task.enabled ? 'green' : 'neutral'}
+                        size="sm"
+                      >
+                        {task.enabled ? 'Enabled' : 'Disabled'}
+                      </Badge>
+                    </div>
                     <p className="text-xs text-neutral-350">
                       <span className="inline-block">Schedule: {task.cron_expression}</span>
                       {task.last_run_at && (
@@ -61,15 +65,16 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
                     </p>
                     {task.last_error && <p className="mt-1 text-xs text-red-500">{task.last_error}</p>}
                   </div>
-                </div>
                 <div className="flex items-center gap-2">
-                  <InputToggle
-                    title={`${task.enabled ? 'Enabled' : 'Disabled'}`}
-                    className="mr-5"
-                    value={task.enabled}
-                    small
-                    onChange={() => onToggleTask(task.id)}
-                  />
+                  <Button
+                    variant="surface"
+                    color="neutral"
+                    size="md"
+                    onClick={() => onToggleTask(task.id)}
+                    title={task.enabled ? 'Pause task' : 'Resume task'}
+                  >
+                    <Icon iconName={task.enabled ? 'pause' : 'play'} iconStyle="regular" />
+                  </Button>
                   <Button
                     variant="surface"
                     color="neutral"
