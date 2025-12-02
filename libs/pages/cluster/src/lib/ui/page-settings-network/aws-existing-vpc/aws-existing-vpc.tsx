@@ -28,7 +28,7 @@ export function AWSExistingVPC({ feature }: AWSExistingVPCProps) {
       <InputToggle
         title="Private nodes"
         description="Create EKS nodes inside private subnets?"
-        className="mb-4 mt-1"
+        className="mb-4"
         value={feature.eks_create_nodes_in_private_subnet}
         forceAlignTop
         small
