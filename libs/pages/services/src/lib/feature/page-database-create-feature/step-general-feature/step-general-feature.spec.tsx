@@ -91,6 +91,7 @@ describe('StepGeneralFeature', () => {
 
     const clusterVpc = {
       aws_vpc_eks_id: 'vpc-1',
+      eks_create_nodes_in_private_subnet: false,
       eks_subnets_zone_a_ids: [],
       eks_subnets_zone_b_ids: [],
       eks_subnets_zone_c_ids: [],
@@ -128,6 +129,7 @@ describe('StepGeneralFeature', () => {
 
     const clusterVpc = {
       aws_vpc_eks_id: 'vpc-1',
+      eks_create_nodes_in_private_subnet: false,
       eks_subnets_zone_a_ids: [],
       eks_subnets_zone_b_ids: [],
       eks_subnets_zone_c_ids: [],
