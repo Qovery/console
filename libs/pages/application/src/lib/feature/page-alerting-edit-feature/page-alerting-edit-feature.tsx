@@ -8,9 +8,10 @@ import {
   MetricConfigurationStep,
   QUERY_CPU,
   QUERY_HTTP_ERROR,
+  QUERY_HTTP_LATENCY,
   QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
-  QUERY_REPLICAS_NUMBER,
+  QUERY_MISSING_REPLICAS,
   useAlertRules,
   useContainerName,
   useEditAlertRule,
@@ -60,7 +61,12 @@ export function PageAlertingEditFeature() {
   useEffect(() => {
     if (alertRule && alerts.length === 0) {
       const rawThreshold = alertRule.condition.threshold ?? 0
-      const threshold = alertRule.tag === 'http_latency' ? rawThreshold : rawThreshold * 100 || 80
+      const threshold =
+        alertRule.tag === 'http_latency'
+          ? rawThreshold
+          : alertRule.condition.threshold != null
+            ? rawThreshold * 100
+            : 80
 
       const alertConfig: AlertConfiguration = {
         id: alertRule.id,
@@ -111,9 +117,10 @@ export function PageAlertingEditFeature() {
               promql: match(updatedAlert.tag)
                 .with('cpu', () => QUERY_CPU(containerName))
                 .with('memory', () => QUERY_MEMORY(containerName))
-                .with('replicas_number', () => QUERY_REPLICAS_NUMBER(containerName))
+                .with('missing_replicas', () => QUERY_MISSING_REPLICAS(containerName))
                 .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
                 .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
+                .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
                 .otherwise(() => ''),
             },
             for_duration: updatedAlert.for_duration,

@@ -49,7 +49,7 @@ export const QUERY_INSTANCE_RESTART = (containerName: string) => `
   }
 `
 
-export const QUERY_REPLICAS_NUMBER = (containerName: string) => `
+export const QUERY_MISSING_REPLICAS = (containerName: string) => `
 (
   kube_deployment_status_replicas_available{deployment="${containerName}"}
 /
