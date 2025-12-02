@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ClusterAccessModal should match snapshot 1`] = `
 <body>
@@ -44,7 +44,7 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
             https://www.qovery.com/docs/cli/overview#installation
             <i
               aria-hidden="true"
-              class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
+              class="fa-regular fa-arrow-up-right-from-square text-xs leading-5"
             />
           </a>
         </li>
@@ -76,7 +76,7 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>
@@ -114,7 +114,7 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>
@@ -147,7 +147,7 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>
@@ -169,7 +169,7 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>
@@ -225,7 +225,7 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
             https://www.qovery.com/docs/cli/overview#installation
             <i
               aria-hidden="true"
-              class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
+              class="fa-regular fa-arrow-up-right-from-square text-xs leading-5"
             />
           </a>
         </li>
@@ -257,7 +257,7 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>
@@ -290,7 +290,7 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>
@@ -312,7 +312,7 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>

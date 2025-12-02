@@ -2,6 +2,7 @@
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin'
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 import react from '@vitejs/plugin-react'
+import { join } from 'path'
 import { defineConfig } from 'vite'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 
@@ -11,6 +12,9 @@ export default defineConfig(() => ({
   server: {
     port: 4200,
     host: 'localhost',
+    fs: {
+      allow: ['../..'],
+    },
   },
   preview: {
     port: 4200,
@@ -33,6 +37,14 @@ export default defineConfig(() => ({
       ],
     }),
   ],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        includePaths: [join(__dirname, '../../libs/shared/ui/src/lib/styles')],
+        additionalData: '',
+      },
+    },
+  },
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [ nxViteTsPaths() ],
