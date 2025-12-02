@@ -1,10 +1,7 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { type Cluster, ClusterStateEnum, type ClusterStatus } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { CLUSTER_OVERVIEW_URL, CLUSTER_URL, INFRA_LOGS_URL, OVERVIEW_URL } from '@qovery/shared/routes'
-import { QOVERY_WS } from '@qovery/shared/util-node-env'
-import { queries, useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import {
   isClusterNotificationEnabled,
   isClusterSoundEnabled,
@@ -43,8 +40,6 @@ export function useClusterInstallNotifications({
   )
   const trackedIdsRef = useRef<Set<string>>(new Set(trackedInstalls.map(({ id }) => id)))
   const prevStateRef = useRef<Map<string, LifecycleState>>(new Map())
-  const seenProgressRef = useRef<Set<string>>(new Set())
-  const queryClient = useQueryClient()
 
   const trackedNames = useMemo(() => {
     const map = new Map<string, string | undefined>()
@@ -94,76 +89,6 @@ export function useClusterInstallNotifications({
     }
   }, [])
 
-  // Background-friendly refetch while the tab is hidden so notifications fire even when unfocused
-  useEffect(() => {
-    if (typeof document === 'undefined' || typeof window === 'undefined') return
-    if (!organizationId) return
-
-    const queryKey = queries.clusters.listStatuses({ organizationId }).queryKey
-    let intervalId: ReturnType<typeof setInterval> | undefined
-
-    const stopInterval = () => {
-      if (intervalId) {
-        clearInterval(intervalId)
-        intervalId = undefined
-      }
-    }
-
-    const refetchStatuses = () => {
-      if (trackedIdsRef.current.size === 0) {
-        stopInterval()
-        return
-      }
-      void queryClient.invalidateQueries({ queryKey })
-    }
-
-    const handleVisibility = () => {
-      if (document.visibilityState === 'hidden' && trackedIdsRef.current.size > 0) {
-        refetchStatuses() // kick once on hide
-        if (!intervalId) {
-          intervalId = setInterval(refetchStatuses, 15_000)
-        }
-      } else {
-        stopInterval()
-      }
-    }
-
-    handleVisibility()
-    document.addEventListener('visibilitychange', handleVisibility)
-
-    return () => {
-      stopInterval()
-      document.removeEventListener('visibilitychange', handleVisibility)
-    }
-  }, [organizationId, queryClient, trackedInstalls.length])
-
-  // WebSocket subscription scoped to tracked clusters to avoid timer throttling when unfocused
-  useReactQueryWsSubscription({
-    url: QOVERY_WS + '/cluster/status',
-    urlSearchParams: { organization: organizationId },
-    enabled: Boolean(organizationId) && trackedInstalls.length > 0,
-    onMessage(queryClientFromWs, message: ClusterStatus) {
-      const clusterId = (message as ClusterStatus).cluster_id
-      if (!clusterId || !trackedIdsRef.current.has(clusterId)) return
-
-      queryClientFromWs.setQueryData(
-        queries.clusters.listStatuses({ organizationId }).queryKey,
-        (prev: ClusterStatus[] | undefined) => {
-          if (!prev) return [message]
-          let found = false
-          const next = prev.map((status) => {
-            if (status.cluster_id === clusterId) {
-              found = true
-              return { ...status, ...message }
-            }
-            return status
-          })
-          return found ? next : [...next, message]
-        }
-      )
-    },
-  })
-
   useEffect(() => {
     if (!isClusterNotificationEnabled()) return
     if (typeof window === 'undefined') return
@@ -178,25 +103,15 @@ export function useClusterInstallNotifications({
       const cachedState = getCachedDeploymentProgress(clusterId)?.state
       const derivedState = cachedState ?? deriveStateFromStatus(status?.status, status?.is_deployed)
       const prevState = prevStateRef.current.get(clusterId) ?? 'idle'
-      const hasSeenProgress = seenProgressRef.current.has(clusterId)
 
-      if (derivedState === 'installing') {
-        seenProgressRef.current.add(clusterId)
-      }
-
-      const transitionedToSuccess =
-        derivedState === 'succeeded' && prevState !== 'succeeded' && (hasSeenProgress || prevState === 'installing')
+      const transitionedToSuccess = prevState !== 'succeeded' && derivedState === 'succeeded'
       const transitionedToFailure = prevState !== 'failed' && derivedState === 'failed'
 
       if (transitionedToFailure) {
         notifiedClustersRef.current.add(clusterId)
         clearTrackedClusterInstall(clusterId)
         trackedIdsRef.current.delete(clusterId)
-        setTrackedInstalls((prev) => {
-          const next = prev.filter((install) => install.id !== clusterId)
-          trackedIdsRef.current = new Set(next.map(({ id }) => id))
-          return next
-        })
+        setTrackedInstalls((prev) => prev.filter((install) => install.id !== clusterId))
 
         const clusterName =
           trackedNames.get(clusterId) ?? clusters.find((cluster) => cluster.id === clusterId)?.name ?? 'Cluster'
@@ -219,11 +134,7 @@ export function useClusterInstallNotifications({
         notifiedClustersRef.current.add(clusterId)
         clearTrackedClusterInstall(clusterId)
         trackedIdsRef.current.delete(clusterId)
-        setTrackedInstalls((prev) => {
-          const next = prev.filter((install) => install.id !== clusterId)
-          trackedIdsRef.current = new Set(next.map(({ id }) => id))
-          return next
-        })
+        setTrackedInstalls((prev) => prev.filter((install) => install.id !== clusterId))
 
         const clusterName =
           trackedNames.get(clusterId) ?? clusters.find((cluster) => cluster.id === clusterId)?.name ?? 'Cluster'
@@ -256,7 +167,7 @@ export function useClusterInstallNotifications({
 
       prevStateRef.current.set(clusterId, derivedState)
     })
-  }, [clusterStatuses, clusters, organizationId, projects])
+  }, [clusterStatuses, clusters, organizationId, projects, trackedInstalls, trackedNames])
 }
 
 export default useClusterInstallNotifications
