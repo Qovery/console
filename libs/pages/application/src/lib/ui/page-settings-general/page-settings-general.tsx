@@ -182,7 +182,10 @@ export function PageSettingsGeneral({
               <>
                 <Section className="gap-4">
                   <Heading>Source</Heading>
-                  <EditGitRepositorySettingsFeature />
+                  <EditGitRepositorySettingsFeature
+                    rootPathLabel="Terraform root folder path"
+                    rootPathHint="Provide the folder path where the Terraform code is located in the repository."
+                  />
                 </Section>
                 <Section className="gap-4">
                   <Heading>Build and deploy</Heading>
