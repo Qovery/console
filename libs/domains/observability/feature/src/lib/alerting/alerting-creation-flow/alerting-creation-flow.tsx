@@ -136,42 +136,40 @@ export function AlertingCreationFlow({
         // XXX: Generate description from function, operator, threshold and metric category for Notification
         const description = generateConditionDescription(func, operator, threshold, alert.tag as MetricCategory)
 
-        console.log('description', description)
-
-        // await createAlertRule({
-        //   payload: {
-        //     organization_id: organizationId,
-        //     cluster_id: environment.cluster_id,
-        //     target: {
-        //       target_id: service.id,
-        //       target_type: service.serviceType as AlertTargetType,
-        //     },
-        //     name: alert.name,
-        //     tag: alert.tag,
-        //     description,
-        //     condition: {
-        //       kind: 'BUILT',
-        //       function: func,
-        //       operator,
-        //       threshold,
-        //       promql: match(alert.tag)
-        //         .with('cpu', () => QUERY_CPU(containerName))
-        //         .with('memory', () => QUERY_MEMORY(containerName))
-        //         .with('missing_replicas', () => QUERY_MISSING_REPLICAS(containerName))
-        //         .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
-        //         .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
-        //         .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
-        //         .otherwise(() => ''),
-        //     },
-        //     for_duration: alert.for_duration,
-        //     severity: alert.severity,
-        //     enabled: true,
-        //     alert_receiver_ids: alert.alert_receiver_ids,
-        //     presentation: {
-        //       summary: alert.presentation.summary ?? undefined,
-        //     },
-        //   },
-        // })
+        await createAlertRule({
+          payload: {
+            organization_id: organizationId,
+            cluster_id: environment.cluster_id,
+            target: {
+              target_id: service.id,
+              target_type: service.serviceType as AlertTargetType,
+            },
+            name: alert.name,
+            tag: alert.tag,
+            description,
+            condition: {
+              kind: 'BUILT',
+              function: func,
+              operator,
+              threshold,
+              promql: match(alert.tag)
+                .with('cpu', () => QUERY_CPU(containerName))
+                .with('memory', () => QUERY_MEMORY(containerName))
+                .with('missing_replicas', () => QUERY_MISSING_REPLICAS(containerName))
+                .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
+                .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
+                .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
+                .otherwise(() => ''),
+            },
+            for_duration: alert.for_duration,
+            severity: alert.severity,
+            enabled: true,
+            alert_receiver_ids: alert.alert_receiver_ids,
+            presentation: {
+              summary: alert.presentation.summary ?? undefined,
+            },
+          },
+        })
       }
       onComplete(activeAlerts)
     } catch (error) {
