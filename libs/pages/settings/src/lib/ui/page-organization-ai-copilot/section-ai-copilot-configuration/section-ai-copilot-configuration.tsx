@@ -58,7 +58,7 @@ export function SectionAICopilotConfiguration({
   return (
     <Section>
       <div className="mb-8">
-        <Heading className='mb-2'>AI Copilot Configuration</Heading>
+        <Heading className="mb-2">AI Copilot Configuration</Heading>
         <p className="text-xs text-neutral-400">Configure your Copilot</p>
       </div>
       <BlockContent title="Configuration" classNameContent="p-0">
@@ -71,8 +71,8 @@ export function SectionAICopilotConfiguration({
             <div className="-mx-6 border-b border-neutral-250 px-6 pb-6">
               <div className="flex items-center gap-4">
                 <div className="flex-1">
-                  <div className='flex items-center'>
-                    <Icon iconName="robot" className="text-brand-500 mr-2" />
+                  <div className="mb-2 flex items-center">
+                    <Icon iconName="robot" className="mr-2 text-brand-500" />
                     <p className="text-sm font-medium text-neutral-400">AI Copilot for {organization?.name}</p>
                   </div>
                   <p className="text-xs text-neutral-350">AI-powered assistance is currently active</p>

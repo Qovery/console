@@ -26,7 +26,7 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
   return (
     <Section>
       <div className="mb-8">
-        <Heading className='mb-2'>Scheduled Tasks</Heading>
+        <Heading className="mb-2">Scheduled Tasks</Heading>
         <p className="text-xs text-neutral-400">Recurring tasks configured for your organization</p>
       </div>
       <BlockContent title="Tasks List" classNameContent="p-0">
@@ -37,35 +37,26 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
         ) : tasks.length > 0 ? (
           <ul>
             {tasks.map((task) => (
-              <li
-                key={task.id}
-                className="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
-              >
-                  <div>
-                    <div className="mb-1 flex items-center gap-2">
-                      <p className="text-xs font-medium text-neutral-400">{task.user_intent}</p>
-                      <Badge
-                        variant="surface"
-                        color={task.enabled ? 'green' : 'neutral'}
-                        size="sm"
-                      >
-                        {task.enabled ? 'Enabled' : 'Disabled'}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-neutral-350">
-                      <span className="inline-block">Schedule: {task.cron_expression}</span>
-                      {task.last_run_at && (
-                        <span className="ml-3 inline-block">
-                          Last run: {new Date(task.last_run_at).toLocaleString()}
-                        </span>
-                      )}
-                      {task.error_count > 0 && (
-                        <span className="ml-3 inline-block text-red-500">Errors: {task.error_count}</span>
-                      )}
-                    </p>
-                    {task.last_error && <p className="mt-1 text-xs text-red-500">{task.last_error}</p>}
-                  </div>
-                <div className="flex items-center gap-2">
+              <li key={task.id} className="flex items-center border-b border-neutral-250 px-5 py-4 last:border-0">
+                <div className="flex-1">
+                  <p className="mb-1 text-xs font-medium text-neutral-400">{task.user_intent}</p>
+                  <p className="text-xs text-neutral-350">
+                    <span className="inline-block">Schedule: {task.cron_expression}</span>
+                    {task.last_run_at && (
+                      <span className="ml-3 inline-block">Last run: {new Date(task.last_run_at).toLocaleString()}</span>
+                    )}
+                    {task.error_count > 0 && (
+                      <span className="ml-3 inline-block text-red-500">Errors: {task.error_count}</span>
+                    )}
+                  </p>
+                  {task.last_error && <p className="mt-1 text-xs text-red-500">{task.last_error}</p>}
+                </div>
+                <div className="flex flex-1 items-center justify-center">
+                  <Badge variant="surface" color={task.enabled ? 'green' : 'neutral'} size="sm">
+                    {task.enabled ? 'Enabled' : 'Disabled'}
+                  </Badge>
+                </div>
+                <div className="flex flex-1 items-center justify-end gap-2">
                   <Button
                     variant="surface"
                     color="neutral"
