@@ -49,7 +49,9 @@ export const setClusterSoundEnabled = (enabled: boolean) => {
 }
 
 export const isClusterNotificationEnabled = () =>
-  isBrowserNotificationSupported() && Notification.permission === 'granted' && getStoredBoolean(NOTIFICATION_ENABLED_KEY)
+  isBrowserNotificationSupported() &&
+  Notification.permission === 'granted' &&
+  getStoredBoolean(NOTIFICATION_ENABLED_KEY)
 
 export const isClusterSoundEnabled = () => getStoredBoolean(SOUND_ENABLED_KEY)
 

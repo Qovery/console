@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useClusterLogs } from '@qovery/domains/clusters/feature'
+import { useClusterLogs } from '../use-cluster-logs/use-cluster-logs'
 
 export type StepStatus = 'current' | 'pending' | 'done'
 export type LifecycleState = 'idle' | 'installing' | 'succeeded' | 'failed'
@@ -110,8 +110,7 @@ export function useDeploymentProgress({
         break
       }
 
-      const isCreateError =
-        log.step === 'CreateError' || normalizedMessage.includes('createerror')
+      const isCreateError = log.step === 'CreateError' || normalizedMessage.includes('createerror')
 
       if (isCreateError) {
         isFailed = true
@@ -121,20 +120,28 @@ export function useDeploymentProgress({
       const triggers: { index: number; match: (msg: string) => boolean }[] = [
         {
           index: DEPLOYMENT_STEPS.length - 1,
-          match: (msg) => msg.includes('Check if cluster has calls to deprecated kubernetes API for version'),
+          match: (msg) => msg.includes('Check if cluster has calls to deprecated kubernetes API for version'), // last step
         },
         {
           index: 1,
-          match: (msg) =>
-            Boolean(clusterName && providerCode && msg.includes(`Deployment ${providerCode} cluster ${clusterName}`)),
+          match: () => {
+            if (!providerCode) return false
+            return normalizedMessage.includes(`deployment ${providerCode.toLowerCase()} cluster`)
+          }, // Providing infrastructure (on provider side) – name optional
         },
         {
           index: 2,
-          match: (msg) => msg.includes('Saved the plan to: tf_plan'),
+          match: (msg) =>
+            msg.includes('Kubernetes nodes have been successfully created') ||
+            msg.includes('Checking if Karpenter nodegroup should be deployed...') ||
+            msg.includes('Ensuring all groups nodes are in ready state from the Scaleway API') ||
+            msg.includes(
+              'Ensuring no failed nodegroups are present in the cluster, or delete them if at least one active nodegroup is present'
+            ),
         },
         {
           index: 3,
-          match: (msg) => msg.includes('Preparing Helm files on disk'),
+          match: (msg) => msg.includes('Preparing Helm files on disk'), // installing Qovery stack
         },
       ]
 

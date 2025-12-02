@@ -8,13 +8,9 @@ import { useCallback, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
-import {
-  useCreateCluster,
-  useDeployCluster,
-  useEditCloudProviderInfo,
-} from '@qovery/domains/clusters/feature'
+import { useCreateCluster, useDeployCluster, useEditCloudProviderInfo } from '@qovery/domains/clusters/feature'
 import { trackClusterInstall } from '@qovery/domains/clusters/feature'
-import { useNotificationPermissionModal } from '../../../../../../../domains/clusters/feature/src/lib/deployment-progress/cluster-notification-permission-modal'
+import { useNotificationPermissionModal } from '@qovery/domains/clusters/feature'
 import {
   CLUSTERS_CREATION_EKS_URL,
   CLUSTERS_CREATION_FEATURES_URL,
@@ -137,7 +133,7 @@ export function StepSummaryFeature() {
             cloud_provider_credentials,
           },
         })
-        trackClusterInstall(cluster.id)
+        trackClusterInstall(cluster.id, cluster.name)
         await editCloudProviderInfo({
           organizationId,
           clusterId: cluster.id,
@@ -172,7 +168,7 @@ export function StepSummaryFeature() {
             infrastructure_charts_parameters: resourcesData?.infrastructure_charts_parameters,
           },
         })
-        trackClusterInstall(cluster.id)
+        trackClusterInstall(cluster.id, cluster.name)
 
         showNotificationPermissionModal(() => navigate(CLUSTERS_URL(organizationId)))
       } catch (e) {
@@ -364,7 +360,7 @@ export function StepSummaryFeature() {
           organizationId,
           clusterRequest,
         })
-        trackClusterInstall(cluster.id)
+        trackClusterInstall(cluster.id, cluster.name)
         await editCloudProviderInfo({
           organizationId,
           clusterId: cluster.id,

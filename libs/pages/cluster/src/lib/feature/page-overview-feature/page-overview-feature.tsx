@@ -1,6 +1,6 @@
 import clsx from 'clsx'
-import { useEffect, useRef, useState } from 'react'
 import { ClusterStateEnum } from 'qovery-typescript-axios'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   ClusterCardNodeUsage,

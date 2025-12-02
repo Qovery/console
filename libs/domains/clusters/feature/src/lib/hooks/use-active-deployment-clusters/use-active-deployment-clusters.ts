@@ -1,5 +1,5 @@
+import { ClusterStateEnum, type ClusterStatus } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { type ClusterStatus, ClusterStateEnum } from 'qovery-typescript-axios'
 
 interface UseActiveDeploymentClustersProps {
   clusterStatuses?: ClusterStatus[]
@@ -43,7 +43,9 @@ export function useActiveDeploymentClusters({
 
     const idsToAdd =
       clusterStatuses
-        .filter(({ status, is_deployed }) => isDeploying({ status, is_deployed }) || isTerminal({ status, is_deployed }))
+        .filter(
+          ({ status, is_deployed }) => isDeploying({ status, is_deployed }) || isTerminal({ status, is_deployed })
+        )
         .map(({ cluster_id }) => cluster_id ?? '')
         .filter((id): id is string => Boolean(id)) || []
 

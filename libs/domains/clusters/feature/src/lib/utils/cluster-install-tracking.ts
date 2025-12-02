@@ -1,7 +1,8 @@
+// LocalStorage helpers to remember cluster installs the user started, so UI/notifications can scope to them and survive reloads.
 const TRACK_KEY = 'cluster-install-tracked-ids'
 const MAX_AGE_MS = 1000 * 60 * 60 * 24 // 24h safety cleanup
 
-type TrackedInstall = { id: string; createdAt: number }
+type TrackedInstall = { id: string; name?: string; createdAt: number }
 
 const readInstalls = (): TrackedInstall[] => {
   if (typeof window === 'undefined') return []
@@ -25,10 +26,10 @@ const writeInstalls = (installs: TrackedInstall[]) => {
   }
 }
 
-export const trackClusterInstall = (clusterId: string) => {
+export const trackClusterInstall = (clusterId: string, clusterName?: string) => {
   if (!clusterId) return
   const existing = readInstalls().filter((entry) => entry.id !== clusterId)
-  existing.push({ id: clusterId, createdAt: Date.now() })
+  existing.push({ id: clusterId, name: clusterName, createdAt: Date.now() })
   writeInstalls(existing)
 }
 
@@ -39,3 +40,5 @@ export const clearTrackedClusterInstall = (clusterId: string) => {
 }
 
 export const getTrackedClusterInstallIds = (): string[] => readInstalls().map((entry) => entry.id)
+
+export const getTrackedClusterInstalls = (): TrackedInstall[] => readInstalls()

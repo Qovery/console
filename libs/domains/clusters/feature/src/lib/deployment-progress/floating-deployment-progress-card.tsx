@@ -50,7 +50,7 @@ function ClusterRow({
     : projectTarget
       ? OVERVIEW_URL(organizationId, projectTarget.id)
       : undefined
-  const targetLabel = isFailed ? 'See logs' : projectTarget ? 'See project' : undefined
+  const targetLabel = isFailed ? 'See logs' : projectTarget ? 'Start deploying' : undefined
 
   return (
     <div className={rowClasses}>
@@ -79,6 +79,9 @@ function ClusterRow({
               </svg>
             </span>
           )}
+          {!isSucceeded && !isFailed && !isInstalling && (
+            <Icon iconName="clock" iconStyle="regular" className="text-neutral-350" />
+          )}
           <span className="truncate">
             {clusterName ?? 'Cluster'} {isFailed ? 'creation failed' : isSucceeded ? 'created' : ''}
           </span>
@@ -96,12 +99,16 @@ function ClusterRow({
               className="flex min-w-0 items-center gap-2 text-ssm text-neutral-350 hover:text-neutral-400"
               onClick={() => setExpanded((prev) => !prev)}
             >
-              <AnimatedGradientText className="truncate from-neutral-300 via-neutral-350 to-neutral-300 text-left">
-                {currentStepLabel}
-              </AnimatedGradientText>{' '}
+              <span className="min-w-0 overflow-hidden">
+                <AnimatedGradientText className="block w-full truncate from-neutral-300 via-neutral-350 to-neutral-300 text-left">
+                  {currentStepLabel}
+                </AnimatedGradientText>
+              </span>
+              <span aria-hidden="true">&nbsp;</span>
               <Icon iconName={expanded ? 'chevron-up' : 'chevron-down'} iconStyle="regular" />
             </button>
           )}
+          {!isSucceeded && !isFailed && !isInstalling && <p className="text-ssm text-neutral-350">Deployment queued</p>}
         </div>
       </div>
       {expanded && !isDone && (
