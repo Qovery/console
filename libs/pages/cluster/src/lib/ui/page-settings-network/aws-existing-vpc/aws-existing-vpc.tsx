@@ -30,6 +30,7 @@ export function AWSExistingVPC({ feature }: AWSExistingVPCProps) {
         description="Create EKS nodes inside private subnets?"
         className="mb-4 mt-1"
         value={feature.eks_create_nodes_in_private_subnet}
+        forceAlignTop
         small
         disabled
       />

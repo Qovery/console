@@ -118,16 +118,15 @@ export function AWSVpcFeature({ isKarpenter = false }: AWSVpcFeatureProps) {
         rules={{ required: true, shouldUnregister: true }}
         control={control}
         render={({ field }) => (
-          <>
-            <InputToggle
-              title="Private nodes"
-              description="Create EKS nodes inside private subnets?"
-              className="mb-4 ml-4 mt-1"
-              value={field.value}
-              onChange={field.onChange}
-              small
-            />
-          </>
+          <InputToggle
+            title="Private nodes"
+            description="Create EKS nodes inside private subnets?"
+            className="mb-4 ml-4 mt-1"
+            value={field.value}
+            onChange={field.onChange}
+            forceAlignTop
+            small
+          />
         )}
       />
       <h4 className="mb-3 text-sm font-medium text-neutral-400">Mandatory subnet IDs</h4>
