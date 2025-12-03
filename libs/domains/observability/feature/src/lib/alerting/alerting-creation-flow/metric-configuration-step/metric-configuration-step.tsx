@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { AlertRuleConditionOperator, AlertSeverity } from 'qovery-typescript-axios'
+import { type AlertRuleConditionOperator, AlertSeverity } from 'qovery-typescript-axios'
 import { AlertRuleConditionFunction } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -49,15 +49,6 @@ const METRIC_TYPE_OPTIONS: Record<MetricCategory, { label: string; value: AlertR
   instance_restart: VALUES_OPTIONS,
 }
 
-const DEFAULT_THRESHOLDS: Record<MetricCategory, number> = {
-  cpu: 80,
-  memory: 80,
-  http_error: 5,
-  http_latency: 0.25,
-  missing_replicas: 0,
-  instance_restart: 80,
-}
-
 const OPERATOR_OPTIONS: Value[] = [
   { label: 'Above', value: 'ABOVE' },
   { label: 'Below', value: 'BELOW' },
@@ -77,10 +68,105 @@ const SEVERITY_OPTIONS: Value[] = Object.values(AlertSeverity).map((severity) =>
   value: severity,
 }))
 
-const METRICS_WITH_HIDDEN_CONDITIONS: MetricCategory[] = ['missing_replicas']
+type ConditionField = 'function' | 'operator' | 'threshold' | 'duration'
+
+type MetricFieldConfig = {
+  hiddenFields?: ConditionField[]
+  unit?: '%' | 'secs'
+  defaults?: Partial<{
+    function: AlertRuleConditionFunction
+    operator: AlertRuleConditionOperator
+    threshold: number
+    duration: string
+  }>
+}
+
+const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
+  cpu: {
+    unit: '%',
+    defaults: {
+      function: 'MAX',
+      operator: 'ABOVE',
+      threshold: 80,
+      duration: 'PT5M',
+    },
+  },
+  memory: {
+    unit: '%',
+    defaults: {
+      function: 'MAX',
+      operator: 'ABOVE',
+      threshold: 80,
+      duration: 'PT5M',
+    },
+  },
+  http_error: {
+    unit: '%',
+    hiddenFields: ['function'],
+    defaults: {
+      function: 'NONE',
+      operator: 'ABOVE',
+      threshold: 5,
+      duration: 'PT5M',
+    },
+  },
+  http_latency: {
+    unit: 'secs',
+    defaults: {
+      function: 'MAX',
+      operator: 'ABOVE',
+      threshold: 0.25,
+      duration: 'PT5M',
+    },
+  },
+  missing_replicas: {
+    unit: '%',
+    hiddenFields: ['function', 'operator', 'threshold', 'duration'],
+    defaults: {
+      function: 'COUNT',
+      operator: 'BELOW',
+      threshold: 1,
+      duration: 'PT0S',
+    },
+  },
+  instance_restart: {
+    unit: '%',
+    defaults: {
+      function: 'MAX',
+      operator: 'ABOVE',
+      threshold: 80,
+      duration: 'PT5M',
+    },
+  },
+}
+
+const shouldHideField = (category: MetricCategory, field: ConditionField): boolean => {
+  return METRIC_FIELD_CONFIG[category]?.hiddenFields?.includes(field) ?? false
+}
 
 const shouldHideConditions = (category: MetricCategory): boolean => {
-  return METRICS_WITH_HIDDEN_CONDITIONS.includes(category)
+  const config = METRIC_FIELD_CONFIG[category]
+  return (config?.hiddenFields?.length ?? 0) === 4
+}
+
+const getDefaultValue = <T extends ConditionField>(
+  category: MetricCategory,
+  field: T
+): T extends 'function'
+  ? AlertRuleConditionFunction
+  : T extends 'operator'
+    ? AlertRuleConditionOperator
+    : T extends 'threshold'
+      ? number
+      : T extends 'duration'
+        ? string
+        : never => {
+  const config = METRIC_FIELD_CONFIG[category]
+  return config?.defaults?.[field] as never
+}
+
+const getUnit = (category: MetricCategory): string => {
+  return METRIC_FIELD_CONFIG[category]?.unit ?? '%'
 }
 
 export function MetricConfigurationStep({
@@ -112,27 +198,34 @@ export function MetricConfigurationStep({
 
   const defaultValues = useMemo<AlertConfiguration>(() => {
     if (initialData) {
-      const isHiddenConditionMetric = shouldHideConditions(metricCategory)
-      if (isHiddenConditionMetric) {
-        return {
-          ...initialData,
-          condition: {
-            ...initialData.condition,
-            operator: AlertRuleConditionOperator.BELOW,
-            threshold: 1,
-          },
+      const config = METRIC_FIELD_CONFIG[metricCategory]
+      const condition = { ...initialData.condition }
+
+      if (config?.defaults) {
+        if (shouldHideField(metricCategory, 'function') && config.defaults.function) {
+          condition.function = config.defaults.function
+        }
+        if (shouldHideField(metricCategory, 'operator') && config.defaults.operator) {
+          condition.operator = config.defaults.operator
+        }
+        if (shouldHideField(metricCategory, 'threshold') && config.defaults.threshold !== undefined) {
+          condition.threshold = config.defaults.threshold
         }
       }
-      return initialData
+
+      return {
+        ...initialData,
+        condition,
+        for_duration: shouldHideField(metricCategory, 'duration')
+          ? config?.defaults?.duration ?? initialData.for_duration
+          : initialData.for_duration,
+      }
     }
 
-    const isHiddenConditionMetric = shouldHideConditions(metricCategory)
-    const defaultThreshold = isHiddenConditionMetric ? 1 : DEFAULT_THRESHOLDS[metricCategory] ?? 80
-    const defaultFunction = METRIC_TYPE_OPTIONS[metricCategory][0].value ?? AlertRuleConditionFunction.MAX
-    const defaultOperator = isHiddenConditionMetric
-      ? AlertRuleConditionOperator.BELOW
-      : AlertRuleConditionOperator.ABOVE
-    const defaultDuration = 'PT5M'
+    const defaultFunction = getDefaultValue(metricCategory, 'function')
+    const defaultOperator = getDefaultValue(metricCategory, 'operator')
+    const defaultThreshold = getDefaultValue(metricCategory, 'threshold')
+    const defaultDuration = getDefaultValue(metricCategory, 'duration')
 
     return {
       id: uuid(),
@@ -159,10 +252,20 @@ export function MetricConfigurationStep({
 
   useEffect(() => {
     methods.reset(defaultValues)
-    const isHiddenConditionMetric = shouldHideConditions(metricCategory)
-    if (isHiddenConditionMetric) {
-      methods.setValue('condition.operator', AlertRuleConditionOperator.BELOW)
-      methods.setValue('condition.threshold', 1)
+    const config = METRIC_FIELD_CONFIG[metricCategory]
+    if (config?.defaults) {
+      if (shouldHideField(metricCategory, 'function') && config.defaults.function) {
+        methods.setValue('condition.function', config.defaults.function)
+      }
+      if (shouldHideField(metricCategory, 'operator') && config.defaults.operator) {
+        methods.setValue('condition.operator', config.defaults.operator)
+      }
+      if (shouldHideField(metricCategory, 'threshold') && config.defaults.threshold !== undefined) {
+        methods.setValue('condition.threshold', config.defaults.threshold)
+      }
+      if (shouldHideField(metricCategory, 'duration') && config.defaults.duration) {
+        methods.setValue('for_duration', config.defaults.duration)
+      }
     }
   }, [methods, defaultValues, metricCategory])
 
@@ -170,13 +273,14 @@ export function MetricConfigurationStep({
   const watchCondition = methods.watch('condition')
   const watchForDuration = methods.watch('for_duration')
 
-  const unit = match(watchTag)
-    .with('http_latency', () => 'secs')
-    .otherwise(() => '%')
+  const unit = getUnit(watchTag as MetricCategory)
 
   // Auto-generate alert name from conditions
   useEffect(() => {
-    const isHiddenConditionMetric = shouldHideConditions(watchTag as MetricCategory)
+    if (isEdit) return
+
+    const category = watchTag as MetricCategory
+    const isHiddenConditionMetric = shouldHideConditions(category)
 
     if (isHiddenConditionMetric) {
       const metric = formatMetricLabel(watchTag)
@@ -187,24 +291,26 @@ export function MetricConfigurationStep({
     }
 
     const metric = formatMetricLabel(watchTag)
-    const functionLabel = METRIC_TYPE_OPTIONS[watchTag as MetricCategory]?.find(
-      (option) => option.value === watchCondition?.function
-    )?.label
-    const operator = formatOperator(watchCondition?.operator)
-    const threshold = formatThreshold(
-      watchTag as MetricCategory,
-      parseFloat(watchCondition?.threshold?.toString() ?? '0'),
-      unit
-    )
-    const duration = formatDuration(watchForDuration)
+    const functionLabel = !shouldHideField(category, 'function')
+      ? METRIC_TYPE_OPTIONS[category]?.find((option) => option.value === watchCondition?.function)?.label
+      : undefined
+    const operator = !shouldHideField(category, 'operator') ? formatOperator(watchCondition?.operator) : undefined
+    const threshold = !shouldHideField(category, 'threshold')
+      ? formatThreshold(category, parseFloat(watchCondition?.threshold?.toString() ?? '0'), unit)
+      : undefined
+    const duration = !shouldHideField(category, 'duration') ? formatDuration(watchForDuration) : undefined
 
-    if (metric && operator && threshold && duration && functionLabel) {
-      methods.setValue(
-        'name',
-        `${functionLabel} ${metric} ${operator} ${threshold} ${duration === 'immediately' ? 'immediately' : `for ${duration}`}`
-      )
+    const parts: string[] = []
+    if (functionLabel) parts.push(functionLabel)
+    if (metric) parts.push(metric)
+    if (operator && threshold) parts.push(`${operator} ${threshold}`)
+    if (duration) parts.push(duration === 'immediately' ? 'immediately' : `for ${duration}`)
+
+    if (parts.length > 0) {
+      methods.setValue('name', parts.join(' '))
     }
   }, [
+    isEdit,
     watchTag,
     watchCondition?.function,
     watchCondition?.operator,
@@ -215,18 +321,26 @@ export function MetricConfigurationStep({
   ])
 
   const handleNext = async (data: AlertConfiguration) => {
-    const isHiddenConditionMetric = shouldHideConditions(metricCategory)
-    const processedData = isHiddenConditionMetric
-      ? {
-          ...data,
-          condition: {
-            ...data.condition,
-            operator: AlertRuleConditionOperator.BELOW,
-            threshold: 1,
-          },
-          for_duration: 'PT0S',
-        }
-      : data
+    const config = METRIC_FIELD_CONFIG[metricCategory]
+    const processedData = { ...data }
+
+    if (config?.defaults) {
+      processedData.condition = { ...data.condition }
+
+      if (shouldHideField(metricCategory, 'function') && config.defaults.function) {
+        processedData.condition.function = config.defaults.function
+      }
+      if (shouldHideField(metricCategory, 'operator') && config.defaults.operator) {
+        processedData.condition.operator = config.defaults.operator
+      }
+      if (shouldHideField(metricCategory, 'threshold') && config.defaults.threshold !== undefined) {
+        processedData.condition.threshold = config.defaults.threshold
+      }
+      if (shouldHideField(metricCategory, 'duration') && config.defaults.duration) {
+        processedData.for_duration = config.defaults.duration
+      }
+    }
+
     const newAlerts = [...alerts]
     newAlerts[index] = { ...processedData, skipped: false }
     setAlerts(newAlerts)
@@ -242,18 +356,26 @@ export function MetricConfigurationStep({
 
   const handleSkip = async () => {
     const currentFormValues = methods.getValues()
-    const isHiddenConditionMetric = shouldHideConditions(metricCategory)
-    const processedValues = isHiddenConditionMetric
-      ? {
-          ...currentFormValues,
-          condition: {
-            ...currentFormValues.condition,
-            operator: AlertRuleConditionOperator.BELOW,
-            threshold: 1,
-          },
-          for_duration: 'PT0S',
-        }
-      : currentFormValues
+    const config = METRIC_FIELD_CONFIG[metricCategory]
+    const processedValues = { ...currentFormValues }
+
+    if (config?.defaults) {
+      processedValues.condition = { ...currentFormValues.condition }
+
+      if (shouldHideField(metricCategory, 'function') && config.defaults.function) {
+        processedValues.condition.function = config.defaults.function
+      }
+      if (shouldHideField(metricCategory, 'operator') && config.defaults.operator) {
+        processedValues.condition.operator = config.defaults.operator
+      }
+      if (shouldHideField(metricCategory, 'threshold') && config.defaults.threshold !== undefined) {
+        processedValues.condition.threshold = config.defaults.threshold
+      }
+      if (shouldHideField(metricCategory, 'duration') && config.defaults.duration) {
+        processedValues.for_duration = config.defaults.duration
+      }
+    }
+
     const newAlerts = [...alerts]
     newAlerts[index] = {
       ...processedValues,
@@ -283,18 +405,26 @@ export function MetricConfigurationStep({
   }
 
   const onSubmit = methods.handleSubmit((data) => {
-    const isHiddenConditionMetric = shouldHideConditions(metricCategory)
-    const processedData = isHiddenConditionMetric
-      ? {
-          ...data,
-          condition: {
-            ...data.condition,
-            operator: AlertRuleConditionOperator.BELOW,
-            threshold: 1,
-          },
-          for_duration: 'PT0S',
-        }
-      : data
+    const config = METRIC_FIELD_CONFIG[metricCategory]
+    const processedData = { ...data }
+
+    if (config?.defaults) {
+      processedData.condition = { ...data.condition }
+
+      if (shouldHideField(metricCategory, 'function') && config.defaults.function) {
+        processedData.condition.function = config.defaults.function
+      }
+      if (shouldHideField(metricCategory, 'operator') && config.defaults.operator) {
+        processedData.condition.operator = config.defaults.operator
+      }
+      if (shouldHideField(metricCategory, 'threshold') && config.defaults.threshold !== undefined) {
+        processedData.condition.threshold = config.defaults.threshold
+      }
+      if (shouldHideField(metricCategory, 'duration') && config.defaults.duration) {
+        processedData.for_duration = config.defaults.duration
+      }
+    }
+
     handleNext(processedData)
   })
 
@@ -342,7 +472,7 @@ export function MetricConfigurationStep({
                         />
                       )}
                     />
-                    {!shouldHideConditions(metricCategory) && (
+                    {!shouldHideField(metricCategory, 'function') && (
                       <Controller
                         name="condition.function"
                         control={methods.control}
@@ -380,17 +510,76 @@ export function MetricConfigurationStep({
                   </div>
                 </div>
 
-                {!shouldHideConditions(metricCategory) && (
+                {(!shouldHideField(metricCategory, 'operator') || !shouldHideField(metricCategory, 'threshold')) && (
                   <div className="flex flex-col gap-1">
                     <p className="text-sm">Trigger condition</p>
                     <div className="flex items-center gap-2">
+                      {!shouldHideField(metricCategory, 'operator') && (
+                        <Controller
+                          name="condition.operator"
+                          control={methods.control}
+                          render={({ field }) => (
+                            <InputSelectSmall
+                              name={field.name}
+                              items={OPERATOR_OPTIONS}
+                              defaultValue={field.value}
+                              onChange={(value) => field.onChange(value)}
+                              className="w-full"
+                              inputClassName="bg-transparent"
+                            />
+                          )}
+                        />
+                      )}
+                      {!shouldHideField(metricCategory, 'threshold') && (
+                        <Controller
+                          name="condition.threshold"
+                          control={methods.control}
+                          rules={{
+                            validate: (v) => {
+                              const value = v?.toString()
+                              if (value === '') {
+                                return 'Threshold is required'
+                              }
+                              if (watchTag !== 'http_latency' && (Number(value) < 0 || Number(value) > 100)) {
+                                return 'Threshold must be between 0 and 100'
+                              }
+                              return true
+                            },
+                          }}
+                          render={({ field, fieldState: { error } }) => (
+                            <div className="relative w-40">
+                              <InputTextSmall
+                                label="Threshold"
+                                name={field.name}
+                                type="number"
+                                placeholder="00"
+                                value={field.value?.toString()}
+                                onChange={field.onChange}
+                                className={clsx('w-full', error ? 'border-red-500' : '')}
+                                inputClassName="bg-transparent pr-6"
+                              />
+                              <span className="pointer-events-none absolute right-3 top-1/2 flex h-8 -translate-y-1/2 items-center text-xs text-neutral-350">
+                                {unit}
+                              </span>
+                            </div>
+                          )}
+                        />
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {!shouldHideField(metricCategory, 'duration') && (
+                  <div className="flex flex-col gap-1">
+                    <p className="text-sm">Duration</p>
+                    <div className="flex items-center gap-2">
                       <Controller
-                        name="condition.operator"
+                        name="for_duration"
                         control={methods.control}
                         render={({ field }) => (
                           <InputSelectSmall
                             name={field.name}
-                            items={OPERATOR_OPTIONS}
+                            items={DURATION_OPTIONS}
                             defaultValue={field.value}
                             onChange={(value) => field.onChange(value)}
                             className="w-full"
@@ -398,96 +587,57 @@ export function MetricConfigurationStep({
                           />
                         )}
                       />
-                      <Controller
-                        name="condition.threshold"
-                        control={methods.control}
-                        rules={{
-                          validate: (v) => {
-                            const value = v?.toString()
-                            if (value === '') {
-                              return 'Threshold is required'
-                            }
-                            if (watchTag !== 'http_latency' && (Number(value) < 0 || Number(value) > 100)) {
-                              return 'Threshold must be between 0 and 100'
-                            }
-                            return true
-                          },
-                        }}
-                        render={({ field, fieldState: { error } }) => (
-                          <div className="relative w-40">
-                            <InputTextSmall
-                              label="Threshold"
-                              name={field.name}
-                              type="number"
-                              placeholder="00"
-                              value={field.value?.toString()}
-                              onChange={field.onChange}
-                              className={clsx('w-full', error ? 'border-red-500' : '')}
-                              inputClassName="bg-transparent pr-6"
-                            />
-                            <span className="pointer-events-none absolute right-3 top-1/2 flex h-8 -translate-y-1/2 items-center text-xs text-neutral-350">
-                              {unit}
-                            </span>
-                          </div>
-                        )}
-                      />
                     </div>
                   </div>
                 )}
-
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm">Duration</p>
-                  <div className="flex items-center gap-2">
-                    <Controller
-                      name="for_duration"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputSelectSmall
-                          name={field.name}
-                          items={DURATION_OPTIONS}
-                          defaultValue={field.value}
-                          onChange={(value) => field.onChange(value)}
-                          className="w-full"
-                          inputClassName="bg-transparent"
-                        />
-                      )}
-                    />
-                  </div>
-                </div>
               </div>
             </div>
             <div className="flex flex-col gap-4 border-t border-neutral-250 p-4">
               <div className="flex flex-col gap-1">
                 <p className="text-sm">Main condition query</p>
                 <div className="rounded border border-neutral-250 bg-neutral-100 p-3 font-code text-sm">
-                  {metricCategory === 'missing_replicas' ? (
+                  {shouldHideConditions(metricCategory) ? (
                     <p className="text-xs uppercase text-blue-500">
-                      SEND A NOTIFICATION WHEN <span className="text-neutral-900">{serviceName}</span> HAS MISSING
-                      REPLICAS
+                      SEND A NOTIFICATION WHEN <span className="text-neutral-900">{serviceName}</span> HAS{' '}
+                      <span className="text-neutral-900">{formatMetricLabel(metricCategory)?.toUpperCase()}</span>
                     </p>
                   ) : (
                     <p className="flex flex-col gap-1 text-xs uppercase text-blue-500">
                       <span>
-                        SEND A NOTIFICATION WHEN THE <span className="text-neutral-900">{functionLabel}</span> OF{' '}
+                        SEND A NOTIFICATION WHEN{' '}
+                        {!shouldHideField(metricCategory, 'function') && functionLabel && (
+                          <>
+                            THE <span className="text-neutral-900">{functionLabel}</span> OF
+                          </>
+                        )}{' '}
                         <span className="text-neutral-900">{formatMetricLabel(metricCategory)}</span> FOR{' '}
                         <span className="text-neutral-900">{serviceName}</span>
                       </span>
-                      <span>
-                        IS <span className="text-neutral-900">{watchCondition.operator}</span>{' '}
-                        <span className="text-red-600">
-                          {watchCondition.threshold} {unit}
-                        </span>{' '}
-                        {watchForDuration === 'PT0S' ? (
-                          'IMMEDIATELY'
-                        ) : (
-                          <>
-                            DURING THE{' '}
-                            <span className="text-neutral-900">
-                              {DURATION_OPTIONS.find((option) => option.value === watchForDuration)?.label}
+                      {(!shouldHideField(metricCategory, 'operator') ||
+                        !shouldHideField(metricCategory, 'threshold')) && (
+                        <span>
+                          IS{' '}
+                          {!shouldHideField(metricCategory, 'operator') && (
+                            <span className="text-neutral-900">{watchCondition.operator}</span>
+                          )}{' '}
+                          {!shouldHideField(metricCategory, 'threshold') && (
+                            <span className="text-red-600">
+                              {watchCondition.threshold} {unit}
                             </span>
-                          </>
-                        )}
-                      </span>
+                          )}{' '}
+                          {!shouldHideField(metricCategory, 'duration') &&
+                            (watchForDuration === 'PT0S' ? (
+                              'IMMEDIATELY'
+                            ) : (
+                              <>
+                                DURING THE{' '}
+                                <span className="text-neutral-900">
+                                  {DURATION_OPTIONS.find((option) => option.value === watchForDuration)?.label}
+                                </span>
+                              </>
+                            ))}
+                        </span>
+                      )}
                     </p>
                   )}
                 </div>
@@ -565,7 +715,7 @@ export function MetricConfigurationStep({
                       label: (
                         <span className="flex items-center gap-1">
                           {match(receiver.type)
-                            .with('SLACK', (v) => <Icon name={v} iconStyle="regular" width={14} height={14} />)
+                            .with('SLACK', (v) => <Icon name={v} width={14} height={14} />)
                             .otherwise(() => (
                               <Icon iconName="webhook" iconStyle="regular" className="text-xs" />
                             ))}
