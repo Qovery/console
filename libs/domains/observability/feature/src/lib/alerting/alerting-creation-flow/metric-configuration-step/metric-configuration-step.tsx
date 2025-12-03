@@ -131,6 +131,7 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
   },
   instance_restart: {
     unit: '',
+    hiddenFields: ['function', 'operator', 'threshold'],
     defaults: {
       function: 'NONE',
       operator: 'EQUAL',
