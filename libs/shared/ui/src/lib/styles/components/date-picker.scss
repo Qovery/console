@@ -97,6 +97,17 @@
   .react-datepicker__day--range-end.react-datepicker__day--range-start {
     border-radius: theme('spacing.1');
   }
+
+  // Custom styling for dates disabled due to range limit
+  .date-picker-day--range-disabled {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    color: theme('colors.red.500') !important;
+    cursor: pointer !important;
+  }
+
+  .date-picker-day--range-disabled:hover {
+    background-color: rgba(239, 68, 68, 0.2) !important;
+  }
 }
 
 .date-picker--open {

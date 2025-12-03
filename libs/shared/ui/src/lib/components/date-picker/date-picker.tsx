@@ -15,6 +15,7 @@ export interface DatePickerProps {
   defaultDates?: [Date, Date]
   onClickOutside?: () => void
   useLocalTime?: boolean
+  maxRangeInDays?: number
 }
 
 export function DatePicker({
@@ -26,6 +27,7 @@ export function DatePicker({
   defaultDates,
   onClickOutside,
   useLocalTime = false,
+  maxRangeInDays,
   children,
 }: PropsWithChildren<DatePickerProps>) {
   const [startDate, setStartDate] = useState<Date | null>(defaultDates ? defaultDates[0] : null)
@@ -39,6 +41,7 @@ export function DatePicker({
   const [startTimeError, setStartTimeError] = useState('')
   const [endDateError, setEndDateError] = useState('')
   const [endTimeError, setEndTimeError] = useState('')
+  const [rangeError, setRangeError] = useState('')
 
   // Validation functions
   const validateDate = (dateStr: string): boolean => {
@@ -91,12 +94,33 @@ export function DatePicker({
     if (!dates) {
       setStartDate(null)
       setEndDate(null)
+      setRangeError('')
       return
     }
 
     const [start, end] = dates
+
+    // If maxRangeInDays is set and user clicks a date beyond the range, reset to new start date
+    if (maxRangeInDays && start && end) {
+      const timeDiff = Math.abs(end.getTime() - start.getTime())
+      const daysDifference = Math.floor(timeDiff / (1000 * 60 * 60 * 24))
+
+      if (daysDifference >= maxRangeInDays) {
+        // Reset and start new selection with the clicked date as start
+        setStartDate(end)
+        setEndDate(null)
+        setStartDateText(formatLocalDate(end))
+        setStartDateError('')
+        setRangeError('')
+        return
+      }
+    }
+
     setStartDate(start)
     setEndDate(end)
+
+    // Clear range error when selecting new dates
+    setRangeError('')
 
     // Update DATE text inputs based on calendar selection
     if (start) {
@@ -147,6 +171,53 @@ export function DatePicker({
     }
   }
 
+  // Filter dates to enforce maxRangeInDays limit
+  const filterDate = (date: Date): boolean => {
+    if (!startDate || !maxRangeInDays) return true
+
+    // Only restrict FUTURE dates beyond the range, allow all past dates
+    if (date >= startDate) {
+      const timeDiff = date.getTime() - startDate.getTime()
+      const daysDifference = Math.floor(timeDiff / (1000 * 60 * 60 * 24))
+
+      return daysDifference < maxRangeInDays
+    }
+
+    // Allow all past dates (they'll be handled by minDate if needed)
+    return true
+  }
+
+  // Add custom class names for styling disabled dates
+  const getDayClassName = (date: Date): string => {
+    if (!startDate || !maxRangeInDays) return ''
+
+    // Check if date is disabled by minDate (organization plan retention)
+    if (minDate && date < minDate) {
+      return '' // Don't apply red styling to minDate-disabled dates
+    }
+
+    // Check if date is disabled by maxDate
+    if (maxDate && date > maxDate) {
+      return '' // Don't apply red styling to maxDate-disabled dates
+    }
+
+    // Normalize both dates to midnight for accurate day comparison
+    const normalizedStartDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+    const normalizedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+
+    // Only apply red styling to FUTURE dates beyond the range limit (not past dates)
+    if (normalizedDate >= normalizedStartDate) {
+      const timeDiff = normalizedDate.getTime() - normalizedStartDate.getTime()
+      const daysDifference = Math.floor(timeDiff / (1000 * 60 * 60 * 24))
+
+      if (daysDifference >= maxRangeInDays) {
+        return 'date-picker-day--range-disabled'
+      }
+    }
+
+    return ''
+  }
+
   const handleInputChange = (type: 'startDate' | 'startTime' | 'endDate' | 'endTime', value: string) => {
     switch (type) {
       case 'startDate':
@@ -188,6 +259,7 @@ export function DatePicker({
                 renderCustomHeader={(params: ReactDatePickerCustomHeaderProps) => <DatePickerHeader {...params} />}
                 maxDate={maxDate}
                 minDate={minDate}
+                dayClassName={getDayClassName}
                 showDisabledMonthNavigation
                 selectsRange
                 useWeekdaysShort
@@ -274,8 +346,59 @@ export function DatePicker({
 
                       const startDateTime = getCombinedDateTime(startDateText, startTimeText)
                       const endDateTime = getCombinedDateTime(endDateText, endTimeText)
+
+                      // Validate range if maxRangeInDays is set
+                      if (maxRangeInDays) {
+                        // Normalize to dates only (ignore time) for inclusive day counting
+                        const startDateOnly = new Date(
+                          startDateTime.getFullYear(),
+                          startDateTime.getMonth(),
+                          startDateTime.getDate()
+                        )
+                        const endDateOnly = new Date(
+                          endDateTime.getFullYear(),
+                          endDateTime.getMonth(),
+                          endDateTime.getDate()
+                        )
+
+                        const timeDiff = Math.abs(endDateOnly.getTime() - startDateOnly.getTime())
+                        const daysDifference = Math.floor(timeDiff / (1000 * 60 * 60 * 24))
+
+                        // Add 1 for inclusive counting (Oct 1 to Oct 30 = 30 days, not 29)
+                        const inclusiveDays = daysDifference + 1
+
+                        if (inclusiveDays > maxRangeInDays) {
+                          setRangeError(`Date range cannot exceed ${maxRangeInDays} days`)
+                          return
+                        }
+                      }
+
+                      setRangeError('')
                       onChange(startDateTime, endDateTime)
                     } else if (startDate && endDate) {
+                      // Validate range if maxRangeInDays is set
+                      if (maxRangeInDays) {
+                        // Normalize to dates only (ignore time) for inclusive day counting
+                        const startDateOnly = new Date(
+                          startDate.getFullYear(),
+                          startDate.getMonth(),
+                          startDate.getDate()
+                        )
+                        const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
+
+                        const timeDiff = Math.abs(endDateOnly.getTime() - startDateOnly.getTime())
+                        const daysDifference = Math.floor(timeDiff / (1000 * 60 * 60 * 24))
+
+                        // Add 1 for inclusive counting (Oct 1 to Oct 30 = 30 days, not 29)
+                        const inclusiveDays = daysDifference + 1
+
+                        if (inclusiveDays > maxRangeInDays) {
+                          setRangeError(`Date range cannot exceed ${maxRangeInDays} days`)
+                          return
+                        }
+                      }
+
+                      setRangeError('')
                       onChange(startDate, endDate)
                     }
                   } catch (error) {
@@ -285,6 +408,7 @@ export function DatePicker({
               >
                 Apply
               </Button>
+              {rangeError && <p className="mt-2 text-center text-xs text-red-500">{rangeError}</p>}
             </div>
           </div>
         </div>
