@@ -100,12 +100,12 @@ export function PageAlertingEditFeature() {
     const updatedAlert = updatedAlerts ? updatedAlerts[0] : alerts[0]
 
     const isMissingReplicas = updatedAlert.tag === 'missing_replicas'
-    const threshold =
-      updatedAlert.tag === 'http_latency'
-        ? updatedAlert.condition.threshold ?? 0
-        : isMissingReplicas
-          ? 1
-          : (updatedAlert.condition.threshold ?? 0) / 100
+    const threshold = match(updatedAlert.tag)
+      .with('http_latency', () => updatedAlert.condition.threshold ?? 0)
+      .with('instance_restart', () => 1)
+      .with('missing_replicas', () => 1)
+      .otherwise(() => (updatedAlert.condition.threshold ?? 0) / 100)
+
     const operator = isMissingReplicas ? AlertRuleConditionOperator.BELOW : updatedAlert.condition.operator ?? 'ABOVE'
     const func = updatedAlert.condition.function ?? 'NONE'
 

@@ -120,7 +120,6 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
     },
   },
   missing_replicas: {
-    unit: '%',
     hiddenFields: ['function', 'operator', 'threshold', 'duration'],
     defaults: {
       function: 'NONE',
@@ -130,7 +129,6 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
     },
   },
   instance_restart: {
-    unit: '',
     hiddenFields: ['function', 'operator', 'threshold'],
     defaults: {
       function: 'NONE',
@@ -167,7 +165,7 @@ const getDefaultValue = <T extends ConditionField>(
 }
 
 const getUnit = (category: MetricCategory): string => {
-  return METRIC_FIELD_CONFIG[category]?.unit ?? '%'
+  return METRIC_FIELD_CONFIG[category]?.unit ?? ''
 }
 
 export function MetricConfigurationStep({

@@ -129,8 +129,12 @@ export function AlertingCreationFlow({
     try {
       setIsLoading(true)
       for (const alert of activeAlerts) {
-        const threshold =
-          alert.tag === 'http_latency' ? alert.condition.threshold ?? 0 : (alert.condition.threshold ?? 0) / 100
+        const threshold = match(alert.tag)
+          .with('http_latency', () => alert.condition.threshold ?? 0)
+          .with('instance_restart', () => 1)
+          .with('missing_replicas', () => 1)
+          .otherwise(() => (alert.condition.threshold ?? 0) / 100)
+
         const operator = alert.condition.operator ?? 'ABOVE'
         const func = alert.condition.function ?? 'NONE'
         // XXX: Generate description from function, operator, threshold and metric category for Notification
