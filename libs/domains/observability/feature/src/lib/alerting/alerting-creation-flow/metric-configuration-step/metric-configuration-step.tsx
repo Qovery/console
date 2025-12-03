@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { type AlertRuleConditionOperator, AlertSeverity } from 'qovery-typescript-axios'
+import { AlertRuleConditionOperator, AlertSeverity } from 'qovery-typescript-axios'
 import { AlertRuleConditionFunction } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -49,10 +49,10 @@ const METRIC_TYPE_OPTIONS: Record<MetricCategory, { label: string; value: AlertR
   instance_restart: VALUES_OPTIONS,
 }
 
-const OPERATOR_OPTIONS: Value[] = [
-  { label: 'Above', value: 'ABOVE' },
-  { label: 'Below', value: 'BELOW' },
-]
+const OPERATOR_OPTIONS: Value[] = Object.values(AlertRuleConditionOperator).map((operator) => ({
+  label: operator.replace(/_/g, ' '),
+  value: operator,
+}))
 
 const DURATION_OPTIONS: Value[] = [
   { label: 'Immediate', value: 'PT0S' },
@@ -72,7 +72,7 @@ type ConditionField = 'function' | 'operator' | 'threshold' | 'duration'
 
 type MetricFieldConfig = {
   hiddenFields?: ConditionField[]
-  unit?: '%' | 'secs'
+  unit?: '%' | 'secs' | string
   defaults?: Partial<{
     function: AlertRuleConditionFunction
     operator: AlertRuleConditionOperator
@@ -123,18 +123,18 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
     unit: '%',
     hiddenFields: ['function', 'operator', 'threshold', 'duration'],
     defaults: {
-      function: 'COUNT',
+      function: 'NONE',
       operator: 'BELOW',
       threshold: 1,
       duration: 'PT0S',
     },
   },
   instance_restart: {
-    unit: '%',
+    unit: '',
     defaults: {
-      function: 'MAX',
-      operator: 'ABOVE',
-      threshold: 80,
+      function: 'NONE',
+      operator: 'EQUAL',
+      threshold: 1,
       duration: 'PT5M',
     },
   },
@@ -618,7 +618,7 @@ export function MetricConfigurationStep({
                         <span>
                           IS{' '}
                           {!shouldHideField(metricCategory, 'operator') && (
-                            <span className="text-neutral-900">{watchCondition.operator}</span>
+                            <span className="text-neutral-900">{watchCondition.operator?.replace(/_/g, ' ')}</span>
                           )}{' '}
                           {!shouldHideField(metricCategory, 'threshold') && (
                             <span className="text-red-600">

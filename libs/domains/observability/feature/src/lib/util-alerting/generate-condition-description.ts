@@ -5,23 +5,28 @@ import { type MetricCategory } from '../alerting/alerting-creation-flow/alerting
 const METRIC_LABEL_OVERRIDES: Record<string, string> = {
   cpu: 'CPU',
   memory: 'Memory',
-  instances: 'Instances',
-  k8s_event: 'K8s events',
-  network: 'Network',
-  logs: 'Logs',
+  http_error: 'HTTP error',
+  http_latency: 'HTTP latency',
+  missing_replicas: 'Missing replicas',
+  instance_restart: 'Instance restart',
 }
 
-const OPERATOR_SYMBOLS: Record<string, string> = {
+const OPERATOR_SYMBOLS: Record<AlertRuleConditionOperator, string> = {
   ABOVE: '>',
   BELOW: '<',
+  EQUAL: '=',
+  ABOVE_OR_EQUAL: '>=',
+  BELOW_OR_EQUAL: '<=',
+  NONE: 'None',
 }
 
-const FUNCTION_LABELS: Record<string, string> = {
+const FUNCTION_LABELS: Record<AlertRuleConditionFunction, string> = {
   MAX: 'Maximum',
   AVG: 'Average',
   MIN: 'Minimum',
   COUNT: 'Count',
-  NONE: '',
+  SUM: 'Sum',
+  NONE: 'None',
 }
 
 export function formatMetricLabel(tag?: string) {
@@ -29,19 +34,10 @@ export function formatMetricLabel(tag?: string) {
   if (METRIC_LABEL_OVERRIDES[tag]) {
     return METRIC_LABEL_OVERRIDES[tag]
   }
-
-  const words = tag.split('_').filter(Boolean)
-  if (words.length === 0) return undefined
-
-  return words
-    .map((word) => {
-      if (word.toLowerCase() === 'http') return 'HTTP'
-      return word.length <= 3 ? word.toUpperCase() : upperCaseFirstLetter(word)
-    })
-    .join(' ')
+  return upperCaseFirstLetter(tag)
 }
 
-export function formatOperator(operator?: string) {
+export function formatOperator(operator?: AlertRuleConditionOperator) {
   if (!operator) return undefined
   return OPERATOR_SYMBOLS[operator] ?? operator
 }
@@ -75,14 +71,14 @@ export function formatDuration(duration?: string) {
   return parts.join(' ')
 }
 
-export function formatFunction(func?: AlertRuleConditionFunction | string) {
+export function formatFunction(func?: AlertRuleConditionFunction) {
   if (!func) return undefined
   return FUNCTION_LABELS[func] ?? func
 }
 
 export function generateConditionDescription(
-  func?: AlertRuleConditionFunction | string,
-  operator?: AlertRuleConditionOperator | string,
+  func?: AlertRuleConditionFunction,
+  operator?: AlertRuleConditionOperator,
   threshold?: number,
   metric?: MetricCategory,
   unit = '%'

@@ -11,33 +11,10 @@ describe('formatMetricLabel', () => {
   it('should return override value for known metric tags', () => {
     expect(formatMetricLabel('cpu')).toBe('CPU')
     expect(formatMetricLabel('memory')).toBe('Memory')
-    expect(formatMetricLabel('instances')).toBe('Instances')
-    expect(formatMetricLabel('k8s_event')).toBe('K8s events')
-    expect(formatMetricLabel('network')).toBe('Network')
-    expect(formatMetricLabel('logs')).toBe('Logs')
-  })
-
-  it('should format single word tags with short words (<=3 chars) as uppercase', () => {
-    expect(formatMetricLabel('api')).toBe('API')
-    expect(formatMetricLabel('id')).toBe('ID')
-    expect(formatMetricLabel('url')).toBe('URL')
-  })
-
-  it('should format single word tags with long words (>3 chars) with capitalized first letter', () => {
-    expect(formatMetricLabel('database')).toBe('Database')
-    expect(formatMetricLabel('application')).toBe('Application')
-  })
-
-  it('should format multi-word tags separated by underscores', () => {
-    expect(formatMetricLabel('http_request')).toBe('HTTP Request')
-    expect(formatMetricLabel('cpu_usage')).toBe('CPU Usage')
-    expect(formatMetricLabel('memory_consumption')).toBe('Memory Consumption')
-  })
-
-  it('should handle "http" as special case and return "HTTP"', () => {
-    expect(formatMetricLabel('http')).toBe('HTTP')
-    expect(formatMetricLabel('http_request')).toBe('HTTP Request')
-    expect(formatMetricLabel('http_latency')).toBe('HTTP Latency')
+    expect(formatMetricLabel('http_error')).toBe('HTTP error')
+    expect(formatMetricLabel('http_latency')).toBe('HTTP latency')
+    expect(formatMetricLabel('missing_replicas')).toBe('Missing replicas')
+    expect(formatMetricLabel('instance_restart')).toBe('Instance restart')
   })
 })
 
@@ -45,11 +22,10 @@ describe('formatOperator', () => {
   it('should return symbol for known operators', () => {
     expect(formatOperator('ABOVE')).toBe('>')
     expect(formatOperator('BELOW')).toBe('<')
-  })
-
-  it('should return original value for unknown operators', () => {
-    expect(formatOperator('EQUAL')).toBe('EQUAL')
-    expect(formatOperator('unknown')).toBe('unknown')
+    expect(formatOperator('EQUAL')).toBe('=')
+    expect(formatOperator('ABOVE_OR_EQUAL')).toBe('>=')
+    expect(formatOperator('BELOW_OR_EQUAL')).toBe('<=')
+    expect(formatOperator('NONE')).toBe('None')
   })
 })
 
@@ -100,7 +76,8 @@ describe('formatFunction', () => {
     expect(formatFunction('AVG')).toBe('Average')
     expect(formatFunction('MIN')).toBe('Minimum')
     expect(formatFunction('COUNT')).toBe('Count')
-    expect(formatFunction('NONE')).toBe('')
+    expect(formatFunction('SUM')).toBe('Sum')
+    expect(formatFunction('NONE')).toBe('None')
   })
 })
 
@@ -111,7 +88,7 @@ describe('generateConditionDescription', () => {
 
   it('should handle http_latency metric', () => {
     expect(generateConditionDescription('AVG', 'ABOVE', 100, 'http_latency', 'secs')).toBe(
-      'HTTP Latency - Average > 100secs'
+      'HTTP latency - Average > 100secs'
     )
   })
 
