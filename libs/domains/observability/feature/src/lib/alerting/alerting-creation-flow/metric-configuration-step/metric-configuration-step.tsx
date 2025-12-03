@@ -170,6 +170,10 @@ export function MetricConfigurationStep({
   const watchCondition = methods.watch('condition')
   const watchForDuration = methods.watch('for_duration')
 
+  const unit = match(watchTag)
+    .with('http_latency', () => 'secs')
+    .otherwise(() => '%')
+
   // Auto-generate alert name from conditions
   useEffect(() => {
     const isHiddenConditionMetric = shouldHideConditions(watchTag as MetricCategory)
@@ -189,7 +193,8 @@ export function MetricConfigurationStep({
     const operator = formatOperator(watchCondition?.operator)
     const threshold = formatThreshold(
       watchTag as MetricCategory,
-      parseFloat(watchCondition?.threshold?.toString() ?? '0')
+      parseFloat(watchCondition?.threshold?.toString() ?? '0'),
+      unit
     )
     const duration = formatDuration(watchForDuration)
 
@@ -206,6 +211,7 @@ export function MetricConfigurationStep({
     watchCondition?.threshold,
     watchForDuration,
     methods,
+    unit,
   ])
 
   const handleNext = async (data: AlertConfiguration) => {
@@ -295,10 +301,6 @@ export function MetricConfigurationStep({
   const functionLabel = METRIC_TYPE_OPTIONS[metricCategory]?.find(
     (option: Value) => option.value === watchCondition?.function
   )?.label
-
-  const unit = match(watchTag)
-    .with('http_latency', () => 'secs')
-    .otherwise(() => '%')
 
   return (
     <FunnelFlowBody key={index} customContentWidth="max-w-[52rem]">

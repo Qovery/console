@@ -61,8 +61,9 @@ describe('formatThreshold', () => {
   })
 
   it('should format threshold as milliseconds for http_latency', () => {
-    expect(formatThreshold('http_latency', 100)).toBe('100ms')
-    expect(formatThreshold('http_latency', 50)).toBe('50ms')
+    expect(formatThreshold('http_latency', 100, 'ms')).toBe('100ms')
+    expect(formatThreshold('http_latency', 50, 'ms')).toBe('50ms')
+    expect(formatThreshold('http_latency', 50, 'secs')).toBe('50secs')
   })
 })
 
@@ -109,7 +110,9 @@ describe('generateConditionDescription', () => {
   })
 
   it('should handle http_latency metric', () => {
-    expect(generateConditionDescription('AVG', 'ABOVE', 100, 'http_latency')).toBe('HTTP Latency - Average > 100ms')
+    expect(generateConditionDescription('AVG', 'ABOVE', 100, 'http_latency', 'secs')).toBe(
+      'HTTP Latency - Average > 100secs'
+    )
   })
 
   it('should handle missing parts', () => {

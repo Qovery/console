@@ -46,11 +46,11 @@ export function formatOperator(operator?: string) {
   return OPERATOR_SYMBOLS[operator] ?? operator
 }
 
-export function formatThreshold(metric?: MetricCategory, threshold?: number) {
+export function formatThreshold(metric?: MetricCategory, threshold?: number, unit = '%') {
   if (threshold === undefined || threshold === null) return undefined
   const normalized = threshold <= 1 ? threshold * 100 : threshold
   const formatted = Number.isInteger(normalized) ? normalized.toString() : normalized.toFixed(1).replace(/\.0$/, '')
-  return metric === 'http_latency' ? `${threshold}ms` : `${formatted}%`
+  return metric === 'http_latency' ? `${threshold}${unit}` : `${formatted}${unit}`
 }
 
 export function formatDuration(duration?: string) {
@@ -84,14 +84,15 @@ export function generateConditionDescription(
   func?: AlertRuleConditionFunction | string,
   operator?: AlertRuleConditionOperator | string,
   threshold?: number,
-  metric?: MetricCategory
+  metric?: MetricCategory,
+  unit = '%'
 ): string {
   // Desired format: "{{metric}} - {{function}} {{operator}} {{threshold}}"
   // Example: "CPU - Average >= 80%"
   const metricLabel = formatMetricLabel(metric)
   const functionLabel = formatFunction(func)
   const operatorSymbol = formatOperator(operator)
-  const thresholdFormatted = formatThreshold(metric, threshold)
+  const thresholdFormatted = formatThreshold(metric, threshold, unit)
 
   let conditionPart = ''
   if (functionLabel && operatorSymbol && thresholdFormatted) {
