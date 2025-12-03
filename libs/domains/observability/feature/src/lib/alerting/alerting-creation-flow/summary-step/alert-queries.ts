@@ -39,14 +39,14 @@ export const QUERY_INSTANCE_RESTART = (containerName: string) => `
     increase(
       kube_pod_container_status_restarts_total{
         container="${containerName}"
-      }[5m]
+      }[1m]
     ) > 0
   )
   and on (namespace, pod, container)
   kube_pod_container_status_last_terminated_reason{
     container="${containerName}",
     reason=~"OOMKilled|Error|ContainerCannotRun|RunContainerError|StartError|DeadlineExceeded"
-  }
+  } == 1
 `
 
 export const QUERY_MISSING_REPLICAS = (containerName: string) => `
