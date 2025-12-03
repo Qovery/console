@@ -65,7 +65,7 @@ export function StepPersonalize(props: StepPersonalizeProps) {
             return (
               <InputText
                 className="mb-3"
-                label="Work email"
+                label="Email address"
                 type="email"
                 name={field.name}
                 onChange={field.onChange}
@@ -78,6 +78,7 @@ export function StepPersonalize(props: StepPersonalizeProps) {
         <Controller
           name="company_name"
           control={control}
+          rules={{ required: 'Please enter your company name.' }}
           render={({ field, fieldState: { error } }) => (
             <InputText
               className="mb-3"

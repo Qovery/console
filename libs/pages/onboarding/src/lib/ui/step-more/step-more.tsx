@@ -225,7 +225,12 @@ export function StepMore(props: StepMoreProps) {
           <div className="mt-auto">
             <p>
               You have specific needs?{' '}
-              <a href="https://qovery.com/contact" target="_blank" rel="noreferrer" className="text-sky-500">
+              <a
+                href="https://meetings-eu1.hubspot.com/lnoone/free-trial-demo-request"
+                target="_blank"
+                rel="noreferrer"
+                className="text-sky-500"
+              >
                 Book a demo
               </a>{' '}
               with us and unlock a trial that truly suits you.

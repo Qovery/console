@@ -1,15 +1,19 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { PlanEnum } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import {
-  useAddCreditCard,
-  useCreateOrganization,
-  useDeleteOrganization,
-} from '@qovery/domains/organizations/feature'
+import { useAddCreditCard, useCreateOrganization, useDeleteOrganization } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
+import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import {
+  ENVIRONMENTS_GENERAL_URL,
+  ENVIRONMENTS_URL,
+  ONBOARDING_MORE_URL,
+  ONBOARDING_PERSONALIZE_URL,
+  ONBOARDING_URL,
+} from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { StepProject } from '../../ui/step-project/step-project'
@@ -26,6 +30,7 @@ export function OnboardingProject() {
   const { mutateAsync: addCreditCard } = useAddCreditCard()
   const { mutateAsync: deleteOrganization } = useDeleteOrganization()
   const { handleSubmit, control, setValue } = useForm<{ project_name: string; organization_name: string }>()
+  const { data: userSignUp } = useUserSignUp()
   const {
     organization_name,
     project_name,
@@ -38,6 +43,8 @@ export function OnboardingProject() {
     cardExpiryYear,
   } = useContext(ContextOnboarding)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const shouldSkipBilling = userSignUp?.dx_auth === true
+  const planToUse = shouldSkipBilling ? PlanEnum.USER_2025 : selectedPlan
 
   useEffect(() => {
     setValue('organization_name', organization_name)
@@ -45,7 +52,7 @@ export function OnboardingProject() {
   }, [organization_name, project_name, setValue])
 
   const addCardIfPresent = async (organizationId: string) => {
-    if (!cardToken) return
+    if (!cardToken || shouldSkipBilling) return
 
     try {
       await addCreditCard({
@@ -81,7 +88,7 @@ export function OnboardingProject() {
       const organization = await createOrganization({
         organizationRequest: {
           name: data.organization_name,
-          plan: selectedPlan,
+          plan: planToUse,
           admin_emails: admin_email ? [admin_email] : user?.email ? [user.email] : [],
         },
       })
@@ -112,13 +119,21 @@ export function OnboardingProject() {
           console.error('Failed to clean up organization after card failure', cleanupError)
         }
       }
-      navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
+      const fallbackRoute = shouldSkipBilling ? ONBOARDING_PERSONALIZE_URL : ONBOARDING_MORE_URL
+      navigate(`${ONBOARDING_URL}${fallbackRoute}`)
     } finally {
       setIsSubmitting(false)
     }
   })
 
-  return <StepProject onSubmit={onSubmit} control={control} loading={isSubmitting} />
+  return (
+    <StepProject
+      onSubmit={onSubmit}
+      control={control}
+      loading={isSubmitting}
+      onFirstStepBack={shouldSkipBilling ? () => navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`) : undefined}
+    />
+  )
 }
 
 export default OnboardingProject

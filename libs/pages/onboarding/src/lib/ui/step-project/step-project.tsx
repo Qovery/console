@@ -14,7 +14,7 @@ export interface StepProjectProps {
 }
 
 export function StepProject(props: StepProjectProps) {
-  const { onSubmit, control, loading } = props
+  const { onSubmit, control, loading, onFirstStepBack } = props
   const navigate = useNavigate()
 
   return (
@@ -67,7 +67,7 @@ export function StepProject(props: StepProjectProps) {
             color="neutral"
             variant="surface"
             className="gap-2"
-            onClick={() => navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)}
+            onClick={() => (onFirstStepBack ? onFirstStepBack() : navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`))}
           >
             <Icon name="icon-solid-arrow-left" />
             Back

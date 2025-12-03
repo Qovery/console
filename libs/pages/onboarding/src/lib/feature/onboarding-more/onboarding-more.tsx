@@ -80,11 +80,24 @@ export function OnboardingMore() {
   const [backButton, setBackButton] = useState<boolean>(false)
 
   const navigate = useNavigate()
+  const shouldSkipBilling = userSignUp?.dx_auth === true
   const plan = PLANS.find((plan) => plan.name === selectedPlan) ?? PLANS[0]
   const selectablePlans = PLANS.filter((planOption) => planOption.name !== PlanEnum.ENTERPRISE_2025)
 
   useEffect(() => {
+    if (shouldSkipBilling) {
+      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
+    }
+  }, [navigate, shouldSkipBilling])
+
+  useEffect(() => {
     let mounted = true
+
+    if (shouldSkipBilling) {
+      return () => {
+        mounted = false
+      }
+    }
 
     const initializeChargebee = async () => {
       try {
@@ -105,7 +118,7 @@ export function OnboardingMore() {
     return () => {
       mounted = false
     }
-  }, [])
+  }, [shouldSkipBilling])
 
   useEffect(() => {
     async function fetchOrganizations() {
@@ -117,6 +130,10 @@ export function OnboardingMore() {
     }
     fetchOrganizations()
   }, [organizations])
+
+  if (shouldSkipBilling) {
+    return null
+  }
 
   const handlePlanSelect = (planName: PlanEnum) => {
     setContextValue?.({ selectedPlan: planName })
@@ -143,7 +160,7 @@ export function OnboardingMore() {
               You have specific needs? Book a demo with us and unlock a trial that truly suits you.
             </p>
             <ExternalLink
-              href="https://qovery.com/contact"
+              href="https://meetings-eu1.hubspot.com/lnoone/free-trial-demo-request"
               color="brand"
               withIcon={false}
               className="gap-1 text-sm font-semibold"
@@ -160,6 +177,11 @@ export function OnboardingMore() {
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    if (shouldSkipBilling) {
+      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
+      return
+    }
 
     if (!userSignUp) return
     if (!cardRef.current || !isCardReady || !cbInstance) return

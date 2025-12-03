@@ -1,6 +1,7 @@
 import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
 import { type CardImages } from 'react-payment-inputs/images'
 import { useParams } from 'react-router-dom'
+import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   Button,
@@ -45,13 +46,15 @@ function getBillingRecurrenceStr(renewalAt: string | null | undefined): string {
 
 export function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryProps) {
   const { organizationId = '' } = useParams()
+  const { data: userSignUp } = useUserSignUp()
 
   // Get the billing recurrence word to display based on the renewal date.
   // It's not so accurate, but it's a good enough approximation for now
   const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
   const isTrial = true
   const remainingTrialDay = props.currentCost?.remaining_trial_day
-  const showTrialCallout = isTrial && remainingTrialDay !== undefined && !props.creditCardLoading
+  const showTrialCallout =
+    !userSignUp?.dx_auth && isTrial && remainingTrialDay !== undefined && !props.creditCardLoading
   const hasCreditCard = props.hasCreditCard ?? Boolean(props.creditCard)
   const trialDayLabel = remainingTrialDay === 1 ? 'day' : 'days'
 
