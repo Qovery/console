@@ -30,8 +30,7 @@ export function FreeTrialBanner() {
   return (
     <Banner color="brand" buttonIconRight="arrow-right" buttonLabel="Need help" onClickButton={onClick}>
       <p>
-        Your free trial plan expires {remainingTrialDays} {dayLabel} from now. Your subscription will start
-        automatically at the end of your trial.
+        Your free trial plan expires {remainingTrialDays} {dayLabel} from now. If you need help, please contact us.
       </p>
     </Banner>
   )
