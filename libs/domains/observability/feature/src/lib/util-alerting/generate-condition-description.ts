@@ -1,5 +1,5 @@
 import { type AlertRuleConditionFunction, type AlertRuleConditionOperator } from 'qovery-typescript-axios'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type MetricCategory } from '../alerting/alerting-creation-flow/alerting-creation-flow.types'
 
 const METRIC_LABEL_OVERRIDES: Record<string, string> = {
@@ -66,9 +66,9 @@ export function formatDuration(duration?: string) {
 
   const parts = []
 
-  if (hours) parts.push(`${hours} hour${hours === '1' ? '' : 's'}`)
-  if (minutes) parts.push(`${minutes} minute${minutes === '1' ? '' : 's'}`)
-  if (seconds) parts.push(`${seconds} second${seconds === '1' ? '' : 's'}`)
+  if (hours) parts.push(`${hours} ${pluralize(Number(hours), 'hour')}`)
+  if (minutes) parts.push(`${minutes} ${pluralize(Number(minutes), 'minute')}`)
+  if (seconds) parts.push(`${seconds} ${pluralize(Number(seconds), 'second')}`)
 
   if (parts.length === 0) return undefined
 
