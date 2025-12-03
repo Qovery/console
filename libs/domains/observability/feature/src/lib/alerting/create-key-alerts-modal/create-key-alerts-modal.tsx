@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   APPLICATION_MONITORING_ALERTS_CREATION_URL,
+  APPLICATION_MONITORING_ALERT_METRIC_URL,
   APPLICATION_MONITORING_URL,
   APPLICATION_URL,
 } from '@qovery/shared/routes'
@@ -46,15 +47,8 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
     (service?.ports || []).length > 0 &&
     service?.ports?.some((p) => p.publicly_accessible)
 
-  const hasEqualInstances =
-    (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
-    service?.min_running_instances === service?.max_running_instances
-
   const availableMetrics = METRICS.filter((metric) => {
     if (!hasPublicPort && (metric.id === 'http_error' || metric.id === 'http_latency')) {
-      return false
-    }
-    if (hasPublicPort && hasEqualInstances) {
       return false
     }
     return true
@@ -89,7 +83,7 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
       APPLICATION_MONITORING_ALERTS_CREATION_URL
 
     onClose()
-    navigate(`${basePath}/metric/${data.metrics[0]}?templates=${templatesParam}`)
+    navigate(`${basePath}${APPLICATION_MONITORING_ALERT_METRIC_URL(data.metrics[0])}?templates=${templatesParam}`)
   })
 
   const watchMetrics = methods.watch('metrics')

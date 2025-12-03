@@ -1,3 +1,4 @@
+import { addMinutes, subMinutes } from 'date-fns'
 import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { BooleanParam, type QueryParamConfig, StringParam, useQueryParam } from 'use-query-params'
 import { v4 as uuidv4 } from 'uuid'
@@ -137,6 +138,24 @@ export function DashboardProvider({ children }: PropsWithChildren) {
     setEndDate(endDateISO)
     setTimeRange('custom')
   }, [])
+
+  // Adjust dates when startDate and endDate are identical
+  // This ensures a valid time range for queries by expanding ±30 minutes around the single timestamp
+  useEffect(() => {
+    if (!startDate || !endDate) return
+
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return
+
+    if (start.getTime() === end.getTime()) {
+      const adjustedStart = subMinutes(start, 30)
+      const adjustedEnd = addMinutes(end, 30)
+      setStartDate(adjustedStart.toISOString())
+      setEndDate(adjustedEnd.toISOString())
+    }
+  }, [startDate, endDate, setStartDate, setEndDate])
 
   const startTimestamp = startDate && convertDatetoTimestamp(startDate).toString()
   const endTimestamp = endDate && convertDatetoTimestamp(endDate).toString()

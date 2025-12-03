@@ -8,6 +8,7 @@ import { ErrorBoundary, FunnelFlow } from '@qovery/shared/ui'
 import { useContainerName } from '../../hooks/use-container-name/use-container-name'
 import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create-alert-rule'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
+import { generateConditionDescription } from '../../util-alerting/generate-condition-description'
 import { type AlertConfiguration, type MetricCategory } from './alerting-creation-flow.types'
 import { MetricConfigurationStep } from './metric-configuration-step/metric-configuration-step'
 import {
@@ -132,6 +133,8 @@ export function AlertingCreationFlow({
           alert.tag === 'http_latency' ? alert.condition.threshold ?? 0 : (alert.condition.threshold ?? 0) / 100
         const operator = alert.condition.operator ?? 'ABOVE'
         const func = alert.condition.function ?? 'NONE'
+        // XXX: Generate description from function, operator, threshold and metric category for Notification
+        const description = generateConditionDescription(func, operator, threshold, alert.tag as MetricCategory)
 
         await createAlertRule({
           payload: {
@@ -143,7 +146,7 @@ export function AlertingCreationFlow({
             },
             name: alert.name,
             tag: alert.tag,
-            description: alert.tag,
+            description,
             condition: {
               kind: 'BUILT',
               function: func,

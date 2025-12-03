@@ -1,10 +1,12 @@
 import { subHours } from 'date-fns'
+import { AlertRuleConditionOperator } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import {
   type AlertConfiguration,
   AlertingCreationFlowContext,
+  type MetricCategory,
   MetricConfigurationStep,
   QUERY_CPU,
   QUERY_HTTP_ERROR,
@@ -18,6 +20,7 @@ import {
   useEnvironment,
   useIngressName,
 } from '@qovery/domains/observability/feature'
+import { generateConditionDescription } from '@qovery/domains/observability/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { APPLICATION_MONITORING_ALERTS_URL, APPLICATION_MONITORING_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
@@ -68,6 +71,8 @@ export function PageAlertingEditFeature() {
             ? rawThreshold * 100
             : 80
 
+      const isMissingReplicas = alertRule.tag === 'missing_replicas'
+
       const alertConfig: AlertConfiguration = {
         id: alertRule.id,
         tag: alertRule.tag ?? 'CPU',
@@ -75,8 +80,8 @@ export function PageAlertingEditFeature() {
         condition: {
           kind: alertRule.condition.kind || 'BUILT',
           function: alertRule.condition.function || 'AVG',
-          operator: alertRule.condition.operator || 'ABOVE',
-          threshold,
+          operator: isMissingReplicas ? AlertRuleConditionOperator.BELOW : alertRule.condition.operator || 'ABOVE',
+          threshold: isMissingReplicas ? 1 : threshold,
           promql: alertRule.condition.promql || '',
         },
         name: alertRule.name,
@@ -94,11 +99,14 @@ export function PageAlertingEditFeature() {
   const handleComplete = async (updatedAlerts?: AlertConfiguration[]) => {
     const updatedAlert = updatedAlerts ? updatedAlerts[0] : alerts[0]
 
+    const isMissingReplicas = updatedAlert.tag === 'missing_replicas'
     const threshold =
       updatedAlert.tag === 'http_latency'
         ? updatedAlert.condition.threshold ?? 0
-        : (updatedAlert.condition.threshold ?? 0) / 100
-    const operator = updatedAlert.condition.operator ?? 'ABOVE'
+        : isMissingReplicas
+          ? 1
+          : (updatedAlert.condition.threshold ?? 0) / 100
+    const operator = isMissingReplicas ? AlertRuleConditionOperator.BELOW : updatedAlert.condition.operator ?? 'ABOVE'
     const func = updatedAlert.condition.function ?? 'NONE'
 
     if (updatedAlert && environment && containerName && ingressName) {
@@ -108,7 +116,7 @@ export function PageAlertingEditFeature() {
           payload: {
             name: updatedAlert.name,
             tag: updatedAlert.tag,
-            description: alertRule.description,
+            description: generateConditionDescription(func, operator, threshold, updatedAlert.tag as MetricCategory),
             condition: {
               kind: 'BUILT',
               function: func,
@@ -156,7 +164,7 @@ export function PageAlertingEditFeature() {
   return (
     <AlertingCreationFlowContext.Provider
       value={{
-        selectedMetrics: [alertRule.description || 'custom'],
+        selectedMetrics: [alertRule.tag || 'cpu'],
         serviceId: applicationId,
         serviceName: service.name,
         currentStepIndex,

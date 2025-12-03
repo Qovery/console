@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { AlertSeverity } from 'qovery-typescript-axios'
+import { AlertRuleConditionOperator, AlertSeverity } from 'qovery-typescript-axios'
 import { AlertRuleConditionFunction } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -26,7 +26,7 @@ import {
   formatMetricLabel,
   formatOperator,
   formatThreshold,
-} from '../../../util-alerting/get-rule-summary'
+} from '../../../util-alerting/generate-condition-description'
 import { NotificationChannelModal } from '../../notification-channel-modal/notification-channel-modal'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration, type MetricCategory } from '../alerting-creation-flow.types'
@@ -53,7 +53,7 @@ const DEFAULT_THRESHOLDS: Record<MetricCategory, number> = {
   cpu: 80,
   memory: 80,
   http_error: 5,
-  http_latency: 200,
+  http_latency: 0.25,
   missing_replicas: 0,
   instance_restart: 80,
 }
@@ -76,6 +76,12 @@ const SEVERITY_OPTIONS: Value[] = Object.values(AlertSeverity).map((severity) =>
   label: upperCaseFirstLetter(severity),
   value: severity,
 }))
+
+const METRICS_WITH_HIDDEN_CONDITIONS: MetricCategory[] = ['missing_replicas']
+
+const shouldHideConditions = (category: MetricCategory): boolean => {
+  return METRICS_WITH_HIDDEN_CONDITIONS.includes(category)
+}
 
 export function MetricConfigurationStep({
   isEdit,
@@ -106,20 +112,39 @@ export function MetricConfigurationStep({
 
   const defaultValues = useMemo<AlertConfiguration>(() => {
     if (initialData) {
+      const isHiddenConditionMetric = shouldHideConditions(metricCategory)
+      if (isHiddenConditionMetric) {
+        return {
+          ...initialData,
+          condition: {
+            ...initialData.condition,
+            operator: AlertRuleConditionOperator.BELOW,
+            threshold: 1,
+          },
+        }
+      }
       return initialData
     }
+
+    const isHiddenConditionMetric = shouldHideConditions(metricCategory)
+    const defaultThreshold = isHiddenConditionMetric ? 1 : DEFAULT_THRESHOLDS[metricCategory] ?? 80
+    const defaultFunction = METRIC_TYPE_OPTIONS[metricCategory][0].value ?? AlertRuleConditionFunction.MAX
+    const defaultOperator = isHiddenConditionMetric
+      ? AlertRuleConditionOperator.BELOW
+      : AlertRuleConditionOperator.ABOVE
+    const defaultDuration = 'PT5M'
 
     return {
       id: uuid(),
       tag: metricCategory,
       condition: {
         kind: 'BUILT',
-        function: METRIC_TYPE_OPTIONS[metricCategory][0].value ?? AlertRuleConditionFunction.MAX,
-        operator: 'ABOVE',
-        threshold: DEFAULT_THRESHOLDS[metricCategory] ?? 80,
+        function: defaultFunction,
+        operator: defaultOperator,
+        threshold: defaultThreshold,
         promql: '',
       },
-      for_duration: 'PT5M',
+      for_duration: defaultDuration,
       name: metricCategory ? `${metricCategory.replace(/_/g, ' ').toUpperCase()} alert` : '',
       severity: 'MEDIUM',
       alert_receiver_ids: [],
@@ -134,14 +159,33 @@ export function MetricConfigurationStep({
 
   useEffect(() => {
     methods.reset(defaultValues)
-  }, [methods, defaultValues])
+    const isHiddenConditionMetric = shouldHideConditions(metricCategory)
+    if (isHiddenConditionMetric) {
+      methods.setValue('condition.operator', AlertRuleConditionOperator.BELOW)
+      methods.setValue('condition.threshold', 1)
+    }
+  }, [methods, defaultValues, metricCategory])
 
   const watchTag = methods.watch('tag')
   const watchCondition = methods.watch('condition')
   const watchForDuration = methods.watch('for_duration')
 
+  const unit = match(watchTag)
+    .with('http_latency', () => 'secs')
+    .otherwise(() => '%')
+
   // Auto-generate alert name from conditions
   useEffect(() => {
+    const isHiddenConditionMetric = shouldHideConditions(watchTag as MetricCategory)
+
+    if (isHiddenConditionMetric) {
+      const metric = formatMetricLabel(watchTag)
+      if (metric) {
+        methods.setValue('name', `${metric} Alert`)
+      }
+      return
+    }
+
     const metric = formatMetricLabel(watchTag)
     const functionLabel = METRIC_TYPE_OPTIONS[watchTag as MetricCategory]?.find(
       (option) => option.value === watchCondition?.function
@@ -149,7 +193,8 @@ export function MetricConfigurationStep({
     const operator = formatOperator(watchCondition?.operator)
     const threshold = formatThreshold(
       watchTag as MetricCategory,
-      parseFloat(watchCondition?.threshold?.toString() ?? '0')
+      parseFloat(watchCondition?.threshold?.toString() ?? '0'),
+      unit
     )
     const duration = formatDuration(watchForDuration)
 
@@ -166,11 +211,24 @@ export function MetricConfigurationStep({
     watchCondition?.threshold,
     watchForDuration,
     methods,
+    unit,
   ])
 
   const handleNext = async (data: AlertConfiguration) => {
+    const isHiddenConditionMetric = shouldHideConditions(metricCategory)
+    const processedData = isHiddenConditionMetric
+      ? {
+          ...data,
+          condition: {
+            ...data.condition,
+            operator: AlertRuleConditionOperator.BELOW,
+            threshold: 1,
+          },
+          for_duration: 'PT0S',
+        }
+      : data
     const newAlerts = [...alerts]
-    newAlerts[index] = { ...data, skipped: false }
+    newAlerts[index] = { ...processedData, skipped: false }
     setAlerts(newAlerts)
 
     if (isEdit) {
@@ -184,9 +242,21 @@ export function MetricConfigurationStep({
 
   const handleSkip = async () => {
     const currentFormValues = methods.getValues()
+    const isHiddenConditionMetric = shouldHideConditions(metricCategory)
+    const processedValues = isHiddenConditionMetric
+      ? {
+          ...currentFormValues,
+          condition: {
+            ...currentFormValues.condition,
+            operator: AlertRuleConditionOperator.BELOW,
+            threshold: 1,
+          },
+          for_duration: 'PT0S',
+        }
+      : currentFormValues
     const newAlerts = [...alerts]
     newAlerts[index] = {
-      ...currentFormValues,
+      ...processedValues,
       skipped: true,
     }
     setAlerts(newAlerts)
@@ -213,16 +283,24 @@ export function MetricConfigurationStep({
   }
 
   const onSubmit = methods.handleSubmit((data) => {
-    handleNext(data)
+    const isHiddenConditionMetric = shouldHideConditions(metricCategory)
+    const processedData = isHiddenConditionMetric
+      ? {
+          ...data,
+          condition: {
+            ...data.condition,
+            operator: AlertRuleConditionOperator.BELOW,
+            threshold: 1,
+          },
+          for_duration: 'PT0S',
+        }
+      : data
+    handleNext(processedData)
   })
 
   const functionLabel = METRIC_TYPE_OPTIONS[metricCategory]?.find(
     (option: Value) => option.value === watchCondition?.function
   )?.label
-
-  const unit = match(watchTag)
-    .with('http_latency', () => 'ms')
-    .otherwise(() => '%')
 
   return (
     <FunnelFlowBody key={index} customContentWidth="max-w-[52rem]">
@@ -254,37 +332,32 @@ export function MetricConfigurationStep({
                       name="tag"
                       control={methods.control}
                       render={({ field }) => (
-                        <InputSelectSmall
-                          name={field.name}
-                          items={Object.keys(METRIC_TYPE_OPTIONS).map((key) => ({
-                            label: key.replace(/_/g, ' ').toUpperCase(),
-                            value: key,
-                          }))}
-                          defaultValue={field.value}
-                          onChange={(value) => {
-                            field.onChange(value)
-                            const newThreshold = DEFAULT_THRESHOLDS[value as MetricCategory] ?? 80
-                            methods.setValue('condition.threshold', newThreshold)
-                          }}
+                        <InputTextSmall
+                          label="Metric"
                           className="w-full"
-                          inputClassName="bg-transparent"
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="condition.function"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputSelectSmall
                           name={field.name}
-                          items={METRIC_TYPE_OPTIONS[metricCategory] || []}
-                          defaultValue={field.value}
-                          onChange={(value) => field.onChange(value)}
-                          className="w-40"
-                          inputClassName="bg-transparent"
+                          inputClassName="text-neutral-350"
+                          value={field.value.replace(/_/g, ' ').toUpperCase()}
+                          disabled
                         />
                       )}
                     />
+                    {!shouldHideConditions(metricCategory) && (
+                      <Controller
+                        name="condition.function"
+                        control={methods.control}
+                        render={({ field }) => (
+                          <InputSelectSmall
+                            name={field.name}
+                            items={METRIC_TYPE_OPTIONS[metricCategory] || []}
+                            defaultValue={field.value}
+                            onChange={(value) => field.onChange(value)}
+                            className="w-40"
+                            inputClassName="bg-transparent"
+                          />
+                        )}
+                      />
+                    )}
                   </div>
                 </div>
 
@@ -307,58 +380,60 @@ export function MetricConfigurationStep({
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm">Trigger condition</p>
-                  <div className="flex items-center gap-2">
-                    <Controller
-                      name="condition.operator"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputSelectSmall
-                          name={field.name}
-                          items={OPERATOR_OPTIONS}
-                          defaultValue={field.value}
-                          onChange={(value) => field.onChange(value)}
-                          className="w-full"
-                          inputClassName="bg-transparent"
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="condition.threshold"
-                      control={methods.control}
-                      rules={{
-                        validate: (v) => {
-                          const value = v?.toString()
-                          if (value === '') {
-                            return 'Threshold is required'
-                          }
-                          if (watchTag !== 'http_latency' && (Number(value) < 0 || Number(value) > 100)) {
-                            return 'Threshold must be between 0 and 100'
-                          }
-                          return true
-                        },
-                      }}
-                      render={({ field, fieldState: { error } }) => (
-                        <div className="relative w-40">
-                          <InputTextSmall
-                            label="Threshold"
+                {!shouldHideConditions(metricCategory) && (
+                  <div className="flex flex-col gap-1">
+                    <p className="text-sm">Trigger condition</p>
+                    <div className="flex items-center gap-2">
+                      <Controller
+                        name="condition.operator"
+                        control={methods.control}
+                        render={({ field }) => (
+                          <InputSelectSmall
                             name={field.name}
-                            type="number"
-                            placeholder="00"
-                            value={field.value?.toString()}
-                            onChange={field.onChange}
-                            className={clsx('w-full', error ? 'border-red-500' : '')}
-                            inputClassName="bg-transparent pr-6"
+                            items={OPERATOR_OPTIONS}
+                            defaultValue={field.value}
+                            onChange={(value) => field.onChange(value)}
+                            className="w-full"
+                            inputClassName="bg-transparent"
                           />
-                          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-350">
-                            {unit}
-                          </span>
-                        </div>
-                      )}
-                    />
+                        )}
+                      />
+                      <Controller
+                        name="condition.threshold"
+                        control={methods.control}
+                        rules={{
+                          validate: (v) => {
+                            const value = v?.toString()
+                            if (value === '') {
+                              return 'Threshold is required'
+                            }
+                            if (watchTag !== 'http_latency' && (Number(value) < 0 || Number(value) > 100)) {
+                              return 'Threshold must be between 0 and 100'
+                            }
+                            return true
+                          },
+                        }}
+                        render={({ field, fieldState: { error } }) => (
+                          <div className="relative w-40">
+                            <InputTextSmall
+                              label="Threshold"
+                              name={field.name}
+                              type="number"
+                              placeholder="00"
+                              value={field.value?.toString()}
+                              onChange={field.onChange}
+                              className={clsx('w-full', error ? 'border-red-500' : '')}
+                              inputClassName="bg-transparent pr-6"
+                            />
+                            <span className="pointer-events-none absolute right-3 top-1/2 flex h-8 -translate-y-1/2 items-center text-xs text-neutral-350">
+                              {unit}
+                            </span>
+                          </div>
+                        )}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="flex flex-col gap-1">
                   <p className="text-sm">Duration</p>
@@ -385,30 +460,36 @@ export function MetricConfigurationStep({
               <div className="flex flex-col gap-1">
                 <p className="text-sm">Main condition query</p>
                 <div className="rounded border border-neutral-250 bg-neutral-100 p-3 font-code text-sm">
-                  <p className="flex flex-col gap-1 text-xs uppercase text-blue-500">
-                    <span>
-                      SEND A NOTIFICATION WHEN THE <span className="text-neutral-900">{functionLabel}</span> OF{' '}
-                      <span className="text-neutral-400">{metricCategory}</span> FOR{' '}
-                      <span className="text-neutral-900">{serviceName}</span>
-                    </span>
-                    <span>
-                      IS <span className="text-neutral-900">{watchCondition.operator}</span>{' '}
-                      <span className="text-red-600">
-                        {watchCondition.threshold}
-                        {unit}
-                      </span>{' '}
-                      {watchForDuration === 'PT0S' ? (
-                        'IMMEDIATELY'
-                      ) : (
-                        <>
-                          DURING THE{' '}
-                          <span className="text-neutral-900">
-                            {DURATION_OPTIONS.find((option) => option.value === watchForDuration)?.label}
-                          </span>
-                        </>
-                      )}
-                    </span>
-                  </p>
+                  {metricCategory === 'missing_replicas' ? (
+                    <p className="text-xs uppercase text-blue-500">
+                      SEND A NOTIFICATION WHEN <span className="text-neutral-900">{serviceName}</span> HAS MISSING
+                      REPLICAS
+                    </p>
+                  ) : (
+                    <p className="flex flex-col gap-1 text-xs uppercase text-blue-500">
+                      <span>
+                        SEND A NOTIFICATION WHEN THE <span className="text-neutral-900">{functionLabel}</span> OF{' '}
+                        <span className="text-neutral-900">{formatMetricLabel(metricCategory)}</span> FOR{' '}
+                        <span className="text-neutral-900">{serviceName}</span>
+                      </span>
+                      <span>
+                        IS <span className="text-neutral-900">{watchCondition.operator}</span>{' '}
+                        <span className="text-red-600">
+                          {watchCondition.threshold} {unit}
+                        </span>{' '}
+                        {watchForDuration === 'PT0S' ? (
+                          'IMMEDIATELY'
+                        ) : (
+                          <>
+                            DURING THE{' '}
+                            <span className="text-neutral-900">
+                              {DURATION_OPTIONS.find((option) => option.value === watchForDuration)?.label}
+                            </span>
+                          </>
+                        )}
+                      </span>
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

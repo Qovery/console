@@ -106,7 +106,7 @@ describe('MetricConfigurationStep', () => {
     await renderWithContext()
 
     await waitFor(() => {
-      expect(screen.getByText('Metric')).toBeInTheDocument()
+      expect(screen.getAllByText('Metric').length).toBeGreaterThan(0)
       expect(screen.getByText('Trigger condition')).toBeInTheDocument()
       expect(screen.getByText('Duration')).toBeInTheDocument()
     })
