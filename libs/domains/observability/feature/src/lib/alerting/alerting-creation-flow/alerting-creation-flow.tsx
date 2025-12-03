@@ -137,8 +137,13 @@ export function AlertingCreationFlow({
 
         const operator = alert.condition.operator ?? 'ABOVE'
         const func = alert.condition.function ?? 'NONE'
-        // XXX: Generate description from function, operator, threshold and metric category for Notification
-        const description = generateConditionDescription(func, operator, threshold, alert.tag as MetricCategory)
+        const description = match(alert.tag)
+          .with('instance_restart', () => 'Instance restarts')
+          .with('missing_replicas', () => 'Missing replicas')
+          .otherwise(() =>
+            // XXX: Generate description from function, operator, threshold and metric category for Notification
+            generateConditionDescription(func, operator, threshold, alert.tag as MetricCategory)
+          )
 
         await createAlertRule({
           payload: {
