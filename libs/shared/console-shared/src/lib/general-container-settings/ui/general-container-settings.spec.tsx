@@ -57,7 +57,9 @@ describe('CreateGeneralContainer', () => {
   })
 
   it('should render inputs NOT available in the requests', async () => {
-    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />))
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />)
+    )
     // Registry
     await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
 
