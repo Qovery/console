@@ -58,32 +58,3 @@ jest.mock('remark-gfm', () => ({
   __esModule: true,
   default: () => () => {},
 }))
-
-// Prevent WebSocket/timer side effects in tests
-jest.mock('@qovery/state/util-queries', () => ({
-  ...jest.requireActual('@qovery/state/util-queries'),
-  useReactQueryWsSubscription: () => {},
-}))
-
-// Prevent notification hook side effects in tests
-jest.mock('@qovery/domains/clusters/feature', () => ({
-  ...jest.requireActual('@qovery/domains/clusters/feature'),
-  useClusterInstallNotifications: () => undefined,
-  useClusterStatuses: () => ({ data: [] }),
-}))
-
-// Prevent layout from issuing axios requests during tests
-jest.mock('@qovery/domains/projects/feature', () => ({
-  ...jest.requireActual('@qovery/domains/projects/feature'),
-  useProjects: () => ({ data: [] }),
-}))
-
-jest.mock('@qovery/domains/organizations/feature', () => ({
-  ...jest.requireActual('@qovery/domains/organizations/feature'),
-  useOrganization: () => ({ data: undefined }),
-}))
-
-jest.mock('@qovery/shared/iam/feature', () => ({
-  ...jest.requireActual('@qovery/shared/iam/feature'),
-  useUserRole: () => ({ roles: [], isQoveryAdminUser: false }),
-}))

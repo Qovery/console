@@ -1,8 +1,6 @@
 const nxPreset = require('@nx/jest/preset').default
 const path = require('path')
 
-const fileMock = path.join(__dirname, '__mocks__/fileMock.js')
-
 module.exports = {
   setupFilesAfterEnv: [path.join(__dirname, '__tests__/mocks.ts'), 'jest-canvas-mock'],
   collectCoverage: true,
@@ -15,7 +13,6 @@ module.exports = {
   ],
   moduleNameMapper: {
     '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
-    '\\.(mp3)$': fileMock,
   },
   resetMocks: true,
   ...nxPreset,
