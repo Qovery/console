@@ -1,27 +1,12 @@
-import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
-import { type AnyService } from '@qovery/domains/services/data-access'
 import { mutations } from '@qovery/shared/devops-copilot/data-access'
-
-type Context = {
-  organization?: Organization
-  cluster?: Cluster
-  project?: Project
-  environment?: Environment
-  service?: AnyService
-  deployment?:
-    | {
-        execution_id?: string
-      }
-    | undefined
-  readOnly?: boolean
-}
+import type { DevopsCopilotContext } from './devops-copilot-panel.types'
 
 export const submitMessage = async (
   userSub: string,
   message: string,
   token: string,
   threadId?: string,
-  context?: Context | null,
+  context?: DevopsCopilotContext | null,
   onStream?: (chunk: string) => void,
   signal?: AbortSignal
 ): Promise<{ id: string; messageId: string } | null> => {
