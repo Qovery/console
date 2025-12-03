@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
-import { Badge, Button, Checkbox, Icon, LoaderSpinner, PasswordShowHide, Tooltip, Truncate } from '@qovery/shared/ui'
+import { Badge, Button, Checkbox, Icon, LoaderSpinner, Tooltip, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { TfvarsFilesPopover } from '../terraform-tfvars-popover/terraform-tfvars-popover'
-import { type UIVariable, useTerraformVariablesContext } from '../terraform-variables-context'
+import { SECRET_UNCHANGED_VALUE, type UIVariable, useTerraformVariablesContext } from '../terraform-variables-context'
 import {
   formatSource,
   getSourceBadgeClassName,
@@ -30,16 +30,27 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
   const isCellFocused = useCallback((cell: 'key' | 'value') => focusedCell === cell, [focusedCell])
   const isMultiline = useMemo(() => variable.value.includes('\n') || variable.value.length > 30, [variable.value])
   const textareaValueRef = useRef<HTMLTextAreaElement | null>(null)
-
   const textareaMinHeight = useMemo(() => {
     return isMultiline ? `${Math.min(Math.max(variable.value.split('\n').length * 20 + 24, 44), 120)}px` : 'auto'
   }, [isMultiline, variable.value])
+
+  const isSecretPlaceholder = useMemo(() => {
+    return variable.secret && !isCellFocused('value')
+  }, [variable.secret, isCellFocused])
 
   const focusValueTextarea = useCallback(() => {
     if (textareaValueRef.current) {
       textareaValueRef.current.focus()
     }
   }, [])
+
+  const onValueCellClick = useCallback(() => {
+    // If variable is not a secret, focus the textarea.
+    // In case of a secret, we want to let the user explicitly click on the edit icon to edit the secret value.
+    if (!isSecretPlaceholder) {
+      focusValueTextarea()
+    }
+  }, [isSecretPlaceholder, focusValueTextarea])
 
   return (
     <div className="w-full border-b border-neutral-250">
@@ -107,7 +118,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
         </div>
         {/* Variable value cell */}
         <div
-          className="group relative flex h-full min-h-[44px] cursor-text items-center border-r border-neutral-250"
+          className="group relative flex h-full min-h-[44px] items-center border-r border-neutral-250"
           onMouseEnter={() => {
             setIsCellHovered(true)
           }}
@@ -122,36 +133,35 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
             className={twMerge(
               // Ensure the pseudo-element is behind by using after:-z-10
               'relative z-0 flex h-full w-full items-center after:pointer-events-none after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:-z-10 after:h-full after:w-full after:transition-all after:duration-100 group-hover:after:bg-neutral-100',
-              isCellFocused('value') && 'after:bg-neutral-150 group-hover:after:bg-neutral-150'
+              isCellFocused('value') && 'after:bg-neutral-150 group-hover:after:bg-neutral-150',
+              !isSecretPlaceholder && 'cursor-text'
             )}
-            onClick={focusValueTextarea}
+            onClick={onValueCellClick}
           >
-            {variable.secret ? (
-              <PasswordShowHide
-                value=""
-                isSecret={true}
-                defaultVisible={false}
-                className="h-full w-full px-4 text-sm text-neutral-400 outline-none"
-              />
-            ) : (
-              <textarea
-                ref={textareaValueRef}
-                name="value"
-                value={variable.value}
-                onChange={(e) => {
-                  updateValue(variable.id, e.target.value)
-                }}
-                onFocus={() => setFocusedCell('value')}
-                onBlur={() => setFocusedCell(undefined)}
-                className={twMerge(
-                  'vertical-align-middle h-5 w-full resize-none bg-transparent px-4 text-sm text-neutral-400 outline-none',
-                  isMultiline && 'h-full min-h-5 resize-y py-3'
-                )}
-                style={{ minHeight: textareaMinHeight }}
-                spellCheck={false}
-                placeholder="Variable value"
-              />
+            {isSecretPlaceholder && (
+              <div className="absolute left-0 top-0 flex h-full w-full cursor-default items-center gap-2 bg-white px-4 transition-all duration-100 group-hover:bg-neutral-100">
+                <span className="text-xs text-neutral-350" data-testid="hide_value_secret">
+                  ● ● ● ● ● ● ● ●
+                </span>
+              </div>
             )}
+            <textarea
+              ref={textareaValueRef}
+              name="value"
+              value={variable.secret && variable.value === SECRET_UNCHANGED_VALUE ? '' : variable.value}
+              onChange={(e) => {
+                updateValue(variable.id, e.target.value)
+              }}
+              onFocus={() => setFocusedCell('value')}
+              onBlur={() => setFocusedCell(undefined)}
+              className={twMerge(
+                'vertical-align-middle h-5 w-full resize-none bg-transparent px-4 text-sm text-neutral-400 outline-none',
+                isMultiline && 'h-full min-h-5 resize-y py-3'
+              )}
+              style={{ minHeight: textareaMinHeight }}
+              spellCheck={false}
+              placeholder="Variable value"
+            />
             <div
               className={twMerge(
                 'absolute right-0 top-0 mr-4 flex h-full translate-x-1 items-center gap-2 pl-3 opacity-0 transition-all duration-100 group-hover:bg-neutral-100',
@@ -160,7 +170,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 isVariablePopoverOpen && 'bg-white'
               )}
             >
-              {!variable.secret && (
+              {!isSecretPlaceholder && (
                 <DropdownVariable
                   environmentId={environmentId}
                   onChange={(val) => {
@@ -186,6 +196,15 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                     <Icon className="text-sm" iconName="wand-magic-sparkles" />
                   </button>
                 </DropdownVariable>
+              )}
+              {isSecretPlaceholder && (
+                <button
+                  type="button"
+                  onClick={() => focusValueTextarea()}
+                  className="px-1 text-neutral-350 hover:text-neutral-400"
+                >
+                  <Icon iconName="pen" iconStyle="regular" />
+                </button>
               )}
               {isVariableChanged(variable) && (
                 <button
