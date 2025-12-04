@@ -63,7 +63,16 @@ export function IssueOverview() {
                   <Table.Row key={alert.id}>
                     <Table.RowHeaderCell>
                       <div className="flex items-center justify-between gap-3">
-                        <span className="flex items-center gap-1.5 text-sm text-neutral-400">{alert.name}</span>
+                        <span className="flex items-center gap-1.5 text-sm text-neutral-400">
+                          {alert.name}
+                          {alert.description && (
+                            <Tooltip content={alert.description}>
+                              <span>
+                                <Icon iconName="info-circle" iconStyle="regular" className="text-neutral-350" />
+                              </span>
+                            </Tooltip>
+                          )}
+                        </span>
                         {isMuted && (
                           <Tooltip content="Alert is muted">
                             <Icon iconName="bell-slash" iconStyle="regular" className="text-xs text-neutral-350" />

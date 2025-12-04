@@ -46,10 +46,10 @@ export const QUERY_INSTANCE_RESTART = (containerName: string) => `
   kube_pod_container_status_last_terminated_reason{
     container="${containerName}",
     reason=~"OOMKilled|Error|ContainerCannotRun|RunContainerError|StartError|DeadlineExceeded"
-  } == 1
+  }
 `
 
-export const QUERY_MISSING_REPLICAS = (containerName: string) => `
+export const QUERY_MISSING_INSTANCE = (containerName: string) => `
 (
   kube_deployment_status_replicas_available{deployment="${containerName}"}
 /

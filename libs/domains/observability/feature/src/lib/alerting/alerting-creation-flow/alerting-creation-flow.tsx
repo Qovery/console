@@ -17,7 +17,7 @@ import {
   QUERY_HTTP_LATENCY,
   QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
-  QUERY_MISSING_REPLICAS,
+  QUERY_MISSING_INSTANCE,
 } from './summary-step/alert-queries'
 
 const METRIC_LABELS: Record<MetricCategory, string> = {
@@ -26,7 +26,7 @@ const METRIC_LABELS: Record<MetricCategory, string> = {
   http_error: 'HTTP error',
   http_latency: 'HTTP latency',
   instance_restart: 'Instance restart',
-  missing_replicas: 'Missing replicas',
+  missing_instance: 'Missing instance',
 }
 
 interface AlertingCreationFlowContextInterface {
@@ -129,12 +129,22 @@ export function AlertingCreationFlow({
     try {
       setIsLoading(true)
       for (const alert of activeAlerts) {
-        const threshold =
-          alert.tag === 'http_latency' ? alert.condition.threshold ?? 0 : (alert.condition.threshold ?? 0) / 100
+        const threshold = match(alert.tag)
+          .with('http_latency', () => alert.condition.threshold ?? 0)
+          .with('instance_restart', () => 1)
+          .with('missing_instance', () => 1)
+          .otherwise(() => (alert.condition.threshold ?? 0) / 100)
+
+        const unit = match(alert.tag)
+          .with('http_latency', () => 'secs')
+          .otherwise(() => '%')
+
         const operator = alert.condition.operator ?? 'ABOVE'
         const func = alert.condition.function ?? 'NONE'
-        // XXX: Generate description from function, operator, threshold and metric category for Notification
-        const description = generateConditionDescription(func, operator, threshold, alert.tag as MetricCategory)
+        const description = match(alert.tag)
+          .with('instance_restart', () => 'One or more instances restarted unexpectedly')
+          .with('missing_instance', () => 'Missing one or more running instances for this service')
+          .otherwise(() => generateConditionDescription(func, operator, threshold, unit, alert.for_duration))
 
         await createAlertRule({
           payload: {
@@ -155,7 +165,7 @@ export function AlertingCreationFlow({
               promql: match(alert.tag)
                 .with('cpu', () => QUERY_CPU(containerName))
                 .with('memory', () => QUERY_MEMORY(containerName))
-                .with('missing_replicas', () => QUERY_MISSING_REPLICAS(containerName))
+                .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
                 .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
                 .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
                 .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))

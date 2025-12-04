@@ -25,7 +25,7 @@ describe('CreateKeyAlertsModal', () => {
 
     expect(screen.getByText('CPU')).toBeInTheDocument()
     expect(screen.getByText('Memory')).toBeInTheDocument()
-    expect(screen.getByText('Missing replicas')).toBeInTheDocument()
+    expect(screen.getByText('Missing instance')).toBeInTheDocument()
     expect(screen.getByText('Instance restart')).toBeInTheDocument()
   })
 

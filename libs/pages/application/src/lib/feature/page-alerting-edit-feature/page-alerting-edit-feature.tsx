@@ -6,14 +6,13 @@ import { match } from 'ts-pattern'
 import {
   type AlertConfiguration,
   AlertingCreationFlowContext,
-  type MetricCategory,
   MetricConfigurationStep,
   QUERY_CPU,
   QUERY_HTTP_ERROR,
   QUERY_HTTP_LATENCY,
   QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
-  QUERY_MISSING_REPLICAS,
+  QUERY_MISSING_INSTANCE,
   useAlertRules,
   useContainerName,
   useEditAlertRule,
@@ -71,7 +70,7 @@ export function PageAlertingEditFeature() {
             ? rawThreshold * 100
             : 80
 
-      const isMissingReplicas = alertRule.tag === 'missing_replicas'
+      const isMissingInstance = alertRule.tag === 'missing_instance'
 
       const alertConfig: AlertConfiguration = {
         id: alertRule.id,
@@ -80,8 +79,8 @@ export function PageAlertingEditFeature() {
         condition: {
           kind: alertRule.condition.kind || 'BUILT',
           function: alertRule.condition.function || 'AVG',
-          operator: isMissingReplicas ? AlertRuleConditionOperator.BELOW : alertRule.condition.operator || 'ABOVE',
-          threshold: isMissingReplicas ? 1 : threshold,
+          operator: isMissingInstance ? AlertRuleConditionOperator.BELOW : alertRule.condition.operator || 'ABOVE',
+          threshold: isMissingInstance ? 1 : threshold,
           promql: alertRule.condition.promql || '',
         },
         name: alertRule.name,
@@ -99,14 +98,23 @@ export function PageAlertingEditFeature() {
   const handleComplete = async (updatedAlerts?: AlertConfiguration[]) => {
     const updatedAlert = updatedAlerts ? updatedAlerts[0] : alerts[0]
 
-    const isMissingReplicas = updatedAlert.tag === 'missing_replicas'
-    const threshold =
-      updatedAlert.tag === 'http_latency'
-        ? updatedAlert.condition.threshold ?? 0
-        : isMissingReplicas
-          ? 1
-          : (updatedAlert.condition.threshold ?? 0) / 100
-    const operator = isMissingReplicas ? AlertRuleConditionOperator.BELOW : updatedAlert.condition.operator ?? 'ABOVE'
+    const isMissingInstance = updatedAlert.tag === 'missing_instance'
+    const threshold = match(updatedAlert.tag)
+      .with('http_latency', () => updatedAlert.condition.threshold ?? 0)
+      .with('instance_restart', () => 1)
+      .with('missing_instance', () => 1)
+      .otherwise(() => (updatedAlert.condition.threshold ?? 0) / 100)
+
+    const unit = match(updatedAlert.tag)
+      .with('http_latency', () => 'secs')
+      .otherwise(() => '%')
+
+    const description = match(updatedAlert.tag)
+      .with('instance_restart', () => 'One or more instances restarted unexpectedly')
+      .with('missing_instance', () => 'Missing one or more running instances for this service')
+      .otherwise(() => generateConditionDescription(func, operator, threshold, unit, updatedAlert.for_duration))
+
+    const operator = isMissingInstance ? AlertRuleConditionOperator.BELOW : updatedAlert.condition.operator ?? 'ABOVE'
     const func = updatedAlert.condition.function ?? 'NONE'
 
     if (updatedAlert && environment && containerName && ingressName) {
@@ -116,7 +124,7 @@ export function PageAlertingEditFeature() {
           payload: {
             name: updatedAlert.name,
             tag: updatedAlert.tag,
-            description: generateConditionDescription(func, operator, threshold, updatedAlert.tag as MetricCategory),
+            description,
             condition: {
               kind: 'BUILT',
               function: func,
@@ -125,7 +133,7 @@ export function PageAlertingEditFeature() {
               promql: match(updatedAlert.tag)
                 .with('cpu', () => QUERY_CPU(containerName))
                 .with('memory', () => QUERY_MEMORY(containerName))
-                .with('missing_replicas', () => QUERY_MISSING_REPLICAS(containerName))
+                .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
                 .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
                 .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
                 .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))

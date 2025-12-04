@@ -7,7 +7,7 @@ const METRIC_LABEL_OVERRIDES: Record<string, string> = {
   memory: 'Memory',
   http_error: 'HTTP error',
   http_latency: 'HTTP latency',
-  missing_replicas: 'Missing replicas',
+  missing_instance: 'Missing instance',
   instance_restart: 'Instance restart',
 }
 
@@ -17,6 +17,15 @@ const OPERATOR_SYMBOLS: Record<AlertRuleConditionOperator, string> = {
   EQUAL: '=',
   ABOVE_OR_EQUAL: '>=',
   BELOW_OR_EQUAL: '<=',
+  NONE: 'None',
+}
+
+const OPERATOR_LABELS: Record<AlertRuleConditionOperator, string> = {
+  ABOVE: 'Above',
+  BELOW: 'Below',
+  EQUAL: 'Equal to',
+  ABOVE_OR_EQUAL: 'At or above',
+  BELOW_OR_EQUAL: 'At or below',
   NONE: 'None',
 }
 
@@ -42,11 +51,19 @@ export function formatOperator(operator?: AlertRuleConditionOperator) {
   return OPERATOR_SYMBOLS[operator] ?? operator
 }
 
+export function formatOperatorLabel(operator?: AlertRuleConditionOperator) {
+  if (!operator) return undefined
+  return OPERATOR_LABELS[operator] ?? operator
+}
+
 export function formatThreshold(metric?: MetricCategory, threshold?: number, unit = '%') {
   if (threshold === undefined || threshold === null) return undefined
+  if (unit !== '%') {
+    return `${threshold}${unit}`
+  }
   const normalized = threshold <= 1 ? threshold * 100 : threshold
   const formatted = Number.isInteger(normalized) ? normalized.toString() : normalized.toFixed(1).replace(/\.0$/, '')
-  return metric === 'http_latency' ? `${threshold}${unit}` : `${formatted}${unit}`
+  return `${formatted}${unit}`
 }
 
 export function formatDuration(duration?: string) {
@@ -80,38 +97,43 @@ export function generateConditionDescription(
   func?: AlertRuleConditionFunction,
   operator?: AlertRuleConditionOperator,
   threshold?: number,
-  metric?: MetricCategory,
-  unit = '%'
+  unit = '%',
+  duration?: string
 ): string {
-  // Desired format: "{{metric}} - {{function}} {{operator}} {{threshold}}"
-  // Example: "CPU - Average >= 80%"
-  const metricLabel = formatMetricLabel(metric)
   const functionLabel = formatFunction(func)
   const operatorSymbol = formatOperator(operator)
-  const thresholdFormatted = formatThreshold(metric, threshold, unit)
+  const operatorLabel = formatOperatorLabel(operator)
+  const thresholdFormatted = formatThreshold(undefined, threshold, unit)
+  const durationFormatted = formatDuration(duration)
+
+  const shouldIncludeFunction = functionLabel && functionLabel !== 'None'
 
   let conditionPart = ''
-  if (functionLabel && operatorSymbol && thresholdFormatted) {
+  if (shouldIncludeFunction && operatorSymbol && thresholdFormatted) {
     conditionPart = `${functionLabel} ${operatorSymbol} ${thresholdFormatted}`
-  } else if (functionLabel && operatorSymbol) {
+  } else if (shouldIncludeFunction && operatorSymbol) {
     conditionPart = `${functionLabel} ${operatorSymbol}`
-  } else if (functionLabel && thresholdFormatted) {
+  } else if (shouldIncludeFunction && thresholdFormatted) {
     conditionPart = `${functionLabel} ${thresholdFormatted}`
-  } else if (operatorSymbol && thresholdFormatted) {
-    conditionPart = `${operatorSymbol} ${thresholdFormatted}`
-  } else if (functionLabel) {
+  } else if (operatorLabel && thresholdFormatted) {
+    conditionPart = `${operatorLabel} ${thresholdFormatted}`
+  } else if (shouldIncludeFunction) {
     conditionPart = functionLabel
-  } else if (operatorSymbol) {
-    conditionPart = operatorSymbol
+  } else if (operatorLabel) {
+    conditionPart = operatorLabel
   } else if (thresholdFormatted) {
     conditionPart = thresholdFormatted
+  } else if (durationFormatted) {
+    conditionPart = durationFormatted
   }
 
-  if (metricLabel && conditionPart) {
-    return `${metricLabel} - ${conditionPart}`
+  if (durationFormatted && conditionPart && conditionPart !== durationFormatted) {
+    if (durationFormatted === 'immediately') {
+      conditionPart = `${conditionPart} ${durationFormatted}`
+    } else {
+      conditionPart = `${conditionPart} for ${durationFormatted}`
+    }
   }
-  if (metricLabel) {
-    return metricLabel
-  }
+
   return conditionPart
 }

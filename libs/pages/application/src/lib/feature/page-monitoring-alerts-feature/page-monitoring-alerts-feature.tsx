@@ -32,9 +32,9 @@ export function PageMonitoringAlertsFeature() {
     <div className="flex h-full">
       <ServiceAlerting>
         {!isClusterDeploying ? (
-          <Callout.Root color="sky" className="relative">
+          <Callout.Root color="yellow" className="relative">
             <Callout.Icon>
-              <Icon iconName="circle-info" iconStyle="regular" />
+              <Icon iconName="circle-exclamation" />
             </Callout.Icon>
             <Callout.Text>
               <Callout.TextHeading>Alert rule is not deployed</Callout.TextHeading>
