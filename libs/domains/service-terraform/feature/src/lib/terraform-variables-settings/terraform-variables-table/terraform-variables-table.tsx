@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
-import { Badge, Button, Checkbox, Icon, LoaderSpinner, Tooltip, Truncate } from '@qovery/shared/ui'
+import { Badge, Button, Checkbox, Icon, LoaderSpinner, Tooltip, truncateText } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { TfvarsFilesPopover } from '../terraform-tfvars-popover/terraform-tfvars-popover'
 import { SECRET_UNCHANGED_VALUE, type UIVariable, useTerraformVariablesContext } from '../terraform-variables-context'
@@ -12,11 +12,47 @@ import {
   isVariableChanged,
 } from '../terraform-variables-utils'
 
-const SourceBadge = ({ variable }: { variable: UIVariable }) => {
+const SourceCell = ({ variable }: { variable: UIVariable }) => {
+  const sourceCellRef = useRef<HTMLDivElement>(null)
+  const text = formatSource(variable)
+  const truncateLimit = 40
+  const [doesOverflow, setDoesOverflow] = useState(false)
+
+  const handleResize = () => {
+    if (sourceCellRef.current) {
+      setDoesOverflow(sourceCellRef.current.scrollWidth > sourceCellRef.current.clientWidth)
+    }
+  }
+
+  useEffect(() => {
+    handleResize()
+    // On resize, check if the tooltip should be displayed
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const Wrapper = useCallback(
+    ({ children }: { children: React.ReactNode }) => {
+      const shouldDisplayTooltip = text.length >= truncateLimit || doesOverflow
+      return shouldDisplayTooltip ? <Tooltip content={text}>{children}</Tooltip> : children
+    },
+    [text, truncateLimit, doesOverflow]
+  )
+
   return (
-    <Badge className={twMerge(getSourceBadgeClassName(variable), 'font-medium')} variant="surface">
-      <Truncate text={formatSource(variable)} truncateLimit={40} />
-    </Badge>
+    <div
+      className="inline-flex h-full items-center overflow-hidden border-r border-neutral-250 px-2 lg:px-4"
+      ref={sourceCellRef}
+    >
+      <Badge className={twMerge(getSourceBadgeClassName(variable), 'font-medium')} variant="surface">
+        <Wrapper>
+          <span>
+            {truncateText(text, truncateLimit)}
+            {text.length > truncateLimit ? '...' : ''}
+          </span>
+        </Wrapper>
+      </Badge>
+    </div>
   )
 }
 
@@ -33,7 +69,6 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
   const textareaMinHeight = useMemo(() => {
     return isMultiline ? `${Math.min(Math.max(variable.value.split('\n').length * 20 + 24, 44), 120)}px` : 'auto'
   }, [isMultiline, variable.value])
-
   const isSecretPlaceholder = useMemo(() => {
     return variable.secret && !isCellFocused('value')
   }, [variable.secret, isCellFocused])
@@ -56,7 +91,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
     <div className="w-full border-b border-neutral-250">
       <div
         className={twMerge(
-          'grid min-h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center',
+          'grid min-h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_52px] items-center',
           hoveredRow ? (hoveredRow === variable.source ? 'bg-neutral-100' : 'bg-white') : 'bg-white',
           isRowSelected(variable.id) && 'bg-neutral-150 hover:bg-neutral-150',
           isMultiline && 'min-h-auto'
@@ -218,11 +253,9 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
             </div>
           </div>
         </div>
-        {/* Source badge */}
-        <div className="flex h-full items-center border-r border-neutral-250 px-4">
-          <SourceBadge variable={variable} />
-        </div>
-        {/* Secret toggle */}
+        {/* Source cell */}
+        <SourceCell variable={variable} />
+        {/* Secret toggle cell */}
         <button
           className="flex items-center justify-center text-center text-sm text-neutral-400"
           type="button"
@@ -263,7 +296,7 @@ const TerraformVariablesRows = () => {
 
   return (
     <div className="flex flex-col items-center justify-center border-t border-neutral-250">
-      <div className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center border-b border-neutral-250 bg-neutral-100">
+      <div className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_52px] items-center border-b border-neutral-250 bg-neutral-100">
         <div className="flex h-full items-center justify-center border-r border-neutral-250">
           <Checkbox
             disabled={!isSelectAllCheckboxEnabled}
