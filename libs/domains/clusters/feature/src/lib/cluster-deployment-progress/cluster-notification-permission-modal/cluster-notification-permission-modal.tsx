@@ -1,5 +1,8 @@
-import { useCallback, useState } from 'react'
-import { Button, Icon, InputToggle, useModal } from '@qovery/shared/ui'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { CLUSTERS_GENERAL_URL, CLUSTERS_URL } from '@qovery/shared/routes'
+import { Button, InputToggle } from '@qovery/shared/ui'
+import { SHOW_SELF_MANAGED_GUIDE_KEY } from '../../cluster-action-toolbar/cluster-action-toolbar'
 
 const NOTIFICATION_MODAL_SEEN_KEY = 'cluster-notification-permission-modal-v2-seen'
 const NOTIFICATION_ENABLED_KEY = 'cluster-notification-enabled'
@@ -28,22 +31,17 @@ const getStoredBoolean = (key: string) => {
   return localStorage.getItem(key) === 'true'
 }
 
-export const getNotificationModalSeen = () => {
-  if (typeof window === 'undefined') return true
-  return localStorage.getItem(NOTIFICATION_MODAL_SEEN_KEY) === 'true'
-}
-
-export const setNotificationModalSeen = () => {
+const setNotificationModalSeen = () => {
   if (typeof window === 'undefined') return
   localStorage.setItem(NOTIFICATION_MODAL_SEEN_KEY, 'true')
 }
 
-export const setClusterNotificationEnabled = (enabled: boolean) => {
+const setClusterNotificationEnabled = (enabled: boolean) => {
   if (typeof window === 'undefined') return
   localStorage.setItem(NOTIFICATION_ENABLED_KEY, enabled ? 'true' : 'false')
 }
 
-export const setClusterSoundEnabled = (enabled: boolean) => {
+const setClusterSoundEnabled = (enabled: boolean) => {
   if (typeof window === 'undefined') return
   localStorage.setItem(SOUND_ENABLED_KEY, enabled ? 'true' : 'false')
 }
@@ -56,10 +54,19 @@ export const isClusterNotificationEnabled = () =>
 export const isClusterSoundEnabled = () => getStoredBoolean(SOUND_ENABLED_KEY)
 
 export interface ClusterNotificationPermissionModalProps {
+  organizationId: string
   onClose: () => void
+  onComplete: () => Promise<void>
+  isSelfManaged?: boolean
 }
 
-export function ClusterNotificationPermissionModal({ onClose }: ClusterNotificationPermissionModalProps) {
+export function ClusterNotificationPermissionModal({
+  organizationId,
+  onClose,
+  onComplete,
+  isSelfManaged = false,
+}: ClusterNotificationPermissionModalProps) {
+  const navigate = useNavigate()
   const [notificationsEnabled, setNotificationsEnabled] = useState(() => getStoredBoolean(NOTIFICATION_ENABLED_KEY))
   const [soundEnabled, setSoundEnabled] = useState(() => getStoredBoolean(SOUND_ENABLED_KEY))
   const [isConfirming, setIsConfirming] = useState(false)
@@ -71,6 +78,7 @@ export function ClusterNotificationPermissionModal({ onClose }: ClusterNotificat
 
     if (!notificationsEnabled && !soundEnabled) {
       onClose()
+      await onComplete()
       return
     }
 
@@ -88,6 +96,15 @@ export function ClusterNotificationPermissionModal({ onClose }: ClusterNotificat
     } finally {
       setIsConfirming(false)
       onClose()
+      await onComplete()
+      if (isSelfManaged) {
+        navigate({
+          pathname: CLUSTERS_URL(organizationId) + CLUSTERS_GENERAL_URL,
+          search: `?${SHOW_SELF_MANAGED_GUIDE_KEY}`,
+        })
+      } else {
+        navigate(CLUSTERS_URL(organizationId))
+      }
     }
   }
 
@@ -108,6 +125,7 @@ export function ClusterNotificationPermissionModal({ onClose }: ClusterNotificat
           title="Browser notifications"
           description="Receive a browser notification when the installation completes"
           className="border-b border-neutral-200 py-4"
+          forceAlignTop
         />
         <InputToggle
           small
@@ -116,6 +134,7 @@ export function ClusterNotificationPermissionModal({ onClose }: ClusterNotificat
           title="Sound alert"
           description="Play a short sound when the installation completes"
           className="py-4"
+          forceAlignTop
         />
       </div>
 
@@ -137,33 +156,6 @@ export function ClusterNotificationPermissionModal({ onClose }: ClusterNotificat
       </div>
     </div>
   )
-}
-
-export function useNotificationPermissionModal() {
-  const { openModal, closeModal } = useModal()
-
-  const showNotificationPermissionModal = useCallback(
-    (onAfterClose?: () => void, force?: boolean) => {
-      if (!force && getNotificationModalSeen()) {
-        onAfterClose?.()
-        return
-      }
-
-      openModal({
-        content: (
-          <ClusterNotificationPermissionModal
-            onClose={() => {
-              closeModal()
-              onAfterClose?.()
-            }}
-          />
-        ),
-      })
-    },
-    [closeModal, openModal]
-  )
-
-  return { showNotificationPermissionModal }
 }
 
 export default ClusterNotificationPermissionModal

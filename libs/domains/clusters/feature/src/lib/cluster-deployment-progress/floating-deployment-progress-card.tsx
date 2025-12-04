@@ -17,7 +17,6 @@ function ClusterRow({
   clusterName,
   cloudProvider,
   isSingle,
-  isFirst,
   isLast,
 }: {
   organizationId: string
@@ -25,7 +24,6 @@ function ClusterRow({
   clusterName?: string
   cloudProvider?: string
   isSingle: boolean
-  isFirst: boolean
   isLast: boolean
 }) {
   const [expanded, setExpanded] = useState(false)
@@ -155,7 +153,6 @@ export function FloatingDeploymentProgressCard({ organizationId, clusters }: Flo
           clusterName={cluster.name}
           cloudProvider={cluster.cloud_provider}
           isSingle={isSingle}
-          isFirst={idx === 0}
           isLast={idx === clusters.length - 1}
         />
       ))}

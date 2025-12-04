@@ -3,11 +3,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { CLUSTER_OVERVIEW_URL, CLUSTER_URL, INFRA_LOGS_URL, OVERVIEW_URL } from '@qovery/shared/routes'
 import {
-  isClusterNotificationEnabled,
-  isClusterSoundEnabled,
-} from '../../deployment-progress/cluster-notification-permission-modal'
+  type LifecycleState,
+  getCachedDeploymentProgress,
+} from '../../hooks/use-deployment-progress/use-deployment-progress'
 import { clearTrackedClusterInstall, getTrackedClusterInstalls } from '../../utils/cluster-install-tracking'
-import { type LifecycleState, getCachedDeploymentProgress } from '../use-deployment-progress/use-deployment-progress'
+import { isClusterNotificationEnabled, isClusterSoundEnabled } from './cluster-notification-permission-modal'
 
 type ClusterStatusWithFlag = ClusterStatus
 
