@@ -21,12 +21,7 @@ import {
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useAlertReceivers } from '../../../hooks/use-alert-receivers/use-alert-receivers'
-import {
-  formatDuration,
-  formatMetricLabel,
-  formatOperator,
-  formatThreshold,
-} from '../../../util-alerting/generate-condition-description'
+import { formatMetricLabel } from '../../../util-alerting/generate-condition-description'
 import { NotificationChannelModal } from '../../notification-channel-modal/notification-channel-modal'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration, type MetricCategory } from '../alerting-creation-flow.types'
@@ -274,50 +269,12 @@ export function MetricConfigurationStep({
 
   const unit = getUnit(watchTag as MetricCategory)
 
-  // Auto-generate alert name from conditions
   useEffect(() => {
-    if (isEdit) return
-
-    const category = watchTag as MetricCategory
-    const isHiddenConditionMetric = shouldHideConditions(category)
-
-    if (isHiddenConditionMetric) {
-      const metric = formatMetricLabel(watchTag)
-      if (metric) {
-        methods.setValue('name', `${metric} Alert`)
-      }
-      return
-    }
-
     const metric = formatMetricLabel(watchTag)
-    const functionLabel = !shouldHideField(category, 'function')
-      ? METRIC_TYPE_OPTIONS[category]?.find((option) => option.value === watchCondition?.function)?.label
-      : undefined
-    const operator = !shouldHideField(category, 'operator') ? formatOperator(watchCondition?.operator) : undefined
-    const threshold = !shouldHideField(category, 'threshold')
-      ? formatThreshold(category, parseFloat(watchCondition?.threshold?.toString() ?? '0'), unit)
-      : undefined
-    const duration = !shouldHideField(category, 'duration') ? formatDuration(watchForDuration) : undefined
-
-    const parts: string[] = []
-    if (functionLabel) parts.push(functionLabel)
-    if (metric) parts.push(metric)
-    if (operator && threshold) parts.push(`${operator} ${threshold}`)
-    if (duration) parts.push(duration === 'immediately' ? 'immediately' : `for ${duration}`)
-
-    if (parts.length > 0) {
-      methods.setValue('name', parts.join(' '))
+    if (metric) {
+      methods.setValue('name', `Alert ${metric}`)
     }
-  }, [
-    isEdit,
-    watchTag,
-    watchCondition?.function,
-    watchCondition?.operator,
-    watchCondition?.threshold,
-    watchForDuration,
-    methods,
-    unit,
-  ])
+  }, [isEdit, watchTag, methods])
 
   const handleNext = async (data: AlertConfiguration) => {
     const config = METRIC_FIELD_CONFIG[metricCategory]

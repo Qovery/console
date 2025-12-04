@@ -188,12 +188,17 @@ export function AlertRulesOverview({
                     <div className="flex items-center justify-between gap-3">
                       <span className="flex items-center gap-1.5 text-sm text-neutral-400">
                         {alertRule.name}
-                        {alertRule.is_up_to_date ? (
-                          <Icon iconName="circle-check" iconStyle="regular" className="text-green-500" />
-                        ) : (
+                        {alertRule.description && (
+                          <Tooltip content={alertRule.description}>
+                            <span>
+                              <Icon iconName="info-circle" iconStyle="regular" className="text-neutral-350" />
+                            </span>
+                          </Tooltip>
+                        )}
+                        {!alertRule.is_up_to_date && alertRule.state !== 'UNDEPLOYED' && (
                           <Tooltip content="To apply this change redeploy your cluster">
                             <span>
-                              <Icon iconName="circle-exclamation" iconStyle="regular" className="text-yellow-500" />
+                              <Icon iconName="circle-exclamation" className="text-yellow-700" />
                             </span>
                           </Tooltip>
                         )}

@@ -44,9 +44,12 @@ export function formatOperator(operator?: AlertRuleConditionOperator) {
 
 export function formatThreshold(metric?: MetricCategory, threshold?: number, unit = '%') {
   if (threshold === undefined || threshold === null) return undefined
+  if (unit !== '%') {
+    return `${threshold}${unit}`
+  }
   const normalized = threshold <= 1 ? threshold * 100 : threshold
   const formatted = Number.isInteger(normalized) ? normalized.toString() : normalized.toFixed(1).replace(/\.0$/, '')
-  return metric === 'http_latency' ? `${threshold}${unit}` : `${formatted}${unit}`
+  return `${formatted}${unit}`
 }
 
 export function formatDuration(duration?: string) {
@@ -80,15 +83,13 @@ export function generateConditionDescription(
   func?: AlertRuleConditionFunction,
   operator?: AlertRuleConditionOperator,
   threshold?: number,
-  metric?: MetricCategory,
-  unit = '%'
+  unit = '%',
+  duration?: string
 ): string {
-  // Desired format: "{{metric}} - {{function}} {{operator}} {{threshold}}"
-  // Example: "CPU - Average >= 80%"
-  const metricLabel = formatMetricLabel(metric)
   const functionLabel = formatFunction(func)
   const operatorSymbol = formatOperator(operator)
-  const thresholdFormatted = formatThreshold(metric, threshold, unit)
+  const thresholdFormatted = formatThreshold(undefined, threshold, unit)
+  const durationFormatted = formatDuration(duration)
 
   let conditionPart = ''
   if (functionLabel && operatorSymbol && thresholdFormatted) {
@@ -105,13 +106,17 @@ export function generateConditionDescription(
     conditionPart = operatorSymbol
   } else if (thresholdFormatted) {
     conditionPart = thresholdFormatted
+  } else if (durationFormatted) {
+    conditionPart = durationFormatted
   }
 
-  if (metricLabel && conditionPart) {
-    return `${metricLabel} - ${conditionPart}`
+  if (durationFormatted && conditionPart && conditionPart !== durationFormatted) {
+    if (durationFormatted === 'immediately') {
+      conditionPart = `${conditionPart} ${durationFormatted}`
+    } else {
+      conditionPart = `${conditionPart} for ${durationFormatted}`
+    }
   }
-  if (metricLabel) {
-    return metricLabel
-  }
+
   return conditionPart
 }

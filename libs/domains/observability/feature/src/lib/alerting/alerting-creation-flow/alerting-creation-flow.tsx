@@ -135,15 +135,16 @@ export function AlertingCreationFlow({
           .with('missing_replicas', () => 1)
           .otherwise(() => (alert.condition.threshold ?? 0) / 100)
 
+        const unit = match(alert.tag)
+          .with('http_latency', () => 'secs')
+          .otherwise(() => '%')
+
         const operator = alert.condition.operator ?? 'ABOVE'
         const func = alert.condition.function ?? 'NONE'
         const description = match(alert.tag)
           .with('instance_restart', () => 'Instance restarts')
           .with('missing_replicas', () => 'Missing replicas')
-          .otherwise(() =>
-            // XXX: Generate description from function, operator, threshold and metric category for Notification
-            generateConditionDescription(func, operator, threshold, alert.tag as MetricCategory)
-          )
+          .otherwise(() => generateConditionDescription(func, operator, threshold, unit, alert.for_duration))
 
         await createAlertRule({
           payload: {

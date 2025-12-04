@@ -106,6 +106,10 @@ export function PageAlertingEditFeature() {
       .with('missing_replicas', () => 1)
       .otherwise(() => (updatedAlert.condition.threshold ?? 0) / 100)
 
+    const unit = match(updatedAlert.tag)
+      .with('http_latency', () => 'secs')
+      .otherwise(() => '%')
+
     const operator = isMissingReplicas ? AlertRuleConditionOperator.BELOW : updatedAlert.condition.operator ?? 'ABOVE'
     const func = updatedAlert.condition.function ?? 'NONE'
 
@@ -116,7 +120,7 @@ export function PageAlertingEditFeature() {
           payload: {
             name: updatedAlert.name,
             tag: updatedAlert.tag,
-            description: generateConditionDescription(func, operator, threshold, updatedAlert.tag as MetricCategory),
+            description: generateConditionDescription(func, operator, threshold, unit, updatedAlert.for_duration),
             condition: {
               kind: 'BUILT',
               function: func,
