@@ -1,6 +1,6 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { type PropsWithChildren, useCallback, useMemo, useState } from 'react'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { type PropsWithChildren, useCallback, useMemo, useState } from 'react'
 import { type VariableScope } from '@qovery/domains/variables/data-access'
 import { Icon, InputSearch, Popover, Tooltip, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -80,11 +80,20 @@ export function DropdownVariable({
       <Popover.Root open={open} onOpenChange={_onOpenChange}>
         <Popover.Trigger>{children}</Popover.Trigger>
         <DropdownMenu.Content asChild>
-          <Popover.Content container={container} className="flex max-h-60 w-[248px] min-w-[248px] flex-col p-2">
-            {/* 
+          <Popover.Content
+            container={container}
+            side="right"
+            align="start"
+            sideOffset={8}
+            avoidCollisions={true}
+            collisionPadding={8}
+            sticky="partial"
+            className="flex h-auto max-h-[240px] w-[400px] max-w-[400px] flex-col p-2"
+          >
+            {/*
                 `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
                 fix issue with item focus if we use input search
-                https://github.com/radix-ui/primitives/issues/2193#issuecomment-1790564604 
+                https://github.com/radix-ui/primitives/issues/2193#issuecomment-1790564604
               */}
             <div className="bg-white dark:bg-neutral-700" onKeyDown={(e) => e.stopPropagation()}>
               <InputSearch
@@ -94,7 +103,7 @@ export function DropdownVariable({
                 autofocus
               />
             </div>
-            <div className="overflow-y-auto">
+            <div className="max-h-[200px] overflow-y-auto">
               {filteredVariables.length > 0 ? (
                 filteredVariables.map((variable) => {
                   const isBuiltIn = variable.scope === APIVariableScopeEnum.BUILT_IN
@@ -112,12 +121,12 @@ export function DropdownVariable({
                     >
                       <div className="flex flex-col items-start justify-center gap-1">
                         <span className="text-sm font-medium">
-                          <Truncate text={variable.key} truncateLimit={21} />
+                          <Truncate text={variable.key} truncateLimit={63} />
                         </span>
 
                         {variable.service_name ? (
                           <span className="truncate text-xs font-normal">
-                            <Truncate text={variable.service_name} truncateLimit={30} />
+                            <Truncate text={variable.service_name} truncateLimit={90} />
                           </span>
                         ) : (
                           <span className="text-xs font-normal text-neutral-300">no service</span>
