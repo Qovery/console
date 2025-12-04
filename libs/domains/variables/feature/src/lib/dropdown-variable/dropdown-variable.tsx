@@ -113,13 +113,13 @@ export function DropdownVariable({
                     <DropdownMenu.Item
                       className={twMerge(
                         dropdownMenuItemVariants({ color: 'brand' }),
-                        'flex h-[52px] items-start justify-between gap-1 px-2 py-1.5',
+                        'flex h-[52px] items-start gap-2 px-2 py-1.5',
                         isDisabled && 'cursor-not-allowed opacity-50'
                       )}
                       onClick={() => !isDisabled && onChange(variable.key)}
                       disabled={isDisabled}
                     >
-                      <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
+                      <div className="flex min-w-0 flex-col items-start gap-1">
                         <span className="w-full overflow-hidden text-ellipsis text-sm font-medium">
                           <Truncate text={variable.key} truncateLimit={45} />
                         </span>
