@@ -126,7 +126,8 @@ describe('useQoveryContext', () => {
   })
 
   it('should return undefined current when no entities are available', () => {
-    (useParams as jest.Mock).mockReturnValue({})
+    const mockUseParams = useParams as jest.Mock
+    mockUseParams.mockReturnValue({})
 
     const { result } = renderHook(() => useQoveryContext())
 
