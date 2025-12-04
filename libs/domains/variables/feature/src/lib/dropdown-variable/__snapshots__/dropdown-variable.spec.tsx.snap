@@ -39,7 +39,7 @@ exports[`DropdownVariable should render dropdown content when clicked 1`] = `
     class="max-h-[200px] overflow-y-auto"
   >
     <div
-      class="text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 flex h-[52px] items-center justify-between gap-1 px-2 py-1.5"
+      class="text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 flex h-[52px] items-start gap-2 px-2 py-1.5"
       data-orientation="vertical"
       data-radix-collection-item=""
       role="menuitem"
@@ -47,15 +47,15 @@ exports[`DropdownVariable should render dropdown content when clicked 1`] = `
       type="button"
     >
       <div
-        class="flex flex-col items-start justify-center gap-1"
+        class="flex min-w-0 flex-col items-start gap-1"
       >
         <span
-          class="text-sm font-medium"
+          class="w-full overflow-hidden text-ellipsis text-sm font-medium"
         >
           QOVERY_CONTAINER_Z04308DE2_HOST_INTERNAL
         </span>
         <span
-          class="truncate text-xs font-normal"
+          class="w-full overflow-hidden text-ellipsis text-xs font-normal"
         >
           back-end-A
         </span>
