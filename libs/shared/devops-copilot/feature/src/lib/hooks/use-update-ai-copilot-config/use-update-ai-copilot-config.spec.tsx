@@ -46,7 +46,9 @@ describe('useUpdateAICopilotConfig', () => {
       invalidateQueries: jest.fn(),
     }
     ;(useQueryClient as jest.Mock).mockReturnValue(mockQueryClient)
-    jest.mocked(devopsCopilot.config).mockReturnValue({ queryKey: ['devopsCopilot', 'config', organizationId] } as never)
+    jest
+      .mocked(devopsCopilot.config)
+      .mockReturnValue({ queryKey: ['devopsCopilot', 'config', organizationId] } as never)
   })
 
   it('should call mutationFn with correct parameters', () => {
@@ -192,7 +194,10 @@ describe('useUpdateAICopilotConfig', () => {
       capturedOnError?.(new Error('Test error'), { enabled: true, readOnly: false }, { previousConfig })
     })
 
-    expect(mockQueryClient.setQueryData).toHaveBeenCalledWith(['devopsCopilot', 'config', organizationId], previousConfig)
+    expect(mockQueryClient.setQueryData).toHaveBeenCalledWith(
+      ['devopsCopilot', 'config', organizationId],
+      previousConfig
+    )
     expect(toast).toHaveBeenCalledWith(
       ToastEnum.ERROR,
       'Failed to update AI Copilot configuration',
