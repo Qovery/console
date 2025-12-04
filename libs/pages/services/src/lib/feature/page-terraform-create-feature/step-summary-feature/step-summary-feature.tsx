@@ -90,7 +90,7 @@ export function StepSummaryFeature() {
       })
 
       if (withPlan) {
-        await deployService({ serviceId: response.id, serviceType: 'TERRAFORM', request: { dry_run: true } })
+        await deployService({ serviceId: response.id, serviceType: 'TERRAFORM', request: { action: 'PLAN' } })
         setIsLoadingCreateAndPlan(false)
       }
 
