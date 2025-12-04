@@ -113,20 +113,20 @@ export function DropdownVariable({
                     <DropdownMenu.Item
                       className={twMerge(
                         dropdownMenuItemVariants({ color: 'brand' }),
-                        'flex h-[52px] items-center justify-between gap-1 px-2 py-1.5',
+                        'flex h-[52px] items-start justify-between gap-1 px-2 py-1.5',
                         isDisabled && 'cursor-not-allowed opacity-50'
                       )}
                       onClick={() => !isDisabled && onChange(variable.key)}
                       disabled={isDisabled}
                     >
-                      <div className="flex flex-col items-start justify-center gap-1">
-                        <span className="text-sm font-medium">
-                          <Truncate text={variable.key} truncateLimit={63} />
+                      <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
+                        <span className="w-full overflow-hidden text-ellipsis text-sm font-medium">
+                          <Truncate text={variable.key} truncateLimit={45} />
                         </span>
 
                         {variable.service_name ? (
-                          <span className="truncate text-xs font-normal">
-                            <Truncate text={variable.service_name} truncateLimit={90} />
+                          <span className="w-full overflow-hidden text-ellipsis text-xs font-normal">
+                            <Truncate text={variable.service_name} truncateLimit={50} />
                           </span>
                         ) : (
                           <span className="text-xs font-normal text-neutral-300">no service</span>
