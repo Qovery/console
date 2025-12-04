@@ -33,14 +33,14 @@ const VALUES_OPTIONS = [
 ]
 
 const HTTP_ERROR_VALUES_OPTIONS = [{ label: 'Count', value: AlertRuleConditionFunction.COUNT }]
-const REPLICAS_NUMBER_VALUES_OPTIONS = [{ label: 'Count', value: AlertRuleConditionFunction.COUNT }]
+const INSTANCE_NUMBER_VALUES_OPTIONS = [{ label: 'Count', value: AlertRuleConditionFunction.COUNT }]
 
 const METRIC_TYPE_OPTIONS: Record<MetricCategory, { label: string; value: AlertRuleConditionFunction }[]> = {
   cpu: VALUES_OPTIONS,
   memory: VALUES_OPTIONS,
   http_error: HTTP_ERROR_VALUES_OPTIONS,
   http_latency: VALUES_OPTIONS,
-  missing_replicas: REPLICAS_NUMBER_VALUES_OPTIONS,
+  missing_instance: INSTANCE_NUMBER_VALUES_OPTIONS,
   instance_restart: VALUES_OPTIONS,
 }
 
@@ -114,7 +114,7 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
       duration: 'PT5M',
     },
   },
-  missing_replicas: {
+  missing_instance: {
     hiddenFields: ['function', 'operator', 'threshold', 'duration'],
     defaults: {
       function: 'NONE',

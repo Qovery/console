@@ -13,7 +13,7 @@ describe('formatMetricLabel', () => {
     expect(formatMetricLabel('memory')).toBe('Memory')
     expect(formatMetricLabel('http_error')).toBe('HTTP error')
     expect(formatMetricLabel('http_latency')).toBe('HTTP latency')
-    expect(formatMetricLabel('missing_replicas')).toBe('Missing replicas')
+    expect(formatMetricLabel('missing_instance')).toBe('Missing instance')
     expect(formatMetricLabel('instance_restart')).toBe('Instance restart')
   })
 })
@@ -92,7 +92,7 @@ describe('generateConditionDescription', () => {
 
   it('should handle missing parts', () => {
     expect(generateConditionDescription('AVG', undefined, 80)).toBe('Average 80%')
-    expect(generateConditionDescription(undefined, 'ABOVE', 80)).toBe('> 80%')
+    expect(generateConditionDescription(undefined, 'ABOVE', 80)).toBe('Above 80%')
     expect(generateConditionDescription('AVG', 'ABOVE', undefined)).toBe('Average >')
   })
 
@@ -107,5 +107,6 @@ describe('generateConditionDescription', () => {
   it('should return duration when provided', () => {
     expect(generateConditionDescription('AVG', 'ABOVE', 80, '%', 'PT5M')).toBe('Average > 80% for 5 minutes')
     expect(generateConditionDescription('AVG', 'ABOVE', 0.8, 'secs', 'PT0S')).toBe('Average > 0.8secs immediately')
+    expect(generateConditionDescription('NONE', 'ABOVE', 80, '%', 'PT0S')).toBe('Above 80% immediately')
   })
 })

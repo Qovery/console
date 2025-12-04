@@ -16,7 +16,7 @@ import {
   QUERY_HTTP_LATENCY,
   QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
-  QUERY_MISSING_REPLICAS,
+  QUERY_MISSING_INSTANCE,
 } from './alert-queries'
 
 const { Table } = TablePrimitives
@@ -188,7 +188,7 @@ export function SummaryStep() {
               promql: match(alert.tag)
                 .with('cpu', () => QUERY_CPU(containerName))
                 .with('memory', () => QUERY_MEMORY(containerName))
-                .with('missing_replicas', () => QUERY_MISSING_REPLICAS(containerName))
+                .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
                 .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
                 .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
                 .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
