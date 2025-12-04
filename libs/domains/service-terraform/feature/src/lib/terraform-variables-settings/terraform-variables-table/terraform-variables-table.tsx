@@ -142,6 +142,17 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
             ) : (
               <span className="px-4 text-sm text-neutral-350">{variable.key}</span>
             )}
+            {variable.description && (
+              <Tooltip content={variable.description}>
+                <span
+                  className="-ml-2 text-neutral-300 hover:text-neutral-400"
+                  role="img"
+                  aria-label="Variable description"
+                >
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-xs" />
+                </span>
+              </Tooltip>
+            )}
             {errors.get(variable.id) && (
               <Tooltip content={errors.get(variable.id)}>
                 <div className="mr-4">
