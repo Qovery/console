@@ -1,6 +1,7 @@
 import { type Monaco } from '@monaco-editor/react'
 import { type editor } from 'monaco-editor'
 import { type ComponentProps, useRef } from 'react'
+import { type VariableScope } from '@qovery/domains/variables/data-access'
 import { Button, CodeEditor, Icon } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import DropdownVariable from '../dropdown-variable/dropdown-variable'
@@ -8,10 +9,20 @@ import { useVariables } from '../hooks/use-variables/use-variables'
 
 interface CodeEditorVariableProps extends ComponentProps<typeof CodeEditor> {
   environmentId: string
+  projectId?: string
+  container?: HTMLElement | null
+  serviceId?: string
+  scope?: VariableScope
+  disableBuiltInVariables?: boolean
 }
 
 export function CodeEditorVariable({
   environmentId,
+  projectId,
+  container,
+  serviceId,
+  scope,
+  disableBuiltInVariables = false,
   language = 'json',
   options,
   className,
@@ -82,7 +93,15 @@ export function CodeEditorVariable({
         }}
         {...props}
       />
-      <DropdownVariable environmentId={environmentId} onChange={handleVariableChange}>
+      <DropdownVariable
+        environmentId={environmentId}
+        projectId={projectId}
+        serviceId={serviceId}
+        scope={scope}
+        disableBuiltInVariables={disableBuiltInVariables}
+        onChange={handleVariableChange}
+        container={container}
+      >
         <Button size="md" type="button" color="neutral" variant="surface" className="absolute right-4 top-4 px-2.5">
           <Icon className="text-sm" iconName="wand-magic-sparkles" />
         </Button>
