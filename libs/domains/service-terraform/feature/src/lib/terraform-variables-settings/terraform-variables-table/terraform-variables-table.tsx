@@ -41,7 +41,7 @@ const SourceCell = ({ variable }: { variable: UIVariable }) => {
 
   return (
     <div
-      className="inline-flex h-full items-center overflow-hidden border-r border-neutral-250 px-2 lg:px-4"
+      className="no-scrollbar inline-flex h-full items-center overflow-y-auto border-r border-neutral-250 px-2 lg:px-4"
       ref={sourceCellRef}
     >
       <Badge className={twMerge(getSourceBadgeClassName(variable), 'font-medium')} variant="surface">
