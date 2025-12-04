@@ -119,7 +119,7 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
     defaults: {
       function: 'NONE',
       operator: 'BELOW',
-      threshold: 1,
+      threshold: 0.8,
       duration: 'PT0S',
     },
   },
