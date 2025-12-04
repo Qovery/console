@@ -226,7 +226,7 @@ export function StepMore(props: StepMoreProps) {
             <p>
               You have specific needs?{' '}
               <a
-                href="https://meetings-eu1.hubspot.com/lnoone/free-trial-demo-request"
+                href="https://meetings-eu1.hubspot.com/hakob-hakobian/free-trial-contact-sales"
                 target="_blank"
                 rel="noreferrer"
                 className="text-sky-500"

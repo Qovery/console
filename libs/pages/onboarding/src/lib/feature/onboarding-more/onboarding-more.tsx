@@ -160,7 +160,7 @@ export function OnboardingMore() {
               You have specific needs? Book a demo with us and unlock a trial that truly suits you.
             </p>
             <ExternalLink
-              href="https://meetings-eu1.hubspot.com/lnoone/free-trial-demo-request"
+              href="https://meetings-eu1.hubspot.com/hakob-hakobian/free-trial-contact-sales"
               color="brand"
               withIcon={false}
               className="gap-1 text-sm font-semibold"
