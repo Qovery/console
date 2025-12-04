@@ -2,19 +2,19 @@ import { type Cluster, ClusterStateEnum, type ClusterStatus } from 'qovery-types
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { CLUSTER_OVERVIEW_URL, CLUSTER_URL, INFRA_LOGS_URL, OVERVIEW_URL } from '@qovery/shared/routes'
+import { isSoundEnabled, useNotificationPreferences } from '@qovery/shared/util-hooks'
 import {
   type LifecycleState,
   getCachedDeploymentProgress,
 } from '../../hooks/use-deployment-progress/use-deployment-progress'
 import { clearTrackedClusterInstall, getTrackedClusterInstalls } from '../../utils/cluster-install-tracking'
-import { isClusterNotificationEnabled, isClusterSoundEnabled } from './cluster-notification-permission-modal'
 
 type ClusterStatusWithFlag = ClusterStatus
 
 const clusterCompletionSoundUrl = '/assets/sound/cluster_completion.mp3'
 
-const playCompletionSound = () => {
-  if (!isClusterSoundEnabled() || typeof Audio === 'undefined') return
+const playCompletionSound = (soundEnabledKey: string) => {
+  if (!isSoundEnabled(soundEnabledKey) || typeof Audio === 'undefined') return
   try {
     const audio = new Audio(clusterCompletionSoundUrl)
     audio.volume = 0.6
@@ -33,6 +33,9 @@ export function useClusterInstallNotifications({
   clusters?: Cluster[]
   clusterStatuses?: ClusterStatusWithFlag[]
 }) {
+  const { isNotificationEnabled, soundEnabledKey } = useNotificationPreferences({
+    prefix: 'cluster',
+  })
   const notifiedClustersRef = useRef<Set<string>>(new Set())
   const { data: projects = [] } = useProjects({ organizationId, enabled: !!organizationId })
   const [trackedInstalls, setTrackedInstalls] = useState(() =>
@@ -90,7 +93,7 @@ export function useClusterInstallNotifications({
   }, [])
 
   useEffect(() => {
-    if (!isClusterNotificationEnabled()) return
+    if (!isNotificationEnabled()) return
     if (typeof window === 'undefined') return
     if (trackedInstalls.length === 0) return
 
@@ -162,12 +165,21 @@ export function useClusterInstallNotifications({
           console.error('Unable to show cluster installation notification', error)
         }
 
-        playCompletionSound()
+        playCompletionSound(soundEnabledKey)
       }
 
       prevStateRef.current.set(clusterId, derivedState)
     })
-  }, [clusterStatuses, clusters, organizationId, projects, trackedInstalls, trackedNames])
+  }, [
+    clusterStatuses,
+    clusters,
+    organizationId,
+    projects,
+    trackedInstalls,
+    trackedNames,
+    soundEnabledKey,
+    isNotificationEnabled,
+  ])
 }
 
 export default useClusterInstallNotifications
