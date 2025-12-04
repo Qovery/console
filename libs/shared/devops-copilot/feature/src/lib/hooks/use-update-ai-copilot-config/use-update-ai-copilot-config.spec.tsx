@@ -93,9 +93,6 @@ describe('useUpdateAICopilotConfig', () => {
     const previousConfig: AICopilotConfigResponse = {
       org_config: { read_only: false, enabled: true, instructions: 'old' },
     }
-    const updatedConfig: AICopilotConfigResponse = {
-      org_config: { read_only: true, enabled: true, instructions: 'old' },
-    }
 
     let capturedOnMutate: ((args: { enabled: boolean; readOnly: boolean }) => Promise<unknown>) | undefined
 

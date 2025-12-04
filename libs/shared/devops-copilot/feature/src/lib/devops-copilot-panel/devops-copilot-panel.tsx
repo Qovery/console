@@ -4,11 +4,10 @@ import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import mermaid from 'mermaid'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import { SETTINGS_AI_COPILOT_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { AnimatedGradientText, Button, Callout, Icon, Link, Tooltip } from '@qovery/shared/ui'
-import { ToastEnum, toast } from '@qovery/shared/ui'
 import { QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
@@ -68,7 +67,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     threads = [],
     error: errorThreads,
     isLoading: isLoadingThreads,
-    refetchThreads: refetchThreads,
+    refetchThreads,
   } = useThreads({ organizationId: context?.organization?.id ?? '', owner: user?.sub ?? '' })
 
   const { thread, setThread } = useThreadState({
@@ -118,22 +117,25 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
-  const handleOnClose = () => {
+  const handleOnClose = useCallback(() => {
     onClose()
     setInputMessage('')
-  }
+  }, [onClose])
 
-  const adjustTextareaHeight = (element: HTMLTextAreaElement) => {
-    element.style.height = 'auto'
+  const adjustTextareaHeight = useCallback(
+    (element: HTMLTextAreaElement) => {
+      element.style.height = 'auto'
 
-    if (thread.length > 0) return
+      if (thread.length > 0) return
 
-    if (element.scrollHeight < 240) {
-      element.style.height = `${element.scrollHeight}px`
-    } else {
-      element.style.height = '240px'
-    }
-  }
+      if (element.scrollHeight < 240) {
+        element.style.height = `${element.scrollHeight}px`
+      } else {
+        element.style.height = '240px'
+      }
+    },
+    [thread.length]
+  )
 
   const hasMermaidChart = (messages: Message[], streamingText?: string) =>
     messages.some((msg) => msg.text.includes('```mermaid')) || (streamingText?.includes('```mermaid') ?? false)
@@ -151,7 +153,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
         inputRef.current.scrollTop = inputRef.current.scrollHeight
       }
     }, 50)
-  }, [])
+  }, [adjustTextareaHeight])
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
@@ -161,7 +163,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     }
     document.addEventListener('keydown', down)
     return () => document.removeEventListener('keydown', down)
-  }, [thread])
+  }, [handleOnClose])
 
   const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
 
@@ -207,7 +209,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
       setStreamingMessage('')
     }
     if (!streamingMessage || displayedStreamingMessage === streamingMessage) return
-  }, [streamingMessage, displayedStreamingMessage, isStopped, isFinish])
+  }, [streamingMessage, displayedStreamingMessage, isStopped, isFinish, isLoading, lastSubmitResult, setThread, thread])
 
   useEffect(() => {
     if (streamingMessage.length === 0 || streamingMessage.length <= displayedStreamingMessage.length) {
@@ -460,7 +462,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                       <Callout.TextHeading>Read-write mode enabled</Callout.TextHeading>
                       <Callout.TextDescription>
                         The copilot can perform actions on your infrastructure.
-                        {thread.length == 0 && ' Mode cannot be changed after the conversation has started.'}
+                        {thread.length === 0 && ' Mode cannot be changed after the conversation has started.'}
                       </Callout.TextDescription>
                     </Callout.Text>
                   </Callout.Root>
@@ -552,7 +554,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   <div className="relative top-2 mt-auto">
                     <div
                       className="group flex cursor-pointer items-center gap-2"
-                      onClick={() => setShowPlans((prev) => ({ ...prev, ['temp']: !prev['temp'] }))}
+                      onClick={() => setShowPlans((prev) => ({ ...prev, temp: !prev['temp'] }))}
                     >
                       <AnimatedGradientText className="w-fit text-ssm font-medium">{loadingText}</AnimatedGradientText>
                       {plan.filter((p) => p.messageId === 'temp').length > 0 && (

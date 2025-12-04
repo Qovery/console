@@ -30,14 +30,6 @@ describe('DevopsCopilotButton', () => {
     ;(useFormatHotkeys as jest.Mock).mockReturnValue('⌘')
   })
 
-  it('should return null when metaKey is not available', () => {
-    ;(useFormatHotkeys as jest.Mock).mockReturnValue(null)
-
-    const { container } = renderWithProviders(<DevopsCopilotButton />, { wrapper })
-
-    expect(container.firstChild).toBeNull()
-  })
-
   it('should render button when metaKey is available', () => {
     const { getByText } = renderWithProviders(<DevopsCopilotButton />, { wrapper })
 

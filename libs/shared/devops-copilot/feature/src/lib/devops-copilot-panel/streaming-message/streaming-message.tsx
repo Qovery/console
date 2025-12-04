@@ -54,7 +54,7 @@ export function StreamingMessage({
       {hasTempPlan && (
         <div
           className="plan-toggle group mt-2 flex cursor-pointer items-center gap-2"
-          onClick={() => setShowPlans((prev) => ({ ...prev, ['temp']: !prev['temp'] }))}
+          onClick={() => setShowPlans((prev) => ({ ...prev, temp: !prev['temp'] }))}
         >
           <div className="w-fit text-ssm font-medium italic text-gray-600">Plan steps</div>
           <Icon
