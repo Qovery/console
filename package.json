@@ -151,7 +151,7 @@
     "babel-loader": "^8.1.0",
     "chance": "^1.1.8",
     "core-js": "3.36.1",
-    "css-loader": "^6.8.1",
+    "css-loader": "^7.1.2",
     "cypress": "^9.1.0",
     "downshift": "^9.0.3",
     "eslint": "8.57.0",
