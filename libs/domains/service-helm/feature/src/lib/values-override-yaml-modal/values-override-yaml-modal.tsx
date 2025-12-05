@@ -1,4 +1,5 @@
 import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
+import { useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { CodeEditorVariable } from '@qovery/domains/variables/feature'
 import { BlockContent, CodeEditor, CopyToClipboardButtonIcon, Icon, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
@@ -6,6 +7,8 @@ import useHelmDefaultValues from '../hooks/use-helm-default-values/use-helm-defa
 
 export interface ValuesOverrideYamlModalProps {
   environmentId: string
+  projectId?: string
+  serviceId?: string
   source: HelmRequestAllOfSource
   onSubmit: (value?: string) => void
   onClose: () => void
@@ -15,6 +18,8 @@ export interface ValuesOverrideYamlModalProps {
 export function ValuesOverrideYamlModal({
   source,
   environmentId,
+  projectId,
+  serviceId,
   onClose,
   onSubmit,
   content,
@@ -29,6 +34,15 @@ export function ValuesOverrideYamlModal({
       source,
     },
   })
+
+  const modalRef = useRef<HTMLDivElement | null>(null)
+  const [modalContainer, setModalContainer] = useState<HTMLElement | null>(null)
+
+  useEffect(() => {
+    if (modalRef.current) {
+      setModalContainer(modalRef.current)
+    }
+  }, [])
 
   const methods = useForm({
     mode: 'onChange',
@@ -50,6 +64,7 @@ export function ValuesOverrideYamlModal({
         onSubmit={onSubmitValue}
         onClose={onClose}
         submitLabel="Save"
+        forwardRef={modalRef}
       >
         <div className="flex h-full">
           <BlockContent title="Override" className="mb-0 rounded-r-none border-r-0" classNameContent="p-0">
@@ -59,6 +74,11 @@ export function ValuesOverrideYamlModal({
               render={({ field }) => (
                 <CodeEditorVariable
                   environmentId={environmentId}
+                  projectId={projectId}
+                  serviceId={serviceId}
+                  scope="HELM"
+                  disableBuiltInVariables={true}
+                  container={modalContainer}
                   width="100%"
                   height="calc(100vh - 278px)"
                   language="yaml"

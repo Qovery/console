@@ -1,5 +1,5 @@
 import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import {
@@ -65,6 +65,14 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
   const { mutateAsync: editVariable } = useEditVariable()
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+  const modalRef = useRef<HTMLDivElement | null>(null)
+  const [modalContainer, setModalContainer] = useState<HTMLElement | null>(null)
+
+  useEffect(() => {
+    if (modalRef.current) {
+      setModalContainer(modalRef.current)
+    }
+  }, [])
 
   const handleInsertVariable = ({
     variableKey,
@@ -280,6 +288,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
         onClose={closeModal}
         onSubmit={_onSubmit}
         loading={loading}
+        forwardRef={modalRef}
       >
         {type === 'ALIAS' || type === 'OVERRIDE' ? (
           <InputText className="mb-3" name="Variable" value={variable?.key} label="Variable" disabled />
@@ -390,7 +399,11 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                 {'environmentId' in props && (
                   <DropdownVariable
                     environmentId={props.environmentId}
+                    projectId={props.projectId}
+                    serviceId={'serviceId' in props ? props.serviceId : undefined}
+                    scope={props.scope}
                     onChange={(variableKey) => handleInsertVariable({ variableKey, value: value || '', onChange })}
+                    container={modalContainer}
                   >
                     <Button
                       size="md"
