@@ -25,7 +25,7 @@ import {
 } from '@qovery/domains/organizations/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { type TerraformGeneralData } from './terraform-configuration-settings/terraform-configuration-settings'
-import { isCustomVariable, isVariableChanged } from './terraform-variables-utils'
+import { buildDescriptionByKey, isCustomVariable, isVariableChanged } from './terraform-variables-utils'
 
 export type UIVariable = {
   id: string
@@ -258,13 +258,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
 
   // Separate lookup for descriptions to ensures descriptions are preserved
   // even when variables are overridden by tfvars files or manual overrides
-  const descriptionByKey = useMemo(() => {
-    return Object.fromEntries(
-      (variablesResponse ?? [])
-        .filter((variable) => variable?.key)
-        .map((variable) => [variable.key, variable.description ?? undefined])
-    )
-  }, [variablesResponse])
+  const descriptionByKey = useMemo(() => buildDescriptionByKey(variablesResponse), [variablesResponse])
 
   // initialVars regroups variables from the git repo and the service's tf_vars. It is used to populate the initial state of the variables. Each variable key must be unique. If a variable key is present in both the git repo and the service's tf_vars, the value from the service's tf_vars is used.
   const initialVars: UIVariable[] = useMemo(() => {
