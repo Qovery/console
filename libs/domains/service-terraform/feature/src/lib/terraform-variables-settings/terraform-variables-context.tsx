@@ -40,7 +40,7 @@ export type UIVariable = {
   originalSecret?: boolean
   // metadata
   isNew?: boolean // created by user in UI (always treated as changed)
-  description?: string // variable description from Terraform file
+  description?: string
 }
 
 export type TfVarsFile = TfVarsFileResponse & {

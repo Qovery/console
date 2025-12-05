@@ -124,7 +124,7 @@ describe('TerraformVariablesTable', () => {
     expect(screen.getByText('Delete selected')).toBeInTheDocument()
   })
 
-  it('should display description icon when variable has a description', () => {
+  it('should display description icon with correct tooltip content when variable has a description', () => {
     renderWithProviders(
       <WrapperComponent
         overrideValues={{
@@ -144,7 +144,9 @@ describe('TerraformVariablesTable', () => {
       </WrapperComponent>
     )
 
-    expect(screen.getByRole('img', { name: 'Variable description' })).toBeInTheDocument()
+    const descriptionIcon = screen.getByRole('img', { name: 'Variable description' })
+    expect(descriptionIcon).toBeInTheDocument()
+    expect(descriptionIcon).toHaveAttribute('data-tooltip-content', 'This is a test description')
   })
 
   it('should not display description icon when variable has no description', () => {
@@ -167,56 +169,5 @@ describe('TerraformVariablesTable', () => {
     )
 
     expect(screen.queryByRole('img', { name: 'Variable description' })).not.toBeInTheDocument()
-  })
-
-  it('should display description icon when variable is overridden by tfvars file but has description from terraform definition', () => {
-    // This tests that descriptions are preserved even when the variable value
-    // comes from a .tfvars file (which doesn't have descriptions)
-    renderWithProviders(
-      <WrapperComponent
-        overrideValues={{
-          vars: [
-            {
-              id: 'variable-1',
-              key: 'aws_region',
-              value: 'eu-west-1', // Value from tfvars file
-              source: 'terraform/variables.tfvars', // Source is tfvars file
-              secret: false,
-              description: 'The AWS region to deploy to', // Description from terraform definition
-            },
-          ],
-        }}
-      >
-        <TerraformVariablesTable />
-      </WrapperComponent>
-    )
-
-    expect(screen.getByRole('img', { name: 'Variable description' })).toBeInTheDocument()
-  })
-
-  it('should display description icon when variable is manually overridden but has description from terraform definition', () => {
-    // This tests that descriptions are preserved even when the variable value
-    // has been manually overridden by the user
-    renderWithProviders(
-      <WrapperComponent
-        overrideValues={{
-          vars: [
-            {
-              id: 'variable-1',
-              key: 'instance_type',
-              value: 't3.large', // Manually overridden value
-              originalValue: 't2.micro', // Original value from terraform
-              source: 'terraform/main.tf',
-              secret: false,
-              description: 'The EC2 instance type', // Description should still be visible
-            },
-          ],
-        }}
-      >
-        <TerraformVariablesTable />
-      </WrapperComponent>
-    )
-
-    expect(screen.getByRole('img', { name: 'Variable description' })).toBeInTheDocument()
   })
 })

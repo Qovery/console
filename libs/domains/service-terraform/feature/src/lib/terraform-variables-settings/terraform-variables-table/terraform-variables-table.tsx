@@ -148,6 +148,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                   className="-ml-2 text-neutral-300 hover:text-neutral-400"
                   role="img"
                   aria-label="Variable description"
+                  data-tooltip-content={variable.description}
                 >
                   <Icon iconName="circle-info" iconStyle="regular" className="text-xs" />
                 </span>
