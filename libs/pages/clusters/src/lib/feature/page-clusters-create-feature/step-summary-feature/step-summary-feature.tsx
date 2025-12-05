@@ -9,16 +9,16 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import { useCreateCluster, useDeployCluster, useEditCloudProviderInfo } from '@qovery/domains/clusters/feature'
+import { trackClusterInstall } from '@qovery/domains/clusters/feature'
+import { ClusterNotificationPermissionModal } from '@qovery/domains/clusters/feature'
 import {
   CLUSTERS_CREATION_EKS_URL,
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_KUBECONFIG_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
-  CLUSTERS_GENERAL_URL,
-  CLUSTERS_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody } from '@qovery/shared/ui'
+import { FunnelFlowBody, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepSummary from '../../../ui/page-clusters-create/step-summary/step-summary'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
@@ -85,6 +85,24 @@ export function StepSummaryFeature() {
     navigate(creationFlowUrl + CLUSTERS_CREATION_EKS_URL)
   }
 
+  const { openModal, closeModal } = useModal()
+
+  const showNotificationPermissionModal = useCallback(
+    (isSelfManaged = false, onComplete: () => Promise<void>) => {
+      openModal({
+        content: (
+          <ClusterNotificationPermissionModal
+            organizationId={organizationId}
+            onClose={closeModal}
+            isSelfManaged={isSelfManaged}
+            onComplete={onComplete}
+          />
+        ),
+      })
+    },
+    [openModal, closeModal, organizationId]
+  )
+
   const onBack = () => {
     if (generalData?.installation_type === 'SELF_MANAGED') {
       goToKubeconfig()
@@ -116,27 +134,26 @@ export function StepSummaryFeature() {
 
     if (generalData.installation_type === 'SELF_MANAGED' && kubeconfigData) {
       try {
-        const cluster = await createCluster({
-          organizationId,
-          clusterRequest: {
-            name: generalData.name,
-            description: generalData.description,
-            region: generalData.region,
-            cloud_provider: generalData.cloud_provider,
-            kubernetes: 'SELF_MANAGED',
-            production: generalData.production,
-            features: [],
-            cloud_provider_credentials,
-          },
-        })
-        await editCloudProviderInfo({
-          organizationId,
-          clusterId: cluster.id,
-          cloudProviderInfoRequest: cloud_provider_credentials,
-        })
-        navigate({
-          pathname: creationFlowUrl + CLUSTERS_GENERAL_URL,
-          search: '?show-self-managed-guide',
+        showNotificationPermissionModal(true, async () => {
+          const cluster = await createCluster({
+            organizationId,
+            clusterRequest: {
+              name: generalData.name,
+              description: generalData.description,
+              region: generalData.region,
+              cloud_provider: generalData.cloud_provider,
+              kubernetes: 'SELF_MANAGED',
+              production: generalData.production,
+              features: [],
+              cloud_provider_credentials,
+            },
+          })
+          trackClusterInstall(cluster.id, cluster.name)
+          await editCloudProviderInfo({
+            organizationId,
+            clusterId: cluster.id,
+            cloudProviderInfoRequest: cloud_provider_credentials,
+          })
         })
       } catch (e) {
         console.error(e)
@@ -147,22 +164,24 @@ export function StepSummaryFeature() {
     // EKS
     if (generalData.installation_type === 'PARTIALLY_MANAGED') {
       try {
-        await createCluster({
-          organizationId,
-          clusterRequest: {
-            name: generalData.name,
-            description: generalData.description,
-            region: generalData.region,
-            cloud_provider: generalData.cloud_provider,
-            kubernetes: 'PARTIALLY_MANAGED',
-            production: generalData.production,
-            features: [],
-            cloud_provider_credentials,
-            infrastructure_charts_parameters: resourcesData?.infrastructure_charts_parameters,
-          },
+        showNotificationPermissionModal(false, async () => {
+          const cluster = await createCluster({
+            organizationId,
+            clusterRequest: {
+              name: generalData.name,
+              description: generalData.description,
+              region: generalData.region,
+              cloud_provider: generalData.cloud_provider,
+              kubernetes: 'PARTIALLY_MANAGED',
+              production: generalData.production,
+              features: [],
+              cloud_provider_credentials,
+              infrastructure_charts_parameters: resourcesData?.infrastructure_charts_parameters,
+            },
+          })
+          // TODO REMI: Check
+          trackClusterInstall(cluster.id, cluster.name)
         })
-
-        navigate(CLUSTERS_URL(organizationId))
       } catch (e) {
         console.error(e)
       }
@@ -350,20 +369,23 @@ export function StepSummaryFeature() {
         })
 
       try {
-        const cluster = await createCluster({
-          organizationId,
-          clusterRequest,
-        })
-        await editCloudProviderInfo({
-          organizationId,
-          clusterId: cluster.id,
-          cloudProviderInfoRequest: cloud_provider_credentials,
-        })
+        showNotificationPermissionModal(false, async () => {
+          const cluster = await createCluster({
+            organizationId,
+            clusterRequest,
+          })
+          // TODO REMI: Check
+          trackClusterInstall(cluster.id, cluster.name)
+          await editCloudProviderInfo({
+            organizationId,
+            clusterId: cluster.id,
+            cloudProviderInfoRequest: cloud_provider_credentials,
+          })
 
-        if (withDeploy) {
-          await deployCluster({ clusterId: cluster.id, organizationId })
-        }
-        navigate(CLUSTERS_URL(organizationId))
+          if (withDeploy) {
+            await deployCluster({ clusterId: cluster.id, organizationId })
+          }
+        })
       } catch (e) {
         console.error(e)
       }

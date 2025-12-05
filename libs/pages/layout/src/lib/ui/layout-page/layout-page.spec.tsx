@@ -3,17 +3,22 @@ import { IntercomProvider } from 'react-use-intercom'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import LayoutPage, { type LayoutPageProps } from './layout-page'
 
+// Override global mocks with test-specific values
 jest.mock('@qovery/domains/clusters/feature', () => {
   return {
     ...jest.requireActual('@qovery/domains/clusters/feature'),
-    useClusterStatuses: () => ({
+    useClusterStatuses: jest.fn(() => ({
       data: [
         {
           cluster_id: '0000-0000-0000-0000',
           status: 'INVALID_CREDENTIALS',
         },
       ],
-    }),
+      isLoading: false,
+      isFetching: false,
+      refetch: jest.fn(),
+    })),
+    useClusterInstallNotifications: jest.fn(() => undefined),
   }
 })
 
@@ -29,9 +34,14 @@ describe('LayoutPage', () => {
     topBar: false,
   }
 
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(renderComponent({ ...props }))
+    const { baseElement, unmount } = renderWithProviders(renderComponent({ ...props }))
     expect(baseElement).toBeTruthy()
+    unmount()
   })
 
   it('should have cluster deployment error banner', () => {
@@ -45,7 +55,8 @@ describe('LayoutPage', () => {
       },
     ]
 
-    renderWithProviders(renderComponent({ ...props }))
+    const { unmount } = renderWithProviders(renderComponent({ ...props }))
     screen.getByText('Check the credentials configuration')
+    unmount()
   })
 })

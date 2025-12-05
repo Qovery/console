@@ -28,6 +28,8 @@ import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-down
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
 import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-cluster'
 
+export const SHOW_SELF_MANAGED_GUIDE_KEY = 'show-self-managed-guide'
+
 function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatus }) {
   const { openModalConfirmation } = useModalConfirmation()
   const { openModal } = useModal()
@@ -263,7 +265,6 @@ export interface ClusterActionToolbarProps {
 export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionToolbarProps) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const showSelfManagedGuideKey = 'show-self-managed-guide'
   const [searchParams, setSearchParams] = useSearchParams()
   const { openModal, closeModal } = useModal()
   const { data: runningStatus } = useClusterRunningStatus({
@@ -282,7 +283,7 @@ export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionTo
           cluster={cluster}
           type={type}
           onClose={() => {
-            searchParams.delete(showSelfManagedGuideKey)
+            searchParams.delete(SHOW_SELF_MANAGED_GUIDE_KEY)
             setSearchParams(searchParams)
             closeModal()
           }}
@@ -291,9 +292,9 @@ export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionTo
     })
 
   useEffect(() => {
-    const bool = searchParams.has(showSelfManagedGuideKey) && cluster.kubernetes === 'SELF_MANAGED'
+    const bool = searchParams.has(SHOW_SELF_MANAGED_GUIDE_KEY) && cluster.kubernetes === 'SELF_MANAGED'
     if (bool) {
-      searchParams.delete(showSelfManagedGuideKey)
+      searchParams.delete(SHOW_SELF_MANAGED_GUIDE_KEY)
       setSearchParams(searchParams)
       openInstallationGuideModal()
     }
