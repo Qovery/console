@@ -109,15 +109,11 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
           className={twMerge(
             'h-full border-r border-neutral-250 transition-all duration-100',
             isCustomVariable(variable) && 'hover:bg-neutral-100',
-            (isCellFocused('key') || isRowSelected(variable.id)) && 'bg-neutral-150 hover:bg-neutral-150'
+            (isCellFocused('key') || isRowSelected(variable.id)) && 'bg-neutral-150 hover:bg-neutral-150',
+            errors.get(variable.id)?.field === 'key' && 'border border-red-500'
           )}
         >
-          <div
-            className={twMerge(
-              'flex h-full w-full items-center border border-transparent',
-              errors.get(variable.id) && 'border-red-500'
-            )}
-          >
+          <div className="flex h-full w-full items-center">
             {variable.isNew ? (
               <input
                 name="key"
@@ -154,8 +150,8 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 </span>
               </Tooltip>
             )}
-            {errors.get(variable.id) && (
-              <Tooltip content={errors.get(variable.id)}>
+            {errors.get(variable.id)?.field === 'key' && (
+              <Tooltip content={errors.get(variable.id)?.message}>
                 <div className="mr-4">
                   <Icon iconName="circle-exclamation" iconStyle="regular" className="text-red-500" />
                 </div>
@@ -165,7 +161,10 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
         </div>
         {/* Variable value cell */}
         <div
-          className="group relative flex h-full min-h-[44px] items-center border-r border-neutral-250"
+          className={twMerge(
+            'group relative flex h-full min-h-[44px] items-center border-r border-neutral-250',
+            errors.get(variable.id)?.field === 'value' && 'border border-red-500'
+          )}
           onMouseEnter={() => {
             setIsCellHovered(true)
           }}
@@ -261,6 +260,13 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 >
                   <Icon iconName="rotate-left" iconStyle="regular" />
                 </button>
+              )}
+              {errors.get(variable.id)?.field === 'value' && (
+                <Tooltip content={errors.get(variable.id)?.message}>
+                  <span className="px-1">
+                    <Icon iconName="circle-exclamation" iconStyle="regular" className="text-red-500" />
+                  </span>
+                </Tooltip>
               )}
             </div>
           </div>
