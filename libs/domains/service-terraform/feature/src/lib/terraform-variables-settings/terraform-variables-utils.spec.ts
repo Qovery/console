@@ -1,47 +1,47 @@
 import { type TerraformVariableDefinition } from 'qovery-typescript-axios'
 import { type UIVariable } from './terraform-variables-context'
-import { buildDescriptionByKey, isVariableChanged } from './terraform-variables-utils'
+import { buildMetadataByKey, isVariableChanged } from './terraform-variables-utils'
 
 describe('Terraform variables utility functions', () => {
-  describe('buildDescriptionByKey', () => {
+  describe('buildMetadataByKey', () => {
     it('should return an empty object when variablesResponse is undefined', () => {
-      expect(buildDescriptionByKey(undefined)).toEqual({})
+      expect(buildMetadataByKey(undefined)).toEqual({})
     })
 
     it('should return an empty object when variablesResponse is an empty array', () => {
-      expect(buildDescriptionByKey([])).toEqual({})
+      expect(buildMetadataByKey([])).toEqual({})
     })
 
-    it('should map variable keys to their descriptions', () => {
-      const variables: TerraformVariableDefinition[] = [
-        { key: 'aws_region', description: 'The AWS region to deploy to' },
-        { key: 'instance_type', description: 'EC2 instance type' },
-      ]
-      expect(buildDescriptionByKey(variables)).toEqual({
-        aws_region: 'The AWS region to deploy to',
-        instance_type: 'EC2 instance type',
+    it('should map variable keys to their metadata', () => {
+      const variables = [
+        { key: 'aws_region', description: 'The AWS region to deploy to', nullable: false },
+        { key: 'instance_type', description: 'EC2 instance type', nullable: true },
+      ] as TerraformVariableDefinition[]
+      expect(buildMetadataByKey(variables)).toEqual({
+        aws_region: { description: 'The AWS region to deploy to', nullable: false },
+        instance_type: { description: 'EC2 instance type', nullable: true },
       })
     })
 
-    it('should handle variables without descriptions', () => {
-      const variables: TerraformVariableDefinition[] = [
+    it('should handle variables without descriptions and default nullable to true', () => {
+      const variables = [
         { key: 'aws_region', description: 'The AWS region' },
-        { key: 'instance_type' }, // no description
-      ]
-      expect(buildDescriptionByKey(variables)).toEqual({
-        aws_region: 'The AWS region',
-        instance_type: undefined,
+        { key: 'instance_type' }, // no description, no nullable
+      ] as TerraformVariableDefinition[]
+      expect(buildMetadataByKey(variables)).toEqual({
+        aws_region: { description: 'The AWS region', nullable: true },
+        instance_type: { description: undefined, nullable: true },
       })
     })
 
     it('should filter out variables without keys', () => {
-      const variables: TerraformVariableDefinition[] = [
-        { key: 'valid_key', description: 'Valid description' },
+      const variables = [
+        { key: 'valid_key', description: 'Valid description', nullable: false },
         { description: 'No key variable' } as TerraformVariableDefinition, // missing key
         { key: '', description: 'Empty key' }, // empty key (falsy)
-      ]
-      expect(buildDescriptionByKey(variables)).toEqual({
-        valid_key: 'Valid description',
+      ] as TerraformVariableDefinition[]
+      expect(buildMetadataByKey(variables)).toEqual({
+        valid_key: { description: 'Valid description', nullable: false },
       })
     })
   })

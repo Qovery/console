@@ -25,7 +25,7 @@ import {
 } from '@qovery/domains/organizations/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { type TerraformGeneralData } from './terraform-configuration-settings/terraform-configuration-settings'
-import { buildDescriptionByKey, isCustomVariable, isVariableChanged } from './terraform-variables-utils'
+import { buildMetadataByKey, isCustomVariable, isVariableChanged } from './terraform-variables-utils'
 
 export type UIVariable = {
   id: string
@@ -41,6 +41,8 @@ export type UIVariable = {
   // metadata
   isNew?: boolean // created by user in UI (always treated as changed)
   description?: string
+  // whether the variable accepts null values (false = required)
+  nullable?: boolean
 }
 
 export type TfVarsFile = TfVarsFileResponse & {
@@ -256,9 +258,9 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     )
   }, [variablesResponse, filesVars])
 
-  // Separate lookup for descriptions to ensures descriptions are preserved
+  // Separate lookup for metadata (description, nullable) to ensure they are preserved
   // even when variables are overridden by tfvars files or manual overrides
-  const descriptionByKey = useMemo(() => buildDescriptionByKey(variablesResponse), [variablesResponse])
+  const metadataByKey = useMemo(() => buildMetadataByKey(variablesResponse), [variablesResponse])
 
   // initialVars regroups variables from the git repo and the service's tf_vars. It is used to populate the initial state of the variables. Each variable key must be unique. If a variable key is present in both the git repo and the service's tf_vars, the value from the service's tf_vars is used.
   const initialVars: UIVariable[] = useMemo(() => {
@@ -281,7 +283,9 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       const value = 'value' in variable ? variable.value ?? '' : 'default' in variable ? variable.default ?? '' : ''
       const secret =
         'sensitive' in variable ? variable.sensitive : 'secret' in variable ? Boolean(variable.secret) : false
-      const description = descriptionByKey[variable.key ?? '']
+      const metadata = metadataByKey[variable.key ?? '']
+      const description = metadata?.description
+      const nullable = metadata?.nullable ?? true
       uniqueVars.set(variable.key ?? '', {
         id: uuidv4(),
         key: variable.key ?? '',
@@ -293,10 +297,11 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
         secret,
         isNew: false,
         description,
+        nullable,
       })
     })
     return Array.from(uniqueVars.values())
-  }, [groupedInitialVars, variableByKey, descriptionByKey])
+  }, [groupedInitialVars, variableByKey, metadataByKey])
 
   const [vars, setVars] = useState<UIVariable[]>([])
 
@@ -319,9 +324,20 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const errors = useMemo(() => {
     const newErrors = new Map<string, string>()
     vars.forEach((v) => {
+      // Check for duplicate keys (only for new variables)
       const duplicate = vars.find((v2) => v.key === v2.key && v.id !== v2.id && v.isNew)
       if (duplicate) {
         newErrors.set(v.id, `Variable "${v.key}" already exists`)
+        return // Only show one error per variable
+      }
+
+      // Check for required field validation (nullable === false means required)
+      // Don't validate if secret is unchanged (user hasn't edited it yet)
+      const isEmpty = !v.value || v.value.trim() === ''
+      const isSecretUnchanged = v.secret && v.value === SECRET_UNCHANGED_VALUE
+
+      if (v.nullable === false && isEmpty && !isSecretUnchanged) {
+        newErrors.set(v.id, `Value required for "${v.key}"`)
       }
     })
     return newErrors
@@ -382,6 +398,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       originalValue: undefined,
       originalSecret: undefined,
       isNew: true,
+      nullable: true, // custom variables are nullable by default
     }
     setVars((prev) => [...prev, newVar])
   }, [])
