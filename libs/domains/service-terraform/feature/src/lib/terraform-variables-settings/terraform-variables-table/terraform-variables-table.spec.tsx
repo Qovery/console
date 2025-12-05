@@ -123,4 +123,51 @@ describe('TerraformVariablesTable', () => {
 
     expect(screen.getByText('Delete selected')).toBeInTheDocument()
   })
+
+  it('should display description icon with correct tooltip content when variable has a description', () => {
+    renderWithProviders(
+      <WrapperComponent
+        overrideValues={{
+          vars: [
+            {
+              id: 'variable-1',
+              key: 'variable-1',
+              value: 'value-1',
+              source: CUSTOM_SOURCE,
+              secret: false,
+              description: 'This is a test description',
+            },
+          ],
+        }}
+      >
+        <TerraformVariablesTable />
+      </WrapperComponent>
+    )
+
+    const descriptionIcon = screen.getByRole('img', { name: 'Variable description' })
+    expect(descriptionIcon).toBeInTheDocument()
+    expect(descriptionIcon).toHaveAttribute('data-tooltip-content', 'This is a test description')
+  })
+
+  it('should not display description icon when variable has no description', () => {
+    renderWithProviders(
+      <WrapperComponent
+        overrideValues={{
+          vars: [
+            {
+              id: 'variable-1',
+              key: 'variable-1',
+              value: 'value-1',
+              source: CUSTOM_SOURCE,
+              secret: false,
+            },
+          ],
+        }}
+      >
+        <TerraformVariablesTable />
+      </WrapperComponent>
+    )
+
+    expect(screen.queryByRole('img', { name: 'Variable description' })).not.toBeInTheDocument()
+  })
 })

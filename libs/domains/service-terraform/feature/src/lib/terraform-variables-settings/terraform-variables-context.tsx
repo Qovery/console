@@ -25,7 +25,7 @@ import {
 } from '@qovery/domains/organizations/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { type TerraformGeneralData } from './terraform-configuration-settings/terraform-configuration-settings'
-import { isCustomVariable, isVariableChanged } from './terraform-variables-utils'
+import { buildDescriptionByKey, isCustomVariable, isVariableChanged } from './terraform-variables-utils'
 
 export type UIVariable = {
   id: string
@@ -40,6 +40,7 @@ export type UIVariable = {
   originalSecret?: boolean
   // metadata
   isNew?: boolean // created by user in UI (always treated as changed)
+  description?: string
 }
 
 export type TfVarsFile = TfVarsFileResponse & {
@@ -255,6 +256,10 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     )
   }, [variablesResponse, filesVars])
 
+  // Separate lookup for descriptions to ensures descriptions are preserved
+  // even when variables are overridden by tfvars files or manual overrides
+  const descriptionByKey = useMemo(() => buildDescriptionByKey(variablesResponse), [variablesResponse])
+
   // initialVars regroups variables from the git repo and the service's tf_vars. It is used to populate the initial state of the variables. Each variable key must be unique. If a variable key is present in both the git repo and the service's tf_vars, the value from the service's tf_vars is used.
   const initialVars: UIVariable[] = useMemo(() => {
     const uniqueVars = new Map<string, UIVariable>()
@@ -276,6 +281,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       const value = 'value' in variable ? variable.value ?? '' : 'default' in variable ? variable.default ?? '' : ''
       const secret =
         'sensitive' in variable ? variable.sensitive : 'secret' in variable ? Boolean(variable.secret) : false
+      const description = descriptionByKey[variable.key ?? '']
       uniqueVars.set(variable.key ?? '', {
         id: uuidv4(),
         key: variable.key ?? '',
@@ -286,10 +292,11 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
         source,
         secret,
         isNew: false,
+        description,
       })
     })
     return Array.from(uniqueVars.values())
-  }, [groupedInitialVars, variableByKey])
+  }, [groupedInitialVars, variableByKey, descriptionByKey])
 
   const [vars, setVars] = useState<UIVariable[]>([])
 
