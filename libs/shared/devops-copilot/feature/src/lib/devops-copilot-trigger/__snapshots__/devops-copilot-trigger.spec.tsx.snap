@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`DevopsCopilotTrigger should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      data-testid="devops-copilot-panel"
+      style="display: none;"
+    >
+      <button>
+        Close
+      </button>
+    </div>
+  </div>
+</body>
+`;

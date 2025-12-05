@@ -20,10 +20,26 @@ export const RenderMarkdown: FC<Props> = ({ children, ...props }) => (
   <Markdown
     remarkPlugins={[remarkGfm]}
     components={{
-      h1: ({ node, ...props }) => <h1 className="my-3 text-2xl font-bold" {...props} />,
-      h2: ({ node, ...props }) => <h2 className="my-3 text-xl font-semibold" {...props} />,
-      h3: ({ node, ...props }) => <h3 className="my-2 text-lg font-medium" {...props} />,
-      h4: ({ node, ...props }) => <h4 className="my-2 text-base font-medium" {...props} />,
+      h1: ({ node, children, ...props }) => (
+        <h1 className="my-3 text-2xl font-bold" {...props}>
+          {children}
+        </h1>
+      ),
+      h2: ({ node, children, ...props }) => (
+        <h2 className="my-3 text-xl font-semibold" {...props}>
+          {children}
+        </h2>
+      ),
+      h3: ({ node, children, ...props }) => (
+        <h3 className="my-2 text-lg font-medium" {...props}>
+          {children}
+        </h3>
+      ),
+      h4: ({ node, children, ...props }) => (
+        <h4 className="my-2 text-base font-medium" {...props}>
+          {children}
+        </h4>
+      ),
       p: ({ node, ...props }) => <p className="my-3 leading-relaxed" {...props} />,
       ul: ({ node, ...props }) => <ul className="my-3 list-disc space-y-1 pl-6" {...props} />,
       ol: ({ node, ...props }) => <ol className="my-3 list-decimal space-y-1 pl-6" {...props} />,

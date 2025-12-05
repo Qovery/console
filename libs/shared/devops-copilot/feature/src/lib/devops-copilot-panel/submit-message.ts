@@ -1,40 +1,29 @@
-import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
-import { type AnyService } from '@qovery/domains/services/data-access'
 import { mutations } from '@qovery/shared/devops-copilot/data-access'
-
-type Context = {
-  organization?: Organization
-  cluster?: Cluster
-  project?: Project
-  environment?: Environment
-  service?: AnyService
-  deployment?:
-    | {
-        execution_id?: string
-      }
-    | undefined
-}
+import type { DevopsCopilotContext } from './devops-copilot-panel.types'
 
 export const submitMessage = async (
   userSub: string,
   message: string,
   token: string,
   threadId?: string,
-  context?: Context | null,
+  context?: DevopsCopilotContext | null,
   onStream?: (chunk: string) => void,
   signal?: AbortSignal
 ): Promise<{ id: string; messageId: string } | null> => {
   try {
-    // Ensure we have an organization ID
     const organizationId = context?.organization?.id
     if (!organizationId) {
       throw new Error('Organization ID is required but not provided in context')
     }
 
-    // First, create a new thread
     let _threadId = threadId
     if (!threadId) {
-      const response = await mutations.addThread({ userSub, organizationId, message })
+      const response = await mutations.addThread({
+        userSub,
+        organizationId,
+        message,
+        readOnly: context?.readOnly ?? true,
+      })
       const responseJson = response.data
       _threadId = responseJson.id
     }
@@ -43,7 +32,6 @@ export const submitMessage = async (
       throw new Error('Failed to fetch thread')
     }
 
-    // Then, send the message to the thread
     const messageResponse = await mutations.addMessage({
       userSub,
       token,

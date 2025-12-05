@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
-import { type Thread } from '../../devops-copilot-panel/devops-copilot-panel'
+import { type Thread } from '../../devops-copilot-panel/devops-copilot-panel.types'
 import { useThread } from '../use-thread/use-thread'
 
 interface UseCurrentThreadOptions {
