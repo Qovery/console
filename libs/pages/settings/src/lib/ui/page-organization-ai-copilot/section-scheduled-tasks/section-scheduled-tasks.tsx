@@ -1,15 +1,5 @@
 import { type RecurringTask } from '@qovery/shared/devops-copilot/data-access'
-import {
-  Badge,
-  BlockContent,
-  Button,
-  Heading,
-  Icon,
-  IconAwesomeEnum,
-  LoaderSpinner,
-  Section,
-  useModal,
-} from '@qovery/shared/ui'
+import { Badge, BlockContent, Button, Heading, Icon, LoaderSpinner, Section, useModal } from '@qovery/shared/ui'
 
 export type { RecurringTask }
 
@@ -70,6 +60,7 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
                     variant="surface"
                     color="neutral"
                     size="md"
+                    title="Delete task"
                     onClick={() => {
                       openModal({
                         content: (

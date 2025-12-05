@@ -22,22 +22,10 @@ export function useVoteHandler({ thread, setThread, userId, withContext, context
       setThread(updatedThread)
 
       try {
-        const response = await submitVote(
-          userId,
-          messageId,
-          vote,
-          withContext ? context : { organization: context.organization }
-        )
+        await submitVote(userId, messageId, vote, withContext ? context : { organization: context.organization })
 
-        if (!response) {
-          const updatedThread = thread.map((msg: Message) =>
-            msg.id === messageId ? { ...msg, vote: currentVote } : msg
-          )
-          setThread(updatedThread)
-        } else {
-          if (nextVote) {
-            toast(ToastEnum.SUCCESS, `Message successfully ${nextVote === 'upvote' ? 'upvoted' : 'downvoted'}`)
-          }
+        if (nextVote) {
+          toast(ToastEnum.SUCCESS, `Message successfully ${nextVote === 'upvote' ? 'upvoted' : 'downvoted'}`)
         }
       } catch (error) {
         console.error('Error sending vote:', error)
