@@ -51,6 +51,7 @@ function buildValueOptions(queryParams: DecodedValueMap<typeof queryParamsServic
 }
 
 function buildQueryParams(value: string) {
+  console.log('value', value)
   const filterRegex = /(\w+)[:]([^\s]*)/g
   const matches = value.match(filterRegex)
   const queryParams: Omit<DecodedValueMap<typeof queryParamsServiceLogs>, 'startDate' | 'endDate'> = {
@@ -152,6 +153,7 @@ export function SearchServiceLogs({
   const handleChange = useCallback(
     (options: Option[]) => {
       setOptions(options)
+      console.log('options', options)
       const query = buildQueryParams(options.map((option) => option.value).join(' '))
       setQueryParams(query)
       if (queryParams.startDate || queryParams.endDate || queryParams.mode === 'history') {
