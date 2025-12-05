@@ -13,9 +13,8 @@ const Wrapper = (props: Omit<StepProjectProps, 'control'>) => {
 
 describe('StepProject', () => {
   it('should render successfully', () => {
-    const authLogout = jest.fn()
     const onSubmit = jest.fn()
-    const { baseElement } = render(<Wrapper authLogout={authLogout} onSubmit={onSubmit} />)
+    const { baseElement } = render(<Wrapper onSubmit={onSubmit} />)
 
     expect(baseElement).toBeTruthy()
   })

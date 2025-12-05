@@ -1,107 +1,252 @@
-import { useForm } from 'react-hook-form'
+import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
+import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
+import { PlanEnum, type SignUpRequest } from 'qovery-typescript-axios'
+import { type FormEvent, useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
-import { type Value } from '@qovery/shared/interfaces'
-import { ONBOARDING_PROJECT_URL, ONBOARDING_THANKS_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { useAuth } from '@qovery/shared/auth'
+import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { ExternalLink, Icon, toastError, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { loadChargebee } from '@qovery/shared/util-payment'
+import { type SerializedError } from '@qovery/shared/utils'
+import PlanCard from '../../ui/plan-card/plan-card'
 import { StepMore } from '../../ui/step-more/step-more'
+import { ContextOnboarding } from '../container/container'
 
-const dataQuestions: Value[] = [
+const PLANS = [
   {
-    label: 'Spin up testing/dev/QA environments',
-    value: 'i-want-to-easily-spin-up-testing-dev-qa-environments',
+    name: PlanEnum.USER_2025,
+    title: 'User plan',
+    text: 'Perfect for small team',
+    price: 299,
+    list: [
+      'Deploy on your own cloud',
+      'Include 2 users',
+      'Include 1 managed cluster',
+      'Include 1,000 deployment minutes',
+      'Standard support',
+    ],
   },
   {
-    label: 'Simplify my deployment pipeline',
-    value: 'i-want-to-simplify-my-deployment-pipeline',
+    name: PlanEnum.TEAM_2025,
+    title: 'Team plan',
+    text: 'Ideal for teams',
+    price: 899,
+    list: [
+      'Deploy on your own cloud',
+      'Include 10 users',
+      'Include 2 managed cluster',
+      'Include 5,000 deployment minutes',
+      'Standard support',
+    ],
   },
   {
-    label: 'Automate my deployment pipeline',
-    value: 'i-want-to-automate-my-deployment-pipeline',
+    name: PlanEnum.BUSINESS_2025,
+    title: 'Business plan',
+    text: 'For growing businesses',
+    price: 2099,
+    list: [
+      'Deploy on your own cloud',
+      'Include 30 users',
+      'Include 3 managed cluster',
+      'Include 10,000 deployment minutes',
+      'Business support with SLAs',
+    ],
   },
   {
-    label: 'Deploy my new project',
-    value: 'i-want-to-easily-deploy-my-new-project',
-  },
-  {
-    label: 'Migrate my apps from Heroku',
-    value: 'i-want-to-easily-migrate-my-apps-from-heroku',
-  },
-  {
-    label: 'Find a better alternative to Heroku',
-    value: 'i-want-to-find-a-better-alternative-to-heroku',
-  },
-  {
-    label: 'Spin up and manage my Kubernetes cluster',
-    value: 'i-want-to-easily-spin-up-and-manage-my-kubernetes-cluster',
-  },
-  {
-    label: 'Deploy my apps on my Kubernetes cluster',
-    value: 'i-want-to-easily-deploy-my-apps-on-my-kubernetes-cluster',
-  },
-  {
-    label: 'Other',
-    value: 'other',
+    name: PlanEnum.ENTERPRISE_2025,
+    title: 'Enterprise plan',
+    text: 'Tailored for your organization',
+    price: 'custom' as const,
+    list: ['All BUSINESS features', 'Deploy on-premise or private cloud', 'Custom limits', 'Custom support'],
   },
 ]
 
 export function OnboardingMore() {
-  useDocumentTitle('Onboarding Tell us more - Qovery')
+  useDocumentTitle('Onboarding Free trial activation - Qovery')
 
   const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
+  const { openModal, closeModal } = useModal()
+  const cardRef = useRef<FieldContainer>(null)
+  const [cbInstance, setCbInstance] = useState<CbInstance | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isCardReady, setIsCardReady] = useState(false)
+  const { selectedPlan, setContextValue } = useContext(ContextOnboarding)
+  const { authLogout } = useAuth()
+  const { data: organizations = [] } = useOrganizations()
+  const [backButton, setBackButton] = useState<boolean>(false)
 
-  const { handleSubmit, control, watch } = useForm<{
-    user_questions?: string
-    qovery_usage: string
-    qovery_usage_other?: string
-    where_to_deploy?: string
-  }>({
-    defaultValues: {
-      user_questions: userSignUp?.user_questions ?? undefined,
-      qovery_usage: userSignUp?.qovery_usage,
-      qovery_usage_other: userSignUp?.qovery_usage_other ?? undefined,
-      where_to_deploy: userSignUp?.qovery_usage_other ?? undefined,
-    },
-  })
   const navigate = useNavigate()
-  const displayQoveryUsageOther = watch('qovery_usage') === 'other'
+  const shouldSkipBilling = userSignUp?.dx_auth === true
+  const plan = PLANS.find((plan) => plan.name === selectedPlan) ?? PLANS[0]
+  const selectablePlans = PLANS.filter((planOption) => planOption.name !== PlanEnum.ENTERPRISE_2025)
 
-  const onSubmit = handleSubmit(async (data) => {
-    if (!userSignUp) return
+  useEffect(() => {
+    if (shouldSkipBilling) {
+      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
+    }
+  }, [navigate, shouldSkipBilling])
 
-    if (data) {
-      // reset qovery usage other
-      if (data['qovery_usage'] !== 'other') {
-        delete data['qovery_usage_other']
-      }
+  useEffect(() => {
+    let mounted = true
 
-      try {
-        await createUserSignUp({
-          ...userSignUp,
-          ...data,
-        })
-        const { data: newUserSignUp } = await refetchUserSignUp()
-
-        if (newUserSignUp?.dx_auth) {
-          navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
-        } else if (!userSignUp?.dx_auth) {
-          // redirect to Thanks page if user not authorized by the dx team
-          // dx_auth must be updated in the bdd
-          navigate(`${ONBOARDING_URL}${ONBOARDING_THANKS_URL}`)
-        }
-      } catch (error) {
-        console.error(error)
+    if (shouldSkipBilling) {
+      return () => {
+        mounted = false
       }
     }
-  })
+
+    const initializeChargebee = async () => {
+      try {
+        const instance = await loadChargebee()
+
+        if (!mounted) {
+          return
+        }
+
+        setCbInstance(instance)
+      } catch (error) {
+        console.error('Failed to initialize Chargebee:', error)
+      }
+    }
+
+    initializeChargebee()
+
+    return () => {
+      mounted = false
+    }
+  }, [shouldSkipBilling])
+
+  useEffect(() => {
+    async function fetchOrganizations() {
+      if (organizations.length === 0) {
+        setBackButton(false)
+      } else {
+        setBackButton(true)
+      }
+    }
+    fetchOrganizations()
+  }, [organizations])
+
+  if (shouldSkipBilling) {
+    return null
+  }
+
+  const handlePlanSelect = (planName: PlanEnum) => {
+    setContextValue?.({ selectedPlan: planName })
+    closeModal()
+  }
+
+  const openPlanSelectionModal = () => {
+    openModal({
+      content: (
+        <div className="flex h-full flex-col p-8">
+          <div>
+            <h3 className="mb-1 text-lg text-neutral-400">Change your plan</h3>
+            <p className="mb-6 text-sm text-neutral-350">Choose the plan that suits you the best.</p>
+          </div>
+          <div className="mb-8 flex flex-col gap-5 md:flex-row">
+            {selectablePlans.map((planOption) => (
+              <div key={planOption.name} className="flex-1">
+                <PlanCard {...planOption} loading="" onClick={() => handlePlanSelect(planOption.name)} />
+              </div>
+            ))}
+          </div>
+          <div className="mt-auto flex items-center justify-between">
+            <p className="text-sm text-neutral-400">
+              You have specific needs? Book a demo with us and unlock a trial that truly suits you.
+            </p>
+            <ExternalLink
+              href="https://meetings-eu1.hubspot.com/hakob-hakobian/free-trial-contact-sales"
+              color="brand"
+              withIcon={false}
+              className="gap-1 text-sm font-semibold"
+            >
+              Book a demo
+              <Icon name="icon-solid-chevron-right" className="text-xs" />
+            </ExternalLink>
+          </div>
+        </div>
+      ),
+      options: { fullScreen: true },
+    })
+  }
+
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    if (shouldSkipBilling) {
+      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
+      return
+    }
+
+    if (!userSignUp) return
+    if (!cardRef.current || !isCardReady || !cbInstance) return
+
+    setIsSubmitting(true)
+
+    try {
+      const tokenizedCard = await cardRef.current.tokenize({})
+
+      if (!tokenizedCard.token) {
+        throw new Error('No token returned from Chargebee')
+      }
+
+      setContextValue?.({
+        cardToken: tokenizedCard.token,
+        cardLast4: tokenizedCard.card?.last4 ?? null,
+        cardExpiryMonth: tokenizedCard.card?.expiry_month ?? null,
+        cardExpiryYear: tokenizedCard.card?.expiry_year ?? null,
+      })
+
+      const hasRequiredSignUpFields =
+        !!userSignUp?.first_name && !!userSignUp?.last_name && !!userSignUp?.user_email && !!userSignUp?.qovery_usage
+
+      if (hasRequiredSignUpFields) {
+        const signUpPayload: SignUpRequest = {
+          first_name: userSignUp.first_name,
+          last_name: userSignUp.last_name,
+          user_email: userSignUp.user_email,
+          type_of_use: userSignUp.type_of_use,
+          qovery_usage: userSignUp.qovery_usage,
+          company_name: userSignUp.company_name ?? undefined,
+          company_size: userSignUp.company_size ?? undefined,
+          user_role: userSignUp.user_role ?? undefined,
+          qovery_usage_other: userSignUp.qovery_usage_other ?? undefined,
+          user_questions: userSignUp.user_questions ?? undefined,
+          current_step: 'billing',
+          dx_auth: userSignUp.dx_auth ?? undefined,
+          infrastructure_hosting: userSignUp.infrastructure_hosting ?? undefined,
+        }
+
+        await createUserSignUp(signUpPayload)
+      }
+
+      await refetchUserSignUp()
+      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
+    } catch (error) {
+      console.error(error)
+      toastError(error as unknown as SerializedError)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <StepMore
-      dataQuestions={dataQuestions}
-      control={control}
       onSubmit={onSubmit}
-      displayQoveryUsageOther={displayQoveryUsageOther}
+      selectedPlan={plan}
+      onChangePlan={openPlanSelectionModal}
+      authLogout={authLogout}
+      backButton={backButton}
+      cbInstance={cbInstance}
+      cardRef={cardRef}
+      onCardReady={() => setIsCardReady(true)}
+      isCardReady={isCardReady}
+      isSubmitting={isSubmitting}
     />
   )
 }

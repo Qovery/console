@@ -185,7 +185,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     threads = [],
     error: errorThreads,
     isLoading: isLoadingThreads,
-    refetchThreads: refetchThreads,
+    refetchThreads,
   } = useThreads({ organizationId: context?.organization?.id ?? '', owner: user?.sub ?? '' })
 
   const { thread, setThread } = useThreadState({
@@ -894,7 +894,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   <div className="relative top-2 mt-auto">
                     <div
                       className="group flex cursor-pointer items-center gap-2"
-                      onClick={() => setShowPlans((prev) => ({ ...prev, ['temp']: !prev['temp'] }))}
+                      onClick={() => setShowPlans((prev) => ({ ...prev, temp: !prev['temp'] }))}
                     >
                       <AnimatedGradientText className="w-fit text-ssm font-medium">{loadingText}</AnimatedGradientText>
                       {plan.filter((p) => p.messageId === 'temp').length > 0 && (
@@ -929,7 +929,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     {plan.filter((p) => p.messageId === 'temp').length > 0 && (
                       <div
                         className="plan-toggle group mt-2 flex cursor-pointer items-center gap-2"
-                        onClick={() => setShowPlans((prev) => ({ ...prev, ['temp']: !prev['temp'] }))}
+                        onClick={() => setShowPlans((prev) => ({ ...prev, temp: !prev['temp'] }))}
                       >
                         <div className="w-fit text-ssm font-medium italic text-gray-600">Plan steps</div>
                         <Icon

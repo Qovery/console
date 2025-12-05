@@ -1,5 +1,6 @@
+import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import { render } from '__tests__/utils/setup-jest'
-import { useForm } from 'react-hook-form'
+import { type MutableRefObject } from 'react'
 import StepMore, { type StepMoreProps } from './step-more'
 
 describe('StepMore', () => {
@@ -7,25 +8,20 @@ describe('StepMore', () => {
 
   beforeEach(() => {
     props = {
-      dataQuestions: [{ label: 'some-label', value: 'some-value' }],
       onSubmit: jest.fn(),
-      displayQoveryUsageOther: false,
+      selectedPlan: {
+        title: 'User plan',
+        price: 299,
+      },
+      onChangePlan: jest.fn(),
+      authLogout: jest.fn(),
+      cbInstance: null,
+      cardRef: { current: null } as MutableRefObject<FieldContainer | null>,
+      onCardReady: jest.fn(),
+      isCardReady: false,
+      isSubmitting: false,
     }
-
-    const Wrapper = () => {
-      const { control } = useForm<{
-        user_questions?: string
-        qovery_usage: string
-        qovery_usage_other?: string
-        where_to_deploy?: string
-      }>()
-
-      props.control = control
-
-      return <StepMore {...(props as StepMoreProps)} />
-    }
-
-    render(<Wrapper />)
+    render(<StepMore {...(props as StepMoreProps)} />)
   })
 
   it('should render successfully', () => {
