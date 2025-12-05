@@ -4,7 +4,7 @@ import { type PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import {
-  FloatingDeploymentProgressCard,
+  ClusterDeploymentProgressCard,
   useActiveDeploymentClusters,
   useClusterInstallNotifications,
   useClusterStatuses,
@@ -201,8 +201,8 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
             )}
           </div>
         </div>
-        {showFloatingDeploymentCard && organizationId && deployingClusters.length > 0 && (
-          <FloatingDeploymentProgressCard organizationId={organizationId} clusters={deployingClusters} />
+        {showFloatingDeploymentCard && (
+          <ClusterDeploymentProgressCard organizationId={organizationId} clusters={deployingClusters} />
         )}
       </main>
     </>

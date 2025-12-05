@@ -41,7 +41,7 @@ export * from './lib/hooks/use-update-karpenter-private-fargate/use-update-karpe
 export * from './lib/hooks/use-cluster-running-status/use-cluster-running-status'
 export * from './lib/hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 export * from './lib/hooks/use-deployment-progress/use-deployment-progress'
-export * from './lib/cluster-deployment-progress/floating-deployment-progress-card'
+export * from './lib/cluster-deployment-progress/cluster-deployment-progress-card/cluster-deployment-progress-card'
 export * from './lib/cluster-deployment-progress/cluster-notification-permission-modal/cluster-notification-permission-modal'
 export * from './lib/cluster-deployment-progress/cluster-notification-permission-modal/use-cluster-install-notifications'
 export * from './lib/gpu-resources-settings/gpu-resources-settings'

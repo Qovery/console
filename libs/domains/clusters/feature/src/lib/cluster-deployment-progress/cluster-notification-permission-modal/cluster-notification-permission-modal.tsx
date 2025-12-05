@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CLUSTERS_GENERAL_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, InputToggle } from '@qovery/shared/ui'
@@ -26,6 +26,17 @@ export function ClusterNotificationPermissionModal({
   const [, setModalSeen] = useLocalStorage<boolean>(NOTIFICATION_MODAL_SEEN_KEY, false)
   const [isConfirming, setIsConfirming] = useState(false)
 
+  const navigateToClusters = useCallback(() => {
+    if (isSelfManaged) {
+      navigate({
+        pathname: CLUSTERS_URL(organizationId) + CLUSTERS_GENERAL_URL,
+        search: `?${SHOW_SELF_MANAGED_GUIDE_KEY}`,
+      })
+    } else {
+      navigate(CLUSTERS_URL(organizationId))
+    }
+  }, [navigate, organizationId, isSelfManaged])
+
   const handleConfirm = async () => {
     setModalSeen(true)
 
@@ -44,14 +55,7 @@ export function ClusterNotificationPermissionModal({
       setIsConfirming(false)
       onClose()
       await onComplete()
-      if (isSelfManaged) {
-        navigate({
-          pathname: CLUSTERS_URL(organizationId) + CLUSTERS_GENERAL_URL,
-          search: `?${SHOW_SELF_MANAGED_GUIDE_KEY}`,
-        })
-      } else {
-        navigate(CLUSTERS_URL(organizationId))
-      }
+      navigateToClusters()
     }
   }
 
@@ -90,9 +94,16 @@ export function ClusterNotificationPermissionModal({
           size="lg"
           variant="plain"
           color="neutral"
-          onClick={() => {
+          onClick={async () => {
             setModalSeen(true)
-            onClose()
+            try {
+              await onComplete()
+              navigateToClusters()
+            } catch (error) {
+              console.error(error)
+            } finally {
+              onClose()
+            }
           }}
         >
           Not now
