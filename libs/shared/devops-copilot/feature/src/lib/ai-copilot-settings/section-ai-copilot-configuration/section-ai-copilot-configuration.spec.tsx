@@ -124,7 +124,7 @@ describe('SectionAICopilotConfiguration', () => {
   })
 
   it('should show loading state on buttons when updating', () => {
-    const { container } = render(<SectionAICopilotConfiguration {...defaultProps} isUpdating={true} />)
+    render(<SectionAICopilotConfiguration {...defaultProps} isUpdating={true} />)
 
     const disableButton = screen.getByRole('button', { name: /disable/i })
     expect(disableButton).toBeInTheDocument()

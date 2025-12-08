@@ -1,12 +1,10 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Organization } from 'qovery-typescript-axios'
-import {
-  useAICopilotConfig,
-  useAICopilotRecurringTasks,
-  useDeleteAICopilotRecurringTask,
-  useToggleAICopilotRecurringTask,
-  useUpdateAICopilotConfig,
-} from '@qovery/shared/devops-copilot/feature'
+import { useAICopilotConfig } from '../hooks/use-ai-copilot-config/use-ai-copilot-config'
+import { useAICopilotRecurringTasks } from '../hooks/use-ai-copilot-recurring-tasks/use-ai-copilot-recurring-tasks'
+import { useDeleteAICopilotRecurringTask } from '../hooks/use-delete-ai-copilot-recurring-task/use-delete-ai-copilot-recurring-task'
+import { useToggleAICopilotRecurringTask } from '../hooks/use-toggle-ai-copilot-recurring-task/use-toggle-ai-copilot-recurring-task'
+import { useUpdateAICopilotConfig } from '../hooks/use-update-ai-copilot-config/use-update-ai-copilot-config'
 import SectionAICopilotConfiguration from './section-ai-copilot-configuration/section-ai-copilot-configuration'
 import SectionAICopilotOptIn from './section-ai-copilot-opt-in/section-ai-copilot-opt-in'
 import SectionScheduledTasks from './section-scheduled-tasks/section-scheduled-tasks'
