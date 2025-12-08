@@ -1,6 +1,6 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { type PropsWithChildren, useCallback, useState } from 'react'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { type PropsWithChildren, useCallback, useState } from 'react'
 import { type VariableScope } from '@qovery/domains/variables/data-access'
 import { Icon, InputSearch, Popover, Tooltip, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -30,7 +30,7 @@ export function DropdownVariable({
 }: DropdownVariableProps) {
   // Determine which scope to query based on provided props
   const parentIdToUse = serviceId || environmentId
-  const scopeToUse = (serviceId && scope) ? scope : 'ENVIRONMENT'
+  const scopeToUse = serviceId && scope ? scope : 'ENVIRONMENT'
 
   const { data: variables = [] } = useVariables({
     parentId: parentIdToUse,

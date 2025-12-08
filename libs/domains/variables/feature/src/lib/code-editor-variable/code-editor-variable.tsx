@@ -29,7 +29,7 @@ export function CodeEditorVariable({
   ...props
 }: CodeEditorVariableProps) {
   const parentIdToUse = serviceId || environmentId
-  const scopeToUse = (serviceId && scope) ? scope : 'ENVIRONMENT'
+  const scopeToUse = serviceId && scope ? scope : 'ENVIRONMENT'
 
   const { refetch: refetchVariables } = useVariables({
     parentId: parentIdToUse,
