@@ -1,4 +1,5 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { useNavigate } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type ReactNode, useRef, useState } from 'react'
 import { Icon, InputSearch, Popover, dropdownMenuItemVariants } from '@qovery/shared/ui'
@@ -17,6 +18,7 @@ interface BreadcrumbItemProps {
 }
 
 export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [open, setOpen] = useState(false)
   const firstItemRef = useRef<HTMLDivElement>(null)
@@ -72,7 +74,7 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
         <span className="flex items-center justify-between gap-1">
           <button
             type="button"
-            className="flex items-center gap-1.5 rounded text-sm font-medium text-neutral-subtle transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11"
+            className="focus-visible:outline-brand-11 flex items-center gap-1.5 rounded text-sm font-medium text-neutral-subtle transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2"
           >
             {item.prefix}
             {item.label}
@@ -82,7 +84,7 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
               type="button"
               className={twMerge(
                 clsx(
-                  'relative top-[1px] flex h-6 w-6 items-center justify-center rounded text-neutral-disabled transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
+                  'focus-visible:outline-brand-11 relative top-[1px] flex h-6 w-6 items-center justify-center rounded text-neutral-disabled transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2',
                   {
                     'text-neutral': open,
                   }
@@ -116,7 +118,10 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
                   {filteredItems.map((listItem) => (
                     <DropdownMenu.Item
                       key={listItem.id}
-                      onSelect={() => setOpen(false)}
+                      onSelect={() => {
+                        setOpen(false)
+                        navigate({ to: listItem.path })
+                      }}
                       className={twMerge(
                         dropdownMenuItemVariants({ color: 'brand' }),
                         'justify-between truncate last:mb-3'
