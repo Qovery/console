@@ -9,13 +9,13 @@ import {
 } from '@qovery/shared/devops-copilot/feature'
 import SectionAICopilotConfiguration from './section-ai-copilot-configuration/section-ai-copilot-configuration'
 import SectionAICopilotOptIn from './section-ai-copilot-opt-in/section-ai-copilot-opt-in'
-import SectionScheduledTasks, { type RecurringTask } from './section-scheduled-tasks/section-scheduled-tasks'
+import SectionScheduledTasks from './section-scheduled-tasks/section-scheduled-tasks'
 
-export interface PageOrganizationAICopilotProps {
+export interface AICopilotSettingsProps {
   organization?: Organization
 }
 
-export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps) {
+export function AICopilotSettings(props: AICopilotSettingsProps) {
   const { organization } = props
   const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot-config-panel')
 
@@ -84,4 +84,4 @@ export function PageOrganizationAICopilot(props: PageOrganizationAICopilotProps)
   )
 }
 
-export default PageOrganizationAICopilot
+export default AICopilotSettings

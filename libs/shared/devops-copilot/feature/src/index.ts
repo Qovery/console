@@ -6,3 +6,4 @@ export * from './lib/hooks/use-ai-copilot-recurring-tasks/use-ai-copilot-recurri
 export * from './lib/hooks/use-toggle-ai-copilot-recurring-task/use-toggle-ai-copilot-recurring-task'
 export * from './lib/hooks/use-delete-ai-copilot-recurring-task/use-delete-ai-copilot-recurring-task'
 export * from './lib/hooks/use-update-ai-copilot-config/use-update-ai-copilot-config'
+export * from './lib/ai-copilot-settings/ai-copilot-settings'
