@@ -49,7 +49,9 @@ export function IssueOverview() {
             <Table.Header>
               <Table.Row className="font-code text-xs">
                 <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Alert name</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Target</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="h-9 border-l border-neutral-250 font-normal text-neutral-350">
+                  Target
+                </Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Severity</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Age</Table.ColumnHeaderCell>
               </Table.Row>
@@ -62,17 +64,15 @@ export function IssueOverview() {
                 return (
                   <Table.Row key={alert.id}>
                     <Table.RowHeaderCell>
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="flex items-center gap-1.5 text-sm text-neutral-400">
-                          {alert.name}
+                      <div className="flex min-w-0 items-start justify-between gap-4">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-neutral-400">{alert.name}</p>
                           {alert.description && (
-                            <Tooltip content={alert.description}>
-                              <span>
-                                <Icon iconName="info-circle" iconStyle="regular" className="text-neutral-350" />
-                              </span>
-                            </Tooltip>
+                            <p className="truncate text-ssm font-normal text-neutral-350" title={alert.description}>
+                              {alert.description}
+                            </p>
                           )}
-                        </span>
+                        </div>
                         {isMuted && (
                           <Tooltip content="Alert is muted">
                             <Icon iconName="bell-slash" iconStyle="regular" className="text-xs text-neutral-350" />
@@ -80,7 +80,7 @@ export function IssueOverview() {
                         )}
                       </div>
                     </Table.RowHeaderCell>
-                    <Table.Cell className="h-11">
+                    <Table.Cell className="h-16 border-l border-neutral-250">
                       <Link
                         as="button"
                         radius="full"
@@ -111,10 +111,10 @@ export function IssueOverview() {
                         {alert.target.service?.name}
                       </Link>
                     </Table.Cell>
-                    <Table.Cell className="h-11">
+                    <Table.Cell className="h-16">
                       <SeverityIndicator severity={alert.severity} />
                     </Table.Cell>
-                    <Table.Cell className="h-11">{timeAgo(new Date(alert.starts_at ?? ''))}</Table.Cell>
+                    <Table.Cell className="h-16">{timeAgo(new Date(alert.starts_at ?? ''))}</Table.Cell>
                   </Table.Row>
                 )
               })}
