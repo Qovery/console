@@ -43,23 +43,14 @@ export function sortVariables(variables: VariableResponse[]): VariableResponse[]
   const withAliasOrOverride = variables.filter((sorted) => sorted.aliased_variable || sorted.overridden_variable)
 
   const final: VariableResponse[] = []
-  const addedAliases = new Set<string>()
 
   sortedAscii.map((el) => {
     final.push(el)
     withAliasOrOverride.some((elAliasOrOverride) => {
       if (elAliasOrOverride.aliased_variable?.key === el.key || elAliasOrOverride.overridden_variable?.key === el.key) {
         final.push(elAliasOrOverride)
-        addedAliases.add(elAliasOrOverride.id)
       }
     })
-  })
-
-  // Add orphaned aliases/overrides (e.g., aliases of BUILT_IN variables that aren't in the list)
-  withAliasOrOverride.forEach((elAliasOrOverride) => {
-    if (!addedAliases.has(elAliasOrOverride.id)) {
-      final.push(elAliasOrOverride)
-    }
   })
 
   return final

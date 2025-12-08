@@ -7,31 +7,11 @@ export interface ValuesOverrideYamlSettingProps {
   source: HelmRequestAllOfSource
   onSubmit: (value?: string) => void
   content?: string
-  environmentId?: string
-  projectId?: string
-  serviceId?: string
 }
 
-export function ValuesOverrideYamlSetting({
-  onSubmit,
-  content,
-  source,
-  environmentId: envIdProp,
-  projectId: projectIdProp,
-  serviceId: serviceIdProp,
-}: ValuesOverrideYamlSettingProps) {
+export function ValuesOverrideYamlSetting({ onSubmit, content, source }: ValuesOverrideYamlSettingProps) {
   const { openModal, closeModal } = useModal()
-  const {
-    environmentId: envIdParam = '',
-    projectId: projectIdParam = '',
-    serviceId: serviceIdParam = '',
-    applicationId = '',
-  } = useParams()
-
-  // Use props if provided, otherwise fall back to useParams
-  const environmentId = envIdProp || envIdParam
-  const projectId = projectIdProp || projectIdParam
-  const serviceId = serviceIdProp || serviceIdParam || applicationId
+  const { environmentId = '' } = useParams()
 
   const openModalValuesOverrideYaml = () => {
     openModal({
@@ -39,8 +19,6 @@ export function ValuesOverrideYamlSetting({
         <ValuesOverrideYamlModal
           content={content}
           environmentId={environmentId}
-          projectId={projectId}
-          serviceId={serviceId}
           source={source}
           onClose={closeModal}
           onSubmit={onSubmit}
