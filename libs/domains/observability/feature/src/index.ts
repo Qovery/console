@@ -13,6 +13,7 @@ export * from './lib/alerting/notification-channel-overview/notification-channel
 export * from './lib/alerting/issue-overview/issue-overview'
 export * from './lib/alerting/organization-alerting/organization-alerting'
 export * from './lib/util-alerting/generate-condition-description'
+export * from './lib/util-alerting/alert-type-guards'
 export * from './lib/hooks/use-edit-alert-rule/use-edit-alert-rule'
 export * from './lib/hooks/use-alert-rules/use-alert-rules'
 export * from './lib/hooks/use-environment/use-environment'
