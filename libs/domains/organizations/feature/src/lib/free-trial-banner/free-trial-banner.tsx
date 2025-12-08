@@ -8,7 +8,7 @@ export function FreeTrialBanner() {
   const { organizationId = '' } = useParams()
   const { pathname } = useLocation()
   const { data: currentCost } = useCurrentCost({ organizationId })
-  const { showChat, initChat } = useSupportChat()
+  const { showChat } = useSupportChat()
 
   const remainingTrialDays = currentCost?.remaining_trial_day
 
@@ -22,13 +22,8 @@ export function FreeTrialBanner() {
 
   const dayLabel = remainingTrialDays === 1 ? 'day' : 'days'
 
-  const onClick = () => {
-    initChat()
-    showChat()
-  }
-
   return (
-    <Banner color="brand" buttonIconRight="arrow-right" buttonLabel="Need help" onClickButton={onClick}>
+    <Banner color="brand" buttonIconRight="arrow-right" buttonLabel="Need help" onClickButton={() => showChat()}>
       Your free trial plan expires {remainingTrialDays} {dayLabel} from now. If you need help, please contact us.
     </Banner>
   )

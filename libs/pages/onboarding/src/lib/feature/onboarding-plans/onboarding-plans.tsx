@@ -7,7 +7,7 @@ import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { ExternalLink, Icon, toastError, useModal } from '@qovery/shared/ui'
+import { ExternalLink, Heading, Icon, Section, toastError, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { loadChargebee } from '@qovery/shared/util-payment'
 import { type SerializedError } from '@qovery/shared/utils'
@@ -120,15 +120,17 @@ export function OnboardingPlans() {
 
   const handlePlanSelect = (planName: PlanEnum) => {
     setContextValue?.({ selectedPlan: planName })
-    closeModal()
+    setTimeout(() => closeModal(), 200)
   }
 
   const openPlanSelectionModal = () => {
     openModal({
       content: (
-        <div className="flex h-full flex-col p-8">
+        <Section className="h-full p-8">
           <div>
-            <h3 className="mb-1 text-lg text-neutral-400">Change your plan</h3>
+            <Heading level={1} className="mb-1 text-neutral-400">
+              Change your plan
+            </Heading>
             <p className="mb-6 text-sm text-neutral-350">Choose the plan that suits you the best.</p>
           </div>
           <div className="mb-8 flex flex-col gap-5 md:flex-row">
@@ -145,14 +147,13 @@ export function OnboardingPlans() {
             <ExternalLink
               href="https://meetings-eu1.hubspot.com/hakob-hakobian/free-trial-contact-sales"
               color="brand"
-              withIcon={false}
+              withIcon
               className="gap-1 text-sm font-semibold"
             >
               Book a demo
-              <Icon name="icon-solid-chevron-right" className="text-xs" />
             </ExternalLink>
           </div>
-        </div>
+        </Section>
       ),
       options: { fullScreen: true },
     })
@@ -217,6 +218,8 @@ export function OnboardingPlans() {
       setIsSubmitting(false)
     }
   }
+
+  if (!cbInstance) return null
 
   return (
     <StepPlans

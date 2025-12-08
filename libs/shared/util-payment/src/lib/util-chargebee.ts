@@ -130,6 +130,28 @@ export interface ChargebeeTokenResult {
   }
 }
 
+export const fieldStyles = {
+  base: {
+    color: 'var(--color-neutral-400)',
+    fontWeight: '400',
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    fontSize: '14px',
+    fontSmoothing: 'antialiased',
+    '::placeholder': {
+      color: 'var(--color-neutral-350)',
+    },
+    ':focus': {
+      color: 'var(--color-neutral-400)',
+    },
+  },
+  invalid: {
+    color: 'var(--color-red-500)',
+    ':focus': {
+      color: 'var(--color-red-500)',
+    },
+  },
+}
+
 /**
  * Create and mount individual Chargebee field components for more control over layout
  * This creates separate iframe-based input fields for number, expiry, and CVV
@@ -161,28 +183,6 @@ export async function createIndividualCardFields(
 
   // Load the components module before creating components
   await cbInstance.load('components')
-
-  const fieldStyles = {
-    base: {
-      color: 'var(--color-neutral-400)',
-      fontWeight: '400',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      fontSize: '14px',
-      fontSmoothing: 'antialiased',
-      '::placeholder': {
-        color: 'var(--color-neutral-350)',
-      },
-      ':focus': {
-        color: 'var(--color-neutral-400)',
-      },
-    },
-    invalid: {
-      color: 'var(--color-red-500)',
-      ':focus': {
-        color: 'var(--color-red-500)',
-      },
-    },
-  }
 
   // Create card number field
   // Note: 'cardNumber', 'cardExpiry', 'cardCvv' are valid component types at runtime
@@ -249,6 +249,33 @@ export async function createIndividualCardFields(
   return combinedComponent
 }
 
+export const fieldCardStyles = {
+  base: {
+    color: 'var(--color-neutral-400)',
+    fontWeight: '400',
+    fontFamily: 'Roboto, Helvetica, sans-serif',
+    fontSize: '14px',
+    lineHeight: '1.25rem',
+    letterSpacing: '0.0025em',
+    fontSmoothing: 'antialiased',
+    '::placeholder': {
+      color: 'var(--color-neutral-350)',
+    },
+    ':focus': {
+      color: 'var(--color-neutral-400)',
+    },
+    ':hover': {
+      color: 'var(--color-neutral-400)',
+    },
+  },
+  invalid: {
+    color: 'var(--color-red-500)',
+    ':focus': {
+      color: 'var(--color-red-500)',
+    },
+  },
+}
+
 /**
  * Create and mount a Chargebee card component for secure tokenization
  * This creates iframe-based input fields that handle card data securely
@@ -268,32 +295,7 @@ export async function createCardComponent(containerId: string, currency = 'USD')
 
   const cardComponent = cbInstance.createComponent('card', {
     currency,
-    style: {
-      base: {
-        color: 'var(--color-neutral-400)',
-        fontWeight: '400',
-        fontFamily: 'Roboto, Helvetica, sans-serif',
-        fontSize: '14px',
-        lineHeight: '1.25rem',
-        letterSpacing: '0.0025em',
-        fontSmoothing: 'antialiased',
-        '::placeholder': {
-          color: 'var(--color-neutral-350)',
-        },
-        ':focus': {
-          color: 'var(--color-neutral-400)',
-        },
-        ':hover': {
-          color: 'var(--color-neutral-400)',
-        },
-      },
-      invalid: {
-        color: 'var(--color-red-500)',
-        ':focus': {
-          color: 'var(--color-red-500)',
-        },
-      },
-    },
+    style: fieldCardStyles,
     classes: {
       focus: 'chargebee-field-focus',
       invalid: 'chargebee-field-invalid',
