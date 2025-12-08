@@ -1,12 +1,11 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { TypeOfUseEnum } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
-import { ONBOARDING_MORE_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { ONBOARDING_PLANS_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { Icon } from '@qovery/shared/ui'
 import { StepPersonalize } from '../../ui/step-personalize/step-personalize'
 
@@ -103,16 +102,12 @@ export function FormUser() {
       company_name: userSignUp?.company_name ?? '',
       qovery_usage: userSignUp?.qovery_usage ?? undefined,
       qovery_usage_other: userSignUp?.qovery_usage_other ?? undefined,
-      type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.PERSONAL,
+      type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.WORK,
       infrastructure_hosting: userSignUp?.infrastructure_hosting ?? 'AWS',
     },
   })
 
-  useEffect(() => {
-    // Always set type_of_use to WORK since onboarding now targets company users only.
-    methods.register('type_of_use')
-    methods.setValue('type_of_use', userSignUp?.type_of_use ?? TypeOfUseEnum.WORK)
-  }, [methods, userSignUp?.type_of_use])
+  // methods.register('type_of_use')
 
   const onSubmit = methods.handleSubmit(async (data) => {
     if (!data) return
@@ -128,7 +123,7 @@ export function FormUser() {
         ...userSignUp,
         ...normalizedData,
       })
-      const nextStep = userSignUp?.dx_auth ? ONBOARDING_PROJECT_URL : ONBOARDING_MORE_URL
+      const nextStep = userSignUp?.dx_auth ? ONBOARDING_PROJECT_URL : ONBOARDING_PLANS_URL
       navigate(`${ONBOARDING_URL}${nextStep}`)
     } catch (error) {
       console.error(error)

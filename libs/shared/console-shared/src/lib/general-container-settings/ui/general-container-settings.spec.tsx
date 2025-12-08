@@ -57,18 +57,16 @@ describe('CreateGeneralContainer', () => {
   })
 
   it('should render inputs NOT available in the requests', async () => {
-    const { userEvent } = renderWithProviders(
+    const { debug, baseElement, userEvent } = renderWithProviders(
       wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />)
     )
     // Registry
     await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
 
     // Image name
-    const imageNameInput = screen.getByLabelText('Image name')
-    await userEvent.type(imageNameInput, 'my-custom-image')
-    await userEvent.click(await screen.findByText('Select "my-custom-image" - not found in registry'))
+    await userEvent.type(screen.getByLabelText('Image name'), 'my-custom-image')
+    await selectEvent.select(screen.getByLabelText('Image name'), ['Select "my-custom-image" - not found in registry'])
     // Image tag
-    const imageTagInput = await screen.findByLabelText('Image tag')
-    await userEvent.type(imageTagInput, '12.0.0')
+    await userEvent.type(screen.getByLabelText('Image tag'), '12.0.0')
   })
 })

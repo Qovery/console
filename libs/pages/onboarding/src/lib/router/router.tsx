@@ -1,11 +1,11 @@
 import {
-  ONBOARDING_MORE_URL,
   ONBOARDING_PERSONALIZE_URL,
+  ONBOARDING_PLANS_URL,
   ONBOARDING_PROJECT_URL,
   type Route,
 } from '@qovery/shared/routes'
-import { OnboardingMore } from '../feature/onboarding-more/onboarding-more'
 import { OnboardingPersonalize } from '../feature/onboarding-personalize/onboarding-personalize'
+import { OnboardingPlans } from '../feature/onboarding-plans/onboarding-plans'
 import { OnboardingProject } from '../feature/onboarding-project/onboarding-project'
 
 export const ROUTER_ONBOARDING: Route[] = [
@@ -14,8 +14,8 @@ export const ROUTER_ONBOARDING: Route[] = [
     component: <OnboardingPersonalize />,
   },
   {
-    path: ONBOARDING_MORE_URL,
-    component: <OnboardingMore />,
+    path: ONBOARDING_PLANS_URL,
+    component: <OnboardingPlans />,
   },
   {
     path: ONBOARDING_PROJECT_URL,

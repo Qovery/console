@@ -1,9 +1,9 @@
 import { render } from '__tests__/utils/setup-jest'
-import OnboardingMore from './onboarding-more'
+import OnboardingPlans from './onboarding-plans'
 
-describe('OnboardingMore', () => {
+describe('OnboardingPlans', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<OnboardingMore />)
+    const { baseElement } = render(<OnboardingPlans />)
     expect(baseElement).toBeTruthy()
   })
 })

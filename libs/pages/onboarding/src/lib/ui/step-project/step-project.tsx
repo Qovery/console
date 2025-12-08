@@ -1,6 +1,6 @@
 import { type Control, Controller } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { ONBOARDING_PLANS_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { Button, Icon, InputText } from '@qovery/shared/ui'
 
 export interface StepProjectProps {
@@ -67,13 +67,13 @@ export function StepProject(props: StepProjectProps) {
             color="neutral"
             variant="surface"
             className="gap-2"
-            onClick={() => (onFirstStepBack ? onFirstStepBack() : navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`))}
+            onClick={() => (onFirstStepBack ? onFirstStepBack() : navigate(`${ONBOARDING_URL}${ONBOARDING_PLANS_URL}`))}
           >
             <Icon name="icon-solid-arrow-left" />
             Back
           </Button>
           <Button type="submit" size="lg" loading={loading} disabled={loading}>
-            {loading ? 'Creating...' : 'Continue'}
+            {loading ? 'Creating…' : 'Continue'}
           </Button>
         </div>
       </form>

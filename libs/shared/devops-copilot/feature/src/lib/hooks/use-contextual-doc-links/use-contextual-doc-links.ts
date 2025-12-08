@@ -42,8 +42,8 @@ import {
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
-  ONBOARDING_MORE_URL,
   ONBOARDING_PERSONALIZE_URL,
+  ONBOARDING_PLANS_URL,
   ONBOARDING_PROJECT_URL,
   ONBOARDING_URL,
   SERVICES_APPLICATION_CREATION_URL,
@@ -771,7 +771,7 @@ export function useContextualDocLinks() {
   // ONBOARDING
   const onBoardingPersonalizeURL = useMatch(ONBOARDING_URL + ONBOARDING_PERSONALIZE_URL)
   const onBoardingProjectURL = useMatch(ONBOARDING_URL + ONBOARDING_PROJECT_URL)
-  const onBoardingMoreURL = useMatch(ONBOARDING_URL + ONBOARDING_MORE_URL)
+  const onBoardingPlansURL = useMatch(ONBOARDING_URL + ONBOARDING_PLANS_URL)
 
   // AUDIT LOGS
   const auditLogsGeneralURL = useMatch(AUDIT_LOGS_URL() + AUDIT_LOGS_GENERAL_URL)
@@ -980,7 +980,7 @@ export function useContextualDocLinks() {
   const matchingPattern =
     onBoardingPersonalizeURL ??
     onBoardingProjectURL ??
-    onBoardingMoreURL ??
+    onBoardingPlansURL ??
     auditLogsGeneralURL ??
     projectSettingsGeneralURL ??
     projectSettingsDangerZoneURL ??

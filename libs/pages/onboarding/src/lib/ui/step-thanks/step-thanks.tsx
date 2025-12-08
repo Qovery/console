@@ -1,4 +1,4 @@
-import { ONBOARDING_MORE_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { ONBOARDING_PLANS_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { ExternalLink, Icon, Link } from '@qovery/shared/ui'
 
 interface StepThanksProps {
@@ -59,7 +59,7 @@ export function StepThanks(props: StepThanksProps) {
             variant="surface"
             size="lg"
             className="gap-2"
-            to={ONBOARDING_URL + ONBOARDING_MORE_URL}
+            to={ONBOARDING_URL + ONBOARDING_PLANS_URL}
           >
             <Icon name="icon-solid-arrow-left" />
             Back

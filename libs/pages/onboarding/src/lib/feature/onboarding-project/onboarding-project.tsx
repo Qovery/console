@@ -10,8 +10,8 @@ import { useAuth } from '@qovery/shared/auth'
 import {
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
-  ONBOARDING_MORE_URL,
   ONBOARDING_PERSONALIZE_URL,
+  ONBOARDING_PLANS_URL,
   ONBOARDING_URL,
 } from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
@@ -119,7 +119,7 @@ export function OnboardingProject() {
           console.error('Failed to clean up organization after card failure', cleanupError)
         }
       }
-      const fallbackRoute = shouldSkipBilling ? ONBOARDING_PERSONALIZE_URL : ONBOARDING_MORE_URL
+      const fallbackRoute = shouldSkipBilling ? ONBOARDING_PERSONALIZE_URL : ONBOARDING_PLANS_URL
       navigate(`${ONBOARDING_URL}${fallbackRoute}`)
     } finally {
       setIsSubmitting(false)

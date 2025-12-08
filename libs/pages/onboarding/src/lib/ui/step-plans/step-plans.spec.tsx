@@ -1,10 +1,10 @@
 import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import { render } from '__tests__/utils/setup-jest'
 import { type MutableRefObject } from 'react'
-import StepMore, { type StepMoreProps } from './step-more'
+import StepPlans, { type StepPlansProps } from './step-plans'
 
-describe('StepMore', () => {
-  let props: Partial<StepMoreProps>
+describe('StepPlans', () => {
+  let props: Partial<StepPlansProps>
 
   beforeEach(() => {
     props = {
@@ -21,11 +21,11 @@ describe('StepMore', () => {
       isCardReady: false,
       isSubmitting: false,
     }
-    render(<StepMore {...(props as StepMoreProps)} />)
+    render(<StepPlans {...(props as StepPlansProps)} />)
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<StepMore {...(props as StepMoreProps)} />)
+    const { baseElement } = render(<StepPlans {...(props as StepPlansProps)} />)
     expect(baseElement).toBeTruthy()
   })
 })

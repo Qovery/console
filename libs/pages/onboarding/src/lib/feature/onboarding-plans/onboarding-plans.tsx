@@ -2,7 +2,7 @@ import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/comp
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { PlanEnum, type SignUpRequest } from 'qovery-typescript-axios'
 import { type FormEvent, useContext, useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
@@ -12,7 +12,7 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { loadChargebee } from '@qovery/shared/util-payment'
 import { type SerializedError } from '@qovery/shared/utils'
 import PlanCard from '../../ui/plan-card/plan-card'
-import { StepMore } from '../../ui/step-more/step-more'
+import StepPlans from '../../ui/step-plans/step-plans'
 import { ContextOnboarding } from '../container/container'
 
 const PLANS = [
@@ -64,7 +64,7 @@ const PLANS = [
   },
 ]
 
-export function OnboardingMore() {
+export function OnboardingPlans() {
   useDocumentTitle('Onboarding Free trial activation - Qovery')
 
   const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
@@ -77,18 +77,12 @@ export function OnboardingMore() {
   const { selectedPlan, setContextValue } = useContext(ContextOnboarding)
   const { authLogout } = useAuth()
   const { data: organizations = [] } = useOrganizations()
-  const [backButton, setBackButton] = useState<boolean>(false)
 
   const navigate = useNavigate()
   const shouldSkipBilling = userSignUp?.dx_auth === true
   const plan = PLANS.find((plan) => plan.name === selectedPlan) ?? PLANS[0]
   const selectablePlans = PLANS.filter((planOption) => planOption.name !== PlanEnum.ENTERPRISE_2025)
-
-  useEffect(() => {
-    if (shouldSkipBilling) {
-      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
-    }
-  }, [navigate, shouldSkipBilling])
+  const backButton = organizations.length > 0
 
   useEffect(() => {
     let mounted = true
@@ -120,19 +114,8 @@ export function OnboardingMore() {
     }
   }, [shouldSkipBilling])
 
-  useEffect(() => {
-    async function fetchOrganizations() {
-      if (organizations.length === 0) {
-        setBackButton(false)
-      } else {
-        setBackButton(true)
-      }
-    }
-    fetchOrganizations()
-  }, [organizations])
-
   if (shouldSkipBilling) {
-    return null
+    return <Navigate to={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`} replace />
   }
 
   const handlePlanSelect = (planName: PlanEnum) => {
@@ -236,7 +219,7 @@ export function OnboardingMore() {
   }
 
   return (
-    <StepMore
+    <StepPlans
       onSubmit={onSubmit}
       selectedPlan={plan}
       onChangePlan={openPlanSelectionModal}
@@ -251,4 +234,4 @@ export function OnboardingMore() {
   )
 }
 
-export default OnboardingMore
+export default OnboardingPlans
