@@ -84,36 +84,9 @@ export function DropdownVariable({
             <DropdownMenu.Label asChild>
               <div
                 className="mb-1 bg-white dark:bg-neutral-700"
-                onKeyDownCapture={(e) => {
-                  e.stopPropagation()
-                }}
-                onKeyUpCapture={(e) => {
-                  e.stopPropagation()
-                }}
-                onPointerDownCapture={(e) => {
-                  e.stopPropagation()
-                }}
-                onPointerUpCapture={(e) => {
-                  e.stopPropagation()
-                }}
-                onMouseDownCapture={(e) => {
-                  e.stopPropagation()
-                }}
-                onMouseUpCapture={(e) => {
-                  e.stopPropagation()
-                }}
-                onClickCapture={(e) => {
-                  e.stopPropagation()
-                }}
-                onFocusCapture={(e) => {
-                  e.stopPropagation()
-                }}
-                onTouchStartCapture={(e) => {
-                  e.stopPropagation()
-                }}
-                onTouchEndCapture={(e) => {
-                  e.stopPropagation()
-                }}
+                onKeyDown={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
               >
                 <InputSearch placeholder="Search..." onChange={(value) => setSearchTerm(value)} autofocus />
               </div>
