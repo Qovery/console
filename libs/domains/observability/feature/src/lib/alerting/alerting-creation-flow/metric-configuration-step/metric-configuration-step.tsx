@@ -124,12 +124,12 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
     },
   },
   instance_restart: {
-    hiddenFields: ['function', 'operator', 'threshold'],
+    hiddenFields: ['function', 'operator', 'threshold', 'duration'],
     defaults: {
       function: 'NONE',
       operator: 'EQUAL',
       threshold: 1,
-      duration: 'PT5M',
+      duration: 'PT0S',
     },
   },
 }
