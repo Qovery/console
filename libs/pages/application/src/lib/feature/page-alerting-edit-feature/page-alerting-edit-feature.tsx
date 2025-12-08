@@ -109,13 +109,13 @@ export function PageAlertingEditFeature() {
       .with('http_latency', () => 'secs')
       .otherwise(() => '%')
 
+    const operator = isMissingInstance ? AlertRuleConditionOperator.BELOW : updatedAlert.condition.operator ?? 'ABOVE'
+    const func = updatedAlert.condition.function ?? 'NONE'
+
     const description = match(updatedAlert.tag)
       .with('instance_restart', () => 'One or more instances restarted unexpectedly')
       .with('missing_instance', () => 'Missing one or more running instances for this service')
       .otherwise(() => generateConditionDescription(func, operator, threshold, unit, updatedAlert.for_duration))
-
-    const operator = isMissingInstance ? AlertRuleConditionOperator.BELOW : updatedAlert.condition.operator ?? 'ABOVE'
-    const func = updatedAlert.condition.function ?? 'NONE'
 
     if (updatedAlert && environment && containerName && ingressName) {
       try {
