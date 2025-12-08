@@ -17,10 +17,10 @@ exports[`FieldVariableSuggestion should render dropdown content when clicked 1`]
   tabindex="-1"
 >
   <div
-    class="bg-white dark:bg-neutral-700"
+    class="mb-1 bg-white dark:bg-neutral-700"
   >
     <div
-      class="relative w-full mb-1"
+      class="relative w-full"
     >
       <span
         class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-400 dark:text-white"
@@ -39,7 +39,7 @@ exports[`FieldVariableSuggestion should render dropdown content when clicked 1`]
     class="max-h-[200px] overflow-y-auto"
   >
     <div
-      class="text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 flex h-[52px] items-start gap-2 px-2 py-1.5"
+      class="text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 flex h-[52px] flex-col items-start justify-center px-2 py-1.5"
       data-orientation="vertical"
       data-radix-collection-item=""
       role="menuitem"
@@ -47,27 +47,27 @@ exports[`FieldVariableSuggestion should render dropdown content when clicked 1`]
       type="button"
     >
       <div
-        class="flex min-w-0 flex-col items-start gap-1"
+        class="flex w-full min-w-0 items-center gap-2"
       >
         <span
-          class="w-full overflow-hidden text-ellipsis text-sm font-medium"
+          class="min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium"
         >
           QOVERY_CONTAINER_Z04308DE2_HOST_INTERNAL
         </span>
         <span
-          class="w-full overflow-hidden text-ellipsis text-xs font-normal"
+          class="flex-shrink-0"
+          data-state="closed"
         >
-          back-end-A
+          <i
+            aria-hidden="true"
+            class="fa-regular fa-info-circle text-neutral-400"
+          />
         </span>
       </div>
       <span
-        class=""
-        data-state="closed"
+        class="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-xs font-normal"
       >
-        <i
-          aria-hidden="true"
-          class="fa-regular fa-info-circle text-neutral-400"
-        />
+        back-end-A
       </span>
     </div>
   </div>

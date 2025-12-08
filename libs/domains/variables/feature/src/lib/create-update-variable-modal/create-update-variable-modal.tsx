@@ -399,9 +399,6 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                 {'environmentId' in props && (
                   <DropdownVariable
                     environmentId={props.environmentId}
-                    projectId={props.projectId}
-                    serviceId={'serviceId' in props ? props.serviceId : undefined}
-                    scope={props.scope}
                     onChange={(variableKey) => handleInsertVariable({ variableKey, value: value || '', onChange })}
                     container={modalContainer}
                   >

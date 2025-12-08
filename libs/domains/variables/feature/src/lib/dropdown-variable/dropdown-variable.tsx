@@ -1,6 +1,6 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { type PropsWithChildren, useCallback, useState } from 'react'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useCallback, useMemo, useState } from 'react'
 import { type VariableScope } from '@qovery/domains/variables/data-access'
 import { Icon, InputSearch, Popover, Tooltip, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -28,32 +28,14 @@ export function DropdownVariable({
   container,
   disableBuiltInVariables = false,
 }: DropdownVariableProps) {
-  // Get ENVIRONMENT scoped variables (includes aliases of ENVIRONMENT variables)
-  const { data: environmentVariables = [] } = useVariables({
-    parentId: environmentId,
-    scope: 'ENVIRONMENT',
+  // Determine which scope to query based on provided props
+  const parentIdToUse = serviceId || environmentId
+  const scopeToUse = (serviceId && scope) ? scope : 'ENVIRONMENT'
+
+  const { data: variables = [] } = useVariables({
+    parentId: parentIdToUse,
+    scope: scopeToUse,
   })
-
-  // Get PROJECT scoped variables (includes BUILT_IN variables and their aliases at PROJECT level)
-  // Only query if projectId is provided and not empty
-  const { data: projectVariables = [] } = useVariables({
-    parentId: projectId || '',
-    scope: projectId ? 'PROJECT' : undefined,
-  })
-
-  // Get service-scoped variables if serviceId and scope are provided
-  const { data: serviceVariables = [] } = useVariables({
-    parentId: serviceId || '',
-    scope: serviceId && scope ? scope : undefined,
-  })
-
-  // Merge and deduplicate by ID
-  const variables = useMemo(() => {
-    return [...environmentVariables, ...projectVariables, ...serviceVariables].filter(
-      (v, index, self) => self.findIndex((t) => t.id === v.id) === index
-    )
-  }, [environmentVariables, projectVariables, serviceVariables])
-
   const [open, setOpen] = useState(false)
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -89,21 +71,59 @@ export function DropdownVariable({
             collisionPadding={8}
             sticky="partial"
             className="flex h-auto max-h-[240px] w-[400px] max-w-[400px] flex-col p-2"
+            onOpenAutoFocus={(e) => {
+              e.preventDefault()
+              // Let the InputSearch autofocus handle focusing
+            }}
           >
             {/*
                 `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
                 fix issue with item focus if we use input search
                 https://github.com/radix-ui/primitives/issues/2193#issuecomment-1790564604
               */}
-            <div className="bg-white dark:bg-neutral-700" onKeyDown={(e) => e.stopPropagation()}>
-              <InputSearch
-                placeholder="Search..."
-                className="mb-1"
-                onChange={(value) => setSearchTerm(value)}
-                autofocus
-              />
-            </div>
-            <div className="max-h-[200px] overflow-y-auto">
+            <DropdownMenu.Label asChild>
+              <div
+                className="mb-1 bg-white dark:bg-neutral-700"
+                onKeyDownCapture={(e) => {
+                  e.stopPropagation()
+                }}
+                onKeyUpCapture={(e) => {
+                  e.stopPropagation()
+                }}
+                onPointerDownCapture={(e) => {
+                  e.stopPropagation()
+                }}
+                onPointerUpCapture={(e) => {
+                  e.stopPropagation()
+                }}
+                onMouseDownCapture={(e) => {
+                  e.stopPropagation()
+                }}
+                onMouseUpCapture={(e) => {
+                  e.stopPropagation()
+                }}
+                onClickCapture={(e) => {
+                  e.stopPropagation()
+                }}
+                onFocusCapture={(e) => {
+                  e.stopPropagation()
+                }}
+                onTouchStartCapture={(e) => {
+                  e.stopPropagation()
+                }}
+                onTouchEndCapture={(e) => {
+                  e.stopPropagation()
+                }}
+              >
+                <InputSearch placeholder="Search..." onChange={(value) => setSearchTerm(value)} autofocus />
+              </div>
+            </DropdownMenu.Label>
+            <div
+              className="max-h-[200px] overflow-y-auto"
+              onWheel={(e) => {
+                e.stopPropagation()
+              }}
+            >
               {filteredVariables.length > 0 ? (
                 filteredVariables.map((variable) => {
                   const isBuiltIn = variable.scope === APIVariableScopeEnum.BUILT_IN
@@ -113,42 +133,41 @@ export function DropdownVariable({
                     <DropdownMenu.Item
                       className={twMerge(
                         dropdownMenuItemVariants({ color: 'brand' }),
-                        'flex h-[52px] items-start gap-2 px-2 py-1.5',
+                        'flex h-[52px] flex-col items-start justify-center px-2 py-1.5',
                         isDisabled && 'cursor-not-allowed opacity-50'
                       )}
                       onClick={() => !isDisabled && onChange(variable.key)}
                       disabled={isDisabled}
                     >
-                      <div className="flex min-w-0 flex-col items-start gap-1">
-                        <span className="w-full overflow-hidden text-ellipsis text-sm font-medium">
-                          <Truncate text={variable.key} truncateLimit={45} />
+                      <div className="flex w-full min-w-0 items-center gap-2">
+                        <span className="min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">
+                          {variable.key}
                         </span>
-
-                        {variable.service_name ? (
-                          <span className="w-full overflow-hidden text-ellipsis text-xs font-normal">
-                            <Truncate text={variable.service_name} truncateLimit={50} />
-                          </span>
-                        ) : (
-                          <span className="text-xs font-normal text-neutral-300">no service</span>
-                        )}
-                      </div>
-                      {isDisabled ? (
-                        <Tooltip
-                          content="Built-in variables injection is not supported for Helm. Please create an alias to use this variable."
-                          side="left"
-                        >
-                          <span>
-                            <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-400" />
-                          </span>
-                        </Tooltip>
-                      ) : (
-                        variable.description && (
-                          <Tooltip content={variable.description} side="bottom">
-                            <span>
-                              <Icon iconName="info-circle" iconStyle="regular" className="text-neutral-400" />
+                        {isDisabled ? (
+                          <Tooltip
+                            content="Built-in variables injection is not supported for Helm. Please create an alias to use this variable."
+                            side="left"
+                          >
+                            <span className="flex-shrink-0">
+                              <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-400" />
                             </span>
                           </Tooltip>
-                        )
+                        ) : (
+                          variable.description && (
+                            <Tooltip content={variable.description} side="bottom">
+                              <span className="flex-shrink-0">
+                                <Icon iconName="info-circle" iconStyle="regular" className="text-neutral-400" />
+                              </span>
+                            </Tooltip>
+                          )
+                        )}
+                      </div>
+                      {variable.service_name ? (
+                        <span className="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-xs font-normal">
+                          {variable.service_name}
+                        </span>
+                      ) : (
+                        <span className="text-xs font-normal text-neutral-300">no service</span>
                       )}
                     </DropdownMenu.Item>
                   )

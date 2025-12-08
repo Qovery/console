@@ -28,9 +28,12 @@ export function CodeEditorVariable({
   className,
   ...props
 }: CodeEditorVariableProps) {
+  const parentIdToUse = serviceId || environmentId
+  const scopeToUse = (serviceId && scope) ? scope : 'ENVIRONMENT'
+
   const { refetch: refetchVariables } = useVariables({
-    parentId: environmentId,
-    scope: 'ENVIRONMENT',
+    parentId: parentIdToUse,
+    scope: scopeToUse,
   })
 
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
