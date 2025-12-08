@@ -72,7 +72,7 @@ export function StepProject(props: StepProjectProps) {
             <Icon name="icon-solid-arrow-left" />
             Back
           </Button>
-          <Button type="submit" size="lg" loading={loading} disabled={loading}>
+          <Button type="submit" size="lg" loading={loading}>
             {loading ? 'Creating…' : 'Continue'}
           </Button>
         </div>
