@@ -107,8 +107,6 @@ export function FormUser() {
     },
   })
 
-  // methods.register('type_of_use')
-
   const onSubmit = methods.handleSubmit(async (data) => {
     if (!data) return
 

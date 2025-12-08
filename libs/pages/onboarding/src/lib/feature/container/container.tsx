@@ -93,7 +93,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         <FunnelFlowBody
           helpSectionClassName="!p-0 !bg-transparent !border-transparent"
           helpSection={stepProject && <OnboardingRightContent step={step} />}
-          customContentWidth={shouldUseFullWidth ? 'w-full' : undefined}
+          customContentWidth="w-full"
         >
           {children}
         </FunnelFlowBody>

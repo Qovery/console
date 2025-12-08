@@ -1,10 +1,13 @@
 import { CardCVV, CardComponent, CardExpiry, CardNumber, Provider } from '@chargebee/chargebee-js-react-wrapper'
 import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
+import clsx from 'clsx'
 import { type FormEvent, type MutableRefObject, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ENVIRONMENTS_URL, ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { Button, Icon } from '@qovery/shared/ui'
+import { Button, ExternalLink, Heading, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { useLocalStorage } from '@qovery/shared/util-hooks'
+import { twMerge } from '@qovery/shared/util-js'
 import { fieldCardStyles } from '@qovery/shared/util-payment'
 import { Background } from './background'
 
@@ -40,6 +43,8 @@ export default function StepPlans(props: StepPlansProps) {
     isSubmitting,
   } = props
   const navigate = useNavigate()
+  const [currentOrganizationId] = useLocalStorage<string>('currentOrganizationId', '')
+  const [currentProjectId] = useLocalStorage<string>('currentProjectId', '')
 
   const dateFormatter = useMemo(
     () =>
@@ -72,108 +77,129 @@ export default function StepPlans(props: StepPlansProps) {
   const isSubmitDisabled = !isCardReady || !showCardFields || isSubmitting
 
   return (
-    <div className="mx-auto flex max-w-[1024px] gap-16">
-      <div className="flex flex-1 flex-col py-8">
-        <h1 className="h3 mb-3 text-neutral-400">Start with a 14-days free trial</h1>
-        <p className="mb-10 text-sm text-neutral-400">
-          Try Qovery with a 14-days trial, without payment.{' '}
-          <span className="font-medium">You’ll not be charged today.</span>
-        </p>
-        <form onSubmit={onSubmit} className="flex flex-1 flex-col">
-          <div className="mb-8">
-            {!showCardFields && (
-              <div className="rounded-md border border-neutral-200 bg-white p-4 text-sm text-neutral-350">
-                Preparing secure card fields...
-              </div>
-            )}
-            {showCardFields && (
-              <Provider cbInstance={cbInstance}>
-                <CardComponent ref={cardRef} styles={fieldCardStyles} locale="en" currency="USD" onReady={onCardReady}>
-                  <div className="chargebee-field-wrapper">
-                    <label className="chargebee-field-label">Card Number</label>
-                    <CardNumber placeholder="1234 1234 1234 1234" />
-                  </div>
-                  <div className="chargebee-fields-row">
-                    <div className="chargebee-field-wrapper">
-                      <label className="chargebee-field-label">Expiry</label>
-                      <CardExpiry placeholder="MM / YY" />
-                    </div>
-                    <div className="chargebee-field-wrapper">
-                      <label className="chargebee-field-label">CVV</label>
-                      <CardCVV placeholder="CVV" />
-                    </div>
-                  </div>
-                </CardComponent>
-              </Provider>
-            )}
-          </div>
-          <div className="mb-4 rounded-lg border border-brand-200 bg-brand-50 p-4 text-neutral-400 lg:hidden">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-neutral-400">{selectedPlan.title}</p>
-                <p className="text-sm text-brand-500">{getSelectedPlanPrice()}</p>
-              </div>
-              <button type="button" className="text-sm text-neutral-350 underline" onClick={onChangePlan}>
-                Change plan
-              </button>
-            </div>
-          </div>
-          <div className="mt-auto">
-            <p>
-              You have specific needs?{' '}
-              <a
-                href="https://meetings-eu1.hubspot.com/hakob-hakobian/free-trial-contact-sales"
-                target="_blank"
-                rel="noreferrer"
-                className="text-sky-500"
-              >
-                Book a demo
-              </a>{' '}
-              with us and unlock a trial that truly suits you.
-            </p>
-            <div className="mt-4 flex justify-between border-t border-neutral-200 pt-5">
-              {!backButton ? (
-                <Button
-                  type="button"
-                  size="lg"
-                  color="neutral"
-                  variant="surface"
-                  className="gap-2"
-                  onClick={() => navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)}
-                >
-                  <Icon iconName="arrow-left" iconStyle="solid" />
-                  Back
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  size="lg"
-                  color="neutral"
-                  variant="surface"
-                  className="gap-2"
-                  onClick={() => {
-                    if (localStorage['currentOrganizationId']) {
-                      navigate(
-                        ENVIRONMENTS_URL(
-                          localStorage['currentOrganizationId'] || '',
-                          localStorage['currentProjectId'] || ''
-                        )
-                      )
-                    } else {
-                      navigate(-1)
-                    }
-                  }}
-                >
-                  <Icon iconName="arrow-left" iconStyle="solid" />
-                  Back
-                </Button>
+    <Section className="mx-auto flex max-w-[1024px] flex-row gap-16">
+      <div className="relative flex flex-1 flex-col">
+        <div
+          className={twMerge(
+            clsx('absolute inset-0 flex items-center justify-center', {
+              'hidden opacity-0': isCardReady,
+              'opacity-100': !isCardReady,
+            })
+          )}
+        >
+          <LoaderSpinner classWidth="w-6 h-6" />
+        </div>
+        <div
+          className={twMerge(
+            clsx('flex flex-1 flex-col py-8 opacity-100 transition-opacity duration-75', {
+              'opacity-0': !isCardReady,
+            })
+          )}
+        >
+          <Heading level={1} className="mb-3 text-neutral-400">
+            Start with a 14-days free trial
+          </Heading>
+          <p className="mb-10 text-sm text-neutral-400">
+            Try Qovery with a 14-days trial, without payment.{' '}
+            <span className="font-medium">You’ll not be charged today.</span>
+          </p>
+          <form onSubmit={onSubmit} className="flex flex-1 flex-col">
+            <div className="mb-8">
+              {!showCardFields && (
+                <div className="rounded-md border border-neutral-200 bg-white p-4 text-sm text-neutral-350">
+                  Preparing secure card fields...
+                </div>
               )}
-              <Button type="submit" size="lg" loading={isSubmitting} disabled={isSubmitDisabled}>
-                Start my 14-days free trial
-              </Button>
+              {showCardFields && (
+                <Provider cbInstance={cbInstance}>
+                  <CardComponent
+                    ref={cardRef}
+                    styles={fieldCardStyles}
+                    locale="en"
+                    currency="USD"
+                    onReady={onCardReady}
+                  >
+                    <div className="chargebee-field-wrapper">
+                      <label className="chargebee-field-label">Card Number</label>
+                      <CardNumber placeholder="1234 1234 1234 1234" />
+                    </div>
+                    <div className="chargebee-fields-row">
+                      <div className="chargebee-field-wrapper">
+                        <label className="chargebee-field-label">Expiry</label>
+                        <CardExpiry placeholder="MM / YY" />
+                      </div>
+                      <div className="chargebee-field-wrapper">
+                        <label className="chargebee-field-label">CVV</label>
+                        <CardCVV placeholder="CVV" />
+                      </div>
+                    </div>
+                  </CardComponent>
+                </Provider>
+              )}
             </div>
-          </div>
-        </form>
+            <div className="mb-4 rounded-lg border border-brand-200 bg-brand-50 p-4 text-neutral-400 lg:hidden">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-neutral-400">{selectedPlan.title}</p>
+                  <p className="text-sm text-brand-500">{getSelectedPlanPrice()}</p>
+                </div>
+                <button type="button" className="text-sm text-neutral-350 underline" onClick={onChangePlan}>
+                  Change plan
+                </button>
+              </div>
+            </div>
+            <div className="mt-auto">
+              <p>
+                You have specific needs?{' '}
+                <ExternalLink
+                  href="https://meetings-eu1.hubspot.com/hakob-hakobian/free-trial-contact-sales"
+                  color="sky"
+                  withIcon={false}
+                  className="gap-1 text-base font-normal"
+                >
+                  Book a demo
+                </ExternalLink>{' '}
+                with us and unlock a trial that truly suits you.
+              </p>
+              <div className="mt-4 flex justify-between border-t border-neutral-200 pt-5">
+                {!backButton ? (
+                  <Button
+                    type="button"
+                    size="lg"
+                    color="neutral"
+                    variant="surface"
+                    className="gap-2"
+                    onClick={() => navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)}
+                  >
+                    <Icon iconName="arrow-left" iconStyle="solid" />
+                    Back
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    size="lg"
+                    color="neutral"
+                    variant="surface"
+                    className="gap-2"
+                    onClick={() => {
+                      if (currentOrganizationId) {
+                        navigate(ENVIRONMENTS_URL(currentOrganizationId, currentProjectId))
+                      } else {
+                        navigate(-1)
+                      }
+                    }}
+                  >
+                    <Icon iconName="arrow-left" iconStyle="solid" />
+                    Back
+                  </Button>
+                )}
+                <Button type="submit" size="lg" loading={isSubmitting} disabled={isSubmitDisabled}>
+                  Start my 14-days free trial
+                </Button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
       <div className="relative hidden flex-1 overflow-hidden rounded-lg border border-brand-200 lg:block">
         <Background />
@@ -246,6 +272,6 @@ export default function StepPlans(props: StepPlansProps) {
           </div>
         </div>
       </div>
-    </div>
+    </Section>
   )
 }

@@ -15,7 +15,7 @@ export function StepPersonalize(props: StepPersonalizeProps) {
   const isQoveryUsageOther = watch('qovery_usage') === 'other'
 
   return (
-    <div className="pb-10">
+    <div className="mx-auto max-w-content-with-navigation-left pb-10">
       <h1 className="h3 mb-3 text-neutral-400">To tailor your experience</h1>
       <p className="mb-10 text-sm text-neutral-400">We need some information to proceed with your account creation.</p>
       <form onSubmit={onSubmit}>
