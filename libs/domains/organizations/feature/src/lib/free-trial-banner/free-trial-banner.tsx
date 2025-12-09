@@ -2,6 +2,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import { SETTINGS_BILLING_SUMMARY_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { Banner } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
+import { pluralize } from '@qovery/shared/util-js'
 import useCurrentCost from '../hooks/use-current-cost/use-current-cost'
 
 export function FreeTrialBanner() {
@@ -20,11 +21,14 @@ export function FreeTrialBanner() {
     return null
   }
 
-  const dayLabel = remainingTrialDays === 1 ? 'day' : 'days'
+  const message =
+    remainingTrialDays === 0
+      ? 'Your free trial plan expires today. If you need help, please contact us.'
+      : `Your free trial plan expires ${remainingTrialDays} ${pluralize(remainingTrialDays, 'day')} from now. If you need help, please contact us.`
 
   return (
     <Banner color="brand" buttonIconRight="arrow-right" buttonLabel="Need help" onClickButton={() => showChat()}>
-      Your free trial plan expires {remainingTrialDays} {dayLabel} from now. If you need help, please contact us.
+      {message}
     </Banner>
   )
 }

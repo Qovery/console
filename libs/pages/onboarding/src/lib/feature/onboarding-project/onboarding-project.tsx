@@ -23,6 +23,7 @@ export function OnboardingProject() {
   useDocumentTitle('Onboarding Organization - Qovery')
 
   const navigate = useNavigate()
+  const location = useLocation()
   const { user } = useAuth0()
   const { getAccessTokenSilently } = useAuth()
   const { mutateAsync: createOrganization } = useCreateOrganization()
@@ -43,12 +44,10 @@ export function OnboardingProject() {
     cardExpiryYear,
   } = useContext(ContextOnboarding)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
   const shouldSkipBilling = userSignUp?.dx_auth === true
   const planToUse = shouldSkipBilling ? PlanEnum.USER_2025 : selectedPlan
-
-  const location = useLocation()
   const previousUrl = location.state?.previousUrl
-  const hasPreviousUrl = previousUrl !== undefined
 
   useEffect(() => {
     setValue('organization_name', organization_name)
@@ -58,54 +57,51 @@ export function OnboardingProject() {
   const addCardIfPresent = async (organizationId: string) => {
     if (!cardToken || shouldSkipBilling) return
 
-    try {
-      await addCreditCard({
-        organizationId,
-        creditCardRequest: {
-          token: cardToken,
-          cvv: '',
-          number: cardLast4 ? `****${cardLast4}` : '',
-          expiry_year: cardExpiryYear ?? 0,
-          expiry_month: cardExpiryMonth ?? 0,
-        },
-      })
-    } catch (error) {
-      console.error(error)
+    await addCreditCard({
+      organizationId,
+      creditCardRequest: {
+        token: cardToken,
+        cvv: '',
+        number: cardLast4 ? `****${cardLast4}` : '',
+        expiry_year: cardExpiryYear ?? 0,
+        expiry_month: cardExpiryMonth ?? 0,
+      },
+    })
+  }
+
+  const handleBack = () => {
+    if (previousUrl !== undefined) {
+      navigate(previousUrl)
+    } else if (shouldSkipBilling) {
+      navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
+    } else {
+      navigate(-1)
     }
   }
 
   const onSubmit = handleSubmit(async (data) => {
-    if (!data) return
-
     const currentData = {
       organization_name: data.organization_name,
       project_name: data.project_name,
       admin_email,
     }
-    setContextValue && setContextValue(currentData)
+    setContextValue?.(currentData)
 
     setIsSubmitting(true)
     let createdOrganizationId: string | null = null
 
     try {
-      try {
-        const organization = await createOrganization({
-          organizationRequest: {
-            name: data.organization_name,
-            plan: planToUse,
-            admin_emails: admin_email ? [admin_email] : user?.email ? [user.email] : [],
-          },
-        })
-        createdOrganizationId = organization.id
-        await getAccessTokenSilently({ cacheMode: 'off' })
-      } catch (error) {
-        toastError(error as Error)
-        return
-      }
+      const organization = await createOrganization({
+        organizationRequest: {
+          name: data.organization_name,
+          plan: planToUse,
+          admin_emails: admin_email ? [admin_email] : user?.email ? [user.email] : [],
+        },
+      })
+      createdOrganizationId = organization.id
+      await getAccessTokenSilently({ cacheMode: 'off' })
 
-      if (createdOrganizationId) {
-        await addCardIfPresent(createdOrganizationId)
-      }
+      await addCardIfPresent(createdOrganizationId)
 
       const project = await createProject({
         organizationId: createdOrganizationId,
@@ -114,9 +110,7 @@ export function OnboardingProject() {
         },
       })
 
-      if (project) {
-        navigate(ENVIRONMENTS_URL(createdOrganizationId, project.id) + ENVIRONMENTS_GENERAL_URL)
-      }
+      navigate(ENVIRONMENTS_URL(createdOrganizationId, project.id) + ENVIRONMENTS_GENERAL_URL)
     } catch (error) {
       toastError(error as Error)
       if (createdOrganizationId) {
@@ -133,20 +127,5 @@ export function OnboardingProject() {
     }
   })
 
-  return (
-    <StepProject
-      onSubmit={onSubmit}
-      control={control}
-      loading={isSubmitting}
-      onFirstStepBack={
-        hasPreviousUrl
-          ? () => navigate(previousUrl)
-          : shouldSkipBilling
-            ? () => navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
-            : () => navigate(-1)
-      }
-    />
-  )
+  return <StepProject onSubmit={onSubmit} control={control} loading={isSubmitting} onFirstStepBack={handleBack} />
 }
-
-export default OnboardingProject
