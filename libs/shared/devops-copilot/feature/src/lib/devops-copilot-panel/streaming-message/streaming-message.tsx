@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Icon } from '@qovery/shared/ui'
 import { getIconClass, getIconName } from '../../utils/icon-utils/icon-utils'
 import type { PlanStep } from '../devops-copilot-panel'
@@ -21,33 +22,37 @@ export function StreamingMessage({
   const hasTempPlan = tempPlans.length > 0
   const isTempPlanVisible = showPlans['temp']
 
-  const input = displayedStreamingMessage
-  let renderInput = input
+  const renderInput = useMemo(() => {
+    const input = displayedStreamingMessage
+    let processedInput = input
 
-  const allBackticks = [...input.matchAll(/```/g)]
-  if (allBackticks.length > 0) {
-    const lastBacktick = allBackticks.at(-1)
-    if (lastBacktick && lastBacktick.index !== undefined) {
-      const afterBackticks = input.slice(lastBacktick.index + 3)
-      if (!afterBackticks.includes('\n') && afterBackticks.length < 10) {
-        if ('mermaid'.startsWith(afterBackticks.trim()) && afterBackticks.trim().length > 0) {
-          renderInput = input.slice(0, lastBacktick.index) + 'Generating charts…'
-        } else if (afterBackticks.trim().length === 0 || afterBackticks.match(/^[a-z]*$/)) {
-          renderInput = input.slice(0, lastBacktick.index)
+    const allBackticks = [...input.matchAll(/```/g)]
+    if (allBackticks.length > 0) {
+      const lastBacktick = allBackticks.at(-1)
+      if (lastBacktick && lastBacktick.index !== undefined) {
+        const afterBackticks = input.slice(lastBacktick.index + 3)
+        if (!afterBackticks.includes('\n') && afterBackticks.length < 10) {
+          if ('mermaid'.startsWith(afterBackticks.trim()) && afterBackticks.trim().length > 0) {
+            processedInput = input.slice(0, lastBacktick.index) + 'Generating charts…'
+          } else if (afterBackticks.trim().length === 0 || afterBackticks.match(/^[a-z]*$/)) {
+            processedInput = input.slice(0, lastBacktick.index)
+          }
         }
       }
     }
-  }
 
-  const startMatches = [...renderInput.matchAll(/```mermaid/g)]
-  const endMatches = [...renderInput.matchAll(/```(?!mermaid)/g)]
-  if (startMatches.length > endMatches.length) {
-    const lastStart = startMatches.at(-1)
-    if (lastStart) {
-      const cutoffIndex = lastStart.index ?? renderInput.length
-      renderInput = renderInput.slice(0, cutoffIndex) + 'Generating charts…'
+    const startMatches = [...processedInput.matchAll(/```mermaid/g)]
+    const endMatches = [...processedInput.matchAll(/```(?!mermaid)/g)]
+    if (startMatches.length > endMatches.length) {
+      const lastStart = startMatches.at(-1)
+      if (lastStart) {
+        const cutoffIndex = lastStart.index ?? processedInput.length
+        processedInput = processedInput.slice(0, cutoffIndex) + 'Generating charts…'
+      }
     }
-  }
+
+    return processedInput
+  }, [displayedStreamingMessage])
 
   return (
     <div className="streaming text-sm">

@@ -22,6 +22,33 @@ export interface SectionAICopilotConfigurationProps {
   onDisable: () => void
 }
 
+function getDisableConfirmationModal(closeModal: () => void, onDisable: () => void) {
+  return (
+    <div className="p-6">
+      <h2 className="h4 mb-2 text-neutral-400">Disable AI Copilot</h2>
+      <p className="mb-6 text-sm text-neutral-350">
+        Are you sure you want to disable AI Copilot? This will stop all AI-powered assistance for your organization.
+      </p>
+      <div className="flex justify-end gap-3">
+        <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
+          Cancel
+        </Button>
+        <Button
+          type="button"
+          size="lg"
+          color="red"
+          onClick={() => {
+            closeModal()
+            onDisable()
+          }}
+        >
+          Disable
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 export function SectionAICopilotConfiguration({
   organization,
   isLoading,
@@ -31,13 +58,9 @@ export function SectionAICopilotConfiguration({
   onDisable,
 }: SectionAICopilotConfigurationProps) {
   const { openModal, closeModal } = useModal()
-  const [selectedMode, setSelectedMode] = useState<'read-only' | 'read-write' | null>(null)
+  const [selectedMode, setSelectedMode] = useState<'read-only' | 'read-write' | null>(currentMode)
   const mode = selectedMode ?? currentMode
   const hasUnsavedChanges = selectedMode !== null && selectedMode !== currentMode
-
-  const handleModeSelect = (newMode: 'read-write' | 'read-only') => {
-    setSelectedMode(newMode)
-  }
 
   const handleSaveMode = () => {
     if (selectedMode) {
@@ -83,37 +106,7 @@ export function SectionAICopilotConfiguration({
                   loading={isUpdating}
                   onClick={() => {
                     openModal({
-                      content: (
-                        <div className="p-6">
-                          <h2 className="h4 mb-2 text-neutral-400">Disable AI Copilot</h2>
-                          <p className="mb-6 text-sm text-neutral-350">
-                            Are you sure you want to disable AI Copilot? This will stop all AI-powered assistance for
-                            your organization.
-                          </p>
-                          <div className="flex justify-end gap-3">
-                            <Button
-                              type="button"
-                              color="neutral"
-                              variant="plain"
-                              size="lg"
-                              onClick={() => closeModal()}
-                            >
-                              Cancel
-                            </Button>
-                            <Button
-                              type="button"
-                              size="lg"
-                              color="red"
-                              onClick={() => {
-                                closeModal()
-                                onDisable()
-                              }}
-                            >
-                              Disable
-                            </Button>
-                          </div>
-                        </div>
-                      ),
+                      content: getDisableConfirmationModal(closeModal, onDisable),
                     })
                   }}
                 >
@@ -132,7 +125,7 @@ export function SectionAICopilotConfiguration({
 
               <InputSelect
                 value={mode}
-                onChange={(value) => handleModeSelect(value as 'read-write' | 'read-only')}
+                onChange={(value) => setSelectedMode(value as 'read-write' | 'read-only')}
                 options={modeOptions}
                 portal
                 label="Right access"

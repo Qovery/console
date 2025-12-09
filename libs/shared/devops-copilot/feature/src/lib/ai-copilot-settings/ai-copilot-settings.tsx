@@ -37,12 +37,8 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
     instructions: orgConfig?.instructions,
   })
 
-  const handleEnableCopilot = () => {
-    updateConfigMutation.mutate({ enabled: true, readOnly: true })
-  }
-
-  const handleDisableCopilot = () => {
-    updateConfigMutation.mutate({ enabled: false, readOnly: true })
+  const handleToggleCopilot = (enabled: boolean) => {
+    updateConfigMutation.mutate({ enabled, readOnly: true })
   }
 
   if (!isDevopsCopilotPanelFeatureFlag) {
@@ -56,7 +52,7 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
           <SectionAICopilotOptIn
             organization={organization}
             isLoading={isLoadingConfig}
-            onEnable={handleEnableCopilot}
+            onEnable={() => handleToggleCopilot(true)}
           />
         ) : (
           <>
@@ -66,7 +62,7 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
               isUpdating={updateConfigMutation.isLoading}
               currentMode={currentMode}
               onModeChange={(mode) => updateConfigMutation.mutate({ enabled: true, readOnly: mode === 'read-only' })}
-              onDisable={handleDisableCopilot}
+              onDisable={() => handleToggleCopilot(false)}
             />
 
             <SectionScheduledTasks

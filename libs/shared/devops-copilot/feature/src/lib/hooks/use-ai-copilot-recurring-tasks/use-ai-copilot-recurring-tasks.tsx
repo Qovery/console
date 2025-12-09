@@ -8,7 +8,6 @@ export interface UseAICopilotRecurringTasksProps {
 export function useAICopilotRecurringTasks({ organizationId }: UseAICopilotRecurringTasksProps) {
   return useQuery({
     ...devopsCopilot.recurringTasks({ organizationId }),
-    enabled: !!organizationId,
   })
 }
 

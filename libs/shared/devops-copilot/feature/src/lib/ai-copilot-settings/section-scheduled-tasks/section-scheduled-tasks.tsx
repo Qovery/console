@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { type RecurringTask } from '@qovery/shared/devops-copilot/data-access'
 import { Badge, BlockContent, Button, Heading, Icon, LoaderSpinner, Section, useModal } from '@qovery/shared/ui'
 
@@ -12,6 +13,36 @@ export interface SectionScheduledTasksProps {
 
 export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDeleteTask }: SectionScheduledTasksProps) {
   const { openModal, closeModal } = useModal()
+
+  const getDeleteTaskConfirmationModal = useCallback(
+    (taskId: string) => {
+      return (
+        <div className="p-6">
+          <h2 className="h4 mb-2 text-neutral-400">Delete Task</h2>
+          <p className="mb-6 text-sm text-neutral-350">
+            Are you sure you want to delete this task? This action cannot be undone.
+          </p>
+          <div className="flex justify-end gap-3">
+            <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              color="red"
+              onClick={() => {
+                closeModal()
+                onDeleteTask(taskId)
+              }}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+      )
+    },
+    [closeModal, onDeleteTask]
+  )
 
   return (
     <Section>
@@ -63,36 +94,7 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
                     title="Delete task"
                     onClick={() => {
                       openModal({
-                        content: (
-                          <div className="p-6">
-                            <h2 className="h4 mb-2 text-neutral-400">Delete Task</h2>
-                            <p className="mb-6 text-sm text-neutral-350">
-                              Are you sure you want to delete this task? This action cannot be undone.
-                            </p>
-                            <div className="flex justify-end gap-3">
-                              <Button
-                                type="button"
-                                color="neutral"
-                                variant="plain"
-                                size="lg"
-                                onClick={() => closeModal()}
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                type="button"
-                                size="lg"
-                                color="red"
-                                onClick={() => {
-                                  closeModal()
-                                  onDeleteTask(task.id)
-                                }}
-                              >
-                                Delete
-                              </Button>
-                            </div>
-                          </div>
-                        ),
+                        content: getDeleteTaskConfirmationModal(task.id),
                       })
                     }}
                   >

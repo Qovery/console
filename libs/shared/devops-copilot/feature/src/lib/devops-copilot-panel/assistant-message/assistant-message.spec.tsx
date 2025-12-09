@@ -36,19 +36,11 @@ describe('AssistantMessage', () => {
     timestamp: 1000,
   }
 
-  const createMockRenderCache = () => {
-    const cache = new Map<string, JSX.Element>()
-    return {
-      current: cache,
-    } as React.MutableRefObject<Map<string, JSX.Element>>
-  }
-
   const defaultProps = {
     message: mockMessage,
     plan: [],
     showPlans: {},
     setShowPlans: mockSetShowPlans,
-    mermaidRenderCache: createMockRenderCache(),
     handleVote: mockHandleVote,
   }
 
@@ -62,17 +54,6 @@ describe('AssistantMessage', () => {
 
       expect(screen.getByTestId('render-markdown')).toBeInTheDocument()
       expect(screen.getByTestId('render-markdown')).toHaveTextContent('This is an assistant message')
-    })
-
-    it('should use mermaid render cache', () => {
-      const cache = createMockRenderCache()
-      const { rerender } = render(<AssistantMessage {...defaultProps} mermaidRenderCache={cache} />)
-
-      expect(cache.current.has('msg-1')).toBe(true)
-
-      rerender(<AssistantMessage {...defaultProps} mermaidRenderCache={cache} />)
-
-      expect(screen.getByTestId('render-markdown')).toBeInTheDocument()
     })
   })
 

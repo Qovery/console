@@ -12,6 +12,5 @@ export interface Config {
 export const useAICopilotConfig = ({ organizationId }: { organizationId: string }) => {
   return useQuery({
     ...queries.devopsCopilot.config({ organizationId }),
-    enabled: !!organizationId,
   })
 }

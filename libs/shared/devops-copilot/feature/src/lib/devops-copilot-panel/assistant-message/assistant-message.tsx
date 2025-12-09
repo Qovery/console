@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { type MutableRefObject } from 'react'
+import { useMemo } from 'react'
 import { Button, Icon } from '@qovery/shared/ui'
 import { RenderMarkdown } from '../../devops-render-markdown/devops-render-markdown'
 import { getIconClass, getIconName } from '../../utils/icon-utils/icon-utils'
@@ -10,21 +10,15 @@ interface AssistantMessageProps {
   plan: PlanStep[]
   showPlans: Record<string, boolean>
   setShowPlans: (fn: (prev: Record<string, boolean>) => Record<string, boolean>) => void
-  mermaidRenderCache: MutableRefObject<Map<string, JSX.Element>>
   handleVote: (messageId: string, vote: 'upvote' | 'downvote') => void
 }
 
-export function AssistantMessage({
-  message,
-  plan,
-  showPlans,
-  setShowPlans,
-  mermaidRenderCache,
-  handleVote,
-}: AssistantMessageProps) {
+export function AssistantMessage({ message, plan, showPlans, setShowPlans, handleVote }: AssistantMessageProps) {
   const messagePlans = plan.filter((p) => p.messageId === message.id)
   const hasPlan = messagePlans.length > 0
   const isPlanVisible = showPlans[message.id]
+
+  const renderedMarkdown = useMemo(() => <RenderMarkdown>{message.text}</RenderMarkdown>, [message.text])
 
   return (
     <div key={message.id} className="group text-sm">
@@ -56,12 +50,7 @@ export function AssistantMessage({
           ))}
         </div>
       )}
-      {(() => {
-        if (!mermaidRenderCache.current.has(message.id)) {
-          mermaidRenderCache.current.set(message.id, <RenderMarkdown>{message.text}</RenderMarkdown>)
-        }
-        return mermaidRenderCache.current.get(message.id)
-      })()}{' '}
+      {renderedMarkdown}
       <div className="invisible mt-2 flex gap-2 text-xs text-neutral-400 group-hover:visible">
         <Button
           type="button"

@@ -208,8 +208,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [isAtBottom, setIsAtBottom] = useState(true)
   const panelRef = useRef<HTMLDivElement>(null)
 
-  const mermaidRenderCache = useRef<Map<string, JSX.Element>>(new Map())
-
   useEffect(() => {
     if (
       (isLoading && isFinish && displayedStreamingMessage.length >= streamingMessage.length) ||
@@ -582,7 +580,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                         plan={plan}
                         showPlans={showPlans}
                         setShowPlans={setShowPlans}
-                        mermaidRenderCache={mermaidRenderCache}
                         handleVote={handleVote}
                       />
                     ))
