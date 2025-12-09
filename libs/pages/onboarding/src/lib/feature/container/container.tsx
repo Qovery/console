@@ -61,7 +61,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const currentTitle = titlesPerRoute[currentRouteIndex] ?? 'Onboarding'
   const projectRoutePath = ROUTER_ONBOARDING[2]?.path
   const stepProject = currentPath === projectRoutePath
-  const shouldUseFullWidth = currentRouteIndex === 1
 
   const hasDxAuth = Boolean(userSignUp?.dx_auth)
   const hasExistingOrganization = organizations.length > 0
