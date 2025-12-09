@@ -39,18 +39,18 @@ function TooltipContent({
     aws_vpc_eks_id: string
     eks_create_nodes_in_private_subnet: boolean
     eks_subnets?: Subnets[]
-    eks_karpenter_fargate_subnets?: Subnets[]
+    eks_private_subnets?: Subnets[]
     mongodb_subnets?: Subnets[]
     rds_subnets?: Subnets[]
     redis_subnets?: Subnets[]
   }
 }) {
-  const { eks_subnets, eks_karpenter_fargate_subnets, mongodb_subnets, rds_subnets, redis_subnets } = values
+  const { eks_subnets, eks_private_subnets, mongodb_subnets, rds_subnets, redis_subnets } = values
 
   return (
     <div className="grid gap-4 p-2">
       <TooltipContentSubnets subnets={eks_subnets}>EKS public subnet IDs</TooltipContentSubnets>
-      <TooltipContentSubnets subnets={eks_karpenter_fargate_subnets}>EKS private subnet IDs</TooltipContentSubnets>
+      <TooltipContentSubnets subnets={eks_private_subnets}>EKS private subnet IDs</TooltipContentSubnets>
       <TooltipContentSubnets subnets={mongodb_subnets}>
         <Icon name={IconEnum.MONGODB} width="16" className="mr-2" />
         MongoDB subnet IDs
@@ -152,7 +152,7 @@ export function AWSVpcFeature({ isKarpenter = false }: AWSVpcFeatureProps) {
             ? [
                 {
                   title: 'EKS private subnet IDs',
-                  name: 'aws_existing_vpc.eks_karpenter_fargate_subnets',
+                  name: 'aws_existing_vpc.eks_private_subnets',
                   callout: (
                     <Callout.Root color="yellow">
                       <Callout.Icon>

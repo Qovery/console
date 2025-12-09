@@ -84,7 +84,7 @@ export function StepFeaturesFeature() {
               aws_vpc_eks_id: existingVpcData?.aws_vpc_eks_id ?? '',
               eks_create_nodes_in_private_subnet: existingVpcData?.eks_create_nodes_in_private_subnet ?? false,
               eks_subnets: removeEmptySubnet(existingVpcData?.eks_subnets),
-              eks_karpenter_fargate_subnets: removeEmptySubnet(existingVpcData?.eks_karpenter_fargate_subnets),
+              eks_private_subnets: removeEmptySubnet(existingVpcData?.eks_private_subnets),
               mongodb_subnets: removeEmptySubnet(existingVpcData?.mongodb_subnets),
               rds_subnets: removeEmptySubnet(existingVpcData?.rds_subnets),
               redis_subnets: removeEmptySubnet(existingVpcData?.redis_subnets),
