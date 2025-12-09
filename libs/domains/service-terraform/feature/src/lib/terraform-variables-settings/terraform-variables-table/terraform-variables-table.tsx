@@ -115,7 +115,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
           <div
             className={twMerge(
               'flex h-full w-full items-center border border-transparent',
-              errors.get(variable.id) && 'border-red-500'
+              errors.get(variable.id)?.field === 'key' && 'border-red-500'
             )}
           >
             {variable.isNew ? (
@@ -154,8 +154,8 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 </span>
               </Tooltip>
             )}
-            {errors.get(variable.id) && (
-              <Tooltip content={errors.get(variable.id)}>
+            {errors.get(variable.id)?.field === 'key' && (
+              <Tooltip content={errors.get(variable.id)?.message}>
                 <div className="mr-4">
                   <Icon iconName="circle-exclamation" iconStyle="regular" className="text-red-500" />
                 </div>
@@ -179,9 +179,10 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
           <div
             className={twMerge(
               // Ensure the pseudo-element is behind by using after:-z-10
-              'relative z-0 flex h-full w-full items-center after:pointer-events-none after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:-z-10 after:h-full after:w-full after:transition-all after:duration-100 group-hover:after:bg-neutral-100',
+              'relative z-0 flex h-full w-full items-center border border-transparent after:pointer-events-none after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:-z-10 after:h-full after:w-full after:transition-all after:duration-100 group-hover:after:bg-neutral-100',
               isCellFocused('value') && 'after:bg-neutral-150 group-hover:after:bg-neutral-150',
-              !isSecretPlaceholder && 'cursor-text'
+              !isSecretPlaceholder && 'cursor-text',
+              errors.get(variable.id)?.field === 'value' && 'border-red-500'
             )}
             onClick={onValueCellClick}
           >
@@ -261,6 +262,13 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 >
                   <Icon iconName="rotate-left" iconStyle="regular" />
                 </button>
+              )}
+              {errors.get(variable.id)?.field === 'value' && (
+                <Tooltip content={errors.get(variable.id)?.message}>
+                  <span className="px-1">
+                    <Icon iconName="circle-exclamation" iconStyle="regular" className="text-red-500" />
+                  </span>
+                </Tooltip>
               )}
             </div>
           </div>
