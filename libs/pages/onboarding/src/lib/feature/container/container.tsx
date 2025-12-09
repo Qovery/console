@@ -1,6 +1,6 @@
 import { PlanEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useEffect, useState } from 'react'
-import { type Params, useNavigate } from 'react-router-dom'
+import { type Params, useLocation, useNavigate } from 'react-router-dom'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
@@ -42,6 +42,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const { children, params } = props
 
   const navigate = useNavigate()
+  const location = useLocation()
   const [step, setStep] = useState(params['*'])
   const [contextValue, setContextValue] = useState(defaultContext)
   const { data: organizations = [] } = useOrganizations()
@@ -68,9 +69,11 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   useEffect(() => {
     if (hasDxAuth && currentPath === ONBOARDING_PLANS_URL) {
-      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
+      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`, {
+        state: location.state,
+      })
     }
-  }, [currentPath, hasDxAuth, navigate])
+  }, [currentPath, hasDxAuth, navigate, location.state])
 
   const currentStep = hasExistingOrganization
     ? currentPath === ONBOARDING_PROJECT_URL

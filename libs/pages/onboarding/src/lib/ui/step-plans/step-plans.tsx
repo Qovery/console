@@ -6,7 +6,6 @@ import { type FormEvent, type MutableRefObject, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ENVIRONMENTS_URL, ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { Button, ExternalLink, Heading, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
-import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { fieldCardStyles } from '@qovery/shared/util-payment'
 import { Background } from './background'
@@ -43,8 +42,8 @@ export default function StepPlans(props: StepPlansProps) {
     isSubmitting,
   } = props
   const navigate = useNavigate()
-  const [currentOrganizationId] = useLocalStorage<string>('currentOrganizationId', '')
-  const [currentProjectId] = useLocalStorage<string>('currentProjectId', '')
+  const currentOrganizationId = localStorage.getItem('currentOrganizationId') || ''
+  const currentProjectId = localStorage.getItem('currentProjectId') || ''
 
   const dateFormatter = useMemo(
     () =>
@@ -74,7 +73,6 @@ export default function StepPlans(props: StepPlansProps) {
   }
 
   const showCardFields = cbInstance !== null
-  const isSubmitDisabled = !isCardReady || !showCardFields || isSubmitting
 
   return (
     <Section className="mx-auto flex max-w-[1024px] flex-row gap-16">
@@ -193,7 +191,7 @@ export default function StepPlans(props: StepPlansProps) {
                     Back
                   </Button>
                 )}
-                <Button type="submit" size="lg" loading={isSubmitting} disabled={isSubmitDisabled}>
+                <Button type="submit" size="lg" loading={isSubmitting}>
                   Start my 14-days free trial
                 </Button>
               </div>

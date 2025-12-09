@@ -1,6 +1,4 @@
 import { type Control, Controller } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
-import { ONBOARDING_PLANS_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { Button, Icon, InputText } from '@qovery/shared/ui'
 
 export interface StepProjectProps {
@@ -15,10 +13,9 @@ export interface StepProjectProps {
 
 export function StepProject(props: StepProjectProps) {
   const { onSubmit, control, loading, onFirstStepBack } = props
-  const navigate = useNavigate()
 
   return (
-    <div className="pb-10">
+    <div className="mx-auto max-w-content-with-navigation-left pb-10">
       <h1 className="h3 mb-3 text-neutral-400">
         Create your Organization
         <span className="ml-2" role="img" aria-label="star">
@@ -61,15 +58,8 @@ export function StepProject(props: StepProjectProps) {
           )}
         />
         <div className="mt-10 flex justify-between border-t border-neutral-200 pt-5">
-          <Button
-            type="button"
-            size="lg"
-            color="neutral"
-            variant="surface"
-            className="gap-2"
-            onClick={() => (onFirstStepBack ? onFirstStepBack() : navigate(`${ONBOARDING_URL}${ONBOARDING_PLANS_URL}`))}
-          >
-            <Icon name="icon-solid-arrow-left" />
+          <Button type="button" size="lg" color="neutral" variant="surface" className="gap-2" onClick={onFirstStepBack}>
+            <Icon iconName="arrow-left" iconStyle="solid" />
             Back
           </Button>
           <Button type="submit" size="lg" loading={loading}>

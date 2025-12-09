@@ -2,7 +2,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAddCreditCard, useCreateOrganization, useDeleteOrganization } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
@@ -46,6 +46,10 @@ export function OnboardingProject() {
   const shouldSkipBilling = userSignUp?.dx_auth === true
   const planToUse = shouldSkipBilling ? PlanEnum.USER_2025 : selectedPlan
 
+  const location = useLocation()
+  const previousUrl = location.state?.previousUrl
+  const hasPreviousUrl = previousUrl !== undefined
+
   useEffect(() => {
     setValue('organization_name', organization_name)
     setValue('project_name', project_name || 'main')
@@ -85,32 +89,36 @@ export function OnboardingProject() {
     let createdOrganizationId: string | null = null
 
     try {
-      const organization = await createOrganization({
-        organizationRequest: {
-          name: data.organization_name,
-          plan: planToUse,
-          admin_emails: admin_email ? [admin_email] : user?.email ? [user.email] : [],
-        },
-      })
-      createdOrganizationId = organization.id
-      await getAccessTokenSilently({ cacheMode: 'off' })
+      try {
+        const organization = await createOrganization({
+          organizationRequest: {
+            name: data.organization_name,
+            plan: planToUse,
+            admin_emails: admin_email ? [admin_email] : user?.email ? [user.email] : [],
+          },
+        })
+        createdOrganizationId = organization.id
+        await getAccessTokenSilently({ cacheMode: 'off' })
+      } catch (error) {
+        toastError(error as Error)
+        return
+      }
 
-      if (organization.id) {
-        await addCardIfPresent(organization.id)
+      if (createdOrganizationId) {
+        await addCardIfPresent(createdOrganizationId)
       }
 
       const project = await createProject({
-        organizationId: organization.id,
+        organizationId: createdOrganizationId,
         projectRequest: {
           name: data.project_name,
         },
       })
 
       if (project) {
-        navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
+        navigate(ENVIRONMENTS_URL(createdOrganizationId, project.id) + ENVIRONMENTS_GENERAL_URL)
       }
     } catch (error) {
-      console.error(error)
       toastError(error as Error)
       if (createdOrganizationId) {
         try {
@@ -131,7 +139,13 @@ export function OnboardingProject() {
       onSubmit={onSubmit}
       control={control}
       loading={isSubmitting}
-      onFirstStepBack={shouldSkipBilling ? () => navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`) : undefined}
+      onFirstStepBack={
+        hasPreviousUrl
+          ? () => navigate(previousUrl)
+          : shouldSkipBilling
+            ? () => navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
+            : () => navigate(-1)
+      }
     />
   )
 }
