@@ -115,12 +115,12 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
     },
   },
   missing_instance: {
-    hiddenFields: ['function', 'operator', 'threshold', 'duration'],
+    hiddenFields: ['function', 'operator', 'threshold'],
     defaults: {
       function: 'NONE',
       operator: 'BELOW',
       threshold: 0.8,
-      duration: 'PT0S',
+      duration: 'PT5M',
     },
   },
   instance_restart: {
@@ -129,7 +129,7 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
       function: 'NONE',
       operator: 'EQUAL',
       threshold: 1,
-      duration: 'PT0S',
+      duration: 'PT1M',
     },
   },
 }
