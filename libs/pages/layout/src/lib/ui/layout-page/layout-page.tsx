@@ -1,9 +1,11 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
+import { useQuery } from '@tanstack/react-query'
 import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useClusterStatuses } from '@qovery/domains/clusters/feature'
+import { observability } from '@qovery/domains/observability/data-access'
 import { InvoiceBanner, useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton, DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
@@ -55,6 +57,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
   const { data: organization } = useOrganization({ organizationId })
   const { roles, isQoveryAdminUser } = useUserRole()
+  const isAlertingFeatureFlagEnabled = useFeatureFlagVariantKey('alerting')
   const isFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
 
   const isQoveryUserWithMobileCheck = checkQoveryUser(isQoveryAdminUser)
@@ -96,6 +99,22 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
       .otherwise(() => false)
   )
 
+  const { data: alertRules = [] } = useQuery({
+    ...observability.alertRules({ organizationId }),
+    enabled: Boolean(organizationId && isAlertingFeatureFlagEnabled),
+  })
+
+  const hasFiringAlerts = useMemo(
+    () =>
+      alertRules.some(
+        ({ state, target }) =>
+          ['APPLICATION', 'CONTAINER', 'JOB', 'CRONJOB', 'HELM', 'TERRAFORM'].includes(
+            target?.target_type?.trim?.() ?? ''
+          ) && ['TRIGGERED', 'PENDING_NOTIFICATION', 'NOTIFIED'].includes(state ?? '')
+      ),
+    [alertRules]
+  )
+
   // Display Qovery admin if we don't have the organization in the token
   const displayQoveryAdminBanner = useMemo(() => {
     if (isQoveryAdminUser) {
@@ -122,6 +141,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
               clusterNotification={
                 clusterCredentialError || clusterStatusesError ? 'error' : clusterUpgradeWarning ? 'warning' : undefined
               }
+              alertingNotification={hasFiringAlerts ? 'error' : undefined}
             />
           </div>
           <div className="flex w-full grow flex-col-reverse">
