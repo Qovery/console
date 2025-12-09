@@ -70,8 +70,7 @@ export function OnboardingProject() {
         },
       })
     } catch (error) {
-      toastError(error as Error)
-      throw error
+      console.error(error)
     }
   }
 
