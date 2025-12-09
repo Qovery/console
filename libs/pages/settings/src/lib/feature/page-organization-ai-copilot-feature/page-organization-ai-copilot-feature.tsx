@@ -9,6 +9,10 @@ export function PageOrganizationAICopilotFeature() {
 
   const { data: organization } = useOrganization({ organizationId })
 
+  if (!organization) {
+    return null
+  }
+
   return <AICopilotSettings organization={organization} />
 }
 
