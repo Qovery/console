@@ -1,6 +1,6 @@
 import { Icon } from '@qovery/shared/ui'
 import { getIconClass, getIconName } from '../../utils/icon-utils/icon-utils'
-import type { PlanStep } from '../devops-copilot-panel.types'
+import type { PlanStep } from '../devops-copilot-panel'
 
 interface StreamingMessageProps {
   displayedStreamingMessage: string

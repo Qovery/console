@@ -1,5 +1,5 @@
 import { render, renderWithProviders, screen } from '@qovery/shared/util-tests'
-import type { Message, PlanStep } from '../devops-copilot-panel.types'
+import type { Message, PlanStep } from '../devops-copilot-panel'
 import { AssistantMessage } from './assistant-message'
 
 jest.mock('../../devops-render-markdown/devops-render-markdown', () => ({

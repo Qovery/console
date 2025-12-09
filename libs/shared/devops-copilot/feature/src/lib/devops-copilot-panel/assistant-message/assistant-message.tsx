@@ -3,7 +3,7 @@ import { type MutableRefObject } from 'react'
 import { Button, Icon } from '@qovery/shared/ui'
 import { RenderMarkdown } from '../../devops-render-markdown/devops-render-markdown'
 import { getIconClass, getIconName } from '../../utils/icon-utils/icon-utils'
-import type { Message, PlanStep } from '../devops-copilot-panel.types'
+import type { Message, PlanStep } from '../devops-copilot-panel'
 
 interface AssistantMessageProps {
   message: Message

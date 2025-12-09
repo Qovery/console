@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { ToastEnum, toast } from '@qovery/shared/ui'
-import type { DevopsCopilotContext, Message } from '../../devops-copilot-panel.types'
+import type { CopilotContextData, Message } from '../../devops-copilot-panel'
 import { submitVote } from '../../submit-vote'
 
 interface UseVoteHandlerParams {
@@ -8,7 +8,7 @@ interface UseVoteHandlerParams {
   setThread: (thread: Message[]) => void
   userId: string
   withContext: boolean
-  context: DevopsCopilotContext
+  context: CopilotContextData
 }
 
 export function useVoteHandler({ thread, setThread, userId, withContext, context }: UseVoteHandlerParams) {

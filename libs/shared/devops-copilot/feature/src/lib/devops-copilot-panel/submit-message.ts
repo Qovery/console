@@ -1,12 +1,12 @@
 import { mutations } from '@qovery/shared/devops-copilot/data-access'
-import type { DevopsCopilotContext } from './devops-copilot-panel.types'
+import type { CopilotContextData } from './devops-copilot-panel'
 
 export const submitMessage = async (
   userSub: string,
   message: string,
   token: string,
   threadId?: string,
-  context?: DevopsCopilotContext | null,
+  context?: CopilotContextData | null,
   onStream?: (chunk: string) => void,
   signal?: AbortSignal
 ): Promise<{ id: string; messageId: string } | null> => {

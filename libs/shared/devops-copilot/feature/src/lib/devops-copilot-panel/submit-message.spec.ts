@@ -1,7 +1,7 @@
 import { TextDecoder, TextEncoder } from 'util'
 import { mutations } from '@qovery/shared/devops-copilot/data-access'
 import { organizationFactoryMock } from '@qovery/shared/factories'
-import type { DevopsCopilotContext } from './devops-copilot-panel.types'
+import type { CopilotContextData } from './devops-copilot-panel'
 import { submitMessage } from './submit-message'
 
 global.TextEncoder = TextEncoder as typeof global.TextEncoder
@@ -18,7 +18,7 @@ describe('submitMessage', () => {
   const mockAddThread = mutations.addThread as jest.MockedFunction<typeof mutations.addThread>
   const mockAddMessage = mutations.addMessage as jest.MockedFunction<typeof mutations.addMessage>
 
-  const mockContext: DevopsCopilotContext = {
+  const mockContext: CopilotContextData = {
     organization: organizationFactoryMock(1)[0],
     readOnly: true,
   }

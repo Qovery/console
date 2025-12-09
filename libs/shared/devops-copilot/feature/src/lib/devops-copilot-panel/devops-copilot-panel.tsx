@@ -4,8 +4,10 @@ import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import mermaid from 'mermaid'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
+import { type CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { SETTINGS_AI_COPILOT_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { AnimatedGradientText, Button, Callout, Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { QOVERY_STATUS_URL } from '@qovery/shared/util-const'
@@ -21,13 +23,49 @@ import { useThreads } from '../hooks/use-threads/use-threads'
 import { getIconClass, getIconName } from '../utils/icon-utils/icon-utils'
 import { AssistantMessage } from './assistant-message/assistant-message'
 import DevopsCopilotHistory from './devops-copilot-history'
-import type { DevopsCopilotPanelProps, Message, PlanStep } from './devops-copilot-panel.types'
 import { Header } from './header/header'
 import { useMessageSubmission } from './hooks/use-message-submission/use-message-submission'
 import { useVoteHandler } from './hooks/use-vote-handler/use-vote-handler'
 import { Input } from './input/input'
 import { renderStreamingMessageWithMermaid } from './streaming-mermaid-renderer/streaming-mermaid-renderer'
 import { StreamingMessage } from './streaming-message/streaming-message'
+
+export type Message = {
+  id: string
+  text: string
+  owner: 'user' | 'assistant'
+  timestamp: number
+  vote?: 'upvote' | 'downvote'
+}
+
+export type Thread = Message[]
+
+export interface DevopsCopilotPanelProps {
+  onClose: () => void
+  smaller?: boolean
+  style?: CSSProperties
+}
+
+export type PlanStep = {
+  messageId: string
+  description: string
+  toolName: string
+  status: 'not_started' | 'in_progress' | 'completed' | 'waiting' | 'error'
+}
+
+export type CopilotContextData = {
+  organization?: Organization
+  cluster?: Cluster
+  project?: Project
+  environment?: Environment
+  service?: AnyService
+  deployment?:
+    | {
+        execution_id?: string
+      }
+    | undefined
+  readOnly?: boolean
+}
 
 export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) {
   const controllerRef = useRef<AbortController | null>(null)

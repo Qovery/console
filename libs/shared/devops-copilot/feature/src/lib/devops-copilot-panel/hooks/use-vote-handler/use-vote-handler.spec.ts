@@ -1,7 +1,7 @@
 import { clusterFactoryMock, organizationFactoryMock, projectsFactoryMock } from '@qovery/shared/factories'
 import { toast } from '@qovery/shared/ui'
 import { renderHook, waitFor } from '@qovery/shared/util-tests'
-import type { DevopsCopilotContext, Message } from '../../devops-copilot-panel.types'
+import type { CopilotContextData, Message } from '../../devops-copilot-panel'
 import * as submitVoteModule from '../../submit-vote'
 import { useVoteHandler } from './use-vote-handler'
 
@@ -23,7 +23,7 @@ const mockToast = toast as jest.MockedFunction<typeof toast>
 describe('useVoteHandler', () => {
   const mockSubmitVote = submitVoteModule.submitVote as jest.MockedFunction<typeof submitVoteModule.submitVote>
 
-  const mockContext: DevopsCopilotContext = {
+  const mockContext: CopilotContextData = {
     organization: organizationFactoryMock(1)[0],
   }
 

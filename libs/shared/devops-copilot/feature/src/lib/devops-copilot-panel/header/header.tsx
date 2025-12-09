@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import { type MutableRefObject } from 'react'
 import { Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL } from '@qovery/shared/util-const'
-import type { Message, PlanStep } from '../devops-copilot-panel.types'
+import type { Message, PlanStep } from '../devops-copilot-panel'
 
 interface HeaderProps {
   threadId?: string

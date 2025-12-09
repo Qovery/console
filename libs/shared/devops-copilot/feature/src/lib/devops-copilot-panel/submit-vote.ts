@@ -1,11 +1,11 @@
 import { mutations } from '@qovery/shared/devops-copilot/data-access'
-import type { DevopsCopilotContext } from './devops-copilot-panel.types'
+import type { CopilotContextData } from './devops-copilot-panel'
 
 export async function submitVote(
   userSub: string,
   messageId: string,
   vote: 'upvote' | 'downvote',
-  context?: DevopsCopilotContext | null
+  context?: CopilotContextData | null
 ): Promise<{ id: string }> {
   try {
     const organizationId = context?.organization?.id

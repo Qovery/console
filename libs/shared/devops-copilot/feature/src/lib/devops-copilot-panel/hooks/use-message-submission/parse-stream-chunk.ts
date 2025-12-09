@@ -1,4 +1,4 @@
-import type { PlanStep } from '../../devops-copilot-panel.types'
+import type { PlanStep } from '../../devops-copilot-panel'
 
 const CHUNK_PREFIXES = {
   PLAN: '__plan__:',

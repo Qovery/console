@@ -1,5 +1,5 @@
 import { render, renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { type PlanStep } from '../devops-copilot-panel.types'
+import { type PlanStep } from '../devops-copilot-panel'
 import { StreamingMessage } from './streaming-message'
 
 describe('StreamingMessage', () => {

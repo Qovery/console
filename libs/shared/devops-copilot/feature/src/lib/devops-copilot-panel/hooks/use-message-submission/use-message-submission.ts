@@ -1,5 +1,5 @@
 import { type MutableRefObject, useCallback, useRef } from 'react'
-import type { DevopsCopilotContext, Message, PlanStep } from '../../devops-copilot-panel.types'
+import type { CopilotContextData, Message, PlanStep } from '../../devops-copilot-panel'
 import { submitMessage } from '../../submit-message'
 import { parseStreamChunk } from './parse-stream-chunk'
 
@@ -15,7 +15,7 @@ interface MessageSubmissionState {
   thread: Message[]
   threadId: string | undefined
   withContext: boolean
-  context: DevopsCopilotContext
+  context: CopilotContextData
   isReadOnly: boolean
   userId: string
 }
