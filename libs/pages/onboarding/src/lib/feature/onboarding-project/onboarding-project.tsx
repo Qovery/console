@@ -16,6 +16,7 @@ import {
 } from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { type SerializedError } from '@qovery/shared/utils'
 import { StepProject } from '../../ui/step-project/step-project'
 import { ContextOnboarding } from '../container/container'
 
@@ -112,7 +113,11 @@ export function OnboardingProject() {
 
       navigate(ENVIRONMENTS_URL(createdOrganizationId, project.id) + ENVIRONMENTS_GENERAL_URL)
     } catch (error) {
-      toastError(error as Error)
+      if ((error as SerializedError).code === '409') {
+        toastError(error as unknown as SerializedError)
+        return
+      }
+
       if (createdOrganizationId) {
         try {
           await deleteOrganization({ organizationId: createdOrganizationId })
