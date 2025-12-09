@@ -11,7 +11,7 @@ export function FreeTrialBanner() {
   const { data: currentCost } = useCurrentCost({ organizationId })
   const { showChat } = useSupportChat()
 
-  const remainingTrialDays = currentCost?.remaining_trial_day
+  const remainingTrialDays = (currentCost?.remaining_trial_day ?? 0) + 1
 
   const isOnOrganizationBillingSummaryPage = pathname.includes(
     SETTINGS_URL(organizationId) + SETTINGS_BILLING_SUMMARY_URL

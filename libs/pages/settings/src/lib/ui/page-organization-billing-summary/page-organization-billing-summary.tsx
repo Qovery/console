@@ -1,4 +1,6 @@
+import { format } from 'date-fns'
 import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
+import { useMemo } from 'react'
 import { type CardImages } from 'react-payment-inputs/images'
 import { useParams } from 'react-router-dom'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
@@ -15,7 +17,7 @@ import {
   imagesCreditCart,
 } from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
-import { costToHuman, formatPlanDisplay } from '@qovery/shared/util-js'
+import { costToHuman, formatPlanDisplay, pluralize } from '@qovery/shared/util-js'
 import InvoicesListFeature from '../../feature/page-organization-billing-summary-feature/invoices-list-feature/invoices-list-feature'
 
 export interface PageOrganizationBillingSummaryProps {
@@ -51,12 +53,30 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
   // Get the billing recurrence word to display based on the renewal date.
   // It's not so accurate, but it's a good enough approximation for now
   const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
-  const isTrial = true
-  const remainingTrialDay = props.currentCost?.remaining_trial_day
+  const remainingTrialDay = (props.currentCost?.remaining_trial_day ?? 0) + 1
   const showTrialCallout =
-    !userSignUp?.dx_auth && isTrial && remainingTrialDay !== undefined && !props.creditCardLoading
+    !userSignUp?.dx_auth && remainingTrialDay !== undefined && remainingTrialDay > 0 && !props.creditCardLoading
   const hasCreditCard = props.hasCreditCard ?? Boolean(props.creditCard)
-  const trialDayLabel = remainingTrialDay === 1 ? 'day' : 'days'
+
+  // This function is used to get the trial start date based on the remaining trial days from the API
+  const trialStartDate = useMemo(() => {
+    const remainingTrialDayFromApi = props.currentCost?.remaining_trial_day
+    if (remainingTrialDayFromApi === undefined || remainingTrialDayFromApi === null) return null
+
+    const trialDurationDays = 14
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const daysUntilExpiration = remainingTrialDayFromApi + 1
+    const expirationDate = new Date(today)
+    expirationDate.setDate(expirationDate.getDate() + daysUntilExpiration)
+
+    const startDate = new Date(expirationDate)
+    startDate.setDate(startDate.getDate() - trialDurationDays)
+    startDate.setHours(0, 0, 0, 0)
+
+    return startDate
+  }, [props.currentCost?.remaining_trial_day])
 
   return (
     <div className="flex w-full max-w-[832px] flex-col justify-between">
@@ -66,12 +86,13 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <Callout.Text>
               <Callout.TextHeading>
                 {hasCreditCard
-                  ? `Your free trial plan expires ${remainingTrialDay} ${trialDayLabel} from now`
-                  : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay} ${trialDayLabel}`}
+                  ? `Your free trial plan expires ${remainingTrialDay} ${pluralize(remainingTrialDay, 'day')} from now`
+                  : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay} ${pluralize(remainingTrialDay, 'day')}`}
               </Callout.TextHeading>
               {hasCreditCard ? (
                 <>
-                  You have contracted a free 14-days trial on November 25, 2025. At the end of this plan your user
+                  You have contracted a free 14-days trial on{' '}
+                  {trialStartDate ? format(trialStartDate, 'MMMM d, yyyy') : '...'}. At the end of this plan your user
                   subscription will start unless you cancel your trial
                 </>
               ) : (
