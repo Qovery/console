@@ -38,9 +38,9 @@ export function CrudModal({ customDomain, onSubmit, onClose, loading, isEdit, li
               redirect the traffic to each port by setting the “Port Name” value within the port settings.
             </li>
             <li>
-              If you don’t want Qovery to manage the certificate for this custom domain, disable the “Generate
-              Certificate” flag. Disabling this flag is necessary whenever your service is behind a CDN that already
-              manages the certificate for you and the traffic is proxied by the CDN to the Qovery domain.
+              If you don't want Qovery to manage the certificate for this custom domain, disable the "Generate
+              Certificate" flag. Disabling this flag is necessary whenever your service is behind a CDN or DNS proxy
+              that already manages the certificate for you and the traffic is proxied to the Qovery domain.
             </li>
           </ol>
           <ExternalLink className="mt-2 " href="https://www.qovery.com/docs/configuration/application#custom-domains">
@@ -96,8 +96,8 @@ export function CrudModal({ customDomain, onSubmit, onClose, loading, isEdit, li
               }
               field.onChange(value)
             }}
-            title="Domain behind a CDN (e.g. Cloudflare, CloudFront)"
-            description="Check this if the traffic on this domain is managed by a CDN."
+            title="Domain behind a CDN or DNS proxy (e.g. Cloudflare, CloudFront, Route 53)"
+            description="Check this if the traffic on this domain is managed by a CDN or DNS proxy."
             forceAlignTop
             small
           />

@@ -54,9 +54,7 @@ export function StepSummaryFeature() {
       timeout_sec: Number(generalData.timeout_sec),
       auto_deploy: generalData.auto_deploy ?? false,
       engine: generalData.engine,
-      backend: {
-        kubernetes: {},
-      },
+      backend: generalData.backend,
       terraform_files_source: {
         git_repository: {
           url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
@@ -92,7 +90,7 @@ export function StepSummaryFeature() {
       })
 
       if (withPlan) {
-        await deployService({ serviceId: response.id, serviceType: 'TERRAFORM', request: { dry_run: true } })
+        await deployService({ serviceId: response.id, serviceType: 'TERRAFORM', request: { action: 'PLAN' } })
         setIsLoadingCreateAndPlan(false)
       }
 
@@ -182,11 +180,12 @@ export function StepSummaryFeature() {
                   {generalData.provider_version.explicit_version}
                 </li>
                 <li>
-                  <span className="font-medium">Execution credentials:</span>{' '}
-                  {generalData.use_cluster_credentials ? 'Cluster credentials' : 'Environment variables'}
+                  <span className="font-medium">Backend:</span>{' '}
+                  {'kubernetes' in generalData.backend ? 'Kubernetes' : 'User provided'}
                 </li>
                 <li>
-                  <span className="font-medium">State:</span> Kubernetes (Default)
+                  <span className="font-medium">Execution credentials:</span>{' '}
+                  {generalData.use_cluster_credentials ? 'Cluster credentials' : 'Environment variables'}
                 </li>
                 <li>
                   <span className="font-medium">Auto-deploy:</span>{' '}

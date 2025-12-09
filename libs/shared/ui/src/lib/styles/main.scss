@@ -147,6 +147,16 @@ svg:focus,
   outline: none;
 }
 
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 /* Chargebee styles */
 /* Individual field wrappers matching InputText design */
 .chargebee-field-wrapper {

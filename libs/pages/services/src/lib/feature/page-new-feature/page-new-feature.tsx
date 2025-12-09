@@ -362,18 +362,19 @@ export function PageNewFeature() {
               icon: <Icon name="TERRAFORM" width={32} height={32} />,
               link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_TERRAFORM_CREATION_URL,
               cloud_provider: cloudProvider,
+              badge: 'NEW',
             },
           ]
         : [
             {
               title: 'Terraform',
-              description: "Terraform service isn't available for your organization.",
+              description: 'Terraform native service is available only for organizations on the Team plan or higher.',
               icon: <Icon name="TERRAFORM" width={32} height={32} />,
-              onClick: () => showPylonForm('request-access-terraform'),
+              onClick: () => showPylonForm('request-upgrade-plan'),
               cloud_provider: cloudProvider,
               disabledCTA: (
                 <p className="cursor-pointer text-xs font-medium text-neutral-400">
-                  Contact us to enable it <Icon iconName="chevron-right" className="ml-1 text-2xs" />
+                  Upgrade your plan <Icon iconName="chevron-right" className="ml-1 text-2xs" />
                 </p>
               ),
               badge: 'NEW',

@@ -126,12 +126,6 @@ export function StepFeatures(props: StepFeaturesProps) {
                           control={control}
                           watch={watch}
                           setValue={setValue}
-                          disabled={feature.id === 'STATIC_IP' && isKarpenter && isProduction}
-                          tooltip={
-                            feature.id === 'STATIC_IP' && isKarpenter && isProduction
-                              ? 'This feature can not be disabled on a production cluster using Karpenter'
-                              : undefined
-                          }
                         >
                           {feature.id === 'STATIC_IP' && (
                             <Callout.Root color="yellow" className="mt-4">
@@ -199,6 +193,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                 <ScalewayStaticIp
                   staticIpFeature={features.find(({ id }) => id === 'STATIC_IP')}
                   natGatewayFeature={features.find(({ id }) => id === 'NAT_GATEWAY')}
+                  production={isProduction || false}
                 />
               ) : (
                 <div className="mt-2 flex justify-center">

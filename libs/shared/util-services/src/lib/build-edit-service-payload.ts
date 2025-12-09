@@ -106,7 +106,7 @@ function refactoTerraform({ service, request = {} }: terraformProps): TerraformR
     },
     timeout_sec: Number(request.timeout_sec ?? service.timeout_sec),
     terraform_variables_source: {
-      tf_vars: [],
+      tf_vars: request.terraform_variables_source?.tf_vars ?? service.terraform_variables_source?.tf_vars ?? [],
       tf_var_file_paths:
         request.terraform_variables_source?.tf_var_file_paths ??
         service.terraform_variables_source?.tf_var_file_paths ??

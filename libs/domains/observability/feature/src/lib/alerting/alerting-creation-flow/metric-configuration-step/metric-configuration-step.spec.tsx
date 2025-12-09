@@ -20,11 +20,12 @@ jest.mock('react-router-dom', () => ({
 const createAlert = (overrides: Partial<AlertConfiguration> = {}): AlertConfiguration => ({
   id: 'alert-1',
   name: 'CPU Alert',
-  tag: 'CPU',
+  tag: 'cpu',
   for_duration: 'PT5M',
   condition: { kind: 'BUILT', function: 'AVG', operator: 'ABOVE', threshold: 80, promql: '' },
   severity: 'MEDIUM' as AlertSeverity,
-  alert_receiver_ids: [],
+  alert_receiver_ids: ['receiver-1'],
+  presentation: { summary: 'My description' },
   skipped: false,
   ...overrides,
 })
@@ -32,10 +33,11 @@ const createAlert = (overrides: Partial<AlertConfiguration> = {}): AlertConfigur
 const renderWithContext = async (
   alerts: AlertConfiguration[] = [],
   selectedMetrics: string[] = ['cpu'],
-  props: { isEdit?: boolean; isLoadingEditAlertRule?: boolean } = {}
+  props: { isEdit?: boolean } = {}
 ) => {
   const mockSetCurrentStepIndex = jest.fn()
   const mockSetAlerts = jest.fn()
+  const mockOnNavigateToMetric = jest.fn()
   const mockOnComplete = jest.fn()
 
   const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -48,9 +50,12 @@ const renderWithContext = async (
         setCurrentStepIndex: mockSetCurrentStepIndex,
         alerts,
         setAlerts: mockSetAlerts,
-        onComplete: mockOnComplete,
-        totalSteps: selectedMetrics.length + 1,
+        totalSteps: selectedMetrics.length,
         containerName: 'container-1',
+        ingressName: 'ingress-1',
+        onNavigateToMetric: mockOnNavigateToMetric,
+        onComplete: mockOnComplete,
+        isLoading: false,
       }}
     >
       {children}
@@ -101,7 +106,7 @@ describe('MetricConfigurationStep', () => {
     await renderWithContext()
 
     await waitFor(() => {
-      expect(screen.getByText('Metric')).toBeInTheDocument()
+      expect(screen.getAllByText('Metric').length).toBeGreaterThan(0)
       expect(screen.getByText('Trigger condition')).toBeInTheDocument()
       expect(screen.getByText('Duration')).toBeInTheDocument()
     })
@@ -119,8 +124,16 @@ describe('MetricConfigurationStep', () => {
     })
   })
 
-  it('should render continue button in normal mode', async () => {
+  it('should render create button in normal mode when on last metric', async () => {
     await renderWithContext()
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /create/i })).toBeInTheDocument()
+    })
+  })
+
+  it('should render include button in normal mode when more metrics remain', async () => {
+    await renderWithContext([], ['cpu', 'memory'])
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /include/i })).toBeInTheDocument()
@@ -148,21 +161,21 @@ describe('MetricConfigurationStep', () => {
     })
   })
 
-  it('should enable continue button when form is valid', async () => {
-    await renderWithContext()
+  it('should enable create button when form is valid', async () => {
+    const validAlert = createAlert({ tag: 'cpu' })
+    await renderWithContext([validAlert])
 
     await waitFor(() => {
-      const continueButton = screen.getByRole('button', { name: /include/i })
-      expect(continueButton).toBeEnabled()
+      const createButton = screen.getByRole('button', { name: /create/i })
+      expect(createButton).toBeEnabled()
     })
   })
 
   it('should pre-fill form with existing alert data in edit mode', async () => {
     const existingAlert = createAlert({
       id: 'alert-1',
-      name: 'Existing Alert',
-      metricCategory: 'cpu',
-      condition: { operator: 'below', threshold: '50' },
+      tag: 'cpu',
+      condition: { kind: 'BUILT', function: 'AVG', operator: 'BELOW', threshold: 50, promql: '' },
     })
 
     mockUseParams.mockReturnValue({ alertId: 'alert-1' })
@@ -170,8 +183,8 @@ describe('MetricConfigurationStep', () => {
     await renderWithContext([existingAlert], ['cpu'], { isEdit: true })
 
     await waitFor(() => {
-      const nameInput = screen.getByDisplayValue('Existing Alert')
-      expect(nameInput).toBeInTheDocument()
+      const thresholdInput = screen.getByDisplayValue('50')
+      expect(thresholdInput).toBeInTheDocument()
     })
   })
 })

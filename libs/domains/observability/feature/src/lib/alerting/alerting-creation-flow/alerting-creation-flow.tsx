@@ -1,20 +1,32 @@
 import { subHours } from 'date-fns'
-import { type Environment } from 'qovery-typescript-axios'
+import { type AlertTargetType, type Environment } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
-import { Navigate, Route, Routes, useSearchParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ErrorBoundary, FunnelFlow } from '@qovery/shared/ui'
-import useContainerName from '../../hooks/use-container-name/use-container-name'
-import { type AlertConfiguration } from './alerting-creation-flow.types'
-import { ROUTER_ALERTING_CREATION, type RouteType } from './router'
+import { useContainerName } from '../../hooks/use-container-name/use-container-name'
+import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create-alert-rule'
+import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
+import { generateConditionDescription } from '../../util-alerting/generate-condition-description'
+import { type AlertConfiguration, type MetricCategory } from './alerting-creation-flow.types'
+import { MetricConfigurationStep } from './metric-configuration-step/metric-configuration-step'
+import {
+  QUERY_CPU,
+  QUERY_HTTP_ERROR,
+  QUERY_HTTP_LATENCY,
+  QUERY_INSTANCE_RESTART,
+  QUERY_MEMORY,
+  QUERY_MISSING_INSTANCE,
+} from './summary-step/alert-queries'
 
-const METRIC_LABELS: Record<string, string> = {
+const METRIC_LABELS: Record<MetricCategory, string> = {
   cpu: 'CPU',
   memory: 'Memory',
-  instances: 'Instances',
-  k8s_event: 'k8s event',
-  network: 'Network',
-  logs: 'Logs',
+  http_error: 'HTTP error',
+  http_latency: 'HTTP latency',
+  instance_restart: 'Instance restart',
+  missing_instance: 'Missing instance',
 }
 
 interface AlertingCreationFlowContextInterface {
@@ -25,9 +37,12 @@ interface AlertingCreationFlowContextInterface {
   setCurrentStepIndex: (index: number) => void
   alerts: AlertConfiguration[]
   setAlerts: (alerts: AlertConfiguration[]) => void
-  onComplete: (alerts: AlertConfiguration[]) => void
   totalSteps: number
   containerName?: string
+  ingressName?: string
+  onNavigateToMetric: (index: number) => void
+  onComplete: (alerts: AlertConfiguration[]) => Promise<void>
+  isLoading: boolean
 }
 
 export const AlertingCreationFlowContext = createContext<AlertingCreationFlowContextInterface | undefined>(undefined)
@@ -43,7 +58,7 @@ export const useAlertingCreationFlowContext = () => {
 interface AlertingCreationFlowProps {
   environment: Environment
   service: AnyService
-  selectedMetrics: string[]
+  selectedMetrics: MetricCategory[]
   onClose: () => void
   onComplete: (alerts: AlertConfiguration[]) => void
 }
@@ -55,9 +70,16 @@ export function AlertingCreationFlow({
   onClose,
   onComplete,
 }: AlertingCreationFlowProps) {
-  const [searchParams] = useSearchParams()
+  const { organizationId = '' } = useParams()
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [alerts, setAlerts] = useState<AlertConfiguration[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+
+  const { mutateAsync: createAlertRule } = useCreateAlertRule({ organizationId })
+
+  const handleNavigateToMetric = (index: number) => {
+    setCurrentStepIndex(index)
+  }
 
   const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
 
@@ -72,17 +94,25 @@ export function AlertingCreationFlow({
     endDate: now.toISOString(),
   })
 
+  const { data: ingressName } = useIngressName({
+    clusterId: environment.cluster_id,
+    serviceId: service.id,
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+  })
+
   const serviceId = service.id
   const serviceName = service.name
 
-  const totalSteps = selectedMetrics.length + 1
+  const totalSteps = selectedMetrics.length
 
   const getCurrentTitle = () => {
     const metricCategory = selectedMetrics[currentStepIndex]
     if (!metricCategory) {
       return 'Alerts'
     }
-    return `${METRIC_LABELS[metricCategory] || metricCategory} alerts`
+    const metricLabel = METRIC_LABELS[metricCategory] || metricCategory
+    return `${metricLabel} alert`
   }
 
   const handleExit = () => {
@@ -91,7 +121,73 @@ export function AlertingCreationFlow({
     }
   }
 
-  const preserveQueryString = searchParams.toString() ? `?${searchParams.toString()}` : ''
+  const handleComplete = async (alertsToCreate: AlertConfiguration[]) => {
+    if (!containerName || !ingressName) return
+
+    const activeAlerts = alertsToCreate.filter((alert) => !alert.skipped)
+
+    try {
+      setIsLoading(true)
+      for (const alert of activeAlerts) {
+        const threshold = match(alert.tag)
+          .with('http_latency', () => alert.condition.threshold ?? 0)
+          .with('instance_restart', () => 1)
+          .with('missing_instance', () => 1)
+          .otherwise(() => (alert.condition.threshold ?? 0) / 100)
+
+        const unit = match(alert.tag)
+          .with('http_latency', () => 'secs')
+          .otherwise(() => '%')
+
+        const operator = alert.condition.operator ?? 'ABOVE'
+        const func = alert.condition.function ?? 'NONE'
+        const description = match(alert.tag)
+          .with('instance_restart', () => 'One or more instances restarted unexpectedly')
+          .with('missing_instance', () => 'Missing one or more running instances for this service')
+          .otherwise(() => generateConditionDescription(func, operator, threshold, unit, alert.for_duration))
+
+        await createAlertRule({
+          payload: {
+            organization_id: organizationId,
+            cluster_id: environment.cluster_id,
+            target: {
+              target_id: service.id,
+              target_type: service.serviceType as AlertTargetType,
+            },
+            name: alert.name,
+            tag: alert.tag,
+            description,
+            condition: {
+              kind: 'BUILT',
+              function: func,
+              operator,
+              threshold,
+              promql: match(alert.tag)
+                .with('cpu', () => QUERY_CPU(containerName))
+                .with('memory', () => QUERY_MEMORY(containerName))
+                .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
+                .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
+                .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
+                .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
+                .otherwise(() => ''),
+            },
+            for_duration: alert.for_duration,
+            severity: alert.severity,
+            enabled: true,
+            alert_receiver_ids: alert.alert_receiver_ids,
+            presentation: {
+              summary: alert.presentation.summary ?? undefined,
+            },
+          },
+        })
+      }
+      onComplete(activeAlerts)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <AlertingCreationFlowContext.Provider
@@ -103,9 +199,12 @@ export function AlertingCreationFlow({
         setCurrentStepIndex,
         alerts,
         setAlerts,
-        onComplete,
         totalSteps,
         containerName,
+        ingressName,
+        onNavigateToMetric: handleNavigateToMetric,
+        onComplete: handleComplete,
+        isLoading,
       }}
     >
       <FunnelFlow
@@ -115,16 +214,9 @@ export function AlertingCreationFlow({
         currentTitle={getCurrentTitle()}
         onExit={handleExit}
       >
-        <Routes>
-          {ROUTER_ALERTING_CREATION.map((route: RouteType) => (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={<ErrorBoundary key={route.path}>{route.component}</ErrorBoundary>}
-            />
-          ))}
-          <Route path="*" element={<Navigate replace to={`metric/${selectedMetrics[0]}${preserveQueryString}`} />} />
-        </Routes>
+        <ErrorBoundary>
+          <MetricConfigurationStep />
+        </ErrorBoundary>
       </FunnelFlow>
     </AlertingCreationFlowContext.Provider>
   )

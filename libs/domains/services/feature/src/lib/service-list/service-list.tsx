@@ -580,7 +580,8 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                     <Truncate text={`${containerImage.image_name}`} truncateLimit={20} />
                   </span>
                 </div>
-                {service.serviceType === 'CONTAINER' && (
+                {(service.serviceType === 'CONTAINER' ||
+                  (service.serviceType === 'JOB' && isJobContainerSource(service.source))) && (
                   <LastVersion
                     organizationId={organizationId}
                     projectId={projectId}

@@ -1,4 +1,19 @@
+import { type TerraformVariableDefinition } from 'qovery-typescript-axios'
 import { CUSTOM_SOURCE, type UIVariable } from './terraform-variables-context'
+
+/**
+ * Creates a lookup map of variable keys to their descriptions from Terraform variable definitions.
+ * This ensures descriptions are preserved even when variables are overridden by tfvars files.
+ */
+export const buildDescriptionByKey = (
+  variablesResponse: TerraformVariableDefinition[] | undefined
+): Record<string, string | undefined> => {
+  return Object.fromEntries(
+    (variablesResponse ?? [])
+      .filter((variable) => variable?.key)
+      .map((variable) => [variable.key, variable.description ?? undefined])
+  )
+}
 
 export const isVariableChanged = (v: UIVariable): boolean => {
   // New variables are always considered changed

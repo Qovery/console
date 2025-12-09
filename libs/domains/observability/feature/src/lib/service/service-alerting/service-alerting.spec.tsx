@@ -1,4 +1,4 @@
-import { AlertRuleState, AlertSeverity } from 'qovery-typescript-axios'
+import { AlertRuleState } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceAlerting } from './service-alerting'
 
@@ -41,11 +41,17 @@ describe('ServiceAlerting', () => {
   const createAlertRule = (overrides = {}) => ({
     id: 'alert-1',
     name: 'High CPU Usage',
-    state: AlertRuleState.OK,
+    state: 'MONITORING',
     enabled: true,
-    severity: AlertSeverity.CRITICAL,
+    severity: 'CRITICAL',
+    is_up_to_date: true,
     target: {
       target_id: 'app-123',
+    },
+    tag: 'cpu',
+    for_duration: 'PT5M',
+    condition: {
+      kind: 'CUSTOM',
     },
     ...overrides,
   })
@@ -62,7 +68,7 @@ describe('ServiceAlerting', () => {
       data: defaultEnvironment,
     })
     mockUseService.mockReturnValue({
-      data: { id: 'app-123', name: 'Test App' },
+      data: { id: 'app-123', name: 'Test App', environment: { id: 'env-123' } },
     })
     mockUseAlertRules.mockReturnValue({
       data: [],
@@ -104,7 +110,7 @@ describe('ServiceAlerting', () => {
 
   it('should display correct status for different alert states', () => {
     const alertRules = [
-      createAlertRule({ id: 'alert-1', name: 'Triggered Alert', state: AlertRuleState.TRIGGERED }),
+      createAlertRule({ id: 'alert-1', name: 'Firing Alert', state: AlertRuleState.NOTIFIED }),
       createAlertRule({ id: 'alert-2', name: 'Suppressed Alert', state: AlertRuleState.SUPPRESSED }),
       createAlertRule({ id: 'alert-3', name: 'OK Alert', state: AlertRuleState.OK }),
     ]

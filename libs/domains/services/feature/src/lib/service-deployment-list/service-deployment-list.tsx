@@ -10,12 +10,18 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
-import { type DeploymentHistoryService, type Environment, OrganizationEventOrigin } from 'qovery-typescript-axios'
+import {
+  type DeploymentHistoryService,
+  type DeploymentHistoryTriggerAction,
+  type Environment,
+  OrganizationEventOrigin,
+  type ServiceSubActionEnum,
+} from 'qovery-typescript-axios'
 import { useCallback, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
+import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
   ActionTriggerStatusChip,
@@ -32,7 +38,7 @@ import {
   truncateText,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { dateFullFormat, formatDuration } from '@qovery/shared/util-dates'
+import { dateFullFormat, formatDuration, formatInTimeZone } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCancelDeploymentQueueService } from '../hooks/use-cancel-deployment-queue-service/use-cancel-deployment-queue-service'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
@@ -53,8 +59,21 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistorySer
   return typeof data === 'object' && data !== null && 'status' in data && 'details' in data
 }
 
+const formatTriggerAction = (
+  actionTrigger: DeploymentHistoryTriggerAction | Exclude<ServiceSubActionEnum, 'NONE'> | undefined
+) => {
+  return match(actionTrigger)
+    .with('TERRAFORM_PLAN_ONLY', () => 'Plan')
+    .with('TERRAFORM_PLAN_AND_APPLY', () => 'Plan and apply')
+    .with('TERRAFORM_MIGRATE_STATE', () => 'Migrate state')
+    .with('TERRAFORM_FORCE_UNLOCK_STATE', () => 'Force unlock')
+    .with('TERRAFORM_DESTROY', () => 'Destroy')
+    .otherwise(() => upperCaseFirstLetter(actionTrigger ?? ''))
+}
+
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
   const { data: service } = useService({ environmentId: environment?.id, serviceId })
+  console.log('🚀 ~ ServiceDeploymentList ~ service:', service)
 
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
     serviceId,
@@ -179,6 +198,30 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                     </DropdownMenu.Root>
                   ))
                   .otherwise(() => null)}
+                {(service?.serviceType === 'TERRAFORM' ||
+                  (service?.serviceType === 'JOB' && service?.job_type !== 'CRON')) && (
+                  <Tooltip content="Service logs">
+                    <ActionToolbar.Button asChild className="justify-center px-2">
+                      <Link
+                        to={
+                          ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
+                          SERVICE_LOGS_URL(
+                            serviceId,
+                            undefined,
+                            isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
+                            'history',
+                            isDeploymentHistory(data)
+                              ? formatInTimeZone(new Date(data.auditing_data.created_at), 'yyyy-MM-dd HH:mm:ss', 'UTC')
+                              : undefined
+                          )
+                        }
+                        state={{ prevUrl: pathname }}
+                      >
+                        <Icon iconName="scroll" />
+                      </Link>
+                    </ActionToolbar.Button>
+                  </Tooltip>
+                )}
                 <Tooltip content="Pipeline">
                   <ActionToolbar.Button asChild className="justify-center px-2">
                     <Link
@@ -222,7 +265,8 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         },
         cell: (info) => {
           const data = info.row.original
-          const triggerAction = data.status_details?.action
+          const subAction = data.status_details?.sub_action
+          const triggerAction = subAction !== 'NONE' ? subAction : data.status_details?.action
 
           return match(data)
             .with(P.when(isDeploymentHistory), (d) => {
@@ -244,7 +288,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                       .otherwise(() => undefined)}
                   />
                   <div className="flex flex-col gap-1">
-                    <span className="font-medium text-neutral-400">{upperCaseFirstLetter(triggerAction)}</span>
+                    <span className="font-medium text-neutral-400">{formatTriggerAction(triggerAction)}</span>
                     <span className="text-ssm text-neutral-350">{upperCaseFirstLetter(actionStatus)}</span>
                   </div>
                 </div>
@@ -254,7 +298,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
               <div className="flex items-center gap-4">
                 <ActionTriggerStatusChip size="md" status="QUEUED" triggerAction={triggerAction} />
                 <div className="flex flex-col gap-1">
-                  <span className="font-medium text-neutral-400">{upperCaseFirstLetter(triggerAction)}</span>
+                  <span className="font-medium text-neutral-400">{formatTriggerAction(triggerAction)}</span>
                   <span className="text-ssm text-neutral-350">In queue...</span>
                 </div>
               </div>

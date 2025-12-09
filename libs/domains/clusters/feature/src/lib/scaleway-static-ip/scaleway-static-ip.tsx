@@ -17,9 +17,15 @@ export interface ScalewayStaticIpProps {
   staticIpFeature?: ClusterFeatureResponse
   natGatewayFeature?: ClusterFeatureResponse
   disabled?: boolean
+  production: boolean
 }
 
-export function ScalewayStaticIp({ staticIpFeature, natGatewayFeature, disabled = false }: ScalewayStaticIpProps) {
+export function ScalewayStaticIp({
+  staticIpFeature,
+  natGatewayFeature,
+  production,
+  disabled = false,
+}: ScalewayStaticIpProps) {
   const { control, watch, setValue } = useFormContext<ClusterFeaturesData>()
 
   const isEditable = !disabled
@@ -41,6 +47,7 @@ export function ScalewayStaticIp({ staticIpFeature, natGatewayFeature, disabled 
           <Controller
             name={`features.${staticIpFeature?.id}.value`}
             control={control}
+            defaultValue={production}
             render={({ field }) => (
               <div className="flex gap-2">
                 <InputToggle

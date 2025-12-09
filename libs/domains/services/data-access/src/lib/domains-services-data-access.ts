@@ -68,7 +68,6 @@ import {
   type TerraformDeploymentRestrictionRequest,
   TerraformMainCallsApi,
   type TerraformRequest,
-  type TerraformVariablesReplaceRequest,
   TerraformsApi,
   type Application as _Application,
   type CloneServiceRequest as _CloneServiceRequest,
@@ -1238,19 +1237,6 @@ export const mutations = {
   },
   async cleanFailedJobs({ environmentId, payload }: { environmentId: string; payload: CleanFailedJobsRequest }) {
     const response = await environmentActionApi.cleanFailedJobs(environmentId, payload)
-    return response.data
-  },
-  async replaceAllTerraformVariables({
-    serviceId,
-    payload,
-  }: {
-    serviceId: string
-    payload: TerraformVariablesReplaceRequest
-  }) {
-    const response = await terraformConfigurationApi.replaceAllTerraformVariables.bind(terraformConfigurationApi)(
-      serviceId,
-      payload
-    )
     return response.data
   },
 }

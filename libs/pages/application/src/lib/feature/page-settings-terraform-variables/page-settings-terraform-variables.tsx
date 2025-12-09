@@ -6,7 +6,6 @@ import {
   type TerraformGeneralData,
   TerraformVariablesProvider,
   TerraformVariablesSettings,
-  useTerraformEditVariables,
   useTerraformVariablesContext,
 } from '@qovery/domains/service-terraform/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
@@ -18,52 +17,40 @@ const TerraformVariablesSettingsForm = () => {
   const { handleSubmit } = useFormContext<TerraformGeneralData>()
   const { serializeForApi, tfVarFiles, errors } = useTerraformVariablesContext()
   const { data: service } = useService({ serviceId: applicationId })
-  const { mutate: replaceAllTerraformVariables, isLoading: isLoadingReplaceVariables } = useTerraformEditVariables()
+
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
     organizationId,
     projectId,
     environmentId,
   })
 
-  const isLoading = useMemo(
-    () => isLoadingReplaceVariables || isLoadingEditService,
-    [isLoadingReplaceVariables, isLoadingEditService]
-  )
-
   if (service?.serviceType !== 'TERRAFORM') {
     return null
   }
 
   const onSubmit = handleSubmit(() => {
-    // Update all variables
-    replaceAllTerraformVariables({
-      serviceId: applicationId,
-      payload: {
-        variables: serializeForApi(),
-      },
-    })
-    // Update the service with the order of tfvars files
-    const updatedService = buildEditServicePayload({
+    // Edit the service with the updated variables and the updated order of tfvars files
+    const payload = buildEditServicePayload({
       service,
       request: {
         terraform_variables_source: {
           ...service.terraform_variables_source,
+          tf_vars: serializeForApi(),
           tf_var_file_paths: [...tfVarFiles.filter((file) => file.enabled)].reverse().map((file) => file.source),
         },
       },
     })
     editService({
       serviceId: applicationId,
-      payload: updatedService,
+      payload,
     })
   })
 
   return (
     <>
       <TerraformVariablesSettings />
-
       <div className="mt-10 flex justify-end">
-        <Button type="submit" size="lg" onClick={onSubmit} loading={isLoading} disabled={errors.size > 0}>
+        <Button type="submit" size="lg" onClick={onSubmit} loading={isLoadingEditService} disabled={errors.size > 0}>
           Save
         </Button>
       </div>
@@ -77,7 +64,7 @@ export const PageSettingsTerraformVariablesFeature = () => {
   const methods = useForm<TerraformGeneralData>({
     mode: 'onChange',
     defaultValues: match(service)
-      .with({ serviceType: 'TERRAFORM' }, (s) => ({ ...s, state: 'kubernetes' }))
+      .with({ serviceType: 'TERRAFORM' }, (s) => s)
       .otherwise(() => ({})),
   })
 

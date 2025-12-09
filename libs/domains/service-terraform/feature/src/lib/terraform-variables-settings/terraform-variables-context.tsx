@@ -25,7 +25,7 @@ import {
 } from '@qovery/domains/organizations/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { type TerraformGeneralData } from './terraform-configuration-settings/terraform-configuration-settings'
-import { isCustomVariable, isVariableChanged } from './terraform-variables-utils'
+import { buildDescriptionByKey, isCustomVariable, isVariableChanged } from './terraform-variables-utils'
 
 export type UIVariable = {
   id: string
@@ -40,6 +40,7 @@ export type UIVariable = {
   originalSecret?: boolean
   // metadata
   isNew?: boolean // created by user in UI (always treated as changed)
+  description?: string
 }
 
 export type TfVarsFile = TfVarsFileResponse & {
@@ -80,6 +81,7 @@ export type TerraformVariablesContextType = {
 }
 
 export const CUSTOM_SOURCE = 'Custom'
+export const SECRET_UNCHANGED_VALUE = 'SECRET_VALUE_UNCHANGED'
 
 export const TerraformVariablesContext = createContext<TerraformVariablesContextType | undefined>(undefined)
 
@@ -158,6 +160,11 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
 
   const submitNewPath = useCallback(async () => {
     try {
+      if (!newPath.endsWith('.tfvars')) {
+        setNewPathErrorMessage('The path must end with .tfvars')
+        return
+      }
+
       await fetchTfVars(
         {
           organizationId,
@@ -249,6 +256,10 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     )
   }, [variablesResponse, filesVars])
 
+  // Separate lookup for descriptions to ensures descriptions are preserved
+  // even when variables are overridden by tfvars files or manual overrides
+  const descriptionByKey = useMemo(() => buildDescriptionByKey(variablesResponse), [variablesResponse])
+
   // initialVars regroups variables from the git repo and the service's tf_vars. It is used to populate the initial state of the variables. Each variable key must be unique. If a variable key is present in both the git repo and the service's tf_vars, the value from the service's tf_vars is used.
   const initialVars: UIVariable[] = useMemo(() => {
     const uniqueVars = new Map<string, UIVariable>()
@@ -260,23 +271,32 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
           : currentVariable && 'default' in currentVariable
             ? currentVariable.default ?? ''
             : ''
+      const originalSecret =
+        currentVariable && 'sensitive' in currentVariable
+          ? currentVariable.sensitive
+          : currentVariable && 'secret' in currentVariable
+            ? Boolean(currentVariable.secret)
+            : false
       const source = currentVariable && 'source' in currentVariable ? currentVariable.source : CUSTOM_SOURCE
       const value = 'value' in variable ? variable.value ?? '' : 'default' in variable ? variable.default ?? '' : ''
+      const secret =
+        'sensitive' in variable ? variable.sensitive : 'secret' in variable ? Boolean(variable.secret) : false
+      const description = descriptionByKey[variable.key ?? '']
       uniqueVars.set(variable.key ?? '', {
         id: uuidv4(),
         key: variable.key ?? '',
         value,
         originalKey: variable.key,
         originalValue,
-        originalSecret:
-          'sensitive' in variable ? variable.sensitive : 'secret' in variable ? Boolean(variable.secret) : false,
+        originalSecret,
         source,
-        secret: 'sensitive' in variable ? variable.sensitive : 'secret' in variable ? Boolean(variable.secret) : false,
+        secret,
         isNew: false,
+        description,
       })
     })
     return Array.from(uniqueVars.values())
-  }, [groupedInitialVars, variableByKey])
+  }, [groupedInitialVars, variableByKey, descriptionByKey])
 
   const [vars, setVars] = useState<UIVariable[]>([])
 
@@ -375,7 +395,18 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   }, [])
 
   const toggleSecret = useCallback((id: string) => {
-    setVars((prev) => prev.map((v) => (v.id === id ? { ...v, secret: !v.secret } : v)))
+    setVars((prev) =>
+      prev.map((v) =>
+        v.id === id
+          ? {
+              ...v,
+              secret: !v.secret,
+              // If it is currently a secret and the value is the unchanged value, set the value to an empty string
+              value: v.secret && v.value === SECRET_UNCHANGED_VALUE ? '' : v.value,
+            }
+          : v
+      )
+    )
   }, [])
 
   const revertValue = useCallback((id: string) => {
@@ -385,6 +416,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
           ? {
               ...v,
               value: v.originalValue ?? '',
+              secret: v.originalSecret ?? false,
               isOverridden: false,
             }
           : v

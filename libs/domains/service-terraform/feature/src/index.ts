@@ -2,6 +2,5 @@ export * from './lib/terraform-variables-settings/terraform-configuration-settin
 export * from './source-setting/source-setting'
 export * from './lib/terraform-variables-settings/terraform-variables-settings'
 export * from './lib/terraform-variables-settings/terraform-variables-context'
-export * from './lib/hooks/use-terraform-edit-variables/use-terraform-edit-variables'
 export * from './lib/terraform-variables-settings/terraform-tfvars-popover/terraform-tfvars-popover'
 export * from './lib/terraform-variables-settings/terraform-configuration-settings/terraform-configuration-settings'

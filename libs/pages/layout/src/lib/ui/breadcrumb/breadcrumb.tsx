@@ -8,6 +8,7 @@ import { BreadcrumbDeploymentHistory, BreadcrumbDeploymentLogs } from '@qovery/d
 import { ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
+  ALERTING_URL,
   APPLICATION_GENERAL_URL,
   APPLICATION_URL,
   AUDIT_LOGS_URL,
@@ -46,6 +47,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
   const { data: services = [] } = useServices({ environmentId })
 
   const matchAuditLogs = useMatch({ path: AUDIT_LOGS_URL(), end: false })
+  const matchAlerting = useMatch({ path: ALERTING_URL(), end: false })
   const matchSettings = useMatch({ path: SETTINGS_URL(), end: false })
   const matchClusters = useMatch({ path: CLUSTERS_URL(), end: false })
   const matchEnvironmentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL(), end: false })
@@ -263,21 +265,22 @@ export function Breadcrumb(props: BreadcrumbProps) {
   return (
     <div className="flex w-full items-center justify-between">
       <div className="flex h-full items-center">
-        {organizationId && (projectId || clusterId || matchAuditLogs || matchClusters || matchSettings) && (
-          <Tooltip content={currentOrganization?.name || ''}>
-            <div className="mr-2">
-              {currentOrganization?.logo_url ? (
-                <img
-                  src={currentOrganization?.logo_url}
-                  className="h-4"
-                  alt={`${currentOrganization?.name} organization`}
-                />
-              ) : (
-                squareContent(currentOrganization?.name.charAt(0), '')
-              )}
-            </div>
-          </Tooltip>
-        )}
+        {organizationId &&
+          (projectId || clusterId || matchAuditLogs || matchClusters || matchSettings || matchAlerting) && (
+            <Tooltip content={currentOrganization?.name || ''}>
+              <div className="mr-2">
+                {currentOrganization?.logo_url ? (
+                  <img
+                    src={currentOrganization?.logo_url}
+                    className="h-4"
+                    alt={`${currentOrganization?.name} organization`}
+                  />
+                ) : (
+                  squareContent(currentOrganization?.name.charAt(0), '')
+                )}
+              </div>
+            </Tooltip>
+          )}
         {clusterId && (
           <BreadcrumbItem
             isLast={!projectId}
@@ -342,6 +345,16 @@ export function Breadcrumb(props: BreadcrumbProps) {
           <BreadcrumbItem
             label={organizations.find(({ id }) => id === organizationId)?.name}
             data={[{ id: '0', name: 'Audit Logs' }]}
+            menuItems={[]}
+            paramId="0"
+            isLast
+            link=""
+          />
+        )}
+        {matchAlerting && (
+          <BreadcrumbItem
+            label={organizations.find(({ id }) => id === organizationId)?.name}
+            data={[{ id: '0', name: 'Alerting' }]}
             menuItems={[]}
             paramId="0"
             isLast

@@ -27,6 +27,7 @@ const mockDeploymentHistory = [
     status_details: {
       action: 'DEPLOY',
       status: 'ERROR',
+      sub_action: 'NONE',
     },
     details: {
       commit: {
@@ -69,6 +70,7 @@ const mockDeploymentQueue = [
     status_details: {
       action: 'DEPLOY',
       status: 'QUEUED',
+      sub_action: 'NONE',
     },
     icon_uri: 'app://qovery-console/cron-job',
   },

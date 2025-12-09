@@ -1,7 +1,50 @@
+import { type TerraformVariableDefinition } from 'qovery-typescript-axios'
 import { type UIVariable } from './terraform-variables-context'
-import { isVariableChanged } from './terraform-variables-utils'
+import { buildDescriptionByKey, isVariableChanged } from './terraform-variables-utils'
 
 describe('Terraform variables utility functions', () => {
+  describe('buildDescriptionByKey', () => {
+    it('should return an empty object when variablesResponse is undefined', () => {
+      expect(buildDescriptionByKey(undefined)).toEqual({})
+    })
+
+    it('should return an empty object when variablesResponse is an empty array', () => {
+      expect(buildDescriptionByKey([])).toEqual({})
+    })
+
+    it('should map variable keys to their descriptions', () => {
+      const variables: TerraformVariableDefinition[] = [
+        { key: 'aws_region', description: 'The AWS region to deploy to' },
+        { key: 'instance_type', description: 'EC2 instance type' },
+      ]
+      expect(buildDescriptionByKey(variables)).toEqual({
+        aws_region: 'The AWS region to deploy to',
+        instance_type: 'EC2 instance type',
+      })
+    })
+
+    it('should handle variables without descriptions', () => {
+      const variables: TerraformVariableDefinition[] = [
+        { key: 'aws_region', description: 'The AWS region' },
+        { key: 'instance_type' }, // no description
+      ]
+      expect(buildDescriptionByKey(variables)).toEqual({
+        aws_region: 'The AWS region',
+        instance_type: undefined,
+      })
+    })
+
+    it('should filter out variables without keys', () => {
+      const variables: TerraformVariableDefinition[] = [
+        { key: 'valid_key', description: 'Valid description' },
+        { description: 'No key variable' } as TerraformVariableDefinition, // missing key
+        { key: '', description: 'Empty key' }, // empty key (falsy)
+      ]
+      expect(buildDescriptionByKey(variables)).toEqual({
+        valid_key: 'Valid description',
+      })
+    })
+  })
   describe('isVariableChanged', () => {
     it('should return false if nothing has changed', () => {
       const variable: UIVariable = {
