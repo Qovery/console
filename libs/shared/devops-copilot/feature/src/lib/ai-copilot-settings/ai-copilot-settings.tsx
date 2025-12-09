@@ -10,7 +10,7 @@ import SectionAICopilotOptIn from './section-ai-copilot-opt-in/section-ai-copilo
 import SectionScheduledTasks from './section-scheduled-tasks/section-scheduled-tasks'
 
 export interface AICopilotSettingsProps {
-  organization?: Organization
+  organization: Organization
 }
 
 export function AICopilotSettings(props: AICopilotSettingsProps) {
@@ -18,11 +18,11 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
   const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot-config-panel')
 
   const { data: configData, isLoading: isLoadingConfig } = useAICopilotConfig({
-    organizationId: organization?.id ?? '',
+    organizationId: organization.id,
   })
 
   const { data: recurringTasksData, isLoading: isLoadingTasks } = useAICopilotRecurringTasks({
-    organizationId: organization?.id ?? '',
+    organizationId: organization.id,
   })
 
   const tasks = recurringTasksData?.tasks || []
@@ -30,10 +30,10 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
   const isEnabled = orgConfig?.enabled ?? false
   const currentMode = orgConfig?.read_only ? 'read-only' : 'read-write'
 
-  const toggleTaskMutation = useToggleAICopilotRecurringTask({ organizationId: organization?.id ?? '' })
-  const deleteTaskMutation = useDeleteAICopilotRecurringTask({ organizationId: organization?.id ?? '' })
+  const toggleTaskMutation = useToggleAICopilotRecurringTask({ organizationId: organization.id })
+  const deleteTaskMutation = useDeleteAICopilotRecurringTask({ organizationId: organization.id })
   const updateConfigMutation = useUpdateAICopilotConfig({
-    organizationId: organization?.id ?? '',
+    organizationId: organization.id,
     instructions: orgConfig?.instructions,
   })
 
