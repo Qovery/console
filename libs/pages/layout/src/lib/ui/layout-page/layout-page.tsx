@@ -1,9 +1,15 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useMemo } from 'react'
+import { type PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useClusterStatuses } from '@qovery/domains/clusters/feature'
+import {
+  ClusterDeploymentProgressCard,
+  useActiveDeploymentClusters,
+  useClusterInstallNotifications,
+  useClusterStatuses,
+} from '@qovery/domains/clusters/feature'
+import { getTrackedClusterInstallIds } from '@qovery/domains/clusters/feature'
 import { InvoiceBanner, useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton, DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
@@ -52,7 +58,18 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { organizationId = '' } = useParams()
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
+  const [shouldPollClusterStatuses, setShouldPollClusterStatuses] = useState(false)
+  const [trackedClusterIds, setTrackedClusterIds] = useState<string[]>(getTrackedClusterInstallIds())
+  const { data: clusterStatuses } = useClusterStatuses({
+    organizationId,
+    enabled: !!organizationId,
+    refetchInterval: shouldPollClusterStatuses ? 5000 : undefined,
+    refetchIntervalInBackground: true,
+  })
+  const { activeIds: activeDeploymentClusterIds } = useActiveDeploymentClusters({
+    clusterStatuses,
+    trackedClusterIds,
+  })
   const { data: organization } = useOrganization({ organizationId })
   const { roles, isQoveryAdminUser } = useUserRole()
   const isFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
@@ -69,6 +86,11 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
 
   const clusterBanner =
     !matchLogInfraRoute && clusters && displayClusterDeploymentBanner(firstClusterStatus?.status) && !clusterIsDeployed
+
+  const deployingClusters =
+    clusters?.filter(({ id }) => activeDeploymentClusterIds.includes(id) && trackedClusterIds.includes(id)) || []
+  const isOnClusterPage = pathname.includes('/cluster/')
+  const showFloatingDeploymentCard = deployingClusters.length > 0 && !isOnClusterPage
 
   const invalidCluster = clusters?.find(
     ({ id }) =>
@@ -104,6 +126,22 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
     }
     return false
   }, [roles, organizationId, isQoveryAdminUser])
+
+  useEffect(() => {
+    const hasDeployingCluster =
+      clusterStatuses?.some(
+        ({ status, is_deployed }) =>
+          displayClusterDeploymentBanner(status) && (is_deployed === false || is_deployed === undefined)
+      ) ?? false
+    setShouldPollClusterStatuses(hasDeployingCluster)
+    setTrackedClusterIds(getTrackedClusterInstallIds())
+  }, [clusterStatuses])
+
+  useClusterInstallNotifications({
+    organizationId,
+    clusters: clusters ?? [],
+    clusterStatuses,
+  })
 
   return (
     <>
@@ -152,16 +190,6 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 invalid.
               </Banner>
             )}
-            {clusterBanner && (
-              <Banner
-                color="brand"
-                onClickButton={() => navigate(INFRA_LOGS_URL(organizationId, firstCluster?.id))}
-                buttonLabel="See logs"
-              >
-                Installation of the cluster <span className="mx-1 block font-bold">{firstCluster?.name}</span> is
-                ongoing, you can follow it from logs
-              </Banner>
-            )}
             <InvoiceBanner />
             {topBar && (
               <TopBar>
@@ -173,6 +201,9 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
             )}
           </div>
         </div>
+        {showFloatingDeploymentCard && (
+          <ClusterDeploymentProgressCard organizationId={organizationId} clusters={deployingClusters} />
+        )}
       </main>
     </>
   )
