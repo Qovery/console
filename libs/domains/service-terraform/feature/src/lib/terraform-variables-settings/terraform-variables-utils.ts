@@ -16,7 +16,7 @@ export const buildMetadataByKey = (
         variable.key,
         {
           description: variable.description ?? undefined,
-          nullable: (variable as { nullable?: boolean }).nullable ?? true,
+          nullable: variable.nullable ?? true,
         },
       ])
   )
