@@ -109,11 +109,15 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
           className={twMerge(
             'h-full border-r border-neutral-250 transition-all duration-100',
             isCustomVariable(variable) && 'hover:bg-neutral-100',
-            (isCellFocused('key') || isRowSelected(variable.id)) && 'bg-neutral-150 hover:bg-neutral-150',
-            errors.get(variable.id)?.field === 'key' && 'border border-red-500'
+            (isCellFocused('key') || isRowSelected(variable.id)) && 'bg-neutral-150 hover:bg-neutral-150'
           )}
         >
-          <div className="flex h-full w-full items-center">
+          <div
+            className={twMerge(
+              'flex h-full w-full items-center border border-transparent',
+              errors.get(variable.id)?.field === 'key' && 'border-red-500'
+            )}
+          >
             {variable.isNew ? (
               <input
                 name="key"
@@ -161,10 +165,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
         </div>
         {/* Variable value cell */}
         <div
-          className={twMerge(
-            'group relative flex h-full min-h-[44px] items-center border-r border-neutral-250',
-            errors.get(variable.id)?.field === 'value' && 'border border-red-500'
-          )}
+          className="group relative flex h-full min-h-[44px] items-center border-r border-neutral-250"
           onMouseEnter={() => {
             setIsCellHovered(true)
           }}
@@ -178,9 +179,10 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
           <div
             className={twMerge(
               // Ensure the pseudo-element is behind by using after:-z-10
-              'relative z-0 flex h-full w-full items-center after:pointer-events-none after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:-z-10 after:h-full after:w-full after:transition-all after:duration-100 group-hover:after:bg-neutral-100',
+              'relative z-0 flex h-full w-full items-center border border-transparent after:pointer-events-none after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:-z-10 after:h-full after:w-full after:transition-all after:duration-100 group-hover:after:bg-neutral-100',
               isCellFocused('value') && 'after:bg-neutral-150 group-hover:after:bg-neutral-150',
-              !isSecretPlaceholder && 'cursor-text'
+              !isSecretPlaceholder && 'cursor-text',
+              errors.get(variable.id)?.field === 'value' && 'border-red-500'
             )}
             onClick={onValueCellClick}
           >
