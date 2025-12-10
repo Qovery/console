@@ -234,9 +234,12 @@ export default function StepPlans(props: StepPlansProps) {
                   </p>
                 </div>
                 <div className="mb-8">
-                  <h3 className="mb-1 text-sm font-medium text-neutral-400">{trialReminderDate}: Trial reminder </h3>
+                  <h3 className="mb-1 text-sm font-medium text-neutral-400">
+                    {trialReminderDate}: Approaching trial end{' '}
+                  </h3>
                   <p className="text-ssm font-normal text-neutral-350">
-                    We’ll remind you via an email and on the product two days before the end.
+                    Take a moment to review your setup before moving to your full plan. Your remaining days are always
+                    visible.
                   </p>
                 </div>
                 <div>
