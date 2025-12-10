@@ -61,20 +61,7 @@ export function OnboardingProject() {
     setValue('project_name', project_name || 'main')
   }, [organization_name, project_name, setValue])
 
-  const addCardIfPresent = async (organizationId: string) => {
-    if (!cardToken || shouldSkipBilling) return
-
-    await addCreditCard({
-      organizationId,
-      creditCardRequest: {
-        token: cardToken,
-        cvv: '',
-        number: cardLast4 ? `****${cardLast4}` : '',
-        expiry_year: cardExpiryYear ?? 0,
-        expiry_month: cardExpiryMonth ?? 0,
-      },
-    })
-
+  const updateBillingInfo = async (organizationId: string) => {
     await editBillingInfo({
       organizationId,
       billingInfoRequest: {
@@ -88,6 +75,26 @@ export function OnboardingProject() {
         country_code: 'US',
       },
     })
+  }
+
+  const addCardIfPresent = async (organizationId: string) => {
+    if (!cardToken || shouldSkipBilling) {
+      await updateBillingInfo(organizationId)
+      return
+    }
+
+    await addCreditCard({
+      organizationId,
+      creditCardRequest: {
+        token: cardToken,
+        cvv: '',
+        number: cardLast4 ? `****${cardLast4}` : '',
+        expiry_year: cardExpiryYear ?? 0,
+        expiry_month: cardExpiryMonth ?? 0,
+      },
+    })
+
+    await updateBillingInfo(organizationId)
   }
 
   const handleBack = () => {
