@@ -169,14 +169,18 @@ const Item = ({ description, className, children, ...props }: ItemProps) => {
   return (
     <CommandItem
       className={twMerge(
-        'group flex h-10 cursor-pointer items-center gap-2 p-1.5 hover:bg-neutral-400 data-[selected=true]:bg-neutral-400',
+        'group flex h-10 cursor-pointer items-center gap-2 p-1.5 hover:bg-brand-50 data-[selected=true]:bg-brand-50 dark:hover:bg-neutral-400 dark:data-[selected=true]:bg-neutral-400',
         className
       )}
       {...props}
     >
-      <span className="whitespace-nowrap rounded-[4px] bg-neutral-500 p-1 pt-0.5">{children}</span>
+      <span className="whitespace-nowrap rounded-[4px] bg-brand-100 p-1 pt-0.5 text-brand-500 dark:bg-neutral-500 dark:text-neutral-50">
+        {children}
+      </span>
       {description && (
-        <span className="hidden text-xs text-neutral-300 group-data-[selected=true]:inline">{description}</span>
+        <span className="hidden text-xs  text-brand-500 group-data-[selected=true]:inline dark:text-neutral-300">
+          {description}
+        </span>
       )}
     </CommandItem>
   )
@@ -529,7 +533,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
         <div
           className={twMerge(
             clsx(
-              'has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 relative h-9 rounded border border-neutral-400 text-sm outline-none transition-colors focus-within:border-neutral-350 focus-within:outline focus-within:outline-[3px] focus-within:outline-offset-0 focus-within:outline-neutral-400 hover:border-neutral-350',
+              'has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 relative h-9 rounded border border-neutral-250 text-sm outline-none transition-colors hover:border-neutral-350 dark:border-neutral-400 dark:focus-within:border-neutral-350 dark:focus-within:outline dark:focus-within:outline-[3px] dark:focus-within:outline-offset-0 dark:focus-within:outline-neutral-400 dark:hover:border-neutral-350',
               {
                 'cursor-text': !disabled && selected.length !== 0,
               },
@@ -542,11 +546,11 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
           }}
         >
           <div className="relative flex h-full w-full pl-11">
-            <div className="absolute left-[1px] top-0 flex h-[34px] w-7 items-center justify-end rounded-l bg-neutral-600 after:absolute after:-right-[12px] after:top-0 after:block after:h-full after:w-3 after:bg-neutral-600 after:content-['']">
+            <div className="absolute left-[1px] top-0 flex h-[34px] w-7 items-center justify-end rounded-l bg-white after:absolute after:-right-[12px] after:top-0 after:block after:h-full after:w-3 after:bg-white after:content-[''] dark:bg-neutral-600 dark:after:bg-neutral-600">
               {isLoading ? (
-                <Icon iconName="loader" iconStyle="regular" className="ml-0.5 mt-[1px] animate-spin text-neutral-250" />
+                <Icon iconName="loader" iconStyle="regular" className="ml-0.5 mt-[1px] animate-spin text-brand-500" />
               ) : (
-                <Icon iconName="magnifying-glass" iconStyle="regular" className="ml-0.5 mt-[1px] text-neutral-250" />
+                <Icon iconName="magnifying-glass" iconStyle="regular" className="ml-0.5 mt-[1px] text-neutral-350" />
               )}
             </div>
             <div className="flex w-full items-center gap-1 overflow-x-auto">
@@ -557,7 +561,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                     key={option.value}
                     className={twMerge(
                       clsx(
-                        'relative inline-flex h-7 cursor-default items-center whitespace-nowrap rounded bg-neutral-500 py-1 pe-6 pl-2 text-sm text-neutral-50 transition-colors hover:bg-neutral-400 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+                        'relative inline-flex h-7 cursor-default items-center whitespace-nowrap rounded  bg-brand-100 py-1 pe-6 pl-2  text-sm text-brand-500 transition-colors hover:bg-brand-200 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-neutral-500 dark:text-neutral-50 dark:hover:bg-neutral-400  ',
                         badgeClassName
                       )
                     )}
@@ -585,7 +589,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                   >
                     {option.label}
                     <button
-                      className="outline-hidden absolute right-[0.5px] flex h-7 w-6 cursor-pointer items-center justify-center border border-transparent p-0 text-neutral-50 outline-none transition-colors hover:text-neutral-200"
+                      className="outline-hidden absolute right-[0.5px] flex h-7 w-6 cursor-pointer items-center justify-center border border-transparent p-0 text-brand-500 outline-none transition-colors hover:text-brand-600 dark:text-neutral-50 dark:hover:text-neutral-200"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           handleUnselect(option)
@@ -632,7 +636,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                 placeholder={hidePlaceholderWhenSelected && selected.length !== 0 ? '' : placeholder}
                 className={twMerge(
                   clsx(
-                    'h-full flex-1 bg-transparent text-sm text-neutral-50 outline-none placeholder:text-neutral-250 disabled:cursor-not-allowed',
+                    'h-full flex-1 bg-transparent text-sm text-neutral-350 outline-none placeholder:text-neutral-250 disabled:cursor-not-allowed dark:text-neutral-50 dark:placeholder:text-neutral-250',
                     {
                       'w-full': hidePlaceholderWhenSelected,
                       'pe-3': selected.length === 0,
@@ -645,10 +649,10 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
             </div>
           </div>
           {selected.length > 0 && (
-            <div className="absolute right-0 top-0 flex h-[34px] w-6 items-center justify-center rounded-r bg-neutral-600 before:absolute before:-left-7 before:top-0 before:block before:h-full before:w-7 before:bg-gradient-to-r before:from-transparent before:to-neutral-600 before:content-['']">
+            <div className="absolute right-0 top-0 flex h-[34px] w-6 items-center justify-center rounded-r bg-white before:absolute before:-left-7 before:top-0 before:block before:h-full before:w-7 before:bg-gradient-to-r before:from-transparent before:to-white before:content-[''] dark:bg-neutral-600 dark:before:to-neutral-600">
               <button
                 type="button"
-                className="flex h-5 w-5 items-center justify-center rounded border border-transparent p-0 text-xs text-neutral-250 hover:text-neutral-50 focus:border-neutral-250 focus:text-neutral-50 focus:outline-none"
+                className="flex h-5 w-5 items-center justify-center rounded border border-transparent p-0 text-xs text-brand-500 hover:text-brand-600 focus:border-white focus:text-brand-600 focus:outline-none dark:text-neutral-250 dark:hover:text-neutral-50 dark:focus:border-neutral-250 dark:focus:text-neutral-50"
                 onClick={() => {
                   setSelected(selected.filter((s) => s.fixed))
                   onChange?.(selected.filter((s) => s.fixed))
@@ -682,7 +686,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
           >
             {open && !isLoading && (
               <CommandList
-                className="max-h-none overflow-hidden rounded-md border border-neutral-400 bg-neutral-600 text-sm text-neutral-50 shadow-lg"
+                className="max-h-none overflow-hidden rounded-md border border-neutral-400 bg-white text-sm text-neutral-50 shadow-lg dark:bg-neutral-600"
                 onMouseLeave={() => {
                   setOnScrollbar(false)
                 }}
@@ -701,7 +705,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                     <CommandGroup heading="" className="px-0 py-1 pb-0">
                       <CommandItem
                         value="confirm-search"
-                        className="flex h-10 cursor-pointer items-center gap-2 rounded-sm p-1.5 pl-2.5 transition-colors hover:bg-neutral-400 data-[selected=true]:bg-neutral-400"
+                        className="flex h-10 cursor-pointer items-center gap-2 rounded-sm p-1.5 pl-2.5 transition-colors hover:bg-yellow-400 data-[selected=true]:bg-yellow-400 dark:hover:bg-neutral-400 dark:data-[selected=true]:bg-neutral-400"
                         onSelect={() => {
                           onChange?.(selected)
                           handleFreeTextInput()
