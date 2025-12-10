@@ -13,6 +13,7 @@ export interface InputTextProps {
   disabled?: boolean
   dataTestId?: string
   rightElement?: ReactNode
+  placeholder?: string
 }
 
 export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function InputText(props, ref) {
@@ -28,6 +29,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
     disabled,
     rightElement,
     dataTestId,
+    placeholder,
   } = props
 
   const [focused, setFocused] = useState(false)
@@ -41,7 +43,9 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
 
   const hasFocus = focused
   const hasLabelUp =
-    hasFocus || (currentValue?.toString() && currentValue?.toString().length > 0) ? 'input--label-up' : ''
+    hasFocus || (currentValue?.toString() && currentValue?.toString().length > 0) || placeholder
+      ? 'input--label-up'
+      : ''
 
   const hasError = error && error.length > 0 ? 'input--error' : ''
 
@@ -88,6 +92,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
               type={currentType}
               disabled={disabled}
               value={currentValue}
+              placeholder={placeholder}
               onChange={(e) => {
                 if (onChange) onChange(e)
                 setCurrentValue(e.currentTarget.value)

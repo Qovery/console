@@ -14,10 +14,23 @@ export interface WebhookCrudModalProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   isEdition?: boolean
   isLoading?: boolean
+  hasExistingSecret?: boolean
+  secretTouched?: boolean
+  onSecretChange?: (onChange: (value: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => void
+  showSecretClearWarning?: boolean
 }
 
 export function WebhookCrudModal(props: WebhookCrudModalProps) {
-  const { closeModal, onSubmit, isEdition, isLoading } = props
+  const {
+    closeModal,
+    onSubmit,
+    isEdition,
+    isLoading,
+    hasExistingSecret,
+    secretTouched,
+    onSecretChange,
+    showSecretClearWarning,
+  } = props
   const { control } = useFormContext<OrganizationWebhookCreateRequest>()
 
   return (
@@ -98,11 +111,14 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
         render={({ field, fieldState: { error } }) => (
           <InputText
             className="mb-3"
+            type="password"
             name={field.name}
-            onChange={field.onChange}
+            onChange={onSecretChange ? onSecretChange(field.onChange) : field.onChange}
             value={field.value}
             label="Secret"
             error={error?.message}
+            placeholder={hasExistingSecret && !secretTouched ? '••••••••' : undefined}
+            hint={showSecretClearWarning ? 'Saving with an empty secret will remove the existing secret.' : undefined}
           />
         )}
       />
