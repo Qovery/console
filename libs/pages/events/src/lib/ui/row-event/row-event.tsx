@@ -36,7 +36,6 @@ import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 // TODO check the place to be
 import '../../utils/code-editor-audit-logs.scss'
-import CopyButton from '../copy-button/copy-button'
 
 export interface RowEventProps {
   event: OrganizationEventResponse
