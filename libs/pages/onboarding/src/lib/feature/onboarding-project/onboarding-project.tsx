@@ -154,3 +154,5 @@ export function OnboardingProject() {
 
   return <StepProject onSubmit={onSubmit} control={control} loading={isSubmitting} onFirstStepBack={handleBack} />
 }
+
+export default OnboardingProject
