@@ -1,4 +1,3 @@
-import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import { Command, CommandGroup, CommandItem, CommandList, Command as CommandPrimitive, useCommandState } from 'cmdk'
 import {
@@ -24,10 +23,12 @@ export interface Option {
   description?: string
   disable?: boolean
   subOptions?: Exclude<Option, 'subOptions'>[]
+  /** Async callback to load suboptions when this option is clicked */
+  onLoadSubOptions?: () => Promise<Option[]>
   /** fixed option that can't be removed. */
   fixed?: boolean
   /** Group the options by providing key. */
-  [key: string]: string | boolean | Option[] | undefined
+  [key: string]: string | boolean | Option[] | undefined | (() => Promise<Option[]>)
 }
 
 interface GroupOption {
@@ -88,6 +89,8 @@ interface MultipleSelectorProps {
   inputProps?: Omit<React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>, 'value' | 'placeholder' | 'disabled'>
   /** is loading. */
   isLoading?: boolean
+  /** Loading indicator for suboptions */
+  subOptionsLoadingIndicator?: React.ReactNode
 }
 
 export interface MultipleSelectorRef {
@@ -118,20 +121,33 @@ function transToGroupOption(options: Option[], groupBy?: string) {
   return groupOption
 }
 
-function removePickedOption(groupOption: GroupOption, picked: Option[]) {
-  const cloneOption = JSON.parse(JSON.stringify(groupOption)) as GroupOption
+function removePickedOption(
+  groupOption: GroupOption,
+  picked: Option[],
+  loadedAsyncSubOptions?: Record<string, Option[]>
+) {
+  const cloneOption: GroupOption = {}
 
-  for (const [key, value] of Object.entries(cloneOption)) {
+  for (const [key, value] of Object.entries(groupOption)) {
     cloneOption[key] = value.filter((val) => {
       // Remove if the option itself is picked
       if (picked.find((p) => p.value === val.value)) {
         return false
       }
 
-      // Remove parent if any of its subOptions are picked
+      // Remove parent if any of its static subOptions are picked
       if (val.subOptions && val.subOptions.length > 0) {
         const hasPickedChild = val.subOptions.some((subOption) => picked.find((p) => p.value === subOption.value))
         if (hasPickedChild) {
+          return false
+        }
+      }
+
+      // Remove parent if any of its async subOptions are picked
+      if (loadedAsyncSubOptions && loadedAsyncSubOptions[val.value]) {
+        const asyncSubOptions = loadedAsyncSubOptions[val.value]
+        const hasPickedAsyncChild = asyncSubOptions.some((subOption) => picked.find((p) => p.value === subOption.value))
+        if (hasPickedAsyncChild) {
           return false
         }
       }
@@ -212,6 +228,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
       inputProps,
       freeTextInput = false,
       isLoading: isLoadingProp = false,
+      subOptionsLoadingIndicator,
     },
     ref
   ) => {
@@ -249,6 +266,8 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
     const [options, setOptions] = useState<GroupOption>(transToGroupOption(arrayDefaultOptions, groupBy))
     const [inputValue, setInputValue] = useState('')
     const debouncedSearchTerm = useDebounce(inputValue, delay || 500)
+    const [loadedSubOptions, setLoadedSubOptions] = useState<Record<string, Option[]>>({})
+    const [loadingSubOptionsKey, setLoadingSubOptionsKey] = useState<string | undefined>()
 
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (
@@ -260,8 +279,29 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
         setOpen(false)
         inputRef.current.blur()
         setKeyShowSubOptions(undefined)
+        setLoadingSubOptionsKey(undefined)
       }
     }
+
+    const loadSubOptionsAsync = useCallback(async (option: Option) => {
+      if (!option.onLoadSubOptions) return
+
+      setLoadingSubOptionsKey(option.value)
+      setKeyShowSubOptions(option.value)
+
+      try {
+        const subOptions = await option.onLoadSubOptions()
+        setLoadedSubOptions((prev) => ({
+          ...prev,
+          [option.value]: subOptions,
+        }))
+      } catch (error) {
+        console.error('Failed to load suboptions:', error)
+        setKeyShowSubOptions(undefined)
+      } finally {
+        setLoadingSubOptionsKey(undefined)
+      }
+    }, [])
 
     const handleUnselect = useCallback(
       (option: Option) => {
@@ -492,7 +532,10 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
       return <CommandEmpty>{emptyIndicator}</CommandEmpty>
     }, [creatable, emptyIndicator, onSearch, options])
 
-    const selectables = useMemo<GroupOption>(() => removePickedOption(options, selected), [options, selected])
+    const selectables = useMemo<GroupOption>(
+      () => removePickedOption(options, selected, loadedSubOptions),
+      [options, selected, loadedSubOptions]
+    )
 
     const commandFilter = useCallback(() => {
       if (commandProps?.filter) {
@@ -719,9 +762,15 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                     </CommandGroup>
                   )}
                   {Object.entries(selectables).map(([key, dropdowns]) => (
-                    <ScrollArea key={key} className="*:max-h-48 sm:*:max-h-80">
+                    <div key={key} className="max-h-96 overflow-y-auto">
                       <CommandGroup heading={key} className="px-0 py-1">
                         {dropdowns.map((option) => {
+                          const hasStaticSubOptions = option.subOptions && option.subOptions.length > 0
+                          const hasAsyncSubOptions = !!option.onLoadSubOptions
+                          const asyncSubOptions = loadedSubOptions[option.value]
+                          const isLoadingAsync = loadingSubOptionsKey === option.value
+                          const shouldShowSubOptions = keyShowSubOptions === option.value
+
                           return (
                             <div key={option.value}>
                               {!keyShowSubOptions && (
@@ -734,8 +783,15 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                                     e.stopPropagation()
                                   }}
                                   onSelect={() => {
-                                    if (option.subOptions && option.subOptions.length > 0) {
+                                    // Handle static suboptions
+                                    if (hasStaticSubOptions) {
                                       setKeyShowSubOptions(option.value)
+                                      return
+                                    }
+
+                                    // Handle async suboptions
+                                    if (hasAsyncSubOptions) {
+                                      void loadSubOptionsAsync(option)
                                       return
                                     }
 
@@ -763,46 +819,58 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                                   {option.label}
                                 </Item>
                               )}
-                              {option.subOptions &&
-                                option.subOptions.length > 0 &&
-                                keyShowSubOptions === option.value && (
-                                  <div>
-                                    {option.subOptions.map((subOption) => (
-                                      <Item
-                                        key={subOption.value}
-                                        value={subOption.value}
-                                        description={subOption.description}
-                                        disabled={subOption.disable}
-                                        onMouseDown={(e) => {
-                                          e.preventDefault()
-                                          e.stopPropagation()
-                                        }}
-                                        onSelect={() => {
-                                          if (selected.length >= maxSelected) {
-                                            onMaxSelected?.(selected.length)
-                                            return
-                                          }
-                                          setInputValue('')
-                                          setKeyShowSubOptions(undefined)
-                                          const newOptions = [...selected, subOption]
-                                          setSelected(newOptions)
-                                          onChange?.(newOptions)
-                                          inputRef.current?.focus()
-                                        }}
-                                        className={clsx(
-                                          subOption.disable && 'pointer-events-none cursor-not-allowed opacity-50'
-                                        )}
-                                      >
-                                        {subOption.label}
-                                      </Item>
-                                    ))}
-                                  </div>
-                                )}
+                              {shouldShowSubOptions && (
+                                <div>
+                                  {isLoadingAsync && (
+                                    <div className="flex h-10 items-center justify-center p-2">
+                                      {subOptionsLoadingIndicator || (
+                                        <Icon
+                                          iconName="loader"
+                                          iconStyle="regular"
+                                          className="animate-spin text-brand-500 dark:text-neutral-250"
+                                        />
+                                      )}
+                                    </div>
+                                  )}
+                                  {!isLoadingAsync &&
+                                    (hasStaticSubOptions ? option.subOptions : asyncSubOptions)
+                                      ?.filter((subOption) => !selected.find((s) => s.value === subOption.value))
+                                      ?.map((subOption) => (
+                                        <Item
+                                          key={subOption.value}
+                                          value={subOption.value}
+                                          description={subOption.description}
+                                          disabled={subOption.disable}
+                                          onMouseDown={(e) => {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                          }}
+                                          onSelect={() => {
+                                            if (selected.length >= maxSelected) {
+                                              onMaxSelected?.(selected.length)
+                                              return
+                                            }
+                                            setInputValue('')
+                                            setKeyShowSubOptions(undefined)
+                                            const newOptions = [...selected, subOption]
+                                            setSelected(newOptions)
+                                            onChange?.(newOptions)
+                                            inputRef.current?.focus()
+                                          }}
+                                          className={clsx(
+                                            subOption.disable && 'pointer-events-none cursor-not-allowed opacity-50'
+                                          )}
+                                        >
+                                          {subOption.label}
+                                        </Item>
+                                      ))}
+                                </div>
+                              )}
                             </div>
                           )
                         })}
                       </CommandGroup>
-                    </ScrollArea>
+                    </div>
                   ))}
                 </>
               </CommandList>
