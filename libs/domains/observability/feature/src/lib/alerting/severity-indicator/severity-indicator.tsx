@@ -20,29 +20,29 @@ function getSeverityConfig(severity: AlertSeverity): SeverityConfig {
     .with('LOW', () => ({
       label: 'Low',
       bars: 2,
-      textColor: 'text-neutral-400',
-      barColor: 'bg-neutral-350',
+      textColor: 'text-neutral-350',
+      barColor: 'bg-neutral-300',
       emptyBarColor: 'bg-neutral-200',
     }))
     .with('MEDIUM', () => ({
       label: 'Medium',
       bars: 3,
-      textColor: 'text-yellow-600',
-      barColor: 'bg-yellow-500',
+      textColor: 'text-neutral-400',
+      barColor: 'bg-neutral-300',
       emptyBarColor: 'bg-neutral-200',
     }))
     .with('HIGH', () => ({
       label: 'High',
       bars: 4,
-      textColor: 'text-red-600',
-      barColor: 'bg-red-600',
+      textColor: 'text-neutral-400',
+      barColor: 'bg-neutral-300',
       emptyBarColor: 'bg-neutral-200',
     }))
     .with('CRITICAL', () => ({
       label: 'Critical',
       bars: 5,
-      textColor: 'text-red-600',
-      barColor: 'bg-red-600',
+      textColor: 'text-neutral-400',
+      barColor: 'bg-neutral-300',
       emptyBarColor: 'bg-neutral-200',
     }))
     .exhaustive()
@@ -62,7 +62,7 @@ export function SeverityIndicator({ severity, className = '' }: SeverityIndicato
           />
         ))}
       </div>
-      <span className={`relative -top-[0.5px] text-sm font-medium ${config.textColor}`}>{config.label}</span>
+      <span className={`relative -top-[0.5px] text-sm ${config.textColor}`}>{config.label}</span>
     </div>
   )
 }

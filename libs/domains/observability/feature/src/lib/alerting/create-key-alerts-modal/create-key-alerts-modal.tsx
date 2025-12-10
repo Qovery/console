@@ -100,7 +100,7 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
   return (
     <FormProvider {...methods}>
       <ModalCrud
-        title="Create key alerts"
+        title="Create new alert"
         description="Please select the type of alert want to add to your service."
         onClose={onClose}
         onSubmit={onSubmit}
