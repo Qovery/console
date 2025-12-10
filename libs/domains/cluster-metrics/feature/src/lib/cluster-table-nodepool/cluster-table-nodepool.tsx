@@ -1,5 +1,6 @@
 import * as Accordion from '@radix-ui/react-accordion'
 import clsx from 'clsx'
+import { type ClusterNodeDto } from 'qovery-ws-typescript-axios'
 import { useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
@@ -13,6 +14,184 @@ import { calculateNodePoolMetrics, calculateUntrackedNodesMetrics } from './calc
 export interface ClusterTableNodepoolProps {
   organizationId: string
   clusterId: string
+}
+
+interface SystemNodepoolProps {
+  organizationId: string
+  clusterId: string
+  untrackedNodes: ClusterNodeDto[]
+  nodeWarnings: Record<string, unknown>
+}
+
+function SystemNodepool({ organizationId, clusterId, untrackedNodes, nodeWarnings }: SystemNodepoolProps) {
+  const untrackedMetrics = useMemo(
+    () => calculateUntrackedNodesMetrics(untrackedNodes, nodeWarnings),
+    [untrackedNodes, nodeWarnings]
+  )
+
+  const nodesHealthyPercentage = useMemo(
+    () =>
+      calculatePercentage(
+        untrackedMetrics.nodesCount - untrackedMetrics.nodesWarningCount,
+        untrackedMetrics.nodesCount
+      ),
+    [untrackedMetrics.nodesCount, untrackedMetrics.nodesWarningCount]
+  )
+
+  const nodesWarningPercentage = useMemo(
+    () => calculatePercentage(untrackedMetrics.nodesWarningCount, untrackedMetrics.nodesCount),
+    [untrackedMetrics.nodesWarningCount, untrackedMetrics.nodesCount]
+  )
+
+  const deployingPercentage = useMemo(
+    () => calculatePercentage(untrackedMetrics.nodesDeployingCount, untrackedMetrics.nodesCount),
+    [untrackedMetrics.nodesDeployingCount, untrackedMetrics.nodesCount]
+  )
+
+  return (
+    <>
+      <div className="mt-2 flex flex-col gap-1">
+        <div className="text-sm font-medium text-neutral-400">System & infrastructure nodes (1)</div>
+        <div className="text-xs text-neutral-350">
+          These nodes run essential cluster services such as networking, autoscaling, and monitoring.
+        </div>
+      </div>
+      <Accordion.Item
+        key="untracked-nodes"
+        value="untracked-nodes"
+        className="rounded border border-neutral-250 [box-shadow:0px_1px_2px_0px_rgba(27,36,44,0.12)]"
+      >
+        <Accordion.Trigger className="group flex min-h-[86px] w-full items-start justify-between py-5">
+          <div className="flex h-full w-1/4 items-start justify-between border-r border-neutral-200 px-6">
+            <div className="flex items-start gap-[18px]">
+              <Tooltip content={untrackedMetrics.nodesWarningCount > 0 ? 'Warning' : 'Ready'}>
+                <span className="flex h-5 w-4 items-center justify-center">
+                  {untrackedMetrics.nodesWarningCount > 0 ? (
+                    <Icon iconName="circle-exclamation" iconStyle="regular" className="text-base text-yellow-500" />
+                  ) : (
+                    <Icon iconName="circle-check" iconStyle="regular" className="text-base text-green-500" />
+                  )}
+                </span>
+              </Tooltip>
+              <div className="flex flex-1 flex-col gap-0.5">
+                <div className="text-left text-sm font-medium leading-[20px] text-neutral-400">
+                  Karpenter node group
+                </div>
+                <div className="text-left text-xs leading-[18px] text-neutral-350">
+                  EKS managed node group that hosts the Karpenter controller and other essential cluster infrastructure
+                  components.
+                </div>
+              </div>
+            </div>
+            <Icon
+              iconName="chevron-down"
+              iconStyle="solid"
+              className="relative top-0.5 text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
+            />
+          </div>
+          <div className="flex w-1/4 flex-col justify-start gap-3 border-r border-neutral-200 px-5 pt-0.5">
+            <div className="flex w-full items-center justify-between">
+              <span className="flex items-center gap-2 text-sm text-neutral-350">
+                <Icon iconName="microchip" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
+                <span>
+                  <Tooltip content="Capacity">
+                    <span className="font-medium text-neutral-400">{untrackedMetrics.cpuReserved} vCPU</span>
+                  </Tooltip>
+                </span>
+              </span>
+            </div>
+          </div>
+          <div className="flex w-1/4 flex-col justify-start gap-3 border-r border-neutral-200 px-5 pt-0.5">
+            <div className="flex w-full items-center justify-between">
+              <span className="flex items-center gap-2 text-sm text-neutral-350">
+                <Icon iconName="memory" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
+                <span>
+                  <Tooltip content="Capacity">
+                    <span className="font-medium text-neutral-400">{untrackedMetrics.memoryReserved} GB</span>
+                  </Tooltip>
+                </span>
+              </span>
+            </div>
+          </div>
+          <div className="flex w-1/4 flex-col justify-start gap-3 px-5 pt-0.5">
+            <span className="flex items-center gap-2 text-sm text-neutral-350">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24">
+                <path
+                  fill="var(--color-neutral-300)"
+                  fillRule="evenodd"
+                  d="M13 4a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2zm7 0h-5v5h5z"
+                  clipRule="evenodd"
+                ></path>
+                <path
+                  fill="var(--color-neutral-300)"
+                  fillRule="evenodd"
+                  d="M2.586 6.586A2 2 0 0 1 4 6h5a2 2 0 0 1 2 2v5h5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 .586-1.414M4 15v5h5v-5zm5-2H4V8h5zm2 2v5h5v-5z"
+                  clipRule="evenodd"
+                ></path>
+              </svg>
+              <span>
+                <span className="font-medium text-neutral-400">{untrackedMetrics.nodesCount}</span>{' '}
+                {pluralize(untrackedMetrics.nodesCount, 'node', 'nodes')}
+              </span>
+            </span>
+            <Tooltip
+              content={
+                <div className="flex flex-col gap-1">
+                  {untrackedMetrics.nodesCount -
+                    untrackedMetrics.nodesWarningCount -
+                    untrackedMetrics.nodesDeployingCount >
+                    0 && (
+                    <div className="flex items-center">
+                      <div className="flex w-full items-center gap-1.5">
+                        <Icon iconName="check-circle" iconStyle="regular" className="text-green-400" />
+                        <span>
+                          Healthy{' '}
+                          {pluralize(untrackedMetrics.nodesCount - untrackedMetrics.nodesWarningCount, 'node', 'nodes')}
+                        </span>
+                        <span className="ml-auto block font-semibold">
+                          {untrackedMetrics.nodesCount - untrackedMetrics.nodesWarningCount}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  {untrackedMetrics.nodesWarningCount > 0 && (
+                    <div className="flex w-full items-center gap-1.5">
+                      <Icon iconName="exclamation-circle" iconStyle="regular" className="text-yellow-500" />
+                      <span>Warning {pluralize(untrackedMetrics.nodesWarningCount, 'node', 'nodes')}</span>
+                      <span className="ml-auto block font-semibold">{untrackedMetrics.nodesWarningCount}</span>
+                    </div>
+                  )}
+                  {untrackedMetrics.nodesDeployingCount > 0 && (
+                    <div className="flex w-full items-center gap-1.5">
+                      <Icon iconName="exclamation-circle" iconStyle="regular" className="text-brand-300" />
+                      <span>Deploying {pluralize(untrackedMetrics.nodesDeployingCount, 'node', 'nodes')}</span>
+                      <span className="ml-auto block font-semibold">{untrackedMetrics.nodesWarningCount}</span>
+                    </div>
+                  )}
+                </div>
+              }
+              classNameContent="w-[157px] px-2.5 py-1.5"
+            >
+              <ProgressBar.Root>
+                {deployingPercentage > 0 && (
+                  <ProgressBar.Cell value={deployingPercentage} color="var(--color-brand-500" />
+                )}
+                {nodesHealthyPercentage - nodesWarningPercentage > 0 && (
+                  <ProgressBar.Cell value={nodesHealthyPercentage} color="var(--color-green-500)" />
+                )}
+                {nodesWarningPercentage > 0 && (
+                  <ProgressBar.Cell value={nodesWarningPercentage} color="var(--color-yellow-500)" />
+                )}
+              </ProgressBar.Root>
+            </Tooltip>
+          </div>
+        </Accordion.Trigger>
+        <Accordion.Content className="overflow-hidden data-[state=open]:animate-slidein-down-sm-faded">
+          <ClusterTableNode nodes={untrackedNodes} organizationId={organizationId} clusterId={clusterId} />
+        </Accordion.Content>
+      </Accordion.Item>
+    </>
+  )
 }
 
 interface MetricProgressBarProps {
@@ -345,179 +524,14 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
           </Accordion.Item>
         )
       })}
-      {untrackedNodes.length > 0 &&
-        (() => {
-          const untrackedMetrics = calculateUntrackedNodesMetrics(untrackedNodes, nodeWarnings)
-          const nodesHealthyPercentage = calculatePercentage(
-            untrackedMetrics.nodesCount - untrackedMetrics.nodesWarningCount,
-            untrackedMetrics.nodesCount
-          )
-          const nodesWarningPercentage = calculatePercentage(
-            untrackedMetrics.nodesWarningCount,
-            untrackedMetrics.nodesCount
-          )
-          const deployingPercentage = calculatePercentage(
-            untrackedMetrics.nodesDeployingCount,
-            untrackedMetrics.nodesCount
-          )
-
-          return (
-            <>
-              <div className="mt-2 flex flex-col gap-1">
-                <div className="text-sm font-medium text-neutral-400">System & infrastructure nodes (1)</div>
-                <div className="text-xs text-neutral-350">
-                  These nodes run essential cluster services such as networking, autoscaling, and monitoring.
-                </div>
-              </div>
-              <Accordion.Item
-                key="untracked-nodes"
-                value="untracked-nodes"
-                className="rounded border border-neutral-250 [box-shadow:0px_1px_2px_0px_rgba(27,36,44,0.12)]"
-              >
-                <Accordion.Trigger className="group flex min-h-[86px] w-full items-start justify-between py-5">
-                  <div className="flex h-full w-1/4 items-start justify-between border-r border-neutral-200 px-6">
-                    <div className="flex items-start gap-[18px]">
-                      <Tooltip content={untrackedMetrics.nodesWarningCount > 0 ? 'Warning' : 'Ready'}>
-                        <span className="flex h-5 w-4 items-center justify-center">
-                          {untrackedMetrics.nodesWarningCount > 0 ? (
-                            <Icon
-                              iconName="circle-exclamation"
-                              iconStyle="regular"
-                              className="text-base text-yellow-500"
-                            />
-                          ) : (
-                            <Icon iconName="circle-check" iconStyle="regular" className="text-base text-green-500" />
-                          )}
-                        </span>
-                      </Tooltip>
-                      <div className="flex flex-1 flex-col gap-0.5">
-                        <div className="text-left text-sm font-medium leading-[20px] text-neutral-400">
-                          Karpenter node group
-                        </div>
-                        <div className="text-left text-xs leading-[18px] text-neutral-350">
-                          EKS managed node group that hosts the Karpenter controller and other essential cluster
-                          infrastructure components.
-                        </div>
-                      </div>
-                    </div>
-                    <Icon
-                      iconName="chevron-down"
-                      iconStyle="solid"
-                      className="relative top-0.5 text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
-                    />
-                  </div>
-                  <div className="flex w-1/4 flex-col justify-start gap-3 border-r border-neutral-200 px-5 pt-0.5">
-                    <div className="flex w-full items-center justify-between">
-                      <span className="flex items-center gap-2 text-sm text-neutral-350">
-                        <Icon
-                          iconName="microchip"
-                          iconStyle="regular"
-                          className="relative top-[1px] text-neutral-300"
-                        />
-                        <span>
-                          <Tooltip content="Capacity">
-                            <span className="font-medium text-neutral-400">{untrackedMetrics.cpuReserved} vCPU</span>
-                          </Tooltip>
-                        </span>
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex w-1/4 flex-col justify-start gap-3 border-r border-neutral-200 px-5 pt-0.5">
-                    <div className="flex w-full items-center justify-between">
-                      <span className="flex items-center gap-2 text-sm text-neutral-350">
-                        <Icon iconName="memory" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
-                        <span>
-                          <Tooltip content="Capacity">
-                            <span className="font-medium text-neutral-400">{untrackedMetrics.memoryReserved} GB</span>
-                          </Tooltip>
-                        </span>
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex w-1/4 flex-col justify-start gap-3 px-5 pt-0.5">
-                    <span className="flex items-center gap-2 text-sm text-neutral-350">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24">
-                        <path
-                          fill="var(--color-neutral-300)"
-                          fillRule="evenodd"
-                          d="M13 4a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2zm7 0h-5v5h5z"
-                          clipRule="evenodd"
-                        ></path>
-                        <path
-                          fill="var(--color-neutral-300)"
-                          fillRule="evenodd"
-                          d="M2.586 6.586A2 2 0 0 1 4 6h5a2 2 0 0 1 2 2v5h5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 .586-1.414M4 15v5h5v-5zm5-2H4V8h5zm2 2v5h5v-5z"
-                          clipRule="evenodd"
-                        ></path>
-                      </svg>
-                      <span>
-                        <span className="font-medium text-neutral-400">{untrackedMetrics.nodesCount}</span>{' '}
-                        {pluralize(untrackedMetrics.nodesCount, 'node', 'nodes')}
-                      </span>
-                    </span>
-                    <Tooltip
-                      content={
-                        <div className="flex flex-col gap-1">
-                          {untrackedMetrics.nodesCount -
-                            untrackedMetrics.nodesWarningCount -
-                            untrackedMetrics.nodesDeployingCount >
-                            0 && (
-                            <div className="flex items-center">
-                              <div className="flex w-full items-center gap-1.5">
-                                <Icon iconName="check-circle" iconStyle="regular" className="text-green-400" />
-                                <span>
-                                  Healthy{' '}
-                                  {pluralize(
-                                    untrackedMetrics.nodesCount - untrackedMetrics.nodesWarningCount,
-                                    'node',
-                                    'nodes'
-                                  )}
-                                </span>
-                                <span className="ml-auto block font-semibold">
-                                  {untrackedMetrics.nodesCount - untrackedMetrics.nodesWarningCount}
-                                </span>
-                              </div>
-                            </div>
-                          )}
-                          {untrackedMetrics.nodesWarningCount > 0 && (
-                            <div className="flex w-full items-center gap-1.5">
-                              <Icon iconName="exclamation-circle" iconStyle="regular" className="text-yellow-500" />
-                              <span>Warning {pluralize(untrackedMetrics.nodesWarningCount, 'node', 'nodes')}</span>
-                              <span className="ml-auto block font-semibold">{untrackedMetrics.nodesWarningCount}</span>
-                            </div>
-                          )}
-                          {untrackedMetrics.nodesDeployingCount > 0 && (
-                            <div className="flex w-full items-center gap-1.5">
-                              <Icon iconName="exclamation-circle" iconStyle="regular" className="text-brand-300" />
-                              <span>Deploying {pluralize(untrackedMetrics.nodesDeployingCount, 'node', 'nodes')}</span>
-                              <span className="ml-auto block font-semibold">{untrackedMetrics.nodesWarningCount}</span>
-                            </div>
-                          )}
-                        </div>
-                      }
-                      classNameContent="w-[157px] px-2.5 py-1.5"
-                    >
-                      <ProgressBar.Root>
-                        {deployingPercentage > 0 && (
-                          <ProgressBar.Cell value={deployingPercentage} color="var(--color-brand-500" />
-                        )}
-                        {nodesHealthyPercentage - nodesWarningPercentage > 0 && (
-                          <ProgressBar.Cell value={nodesHealthyPercentage} color="var(--color-green-500)" />
-                        )}
-                        {nodesWarningPercentage > 0 && (
-                          <ProgressBar.Cell value={nodesWarningPercentage} color="var(--color-yellow-500)" />
-                        )}
-                      </ProgressBar.Root>
-                    </Tooltip>
-                  </div>
-                </Accordion.Trigger>
-                <Accordion.Content className="overflow-hidden data-[state=open]:animate-slidein-down-sm-faded">
-                  <ClusterTableNode nodes={untrackedNodes} organizationId={organizationId} clusterId={clusterId} />
-                </Accordion.Content>
-              </Accordion.Item>
-            </>
-          )
-        })()}
+      {untrackedNodes.length > 0 && (
+        <SystemNodepool
+          organizationId={organizationId}
+          clusterId={clusterId}
+          untrackedNodes={untrackedNodes}
+          nodeWarnings={nodeWarnings}
+        />
+      )}
     </Accordion.Root>
   )
 }
