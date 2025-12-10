@@ -5,7 +5,7 @@ exports[`DockerfileFragmentInlineSetting should match snapshot with content 1`] 
   style=""
 >
   <script
-    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs/loader.js"
+    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs/loader.js"
   />
   <div>
     <div
@@ -59,7 +59,7 @@ exports[`DockerfileFragmentInlineSetting should match snapshot without content 1
   style=""
 >
   <script
-    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs/loader.js"
+    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs/loader.js"
   />
   <div>
     <div
