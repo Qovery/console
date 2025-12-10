@@ -106,11 +106,10 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
 
   const hasFiringAlerts = useMemo(
     () =>
-      alertRules.some(
-        ({ state, target }) =>
-          ['APPLICATION', 'CONTAINER', 'JOB', 'CRONJOB', 'HELM', 'TERRAFORM'].includes(
-            target?.target_type?.trim?.() ?? ''
-          ) && ['TRIGGERED', 'PENDING_NOTIFICATION', 'NOTIFIED'].includes(state ?? '')
+      alertRules.some(({ state }) =>
+        match(state)
+          .with('TRIGGERED', 'PENDING_NOTIFICATION', 'NOTIFIED', () => true)
+          .otherwise(() => false)
       ),
     [alertRules]
   )
