@@ -235,6 +235,11 @@ export function cacheEntityOption(option: Option): void {
   SELECTED_OPTIONS_BY_KEY.set(type, option)
 }
 
+// to be used for tests only
+export function clearSelectedOptionsCache(): void {
+  SELECTED_OPTIONS_BY_KEY.clear()
+}
+
 const SERVICE_TARGET_TYPES: ReadonlySet<string> = new Set([
   'targetType:APPLICATION',
   'targetType:DATABASE',
