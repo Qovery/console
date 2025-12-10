@@ -54,9 +54,8 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
   // It's not so accurate, but it's a good enough approximation for now
   const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
   const remainingTrialDay = props.currentCost?.remaining_trial_day ?? 0
-  const showTrialCallout =
-    !userSignUp?.dx_auth && remainingTrialDay !== undefined && remainingTrialDay > 0 && !props.creditCardLoading
-  const hasCreditCard = props.hasCreditCard ?? Boolean(props.creditCard)
+  const showTrialCallout = remainingTrialDay !== undefined && remainingTrialDay > 0 && !props.creditCardLoading
+  const showErrorCallout = (props.hasCreditCard ?? Boolean(props.creditCard)) || userSignUp?.dx_auth
 
   // This function is used to get the trial start date based on the remaining trial days from the API
   const trialStartDate = useMemo(() => {
@@ -82,14 +81,14 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
     <div className="flex w-full max-w-[832px] flex-col justify-between">
       <Section className="p-8">
         {showTrialCallout && (
-          <Callout.Root color={hasCreditCard ? 'yellow' : 'red'} className="mb-8 items-center">
+          <Callout.Root color={showErrorCallout ? 'yellow' : 'red'} className="mb-8 items-center">
             <Callout.Text>
               <Callout.TextHeading>
-                {hasCreditCard
+                {showErrorCallout
                   ? `Your free trial plan expires ${remainingTrialDay + 1} ${pluralize(remainingTrialDay, 'day')} from now`
                   : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay + 1} ${pluralize(remainingTrialDay, 'day')}`}
               </Callout.TextHeading>
-              {hasCreditCard ? (
+              {showErrorCallout ? (
                 <>
                   You have contracted a free 14-days trial on{' '}
                   {trialStartDate ? format(trialStartDate, 'MMMM d, yyyy') : '...'}. At the end of this plan your user
@@ -102,10 +101,10 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <Button
               size="sm"
               variant="solid"
-              color={hasCreditCard ? 'yellow' : 'red'}
-              onClick={() => (hasCreditCard ? props.onCancelTrialClick?.() : props.onAddCreditCardClick?.())}
+              color={showErrorCallout ? 'yellow' : 'red'}
+              onClick={() => (showErrorCallout ? props.onCancelTrialClick?.() : props.onAddCreditCardClick?.())}
             >
-              {hasCreditCard ? 'Cancel free trial' : 'Add credit card'}
+              {showErrorCallout ? 'Cancel free trial' : 'Add credit card'}
             </Button>
           </Callout.Root>
         )}
