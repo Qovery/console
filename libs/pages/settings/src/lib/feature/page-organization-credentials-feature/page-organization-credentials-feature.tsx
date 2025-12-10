@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { CloudProviderEnum, type ClusterCredentials, type CredentialCluster } from 'qovery-typescript-axios'
-import { Suspense, useMemo } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeleteCloudProviderCredential } from '@qovery/domains/cloud-providers/feature'
@@ -8,10 +8,9 @@ import { ClusterAvatar, ClusterCredentialsModal, CredentialsListClustersModal } 
 import { useOrganizationCredentials } from '@qovery/domains/organizations/feature'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { BlockContent, Heading, Section, Skeleton } from '@qovery/shared/ui'
-import { Button, Icon, Indicator, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, Indicator, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
-import { CloudCredentialsSelectProviderModal } from './cloud-credentials-select-provider-modal'
 
 const convertToCloudProviderEnum = (cloudProvider: ClusterCredentials['object_type']): CloudProviderEnum => {
   return match(cloudProvider)
@@ -290,6 +289,30 @@ export function PageOrganizationCredentialsFeature() {
   const { organizationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
   const queryClient = useQueryClient()
+  const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false)
+
+  const cloudProviderOptions = [
+    {
+      label: 'AWS',
+      value: CloudProviderEnum.AWS,
+      icon: <ClusterAvatar cloudProvider={CloudProviderEnum.AWS} size="xs" />,
+    },
+    {
+      label: 'GCP',
+      value: CloudProviderEnum.GCP,
+      icon: <ClusterAvatar cloudProvider={CloudProviderEnum.GCP} size="xs" />,
+    },
+    {
+      label: 'Azure',
+      value: CloudProviderEnum.AZURE,
+      icon: <ClusterAvatar cloudProvider={CloudProviderEnum.AZURE} size="xs" />,
+    },
+    {
+      label: 'Scaleway',
+      value: CloudProviderEnum.SCW,
+      icon: <ClusterAvatar cloudProvider={CloudProviderEnum.SCW} size="xs" />,
+    },
+  ]
 
   const openClusterCredentialsModal = (cloudProvider: CloudProviderEnum) => {
     openModal({
@@ -313,16 +336,9 @@ export function PageOrganizationCredentialsFeature() {
     })
   }
 
-  const onCreate = () => {
-    openModal({
-      content: (
-        <CloudCredentialsSelectProviderModal
-          onSelect={(cloudProvider) => {
-            openClusterCredentialsModal(cloudProvider)
-          }}
-        />
-      ),
-    })
+  const onSelectProvider = (cloudProvider: CloudProviderEnum) => {
+    setIsCreateMenuOpen(false)
+    openClusterCredentialsModal(cloudProvider)
   }
 
   return (
@@ -335,10 +351,21 @@ export function PageOrganizationCredentialsFeature() {
               <p className="text-xs text-neutral-400">Manage your Cloud providers credentials</p>
               <NeedHelp />
             </div>
-            <Button className="gap-2" size="md" onClick={onCreate}>
-              New credential
-              <Icon iconName="circle-plus" iconStyle="regular" />
-            </Button>
+            <DropdownMenu.Root open={isCreateMenuOpen} onOpenChange={setIsCreateMenuOpen}>
+              <DropdownMenu.Trigger asChild>
+                <Button className="gap-2" size="md">
+                  New credential
+                  <Icon iconName="circle-plus" iconStyle="regular" />
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content align="end">
+                {cloudProviderOptions.map((option) => (
+                  <DropdownMenu.Item key={option.value} icon={option.icon} onClick={() => onSelectProvider(option.value)}>
+                    {option.label}
+                  </DropdownMenu.Item>
+                ))}
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           </div>
 
           <Suspense fallback={<Loader />}>
