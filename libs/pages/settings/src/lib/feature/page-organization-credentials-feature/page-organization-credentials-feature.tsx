@@ -360,7 +360,11 @@ export function PageOrganizationCredentialsFeature() {
               </DropdownMenu.Trigger>
               <DropdownMenu.Content align="end">
                 {cloudProviderOptions.map((option) => (
-                  <DropdownMenu.Item key={option.value} icon={option.icon} onClick={() => onSelectProvider(option.value)}>
+                  <DropdownMenu.Item
+                    key={option.value}
+                    icon={option.icon}
+                    onClick={() => onSelectProvider(option.value)}
+                  >
                     {option.label}
                   </DropdownMenu.Item>
                 ))}
