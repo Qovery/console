@@ -26,7 +26,8 @@ export function FreeTrialBanner() {
     return null
   }
 
-  const message = `Your free trial plan expires ${remainingTrialDays + 1} ${pluralize(remainingTrialDays, 'day')} from now. If you need help, please contact us.`
+  // Add + 1 because Chargebee return 0 when the trial is ending today
+  const message = `Your free trial plan expires ${remainingTrialDays + 1} ${pluralize(remainingTrialDays + 1, 'day')} from now. If you need help, please contact us.`
 
   return (
     <Banner color="brand" buttonIconRight="arrow-right" buttonLabel="Need help" onClickButton={() => showChat()}>

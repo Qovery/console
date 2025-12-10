@@ -84,9 +84,10 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           <Callout.Root color={showErrorCallout ? 'yellow' : 'red'} className="mb-8 items-center">
             <Callout.Text>
               <Callout.TextHeading>
+                {/* Add + 1 because Chargebee return 0 when the trial is ending today */}
                 {showErrorCallout
-                  ? `Your free trial plan expires ${remainingTrialDay + 1} ${pluralize(remainingTrialDay, 'day')} from now`
-                  : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay + 1} ${pluralize(remainingTrialDay, 'day')}`}
+                  ? `Your free trial plan expires ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')} from now`
+                  : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')}`}
               </Callout.TextHeading>
               {showErrorCallout ? (
                 <>
