@@ -11,7 +11,7 @@ export function FreeTrialBanner() {
   const { data: currentCost, isFetched: isFetchedCurrentCost } = useCurrentCost({ organizationId })
   const { showChat } = useSupportChat()
 
-  const remainingTrialDays = (currentCost?.remaining_trial_day ?? 0) + 1
+  const remainingTrialDays = currentCost?.remaining_trial_day ?? 0
 
   const isOnOrganizationBillingSummaryPage = pathname.includes(
     SETTINGS_URL(organizationId) + SETTINGS_BILLING_SUMMARY_URL
@@ -26,7 +26,7 @@ export function FreeTrialBanner() {
     return null
   }
 
-  const message = `Your free trial plan expires ${remainingTrialDays} ${pluralize(remainingTrialDays, 'day')} from now. If you need help, please contact us.`
+  const message = `Your free trial plan expires ${remainingTrialDays + 1} ${pluralize(remainingTrialDays, 'day')} from now. If you need help, please contact us.`
 
   return (
     <Banner color="brand" buttonIconRight="arrow-right" buttonLabel="Need help" onClickButton={() => showChat()}>

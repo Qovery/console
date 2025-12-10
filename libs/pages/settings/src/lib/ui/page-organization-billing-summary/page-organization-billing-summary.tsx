@@ -53,7 +53,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
   // Get the billing recurrence word to display based on the renewal date.
   // It's not so accurate, but it's a good enough approximation for now
   const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
-  const remainingTrialDay = (props.currentCost?.remaining_trial_day ?? 0) + 1
+  const remainingTrialDay = props.currentCost?.remaining_trial_day ?? 0
   const showTrialCallout =
     !userSignUp?.dx_auth && remainingTrialDay !== undefined && remainingTrialDay > 0 && !props.creditCardLoading
   const hasCreditCard = props.hasCreditCard ?? Boolean(props.creditCard)
@@ -86,8 +86,8 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <Callout.Text>
               <Callout.TextHeading>
                 {hasCreditCard
-                  ? `Your free trial plan expires ${remainingTrialDay} ${pluralize(remainingTrialDay, 'day')} from now`
-                  : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay} ${pluralize(remainingTrialDay, 'day')}`}
+                  ? `Your free trial plan expires ${remainingTrialDay + 1} ${pluralize(remainingTrialDay, 'day')} from now`
+                  : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay + 1} ${pluralize(remainingTrialDay, 'day')}`}
               </Callout.TextHeading>
               {hasCreditCard ? (
                 <>
