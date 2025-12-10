@@ -285,19 +285,44 @@ const Loader = () => (
 
 export function PageOrganizationCredentialsFeature() {
   useDocumentTitle('Cloud Crendentials - Organization settings')
+  const { organizationId = '' } = useParams()
+  const { openModal, closeModal } = useModal()
+
+  const onCreate = () => {
+    openModal({
+      content: (
+        <ClusterCredentialsModal
+          organizationId={organizationId}
+          onClose={() => closeModal()}
+          cloudProvider={CloudProviderEnum.AWS}
+        />
+      ),
+      options: {
+        width: 680,
+      },
+    })
+  }
 
   return (
     <div className="w-full">
       <Section className="flex max-w-content-with-navigation-left flex-col p-8">
-        <div className="space-y-3">
-          <Heading>Cloud Credentials</Heading>
-          <p className="text-xs text-neutral-400">Manage your Cloud providers credentials</p>
-          <NeedHelp />
-        </div>
+        <div className="space-y-8">
+          <div className="flex items-start justify-between gap-2">
+            <div className="space-y-3">
+              <Heading>Cloud Credentials</Heading>
+              <p className="text-xs text-neutral-400">Manage your Cloud providers credentials</p>
+              <NeedHelp />
+            </div>
+            <Button className="gap-2" size="md" onClick={onCreate}>
+              Create new credentials
+              <Icon iconName="circle-plus" iconStyle="regular" />
+            </Button>
+          </div>
 
-        <Suspense fallback={<Loader />}>
-          <PageOrganizationCredentials />
-        </Suspense>
+          <Suspense fallback={<Loader />}>
+            <PageOrganizationCredentials />
+          </Suspense>
+        </div>
       </Section>
     </div>
   )
