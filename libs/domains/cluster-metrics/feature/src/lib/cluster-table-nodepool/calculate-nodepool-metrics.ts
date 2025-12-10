@@ -92,3 +92,46 @@ export function calculateNodePoolMetrics(
     nodesDeployingCount,
   }
 }
+
+export function calculateUntrackedNodesMetrics(
+  untrackedNodes: ClusterNodeDto[],
+  nodeWarnings: Record<string, unknown>
+): NodePoolMetrics {
+  // Calculate CPU capacity and usage from actual node resources
+  const cpuCapacityRaw = untrackedNodes.reduce((acc, node) => acc + (node.resources_allocatable?.cpu_milli || 0), 0)
+  const cpuUsedRaw = milliCoreToVCPU(
+    untrackedNodes.reduce((acc, node) => acc + (node.resources_allocated?.request_cpu_milli || 0), 0)
+  )
+  const cpuReservedRaw = milliCoreToVCPU(cpuCapacityRaw)
+
+  // Calculate Memory capacity and usage from actual node resources
+  const memoryCapacityRaw = untrackedNodes.reduce((acc, node) => acc + (node.resources_allocatable?.memory_mib || 0), 0)
+  const memoryUsedRaw = mibToGib(
+    untrackedNodes.reduce((acc, node) => acc + (node.resources_allocated?.request_memory_mib || 0), 0)
+  )
+  const memoryReservedRaw = mibToGib(memoryCapacityRaw)
+
+  // Warning and deploying counts
+  const nodesWarningCount = untrackedNodes.filter((node) => node.name && nodeWarnings && nodeWarnings[node.name]).length
+  const nodesDeployingCount = untrackedNodes.filter(
+    (node) => node.conditions?.find((condition) => condition.type === 'Ready')?.status === 'False'
+  ).length
+
+  return {
+    cpuUsed: formatNumber(cpuUsedRaw, 0),
+    cpuTotal: null,
+    cpuReserved: formatNumber(cpuReservedRaw, 0),
+    cpuReservedRaw,
+    cpuUsedRaw,
+    cpuTotalRaw: null,
+    memoryUsed: formatNumber(memoryUsedRaw, 0),
+    memoryTotal: null,
+    memoryReserved: formatNumber(memoryReservedRaw, 0),
+    memoryReservedRaw,
+    memoryUsedRaw,
+    memoryTotalRaw: null,
+    nodesCount: untrackedNodes.length,
+    nodesWarningCount,
+    nodesDeployingCount,
+  }
+}

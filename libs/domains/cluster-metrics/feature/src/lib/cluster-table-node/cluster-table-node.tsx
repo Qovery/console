@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
+import { type ClusterNodeDto, type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 import { useMemo } from 'react'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { Badge, Icon, ProgressBar, Tooltip } from '@qovery/shared/ui'
@@ -87,13 +87,20 @@ export interface ClusterTableNodeProps {
   organizationId: string
   clusterId: string
   nodePool?: NodePoolInfoDto
+  nodes?: ClusterNodeDto[]
   className?: string
 }
 
 const KEY_KARPENTER_NODE_POOL = 'karpenter.sh/nodepool'
 const KEY_KARPENTER_CAPACITY_TYPE = 'karpenter.sh/capacity-type'
 
-export function ClusterTableNode({ nodePool, organizationId, clusterId, className }: ClusterTableNodeProps) {
+export function ClusterTableNode({
+  nodePool,
+  nodes: nodesProp,
+  organizationId,
+  clusterId,
+  className,
+}: ClusterTableNodeProps) {
   const { data: runningStatus } = useClusterRunningStatus({
     organizationId: organizationId,
     clusterId: clusterId,
@@ -105,11 +112,13 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
 
   const nodes = useMemo(
     () =>
-      (nodePool
-        ? metrics?.nodes.filter((node) => node.labels[KEY_KARPENTER_NODE_POOL] === nodePool.name)
-        : metrics?.nodes
-      )?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
-    [nodePool, metrics?.nodes]
+      nodesProp
+        ? [...nodesProp].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        : (nodePool
+            ? metrics?.nodes.filter((node) => node.labels[KEY_KARPENTER_NODE_POOL] === nodePool.name)
+            : metrics?.nodes
+          )?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
+    [nodePool, nodesProp, metrics?.nodes]
   )
   const nodeWarnings = useMemo(
     () => runningStatus?.computed_status?.node_warnings || {},
@@ -217,9 +226,16 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
               />
             </div>
             <div className="flex h-12 w-[calc(35%/3)] items-center gap-2 overflow-hidden px-3">
-              <Badge variant="surface" radius="full" className="lowercase">
-                {node.instance_type?.replace('_', ' ')}
-              </Badge>
+              <div className="flex items-center gap-1.5">
+                <Badge variant="surface" radius="full" className="lowercase">
+                  {node.instance_type?.replace('_', ' ')}
+                </Badge>
+                {node.architecture && (
+                  <Badge variant="surface" radius="full" className="lowercase">
+                    {node.architecture}
+                  </Badge>
+                )}
+              </div>
               {node.labels[KEY_KARPENTER_CAPACITY_TYPE] === 'spot' && (
                 <Tooltip content="Spot instance">
                   <Badge variant="surface" radius="full" className="w-6 justify-center p-0">
