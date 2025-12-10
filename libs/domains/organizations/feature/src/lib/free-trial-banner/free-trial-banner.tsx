@@ -17,11 +17,9 @@ export function FreeTrialBanner() {
     SETTINGS_URL(organizationId) + SETTINGS_BILLING_SUMMARY_URL
   )
 
-  console.log(remainingTrialDays)
-
   if (
     remainingTrialDays === undefined ||
-    remainingTrialDays === 0 ||
+    remainingTrialDays <= 0 ||
     isOnOrganizationBillingSummaryPage ||
     !isFetchedCurrentCost
   ) {
