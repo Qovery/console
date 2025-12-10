@@ -1,159 +1,126 @@
 import { subDays } from 'date-fns'
-import {
-  type ClusterCloudProviderInfoCredentials,
-  type Environment,
-  type Organization,
-  OrganizationEventTargetType,
-  type Project,
-} from 'qovery-typescript-axios'
+import { type Organization } from 'qovery-typescript-axios'
 import { useSearchParams } from 'react-router-dom'
-import { Button, DatePicker, Icon, InputFilter } from '@qovery/shared/ui'
+import { Button, DatePicker, Icon, MultipleSelector, type Option } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { hasEnvironment, hasProject } from '../../feature/page-general-feature/page-general-feature'
+import { type SelectedTimestamps } from '../../feature/custom-filter-feature/custom-filter-feature'
 
 export interface CustomFilterProps {
   onChangeTimestamp: (startDate: Date, endDate: Date) => void
   onChangeClearTimestamp: () => void
   isOpenTimestamp: boolean
   setIsOpenTimestamp: (isOpen: boolean) => void
-  onChangeType: (type: string, value?: string | string[]) => void
   clearFilter: () => void
-  timestamps?: [Date, Date]
-  projects?: Project[]
-  environments?: Environment[]
-  eventsTargetsData?: ClusterCloudProviderInfoCredentials[]
-  isLoadingEventsTargetsData?: boolean
-  displayEventTargets?: boolean
-  targetType?: string | null
-  projectId?: string | null
-  environmentId?: string | null
+  timestamps: SelectedTimestamps
   organization?: Organization
-  targetId?: string | null
+  selectedOptions: Option[]
+  options: Option[]
+  handleChange: (options: Option[]) => void
+}
+
+function getDefaultDates(timestamps: SelectedTimestamps): [Date, Date] | undefined {
+  if (timestamps.fromTimestamp && timestamps.toTimestamp) {
+    return [timestamps.fromTimestamp, timestamps.toTimestamp]
+  }
+  return undefined
 }
 
 export function CustomFilter({
-  onChangeType,
   clearFilter,
   onChangeTimestamp,
   onChangeClearTimestamp,
   isOpenTimestamp,
   timestamps,
   setIsOpenTimestamp,
-  projects = [],
-  environments = [],
-  eventsTargetsData = [],
-  isLoadingEventsTargetsData = false,
-  displayEventTargets = false,
-  targetType,
-  projectId,
-  environmentId,
   organization,
-  targetId,
+  selectedOptions,
+  options,
+  handleChange,
 }: CustomFilterProps) {
   const [searchParams] = useSearchParams()
 
+  // Calculate retention days and determine if we need to enforce 30-day limit
+  const retentionDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 30
+  const maxRangeInDays = retentionDays > 30 ? 30 : undefined
+
   return (
     <>
-      <p className="mr-1.5 text-ssm font-medium text-neutral-350">Select</p>
-      <div className="mr-5">
+      <div className="mr-2">
         <DatePicker
-          key={timestamps ? timestamps[0].toString() : 'timestamp'}
+          key={timestamps.fromTimestamp ? timestamps.fromTimestamp.toString() : 'timestamp'}
           onChange={onChangeTimestamp}
           isOpen={isOpenTimestamp}
           maxDate={new Date()}
-          minDate={subDays(new Date(), organization?.organization_plan?.audit_logs_retention_in_days ?? 30)}
-          defaultDates={timestamps}
+          minDate={subDays(new Date(), retentionDays)}
+          defaultDates={getDefaultDates(timestamps)}
           showTimeInput
           useLocalTime
           onClickOutside={() => setIsOpenTimestamp(!isOpenTimestamp)}
+          maxRangeInDays={maxRangeInDays}
         >
-          {!timestamps ? (
+          {!timestamps.fromTimestamp && !timestamps.toTimestamp ? (
             <Button
               data-testid="timeframe-button"
               type="button"
               variant="surface"
               color="neutral"
               className="gap-2"
+              size="md"
               onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
             >
               Timeframe
-              <Icon iconName="clock" iconStyle="regular" />
+              <Icon iconName="calendar-day" iconStyle="regular" />
             </Button>
           ) : (
-            <Button type="button" data-testid="timeframe-values" onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}>
-              from: {dateYearMonthDayHourMinuteSecond(timestamps[0], true, false)} - to:{' '}
-              {dateYearMonthDayHourMinuteSecond(timestamps[1], true, false)}
-              <span
-                data-testid="clear-timestamp"
-                className="relative left-1 px-1 py-1"
-                role="button"
-                onClick={(event) => {
-                  event.stopPropagation()
-                  onChangeClearTimestamp()
-                }}
-              >
-                <Icon iconName="xmark" />
-              </span>
+            <Button
+              type="button"
+              data-testid="timeframe-values"
+              className="whitespace-nowrap"
+              variant={timestamps.automaticallySelected ? 'surface' : 'solid'}
+              color={timestamps.automaticallySelected ? 'neutral' : 'brand'}
+              size="md"
+              onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
+            >
+              {timestamps.automaticallySelected ? (
+                <>
+                  30d <Icon iconName="calendar-day" className="pl-2" />
+                </>
+              ) : (
+                <>
+                  from: {dateYearMonthDayHourMinuteSecond(timestamps.fromTimestamp ?? new Date(), true, false)} - to:{' '}
+                  {dateYearMonthDayHourMinuteSecond(timestamps.toTimestamp ?? new Date(), true, false)}
+                  <span
+                    data-testid="clear-timestamp"
+                    className="relative left-1 px-1 py-1"
+                    role="button"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      onChangeClearTimestamp()
+                    }}
+                  >
+                    <Icon iconName="xmark" />
+                  </span>
+                </>
+              )}
             </Button>
           )}
         </DatePicker>
       </div>
-      <div className="relative flex items-center text-ssm font-medium text-neutral-350">
-        <p className=" mr-1.5">Search</p>
-        <div className="flex items-center gap-2">
-          <InputFilter
-            name="Type"
-            nameKey="targetType"
-            options={Object.keys(OrganizationEventTargetType).map((type) => ({
-              label: upperCaseFirstLetter(type)?.split('_').join(' ') || '',
-              value: type,
-            }))}
-            onChange={onChangeType}
-            defaultValue={targetType as string}
+      <div className="relative flex w-full items-center gap-1 text-ssm font-medium text-neutral-350">
+        <div className="min-w-0 flex-1">
+          <MultipleSelector
+            placeholder="Search in audit logs"
+            value={selectedOptions}
+            options={options}
+            onChange={handleChange}
+            freeTextInput={false}
           />
-          {projects && hasProject(targetType as string) && (
-            <InputFilter
-              name="Project"
-              nameKey="projectId"
-              options={projects.map((project) => ({
-                label: project.name || '',
-                value: project.id,
-              }))}
-              onChange={onChangeType}
-              defaultValue={projectId as string}
-            />
-          )}
-          {projectId && hasEnvironment(targetType as string) && environments && (
-            <InputFilter
-              name="Environment"
-              nameKey="environmentId"
-              options={environments.map((environment) => ({
-                label: environment.name || '',
-                value: environment.id,
-              }))}
-              onChange={onChangeType}
-              defaultValue={environmentId as string}
-            />
-          )}
-          {eventsTargetsData && displayEventTargets && (
-            <InputFilter
-              name="Target"
-              nameKey="targetId"
-              options={eventsTargetsData.map((target) => ({
-                label: target.name || '',
-                value: target.id || '',
-              }))}
-              onChange={onChangeType}
-              defaultValue={targetId as string}
-              isLoading={isLoadingEventsTargetsData}
-            />
-          )}
         </div>
         {searchParams.toString()?.length > 0 && (
-          <span className="link ml-6 cursor-pointer text-brand-500" onClick={clearFilter}>
+          <Button className="ml-1 gap-2" size="md" color="neutral" variant="surface" onClick={clearFilter}>
             Clear all
-          </span>
+            <Icon iconName="xmark" iconStyle="regular" />
+          </Button>
         )}
       </div>
     </>
