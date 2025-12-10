@@ -4,7 +4,7 @@ import {
   type OrganizationEventResponse,
   OrganizationEventType,
 } from 'qovery-typescript-axios'
-import { type Dispatch, type SetStateAction } from 'react'
+import { type Dispatch, type SetStateAction, useState } from 'react'
 import {
   Button,
   Icon,
@@ -55,13 +55,10 @@ const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     ],
   },
   {
-    title: 'Target type',
-  },
-  {
     title: 'Target',
   },
   {
-    title: 'Change',
+    title: 'Target type',
   },
   {
     title: 'User',
@@ -87,10 +84,11 @@ const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
         sortAlphabetically: true,
       },
     ],
+    classNameTitle: 'justify-end',
   },
 ]
 
-const columnsWidth = '18% 11% 10% 15% 10% 20% 16%'
+const columnsWidth = '18% 15% 25% 15% 15% 12%'
 
 export function PageGeneral({
   isLoading,
@@ -110,6 +108,7 @@ export function PageGeneral({
   organizationMaxLimitReached,
 }: PageGeneralProps) {
   const auditLogsRetentionInDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 30
+  const [expandedEventTimestamp, setExpandedEventTimestamp] = useState<string | null>(null)
 
   return (
     <Section className="grow p-8">
@@ -129,7 +128,14 @@ export function PageGeneral({
         <div>
           {isLoading ? (
             placeholderEvents?.map((event) => (
-              <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} isPlaceholder />
+              <RowEventFeature
+                key={event.timestamp}
+                event={event}
+                columnsWidth={columnsWidth}
+                isPlaceholder
+                expandedEventTimestamp={expandedEventTimestamp}
+                setExpandedEventTimestamp={setExpandedEventTimestamp}
+              />
             ))
           ) : !organizationMaxLimitReached && events?.length === 0 ? (
             <div className="flex h-[30vh] items-center justify-center px-5 py-4 text-center">
@@ -144,7 +150,13 @@ export function PageGeneral({
           ) : organizationMaxLimitReached ? (
             <div>
               {events?.map((event) => (
-                <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} />
+                <RowEventFeature
+                  key={event.timestamp}
+                  event={event}
+                  columnsWidth={columnsWidth}
+                  expandedEventTimestamp={expandedEventTimestamp}
+                  setExpandedEventTimestamp={setExpandedEventTimestamp}
+                />
               ))}
               <div className="flex h-14 items-center justify-center border-b border-neutral-200">
                 <p className="flex items-center gap-3 text-sm text-neutral-400">
@@ -172,7 +184,15 @@ export function PageGeneral({
               ))}
             </div>
           ) : (
-            events?.map((event) => <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} />)
+            events?.map((event) => (
+              <RowEventFeature
+                key={event.timestamp}
+                event={event}
+                columnsWidth={columnsWidth}
+                expandedEventTimestamp={expandedEventTimestamp}
+                setExpandedEventTimestamp={setExpandedEventTimestamp}
+              />
+            ))
           )}
         </div>
       </Table>

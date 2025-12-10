@@ -38,10 +38,7 @@ const SUB_TARGET_TYPES_BY_TARGET_TYPE: Map<string, string[]> = new Map<string, s
   ],
   [
     OrganizationEventTargetType.DATABASE,
-    [
-      OrganizationEventSubTargetType.CONFIG,
-      OrganizationEventSubTargetType.REMOTE_ACCESS,
-    ],
+    [OrganizationEventSubTargetType.CONFIG, OrganizationEventSubTargetType.REMOTE_ACCESS],
   ],
   [
     OrganizationEventTargetType.HELM,
@@ -110,15 +107,8 @@ const SUB_TARGET_TYPES_BY_TARGET_TYPE: Map<string, string[]> = new Map<string, s
     ],
   ],
   [OrganizationEventTargetType.CONTAINER_REGISTRY, [OrganizationEventSubTargetType.CONFIG]],
-  [
-    OrganizationEventTargetType.ENTERPRISE_CONNECTION,
-    [
-      OrganizationEventSubTargetType.SSO,
-    ],
-  ],
-  [OrganizationEventTargetType.HELM_REPOSITORY, [
-    OrganizationEventSubTargetType.CONFIG,
-  ]],
+  [OrganizationEventTargetType.ENTERPRISE_CONNECTION, [OrganizationEventSubTargetType.SSO]],
+  [OrganizationEventTargetType.HELM_REPOSITORY, [OrganizationEventSubTargetType.CONFIG]],
   [
     OrganizationEventTargetType.ENVIRONMENT,
     [
