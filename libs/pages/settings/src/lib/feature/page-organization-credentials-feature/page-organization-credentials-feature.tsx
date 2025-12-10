@@ -1,6 +1,6 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { CloudProviderEnum, type ClusterCredentials, type CredentialCluster } from 'qovery-typescript-axios'
-import { Suspense } from 'react'
-import { useMemo } from 'react'
+import { Suspense, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeleteCloudProviderCredential } from '@qovery/domains/cloud-providers/feature'
@@ -10,6 +10,8 @@ import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { BlockContent, Heading, Section, Skeleton } from '@qovery/shared/ui'
 import { Button, Icon, Indicator, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { queries } from '@qovery/state/util-queries'
+import { CloudCredentialsSelectProviderModal } from './cloud-credentials-select-provider-modal'
 
 const convertToCloudProviderEnum = (cloudProvider: ClusterCredentials['object_type']): CloudProviderEnum => {
   return match(cloudProvider)
@@ -156,7 +158,7 @@ const PageOrganizationCredentials = () => {
       content: (
         <ClusterCredentialsModal
           organizationId={organizationId}
-          onClose={(response) => {
+          onClose={() => {
             closeModal()
           }}
           credential={credential}
@@ -287,19 +289,39 @@ export function PageOrganizationCredentialsFeature() {
   useDocumentTitle('Cloud Crendentials - Organization settings')
   const { organizationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
+  const queryClient = useQueryClient()
 
-  const onCreate = () => {
+  const openClusterCredentialsModal = (cloudProvider: CloudProviderEnum) => {
     openModal({
       content: (
         <ClusterCredentialsModal
           organizationId={organizationId}
-          onClose={() => closeModal()}
-          cloudProvider={CloudProviderEnum.AWS}
+          onClose={(response) => {
+            if (response) {
+              queryClient.invalidateQueries({
+                queryKey: queries.organizations.listCredentials({ organizationId }).queryKey,
+              })
+            }
+            closeModal()
+          }}
+          cloudProvider={cloudProvider}
         />
       ),
       options: {
         width: 680,
       },
+    })
+  }
+
+  const onCreate = () => {
+    openModal({
+      content: (
+        <CloudCredentialsSelectProviderModal
+          onSelect={(cloudProvider) => {
+            openClusterCredentialsModal(cloudProvider)
+          }}
+        />
+      ),
     })
   }
 
