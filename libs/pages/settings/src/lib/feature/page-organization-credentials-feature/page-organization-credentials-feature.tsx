@@ -336,7 +336,7 @@ export function PageOrganizationCredentialsFeature() {
               <NeedHelp />
             </div>
             <Button className="gap-2" size="md" onClick={onCreate}>
-              Create new credentials
+              New credential
               <Icon iconName="circle-plus" iconStyle="regular" />
             </Button>
           </div>
