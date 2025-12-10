@@ -3,7 +3,12 @@ import { PlanEnum } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useAddCreditCard, useCreateOrganization, useDeleteOrganization } from '@qovery/domains/organizations/feature'
+import {
+  useAddCreditCard,
+  useCreateOrganization,
+  useDeleteOrganization,
+  useEditBillingInfo,
+} from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
@@ -30,6 +35,7 @@ export function OnboardingProject() {
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject()
   const { mutateAsync: addCreditCard } = useAddCreditCard()
+  const { mutateAsync: editBillingInfo } = useEditBillingInfo()
   const { mutateAsync: deleteOrganization } = useDeleteOrganization()
   const { handleSubmit, control, setValue } = useForm<{ project_name: string; organization_name: string }>()
   const { data: userSignUp } = useUserSignUp()
@@ -68,6 +74,20 @@ export function OnboardingProject() {
         expiry_month: cardExpiryMonth ?? 0,
       },
     })
+
+    await editBillingInfo({
+      organizationId,
+      billingInfoRequest: {
+        first_name: userSignUp?.first_name ?? '',
+        last_name: userSignUp?.last_name ?? '',
+        company: userSignUp?.company_name ?? '',
+        email: admin_email.length > 0 ? admin_email : user?.email ?? '',
+        address: '',
+        city: 'NEW YORK CITY',
+        zip: '10001',
+        country_code: 'US',
+      },
+    })
   }
 
   const handleBack = () => {
@@ -96,7 +116,7 @@ export function OnboardingProject() {
         organizationRequest: {
           name: data.organization_name,
           plan: planToUse,
-          admin_emails: admin_email ? [admin_email] : user?.email ? [user.email] : [],
+          admin_emails: admin_email.length > 0 ? [admin_email] : user?.email ? [user.email] : [],
         },
       })
       createdOrganizationId = organization.id
