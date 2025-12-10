@@ -1,11 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useClusterStatuses } from '@qovery/domains/clusters/feature'
-import { observability } from '@qovery/domains/observability/data-access'
+import { useAlerts } from '@qovery/domains/observability/feature'
 import { InvoiceBanner, useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton, DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
@@ -99,19 +98,19 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
       .otherwise(() => false)
   )
 
-  const { data: alertRules = [] } = useQuery({
-    ...observability.alertRules({ organizationId }),
+  const { data: alerts = [] } = useAlerts({
+    organizationId,
     enabled: Boolean(organizationId && isAlertingFeatureFlagEnabled),
   })
 
   const hasFiringAlerts = useMemo(
     () =>
-      alertRules.some(({ state }) =>
+      alerts.some(({ state }) =>
         match(state)
           .with('TRIGGERED', 'PENDING_NOTIFICATION', 'NOTIFIED', () => true)
           .otherwise(() => false)
       ),
-    [alertRules]
+    [alerts]
   )
 
   // Display Qovery admin if we don't have the organization in the token
