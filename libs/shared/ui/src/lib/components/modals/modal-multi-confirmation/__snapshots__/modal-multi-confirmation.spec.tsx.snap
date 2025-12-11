@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ModalMultiConfirmation should match delete mode without description 1`] = `
 <div>
@@ -25,7 +25,7 @@ exports[`ModalMultiConfirmation should match delete mode without description 1`]
         >
           <i
             aria-hidden="true"
-            class="fa-solid fa-triangle-exclamation text-red-600"
+            class="fa-regular fa-triangle-exclamation text-red-600"
           />
         </div>
         <div

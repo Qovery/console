@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`NetworkingSetting should match snapshot in empty state 1`] = `
 <body>
@@ -41,7 +41,7 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
           Add port
           <i
             aria-hidden="true"
-            class="fa-solid fa-plus-circle "
+            class="fa-regular fa-plus-circle "
           />
         </button>
       </div>
@@ -69,7 +69,7 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-wave-pulse text-neutral-300"
+                class="fa-regular fa-wave-pulse text-neutral-300"
               />
               <p
                 class="mb-3 mt-1 text-xs font-medium text-neutral-350"
@@ -126,7 +126,7 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
           Add port
           <i
             aria-hidden="true"
-            class="fa-solid fa-plus-circle "
+            class="fa-regular fa-plus-circle "
           />
         </button>
       </div>
@@ -187,7 +187,7 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-gear "
+                    class="fa-regular fa-gear "
                   />
                 </button>
                 <button
@@ -197,7 +197,7 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-trash "
+                    class="fa-regular fa-trash "
                   />
                 </button>
               </div>
@@ -236,7 +236,7 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-gear "
+                    class="fa-regular fa-gear "
                   />
                 </button>
                 <button
@@ -246,7 +246,7 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-trash "
+                    class="fa-regular fa-trash "
                   />
                 </button>
               </div>

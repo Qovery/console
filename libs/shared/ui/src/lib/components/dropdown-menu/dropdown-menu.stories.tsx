@@ -27,7 +27,10 @@ export const Primary = {
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         <DropdownMenu.Item icon={<Icon iconName="play" />}>Deploy</DropdownMenu.Item>
-        <DropdownMenu.Item>Deploy latest version</DropdownMenu.Item>
+        <DropdownMenu.Item icon={<Icon iconName="play" />} color="yellow">
+          Update
+        </DropdownMenu.Item>
+        <DropdownMenu.Item disabled>Deploy latest version</DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="gear" />}>
           <Truncate text="Super long text that should be truncated at some point" truncateLimit={27} />
         </DropdownMenu.Item>
