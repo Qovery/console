@@ -134,7 +134,8 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
               <h3 className="text-sm font-medium text-neutral-400">Metric categories</h3>
               <p className="text-neutral-350">Choose the metric categories you want to generate alerts for</p>
             </div>
-
+            {/* This is a workaround to prevent the button from being focused when the user open the modal */}
+            <button className="pointer-events-none absolute h-0 w-0 select-none"></button>
             <div className="mb-1 grid grid-cols-3 gap-2">
               {availableMetrics.map((metric) => {
                 const isSelected = watchMetrics?.includes(metric.id)
