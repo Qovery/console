@@ -63,9 +63,12 @@ export function ModalCrud(props: ModalCrudProps) {
       {howItWorks && (
         <Popover.Root>
           <Popover.Trigger>
-            <span className="mt-2 cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600">
+            <button
+              type="button"
+              className="mt-2 cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+            >
               Show how it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
-            </span>
+            </button>
           </Popover.Trigger>
           <Popover.Content side="left" className="relative text-sm text-neutral-350" style={{ width: 440 }}>
             <h6 className="mb-2 font-medium text-neutral-400">How it works</h6>
