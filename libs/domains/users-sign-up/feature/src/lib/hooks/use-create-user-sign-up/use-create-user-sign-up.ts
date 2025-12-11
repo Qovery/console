@@ -19,6 +19,7 @@ export function useCreateUserSignUp() {
         last_name: variables.last_name,
         company: variables.company_name || '',
         job_title: variables.user_role || '',
+        phone: variables.phone ?? '',
         signup_source: 'Console',
       }
       signUpCargo(cargoPayload)

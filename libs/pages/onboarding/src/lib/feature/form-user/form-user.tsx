@@ -93,6 +93,7 @@ export function FormUser() {
     qovery_usage_other?: string
     type_of_use: TypeOfUseEnum
     infrastructure_hosting: string
+    phone: string
   }>({
     mode: 'onChange',
     defaultValues: {
@@ -104,6 +105,7 @@ export function FormUser() {
       qovery_usage_other: userSignUp?.qovery_usage_other ?? undefined,
       type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.WORK,
       infrastructure_hosting: userSignUp?.infrastructure_hosting ?? 'AWS',
+      phone: '',
     },
   })
 
