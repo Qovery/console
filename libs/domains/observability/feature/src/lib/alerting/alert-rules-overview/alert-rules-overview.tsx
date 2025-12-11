@@ -101,11 +101,9 @@ export function AlertRulesOverview({
       </div>
     )
 
-  const editAlertRule = (alertRule: AlertRuleResponse) => {
-    if (!service || !projectId) return
-
+  const editAlertRule = (projectId: string, environmentId: string, serviceId: string, alertRule: AlertRuleResponse) => {
     navigate(
-      APPLICATION_URL(organizationId, projectId, service.environment.id, service.id) +
+      APPLICATION_URL(organizationId, projectId, environmentId, serviceId) +
         APPLICATION_MONITORING_URL +
         APPLICATION_MONITORING_ALERT_EDIT_URL(alertRule.id)
     )
@@ -165,11 +163,9 @@ export function AlertRulesOverview({
                 <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Target</Table.ColumnHeaderCell>
               )}
               <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Severity</Table.ColumnHeaderCell>
-              {service && (
-                <Table.ColumnHeaderCell className="h-9 text-right font-normal text-neutral-350">
-                  Actions
-                </Table.ColumnHeaderCell>
-              )}
+              <Table.ColumnHeaderCell className="h-9 text-right font-normal text-neutral-350">
+                Actions
+              </Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
 
@@ -256,34 +252,39 @@ export function AlertRulesOverview({
                   <Table.Cell className="h-16">
                     <SeverityIndicator severity={alertRule.severity} />
                   </Table.Cell>
-                  {service && (
-                    <Table.Cell className="h-16">
-                      <div className="flex items-center justify-end gap-2">
-                        <Tooltip content="Edit">
-                          <Button
-                            variant="outline"
-                            color="neutral"
-                            size="xs"
-                            className="w-6 justify-center"
-                            onClick={() => editAlertRule(alertRule)}
-                          >
-                            <Icon iconName="pen" iconStyle="regular" className="text-xs" />
-                          </Button>
-                        </Tooltip>
-                        <Tooltip content="Delete alert rule">
-                          <Button
-                            variant="outline"
-                            color="neutral"
-                            size="xs"
-                            className="w-6 justify-center"
-                            onClick={() => deleteAlertRuleModal(alertRule)}
-                          >
-                            <Icon iconName="trash-can" iconStyle="regular" className="text-xs" />
-                          </Button>
-                        </Tooltip>
-                      </div>
-                    </Table.Cell>
-                  )}
+                  <Table.Cell className="h-16">
+                    <div className="flex items-center justify-end gap-2">
+                      <Tooltip content="Edit">
+                        <Button
+                          variant="outline"
+                          color="neutral"
+                          size="xs"
+                          className="w-6 justify-center"
+                          onClick={() =>
+                            editAlertRule(
+                              alertRule.target.service?.project_id ?? '',
+                              alertRule.target.service?.environment_id ?? '',
+                              alertRule.target.service?.id ?? '',
+                              alertRule
+                            )
+                          }
+                        >
+                          <Icon iconName="pen" iconStyle="regular" className="text-xs" />
+                        </Button>
+                      </Tooltip>
+                      <Tooltip content="Delete alert rule">
+                        <Button
+                          variant="outline"
+                          color="neutral"
+                          size="xs"
+                          className="w-6 justify-center"
+                          onClick={() => deleteAlertRuleModal(alertRule)}
+                        >
+                          <Icon iconName="trash-can" iconStyle="regular" className="text-xs" />
+                        </Button>
+                      </Tooltip>
+                    </div>
+                  </Table.Cell>
                 </Table.Row>
               )
             })}
