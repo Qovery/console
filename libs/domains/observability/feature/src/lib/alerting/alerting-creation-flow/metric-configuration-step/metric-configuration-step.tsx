@@ -364,6 +364,10 @@ export function MetricConfigurationStep({
     const config = METRIC_FIELD_CONFIG[metricCategory]
     const processedData = { ...data }
 
+    if (processedData.presentation.summary?.length === 0) {
+      processedData.presentation = { summary: undefined }
+    }
+
     if (config?.defaults) {
       processedData.condition = { ...data.condition }
 

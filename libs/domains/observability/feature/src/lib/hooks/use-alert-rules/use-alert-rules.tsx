@@ -6,7 +6,6 @@ export function useAlertRules({ organizationId, serviceId }: { organizationId: s
   return useQuery({
     ...observability.alertRules({ organizationId }),
     select: (data) => {
-      // Filter out ghost alerts - only return managed alerts
       const managedAlerts = data.filter(isManagedAlertRule)
       return serviceId ? managedAlerts.filter((rule) => rule.target.target_id === serviceId) : managedAlerts
     },
