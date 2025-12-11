@@ -404,7 +404,7 @@ export function MetricConfigurationStep({
                   </div>
                   <ExternalLink
                     className="shrink-0"
-                    href="https://www.qovery.com/docs/configuration/integrations/observability/qovery-observe"
+                    href="https://www.qovery.com/docs/configuration/integrations/observability/qovery-observe#alert-conditions-guide"
                     size="sm"
                   >
                     Conditions guide

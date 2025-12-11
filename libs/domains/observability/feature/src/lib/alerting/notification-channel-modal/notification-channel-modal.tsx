@@ -5,7 +5,7 @@ import {
   type SlackAlertReceiverEditRequest,
 } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
+import { ExternalLink, InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCreateAlertReceiver } from '../../hooks/use-create-alert-receiver/use-create-alert-receiver'
 import { useEditAlertReceiver } from '../../hooks/use-edit-alert-receiver/use-edit-alert-receiver'
@@ -105,9 +105,15 @@ export function NotificationChannelModal({
       <ModalCrud
         title={isEdit ? 'Edit channel' : 'New channel'}
         description={
-          isEdit
-            ? undefined
-            : `Select the ${upperCaseFirstLetter(type)} channel you want to add as a selectable notification channel for your alerts`
+          isEdit ? undefined : (
+            <>
+              Select the {upperCaseFirstLetter(type)} channel you want to add as a selectable notification channel for
+              your alerts.{' '}
+              <ExternalLink href="https://www.qovery.com/docs/configuration/integrations/slack" size="sm">
+                How to configure it
+              </ExternalLink>
+            </>
+          )
         }
         onClose={onClose}
         onSubmit={handleSubmit}
