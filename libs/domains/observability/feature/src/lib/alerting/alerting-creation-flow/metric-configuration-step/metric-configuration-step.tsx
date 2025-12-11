@@ -235,7 +235,7 @@ export function MetricConfigurationStep({
       name: metricCategory ? `${metricCategory.replace(/_/g, ' ').toUpperCase()} alert` : '',
       severity: 'MEDIUM',
       alert_receiver_ids: [],
-      presentation: { summary: undefined },
+      presentation: { summary: '' },
     }
   }, [initialData, metricCategory])
 
@@ -364,6 +364,10 @@ export function MetricConfigurationStep({
     const config = METRIC_FIELD_CONFIG[metricCategory]
     const processedData = { ...data }
 
+    if (processedData.presentation.summary?.length === 0) {
+      processedData.presentation = { summary: undefined }
+    }
+
     if (config?.defaults) {
       processedData.condition = { ...data.condition }
 
@@ -404,7 +408,7 @@ export function MetricConfigurationStep({
                   </div>
                   <ExternalLink
                     className="shrink-0"
-                    href="https://www.qovery.com/docs/configuration/integrations/observability/qovery-observe"
+                    href="https://www.qovery.com/docs/configuration/integrations/observability/qovery-observe#alert-conditions-guide"
                     size="sm"
                   >
                     Conditions guide

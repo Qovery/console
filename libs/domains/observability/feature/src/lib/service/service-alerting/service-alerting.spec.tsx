@@ -4,6 +4,8 @@ import { ServiceAlerting } from './service-alerting'
 
 const mockUseParams = jest.fn()
 const mockUseAlertRules = jest.fn()
+const mockUseAlertRulesGhosted = jest.fn()
+const mockUseDeleteAlertRule = jest.fn()
 const mockUseEnvironment = jest.fn()
 const mockUseService = jest.fn()
 
@@ -14,6 +16,14 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('../../hooks/use-alert-rules/use-alert-rules', () => ({
   useAlertRules: (params: unknown) => mockUseAlertRules(params),
+}))
+
+jest.mock('../../hooks/use-alert-rules-ghosted/use-alert-rules-ghosted', () => ({
+  useAlertRulesGhosted: (params: unknown) => mockUseAlertRulesGhosted(params),
+}))
+
+jest.mock('../../hooks/use-delete-alert-rule/use-delete-alert-rule', () => ({
+  useDeleteAlertRule: (params: unknown) => mockUseDeleteAlertRule(params),
 }))
 
 jest.mock('../../hooks/use-environment/use-environment', () => ({
@@ -45,8 +55,10 @@ describe('ServiceAlerting', () => {
     enabled: true,
     severity: 'CRITICAL',
     is_up_to_date: true,
+    source: 'MANAGED',
     target: {
       target_id: 'app-123',
+      target_type: 'APPLICATION',
     },
     tag: 'cpu',
     for_duration: 'PT5M',
@@ -73,6 +85,13 @@ describe('ServiceAlerting', () => {
     mockUseAlertRules.mockReturnValue({
       data: [],
       isFetched: true,
+    })
+    mockUseAlertRulesGhosted.mockReturnValue({
+      data: [],
+      isFetched: true,
+    })
+    mockUseDeleteAlertRule.mockReturnValue({
+      mutate: jest.fn(),
     })
   })
 
@@ -101,6 +120,10 @@ describe('ServiceAlerting', () => {
       data: alertRules,
       isFetched: true,
     })
+    mockUseAlertRulesGhosted.mockReturnValue({
+      data: [],
+      isFetched: true,
+    })
 
     renderWithProviders(<ServiceAlerting />)
 
@@ -118,6 +141,10 @@ describe('ServiceAlerting', () => {
       data: alertRules,
       isFetched: true,
     })
+    mockUseAlertRulesGhosted.mockReturnValue({
+      data: [],
+      isFetched: true,
+    })
 
     renderWithProviders(<ServiceAlerting />)
 
@@ -130,6 +157,10 @@ describe('ServiceAlerting', () => {
     const alertRule = createAlertRule({ enabled: false })
     mockUseAlertRules.mockReturnValue({
       data: [alertRule],
+      isFetched: true,
+    })
+    mockUseAlertRulesGhosted.mockReturnValue({
+      data: [],
       isFetched: true,
     })
 

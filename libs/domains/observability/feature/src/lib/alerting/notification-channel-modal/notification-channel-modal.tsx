@@ -5,7 +5,7 @@ import {
   type SlackAlertReceiverEditRequest,
 } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
+import { ExternalLink, InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCreateAlertReceiver } from '../../hooks/use-create-alert-receiver/use-create-alert-receiver'
 import { useEditAlertReceiver } from '../../hooks/use-edit-alert-receiver/use-edit-alert-receiver'
@@ -22,6 +22,8 @@ const CHANNEL_TYPE_OPTIONS = [
   { value: 'WEBHOOK', label: 'Webhook' },
   { value: 'EMAIL', label: 'Email' },
 ]
+
+const FAKE_PLACEHOLDER = 'fakewebhookurl'
 
 export function NotificationChannelModal({
   type,
@@ -43,7 +45,7 @@ export function NotificationChannelModal({
       name: alertReceiver?.name ?? 'Input slack channel',
       type: alertReceiver?.type ?? 'SLACK',
       send_resolved: alertReceiver?.send_resolved ?? true,
-      webhook_url: isEdit ? undefined : undefined,
+      webhook_url: isEdit ? FAKE_PLACEHOLDER : undefined,
     },
     resolver: (values) => {
       const errors: Record<string, { type: string; message: string }> = {}
@@ -69,10 +71,11 @@ export function NotificationChannelModal({
   const handleSubmit = methods.handleSubmit(async (data) => {
     if (isEdit && alertReceiver) {
       const { webhook_url, ...restData } = data
+      const webhookUrlValue = webhook_url === FAKE_PLACEHOLDER ? undefined : webhook_url
       const editPayload: SlackAlertReceiverEditRequest = {
         ...restData,
         description: alertReceiver.description ?? 'Webhook for Qovery alerts',
-        ...(webhook_url && webhook_url.trim() !== '' ? { webhook_url } : {}),
+        ...(webhookUrlValue && webhookUrlValue.trim() !== '' ? { webhook_url: webhookUrlValue } : {}),
       }
 
       try {
@@ -102,9 +105,15 @@ export function NotificationChannelModal({
       <ModalCrud
         title={isEdit ? 'Edit channel' : 'New channel'}
         description={
-          isEdit
-            ? undefined
-            : `Select the ${upperCaseFirstLetter(type)} channel you want to add as a selectable notification channel for your alerts`
+          isEdit ? undefined : (
+            <>
+              Select the {upperCaseFirstLetter(type)} channel you want to add as a selectable notification channel for
+              your alerts.{' '}
+              <ExternalLink href="https://www.qovery.com/docs/configuration/integrations/slack" size="sm">
+                How to configure it
+              </ExternalLink>
+            </>
+          )
         }
         onClose={onClose}
         onSubmit={handleSubmit}
@@ -158,14 +167,13 @@ export function NotificationChannelModal({
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
-                className="mb-1"
+                className="mb-1 [&_.absolute]:hidden"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value ?? ''}
-                type="text"
+                type={isEdit ? 'password' : 'text'}
                 label="Webhook URL"
                 error={error?.message}
-                hint={isEdit ? 'Leave empty to keep the current webhook URL' : undefined}
               />
             )}
           />
