@@ -17,7 +17,7 @@ export function Separator() {
 export function Header() {
   return (
     <header className="w-full bg-background-secondary py-4 pl-3 pr-4">
-      <div className="container mx-auto flex items-center gap-4">
+      <div className="container flex items-center gap-4">
         <LogoIcon />
         <Separator />
         <Breadcrumbs />
