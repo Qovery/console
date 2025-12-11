@@ -13,7 +13,7 @@ export function useEditBillingInfo() {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Credit code added',
+        title: 'Billing information updated',
       },
       notifyOnError: true,
     },

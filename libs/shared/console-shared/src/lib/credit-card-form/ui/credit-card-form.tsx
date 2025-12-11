@@ -35,44 +35,45 @@ export function CreditCardForm(props: CreditCardFormProps) {
           />
         )}
       />
+      <div className="flex gap-3">
+        <Controller
+          name="expiry"
+          control={control}
+          rules={{
+            required: 'Please enter the card expiry date',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputCreditCard
+              className="mb-3 w-full"
+              type="expiry"
+              name={field.name}
+              onChange={field.onChange}
+              label="Expiration date"
+              error={error?.message}
+              value={field.value}
+            />
+          )}
+        />
 
-      <Controller
-        name="expiry"
-        control={control}
-        rules={{
-          required: 'Please enter the card expiry date',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputCreditCard
-            className="mb-3"
-            type="expiry"
-            name={field.name}
-            onChange={field.onChange}
-            label="Expiration date"
-            error={error?.message}
-            value={field.value}
-          />
-        )}
-      />
-
-      <Controller
-        name="cvc"
-        control={control}
-        rules={{
-          required: 'Please enter the card CVC',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputCreditCard
-            className="mb-3"
-            type="cvc"
-            name={field.name}
-            onChange={field.onChange}
-            label="CVC"
-            error={error?.message}
-            value={field.value}
-          />
-        )}
-      />
+        <Controller
+          name="cvc"
+          control={control}
+          rules={{
+            required: 'Please enter the card CVC',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputCreditCard
+              className="mb-3 w-full"
+              type="cvc"
+              name={field.name}
+              onChange={field.onChange}
+              label="CVC"
+              error={error?.message}
+              value={field.value}
+            />
+          )}
+        />
+      </div>
     </div>
   )
 }

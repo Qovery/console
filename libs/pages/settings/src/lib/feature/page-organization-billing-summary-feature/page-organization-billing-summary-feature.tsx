@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useCreditCards, useCurrentCost } from '@qovery/domains/organizations/feature'
+import { AddCreditCardModalFeature } from '@qovery/shared/console-shared'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { useModal } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
@@ -17,7 +18,7 @@ export function PageOrganizationBillingSummaryFeature() {
 
   const { data: creditCards = [], isLoading: isLoadingCreditCards } = useCreditCards({ organizationId })
   const { data: currentCost } = useCurrentCost({ organizationId })
-  const { showChat } = useSupportChat()
+  const { showChat, showPylonForm } = useSupportChat()
   const { isQoveryAdminUser } = useUserRole()
 
   const openPromoCodeModal = () => {
@@ -52,14 +53,27 @@ export function PageOrganizationBillingSummaryFeature() {
     }
   }
 
+  const handleCancelTrialClick = () => {
+    showPylonForm('cancel-free-trial')
+  }
+
+  const handleAddCreditCardClick = () => {
+    openModal({
+      content: <AddCreditCardModalFeature organizationId={organizationId} />,
+    })
+  }
+
   return (
     <PageOrganizationBillingSummary
       currentCost={currentCost}
       creditCard={creditCards[0]}
       creditCardLoading={isLoadingCreditCards}
+      hasCreditCard={creditCards.length > 0}
       onPromoCodeClick={openPromoCodeModal}
       onShowUsageClick={openShowUsageModal}
       onChangePlanClick={handleChangePlanClick}
+      onCancelTrialClick={handleCancelTrialClick}
+      onAddCreditCardClick={handleAddCreditCardClick}
     />
   )
 }

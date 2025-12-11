@@ -15,7 +15,6 @@ export function useCreateOrganization() {
       notifyOnSuccess: {
         title: 'Your organization has been created',
       },
-      notifyOnError: true,
     },
   })
 }
