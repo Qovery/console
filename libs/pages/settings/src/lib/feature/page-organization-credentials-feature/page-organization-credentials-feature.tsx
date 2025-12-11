@@ -295,22 +295,18 @@ export function PageOrganizationCredentialsFeature() {
     {
       label: 'AWS',
       value: CloudProviderEnum.AWS,
-      icon: <ClusterAvatar cloudProvider={CloudProviderEnum.AWS} size="xs" />,
     },
     {
       label: 'GCP',
       value: CloudProviderEnum.GCP,
-      icon: <ClusterAvatar cloudProvider={CloudProviderEnum.GCP} size="xs" />,
     },
     {
       label: 'Azure',
       value: CloudProviderEnum.AZURE,
-      icon: <ClusterAvatar cloudProvider={CloudProviderEnum.AZURE} size="xs" />,
     },
     {
       label: 'Scaleway',
       value: CloudProviderEnum.SCW,
-      icon: <ClusterAvatar cloudProvider={CloudProviderEnum.SCW} size="xs" />,
     },
   ]
 
@@ -362,7 +358,7 @@ export function PageOrganizationCredentialsFeature() {
                 {cloudProviderOptions.map((option) => (
                   <DropdownMenu.Item
                     key={option.value}
-                    icon={option.icon}
+                    icon={<Icon name={option.value} width={16} height={16} />}
                     onClick={() => onSelectProvider(option.value)}
                   >
                     {option.label}
