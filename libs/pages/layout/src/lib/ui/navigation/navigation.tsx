@@ -21,9 +21,10 @@ import MenuAccountFeature from '../../feature/menu-account-feature/menu-account-
 export interface NavigationProps {
   defaultOrganizationId: string
   clusterNotification?: 'error' | 'warning'
+  alertingNotification?: 'error'
 }
 
-export function Navigation({ defaultOrganizationId, clusterNotification }: NavigationProps) {
+export function Navigation({ defaultOrganizationId, clusterNotification, alertingNotification }: NavigationProps) {
   const { organizationId = defaultOrganizationId, clusterId = '', projectId } = useParams()
   const { pathname } = useLocation()
   const { data: clusters = [] } = useClusters({ organizationId })
@@ -122,7 +123,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
           </Tooltip>
           {hasAlerting && (
             <Tooltip content="Alerting" side="right">
-              <div>
+              <div className="relative">
                 <Link
                   as="button"
                   color="neutral"
@@ -137,6 +138,12 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 >
                   <Icon iconName="bell" className="text-[18px]" />
                 </Link>
+                {alertingNotification === 'error' && (
+                  <span className="absolute right-1.5 top-1.5 flex">
+                    <span className="absolute inline-flex h-full w-full animate-ping-small rounded-full bg-red-500 opacity-75" />
+                    <span className="h-2 w-2 rounded-lg bg-red-500"></span>
+                  </span>
+                )}
               </div>
             </Tooltip>
           )}

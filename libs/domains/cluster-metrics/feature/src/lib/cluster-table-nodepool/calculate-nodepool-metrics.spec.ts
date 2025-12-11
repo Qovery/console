@@ -1,5 +1,5 @@
 import type { ClusterNodeDto, NodePoolInfoDto } from 'qovery-ws-typescript-axios'
-import { calculateNodePoolMetrics } from './calculate-nodepool-metrics'
+import { calculateNodePoolMetrics, calculateUntrackedNodesMetrics } from './calculate-nodepool-metrics'
 
 describe('calculateNodePoolMetrics', () => {
   const mockNodes: ClusterNodeDto[] = [
@@ -338,6 +338,252 @@ describe('calculateNodePoolMetrics', () => {
       memoryTotalRaw: 2,
       nodesCount: 2,
       nodesWarningCount: 1,
+      nodesDeployingCount: 0,
+    })
+  })
+})
+
+describe('calculateUntrackedNodesMetrics', () => {
+  const mockUntrackedNodes: ClusterNodeDto[] = [
+    {
+      name: 'untracked-node-1',
+      labels: {},
+      metrics_usage: {
+        cpu_milli_usage: 1000,
+        memory_mib_working_set_usage: 512,
+      },
+      resources_allocated: {
+        request_cpu_milli: 1000,
+        request_memory_mib: 512,
+        limit_cpu_milli: 2000,
+        limit_memory_mib: 1024,
+      },
+      resources_capacity: {
+        cpu_milli: 2000,
+        memory_mib: 1024,
+        ephemeral_storage_mib: 20480,
+        pods: 110,
+      },
+      resources_allocatable: {
+        cpu_milli: 2000,
+        memory_mib: 1024,
+        ephemeral_storage_mib: 20480,
+        pods: 110,
+      },
+      conditions: [
+        {
+          type: 'Ready',
+          status: 'True',
+          last_heartbeat_time: 1704067200000,
+          last_transition_time: 1704067200000,
+          message: '',
+          reason: '',
+        },
+      ],
+      addresses: [],
+      annotations: {},
+      architecture: 'amd64',
+      created_at: 1704067200000,
+      kubelet_version: 'v1.24.0',
+      operating_system: 'linux',
+      kernel_version: '5.15.0',
+      os_image: 'Ubuntu 22.04 LTS',
+      pods: [],
+      taints: [],
+      unschedulable: false,
+    },
+    {
+      name: 'untracked-node-2',
+      labels: {},
+      metrics_usage: {
+        cpu_milli_usage: 1500,
+        memory_mib_working_set_usage: 768,
+      },
+      resources_allocated: {
+        request_cpu_milli: 1500,
+        request_memory_mib: 768,
+        limit_cpu_milli: 3000,
+        limit_memory_mib: 1536,
+      },
+      resources_capacity: {
+        cpu_milli: 3000,
+        memory_mib: 1536,
+        ephemeral_storage_mib: 30720,
+        pods: 110,
+      },
+      resources_allocatable: {
+        cpu_milli: 3000,
+        memory_mib: 1536,
+        ephemeral_storage_mib: 30720,
+        pods: 110,
+      },
+      conditions: [
+        {
+          type: 'Ready',
+          status: 'True',
+          last_heartbeat_time: 1704067200000,
+          last_transition_time: 1704067200000,
+          message: '',
+          reason: '',
+        },
+      ],
+      addresses: [],
+      annotations: {},
+      architecture: 'arm64',
+      created_at: 1704067200000,
+      kubelet_version: 'v1.24.0',
+      operating_system: 'linux',
+      kernel_version: '5.15.0',
+      os_image: 'Ubuntu 22.04 LTS',
+      pods: [],
+      taints: [],
+      unschedulable: false,
+    },
+  ]
+
+  const mockNodeWarnings = {
+    'untracked-node-1': { message: 'Warning message' },
+  }
+
+  it('should calculate metrics for untracked nodes', () => {
+    const result = calculateUntrackedNodesMetrics(mockUntrackedNodes, {})
+
+    expect(result).toEqual({
+      cpuUsed: 3,
+      cpuTotal: null,
+      cpuReserved: 5,
+      cpuReservedRaw: 5,
+      cpuUsedRaw: 2.5,
+      cpuTotalRaw: null,
+      memoryUsed: 1,
+      memoryTotal: null,
+      memoryReserved: 3,
+      memoryReservedRaw: 2.5,
+      memoryUsedRaw: 1.25,
+      memoryTotalRaw: null,
+      nodesCount: 2,
+      nodesWarningCount: 0,
+      nodesDeployingCount: 0,
+    })
+  })
+
+  it('should handle empty untracked nodes', () => {
+    const result = calculateUntrackedNodesMetrics([], {})
+
+    expect(result).toEqual({
+      cpuUsed: 0,
+      cpuTotal: null,
+      cpuReserved: 0,
+      cpuReservedRaw: 0,
+      cpuUsedRaw: 0,
+      cpuTotalRaw: null,
+      memoryUsed: 0,
+      memoryTotal: null,
+      memoryReserved: 0,
+      memoryReservedRaw: 0,
+      memoryUsedRaw: 0,
+      memoryTotalRaw: null,
+      nodesCount: 0,
+      nodesWarningCount: 0,
+      nodesDeployingCount: 0,
+    })
+  })
+
+  it('should count warning nodes correctly', () => {
+    const result = calculateUntrackedNodesMetrics(mockUntrackedNodes, mockNodeWarnings)
+
+    expect(result.nodesWarningCount).toEqual(1)
+    expect(result.nodesCount).toEqual(2)
+  })
+
+  it('should count deploying nodes correctly', () => {
+    const deployingNodes: ClusterNodeDto[] = [
+      {
+        ...mockUntrackedNodes[0],
+        conditions: [
+          {
+            type: 'Ready',
+            status: 'False',
+            last_heartbeat_time: 1704067200000,
+            last_transition_time: 1704067200000,
+            message: '',
+            reason: '',
+          },
+        ],
+      },
+    ]
+
+    const result = calculateUntrackedNodesMetrics(deployingNodes, {})
+
+    expect(result.nodesDeployingCount).toEqual(1)
+    expect(result.nodesCount).toEqual(1)
+  })
+
+  it('should always return null for total limits', () => {
+    const result = calculateUntrackedNodesMetrics(mockUntrackedNodes, {})
+
+    expect(result.cpuTotal).toBeNull()
+    expect(result.cpuTotalRaw).toBeNull()
+    expect(result.memoryTotal).toBeNull()
+    expect(result.memoryTotalRaw).toBeNull()
+  })
+
+  it('should handle nodes with missing resource information', () => {
+    const nodesWithMissingInfo: ClusterNodeDto[] = [
+      {
+        name: 'untracked-node-3',
+        labels: {},
+        metrics_usage: {},
+        resources_allocated: {
+          request_cpu_milli: 0,
+          request_memory_mib: 0,
+          limit_cpu_milli: 0,
+          limit_memory_mib: 0,
+        },
+        resources_capacity: {
+          cpu_milli: 0,
+          memory_mib: 0,
+          ephemeral_storage_mib: 0,
+          pods: 0,
+        },
+        resources_allocatable: {
+          cpu_milli: 0,
+          memory_mib: 0,
+          ephemeral_storage_mib: 0,
+          pods: 0,
+        },
+        conditions: [],
+        addresses: [],
+        annotations: {},
+        architecture: 'amd64',
+        created_at: 1704067200000,
+        kubelet_version: 'v1.24.0',
+        operating_system: 'linux',
+        kernel_version: '5.15.0',
+        os_image: 'Ubuntu 22.04 LTS',
+        pods: [],
+        taints: [],
+        unschedulable: false,
+      },
+    ]
+
+    const result = calculateUntrackedNodesMetrics(nodesWithMissingInfo, {})
+
+    expect(result).toEqual({
+      cpuUsed: 0,
+      cpuTotal: null,
+      cpuReserved: 0,
+      cpuReservedRaw: 0,
+      cpuUsedRaw: 0,
+      cpuTotalRaw: null,
+      memoryUsed: 0,
+      memoryTotal: null,
+      memoryReserved: 0,
+      memoryReservedRaw: 0,
+      memoryUsedRaw: 0,
+      memoryTotalRaw: null,
+      nodesCount: 1,
+      nodesWarningCount: 0,
       nodesDeployingCount: 0,
     })
   })

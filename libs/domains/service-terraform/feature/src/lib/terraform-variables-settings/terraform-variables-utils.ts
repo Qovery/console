@@ -1,17 +1,24 @@
 import { type TerraformVariableDefinition } from 'qovery-typescript-axios'
 import { CUSTOM_SOURCE, type UIVariable } from './terraform-variables-context'
 
-/**
- * Creates a lookup map of variable keys to their descriptions from Terraform variable definitions.
- * This ensures descriptions are preserved even when variables are overridden by tfvars files.
- */
-export const buildDescriptionByKey = (
+export type VariableMetadata = {
+  description?: string
+  nullable: boolean
+}
+
+export const buildMetadataByKey = (
   variablesResponse: TerraformVariableDefinition[] | undefined
-): Record<string, string | undefined> => {
+): Record<string, VariableMetadata> => {
   return Object.fromEntries(
     (variablesResponse ?? [])
       .filter((variable) => variable?.key)
-      .map((variable) => [variable.key, variable.description ?? undefined])
+      .map((variable) => [
+        variable.key,
+        {
+          description: variable.description ?? undefined,
+          nullable: variable.nullable ?? true,
+        },
+      ])
   )
 }
 

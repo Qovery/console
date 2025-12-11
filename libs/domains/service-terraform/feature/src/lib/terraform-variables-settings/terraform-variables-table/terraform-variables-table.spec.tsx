@@ -28,7 +28,7 @@ const WrapperComponent = ({
     revertValue: jest.fn(),
     removeVariable: jest.fn(),
     serializeForApi: jest.fn(),
-    errors: new Map(),
+    errors: new Map<string, { message: string; field: 'key' | 'value' }>(),
     fetchTfVarsFiles: jest.fn(),
     tfVarFiles: [],
     setTfVarFiles: jest.fn(),
@@ -169,5 +169,67 @@ describe('TerraformVariablesTable', () => {
     )
 
     expect(screen.queryByRole('img', { name: 'Variable description' })).not.toBeInTheDocument()
+  })
+
+  it('should display error styling for value field when variable has validation error', () => {
+    const errors = new Map<string, { message: string; field: 'key' | 'value' }>()
+    errors.set('variable-1', { message: 'Value required for "aws_region"', field: 'value' })
+
+    const { container } = renderWithProviders(
+      <WrapperComponent
+        overrideValues={{
+          vars: [
+            {
+              id: 'variable-1',
+              key: 'aws_region',
+              value: '',
+              source: 'variables.tf',
+              secret: false,
+              nullable: false,
+              originalKey: 'aws_region',
+              originalValue: '',
+              originalSecret: false,
+              isNew: false,
+            },
+          ],
+          errors,
+        }}
+      >
+        <TerraformVariablesTable />
+      </WrapperComponent>
+    )
+
+    // The error icon (circle-exclamation) should be present
+    const errorIcon = container.querySelector('.fa-circle-exclamation')
+    expect(errorIcon).toBeInTheDocument()
+  })
+
+  it('should display error styling for key field when variable has duplicate key error', () => {
+    const errors = new Map<string, { message: string; field: 'key' | 'value' }>()
+    errors.set('variable-1', { message: 'Variable "test" already exists', field: 'key' })
+
+    const { container } = renderWithProviders(
+      <WrapperComponent
+        overrideValues={{
+          vars: [
+            {
+              id: 'variable-1',
+              key: 'test',
+              value: 'value',
+              source: CUSTOM_SOURCE,
+              secret: false,
+              isNew: true,
+            },
+          ],
+          errors,
+        }}
+      >
+        <TerraformVariablesTable />
+      </WrapperComponent>
+    )
+
+    // The error icon (circle-exclamation) should be present
+    const errorIcon = container.querySelector('.fa-circle-exclamation')
+    expect(errorIcon).toBeInTheDocument()
   })
 })

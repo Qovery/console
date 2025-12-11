@@ -129,7 +129,7 @@ export function AlertRulesOverview({
   return filteredAlertRules.length === 0 ? (
     <div className="flex flex-col items-center justify-center overflow-hidden rounded-md border border-neutral-250 bg-neutral-100 p-10 text-center">
       <Icon iconName="light-emergency" iconStyle="regular" className="mb-2.5 text-xl text-neutral-350" />
-      <p className="font-medium">
+      <p className="font-medium text-neutral-400">
         {service ? 'No alerts created for this service' : 'No alerts created for this organization'}
       </p>
       <p className="mb-3 text-sm text-neutral-350">
@@ -145,7 +145,7 @@ export function AlertRulesOverview({
       {onCreateKeyAlerts && (
         <Button size="md" className="gap-1.5" onClick={onCreateKeyAlerts}>
           <Icon iconName="plus-large" className="text-xs" />
-          Create key alerts
+          New alert
         </Button>
       )}
     </div>
@@ -158,11 +158,7 @@ export function AlertRulesOverview({
           <Table.Header>
             <Table.Row className="font-code text-xs">
               <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Alert name</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell
-                className={clsx('h-9 font-normal text-neutral-350', {
-                  'border-l border-neutral-250': !service,
-                })}
-              >
+              <Table.ColumnHeaderCell className="h-9 border-l border-neutral-250 font-normal text-neutral-350">
                 Status
               </Table.ColumnHeaderCell>
               {!service && (
@@ -185,16 +181,16 @@ export function AlertRulesOverview({
               return (
                 <Table.Row key={alertRule.id}>
                   <Table.RowHeaderCell>
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="flex items-center gap-1.5 text-sm text-neutral-400">
-                        {alertRule.name}
-                        {alertRule.description && (
-                          <Tooltip content={alertRule.description}>
-                            <span>
-                              <Icon iconName="info-circle" iconStyle="regular" className="text-neutral-350" />
-                            </span>
-                          </Tooltip>
-                        )}
+                    <div className="flex min-w-0 items-center justify-between gap-4">
+                      <div className="min-w-0 flex-1">
+                        <p className="flex items-center gap-1.5 text-sm font-medium text-neutral-400">
+                          {alertRule.name}
+                        </p>
+                        <p className="truncate text-ssm font-normal text-neutral-350" title={alertRule.description}>
+                          {alertRule.description}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 items-center">
                         {!alertRule.is_up_to_date && alertRule.state !== 'UNDEPLOYED' && (
                           <Tooltip content="To apply this change redeploy your cluster">
                             <span>
@@ -202,19 +198,15 @@ export function AlertRulesOverview({
                             </span>
                           </Tooltip>
                         )}
-                      </span>
-                      {isMuted && (
-                        <Tooltip content="Alert is muted">
-                          <Icon iconName="bell-slash" iconStyle="regular" className="text-xs text-neutral-350" />
-                        </Tooltip>
-                      )}
+                        {isMuted && (
+                          <Tooltip content="Alert is muted">
+                            <Icon iconName="bell-slash" iconStyle="regular" className="ml-2 text-xs text-neutral-350" />
+                          </Tooltip>
+                        )}
+                      </div>
                     </div>
                   </Table.RowHeaderCell>
-                  <Table.Cell
-                    className={clsx('h-11', {
-                      'border-l border-neutral-250': !service,
-                    })}
-                  >
+                  <Table.Cell className="h-16 border-l border-neutral-250">
                     <Tooltip content={statusConfig.tooltip} disabled={!statusConfig.tooltip}>
                       <Badge
                         color={statusConfig.color}
@@ -229,7 +221,7 @@ export function AlertRulesOverview({
                     </Tooltip>
                   </Table.Cell>
                   {!service && (
-                    <Table.Cell className="h-11">
+                    <Table.Cell className="h-16">
                       <Link
                         as="button"
                         radius="full"
@@ -261,11 +253,11 @@ export function AlertRulesOverview({
                       </Link>
                     </Table.Cell>
                   )}
-                  <Table.Cell className="h-11">
+                  <Table.Cell className="h-16">
                     <SeverityIndicator severity={alertRule.severity} />
                   </Table.Cell>
                   {service && (
-                    <Table.Cell className="h-11">
+                    <Table.Cell className="h-16">
                       <div className="flex items-center justify-end gap-2">
                         <Tooltip content="Edit">
                           <Button

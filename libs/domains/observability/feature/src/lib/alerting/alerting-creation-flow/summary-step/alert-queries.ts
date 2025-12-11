@@ -39,7 +39,7 @@ export const QUERY_INSTANCE_RESTART = (containerName: string) => `
     increase(
       kube_pod_container_status_restarts_total{
         container="${containerName}"
-      }[1m]
+      }[5m]
     ) > 0
   )
   and on (namespace, pod, container)
