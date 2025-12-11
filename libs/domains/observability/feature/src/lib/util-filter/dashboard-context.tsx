@@ -140,7 +140,8 @@ export function DashboardProvider({ children }: PropsWithChildren) {
   }, [])
 
   // Adjust dates when startDate and endDate are identical
-  // This ensures a valid time range for queries by expanding ±30 minutes around the single timestamp
+  // This ensures a valid time range for queries by expanding to a 60-minute range
+  // The endDate is capped to the current time to prevent future dates
   useEffect(() => {
     if (!startDate || !endDate) return
 
@@ -150,10 +151,12 @@ export function DashboardProvider({ children }: PropsWithChildren) {
     if (isNaN(start.getTime()) || isNaN(end.getTime())) return
 
     if (start.getTime() === end.getTime()) {
-      const adjustedStart = subMinutes(start, 30)
+      const now = new Date()
       const adjustedEnd = addMinutes(end, 30)
+      const finalEnd = adjustedEnd > now ? now : adjustedEnd
+      const adjustedStart = subMinutes(finalEnd, 60)
       setStartDate(adjustedStart.toISOString())
-      setEndDate(adjustedEnd.toISOString())
+      setEndDate(finalEnd.toISOString())
     }
   }, [startDate, endDate, setStartDate, setEndDate])
 
