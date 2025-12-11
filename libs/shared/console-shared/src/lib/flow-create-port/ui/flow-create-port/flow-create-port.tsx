@@ -37,7 +37,7 @@ export function FlowCreatePort({
         <div>
           <Heading className="mb-2">Ports</Heading>
 
-          <p className={isSetting ? 'mb-3 max-w-lg text-sm text-neutral-400' : 'text-xs text-neutral-400'}>
+          <p className="text-sm text-neutral-350">
             Declare TCP/UDP ports used by your application. Declared ports are accessible from other applications within
             the same environment. You can also expose them on the internet by making them public. Declared ports are
             also used to check the liveness/readiness of your application
