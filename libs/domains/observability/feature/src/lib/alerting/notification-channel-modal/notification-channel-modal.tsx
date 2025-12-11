@@ -23,6 +23,8 @@ const CHANNEL_TYPE_OPTIONS = [
   { value: 'EMAIL', label: 'Email' },
 ]
 
+const FAKE_PLACEHOLDER = 'fakewebhookurl'
+
 export function NotificationChannelModal({
   type,
   onClose,
@@ -43,7 +45,7 @@ export function NotificationChannelModal({
       name: alertReceiver?.name ?? 'Input slack channel',
       type: alertReceiver?.type ?? 'SLACK',
       send_resolved: alertReceiver?.send_resolved ?? true,
-      webhook_url: isEdit ? undefined : undefined,
+      webhook_url: isEdit ? FAKE_PLACEHOLDER : undefined,
     },
     resolver: (values) => {
       const errors: Record<string, { type: string; message: string }> = {}
@@ -69,10 +71,11 @@ export function NotificationChannelModal({
   const handleSubmit = methods.handleSubmit(async (data) => {
     if (isEdit && alertReceiver) {
       const { webhook_url, ...restData } = data
+      const webhookUrlValue = webhook_url === FAKE_PLACEHOLDER ? undefined : webhook_url
       const editPayload: SlackAlertReceiverEditRequest = {
         ...restData,
         description: alertReceiver.description ?? 'Webhook for Qovery alerts',
-        ...(webhook_url && webhook_url.trim() !== '' ? { webhook_url } : {}),
+        ...(webhookUrlValue && webhookUrlValue.trim() !== '' ? { webhook_url: webhookUrlValue } : {}),
       }
 
       try {
@@ -158,14 +161,13 @@ export function NotificationChannelModal({
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
-                className="mb-1"
+                className="mb-1 [&_.absolute]:hidden"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value ?? ''}
-                type="text"
+                type={isEdit ? 'password' : 'text'}
                 label="Webhook URL"
                 error={error?.message}
-                hint={isEdit ? 'Leave empty to keep the current webhook URL' : undefined}
               />
             )}
           />
