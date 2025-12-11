@@ -42,6 +42,7 @@ const METRIC_TYPE_OPTIONS: Record<MetricCategory, { label: string; value: AlertR
   http_latency: VALUES_OPTIONS,
   missing_instance: INSTANCE_NUMBER_VALUES_OPTIONS,
   instance_restart: VALUES_OPTIONS,
+  hpa_limit: INSTANCE_NUMBER_VALUES_OPTIONS,
 }
 
 const OPERATOR_OPTIONS: Value[] = Object.values(AlertRuleConditionOperator).map((operator) => ({
@@ -130,6 +131,15 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
       operator: 'EQUAL',
       threshold: 1,
       duration: 'PT1M',
+    },
+  },
+  hpa_limit: {
+    hiddenFields: ['function', 'operator', 'threshold'],
+    defaults: {
+      function: 'NONE',
+      operator: 'NONE',
+      threshold: 1,
+      duration: 'PT5M',
     },
   },
 }
@@ -427,7 +437,7 @@ export function MetricConfigurationStep({
                           className="w-full"
                           name={field.name}
                           inputClassName="text-neutral-350"
-                          value={field.value.replace(/_/g, ' ').toUpperCase()}
+                          value={(formatMetricLabel(field.value) || field.value.replace(/_/g, ' ')).toUpperCase()}
                           disabled
                         />
                       )}

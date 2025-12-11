@@ -9,6 +9,7 @@ const METRIC_LABEL_OVERRIDES: Record<string, string> = {
   http_latency: 'HTTP latency',
   missing_instance: 'Missing instance',
   instance_restart: 'Instance restart',
+  hpa_limit: 'Auto-scaling limit',
 }
 
 const OPERATOR_SYMBOLS: Record<AlertRuleConditionOperator, string> = {

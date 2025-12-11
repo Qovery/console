@@ -56,6 +56,7 @@ const queryMaxReplicas = (containerName: string) => `
   max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="${containerName}"})
 `
 
+// increase is here to have event only at the beginning of the hpa reached the limit
 const queryMaxLimitReached = (serviceId: string, rateInterval: string) => `
   sum by (pod) (
   increase(
@@ -433,7 +434,7 @@ export function InstanceStatusChart({
                 timestamp: timestamp * 1000,
                 reason: 'ScalingLimited',
                 description:
-                  'Auto scaling reached the maximum number of replicas. You can increase it in the settings.',
+                  'Auto scaling reached the maximum number of instances . You can increase it in the settings.',
                 color: 'var(--color-red-500)',
                 icon: 'exclamation',
                 pod: series.metric.pod,

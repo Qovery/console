@@ -37,6 +37,7 @@ const METRICS: Metric[] = [
   { id: 'http_latency', label: 'HTTP latency', iconName: 'globe' },
   { id: 'missing_instance', label: 'Missing instance', iconName: 'server' },
   { id: 'instance_restart', label: 'Instance restart', iconName: 'cube' },
+  { id: 'hpa_limit', label: 'Auto-scaling limit', iconName: 'up-right-and-down-left-from-center' },
 ]
 
 export function CreateKeyAlertsModal({ onClose, service, organizationId, projectId }: CreateKeyAlertsModalProps) {
@@ -47,8 +48,15 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
     (service?.ports || []).length > 0 &&
     service?.ports?.some((p) => p.publicly_accessible)
 
+  const hasAutoscaling =
+    (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
+    service?.min_running_instances !== service?.max_running_instances
+
   const availableMetrics = METRICS.filter((metric) => {
     if (!hasPublicPort && (metric.id === 'http_error' || metric.id === 'http_latency')) {
+      return false
+    }
+    if (!hasAutoscaling && metric.id === 'hpa_limit') {
       return false
     }
     return true

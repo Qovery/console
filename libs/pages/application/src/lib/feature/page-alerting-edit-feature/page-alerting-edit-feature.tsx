@@ -8,6 +8,7 @@ import {
   AlertingCreationFlowContext,
   MetricConfigurationStep,
   QUERY_CPU,
+  QUERY_HPA_ISSUE,
   QUERY_HTTP_ERROR,
   QUERY_HTTP_LATENCY,
   QUERY_INSTANCE_RESTART,
@@ -17,6 +18,7 @@ import {
   useContainerName,
   useEditAlertRule,
   useEnvironment,
+  useHpaName,
   useIngressName,
 } from '@qovery/domains/observability/feature'
 import { generateConditionDescription } from '@qovery/domains/observability/feature'
@@ -51,6 +53,18 @@ export function PageAlertingEditFeature() {
   const { data: ingressName } = useIngressName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: service?.id ?? '',
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+  })
+
+  const hasAutoscaling =
+    (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
+    service?.min_running_instances !== service?.max_running_instances
+
+  const { data: hpaName } = useHpaName({
+    clusterId: environment?.cluster_id ?? '',
+    serviceId: service?.id ?? '',
+    enabled: hasAutoscaling,
     startDate: oneHourAgo.toISOString(),
     endDate: now.toISOString(),
   })
@@ -103,6 +117,7 @@ export function PageAlertingEditFeature() {
       .with('http_latency', () => updatedAlert.condition.threshold ?? 0)
       .with('instance_restart', () => 1)
       .with('missing_instance', () => 1)
+      .with('hpa_limit', () => 1)
       .otherwise(() => (updatedAlert.condition.threshold ?? 0) / 100)
 
     const unit = match(updatedAlert.tag)
@@ -115,6 +130,7 @@ export function PageAlertingEditFeature() {
     const description = match(updatedAlert.tag)
       .with('instance_restart', () => 'One or more instances restarted unexpectedly')
       .with('missing_instance', () => 'Missing one or more running instances for this service')
+      .with('hpa_limit', () => 'Auto-scaling reached the maximum number of instances')
       .otherwise(() => generateConditionDescription(func, operator, threshold, unit, updatedAlert.for_duration))
 
     if (updatedAlert && environment && containerName && ingressName) {
@@ -137,6 +153,7 @@ export function PageAlertingEditFeature() {
                 .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
                 .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
                 .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
+                .with('hpa_limit', () => (hpaName ? QUERY_HPA_ISSUE(hpaName) : updatedAlert.condition.promql || ''))
                 .otherwise(() => ''),
             },
             for_duration: updatedAlert.for_duration,
