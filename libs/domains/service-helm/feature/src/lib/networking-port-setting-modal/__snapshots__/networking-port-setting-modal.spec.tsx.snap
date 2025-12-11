@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = `
 <body>
@@ -11,7 +11,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
       >
         Set port
       </h2>
-      <span
+      <button
         aria-controls="radix-:r6:"
         aria-expanded="false"
         aria-haspopup="dialog"
@@ -24,7 +24,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
           aria-hidden="true"
           class="fa-regular fa-circle-question text-xs"
         />
-      </span>
+      </button>
       <form
         class="mt-6"
       >
@@ -301,7 +301,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
       >
         Edit port
       </h2>
-      <span
+      <button
         aria-controls="radix-:rd:"
         aria-expanded="false"
         aria-haspopup="dialog"
@@ -314,7 +314,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
           aria-hidden="true"
           class="fa-regular fa-circle-question text-xs"
         />
-      </span>
+      </button>
       <form
         class="mt-6"
       >
