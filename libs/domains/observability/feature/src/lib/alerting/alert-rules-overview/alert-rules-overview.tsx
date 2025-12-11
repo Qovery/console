@@ -259,42 +259,35 @@ export function AlertRulesOverview({
                   </Table.Cell>
                   {!service && (
                     <Table.Cell className="h-16">
-                      <>
-                        {match(alertRule)
-                          .with({ source: 'MANAGED' }, (alertRule) => (
-                            <Link
-                              as="button"
-                              radius="full"
-                              variant="surface"
-                              color="neutral"
-                              size="xs"
-                              className="justify-center gap-1.5 pl-0.5"
-                              to={
-                                APPLICATION_URL(
-                                  organizationId,
-                                  alertRule.target.service?.project_id,
-                                  alertRule.target.service?.environment_id,
-                                  alertRule.target.service?.id
-                                ) +
-                                APPLICATION_MONITORING_URL +
-                                APPLICATION_MONITORING_ALERTS_URL
-                              }
-                            >
-                              <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-white">
-                                <Icon
-                                  name={match(alertRule.target.target_type)
-                                    .with('CONTAINER', () => 'APPLICATION')
-                                    .otherwise((s) => s)}
-                                  iconStyle="regular"
-                                  width={13}
-                                />
-                              </span>
-                              {alertRule.target.service?.name}
-                            </Link>
-                          ))
-                          .with({ source: 'GHOST' }, () => '')
-                          .exhaustive()}
-                      </>
+                      <Link
+                        as="button"
+                        radius="full"
+                        variant="surface"
+                        color="neutral"
+                        size="xs"
+                        className="justify-center gap-1.5 pl-0.5"
+                        to={
+                          APPLICATION_URL(
+                            organizationId,
+                            alertRule.target?.service?.project_id,
+                            alertRule.target?.service?.environment_id,
+                            alertRule.target?.service?.id
+                          ) +
+                          APPLICATION_MONITORING_URL +
+                          APPLICATION_MONITORING_ALERTS_URL
+                        }
+                      >
+                        <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-white">
+                          <Icon
+                            name={match(alertRule.target?.target_type)
+                              .with('CONTAINER', () => 'APPLICATION')
+                              .otherwise((s) => s)}
+                            iconStyle="regular"
+                            width={13}
+                          />
+                        </span>
+                        {alertRule.target?.service?.name}
+                      </Link>
                     </Table.Cell>
                   )}
                   <Table.Cell className="h-16">
