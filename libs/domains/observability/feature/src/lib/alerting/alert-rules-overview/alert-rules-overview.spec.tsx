@@ -1,10 +1,12 @@
 import { type AlertRuleResponse } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import * as useAlertRulesGhosted from '../../hooks/use-alert-rules-ghosted/use-alert-rules-ghosted'
 import * as useAlertRules from '../../hooks/use-alert-rules/use-alert-rules'
 import * as useDeleteAlertRule from '../../hooks/use-delete-alert-rule/use-delete-alert-rule'
 import { AlertRulesOverview } from './alert-rules-overview'
 
 const mockUseAlertRules = jest.spyOn(useAlertRules, 'useAlertRules') as jest.Mock
+const mockUseAlertRulesGhosted = jest.spyOn(useAlertRulesGhosted, 'useAlertRulesGhosted') as jest.Mock
 const mockUseDeleteAlertRule = jest.spyOn(useDeleteAlertRule, 'useDeleteAlertRule') as jest.Mock
 
 describe('AlertRulesOverview', () => {
@@ -22,6 +24,10 @@ describe('AlertRulesOverview', () => {
       data: [],
       isFetched: false,
     })
+    mockUseAlertRulesGhosted.mockReturnValue({
+      data: [],
+      isFetched: false,
+    })
 
     const { container } = renderWithProviders(<AlertRulesOverview organizationId="org-123" />)
 
@@ -30,6 +36,10 @@ describe('AlertRulesOverview', () => {
 
   it('should render empty state when no alert rules exist', () => {
     mockUseAlertRules.mockReturnValue({
+      data: [],
+      isFetched: true,
+    })
+    mockUseAlertRulesGhosted.mockReturnValue({
       data: [],
       isFetched: true,
     })
@@ -48,6 +58,7 @@ describe('AlertRulesOverview', () => {
         severity: 'MEDIUM',
         enabled: true,
         is_up_to_date: true,
+        source: 'MANAGED',
         target: {
           target_type: 'APPLICATION',
           service: {
@@ -65,6 +76,7 @@ describe('AlertRulesOverview', () => {
         severity: 'CRITICAL',
         enabled: true,
         is_up_to_date: true,
+        source: 'MANAGED',
         target: {
           target_type: 'APPLICATION',
           service: {
@@ -79,6 +91,10 @@ describe('AlertRulesOverview', () => {
 
     mockUseAlertRules.mockReturnValue({
       data: alertRules,
+      isFetched: true,
+    })
+    mockUseAlertRulesGhosted.mockReturnValue({
+      data: [],
       isFetched: true,
     })
 
@@ -99,6 +115,7 @@ describe('AlertRulesOverview', () => {
         severity: 'MEDIUM',
         enabled: true,
         is_up_to_date: true,
+        source: 'MANAGED',
         target: { target_type: 'APPLICATION' },
       },
       {
@@ -108,12 +125,17 @@ describe('AlertRulesOverview', () => {
         severity: 'CRITICAL',
         enabled: true,
         is_up_to_date: true,
+        source: 'MANAGED',
         target: { target_type: 'APPLICATION' },
       },
     ] as unknown as AlertRuleResponse[]
 
     mockUseAlertRules.mockReturnValue({
       data: alertRules,
+      isFetched: true,
+    })
+    mockUseAlertRulesGhosted.mockReturnValue({
+      data: [],
       isFetched: true,
     })
 
