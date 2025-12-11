@@ -1,6 +1,6 @@
 // Audit logs simple editor
-.audit-logs-simple-code-editor .monaco-editor,
-.audit-logs-failed-code-editor .monaco-editor {
+.audit-logs-simple-code-editor > .monaco-editor,
+.audit-logs-failed-code-editor > .monaco-editor {
   .view-line {
     background-color: #e6f6eb7f;
   }
@@ -51,7 +51,7 @@
 }
 
 // Audit logs no failed event style
-.audit-logs-simple-code-editor .monaco-editor {
+.audit-logs-simple-code-editor.monaco-editor {
   .view-line {
     background-color: #e6f6eb7f;
   }
@@ -67,7 +67,7 @@
 }
 
 // Audit logs failed event style
-.audit-logs-failed-code-editor .monaco-editor {
+.audit-logs-failed-code-editor > .monaco-editor {
   .view-line {
     background-color: rgba(246, 231, 230, 0.5);
   }
