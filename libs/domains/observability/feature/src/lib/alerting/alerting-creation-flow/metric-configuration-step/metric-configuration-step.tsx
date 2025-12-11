@@ -235,7 +235,7 @@ export function MetricConfigurationStep({
       name: metricCategory ? `${metricCategory.replace(/_/g, ' ').toUpperCase()} alert` : '',
       severity: 'MEDIUM',
       alert_receiver_ids: [],
-      presentation: { summary: undefined },
+      presentation: { summary: '' },
     }
   }, [initialData, metricCategory])
 
