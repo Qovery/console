@@ -92,23 +92,16 @@ export function StepPersonalize(props: StepPersonalizeProps) {
           name="phone"
           control={control}
           rules={{
-            required: 'Please enter your phone.',
+            required: false,
             pattern: {
               value: /^[\d\s+\-()]{7,}$/,
               message: 'Please enter a valid phone number.',
-            },
-            validate: (value) => {
-              const digitsOnly = value.replace(/\D/g, '')
-              if (digitsOnly.length < 7 || digitsOnly.length > 15) {
-                return 'Please enter a valid phone number (7-15 digits).'
-              }
-              return true
             },
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
               className="mb-3"
-              label="Phone"
+              label="Phone (recommended)"
               name={field.name}
               onChange={field.onChange}
               value={field.value}
