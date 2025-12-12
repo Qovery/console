@@ -90,7 +90,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
   const { data: readOnlyData } = useAICopilotConfig({
-    organizationId: context?.organization?.id!,
+    organizationId: context?.organization?.id as string,
   })
 
   const [isReadOnly, setIsReadOnly] = useState(true)
@@ -106,10 +106,10 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     error: errorThreads,
     isLoading: isLoadingThreads,
     refetchThreads,
-  } = useThreads({ organizationId: context?.organization?.id!, owner: user?.sub ?? '' })
+  } = useThreads({ organizationId: context?.organization?.id as string, owner: user?.sub ?? '' })
 
   const { thread, setThread } = useThreadState({
-    organizationId: context?.organization?.id!,
+    organizationId: context?.organization?.id as string,
     threadId,
   })
 
@@ -466,7 +466,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
               }}
               threadId={threadId}
               setThreadId={setThreadId}
-              organizationId={context?.organization?.id!}
+              organizationId={context?.organization?.id as string}
             />
           )}
           <div className="flex h-full w-full flex-col justify-between">
