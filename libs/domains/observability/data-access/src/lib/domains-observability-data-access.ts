@@ -91,6 +91,40 @@ export const observability = createQueryKeys('observability', {
       return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
     },
   }),
+  hpaName: ({
+    clusterId,
+    serviceId,
+    startDate,
+    endDate,
+  }: {
+    clusterId: string
+    serviceId: string
+    startDate: string
+    endDate: string
+  }) => ({
+    queryKey: ['hpaName', clusterId, serviceId, startDate, endDate],
+    async queryFn() {
+      const endpoint = `api/v1/label/horizontalpodautoscaler/values?match[]=kube_horizontalpodautoscaler_labels{label_qovery_com_service_id="${serviceId}"}`
+      const response = await clusterApi.getClusterMetrics(
+        clusterId,
+        endpoint,
+        '',
+        startDate,
+        endDate,
+        undefined,
+        undefined,
+        undefined,
+        'True',
+        'True',
+        undefined,
+        'prometheus',
+        'false',
+        'service_overview',
+        'hpaName'
+      )
+      return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
+    },
+  }),
   namespace: ({
     clusterId,
     serviceId,

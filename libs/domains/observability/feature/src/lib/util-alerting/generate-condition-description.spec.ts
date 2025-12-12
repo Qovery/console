@@ -15,6 +15,7 @@ describe('formatMetricLabel', () => {
     expect(formatMetricLabel('http_latency')).toBe('HTTP latency')
     expect(formatMetricLabel('missing_instance')).toBe('Missing instance')
     expect(formatMetricLabel('instance_restart')).toBe('Instance restart')
+    expect(formatMetricLabel('hpa_limit')).toBe('Auto-scaling limit')
   })
 })
 

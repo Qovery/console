@@ -37,6 +37,7 @@ const METRICS: Metric[] = [
   { id: 'http_latency', label: 'HTTP latency', iconName: 'globe' },
   { id: 'missing_instance', label: 'Missing instance', iconName: 'server' },
   { id: 'instance_restart', label: 'Instance restart', iconName: 'cube' },
+  { id: 'hpa_limit', label: 'Auto-scaling limit', iconName: 'up-right-and-down-left-from-center' },
 ]
 
 export function CreateKeyAlertsModal({ onClose, service, organizationId, projectId }: CreateKeyAlertsModalProps) {
@@ -47,8 +48,15 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
     (service?.ports || []).length > 0 &&
     service?.ports?.some((p) => p.publicly_accessible)
 
+  const hasAutoscaling =
+    (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
+    service?.min_running_instances !== service?.max_running_instances
+
   const availableMetrics = METRICS.filter((metric) => {
     if (!hasPublicPort && (metric.id === 'http_error' || metric.id === 'http_latency')) {
+      return false
+    }
+    if (!hasAutoscaling && metric.id === 'hpa_limit') {
       return false
     }
     return true
@@ -135,8 +143,8 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
               <p className="text-neutral-350">Choose the metric categories you want to generate alerts for</p>
             </div>
             {/* This is a workaround to prevent the button from being focused when the user open the modal */}
-            <button className="pointer-events-none absolute h-0 w-0 select-none"></button>
-            <div className="mb-1 grid grid-cols-3 gap-2">
+            <button type="button" className="pointer-events-none absolute h-0 w-0 select-none"></button>
+            <div className="mb-1 grid grid-cols-2 gap-2">
               {availableMetrics.map((metric) => {
                 const isSelected = watchMetrics?.includes(metric.id)
 
@@ -153,7 +161,7 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
                       }
                     }}
                     className={twMerge(
-                      'group flex flex-col items-center justify-center gap-2 rounded-lg border p-4 outline-none transition-colors hover:border-brand-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-100',
+                      'group flex items-center gap-2 rounded-lg border p-2 outline-none transition-colors hover:border-brand-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-100',
                       isSelected ? 'border-brand-500' : 'border-neutral-200 bg-white'
                     )}
                   >

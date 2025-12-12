@@ -56,21 +56,19 @@ export const QUERY_MISSING_INSTANCE = (containerName: string) => `
   kube_deployment_spec_replicas{deployment="${containerName}"}
 )`
 
-export const QUERY_HPA_ISSUE = (serviceId: string) => `
-sum by (label_qovery_com_service_id) (
-(
-    kube_horizontalpodautoscaler_status_condition{
+export const QUERY_HPA_ISSUE = (hpaName: string) => `
+kube_horizontalpodautoscaler_status_condition{
   condition="ScalingLimited",
-    status="true"
+  status="true",
+  horizontalpodautoscaler="${hpaName}"
 }
-* on (namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
-kube_horizontalpodautoscaler_labels{
-  label_qovery_com_service_id="${serviceId}"
-}
-)
-and on (namespace, horizontalpodautoscaler)
+and on(namespace, horizontalpodautoscaler)
 (
-  kube_horizontalpodautoscaler_status_current_replicas
-  == kube_horizontalpodautoscaler_spec_max_replicas
-)
+  kube_horizontalpodautoscaler_status_current_replicas{
+    horizontalpodautoscaler="${hpaName}"
+  }
+  ==
+  kube_horizontalpodautoscaler_spec_max_replicas{
+    horizontalpodautoscaler="${hpaName}"
+  }
 )`

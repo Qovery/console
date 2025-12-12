@@ -7,12 +7,14 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { ErrorBoundary, FunnelFlow } from '@qovery/shared/ui'
 import { useContainerName } from '../../hooks/use-container-name/use-container-name'
 import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create-alert-rule'
+import { useHpaName } from '../../hooks/use-hpa-name/use-hpa-name'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
 import { generateConditionDescription } from '../../util-alerting/generate-condition-description'
 import { type AlertConfiguration, type MetricCategory } from './alerting-creation-flow.types'
 import { MetricConfigurationStep } from './metric-configuration-step/metric-configuration-step'
 import {
   QUERY_CPU,
+  QUERY_HPA_ISSUE,
   QUERY_HTTP_ERROR,
   QUERY_HTTP_LATENCY,
   QUERY_INSTANCE_RESTART,
@@ -27,6 +29,7 @@ const METRIC_LABELS: Record<MetricCategory, string> = {
   http_latency: 'HTTP latency',
   instance_restart: 'Instance restart',
   missing_instance: 'Missing instance',
+  hpa_limit: 'Auto-scaling limit',
 }
 
 interface AlertingCreationFlowContextInterface {
@@ -101,6 +104,18 @@ export function AlertingCreationFlow({
     endDate: now.toISOString(),
   })
 
+  const hasAutoscaling =
+    (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
+    service?.min_running_instances !== service?.max_running_instances
+
+  const { data: hpaName } = useHpaName({
+    clusterId: environment.cluster_id,
+    serviceId: service.id,
+    enabled: hasAutoscaling,
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+  })
+
   const serviceId = service.id
   const serviceName = service.name
 
@@ -133,6 +148,7 @@ export function AlertingCreationFlow({
           .with('http_latency', () => alert.condition.threshold ?? 0)
           .with('instance_restart', () => 1)
           .with('missing_instance', () => 1)
+          .with('hpa_limit', () => 1)
           .otherwise(() => (alert.condition.threshold ?? 0) / 100)
 
         const unit = match(alert.tag)
@@ -144,6 +160,7 @@ export function AlertingCreationFlow({
         const description = match(alert.tag)
           .with('instance_restart', () => 'One or more instances restarted unexpectedly')
           .with('missing_instance', () => 'Missing one or more running instances for this service')
+          .with('hpa_limit', () => 'Auto-scaling reached the maximum number of instances')
           .otherwise(() => generateConditionDescription(func, operator, threshold, unit, alert.for_duration))
 
         await createAlertRule({
@@ -167,8 +184,9 @@ export function AlertingCreationFlow({
                 .with('memory', () => QUERY_MEMORY(containerName))
                 .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
                 .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
-                .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
-                .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
+                .with('http_error', () => (ingressName ? QUERY_HTTP_ERROR(ingressName) : ''))
+                .with('http_latency', () => (ingressName ? QUERY_HTTP_LATENCY(ingressName) : ''))
+                .with('hpa_limit', () => (hpaName ? QUERY_HPA_ISSUE(hpaName) : ''))
                 .otherwise(() => ''),
             },
             for_duration: alert.for_duration,

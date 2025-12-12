@@ -32,16 +32,16 @@ const VALUES_OPTIONS = [
   { label: 'Minimum', value: AlertRuleConditionFunction.MIN },
 ]
 
-const HTTP_ERROR_VALUES_OPTIONS = [{ label: 'Count', value: AlertRuleConditionFunction.COUNT }]
-const INSTANCE_NUMBER_VALUES_OPTIONS = [{ label: 'Count', value: AlertRuleConditionFunction.COUNT }]
+const COUNT_VALUES_OPTIONS = [{ label: 'Count', value: AlertRuleConditionFunction.COUNT }]
 
 const METRIC_TYPE_OPTIONS: Record<MetricCategory, { label: string; value: AlertRuleConditionFunction }[]> = {
   cpu: VALUES_OPTIONS,
   memory: VALUES_OPTIONS,
-  http_error: HTTP_ERROR_VALUES_OPTIONS,
+  http_error: COUNT_VALUES_OPTIONS,
   http_latency: VALUES_OPTIONS,
-  missing_instance: INSTANCE_NUMBER_VALUES_OPTIONS,
+  missing_instance: COUNT_VALUES_OPTIONS,
   instance_restart: VALUES_OPTIONS,
+  hpa_limit: COUNT_VALUES_OPTIONS,
 }
 
 const OPERATOR_OPTIONS: Value[] = Object.values(AlertRuleConditionOperator).map((operator) => ({
@@ -130,6 +130,15 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
       operator: 'EQUAL',
       threshold: 1,
       duration: 'PT1M',
+    },
+  },
+  hpa_limit: {
+    hiddenFields: ['function', 'operator', 'threshold'],
+    defaults: {
+      function: 'NONE',
+      operator: 'NONE',
+      threshold: 1,
+      duration: 'PT5M',
     },
   },
 }
