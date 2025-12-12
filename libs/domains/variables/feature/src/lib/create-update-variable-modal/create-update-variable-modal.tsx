@@ -90,9 +90,6 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
 
   // Compute available scopes
   const availableScopes = computeAvailableScope(variable?.scope, false, scope, type === 'OVERRIDE') as Scope[]
-  //   .filter(
-  //   (s) => !_isFile || !['APPLICATION', 'CONTAINER', 'JOB', 'HELM'].includes(s)
-  // )
 
   const defaultScope =
     // Check if it's a file and the scope is one of services and assign the default scope to 'ENVIRONMENT'
