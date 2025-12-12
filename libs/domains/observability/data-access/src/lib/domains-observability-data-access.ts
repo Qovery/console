@@ -1,7 +1,9 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   type AlertReceiverCreationRequest,
+  type AlertReceiverCreationValidationRequest,
   type AlertReceiverEditRequest,
+  type AlertReceiverValidationRequest,
   AlertReceiversApi,
   type AlertRuleCreationRequest,
   type AlertRuleEditRequest,
@@ -248,6 +250,20 @@ export const mutations = {
   },
   async deleteAlertReceiver({ alertReceiverId }: { alertReceiverId: string }) {
     const response = await alertReceiversApi.deleteAlertReceiver(alertReceiverId)
+    return response.data
+  },
+  async validateNewAlertReceiver({ payload }: { payload: AlertReceiverCreationValidationRequest }) {
+    const response = await alertReceiversApi.validateNewAlertReceiver(payload)
+    return response.data
+  },
+  async validateEditAlertReceiver({
+    alertReceiverId,
+    payload,
+  }: {
+    alertReceiverId: string
+    payload: AlertReceiverValidationRequest
+  }) {
+    const response = await alertReceiversApi.validateExistingAlertReceiver(alertReceiverId, payload)
     return response.data
   },
 }

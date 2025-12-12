@@ -5,10 +5,11 @@ import {
   type SlackAlertReceiverEditRequest,
 } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { ExternalLink, InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
+import { Button, ExternalLink, InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCreateAlertReceiver } from '../../hooks/use-create-alert-receiver/use-create-alert-receiver'
 import { useEditAlertReceiver } from '../../hooks/use-edit-alert-receiver/use-edit-alert-receiver'
+import { useValidateAlertReceiver } from '../../hooks/use-validate-alert-receiver/use-validate-alert-receiver'
 
 interface NotificationChannelModalProps {
   onClose: () => void
@@ -38,6 +39,7 @@ export function NotificationChannelModal({
   const { mutateAsync: createAlertReceiver, isLoading: isLoadingCreateAlertReceiver } = useCreateAlertReceiver({
     organizationId,
   })
+  const { mutate: validateAlertReceiver, isLoading: isLoadingValidateAlertReceiver } = useValidateAlertReceiver()
 
   const methods = useForm<SlackAlertReceiverCreationRequest>({
     mode: 'onChange',
@@ -100,6 +102,31 @@ export function NotificationChannelModal({
     }
   })
 
+  const handleSendTest = async () => {
+    const isEdit = Boolean(alertReceiver)
+    const webhookUrl = methods.getValues('webhook_url')
+
+    if (isEdit && alertReceiver?.id) {
+      validateAlertReceiver({
+        alertReceiverId: alertReceiver.id,
+        payload: {},
+      })
+    } else {
+      const formData = methods.getValues()
+      const alertReceiverPayload: SlackAlertReceiverCreationRequest = {
+        ...formData,
+        organization_id: organizationId,
+        description: 'Webhook for Qovery alerts',
+        webhook_url: webhookUrl,
+      }
+      validateAlertReceiver({
+        payload: {
+          alert_receiver: alertReceiverPayload,
+        },
+      })
+    }
+  }
+
   return (
     <FormProvider {...methods}>
       <ModalCrud
@@ -120,6 +147,19 @@ export function NotificationChannelModal({
         loading={isLoadingEditAlertReceiver || isLoadingCreateAlertReceiver}
         isEdit={isEdit}
         submitLabel={isEdit ? 'Save' : 'Confirm creation'}
+        bottomButtons={
+          <Button
+            type="button"
+            onClick={handleSendTest}
+            loading={isLoadingValidateAlertReceiver}
+            className="mr-auto"
+            variant="outline"
+            color="neutral"
+            size="lg"
+          >
+            Send test notification
+          </Button>
+        }
       >
         <div className="flex flex-col gap-5">
           {!type && (
