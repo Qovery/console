@@ -71,6 +71,15 @@
     "@nx/eslint:lint": {
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json", "{workspaceRoot}/.eslintignore"],
       "cache": true
+    },
+    "@nx/vite:test": {
+      "cache": true,
+      "inputs": ["default", "^production"]
+    },
+    "@nx/vite:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   },
   "namedInputs": {
@@ -91,23 +100,23 @@
   "generators": {
     "@nx/react": {
       "application": {
-        "projectNameAndRootFormat": "derived",
+        "babel": true,
         "style": "none",
         "linter": "eslint",
         "bundler": "webpack",
-        "babel": true
+        "projectNameAndRootFormat": "derived"
       },
       "component": {
-        "nameAndDirectoryFormat": "derived",
-        "style": "none"
+        "style": "none",
+        "nameAndDirectoryFormat": "derived"
       },
       "hook": {
         "nameAndDirectoryFormat": "derived"
       },
       "library": {
-        "projectNameAndRootFormat": "derived",
         "style": "none",
         "linter": "eslint",
+        "projectNameAndRootFormat": "derived",
         "unitTestRunner": "jest",
         "bundler": "none"
       }
