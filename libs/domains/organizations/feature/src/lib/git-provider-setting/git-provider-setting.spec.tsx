@@ -1,7 +1,7 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { GitProviderEnum, type GitTokenResponse } from 'qovery-typescript-axios'
 import { render, renderWithProviders } from '@qovery/shared/util-tests'
-import { GitProviderSetting, mergeProviders } from './git-provider-setting'
+import { GitProviderSetting, handleTokenSelection, mergeProviders } from './git-provider-setting'
 
 jest.mock('../hooks/use-auth-providers/use-auth-providers', () => {
   return {
@@ -83,5 +83,28 @@ describe('GitProviderSetting', () => {
     expect(result[0].searchText).toBe('Bitbucket bitbucket-user')
     // Git token should have searchText that includes the token name for search
     expect(result[1].searchText).toBe('Bitbucket Token my-bitbucket-token')
+  })
+})
+
+describe('handleTokenSelection', () => {
+  it('should use newToken data directly when provided (race condition fix)', () => {
+    const gitTokens: GitTokenResponse[] = [] // Empty list simulates stale cache
+    const newToken: GitTokenResponse = {
+      id: 'new-token-id',
+      name: 'new-token-name',
+      type: GitProviderEnum.GITHUB,
+      created_at: '',
+      associated_services_count: 0,
+      git_api_url: 'https://github.com/example',
+    }
+
+    const result = handleTokenSelection('new-token-id', gitTokens, newToken)
+
+    expect(result).toEqual({
+      git_token_id: 'new-token-id',
+      git_token_name: 'new-token-name',
+      provider: GitProviderEnum.GITHUB,
+      is_public_repository: false,
+    })
   })
 })
