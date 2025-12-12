@@ -37,7 +37,7 @@ describe('DatePicker', () => {
     const endDate = new Date('2023-12-02')
 
     const { userEvent } = renderWithProviders(
-      <DatePicker onChange={mockOnChange} isOpen defaultDates={[startDate, endDate]} />
+      <DatePicker onChange={mockOnChange} isOpen defaultDates={[startDate, endDate]} useLocalTime={true} />
     )
 
     await userEvent.click(screen.getByText('Apply'))
@@ -56,6 +56,50 @@ describe('DatePicker', () => {
     await userEvent.type(inputs[1], '09:00')
     await userEvent.clear(inputs[2])
     await userEvent.type(inputs[2], '2023-12-02')
+    await userEvent.clear(inputs[3])
+    await userEvent.type(inputs[3], '18:30')
+
+    await userEvent.click(screen.getByText('Apply'))
+
+    expect(mockOnChange).toHaveBeenCalledWith(expect.any(Date), expect.any(Date))
+  })
+
+  it('calls error when date and time inputs are wrong', async () => {
+    const { userEvent } = renderWithProviders(
+      <DatePicker onChange={mockOnChange} isOpen showTimeInput maxRangeInDays={3} />
+    )
+
+    const inputs = screen.getAllByTestId('input-value')
+
+    // Set date and time values
+    await userEvent.clear(inputs[0])
+    await userEvent.type(inputs[0], '2023-12-0')
+    await userEvent.clear(inputs[1])
+    await userEvent.type(inputs[1], '09:0')
+    await userEvent.clear(inputs[2])
+    await userEvent.type(inputs[2], '2023-12-43')
+    await userEvent.clear(inputs[3])
+    await userEvent.type(inputs[3], '18:98')
+
+    await userEvent.click(screen.getByText('Apply'))
+
+    expect(mockOnChange).not.toHaveBeenCalled()
+  })
+
+  it('calls onChange when Apply is clicked with time inputs and max range in days is set and date is outside max', async () => {
+    const { userEvent } = renderWithProviders(
+      <DatePicker onChange={mockOnChange} isOpen showTimeInput maxRangeInDays={3} />
+    )
+
+    const inputs = screen.getAllByTestId('input-value')
+
+    // Set date and time values
+    await userEvent.clear(inputs[0])
+    await userEvent.type(inputs[0], '2023-12-01')
+    await userEvent.clear(inputs[1])
+    await userEvent.type(inputs[1], '09:00')
+    await userEvent.clear(inputs[2])
+    await userEvent.type(inputs[2], '2023-12-05')
     await userEvent.clear(inputs[3])
     await userEvent.type(inputs[3], '18:30')
 
@@ -94,6 +138,23 @@ describe('DatePicker', () => {
     // UTC time should be displayed when useLocalTime=false
     expect(inputs[1]).toHaveValue('10:30')
     expect(inputs[3]).toHaveValue('15:45')
+  })
+
+  it('updates start and end dates when selecting a date range on calendar with max range days defined', async () => {
+    const { userEvent } = renderWithProviders(<DatePicker onChange={mockOnChange} isOpen maxRangeInDays={6} />)
+
+    // Click on two different days to select a range
+    const days = screen.getAllByRole('option')
+    const availableDays = days.filter((day) => !day.classList.contains('react-datepicker__day--outside-month'))
+
+    // Select first day (start date)
+    await userEvent.click(availableDays[0])
+    // Select another day (end date)
+    await userEvent.click(availableDays[5])
+
+    // Click Apply and verify onChange was called with both dates
+    await userEvent.click(screen.getByText('Apply'))
+    expect(mockOnChange).toHaveBeenCalledWith(expect.any(Date), expect.any(Date))
   })
 })
 

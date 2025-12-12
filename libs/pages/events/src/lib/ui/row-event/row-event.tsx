@@ -4,9 +4,8 @@ import {
   OrganizationEventTargetType,
   OrganizationEventType,
 } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { dark } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -23,10 +22,18 @@ import {
   SETTINGS_URL,
   SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
-import { Badge, Icon, IconAwesomeEnum, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
+import {
+  CodeDiffEditor,
+  CodeEditor,
+  type DiffStats,
+  Icon,
+  IconAwesomeEnum,
+  Skeleton,
+  Tooltip,
+  Truncate,
+} from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import CopyButton from '../copy-button/copy-button'
 
 export interface RowEventProps {
   event: OrganizationEventResponse
@@ -62,12 +69,18 @@ export const getSourceIcon = (origin?: OrganizationEventOrigin) => {
 export function RowEvent(props: RowEventProps) {
   const { event, expanded, setExpanded, isPlaceholder, columnsWidth } = props
   const { organizationId = '' } = useParams()
+  const [diffStats, setDiffStats] = useState<DiffStats>({ additions: 0, deletions: 0 })
 
   const renderLink = (targetType: OrganizationEventTargetType) => {
     const { event_type, target_name, project_id, environment_id, target_id } = event
 
     const customLink = (url: string, content = target_name) => (
-      <Link className="cursor-pointer truncate transition hover:text-neutral-350" to={url}>
+      <Link
+        className="cursor-pointer truncate font-medium transition"
+        to={url}
+        onMouseEnter={(e) => e.currentTarget.closest('.group\\/target')?.classList.add('hovering-link')}
+        onMouseLeave={(e) => e.currentTarget.closest('.group\\/target')?.classList.remove('hovering-link')}
+      >
         {content}
       </Link>
     )
@@ -107,93 +120,84 @@ export function RowEvent(props: RowEventProps) {
     }
   }
 
-  const badge = match(event.event_type)
-    .with(OrganizationEventType.ACCEPT, () => (
-      <Badge color="green">
-        Accept <Icon iconName="check" className="ml-1" />
-      </Badge>
-    ))
-    .with(OrganizationEventType.CREATE, () => (
-      <Badge color="green">
-        Create <Icon iconName="check" className="ml-1" />
-      </Badge>
-    ))
-    .with(OrganizationEventType.DEPLOYED, OrganizationEventType.STOPPED, OrganizationEventType.RESTARTED, (v) => (
-      <Badge color="green">
-        {formatEventName(v)}
-        <Icon iconName="check" className="ml-1" />
-      </Badge>
-    ))
-    .with(OrganizationEventType.DELETE, () => (
-      <Badge color="neutral">
-        Delete <Icon iconName="inbox-out" className="ml-1" />
-      </Badge>
-    ))
+  const isEventTypeFailed = event.event_type?.toLowerCase().includes('fail')
+
+  const eventIcon = match(event.event_type)
     .with(
-      OrganizationEventType.DELETED,
-      OrganizationEventType.DEPLOY_FAILED,
-      OrganizationEventType.STOP_FAILED,
-      OrganizationEventType.DELETE_FAILED,
-      OrganizationEventType.RESTART_FAILED,
-      (v) => (
-        <Badge color="neutral">
-          {formatEventName(v)}
-          <Icon iconName="inbox-out" className="ml-1" />
-        </Badge>
-      )
+      OrganizationEventType.CREATE,
+      OrganizationEventType.ACCEPT,
+      OrganizationEventType.DEPLOYED,
+      OrganizationEventType.STOPPED,
+      OrganizationEventType.RESTARTED,
+      OrganizationEventType.UPDATE,
+      OrganizationEventType.DEPLOYED,
+      OrganizationEventType.STOPPED,
+      OrganizationEventType.DEPLOYED_DRY_RUN,
+      () => <Icon iconName="circle-check" className="text-[#30a46c]" />
     )
-    .with(OrganizationEventType.UPDATE, () => (
-      <Badge color="sky">
-        Update <Icon iconName="rotate" className="ml-1" />
-      </Badge>
+    .with(
+      OrganizationEventType.DELETE_QUEUED,
+      OrganizationEventType.STOP_QUEUED,
+      OrganizationEventType.RESTART_QUEUED,
+      OrganizationEventType.DEPLOY_QUEUED,
+      OrganizationEventType.UNINSTALL_QUEUED,
+      OrganizationEventType.FORCE_RUN_QUEUED,
+      OrganizationEventType.FORCE_RUN_QUEUED_DELETE,
+      OrganizationEventType.FORCE_RUN_QUEUED_DEPLOY,
+      OrganizationEventType.FORCE_RUN_QUEUED_STOP,
+      () => <Icon iconName="hourglass-start" />
+    )
+    .with(
+      OrganizationEventType.TRIGGER_CANCEL,
+      OrganizationEventType.TRIGGER_DELETE,
+      OrganizationEventType.TRIGGER_CANCEL,
+      OrganizationEventType.TRIGGER_DEPLOY,
+      OrganizationEventType.TRIGGER_UNINSTALL,
+      OrganizationEventType.TRIGGER_DEPLOY_DRY_RUN,
+      OrganizationEventType.TRIGGER_FORCE_RUN,
+      OrganizationEventType.TRIGGER_FORCE_RUN_DELETE,
+      OrganizationEventType.TRIGGER_FORCE_RUN_DEPLOY,
+      OrganizationEventType.TRIGGER_FORCE_RUN_STOP,
+      OrganizationEventType.TRIGGER_REDEPLOY,
+      OrganizationEventType.TRIGGER_RESTART,
+      OrganizationEventType.TRIGGER_STOP,
+      OrganizationEventType.TRIGGER_TERRAFORM_FORCE_UNLOCK,
+      OrganizationEventType.TRIGGER_TERRAFORM_MIGRATE_STATE,
+      () => <Icon iconName="rocket-launch" />
+    )
+    .with(OrganizationEventType.DELETE, OrganizationEventType.DELETED, () => (
+      <Icon iconName="trash-can" className="text-neutral-350" />
     ))
-    .with(OrganizationEventType.TRIGGER_CANCEL, () => (
-      <Badge color="neutral">
-        Trigger Cancel <Icon iconName="xmark" className="ml-1" />
-      </Badge>
-    ))
-    .with(OrganizationEventType.TRIGGER_DELETE, () => (
-      <Badge color="neutral">
-        Trigger Delete <Icon iconName="inbox-out" className="ml-1" />
-      </Badge>
-    ))
-    .with(OrganizationEventType.TRIGGER_DEPLOY, () => (
-      <Badge color="neutral">
-        Trigger Deploy <Icon iconName="check" className="ml-1" />
-      </Badge>
-    ))
-    .with(OrganizationEventType.TRIGGER_REDEPLOY, () => (
-      <Badge color="neutral">
-        Trigger Redeploy <Icon iconName="check" className="ml-1" />
-      </Badge>
-    ))
-    .with(OrganizationEventType.TRIGGER_STOP, () => (
-      <Badge color="sky">
-        Trigger Stop <Icon iconName="xmark" className="ml-1" />
-      </Badge>
-    ))
-    .with(OrganizationEventType.TRIGGER_RESTART, () => (
-      <Badge color="sky">
-        Trigger Restart <Icon iconName="rotate-right" className="ml-1" />
-      </Badge>
-    ))
-    .otherwise((v) => (
-      <Badge color="neutral">
-        {formatEventName(v ?? '')}
-        <Icon iconName="rotate" className="ml-1" />
-      </Badge>
-    ))
+    .otherwise(() => (isEventTypeFailed ? <Icon iconName="circle-exclamation" className="text-[#e54d2e]" /> : null))
+
+  const isSuccess = match(event.event_type)
+    .with(
+      OrganizationEventType.CREATE,
+      OrganizationEventType.ACCEPT,
+      OrganizationEventType.DEPLOYED,
+      OrganizationEventType.STOPPED,
+      OrganizationEventType.RESTARTED,
+      OrganizationEventType.UPDATE,
+      () => true
+    )
+    .otherwise(() => false)
+
+  const getRowBgClass = () => {
+    if (isEventTypeFailed) return 'bg-[rgb(252,242,242)] hover:bg-[rgb(250,227,226)]'
+    if (isSuccess) return 'hover:bg-neutral-100'
+    return 'hover:bg-neutral-100'
+  }
 
   return (
     <>
       <div
         data-testid="row-event"
-        className="grid h-11 items-center border-b border-b-neutral-200 py-2.5 text-xs font-medium text-neutral-400 last:border-b-0 hover:bg-neutral-100"
+        className={`group grid h-12 items-center border-b border-b-neutral-200 py-2.5 text-xs font-normal text-neutral-400 last:border-b-0 hover:bg-neutral-100 ${getRowBgClass()}`}
         style={{ gridTemplateColumns: columnsWidth }}
         onClick={() => setExpanded(!expanded)}
       >
-        <div className="flex gap-3 px-4">
-          <Skeleton height={10} width={120} show={isPlaceholder}>
+        <div className="flex items-center justify-between gap-3 pl-2">
+          <Skeleton height={10} width={130} show={isPlaceholder}>
             <div className="flex gap-3">
               <Icon
                 name={IconAwesomeEnum.ANGLE_DOWN}
@@ -206,15 +210,23 @@ export function RowEvent(props: RowEventProps) {
               )}
             </div>
           </Skeleton>
-        </div>
-        <div className="px-4" data-testid="tag">
-          <Skeleton height={10} width={80} show={isPlaceholder}>
-            {badge}
+          <Skeleton height={10} width={16} show={isPlaceholder}>
+            {eventIcon}
           </Skeleton>
         </div>
-        <div className="px-4">
+        <div className="px-5" data-testid="tag">
           <Skeleton height={10} width={80} show={isPlaceholder}>
-            <>{upperCaseFirstLetter(event.target_type ?? '')?.replace(/_/g, ' ')}</>
+            <span>
+              <span className={isEventTypeFailed ? 'text-red-500' : 'text-brand-500'}>
+                {formatEventName(event.event_type ?? '')}
+              </span>
+              {event.sub_target_type && (
+                <span className="text-neutral-400">
+                  {' '}
+                  : {upperCaseFirstLetter(event.sub_target_type)?.replace(/_/g, ' ')}
+                </span>
+              )}
+            </span>
           </Skeleton>
         </div>
         <div className="px-4">
@@ -236,60 +248,87 @@ export function RowEvent(props: RowEventProps) {
                 </div>
               }
             >
-              {event.target_type && renderLink(event.target_type)}
+              <div className="flex -translate-x-3 items-center gap-1 truncate pr-2 transition-transform duration-200 hover:text-[rgb(93,48,245)] group-hover:translate-x-0">
+                <Icon
+                  iconName="arrow-right"
+                  className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                />
+                {event.target_type && renderLink(event.target_type)}
+              </div>
             </Tooltip>
           </Skeleton>
         </div>
         <div className="px-4">
           <Skeleton height={10} width={80} show={isPlaceholder}>
-            <span className="truncate">{upperCaseFirstLetter(event.sub_target_type ?? '')?.replace(/_/g, ' ')}</span>
+            <>{upperCaseFirstLetter(event.target_type ?? '')?.replace(/_/g, ' ')}</>
           </Skeleton>
         </div>
         <div className="px-4">
           <Skeleton height={10} width={80} show={isPlaceholder} className="truncate">
-            <Truncate truncateLimit={30} text={event.triggered_by ?? ''} />
+            <Truncate truncateLimit={40} text={event.triggered_by ?? ''} />
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={16} width={80} show={isPlaceholder}>
+          <Skeleton height={16} width={80} show={isPlaceholder} className="justify-end">
             <Tooltip content={event.user_agent} disabled={!event.user_agent} side="right">
               <div className="truncate">
-                <span className="mr-1.5 inline-block text-neutral-400">{getSourceIcon(event.origin)}</span>
                 {upperCaseFirstLetter(event.origin)?.replace('_', ' ')}
                 {event.user_agent && <Icon iconName="info-circle" iconStyle="regular" className="ml-1.5" />}
+                <span className="ml-1.5 inline-block text-neutral-400">{getSourceIcon(event.origin)}</span>
               </div>
             </Tooltip>
           </Skeleton>
         </div>
       </div>
-      {expanded && (
-        <div
-          className="relative flex max-h-[388px] flex-col-reverse overflow-y-auto bg-neutral-700"
-          data-testid="expanded-panel"
-        >
-          <SyntaxHighlighter
-            language="json"
-            style={dark}
-            customStyle={{
-              padding: '1rem',
-              borderRadius: '0.25rem',
-              backgroundColor: 'transparent',
-              fontSize: '12px',
-              marginTop: '28px',
-            }}
-            wrapLines
-          >
-            {JSON.stringify(JSON.parse(event.change || ''), null, 2)}
-          </SyntaxHighlighter>
-          <div className="absolute top-9 flex w-full justify-end">
-            <CopyButton className="mr-7" content={event.change || ''} />
-          </div>
-          <div className="absolute top-0 w-full">
-            <div className="flex h-7 items-center bg-neutral-550 px-4 text-xs text-neutral-100">
-              Object Status after request (here you can find the JSON returned by our API)
+      {expanded &&
+      event.event_type === OrganizationEventType.UPDATE &&
+      event.original_change &&
+      event.change &&
+      event.original_change !== event.change ? (
+        <div className="relative flex flex-col bg-white" data-testid="expanded-panel">
+          <div className="flex h-7 items-center justify-between bg-[#faf9fb] px-4 text-xs text-neutral-100">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-[#30a46c]">+{diffStats.additions}</span>
+              <span className="font-bold text-[#e54d2e]">-{diffStats.deletions}</span>
+              <span className="text-[#65636d]">lines changed</span>
             </div>
           </div>
+          <CodeDiffEditor
+            key={event.timestamp}
+            original={JSON.stringify(JSON.parse(event.original_change), null, 2)}
+            modified={JSON.stringify(JSON.parse(event.change), null, 2)}
+            language="json"
+            height={`${Math.min(JSON.stringify(JSON.parse(event.change || ''), null, 2).split('\n').length * 18, 350)}px`}
+            onDiffStatsChange={setDiffStats}
+          />
         </div>
+      ) : (
+        expanded && (
+          <div className="relative flex flex-col bg-white" data-testid="expanded-panel">
+            <CodeEditor
+              key={event.timestamp}
+              value={JSON.stringify(JSON.parse(event.change || ''), null, 2)}
+              language="json"
+              height={`${Math.min(JSON.stringify(JSON.parse(event.change || ''), null, 2).split('\n').length * 18, 350)}px`}
+              readOnly
+              options={{
+                overviewRulerLanes: 0,
+                renderLineHighlight: 'none',
+                scrollBeyondLastLine: false,
+                automaticLayout: true,
+                lineNumbers: 'on',
+                selectOnLineNumbers: false,
+                stickyScroll: {
+                  enabled: false,
+                },
+                guides: {
+                  indentation: false,
+                },
+              }}
+              className={isEventTypeFailed ? 'audit-logs-failed-code-editor' : 'audit-logs-simple-code-editor'}
+            />
+          </div>
+        )
       )}
     </>
   )
