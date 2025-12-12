@@ -21,6 +21,7 @@ export interface ModalCrudProps {
   howItWorks?: ReactNode
   customLoader?: ReactNode
   forwardRef?: React.RefObject<HTMLDivElement>
+  bottomButtons?: ReactNode
 }
 
 export function ModalCrud(props: ModalCrudProps) {
@@ -39,6 +40,7 @@ export function ModalCrud(props: ModalCrudProps) {
     howItWorks = null,
     customLoader = null,
     forwardRef,
+    bottomButtons,
   } = props
   const { formState, trigger } = useFormContext()
 
@@ -81,6 +83,7 @@ export function ModalCrud(props: ModalCrudProps) {
       <form className="mt-6" onSubmit={onSubmit}>
         {children}
         <div className="mt-6 flex justify-end gap-3">
+          {bottomButtons}
           <Button
             data-testid="cancel-button"
             type="button"
