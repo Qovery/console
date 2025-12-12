@@ -48,12 +48,17 @@ export const submitMessage = async (
       const reader = messageResponse.body.getReader()
       const decoder = new TextDecoder()
 
+      let buffer = ''
       let result = await reader.read()
       while (!result.done) {
         const chunk = decoder.decode(result.value, { stream: true })
-        const lines = chunk.split('\n').filter((line) => line.startsWith('data:'))
+        buffer += chunk
 
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || ''
         for (const line of lines) {
+          if (!line.startsWith('data:')) continue
+
           const cleanChunk = line.slice(5).trim()
           onStream(cleanChunk)
 
@@ -68,6 +73,20 @@ export const submitMessage = async (
         }
 
         result = await reader.read()
+      }
+
+      if (buffer.trim() && buffer.startsWith('data:')) {
+        const cleanChunk = buffer.slice(5).trim()
+        onStream(cleanChunk)
+
+        try {
+          const parsed = JSON.parse(cleanChunk)
+          if (parsed.type === 'complete' && parsed.content?.id) {
+            assistantMessageId = parsed.content.id
+          }
+        } catch (e) {
+          console.error('Failed to parse final chunk:', cleanChunk, e)
+        }
       }
     }
 
