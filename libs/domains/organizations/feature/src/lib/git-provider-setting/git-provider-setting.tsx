@@ -132,6 +132,9 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
                         }}
                       />
                     ),
+                    options: {
+                      fakeModal: true,
+                    },
                   })
                 },
               }}
