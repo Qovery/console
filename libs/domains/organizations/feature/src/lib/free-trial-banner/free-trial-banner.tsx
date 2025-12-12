@@ -20,6 +20,7 @@ export function FreeTrialBanner() {
   if (
     remainingTrialDays === undefined ||
     remainingTrialDays <= 0 ||
+    remainingTrialDays > 90 ||
     isOnOrganizationBillingSummaryPage ||
     !isFetchedCurrentCost
   ) {
