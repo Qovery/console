@@ -1,25 +1,11 @@
-import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
-import { type AnyService } from '@qovery/domains/services/data-access'
 import { mutations } from '@qovery/shared/devops-copilot/data-access'
-
-type Context = {
-  organization?: Organization
-  cluster?: Cluster
-  project?: Project
-  environment?: Environment
-  service?: AnyService
-  deployment?:
-    | {
-        execution_id?: string
-      }
-    | undefined
-}
+import type { CopilotContextData } from './devops-copilot-panel'
 
 export async function submitVote(
   userSub: string,
   messageId: string,
   vote: 'upvote' | 'downvote',
-  context?: Context | null
+  context?: CopilotContextData | null
 ): Promise<{ id: string }> {
   try {
     const organizationId = context?.organization?.id

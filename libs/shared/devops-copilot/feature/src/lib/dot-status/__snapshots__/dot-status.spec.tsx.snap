@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`DotStatus should match snapshot for green 1`] = `
+<body>
+  <div>
+    <div
+      class="box-content h-2 w-2 rounded-full border-2 border-green-200 bg-green-500"
+    />
+  </div>
+</body>
+`;
+
+exports[`DotStatus should match snapshot for red 1`] = `
+<body>
+  <div>
+    <div
+      class="box-content h-2 w-2 rounded-full border-2 border-red-200 bg-red-500"
+    />
+  </div>
+</body>
+`;
+
+exports[`DotStatus should match snapshot for yellow 1`] = `
+<body>
+  <div>
+    <div
+      class="box-content h-2 w-2 rounded-full border-2 border-yellow-200 bg-yellow-500"
+    />
+  </div>
+</body>
+`;
