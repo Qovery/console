@@ -56,7 +56,6 @@ const queryMaxReplicas = (containerName: string) => `
   max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="${containerName}"})
 `
 
-// increase is here to have event only at the beginning of the hpa reached the limit
 const queryMaxLimitReached = (serviceId: string, rateInterval: string) => `
   sum by (pod) (
   increase(

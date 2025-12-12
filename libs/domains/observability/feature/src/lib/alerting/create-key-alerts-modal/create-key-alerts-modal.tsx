@@ -143,8 +143,8 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
               <p className="text-neutral-350">Choose the metric categories you want to generate alerts for</p>
             </div>
             {/* This is a workaround to prevent the button from being focused when the user open the modal */}
-            <button className="pointer-events-none absolute h-0 w-0 select-none"></button>
-            <div className="mb-1 grid grid-cols-3 gap-2">
+            <button type="button" className="pointer-events-none absolute h-0 w-0 select-none"></button>
+            <div className="mb-1 grid grid-cols-2 gap-2">
               {availableMetrics.map((metric) => {
                 const isSelected = watchMetrics?.includes(metric.id)
 
@@ -161,7 +161,7 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
                       }
                     }}
                     className={twMerge(
-                      'group flex flex-col items-center justify-center gap-2 rounded-lg border p-4 outline-none transition-colors hover:border-brand-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-100',
+                      'group flex items-center gap-2 rounded-lg border p-2 outline-none transition-colors hover:border-brand-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-100',
                       isSelected ? 'border-brand-500' : 'border-neutral-200 bg-white'
                     )}
                   >

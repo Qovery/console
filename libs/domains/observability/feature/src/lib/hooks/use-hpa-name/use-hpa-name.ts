@@ -9,7 +9,6 @@ export interface UseHpaNameProps {
   enabled?: boolean
 }
 
-// Retrieves the HPA name associated with a specific service
 export function useHpaName({ clusterId, serviceId, enabled = true, startDate, endDate }: UseHpaNameProps) {
   return useQuery({
     ...observability.hpaName({ clusterId, serviceId, startDate, endDate }),
