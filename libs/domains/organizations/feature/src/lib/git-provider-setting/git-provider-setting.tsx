@@ -11,6 +11,41 @@ export interface GitProviderSettingProps {
   disabled?: boolean
 }
 
+export interface TokenSelectionResult {
+  git_token_id: string | null
+  git_token_name: string | null
+  provider: string | null
+  is_public_repository: boolean
+}
+
+export function handleTokenSelection(
+  value: string,
+  gitTokens: GitTokenResponse[],
+  newToken?: GitTokenResponse
+): TokenSelectionResult {
+  // Use newToken directly if provided AND matches the selected value (handles race condition)
+  // Otherwise, look up the token in the existing list
+  const token = newToken && newToken.id === value ? newToken : gitTokens.find(({ id }) => id === value)
+
+  if (token) {
+    return {
+      git_token_id: token.id,
+      git_token_name: token.name,
+      provider: token.type,
+      is_public_repository: false,
+    }
+  }
+
+  // Not a token - either public repo or auth provider
+  const isPublicRepo = value === 'PUBLIC'
+  return {
+    git_token_id: null,
+    git_token_name: null,
+    provider: isPublicRepo ? null : value,
+    is_public_repository: isPublicRepo,
+  }
+}
+
 export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens: GitTokenResponse[] = []) => {
   const currentAuthProviders = authProviders.map((provider) => ({
     label: `${upperCaseFirstLetter(provider.name)} (${provider.owner})`,
@@ -71,23 +106,16 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
         },
       ]
 
-  const onChange = (value: string) => {
+  const onChange = (value: string, newToken?: GitTokenResponse) => {
     /**
-     * As we have merged providers (user personal account) and git tokens, we need transform it back as 2 separate fields
+     * As we have merged providers (user personal account) and git tokens, we need transform it back as 2 separate fields.
      */
-    const token = gitTokens.find(({ id }) => id === value)
-    if (token) {
-      setValue('git_token_id', token.id)
-      setValue('git_token_name', token.name)
-      setValue('provider', token.type)
-      setValue('is_public_repository', false)
-    } else {
-      const isPublicRepo = value === 'PUBLIC'
-      setValue('git_token_id', null)
-      setValue('git_token_name', null)
-      setValue('provider', isPublicRepo ? null : value)
-      setValue('is_public_repository', isPublicRepo)
-    }
+    const result = handleTokenSelection(value, gitTokens, newToken)
+    setValue('git_token_id', result.git_token_id)
+    setValue('git_token_name', result.git_token_name)
+    setValue('provider', result.provider)
+    setValue('is_public_repository', result.is_public_repository)
+
     // Reset children fields
     setValue('repository', '')
     setValue('branch', '')
@@ -127,7 +155,7 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
                       <GitTokenCreateEditModal
                         organizationId={organizationId}
                         onClose={(response) => {
-                          response && onChange(response.id)
+                          response && onChange(response.id, response)
                           closeModal()
                         }}
                       />
