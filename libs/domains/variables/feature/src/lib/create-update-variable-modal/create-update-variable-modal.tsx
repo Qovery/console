@@ -88,10 +88,8 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
     setTimeout(() => textarea?.focus(), 50)
   }
 
-  // Compute available scopes and filter them - if it's a file, do not allow targeting a service scope
-  const availableScopes = (computeAvailableScope(variable?.scope, false, scope, type === 'OVERRIDE') as Scope[]).filter(
-    (s) => !_isFile || !['APPLICATION', 'CONTAINER', 'JOB', 'HELM'].includes(s)
-  )
+  // Compute available scopes
+  const availableScopes = computeAvailableScope(variable?.scope, false, scope, type === 'OVERRIDE') as Scope[]
 
   const defaultScope =
     // Check if it's a file and the scope is one of services and assign the default scope to 'ENVIRONMENT'
