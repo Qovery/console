@@ -76,6 +76,8 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const { user, getAccessTokenSilently } = useAuth0()
   const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot-config-panel')
 
+  const organizationId = context?.organization?.id ?? ''
+
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [expand, setExpand] = useState(false)
@@ -90,7 +92,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
   const { data: readOnlyData } = useAICopilotConfig({
-    organizationId: context?.organization?.id as string,
+    organizationId,
   })
 
   const [isReadOnly, setIsReadOnly] = useState(true)
@@ -106,10 +108,10 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     error: errorThreads,
     isLoading: isLoadingThreads,
     refetchThreads,
-  } = useThreads({ organizationId: context?.organization?.id as string, owner: user?.sub ?? '' })
+  } = useThreads({ organizationId, owner: user?.sub ?? '' })
 
   const { thread, setThread } = useThreadState({
-    organizationId: context?.organization?.id as string,
+    organizationId,
     threadId,
   })
 
@@ -466,7 +468,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
               }}
               threadId={threadId}
               setThreadId={setThreadId}
-              organizationId={context?.organization?.id as string}
+              organizationId={organizationId}
             />
           )}
           <div className="flex h-full w-full flex-col justify-between">
