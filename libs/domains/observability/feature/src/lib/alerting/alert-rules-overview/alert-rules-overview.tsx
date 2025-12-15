@@ -55,6 +55,7 @@ function getStatusConfig(
       label: 'Undeployed',
       color: 'neutral' as const,
       icon: 'circle-exclamation' as const,
+      tooltip: 'Redeploy your cluster to activate this alert',
     }))
     .with('TRIGGERED', () => ({
       label: 'Triggered',
