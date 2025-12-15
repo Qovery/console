@@ -1,6 +1,6 @@
 import { subHours } from 'date-fns'
 import { type AlertTargetType, type Environment } from 'qovery-typescript-axios'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -86,8 +86,11 @@ export function AlertingCreationFlow({
 
   const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
 
-  const now = new Date()
-  const oneHourAgo = subHours(now, 1)
+  const { now, oneHourAgo } = useMemo(() => {
+    const now = new Date()
+    const oneHourAgo = subHours(now, 1)
+    return { now, oneHourAgo }
+  }, [])
 
   const { data: containerName } = useContainerName({
     clusterId: environment.cluster_id,
@@ -137,9 +140,11 @@ export function AlertingCreationFlow({
   }
 
   const handleComplete = async (alertsToCreate: AlertConfiguration[]) => {
-    if (!containerName || !ingressName) return
-
     const activeAlerts = alertsToCreate.filter((alert) => !alert.skipped)
+
+    const hasHpaAlert = activeAlerts.some((alert) => alert.tag === 'hpa_limit')
+
+    if (!containerName || !ingressName || (hasHpaAlert && !hpaName)) return
 
     try {
       setIsLoading(true)

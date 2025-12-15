@@ -11,6 +11,11 @@ export interface ClusterGeneralData {
   installation_type: 'MANAGED' | 'SELF_MANAGED' | 'LOCAL_DEMO' | 'PARTIALLY_MANAGED'
   metrics_parameters?: {
     enabled?: boolean
+    configuration?: {
+      alerting?: {
+        enabled?: boolean
+      }
+    }
   }
 }
 
