@@ -15,6 +15,18 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 4200,
       host: 'localhost',
+      cors: {
+        origin: '*',
+        methods: ['GET'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+      },
+      proxy: {
+        '/api/webflow': {
+          target: 'https://api.webflow.com',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/webflow/, ''),
+        },
+      },
       fs: {
         allow: ['../..'],
       },
