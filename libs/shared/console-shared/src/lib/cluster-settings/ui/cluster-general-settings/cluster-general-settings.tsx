@@ -9,8 +9,10 @@ export interface ClusterGeneralSettingsProps {
 
 export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
   const { fromDetail } = props
-  const { control, setValue } = useFormContext<ClusterGeneralData>()
+  const { control, setValue, watch } = useFormContext<ClusterGeneralData>()
   const { isQoveryAdminUser } = useUserRole()
+
+  const metricsEnabled = watch('metrics_parameters.enabled')
 
   return (
     <div>
@@ -75,22 +77,41 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
         )}
       />
       {fromDetail && isQoveryAdminUser && (
-        <Controller
-          name="metrics_parameters.enabled"
-          control={control}
-          render={({ field }) => (
-            <div className="mt-5">
-              <InputToggle
-                value={field.value}
-                onChange={field.onChange}
-                title="Metrics enabled"
-                description="Enable metrics for the cluster (Qovery admin only)"
-                forceAlignTop
-                small
-              />
-            </div>
-          )}
-        />
+        <>
+          <Controller
+            name="metrics_parameters.enabled"
+            control={control}
+            render={({ field }) => (
+              <div className="mt-5">
+                <InputToggle
+                  value={field.value}
+                  onChange={field.onChange}
+                  title="Metrics enabled"
+                  description="Enable metrics for the cluster (Qovery admin only)"
+                  forceAlignTop
+                  small
+                />
+              </div>
+            )}
+          />
+          <Controller
+            name="metrics_parameters.configuration.alerting.enabled"
+            control={control}
+            render={({ field }) => (
+              <div className="mt-5">
+                <InputToggle
+                  value={field.value}
+                  onChange={field.onChange}
+                  title="Alert enabled"
+                  description="Enable alerts for the cluster (requires metrics to be enabled)"
+                  forceAlignTop
+                  small
+                  disabled={!metricsEnabled}
+                />
+              </div>
+            )}
+          />
+        </>
       )}
     </div>
   )

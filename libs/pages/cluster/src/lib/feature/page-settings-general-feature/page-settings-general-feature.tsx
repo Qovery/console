@@ -39,7 +39,10 @@ export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: C
               cloud_watch_export_config: cloneCluster.metrics_parameters?.configuration?.cloud_watch_export_config,
               high_availability: cloneCluster.metrics_parameters?.configuration?.high_availability,
               internal_network_monitoring: cloneCluster.metrics_parameters?.configuration?.internal_network_monitoring,
-              alerting: cloneCluster.metrics_parameters?.configuration?.alerting,
+              alerting: {
+                ...cloneCluster.metrics_parameters?.configuration?.alerting,
+                enabled: data.metrics_parameters?.configuration?.alerting?.enabled ?? false,
+              },
             },
           }
         } else {
