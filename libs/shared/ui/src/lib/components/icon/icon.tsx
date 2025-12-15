@@ -67,7 +67,7 @@ export interface IconSVGProps extends SVGAttributes<SVGElement> {
 
 export function Icon(props: IconProps | FontAwesomeIconProps) {
   if ('iconName' in props) {
-    const { iconStyle = 'solid', iconName, className, ...rest } = props
+    const { iconStyle = 'regular', iconName, className, ...rest } = props
     return <i aria-hidden className={`fa-${iconStyle} fa-${iconName} ${className ? className : ''}`} {...rest} />
   }
 

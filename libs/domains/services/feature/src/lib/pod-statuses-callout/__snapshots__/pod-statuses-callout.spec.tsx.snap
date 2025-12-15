@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`PodStatusesCallout should render successfully 1`] = `
 <body>
@@ -40,7 +40,7 @@ exports[`PodStatusesCallout should render successfully 1`] = `
         >
           <i
             aria-hidden="true"
-            class="fa-solid fa-chevron-left px-1"
+            class="fa-regular fa-chevron-left px-1"
           />
         </button>
         <button
@@ -49,7 +49,7 @@ exports[`PodStatusesCallout should render successfully 1`] = `
         >
           <i
             aria-hidden="true"
-            class="fa-solid fa-chevron-right px-1"
+            class="fa-regular fa-chevron-right px-1"
           />
         </button>
       </div>
