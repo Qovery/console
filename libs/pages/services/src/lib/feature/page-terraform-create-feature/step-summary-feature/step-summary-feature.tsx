@@ -3,7 +3,11 @@ import { type TerraformRequest } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { terraformEngines, useTerraformVariablesContext } from '@qovery/domains/service-terraform/feature'
+import {
+  buildDockerfileFragment,
+  terraformEngines,
+  useTerraformVariablesContext,
+} from '@qovery/domains/service-terraform/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
@@ -78,6 +82,7 @@ export function StepSummaryFeature() {
         gpu: generalData.job_resources.gpu,
       },
       use_cluster_credentials: generalData.use_cluster_credentials,
+      dockerfile_fragment: buildDockerfileFragment(generalData),
     }
 
     try {
@@ -192,6 +197,13 @@ export function StepSummaryFeature() {
                   {match(generalData.auto_deploy)
                     .with(true, () => 'On')
                     .otherwise(() => 'Off')}
+                </li>
+                <li>
+                  <span className="font-medium">Custom build commands:</span>{' '}
+                  {match(generalData.dockerfile_fragment_source)
+                    .with('file', () => `File: ${generalData.dockerfile_fragment_path}`)
+                    .with('inline', () => 'Inline commands')
+                    .otherwise(() => 'None')}
                 </li>
                 <li>
                   <span className="font-medium">CPU:</span> {generalData.job_resources.cpu_milli}

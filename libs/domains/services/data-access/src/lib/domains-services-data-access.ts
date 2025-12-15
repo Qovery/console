@@ -68,6 +68,7 @@ import {
   type TerraformDeploymentRestrictionRequest,
   TerraformMainCallsApi,
   type TerraformRequest,
+  type TerraformRequestDockerfileFragment,
   TerraformsApi,
   type Application as _Application,
   type CloneServiceRequest as _CloneServiceRequest,
@@ -170,6 +171,9 @@ export type Helm = _Helm & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: HelmType
 }
+
+export type DockerfileFragment = TerraformRequestDockerfileFragment
+
 export type Terraform = _Terraform & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: TerraformType
