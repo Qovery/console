@@ -39,7 +39,7 @@ const avatarVariants = cva(['flex', 'items-center', 'justify-center'], {
     },
     border: {
       none: [],
-      solid: ['border', 'border-neutral-200'],
+      solid: ['border', 'border-neutral'],
     },
   },
   defaultVariants: {

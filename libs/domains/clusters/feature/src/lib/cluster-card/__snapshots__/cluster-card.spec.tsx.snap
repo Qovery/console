@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ClusterCard should match snapshot 1`] = `
 <div>
@@ -159,11 +159,11 @@ exports[`ClusterCard should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-play mr-4"
+                  class="fa-regular fa-play mr-4"
                 />
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-chevron-down "
+                  class="fa-regular fa-chevron-down "
                 />
               </div>
             </button>
@@ -177,7 +177,7 @@ exports[`ClusterCard should match snapshot 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-scroll "
+                class="fa-regular fa-scroll "
               />
             </button>
             <button
@@ -190,7 +190,7 @@ exports[`ClusterCard should match snapshot 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-terminal "
+                class="fa-regular fa-terminal "
               />
             </button>
             <button
@@ -211,7 +211,7 @@ exports[`ClusterCard should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-ellipsis-v "
+                  class="fa-regular fa-ellipsis-v "
                   width="20"
                 />
               </div>

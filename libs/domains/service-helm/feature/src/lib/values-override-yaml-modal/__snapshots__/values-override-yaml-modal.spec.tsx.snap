@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
 <body>
@@ -69,7 +69,7 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-wand-magic-sparkles text-sm"
+                    class="fa-regular fa-wand-magic-sparkles text-sm"
                   />
                 </button>
               </div>
