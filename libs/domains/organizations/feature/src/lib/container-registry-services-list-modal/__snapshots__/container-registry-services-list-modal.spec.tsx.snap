@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
 <body>
@@ -16,12 +16,12 @@ exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
       <div
         class="relative w-full mb-3"
       >
-        <span
-          class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-400 dark:text-white"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-magnifying-glass absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-subtle"
         />
         <input
-          class="w-full rounded border border-neutral-250 pl-10 pr-6 text-neutral-400 placeholder:text-neutral-350 focus:border-brand-400 focus:outline-none focus:transition-[border-color] dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250 h-9 text-xs"
+          class="w-full rounded border border-neutral bg-surface-neutral-component pl-10 pr-6 text-neutral placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color] h-9 text-sm"
           data-testid="input-search"
           name="search"
           placeholder="Search by project, environment, service name"
@@ -52,7 +52,7 @@ exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-minus "
+                class="fa-regular fa-minus "
               />
             </button>
             Project 1
@@ -89,7 +89,7 @@ exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-plus "
+                      class="fa-regular fa-plus "
                     />
                   </button>
                   <a
@@ -133,7 +133,7 @@ exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-plus "
+                class="fa-regular fa-plus "
               />
             </button>
             Project 2

@@ -475,7 +475,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-wave-pulse text-neutral-350"
+                    class="fa-regular fa-wave-pulse text-neutral-350"
                   />
                   <p
                     class="mb-3 mt-1 text-xs font-medium text-neutral-350"

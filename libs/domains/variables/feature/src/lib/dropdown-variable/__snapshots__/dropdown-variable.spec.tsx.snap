@@ -4,7 +4,7 @@ exports[`DropdownVariable should render dropdown content when clicked 1`] = `
 <div
   aria-labelledby="radix-:rf:"
   aria-orientation="vertical"
-  class="rounded bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded dark:border dark:border-neutral-500 dark:bg-neutral-550 flex max-h-60 w-[400px] min-w-[400px] flex-col p-2"
+  class="rounded border border-neutral bg-surface-neutral shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded flex max-h-60 w-[400px] min-w-[400px] flex-col p-2"
   data-align="center"
   data-orientation="vertical"
   data-radix-menu-content=""
@@ -22,12 +22,12 @@ exports[`DropdownVariable should render dropdown content when clicked 1`] = `
     <div
       class="relative w-full mb-1"
     >
-      <span
-        class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-400 dark:text-white"
-        role="img"
+      <i
+        aria-hidden="true"
+        class="fa-regular fa-magnifying-glass absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-subtle"
       />
       <input
-        class="w-full rounded border border-neutral-250 pl-10 pr-6 text-neutral-400 placeholder:text-neutral-350 focus:border-brand-400 focus:outline-none focus:transition-[border-color] dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250 h-9 text-xs"
+        class="w-full rounded border border-neutral bg-surface-neutral-component pl-10 pr-6 text-neutral placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color] h-9 text-sm"
         data-testid="input-search"
         name="search"
         placeholder="Search..."
@@ -39,7 +39,7 @@ exports[`DropdownVariable should render dropdown content when clicked 1`] = `
     class="max-h-[200px] overflow-y-auto"
   >
     <div
-      class="text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 flex h-[52px] items-start justify-between gap-1 px-2 py-1.5"
+      class="text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral flex h-[52px] items-start justify-between gap-1 px-2 py-1.5"
       data-orientation="vertical"
       data-radix-collection-item=""
       role="menuitem"

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SectionExpand should match snapshot 1`] = `
 <div>
@@ -22,7 +22,7 @@ exports[`SectionExpand should match snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-chevron-down text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
+          class="fa-regular fa-chevron-down text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
         />
         <div
           class="flex flex-col gap-1.5 text-left"

@@ -45,7 +45,7 @@ exports[`VariableList should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-magnifying-glass absolute left-2 top-1/2 block -translate-y-1/2 text-xs text-neutral-350 transition-colors group-hover:text-neutral-400"
+                  class="fa-regular fa-magnifying-glass absolute left-2 top-1/2 block -translate-y-1/2 text-xs text-neutral-350 transition-colors group-hover:text-neutral-400"
                 />
                 <input
                   class="w-36 rounded border border-neutral-250 py-1.5 pl-7 outline-0 transition-colors placeholder:text-neutral-350 group-hover:border-neutral-350"
@@ -77,7 +77,7 @@ exports[`VariableList should match snapshot 1`] = `
                 Value
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-chevron-down "
+                  class="fa-regular fa-chevron-down "
                 />
               </button>
             </div>
@@ -100,7 +100,7 @@ exports[`VariableList should match snapshot 1`] = `
                 Service link
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-chevron-down "
+                  class="fa-regular fa-chevron-down "
                 />
               </button>
             </div>
@@ -123,7 +123,7 @@ exports[`VariableList should match snapshot 1`] = `
                 Scope
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-chevron-down "
+                  class="fa-regular fa-chevron-down "
                 />
               </button>
             </div>
@@ -548,7 +548,7 @@ exports[`VariableList should match snapshot 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-file-lines ml-0.5 text-neutral-400"
+                class="fa-regular fa-file-lines ml-0.5 text-neutral-400"
               />
               <span
                 class="cursor-pointer text-sky-500 hover:underline"
@@ -1528,7 +1528,7 @@ exports[`VariableList should match snapshot 1`] = `
                 Delete selected 
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-trash "
+                  class="fa-regular fa-trash "
                 />
               </button>
             </div>

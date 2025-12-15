@@ -160,7 +160,7 @@ exports[`DockerfileSettings should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-pen "
+                        class="fa-regular fa-pen "
                       />
                     </button>
                   </div>

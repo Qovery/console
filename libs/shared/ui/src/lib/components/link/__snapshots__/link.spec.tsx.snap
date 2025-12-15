@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ExternalLink should match with ExternalLink component 1`] = `
 <div>
@@ -11,7 +11,7 @@ exports[`ExternalLink should match with ExternalLink component 1`] = `
     My external link
     <i
       aria-hidden="true"
-      class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
+      class="fa-regular fa-arrow-up-right-from-square text-xs leading-5"
     />
   </a>
 </div>
