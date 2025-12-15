@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as OrganizationRouteRouteImport } from './routes/organization/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrganizationIndexRouteImport } from './routes/organization/index'
 import { Route as OrganizationOrgIdIndexRouteImport } from './routes/organization/$orgId/index'
@@ -18,54 +20,66 @@ import { Route as OrganizationOrgIdOverviewRouteImport } from './routes/organiza
 import { Route as OrganizationOrgIdClustersRouteImport } from './routes/organization/$orgId/clusters'
 import { Route as OrganizationOrgIdAlertsRouteImport } from './routes/organization/$orgId/alerts'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrganizationRouteRoute = OrganizationRouteRouteImport.update({
+  id: '/organization',
+  path: '/organization',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrganizationIndexRoute = OrganizationIndexRouteImport.update({
-  id: '/organization/',
-  path: '/organization/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => OrganizationRouteRoute,
 } as any)
 const OrganizationOrgIdIndexRoute = OrganizationOrgIdIndexRouteImport.update({
-  id: '/organization/$orgId/',
-  path: '/organization/$orgId/',
-  getParentRoute: () => rootRouteImport,
+  id: '/$orgId/',
+  path: '/$orgId/',
+  getParentRoute: () => OrganizationRouteRoute,
 } as any)
 const OrganizationOrgIdSettingsRoute =
   OrganizationOrgIdSettingsRouteImport.update({
-    id: '/organization/$orgId/settings',
-    path: '/organization/$orgId/settings',
-    getParentRoute: () => rootRouteImport,
+    id: '/$orgId/settings',
+    path: '/$orgId/settings',
+    getParentRoute: () => OrganizationRouteRoute,
   } as any)
 const OrganizationOrgIdSecurityRoute =
   OrganizationOrgIdSecurityRouteImport.update({
-    id: '/organization/$orgId/security',
-    path: '/organization/$orgId/security',
-    getParentRoute: () => rootRouteImport,
+    id: '/$orgId/security',
+    path: '/$orgId/security',
+    getParentRoute: () => OrganizationRouteRoute,
   } as any)
 const OrganizationOrgIdOverviewRoute =
   OrganizationOrgIdOverviewRouteImport.update({
-    id: '/organization/$orgId/overview',
-    path: '/organization/$orgId/overview',
-    getParentRoute: () => rootRouteImport,
+    id: '/$orgId/overview',
+    path: '/$orgId/overview',
+    getParentRoute: () => OrganizationRouteRoute,
   } as any)
 const OrganizationOrgIdClustersRoute =
   OrganizationOrgIdClustersRouteImport.update({
-    id: '/organization/$orgId/clusters',
-    path: '/organization/$orgId/clusters',
-    getParentRoute: () => rootRouteImport,
+    id: '/$orgId/clusters',
+    path: '/$orgId/clusters',
+    getParentRoute: () => OrganizationRouteRoute,
   } as any)
 const OrganizationOrgIdAlertsRoute = OrganizationOrgIdAlertsRouteImport.update({
-  id: '/organization/$orgId/alerts',
-  path: '/organization/$orgId/alerts',
-  getParentRoute: () => rootRouteImport,
+  id: '/$orgId/alerts',
+  path: '/$orgId/alerts',
+  getParentRoute: () => OrganizationRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/organization': typeof OrganizationIndexRoute
+  '/organization': typeof OrganizationRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/organization/': typeof OrganizationIndexRoute
   '/organization/$orgId/alerts': typeof OrganizationOrgIdAlertsRoute
   '/organization/$orgId/clusters': typeof OrganizationOrgIdClustersRoute
   '/organization/$orgId/overview': typeof OrganizationOrgIdOverviewRoute
@@ -75,6 +89,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
   '/organization': typeof OrganizationIndexRoute
   '/organization/$orgId/alerts': typeof OrganizationOrgIdAlertsRoute
   '/organization/$orgId/clusters': typeof OrganizationOrgIdClustersRoute
@@ -86,6 +101,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/organization': typeof OrganizationRouteRouteWithChildren
+  '/login': typeof LoginRoute
   '/organization/': typeof OrganizationIndexRoute
   '/organization/$orgId/alerts': typeof OrganizationOrgIdAlertsRoute
   '/organization/$orgId/clusters': typeof OrganizationOrgIdClustersRoute
@@ -99,6 +116,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/organization'
+    | '/login'
+    | '/organization/'
     | '/organization/$orgId/alerts'
     | '/organization/$orgId/clusters'
     | '/organization/$orgId/overview'
@@ -108,6 +127,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/login'
     | '/organization'
     | '/organization/$orgId/alerts'
     | '/organization/$orgId/clusters'
@@ -118,6 +138,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/organization'
+    | '/login'
     | '/organization/'
     | '/organization/$orgId/alerts'
     | '/organization/$orgId/clusters'
@@ -129,17 +151,26 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  OrganizationIndexRoute: typeof OrganizationIndexRoute
-  OrganizationOrgIdAlertsRoute: typeof OrganizationOrgIdAlertsRoute
-  OrganizationOrgIdClustersRoute: typeof OrganizationOrgIdClustersRoute
-  OrganizationOrgIdOverviewRoute: typeof OrganizationOrgIdOverviewRoute
-  OrganizationOrgIdSecurityRoute: typeof OrganizationOrgIdSecurityRoute
-  OrganizationOrgIdSettingsRoute: typeof OrganizationOrgIdSettingsRoute
-  OrganizationOrgIdIndexRoute: typeof OrganizationOrgIdIndexRoute
+  OrganizationRouteRoute: typeof OrganizationRouteRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/organization': {
+      id: '/organization'
+      path: '/organization'
+      fullPath: '/organization'
+      preLoaderRoute: typeof OrganizationRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -149,58 +180,67 @@ declare module '@tanstack/react-router' {
     }
     '/organization/': {
       id: '/organization/'
-      path: '/organization'
-      fullPath: '/organization'
+      path: '/'
+      fullPath: '/organization/'
       preLoaderRoute: typeof OrganizationIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof OrganizationRouteRoute
     }
     '/organization/$orgId/': {
       id: '/organization/$orgId/'
-      path: '/organization/$orgId'
+      path: '/$orgId'
       fullPath: '/organization/$orgId'
       preLoaderRoute: typeof OrganizationOrgIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof OrganizationRouteRoute
     }
     '/organization/$orgId/settings': {
       id: '/organization/$orgId/settings'
-      path: '/organization/$orgId/settings'
+      path: '/$orgId/settings'
       fullPath: '/organization/$orgId/settings'
       preLoaderRoute: typeof OrganizationOrgIdSettingsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof OrganizationRouteRoute
     }
     '/organization/$orgId/security': {
       id: '/organization/$orgId/security'
-      path: '/organization/$orgId/security'
+      path: '/$orgId/security'
       fullPath: '/organization/$orgId/security'
       preLoaderRoute: typeof OrganizationOrgIdSecurityRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof OrganizationRouteRoute
     }
     '/organization/$orgId/overview': {
       id: '/organization/$orgId/overview'
-      path: '/organization/$orgId/overview'
+      path: '/$orgId/overview'
       fullPath: '/organization/$orgId/overview'
       preLoaderRoute: typeof OrganizationOrgIdOverviewRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof OrganizationRouteRoute
     }
     '/organization/$orgId/clusters': {
       id: '/organization/$orgId/clusters'
-      path: '/organization/$orgId/clusters'
+      path: '/$orgId/clusters'
       fullPath: '/organization/$orgId/clusters'
       preLoaderRoute: typeof OrganizationOrgIdClustersRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof OrganizationRouteRoute
     }
     '/organization/$orgId/alerts': {
       id: '/organization/$orgId/alerts'
-      path: '/organization/$orgId/alerts'
+      path: '/$orgId/alerts'
       fullPath: '/organization/$orgId/alerts'
       preLoaderRoute: typeof OrganizationOrgIdAlertsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof OrganizationRouteRoute
     }
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+interface OrganizationRouteRouteChildren {
+  OrganizationIndexRoute: typeof OrganizationIndexRoute
+  OrganizationOrgIdAlertsRoute: typeof OrganizationOrgIdAlertsRoute
+  OrganizationOrgIdClustersRoute: typeof OrganizationOrgIdClustersRoute
+  OrganizationOrgIdOverviewRoute: typeof OrganizationOrgIdOverviewRoute
+  OrganizationOrgIdSecurityRoute: typeof OrganizationOrgIdSecurityRoute
+  OrganizationOrgIdSettingsRoute: typeof OrganizationOrgIdSettingsRoute
+  OrganizationOrgIdIndexRoute: typeof OrganizationOrgIdIndexRoute
+}
+
+const OrganizationRouteRouteChildren: OrganizationRouteRouteChildren = {
   OrganizationIndexRoute: OrganizationIndexRoute,
   OrganizationOrgIdAlertsRoute: OrganizationOrgIdAlertsRoute,
   OrganizationOrgIdClustersRoute: OrganizationOrgIdClustersRoute,
@@ -208,6 +248,15 @@ const rootRouteChildren: RootRouteChildren = {
   OrganizationOrgIdSecurityRoute: OrganizationOrgIdSecurityRoute,
   OrganizationOrgIdSettingsRoute: OrganizationOrgIdSettingsRoute,
   OrganizationOrgIdIndexRoute: OrganizationOrgIdIndexRoute,
+}
+
+const OrganizationRouteRouteWithChildren =
+  OrganizationRouteRoute._addFileChildren(OrganizationRouteRouteChildren)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  OrganizationRouteRoute: OrganizationRouteRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
