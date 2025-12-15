@@ -172,7 +172,7 @@ exports[`ClusterMigrationModal should match snapshot 1`] = `
                 Documentation link
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
+                  class="fa-regular fa-arrow-up-right-from-square text-xs leading-5"
                 />
               </a>
             </div>

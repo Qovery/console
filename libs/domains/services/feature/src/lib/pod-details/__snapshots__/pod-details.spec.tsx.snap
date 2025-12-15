@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`PodDetails should match snapshot with container based pod and with multiple containers 1`] = `
 <body>
@@ -17,7 +17,7 @@ exports[`PodDetails should match snapshot with container based pod and with mult
         Logs
         <i
           aria-hidden="true"
-          class="fa-solid fa-scroll "
+          class="fa-regular fa-scroll "
         />
       </a>
       <div
@@ -151,7 +151,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
         Logs
         <i
           aria-hidden="true"
-          class="fa-solid fa-scroll "
+          class="fa-regular fa-scroll "
         />
       </a>
       <div
@@ -279,7 +279,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
         Logs
         <i
           aria-hidden="true"
-          class="fa-solid fa-scroll "
+          class="fa-regular fa-scroll "
         />
       </a>
       <div
@@ -376,7 +376,7 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
         Logs
         <i
           aria-hidden="true"
-          class="fa-solid fa-scroll "
+          class="fa-regular fa-scroll "
         />
       </a>
       <dl
