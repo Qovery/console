@@ -29,6 +29,21 @@ const colorsIndigo = {
   900: '#130F66',
 }
 
+const colorsBrand = {
+  1: 'var(--brand-1)',
+  2: 'var(--brand-2)',
+  3: 'var(--brand-3)',
+  4: 'var(--brand-4)',
+  5: 'var(--brand-5)',
+  6: 'var(--brand-6)',
+  7: 'var(--brand-7)',
+  8: 'var(--brand-8)',
+  9: 'var(--brand-9)',
+  10: 'var(--brand-10)',
+  11: 'var(--brand-11)',
+  12: 'var(--brand-12)',
+}
+
 const slideEntrances = () => {
   const genSlide = (suffix, offset) => ({
     [`slidein-up-${suffix}`]: {
@@ -166,7 +181,7 @@ module.exports = {
           'radial-gradient(farthest-side at 50% 0,rgba(0,0,0,.13),transparent),linear-gradient(180deg,hsla(0,0%,100%,0) 40%,hsla(0,0%,100%,0))',
       },
       colors: {
-        brand: colorsIndigo,
+        brand: { ...colorsBrand, ...colorsIndigo },
         indigo: colorsIndigo,
         purple: {
           50: '#FCF4FF',
