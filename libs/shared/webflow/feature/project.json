@@ -1,0 +1,9 @@
+{
+  "name": "webflow-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/webflow/feature/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project webflow-feature --web",
+  "targets": {}
+}

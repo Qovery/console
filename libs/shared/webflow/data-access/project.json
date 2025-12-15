@@ -1,0 +1,9 @@
+{
+  "name": "webflow-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/webflow/data-access/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project webflow-data-access --web",
+  "targets": {}
+}
