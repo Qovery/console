@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`EnvironmentList should match snapshot 1`] = `
 <div>
@@ -25,7 +25,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               Environment
               <i
                 aria-hidden="true"
-                class="fa-solid fa-chevron-down "
+                class="fa-regular fa-chevron-down "
               />
             </button>
           </div>
@@ -48,7 +48,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               Environment status
               <i
                 aria-hidden="true"
-                class="fa-solid fa-chevron-down "
+                class="fa-regular fa-chevron-down "
               />
             </button>
           </div>
@@ -71,7 +71,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               Last deployment
               <i
                 aria-hidden="true"
-                class="fa-solid fa-chevron-down "
+                class="fa-regular fa-chevron-down "
               />
             </button>
           </div>
@@ -94,7 +94,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               Cluster
               <i
                 aria-hidden="true"
-                class="fa-solid fa-chevron-down "
+                class="fa-regular fa-chevron-down "
               />
             </button>
           </div>

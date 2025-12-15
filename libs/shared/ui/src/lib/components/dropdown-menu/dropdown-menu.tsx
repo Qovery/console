@@ -10,13 +10,23 @@ const dropdownMenuItemVariants = cva(
     variants: {
       color: {
         brand: [
-          'data-[highlighted]:bg-brand-50',
-          'data-[highlighted]:text-brand-500',
-          'dark:data-[highlighted]:bg-neutral-400',
-          'dark:text-neutral-100',
+          'data-[highlighted]:bg-brand-2',
+          'data-[highlighted]:text-brand-11',
+          'hover:bg-brand-2',
+          'hover:text-brand-11',
         ],
-        red: ['data-[highlighted]:bg-red-50', 'data-[highlighted]:text-red-600'],
-        yellow: ['data-[highlighted]:bg-neutral-150'],
+        red: [
+          'data-[highlighted]:bg-surface-negative-component',
+          'data-[highlighted]:text-negative',
+          'hover:bg-surface-negative-component',
+          'hover:text-negative',
+        ],
+        yellow: [
+          'data-[highlighted]:bg-surface-warning-component',
+          'data-[highlighted]:text-warning',
+          'hover:bg-surface-warning-component',
+          'hover:text-warning',
+        ],
       },
       disabled: {
         true: ['cursor-not-allowed'],
@@ -27,27 +37,27 @@ const dropdownMenuItemVariants = cva(
       {
         color: 'brand',
         disabled: true,
-        className: ['text-neutral-350'],
+        className: ['text-neutral-disabled'],
       },
       {
         color: 'brand',
         disabled: false,
-        className: ['text-neutral-400', 'hover:bg-brand-50', 'hover:text-brand-500', 'dark:hover:bg-neutral-550'],
+        className: ['text-neutral'],
       },
       {
         color: 'red',
         disabled: true,
-        className: ['text-red-400'],
+        className: ['text-neutral-disabled'],
       },
       {
         color: 'red',
         disabled: false,
-        className: ['hover:bg-red-50', 'text-red-600'],
+        className: ['hover:bg-surface-negative-component', 'text-negative'],
       },
       {
         color: 'yellow',
         disabled: false,
-        className: ['hover:bg-neutral-150', 'text-neutral-400'],
+        className: ['hover:bg-surface-warning-component', 'text-warning'],
       },
     ],
     defaultVariants: {
@@ -73,27 +83,27 @@ const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-3'], {
     {
       color: 'brand',
       disabled: true,
-      className: ['text-brand-300'],
+      className: ['text-neutral-disabled'],
     },
     {
       color: 'brand',
       disabled: false,
-      className: ['text-brand-500'],
+      className: ['text-brand-9'],
     },
     {
       color: 'red',
       disabled: true,
-      className: ['text-red-400'],
+      className: ['text-neutral-disabled'],
     },
     {
       color: 'red',
       disabled: false,
-      className: ['text-red-600'],
+      className: ['text-negative'],
     },
     {
       color: 'yellow',
       disabled: false,
-      className: ['text-yellow-600'],
+      className: ['text-warning'],
     },
   ],
   defaultVariants: {
@@ -135,7 +145,7 @@ const DropdownMenuContent = forwardRef<ElementRef<typeof DropdownMenuPrimitive.C
           sideOffset={sideOffset}
           align={align}
           className={twMerge(
-            'flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:border dark:border-neutral-500 dark:bg-neutral-550',
+            'flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded',
             className
           )}
           ref={ref}
@@ -156,7 +166,7 @@ const DropdownMenuSeparator = forwardRef<
   return (
     <DropdownMenuPrimitive.Separator
       {...props}
-      className={twMerge('my-1 h-[1px] w-full bg-neutral-200 dark:bg-neutral-600', className)}
+      className={twMerge('my-1 h-[1px] w-full bg-surface-neutral-component', className)}
       ref={ref}
     />
   )

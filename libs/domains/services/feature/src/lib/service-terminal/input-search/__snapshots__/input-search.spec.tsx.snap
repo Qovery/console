@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`InputSearch should match snapshot 1`] = `
 <body>
@@ -13,7 +13,7 @@ exports[`InputSearch should match snapshot 1`] = `
         <span>
           <i
             aria-hidden="true"
-            class="fa-solid fa-xmark ml-2 text-sm"
+            class="fa-regular fa-xmark ml-2 text-sm"
           />
         </span>
       </button>
@@ -22,7 +22,7 @@ exports[`InputSearch should match snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-magnifying-glass absolute left-2.5 top-1.5 text-xs text-neutral-50"
+          class="fa-regular fa-magnifying-glass absolute left-2.5 top-1.5 text-xs text-neutral-50"
         />
         <input
           aria-activedescendant=""
@@ -51,7 +51,7 @@ exports[`InputSearch should match snapshot 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-wave-pulse mb-1 block"
+              class="fa-regular fa-wave-pulse mb-1 block"
             />
             No results found
           </p>
@@ -75,7 +75,7 @@ exports[`InputSearch should match with snapshot 1`] = `
         <span>
           <i
             aria-hidden="true"
-            class="fa-solid fa-xmark ml-2 text-sm"
+            class="fa-regular fa-xmark ml-2 text-sm"
           />
         </span>
       </button>
@@ -84,7 +84,7 @@ exports[`InputSearch should match with snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-magnifying-glass absolute left-2.5 top-1.5 text-xs text-neutral-50"
+          class="fa-regular fa-magnifying-glass absolute left-2.5 top-1.5 text-xs text-neutral-50"
         />
         <input
           aria-activedescendant=""
@@ -113,7 +113,7 @@ exports[`InputSearch should match with snapshot 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-wave-pulse mb-1 block"
+              class="fa-regular fa-wave-pulse mb-1 block"
             />
             No results found
           </p>

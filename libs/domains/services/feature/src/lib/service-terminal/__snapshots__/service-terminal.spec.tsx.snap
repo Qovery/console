@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ServiceTerminal should match snapshot 1`] = `
 <body>
@@ -30,7 +30,7 @@ exports[`ServiceTerminal should match snapshot 1`] = `
           Close shell
           <i
             aria-hidden="true"
-            class="fa-solid fa-xmark ml-2 text-sm"
+            class="fa-regular fa-xmark ml-2 text-sm"
           />
         </button>
       </div>
