@@ -436,7 +436,7 @@ export function MetricConfigurationStep({
                           className="w-full"
                           name={field.name}
                           inputClassName="text-neutral-350"
-                          value={field.value.replace(/_/g, ' ').toUpperCase()}
+                          value={formatMetricLabel(field.value)}
                           disabled
                         />
                       )}
