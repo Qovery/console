@@ -2,8 +2,8 @@ import { Outlet, createFileRoute, useLocation, useParams, useRouter } from '@tan
 import axios from 'axios'
 import { useMemo } from 'react'
 import { Icon, Navbar } from '@qovery/shared/ui'
-import { QOVERY_API } from '../../../../../../libs/shared/util-node-env/src'
-import { useAuthInterceptor } from '../../../../../../libs/shared/utils/src/lib/http/interceptors/auth-interceptor/auth-interceptor'
+import { QOVERY_API } from '@qovery/shared/util-node-env'
+import { useAuthInterceptor } from '@qovery/shared/utils'
 import Header from '../../../app/components/header/header'
 
 export const Route = createFileRoute('/_authenticated/organization')({
