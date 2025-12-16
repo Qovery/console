@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { cva } from 'class-variance-authority'
 import {
   type ComponentPropsWithoutRef,
@@ -229,10 +230,11 @@ const NavbarRoot = forwardRef<ElementRef<'div'>, NavbarRootProps>(function Navba
 interface NavbarItemProps extends ComponentPropsWithoutRef<'a'> {
   id: string
   active?: boolean
+  to?: string
 }
 
 const NavbarItem = forwardRef<ElementRef<'a'>, NavbarItemProps>(function NavbarItem(
-  { id, active, children, className, ...props },
+  { id, active, children, className, to, ...props },
   forwardedRef
 ) {
   const { activeId, registerItem, unregisterItem } = useNavbarContext()
@@ -268,7 +270,20 @@ const NavbarItem = forwardRef<ElementRef<'a'>, NavbarItemProps>(function NavbarI
     [forwardedRef]
   )
 
-  return (
+  return to ? (
+    <Link
+      to={to}
+      ref={setRefs}
+      className={twMerge(navbarItemVariants({ active: isActive }), className)}
+      data-active={isActive}
+      aria-current={isActive ? 'page' : undefined}
+      tabIndex={0}
+    >
+      <span ref={contentRef} className="flex items-center justify-center gap-1.5">
+        {children}
+      </span>
+    </Link>
+  ) : (
     <a
       {...props}
       ref={setRefs}
