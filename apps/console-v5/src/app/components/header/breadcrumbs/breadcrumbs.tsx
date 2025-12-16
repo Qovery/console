@@ -1,40 +1,28 @@
 import { useParams, useRouter } from '@tanstack/react-router'
+import { useMemo } from 'react'
+import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { Avatar } from '@qovery/shared/ui'
 import { Separator } from '../header'
 import { BreadcrumbItem, type BreadcrumbItemData } from './breadcrumb-item'
 
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
-  const { orgId } = useParams({ strict: false })
-  const ORGANIZATIONS: BreadcrumbItemData[] = [
-    {
-      id: 'acme',
-      label: 'Acme Corp',
-      path: buildLocation({ to: '/organization/$orgId', params: { orgId: 'acme' } }).href,
-    },
-    {
-      id: 'techstart',
-      label: 'TechStart Inc Long Label To Test The Truncation',
-      path: buildLocation({ to: '/organization/$orgId', params: { orgId: 'techstart' } }).href,
-    },
-    {
-      id: 'global',
-      label: 'Global Systems LongLabelToTestTheTruncation',
-      path: buildLocation({ to: '/organization/$orgId', params: { orgId: 'global' } }).href,
-    },
-    {
-      id: 'innovation',
-      label: 'Innovation Labs',
-      path: buildLocation({ to: '/organization/$orgId', params: { orgId: 'innovation' } }).href,
-    },
-    {
-      id: 'digital',
-      label: 'Digital Solutions',
-      path: buildLocation({ to: '/organization/$orgId', params: { orgId: 'digital' } }).href,
-    },
-  ]
+  const { organizationId } = useParams({ strict: false })
 
-  const currentOrg = ORGANIZATIONS.find((organization) => organization.id === orgId)
+  const { data: organizations = [] } = useOrganizations({
+    enabled: true,
+  })
+
+  const orgItems: BreadcrumbItemData[] = organizations.map((organization) => ({
+    id: organization.id,
+    label: organization.name,
+    path: buildLocation({ to: '/organization/$organizationId', params: { organizationId: organization.id } }).href,
+  }))
+
+  const currentOrg = useMemo(
+    () => orgItems.find((organization) => organization.id === organizationId),
+    [organizationId, orgItems]
+  )
 
   if (!currentOrg) {
     return null
@@ -48,7 +36,7 @@ export function Breadcrumbs() {
           <Avatar fallback={currentOrg.label.charAt(0).toUpperCase()} size="sm" border="solid" className="mr-0.5" />
         ),
       },
-      items: ORGANIZATIONS,
+      items: orgItems,
     },
   ]
 
