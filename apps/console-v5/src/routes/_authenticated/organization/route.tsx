@@ -31,7 +31,7 @@ function RouteComponent() {
           <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
             <Navbar.Item
               id="overview"
-              href={
+              to={
                 buildLocation({
                   to: '/organization/$organizationId/overview',
                   params: { organizationId },
@@ -43,7 +43,7 @@ function RouteComponent() {
             </Navbar.Item>
             <Navbar.Item
               id="security"
-              href={
+              to={
                 buildLocation({
                   to: '/organization/$organizationId/security',
                   params: { organizationId },
@@ -55,7 +55,7 @@ function RouteComponent() {
             </Navbar.Item>
             <Navbar.Item
               id="alerts"
-              href={
+              to={
                 buildLocation({
                   to: '/organization/$organizationId/alerts',
                   params: { organizationId },
@@ -67,7 +67,7 @@ function RouteComponent() {
             </Navbar.Item>
             <Navbar.Item
               id="clusters"
-              href={
+              to={
                 buildLocation({
                   to: '/organization/$organizationId/clusters',
                   params: { organizationId },
@@ -79,7 +79,7 @@ function RouteComponent() {
             </Navbar.Item>
             <Navbar.Item
               id="settings"
-              href={
+              to={
                 buildLocation({
                   to: '/organization/$organizationId/settings',
                   params: { organizationId },
