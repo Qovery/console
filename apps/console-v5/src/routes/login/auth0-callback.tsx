@@ -7,8 +7,8 @@ import { useProjects } from '@qovery/domains/projects/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { LoadingScreen } from '@qovery/shared/ui'
-import { QOVERY_API } from '../../../../../libs/shared/util-node-env/src'
-import { useAuthInterceptor } from '../../../../../libs/shared/utils/src/lib/http/interceptors/auth-interceptor/auth-interceptor'
+import { QOVERY_API } from '@qovery/shared/util-node-env'
+import { useAuthInterceptor } from '@qovery/shared/utils'
 
 export const Route = createFileRoute('/login/auth0-callback')({
   component: RouteComponent,
@@ -52,8 +52,7 @@ function useRedirectIfLogged() {
 
       // User has at least 1 organization attached
       if (organizations.length > 0) {
-        const organizationId = organizations[0].id
-        navigate({ to: '/organization/$orgId/overview', params: { orgId: organizationId } })
+        navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0]?.id } })
       }
       // else {
       // const { data: userSignUp } = await refetchUserSignUp()

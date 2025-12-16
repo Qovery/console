@@ -7,7 +7,7 @@ import { BreadcrumbItem, type BreadcrumbItemData } from './breadcrumb-item'
 
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
-  const { orgId } = useParams({ strict: false })
+  const { organizationId } = useParams({ strict: false })
 
   const { data: organizations = [] } = useOrganizations({
     enabled: true,
@@ -16,10 +16,13 @@ export function Breadcrumbs() {
   const orgItems: BreadcrumbItemData[] = organizations.map((organization) => ({
     id: organization.id,
     label: organization.name,
-    path: buildLocation({ to: '/organization/$orgId', params: { orgId: organization.id } }).href,
+    path: buildLocation({ to: '/organization/$organizationId', params: { organizationId: organization.id } }).href,
   }))
 
-  const currentOrg = useMemo(() => orgItems.find((organization) => organization.id === orgId), [orgId, orgItems])
+  const currentOrg = useMemo(
+    () => orgItems.find((organization) => organization.id === organizationId),
+    [organizationId, orgItems]
+  )
 
   if (!currentOrg) {
     return null

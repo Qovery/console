@@ -16,7 +16,7 @@ function RouteComponent() {
   const pathname = useLocation({
     select: (location) => location.pathname,
   })
-  const { orgId = '' } = useParams({ strict: false })
+  const { organizationId = '' } = useParams({ strict: false })
 
   const activeTabId = useMemo(() => {
     return pathname.split('/').pop()
@@ -33,8 +33,8 @@ function RouteComponent() {
               id="overview"
               href={
                 buildLocation({
-                  to: '/organization/$orgId/overview',
-                  params: { orgId },
+                  to: '/organization/$organizationId/overview',
+                  params: { organizationId },
                 }).href
               }
             >
@@ -45,8 +45,8 @@ function RouteComponent() {
               id="security"
               href={
                 buildLocation({
-                  to: '/organization/$orgId/security',
-                  params: { orgId },
+                  to: '/organization/$organizationId/security',
+                  params: { organizationId },
                 }).href
               }
             >
@@ -57,8 +57,8 @@ function RouteComponent() {
               id="alerts"
               href={
                 buildLocation({
-                  to: '/organization/$orgId/alerts',
-                  params: { orgId },
+                  to: '/organization/$organizationId/alerts',
+                  params: { organizationId },
                 }).href
               }
             >
@@ -69,8 +69,8 @@ function RouteComponent() {
               id="clusters"
               href={
                 buildLocation({
-                  to: '/organization/$orgId/clusters',
-                  params: { orgId },
+                  to: '/organization/$organizationId/clusters',
+                  params: { organizationId },
                 }).href
               }
             >
@@ -81,8 +81,8 @@ function RouteComponent() {
               id="settings"
               href={
                 buildLocation({
-                  to: '/organization/$orgId/settings',
-                  params: { orgId },
+                  to: '/organization/$organizationId/settings',
+                  params: { organizationId },
                 }).href
               }
             >
