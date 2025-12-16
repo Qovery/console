@@ -1,38 +1,35 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { Navigate, createFileRoute, useNavigate } from '@tanstack/react-router'
 import axios from 'axios'
 import { useEffect } from 'react'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
-import { useProjects } from '@qovery/domains/projects/feature'
-import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
-import { useAuth } from '@qovery/shared/auth'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
 
+type Auth0CallbackSearch = {
+  error?: string
+  error_description?: string
+}
+
 export const Route = createFileRoute('/login/auth0-callback')({
   component: RouteComponent,
+  validateSearch: (search: Record<string, unknown>): Auth0CallbackSearch => ({
+    error: (search.error as string) || undefined,
+    error_description: (search.error_description as string) || undefined,
+  }),
 })
 
 function useRedirectIfLogged() {
   const navigate = useNavigate()
-  const searchParams = Route.useSearch()
-  console.log('🚀 ~ useRedirectIfLogged ~ searchParams:', searchParams)
-  const { user } = useAuth()
-  console.log('🚀 ~ useRedirectIfLogged ~ user:', user)
-  const { isAuthenticated, user: auth0User } = useAuth0()
-  console.log('🚀 ~ useRedirectIfLogged ~ isAuthenticated:', isAuthenticated)
-  console.log('🚀 ~ useRedirectIfLogged ~ auth0User:', auth0User)
-  // const sendDataToGTM = useGTMDispatch()
+  const { isAuthenticated } = useAuth0()
   const { data: organizations = [], isFetched: isFetchedOrganizations } = useOrganizations({
     enabled: isAuthenticated,
   })
-  console.log('🚀 ~ useRedirectIfLogged ~ organizations:', organizations)
-  const { data: projects = [] } = useProjects({ organizationId: organizations[0]?.id })
-  console.log('🚀 ~ useRedirectIfLogged ~ projects:', projects)
-  const { refetch: refetchUserSignUp } = useUserSignUp({ enabled: false })
 
   useEffect(() => {
+    // TODO: double check if this is needed
+
     // const connectionParam = searchParams.get('connection')
     // if (connectionParam && !isAuthenticated) {
     //   const domainWithoutDots = connectionParam.trim().replace(/\./g, '')
@@ -54,6 +51,8 @@ function useRedirectIfLogged() {
       if (organizations.length > 0) {
         navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0]?.id } })
       }
+      // TODO: onboarding here
+
       // else {
       // const { data: userSignUp } = await refetchUserSignUp()
       // if (userSignUp?.dx_auth) {
@@ -66,47 +65,27 @@ function useRedirectIfLogged() {
     }
 
     if (isAuthenticated) {
-      // const currentOrganization = getCurrentOrganizationIdFromStorage()
-      // const currentProject = getCurrentProjectIdFromStorage()
-      // // const redirectLoginUri = getRedirectLoginUriFromStorage()
-      // const currentProvider = getCurrentProvider()
-
-      // if (currentProvider === user?.sub) {
-      //   // if (redirectLoginUri) {
-      //   //   navigate(redirectLoginUri)
-      //   //   localStorage.removeItem('redirectLoginUri')
-      //   //   return
-      //   // }
-
-      //   if (currentOrganization && currentProject) {
-      //     navigate(OVERVIEW_URL(currentOrganization, currentProject))
-      //     return
-      //   }
-      // }
-
-      // localStorage.removeItem('currentOrganizationId')
-      // localStorage.removeItem('currentProjectId')
       fetchData()
     }
-  }, [navigate, isAuthenticated, refetchUserSignUp, user, organizations, projects, isFetchedOrganizations])
+  }, [navigate, isAuthenticated, organizations, isFetchedOrganizations])
 }
 
 function PageRedirectLogin() {
+  const { error, error_description } = Route.useSearch()
   useAuthInterceptor(axios, QOVERY_API)
   useRedirectIfLogged()
 
-  // const error = params.error
-  // if (error != null) {
-  //   const errorDescription = params.error_description || 'No description available'
+  if (error != null) {
+    const errorDescription = error_description || 'No description available'
 
-  //   // Handle specific OIDC / SAML issue: the domain provided by the user doesn't exist on Auth0 side
-  //   if (error === 'invalid_request' && errorDescription.includes('')) {
-  //     sessionStorage.setItem('auth0_error', 'Invalid Enterprise SSO Domain Name')
-  //     sessionStorage.setItem('auth0_error_description', 'The domain name provided is not authorized')
-  //   }
+    // Handle specific OIDC / SAML issue: the domain provided by the user doesn't exist on Auth0 side
+    if (error === 'invalid_request' && errorDescription.includes('')) {
+      sessionStorage.setItem('auth0_error', 'Invalid Enterprise SSO Domain Name')
+      sessionStorage.setItem('auth0_error_description', 'The domain name provided is not authorized')
+    }
 
-  //   return <Navigate to="/login" />
-  // }
+    return <Navigate to="/login" search={{ redirect: '/' }} />
+  }
 
   return <LoadingScreen />
 }
