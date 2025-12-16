@@ -1,6 +1,6 @@
 import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/organization/$orgId/')({
+export const Route = createFileRoute('/_authenticated/organization/$orgId/')({
   component: RouteComponent,
 })
 

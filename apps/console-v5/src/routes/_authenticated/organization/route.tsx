@@ -1,13 +1,17 @@
 import { Outlet, createFileRoute, useLocation, useParams, useRouter } from '@tanstack/react-router'
+import axios from 'axios'
 import { useMemo } from 'react'
 import { Icon, Navbar } from '@qovery/shared/ui'
-import Header from '../../app/components/header/header'
+import { QOVERY_API } from '../../../../../../libs/shared/util-node-env/src'
+import { useAuthInterceptor } from '../../../../../../libs/shared/utils/src/lib/http/interceptors/auth-interceptor/auth-interceptor'
+import Header from '../../../app/components/header/header'
 
-export const Route = createFileRoute('/organization')({
+export const Route = createFileRoute('/_authenticated/organization')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
+  useAuthInterceptor(axios, QOVERY_API)
   const { buildLocation } = useRouter()
   const pathname = useLocation({
     select: (location) => location.pathname,

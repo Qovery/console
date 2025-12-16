@@ -11,11 +11,12 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
-import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
+import { LoaderSpinner, ToastEnum, toast, toastError } from '@qovery/shared/ui'
 // TODO: Improve this import to use the shared/ui package
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import '../../../libs/shared/ui/src/lib/styles/main.scss'
 import { ThemeProvider } from './app/components/theme-provider/theme-provider'
+import { Auth0Wrapper, useAuth0Context } from './auth/auth0'
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 
@@ -132,12 +133,36 @@ const queryClient = new QueryClient({
   }),
 })
 
+function InnerApp() {
+  const auth = useAuth0Context()
+
+  if (auth.isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <LoaderSpinner />
+      </div>
+    )
+  }
+
+  return <RouterProvider router={router} context={{ auth, queryClient }} />
+}
+
+function App() {
+  return (
+    <Auth0Wrapper>
+      <InnerApp />
+    </Auth0Wrapper>
+  )
+}
+
+export default App
+
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <StrictMode>
     <FlatProviders providers={[makeProvider(QueryClientProvider, { client: queryClient })]}>
       <ThemeProvider>
-        <RouterProvider router={router} />
+        <App />
       </ThemeProvider>
     </FlatProviders>
   </StrictMode>
