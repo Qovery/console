@@ -15,6 +15,9 @@ export interface ClusterGeneralData {
       alerting?: {
         enabled?: boolean
       }
+      cloud_watch_export_config?: {
+        enabled?: boolean
+      }
     }
   }
 }

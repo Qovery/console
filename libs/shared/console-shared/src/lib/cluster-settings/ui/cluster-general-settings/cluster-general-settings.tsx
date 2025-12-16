@@ -13,6 +13,7 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
   const { isQoveryAdminUser } = useUserRole()
 
   const metricsEnabled = watch('metrics_parameters.enabled')
+  const cloudProvider = watch('cloud_provider')
 
   return (
     <div>
@@ -111,6 +112,25 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
               </div>
             )}
           />
+          {cloudProvider === 'AWS' && (
+            <Controller
+              name="metrics_parameters.configuration.cloud_watch_export_config.enabled"
+              control={control}
+              render={({ field }) => (
+                <div className="mt-5">
+                  <InputToggle
+                    value={field.value}
+                    onChange={field.onChange}
+                    title="CloudWatch exporter enabled"
+                    description="Monitor AWS managed database (RDS)"
+                    forceAlignTop
+                    small
+                    disabled={!metricsEnabled}
+                  />
+                </div>
+              )}
+            />
+          )}
         </>
       )}
     </div>
