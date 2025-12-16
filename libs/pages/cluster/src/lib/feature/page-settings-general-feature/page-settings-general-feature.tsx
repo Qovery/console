@@ -36,7 +36,10 @@ export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: C
             configuration: {
               kind: 'MANAGED_BY_QOVERY',
               resource_profile: cloneCluster.metrics_parameters?.configuration?.resource_profile,
-              cloud_watch_export_config: cloneCluster.metrics_parameters?.configuration?.cloud_watch_export_config,
+              cloud_watch_export_config: {
+                ...cloneCluster.metrics_parameters?.configuration?.cloud_watch_export_config,
+                enabled: data.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled ?? false,
+              },
               high_availability: cloneCluster.metrics_parameters?.configuration?.high_availability,
               internal_network_monitoring: cloneCluster.metrics_parameters?.configuration?.internal_network_monitoring,
               alerting: {
