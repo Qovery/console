@@ -1,18 +1,22 @@
 import { Outlet, createFileRoute, useLocation, useParams, useRouter } from '@tanstack/react-router'
+import axios from 'axios'
 import { useMemo } from 'react'
 import { Icon, Navbar } from '@qovery/shared/ui'
-import Header from '../../app/components/header/header'
+import { QOVERY_API } from '@qovery/shared/util-node-env'
+import { useAuthInterceptor } from '@qovery/shared/utils'
+import Header from '../../../app/components/header/header'
 
-export const Route = createFileRoute('/organization')({
+export const Route = createFileRoute('/_authenticated/organization')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
+  useAuthInterceptor(axios, QOVERY_API)
   const { buildLocation } = useRouter()
   const pathname = useLocation({
     select: (location) => location.pathname,
   })
-  const { orgId = '' } = useParams({ strict: false })
+  const { organizationId = '' } = useParams({ strict: false })
 
   const activeTabId = useMemo(() => {
     return pathname.split('/').pop()
@@ -27,10 +31,10 @@ function RouteComponent() {
           <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
             <Navbar.Item
               id="overview"
-              href={
+              to={
                 buildLocation({
-                  to: '/organization/$orgId/overview',
-                  params: { orgId },
+                  to: '/organization/$organizationId/overview',
+                  params: { organizationId },
                 }).href
               }
             >
@@ -39,10 +43,10 @@ function RouteComponent() {
             </Navbar.Item>
             <Navbar.Item
               id="security"
-              href={
+              to={
                 buildLocation({
-                  to: '/organization/$orgId/security',
-                  params: { orgId },
+                  to: '/organization/$organizationId/security',
+                  params: { organizationId },
                 }).href
               }
             >
@@ -51,10 +55,10 @@ function RouteComponent() {
             </Navbar.Item>
             <Navbar.Item
               id="alerts"
-              href={
+              to={
                 buildLocation({
-                  to: '/organization/$orgId/alerts',
-                  params: { orgId },
+                  to: '/organization/$organizationId/alerts',
+                  params: { organizationId },
                 }).href
               }
             >
@@ -63,10 +67,10 @@ function RouteComponent() {
             </Navbar.Item>
             <Navbar.Item
               id="clusters"
-              href={
+              to={
                 buildLocation({
-                  to: '/organization/$orgId/clusters',
-                  params: { orgId },
+                  to: '/organization/$organizationId/clusters',
+                  params: { organizationId },
                 }).href
               }
             >
@@ -75,10 +79,10 @@ function RouteComponent() {
             </Navbar.Item>
             <Navbar.Item
               id="settings"
-              href={
+              to={
                 buildLocation({
-                  to: '/organization/$orgId/settings',
-                  params: { orgId },
+                  to: '/organization/$organizationId/settings',
+                  params: { organizationId },
                 }).href
               }
             >
