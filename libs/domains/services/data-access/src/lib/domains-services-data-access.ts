@@ -171,9 +171,6 @@ export type Helm = _Helm & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: HelmType
 }
-
-export type DockerfileFragment = TerraformRequestDockerfileFragment
-
 export type Terraform = _Terraform & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: TerraformType

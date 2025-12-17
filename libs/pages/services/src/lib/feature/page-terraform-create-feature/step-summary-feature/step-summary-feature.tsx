@@ -199,13 +199,6 @@ export function StepSummaryFeature() {
                     .otherwise(() => 'Off')}
                 </li>
                 <li>
-                  <span className="font-medium">Custom build commands:</span>{' '}
-                  {match(generalData.dockerfile_fragment_source)
-                    .with('file', () => `File: ${generalData.dockerfile_fragment_path}`)
-                    .with('inline', () => 'Inline commands')
-                    .otherwise(() => 'None')}
-                </li>
-                <li>
                   <span className="font-medium">CPU:</span> {generalData.job_resources.cpu_milli}
                 </li>
                 <li>

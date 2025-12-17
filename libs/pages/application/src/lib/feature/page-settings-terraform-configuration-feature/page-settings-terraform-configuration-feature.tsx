@@ -25,7 +25,6 @@ export default function PageSettingsTerraformConfigurationFeature() {
     defaultValues: match(service)
       .with({ serviceType: 'TERRAFORM' }, (s) => ({
         ...s,
-        state: 'kubernetes',
         ...extractDockerfileFragmentFields(s.dockerfile_fragment),
       }))
       .otherwise(() => ({})),
