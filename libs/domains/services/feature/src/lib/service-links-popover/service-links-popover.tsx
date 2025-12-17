@@ -39,8 +39,8 @@ export function ServiceLinksPopover({
   const filteredLinks = useMemo(() => links.filter((link: LinkProps) => !(link.is_default && link.is_qovery_domain)), [links])
 
   // Separate links into nginx and gateway-api groups
-  const nginxLinks = filteredLinks.filter((link: LinkProps) => !link.url?.includes('gateway-api'))
-  const gatewayApiLinks = filteredLinks.filter((link: LinkProps) => link.url?.includes('gateway-api'))
+  const nginxLinks = useMemo(() => filteredLinks.filter((link: LinkProps) => !link.url?.includes('gateway-api')), [filteredLinks])
+  const gatewayApiLinks = useMemo(() => filteredLinks.filter((link: LinkProps) => link.url?.includes('gateway-api')), [filteredLinks])
 
   const pathDomainsSetting =
     APPLICATION_URL(organizationId, projectId, environmentId, serviceId) +
