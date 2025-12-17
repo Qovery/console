@@ -11,7 +11,7 @@ const { Table } = TablePrimitives
 
 export function IssueOverview() {
   const { organizationId = '' } = useParams()
-  const { data: alerts = [], isFetched: isAlertsFetched } = useAlerts({ organizationId })
+  const { data: alerts = [], isFetched: isAlertsFetched } = useAlerts({ organizationId, refetchInterval: 2_000 })
   useDocumentTitle('Issues - Alerting')
 
   if (!isAlertsFetched)
