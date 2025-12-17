@@ -56,9 +56,7 @@ export function MintlifyHit({ result }: MintlifyHitProps) {
             </span>
           )}
         </span>
-        {getDescription() && (
-          <span className="text-xs text-sky-400">{getDescription()}</span>
-        )}
+        {getDescription() && <span className="text-xs text-sky-400">{getDescription()}</span>}
       </span>
     </ExternalLink>
   )

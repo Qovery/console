@@ -7,10 +7,10 @@ import { twMerge } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { AssistantIconSwitcher } from '../assistant-icon-switcher/assistant-icon-switcher'
 import { DotStatus } from '../dot-status/dot-status'
-import { MintlifyHit } from '../mintlify-hit/mintlify-hit'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
 import { useMintlifySearch } from '../hooks/use-mintlify-search/use-mintlify-search'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
+import { MintlifyHit } from '../mintlify-hit/mintlify-hit'
 
 export interface AssistantPanelProps {
   onClose: () => void
@@ -89,9 +89,7 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
           {query.length > 0 && (
             <div className="flex min-h-0 shrink-0 grow basis-0 flex-col space-y-5 overflow-y-auto">
               {isLoading && <div className="text-sm text-neutral-400">Searching...</div>}
-              {!isLoading && results.length === 0 && (
-                <div className="text-sm text-neutral-400">No results found</div>
-              )}
+              {!isLoading && results.length === 0 && <div className="text-sm text-neutral-400">No results found</div>}
               {!isLoading && results.map((result, index) => <MintlifyHit key={index} result={result} />)}
             </div>
           )}

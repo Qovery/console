@@ -31,61 +31,58 @@ export function useMintlifySearch() {
     error: null,
   })
 
-  const search = useCallback(
-    async (query: string) => {
-      if (!query.trim()) {
-        setState({ query: '', results: [], isLoading: false, error: null })
-        return
+  const search = useCallback(async (query: string) => {
+    if (!query.trim()) {
+      setState({ query: '', results: [], isLoading: false, error: null })
+      return
+    }
+
+    if (!MINTLIFY_DOMAIN || !MINTLIFY_API_KEY) {
+      setState({
+        query,
+        results: [],
+        isLoading: false,
+        error: 'Mintlify configuration missing',
+      })
+      return
+    }
+
+    setState((prev) => ({ ...prev, query, isLoading: true, error: null }))
+
+    try {
+      const response = await fetch(`https://api.mintlify.com/discovery/v1/search/${MINTLIFY_DOMAIN}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${MINTLIFY_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query,
+          pageSize: 10,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Search failed: ${response.statusText}`)
       }
 
-      if (!MINTLIFY_DOMAIN || !MINTLIFY_API_KEY) {
-        setState({
-          query,
-          results: [],
-          isLoading: false,
-          error: 'Mintlify configuration missing',
-        })
-        return
-      }
+      const results: MintlifySearchResult[] = await response.json()
 
-      setState((prev) => ({ ...prev, query, isLoading: true, error: null }))
-
-      try {
-        const response = await fetch(`https://api.mintlify.com/discovery/v1/search/${MINTLIFY_DOMAIN}`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${MINTLIFY_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            query,
-            pageSize: 10,
-          }),
-        })
-
-        if (!response.ok) {
-          throw new Error(`Search failed: ${response.statusText}`)
-        }
-
-        const results: MintlifySearchResult[] = await response.json()
-
-        setState({
-          query,
-          results,
-          isLoading: false,
-          error: null,
-        })
-      } catch (error) {
-        setState({
-          query,
-          results: [],
-          isLoading: false,
-          error: error instanceof Error ? error.message : 'Search failed',
-        })
-      }
-    },
-    []
-  )
+      setState({
+        query,
+        results,
+        isLoading: false,
+        error: null,
+      })
+    } catch (error) {
+      setState({
+        query,
+        results: [],
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Search failed',
+      })
+    }
+  }, [])
 
   return {
     ...state,
