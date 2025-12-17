@@ -36,7 +36,7 @@ export function ServiceLinksPopover({
   const { data: links = [] } = useLinks({ serviceId, serviceType })
 
   // Remove default Qovery links
-  const filteredLinks = links.filter((link: LinkProps) => !(link.is_default && link.is_qovery_domain))
+  const filteredLinks = useMemo(() => links.filter((link: LinkProps) => !(link.is_default && link.is_qovery_domain)), [links])
 
   // Separate links into nginx and gateway-api groups
   const nginxLinks = filteredLinks.filter((link: LinkProps) => !link.url?.includes('gateway-api'))
