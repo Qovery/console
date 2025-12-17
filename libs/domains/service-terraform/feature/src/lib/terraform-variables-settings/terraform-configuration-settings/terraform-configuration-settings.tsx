@@ -4,6 +4,7 @@ import {
   type GitTokenResponse,
   TerraformEngineEnum,
   type TerraformRequest,
+  type TerraformRequestDockerfileFragment,
 } from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
@@ -17,18 +18,25 @@ import {
   InputSelect,
   InputText,
   Link,
+  Modal,
   RadioGroup,
   Section,
 } from '@qovery/shared/ui'
 import useTerraformAvailableVersions from '../../hooks/use-terraform-available-versions/use-terraform-available-versions'
+import { DockerfileFragmentInlineSetting } from '../dockerfile-fragment-inline-setting/dockerfile-fragment-inline-setting'
 
 export const terraformEngines = [
   { name: 'Terraform', value: TerraformEngineEnum.TERRAFORM, icon: <Icon name={IconEnum.TERRAFORM} /> },
   { name: 'OpenTofu', value: TerraformEngineEnum.OPEN_TOFU, icon: <Icon name={IconEnum.OPEN_TOFU} /> },
 ]
 
+export type DockerfileFragmentSource = 'none' | 'file' | 'inline'
+
 export interface TerraformGeneralData
-  extends Omit<TerraformRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec'> {
+  extends Omit<
+    TerraformRequest,
+    'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec' | 'dockerfile_fragment'
+  > {
   source_provider: 'GIT'
   repository: string
   git_repository?: ApplicationGitRepository
@@ -45,6 +53,45 @@ export interface TerraformGeneralData
     read_from_terraform_block: boolean
     explicit_version: string
   }
+  dockerfile_fragment_source: DockerfileFragmentSource
+  dockerfile_fragment_path?: string
+  dockerfile_fragment_content?: string
+  dockerfile_fragment?: TerraformRequestDockerfileFragment | null
+}
+
+export function buildDockerfileFragment(data: TerraformGeneralData): TerraformRequestDockerfileFragment | null {
+  switch (data.dockerfile_fragment_source) {
+    case 'file':
+      return data.dockerfile_fragment_path ? { type: 'file', path: data.dockerfile_fragment_path } : null
+    case 'inline':
+      return data.dockerfile_fragment_content ? { type: 'inline', content: data.dockerfile_fragment_content } : null
+    case 'none':
+    default:
+      return null
+  }
+}
+
+export function extractDockerfileFragmentFields(fragment: TerraformRequestDockerfileFragment | null | undefined): {
+  dockerfile_fragment_source: DockerfileFragmentSource
+  dockerfile_fragment_path?: string
+  dockerfile_fragment_content?: string
+} {
+  if (!fragment) {
+    return { dockerfile_fragment_source: 'none' }
+  }
+  if (fragment.type === 'file' && 'path' in fragment) {
+    return {
+      dockerfile_fragment_source: 'file',
+      dockerfile_fragment_path: fragment.path,
+    }
+  }
+  if (fragment.type === 'inline' && 'content' in fragment) {
+    return {
+      dockerfile_fragment_source: 'inline',
+      dockerfile_fragment_content: fragment.content,
+    }
+  }
+  return { dockerfile_fragment_source: 'none' }
 }
 
 export const TerraformConfigurationSettings = ({
@@ -58,6 +105,7 @@ export const TerraformConfigurationSettings = ({
   const { data: versions = [], isLoading: isTerraformVersionLoading } = useTerraformAvailableVersions()
   const cliCommand = `qovery terraform setup-backend --terraform ${isSettings ? applicationId : '<SERVICE_ID>'}`
   const backend = methods.watch('backend')
+  const dockerfileFragmentSource = methods.watch('dockerfile_fragment_source') ?? 'none'
 
   return (
     <div className="space-y-10">
@@ -308,6 +356,146 @@ export const TerraformConfigurationSettings = ({
           )}
         />
       </Section>
+
+      {isSettings && (
+        <Section className="gap-4">
+          <div className="space-y-1">
+            <Heading level={2}>Custom build commands</Heading>
+            <p className="text-sm text-neutral-350">
+              Add custom tools to the Terraform execution environment (e.g., AWS CLI, kubectl, jq).
+            </p>
+            <Modal
+              trigger={
+                <button
+                  type="button"
+                  className="mt-1 cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+                >
+                  Show how it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
+                </button>
+              }
+              width={600}
+            >
+              <div className="p-6">
+                <h3 className="mb-4 text-lg font-semibold text-neutral-400">How custom build commands work</h3>
+                <p className="mb-4 text-sm text-neutral-350">
+                  Your custom commands are injected into the Dockerfile used to build the Terraform execution image.
+                  This allows you to install additional tools needed during Terraform execution.
+                </p>
+                <p className="mb-2 text-xs text-neutral-350">Simplified example (actual Dockerfile may differ):</p>
+                <pre className="mb-4 overflow-x-auto rounded bg-neutral-100 p-4 text-xs text-neutral-400">
+                  {`FROM debian:trixie-slim
+WORKDIR /app
+COPY . .
+
+# ── Your custom commands are injected here ──
+
+USER app
+ENTRYPOINT ["terraform"]`}
+                </pre>
+                <div className="space-y-2 text-sm text-neutral-350">
+                  <p>
+                    <strong className="text-neutral-400">Custom commands example:</strong>
+                  </p>
+                  <pre className="overflow-x-auto rounded bg-neutral-100 p-3 text-xs text-neutral-400">
+                    {`RUN apt-get update && apt-get install -y \\
+    awscli \\
+    kubectl \\
+    jq \\
+    curl \\
+  && rm -rf /var/lib/apt/lists/*`}
+                  </pre>
+                </div>
+              </div>
+            </Modal>
+          </div>
+
+          <Callout.Root color="neutral" className="p-4">
+            <Callout.Text className="w-full">
+              <Controller
+                name="dockerfile_fragment_source"
+                control={methods.control}
+                defaultValue={methods.getValues('dockerfile_fragment_source') ?? 'none'}
+                render={({ field }) => (
+                  <RadioGroup.Root
+                    className="flex flex-col gap-5"
+                    value={field.value}
+                    onValueChange={(value: DockerfileFragmentSource) => {
+                      field.onChange(value)
+                    }}
+                  >
+                    <label className="grid grid-cols-[16px_1fr] gap-3">
+                      <RadioGroup.Item value="none" />
+                      <div className="flex flex-col gap-1">
+                        <span className="font-medium">No custom commands</span>
+                        <span className="text-sm text-neutral-350">
+                          Use the default Terraform image without modifications.
+                        </span>
+                      </div>
+                    </label>
+                    <div>
+                      <label className="grid grid-cols-[16px_1fr] gap-3">
+                        <RadioGroup.Item value="file" />
+                        <div className="flex flex-col gap-1">
+                          <span className="font-medium">Load commands from a file in my repository</span>
+                          <span className="text-sm text-neutral-350">
+                            Point to a file containing RUN commands (e.g., /terraform/install-tools.dockerfile).
+                          </span>
+                        </div>
+                      </label>
+                      {dockerfileFragmentSource === 'file' && (
+                        <div className="ml-7 mt-3">
+                          <Controller
+                            name="dockerfile_fragment_path"
+                            control={methods.control}
+                            rules={{
+                              required: dockerfileFragmentSource === 'file' ? 'Path is required' : false,
+                              pattern: {
+                                value: /^\/[^/]+(\/[^/]+)*$/,
+                                message:
+                                  'Must be an absolute path starting with / (e.g., /terraform/install-tools.dockerfile)',
+                              },
+                            }}
+                            render={({ field: pathField, fieldState: { error } }) => (
+                              <InputText
+                                name={pathField.name}
+                                type="text"
+                                onChange={pathField.onChange}
+                                value={pathField.value ?? ''}
+                                label="File path"
+                                error={error?.message}
+                                hint="Absolute path from repository root (e.g., /scripts/install-tools.dockerfile)"
+                              />
+                            )}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <label className="grid grid-cols-[16px_1fr] gap-3">
+                        <RadioGroup.Item value="inline" />
+                        <div className="flex flex-col gap-1">
+                          <span className="font-medium">Enter commands directly</span>
+                          <span className="text-sm text-neutral-350">Type RUN commands to install tools.</span>
+                        </div>
+                      </label>
+                      {dockerfileFragmentSource === 'inline' && (
+                        <div className="ml-7 mt-3">
+                          <DockerfileFragmentInlineSetting
+                            content={methods.watch('dockerfile_fragment_content') ?? ''}
+                            onSubmit={(value) => {
+                              methods.setValue('dockerfile_fragment_content', value ?? '', { shouldDirty: true })
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </RadioGroup.Root>
+                )}
+              />
+            </Callout.Text>
+          </Callout.Root>
+        </Section>
+      )}
     </div>
   )
 }

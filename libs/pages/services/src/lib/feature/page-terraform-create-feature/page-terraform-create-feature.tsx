@@ -68,6 +68,7 @@ export function PageTerraformCreateFeature() {
       backend: {
         kubernetes: {},
       },
+      dockerfile_fragment_source: 'none',
     },
   })
 

@@ -68,6 +68,7 @@ import {
   type TerraformDeploymentRestrictionRequest,
   TerraformMainCallsApi,
   type TerraformRequest,
+  type TerraformRequestDockerfileFragment,
   TerraformsApi,
   type Application as _Application,
   type CloneServiceRequest as _CloneServiceRequest,
