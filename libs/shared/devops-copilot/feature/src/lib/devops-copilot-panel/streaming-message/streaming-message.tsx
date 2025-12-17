@@ -24,34 +24,21 @@ export function StreamingMessage({
 
   const renderInput = useMemo(() => {
     const input = displayedStreamingMessage
-    let processedInput = input
 
-    const allBackticks = [...input.matchAll(/```/g)]
-    if (allBackticks.length > 0) {
-      const lastBacktick = allBackticks.at(-1)
-      if (lastBacktick && lastBacktick.index !== undefined) {
-        const afterBackticks = input.slice(lastBacktick.index + 3)
-        if (!afterBackticks.includes('\n') && afterBackticks.length < 10) {
-          if ('mermaid'.startsWith(afterBackticks.trim()) && afterBackticks.trim().length > 0) {
-            processedInput = input.slice(0, lastBacktick.index) + 'Generating charts…'
-          } else if (afterBackticks.trim().length === 0 || afterBackticks.match(/^[a-z]*$/)) {
-            processedInput = input.slice(0, lastBacktick.index)
-          }
-        }
+    const hasMermaidBlock = input.includes('```mermaid')
+
+    if (hasMermaidBlock) {
+      const completeMermaidBlocks = (input.match(/```merm[\s\S]*?```/g) || []).length
+
+      const totalMermaidStarts = (input.match(/```merm/g) || []).length
+
+      if (totalMermaidStarts > completeMermaidBlocks) {
+        const currentMermaidIndex = input.lastIndexOf('```mermaid')
+        return input.slice(0, currentMermaidIndex) + 'Generating charts…'
       }
     }
 
-    const startMatches = [...processedInput.matchAll(/```mermaid/g)]
-    const endMatches = [...processedInput.matchAll(/```(?!mermaid)/g)]
-    if (startMatches.length > endMatches.length) {
-      const lastStart = startMatches.at(-1)
-      if (lastStart) {
-        const cutoffIndex = lastStart.index ?? processedInput.length
-        processedInput = processedInput.slice(0, cutoffIndex) + 'Generating charts…'
-      }
-    }
-
-    return processedInput
+    return input
   }, [displayedStreamingMessage])
 
   return (
