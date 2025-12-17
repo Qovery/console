@@ -6,7 +6,7 @@ export const Route = createFileRoute('/_authenticated/organization/')({
 
 function RouteComponent() {
   return (
-    <div className="bg-background h-full min-h-dvh w-full">
+    <div className="h-full min-h-dvh w-full bg-background">
       <main className="!h-full">
         <div className="m-auto mt-6 h-full w-full max-w-7xl">
           {/* EMPTY FOR NOW */}

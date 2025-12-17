@@ -1,58 +1,37 @@
-import { useParams } from '@tanstack/react-router'
-import { Heading, Icon, Section } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/util-dates'
-import { useChangelogs } from '@qovery/shared/webflow/feature'
-import { useOrganization } from '../hooks/use-organization/use-organization'
+import { type PropsWithChildren } from 'react'
+import { Avatar, Heading, Section } from '@qovery/shared/ui'
+import useOrganization from '../hooks/use-organization/use-organization'
+import { SectionChangelog } from './section-changelog/section-changelog'
+import { SectionLinks } from './section-links/section-links'
 
-export function OrganizationOverview() {
-  const { data: changelogs = [] } = useChangelogs()
-  const { organizationId = '' } = useParams({ strict: false })
+export function OrganizationOverview({ children, organizationId }: PropsWithChildren<{ organizationId: string }>) {
+  const { data: organization, isFetched: isFetchedOrganization } = useOrganization({ organizationId })
 
-  const { data: organization, isLoading: isLoadingOrganization } = useOrganization({ organizationId })
-
-  if (isLoadingOrganization) {
-    return (
-      <div>
-        <span className="text-neutral text-sm">Loading...</span>
-      </div>
-    )
+  if (!isFetchedOrganization) {
+    return null
   }
 
   return (
-    <div className="container mx-auto">
-      <Section>
+    <div className="container mx-auto pb-10">
+      <Section className="gap-8">
         <div className="flex flex-col gap-6">
-          <Heading>{organization?.name}</Heading>
-          <hr className="border-neutral w-full" />
+          <Heading className="flex items-center gap-2">
+            <Avatar
+              src={organization?.logo_url ?? undefined}
+              alt={organization?.name}
+              size="md"
+              border="solid"
+              fallback={organization?.name?.charAt(0).toUpperCase()}
+            />
+            {organization?.name}
+          </Heading>
+          <hr className="w-full border-neutral" />
         </div>
-        <div className="flex flex-col gap-12 md:flex-row">
-          <div>
-            <Section className="flex flex-col gap-6">
-              <Heading>Production health</Heading>
-            </Section>
-          </div>
-          <div>
-            <Section className="flex flex-col gap-3">
-              <Heading className="flex items-center gap-2">
-                <Icon iconName="bullhorn" className="text-neutral-subtle text-sm" />
-                Changelog
-              </Heading>
-              {changelogs?.map((changelog) => (
-                <a
-                  key={changelog.url}
-                  href={changelog.url}
-                  title={changelog.name}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="border-neutral text-neutral hover:border-brand-11 flex flex-col gap-2 rounded-lg border p-4 transition-colors"
-                >
-                  <p className="text-sm">{changelog.name}</p>
-                  <span className="text-neutral-subtle text-ssm">
-                    {dateFullFormat(changelog.firstPublishedAt, 'UTC', 'dd MMM, Y')}
-                  </span>
-                </a>
-              ))}
-            </Section>
+        <div className="flex w-full flex-col gap-12 md:flex-row md:justify-between">
+          <div className="flex w-full flex-col gap-8">{children}</div>
+          <div className="flex w-full flex-col gap-8 md:max-w-96">
+            <SectionChangelog />
+            <SectionLinks />
           </div>
         </div>
       </Section>

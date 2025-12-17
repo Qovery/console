@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import { Controller, type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
-import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { InputText, ModalCrud } from '@qovery/shared/ui'
 import { useCreateProject } from '../hooks/use-create-project/use-create-project'
 
@@ -13,7 +11,6 @@ export interface CreateProjectModalProps {
 export function CreateProjectModal(props: CreateProjectModalProps) {
   const { onClose, organizationId } = props
 
-  const navigate = useNavigate()
   const methods = useForm({
     mode: 'onChange',
   })
@@ -31,7 +28,8 @@ export function CreateProjectModal(props: CreateProjectModalProps) {
           description: data['description'],
         },
       })
-      navigate(ENVIRONMENTS_URL(organizationId, project.id) + ENVIRONMENTS_GENERAL_URL)
+      // @TODO: Add navigation to environments page
+      // navigate(ENVIRONMENTS_URL(organizationId, project.id) + ENVIRONMENTS_GENERAL_URL)
       onClose()
     } catch (error) {
       console.error(error)
