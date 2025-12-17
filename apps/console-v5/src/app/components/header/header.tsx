@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { Button, DropdownMenu, LogoIcon } from '@qovery/shared/ui'
 import { useTheme } from '../theme-provider/theme-provider'
 import { Breadcrumbs } from './breadcrumbs/breadcrumbs'
@@ -17,14 +18,19 @@ export function Separator() {
 
 export function Header() {
   const { setTheme } = useTheme()
+  const { logout } = useAuth0()
+
+  const onLogout = async () => {
+    await logout()
+  }
 
   return (
-    <header className="w-full bg-background-secondary py-4 pl-3 pr-4">
+    <header className="bg-background-secondary w-full py-4 pl-3 pr-4">
       <div className="flex items-center gap-4">
         <LogoIcon />
         <Separator />
         <Breadcrumbs />
-        <div className="ml-auto">
+        <div className="ml-auto flex gap-2">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <Button variant="outline">Toggle theme</Button>
@@ -35,6 +41,9 @@ export function Header() {
               <DropdownMenu.Item onClick={() => setTheme('system')}>System</DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
+          <Button variant="outline" onClick={onLogout}>
+            Log out
+          </Button>
         </div>
       </div>
     </header>

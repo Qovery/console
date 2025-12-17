@@ -10,6 +10,7 @@ export interface BreadcrumbItemData {
   label: string
   path: string
   prefix?: ReactNode
+  logo_url?: string
 }
 
 interface BreadcrumbItemProps {
@@ -59,7 +60,7 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
   }
 
   if (!items || items.length === 0) {
-    return <span className="text-sm font-medium text-neutral">{item.label}</span>
+    return <span className="text-neutral text-sm font-medium">{item.label}</span>
   }
 
   // XXX: https://github.com/radix-ui/primitives/issues/1342
@@ -71,20 +72,20 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
   return (
     <DropdownMenu.Root open={open} onOpenChange={setOpen}>
       <Popover.Root open={open} onOpenChange={setOpen}>
-        <span className="flex items-center justify-between gap-1">
-          <button
-            type="button"
-            className="focus-visible:outline-brand-11 flex items-center gap-1.5 rounded text-sm font-medium text-neutral-subtle transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2"
-          >
-            {item.prefix}
-            {item.label}
-          </button>
-          <Popover.Trigger>
+        <Popover.Trigger>
+          <div className="group flex items-center justify-between gap-1">
+            <button
+              type="button"
+              className="focus-visible:outline-brand-11 text-neutral-subtle group-hover:text-neutral flex items-center gap-1.5 rounded text-sm font-medium transition-colors focus:outline-none focus-visible:outline focus-visible:outline-2"
+            >
+              {item.prefix}
+              {item.label}
+            </button>
             <button
               type="button"
               className={twMerge(
                 clsx(
-                  'focus-visible:outline-brand-11 relative top-[1px] flex h-6 w-6 items-center justify-center rounded text-neutral-disabled transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2',
+                  'focus-visible:outline-brand-11 text-neutral-disabled group-hover:text-neutral relative top-[1px] flex h-6 w-6 items-center justify-center rounded transition-colors focus:outline-none focus-visible:outline focus-visible:outline-2',
                   {
                     'text-neutral': open,
                   }
@@ -100,8 +101,8 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
                 ></path>
               </svg>
             </button>
-          </Popover.Trigger>
-        </span>
+          </div>
+        </Popover.Trigger>
         <DropdownMenu.Content asChild>
           <Popover.Content className="-ml-2.5 flex w-[340px] flex-col gap-3 p-3 pb-0">
             {/* 
@@ -144,7 +145,7 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
               ) : (
                 <div className="px-3 py-6 text-center">
                   <Icon iconName="wave-pulse" className="text-neutral-subtle" />
-                  <p className="mt-1 text-xs font-medium text-neutral-subtle">No result for this search</p>
+                  <p className="text-neutral-subtle mt-1 text-xs font-medium">No result for this search</p>
                 </div>
               )}
             </div>
