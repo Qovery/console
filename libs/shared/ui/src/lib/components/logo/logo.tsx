@@ -1,4 +1,6 @@
-export function LogoIcon() {
+import { type SVGProps } from 'react'
+
+export function LogoIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       className="text-brand"
@@ -7,6 +9,7 @@ export function LogoIcon() {
       height="28"
       fill="none"
       viewBox="0 0 28 28"
+      {...props}
     >
       <path
         fill="currentColor"

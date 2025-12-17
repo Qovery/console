@@ -1,5 +1,7 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import { SectionProductionHealth } from '@qovery/domains/clusters/feature'
 import { OrganizationOverview } from '@qovery/domains/organizations/feature'
+import { ProjectList } from '@qovery/domains/projects/feature'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/overview')({
   component: RouteComponent,
@@ -12,5 +14,10 @@ function RouteComponent() {
     return null
   }
 
-  return <OrganizationOverview />
+  return (
+    <OrganizationOverview organizationId={organizationId}>
+      <SectionProductionHealth organizationId={organizationId} />
+      <ProjectList organizationId={organizationId} />
+    </OrganizationOverview>
+  )
 }
