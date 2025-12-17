@@ -1,5 +1,5 @@
 import { type Link as LinkProps } from 'qovery-typescript-axios'
-import { type ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { APPLICATION_SETTINGS_DOMAIN_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import {
   CopyToClipboardButtonIcon,
