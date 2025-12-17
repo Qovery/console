@@ -8,6 +8,7 @@ import {
   Popover,
   type PopoverContentProps,
   Skeleton,
+  Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
@@ -36,6 +37,10 @@ export function ServiceLinksPopover({
 
   // Remove default Qovery links
   const filteredLinks = links.filter((link: LinkProps) => !(link.is_default && link.is_qovery_domain))
+
+  // Separate links into nginx and gateway-api groups
+  const nginxLinks = filteredLinks.filter((link: LinkProps) => !link.url?.includes('gateway-api'))
+  const gatewayApiLinks = filteredLinks.filter((link: LinkProps) => link.url?.includes('gateway-api'))
 
   const pathDomainsSetting =
     APPLICATION_URL(organizationId, projectId, environmentId, serviceId) +
@@ -68,7 +73,60 @@ export function ServiceLinksPopover({
           )}
         </div>
         <ul className="max-h-96 overflow-y-auto">
-          {filteredLinks.map((link: LinkProps) => (
+          {nginxLinks.map((link: LinkProps) => (
+            <li key={link.url} className="flex p-2">
+              <CopyToClipboardButtonIcon
+                className="mr-2 text-brand-500 hover:text-brand-600 dark:hover:text-brand-400"
+                content={link.url ?? ''}
+              />
+              <a
+                className="flex w-full items-center justify-between text-neutral-400 transition hover:text-brand-500 dark:text-neutral-50 dark:hover:text-brand-400"
+                href={link.url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div className="mr-2 text-ssm font-medium">
+                  <Truncate text={link.url ?? ''} truncateLimit={26} />
+                </div>
+                <div className="text-xs text-neutral-350 dark:text-neutral-250">{link.internal_port}</div>
+              </a>
+            </li>
+          ))}
+          {nginxLinks.length > 0 && gatewayApiLinks.length > 0 && (
+            <>
+              <li className="my-2 border-t border-neutral-200 dark:border-neutral-600" />
+              <li className="flex items-center gap-1 px-2 pb-1 text-xs font-medium text-neutral-350 dark:text-neutral-250">
+                <span>Gateway API / Envoy stack</span>
+                <Tooltip
+                  content={
+                    <div className="max-w-xs">
+                      Links pointing to your service using the new Gateway API / Envoy stack. We strongly recommend to
+                      test it and report any issues / improvements we can do before we sunset nginx stack,{' '}
+                      <a
+                        href="https://www.qovery.com/blog/nginx-ingress-controller-end-of-maintenance-by-march-2026"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline hover:text-neutral-100"
+                      >
+                        more info
+                      </a>
+                    </div>
+                  }
+                  side="right"
+                  classNameContent="max-w-xs"
+                >
+                  <span className="inline-flex cursor-help">
+                    <Icon
+                      iconName="circle-info"
+                      iconStyle="regular"
+                      className="text-neutral-350 hover:text-neutral-400 dark:text-neutral-250 dark:hover:text-neutral-200"
+                    />
+                  </span>
+                </Tooltip>
+              </li>
+            </>
+          )}
+          {gatewayApiLinks.map((link: LinkProps) => (
             <li key={link.url} className="flex p-2">
               <CopyToClipboardButtonIcon
                 className="mr-2 text-brand-500 hover:text-brand-600 dark:hover:text-brand-400"
