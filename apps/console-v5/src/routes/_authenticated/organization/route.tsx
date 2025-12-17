@@ -23,11 +23,11 @@ function RouteComponent() {
   }, [pathname])
 
   return (
-    <div className="bg-background h-full min-h-dvh w-full">
+    <div className="h-full min-h-dvh w-full bg-background">
       <Header />
       {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
       <main className="!h-full">
-        <div className="border-neutral bg-background-secondary sticky top-0 border-b px-4">
+        <div className="sticky top-0 border-b border-neutral bg-background-secondary px-4">
           <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
             <Navbar.Item
               id="overview"
@@ -91,7 +91,7 @@ function RouteComponent() {
             </Navbar.Item>
           </Navbar.Root>
         </div>
-        <div className="m-auto mt-6 h-full w-full max-w-7xl">
+        <div className="m-auto mt-6 h-full w-full max-w-7xl px-4">
           <Outlet />
         </div>
       </main>
