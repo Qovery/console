@@ -3,7 +3,7 @@ import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typesc
 import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useClusterStatuses } from '@qovery/domains/clusters/feature'
+import { ClusterDeploymentProgressCard, useClusterStatuses } from '@qovery/domains/clusters/feature'
 import { useAlerts } from '@qovery/domains/observability/feature'
 import { FreeTrialBanner, InvoiceBanner, useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
@@ -122,6 +122,18 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
     return false
   }, [roles, organizationId, isQoveryAdminUser])
 
+  const deployingClusters = useMemo(() => {
+    if (!clusters || !clusterStatuses) return []
+    return clusters.filter((cluster) => {
+      const status = clusterStatuses.find(({ cluster_id }) => cluster_id === cluster.id)?.status
+      return displayClusterDeploymentBanner(status)
+    })
+  }, [clusters, clusterStatuses])
+
+  const showFloatingDeploymentCard = useMemo(() => {
+    return deployingClusters.length > 0
+  }, [deployingClusters])
+
   return (
     <>
       {displayQoveryAdminBanner && (
@@ -192,6 +204,9 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
             )}
           </div>
         </div>
+        {showFloatingDeploymentCard && (
+          <ClusterDeploymentProgressCard organizationId={organizationId} clusters={deployingClusters} />
+        )}
       </main>
     </>
   )
