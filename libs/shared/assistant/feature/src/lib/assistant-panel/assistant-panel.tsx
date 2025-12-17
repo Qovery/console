@@ -1,5 +1,4 @@
-import { useDeferredValue, useEffect } from 'react'
-import { Hits, SearchBox, useInstantSearch } from 'react-instantsearch'
+import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { ExternalLink, Icon, InputSearch } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
@@ -8,8 +7,9 @@ import { twMerge } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { AssistantIconSwitcher } from '../assistant-icon-switcher/assistant-icon-switcher'
 import { DotStatus } from '../dot-status/dot-status'
-import { Hit } from '../hit/hit'
+import { MintlifyHit } from '../mintlify-hit/mintlify-hit'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
+import { useMintlifySearch } from '../hooks/use-mintlify-search/use-mintlify-search'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
 
 export interface AssistantPanelProps {
@@ -20,9 +20,9 @@ export interface AssistantPanelProps {
 export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps) {
   const { data } = useQoveryStatus()
   const { showChat } = useSupportChat()
-  const { setIndexUiState, indexUiState } = useInstantSearch()
   const docLinks = useContextualDocLinks()
-  const valueDoc = useDeferredValue(indexUiState.query ?? '')
+  const { query, results, isLoading, search } = useMintlifySearch()
+  const [searchValue, setSearchValue] = useState('')
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
@@ -35,7 +35,15 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
 
     document.addEventListener('keydown', down)
     return () => document.removeEventListener('keydown', down)
-  }, [])
+  }, [onClose])
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      search(searchValue)
+    }, 300)
+
+    return () => clearTimeout(timeoutId)
+  }, [searchValue, search])
 
   return (
     <div
@@ -71,23 +79,21 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
           </div>
         )}
         <div className="flex min-h-0 grow flex-col p-5">
-          <SearchBox className="hidden" />
           <InputSearch
             className="mb-5"
             placeholder="Search documentation..."
             onChange={(value: string) => {
-              setIndexUiState((prevIndexUiState) => ({
-                ...prevIndexUiState,
-                query: value,
-              }))
+              setSearchValue(value)
             }}
           />
-          {valueDoc.length > 0 && (
-            <Hits
-              classNames={{ list: 'space-y-5' }}
-              className="flex min-h-0 shrink-0 grow basis-0 overflow-y-auto"
-              hitComponent={Hit}
-            />
+          {query.length > 0 && (
+            <div className="flex min-h-0 shrink-0 grow basis-0 flex-col space-y-5 overflow-y-auto">
+              {isLoading && <div className="text-sm text-neutral-400">Searching...</div>}
+              {!isLoading && results.length === 0 && (
+                <div className="text-sm text-neutral-400">No results found</div>
+              )}
+              {!isLoading && results.map((result, index) => <MintlifyHit key={index} result={result} />)}
+            </div>
           )}
         </div>
         <button
