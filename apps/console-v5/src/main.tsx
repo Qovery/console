@@ -20,9 +20,6 @@ import { Auth0Wrapper, useAuth0Context } from './auth/auth0'
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 
-// Create a new router instance
-const router = createRouter({ routeTree })
-
 type ToastArgs = {
   status?: ToastEnum
   title: string
@@ -49,13 +46,6 @@ interface _MutationMeta {
       ) => ToastArgs)
     | ToastArgs
   notifyOnError?: boolean | { title: string; description?: string }
-}
-
-// Register the router instance for type safety
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router
-  }
 }
 
 declare module '@tanstack/react-query' {
@@ -135,6 +125,9 @@ const queryClient = new QueryClient({
 
 function InnerApp() {
   const auth = useAuth0Context()
+
+  // Create a new router instance
+  const router = createRouter({ routeTree, context: { auth, queryClient } })
 
   if (auth.isLoading) {
     return (

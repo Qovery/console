@@ -1,5 +1,12 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { type QueryClient } from '@tanstack/react-query'
+import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { type Auth0ContextType } from '../auth/auth0'
+
+interface RouterContext {
+  auth: Auth0ContextType
+  queryClient: QueryClient
+}
 
 const RootLayout = () => {
   return (
@@ -10,4 +17,4 @@ const RootLayout = () => {
   )
 }
 
-export const Route = createRootRoute({ component: RootLayout })
+export const Route = createRootRouteWithContext<RouterContext>()({ component: RootLayout })
