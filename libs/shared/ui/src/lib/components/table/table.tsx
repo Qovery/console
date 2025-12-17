@@ -1,11 +1,13 @@
 import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
+import { type HierarchicalFilterState } from '../../utils/target-type-filter-utils'
 import { TableHeadFilter } from './table-head-filter/table-head-filter'
 import TableHeadSort from './table-head-sort/table-head-sort'
 
 export interface TableFilterProps {
   key?: string
   value?: string
+  hierarchical?: HierarchicalFilterState // For hierarchical filters (e.g., target_type)
 }
 
 export interface TableProps<T> {
@@ -19,6 +21,9 @@ export interface TableProps<T> {
   filter?: TableFilterProps[]
   setDataSort?: Dispatch<SetStateAction<T[]>>
   defaultSortingKey?: keyof T
+  // For hierarchical filtering
+  organizationId?: string
+  queryParams?: any
 }
 
 export interface TableHeadProps<T> {
@@ -56,6 +61,8 @@ export function Table<T>({
   setFilter,
   setDataSort,
   defaultSortingKey,
+  organizationId,
+  queryParams,
 }: TableProps<T>) {
   const [isSorted, setIsSorted] = useState(false)
 
@@ -95,6 +102,8 @@ export function Table<T>({
                   filter={filter}
                   setFilter={setFilter}
                   classNameTitle={classNameTitle}
+                  organizationId={organizationId}
+                  queryParams={queryParams}
                 />
               )}
               {sort && data && (

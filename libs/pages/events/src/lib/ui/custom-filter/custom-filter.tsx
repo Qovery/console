@@ -1,7 +1,7 @@
 import { subDays } from 'date-fns'
 import { type Organization } from 'qovery-typescript-axios'
 import { useSearchParams } from 'react-router-dom'
-import { Button, DatePicker, Icon, MultipleSelector, type Option } from '@qovery/shared/ui'
+import { Button, DatePicker, Icon } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { type SelectedTimestamps } from '../../feature/custom-filter-feature/custom-filter-feature'
 
@@ -13,9 +13,6 @@ export interface CustomFilterProps {
   clearFilter: () => void
   timestamps: SelectedTimestamps
   organization?: Organization
-  selectedOptions: Option[]
-  options: Option[]
-  handleChange: (options: Option[]) => void
 }
 
 function getDefaultDates(timestamps: SelectedTimestamps): [Date, Date] | undefined {
@@ -33,9 +30,6 @@ export function CustomFilter({
   timestamps,
   setIsOpenTimestamp,
   organization,
-  selectedOptions,
-  options,
-  handleChange,
 }: CustomFilterProps) {
   const [searchParams] = useSearchParams()
 
@@ -106,23 +100,12 @@ export function CustomFilter({
           )}
         </DatePicker>
       </div>
-      <div className="relative flex w-full items-center gap-1 text-ssm font-medium text-neutral-350">
-        <div className="min-w-0 flex-1">
-          <MultipleSelector
-            placeholder="Search in audit logs"
-            value={selectedOptions}
-            options={options}
-            onChange={handleChange}
-            freeTextInput={false}
-          />
-        </div>
-        {searchParams.toString()?.length > 0 && (
-          <Button className="ml-1 gap-2" size="md" color="neutral" variant="surface" onClick={clearFilter}>
-            Clear all
-            <Icon iconName="xmark" iconStyle="regular" />
-          </Button>
-        )}
-      </div>
+      {searchParams.toString()?.length > 0 && (
+        <Button className="ml-1 gap-2" size="md" color="neutral" variant="surface" onClick={clearFilter}>
+          Clear all
+          <Icon iconName="xmark" iconStyle="regular" />
+        </Button>
+      )}
     </>
   )
 }

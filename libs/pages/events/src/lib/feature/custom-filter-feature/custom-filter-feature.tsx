@@ -1,132 +1,12 @@
 import { subDays } from 'date-fns'
-import { type Organization, OrganizationEventApi, OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { type Organization } from 'qovery-typescript-axios'
+import { memo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { type DecodedValueMap, useQueryParams } from 'use-query-params'
 import { useOrganization } from '@qovery/domains/organizations/feature'
-import type { Option } from '@qovery/shared/ui'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import CustomFilter from '../../ui/custom-filter/custom-filter'
-import {
-  buildSearchBarOptions,
-  fetchTargetsAsync,
-  getCachedOptionOrFetchEntity,
-  getNonDynamicOption,
-  makeConsistentSelectedOptions,
-} from '../../utils/multiple-selector-options-utils'
 import { queryParamsValues } from '../page-general-feature/page-general-feature'
-
-const VALID_FILTER_KEYS = ['targetType', 'targetId', 'projectId', 'environmentId', 'subTargetType']
-
-// Simple async function to build selected options with entity names when needed
-async function buildAuditLogsSelectedOptions(
-  queryParams: DecodedValueMap<typeof queryParamsValues>,
-  organizationId: string
-): Promise<Option[]> {
-  const options: Option[] = []
-
-  // Handle target type (APPLICATION, DATABASE, etc.)
-  if (queryParams.targetType) {
-    const option = getNonDynamicOption('targetType', queryParams.targetType)
-    options.push(option)
-
-    if (queryParams.subTargetType) {
-      const option = getNonDynamicOption('subTargetType', queryParams.subTargetType)
-      options.push(option)
-    }
-
-    // Handle project ID - fetch from global cache or API
-    if (queryParams.projectId) {
-      const option = await getCachedOptionOrFetchEntity(
-        organizationId,
-        queryParams.targetType,
-        queryParams.projectId,
-        'projectId',
-        queryParams
-      )
-      if (option) {
-        options.push(option)
-      } else {
-        // Fallback to ID if fetch fails, should not happen
-        options.push({
-          value: `projectId:${queryParams.projectId}`,
-          label: `Project: ${queryParams.projectId}`,
-        })
-      }
-    }
-
-    // Handle environment ID - fetch from global cache or API
-    if (queryParams.environmentId) {
-      const option = await getCachedOptionOrFetchEntity(
-        organizationId,
-        OrganizationEventTargetType.ENVIRONMENT,
-        queryParams.environmentId,
-        'environmentId',
-        queryParams
-      )
-      if (option) {
-        options.push(option)
-      } else {
-        // Fallback to ID if fetch fails
-        options.push({
-          value: `environmentId:${queryParams.environmentId}`,
-          label: queryParams.environmentId,
-        })
-      }
-    }
-
-    // Handle target ID (service/app ID) - fetch from global cache or API
-    if (queryParams.targetId && queryParams.targetType) {
-      const option = await getCachedOptionOrFetchEntity(
-        organizationId,
-        queryParams.targetType as OrganizationEventTargetType,
-        queryParams.targetId,
-        'targetId',
-        queryParams
-      )
-      if (option) {
-        options.push(option)
-      } else {
-        // Fallback to ID if fetch fails
-        options.push({
-          value: `targetId:${queryParams.targetId}`,
-          label: queryParams.targetId,
-        })
-      }
-    }
-  }
-
-  return options
-}
-
-function buildQueryParams(options: Option[]) {
-  const queryParams: Omit<
-    DecodedValueMap<typeof queryParamsValues>,
-    'fromTimestamp' | 'toTimestamp' | 'continueToken' | 'stepBackToken' | 'pageSize' | 'eventType'
-  > = {
-    targetType: undefined,
-    targetId: undefined,
-    subTargetType: undefined,
-    projectId: undefined,
-    environmentId: undefined,
-    triggeredBy: undefined,
-    origin: undefined,
-  }
-
-  options.forEach((option) => {
-    const splitOption = option.value.split(':')
-    const filterKey = splitOption[0]
-    const filterValue = splitOption[1]
-    const isValidFilter = VALID_FILTER_KEYS.includes(filterKey)
-
-    if (isValidFilter && filterValue) {
-      const typedQueryParams = queryParams as Record<string, string>
-      typedQueryParams[filterKey] = filterValue
-    }
-  })
-
-  return queryParams
-}
 
 export interface SelectedTimestamps {
   automaticallySelected: boolean
@@ -188,11 +68,6 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
 
   const selectedTimestamps = getDefaultTimestamps(queryParams, organization)
 
-  // Sync the input value with query params when they change (async with global cache)
-  useEffect(() => {
-    buildAuditLogsSelectedOptions(queryParams, organizationId).then(setSelectedOptions)
-  }, [queryParams, organizationId])
-
   const onChangeTimestamp = (startDate: Date, endDate: Date) => {
     setQueryParams({
       continueToken: undefined,
@@ -211,25 +86,6 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
     setIsOpenTimestamp(false)
   }
 
-  // Options for the multiple-selector component
-  const [selectedOptions, setSelectedOptions] = useState<Option[]>([])
-
-  // The options are computed according to the user selection
-  const computedOptions = useMemo(() => {
-    return buildSearchBarOptions(queryParams, selectedOptions, organizationId)
-  }, [selectedOptions, queryParams, organizationId])
-
-  // Handle change for multiple-selector component
-  const handleChange = useCallback(
-    (newSelectedOptions: Option[]) => {
-      const consistentOptions = makeConsistentSelectedOptions(newSelectedOptions)
-      setSelectedOptions(consistentOptions)
-      const query = buildQueryParams(consistentOptions)
-      setQueryParams(query)
-    },
-    [setQueryParams]
-  )
-
   return (
     <CustomFilter
       onChangeTimestamp={onChangeTimestamp}
@@ -242,9 +98,6 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
         onChangeClearTimestamp()
       }}
       organization={organization}
-      selectedOptions={selectedOptions}
-      options={computedOptions}
-      handleChange={handleChange}
     />
   )
 }
