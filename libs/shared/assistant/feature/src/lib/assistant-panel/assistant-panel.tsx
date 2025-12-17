@@ -21,7 +21,7 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
   const { data } = useQoveryStatus()
   const { showChat } = useSupportChat()
   const docLinks = useContextualDocLinks()
-  const { query, results, isLoading, search } = useMintlifySearch()
+  const { query, results, isLoading, error, search } = useMintlifySearch()
   const [searchValue, setSearchValue] = useState('')
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
@@ -89,8 +89,11 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
           {query.length > 0 && (
             <div className="flex min-h-0 shrink-0 grow basis-0 flex-col space-y-5 overflow-y-auto">
               {isLoading && <div className="text-sm text-neutral-400">Searching...</div>}
-              {!isLoading && results.length === 0 && <div className="text-sm text-neutral-400">No results found</div>}
-              {!isLoading && results.map((result, index) => <MintlifyHit key={index} result={result} />)}
+              {!isLoading && error && <div className="text-sm text-red-500">Error: {error}</div>}
+              {!isLoading && !error && results.length === 0 && (
+                <div className="text-sm text-neutral-400">No results found</div>
+              )}
+              {!isLoading && !error && results.map((result, index) => <MintlifyHit key={index} result={result} />)}
             </div>
           )}
         </div>

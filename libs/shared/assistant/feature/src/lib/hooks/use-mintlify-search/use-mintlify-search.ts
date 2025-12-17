@@ -38,6 +38,10 @@ export function useMintlifySearch() {
     }
 
     if (!MINTLIFY_DOMAIN || !MINTLIFY_API_KEY) {
+      console.error('Mintlify configuration missing:', {
+        domain: MINTLIFY_DOMAIN ? 'present' : 'missing',
+        apiKey: MINTLIFY_API_KEY ? 'present' : 'missing',
+      })
       setState({
         query,
         results: [],
@@ -46,6 +50,8 @@ export function useMintlifySearch() {
       })
       return
     }
+
+    console.log('Starting Mintlify search:', { query, domain: MINTLIFY_DOMAIN })
 
     setState((prev) => ({ ...prev, query, isLoading: true, error: null }))
 
@@ -68,6 +74,8 @@ export function useMintlifySearch() {
 
       const results: MintlifySearchResult[] = await response.json()
 
+      console.log('Mintlify search success:', { resultsCount: results.length })
+
       setState({
         query,
         results,
@@ -75,6 +83,7 @@ export function useMintlifySearch() {
         error: null,
       })
     } catch (error) {
+      console.error('Mintlify search failed:', error)
       setState({
         query,
         results: [],
