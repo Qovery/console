@@ -17,6 +17,7 @@ export function Breadcrumbs() {
     id: organization.id,
     label: organization.name,
     path: buildLocation({ to: '/organization/$organizationId', params: { organizationId: organization.id } }).href,
+    logo_url: organization.logo_url ?? undefined,
   }))
 
   const currentOrg = useMemo(
@@ -33,7 +34,13 @@ export function Breadcrumbs() {
       item: {
         ...currentOrg,
         prefix: (
-          <Avatar fallback={currentOrg.label.charAt(0).toUpperCase()} size="sm" border="solid" className="mr-0.5" />
+          <Avatar
+            src={currentOrg.logo_url}
+            fallback={currentOrg.label.charAt(0).toUpperCase()}
+            size="sm"
+            border="solid"
+            className="mr-0.5"
+          />
         ),
       },
       items: orgItems,
