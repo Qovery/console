@@ -3,7 +3,7 @@ import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typesc
 import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useClusterStatuses } from '@qovery/domains/clusters/feature'
+import { ClusterDeploymentProgressCard, useClusterStatuses } from '@qovery/domains/clusters/feature'
 import { useAlerts } from '@qovery/domains/observability/feature'
 import { FreeTrialBanner, InvoiceBanner, useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
@@ -65,12 +65,6 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
 
   // Clusters need to be sorted to find the first created cluster
   clusters?.sort(({ created_at: a }, { created_at: b }) => new Date(a).getTime() - new Date(b).getTime())
-  const firstCluster = clusters?.[0]
-  const firstClusterStatus = firstCluster && clusterStatuses?.find(({ cluster_id }) => firstCluster.id === cluster_id)
-  const clusterIsDeployed = firstClusterStatus?.is_deployed
-
-  const clusterBanner =
-    !matchLogInfraRoute && clusters && displayClusterDeploymentBanner(firstClusterStatus?.status) && !clusterIsDeployed
 
   const invalidCluster = clusters?.find(
     ({ id }) =>
@@ -122,6 +116,18 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
     return false
   }, [roles, organizationId, isQoveryAdminUser])
 
+  const deployingClusters = useMemo(() => {
+    if (!clusters || !clusterStatuses) return []
+    return clusters.filter((cluster) => {
+      const status = clusterStatuses.find(({ cluster_id }) => cluster_id === cluster.id)?.status
+      return displayClusterDeploymentBanner(status)
+    })
+  }, [clusters, clusterStatuses])
+
+  const showFloatingDeploymentCard = useMemo(() => {
+    return deployingClusters.length > 0
+  }, [deployingClusters])
+
   return (
     <>
       {displayQoveryAdminBanner && (
@@ -146,7 +152,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
             <div>
               <div
                 className={`relative flex ${
-                  clusterCredentialError || clusterBanner ? 'min-h-page-container-wbanner' : 'min-h-page-container'
+                  clusterCredentialError ? 'min-h-page-container-wbanner' : 'min-h-page-container'
                 }`}
               >
                 <div className="flex grow flex-col px-2 pt-2 dark:px-0 dark:pt-0">{children}</div>
@@ -170,16 +176,6 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 invalid.
               </Banner>
             )}
-            {clusterBanner && (
-              <Banner
-                color="brand"
-                onClickButton={() => navigate(INFRA_LOGS_URL(organizationId, firstCluster?.id))}
-                buttonLabel="See logs"
-              >
-                Installation of the cluster <span className="mx-1 block font-bold">{firstCluster?.name}</span> is
-                ongoing, you can follow it from logs
-              </Banner>
-            )}
             <FreeTrialBanner />
             <InvoiceBanner />
             {topBar && (
@@ -192,6 +188,9 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
             )}
           </div>
         </div>
+        {showFloatingDeploymentCard && (
+          <ClusterDeploymentProgressCard organizationId={organizationId} clusters={deployingClusters} />
+        )}
       </main>
     </>
   )
