@@ -1,5 +1,5 @@
 import { type Link as LinkProps } from 'qovery-typescript-axios'
-import { useMemo, type ReactNode } from 'react'
+import { type ReactNode, useMemo } from 'react'
 import { APPLICATION_SETTINGS_DOMAIN_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import {
   CopyToClipboardButtonIcon,
@@ -36,11 +36,20 @@ export function ServiceLinksPopover({
   const { data: links = [] } = useLinks({ serviceId, serviceType })
 
   // Remove default Qovery links
-  const filteredLinks = useMemo(() => links.filter((link: LinkProps) => !(link.is_default && link.is_qovery_domain)), [links])
+  const filteredLinks = useMemo(
+    () => links.filter((link: LinkProps) => !(link.is_default && link.is_qovery_domain)),
+    [links]
+  )
 
   // Separate links into nginx and gateway-api groups
-  const nginxLinks = useMemo(() => filteredLinks.filter((link: LinkProps) => !link.url?.includes('gateway-api')), [filteredLinks])
-  const gatewayApiLinks = useMemo(() => filteredLinks.filter((link: LinkProps) => link.url?.includes('gateway-api')), [filteredLinks])
+  const nginxLinks = useMemo(
+    () => filteredLinks.filter((link: LinkProps) => !link.url?.includes('gateway-api')),
+    [filteredLinks]
+  )
+  const gatewayApiLinks = useMemo(
+    () => filteredLinks.filter((link: LinkProps) => link.url?.includes('gateway-api')),
+    [filteredLinks]
+  )
 
   const pathDomainsSetting =
     APPLICATION_URL(organizationId, projectId, environmentId, serviceId) +
