@@ -1,0 +1,108 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`DockerfileFragmentInlineSetting should match snapshot with content 1`] = `
+<body
+  style=""
+>
+  <script
+    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs/loader.js"
+  />
+  <div>
+    <div
+      class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
+      data-testid="block-content"
+    >
+      <div
+        class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
+      >
+        <h2
+          class="text-ssm font-medium text-neutral-400"
+        >
+          Commands
+        </h2>
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-xs h-6 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none aspect-square justify-center p-0 hover:text-neutral-400"
+          type="button"
+        >
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-pen "
+          />
+        </button>
+      </div>
+      <div
+        class="p-0"
+      >
+        <section
+          style="display: flex; position: relative; text-align: initial; width: 100%; height: 200px;"
+        >
+          <div
+            style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
+          >
+            <div
+              class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+              data-testid="spinner"
+            />
+          </div>
+          <div
+            style="width: 100%; display: none;"
+          />
+        </section>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`DockerfileFragmentInlineSetting should match snapshot without content 1`] = `
+<body
+  style=""
+>
+  <script
+    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs/loader.js"
+  />
+  <div>
+    <div
+      class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
+      data-testid="block-content"
+    >
+      <div
+        class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
+      >
+        <h2
+          class="text-ssm font-medium text-neutral-400"
+        >
+          Commands
+        </h2>
+      </div>
+      <div
+        class="p-0"
+      >
+        <div
+          class="my-4 px-10 py-5 text-center"
+        >
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-wave-pulse text-neutral-350"
+          />
+          <p
+            class="mb-3 mt-1 text-xs font-medium text-neutral-350"
+          >
+            No commands defined.
+          </p>
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
+            type="button"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-plus mr-2"
+            />
+            Add commands
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
