@@ -11,5 +11,6 @@ const Template: StoryFn<typeof EmptyState> = (args) => <EmptyState {...args} />
 export const Primary = Template.bind({})
 Primary.args = {
   title: 'No Storage are set',
+  icon: 'folder-open',
   description: 'Need help? You may find these links useful',
 }

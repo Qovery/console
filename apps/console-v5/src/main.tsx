@@ -11,7 +11,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
-import { LoaderSpinner, ToastEnum, toast, toastError } from '@qovery/shared/ui'
+import { LoaderSpinner, ModalProvider, ToastEnum, toast, toastError } from '@qovery/shared/ui'
 // TODO: Improve this import to use the shared/ui package
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import '../../../libs/shared/ui/src/lib/styles/main.scss'
@@ -162,7 +162,9 @@ root.render(
   <StrictMode>
     <FlatProviders providers={[makeProvider(QueryClientProvider, { client: queryClient })]}>
       <ThemeProvider>
-        <App />
+        <ModalProvider>
+          <App />
+        </ModalProvider>
       </ThemeProvider>
     </FlatProviders>
   </StrictMode>

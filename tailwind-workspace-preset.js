@@ -341,27 +341,27 @@ module.exports = {
         },
         brand: {
           strong: 'var(--brand-9)',
-          component: 'var(--brand-a7)',
+          component: 'var(--brand-7)',
           subtle: 'var(--brand-6)',
         },
         info: {
           strong: 'var(--info-9)',
-          component: 'var(--info-a7)',
+          component: 'var(--info-7)',
           subtle: 'var(--info-6)',
         },
         positive: {
           strong: 'var(--positive-9)',
-          component: 'var(--positive-a7)',
+          component: 'var(--positive-7)',
           subtle: 'var(--positive-6)',
         },
         negative: {
           strong: 'var(--negative-9)',
-          component: 'var(--negative-a7)',
+          component: 'var(--negative-7)',
           subtle: 'var(--negative-6)',
         },
         warning: {
           strong: 'var(--warning-9)',
-          component: 'var(--warning-a7)',
+          component: 'var(--warning-7)',
           subtle: 'var(--warning-6)',
         },
         accent1: {
