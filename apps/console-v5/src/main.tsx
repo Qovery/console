@@ -1,4 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
 import {
   type Mutation,
   MutationCache,
@@ -155,9 +156,11 @@ root.render(
   <StrictMode>
     <FlatProviders providers={[makeProvider(QueryClientProvider, { client: queryClient })]}>
       <ThemeProvider>
-        <ModalProvider>
-          <App />
-        </ModalProvider>
+        <TooltipProvider>
+          <ModalProvider>
+            <App />
+          </ModalProvider>
+        </TooltipProvider>
       </ThemeProvider>
     </FlatProviders>
   </StrictMode>
