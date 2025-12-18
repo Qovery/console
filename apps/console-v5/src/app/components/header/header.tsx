@@ -25,7 +25,7 @@ export function Header() {
   }
 
   return (
-    <header className="bg-background-secondary w-full py-4 pl-3 pr-4">
+    <header className="w-full bg-background-secondary py-4 pl-3 pr-4">
       <div className="flex items-center gap-4">
         <LogoIcon />
         <Separator />
