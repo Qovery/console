@@ -25,12 +25,26 @@ export function StreamingMessage({
   const renderInput = useMemo(() => {
     const input = displayedStreamingMessage
 
+    const incompleteCodeBlockMatch = input.match(/```([^\n`]*)$/)
+
+    if (incompleteCodeBlockMatch) {
+      const language = incompleteCodeBlockMatch[1]
+
+      if ('mermaid'.startsWith(language) && language.length > 0) {
+        const incompleteBlockIndex = input.lastIndexOf('```')
+        return input.slice(0, incompleteBlockIndex) + 'Generating charts…'
+      }
+
+      const incompleteBlockIndex = input.lastIndexOf('```')
+      return input.slice(0, incompleteBlockIndex)
+    }
+
     const hasMermaidBlock = input.includes('```mermaid')
 
     if (hasMermaidBlock) {
-      const completeMermaidBlocks = (input.match(/```merm[\s\S]*?```/g) || []).length
+      const completeMermaidBlocks = (input.match(/```mermaid[\s\S]*?```/g) || []).length
 
-      const totalMermaidStarts = (input.match(/```merm/g) || []).length
+      const totalMermaidStarts = (input.match(/```mermaid/g) || []).length
 
       if (totalMermaidStarts > completeMermaidBlocks) {
         const currentMermaidIndex = input.lastIndexOf('```mermaid')
