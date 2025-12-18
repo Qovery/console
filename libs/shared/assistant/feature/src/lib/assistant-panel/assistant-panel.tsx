@@ -26,6 +26,7 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
   const { data: results = [], isLoading, error } = useSearchDocumentation(debouncedSearchValue)
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
+  const errorMessage = error instanceof Error ? error.message : error ? 'Search failed' : null
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
@@ -82,13 +83,11 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
           {debouncedSearchValue.length > 0 && (
             <div className="flex min-h-0 shrink-0 grow basis-0 flex-col space-y-5 overflow-y-auto">
               {isLoading && <div className="text-sm text-neutral-400">Searching...</div>}
-              {!isLoading && error && (
-                <div className="text-sm text-red-500">Error: {error instanceof Error ? error.message : 'Search failed'}</div>
-              )}
-              {!isLoading && !error && results.length === 0 && (
+              {!isLoading && errorMessage && <div className="text-sm text-red-500">Error: {errorMessage}</div>}
+              {!isLoading && !errorMessage && results.length === 0 && (
                 <div className="text-sm text-neutral-400">No results found</div>
               )}
-              {!isLoading && !error && results.map((result, index) => <MintlifyHit key={index} result={result} />)}
+              {!isLoading && !errorMessage && results.map((result, index) => <MintlifyHit key={index} result={result} />)}
             </div>
           )}
         </div>
