@@ -7,7 +7,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
       class="flex flex-col"
     >
       <h1
-        class="text-neutral-400 text-xl font-bold mb-2"
+        class="text-neutral text-2xl font-bold mb-2"
       >
         Values override as file
       </h1>
@@ -139,7 +139,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
           class="flex flex-col"
         >
           <h2
-            class="text-neutral-400 text-base font-bold mb-2"
+            class="text-neutral text-base font-bold mb-2"
           >
             Override from repository
           </h2>
@@ -169,7 +169,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
       class="flex flex-col"
     >
       <h1
-        class="text-neutral-400 text-xl font-bold mb-2"
+        class="text-neutral text-2xl font-bold mb-2"
       >
         Values override as file
       </h1>
@@ -310,7 +310,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
       class="flex flex-col"
     >
       <h1
-        class="text-neutral-400 text-xl font-bold mb-2"
+        class="text-neutral text-2xl font-bold mb-2"
       >
         Values override as file
       </h1>
@@ -442,7 +442,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
           class="flex flex-col"
         >
           <h2
-            class="text-neutral-400 text-base font-bold mb-2"
+            class="text-neutral text-base font-bold mb-2"
           >
             Override with raw Yaml
           </h2>
@@ -488,7 +488,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-plus mr-2"
+                      class="fa-regular fa-plus mr-2"
                     />
                     Create override
                   </button>
