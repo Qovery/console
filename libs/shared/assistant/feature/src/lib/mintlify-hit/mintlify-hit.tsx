@@ -49,7 +49,7 @@ export function MintlifyHit({ result }: MintlifyHitProps) {
         <span className="flex items-center gap-2">
           <span className="text-sm font-medium text-sky-500">{getTitle()}</span>
           {isApiResult && (
-            <span className="rounded bg-purple-100 px-1.5 py-0.5 text-xs font-medium !text-purple-600 dark:bg-purple-500/20 dark:!text-purple-300">
+            <span className="rounded bg-purple-100 px-1.5 py-0.5 text-xs font-medium text-purple-600 dark:bg-purple-500/20 dark:text-purple-300">
               API
             </span>
           )}
