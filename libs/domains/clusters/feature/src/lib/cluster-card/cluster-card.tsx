@@ -1,14 +1,22 @@
+import { Link, useRouter } from '@tanstack/react-router'
 import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
-import { Link } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
-import { CLUSTER_OVERVIEW_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
-import { AnimatedGradientText, Badge, Icon, Indicator, Link as LinkUI, Skeleton, Tooltip } from '@qovery/shared/ui'
+import {
+  AnimatedGradientText,
+  Badge,
+  Icon,
+  Indicator,
+  Link as LinkUI,
+  LogoIcon,
+  Skeleton,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { ClusterActionToolbar } from '../cluster-action-toolbar/cluster-action-toolbar'
+// import { ClusterActionToolbar } from '../cluster-action-toolbar/cluster-action-toolbar'
 import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
-import { ClusterRunningStatusBadge } from '../cluster-running-status-badge/cluster-running-status-badge'
+import { ClusterRunningStatusIndicator } from '../cluster-running-status-indicator/cluster-running-status-indicator'
 import { ClusterType } from '../cluster-type/cluster-type'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 import { hasGpuInstance } from '../utils/has-gpu-instance'
@@ -20,14 +28,15 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', 'DRY_RUN', (s) => (
       <LinkUI
-        to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
+        to="/"
+        // to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
         color="brand"
         underline
         size="sm"
         className="group flex truncate"
         onClick={(e) => e.stopPropagation()}
       >
-        <AnimatedGradientText shimmerWidth={80} className="group-hover:text-brand-500">
+        <AnimatedGradientText shimmerWidth={80} className="group-hover:text-brand-11">
           <span className="flex items-center gap-0.5">
             {s === 'DRY_RUN' ? 'Evaluating changes (dry-run) ' : upperCaseFirstLetter(s) + '...'}{' '}
             <Icon iconName="arrow-up-right" className="relative top-[1px]" />
@@ -37,7 +46,8 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .with('BUILD_ERROR', 'DELETE_ERROR', 'DEPLOYMENT_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
       <LinkUI
-        to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
+        to="/"
+        // to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
         color="red"
         underline
         size="sm"
@@ -50,7 +60,8 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .with('INVALID_CREDENTIALS', () => (
       <LinkUI
-        to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
+        to="/"
+        // to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
         color="red"
         underline
         size="sm"
@@ -67,7 +78,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
             content={`Last deployment: ${dateFullFormat(clusterDeploymentStatus.last_deployment_date)}`}
             disabled={!clusterDeploymentStatus.last_deployment_date}
           >
-            <span className="max-w-max text-sm text-neutral-350">
+            <span className="max-w-max text-sm text-neutral-subtle">
               {timeAgo(new Date(clusterDeploymentStatus.last_deployment_date))}
             </span>
           </Tooltip>
@@ -82,11 +93,17 @@ export interface ClusterCardProps {
 
 export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardProps) {
   useClusterRunningStatusSocket({ organizationId: cluster.organization.id, clusterId: cluster.id })
+  const { buildLocation } = useRouter()
 
   return (
     <Link
-      to={CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_OVERVIEW_URL}
-      className="duration-50 flex flex-col gap-5 rounded border border-neutral-250 p-5 outline outline-2 outline-transparent transition-all [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:border-brand-500 hover:-outline-offset-2 hover:outline-brand-500"
+      to={
+        buildLocation({
+          to: '/organization/$organizationId/cluster/$clusterId/overview',
+          params: { organizationId: cluster.organization.id, clusterId: cluster.id },
+        }).href
+      }
+      className="duration-50 flex flex-col gap-5 rounded border border-neutral bg-surface-neutral p-5 outline outline-2 outline-transparent transition-all [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:border-brand-11 hover:-outline-offset-2 hover:outline-brand-11"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -96,8 +113,8 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
             className="right-4 top-0 flex-shrink-0"
             content={
               cluster.cloud_provider !== 'ON_PREMISE' && (
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white p-0.5">
-                  <Icon className="h-5 w-5" name={IconEnum.QOVERY} />
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-neutral p-0.5">
+                  <LogoIcon width={20} height={20} />
                 </div>
               )
             }
@@ -106,7 +123,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
           </Indicator>
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <Tooltip content={cluster.id} side="bottom">
-              <span className="block truncate text-base font-semibold leading-snug text-neutral-400">
+              <span className="block max-w-max truncate text-base font-semibold leading-snug text-neutral">
                 {cluster.name}
               </span>
             </Tooltip>
@@ -119,7 +136,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
             () =>
               clusterDeploymentStatus?.is_deployed && (
                 <div className="mt-1.5 flex-shrink-0">
-                  <ClusterRunningStatusBadge
+                  <ClusterRunningStatusIndicator
                     cluster={cluster}
                     clusterDeploymentStatus={clusterDeploymentStatus?.status}
                   />
@@ -169,12 +186,12 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
           </>
         )}
       </div>
-      <hr />
+      <hr className="border-neutral" />
       <div className="flex items-center justify-between">
         <Skeleton className="min-w-max" height={36} width={146} show={!clusterDeploymentStatus}>
           {clusterDeploymentStatus && (
             <div onClick={(e) => e.preventDefault()}>
-              <ClusterActionToolbar cluster={cluster} clusterStatus={clusterDeploymentStatus} />
+              {/* <ClusterActionToolbar cluster={cluster} clusterStatus={clusterDeploymentStatus} /> */}
             </div>
           )}
         </Skeleton>
