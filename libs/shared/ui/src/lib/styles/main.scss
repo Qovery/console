@@ -131,11 +131,27 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizelegibility;
-  background: theme('colors.neutral.200');
   min-height: 100vh;
 
   main:not(.h-screen, .layout-onboarding) {
     height: calc(100vh - theme('spacing.16'));
+  }
+
+  button,
+  a {
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid theme('colors.brand.11');
+      outline-offset: 2px;
+    }
+  }
+
+  ::selection {
+    background: theme('colors.surface.neutral.componentHover');
+    color: theme('colors.surface.neutral.invert');
   }
 }
 
