@@ -86,9 +86,7 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
                   <LoaderSpinner className="w-5" />
                 </div>
               )}
-              {!isLoading && results.length === 0 && (
-                <div className="text-sm text-neutral-400">No results found</div>
-              )}
+              {!isLoading && results.length === 0 && <div className="text-sm text-neutral-400">No results found</div>}
               {!isLoading && results.map((result, index) => <MintlifyHit key={index} result={result} />)}
             </div>
           )}
