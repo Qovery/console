@@ -1,8 +1,8 @@
 import { ExternalLink, truncateText } from '@qovery/shared/ui'
-import type { MintlifySearchResult } from '../hooks/use-mintlify-search/use-mintlify-search'
+import type { SearchDocumentationResult } from '../hooks/use-mintlify-search/use-mintlify-search'
 
 export interface MintlifyHitProps {
-  result: MintlifySearchResult
+  result: SearchDocumentationResult
 }
 
 export function MintlifyHit({ result }: MintlifyHitProps) {

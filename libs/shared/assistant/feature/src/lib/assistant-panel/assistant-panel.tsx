@@ -8,7 +8,7 @@ import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { AssistantIconSwitcher } from '../assistant-icon-switcher/assistant-icon-switcher'
 import { DotStatus } from '../dot-status/dot-status'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
-import { useMintlifySearch } from '../hooks/use-mintlify-search/use-mintlify-search'
+import { useSearchDocumentation } from '../hooks/use-mintlify-search/use-mintlify-search'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
 import { MintlifyHit } from '../mintlify-hit/mintlify-hit'
 
@@ -21,9 +21,9 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
   const { data } = useQoveryStatus()
   const { showChat } = useSupportChat()
   const docLinks = useContextualDocLinks()
-  const { query, results, isLoading, error, search } = useMintlifySearch()
   const [searchValue, setSearchValue] = useState('')
   const debouncedSearchValue = useDebounce(searchValue, 300)
+  const { data: results = [], isLoading, error } = useSearchDocumentation(debouncedSearchValue)
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
@@ -37,10 +37,6 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
     document.addEventListener('keydown', down)
     return () => document.removeEventListener('keydown', down)
   }, [onClose])
-
-  useEffect(() => {
-    search(debouncedSearchValue)
-  }, [debouncedSearchValue, search])
 
   return (
     <div
@@ -83,10 +79,12 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
               setSearchValue(value)
             }}
           />
-          {query.length > 0 && (
+          {debouncedSearchValue.length > 0 && (
             <div className="flex min-h-0 shrink-0 grow basis-0 flex-col space-y-5 overflow-y-auto">
               {isLoading && <div className="text-sm text-neutral-400">Searching...</div>}
-              {!isLoading && error && <div className="text-sm text-red-500">Error: {error}</div>}
+              {!isLoading && error && (
+                <div className="text-sm text-red-500">Error: {error instanceof Error ? error.message : 'Search failed'}</div>
+              )}
               {!isLoading && !error && results.length === 0 && (
                 <div className="text-sm text-neutral-400">No results found</div>
               )}

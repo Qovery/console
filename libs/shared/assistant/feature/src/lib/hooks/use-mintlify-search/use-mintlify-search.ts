@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { MINTLIFY_API_KEY, MINTLIFY_DOMAIN } from '@qovery/shared/util-node-env'
 
-export interface MintlifySearchResult {
+export interface SearchDocumentationResult {
   content?: string
   path: string
   metadata?: {
@@ -16,78 +16,37 @@ export interface MintlifySearchResult {
   }
 }
 
-export interface SearchState {
-  query: string
-  results: MintlifySearchResult[]
-  isLoading: boolean
-  error: string | null
-}
+async function searchDocumentation(query: string): Promise<SearchDocumentationResult[]> {
+  if (!MINTLIFY_DOMAIN || !MINTLIFY_API_KEY) {
+    throw new Error('Mintlify configuration missing')
+  }
 
-export function useMintlifySearch() {
-  const [state, setState] = useState<SearchState>({
-    query: '',
-    results: [],
-    isLoading: false,
-    error: null,
+  const response = await fetch(`https://api.mintlify.com/discovery/v1/search/${MINTLIFY_DOMAIN}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${MINTLIFY_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query,
+      pageSize: 10,
+    }),
   })
 
-  const search = useCallback(async (query: string) => {
-    if (!query.trim()) {
-      setState({ query: '', results: [], isLoading: false, error: null })
-      return
-    }
-
-    if (!MINTLIFY_DOMAIN || !MINTLIFY_API_KEY) {
-      setState({
-        query,
-        results: [],
-        isLoading: false,
-        error: 'Mintlify configuration missing',
-      })
-      return
-    }
-
-    setState((prev) => ({ ...prev, query, isLoading: true, error: null }))
-
-    try {
-      const response = await fetch(`https://api.mintlify.com/discovery/v1/search/${MINTLIFY_DOMAIN}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${MINTLIFY_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query,
-          pageSize: 10,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`Search failed: ${response.statusText}`)
-      }
-
-      const results: MintlifySearchResult[] = await response.json()
-
-      setState({
-        query,
-        results,
-        isLoading: false,
-        error: null,
-      })
-    } catch (error) {
-      setState({
-        query,
-        results: [],
-        isLoading: false,
-        error: error instanceof Error ? error.message : 'Search failed',
-      })
-    }
-  }, [])
-
-  return {
-    ...state,
-    search,
+  if (!response.ok) {
+    throw new Error(`Search failed: ${response.statusText}`)
   }
+
+  return response.json()
 }
 
-export default useMintlifySearch
+export function useSearchDocumentation(query: string) {
+  return useQuery({
+    queryKey: ['search-documentation', query],
+    queryFn: () => searchDocumentation(query),
+    enabled: !!query.trim() && !!MINTLIFY_DOMAIN && !!MINTLIFY_API_KEY,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
+}
+
+export default useSearchDocumentation
