@@ -4,7 +4,7 @@ import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
 import { isGitTokenExpired } from '../hooks/use-git-tokens/use-git-tokens'
 
 export interface ExpiredTokenBadgeProps {
-  token: Pick<GitTokenResponse, 'expired_at'>
+  token: GitTokenResponse
 }
 
 export function ExpiredTokenBadge({ token }: ExpiredTokenBadgeProps) {

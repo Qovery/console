@@ -4,6 +4,7 @@ import {
   Button,
   Icon,
   LoaderSpinner,
+  Tooltip,
   Truncate,
   useModal,
   useModalConfirmation,

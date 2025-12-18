@@ -55,14 +55,14 @@ exports[`GitTokenList should match snapshot 1`] = `
                     class="inline-block"
                     title="Thu, 30 Nov 2023 10:48:26 GMT"
                   >
-                    Last updated
+                    Last updated 
                     1 month
                   </span>
                   <span
                     class="ml-3 inline-block"
                     title="Tue, 31 Oct 2023 10:48:26 GMT"
                   >
-                    Created since
+                    Created since 
                     Oct 31, 2023
                   </span>
                 </p>
@@ -147,14 +147,14 @@ exports[`GitTokenList should match snapshot 1`] = `
                     class="inline-block"
                     title="Thu, 30 Nov 2023 10:48:26 GMT"
                   >
-                    Last updated
+                    Last updated 
                     1 month
                   </span>
                   <span
                     class="ml-3 inline-block"
                     title="Tue, 31 Oct 2023 10:48:26 GMT"
                   >
-                    Created since
+                    Created since 
                     Oct 31, 2023
                   </span>
                 </p>
