@@ -74,7 +74,7 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
         <div className="flex min-h-0 grow flex-col p-5">
           <InputSearch
             className="mb-5"
-            placeholder="Search documentation..."
+            placeholder="Search documentation…"
             onChange={(value: string) => {
               setSearchValue(value)
             }}
