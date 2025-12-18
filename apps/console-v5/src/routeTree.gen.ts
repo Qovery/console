@@ -19,13 +19,6 @@ import { Route as AuthenticatedOrganizationRouteRouteImport } from './routes/_au
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginAuth0CallbackRouteImport } from './routes/login/auth0-callback'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
-import { Route as OrganizationOrgIdAlertsRouteImport } from './routes/organization/$orgId/alerts'
-import { Route as OrganizationOrgIdClustersRouteImport } from './routes/organization/$orgId/clusters'
-import { Route as OrganizationOrgIdIndexRouteImport } from './routes/organization/$orgId/index'
-import { Route as OrganizationOrgIdOverviewRouteImport } from './routes/organization/$orgId/overview'
-import { Route as OrganizationOrgIdSecurityRouteImport } from './routes/organization/$orgId/security'
-import { Route as OrganizationOrgIdSettingsRouteImport } from './routes/organization/$orgId/settings'
-import { Route as OrganizationIndexRouteImport } from './routes/organization/index'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -34,11 +27,6 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrganizationIndexRoute = OrganizationIndexRouteImport.update({
-  id: '/organization/',
-  path: '/organization/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginIndexRoute = LoginIndexRouteImport.update({
@@ -56,40 +44,10 @@ const AuthenticatedOrganizationRouteRoute = AuthenticatedOrganizationRouteRouteI
   path: '/organization',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const OrganizationOrgIdIndexRoute = OrganizationOrgIdIndexRouteImport.update({
-  id: '/organization/$orgId/',
-  path: '/organization/$orgId/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedOrganizationIndexRoute = AuthenticatedOrganizationIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedOrganizationRouteRoute,
-} as any)
-const OrganizationOrgIdSettingsRoute = OrganizationOrgIdSettingsRouteImport.update({
-  id: '/organization/$orgId/settings',
-  path: '/organization/$orgId/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrganizationOrgIdSecurityRoute = OrganizationOrgIdSecurityRouteImport.update({
-  id: '/organization/$orgId/security',
-  path: '/organization/$orgId/security',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrganizationOrgIdOverviewRoute = OrganizationOrgIdOverviewRouteImport.update({
-  id: '/organization/$orgId/overview',
-  path: '/organization/$orgId/overview',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrganizationOrgIdClustersRoute = OrganizationOrgIdClustersRouteImport.update({
-  id: '/organization/$orgId/clusters',
-  path: '/organization/$orgId/clusters',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrganizationOrgIdAlertsRoute = OrganizationOrgIdAlertsRouteImport.update({
-  id: '/organization/$orgId/alerts',
-  path: '/organization/$orgId/alerts',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedOrganizationOrganizationIdIndexRoute =
   AuthenticatedOrganizationOrganizationIdIndexRouteImport.update({
@@ -142,16 +100,10 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/organization': typeof OrganizationIndexRoute
+  '/organization': typeof AuthenticatedOrganizationRouteRouteWithChildren
   '/login/auth0-callback': typeof LoginAuth0CallbackRoute
   '/login': typeof LoginIndexRoute
-  '/organization/$orgId/alerts': typeof OrganizationOrgIdAlertsRoute
-  '/organization/$orgId/clusters': typeof OrganizationOrgIdClustersRoute
-  '/organization/$orgId/overview': typeof OrganizationOrgIdOverviewRoute
-  '/organization/$orgId/security': typeof OrganizationOrgIdSecurityRoute
-  '/organization/$orgId/settings': typeof OrganizationOrgIdSettingsRoute
   '/organization/': typeof AuthenticatedOrganizationIndexRoute
-  '/organization/$orgId': typeof OrganizationOrgIdIndexRoute
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
   '/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   '/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
@@ -166,12 +118,6 @@ export interface FileRoutesByTo {
   '/login/auth0-callback': typeof LoginAuth0CallbackRoute
   '/login': typeof LoginIndexRoute
   '/organization': typeof AuthenticatedOrganizationIndexRoute
-  '/organization/$orgId/alerts': typeof OrganizationOrgIdAlertsRoute
-  '/organization/$orgId/clusters': typeof OrganizationOrgIdClustersRoute
-  '/organization/$orgId/overview': typeof OrganizationOrgIdOverviewRoute
-  '/organization/$orgId/security': typeof OrganizationOrgIdSecurityRoute
-  '/organization/$orgId/settings': typeof OrganizationOrgIdSettingsRoute
-  '/organization/$orgId': typeof OrganizationOrgIdIndexRoute
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
   '/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   '/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
@@ -188,14 +134,7 @@ export interface FileRoutesById {
   '/_authenticated/organization': typeof AuthenticatedOrganizationRouteRouteWithChildren
   '/login/auth0-callback': typeof LoginAuth0CallbackRoute
   '/login/': typeof LoginIndexRoute
-  '/organization/': typeof OrganizationIndexRoute
-  '/organization/$orgId/alerts': typeof OrganizationOrgIdAlertsRoute
-  '/organization/$orgId/clusters': typeof OrganizationOrgIdClustersRoute
-  '/organization/$orgId/overview': typeof OrganizationOrgIdOverviewRoute
-  '/organization/$orgId/security': typeof OrganizationOrgIdSecurityRoute
-  '/organization/$orgId/settings': typeof OrganizationOrgIdSettingsRoute
   '/_authenticated/organization/': typeof AuthenticatedOrganizationIndexRoute
-  '/organization/$orgId/': typeof OrganizationOrgIdIndexRoute
   '/_authenticated/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
   '/_authenticated/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   '/_authenticated/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
@@ -212,13 +151,7 @@ export interface FileRouteTypes {
     | '/organization'
     | '/login/auth0-callback'
     | '/login'
-    | '/organization/$orgId/alerts'
-    | '/organization/$orgId/clusters'
-    | '/organization/$orgId/overview'
-    | '/organization/$orgId/security'
-    | '/organization/$orgId/settings'
     | '/organization/'
-    | '/organization/$orgId'
     | '/organization/$organizationId/alerts'
     | '/organization/$organizationId/clusters'
     | '/organization/$organizationId/overview'
@@ -233,12 +166,6 @@ export interface FileRouteTypes {
     | '/login/auth0-callback'
     | '/login'
     | '/organization'
-    | '/organization/$orgId/alerts'
-    | '/organization/$orgId/clusters'
-    | '/organization/$orgId/overview'
-    | '/organization/$orgId/security'
-    | '/organization/$orgId/settings'
-    | '/organization/$orgId'
     | '/organization/$organizationId/alerts'
     | '/organization/$organizationId/clusters'
     | '/organization/$organizationId/overview'
@@ -254,14 +181,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization'
     | '/login/auth0-callback'
     | '/login/'
-    | '/organization/'
-    | '/organization/$orgId/alerts'
-    | '/organization/$orgId/clusters'
-    | '/organization/$orgId/overview'
-    | '/organization/$orgId/security'
-    | '/organization/$orgId/settings'
     | '/_authenticated/organization/'
-    | '/organization/$orgId/'
     | '/_authenticated/organization/$organizationId/alerts'
     | '/_authenticated/organization/$organizationId/clusters'
     | '/_authenticated/organization/$organizationId/overview'
@@ -277,13 +197,6 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginAuth0CallbackRoute: typeof LoginAuth0CallbackRoute
   LoginIndexRoute: typeof LoginIndexRoute
-  OrganizationIndexRoute: typeof OrganizationIndexRoute
-  OrganizationOrgIdAlertsRoute: typeof OrganizationOrgIdAlertsRoute
-  OrganizationOrgIdClustersRoute: typeof OrganizationOrgIdClustersRoute
-  OrganizationOrgIdOverviewRoute: typeof OrganizationOrgIdOverviewRoute
-  OrganizationOrgIdSecurityRoute: typeof OrganizationOrgIdSecurityRoute
-  OrganizationOrgIdSettingsRoute: typeof OrganizationOrgIdSettingsRoute
-  OrganizationOrgIdIndexRoute: typeof OrganizationOrgIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -300,13 +213,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/organization/': {
-      id: '/organization/'
-      path: '/organization'
-      fullPath: '/organization'
-      preLoaderRoute: typeof OrganizationIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login/': {
@@ -330,54 +236,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationRouteRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/organization/$orgId/': {
-      id: '/organization/$orgId/'
-      path: '/organization/$orgId'
-      fullPath: '/organization/$orgId'
-      preLoaderRoute: typeof OrganizationOrgIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/organization/': {
       id: '/_authenticated/organization/'
       path: '/'
       fullPath: '/organization/'
       preLoaderRoute: typeof AuthenticatedOrganizationIndexRouteImport
       parentRoute: typeof AuthenticatedOrganizationRouteRoute
-    }
-    '/organization/$orgId/settings': {
-      id: '/organization/$orgId/settings'
-      path: '/organization/$orgId/settings'
-      fullPath: '/organization/$orgId/settings'
-      preLoaderRoute: typeof OrganizationOrgIdSettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/organization/$orgId/security': {
-      id: '/organization/$orgId/security'
-      path: '/organization/$orgId/security'
-      fullPath: '/organization/$orgId/security'
-      preLoaderRoute: typeof OrganizationOrgIdSecurityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/organization/$orgId/overview': {
-      id: '/organization/$orgId/overview'
-      path: '/organization/$orgId/overview'
-      fullPath: '/organization/$orgId/overview'
-      preLoaderRoute: typeof OrganizationOrgIdOverviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/organization/$orgId/clusters': {
-      id: '/organization/$orgId/clusters'
-      path: '/organization/$orgId/clusters'
-      fullPath: '/organization/$orgId/clusters'
-      preLoaderRoute: typeof OrganizationOrgIdClustersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/organization/$orgId/alerts': {
-      id: '/organization/$orgId/alerts'
-      path: '/organization/$orgId/alerts'
-      fullPath: '/organization/$orgId/alerts'
-      preLoaderRoute: typeof OrganizationOrgIdAlertsRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/organization/$organizationId/': {
       id: '/_authenticated/organization/$organizationId/'
@@ -483,12 +347,5 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginAuth0CallbackRoute: LoginAuth0CallbackRoute,
   LoginIndexRoute: LoginIndexRoute,
-  OrganizationIndexRoute: OrganizationIndexRoute,
-  OrganizationOrgIdAlertsRoute: OrganizationOrgIdAlertsRoute,
-  OrganizationOrgIdClustersRoute: OrganizationOrgIdClustersRoute,
-  OrganizationOrgIdOverviewRoute: OrganizationOrgIdOverviewRoute,
-  OrganizationOrgIdSecurityRoute: OrganizationOrgIdSecurityRoute,
-  OrganizationOrgIdSettingsRoute: OrganizationOrgIdSettingsRoute,
-  OrganizationOrgIdIndexRoute: OrganizationOrgIdIndexRoute,
 }
 export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>()

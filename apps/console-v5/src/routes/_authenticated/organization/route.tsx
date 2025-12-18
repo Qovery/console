@@ -27,7 +27,7 @@ function RouteComponent() {
       <Header />
       {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
       <main className="!h-full">
-        <div className="sticky top-0 isolate z-10 border-b border-neutral bg-background-secondary px-4">
+        <div className="sticky top-0 border-b border-neutral bg-background-secondary px-4">
           <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
             <Navbar.Item
               id="overview"
