@@ -2,20 +2,20 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
-const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'text-xs', 'px-1.5'], {
+const badgeVariants = cva(['text-neutral', 'inline-flex', 'items-center', 'shrink-0', 'text-xs', 'px-1.5'], {
   variants: {
     size: {
       base: ['h-6'],
       sm: ['h-5'],
     },
     color: {
-      neutral: [],
-      red: ['text-red-500'],
-      purple: ['text-purple-500'],
-      sky: ['text-sky-500'],
-      green: ['text-green-500'],
-      yellow: ['text-yellow-900'],
-      brand: ['text-brand-500'],
+      neutral: ['border-neutral'],
+      red: ['border-negative-subtle'],
+      purple: ['border-accent1-subtle'],
+      sky: ['border-info-subtle'],
+      green: ['border-positive-subtle'],
+      yellow: ['border-warning-subtle'],
+      brand: ['border-brand-subtle'],
     },
     variant: {
       outline: ['border'],
@@ -30,94 +30,67 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'text-xs',
     {
       variant: 'surface',
       color: 'neutral',
-      className: ['bg-neutral-100', 'border-neutral-200', 'text-neutral-400'],
+      className: ['bg-surface-neutral-subtle'],
+    },
+    {
+      variant: 'surface',
+      color: 'red',
+      className: ['bg-surface-negative-subtle'],
     },
     {
       variant: 'outline',
-      color: 'neutral',
-      className: ['border-neutral-250', 'text-neutral-400', 'dark:border-neutral-350', 'dark:text-neutral-300'],
-    },
-    /*
-    // Generate all colors
-      ...[
-        'red' as const,
-        'purple' as const,
-        'sky' as const,
-        'green' as const,
-        'yellow' as const,
-        'brand' as const,
-      ].flatMap((color) => [
-        {
-          variant: 'surface' as const,
-          color,
-          className: [`bg-${color}-50`],
-        },
-        {
-          variant: ['surface' as const, 'outline' as const],
-          color,
-          className: [`border-${color}-500`],
-        },
-      ]),
-  */
-    {
-      variant: 'surface',
       color: 'red',
-      className: ['bg-red-50'],
-    },
-    {
-      variant: ['surface', 'outline'],
-      color: 'red',
-      className: ['border-red-500/30'],
+      className: ['text-negative'],
     },
     {
       variant: 'surface',
       color: 'purple',
-      className: ['bg-purple-50'],
+      className: ['bg-surface-accent1-component'],
     },
     {
-      variant: ['surface', 'outline'],
+      variant: 'outline',
       color: 'purple',
-      className: ['border-purple-500'],
+      className: ['text-accent1'],
     },
     {
       variant: 'surface',
       color: 'sky',
-      className: ['bg-sky-50'],
+      className: ['bg-surface-info-subtle'],
     },
     {
-      variant: ['surface', 'outline'],
+      variant: 'outline',
       color: 'sky',
-      className: ['border-sky-500'],
+      className: ['text-info'],
     },
     {
       variant: 'surface',
       color: 'green',
-      className: ['bg-green-50'],
+      className: ['bg-surface-positive-subtle'],
     },
     {
-      variant: ['surface', 'outline'],
+      variant: 'outline',
       color: 'green',
-      className: ['border-green-500'],
+      className: ['text-positive'],
     },
     {
       variant: 'surface',
       color: 'yellow',
-      className: ['bg-yellow-500/30'],
+      className: ['bg-surface-warning-subtle'],
     },
     {
-      variant: ['surface', 'outline'],
+      variant: 'outline',
       color: 'yellow',
-      className: ['border-yellow-100'],
+      className: ['text-warning'],
     },
     {
       variant: 'surface',
       color: 'brand',
-      className: ['bg-brand-50'],
+      className: ['bg-surface-brand-subtle'],
     },
     {
-      variant: ['surface', 'outline'],
+      variant: 'outline',
       color: 'brand',
-      className: ['border-brand-500'],
+      className: ['text-brand'],
     },
   ],
   defaultVariants: {

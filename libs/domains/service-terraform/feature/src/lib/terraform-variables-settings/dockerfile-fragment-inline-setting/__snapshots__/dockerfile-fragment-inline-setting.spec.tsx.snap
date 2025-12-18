@@ -26,7 +26,7 @@ exports[`DockerfileFragmentInlineSetting should match snapshot with content 1`] 
         >
           <i
             aria-hidden="true"
-            class="fa-solid fa-pen "
+            class="fa-regular fa-pen "
           />
         </button>
       </div>
@@ -83,7 +83,7 @@ exports[`DockerfileFragmentInlineSetting should match snapshot without content 1
         >
           <i
             aria-hidden="true"
-            class="fa-solid fa-wave-pulse text-neutral-350"
+            class="fa-regular fa-wave-pulse text-neutral-350"
           />
           <p
             class="mb-3 mt-1 text-xs font-medium text-neutral-350"
@@ -96,7 +96,7 @@ exports[`DockerfileFragmentInlineSetting should match snapshot without content 1
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-plus mr-2"
+              class="fa-regular fa-plus mr-2"
             />
             Add commands
           </button>
