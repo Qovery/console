@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { type Organization } from 'qovery-typescript-axios'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseOrganizationProps {
@@ -6,9 +7,16 @@ export interface UseOrganizationProps {
   enabled?: boolean
 }
 
+export const organizationQuery = ({ organizationId }: { organizationId: string }) => ({
+  ...queries.organizations.details({ organizationId }),
+  select(data?: Organization) {
+    return data
+  },
+})
+
 export function useOrganization({ organizationId, enabled }: UseOrganizationProps) {
   return useQuery({
-    ...queries.organizations.details({ organizationId }),
+    ...organizationQuery({ organizationId }),
     enabled,
   })
 }

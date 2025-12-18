@@ -1,15 +1,12 @@
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { type PropsWithChildren } from 'react'
 import { Avatar, Heading, Section } from '@qovery/shared/ui'
-import useOrganization from '../hooks/use-organization/use-organization'
+import { organizationQuery } from '../hooks/use-organization/use-organization'
 import { SectionChangelog } from './section-changelog/section-changelog'
 import { SectionLinks } from './section-links/section-links'
 
 export function OrganizationOverview({ children, organizationId }: PropsWithChildren<{ organizationId: string }>) {
-  const { data: organization, isFetched: isFetchedOrganization } = useOrganization({ organizationId })
-
-  if (!isFetchedOrganization) {
-    return null
-  }
+  const { data: organization } = useSuspenseQuery(organizationQuery({ organizationId }))
 
   return (
     <div className="container mx-auto pb-10">
