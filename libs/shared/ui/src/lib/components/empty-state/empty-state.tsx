@@ -14,7 +14,7 @@ export function EmptyState({ title, description, className, icon, children }: Em
   return (
     <div
       className={twMerge(
-        'flex h-56 flex-col items-center justify-center gap-4 rounded border border-neutral bg-surface-neutral p-10 text-center text-sm text-neutral-subtle',
+        'flex h-56 flex-col items-center justify-center gap-4 rounded-lg border border-neutral bg-surface-neutral p-10 text-center text-sm text-neutral-subtle',
         className
       )}
     >
