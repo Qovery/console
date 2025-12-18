@@ -19,7 +19,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
 import { QueryParamProvider } from 'use-query-params'
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6'
-import { InstantSearchProvider } from '@qovery/shared/assistant/feature'
 import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@qovery/shared/routes'
 import { ErrorFallback, ModalProvider, ToastBehavior, toastError } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
@@ -166,7 +165,6 @@ root.render(
           skipRedirectCallback: window.location.pathname !== LOGIN_URL + LOGIN_AUTH_REDIRECT_URL,
         }),
         makeProvider(QueryClientProvider, { client: queryClient }),
-        InstantSearchProvider,
       ]}
     >
       <BrowserRouter>
