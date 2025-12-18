@@ -89,7 +89,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                         )}
                         onClick={(e) => {
                           e.preventDefault()
-                          setValue('vpc_mode', vpcMode.value)
+                          field.onChange({ target: { name: field.name, value: vpcMode.value } })
                         }}
                       >
                         {cloneElement(vpcMode.icon, { className: 'w-[20px] h-[20px] mt-1' })}
