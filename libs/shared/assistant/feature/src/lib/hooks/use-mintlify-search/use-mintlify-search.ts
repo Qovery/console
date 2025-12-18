@@ -44,7 +44,7 @@ export function useSearchDocumentation(query: string) {
   return useQuery({
     queryKey: ['search-documentation', query],
     queryFn: () => searchDocumentation(query),
-    enabled: !!query.trim() && !!MINTLIFY_API_KEY,
+    enabled: !!query.trim(),
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
