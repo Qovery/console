@@ -14,7 +14,6 @@ declare global {
       NX_PUBLIC_POSTHOG_APIHOST: string
       NX_PUBLIC_GTM: string
       NX_PUBLIC_INSTATUS_APP_ID: string
-      NX_PUBLIC_MINTLIFY_DOMAIN: string
       NX_PUBLIC_MINTLIFY_API_KEY: string
       NX_PUBLIC_CARGO_API_TOKEN: string
       NX_PUBLIC_PYLON_APP_ID: string
@@ -36,7 +35,6 @@ export const NODE_ENV = process.env.NODE_ENV,
   POSTHOG_APIHOST = process.env.NX_PUBLIC_POSTHOG_APIHOST,
   GTM = process.env.NX_PUBLIC_GTM,
   INSTATUS_APP_ID = process.env.NX_PUBLIC_INSTATUS_APP_ID,
-  MINTLIFY_DOMAIN = process.env.NX_PUBLIC_MINTLIFY_DOMAIN,
   MINTLIFY_API_KEY = process.env.NX_PUBLIC_MINTLIFY_API_KEY,
   CARGO_API_TOKEN = process.env.NX_PUBLIC_CARGO_API_TOKEN,
   DEVOPS_COPILOT_API_BASE_URL = process.env.NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL || 'https://api-ai-dev.qovery.com',

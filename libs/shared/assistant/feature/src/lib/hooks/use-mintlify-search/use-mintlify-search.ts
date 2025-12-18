@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { MINTLIFY_API_KEY, MINTLIFY_DOMAIN } from '@qovery/shared/util-node-env'
+import { MINTLIFY_API_KEY } from '@qovery/shared/util-node-env'
 
 export interface SearchDocumentationResult {
   content?: string
@@ -17,11 +17,11 @@ export interface SearchDocumentationResult {
 }
 
 async function searchDocumentation(query: string): Promise<SearchDocumentationResult[]> {
-  if (!MINTLIFY_DOMAIN || !MINTLIFY_API_KEY) {
+  if (!MINTLIFY_API_KEY) {
     throw new Error('Mintlify configuration missing')
   }
 
-  const response = await fetch(`https://api.mintlify.com/discovery/v1/search/${MINTLIFY_DOMAIN}`, {
+  const response = await fetch('https://api.mintlify.com/discovery/v1/search/qovery', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${MINTLIFY_API_KEY}`,
@@ -44,7 +44,7 @@ export function useSearchDocumentation(query: string) {
   return useQuery({
     queryKey: ['search-documentation', query],
     queryFn: () => searchDocumentation(query),
-    enabled: !!query.trim() && !!MINTLIFY_DOMAIN && !!MINTLIFY_API_KEY,
+    enabled: !!query.trim() && !!MINTLIFY_API_KEY,
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
