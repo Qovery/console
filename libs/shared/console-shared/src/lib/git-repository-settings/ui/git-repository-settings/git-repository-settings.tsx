@@ -5,6 +5,7 @@ import {
   GitProviderSetting,
   GitPublicRepositorySettings,
   GitRepositorySetting,
+  GitTokenCreateEditModal,
   isGitTokenExpired,
   useGitTokens,
 } from '@qovery/domains/organizations/feature'
@@ -59,10 +60,32 @@ export function GitRepositorySettings({
           <Callout.Icon>
             <Icon iconName="triangle-exclamation" iconStyle="regular" />
           </Callout.Icon>
-          <Callout.Text>
-            The selected git token has expired. Please update it in organization settings to ensure deployments work
-            correctly.
+          <Callout.Text className="flex-1">
+            The selected git token has expired. Please update it to ensure deployments work correctly.
           </Callout.Text>
+          <Button
+            type="button"
+            variant="outline"
+            color="neutral"
+            size="sm"
+            onClick={() => {
+              openModal({
+                content: (
+                  <GitTokenCreateEditModal
+                    isEdit
+                    gitToken={selectedToken}
+                    organizationId={organizationId}
+                    onClose={(response) => {
+                      closeModal()
+                      // Token was updated, form will re-validate automatically via React Query
+                    }}
+                  />
+                ),
+              })
+            }}
+          >
+            Update now
+          </Button>
         </Callout.Root>
       )}
       {watchFieldIsPublicRepository ? (

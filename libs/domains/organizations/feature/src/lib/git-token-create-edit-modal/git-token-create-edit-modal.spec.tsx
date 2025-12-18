@@ -112,4 +112,114 @@ describe('GitTokenCreateEditModal', () => {
 
     expect(props.onClose).toHaveBeenCalled()
   })
+
+  describe('expired token warning banner', () => {
+    describe('Warning banner display for expired tokens', () => {
+      it('should show expiration warning banner when editing expired token', () => {
+        const expiredToken: typeof props.gitToken = {
+          id: '1111-1111-1111',
+          created_at: '2023-01-01T00:00:00Z',
+          updated_at: '2023-01-01T00:00:00Z',
+          name: 'my-token',
+          description: '',
+          type: GitProviderEnum.GITHUB,
+          expired_at: '2023-06-15T10:30:00Z', // Past date - expired
+          associated_services_count: 0,
+          git_api_url: '',
+        }
+
+        renderWithProviders(
+          wrapWithReactHookForm(<GitTokenCreateEditModal {...props} isEdit gitToken={expiredToken} />)
+        )
+
+        expect(screen.getByText(/this token expired on/i)).toBeInTheDocument()
+        expect(screen.getByText(/please update the token value below/i)).toBeInTheDocument()
+      })
+    })
+
+    describe('No warning for non-expired tokens', () => {
+      it('should not show warning banner when editing non-expired token', () => {
+        const validToken: typeof props.gitToken = {
+          id: '1111-1111-1111',
+          created_at: '2023-01-01T00:00:00Z',
+          updated_at: '2023-01-01T00:00:00Z',
+          name: 'my-token',
+          description: '',
+          type: GitProviderEnum.GITHUB,
+          expired_at: '2099-12-31T23:59:59Z', // Future date - not expired
+          associated_services_count: 0,
+          git_api_url: '',
+        }
+
+        renderWithProviders(wrapWithReactHookForm(<GitTokenCreateEditModal {...props} isEdit gitToken={validToken} />))
+
+        expect(screen.queryByText(/this token expired on/i)).not.toBeInTheDocument()
+      })
+
+      it('should not show warning banner when creating new token', () => {
+        renderWithProviders(wrapWithReactHookForm(<GitTokenCreateEditModal {...props} />))
+
+        expect(screen.queryByText(/this token expired on/i)).not.toBeInTheDocument()
+      })
+    })
+
+    describe('Token without expiration date', () => {
+      it('should not show warning banner when token has no expiration date', () => {
+        const tokenWithoutExpiration: typeof props.gitToken = {
+          id: '1111-1111-1111',
+          created_at: '2023-01-01T00:00:00Z',
+          updated_at: '2023-01-01T00:00:00Z',
+          name: 'my-token',
+          description: '',
+          type: GitProviderEnum.GITHUB,
+          expired_at: undefined, // No expiration
+          associated_services_count: 0,
+          git_api_url: '',
+        }
+
+        renderWithProviders(
+          wrapWithReactHookForm(<GitTokenCreateEditModal {...props} isEdit gitToken={tokenWithoutExpiration} />)
+        )
+
+        expect(screen.queryByText(/this token expired on/i)).not.toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('Mutation failure handling', () => {
+    it('should keep modal open when edit mutation fails', async () => {
+      const mockError = new Error('Network error')
+      useEditGitTokenMockSpy.mockReturnValue({
+        mutateAsync: jest.fn().mockRejectedValue(mockError),
+      })
+
+      const expiredToken: typeof props.gitToken = {
+        id: '1111-1111-1111',
+        created_at: '2023-01-01T00:00:00Z',
+        updated_at: '2023-01-01T00:00:00Z',
+        name: 'my-token',
+        description: '',
+        type: GitProviderEnum.GITHUB,
+        expired_at: '2020-01-01T00:00:00Z',
+        associated_services_count: 0,
+        git_api_url: '',
+      }
+
+      const { userEvent } = renderWithProviders(
+        wrapWithReactHookForm(<GitTokenCreateEditModal {...props} isEdit gitToken={expiredToken} />)
+      )
+
+      const inputTokenValue = screen.getByLabelText('Token value')
+      await userEvent.type(inputTokenValue, 'new-token-value')
+
+      const btn = screen.getByRole('button', { name: 'Confirm' })
+      await userEvent.click(btn)
+
+      // onClose should NOT be called when mutation fails
+      expect(props.onClose).not.toHaveBeenCalled()
+
+      // Warning banner should still be visible (modal still open)
+      expect(screen.getByText(/this token expired on/i)).toBeInTheDocument()
+    })
+  })
 })

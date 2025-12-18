@@ -1,9 +1,20 @@
 import { GitProviderEnum, type GitTokenRequest, type GitTokenResponse } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { ExternalLink, Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
+import {
+  Callout,
+  ExternalLink,
+  Icon,
+  InputSelect,
+  InputText,
+  InputTextArea,
+  ModalCrud,
+  useModal,
+} from '@qovery/shared/ui'
+import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCreateGitToken } from '../hooks/use-create-git-token/use-create-git-token'
 import { useEditGitToken } from '../hooks/use-edit-git-token/use-edit-git-token'
+import { isGitTokenExpired } from '../hooks/use-git-tokens/use-git-tokens'
 
 export interface GitTokenCreateEditModalProps {
   onClose: (response?: GitTokenResponse) => void
@@ -102,6 +113,16 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
           </>
         }
       >
+        {isEdit && gitToken && isGitTokenExpired(gitToken) && (
+          <Callout.Root color="yellow" className="mb-5">
+            <Callout.Icon>
+              <Icon iconName="triangle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              This token expired on {dateMediumLocalFormat(gitToken.expired_at!)}. Please update the token value below.
+            </Callout.Text>
+          </Callout.Root>
+        )}
         {isEdit && (
           <Controller
             name="id"
@@ -293,7 +314,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
           name="token"
           control={methods.control}
           rules={{
-            required: true,
+            required: 'Please enter a token value.',
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
