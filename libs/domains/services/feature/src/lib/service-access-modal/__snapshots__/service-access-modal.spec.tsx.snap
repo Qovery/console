@@ -6,7 +6,7 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
     class="flex flex-col p-5"
   >
     <h1
-      class="text-xl font-bold h4 max-w-sm truncate text-neutral-400"
+      class="text-2xl font-bold h4 max-w-sm truncate text-neutral-400"
     >
       Access from
     </h1>
@@ -201,7 +201,7 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
     class="flex flex-col p-5"
   >
     <h1
-      class="text-xl font-bold h4 max-w-sm truncate text-neutral-400"
+      class="text-2xl font-bold h4 max-w-sm truncate text-neutral-400"
     >
       Access from
     </h1>
