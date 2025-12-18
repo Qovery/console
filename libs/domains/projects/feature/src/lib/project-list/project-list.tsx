@@ -48,9 +48,9 @@ export function ProjectList({ organizationId }: { organizationId: string }) {
           )}
         >
           {projects?.map((project) => (
-            <div
+            <button
               key={project.id}
-              className="group flex items-center justify-between rounded-lg border border-neutral bg-surface-neutral p-4 text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle"
+              className="group flex items-center justify-between rounded-lg border border-neutral bg-surface-neutral p-4 text-left text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle"
             >
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium">{project.name}</p>
@@ -62,8 +62,8 @@ export function ProjectList({ organizationId }: { organizationId: string }) {
               <Icon
                 iconName="angle-right"
                 className="text-base text-neutral-subtle transition-colors group-hover:text-neutral"
-              />{' '}
-            </div>
+              />
+            </button>
           ))}
         </div>
       )}
