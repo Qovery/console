@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { ExternalLink, Icon, InputSearch } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
-import { useSupportChat } from '@qovery/shared/util-hooks'
+import { useDebounce, useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { AssistantIconSwitcher } from '../assistant-icon-switcher/assistant-icon-switcher'
@@ -23,6 +23,7 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
   const docLinks = useContextualDocLinks()
   const { query, results, isLoading, error, search } = useMintlifySearch()
   const [searchValue, setSearchValue] = useState('')
+  const debouncedSearchValue = useDebounce(searchValue, 300)
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
@@ -38,12 +39,8 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
   }, [onClose])
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      search(searchValue)
-    }, 300)
-
-    return () => clearTimeout(timeoutId)
-  }, [searchValue, search])
+    search(debouncedSearchValue)
+  }, [debouncedSearchValue, search])
 
   return (
     <div
