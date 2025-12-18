@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
-import { ExternalLink, Icon, InputSearch } from '@qovery/shared/ui'
+import { ExternalLink, Icon, InputSearch, LoaderSpinner } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { useDebounce, useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
@@ -81,7 +81,11 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
           />
           {debouncedSearchValue.length > 0 && (
             <div className="flex min-h-0 shrink-0 grow basis-0 flex-col space-y-5 overflow-y-auto">
-              {isLoading && <div className="text-sm text-neutral-400">Searching...</div>}
+              {isLoading && (
+                <div className="flex justify-center">
+                  <LoaderSpinner className="w-5" />
+                </div>
+              )}
               {!isLoading && results.length === 0 && (
                 <div className="text-sm text-neutral-400">No results found</div>
               )}
