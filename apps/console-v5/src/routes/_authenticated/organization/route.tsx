@@ -1,6 +1,7 @@
 import { Outlet, createFileRoute, useLocation, useParams, useRouter } from '@tanstack/react-router'
 import axios from 'axios'
 import { useMemo } from 'react'
+import { organizationsQuery } from '@qovery/domains/organizations/feature'
 import { Icon, Navbar } from '@qovery/shared/ui'
 import { QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
@@ -8,6 +9,7 @@ import Header from '../../../app/components/header/header'
 
 export const Route = createFileRoute('/_authenticated/organization')({
   component: RouteComponent,
+  loader: ({ context }) => context.queryClient.ensureQueryData(organizationsQuery),
 })
 
 function RouteComponent() {

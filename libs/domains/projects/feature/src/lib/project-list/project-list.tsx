@@ -1,17 +1,14 @@
+import { useSuspenseQuery } from '@tanstack/react-query'
 import clsx from 'clsx'
 import { Button, EmptyState, Heading, Icon, Section, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { pluralize } from '@qovery/shared/util-js'
 import CreateProjectModal from '../create-project-modal/create-project-modal'
-import { useProjects } from '../hooks/use-projects/use-projects'
+import { projectsQuery } from '../hooks/use-projects/use-projects'
 
 export function ProjectList({ organizationId }: { organizationId: string }) {
-  const { data: projects = [], isFetched: isProjectsFetched } = useProjects({ organizationId })
+  const { data: projects = [] } = useSuspenseQuery(projectsQuery({ organizationId }))
   const { openModal, closeModal } = useModal()
-
-  if (!isProjectsFetched) {
-    return null
-  }
 
   const createProjectModal = () => {
     openModal({

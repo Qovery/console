@@ -1,9 +1,10 @@
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { Heading, Icon, Section } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
-import { useChangelogs } from '@qovery/shared/webflow/feature'
+import { changelogsQuery } from '@qovery/shared/webflow/feature'
 
 export function SectionChangelog() {
-  const { data: changelogs = [] } = useChangelogs()
+  const { data: changelogs = [] } = useSuspenseQuery(changelogsQuery)
 
   return (
     <Section className="flex flex-col gap-3">

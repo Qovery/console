@@ -9,10 +9,13 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
+import axios from 'axios'
 import { StrictMode } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
 import { LoaderSpinner, ModalProvider, ToastEnum, toast, toastError } from '@qovery/shared/ui'
+import { QOVERY_API } from '@qovery/shared/util-node-env'
+import { useAuthInterceptor } from '@qovery/shared/utils'
 // TODO: Improve this import to use the shared/ui package
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import '../../../libs/shared/ui/src/lib/styles/main.scss'
@@ -129,6 +132,8 @@ function InnerApp() {
 
   // Create a new router instance
   const router = createRouter({ routeTree, context: { auth, queryClient } })
+
+  useAuthInterceptor(axios, QOVERY_API)
 
   if (auth.isLoading) {
     return (
