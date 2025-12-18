@@ -41,25 +41,10 @@ async function searchDocumentation(query: string): Promise<SearchDocumentationRe
 }
 
 export function useSearchDocumentation(query: string) {
-  const enabled = !!query.trim() && !!MINTLIFY_DOMAIN && !!MINTLIFY_API_KEY
-
-  // Temporary debug logging
-  if (query.trim()) {
-    console.log('[Search Debug]', {
-      query,
-      enabled,
-      hasDomain: !!MINTLIFY_DOMAIN,
-      hasApiKey: !!MINTLIFY_API_KEY,
-    })
-  }
-
   return useQuery({
     queryKey: ['search-documentation', query],
-    queryFn: () => {
-      console.log('[Search] Executing query for:', query)
-      return searchDocumentation(query)
-    },
-    enabled,
+    queryFn: () => searchDocumentation(query),
+    enabled: !!query.trim() && !!MINTLIFY_DOMAIN && !!MINTLIFY_API_KEY,
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }

@@ -23,7 +23,7 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
   const docLinks = useContextualDocLinks()
   const [searchValue, setSearchValue] = useState('')
   const debouncedSearchValue = useDebounce(searchValue, 300)
-  const { data: results = [], isFetching } = useSearchDocumentation(debouncedSearchValue)
+  const { data: results = [], isLoading } = useSearchDocumentation(debouncedSearchValue)
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
@@ -81,15 +81,15 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
           />
           {debouncedSearchValue.length > 0 && (
             <div className="flex min-h-0 shrink-0 grow basis-0 flex-col space-y-5 overflow-y-auto">
-              {isFetching && (
+              {isLoading && (
                 <div className="flex justify-center">
                   <LoaderSpinner className="w-5" />
                 </div>
               )}
-              {!isFetching && results.length === 0 && (
+              {!isLoading && results.length === 0 && (
                 <div className="text-sm text-neutral-400">No results found</div>
               )}
-              {!isFetching && results.map((result, index) => <MintlifyHit key={index} result={result} />)}
+              {!isLoading && results.map((result, index) => <MintlifyHit key={index} result={result} />)}
             </div>
           )}
         </div>
