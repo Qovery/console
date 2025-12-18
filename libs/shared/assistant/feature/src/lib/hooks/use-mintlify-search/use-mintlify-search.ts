@@ -45,7 +45,7 @@ export function useSearchDocumentation(query: string) {
     queryKey: ['search-documentation', query],
     queryFn: () => searchDocumentation(query),
     enabled: !!query.trim(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   })
 }
 
