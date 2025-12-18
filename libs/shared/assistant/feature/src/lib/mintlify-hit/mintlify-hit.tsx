@@ -1,4 +1,4 @@
-import { ExternalLink } from '@qovery/shared/ui'
+import { ExternalLink, truncateText } from '@qovery/shared/ui'
 import type { MintlifySearchResult } from '../hooks/use-mintlify-search/use-mintlify-search'
 
 export interface MintlifyHitProps {
@@ -28,19 +28,17 @@ export function MintlifyHit({ result }: MintlifyHitProps) {
     return `https://qovery.com/docs${result.path.startsWith('/') ? '' : '/'}${result.path}`
   }
 
-  const truncateContent = (content: string, maxLength = 150) => {
-    if (content.length <= maxLength) return content
-    return content.substring(0, maxLength).trim() + '...'
-  }
-
   const getDescription = () => {
+    const maxLength = 150
     // For API results, prioritize metadata.description
     if (result.metadata?.description) {
-      return truncateContent(result.metadata.description)
+      return result.metadata.description.length > maxLength
+        ? `${truncateText(result.metadata.description, maxLength)}...`
+        : result.metadata.description
     }
     // Fall back to content field
     if (result.content) {
-      return truncateContent(result.content)
+      return result.content.length > maxLength ? `${truncateText(result.content, maxLength)}...` : result.content
     }
     return null
   }
