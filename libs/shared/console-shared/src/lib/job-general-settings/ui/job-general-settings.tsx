@@ -75,6 +75,7 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
                 gitDisabled={false}
                 rootPathLabel={props.rootPathLabel}
                 rootPathHint={props.rootPathHint}
+                organizationId={props.organization?.id ?? ''}
               />
             ))}
 

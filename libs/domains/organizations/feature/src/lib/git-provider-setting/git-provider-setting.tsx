@@ -3,9 +3,10 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { Icon, InputSelect, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { ExpiredTokenBadge } from '../expired-token-badge/expired-token-badge'
 import { GitTokenCreateEditModal } from '../git-token-create-edit-modal/git-token-create-edit-modal'
 import { useAuthProviders } from '../hooks/use-auth-providers/use-auth-providers'
-import { useGitTokens } from '../hooks/use-git-tokens/use-git-tokens'
+import { isGitTokenExpired, useGitTokens } from '../hooks/use-git-tokens/use-git-tokens'
 
 export interface GitProviderSettingProps {
   disabled?: boolean
@@ -54,18 +55,24 @@ export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens:
     searchText: `${upperCaseFirstLetter(provider.name)} ${provider.owner}`,
   }))
 
-  const currentGitTokens = gitTokens.map((token) => ({
-    label: (
-      <span>
-        {upperCaseFirstLetter(token.type)} Token ({token.name})
-        <Icon iconName="key" iconStyle="regular" className="ml-3 text-base" />
-      </span>
-    ),
-    value: token.id,
-    icon: <Icon width={16} height={16} name={token.type} />,
-    // Add searchable text for filtering
-    searchText: `${upperCaseFirstLetter(token.type)} Token ${token.name}`,
-  }))
+  const currentGitTokens = gitTokens.map((token) => {
+    const expired = isGitTokenExpired(token)
+
+    return {
+      label: (
+        <span className="flex items-center gap-2">
+          {upperCaseFirstLetter(token.type)} Token ({token.name})
+          <Icon iconName="key" iconStyle="regular" className="text-base" />
+          <ExpiredTokenBadge token={token} />
+        </span>
+      ),
+      value: token.id,
+      icon: <Icon width={16} height={16} name={token.type} />,
+      // Add searchable text for filtering
+      searchText: `${upperCaseFirstLetter(token.type)} Token ${token.name}`,
+      isDisabled: expired,
+    }
+  })
 
   return [...currentAuthProviders, ...currentGitTokens]
 }

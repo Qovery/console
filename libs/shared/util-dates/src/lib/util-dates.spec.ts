@@ -9,6 +9,7 @@ import {
   dateYearMonthDayHourMinuteSecond,
   formatDuration,
   formatDurationMinutesSeconds,
+  isDatePast,
   timeAgo,
 } from './util-dates'
 
@@ -125,5 +126,68 @@ describe('timeAgo function', () => {
     const date = new Date(now.getTime() - 2 * 60 * 60 * 1000)
     const result = timeAgo(date)
     expect(result).toBe('2 hours')
+  })
+})
+
+describe('isDatePast', () => {
+  beforeAll(() => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2023-08-30T12:00:00Z'))
+  })
+
+  afterAll(() => {
+    jest.useRealTimers()
+  })
+
+  it('should return true for dates in the past', () => {
+    const pastDate = '2023-08-29T12:00:00Z' // Yesterday
+    expect(isDatePast(pastDate)).toBe(true)
+  })
+
+  it('should return true for dates far in the past', () => {
+    const pastDate = '2020-01-01T00:00:00Z'
+    expect(isDatePast(pastDate)).toBe(true)
+  })
+
+  it('should return false for dates in the future', () => {
+    const futureDate = '2023-08-31T12:00:00Z' // Tomorrow
+    expect(isDatePast(futureDate)).toBe(false)
+  })
+
+  it('should return false for dates far in the future', () => {
+    const futureDate = '2099-12-31T23:59:59Z'
+    expect(isDatePast(futureDate)).toBe(false)
+  })
+
+  it('should return false for null date', () => {
+    expect(isDatePast(null)).toBe(false)
+  })
+
+  it('should return false for undefined date', () => {
+    expect(isDatePast(undefined)).toBe(false)
+  })
+
+  it('should return false for empty string', () => {
+    expect(isDatePast('')).toBe(false)
+  })
+
+  it('should handle dates very close to current time', () => {
+    // Test with a date 1 second in the past
+    const pastDate = '2023-08-30T11:59:59Z'
+    expect(isDatePast(pastDate)).toBe(true)
+
+    // Test with a date 1 second in the future
+    const futureDate = '2023-08-30T12:00:01Z'
+    expect(isDatePast(futureDate)).toBe(false)
+  })
+
+  it('should handle tokens without expiration date (null) by returning false', () => {
+    // AC-6: Tokens without expiration date should be treated as valid
+    expect(isDatePast(null)).toBe(false)
+  })
+
+  it('should handle tokens without expiration date (undefined) by returning false', () => {
+    // AC-6: Tokens without expiration date should be treated as valid
+    expect(isDatePast(undefined)).toBe(false)
   })
 })

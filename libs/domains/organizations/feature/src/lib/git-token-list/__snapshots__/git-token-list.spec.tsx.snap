@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`GitTokenList should match snapshot 1`] = `
 <body>
@@ -44,7 +44,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 class="ml-4"
               >
                 <p
-                  class="mb-1 flex text-xs font-medium text-neutral-400"
+                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral-400"
                 >
                   token1
                 </p>
@@ -55,14 +55,14 @@ exports[`GitTokenList should match snapshot 1`] = `
                     class="inline-block"
                     title="Thu, 30 Nov 2023 10:48:26 GMT"
                   >
-                    Last updated 
+                    Last updated
                     1 month
                   </span>
                   <span
                     class="ml-3 inline-block"
                     title="Tue, 31 Oct 2023 10:48:26 GMT"
                   >
-                    Created since 
+                    Created since
                     Oct 31, 2023
                   </span>
                 </p>
@@ -136,7 +136,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 class="ml-4"
               >
                 <p
-                  class="mb-1 flex text-xs font-medium text-neutral-400"
+                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral-400"
                 >
                   token2
                 </p>
@@ -147,14 +147,14 @@ exports[`GitTokenList should match snapshot 1`] = `
                     class="inline-block"
                     title="Thu, 30 Nov 2023 10:48:26 GMT"
                   >
-                    Last updated 
+                    Last updated
                     1 month
                   </span>
                   <span
                     class="ml-3 inline-block"
                     title="Tue, 31 Oct 2023 10:48:26 GMT"
                   >
-                    Created since 
+                    Created since
                     Oct 31, 2023
                   </span>
                 </p>
