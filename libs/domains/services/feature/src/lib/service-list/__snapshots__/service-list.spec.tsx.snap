@@ -740,7 +740,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="flex"
               >
                 <span
-                  class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 text-neutral-400 min-w-7 max-w-[81px] rounded-r-none border-r-0 border-neutral-250"
+                  class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-surface-neutral-subtle min-w-7 max-w-[81px] rounded-r-none border-r-0 border-neutral-250"
                 >
                   <span
                     class="flex h-full w-full items-center justify-center truncate"

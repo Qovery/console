@@ -86,7 +86,7 @@ exports[`ClusterCard should match snapshot 1`] = `
       class="flex flex-wrap gap-2"
     >
       <span
-        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md border-neutral-250 text-neutral-400 dark:border-neutral-350 dark:text-neutral-300"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md"
         data-accent-color="neutral"
       >
         <svg
@@ -106,19 +106,19 @@ exports[`ClusterCard should match snapshot 1`] = `
         Qovery managed
       </span>
       <span
-        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md bg-surface-neutral-subtle"
         data-accent-color="neutral"
       >
         EKS
       </span>
       <span
-        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md bg-surface-neutral-subtle"
         data-accent-color="neutral"
       >
         us-east-1
       </span>
       <span
-        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md bg-surface-neutral-subtle"
         data-accent-color="neutral"
       >
         1.21
@@ -220,7 +220,7 @@ exports[`ClusterCard should match snapshot 1`] = `
         </div>
       </div>
       <span
-        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 text-red-500 border rounded-md bg-red-50 border-red-500/30"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-negative-subtle border rounded-md bg-surface-negative-subtle"
         data-accent-color="red"
       >
         Production
