@@ -10,6 +10,7 @@ import {
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { dateMediumLocalFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
+import { ExpiredTokenBadge } from '../expired-token-badge/expired-token-badge'
 import GitTokenCreateEditModal from '../git-token-create-edit-modal/git-token-create-edit-modal'
 import GitTokenServicesListModal from '../git-token-services-list-modal/git-token-services-list-modal'
 import { useDeleteGitToken } from '../hooks/use-delete-git-token/use-delete-git-token'
@@ -38,12 +39,13 @@ export function GitTokenList() {
               <div className="flex">
                 <Icon name={gitToken.type} width="20px" height="20px" />
                 <div className="ml-4">
-                  <p className="mb-1 flex text-xs font-medium text-neutral-400">
+                  <p className="mb-1 flex items-center gap-2 text-xs font-medium text-neutral-400">
                     <Truncate truncateLimit={60} text={gitToken.name ?? ''} />
+                    <ExpiredTokenBadge token={gitToken} />
                     {gitToken.description && (
                       <Tooltip content={gitToken.description}>
-                        <span className="ml-1 cursor-pointer">
-                          <Icon iconName="circle-info" iconStyle="regular" className="ml-1 cursor-pointer" />
+                        <span className="cursor-pointer">
+                          <Icon iconName="circle-info" iconStyle="regular" className="cursor-pointer" />
                         </span>
                       </Tooltip>
                     )}

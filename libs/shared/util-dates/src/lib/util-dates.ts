@@ -131,3 +131,8 @@ export function formatDurationMinutesSeconds(isoDuration: string): string {
 
   return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`
 }
+
+export function isDatePast(date: string | undefined | null): boolean {
+  if (!date) return false
+  return new Date(date) < new Date()
+}

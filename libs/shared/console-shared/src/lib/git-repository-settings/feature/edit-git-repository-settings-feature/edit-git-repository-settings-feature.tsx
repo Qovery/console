@@ -16,7 +16,7 @@ export function EditGitRepositorySettingsFeature({
   rootPathHint,
   rootPathLabel,
 }: EditGitRepositorySettingsFeatureProps) {
-  const { applicationId = '' } = useParams()
+  const { applicationId = '', organizationId = '' } = useParams()
   const { data: service } = useService({ serviceId: applicationId })
 
   const gitRepository = match(service)
@@ -68,6 +68,7 @@ export function EditGitRepositorySettingsFeature({
       urlRepository={gitRepository?.url}
       rootPathLabel={rootPathLabel}
       rootPathHint={rootPathHint}
+      organizationId={organizationId}
     />
   )
 }
