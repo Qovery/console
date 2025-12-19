@@ -112,7 +112,7 @@ function Item({ cluster, project }: { cluster: Cluster; project: Project }) {
             <Icon
               iconName="chevron-down"
               iconStyle="regular"
-              className="text-xs text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)]  hover:text-neutral-400 group-data-[state=open]:rotate-180"
+              className="text-xs text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)]  group-hover:text-neutral-400 group-data-[state=open]:rotate-180"
             />
           </div>
         </AccordionPrimitive.Trigger>
