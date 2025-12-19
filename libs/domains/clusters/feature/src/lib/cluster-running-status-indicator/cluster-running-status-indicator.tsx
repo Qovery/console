@@ -47,8 +47,8 @@ export function ClusterRunningStatusIndicator({
     return type === 'dot' ? (
       <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
     ) : (
-      <Badge variant="surface" color="neutral" className="items-center gap-2 border-[#A0AFC54D] pr-2">
-        <span className="text-neutral-400">Stopped</span>
+      <Badge variant="surface" color="neutral" className="items-center gap-2 pr-2">
+        Stopped
         <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
       </Badge>
     )
@@ -58,8 +58,8 @@ export function ClusterRunningStatusIndicator({
     return type === 'dot' ? (
       <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
     ) : (
-      <Badge variant="surface" color="neutral" className="items-center gap-2 border-[#A0AFC54D] pr-2">
-        <span className="text-neutral-400">Not installed</span>
+      <Badge variant="surface" color="neutral" className="items-center gap-2 pr-2">
+        Not installed
         <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
       </Badge>
     )
@@ -75,8 +75,8 @@ export function ClusterRunningStatusIndicator({
         <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
       ) : (
         <Tooltip content="Cannot fetch the cluster status. Check the installation guide">
-          <Badge variant="surface" color="neutral" className="items-center gap-2 border-[#A0AFC54D] pr-2">
-            <span className="text-neutral-400">Unknown</span>
+          <Badge variant="surface" color="neutral" className="items-center gap-2 pr-2">
+            Unknown
             <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
           </Badge>
         </Tooltip>
@@ -86,8 +86,8 @@ export function ClusterRunningStatusIndicator({
         <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
       ) : (
         <Tooltip content="Cannot fetch the cluster status. Please contact us if the issue persists">
-          <Badge variant="surface" color="neutral" className="items-center gap-2 border-[#A0AFC54D] pr-2">
-            <span className="text-neutral-400">Status unavailable</span>
+          <Badge variant="surface" color="neutral" className="items-center gap-2 pr-2">
+            Status unavailable
             <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
           </Badge>
         </Tooltip>
@@ -100,9 +100,9 @@ export function ClusterRunningStatusIndicator({
       type === 'dot' ? (
         <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
       ) : (
-        <Badge variant="surface" color="green" className="items-center gap-2 border-[#44C9794D] pr-2 capitalize">
-          <span className="text-neutral-400">{s.global_status.toLowerCase()}</span>
-          <span className="block h-2 w-2 rounded-full bg-current" />
+        <Badge variant="surface" color="green" className="items-center gap-2 pr-2 capitalize">
+          {s.global_status.toLowerCase()}
+          <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
         </Badge>
       )
     )
@@ -115,7 +115,7 @@ export function ClusterRunningStatusIndicator({
             <Badge
               variant="surface"
               color={isFeatureFlag ? 'yellow' : 'green'}
-              className="items-center gap-1.5 border-[#D1A0024D] pr-2 capitalize"
+              className="items-center gap-1.5 pr-2 capitalize"
               onClick={(e) => {
                 // XXX: To avoid link redirection from the parent, we need to manage onOpenChange
                 e.preventDefault()
@@ -124,17 +124,17 @@ export function ClusterRunningStatusIndicator({
               }}
             >
               {isFeatureFlag && (
-                <span className="flex h-4 w-4 items-center justify-center rounded bg-yellow-700 text-xs font-semibold text-white">
+                <span className="text-default flex h-4 w-4 items-center justify-center rounded bg-surface-warning-solid text-xs font-semibold">
                   {Object.keys(s.node_warnings).length}
                 </span>
               )}
-              <span className="text-neutral-400">{isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}</span>
+              {isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}
               {Object.entries(s.node_warnings).length === 0 ? (
-                <span className="block h-2 w-2 rounded-full bg-current" />
+                <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
               ) : isFeatureFlag ? (
-                <Icon iconName="chevron-down" className="text-neutral-400" />
+                <Icon iconName="chevron-down" className="text-surface-positive-solid" />
               ) : (
-                <span className="block h-2 w-2 rounded-full bg-current" />
+                <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
               )}
             </Badge>
           </Popover.Trigger>
@@ -190,11 +190,11 @@ export function ClusterRunningStatusIndicator({
                   {s.qovery_components_in_failure.length}
                 </span>
               )}
-              <span className="text-neutral-400">{isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}</span>
+              {isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}
               {s.qovery_components_in_failure.length === 0 ? (
                 <span className="block h-2 w-2 rounded-full bg-current" />
               ) : isFeatureFlag ? (
-                <Icon iconName="chevron-down" className="text-neutral-400" />
+                <Icon iconName="chevron-down" className="text-surface-negative-solid" />
               ) : (
                 <span className="block h-2 w-2 rounded-full bg-current" />
               )}
