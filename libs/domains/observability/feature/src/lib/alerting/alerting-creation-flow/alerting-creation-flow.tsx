@@ -142,9 +142,18 @@ export function AlertingCreationFlow({
   const handleComplete = async (alertsToCreate: AlertConfiguration[]) => {
     const activeAlerts = alertsToCreate.filter((alert) => !alert.skipped)
 
-    const hasHpaAlert = activeAlerts.some((alert) => alert.tag === 'hpa_limit')
+    const hasPublicPort =
+      (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
+      (service?.ports || []).length > 0 &&
+      service?.ports?.some((p) => p.publicly_accessible)
 
-    if (!containerName || !ingressName || (hasHpaAlert && !hpaName)) return
+    const hasAutoscaling =
+      (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
+      service?.min_running_instances !== service?.max_running_instances
+
+    if (!containerName) return
+    if (hasPublicPort && !ingressName) return
+    if (hasAutoscaling && !hpaName) return
 
     try {
       setIsLoading(true)
