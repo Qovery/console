@@ -55,24 +55,20 @@ export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens:
     searchText: `${upperCaseFirstLetter(provider.name)} ${provider.owner}`,
   }))
 
-  const currentGitTokens = gitTokens.map((token) => {
-    const expired = isGitTokenExpired(token)
-
-    return {
-      label: (
-        <span className="flex items-center gap-2">
-          {upperCaseFirstLetter(token.type)} Token ({token.name})
-          <Icon iconName="key" iconStyle="regular" className="text-base" />
-          <ExpiredTokenBadge token={token} />
-        </span>
-      ),
-      value: token.id,
-      icon: <Icon width={16} height={16} name={token.type} />,
-      // Add searchable text for filtering
-      searchText: `${upperCaseFirstLetter(token.type)} Token ${token.name}`,
-      isDisabled: expired,
-    }
-  })
+  const currentGitTokens = gitTokens.map((token) => ({
+    label: (
+      <span className="flex items-center gap-2">
+        {upperCaseFirstLetter(token.type)} Token ({token.name})
+        <Icon iconName="key" iconStyle="regular" className="text-base" />
+        <ExpiredTokenBadge token={token} />
+      </span>
+    ),
+    value: token.id,
+    icon: <Icon width={16} height={16} name={token.type} />,
+    // Add searchable text for filtering
+    searchText: `${upperCaseFirstLetter(token.type)} Token ${token.name}`,
+    isDisabled: isGitTokenExpired(token),
+  }))
 
   return [...currentAuthProviders, ...currentGitTokens]
 }
