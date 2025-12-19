@@ -1,5 +1,5 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type ReactNode, useRef, useState } from 'react'
 import { Icon, InputSearch, Popover, dropdownMenuItemVariants } from '@qovery/shared/ui'
@@ -70,22 +70,29 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
   // DropdownMenu.Root for entries.
   // So both open state should be sync
   return (
-    <DropdownMenu.Root open={open} onOpenChange={setOpen}>
-      <Popover.Root open={open} onOpenChange={setOpen}>
-        <Popover.Trigger>
-          <div className="group flex items-center justify-between gap-1">
-            <button
-              type="button"
-              className="flex items-center gap-1.5 rounded text-sm font-medium text-neutral-subtle transition-colors focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11 group-hover:text-neutral"
-            >
-              {item.prefix}
-              {item.label}
-            </button>
+    <div className="flex items-center justify-between gap-1">
+      <Link
+        to={item.path}
+        className={twMerge(
+          clsx(
+            'flex items-center gap-1.5 rounded text-sm font-medium text-neutral-subtle transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
+            {
+              'text-neutral': open,
+            }
+          )
+        )}
+      >
+        {item.prefix}
+        {item.label}
+      </Link>
+      <DropdownMenu.Root open={open} onOpenChange={setOpen}>
+        <Popover.Root open={open} onOpenChange={setOpen}>
+          <Popover.Trigger>
             <button
               type="button"
               className={twMerge(
                 clsx(
-                  'relative top-[1px] flex h-6 w-6 items-center justify-center rounded text-neutral-disabled transition-colors focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11 group-hover:text-neutral',
+                  'relative top-[1px] flex h-6 w-6 items-center justify-center rounded text-neutral-disabled transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
                   {
                     'text-neutral': open,
                   }
@@ -101,58 +108,58 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
                 ></path>
               </svg>
             </button>
-          </div>
-        </Popover.Trigger>
-        <DropdownMenu.Content asChild>
-          <Popover.Content className="-ml-2.5 flex w-[340px] flex-col gap-3 p-3 pb-0">
-            {/* 
+          </Popover.Trigger>
+          <DropdownMenu.Content asChild>
+            <Popover.Content className="-ml-2.5 flex w-[340px] flex-col gap-3 p-3 pb-0">
+              {/* 
               Transfer focus from input to list when using arrow keys
               This enables keyboard navigation while keeping the input functional
               https://github.com/radix-ui/primitives/issues/2193#issuecomment-1790564604 
             */}
-            <div className="flex flex-col gap-3" onKeyDown={handleInputKeyDown} ref={inputContainerRef}>
-              <InputSearch placeholder="Search..." onChange={(value) => setSearchQuery(value)} autofocus />
-            </div>
-            <div className="max-h-64 overflow-y-auto" ref={firstItemRef} onKeyDown={handleListKeyDown}>
-              {filteredItems.length > 0 ? (
-                <div className="flex flex-col gap-1">
-                  {filteredItems.map((listItem) => (
-                    <DropdownMenu.Item
-                      key={listItem.id}
-                      onSelect={() => {
-                        setOpen(false)
-                        navigate({ to: listItem.path })
-                      }}
-                      className={twMerge(
-                        dropdownMenuItemVariants({ color: 'brand' }),
-                        'justify-between truncate last:mb-3'
-                      )}
-                    >
-                      <div className="flex min-w-0 items-center gap-3">
-                        <Icon
-                          iconName="check"
-                          className={twMerge(
-                            clsx('text-positive opacity-0', {
-                              'opacity-100': item.id === listItem.id,
-                            })
-                          )}
-                        />
-                        <span className="truncate">{listItem.label}</span>
-                      </div>
-                    </DropdownMenu.Item>
-                  ))}
-                </div>
-              ) : (
-                <div className="px-3 py-6 text-center">
-                  <Icon iconName="wave-pulse" className="text-neutral-subtle" />
-                  <p className="mt-1 text-xs font-medium text-neutral-subtle">No result for this search</p>
-                </div>
-              )}
-            </div>
-          </Popover.Content>
-        </DropdownMenu.Content>
-      </Popover.Root>
-    </DropdownMenu.Root>
+              <div className="flex flex-col gap-3" onKeyDown={handleInputKeyDown} ref={inputContainerRef}>
+                <InputSearch placeholder="Search..." onChange={(value) => setSearchQuery(value)} autofocus />
+              </div>
+              <div className="max-h-64 overflow-y-auto" ref={firstItemRef} onKeyDown={handleListKeyDown}>
+                {filteredItems.length > 0 ? (
+                  <div className="flex flex-col gap-1">
+                    {filteredItems.map((listItem) => (
+                      <DropdownMenu.Item
+                        key={listItem.id}
+                        onSelect={() => {
+                          setOpen(false)
+                          navigate({ to: listItem.path })
+                        }}
+                        className={twMerge(
+                          dropdownMenuItemVariants({ color: 'brand' }),
+                          'justify-between truncate last:mb-3'
+                        )}
+                      >
+                        <div className="flex min-w-0 items-center gap-3">
+                          <Icon
+                            iconName="check"
+                            className={twMerge(
+                              clsx('text-positive opacity-0', {
+                                'opacity-100': item.id === listItem.id,
+                              })
+                            )}
+                          />
+                          <span className="truncate">{listItem.label}</span>
+                        </div>
+                      </DropdownMenu.Item>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="px-3 py-6 text-center">
+                    <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+                    <p className="mt-1 text-xs font-medium text-neutral-subtle">No result for this search</p>
+                  </div>
+                )}
+              </div>
+            </Popover.Content>
+          </DropdownMenu.Content>
+        </Popover.Root>
+      </DropdownMenu.Root>
+    </div>
   )
 }
 
