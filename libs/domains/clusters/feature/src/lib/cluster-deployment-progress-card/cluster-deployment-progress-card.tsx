@@ -112,7 +112,7 @@ function Item({ cluster, project }: { cluster: Cluster; project: Project }) {
             <Icon
               iconName="chevron-down"
               iconStyle="regular"
-              className="text-xs transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
+              className="text-xs text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)]  hover:text-neutral-400 group-data-[state=open]:rotate-180"
             />
           </div>
         </AccordionPrimitive.Trigger>
@@ -139,6 +139,17 @@ function Item({ cluster, project }: { cluster: Cluster; project: Project }) {
               </li>
             ))}
           </ul>
+          <div className="mt-3">
+            <Link
+              to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
+              size="ssm"
+              color="current"
+              className="inline-flex items-center gap-1 font-medium text-neutral-350 hover:text-neutral-400"
+            >
+              See cluster logs
+              <Icon iconName="chevron-right" iconStyle="regular" className="text-xs" />
+            </Link>
+          </div>
         </AccordionPrimitive.Content>
       </AccordionPrimitive.Item>
     )
