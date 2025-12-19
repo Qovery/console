@@ -1,4 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import posthog from 'posthog-js'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -136,6 +137,10 @@ export function OnboardingProject() {
         projectRequest: {
           name: data.project_name,
         },
+      })
+
+      posthog.capture('onboarding-organization-created', {
+        plan: planToUse,
       })
 
       navigate(ENVIRONMENTS_URL(createdOrganizationId, project.id) + ENVIRONMENTS_GENERAL_URL)
