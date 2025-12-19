@@ -151,7 +151,9 @@ export function AlertingCreationFlow({
       (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
       service?.min_running_instances !== service?.max_running_instances
 
-    if (!containerName || (!hasPublicPort && ingressName) || (!hasAutoscaling && hpaName)) return
+    if (!containerName) return
+    if (hasPublicPort && !ingressName) return
+    if (hasAutoscaling && !hpaName) return
 
     try {
       setIsLoading(true)
