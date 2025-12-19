@@ -1,5 +1,6 @@
 import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
+import posthog from 'posthog-js'
 import { PlanEnum, type SignUpRequest } from 'qovery-typescript-axios'
 import { type FormEvent, useContext, useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
@@ -208,6 +209,10 @@ export function OnboardingPlans() {
 
         await createUserSignUp(signUpPayload)
       }
+
+      posthog.capture('onboarding-payment-details-filled', {
+        plan: selectedPlan,
+      })
 
       await refetchUserSignUp()
       navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)

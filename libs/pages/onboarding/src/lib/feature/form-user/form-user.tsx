@@ -1,4 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import posthog from 'posthog-js'
 import { TypeOfUseEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
@@ -123,6 +124,12 @@ export function FormUser() {
         ...userSignUp,
         ...normalizedData,
       })
+
+      posthog.capture('onboarding-tailor-experience-completed', {
+        qovery_usage: normalizedData.qovery_usage,
+        infrastructure_hosting: normalizedData.infrastructure_hosting,
+      })
+
       const nextStep = userSignUp?.dx_auth ? ONBOARDING_PROJECT_URL : ONBOARDING_PLANS_URL
       navigate(`${ONBOARDING_URL}${nextStep}`)
     } catch (error) {
