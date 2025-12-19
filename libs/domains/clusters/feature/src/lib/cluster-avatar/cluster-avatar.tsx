@@ -15,8 +15,8 @@ export const ClusterAvatar = forwardRef<ElementRef<typeof Avatar>, ClusterAvatar
   const localCloudProvider = cloudProvider ?? cluster?.cloud_provider
   const fallback = match({ cluster, localCloudProvider })
     .with({ cluster: { is_demo: true } }, () => (
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50">
-        <Icon iconName="laptop-code" className="text-sky-500" />
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-info-subtle">
+        <Icon iconName="laptop-code" className="text-surface-info-solid" />
       </div>
     ))
     .with({ localCloudProvider: 'ON_PREMISE' }, () => <Icon name="KUBERNETES" height="65%" width="65%" />)

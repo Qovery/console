@@ -1,26 +1,198 @@
-import { Outlet, createFileRoute, useLocation, useParams, useRouter } from '@tanstack/react-router'
-import axios from 'axios'
-import { useMemo } from 'react'
+import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { Outlet, createFileRoute, useLocation, useParams } from '@tanstack/react-router'
 import { Icon, Navbar } from '@qovery/shared/ui'
-import { QOVERY_API } from '@qovery/shared/util-node-env'
-import { useAuthInterceptor } from '@qovery/shared/utils'
 import Header from '../../../app/components/header/header'
 
 export const Route = createFileRoute('/_authenticated/organization')({
-  component: RouteComponent,
+  component: OrganizationRoute,
 })
 
-function RouteComponent() {
-  useAuthInterceptor(axios, QOVERY_API)
-  const { buildLocation } = useRouter()
-  const pathname = useLocation({
-    select: (location) => location.pathname,
-  })
-  const { organizationId = '' } = useParams({ strict: false })
+type NavigationContext = {
+  type: 'organization' | 'cluster' | 'environment' | 'service' | 'project'
+  params: Record<string, string>
+  tabs: NavigationTab[]
+}
 
-  const activeTabId = useMemo(() => {
-    return pathname.split('/').pop()
-  }, [pathname])
+type NavigationTab = {
+  id: string
+  label: string
+  iconName: IconName
+  routeId: string
+}
+
+const ORGANIZATION_TABS: NavigationTab[] = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    iconName: 'table-layout',
+    routeId: '/_authenticated/organization/$organizationId/overview',
+  },
+  {
+    id: 'audit-logs',
+    label: 'Audit Logs',
+    iconName: 'lock-keyhole',
+    routeId: '/_authenticated/organization/$organizationId/audit-logs',
+  },
+  {
+    id: 'alerts',
+    label: 'Alerts',
+    iconName: 'light-emergency',
+    routeId: '/_authenticated/organization/$organizationId/alerts',
+  },
+  {
+    id: 'clusters',
+    label: 'Clusters',
+    iconName: 'cube',
+    routeId: '/_authenticated/organization/$organizationId/clusters',
+  },
+  {
+    id: 'settings',
+    label: 'Settings',
+    iconName: 'gear-complex',
+    routeId: '/_authenticated/organization/$organizationId/settings',
+  },
+]
+
+const CLUSTER_TABS: NavigationTab[] = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    iconName: 'table-layout',
+    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/overview',
+  },
+  {
+    id: 'settings',
+    label: 'Settings',
+    iconName: 'gear-complex',
+    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
+  },
+]
+
+function createRoutePatternRegex(routeIdPattern: string): RegExp {
+  const patternPath = routeIdPattern.replace('/_authenticated/organization', '/organization')
+  return new RegExp('^' + patternPath.replace(/\$(\w+)/g, '[^/]+') + '(/.*)?$')
+}
+
+/**
+ * To add a new navigation context:
+ * 1. Create a new tabs array (example: ENVIRONMENT_TABS) with routeId using the full route ID pattern
+ * 2. Add a new entry to NAVIGATION_CONTEXTS with:
+ *    - type: the context type (must match NavigationContext['type'])
+ *    - routeIdPattern: the route ID pattern to match (example: '/_authenticated/organization/$organizationId/environment/$environmentId')
+ *    - tabs: the tabs array for this context
+ *    - paramNames: array of parameter names used in the route
+ *
+ * The order matters: more specific patterns should come first (example: cluster before organization)
+ */
+const NAVIGATION_CONTEXTS: Array<{
+  type: NavigationContext['type']
+  routeIdPattern: string
+  tabs: NavigationTab[]
+  paramNames: string[]
+}> = [
+  {
+    type: 'cluster',
+    routeIdPattern: '/_authenticated/organization/$organizationId/cluster/$clusterId',
+    tabs: CLUSTER_TABS,
+    paramNames: ['organizationId', 'clusterId'],
+  },
+  {
+    type: 'organization',
+    routeIdPattern: '/_authenticated/organization/$organizationId',
+    tabs: ORGANIZATION_TABS,
+    paramNames: ['organizationId'],
+  },
+]
+
+function useNavigationContext(): NavigationContext | null {
+  const location = useLocation()
+  const params = useParams({ strict: false })
+  const pathname = location.pathname
+
+  for (const context of NAVIGATION_CONTEXTS) {
+    const patternRegex = createRoutePatternRegex(context.routeIdPattern)
+
+    if (patternRegex.test(pathname)) {
+      const extractedParams: Record<string, string> = {}
+      let hasAllParams = true
+
+      for (const paramName of context.paramNames) {
+        const value = params[paramName]
+        if (typeof value === 'string' && value.length > 0) {
+          extractedParams[paramName] = value
+        } else {
+          hasAllParams = false
+          break
+        }
+      }
+
+      if (hasAllParams) {
+        return {
+          type: context.type,
+          params: extractedParams,
+          tabs: context.tabs,
+        }
+      }
+    }
+  }
+
+  const organizationId = params.organizationId
+  if (typeof organizationId === 'string' && organizationId.length > 0 && pathname.startsWith('/organization/')) {
+    return {
+      type: 'organization',
+      params: { organizationId },
+      tabs: ORGANIZATION_TABS,
+    }
+  }
+
+  return null
+}
+
+function useActiveTabId(context: NavigationContext | null): string {
+  const location = useLocation()
+  const pathname = location.pathname
+
+  if (!context) {
+    return '/'
+  }
+
+  for (const tab of context.tabs) {
+    const tabPath = buildRoutePath(tab.routeId, context.params)
+    if (pathname === tabPath || pathname.startsWith(tabPath + '/')) {
+      return tab.id
+    }
+  }
+
+  return '/'
+}
+
+function buildRoutePath(routeId: string, params: Record<string, string>): string {
+  let path = routeId.replace('/_authenticated/organization', '/organization')
+  for (const [key, value] of Object.entries(params)) {
+    path = path.replace(`$${key}`, value)
+  }
+  return path
+}
+
+function NavigationBar({ context }: { context: NavigationContext }) {
+  return (
+    <>
+      {context.tabs.map((tab) => {
+        const path = buildRoutePath(tab.routeId, context.params)
+        return (
+          <Navbar.Item key={tab.id} id={tab.id} to={path}>
+            <Icon iconName={tab.iconName} />
+            {tab.label}
+          </Navbar.Item>
+        )
+      })}
+    </>
+  )
+}
+
+function OrganizationRoute() {
+  const navigationContext = useNavigationContext()
+  const activeTabId = useActiveTabId(navigationContext)
 
   return (
     <div className="h-full min-h-dvh w-full bg-background">
@@ -29,66 +201,7 @@ function RouteComponent() {
       <main className="!h-full">
         <div className="sticky top-0 border-b border-neutral bg-background-secondary px-4">
           <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
-            <Navbar.Item
-              id="overview"
-              to={
-                buildLocation({
-                  to: '/organization/$organizationId/overview',
-                  params: { organizationId },
-                }).href
-              }
-            >
-              <Icon iconName="table-layout" />
-              Overview
-            </Navbar.Item>
-            <Navbar.Item
-              id="security"
-              to={
-                buildLocation({
-                  to: '/organization/$organizationId/security',
-                  params: { organizationId },
-                }).href
-              }
-            >
-              <Icon iconName="lock-keyhole" />
-              Security
-            </Navbar.Item>
-            <Navbar.Item
-              id="alerts"
-              to={
-                buildLocation({
-                  to: '/organization/$organizationId/alerts',
-                  params: { organizationId },
-                }).href
-              }
-            >
-              <Icon iconName="light-emergency" />
-              Alerts
-            </Navbar.Item>
-            <Navbar.Item
-              id="clusters"
-              to={
-                buildLocation({
-                  to: '/organization/$organizationId/clusters',
-                  params: { organizationId },
-                }).href
-              }
-            >
-              <Icon iconName="cube" />
-              Clusters
-            </Navbar.Item>
-            <Navbar.Item
-              id="settings"
-              to={
-                buildLocation({
-                  to: '/organization/$organizationId/settings',
-                  params: { organizationId },
-                }).href
-              }
-            >
-              <Icon iconName="gear-complex" />
-              Settings
-            </Navbar.Item>
+            {navigationContext && <NavigationBar context={navigationContext} />}
           </Navbar.Root>
         </div>
         <div className="m-auto mt-6 h-full w-full max-w-7xl px-4">

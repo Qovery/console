@@ -8,11 +8,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/$clusterId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsRouteImport } from './routes/_authenticated/organization/$organizationId/alerts'
+import { Route as AuthenticatedOrganizationOrganizationIdAuditLogsRouteImport } from './routes/_authenticated/organization/$organizationId/audit-logs'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/overview'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings'
 import { Route as AuthenticatedOrganizationOrganizationIdClustersRouteImport } from './routes/_authenticated/organization/$organizationId/clusters'
 import { Route as AuthenticatedOrganizationOrganizationIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/overview'
-import { Route as AuthenticatedOrganizationOrganizationIdSecurityRouteImport } from './routes/_authenticated/organization/$organizationId/security'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsRouteImport } from './routes/_authenticated/organization/$organizationId/settings'
 import { Route as AuthenticatedOrganizationIndexRouteImport } from './routes/_authenticated/organization/index'
 import { Route as AuthenticatedOrganizationRouteRouteImport } from './routes/_authenticated/organization/route'
@@ -61,12 +63,6 @@ const AuthenticatedOrganizationOrganizationIdSettingsRoute =
     path: '/$organizationId/settings',
     getParentRoute: () => AuthenticatedOrganizationRouteRoute,
   } as any)
-const AuthenticatedOrganizationOrganizationIdSecurityRoute =
-  AuthenticatedOrganizationOrganizationIdSecurityRouteImport.update({
-    id: '/$organizationId/security',
-    path: '/$organizationId/security',
-    getParentRoute: () => AuthenticatedOrganizationRouteRoute,
-  } as any)
 const AuthenticatedOrganizationOrganizationIdOverviewRoute =
   AuthenticatedOrganizationOrganizationIdOverviewRouteImport.update({
     id: '/$organizationId/overview',
@@ -79,6 +75,12 @@ const AuthenticatedOrganizationOrganizationIdClustersRoute =
     path: '/$organizationId/clusters',
     getParentRoute: () => AuthenticatedOrganizationRouteRoute,
   } as any)
+const AuthenticatedOrganizationOrganizationIdAuditLogsRoute =
+  AuthenticatedOrganizationOrganizationIdAuditLogsRouteImport.update({
+    id: '/$organizationId/audit-logs',
+    path: '/$organizationId/audit-logs',
+    getParentRoute: () => AuthenticatedOrganizationRouteRoute,
+  } as any)
 const AuthenticatedOrganizationOrganizationIdAlertsRoute =
   AuthenticatedOrganizationOrganizationIdAlertsRouteImport.update({
     id: '/$organizationId/alerts',
@@ -89,6 +91,18 @@ const AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute =
   AuthenticatedOrganizationOrganizationIdClusterIdIndexRouteImport.update({
     id: '/$organizationId/$clusterId/',
     path: '/$organizationId/$clusterId/',
+    getParentRoute: () => AuthenticatedOrganizationRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute =
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRouteImport.update({
+    id: '/$organizationId/cluster/$clusterId/',
+    path: '/$organizationId/cluster/$clusterId/',
+    getParentRoute: () => AuthenticatedOrganizationRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRoute =
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteImport.update({
+    id: '/$organizationId/cluster/$clusterId/settings',
+    path: '/$organizationId/cluster/$clusterId/settings',
     getParentRoute: () => AuthenticatedOrganizationRouteRoute,
   } as any)
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute =
@@ -105,13 +119,15 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginIndexRoute
   '/organization/': typeof AuthenticatedOrganizationIndexRoute
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
+  '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   '/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   '/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
-  '/organization/$organizationId/security': typeof AuthenticatedOrganizationOrganizationIdSecurityRoute
   '/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRoute
   '/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
   '/organization/$organizationId/cluster/$clusterId/overview': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute
+  '/organization/$organizationId/cluster/$clusterId/settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRoute
+  '/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -119,13 +135,15 @@ export interface FileRoutesByTo {
   '/login': typeof LoginIndexRoute
   '/organization': typeof AuthenticatedOrganizationIndexRoute
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
+  '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   '/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   '/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
-  '/organization/$organizationId/security': typeof AuthenticatedOrganizationOrganizationIdSecurityRoute
   '/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRoute
   '/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
   '/organization/$organizationId/cluster/$clusterId/overview': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute
+  '/organization/$organizationId/cluster/$clusterId/settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRoute
+  '/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -136,13 +154,15 @@ export interface FileRoutesById {
   '/login/': typeof LoginIndexRoute
   '/_authenticated/organization/': typeof AuthenticatedOrganizationIndexRoute
   '/_authenticated/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
+  '/_authenticated/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   '/_authenticated/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   '/_authenticated/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
-  '/_authenticated/organization/$organizationId/security': typeof AuthenticatedOrganizationOrganizationIdSecurityRoute
   '/_authenticated/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRoute
   '/_authenticated/organization/$organizationId/': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/_authenticated/organization/$organizationId/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/overview': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRoute
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -153,13 +173,15 @@ export interface FileRouteTypes {
     | '/login'
     | '/organization/'
     | '/organization/$organizationId/alerts'
+    | '/organization/$organizationId/audit-logs'
     | '/organization/$organizationId/clusters'
     | '/organization/$organizationId/overview'
-    | '/organization/$organizationId/security'
     | '/organization/$organizationId/settings'
     | '/organization/$organizationId'
     | '/organization/$organizationId/$clusterId'
     | '/organization/$organizationId/cluster/$clusterId/overview'
+    | '/organization/$organizationId/cluster/$clusterId/settings'
+    | '/organization/$organizationId/cluster/$clusterId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -167,13 +189,15 @@ export interface FileRouteTypes {
     | '/login'
     | '/organization'
     | '/organization/$organizationId/alerts'
+    | '/organization/$organizationId/audit-logs'
     | '/organization/$organizationId/clusters'
     | '/organization/$organizationId/overview'
-    | '/organization/$organizationId/security'
     | '/organization/$organizationId/settings'
     | '/organization/$organizationId'
     | '/organization/$organizationId/$clusterId'
     | '/organization/$organizationId/cluster/$clusterId/overview'
+    | '/organization/$organizationId/cluster/$clusterId/settings'
+    | '/organization/$organizationId/cluster/$clusterId'
   id:
     | '__root__'
     | '/'
@@ -183,13 +207,15 @@ export interface FileRouteTypes {
     | '/login/'
     | '/_authenticated/organization/'
     | '/_authenticated/organization/$organizationId/alerts'
+    | '/_authenticated/organization/$organizationId/audit-logs'
     | '/_authenticated/organization/$organizationId/clusters'
     | '/_authenticated/organization/$organizationId/overview'
-    | '/_authenticated/organization/$organizationId/security'
     | '/_authenticated/organization/$organizationId/settings'
     | '/_authenticated/organization/$organizationId/'
     | '/_authenticated/organization/$organizationId/$clusterId/'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/overview'
+    | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings'
+    | '/_authenticated/organization/$organizationId/cluster/$clusterId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -257,13 +283,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteImport
       parentRoute: typeof AuthenticatedOrganizationRouteRoute
     }
-    '/_authenticated/organization/$organizationId/security': {
-      id: '/_authenticated/organization/$organizationId/security'
-      path: '/$organizationId/security'
-      fullPath: '/organization/$organizationId/security'
-      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSecurityRouteImport
-      parentRoute: typeof AuthenticatedOrganizationRouteRoute
-    }
     '/_authenticated/organization/$organizationId/overview': {
       id: '/_authenticated/organization/$organizationId/overview'
       path: '/$organizationId/overview'
@@ -276,6 +295,13 @@ declare module '@tanstack/react-router' {
       path: '/$organizationId/clusters'
       fullPath: '/organization/$organizationId/clusters'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClustersRouteImport
+      parentRoute: typeof AuthenticatedOrganizationRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/audit-logs': {
+      id: '/_authenticated/organization/$organizationId/audit-logs'
+      path: '/$organizationId/audit-logs'
+      fullPath: '/organization/$organizationId/audit-logs'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAuditLogsRouteImport
       parentRoute: typeof AuthenticatedOrganizationRouteRoute
     }
     '/_authenticated/organization/$organizationId/alerts': {
@@ -292,6 +318,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRouteImport
       parentRoute: typeof AuthenticatedOrganizationRouteRoute
     }
+    '/_authenticated/organization/$organizationId/cluster/$clusterId/': {
+      id: '/_authenticated/organization/$organizationId/cluster/$clusterId/'
+      path: '/$organizationId/cluster/$clusterId'
+      fullPath: '/organization/$organizationId/cluster/$clusterId'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRouteImport
+      parentRoute: typeof AuthenticatedOrganizationRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/cluster/$clusterId/settings': {
+      id: '/_authenticated/organization/$organizationId/cluster/$clusterId/settings'
+      path: '/$organizationId/cluster/$clusterId/settings'
+      fullPath: '/organization/$organizationId/cluster/$clusterId/settings'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteImport
+      parentRoute: typeof AuthenticatedOrganizationRouteRoute
+    }
     '/_authenticated/organization/$organizationId/cluster/$clusterId/overview': {
       id: '/_authenticated/organization/$organizationId/cluster/$clusterId/overview'
       path: '/$organizationId/cluster/$clusterId/overview'
@@ -305,27 +345,33 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedOrganizationRouteRouteChildren {
   AuthenticatedOrganizationIndexRoute: typeof AuthenticatedOrganizationIndexRoute
   AuthenticatedOrganizationOrganizationIdAlertsRoute: typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
+  AuthenticatedOrganizationOrganizationIdAuditLogsRoute: typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   AuthenticatedOrganizationOrganizationIdClustersRoute: typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   AuthenticatedOrganizationOrganizationIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
-  AuthenticatedOrganizationOrganizationIdSecurityRoute: typeof AuthenticatedOrganizationOrganizationIdSecurityRoute
   AuthenticatedOrganizationOrganizationIdSettingsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRoute
   AuthenticatedOrganizationOrganizationIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRoute
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
 }
 
 const AuthenticatedOrganizationRouteRouteChildren: AuthenticatedOrganizationRouteRouteChildren = {
   AuthenticatedOrganizationIndexRoute: AuthenticatedOrganizationIndexRoute,
   AuthenticatedOrganizationOrganizationIdAlertsRoute: AuthenticatedOrganizationOrganizationIdAlertsRoute,
+  AuthenticatedOrganizationOrganizationIdAuditLogsRoute: AuthenticatedOrganizationOrganizationIdAuditLogsRoute,
   AuthenticatedOrganizationOrganizationIdClustersRoute: AuthenticatedOrganizationOrganizationIdClustersRoute,
   AuthenticatedOrganizationOrganizationIdOverviewRoute: AuthenticatedOrganizationOrganizationIdOverviewRoute,
-  AuthenticatedOrganizationOrganizationIdSecurityRoute: AuthenticatedOrganizationOrganizationIdSecurityRoute,
   AuthenticatedOrganizationOrganizationIdSettingsRoute: AuthenticatedOrganizationOrganizationIdSettingsRoute,
   AuthenticatedOrganizationOrganizationIdIndexRoute: AuthenticatedOrganizationOrganizationIdIndexRoute,
   AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute:
     AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute,
   AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute:
     AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute,
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRoute:
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRoute,
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute:
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute,
 }
 
 const AuthenticatedOrganizationRouteRouteWithChildren = AuthenticatedOrganizationRouteRoute._addFileChildren(

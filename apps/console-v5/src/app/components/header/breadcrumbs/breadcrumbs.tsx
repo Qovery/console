@@ -1,19 +1,28 @@
 import { useParams, useRouter } from '@tanstack/react-router'
 import { useMemo } from 'react'
-import { useOrganizations } from '@qovery/domains/organizations/feature'
+import { ClusterAvatar, useClusters } from '@qovery/domains/clusters/feature'
+import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { Avatar } from '@qovery/shared/ui'
 import { Separator } from '../header'
 import { BreadcrumbItem, type BreadcrumbItemData } from './breadcrumb-item'
 
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
-  const { organizationId } = useParams({ strict: false })
+  const { organizationId, clusterId } = useParams({ strict: false })
 
   const { data: organizations = [] } = useOrganizations({
     enabled: true,
   })
+  const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId })
+  const { data: clusters = [] } = useClusters({ organizationId })
 
-  const orgItems: BreadcrumbItemData[] = organizations.map((organization) => ({
+  // Necessary to keep the organization from client by Qovery team
+  const allOrganizations =
+    organizations.find((org) => org.id !== organizationId) && organization
+      ? [...organizations, organization]
+      : organizations
+
+  const orgItems: BreadcrumbItemData[] = allOrganizations.map((organization) => ({
     id: organization.id,
     label: organization.name,
     path: buildLocation({ to: '/organization/$organizationId', params: { organizationId: organization.id } }).href,
@@ -25,12 +34,24 @@ export function Breadcrumbs() {
     [organizationId, orgItems]
   )
 
-  if (!currentOrg) {
-    return null
-  }
+  const clusterItems: BreadcrumbItemData[] = clusters.map((cluster) => ({
+    id: cluster.id,
+    label: cluster.name,
+    path: buildLocation({
+      to: '/organization/$organizationId/cluster/$clusterId',
+      params: { organizationId, clusterId: cluster.id },
+    }).href,
+  }))
 
-  const breadcrumbData = [
-    {
+  const currentCluster = useMemo(
+    () => clusterItems.find((cluster) => cluster.id === clusterId),
+    [clusterId, clusterItems]
+  )
+
+  const breadcrumbData: Array<{ item: BreadcrumbItemData; items: BreadcrumbItemData[] }> = []
+
+  if (currentOrg) {
+    breadcrumbData.push({
       item: {
         ...currentOrg,
         prefix: (
@@ -44,8 +65,18 @@ export function Breadcrumbs() {
         ),
       },
       items: orgItems,
-    },
-  ]
+    })
+  }
+
+  if (currentCluster) {
+    breadcrumbData.push({
+      item: {
+        ...currentCluster,
+        prefix: <ClusterAvatar cluster={clusters.find((cluster) => cluster.id === clusterId)} size="sm" />,
+      },
+      items: clusterItems,
+    })
+  }
 
   return (
     <div className="flex items-center gap-2">
