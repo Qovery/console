@@ -10,10 +10,22 @@ import {
   APPLICATION_MONITORING_URL,
   APPLICATION_URL,
 } from '@qovery/shared/routes'
-import { Badge, Button, Chart, Icon, Link, TablePrimitives, Tooltip, useModalConfirmation } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  Chart,
+  DropdownMenu,
+  Icon,
+  Link,
+  TablePrimitives,
+  Tooltip,
+  useModal,
+  useModalConfirmation,
+} from '@qovery/shared/ui'
 import { useAlertRulesGhosted } from '../../hooks/use-alert-rules-ghosted/use-alert-rules-ghosted'
 import { useAlertRules } from '../../hooks/use-alert-rules/use-alert-rules'
 import { useDeleteAlertRule } from '../../hooks/use-delete-alert-rule/use-delete-alert-rule'
+import { AlertRulesCloneModal } from '../alert-rules-clone-modal/alert-rules-clone-modal'
 import { SeverityIndicator } from '../severity-indicator/severity-indicator'
 
 const { Table } = TablePrimitives
@@ -72,7 +84,6 @@ function getStatusConfig(
 
 interface AlertRulesOverviewProps {
   organizationId: string
-  projectId?: string
   service?: AnyService
   filter?: string
   onCreateKeyAlerts?: () => void
@@ -80,12 +91,12 @@ interface AlertRulesOverviewProps {
 
 export function AlertRulesOverview({
   organizationId,
-  projectId,
   service,
   filter,
   children,
   onCreateKeyAlerts,
 }: PropsWithChildren<AlertRulesOverviewProps>) {
+  const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const navigate = useNavigate()
 
@@ -136,6 +147,15 @@ export function AlertRulesOverview({
       confirmationAction: 'delete',
       name: alertRule.name,
       action: () => deleteAlertRule({ alertRuleId: alertRule.id }),
+    })
+  }
+
+  const cloneAlertRule = (alertRule: AlertRuleResponse) => {
+    openModal({
+      content: <AlertRulesCloneModal organizationId={organizationId} alertRule={alertRule} onClose={closeModal} />,
+      options: {
+        fakeModal: true,
+      },
     })
   }
 
@@ -322,15 +342,28 @@ export function AlertRulesOverview({
                             </Button>
                           </Tooltip>
                           <Tooltip content="Delete alert rule">
-                            <Button
-                              variant="outline"
-                              color="neutral"
-                              size="xs"
-                              className="w-6 justify-center"
-                              onClick={() => deleteAlertRuleModal(alertRule)}
-                            >
-                              <Icon iconName="trash-can" iconStyle="regular" className="text-xs" />
-                            </Button>
+                            <DropdownMenu.Root>
+                              <DropdownMenu.Trigger asChild>
+                                <Button variant="outline" color="neutral" size="xs" className="w-6 justify-center">
+                                  <Icon iconName="ellipsis" iconStyle="regular" className="text-xs" />
+                                </Button>
+                              </DropdownMenu.Trigger>
+                              <DropdownMenu.Content className="mr-14 w-40">
+                                <DropdownMenu.Item
+                                  icon={<Icon iconName="clone" />}
+                                  onSelect={() => cloneAlertRule(alertRule)}
+                                >
+                                  Clone
+                                </DropdownMenu.Item>
+                                <DropdownMenu.Item
+                                  color="red"
+                                  icon={<Icon iconName="trash-can" iconStyle="regular" />}
+                                  onSelect={() => deleteAlertRuleModal(alertRule)}
+                                >
+                                  Delete
+                                </DropdownMenu.Item>
+                              </DropdownMenu.Content>
+                            </DropdownMenu.Root>
                           </Tooltip>
                         </div>
                       ))
