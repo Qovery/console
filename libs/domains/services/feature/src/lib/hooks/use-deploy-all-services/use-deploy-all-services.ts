@@ -45,6 +45,13 @@ export function useDeployAllServices() {
           })
         }
       }
+      for (const { id: serviceId } of payload.terraforms ?? []) {
+        if (serviceId) {
+          queryClient.invalidateQueries({
+            queryKey: queries.services.details({ serviceId, serviceType: 'TERRAFORM' }).queryKey,
+          })
+        }
+      }
     },
     meta: {
       notifyOnSuccess(_: unknown, variables: unknown) {

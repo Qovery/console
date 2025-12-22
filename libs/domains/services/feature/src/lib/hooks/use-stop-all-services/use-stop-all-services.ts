@@ -47,6 +47,13 @@ export function useStopAllServices() {
           })
         }
       }
+      for (const serviceId of payload.terraform_ids ?? []) {
+        if (serviceId) {
+          queryClient.invalidateQueries({
+            queryKey: queries.services.details({ serviceId, serviceType: 'TERRAFORM' }).queryKey,
+          })
+        }
+      }
     },
     meta: {
       notifyOnSuccess(_: unknown, variables: unknown) {
