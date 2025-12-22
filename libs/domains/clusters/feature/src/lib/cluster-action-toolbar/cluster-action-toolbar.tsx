@@ -1,3 +1,4 @@
+import { Link, useLocation, useNavigate } from '@tanstack/react-router'
 import {
   type Cluster,
   type ClusterStatus,
@@ -5,10 +6,8 @@ import {
   type KubernetesEnum,
   OrganizationEventTargetType,
 } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { type ReactNode, useCallback, useEffect, useMemo } from 'react'
 import { P, match } from 'ts-pattern'
-import { AUDIT_LOGS_PARAMS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { ActionToolbar, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
@@ -173,7 +172,6 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
 
 function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatus }) {
   const navigate = useNavigate()
-  const { pathname } = useLocation()
   const { openModal } = useModal()
   const [, copyToClipboard] = useCopyToClipboard()
   const { mutate: downloadKubeconfig } = useDownloadKubeconfig()
@@ -213,15 +211,16 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         <DropdownMenu.Item
           icon={<Icon iconName="clock-rotate-left" />}
           onSelect={() =>
-            navigate(
-              AUDIT_LOGS_PARAMS_URL(cluster.organization.id, {
+            navigate({
+              to: '/organization/$organizationId/audit-logs',
+              params: {
+                organizationId: cluster.organization.id,
+              },
+              search: {
                 targetType: OrganizationEventTargetType.CLUSTER,
                 targetId: cluster.id,
-              }),
-              {
-                state: { prevUrl: pathname },
-              }
-            )
+              },
+            })
           }
         >
           See audit logs
@@ -230,7 +229,11 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
           Copy identifier
         </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="gear" />} asChild>
-          <Link className="gap-0" to={CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL}>
+          <Link
+            className="gap-0"
+            to="/organization/$organizationId/cluster/$clusterId/settings"
+            params={{ organizationId: cluster.organization.id, clusterId: cluster.id }}
+          >
             Open settings
           </Link>
         </DropdownMenu.Item>
@@ -262,43 +265,57 @@ export interface ClusterActionToolbarProps {
 
 export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionToolbarProps) {
   const navigate = useNavigate()
-  const { pathname } = useLocation()
+  const location = useLocation()
   const showSelfManagedGuideKey = 'show-self-managed-guide'
-  const [searchParams, setSearchParams] = useSearchParams()
   const { openModal, closeModal } = useModal()
   const { data: runningStatus } = useClusterRunningStatus({
     organizationId: cluster.organization.id,
     clusterId: cluster.id,
   })
 
-  const openInstallationGuideModal = ({ type = 'MANAGED' }: { type?: 'MANAGED' | 'ON_PREMISE' } = {}) =>
-    openModal({
-      options: {
-        width: type === 'MANAGED' ? 488 : 500,
-      },
-      content: (
-        <ClusterInstallationGuideModal
-          mode="EDIT"
-          cluster={cluster}
-          type={type}
-          onClose={() => {
-            searchParams.delete(showSelfManagedGuideKey)
-            setSearchParams(searchParams)
-            closeModal()
-          }}
-        />
-      ),
-    })
+  const searchParams = useMemo(() => {
+    const params = new URLSearchParams(location.search)
+    return params
+  }, [location.search])
+
+  const openInstallationGuideModal = useCallback(
+    ({ type = 'MANAGED' }: { type?: 'MANAGED' | 'ON_PREMISE' } = {}) => {
+      openModal({
+        options: {
+          width: type === 'MANAGED' ? 488 : 500,
+        },
+        content: (
+          <ClusterInstallationGuideModal
+            mode="EDIT"
+            cluster={cluster}
+            type={type}
+            onClose={() => {
+              const newParams = new URLSearchParams(location.search)
+              newParams.delete(showSelfManagedGuideKey)
+              const newSearch = newParams.toString()
+              const newUrl = newSearch ? `${location.pathname}?${newSearch}` : location.pathname
+              window.history.replaceState({}, '', newUrl)
+              closeModal()
+            }}
+          />
+        ),
+      })
+    },
+    [cluster, location.pathname, location.search, openModal, closeModal]
+  )
 
   useEffect(() => {
     const bool = searchParams.has(showSelfManagedGuideKey) && cluster.kubernetes === 'SELF_MANAGED'
     if (bool) {
-      searchParams.delete(showSelfManagedGuideKey)
-      setSearchParams(searchParams)
+      const newParams = new URLSearchParams(location.search)
+      newParams.delete(showSelfManagedGuideKey)
+      const newSearch = newParams.toString()
+      const newUrl = newSearch ? `${location.pathname}?${newSearch}` : location.pathname
+      window.history.replaceState({}, '', newUrl)
       openInstallationGuideModal()
     }
     return () => (bool ? closeModal() : undefined)
-  }, [searchParams, setSearchParams, cluster.kubernetes, closeModal])
+  }, [searchParams, location.search, location.pathname, cluster.kubernetes, closeModal, openInstallationGuideModal])
 
   const actionToolbarButtons = match(cluster)
     .with({ cloud_provider: P.not('ON_PREMISE'), kubernetes: 'SELF_MANAGED' }, () => (
@@ -324,8 +341,12 @@ export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionTo
         <Tooltip content="Logs">
           <ActionToolbar.Button
             onClick={() =>
-              navigate(INFRA_LOGS_URL(cluster.organization.id, cluster.id), {
-                state: { prevUrl: pathname },
+              navigate({
+                to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
+                params: {
+                  organizationId: cluster.organization.id,
+                  clusterId: cluster.id,
+                },
               })
             }
           >
@@ -341,10 +362,9 @@ export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionTo
       <Tooltip content="Qovery cloud shell">
         <ActionToolbar.Button
           onClick={() =>
-            navigate(CLUSTER_URL(cluster.organization.id, cluster.id), {
-              state: {
-                hasShell: true,
-              },
+            navigate({
+              to: '/organization/$organizationId/cluster/$clusterId/overview',
+              search: { hasShell: true },
             })
           }
         >

@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
-import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Icon, Link, ProgressBar, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { calculatePercentage, pluralize } from '@qovery/shared/util-js'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
@@ -121,7 +120,8 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
             >
               <Link
                 color="current"
-                to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+                params={{ organizationId, clusterId }}
               >
                 <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-300" />
               </Link>

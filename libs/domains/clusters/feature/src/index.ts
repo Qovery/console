@@ -5,6 +5,7 @@ export * from './lib/cluster-installation-guide-modal/cluster-installation-guide
 export * from './lib/cluster-action-toolbar/cluster-action-toolbar'
 export * from './lib/cluster-avatar/cluster-avatar'
 export * from './lib/cluster-setup/cluster-setup'
+export * from './lib/cluster-need-redeploy-flag/cluster-need-redeploy-flag'
 export * from './lib/cluster-card/cluster-card'
 export * from './lib/cluster-credentials-modal/cluster-credentials-modal'
 export * from './lib/credentials-list-clusters-modal/credentials-list-clusters-modal'

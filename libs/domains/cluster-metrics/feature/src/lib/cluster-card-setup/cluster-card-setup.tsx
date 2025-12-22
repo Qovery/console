@@ -1,8 +1,7 @@
+import { Link } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { Link, useLocation } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus, useClusterStatus } from '@qovery/domains/clusters/feature'
-import { INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { Badge, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -20,7 +19,6 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
     organizationId: organizationId,
     clusterId: clusterId,
   })
-  const { pathname } = useLocation()
 
   const kubeVersion = runningStatus?.computed_status?.kube_version_status
 
@@ -75,11 +73,9 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
           <Skeleton width="65%" height={20} show={isLoading} className="truncate">
             <Link
               title={deploymentStatus?.last_deployment_date && dateUTCString(deploymentStatus.last_deployment_date)}
-              to={INFRA_LOGS_URL(organizationId, clusterId)}
+              to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+              params={{ organizationId, clusterId }}
               className="flex h-8 w-full items-center gap-2.5 rounded p-1.5 transition-colors hover:bg-neutral-150"
-              state={{
-                prevUrl: pathname,
-              }}
             >
               <StatusChip status={deploymentStatus.status} />
               {match(deploymentStatus?.status)
