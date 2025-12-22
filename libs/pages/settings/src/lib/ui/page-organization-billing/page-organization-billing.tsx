@@ -38,7 +38,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
           ) : props.creditCards.length > 0 ? (
             <div className="flex flex-col">
               <p className="mb-5 text-xs text-neutral-400">
-                You will be charged in USD / EUR - contact us for more details.
+                If you want to modify the card, delete the existing one and add a new.
               </p>
               {props.creditCards.map((creditCard) => (
                 <div
