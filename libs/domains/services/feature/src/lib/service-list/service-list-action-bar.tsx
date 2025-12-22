@@ -132,6 +132,9 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                   helms: deployableServices
                     .filter(({ serviceType }) => serviceType === 'HELM')
                     .map(({ id }) => ({ id })),
+                  terraforms: deployableServices
+                    .filter(({ serviceType }) => serviceType === 'TERRAFORM')
+                    .map(({ id }) => ({ id })),
                 },
               })
               resetRowSelection()
