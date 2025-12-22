@@ -21,6 +21,7 @@ export interface ModalCrudProps {
   howItWorks?: ReactNode
   customLoader?: ReactNode
   forwardRef?: React.RefObject<HTMLDivElement>
+  bottomButtons?: ReactNode
 }
 
 export function ModalCrud(props: ModalCrudProps) {
@@ -39,6 +40,7 @@ export function ModalCrud(props: ModalCrudProps) {
     howItWorks = null,
     customLoader = null,
     forwardRef,
+    bottomButtons,
   } = props
   const { formState, trigger } = useFormContext()
 
@@ -63,9 +65,12 @@ export function ModalCrud(props: ModalCrudProps) {
       {howItWorks && (
         <Popover.Root>
           <Popover.Trigger>
-            <span className="mt-2 cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600">
+            <button
+              type="button"
+              className="mt-2 cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+            >
               Show how it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
-            </span>
+            </button>
           </Popover.Trigger>
           <Popover.Content side="left" className="relative text-sm text-neutral-350" style={{ width: 440 }}>
             <h6 className="mb-2 font-medium text-neutral-400">How it works</h6>
@@ -81,6 +86,7 @@ export function ModalCrud(props: ModalCrudProps) {
       <form className="mt-6" onSubmit={onSubmit}>
         {children}
         <div className="mt-6 flex justify-end gap-3">
+          {bottomButtons}
           <Button
             data-testid="cancel-button"
             type="button"

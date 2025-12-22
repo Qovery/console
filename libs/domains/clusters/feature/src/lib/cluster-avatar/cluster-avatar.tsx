@@ -20,7 +20,7 @@ export const ClusterAvatar = forwardRef<ElementRef<typeof Avatar>, ClusterAvatar
       </div>
     ))
     .with({ localCloudProvider: 'ON_PREMISE' }, () => <Icon name="KUBERNETES" height="65%" width="65%" />)
-    .otherwise((c) => <Icon name={localCloudProvider} height="65%" width="65%" />)
+    .otherwise(() => <Icon name={localCloudProvider} height="65%" width="65%" />)
 
   return <Avatar ref={ref} fallback={fallback} {...props} />
 })

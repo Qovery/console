@@ -15,7 +15,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
     >
       Clone the service on the same or different target environment.
     </p>
-    <span
+    <button
       aria-controls="radix-:r6:"
       aria-expanded="false"
       aria-haspopup="dialog"
@@ -28,7 +28,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
         aria-hidden="true"
         class="fa-regular fa-circle-question text-xs"
       />
-    </span>
+    </button>
     <form
       class="mt-6"
     >

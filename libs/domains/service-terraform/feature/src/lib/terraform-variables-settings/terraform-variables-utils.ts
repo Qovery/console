@@ -1,4 +1,26 @@
+import { type TerraformVariableDefinition } from 'qovery-typescript-axios'
 import { CUSTOM_SOURCE, type UIVariable } from './terraform-variables-context'
+
+export type VariableMetadata = {
+  description?: string
+  nullable: boolean
+}
+
+export const buildMetadataByKey = (
+  variablesResponse: TerraformVariableDefinition[] | undefined
+): Record<string, VariableMetadata> => {
+  return Object.fromEntries(
+    (variablesResponse ?? [])
+      .filter((variable) => variable?.key)
+      .map((variable) => [
+        variable.key,
+        {
+          description: variable.description ?? undefined,
+          nullable: variable.nullable ?? true,
+        },
+      ])
+  )
+}
 
 export const isVariableChanged = (v: UIVariable): boolean => {
   // New variables are always considered changed

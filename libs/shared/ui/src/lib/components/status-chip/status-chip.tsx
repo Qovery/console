@@ -2,6 +2,7 @@ import {
   type ClusterStateEnum,
   type DeploymentHistoryActionStatus,
   type ServiceActionEnum,
+  type ServiceSubActionEnum,
   type StageStatusEnum,
   type StateEnum,
   type StepMetricStatusEnum,
@@ -39,6 +40,7 @@ export interface StatusChipProps {
     | StageStatusEnum
     | DeploymentHistoryActionStatus
     | ServiceActionEnum
+    | Exclude<ServiceSubActionEnum, 'NONE'>
     | undefined
   className?: string
   appendTooltipMessage?: string
@@ -80,6 +82,11 @@ export function StatusChip({
       'WAITING_RESTARTING',
       'WAITING_RUNNING',
       'WAITING_STOPPING',
+      'TERRAFORM_MIGRATE_STATE',
+      'TERRAFORM_PLAN_ONLY',
+      'TERRAFORM_PLAN_AND_APPLY',
+      'TERRAFORM_DESTROY',
+      'TERRAFORM_FORCE_UNLOCK_STATE',
       () => <QueuedIcon />
     )
     .with('DEPLOYING', 'STARTING', 'ONGOING', 'DRY_RUN', 'EXECUTING', () => <DeployingIcon />)

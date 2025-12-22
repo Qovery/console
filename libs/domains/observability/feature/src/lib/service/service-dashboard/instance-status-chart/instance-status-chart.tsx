@@ -433,7 +433,7 @@ export function InstanceStatusChart({
                 timestamp: timestamp * 1000,
                 reason: 'ScalingLimited',
                 description:
-                  'Auto scaling reached the maximum number of replicas. You can increase it in the settings.',
+                  'Auto scaling reached the maximum number of instances . You can increase it in the settings.',
                 color: 'var(--color-red-500)',
                 icon: 'exclamation',
                 pod: series.metric.pod,

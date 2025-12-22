@@ -6,11 +6,18 @@ import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { Button, FunnelFlowBody, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { useCreateAlertRule } from '../../../hooks/use-create-alert-rule/use-create-alert-rule'
-import { SeverityIndicator } from '../../../service/service-alerting/severity-indicator/severity-indicator'
+import { SeverityIndicator } from '../../severity-indicator/severity-indicator'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration } from '../alerting-creation-flow.types'
 import { ALERTING_CREATION_EDIT, ALERTING_CREATION_METRIC } from '../router'
-import { QUERY_CPU, QUERY_MEMORY } from './alert-queries'
+import {
+  QUERY_CPU,
+  QUERY_HTTP_ERROR,
+  QUERY_HTTP_LATENCY,
+  QUERY_INSTANCE_RESTART,
+  QUERY_MEMORY,
+  QUERY_MISSING_INSTANCE,
+} from './alert-queries'
 
 const { Table } = TablePrimitives
 
@@ -22,6 +29,7 @@ interface AlertsSummaryTableProps {
   showIncludeButton?: boolean
 }
 
+// XXX: Not used for now but will be used in the future with flow bulk improvements
 function AlertsSummaryTable({
   alerts,
   onEdit,
@@ -51,10 +59,10 @@ function AlertsSummaryTable({
             <Table.Row key={index} className="h-11">
               <Table.RowHeaderCell>
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-neutral-400">{alert.name}</span>
+                  <span className="truncate text-sm text-neutral-400">{alert.name}</span>
                 </div>
               </Table.RowHeaderCell>
-              <Table.Cell className="h-11">{alert.tag}</Table.Cell>
+              <Table.Cell className="h-11">{alert.tag.replace(/_/g, ' ')}</Table.Cell>
               <Table.Cell className="h-11">
                 <SeverityIndicator severity={alert.severity} />
               </Table.Cell>
@@ -129,6 +137,7 @@ export function SummaryStep() {
     onComplete,
     selectedMetrics,
     containerName,
+    ingressName,
   } = useAlertingCreationFlowContext()
 
   useEffect(() => {
@@ -151,7 +160,7 @@ export function SummaryStep() {
   const handleConfirm = async () => {
     const activeAlerts = alerts.filter((alert) => !alert.skipped)
 
-    if (!service || !environment || !containerName) return
+    if (!service || !environment || !containerName || !ingressName) return
 
     try {
       setIsCreatingAlertRule(true)
@@ -179,14 +188,19 @@ export function SummaryStep() {
               promql: match(alert.tag)
                 .with('cpu', () => QUERY_CPU(containerName))
                 .with('memory', () => QUERY_MEMORY(containerName))
+                .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
+                .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
+                .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
+                .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
                 .otherwise(() => ''),
             },
             for_duration: alert.for_duration,
             severity: alert.severity,
             enabled: true,
-            // alert_receiver_ids: alert.notificationChannels,
-            alert_receiver_ids: ['e52c83f5-c9a8-41c2-9fb3-0f103d8811aa'],
-            presentation: {},
+            alert_receiver_ids: alert.alert_receiver_ids,
+            presentation: {
+              summary: alert.presentation.summary ?? undefined,
+            },
           },
         })
         onComplete(activeAlerts)
@@ -216,7 +230,7 @@ export function SummaryStep() {
   const skippedAlerts = skippedAlertsWithIndex.map(({ alert }) => alert)
 
   return (
-    <FunnelFlowBody>
+    <FunnelFlowBody customContentWidth="max-w-[52rem]">
       <Section className="flex flex-col gap-4">
         <Heading>Summary</Heading>
 
@@ -268,9 +282,7 @@ export function SummaryStep() {
                 <Icon iconName="circle-minus" iconStyle="regular" className="text-red-600" />
                 Alerts excluded from creation ({skippedAlerts.length})
               </p>
-              <span className=" text-neutral-350">
-                Alert we will automatically create and activate as soon as you confirm the creation
-              </span>
+              <span className=" text-neutral-350">These alerts were skipped during setup and won't be created</span>
             </div>
             <AlertsSummaryTable
               alerts={skippedAlerts}

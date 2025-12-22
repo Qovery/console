@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   APPLICATION_MONITORING_ALERTS_CREATION_URL,
+  APPLICATION_MONITORING_ALERT_METRIC_URL,
   APPLICATION_MONITORING_URL,
   APPLICATION_URL,
 } from '@qovery/shared/routes'
 import { Icon, InputTextSmall, ModalCrud } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
+import { type MetricCategory } from '../alerting-creation-flow/alerting-creation-flow.types'
 
 interface CreateKeyAlertsModalProps {
   onClose: () => void
@@ -19,37 +21,57 @@ interface CreateKeyAlertsModalProps {
 
 interface CreateKeyAlertsFormData {
   targetedService: string
-  metricCategories: string[]
+  metrics: MetricCategory[]
 }
 
-interface MetricCategory {
-  id: string
+interface Metric {
+  id: MetricCategory
   label: string
   iconName: IconName
 }
 
-const METRIC_CATEGORIES: MetricCategory[] = [
-  { id: 'instances', label: 'Instances', iconName: 'cloud' },
-  { id: 'k8s_event', label: 'k8s event', iconName: 'cube' },
+const METRICS: Metric[] = [
   { id: 'cpu', label: 'CPU', iconName: 'microchip' },
   { id: 'memory', label: 'Memory', iconName: 'server' },
-  { id: 'network', label: 'Network', iconName: 'code' },
-  { id: 'logs', label: 'Logs', iconName: 'file-lines' },
+  { id: 'http_error', label: 'HTTP error', iconName: 'globe' },
+  { id: 'http_latency', label: 'HTTP latency', iconName: 'globe' },
+  { id: 'missing_instance', label: 'Missing instance', iconName: 'server' },
+  { id: 'instance_restart', label: 'Instance restart', iconName: 'cube' },
+  { id: 'hpa_limit', label: 'Auto-scaling limit', iconName: 'up-right-and-down-left-from-center' },
 ]
 
 export function CreateKeyAlertsModal({ onClose, service, organizationId, projectId }: CreateKeyAlertsModalProps) {
   const navigate = useNavigate()
 
+  const hasPublicPort =
+    (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
+    (service?.ports || []).length > 0 &&
+    service?.ports?.some((p) => p.publicly_accessible)
+
+  const hasAutoscaling =
+    (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
+    service?.min_running_instances !== service?.max_running_instances
+
+  const availableMetrics = METRICS.filter((metric) => {
+    if (!hasPublicPort && (metric.id === 'http_error' || metric.id === 'http_latency')) {
+      return false
+    }
+    if (!hasAutoscaling && metric.id === 'hpa_limit') {
+      return false
+    }
+    return true
+  })
+
   const methods = useForm<CreateKeyAlertsFormData>({
     mode: 'onChange',
     defaultValues: {
       targetedService: service?.id ?? undefined,
-      metricCategories: [],
+      metrics: [],
     },
     resolver: (values) => {
       const errors: Record<string, { type: string; message: string }> = {}
-      if (!values.metricCategories || values.metricCategories.length === 0) {
-        errors['metricCategories'] = {
+      if (!values.metrics || values.metrics.length === 0) {
+        errors['metrics'] = {
           type: 'required',
           message: 'At least one category must be selected',
         }
@@ -62,31 +84,31 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    const templatesParam = data.metricCategories.join(',')
+    const templatesParam = data.metrics.join(',')
     const basePath =
       APPLICATION_URL(organizationId, projectId, service?.environment?.id, service?.id) +
       APPLICATION_MONITORING_URL +
       APPLICATION_MONITORING_ALERTS_CREATION_URL
 
     onClose()
-    navigate(`${basePath}/metric/${data.metricCategories[0]}?templates=${templatesParam}`)
+    navigate(`${basePath}${APPLICATION_MONITORING_ALERT_METRIC_URL(data.metrics[0])}?templates=${templatesParam}`)
   })
 
-  const watchMetricCategories = methods.watch('metricCategories')
+  const watchMetrics = methods.watch('metrics')
 
-  const toggleCategory = (categoryId: string) => {
-    const currentCategories = watchMetricCategories || []
-    const newCategories = currentCategories.includes(categoryId)
-      ? currentCategories.filter((id) => id !== categoryId)
-      : [...currentCategories, categoryId]
+  const toggleMetric = (metricId: MetricCategory) => {
+    const currentMetrics = watchMetrics || []
+    const newMetrics = currentMetrics.includes(metricId)
+      ? currentMetrics.filter((m) => m !== metricId)
+      : [...currentMetrics, metricId]
 
-    methods.setValue('metricCategories', newCategories, { shouldValidate: true })
+    methods.setValue('metrics', newMetrics, { shouldValidate: true })
   }
 
   return (
     <FormProvider {...methods}>
       <ModalCrud
-        title="Create key alerts"
+        title="Create new alert"
         description="Please select the type of alert want to add to your service."
         onClose={onClose}
         onSubmit={onSubmit}
@@ -120,25 +142,26 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
               <h3 className="text-sm font-medium text-neutral-400">Metric categories</h3>
               <p className="text-neutral-350">Choose the metric categories you want to generate alerts for</p>
             </div>
-
-            <div className="mb-1 grid grid-cols-3 gap-2">
-              {METRIC_CATEGORIES.map((category) => {
-                const isSelected = watchMetricCategories?.includes(category.id)
+            {/* This is a workaround to prevent the button from being focused when the user open the modal */}
+            <button type="button" className="pointer-events-none absolute h-0 w-0 select-none"></button>
+            <div className="mb-1 grid grid-cols-2 gap-2">
+              {availableMetrics.map((metric) => {
+                const isSelected = watchMetrics?.includes(metric.id)
 
                 return (
                   <button
-                    key={category.id}
+                    key={metric.id}
                     type="button"
-                    onClick={() => toggleCategory(category.id)}
+                    onClick={() => toggleMetric(metric.id)}
                     onKeyDown={(event) => {
                       if (event.key === 'Enter' || event.key === ' ') {
                         event.preventDefault()
                         event.stopPropagation()
-                        toggleCategory(category.id)
+                        toggleMetric(metric.id)
                       }
                     }}
                     className={twMerge(
-                      'group flex flex-col items-center justify-center gap-2 rounded-lg border p-4 outline-none transition-colors hover:border-brand-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-100',
+                      'group flex items-center gap-2 rounded-lg border p-2 outline-none transition-colors hover:border-brand-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-100',
                       isSelected ? 'border-brand-500' : 'border-neutral-200 bg-white'
                     )}
                   >
@@ -148,9 +171,9 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
                         isSelected ? 'bg-brand-50 text-brand-500' : 'bg-neutral-150 text-neutral-400'
                       )}
                     >
-                      <Icon iconName={category.iconName} iconStyle="regular" className="text-base" />
+                      <Icon iconName={metric.iconName} iconStyle="regular" className="text-base" />
                     </div>
-                    <span className="text-sm font-medium text-neutral-400">{category.label}</span>
+                    <span className="text-sm font-medium text-neutral-400">{metric.label}</span>
                   </button>
                 )
               })}

@@ -63,7 +63,7 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, T
       </TooltipPrimitive.Trigger>
       <TooltipPrimitive.Portal container={container}>
         <TooltipPrimitive.Content
-          className={twMerge(tooltipContentVariants({ color }), classNameContent)}
+          className={twMerge('z-[10000]', tooltipContentVariants({ color }), classNameContent)}
           side={side}
           sideOffset={6}
           align={align}

@@ -191,6 +191,8 @@ export function StepSummaryFeature() {
                 id: 'EXISTING_VPC',
                 value: {
                   aws_vpc_eks_id: featuresData?.aws_existing_vpc?.aws_vpc_eks_id ?? '',
+                  eks_create_nodes_in_private_subnet:
+                    featuresData?.aws_existing_vpc?.eks_create_nodes_in_private_subnet ?? false,
                   eks_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.eks_subnets)!,
                   eks_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.eks_subnets)!,
                   eks_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.eks_subnets)!,

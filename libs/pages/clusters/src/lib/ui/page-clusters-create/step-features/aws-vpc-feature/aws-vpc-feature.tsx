@@ -2,7 +2,7 @@ import { type PropsWithChildren } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { type Subnets } from '@qovery/shared/interfaces'
-import { Callout, ExternalLink, Icon, InputText, Tooltip } from '@qovery/shared/ui'
+import { Callout, ExternalLink, Icon, InputText, InputToggle, Tooltip } from '@qovery/shared/ui'
 import { removeEmptySubnet } from '../../../../feature/page-clusters-create-feature/step-features-feature/step-features-feature'
 import ButtonPopoverSubnets from '../button-popover-subnets/button-popover-subnets'
 
@@ -37,6 +37,7 @@ function TooltipContent({
 }: {
   values: {
     aws_vpc_eks_id: string
+    eks_create_nodes_in_private_subnet: boolean
     eks_subnets?: Subnets[]
     eks_karpenter_fargate_subnets?: Subnets[]
     mongodb_subnets?: Subnets[]
@@ -110,6 +111,22 @@ export function AWSVpcFeature({ isKarpenter = false }: AWSVpcFeatureProps) {
               How to configure your VPC
             </ExternalLink>
           </>
+        )}
+      />
+      <Controller
+        name="aws_existing_vpc.eks_create_nodes_in_private_subnet"
+        rules={{ required: true, shouldUnregister: true }}
+        control={control}
+        render={({ field }) => (
+          <InputToggle
+            title="Private nodes"
+            description="Create EKS nodes inside private subnets?"
+            className="mb-4 ml-4 mt-1"
+            value={field.value}
+            onChange={field.onChange}
+            forceAlignTop
+            small
+          />
         )}
       />
       <h4 className="mb-3 text-sm font-medium text-neutral-400">Mandatory subnet IDs</h4>

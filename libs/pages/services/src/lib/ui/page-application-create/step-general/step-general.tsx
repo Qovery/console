@@ -106,7 +106,9 @@ export function StepGeneral(props: StepGeneralProps) {
             )}
           />
 
-          {watchServiceType === 'APPLICATION' && <GitRepositorySettings gitDisabled={false} />}
+          {watchServiceType === 'APPLICATION' && (
+            <GitRepositorySettings gitDisabled={false} organizationId={organizationId} />
+          )}
           {watchServiceType === 'CONTAINER' && <GeneralContainerSettings organization={props.organization} />}
         </Section>
 

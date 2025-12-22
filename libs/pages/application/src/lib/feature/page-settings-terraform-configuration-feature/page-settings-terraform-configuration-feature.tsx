@@ -1,7 +1,12 @@
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { TerraformConfigurationSettings, type TerraformGeneralData } from '@qovery/domains/service-terraform/feature'
+import {
+  TerraformConfigurationSettings,
+  type TerraformGeneralData,
+  buildDockerfileFragment,
+  extractDockerfileFragmentFields,
+} from '@qovery/domains/service-terraform/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { Button } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
@@ -18,7 +23,10 @@ export default function PageSettingsTerraformConfigurationFeature() {
   const methods = useForm<TerraformGeneralData>({
     mode: 'onChange',
     defaultValues: match(service)
-      .with({ serviceType: 'TERRAFORM' }, (s) => ({ ...s, state: 'kubernetes' }))
+      .with({ serviceType: 'TERRAFORM' }, (s) => ({
+        ...s,
+        ...extractDockerfileFragmentFields(s.dockerfile_fragment),
+      }))
       .otherwise(() => ({})),
   })
 
@@ -29,6 +37,7 @@ export default function PageSettingsTerraformConfigurationFeature() {
       const payload = {
         ...data,
         timeout_sec: Number(data.timeout_sec ?? service.timeout_sec),
+        dockerfile_fragment: buildDockerfileFragment(data),
       }
 
       editService({

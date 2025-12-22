@@ -13,9 +13,15 @@ export const usersSignUp = createQueryKeys('usersSignUp', {
   },
 })
 
+export type LocalSignUpPayload = SignUpRequest & {
+  phone?: string
+}
+
 export const mutations = {
-  async createUserSignup(payload: SignUpRequest) {
-    const response = await usersSignUpApi.createUserSignUp(payload)
+  async createUserSignup(payload: LocalSignUpPayload) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { phone, ...payloadWithoutPhone } = payload
+    const response = await usersSignUpApi.createUserSignUp(payloadWithoutPhone)
     // API doesn't return the data updated
     return response.data
   },

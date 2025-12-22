@@ -3,7 +3,11 @@ import { type TerraformRequest } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { terraformEngines, useTerraformVariablesContext } from '@qovery/domains/service-terraform/feature'
+import {
+  buildDockerfileFragment,
+  terraformEngines,
+  useTerraformVariablesContext,
+} from '@qovery/domains/service-terraform/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
@@ -54,9 +58,7 @@ export function StepSummaryFeature() {
       timeout_sec: Number(generalData.timeout_sec),
       auto_deploy: generalData.auto_deploy ?? false,
       engine: generalData.engine,
-      backend: {
-        kubernetes: {},
-      },
+      backend: generalData.backend,
       terraform_files_source: {
         git_repository: {
           url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
@@ -80,6 +82,7 @@ export function StepSummaryFeature() {
         gpu: generalData.job_resources.gpu,
       },
       use_cluster_credentials: generalData.use_cluster_credentials,
+      dockerfile_fragment: buildDockerfileFragment(generalData),
     }
 
     try {
@@ -92,7 +95,7 @@ export function StepSummaryFeature() {
       })
 
       if (withPlan) {
-        await deployService({ serviceId: response.id, serviceType: 'TERRAFORM', request: { dry_run: true } })
+        await deployService({ serviceId: response.id, serviceType: 'TERRAFORM', request: { action: 'PLAN' } })
         setIsLoadingCreateAndPlan(false)
       }
 
@@ -182,11 +185,12 @@ export function StepSummaryFeature() {
                   {generalData.provider_version.explicit_version}
                 </li>
                 <li>
-                  <span className="font-medium">Execution credentials:</span>{' '}
-                  {generalData.use_cluster_credentials ? 'Cluster credentials' : 'Environment variables'}
+                  <span className="font-medium">Backend:</span>{' '}
+                  {'kubernetes' in generalData.backend ? 'Kubernetes' : 'User provided'}
                 </li>
                 <li>
-                  <span className="font-medium">State:</span> Kubernetes (Default)
+                  <span className="font-medium">Execution credentials:</span>{' '}
+                  {generalData.use_cluster_credentials ? 'Cluster credentials' : 'Environment variables'}
                 </li>
                 <li>
                   <span className="font-medium">Auto-deploy:</span>{' '}

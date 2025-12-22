@@ -10,6 +10,7 @@ export * from './lib/helm-repository-create-edit-modal/helm-repository-create-ed
 export * from './lib/git-token-list/git-token-list'
 export * from './lib/container-registry-create-edit-modal/container-registry-create-edit-modal'
 export * from './lib/container-registry-form/container-registry-form'
+export * from './lib/expired-token-badge/expired-token-badge'
 export * from './lib/label-create-edit-modal/label-create-edit-modal'
 export * from './lib/label-setting/label-setting'
 export * from './lib/helm-repository-services-list-modal/helm-repository-services-list-modal'
@@ -84,3 +85,4 @@ export * from './lib/hooks/use-organization-credentials/use-organization-credent
 export * from './lib/hooks/use-parse-terraform-variables-from-git-repo/use-parse-terraform-variables-from-git-repo'
 export * from './lib/hooks/use-list-tfvars-files-from-git-repo/use-list-tfvars-files-from-git-repo'
 export * from './lib/invoice-banner/invoice-banner'
+export * from './lib/free-trial-banner/free-trial-banner'

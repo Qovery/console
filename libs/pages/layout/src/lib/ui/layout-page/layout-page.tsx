@@ -3,8 +3,9 @@ import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typesc
 import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useClusterStatuses } from '@qovery/domains/clusters/feature'
-import { InvoiceBanner, useOrganization } from '@qovery/domains/organizations/feature'
+import { ClusterDeploymentProgressCard, useClusterStatuses } from '@qovery/domains/clusters/feature'
+import { useAlerts } from '@qovery/domains/observability/feature'
+import { FreeTrialBanner, InvoiceBanner, useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton, DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
@@ -55,6 +56,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
   const { data: organization } = useOrganization({ organizationId })
   const { roles, isQoveryAdminUser } = useUserRole()
+  const isAlertingFeatureFlagEnabled = useFeatureFlagVariantKey('alerting')
   const isFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
 
   const isQoveryUserWithMobileCheck = checkQoveryUser(isQoveryAdminUser)
@@ -63,12 +65,6 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
 
   // Clusters need to be sorted to find the first created cluster
   clusters?.sort(({ created_at: a }, { created_at: b }) => new Date(a).getTime() - new Date(b).getTime())
-  const firstCluster = clusters?.[0]
-  const firstClusterStatus = firstCluster && clusterStatuses?.find(({ cluster_id }) => firstCluster.id === cluster_id)
-  const clusterIsDeployed = firstClusterStatus?.is_deployed
-
-  const clusterBanner =
-    !matchLogInfraRoute && clusters && displayClusterDeploymentBanner(firstClusterStatus?.status) && !clusterIsDeployed
 
   const invalidCluster = clusters?.find(
     ({ id }) =>
@@ -96,6 +92,21 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
       .otherwise(() => false)
   )
 
+  const { data: alerts = [] } = useAlerts({
+    organizationId,
+    enabled: Boolean(organizationId && isAlertingFeatureFlagEnabled),
+  })
+
+  const hasFiringAlerts = useMemo(
+    () =>
+      alerts.some(({ state }) =>
+        match(state)
+          .with('TRIGGERED', 'PENDING_NOTIFICATION', 'NOTIFIED', () => true)
+          .otherwise(() => false)
+      ),
+    [alerts]
+  )
+
   // Display Qovery admin if we don't have the organization in the token
   const displayQoveryAdminBanner = useMemo(() => {
     if (isQoveryAdminUser) {
@@ -104,6 +115,18 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
     }
     return false
   }, [roles, organizationId, isQoveryAdminUser])
+
+  const deployingClusters = useMemo(() => {
+    if (!clusters || !clusterStatuses) return []
+    return clusters.filter((cluster) => {
+      const status = clusterStatuses.find(({ cluster_id }) => cluster_id === cluster.id)?.status
+      return displayClusterDeploymentBanner(status)
+    })
+  }, [clusters, clusterStatuses])
+
+  const showFloatingDeploymentCard = useMemo(() => {
+    return deployingClusters.length > 0
+  }, [deployingClusters])
 
   return (
     <>
@@ -122,13 +145,14 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
               clusterNotification={
                 clusterCredentialError || clusterStatusesError ? 'error' : clusterUpgradeWarning ? 'warning' : undefined
               }
+              alertingNotification={hasFiringAlerts ? 'error' : undefined}
             />
           </div>
           <div className="flex w-full grow flex-col-reverse">
             <div>
               <div
                 className={`relative flex ${
-                  clusterCredentialError || clusterBanner ? 'min-h-page-container-wbanner' : 'min-h-page-container'
+                  clusterCredentialError ? 'min-h-page-container-wbanner' : 'min-h-page-container'
                 }`}
               >
                 <div className="flex grow flex-col px-2 pt-2 dark:px-0 dark:pt-0">{children}</div>
@@ -152,16 +176,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 invalid.
               </Banner>
             )}
-            {clusterBanner && (
-              <Banner
-                color="brand"
-                onClickButton={() => navigate(INFRA_LOGS_URL(organizationId, firstCluster?.id))}
-                buttonLabel="See logs"
-              >
-                Installation of the cluster <span className="mx-1 block font-bold">{firstCluster?.name}</span> is
-                ongoing, you can follow it from logs
-              </Banner>
-            )}
+            <FreeTrialBanner />
             <InvoiceBanner />
             {topBar && (
               <TopBar>
@@ -173,6 +188,9 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
             )}
           </div>
         </div>
+        {showFloatingDeploymentCard && (
+          <ClusterDeploymentProgressCard organizationId={organizationId} clusters={deployingClusters} />
+        )}
       </main>
     </>
   )

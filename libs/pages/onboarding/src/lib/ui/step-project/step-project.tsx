@@ -1,6 +1,4 @@
 import { type Control, Controller } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
-import { ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { Button, Icon, InputText } from '@qovery/shared/ui'
 
 export interface StepProjectProps {
@@ -9,16 +7,15 @@ export interface StepProjectProps {
     organization_name: string
     project_name: string
   }>
-  authLogout: () => void
-  backButton?: boolean
+  loading?: boolean
+  onFirstStepBack?: () => void
 }
 
 export function StepProject(props: StepProjectProps) {
-  const { onSubmit, control, authLogout, backButton } = props
-  const navigate = useNavigate()
+  const { onSubmit, control, loading, onFirstStepBack } = props
 
   return (
-    <div className="pb-10">
+    <div className="mx-auto max-w-content-with-navigation-left pb-10">
       <h1 className="h3 mb-3 text-neutral-400">
         Create your Organization
         <span className="ml-2" role="img" aria-label="star">
@@ -61,42 +58,12 @@ export function StepProject(props: StepProjectProps) {
           )}
         />
         <div className="mt-10 flex justify-between border-t border-neutral-200 pt-5">
-          {!backButton ? (
-            <Button
-              type="button"
-              size="lg"
-              color="neutral"
-              variant="surface"
-              className="gap-2"
-              onClick={() => authLogout()}
-            >
-              <Icon name="icon-solid-arrow-left" />
-              Disconnect
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              size="lg"
-              color="neutral"
-              variant="surface"
-              className="gap-2"
-              onClick={() =>
-                localStorage['currentOrganizationId']
-                  ? navigate(
-                      ENVIRONMENTS_URL(
-                        localStorage['currentOrganizationId'] || '',
-                        localStorage['currentProjectId'] || ''
-                      )
-                    )
-                  : navigate(-1)
-              }
-            >
-              <Icon name="icon-solid-arrow-left" />
-              Back
-            </Button>
-          )}
-          <Button type="submit" size="lg">
-            Continue
+          <Button type="button" size="lg" color="neutral" variant="surface" className="gap-2" onClick={onFirstStepBack}>
+            <Icon iconName="arrow-left" iconStyle="solid" />
+            Back
+          </Button>
+          <Button type="submit" size="lg" loading={loading}>
+            {loading ? 'Creating…' : 'Continue'}
           </Button>
         </div>
       </form>

@@ -1,9 +1,11 @@
-import { AlertRuleState, AlertSeverity } from 'qovery-typescript-axios'
+import { AlertRuleState } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceAlerting } from './service-alerting'
 
 const mockUseParams = jest.fn()
 const mockUseAlertRules = jest.fn()
+const mockUseAlertRulesGhosted = jest.fn()
+const mockUseDeleteAlertRule = jest.fn()
 const mockUseEnvironment = jest.fn()
 const mockUseService = jest.fn()
 
@@ -14,6 +16,14 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('../../hooks/use-alert-rules/use-alert-rules', () => ({
   useAlertRules: (params: unknown) => mockUseAlertRules(params),
+}))
+
+jest.mock('../../hooks/use-alert-rules-ghosted/use-alert-rules-ghosted', () => ({
+  useAlertRulesGhosted: (params: unknown) => mockUseAlertRulesGhosted(params),
+}))
+
+jest.mock('../../hooks/use-delete-alert-rule/use-delete-alert-rule', () => ({
+  useDeleteAlertRule: (params: unknown) => mockUseDeleteAlertRule(params),
 }))
 
 jest.mock('../../hooks/use-environment/use-environment', () => ({
@@ -41,11 +51,19 @@ describe('ServiceAlerting', () => {
   const createAlertRule = (overrides = {}) => ({
     id: 'alert-1',
     name: 'High CPU Usage',
-    state: AlertRuleState.OK,
+    state: 'MONITORING',
     enabled: true,
-    severity: AlertSeverity.CRITICAL,
+    severity: 'CRITICAL',
+    is_up_to_date: true,
+    source: 'MANAGED',
     target: {
       target_id: 'app-123',
+      target_type: 'APPLICATION',
+    },
+    tag: 'cpu',
+    for_duration: 'PT5M',
+    condition: {
+      kind: 'CUSTOM',
     },
     ...overrides,
   })
@@ -62,11 +80,18 @@ describe('ServiceAlerting', () => {
       data: defaultEnvironment,
     })
     mockUseService.mockReturnValue({
-      data: { id: 'app-123', name: 'Test App' },
+      data: { id: 'app-123', name: 'Test App', environment: { id: 'env-123' } },
     })
     mockUseAlertRules.mockReturnValue({
       data: [],
       isFetched: true,
+    })
+    mockUseAlertRulesGhosted.mockReturnValue({
+      data: [],
+      isFetched: true,
+    })
+    mockUseDeleteAlertRule.mockReturnValue({
+      mutate: jest.fn(),
     })
   })
 
@@ -95,6 +120,10 @@ describe('ServiceAlerting', () => {
       data: alertRules,
       isFetched: true,
     })
+    mockUseAlertRulesGhosted.mockReturnValue({
+      data: [],
+      isFetched: true,
+    })
 
     renderWithProviders(<ServiceAlerting />)
 
@@ -104,12 +133,16 @@ describe('ServiceAlerting', () => {
 
   it('should display correct status for different alert states', () => {
     const alertRules = [
-      createAlertRule({ id: 'alert-1', name: 'Triggered Alert', state: AlertRuleState.TRIGGERED }),
+      createAlertRule({ id: 'alert-1', name: 'Firing Alert', state: AlertRuleState.NOTIFIED }),
       createAlertRule({ id: 'alert-2', name: 'Suppressed Alert', state: AlertRuleState.SUPPRESSED }),
       createAlertRule({ id: 'alert-3', name: 'OK Alert', state: AlertRuleState.OK }),
     ]
     mockUseAlertRules.mockReturnValue({
       data: alertRules,
+      isFetched: true,
+    })
+    mockUseAlertRulesGhosted.mockReturnValue({
+      data: [],
       isFetched: true,
     })
 
@@ -124,6 +157,10 @@ describe('ServiceAlerting', () => {
     const alertRule = createAlertRule({ enabled: false })
     mockUseAlertRules.mockReturnValue({
       data: [alertRule],
+      isFetched: true,
+    })
+    mockUseAlertRulesGhosted.mockReturnValue({
+      data: [],
       isFetched: true,
     })
 

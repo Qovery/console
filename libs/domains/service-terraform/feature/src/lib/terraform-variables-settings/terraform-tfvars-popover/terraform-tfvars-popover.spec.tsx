@@ -21,7 +21,7 @@ const WrapperComponent = ({
     revertValue: jest.fn(),
     removeVariable: jest.fn(),
     serializeForApi: jest.fn(),
-    errors: new Map(),
+    errors: new Map<string, { message: string; field: 'key' | 'value' }>(),
     fetchTfVarsFiles: jest.fn(),
     tfVarFiles: [],
     setTfVarFiles: jest.fn(),

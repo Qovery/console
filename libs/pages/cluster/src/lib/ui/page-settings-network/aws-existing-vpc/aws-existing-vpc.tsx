@@ -1,6 +1,6 @@
 import { type ClusterFeatureAwsExistingVpc } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
-import { Icon, InputText } from '@qovery/shared/ui'
+import { Icon, InputText, InputToggle } from '@qovery/shared/ui'
 
 export interface AWSExistingVPCProps {
   feature: ClusterFeatureAwsExistingVpc
@@ -25,6 +25,15 @@ export function AWSExistingVPC({ feature }: AWSExistingVPCProps) {
       <h4 className="mb-1 text-sm font-medium text-neutral-400">Deploy on an existing VPC</h4>
       <p className="mb-4 text-sm text-neutral-350">In your VPC settings, you have to enable DNS hostnames.</p>
       <InputText name="vpc_id" label="VPC ID" value={feature.aws_vpc_eks_id} className="mb-4" disabled />
+      <InputToggle
+        title="Private nodes"
+        description="Create EKS nodes inside private subnets?"
+        className="mb-4"
+        value={feature.eks_create_nodes_in_private_subnet}
+        forceAlignTop
+        small
+        disabled
+      />
       <ul className="grid gap-4">
         <li className="text-neutral-400">
           <span className="mb-1 flex items-center text-xs font-medium">

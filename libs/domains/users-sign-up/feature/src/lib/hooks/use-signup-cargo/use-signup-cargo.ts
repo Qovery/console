@@ -8,9 +8,10 @@ export interface CargoSignupPayload {
   company: string
   job_title: string
   signup_source: string
+  phone: string
 }
 
-const CARGO_API_URL = 'https://api.getcargo.io/v1/models/277bc95c-61d5-4fec-beac-9fc211f196a4/records/ingest'
+const CARGO_API_URL = 'https://api.getcargo.io/v1/models/7e42e545-bdee-438b-b2dc-3799e95bf046/records/ingest'
 
 // https://qovery.slack.com/archives/C08M2RT8T29/p1746543979992499
 export function useSignUpCargo() {

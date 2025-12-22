@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
 <body>
@@ -32,14 +32,14 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
             No override defined.
           </p>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-9 px-3 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
             type="button"
           >
-            Create override 
             <i
               aria-hidden="true"
-              class="fa-solid fa-pen ml-2"
+              class="fa-solid fa-plus mr-2"
             />
+            Create override
           </button>
         </div>
       </div>

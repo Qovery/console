@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
-import { Badge, Button, Checkbox, Icon, LoaderSpinner, PasswordShowHide, Tooltip, Truncate } from '@qovery/shared/ui'
+import { Badge, Button, Checkbox, Icon, LoaderSpinner, Tooltip, truncateText } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { TfvarsFilesPopover } from '../terraform-tfvars-popover/terraform-tfvars-popover'
-import { type UIVariable, useTerraformVariablesContext } from '../terraform-variables-context'
+import { SECRET_UNCHANGED_VALUE, type UIVariable, useTerraformVariablesContext } from '../terraform-variables-context'
 import {
   formatSource,
   getSourceBadgeClassName,
@@ -12,11 +12,47 @@ import {
   isVariableChanged,
 } from '../terraform-variables-utils'
 
-const SourceBadge = ({ variable }: { variable: UIVariable }) => {
+const SourceCell = ({ variable }: { variable: UIVariable }) => {
+  const sourceCellRef = useRef<HTMLDivElement>(null)
+  const text = formatSource(variable)
+  const truncateLimit = 40
+  const [doesOverflow, setDoesOverflow] = useState(false)
+
+  const handleResize = () => {
+    if (sourceCellRef.current) {
+      setDoesOverflow(sourceCellRef.current.scrollWidth > sourceCellRef.current.clientWidth)
+    }
+  }
+
+  useEffect(() => {
+    handleResize()
+    // On resize, check if the tooltip should be displayed
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const Wrapper = useCallback(
+    ({ children }: { children: React.ReactNode }) => {
+      const shouldDisplayTooltip = text.length >= truncateLimit || doesOverflow
+      return shouldDisplayTooltip ? <Tooltip content={text}>{children}</Tooltip> : children
+    },
+    [text, truncateLimit, doesOverflow]
+  )
+
   return (
-    <Badge className={twMerge(getSourceBadgeClassName(variable), 'font-medium')} variant="surface">
-      <Truncate text={formatSource(variable)} truncateLimit={40} />
-    </Badge>
+    <div
+      className="no-scrollbar inline-flex h-full items-center overflow-y-auto border-r border-neutral-250 px-2 lg:px-4"
+      ref={sourceCellRef}
+    >
+      <Badge className={twMerge(getSourceBadgeClassName(variable), 'font-medium')} variant="surface">
+        <Wrapper>
+          <span>
+            {truncateText(text, truncateLimit)}
+            {text.length > truncateLimit ? '...' : ''}
+          </span>
+        </Wrapper>
+      </Badge>
+    </div>
   )
 }
 
@@ -28,14 +64,37 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
   const [isCellHovered, setIsCellHovered] = useState(false)
   const [focusedCell, setFocusedCell] = useState<string | undefined>(undefined)
   const isCellFocused = useCallback((cell: 'key' | 'value') => focusedCell === cell, [focusedCell])
+  const isMultiline = useMemo(() => variable.value.includes('\n') || variable.value.length > 30, [variable.value])
+  const textareaValueRef = useRef<HTMLTextAreaElement | null>(null)
+  const textareaMinHeight = useMemo(() => {
+    return isMultiline ? `${Math.min(Math.max(variable.value.split('\n').length * 20 + 24, 44), 120)}px` : 'auto'
+  }, [isMultiline, variable.value])
+  const isSecretPlaceholder = useMemo(() => {
+    return variable.secret && !isCellFocused('value')
+  }, [variable.secret, isCellFocused])
+
+  const focusValueTextarea = useCallback(() => {
+    if (textareaValueRef.current) {
+      textareaValueRef.current.focus()
+    }
+  }, [])
+
+  const onValueCellClick = useCallback(() => {
+    // If variable is not a secret, focus the textarea.
+    // In case of a secret, we want to let the user explicitly click on the edit icon to edit the secret value.
+    if (!isSecretPlaceholder) {
+      focusValueTextarea()
+    }
+  }, [isSecretPlaceholder, focusValueTextarea])
 
   return (
     <div className="w-full border-b border-neutral-250">
       <div
         className={twMerge(
-          'grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center',
+          'grid min-h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_52px] items-center',
           hoveredRow ? (hoveredRow === variable.source ? 'bg-neutral-100' : 'bg-white') : 'bg-white',
-          isRowSelected(variable.id) && 'bg-neutral-150 hover:bg-neutral-150'
+          isRowSelected(variable.id) && 'bg-neutral-150 hover:bg-neutral-150',
+          isMultiline && 'min-h-auto'
         )}
       >
         <div className="flex h-full items-center justify-center border-r border-neutral-250">
@@ -56,7 +115,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
           <div
             className={twMerge(
               'flex h-full w-full items-center border border-transparent',
-              errors.get(variable.id) && 'border-red-500'
+              errors.get(variable.id)?.field === 'key' && 'border-red-500'
             )}
           >
             {variable.isNew ? (
@@ -83,8 +142,20 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
             ) : (
               <span className="px-4 text-sm text-neutral-350">{variable.key}</span>
             )}
-            {errors.get(variable.id) && (
-              <Tooltip content={errors.get(variable.id)}>
+            {variable.description && (
+              <Tooltip content={variable.description}>
+                <span
+                  className="-ml-2 text-neutral-300 hover:text-neutral-400"
+                  role="img"
+                  aria-label="Variable description"
+                  data-tooltip-content={variable.description}
+                >
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-xs" />
+                </span>
+              </Tooltip>
+            )}
+            {errors.get(variable.id)?.field === 'key' && (
+              <Tooltip content={errors.get(variable.id)?.message}>
                 <div className="mr-4">
                   <Icon iconName="circle-exclamation" iconStyle="regular" className="text-red-500" />
                 </div>
@@ -94,7 +165,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
         </div>
         {/* Variable value cell */}
         <div
-          className="group relative flex h-full cursor-text items-center border-r border-neutral-250"
+          className="group relative flex h-full min-h-[44px] items-center border-r border-neutral-250"
           onMouseEnter={() => {
             setIsCellHovered(true)
           }}
@@ -105,41 +176,40 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
             setIsCellHovered(false)
           }}
         >
-          {/* Background */}
           <div
             className={twMerge(
-              'pointer-events-none absolute bottom-0 left-0 right-0 top-0 h-full w-full transition-all duration-100 group-hover:bg-neutral-100',
-              isCellFocused('value') && 'bg-neutral-150 group-hover:bg-neutral-150'
+              // Ensure the pseudo-element is behind by using after:-z-10
+              'relative z-0 flex h-full w-full items-center border border-transparent after:pointer-events-none after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:-z-10 after:h-full after:w-full after:transition-all after:duration-100 group-hover:after:bg-neutral-100',
+              isCellFocused('value') && 'after:bg-neutral-150 group-hover:after:bg-neutral-150',
+              !isSecretPlaceholder && 'cursor-text',
+              errors.get(variable.id)?.field === 'value' && 'border-red-500'
             )}
-          />
-          {/* Cell content */}
-          <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full">
-            {variable.secret ? (
-              <PasswordShowHide
-                value=""
-                isSecret={true}
-                defaultVisible={false}
-                className="h-full w-full px-4 text-sm text-neutral-400 outline-none"
-              />
-            ) : (
-              <input
-                name="value"
-                value={variable.value}
-                onChange={(e) => {
-                  updateValue(variable.id, e.target.value)
-                }}
-                onFocus={() => setFocusedCell('value')}
-                onBlur={() => setFocusedCell(undefined)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault()
-                  }
-                }}
-                className="h-full w-full bg-transparent px-4 text-sm text-neutral-400 outline-none"
-                spellCheck={false}
-                placeholder="Variable value"
-              />
+            onClick={onValueCellClick}
+          >
+            {isSecretPlaceholder && (
+              <div className="absolute left-0 top-0 flex h-full w-full cursor-default items-center gap-2 bg-white px-4 transition-all duration-100 group-hover:bg-neutral-100">
+                <span className="text-xs text-neutral-350" data-testid="hide_value_secret">
+                  ● ● ● ● ● ● ● ●
+                </span>
+              </div>
             )}
+            <textarea
+              ref={textareaValueRef}
+              name="value"
+              value={variable.secret && variable.value === SECRET_UNCHANGED_VALUE ? '' : variable.value}
+              onChange={(e) => {
+                updateValue(variable.id, e.target.value)
+              }}
+              onFocus={() => setFocusedCell('value')}
+              onBlur={() => setFocusedCell(undefined)}
+              className={twMerge(
+                'vertical-align-middle h-5 w-full resize-none bg-transparent px-4 text-sm text-neutral-400 outline-none',
+                isMultiline && 'h-full min-h-5 resize-y py-3'
+              )}
+              style={{ minHeight: textareaMinHeight }}
+              spellCheck={false}
+              placeholder="Variable value"
+            />
             <div
               className={twMerge(
                 'absolute right-0 top-0 mr-4 flex h-full translate-x-1 items-center gap-2 pl-3 opacity-0 transition-all duration-100 group-hover:bg-neutral-100',
@@ -148,7 +218,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 isVariablePopoverOpen && 'bg-white'
               )}
             >
-              {!variable.secret && (
+              {!isSecretPlaceholder && (
                 <DropdownVariable
                   environmentId={environmentId}
                   onChange={(val) => {
@@ -175,7 +245,15 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                   </button>
                 </DropdownVariable>
               )}
-
+              {isSecretPlaceholder && (
+                <button
+                  type="button"
+                  onClick={() => focusValueTextarea()}
+                  className="px-1 text-neutral-350 hover:text-neutral-400"
+                >
+                  <Icon iconName="pen" iconStyle="regular" />
+                </button>
+              )}
               {isVariableChanged(variable) && (
                 <button
                   type="button"
@@ -185,14 +263,19 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                   <Icon iconName="rotate-left" iconStyle="regular" />
                 </button>
               )}
+              {errors.get(variable.id)?.field === 'value' && (
+                <Tooltip content={errors.get(variable.id)?.message}>
+                  <span className="px-1">
+                    <Icon iconName="circle-exclamation" iconStyle="regular" className="text-red-500" />
+                  </span>
+                </Tooltip>
+              )}
             </div>
           </div>
         </div>
-        {/* Source badge */}
-        <div className="flex h-full items-center border-r border-neutral-250 px-4">
-          <SourceBadge variable={variable} />
-        </div>
-        {/* Secret toggle */}
+        {/* Source cell */}
+        <SourceCell variable={variable} />
+        {/* Secret toggle cell */}
         <button
           className="flex items-center justify-center text-center text-sm text-neutral-400"
           type="button"
@@ -233,7 +316,7 @@ const TerraformVariablesRows = () => {
 
   return (
     <div className="flex flex-col items-center justify-center border-t border-neutral-250">
-      <div className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center border-b border-neutral-250 bg-neutral-100">
+      <div className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_52px] items-center border-b border-neutral-250 bg-neutral-100">
         <div className="flex h-full items-center justify-center border-r border-neutral-250">
           <Checkbox
             disabled={!isSelectAllCheckboxEnabled}

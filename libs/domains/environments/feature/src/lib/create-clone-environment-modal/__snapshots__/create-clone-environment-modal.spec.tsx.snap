@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
 <body>
@@ -16,7 +16,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
       >
         Create a new environment and deploy your applications.
       </p>
-      <span
+      <button
         aria-controls="radix-:rd:"
         aria-expanded="false"
         aria-haspopup="dialog"
@@ -29,7 +29,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
           aria-hidden="true"
           class="fa-regular fa-circle-question text-xs"
         />
-      </span>
+      </button>
       <form
         class="mt-6"
       >

@@ -15,6 +15,7 @@ const feature = {
   rds_subnets_zone_a_ids: ['subnet-rds-zone-a'],
   rds_subnets_zone_b_ids: ['subnet-rds-zone-b'],
   rds_subnets_zone_c_ids: ['subnet-rds-zone-c'],
+  eks_create_nodes_in_private_subnet: false,
 }
 
 describe('AWSExistingVPC', () => {

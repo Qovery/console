@@ -97,11 +97,10 @@ export function RowEvent(props: RowEventProps) {
         customLink(SETTINGS_URL(organizationId) + SETTINGS_CONTAINER_REGISTRIES_URL),
       [OrganizationEventTargetType.ENTERPRISE_CONNECTION]: () =>
         customLink(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL),
+      [OrganizationEventTargetType.HELM_REPOSITORY]: () => <span>NOT_IMPLEMENTED</span>,
     }
 
     if (event_type !== OrganizationEventType.DELETE) {
-      if (targetType.includes('HELM_REPOSITORY')) return <span>NOT_IMPLEMENTED</span>
-
       return linkConfig[targetType]()
     } else {
       return <span className="truncate">{target_name}</span>

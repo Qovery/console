@@ -14,10 +14,12 @@ export interface WebhookCrudModalProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   isEdition?: boolean
   isLoading?: boolean
+  hasExistingSecret?: boolean
+  isEditDirty?: boolean
 }
 
 export function WebhookCrudModal(props: WebhookCrudModalProps) {
-  const { closeModal, onSubmit, isEdition, isLoading } = props
+  const { closeModal, onSubmit, isEdition, isLoading, hasExistingSecret, isEditDirty } = props
   const { control } = useFormContext<OrganizationWebhookCreateRequest>()
 
   return (
@@ -92,20 +94,23 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
         )}
       />
 
-      <Controller
-        name="target_secret"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            className="mb-3"
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Secret"
-            error={error?.message}
-          />
-        )}
-      />
+      {!isEdition && (
+        <Controller
+          name="target_secret"
+          control={control}
+          render={({ field }) => (
+            <InputText
+              className="mb-3"
+              type="password"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              label="Secret"
+              placeholder="Enter webhook secret"
+            />
+          )}
+        />
+      )}
 
       <div className="mb-3 font-bold text-neutral-400">Event & filters</div>
 
@@ -205,6 +210,31 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
           )}
         />
       </div>
+
+      {isEditDirty && hasExistingSecret && (
+        <>
+          <hr className="my-3" />
+          <span className="text-sm text-neutral-350">Confirm your secret</span>
+          <Controller
+            name="target_secret"
+            control={control}
+            rules={{
+              required: 'Please enter a secret.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                className="mt-3"
+                type="password"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Secret"
+                error={error?.message}
+              />
+            )}
+          />
+        </>
+      )}
     </ModalCrud>
   )
 }

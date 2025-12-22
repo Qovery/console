@@ -1,19 +1,35 @@
+import { format } from 'date-fns'
 import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
+import { useMemo } from 'react'
 import { type CardImages } from 'react-payment-inputs/images'
 import { useParams } from 'react-router-dom'
+import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { Button, ExternalLink, Heading, Icon, Link, Section, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
+import {
+  Button,
+  Callout,
+  ExternalLink,
+  Heading,
+  Icon,
+  Link,
+  Section,
+  Skeleton,
+  imagesCreditCart,
+} from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
-import { costToHuman, formatPlanDisplay } from '@qovery/shared/util-js'
+import { costToHuman, formatPlanDisplay, pluralize } from '@qovery/shared/util-js'
 import InvoicesListFeature from '../../feature/page-organization-billing-summary-feature/invoices-list-feature/invoices-list-feature'
 
 export interface PageOrganizationBillingSummaryProps {
   currentCost?: OrganizationCurrentCost
   creditCard?: CreditCard
   creditCardLoading?: boolean
+  hasCreditCard?: boolean
   onPromoCodeClick?: () => void
   onShowUsageClick?: () => void
   onChangePlanClick?: () => void
+  onCancelTrialClick?: () => void
+  onAddCreditCardClick?: () => void
 }
 
 // This function is used to get the billing recurrence word to display based on the renewal date.
@@ -32,14 +48,67 @@ function getBillingRecurrenceStr(renewalAt: string | null | undefined): string {
 
 export function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryProps) {
   const { organizationId = '' } = useParams()
+  const { data: userSignUp } = useUserSignUp()
 
   // Get the billing recurrence word to display based on the renewal date.
   // It's not so accurate, but it's a good enough approximation for now
   const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
+  const remainingTrialDay = props.currentCost?.remaining_trial_day ?? 0
+  const showTrialCallout = remainingTrialDay !== undefined && remainingTrialDay > 0 && !props.creditCardLoading
+  const showErrorCallout = (props.hasCreditCard ?? Boolean(props.creditCard)) || userSignUp?.dx_auth
+
+  // This function is used to get the trial start date based on the remaining trial days from the API
+  const trialStartDate = useMemo(() => {
+    const remainingTrialDayFromApi = props.currentCost?.remaining_trial_day
+    if (remainingTrialDayFromApi === undefined || remainingTrialDayFromApi === null) return null
+
+    const trialDurationDays = 14
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const daysUntilExpiration = remainingTrialDayFromApi + 1
+    const expirationDate = new Date(today)
+    expirationDate.setDate(expirationDate.getDate() + daysUntilExpiration)
+
+    const startDate = new Date(expirationDate)
+    startDate.setDate(startDate.getDate() - trialDurationDays)
+    startDate.setHours(0, 0, 0, 0)
+
+    return startDate
+  }, [props.currentCost?.remaining_trial_day])
 
   return (
     <div className="flex w-full max-w-[832px] flex-col justify-between">
       <Section className="p-8">
+        {showTrialCallout && (
+          <Callout.Root color={showErrorCallout ? 'yellow' : 'red'} className="mb-8 items-center">
+            <Callout.Text>
+              <Callout.TextHeading>
+                {/* Add + 1 because Chargebee return 0 when the trial is ending today */}
+                {showErrorCallout
+                  ? `Your free trial plan expires ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')} from now`
+                  : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')}`}
+              </Callout.TextHeading>
+              {showErrorCallout ? (
+                <>
+                  You have contracted a free 14-days trial on{' '}
+                  {trialStartDate ? format(trialStartDate, 'MMMM d, yyyy') : '...'}. At the end of this plan your user
+                  subscription will start unless you cancel your trial
+                </>
+              ) : (
+                <>Add a payment method to avoid service interruption at the end of your trial.</>
+              )}
+            </Callout.Text>
+            <Button
+              size="sm"
+              variant="solid"
+              color={showErrorCallout ? 'yellow' : 'red'}
+              onClick={() => (showErrorCallout ? props.onCancelTrialClick?.() : props.onAddCreditCardClick?.())}
+            >
+              {showErrorCallout ? 'Cancel free trial' : 'Add credit card'}
+            </Button>
+          </Callout.Root>
+        )}
         <div className="mb-8 flex justify-between">
           <Heading className="mb-2">Plan details</Heading>
           <div className="flex gap-3">

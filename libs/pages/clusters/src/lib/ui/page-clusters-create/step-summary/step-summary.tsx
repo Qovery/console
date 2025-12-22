@@ -373,6 +373,10 @@ export function StepSummary(props: StepSummaryProps) {
                       <strong className="font-medium">VPC ID: </strong>
                       {props.featuresData.aws_existing_vpc.aws_vpc_eks_id}
                     </li>
+                    <li className="mb-3">
+                      <strong className="font-medium">Private nodes: </strong>
+                      {props.featuresData.aws_existing_vpc.eks_create_nodes_in_private_subnet ? 'true' : 'false'}
+                    </li>
                     {props.featuresData.aws_existing_vpc.eks_subnets?.length !== 0 && (
                       <li className="mb-3">
                         <strong className="font-medium">EKS public subnet IDs: </strong>

@@ -49,8 +49,8 @@ export function PlanCard(props: PlanCardProps) {
       </Button>
       <ul>
         {list.map((line: string, index: number) => (
-          <li key={index} className="mb-2 text-xs text-neutral-400 last:mb-10">
-            <Icon iconName="check" className="mr-1.5 text-green-500" />
+          <li key={index} className="mb-2 text-sm text-neutral-400 last:mb-10">
+            <Icon iconName="circle-check" className="fa-regular mr-1.5 text-green-500" />
             {line}
           </li>
         ))}

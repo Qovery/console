@@ -1,11 +1,16 @@
 import type { AlertRuleCreationRequest } from 'qovery-typescript-axios'
 
-type MetricCategory = 'cpu' | 'memory' | 'instances' | 'k8s_event' | 'network' | 'logs'
+export type MetricCategory =
+  | 'cpu'
+  | 'memory'
+  | 'http_error'
+  | 'http_latency'
+  | 'missing_instance'
+  | 'instance_restart'
+  | 'hpa_limit'
+
 export interface AlertConfiguration
-  extends Omit<
-    AlertRuleCreationRequest,
-    'organization_id' | 'cluster_id' | 'target' | 'enabled' | 'description' | 'presentation'
-  > {
+  extends Omit<AlertRuleCreationRequest, 'organization_id' | 'cluster_id' | 'target' | 'enabled' | 'description'> {
   id: string
   tag: MetricCategory | string
   skipped?: boolean

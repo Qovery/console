@@ -1,7 +1,9 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   type AlertReceiverCreationRequest,
+  type AlertReceiverCreationValidationRequest,
   type AlertReceiverEditRequest,
+  type AlertReceiverValidationRequest,
   AlertReceiversApi,
   type AlertRuleCreationRequest,
   type AlertRuleEditRequest,
@@ -85,6 +87,40 @@ export const observability = createQueryKeys('observability', {
         'false',
         'service_overview',
         'ingressName'
+      )
+      return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
+    },
+  }),
+  hpaName: ({
+    clusterId,
+    serviceId,
+    startDate,
+    endDate,
+  }: {
+    clusterId: string
+    serviceId: string
+    startDate: string
+    endDate: string
+  }) => ({
+    queryKey: ['hpaName', clusterId, serviceId, startDate, endDate],
+    async queryFn() {
+      const endpoint = `api/v1/label/horizontalpodautoscaler/values?match[]=kube_horizontalpodautoscaler_labels{label_qovery_com_service_id="${serviceId}"}`
+      const response = await clusterApi.getClusterMetrics(
+        clusterId,
+        endpoint,
+        '',
+        startDate,
+        endDate,
+        undefined,
+        undefined,
+        undefined,
+        'True',
+        'True',
+        undefined,
+        'prometheus',
+        'false',
+        'service_overview',
+        'hpaName'
       )
       return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
     },
@@ -248,6 +284,20 @@ export const mutations = {
   },
   async deleteAlertReceiver({ alertReceiverId }: { alertReceiverId: string }) {
     const response = await alertReceiversApi.deleteAlertReceiver(alertReceiverId)
+    return response.data
+  },
+  async validateNewAlertReceiver({ payload }: { payload: AlertReceiverCreationValidationRequest }) {
+    const response = await alertReceiversApi.validateNewAlertReceiver(payload)
+    return response.data
+  },
+  async validateEditAlertReceiver({
+    alertReceiverId,
+    payload,
+  }: {
+    alertReceiverId: string
+    payload: AlertReceiverValidationRequest
+  }) {
+    const response = await alertReceiversApi.validateExistingAlertReceiver(alertReceiverId, payload)
     return response.data
   },
 }

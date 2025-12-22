@@ -89,7 +89,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                         )}
                         onClick={(e) => {
                           e.preventDefault()
-                          setValue('vpc_mode', vpcMode.value)
+                          field.onChange({ target: { name: field.name, value: vpcMode.value } })
                         }}
                       >
                         {cloneElement(vpcMode.icon, { className: 'w-[20px] h-[20px] mt-1' })}
@@ -126,12 +126,6 @@ export function StepFeatures(props: StepFeaturesProps) {
                           control={control}
                           watch={watch}
                           setValue={setValue}
-                          disabled={feature.id === 'STATIC_IP' && isKarpenter && isProduction}
-                          tooltip={
-                            feature.id === 'STATIC_IP' && isKarpenter && isProduction
-                              ? 'This feature can not be disabled on a production cluster using Karpenter'
-                              : undefined
-                          }
                         >
                           {feature.id === 'STATIC_IP' && (
                             <Callout.Root color="yellow" className="mt-4">

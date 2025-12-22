@@ -1,6 +1,6 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { CloudProviderEnum, type ClusterCredentials, type CredentialCluster } from 'qovery-typescript-axios'
-import { Suspense } from 'react'
-import { useMemo } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeleteCloudProviderCredential } from '@qovery/domains/cloud-providers/feature'
@@ -8,8 +8,9 @@ import { ClusterAvatar, ClusterCredentialsModal, CredentialsListClustersModal } 
 import { useOrganizationCredentials } from '@qovery/domains/organizations/feature'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { BlockContent, Heading, Section, Skeleton } from '@qovery/shared/ui'
-import { Button, Icon, Indicator, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, Indicator, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { queries } from '@qovery/state/util-queries'
 
 const convertToCloudProviderEnum = (cloudProvider: ClusterCredentials['object_type']): CloudProviderEnum => {
   return match(cloudProvider)
@@ -156,7 +157,7 @@ const PageOrganizationCredentials = () => {
       content: (
         <ClusterCredentialsModal
           organizationId={organizationId}
-          onClose={(response) => {
+          onClose={() => {
             closeModal()
           }}
           credential={credential}
@@ -285,19 +286,92 @@ const Loader = () => (
 
 export function PageOrganizationCredentialsFeature() {
   useDocumentTitle('Cloud Crendentials - Organization settings')
+  const { organizationId = '' } = useParams()
+  const { openModal, closeModal } = useModal()
+  const queryClient = useQueryClient()
+  const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false)
+
+  const cloudProviderOptions = [
+    {
+      label: 'AWS',
+      value: CloudProviderEnum.AWS,
+    },
+    {
+      label: 'GCP',
+      value: CloudProviderEnum.GCP,
+    },
+    {
+      label: 'Azure',
+      value: CloudProviderEnum.AZURE,
+    },
+    {
+      label: 'Scaleway',
+      value: CloudProviderEnum.SCW,
+    },
+  ]
+
+  const openClusterCredentialsModal = (cloudProvider: CloudProviderEnum) => {
+    openModal({
+      content: (
+        <ClusterCredentialsModal
+          organizationId={organizationId}
+          onClose={(response) => {
+            if (response) {
+              queryClient.invalidateQueries({
+                queryKey: queries.organizations.listCredentials({ organizationId }).queryKey,
+              })
+            }
+            closeModal()
+          }}
+          cloudProvider={cloudProvider}
+        />
+      ),
+      options: {
+        width: 680,
+      },
+    })
+  }
+
+  const onSelectProvider = (cloudProvider: CloudProviderEnum) => {
+    setIsCreateMenuOpen(false)
+    openClusterCredentialsModal(cloudProvider)
+  }
 
   return (
     <div className="w-full">
       <Section className="flex max-w-content-with-navigation-left flex-col p-8">
-        <div className="space-y-3">
-          <Heading>Cloud Credentials</Heading>
-          <p className="text-xs text-neutral-400">Manage your Cloud providers credentials</p>
-          <NeedHelp />
-        </div>
+        <div className="space-y-8">
+          <div className="flex items-start justify-between gap-2">
+            <div className="space-y-3">
+              <Heading>Cloud Credentials</Heading>
+              <p className="text-xs text-neutral-400">Manage your Cloud providers credentials</p>
+              <NeedHelp />
+            </div>
+            <DropdownMenu.Root open={isCreateMenuOpen} onOpenChange={setIsCreateMenuOpen}>
+              <DropdownMenu.Trigger asChild>
+                <Button className="gap-2" size="md">
+                  New credential
+                  <Icon iconName="circle-plus" iconStyle="regular" />
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content align="end">
+                {cloudProviderOptions.map((option) => (
+                  <DropdownMenu.Item
+                    key={option.value}
+                    icon={<Icon name={option.value} width={16} height={16} />}
+                    onClick={() => onSelectProvider(option.value)}
+                  >
+                    {option.label}
+                  </DropdownMenu.Item>
+                ))}
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          </div>
 
-        <Suspense fallback={<Loader />}>
-          <PageOrganizationCredentials />
-        </Suspense>
+          <Suspense fallback={<Loader />}>
+            <PageOrganizationCredentials />
+          </Suspense>
+        </div>
       </Section>
     </div>
   )

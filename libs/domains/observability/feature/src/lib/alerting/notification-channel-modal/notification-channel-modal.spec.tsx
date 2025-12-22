@@ -2,10 +2,12 @@ import { type AlertReceiverResponse } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useCreateAlertReceiver from '../../hooks/use-create-alert-receiver/use-create-alert-receiver'
 import * as useEditAlertReceiver from '../../hooks/use-edit-alert-receiver/use-edit-alert-receiver'
+import * as useValidateAlertReceiver from '../../hooks/use-validate-alert-receiver/use-validate-alert-receiver'
 import { NotificationChannelModal } from './notification-channel-modal'
 
 const mockUseCreateAlertReceiver = jest.spyOn(useCreateAlertReceiver, 'useCreateAlertReceiver') as jest.Mock
 const mockUseEditAlertReceiver = jest.spyOn(useEditAlertReceiver, 'useEditAlertReceiver') as jest.Mock
+const mockUseValidateAlertReceiver = jest.spyOn(useValidateAlertReceiver, 'useValidateAlertReceiver') as jest.Mock
 
 const mockOnClose = jest.fn()
 
@@ -25,6 +27,10 @@ describe('NotificationChannelModal', () => {
     })
     mockUseEditAlertReceiver.mockReturnValue({
       mutateAsync: jest.fn(),
+      isLoading: false,
+    })
+    mockUseValidateAlertReceiver.mockReturnValue({
+      mutate: jest.fn(),
       isLoading: false,
     })
   })
@@ -58,5 +64,57 @@ describe('NotificationChannelModal', () => {
     )
 
     expect(await screen.findByDisplayValue('My Channel')).toBeInTheDocument()
+  })
+
+  it('should send test notification request when button is clicked in create mode', async () => {
+    const mockValidateAlertReceiver = jest.fn()
+    mockUseValidateAlertReceiver.mockReturnValue({
+      mutate: mockValidateAlertReceiver,
+      isLoading: false,
+    })
+
+    const { userEvent } = renderWithProviders(
+      <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" type="SLACK" />
+    )
+
+    const testButton = await screen.findByText('Send test notification')
+    expect(testButton).toBeInTheDocument()
+
+    await userEvent.click(testButton)
+
+    expect(mockValidateAlertReceiver).toHaveBeenCalledWith({
+      payload: {
+        alert_receiver: {
+          name: 'Input slack channel',
+          type: 'SLACK',
+          send_resolved: true,
+          organization_id: 'org-123',
+          description: 'Webhook for Qovery alerts',
+          webhook_url: undefined,
+        },
+      },
+    })
+  })
+
+  it('should send test notification request when button is clicked in edit mode', async () => {
+    const mockValidateAlertReceiver = jest.fn()
+    mockUseValidateAlertReceiver.mockReturnValue({
+      mutate: mockValidateAlertReceiver,
+      isLoading: false,
+    })
+
+    const { userEvent } = renderWithProviders(
+      <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" alertReceiver={defaultAlertReceiver} />
+    )
+
+    const testButton = await screen.findByText('Send test notification')
+    expect(testButton).toBeInTheDocument()
+
+    await userEvent.click(testButton)
+
+    expect(mockValidateAlertReceiver).toHaveBeenCalledWith({
+      alertReceiverId: 'receiver-123',
+      payload: {},
+    })
   })
 })

@@ -123,8 +123,8 @@ export function StepGeneralFeature() {
                         <GitBranchSettings
                           gitProvider={watchFieldGitProvider}
                           gitTokenId={watchFieldGitTokenId}
-                          rootPathLabel="Manifest folder path"
-                          rootPathHint="Provide the folder path in the repository where the manifest is located."
+                          rootPathLabel="Terraform root folder path"
+                          rootPathHint="Provide the folder path where the Terraform code is located in the repository."
                         />
                       )}
                     </>
