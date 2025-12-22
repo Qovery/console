@@ -70,6 +70,7 @@ function ServiceDashboardContent() {
   const { data: namespace, isFetched: isFetchedNamespace } = useNamespace({
     clusterId: environment?.cluster_id ?? '',
     serviceId: applicationId,
+    resourceType: hasStorage ? 'statefulset' : 'deployment',
     startDate: oneHourAgo.toISOString(),
     endDate: now.toISOString(),
   })
