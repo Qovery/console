@@ -13,4 +13,5 @@ export const projectsFactoryMock = (howMany: number): Project[] =>
     organization: {
       id: '',
     },
+    associated_environments_count: 2,
   }))
