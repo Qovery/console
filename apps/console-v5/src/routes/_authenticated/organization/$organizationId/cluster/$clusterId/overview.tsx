@@ -75,12 +75,12 @@ function TableSkeleton() {
 
 function TableLegend() {
   return (
-    <div className="flex w-full items-center justify-end gap-1.5 text-xs text-neutral-subtle">
+    <div className="flex w-full items-center justify-end gap-1.5 text-xs text-neutral">
       <span className="block h-2 w-2 bg-brand-9"></span>
       <span className="flex items-center gap-1">
         Reserved
         <Tooltip content="Reserved CPU or memory represents the amount of resource guaranteed for this workload.">
-          <span className="relative top-[1px] text-neutral-subtle">
+          <span className="relative top-[1px] text-neutral">
             <Icon iconName="circle-question" iconStyle="regular" />
           </span>
         </Tooltip>
