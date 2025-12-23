@@ -1,6 +1,20 @@
 import mermaid from 'mermaid'
 import { useEffect, useRef, useState } from 'react'
 
+const cleanupMermaidErrors = () => {
+  const bodyChildren = document.body.children
+  for (let i = bodyChildren.length - 1; i >= 0; i--) {
+    const child = bodyChildren[i]
+    if (
+      child.id.startsWith('d') ||
+      child.textContent?.includes('Syntax error') ||
+      child.textContent?.includes('mermaid version')
+    ) {
+      child.remove()
+    }
+  }
+}
+
 const isLikelyCompleteDiagram = (code: string): boolean => {
   const trimmed = code.trim()
   if (!trimmed) return false
@@ -51,12 +65,14 @@ export const MermaidChart = ({ code }: { code: string }) => {
           }
         })
         .catch(() => {
+          cleanupMermaidErrors()
           if (containerRef.current) {
             containerRef.current.innerHTML = ''
             setLastRenderedCode(trimmedCode)
           }
         })
     } catch (e) {
+      cleanupMermaidErrors()
       if (containerRef.current) {
         containerRef.current.innerHTML = ''
         setLastRenderedCode(trimmedCode)
