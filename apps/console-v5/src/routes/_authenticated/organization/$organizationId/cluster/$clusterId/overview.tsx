@@ -35,19 +35,19 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 
 function TableSkeleton() {
   return (
-    <div className="overflow-hidden rounded border border-neutral-200">
-      <div className="flex divide-x divide-neutral-200 border-b border-neutral-200">
-        <div className="h-8 w-1/4 bg-neutral-100"></div>
-        <div className="h-8 w-1/4 bg-neutral-100"></div>
-        <div className="h-8 w-1/4 bg-neutral-100"></div>
-        <div className="h-8 w-[calc(35%/3)] bg-neutral-100"></div>
-        <div className="h-8 w-[calc(20%/3)] bg-neutral-100"></div>
-        <div className="h-8 w-[calc(20%/3)] bg-neutral-100"></div>
+    <div className="overflow-hidden rounded border border-neutral">
+      <div className="flex divide-x divide-neutral border-b border-neutral">
+        <div className="h-8 w-1/4 bg-surface-neutral"></div>
+        <div className="h-8 w-1/4 bg-surface-neutral"></div>
+        <div className="h-8 w-1/4 bg-surface-neutral"></div>
+        <div className="h-8 w-[calc(35%/3)] bg-surface-neutral"></div>
+        <div className="h-8 w-[calc(20%/3)] bg-surface-neutral"></div>
+        <div className="h-8 w-[calc(20%/3)] bg-surface-neutral"></div>
       </div>
 
-      <div className="divide-y divide-neutral-200">
+      <div className="divide-y divide-neutral">
         {[1, 2, 3, 4, 5, 6].map((index) => (
-          <div key={index} className="flex divide-x divide-neutral-200">
+          <div key={index} className="flex divide-x divide-neutral">
             <div className="flex h-12 w-1/4 items-center gap-2 px-5">
               <Skeleton width={80} height={10} />
             </div>
@@ -80,7 +80,7 @@ function TableLegend() {
       <span className="flex items-center gap-1">
         Reserved
         <Tooltip content="Reserved CPU or memory represents the amount of resource guaranteed for this workload.">
-          <span className="relative top-[1px] text-neutral">
+          <span className="relative top-[1px] text-neutral-subtle">
             <Icon iconName="circle-question" iconStyle="regular" />
           </span>
         </Tooltip>
@@ -110,8 +110,8 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
   if (typeof runningStatus === 'string') {
     return (
       <div className="h-80 p-8">
-        <div className="flex h-full flex-col items-center justify-center gap-1 rounded border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
-          <Icon className="text-xl text-neutral-300" iconName="circle-info" iconStyle="regular" />
+        <div className="flex h-full flex-col items-center justify-center gap-1 rounded border border-neutral bg-surface-neutral py-10 text-sm text-neutral">
+          <Icon className="text-xl text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
           <span className="font-medium">No metrics available because the running status is unavailable.</span>
         </div>
       </div>

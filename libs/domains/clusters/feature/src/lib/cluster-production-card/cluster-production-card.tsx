@@ -1,11 +1,16 @@
 import { Link } from '@tanstack/react-router'
 import type { Cluster, ClusterStatus } from 'qovery-typescript-axios'
 import { Icon } from '@qovery/shared/ui'
+import { pluralize } from '@qovery/shared/util-js'
 import { ClusterRunningStatusIndicator } from '../cluster-running-status-indicator/cluster-running-status-indicator'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
+import { useServicesCluster } from '../hooks/use-services-cluster/use-services-cluster'
 
 export function ClusterProductionCard({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus?: ClusterStatus }) {
   useClusterRunningStatusSocket({ organizationId: cluster.organization.id, clusterId: cluster.id })
+
+  const { data: services } = useServicesCluster({ organizationId: cluster.organization.id, clusterId: cluster.id })
+  const serviceCount = services?.length ?? 0
 
   return (
     <Link
@@ -28,7 +33,11 @@ export function ClusterProductionCard({ cluster, clusterStatus }: { cluster: Clu
               />
             </span>
           </p>
-          <span className="text-ssm text-neutral-subtle">No services created yet</span>
+          <span className="text-ssm text-neutral-subtle">
+            {serviceCount
+              ? `${serviceCount} ${pluralize(serviceCount, 'service', 'services')}`
+              : 'No services created yet'}
+          </span>
         </div>
       </div>
     </Link>
