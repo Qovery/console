@@ -15,6 +15,7 @@ function RouteComponent() {
     <Navigate
       to="/organization/$organizationId/cluster/$clusterId/settings/general"
       params={{ organizationId, clusterId }}
+      replace
     />
   )
 }
