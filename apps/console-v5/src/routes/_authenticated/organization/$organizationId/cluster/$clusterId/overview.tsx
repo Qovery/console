@@ -244,6 +244,10 @@ function RouteComponent() {
   useClusterRunningStatusSocket({ organizationId, clusterId })
   useClusterMetricsSocket({ organizationId, clusterId })
 
+  if (!organizationId || !clusterId) {
+    return null
+  }
+
   return (
     <ClusterTerminalProvider>
       <ErrorBoundary>

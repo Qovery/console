@@ -22,8 +22,6 @@ export const ClusterTerminalProvider = ({ children }: PropsWithChildren) => {
     }
   }, [searchParams])
 
-  console.log('open', open)
-
   return (
     <ClusterTerminalContext.Provider
       value={{
