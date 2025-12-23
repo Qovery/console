@@ -26,10 +26,10 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
     !deploymentStatus?.is_deployed || !deploymentStatus?.last_deployment_date || !cluster?.created_at || !kubeVersion
 
   return (
-    <div className="flex flex-col gap-2.5 rounded border border-neutral-250 p-4">
-      <p className="text-sm text-neutral-350">Cluster setup</p>
+    <div className="flex flex-col gap-2.5 rounded border border-neutral bg-surface-neutral p-4">
+      <p className="text-sm text-neutral-subtle">Cluster setup</p>
       <div
-        className={clsx('flex flex-col text-sm text-neutral-400', {
+        className={clsx('flex flex-col text-sm text-neutral', {
           'mt-1 gap-3': isLoading,
         })}
       >
@@ -75,7 +75,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
               title={deploymentStatus?.last_deployment_date && dateUTCString(deploymentStatus.last_deployment_date)}
               to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
               params={{ organizationId, clusterId }}
-              className="flex h-8 w-full items-center gap-2.5 rounded p-1.5 transition-colors hover:bg-neutral-150"
+              className="flex h-8 w-full items-center gap-2.5 rounded p-1.5 transition-colors hover:bg-surface-neutral-componentHover"
             >
               <StatusChip status={deploymentStatus.status} />
               {match(deploymentStatus?.status)
@@ -95,7 +95,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
                 )
                 .otherwise((s) => upperCaseFirstLetter(s))}{' '}
               {deploymentStatus?.last_deployment_date && timeAgo(new Date(deploymentStatus.last_deployment_date))} ago
-              <Icon className="ml-auto text-base text-neutral-300" iconName="arrow-up-right" iconStyle="regular" />
+              <Icon className="ml-auto text-base text-neutral-subtle" iconName="arrow-up-right" iconStyle="regular" />
             </Link>
           </Skeleton>
         )}
@@ -104,7 +104,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
             title={cluster?.created_at && dateUTCString(cluster.created_at)}
             className="flex h-8 items-center gap-2.5 p-1.5"
           >
-            <Icon className="text-base text-neutral-300" iconName="calendar-day" iconStyle="regular" />
+            <Icon className="text-base text-neutral-subtle" iconName="calendar-day" iconStyle="regular" />
             Created {cluster?.created_at && timeAgo(new Date(cluster.created_at))} ago
           </div>
         </Skeleton>
