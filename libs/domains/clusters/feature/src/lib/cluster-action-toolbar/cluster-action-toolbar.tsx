@@ -365,6 +365,10 @@ export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionTo
             navigate({
               to: '/organization/$organizationId/cluster/$clusterId/overview',
               search: { hasShell: true },
+              params: {
+                organizationId: cluster.organization.id,
+                clusterId: cluster.id,
+              },
             })
           }
         >

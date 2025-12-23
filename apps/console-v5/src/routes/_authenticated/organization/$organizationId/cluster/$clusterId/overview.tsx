@@ -75,12 +75,12 @@ function TableSkeleton() {
 
 function TableLegend() {
   return (
-    <div className="flex w-full items-center justify-end gap-1.5 text-xs text-neutral-400">
-      <span className="block h-2 w-2 bg-brand-400"></span>
+    <div className="flex w-full items-center justify-end gap-1.5 text-xs text-neutral-subtle">
+      <span className="block h-2 w-2 bg-brand-9"></span>
       <span className="flex items-center gap-1">
         Reserved
         <Tooltip content="Reserved CPU or memory represents the amount of resource guaranteed for this workload.">
-          <span className="relative top-[1px] text-neutral-350">
+          <span className="relative top-[1px] text-neutral-subtle">
             <Icon iconName="circle-question" iconStyle="regular" />
           </span>
         </Tooltip>
@@ -127,7 +127,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
               <ClusterAvatar cluster={cluster} />
               <Heading>{cluster?.name}</Heading>
             </div>
-            <div className="h-4 w-px bg-neutral-250" />
+            <div className="h-4 w-0 border-r border-neutral" />
             <div className="flex flex-row items-center gap-2">
               {cluster?.production && (
                 <Badge variant="surface" color="red">
