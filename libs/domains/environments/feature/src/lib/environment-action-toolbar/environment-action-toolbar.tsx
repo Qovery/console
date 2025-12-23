@@ -5,7 +5,6 @@ import {
   OrganizationEventTargetType,
   StateEnum,
 } from 'qovery-typescript-axios'
-import { useLocation } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useServices } from '@qovery/domains/services/feature'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
@@ -245,7 +244,6 @@ function MenuManageDeployment({
 }
 
 function MenuOtherActions({ state, environment }: { state: StateEnum; environment: Environment }) {
-  const { pathname } = useLocation()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteEnvironment } = useDeleteEnvironment({ projectId: environment.project.id })
@@ -335,7 +333,6 @@ export interface EnvironmentActionToolbarProps {
 }
 
 export function EnvironmentActionToolbar({ environment, variant = 'default' }: EnvironmentActionToolbarProps) {
-  const { pathname } = useLocation()
   const { data: countServices, isFetched: isFetchedServices } = useServiceCount({ environmentId: environment.id })
 
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
@@ -355,7 +352,7 @@ export function EnvironmentActionToolbar({ environment, variant = 'default' }: E
             <ActionToolbar.Button asChild>
               <Link
                 to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
-                state={{ prevUrl: pathname }}
+                // state={{ prevUrl: pathname }}
               >
                 <Icon iconName="timeline" />
               </Link>
