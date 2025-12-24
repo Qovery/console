@@ -109,7 +109,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
 
   if (typeof runningStatus === 'string') {
     return (
-      <div className="h-80 p-8">
+      <div className="mt-6 h-80 p-8">
         <div className="flex h-full flex-col items-center justify-center gap-1 rounded border border-neutral bg-surface-neutral py-10 text-sm text-neutral">
           <Icon className="text-xl text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
           <span className="font-medium">No metrics available because the running status is unavailable.</span>
@@ -120,12 +120,16 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
 
   return (
     <>
-      <Section className="gap-6 pb-6">
+      <Section className="m-6 gap-6 pb-6">
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <ClusterAvatar cluster={cluster} />
-              <Heading>{cluster?.name}</Heading>
+              <Skeleton width={40} height={40} show={!cluster} rounded>
+                <ClusterAvatar cluster={cluster} />
+              </Skeleton>
+              <Skeleton width={160} height={22} show={!cluster}>
+                <Heading>{cluster?.name}</Heading>
+              </Skeleton>
             </div>
             <div className="h-4 w-0 border-r border-neutral" />
             <div className="flex flex-row items-center gap-2">
@@ -191,11 +195,13 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
               )}
             </div>
             <div className="ml-auto">
-              {cluster && clusterStatus ? (
-                <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} />
-              ) : (
-                <div />
-              )}
+              <Skeleton width={150} height={36} show={!cluster && !clusterStatus}>
+                {cluster && clusterStatus ? (
+                  <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} />
+                ) : (
+                  <div />
+                )}
+              </Skeleton>
             </div>
           </div>
           <hr className="w-full border-neutral" />
@@ -226,7 +232,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
         ) : (
           <div className="flex flex-col gap-4">
             <TableLegend />
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded border border-neutral">
               <ClusterTableNode organizationId={organizationId} clusterId={clusterId} className="border-0" />
             </div>
           </div>
