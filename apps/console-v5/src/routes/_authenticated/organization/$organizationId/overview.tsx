@@ -17,9 +17,11 @@ function RouteComponent() {
   }
 
   return (
-    <OrganizationOverview organizationId={organizationId}>
-      <SectionProductionHealth organizationId={organizationId} />
-      <ProjectList organizationId={organizationId} />
-    </OrganizationOverview>
+    <div className="mt-6">
+      <OrganizationOverview organizationId={organizationId}>
+        <SectionProductionHealth organizationId={organizationId} />
+        <ProjectList organizationId={organizationId} />
+      </OrganizationOverview>
+    </div>
   )
 }

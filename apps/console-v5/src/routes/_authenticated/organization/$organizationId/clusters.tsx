@@ -16,7 +16,7 @@ function RouteComponent() {
   const isLoading = isLoadingCluster || isLoadingClusterStatus
 
   return (
-    <div className="container mx-auto pb-10">
+    <div className="container mx-auto mt-6 pb-10">
       <Section className="gap-8">
         <div className="flex flex-col gap-6">
           <Heading>Clusters</Heading>
