@@ -1,22 +1,21 @@
-import { Link, useRouter } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import type { Cluster, ClusterStatus } from 'qovery-typescript-axios'
 import { Icon } from '@qovery/shared/ui'
+import { pluralize } from '@qovery/shared/util-js'
 import { ClusterRunningStatusIndicator } from '../cluster-running-status-indicator/cluster-running-status-indicator'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
+import { useServicesCluster } from '../hooks/use-services-cluster/use-services-cluster'
 
 export function ClusterProductionCard({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus?: ClusterStatus }) {
   useClusterRunningStatusSocket({ organizationId: cluster.organization.id, clusterId: cluster.id })
 
-  const { buildLocation } = useRouter()
+  const { data: services } = useServicesCluster({ organizationId: cluster.organization.id, clusterId: cluster.id })
+  const serviceCount = services?.length ?? 0
 
   return (
     <Link
-      to={
-        buildLocation({
-          to: '/organization/$organizationId/cluster/$clusterId/overview',
-          params: { organizationId: cluster.organization.id, clusterId: cluster.id },
-        }).href
-      }
+      to="/organization/$organizationId/cluster/$clusterId/overview"
+      params={{ organizationId: cluster.organization.id, clusterId: cluster.id }}
       className="duration-50 flex flex-col gap-5 rounded border border-neutral bg-surface-neutral p-5 text-neutral transition-colors hover:bg-surface-neutral-subtle"
     >
       <div className="flex items-center gap-3">
@@ -34,7 +33,11 @@ export function ClusterProductionCard({ cluster, clusterStatus }: { cluster: Clu
               />
             </span>
           </p>
-          <span className="text-ssm text-neutral-subtle">No services created yet</span>
+          <span className="text-ssm text-neutral-subtle">
+            {serviceCount
+              ? `${serviceCount} ${pluralize(serviceCount, 'service', 'services')}`
+              : 'No services created yet'}
+          </span>
         </div>
       </div>
     </Link>

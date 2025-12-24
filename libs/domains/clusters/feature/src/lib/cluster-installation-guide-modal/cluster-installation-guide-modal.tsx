@@ -35,7 +35,7 @@ export function ClusterInstallationGuideModal({ type, onClose, ...props }: Clust
 
   return (
     <div className="flex flex-col gap-6 p-6">
-      <h2 className="h4 text-neutral-400">
+      <h2 className="h4 text-neutral">
         {isDemo ? 'Install Qovery on your local machine' : 'Install Qovery on your cluster'}
       </h2>
 
@@ -54,7 +54,7 @@ export function ClusterInstallationGuideModal({ type, onClose, ...props }: Clust
         )}
 
         {type === 'MANAGED' && (
-          <ol className="ml-4 list-outside list-decimal text-neutral-400" type="1">
+          <ol className="ml-4 list-outside list-decimal text-neutral" type="1">
             <li className="mb-6 text-sm font-medium">
               <span>Save the following yaml, it contains the Qovery configuration assigned to your cluster.</span>
               <br />

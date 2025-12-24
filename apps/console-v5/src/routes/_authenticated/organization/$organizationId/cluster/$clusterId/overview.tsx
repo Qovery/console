@@ -1,21 +1,258 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { useContext } from 'react'
+import {
+  ClusterCardNodeUsage,
+  ClusterTableNode,
+  ClusterTableNodepool,
+  useClusterMetrics,
+  useClusterMetricsSocket,
+} from '@qovery/domains/cluster-metrics/feature'
+import { ClusterCardResources } from '@qovery/domains/cluster-metrics/feature'
+import { ClusterCardSetup } from '@qovery/domains/cluster-metrics/feature'
+import {
+  ClusterActionToolbar,
+  ClusterAvatar,
+  ClusterNeedRedeployFlag,
+  ClusterTerminal,
+  ClusterTerminalContext,
+  ClusterTerminalProvider,
+  ClusterType,
+  hasGpuInstance,
+  useCluster,
+  useClusterRunningStatus,
+  useClusterRunningStatusSocket,
+  useClusterStatus,
+  useDeployCluster,
+} from '@qovery/domains/clusters/feature'
+import { IconEnum } from '@qovery/shared/enums'
+import { Badge, ErrorBoundary, Heading, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/overview')({
   component: RouteComponent,
 })
 
+function TableSkeleton() {
+  return (
+    <div className="overflow-hidden rounded border border-neutral">
+      <div className="flex divide-x divide-neutral border-b border-neutral">
+        <div className="h-8 w-1/4 bg-surface-neutral"></div>
+        <div className="h-8 w-1/4 bg-surface-neutral"></div>
+        <div className="h-8 w-1/4 bg-surface-neutral"></div>
+        <div className="h-8 w-[calc(35%/3)] bg-surface-neutral"></div>
+        <div className="h-8 w-[calc(20%/3)] bg-surface-neutral"></div>
+        <div className="h-8 w-[calc(20%/3)] bg-surface-neutral"></div>
+      </div>
+
+      <div className="divide-y divide-neutral">
+        {[1, 2, 3, 4, 5, 6].map((index) => (
+          <div key={index} className="flex divide-x divide-neutral">
+            <div className="flex h-12 w-1/4 items-center gap-2 px-5">
+              <Skeleton width={80} height={10} />
+            </div>
+            <div className="flex h-12 w-1/4 items-center px-3">
+              <Skeleton width={80} height={10} />
+            </div>
+            <div className="flex h-12 w-1/4 items-center px-3">
+              <Skeleton width={80} height={10} />
+            </div>
+            <div className="flex h-12 w-[calc(35%/3)] items-center gap-2 px-3">
+              <Skeleton width={80} height={10} />
+            </div>
+            <div className="flex h-12 w-[calc(20%/3)] items-center px-3">
+              <Skeleton width={80} height={10} />
+            </div>
+            <div className="flex h-12 w-[calc(20%/3)] items-center px-3">
+              <Skeleton width={80} height={10} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function TableLegend() {
+  return (
+    <div className="flex w-full items-center justify-end gap-1.5 text-xs text-neutral">
+      <span className="block h-2 w-2 bg-brand-9"></span>
+      <span className="flex items-center gap-1">
+        Reserved
+        <Tooltip content="Reserved CPU or memory represents the amount of resource guaranteed for this workload.">
+          <span className="relative top-[1px] text-neutral-subtle">
+            <Icon iconName="circle-question" iconStyle="regular" />
+          </span>
+        </Tooltip>
+      </span>
+    </div>
+  )
+}
+
+function ClusterOverview({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
+  const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
+  const { mutate: deployCluster } = useDeployCluster()
+  const { data: runningStatus } = useClusterRunningStatus({ organizationId, clusterId })
+  const { data: clusterMetrics } = useClusterMetrics({ organizationId, clusterId })
+  const { data: clusterStatus, isLoading: isClusterStatusLoading } = useClusterStatus({
+    organizationId,
+    clusterId,
+    refetchInterval: 4_000,
+    enabled: Boolean(organizationId) && Boolean(clusterId),
+  })
+
+  const { open } = useContext(ClusterTerminalContext)
+
+  const isLoading = isClusterLoading || isClusterStatusLoading || !runningStatus || !clusterMetrics
+
+  const isKarpenter = cluster?.features?.find((feature) => feature.id === 'KARPENTER')
+
+  if (typeof runningStatus === 'string') {
+    return (
+      <div className="h-80 p-8">
+        <div className="flex h-full flex-col items-center justify-center gap-1 rounded border border-neutral bg-surface-neutral py-10 text-sm text-neutral">
+          <Icon className="text-xl text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
+          <span className="font-medium">No metrics available because the running status is unavailable.</span>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <Section className="gap-6 pb-6">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <ClusterAvatar cluster={cluster} />
+              <Heading>{cluster?.name}</Heading>
+            </div>
+            <div className="h-4 w-0 border-r border-neutral" />
+            <div className="flex flex-row items-center gap-2">
+              {cluster?.production && (
+                <Badge variant="surface" color="red">
+                  Production
+                </Badge>
+              )}
+              {cluster?.is_default && <Badge color="sky">Default</Badge>}
+              {cluster ? (
+                cluster.kubernetes === 'SELF_MANAGED' ? (
+                  <Badge color="neutral">
+                    <Icon name={IconEnum.KUBERNETES} height={16} width={16} className="mr-1" />
+                    Self managed
+                  </Badge>
+                ) : (
+                  <>
+                    <Badge color="neutral">
+                      <Icon name={IconEnum.QOVERY} height={16} width={16} className="mr-1" />
+                      Qovery managed
+                    </Badge>
+                    <ClusterType
+                      cloudProvider={cluster.cloud_provider}
+                      kubernetes={cluster.kubernetes}
+                      instanceType={cluster.instance_type}
+                    />
+                  </>
+                )
+              ) : (
+                <Skeleton width={120} height={22} show />
+              )}
+              {cluster?.region !== 'on-premise' && cluster?.kubernetes !== 'PARTIALLY_MANAGED' && (
+                <Skeleton width={120} height={22} show={!cluster}>
+                  <Badge color="neutral" variant="surface">
+                    {cluster?.region}
+                  </Badge>
+                </Skeleton>
+              )}
+              {cluster?.kubernetes !== 'SELF_MANAGED' && (
+                <>
+                  <Skeleton width={120} height={22} show={!cluster}>
+                    {cluster?.version && (
+                      <Badge color="neutral" variant="surface">
+                        {cluster?.version}
+                      </Badge>
+                    )}
+                  </Skeleton>
+                  {cluster?.instance_type &&
+                    cluster.kubernetes !== 'PARTIALLY_MANAGED' &&
+                    cluster?.instance_type !== 'KARPENTER' && (
+                      <Skeleton width={120} height={22} show={!cluster}>
+                        <Badge color="neutral" variant="surface">
+                          {cluster?.instance_type?.toLowerCase().replace('_', '.')}
+                        </Badge>
+                      </Skeleton>
+                    )}
+                </>
+              )}
+              {hasGpuInstance(cluster) && (
+                <Badge color="neutral" variant="surface">
+                  GPU pool
+                </Badge>
+              )}
+            </div>
+            <div className="ml-auto">
+              {cluster && clusterStatus ? (
+                <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} />
+              ) : (
+                <div />
+              )}
+            </div>
+          </div>
+          <hr className="w-full border-neutral" />
+        </div>
+        {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
+          <ClusterNeedRedeployFlag
+            deploymentStatus={cluster.deployment_status}
+            onClickButton={() =>
+              deployCluster({
+                organizationId,
+                clusterId,
+              })
+            }
+          />
+        )}
+        <div className="grid gap-6 md:grid-cols-3">
+          <ClusterCardNodeUsage organizationId={organizationId} clusterId={clusterId} />
+          <ClusterCardResources organizationId={organizationId} clusterId={clusterId} />
+          <ClusterCardSetup organizationId={organizationId} clusterId={clusterId} />
+        </div>
+        {isLoading ? (
+          <TableSkeleton />
+        ) : isKarpenter ? (
+          <div className="flex flex-col gap-4">
+            <TableLegend />
+            <ClusterTableNodepool organizationId={organizationId} clusterId={clusterId} />
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            <TableLegend />
+            <div className="overflow-hidden rounded border border-neutral-250">
+              <ClusterTableNode organizationId={organizationId} clusterId={clusterId} className="border-0" />
+            </div>
+          </div>
+        )}
+      </Section>
+      {open && cluster && <ClusterTerminal organizationId={cluster.organization.id} clusterId={cluster.id} />}
+    </>
+  )
+}
+
 function RouteComponent() {
-  const { organizationId, clusterId } = useParams({ strict: false })
   useDocumentTitle('Cluster - Overview')
+  const { organizationId, clusterId } = useParams({ strict: false })
+
+  useClusterRunningStatusSocket({ organizationId, clusterId })
+  useClusterMetricsSocket({ organizationId, clusterId })
 
   if (!organizationId || !clusterId) {
     return null
   }
 
   return (
-    <div>
-      <p>Cluster Overview for {clusterId}</p>
-    </div>
+    <ClusterTerminalProvider>
+      <ErrorBoundary>
+        <ClusterOverview organizationId={organizationId} clusterId={clusterId} />
+      </ErrorBoundary>
+    </ClusterTerminalProvider>
   )
 }
