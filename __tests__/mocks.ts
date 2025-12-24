@@ -1,5 +1,6 @@
 import { Auth0ProviderOptions } from '@auth0/auth0-react'
 import { ComponentType } from 'react'
+import React from 'react'
 
 jest.mock('@auth0/auth0-react', () => ({
   Auth0Provider: ({ children }: Auth0ProviderOptions) => children,
@@ -15,6 +16,24 @@ jest.mock('@auth0/auth0-react', () => ({
     }
   },
 }))
+
+jest.mock('@tanstack/react-router', () => {
+  const React = jest.requireActual('react')
+  return {
+    ...jest.requireActual('@tanstack/react-router'),
+    useRouter: jest.fn(() => ({
+      buildLocation: jest.fn(() => ({
+        href: '/',
+      })),
+    })),
+    Link: React.forwardRef(
+      (
+        { children, ...props }: { children?: React.ReactNode; [key: string]: unknown },
+        ref: React.Ref<HTMLAnchorElement>
+      ) => React.createElement('a', { ref, ...props }, children)
+    ),
+  }
+})
 
 jest.mock('@uidotdev/usehooks', () => ({
   useDocumentTitle: jest.fn(),

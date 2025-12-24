@@ -14,7 +14,7 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-// import { ClusterActionToolbar } from '../cluster-action-toolbar/cluster-action-toolbar'
+import { ClusterActionToolbar } from '../cluster-action-toolbar/cluster-action-toolbar'
 import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
 import { ClusterRunningStatusIndicator } from '../cluster-running-status-indicator/cluster-running-status-indicator'
 import { ClusterType } from '../cluster-type/cluster-type'
@@ -28,8 +28,11 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', 'DRY_RUN', (s) => (
       <LinkUI
-        to="/"
-        // to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
+        to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+        params={{
+          organizationId: cluster.organization.id,
+          clusterId: cluster.id,
+        }}
         color="brand"
         underline
         size="sm"
@@ -46,8 +49,11 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .with('BUILD_ERROR', 'DELETE_ERROR', 'DEPLOYMENT_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
       <LinkUI
-        to="/"
-        // to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
+        to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+        params={{
+          organizationId: cluster.organization.id,
+          clusterId: cluster.id,
+        }}
         color="red"
         underline
         size="sm"
@@ -60,8 +66,11 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .with('INVALID_CREDENTIALS', () => (
       <LinkUI
-        to="/"
-        // to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
+        to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+        params={{
+          organizationId: cluster.organization.id,
+          clusterId: cluster.id,
+        }}
         color="red"
         underline
         size="sm"
@@ -191,7 +200,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
         <Skeleton className="min-w-max" height={36} width={146} show={!clusterDeploymentStatus}>
           {clusterDeploymentStatus && (
             <div onClick={(e) => e.preventDefault()}>
-              {/* <ClusterActionToolbar cluster={cluster} clusterStatus={clusterDeploymentStatus} /> */}
+              <ClusterActionToolbar cluster={cluster} clusterStatus={clusterDeploymentStatus} />
             </div>
           )}
         </Skeleton>

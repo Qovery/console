@@ -3,7 +3,7 @@ import { type PropsWithChildren } from 'react'
 import { CopyButton, ExternalLink, Heading, Section } from '@qovery/shared/ui'
 
 const CommandBlock = ({ command }: { command: string }) => (
-  <div className="flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
+  <div className="flex justify-between gap-6 rounded-sm bg-surface-neutral-subtle p-3 text-neutral">
     <div>
       <span className="select-none">$ </span>
       {command}
@@ -13,7 +13,7 @@ const CommandBlock = ({ command }: { command: string }) => (
 )
 
 const Step = ({ number, title, children }: PropsWithChildren<{ number: number; title: string }>) => (
-  <li className="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm">
+  <li className="flex flex-col gap-2 rounded border border-neutral px-4 py-3 text-sm">
     <span className="font-medium">
       {number}. {title}
     </span>
@@ -39,16 +39,16 @@ export function ClusterAccessModal({ clusterId, type }: ClusterAccessModalProps)
 
   return (
     <Section className="p-5">
-      <Heading className="h4 max-w-sm truncate text-neutral-400">Access to your cluster</Heading>
+      <Heading className="h4 max-w-sm truncate text-neutral">Access to your cluster</Heading>
 
-      <p className="mb-6 mt-2 text-sm text-neutral-350">
+      <p className="mb-6 mt-2 text-sm text-neutral-subtle">
         This section explains how to connect to your {isSelfManaged ? 'self-managed ' : ''}
         cluster using kubectl, k9s.
       </p>
 
       <ul className="flex flex-col gap-4">
         <Step number={1} title="Download/Update Qovery CLI">
-          <p className="text-neutral-350">
+          <p className="text-neutral-subtle">
             Download and install the Qovery CLI (or update its version to the latest version)
           </p>
           <ExternalLink href="https://www.qovery.com/docs/cli/overview#installation">
@@ -62,7 +62,7 @@ export function ClusterAccessModal({ clusterId, type }: ClusterAccessModalProps)
 
         {!isSelfManaged && (
           <Step number={3} title="Export your kubeconfig">
-            <p className="text-neutral-350">
+            <p className="text-neutral-subtle">
               Replace the path from the previous command's output and run the following command in your terminal.
             </p>
             <CommandBlock command={commands.exportConfig} />
