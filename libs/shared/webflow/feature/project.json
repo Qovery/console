@@ -3,7 +3,19 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/webflow/feature/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:shared", "type:feature"],
   "// targets": "to see all targets run: nx show project webflow-feature --web",
-  "targets": {}
+  "targets": {
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
+    }
+  }
 }

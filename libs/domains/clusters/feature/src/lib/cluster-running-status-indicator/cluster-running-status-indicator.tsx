@@ -66,7 +66,7 @@ export function ClusterRunningStatusIndicator({
   }
 
   if (isLoading && !runningStatus && !isTimeout) {
-    return <Skeleton width={80} height={24} />
+    return <Skeleton width={type === 'dot' ? 8 : 80} height={type === 'dot' ? 8 : 24} rounded={type === 'dot'} />
   }
 
   if (isTimeout && !runningStatus) {

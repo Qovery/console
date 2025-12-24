@@ -61,6 +61,12 @@ const CLUSTER_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/overview',
   },
   {
+    id: 'cluster-logs',
+    label: 'Cluster Logs',
+    iconName: 'scroll',
+    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
+  },
+  {
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
