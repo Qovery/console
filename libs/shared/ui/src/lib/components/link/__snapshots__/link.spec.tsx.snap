@@ -21,7 +21,7 @@ exports[`Link should match with Link component 1`] = `
 <div>
   <a
     class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
-    href="/"
+    to="/"
   >
     My link
   </a>
