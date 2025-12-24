@@ -120,6 +120,17 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
 
   return (
     <>
+      {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
+        <ClusterNeedRedeployFlag
+          deploymentStatus={cluster.deployment_status}
+          onClickButton={() =>
+            deployCluster({
+              organizationId,
+              clusterId,
+            })
+          }
+        />
+      )}
       <Section className="m-6 gap-6 pb-6">
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-4">
@@ -206,17 +217,6 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
           </div>
           <hr className="w-full border-neutral" />
         </div>
-        {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
-          <ClusterNeedRedeployFlag
-            deploymentStatus={cluster.deployment_status}
-            onClickButton={() =>
-              deployCluster({
-                organizationId,
-                clusterId,
-              })
-            }
-          />
-        )}
         <div className="grid gap-6 md:grid-cols-3">
           <ClusterCardNodeUsage organizationId={organizationId} clusterId={clusterId} />
           <ClusterCardResources organizationId={organizationId} clusterId={clusterId} />

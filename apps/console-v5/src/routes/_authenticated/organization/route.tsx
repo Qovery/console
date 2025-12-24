@@ -204,7 +204,7 @@ function OrganizationRoute() {
     <div className="h-full min-h-dvh w-full bg-background">
       <Header />
       {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
-      <main className="flex h-full min-h-0 flex-1 flex-col">
+      <main className="flex !h-full min-h-0 flex-1 flex-col">
         <div className="sticky top-0 border-b border-neutral bg-background-secondary px-4">
           <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
             {navigationContext && <NavigationBar context={navigationContext} />}
