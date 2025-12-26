@@ -22,7 +22,7 @@ const ProgressBarRoot = forwardRef<ElementRef<'div'>, ProgressBarRootProps>(func
     <ProgressBarContext.Provider value={{ mode }}>
       <div
         ref={ref}
-        className={twMerge('relative h-2 w-full overflow-hidden rounded-full bg-neutral-150', className)}
+        className={twMerge('relative h-2 w-full overflow-hidden rounded-full bg-surface-neutral-component', className)}
         {...props}
       >
         <div className="flex h-full w-full">{children}</div>
@@ -50,7 +50,7 @@ const ProgressBarCell = forwardRef<ElementRef<'div'>, ProgressBarCellProps>(func
       className={twMerge(
         clsx('h-full', {
           'absolute left-0 top-0': mode === 'absolute',
-          'border-r border-neutral-50 last:border-r-0': mode === 'default',
+          'border-r border-neutral last:border-r-0': mode === 'default',
         }),
         className
       )}

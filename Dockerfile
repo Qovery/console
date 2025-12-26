@@ -32,6 +32,7 @@ ENV NODE_ENV=$NODE_ENV \
     NX_PUBLIC_ONBOARDING=$NX_PUBLIC_ONBOARDING \
     NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY=$NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY \
     NX_PUBLIC_MINTLIFY_API_KEY=$NX_PUBLIC_MINTLIFY_API_KEY
+    NX_PUBLIC_WEBFLOW_API_KEY=$NX_PUBLIC_WEBFLOW_API_KEY
 
 # Install dependencies with cache mount for faster rebuilds
 COPY package.json yarn.lock .yarnrc.yml ./
@@ -42,14 +43,14 @@ RUN --mount=type=cache,target=/root/.yarn \
 # Copy source files (use .dockerignore to exclude unnecessary files)
 COPY . .
 
-# Build with NX cache mount for faster rebuilds
+# Build console-v5 with NX cache mount for faster rebuilds
 RUN --mount=type=cache,target=/app/node_modules/.cache/nx \
-    yarn build
+    yarn nx build console-v5 --configuration=production
 
 # Bundle static assets with nginx
 FROM nginx:1.25-alpine
 # Copy built assets from builder
-COPY --from=builder /app/dist/apps/* /usr/share/nginx/html
+COPY --from=builder /app/dist/apps/console-v5 /usr/share/nginx/html
 # Add your nginx.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose port

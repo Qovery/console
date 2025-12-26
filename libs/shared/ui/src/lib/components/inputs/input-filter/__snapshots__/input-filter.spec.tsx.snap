@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`InputFilter should match input filter with loading 1`] = `
 <div>
@@ -35,7 +35,7 @@ exports[`InputFilter should match input filter with value 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-xmark "
+          class="fa-regular fa-xmark "
         />
       </span>
     </button>
@@ -53,7 +53,7 @@ exports[`InputFilter should match input filter without value 1`] = `
       Filter
       <i
         aria-hidden="true"
-        class="fa-solid fa-magnifying-glass "
+        class="fa-regular fa-magnifying-glass "
       />
     </button>
   </div>

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`GitPublicRepositorySettings should match snapshot 1`] = `
 <body>
@@ -45,7 +45,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         Go to repository
         <i
           aria-hidden="true"
-          class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+          class="fa-regular fa-arrow-up-right-from-square text-2xs leading-4"
         />
       </a>
     </div>
