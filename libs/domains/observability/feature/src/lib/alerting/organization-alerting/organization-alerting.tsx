@@ -4,7 +4,7 @@ import { Heading, InputSearch, Section } from '@qovery/shared/ui'
 import { AlertRulesOverview } from '../alert-rules-overview/alert-rules-overview'
 
 export function OrganizationAlerting() {
-  const { organizationId = '', projectId = '' } = useParams()
+  const { organizationId = '' } = useParams()
   const [filter, setFilter] = useState('')
 
   return (
@@ -20,7 +20,7 @@ export function OrganizationAlerting() {
           className="w-72"
           onChange={(value) => setFilter(value)}
         />
-        <AlertRulesOverview organizationId={organizationId} projectId={projectId} filter={filter} />
+        <AlertRulesOverview organizationId={organizationId} filter={filter} />
       </div>
     </Section>
   )
