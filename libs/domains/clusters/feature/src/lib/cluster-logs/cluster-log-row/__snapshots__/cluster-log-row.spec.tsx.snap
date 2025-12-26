@@ -1,0 +1,129 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ClusterLogRow should display cell error message 1`] = `
+<div>
+  <div
+    class="group flex min-h-6 select-none justify-between font-code text-xs hover:bg-surface-neutral-subtle text-neutral-invert bg-surface-negative-component"
+  >
+    <div
+      class="flex"
+    >
+      <div
+        class="group-hover:bg-surface-negative-componentHover bg-surface-negative-component text-neutral"
+        data-testid="index"
+      >
+        <div
+          class="h-6 w-10 min-w-[40px] px-2 py-1 text-right"
+        >
+          2
+        </div>
+      </div>
+      <div
+        class="px-2 py-1 text-negative"
+        data-testid="cell-date"
+      >
+        23:59:59
+      </div>
+      <div
+        class="w-11/12 select-text py-1 text-negative"
+        data-testid="cell-msg"
+      >
+        <span
+          class="font-bold"
+        >
+          DeleteError
+           - 
+        </span>
+        <span
+          class="whitespace-pre-wrap"
+        >
+          error message
+        </span>
+      </div>
+    </div>
+    <div
+      class="flex whitespace-nowrap px-2 py-1 text-negative"
+    >
+      <span
+        class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-[''] mr-4 text-neutral opacity-0 group-hover:opacity-100"
+        data-state="closed"
+        data-testid="copy-container"
+      >
+        <span
+          class="icon-solid-copy shrink-0 "
+          role="img"
+        />
+      </span>
+      <span
+        title="Fri, 26 Dec 2025 11:02:13 GMT"
+      >
+        26 Dec, 12:02:13.00
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ClusterLogRow should display cell message 1`] = `
+<div>
+  <div
+    class="group flex min-h-6 select-none justify-between font-code text-xs hover:bg-surface-neutral-subtle bg-surface-positive-subtle text-positive"
+  >
+    <div
+      class="flex"
+    >
+      <div
+        class="group-hover:bg-surface-positive-componentHover bg-surface-positive-component text-neutral"
+        data-testid="index"
+      >
+        <div
+          class="h-6 w-10 min-w-[40px] px-2 py-1 text-right"
+        >
+          2
+        </div>
+      </div>
+      <div
+        class="px-2 py-1 text-positive"
+        data-testid="cell-date"
+      >
+        23:59:59
+      </div>
+      <div
+        class="w-11/12 select-text py-1 text-positive"
+        data-testid="cell-msg"
+      >
+        <span
+          class="font-bold"
+        >
+          Created
+           - 
+        </span>
+        <span
+          class="whitespace-pre-wrap"
+        >
+          hello world
+        </span>
+      </div>
+    </div>
+    <div
+      class="flex whitespace-nowrap px-2 py-1 text-positive"
+    >
+      <span
+        class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-[''] mr-4 text-neutral opacity-0 group-hover:opacity-100"
+        data-state="closed"
+        data-testid="copy-container"
+      >
+        <span
+          class="icon-solid-copy shrink-0 "
+          role="img"
+        />
+      </span>
+      <span
+        title="Fri, 26 Dec 2025 11:02:13 GMT"
+      >
+        26 Dec, 12:02:13.00
+      </span>
+    </div>
+  </div>
+</div>
+`;
