@@ -1,6 +1,6 @@
 import download from 'downloadjs'
 import { type ClusterLogs } from 'qovery-typescript-axios'
-import { type RefObject, useEffect } from 'react'
+import { type RefObject } from 'react'
 import { Button, Icon } from '@qovery/shared/ui'
 
 export interface ClusterHeaderLogsProps {
@@ -25,11 +25,6 @@ export function ClusterHeaderLogs(props: ClusterHeaderLogsProps) {
       section.scroll(0, 0)
     }
   }
-
-  useEffect(() => {
-    // auto scroll when we add data
-    forcedScroll && forcedScroll(true)
-  }, [data])
 
   return (
     <>

@@ -1,5 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { Outlet, createFileRoute, useLocation, useParams } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import { Icon, Navbar } from '@qovery/shared/ui'
 import Header from '../../../app/components/header/header'
 
@@ -196,9 +196,17 @@ function NavigationBar({ context }: { context: NavigationContext }) {
   )
 }
 
+const fullWidthRouteIds = ['/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs']
+
+function useFullWidthLayout(): boolean {
+  const matches = useMatches()
+  return matches.some((match) => fullWidthRouteIds.some((routeId) => match.routeId === routeId))
+}
+
 function OrganizationRoute() {
   const navigationContext = useNavigationContext()
   const activeTabId = useActiveTabId(navigationContext)
+  const needsFullWidth = useFullWidthLayout()
 
   return (
     <div className="h-full min-h-dvh w-full bg-background">
@@ -210,7 +218,7 @@ function OrganizationRoute() {
             {navigationContext && <NavigationBar context={navigationContext} />}
           </Navbar.Root>
         </div>
-        <div className="container mx-auto h-full w-full px-4">
+        <div className={needsFullWidth ? 'h-full w-full' : 'container mx-auto h-full w-full px-4'}>
           <Outlet />
         </div>
       </main>

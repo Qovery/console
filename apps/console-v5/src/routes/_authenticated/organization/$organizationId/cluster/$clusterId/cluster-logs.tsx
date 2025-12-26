@@ -1,5 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import {
   ClusterHeaderLogs,
   ClusterLogRow,
@@ -7,7 +7,7 @@ import {
   useClusterLogs,
   useClusterStatus,
 } from '@qovery/domains/clusters/feature'
-import { EmptyState, LoaderDots, LoaderSpinner } from '@qovery/shared/ui'
+import { EmptyState, LoaderDots } from '@qovery/shared/ui'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs')({
   component: RouteComponent,
@@ -30,6 +30,11 @@ function RouteComponent() {
 
   const refScrollSection = useRef<HTMLDivElement>(null)
 
+  // `useEffect` used to scroll to the bottom of the logs when we add data
+  useEffect(() => {
+    refScrollSection.current?.scroll(0, refScrollSection.current.scrollHeight)
+  }, [logs])
+
   if (!cluster || !clusterStatus) {
     return null
   }
@@ -37,14 +42,14 @@ function RouteComponent() {
   const firstDate = logs.length > 0 && logs[0].timestamp ? new Date(logs[0].timestamp) : undefined
 
   return (
-    <div className="flex h-full min-h-dvh flex-col items-center">
+    <div className="flex h-[calc(100dvh-108px)] flex-col items-center overflow-hidden">
       {isLogsLoading && !isLogsFetched ? (
-        <div className="flex h-full flex-col items-center justify-center">
+        <div className="flex h-full flex-1 flex-col items-center justify-center">
           <LoaderDots />
         </div>
       ) : isLogsFetched && logs.length > 0 ? (
-        <div ref={refScrollSection} className="flex flex-col pb-10">
-          <div className="sticky top-11 flex h-11 w-full items-center justify-end border-b border-neutral bg-surface-neutral-component px-2">
+        <div ref={refScrollSection} className="flex flex-col overflow-y-scroll pb-10">
+          <div className="sticky top-0 flex h-11 min-h-11 w-full items-center justify-end border-b border-neutral bg-surface-neutral-component px-4">
             <ClusterHeaderLogs data={logs} refScrollSection={refScrollSection} />
           </div>
           <div className="flex flex-col">
@@ -54,9 +59,9 @@ function RouteComponent() {
           </div>
         </div>
       ) : (
-        <div className="flex h-full flex-col items-center justify-center">
+        <div className="flex h-full  w-1/2 flex-col items-center justify-center">
           <EmptyState
-            className="w-1/2 border-none bg-transparent"
+            className="border-none bg-transparent"
             title="No logs found"
             description="No logs found for this cluster. Please try again later."
             icon="cube"
