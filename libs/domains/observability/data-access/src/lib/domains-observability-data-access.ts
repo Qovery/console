@@ -9,11 +9,13 @@ import {
   type AlertRuleEditRequest,
   AlertRulesApi,
   ClustersApi,
+  OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
 
 const clusterApi = new ClustersApi()
 const alertRulesApi = new AlertRulesApi()
 const alertReceiversApi = new AlertReceiversApi()
+const organizationApi = new OrganizationMainCallsApi()
 
 export const observability = createQueryKeys('observability', {
   containerName: ({
@@ -250,6 +252,13 @@ export const observability = createQueryKeys('observability', {
     queryKey: [organizationId],
     async queryFn() {
       const response = await alertReceiversApi.getAlertReceivers(organizationId)
+      return response.data.results
+    },
+  }),
+  servicesSearch: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await organizationApi.listServicesByOrganizationId(organizationId, null, null, clusterId)
       return response.data.results
     },
   }),

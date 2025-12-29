@@ -3,11 +3,12 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseServicesSearchProps {
   organizationId: string
+  clusterId: string
 }
 
-export function useServicesSearch({ organizationId }: UseServicesSearchProps) {
+export function useServicesSearch({ organizationId, clusterId }: UseServicesSearchProps) {
   return useQuery({
-    ...queries.organizations.servicesSearch({ organizationId }),
+    ...queries.observability.servicesSearch({ organizationId, clusterId }),
   })
 }
 

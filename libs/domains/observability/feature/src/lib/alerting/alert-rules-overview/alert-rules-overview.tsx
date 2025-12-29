@@ -270,7 +270,7 @@ export function AlertRulesOverview({
                         color={statusConfig.color}
                         variant="surface"
                         radius="full"
-                        className="gap-1 font-medium"
+                        className="gap-1 truncate font-medium"
                         size="sm"
                       >
                         <Icon iconName={statusConfig.icon} iconStyle="regular" className="text-xs" />
