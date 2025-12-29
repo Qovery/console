@@ -10,7 +10,8 @@ import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create
 import { useServicesSearch } from '../../hooks/use-services-search/use-services-search'
 
 export interface AlertRulesCloneModalProps {
-  alertRule: AlertRuleResponse
+  alertRule?: AlertRuleResponse
+  alertRules?: AlertRuleResponse[]
   organizationId: string
   onClose: () => void
 }
@@ -51,7 +52,10 @@ function ServiceItem({ service, onRemove }: { service: ServiceLightResponse; onR
   )
 }
 
-export function AlertRulesCloneModal({ alertRule, organizationId, onClose }: AlertRulesCloneModalProps) {
+export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, onClose }: AlertRulesCloneModalProps) {
+  const rulesToClone = alertRules ?? (alertRule ? [alertRule] : [])
+  const firstRule = rulesToClone[0]
+
   const methods = useForm({
     mode: 'all',
     defaultValues: {
@@ -67,7 +71,7 @@ export function AlertRulesCloneModal({ alertRule, organizationId, onClose }: Ale
   })
   const { data: services = [], isLoading: isLoadingServices } = useServicesSearch({
     organizationId,
-    clusterId: alertRule.cluster_id,
+    clusterId: firstRule?.cluster_id,
   })
   const [searchValue, setSearchValue] = useState('')
   const [selectedServiceIds, setSelectedServiceIds] = useState<Set<string>>(new Set())
@@ -107,32 +111,34 @@ export function AlertRulesCloneModal({ alertRule, organizationId, onClose }: Ale
   }
 
   const onSubmit = methods.handleSubmit(async () => {
-    if (!alertRule.cluster_id) {
+    if (!firstRule?.cluster_id) {
       return
     }
 
     try {
       await Promise.all(
-        selectedServices.map((service) =>
-          cloneAlertRule({
-            payload: {
-              organization_id: organizationId,
-              cluster_id: alertRule.cluster_id, // @TODO: change to the cluster_id of the service `service.cluster_id`
-              target: {
-                target_id: service.id,
-                target_type: service.service_type as AlertTargetType,
+        rulesToClone.flatMap((rule) =>
+          selectedServices.map((service) =>
+            cloneAlertRule({
+              payload: {
+                organization_id: organizationId,
+                cluster_id: rule.cluster_id ?? firstRule.cluster_id,
+                target: {
+                  target_id: service.id,
+                  target_type: service.service_type as AlertTargetType,
+                },
+                name: rule.name,
+                tag: rule.tag,
+                description: rule.description,
+                condition: rule.condition,
+                for_duration: rule.for_duration,
+                severity: rule.severity,
+                enabled: rule.enabled,
+                alert_receiver_ids: rule.alert_receiver_ids ?? [],
+                presentation: rule.presentation,
               },
-              name: alertRule.name,
-              tag: alertRule.tag,
-              description: alertRule.description,
-              condition: alertRule.condition,
-              for_duration: alertRule.for_duration,
-              severity: alertRule.severity,
-              enabled: alertRule.enabled,
-              alert_receiver_ids: alertRule.alert_receiver_ids ?? [],
-              presentation: alertRule.presentation,
-            },
-          })
+            })
+          )
         )
       )
       onClose()
@@ -145,7 +151,11 @@ export function AlertRulesCloneModal({ alertRule, organizationId, onClose }: Ale
     <FormProvider {...methods}>
       <ModalCrud
         title="Service selection"
-        description="Please select all the services you want to clone your alerts on"
+        description={
+          rulesToClone.length > 1
+            ? `Please select all the services you want to clone ${rulesToClone.length} alerts on`
+            : 'Please select all the services you want to clone your alerts on'
+        }
         onClose={onClose}
         onSubmit={onSubmit}
         loading={isCloneAlertRuleLoading}
