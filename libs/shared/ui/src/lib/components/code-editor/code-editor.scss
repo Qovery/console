@@ -1,0 +1,83 @@
+// Audit logs simple editor
+.audit-logs-simple-code-editor > .monaco-editor,
+.audit-logs-failed-code-editor > .monaco-editor {
+  .view-line {
+    background-color: #e6f6eb7f;
+  }
+
+  .margin-view-overlays {
+    background-color: #e6f6eb;
+    border-left: 1px solid #30a46c;
+  }
+
+  .line-numbers {
+    color: #218358 !important;
+  }
+
+  // Enforce font-family for line and number sections
+  .view-line,
+  .line-numbers {
+    font-family: 'Roboto', monospace !important;
+    font-size: 13px;
+  }
+
+  // JSON Values
+  .mtk2,
+  .mtk3,
+  .mtk4,
+  .mtk5,
+  .mtk6,
+  .mtk7,
+  .mtk8,
+  .mtk9 {
+    color: var(--color-brand-500) !important;
+  }
+
+  // JSON attributes + ':'
+  .mtk1,
+  .mtk20 {
+    color: #0d74ce !important;
+  }
+
+  // JSON brackets
+  span.mtk1.bracket-highlighting-0,
+  span.mtk1.bracket-highlighting-1,
+  span.mtk1.bracket-highlighting-2,
+  span.mtk1.bracket-highlighting-3,
+  span.mtk1.bracket-highlighting-4,
+  span.mtk1.bracket-highlighting-5 {
+    color: #ab6400 !important;
+  }
+}
+
+// Audit logs no failed event style
+.audit-logs-simple-code-editor.monaco-editor {
+  .view-line {
+    background-color: #e6f6eb7f;
+  }
+
+  .margin-view-overlays {
+    background-color: #e6f6eb;
+    border-left: 1px solid #30a46c;
+  }
+
+  .line-numbers {
+    color: #218358 !important;
+  }
+}
+
+// Audit logs failed event style
+.audit-logs-failed-code-editor > .monaco-editor {
+  .view-line {
+    background-color: rgba(246, 231, 230, 0.5);
+  }
+
+  .margin-view-overlays {
+    background-color: #f6e9e6;
+    border-left: 1px solid #fa0419;
+  }
+
+  .line-numbers {
+    color: #e89381 !important;
+  }
+}
