@@ -263,7 +263,9 @@ export function AlertRulesOverview({
                   />
                 </div>
               </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Alert name</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="h-9 pl-0 font-normal text-neutral-350">
+                Alert name
+              </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="h-9 border-l border-neutral-250 font-normal text-neutral-350">
                 Status
               </Table.ColumnHeaderCell>
@@ -311,7 +313,7 @@ export function AlertRulesOverview({
                       </div>
                     )}
                   </Table.Cell>
-                  <Table.RowHeaderCell>
+                  <Table.RowHeaderCell className="pl-0">
                     <div className="flex min-w-0 items-center justify-between gap-4">
                       <div className="min-w-0 flex-1">
                         <p className="flex items-center gap-1.5 text-sm font-medium text-neutral-400">
