@@ -1,6 +1,6 @@
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useEffect, useState } from 'react'
-import { type Params, useLocation, useNavigate } from 'react-router-dom'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
@@ -35,7 +35,7 @@ const defaultContext: DefaultContextProps = {
 export const ContextOnboarding = createContext<DefaultContextProps>(defaultContext)
 
 export interface ContainerProps {
-  params: Readonly<Params<string>>
+  params: Readonly<Record<string, string>>
 }
 
 export function Container(props: PropsWithChildren<ContainerProps>) {
@@ -68,9 +68,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   useEffect(() => {
     if (hasDxAuth && currentPath === ONBOARDING_PLANS_URL) {
-      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`, {
-        state: location.state,
-      })
+      navigate({ to: `${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`, state: location.state })
     }
   }, [currentPath, hasDxAuth, navigate, location.state])
 

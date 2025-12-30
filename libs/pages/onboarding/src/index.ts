@@ -1,1 +1,5 @@
 export * from './lib/page-onboarding'
+export * from './lib/feature/onboarding-personalize/onboarding-personalize'
+export * from './lib/feature/onboarding-plans/onboarding-plans'
+export * from './lib/feature/onboarding-project/onboarding-project'
+export * from './lib/feature/container/container'

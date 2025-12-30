@@ -16,8 +16,8 @@ export function StepPersonalize(props: StepPersonalizeProps) {
 
   return (
     <div className="mx-auto max-w-content-with-navigation-left pb-10">
-      <h1 className="h3 mb-3 text-neutral-400">To tailor your experience</h1>
-      <p className="mb-10 text-sm text-neutral-400">We need some information to proceed with your account creation.</p>
+      <h1 className="h3 mb-3 text-neutral">To tailor your experience</h1>
+      <p className="mb-10 text-sm text-neutral">We need some information to proceed with your account creation.</p>
       <form onSubmit={onSubmit}>
         <div className="mb-3 flex gap-3">
           <Controller
@@ -162,7 +162,7 @@ export function StepPersonalize(props: StepPersonalizeProps) {
             />
           )}
         />
-        <div className="mt-10 flex justify-between border-t border-neutral-200 pt-5">
+        <div className="mt-10 flex justify-between border-t border-surface-neutral-subtle pt-5">
           <Button
             className="gap-2"
             type="button"

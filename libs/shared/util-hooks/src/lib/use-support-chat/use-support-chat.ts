@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { useMatch, useMatches, useParams } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo } from 'react'
-import { useMatch, useParams } from 'react-router-dom'
 import { type IntercomProps, useIntercom } from 'react-use-intercom'
 import { ONBOARDING_URL } from '@qovery/shared/routes'
 
@@ -32,14 +32,17 @@ declare global {
 
 export function useSupportChat() {
   const { user } = useAuth0()
-  const { organizationId } = useParams()
+  const { organizationId } = useParams({ strict: false })
 
   const { update: updateIntercom, shutdown: shutdownIntercom, showMessages: showIntercomMessenger } = useIntercom()
-  const matchesOnboardingRoutes = useMatch({ path: ONBOARDING_URL, end: false })
+  // const matchesOnboardingRoutes = useMatch({ path: ONBOARDING_URL, end: false })
+  const matches = useMatches()
+  console.log('🚀 ~ useSupportChat ~ matches:', matches)
 
   const service = useMemo(() => {
-    return matchesOnboardingRoutes ? 'intercom' : 'pylon'
-  }, [matchesOnboardingRoutes])
+    return matches.some((match) => match.routeId.startsWith('/_authenticated/onboarding')) ? 'intercom' : 'pylon'
+  }, [matches])
+  console.log('🚀 ~ useSupportChat ~ service:', service)
 
   const defaultChatParams = useMemo(() => {
     let defaultChatParams = undefined

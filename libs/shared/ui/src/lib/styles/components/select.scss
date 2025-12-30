@@ -59,7 +59,6 @@
   width: calc(100% + 2rem) !important;
   left: -1rem;
   margin-top: 1rem !important;
-  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.12) !important;
   @apply p-2;
 }
 
@@ -71,21 +70,21 @@
 .input-select__option,
 .input-select__button {
   display: flex !important;
-  background: #fff !important;
+  background: var(--neutral-2) !important;
   padding: 8px !important;
   cursor: pointer !important;
-  @apply items-center gap-2 rounded-sm;
+  @apply items-center gap-2 rounded-md;
 
   label {
-    @apply static translate-y-0 text-ssm font-medium text-neutral-400;
+    @apply static translate-y-0 text-ssm font-medium text-neutral;
   }
 
   .input-select__checkbox {
-    @apply flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border-2 border-neutral-350 bg-white;
+    @apply flex h-4 w-4 shrink-0 items-center justify-center rounded-md border-2 border-neutral-350 bg-white;
   }
 
   &:hover {
-    background: #fff !important;
+    background: var(--neutral-2) !important;
   }
 }
 
@@ -99,7 +98,7 @@
   background: theme('colors.white');
 
   label {
-    @apply text-neutral-400;
+    @apply text-neutral;
   }
 
   .input-select__checkbox {
@@ -115,8 +114,8 @@
 .input-select__option--is-focused.input-select__option--is-selected,
 .input-select__button:hover,
 .input-select__option--is-focused:hover {
-  background: theme('colors.brand.50') !important;
+  background: var(--neutral-4) !important;
   label {
-    color: theme('colors.brand.500') !important;
+    color: var(--brand-9) !important;
   }
 }

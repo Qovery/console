@@ -1,9 +1,9 @@
 import { CardCVV, CardComponent, CardExpiry, CardNumber, Provider } from '@chargebee/chargebee-js-react-wrapper'
 import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
+import { useNavigate } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type FormEvent, type MutableRefObject, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { ENVIRONMENTS_URL, ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { Button, ExternalLink, Heading, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -75,7 +75,7 @@ export default function StepPlans(props: StepPlansProps) {
   const showCardFields = cbInstance !== null
 
   return (
-    <Section className="mx-auto flex max-w-[1024px] flex-row gap-16">
+    <Section className="mx-auto flex max-w-[1024px] flex-row gap-16 ">
       <div className="relative flex flex-1 flex-col">
         <div
           className={twMerge(
@@ -167,7 +167,7 @@ export default function StepPlans(props: StepPlansProps) {
                     color="neutral"
                     variant="surface"
                     className="gap-2"
-                    onClick={() => navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)}
+                    onClick={() => navigate({ to: `${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}` })}
                   >
                     <Icon iconName="arrow-left" iconStyle="solid" />
                     Back
@@ -181,9 +181,9 @@ export default function StepPlans(props: StepPlansProps) {
                     className="gap-2"
                     onClick={() => {
                       if (currentOrganizationId) {
-                        navigate(ENVIRONMENTS_URL(currentOrganizationId, currentProjectId))
+                        navigate({ to: ENVIRONMENTS_URL(currentOrganizationId, currentProjectId) })
                       } else {
-                        navigate(-1)
+                        navigate({ to: '/onboarding/personalize' })
                       }
                     }}
                   >

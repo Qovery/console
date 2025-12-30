@@ -1,13 +1,13 @@
 @use '../base/variable';
 
 .input {
-  @apply relative min-h-[52px] cursor-pointer rounded border border-neutral-250 bg-white px-3 py-2 dark:bg-neutral-500;
+  @apply relative min-h-[52px] cursor-pointer rounded-md border border-neutral-component bg-background px-3 py-2 hover:bg-surface-neutral-component;
   transition:
     120ms all variable.$timing-cubic,
     0 outline;
 
   label {
-    @apply absolute translate-y-2 select-none text-sm text-neutral-350 transition-label duration-[120ms] ease-in-out dark:text-neutral-50;
+    @apply absolute translate-y-2 select-none text-sm text-neutral-subtle transition-label duration-[120ms] ease-in-out;
   }
 
   input:focus,
@@ -15,11 +15,10 @@
     outline: none;
   }
 
-  &:hover:not(.input--error),
   &.input--focused:not(.input--error),
   .input__button--focused {
-    @apply border-brand-500;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+    @apply border-brand-strong;
+    // box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
 
     input,
     textarea {
@@ -33,7 +32,7 @@
 }
 
 .input__value {
-  @apply absolute bottom-[7px] left-0 w-full appearance-none bg-transparent px-3 text-sm text-neutral-400 ring-0 dark:text-neutral-50;
+  @apply absolute bottom-[7px] left-0 w-full appearance-none bg-transparent px-3 text-sm text-neutral ring-0;
 }
 
 .input__value[type='time'] {
@@ -41,16 +40,9 @@
   color: transparent;
 }
 
-.dark {
-  .input--focused,
-  .input__button--focused {
-    outline: 0px solid theme('colors.brand.500');
-  }
-}
-
 .input--focused,
 .input__button--focused {
-  outline: 3px solid theme('colors.brand.100');
+  outline: 1px solid var(--brand-9);
   label {
     @apply translate-y-0 text-xs;
   }

@@ -1,8 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { TypeOfUseEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
@@ -131,7 +131,8 @@ export function FormUser() {
       })
 
       const nextStep = userSignUp?.dx_auth ? ONBOARDING_PROJECT_URL : ONBOARDING_PLANS_URL
-      navigate(`${ONBOARDING_URL}${nextStep}`)
+      // TODO: change that
+      navigate({ to: `${ONBOARDING_URL}${nextStep}` })
     } catch (error) {
       console.error(error)
     }

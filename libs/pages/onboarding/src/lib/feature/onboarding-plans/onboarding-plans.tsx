@@ -1,9 +1,9 @@
 import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
+import { Navigate, useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { PlanEnum, type SignUpRequest } from 'qovery-typescript-axios'
 import { type FormEvent, useContext, useEffect, useRef, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
@@ -164,7 +164,8 @@ export function OnboardingPlans() {
     event.preventDefault()
 
     if (shouldSkipBilling) {
-      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
+      // TODO: change that
+      navigate({ to: `${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}` })
       return
     }
 
@@ -215,7 +216,8 @@ export function OnboardingPlans() {
       })
 
       await refetchUserSignUp()
-      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
+      // TODO: change that
+      navigate({ to: `${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}` })
     } catch (error) {
       console.error(error)
       toastError(error as unknown as SerializedError)
