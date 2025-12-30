@@ -476,7 +476,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
               threadId={threadId}
               threads={threads}
               currentThreadHistoryTitle={currentThreadHistoryTitle}
-              readOnlyConfig={readOnlyData?.org_config}
+              userAccess={readOnlyData?.user_access}
               isReadOnly={isReadOnly}
               setIsReadOnly={setIsReadOnly}
               threadLength={thread.length}

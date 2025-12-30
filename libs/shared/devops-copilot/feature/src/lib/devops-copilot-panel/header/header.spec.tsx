@@ -24,7 +24,7 @@ describe('Header', () => {
     threadId: undefined,
     threads: [],
     currentThreadHistoryTitle: 'New conversation',
-    readOnlyConfig: undefined,
+    userAccess: undefined,
     isReadOnly: true,
     setIsReadOnly: mockSetIsReadOnly,
     threadLength: 0,
@@ -95,20 +95,20 @@ describe('Header', () => {
     })
 
     it('should show read-only mode when read-only config is enabled', () => {
-      renderWithProviders(<Header {...defaultProps} readOnlyConfig={{ read_only: false }} isReadOnly={true} />)
+      renderWithProviders(<Header {...defaultProps} userAccess={{ read_only: false }} isReadOnly={true} />)
 
       expect(screen.getByText('Read-only')).toBeInTheDocument()
     })
 
     it('should show read-write mode when not read-only', () => {
-      renderWithProviders(<Header {...defaultProps} readOnlyConfig={{ read_only: false }} isReadOnly={false} />)
+      renderWithProviders(<Header {...defaultProps} userAccess={{ read_only: false }} isReadOnly={false} />)
 
       expect(screen.getByText('Read-write')).toBeInTheDocument()
     })
 
     it('should allow toggling read-only when thread is empty', async () => {
       const { userEvent, container } = renderWithProviders(
-        <Header {...defaultProps} readOnlyConfig={{ read_only: false }} threadLength={0} isReadOnly={true} />
+        <Header {...defaultProps} userAccess={{ read_only: false }} threadLength={0} isReadOnly={true} />
       )
 
       const toggles = container.querySelectorAll('button')
@@ -125,7 +125,7 @@ describe('Header', () => {
 
     it('should not allow toggling read-only when thread has messages', async () => {
       const { userEvent, container } = renderWithProviders(
-        <Header {...defaultProps} readOnlyConfig={{ read_only: false }} threadLength={5} />
+        <Header {...defaultProps} userAccess={{ read_only: false }} threadLength={5} />
       )
 
       const toggles = container.querySelectorAll('button')
@@ -142,7 +142,7 @@ describe('Header', () => {
 
     it('should disable toggle button when thread has messages', () => {
       const { container } = renderWithProviders(
-        <Header {...defaultProps} readOnlyConfig={{ read_only: false }} threadLength={3} />
+        <Header {...defaultProps} userAccess={{ read_only: false }} threadLength={3} />
       )
 
       const toggles = container.querySelectorAll('button')
@@ -298,7 +298,7 @@ describe('Header', () => {
 
     it('should have tooltip for read-only toggle when enabled', () => {
       const { container } = renderWithProviders(
-        <Header {...defaultProps} readOnlyConfig={{ read_only: false }} threadLength={0} isReadOnly={true} />
+        <Header {...defaultProps} userAccess={{ read_only: false }} threadLength={0} isReadOnly={true} />
       )
 
       const toggles = container.querySelectorAll('button')
@@ -311,7 +311,7 @@ describe('Header', () => {
 
     it('should have tooltip explaining disabled toggle', () => {
       const { container } = renderWithProviders(
-        <Header {...defaultProps} readOnlyConfig={{ read_only: false }} threadLength={5} />
+        <Header {...defaultProps} userAccess={{ read_only: false }} threadLength={5} />
       )
 
       const toggles = container.querySelectorAll('button')

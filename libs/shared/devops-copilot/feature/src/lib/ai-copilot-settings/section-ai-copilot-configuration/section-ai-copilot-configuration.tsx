@@ -58,7 +58,7 @@ export function SectionAICopilotConfiguration({
   onDisable,
 }: SectionAICopilotConfigurationProps) {
   const { openModal, closeModal } = useModal()
-  const [selectedMode, setSelectedMode] = useState<'read-only' | 'read-write' | null>(currentMode)
+  const [selectedMode, setSelectedMode] = useState<'read-only' | 'read-write' | null>(null)
   const mode = selectedMode ?? currentMode
   const hasUnsavedChanges = selectedMode !== null && selectedMode !== currentMode
 

@@ -8,7 +8,7 @@ interface HeaderProps {
   threadId?: string
   threads: Array<{ id: string; title: string }>
   currentThreadHistoryTitle: string
-  readOnlyConfig?: { read_only?: boolean }
+  userAccess?: { read_only?: boolean }
   isReadOnly: boolean
   setIsReadOnly: (value: boolean) => void
   threadLength: number
@@ -26,7 +26,7 @@ export function Header({
   threadId,
   threads,
   currentThreadHistoryTitle,
-  readOnlyConfig,
+  userAccess,
   isReadOnly,
   setIsReadOnly,
   threadLength,
@@ -49,7 +49,7 @@ export function Header({
               ? currentThreadHistoryTitle + '...'
               : currentThreadHistoryTitle}
         </span>
-        {readOnlyConfig?.read_only === false && (
+        {userAccess?.read_only === false && (
           <>
             <div className="mx-1 h-5 w-[1px] bg-neutral-200 dark:bg-neutral-500"></div>
             <div className="flex items-center gap-2">

@@ -27,8 +27,28 @@ export interface AICopilotOrgConfig {
   instructions?: string
 }
 
+export interface AICopilotRoleConfig {
+  id: string
+  organization_id: string
+  role_id: string
+  role_name: string
+  enabled: boolean
+  read_only: boolean
+  instructions?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface AICopilotUserAccess {
+  enabled: boolean
+  read_only: boolean
+  instructions?: string
+}
+
 export interface AICopilotConfigResponse {
   org_config: AICopilotOrgConfig
+  role_configs: AICopilotRoleConfig[]
+  user_access?: AICopilotUserAccess
 }
 
 // Create a dedicated axios instance for DevOps Copilot

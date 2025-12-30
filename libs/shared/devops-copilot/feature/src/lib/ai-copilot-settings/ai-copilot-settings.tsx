@@ -58,7 +58,7 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
           <>
             <SectionAICopilotConfiguration
               organization={organization}
-              isLoading={isLoadingConfig}
+              isLoading={isLoadingConfig || !orgConfig}
               isUpdating={updateConfigMutation.isLoading}
               currentMode={currentMode}
               onModeChange={(mode) => updateConfigMutation.mutate({ enabled: true, readOnly: mode === 'read-only' })}
