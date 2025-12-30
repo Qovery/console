@@ -21,21 +21,18 @@ const handleSubmit = (data: FieldValues, cluster: Cluster) => {
   }
 }
 
-function RouteComponent() {
-  const { organizationId, clusterId } = useParams({ strict: false })
-  const { data: cluster } = useCluster({ organizationId, clusterId })
+function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
+  const { organizationId } = useParams({ strict: false })
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
   const { isQoveryAdminUser } = useUserRole()
 
   const methods = useForm({
     mode: 'onChange',
-    defaultValues: {
-      ...(cluster || {}),
-    },
+    defaultValues: cluster,
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (data && cluster) {
+    if (data) {
       const cloneCluster = handleSubmit(data, cluster)
 
       if (isQoveryAdminUser) {
@@ -71,10 +68,6 @@ function RouteComponent() {
       })
     }
   })
-
-  if (!cluster) {
-    return null
-  }
 
   return (
     <FormProvider {...methods}>
@@ -124,4 +117,15 @@ function RouteComponent() {
       </div>
     </FormProvider>
   )
+}
+
+function RouteComponent() {
+  const { organizationId, clusterId } = useParams({ strict: false })
+  const { data: cluster } = useCluster({ organizationId, clusterId })
+
+  if (!cluster) {
+    return null
+  }
+
+  return <ClusterGeneralSettingsForm cluster={cluster} />
 }
