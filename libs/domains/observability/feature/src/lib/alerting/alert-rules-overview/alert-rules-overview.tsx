@@ -1,6 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import type { AlertRuleResponse, AlertRuleSource, AlertRuleState } from 'qovery-typescript-axios'
-import { type PropsWithChildren, type ReactNode } from 'react'
+import { type PropsWithChildren, type ReactNode, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -10,11 +10,25 @@ import {
   APPLICATION_MONITORING_URL,
   APPLICATION_URL,
 } from '@qovery/shared/routes'
-import { Badge, Button, Chart, Icon, Link, TablePrimitives, Tooltip, useModalConfirmation } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  Chart,
+  Checkbox,
+  DropdownMenu,
+  Icon,
+  Link,
+  TablePrimitives,
+  Tooltip,
+  useModal,
+  useModalConfirmation,
+} from '@qovery/shared/ui'
 import { useAlertRulesGhosted } from '../../hooks/use-alert-rules-ghosted/use-alert-rules-ghosted'
 import { useAlertRules } from '../../hooks/use-alert-rules/use-alert-rules'
 import { useDeleteAlertRule } from '../../hooks/use-delete-alert-rule/use-delete-alert-rule'
+import { AlertRulesCloneModal } from '../alert-rules-clone-modal/alert-rules-clone-modal'
 import { SeverityIndicator } from '../severity-indicator/severity-indicator'
+import { AlertRulesActionBar } from './alert-rules-action-bar/alert-rules-action-bar'
 
 const { Table } = TablePrimitives
 
@@ -72,7 +86,6 @@ function getStatusConfig(
 
 interface AlertRulesOverviewProps {
   organizationId: string
-  projectId?: string
   service?: AnyService
   filter?: string
   onCreateKeyAlerts?: () => void
@@ -80,12 +93,12 @@ interface AlertRulesOverviewProps {
 
 export function AlertRulesOverview({
   organizationId,
-  projectId,
   service,
   filter,
   children,
   onCreateKeyAlerts,
 }: PropsWithChildren<AlertRulesOverviewProps>) {
+  const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const navigate = useNavigate()
 
@@ -113,6 +126,59 @@ export function AlertRulesOverview({
       })
     : allAlertRules
 
+  const [selectedAlertRuleIds, setSelectedAlertRuleIds] = useState<Set<string>>(new Set())
+
+  const selectableAlertRules = useMemo(
+    () => filteredAlertRules.filter((alertRule) => alertRule.source === 'MANAGED'),
+    [filteredAlertRules]
+  )
+
+  const selectedAlertRules = useMemo(
+    () =>
+      filteredAlertRules.filter((alertRule) => {
+        const alertRuleId = match(alertRule)
+          .with({ source: 'MANAGED' }, (alertRule) => alertRule.id)
+          .otherwise(() => '')
+        return selectedAlertRuleIds.has(alertRuleId)
+      }),
+    [filteredAlertRules, selectedAlertRuleIds]
+  )
+
+  const isAllSelected = useMemo(
+    () => selectableAlertRules.length > 0 && selectedAlertRuleIds.size === selectableAlertRules.length,
+    [selectableAlertRules.length, selectedAlertRuleIds.size]
+  )
+
+  const isSomeSelected = useMemo(
+    () => selectedAlertRuleIds.size > 0 && selectedAlertRuleIds.size < selectableAlertRules.length,
+    [selectedAlertRuleIds.size, selectableAlertRules.length]
+  )
+
+  const toggleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const allIds = new Set(selectableAlertRules.map((alertRule) => alertRule.id))
+      setSelectedAlertRuleIds(allIds)
+    } else {
+      setSelectedAlertRuleIds(new Set())
+    }
+  }
+
+  const toggleSelectAlertRule = (alertRuleId: string) => {
+    setSelectedAlertRuleIds((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(alertRuleId)) {
+        newSet.delete(alertRuleId)
+      } else {
+        newSet.add(alertRuleId)
+      }
+      return newSet
+    })
+  }
+
+  const resetRowSelection = () => {
+    setSelectedAlertRuleIds(new Set())
+  }
+
   if (!isAlertRulesFetched || !isAlertRulesGhostedFetched)
     return (
       <div className="flex h-full w-full items-center justify-center p-5">
@@ -136,6 +202,15 @@ export function AlertRulesOverview({
       confirmationAction: 'delete',
       name: alertRule.name,
       action: () => deleteAlertRule({ alertRuleId: alertRule.id }),
+    })
+  }
+
+  const cloneAlertRule = (alertRule: AlertRuleResponse) => {
+    openModal({
+      content: <AlertRulesCloneModal organizationId={organizationId} alertRule={alertRule} onClose={closeModal} />,
+      options: {
+        fakeModal: true,
+      },
     })
   }
 
@@ -177,7 +252,20 @@ export function AlertRulesOverview({
         <Table.Root className="divide-y divide-neutral-250">
           <Table.Header>
             <Table.Row className="font-code text-xs">
-              <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Alert name</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="h-9 w-12">
+                <div className="flex h-5 items-center">
+                  <Checkbox
+                    checked={isAllSelected ? true : isSomeSelected ? 'indeterminate' : false}
+                    onCheckedChange={(checked) => {
+                      if (checked === 'indeterminate') return
+                      toggleSelectAll(checked)
+                    }}
+                  />
+                </div>
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="h-9 pl-0 font-normal text-neutral-350">
+                Alert name
+              </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="h-9 border-l border-neutral-250 font-normal text-neutral-350">
                 Status
               </Table.ColumnHeaderCell>
@@ -199,6 +287,12 @@ export function AlertRulesOverview({
                 .with({ source: 'GHOST' }, () => false)
                 .otherwise(() => false)
 
+              const alertRuleId = match(alertRule)
+                .with({ source: 'MANAGED' }, (alertRule) => alertRule.id)
+                .otherwise(() => '')
+              const isSelectable = alertRule.source === 'MANAGED'
+              const isSelected = selectedAlertRuleIds.has(alertRuleId)
+
               return (
                 <Table.Row
                   key={match(alertRule)
@@ -206,7 +300,20 @@ export function AlertRulesOverview({
                     .with({ source: 'GHOST' }, () => index)
                     .exhaustive()}
                 >
-                  <Table.RowHeaderCell>
+                  <Table.Cell className="h-16 w-12">
+                    {isSelectable && (
+                      <div className="flex h-full items-center">
+                        <Checkbox
+                          checked={isSelected}
+                          onCheckedChange={(checked) => {
+                            if (checked === 'indeterminate') return
+                            toggleSelectAlertRule(alertRuleId)
+                          }}
+                        />
+                      </div>
+                    )}
+                  </Table.Cell>
+                  <Table.RowHeaderCell className="pl-0">
                     <div className="flex min-w-0 items-center justify-between gap-4">
                       <div className="min-w-0 flex-1">
                         <p className="flex items-center gap-1.5 text-sm font-medium text-neutral-400">
@@ -250,7 +357,7 @@ export function AlertRulesOverview({
                         color={statusConfig.color}
                         variant="surface"
                         radius="full"
-                        className="gap-1 font-medium"
+                        className="gap-1 truncate font-medium"
                         size="sm"
                       >
                         <Icon iconName={statusConfig.icon} iconStyle="regular" className="text-xs" />
@@ -322,15 +429,28 @@ export function AlertRulesOverview({
                             </Button>
                           </Tooltip>
                           <Tooltip content="Delete alert rule">
-                            <Button
-                              variant="outline"
-                              color="neutral"
-                              size="xs"
-                              className="w-6 justify-center"
-                              onClick={() => deleteAlertRuleModal(alertRule)}
-                            >
-                              <Icon iconName="trash-can" iconStyle="regular" className="text-xs" />
-                            </Button>
+                            <DropdownMenu.Root>
+                              <DropdownMenu.Trigger asChild>
+                                <Button variant="outline" color="neutral" size="xs" className="w-6 justify-center">
+                                  <Icon iconName="ellipsis" iconStyle="regular" className="text-xs" />
+                                </Button>
+                              </DropdownMenu.Trigger>
+                              <DropdownMenu.Content className="mr-14 w-40">
+                                <DropdownMenu.Item
+                                  icon={<Icon iconName="clone" />}
+                                  onSelect={() => cloneAlertRule(alertRule)}
+                                >
+                                  Clone
+                                </DropdownMenu.Item>
+                                <DropdownMenu.Item
+                                  color="red"
+                                  icon={<Icon iconName="trash-can" iconStyle="regular" />}
+                                  onSelect={() => deleteAlertRuleModal(alertRule)}
+                                >
+                                  Delete
+                                </DropdownMenu.Item>
+                              </DropdownMenu.Content>
+                            </DropdownMenu.Root>
                           </Tooltip>
                         </div>
                       ))
@@ -343,6 +463,11 @@ export function AlertRulesOverview({
           </Table.Body>
         </Table.Root>
       </div>
+      <AlertRulesActionBar
+        selectedAlertRules={selectedAlertRules.filter((rule) => rule.source === 'MANAGED')}
+        resetRowSelection={resetRowSelection}
+        organizationId={organizationId}
+      />
     </div>
   )
 }

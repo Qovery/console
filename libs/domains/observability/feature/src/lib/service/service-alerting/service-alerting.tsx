@@ -43,12 +43,7 @@ function ServiceAlertingContent({ organizationId, projectId, service, children }
           </Button>
         </div>
       </div>
-      <AlertRulesOverview
-        organizationId={organizationId}
-        projectId={projectId}
-        service={service}
-        onCreateKeyAlerts={createKeyAlertsModal}
-      >
+      <AlertRulesOverview organizationId={organizationId} service={service} onCreateKeyAlerts={createKeyAlertsModal}>
         {children}
       </AlertRulesOverview>
     </Section>

@@ -45,6 +45,7 @@ function PageApplicationWrapped() {
         project_name: project.name,
         environment_id: environment.id,
         environment_name: environment.name,
+        cluster_id: environment.cluster_id,
       })
     }
   }, [service?.id, environment?.id, project?.id])

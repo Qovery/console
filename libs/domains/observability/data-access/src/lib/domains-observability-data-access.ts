@@ -9,11 +9,13 @@ import {
   type AlertRuleEditRequest,
   AlertRulesApi,
   ClustersApi,
+  OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
 
 const clusterApi = new ClustersApi()
 const alertRulesApi = new AlertRulesApi()
 const alertReceiversApi = new AlertReceiversApi()
+const organizationApi = new OrganizationMainCallsApi()
 
 export const observability = createQueryKeys('observability', {
   containerName: ({
