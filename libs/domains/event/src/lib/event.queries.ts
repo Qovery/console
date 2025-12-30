@@ -38,6 +38,8 @@ export const useFetchEvents = (organizationId: string, queryParams: EventQueryPa
   queryParams.subTargetType ??= undefined
   queryParams.triggeredBy ??= undefined
   queryParams.origin ??= undefined
+  queryParams.projectId ??= undefined
+  queryParams.environmentId ??= undefined
   const {
     pageSize,
     eventType,
@@ -50,6 +52,8 @@ export const useFetchEvents = (organizationId: string, queryParams: EventQueryPa
     fromTimestamp,
     continueToken,
     stepBackToken,
+    projectId,
+    environmentId,
   } = queryParams
   return useQuery<OrganizationEventResponseList, Error>(
     ['organization', organizationId, 'events', queryParams],
@@ -66,7 +70,9 @@ export const useFetchEvents = (organizationId: string, queryParams: EventQueryPa
         targetId,
         subTargetType,
         triggeredBy,
-        origin
+        origin,
+        projectId,
+        environmentId
       )
       return response.data
     },
