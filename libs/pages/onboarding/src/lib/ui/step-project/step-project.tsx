@@ -16,13 +16,13 @@ export function StepProject(props: StepProjectProps) {
 
   return (
     <div className="mx-auto max-w-content-with-navigation-left pb-10">
-      <h1 className="h3 mb-3 text-neutral-400">
+      <h1 className="h3 mb-3 text-neutral">
         Create your Organization
         <span className="ml-2" role="img" aria-label="star">
           ✨
         </span>
       </h1>
-      <p className="mb-10 text-sm text-neutral-400">
+      <p className="mb-10 text-sm text-neutral">
         You will now create your Organization and a first project within it. Both the Organization and Project name can
         be edited afterwards.
       </p>
@@ -57,7 +57,7 @@ export function StepProject(props: StepProjectProps) {
             />
           )}
         />
-        <div className="mt-10 flex justify-between border-t border-neutral-200 pt-5">
+        <div className="mt-10 flex justify-between border-t border-surface-neutral-subtle pt-5">
           <Button type="button" size="lg" color="neutral" variant="surface" className="gap-2" onClick={onFirstStepBack}>
             <Icon iconName="arrow-left" iconStyle="solid" />
             Back

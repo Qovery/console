@@ -1,6 +1,6 @@
 import type { Component } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/base-types'
 import type { Events } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/enums'
-import type { CbToken } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/types'
+import type { CbToken, ComponentOptions } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/types'
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { CHARGEBEE_PUBLISHABLE_KEY } from '@qovery/shared/util-node-env'
 
@@ -130,7 +130,7 @@ export interface ChargebeeTokenResult {
   }
 }
 
-export const fieldStyles = {
+export const fieldStyles: ComponentOptions['style'] = {
   base: {
     color: 'var(--color-neutral-400)',
     fontWeight: '400',
@@ -251,7 +251,7 @@ export async function createIndividualCardFields(
 
 export const fieldCardStyles = {
   base: {
-    color: 'var(--color-neutral-400)',
+    color: 'var(--color-brand-9)',
     fontWeight: '400',
     fontFamily: 'Roboto, Helvetica, sans-serif',
     fontSize: '14px',
@@ -259,13 +259,13 @@ export const fieldCardStyles = {
     letterSpacing: '0.0025em',
     fontSmoothing: 'antialiased',
     '::placeholder': {
-      color: 'var(--color-neutral-350)',
+      color: 'var(--color-neutral-disabled)',
     },
     ':focus': {
-      color: 'var(--color-neutral-400)',
+      color: 'var(--color-neutral)',
     },
     ':hover': {
-      color: 'var(--color-neutral-400)',
+      color: 'var(--color-neutral)',
     },
   },
   invalid: {

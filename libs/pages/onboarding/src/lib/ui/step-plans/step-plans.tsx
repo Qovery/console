@@ -94,10 +94,10 @@ export default function StepPlans(props: StepPlansProps) {
             })
           )}
         >
-          <Heading level={1} className="mb-3 text-neutral-400">
+          <Heading level={1} className="mb-3 text-neutral">
             Start with a 14-days free trial
           </Heading>
-          <p className="mb-10 text-sm text-neutral-400">
+          <p className="mb-10 text-sm text-neutral">
             Try Qovery with a 14-days trial, without payment.{' '}
             <span className="font-medium">You’ll not be charged today.</span>
           </p>
@@ -159,7 +159,7 @@ export default function StepPlans(props: StepPlansProps) {
                 </ExternalLink>{' '}
                 with us and unlock a trial that truly suits you.
               </p>
-              <div className="mt-4 flex justify-between border-t border-neutral-200 pt-5">
+              <div className="mt-4 flex justify-between border-t border-surface-neutral-subtle pt-5">
                 {!backButton ? (
                   <Button
                     type="button"

@@ -15,6 +15,7 @@ import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as LoginAuth0CallbackRouteImport } from './routes/login/auth0-callback'
 import { Route as AuthenticatedOrganizationRouteRouteImport } from './routes/_authenticated/organization/route'
 import { Route as AuthenticatedOrganizationIndexRouteImport } from './routes/_authenticated/organization/index'
+import { Route as AuthenticatedOnboardingProjectRouteImport } from './routes/_authenticated/onboarding/project'
 import { Route as AuthenticatedOnboardingPlansRouteImport } from './routes/_authenticated/onboarding/plans'
 import { Route as AuthenticatedOnboardingPersonalizeRouteImport } from './routes/_authenticated/onboarding/personalize'
 import { Route as AuthenticatedOrganizationOrganizationIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/index'
@@ -66,6 +67,12 @@ const AuthenticatedOrganizationIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedOrganizationRouteRoute,
+  } as any)
+const AuthenticatedOnboardingProjectRoute =
+  AuthenticatedOnboardingProjectRouteImport.update({
+    id: '/onboarding/project',
+    path: '/onboarding/project',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedOnboardingPlansRoute =
   AuthenticatedOnboardingPlansRouteImport.update({
@@ -224,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginIndexRoute
   '/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
+  '/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
   '/organization/': typeof AuthenticatedOrganizationIndexRoute
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
   '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
@@ -250,6 +258,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginIndexRoute
   '/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
+  '/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
   '/organization': typeof AuthenticatedOrganizationIndexRoute
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
   '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
@@ -278,6 +287,7 @@ export interface FileRoutesById {
   '/login/': typeof LoginIndexRoute
   '/_authenticated/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/_authenticated/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
+  '/_authenticated/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
   '/_authenticated/organization/': typeof AuthenticatedOrganizationIndexRoute
   '/_authenticated/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
   '/_authenticated/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
@@ -307,6 +317,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding/personalize'
     | '/onboarding/plans'
+    | '/onboarding/project'
     | '/organization/'
     | '/organization/$organizationId/alerts'
     | '/organization/$organizationId/audit-logs'
@@ -333,6 +344,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding/personalize'
     | '/onboarding/plans'
+    | '/onboarding/project'
     | '/organization'
     | '/organization/$organizationId/alerts'
     | '/organization/$organizationId/audit-logs'
@@ -360,6 +372,7 @@ export interface FileRouteTypes {
     | '/login/'
     | '/_authenticated/onboarding/personalize'
     | '/_authenticated/onboarding/plans'
+    | '/_authenticated/onboarding/project'
     | '/_authenticated/organization/'
     | '/_authenticated/organization/$organizationId/alerts'
     | '/_authenticated/organization/$organizationId/audit-logs'
@@ -431,6 +444,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/organization/'
       preLoaderRoute: typeof AuthenticatedOrganizationIndexRouteImport
       parentRoute: typeof AuthenticatedOrganizationRouteRoute
+    }
+    '/_authenticated/onboarding/project': {
+      id: '/_authenticated/onboarding/project'
+      path: '/onboarding/project'
+      fullPath: '/onboarding/project'
+      preLoaderRoute: typeof AuthenticatedOnboardingProjectRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/onboarding/plans': {
       id: '/_authenticated/onboarding/plans'
@@ -659,6 +679,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedOrganizationRouteRoute: typeof AuthenticatedOrganizationRouteRouteWithChildren
   AuthenticatedOnboardingPersonalizeRoute: typeof AuthenticatedOnboardingPersonalizeRoute
   AuthenticatedOnboardingPlansRoute: typeof AuthenticatedOnboardingPlansRoute
+  AuthenticatedOnboardingProjectRoute: typeof AuthenticatedOnboardingProjectRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -667,6 +688,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedOnboardingPersonalizeRoute:
     AuthenticatedOnboardingPersonalizeRoute,
   AuthenticatedOnboardingPlansRoute: AuthenticatedOnboardingPlansRoute,
+  AuthenticatedOnboardingProjectRoute: AuthenticatedOnboardingProjectRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

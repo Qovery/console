@@ -1,9 +1,9 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useLocation, useNavigate } from 'react-router-dom'
 import {
   useAddCreditCard,
   useCreateOrganization,
@@ -30,7 +30,6 @@ export function OnboardingProject() {
   useDocumentTitle('Onboarding Organization - Qovery')
 
   const navigate = useNavigate()
-  const location = useLocation()
   const { user } = useAuth0()
   const { getAccessTokenSilently } = useAuth()
   const { mutateAsync: createOrganization } = useCreateOrganization()
@@ -55,7 +54,6 @@ export function OnboardingProject() {
 
   const shouldSkipBilling = userSignUp?.dx_auth === true
   const planToUse = shouldSkipBilling ? PlanEnum.USER_2025 : selectedPlan
-  const previousUrl = location.state?.previousUrl
 
   useEffect(() => {
     setValue('organization_name', organization_name)
@@ -99,12 +97,12 @@ export function OnboardingProject() {
   }
 
   const handleBack = () => {
-    if (previousUrl !== undefined) {
-      navigate(previousUrl)
-    } else if (shouldSkipBilling) {
-      navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
+    if (shouldSkipBilling) {
+      // TODO: change that
+      navigate({ to: `${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}` })
     } else {
-      navigate(-1)
+      // TODO: change that
+      navigate({ to: `${ONBOARDING_URL}/plans` })
     }
   }
 
@@ -143,7 +141,8 @@ export function OnboardingProject() {
         plan: planToUse,
       })
 
-      navigate(ENVIRONMENTS_URL(createdOrganizationId, project.id) + ENVIRONMENTS_GENERAL_URL)
+      // TODO: change that
+      navigate({ to: `${ENVIRONMENTS_URL(createdOrganizationId, project.id)}${ENVIRONMENTS_GENERAL_URL}` })
     } catch (error) {
       if ((error as SerializedError).code === '409') {
         toastError(error as unknown as SerializedError)
@@ -158,7 +157,8 @@ export function OnboardingProject() {
         }
       }
       const fallbackRoute = shouldSkipBilling ? ONBOARDING_PERSONALIZE_URL : ONBOARDING_PLANS_URL
-      navigate(`${ONBOARDING_URL}${fallbackRoute}`)
+      // TODO: change that
+      navigate({ to: `${ONBOARDING_URL}${fallbackRoute}` })
     } finally {
       setIsSubmitting(false)
     }
