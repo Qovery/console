@@ -6,6 +6,7 @@ import { type DecodedValueMap, useQueryParams } from 'use-query-params'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import type { Option } from '@qovery/shared/ui'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
+import { SelectedTimestamps } from '../../../../../../shared/ui/src/lib/components/table/table-head-datepicker/table-head-datepicker'
 import CustomFilter from '../../ui/custom-filter/custom-filter'
 import { queryParamsValues } from '../page-general-feature/page-general-feature'
 
@@ -38,12 +39,6 @@ function buildQueryParams(options: Option[]) {
   })
 
   return queryParams
-}
-
-export interface SelectedTimestamps {
-  automaticallySelected: boolean
-  fromTimestamp?: Date
-  toTimestamp?: Date
 }
 
 // Calculate default timestamps for display (not stored in URL)
@@ -122,25 +117,6 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
     })
     setIsOpenTimestamp(false)
   }
-
-  // // Options for the multiple-selector component
-  // const [selectedOptions, setSelectedOptions] = useState<Option[]>([])
-  //
-  // // The options are computed according to the user selection
-  // const computedOptions = useMemo(() => {
-  //   return buildSearchBarOptions(queryParams, selectedOptions, organizationId)
-  // }, [selectedOptions, queryParams, organizationId])
-  //
-  // // Handle change for multiple-selector component
-  // const handleChange = useCallback(
-  //   (newSelectedOptions: Option[]) => {
-  //     const consistentOptions = makeConsistentSelectedOptions(newSelectedOptions)
-  //     setSelectedOptions(consistentOptions)
-  //     const query = buildQueryParams(consistentOptions)
-  //     setQueryParams(query)
-  //   },
-  //   [setQueryParams]
-  // )
 
   return (
     <CustomFilter
