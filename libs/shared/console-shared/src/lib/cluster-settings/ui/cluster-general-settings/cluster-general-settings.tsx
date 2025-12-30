@@ -131,6 +131,22 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
               )}
             />
           )}
+          <Controller
+            name="keda.enabled"
+            control={control}
+            render={({ field }) => (
+              <div className="mt-5">
+                <InputToggle
+                  value={field.value}
+                  onChange={field.onChange}
+                  title="KEDA enabled"
+                  description="Enable KEDA for the cluster (Qovery admin only)"
+                  forceAlignTop
+                  small
+                />
+              </div>
+            )}
+          />
         </>
       )}
     </div>
