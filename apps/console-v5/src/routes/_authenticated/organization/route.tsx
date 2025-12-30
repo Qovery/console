@@ -2,6 +2,7 @@ import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import { Icon, Navbar } from '@qovery/shared/ui'
 import Header from '../../../app/components/header/header'
+import { type FileRouteTypes } from '../../../routeTree.gen'
 
 export const Route = createFileRoute('/_authenticated/organization')({
   component: OrganizationRoute,
@@ -196,11 +197,16 @@ function NavigationBar({ context }: { context: NavigationContext }) {
   )
 }
 
-const fullWidthRouteIds = ['/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs']
+const fullWidthRouteIds: FileRouteTypes['id'][] = [
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
+]
 
 function useFullWidthLayout(): boolean {
   const matches = useMatches()
-  return matches.some((match) => fullWidthRouteIds.some((routeId) => match.routeId === routeId))
+  return matches.some((match) =>
+    fullWidthRouteIds.some((routeId) => match.routeId === routeId || match.routeId?.startsWith(routeId + '/'))
+  )
 }
 
 function OrganizationRoute() {
@@ -212,13 +218,13 @@ function OrganizationRoute() {
     <div className="h-full min-h-dvh w-full bg-background">
       <Header />
       {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
-      <main className="flex !h-full min-h-0 flex-1 flex-col">
+      <main className={`flex flex-1 flex-col ${needsFullWidth ? 'h-full' : '!h-full min-h-0'}`}>
         <div className="sticky top-0 border-b border-neutral bg-background-secondary px-4">
           <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
             {navigationContext && <NavigationBar context={navigationContext} />}
           </Navbar.Root>
         </div>
-        <div className={needsFullWidth ? 'h-full w-full' : 'container mx-auto h-full w-full px-4'}>
+        <div className={needsFullWidth ? 'w-full flex-1' : 'container mx-auto h-full w-full px-4'}>
           <Outlet />
         </div>
       </main>
