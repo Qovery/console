@@ -6,20 +6,21 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { Button, Icon, LoaderSpinner, ModalCrud, Popover, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
+import { useClusters } from '../../hooks/use-clusters/use-clusters'
 import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create-alert-rule'
 import { useServicesSearch } from '../../hooks/use-services-search/use-services-search'
 
 export interface AlertRulesCloneModalProps {
-  alertRule?: AlertRuleResponse
-  alertRules?: AlertRuleResponse[]
   organizationId: string
   onClose: () => void
+  alertRule?: AlertRuleResponse
+  alertRules?: AlertRuleResponse[]
 }
 
 function ServiceItem({ service, onRemove }: { service: ServiceLightResponse; onRemove: () => void }) {
   return (
-    <div className="flex items-center justify-between gap-3 py-3">
-      <span className="flex items-center gap-3">
+    <div className="flex w-full items-center justify-between gap-3 py-3">
+      <span className="flex w-full items-center gap-3">
         <ServiceAvatar
           size="xs"
           service={
@@ -35,9 +36,9 @@ function ServiceItem({ service, onRemove }: { service: ServiceLightResponse; onR
                 }
           }
         />
-        <span className="flex items-center gap-2">
+        <span className="flex w-full items-center justify-between gap-2">
           <span className="text-sm font-medium text-neutral-400">
-            <Truncate text={service.name} truncateLimit={15} />
+            <Truncate text={service.name} truncateLimit={30} />
           </span>
           <span className="text-ssm font-normal text-neutral-400">
             <Truncate text={service.project_name} truncateLimit={15} /> /{' '}
@@ -69,9 +70,11 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
   const { mutateAsync: cloneAlertRule, isLoading: isCloneAlertRuleLoading } = useCreateAlertRule({
     organizationId,
   })
+  const { data: clusters = [] } = useClusters({ organizationId })
+  const clustersWithObservabilityEnabled = clusters.filter(({ metrics_parameters }) => metrics_parameters?.enabled)
   const { data: services = [], isLoading: isLoadingServices } = useServicesSearch({
     organizationId,
-    clusterId: firstRule?.cluster_id,
+    clusterIds: clustersWithObservabilityEnabled.map(({ id }) => id),
   })
   const [searchValue, setSearchValue] = useState('')
   const [selectedServiceIds, setSelectedServiceIds] = useState<Set<string>>(new Set())
@@ -265,7 +268,7 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
                             )}
                             <span className="flex flex-1 items-center gap-2">
                               <span className="text-sm font-medium">
-                                <Truncate text={service.name ?? ''} truncateLimit={15} />
+                                <Truncate text={service.name ?? ''} truncateLimit={30} />
                               </span>
                               <span
                                 className={clsx('ml-auto text-xs font-normal', { 'text-neutral-350': !isSelected })}

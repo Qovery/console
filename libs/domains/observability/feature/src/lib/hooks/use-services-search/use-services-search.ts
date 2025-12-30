@@ -3,12 +3,18 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseServicesSearchProps {
   organizationId: string
-  clusterId: string
+  clusterIds: string[]
 }
 
-export function useServicesSearch({ organizationId, clusterId }: UseServicesSearchProps) {
+export function useServicesSearch({ organizationId, clusterIds }: UseServicesSearchProps) {
   return useQuery({
-    ...queries.observability.servicesSearch({ organizationId, clusterId }),
+    ...queries.organizations.servicesSearch({ organizationId }),
+    select: (data) =>
+      data?.filter(
+        (service) =>
+          clusterIds.includes(service.cluster_id) &&
+          (service.service_type === 'APPLICATION' || service.service_type === 'CONTAINER')
+      ),
   })
 }
 

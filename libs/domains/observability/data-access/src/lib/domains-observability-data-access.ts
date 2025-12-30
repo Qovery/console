@@ -255,13 +255,6 @@ export const observability = createQueryKeys('observability', {
       return response.data.results
     },
   }),
-  servicesSearch: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
-    queryKey: [organizationId],
-    async queryFn() {
-      const response = await organizationApi.listServicesByOrganizationId(organizationId, null, null, clusterId)
-      return response.data.results
-    },
-  }),
 })
 
 export const mutations = {
