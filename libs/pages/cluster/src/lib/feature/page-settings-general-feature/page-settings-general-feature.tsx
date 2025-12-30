@@ -53,6 +53,10 @@ export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: C
             enabled: false,
           }
         }
+
+        cloneCluster.keda = {
+          enabled: !!data.keda?.enabled,
+        }
       }
 
       editCluster({

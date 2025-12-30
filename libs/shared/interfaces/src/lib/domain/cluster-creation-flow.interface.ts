@@ -1,4 +1,8 @@
-import { type CloudProviderEnum, type ClusterFeatureKarpenterParameters } from 'qovery-typescript-axios'
+import {
+  type CloudProviderEnum,
+  type ClusterFeatureKarpenterParameters,
+  type ClusterKeda,
+} from 'qovery-typescript-axios'
 
 export interface ClusterGeneralData {
   name: string
@@ -20,6 +24,7 @@ export interface ClusterGeneralData {
       }
     }
   }
+  keda?: ClusterKeda
 }
 
 export type SCWControlPlaneFeatureType = 'KAPSULE' | 'KAPSULE_DEDICATED4' | 'KAPSULE_DEDICATED8' | 'KAPSULE_DEDICATED16'
