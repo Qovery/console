@@ -1,3 +1,4 @@
+import { subDays } from 'date-fns'
 import {
   type Organization,
   OrganizationEventOrigin,
@@ -6,6 +7,7 @@ import {
   OrganizationEventType,
 } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, useState } from 'react'
+import { DecodedValueMap, useQueryParams } from 'use-query-params'
 import {
   Button,
   Icon,
@@ -16,7 +18,8 @@ import {
   type TableFilterProps,
   type TableHeadProps,
 } from '@qovery/shared/ui'
-import CustomFilterFeature from '../../feature/custom-filter-feature/custom-filter-feature'
+import { SelectedTimestamps } from '../../../../../../shared/ui/src/lib/components/table/table-head-datepicker/table-head-datepicker'
+import { queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 
 export interface PageGeneralProps {
@@ -37,57 +40,127 @@ export interface PageGeneralProps {
   organization?: Organization
 }
 
-const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
-  {
-    title: 'Timestamp',
-    className: 'pl-9',
-  },
-  {
-    title: 'Event',
-    filter: [
-      {
-        title: 'Filter by event',
-        key: 'event_type',
-        itemsCustom: Object.keys(OrganizationEventType).map((item) => item),
-        hideFilterNumber: true,
-        search: true,
-        sortAlphabetically: true,
+// ---------------------------------------------
+// Methods used to build datepicker requirements
+// ---------------------------------------------
+// Calculate default timestamps for display (not stored in URL)
+function getDefaultTimestamps(
+  queryParams: DecodedValueMap<typeof queryParamsValues>,
+  organization?: Organization
+): SelectedTimestamps {
+  const fromTimestamp = queryParams.fromTimestamp && new Date(parseInt(queryParams.fromTimestamp, 10) * 1000)
+  const toTimestamp = queryParams.toTimestamp && new Date(parseInt(queryParams.toTimestamp, 10) * 1000)
+
+  // If timestamps are in URL, use them
+  if (fromTimestamp && toTimestamp) {
+    return {
+      automaticallySelected: false,
+      fromTimestamp,
+      toTimestamp,
+    }
+  }
+
+  // If organization has >30 days retention and no URL params, select 30-day old period by default
+  if (organization) {
+    const retentionDays = organization.organization_plan?.audit_logs_retention_in_days ?? 30
+    if (retentionDays > 30) {
+      const now = new Date()
+      const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
+      // Subtract 29 days to get exactly 30 days inclusive (today + 29 previous days = 30 days)
+      const startDate = subDays(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0), 29)
+      return {
+        automaticallySelected: true,
+        fromTimestamp: startDate,
+        toTimestamp: endDate,
+      }
+    }
+  }
+
+  return {
+    automaticallySelected: false,
+    fromTimestamp: undefined,
+    toTimestamp: undefined,
+  }
+}
+// ---------------------------------------------
+// ---------------------------------------------
+
+function createDataHead(
+  timestamps: SelectedTimestamps,
+  organization?: Organization
+): TableHeadProps<OrganizationEventResponse>[] {
+  // Calculate retention days and determine if we need to enforce 30-day limit
+  const retentionDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 30
+  const maxRangeInDays = retentionDays > 30 ? 30 : undefined
+
+  const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
+    {
+      title: 'Timestamp',
+      className: 'pl-9',
+      datePickerData: {
+        maxRangeInDays: maxRangeInDays,
+        retentionDays: retentionDays,
+        timestamps: timestamps,
       },
-    ],
-  },
-  {
-    title: 'Target',
-  },
-  {
-    title: 'Target type',
-  },
-  {
-    title: 'User',
-    filter: [
-      {
-        title: 'Filter by user',
-        key: 'triggered_by',
-        hideFilterNumber: true,
-        search: true,
-        sortAlphabetically: true,
-      },
-    ],
-  },
-  {
-    title: 'Source',
-    filter: [
-      {
-        title: 'Filter by source',
-        key: 'origin',
-        itemsCustom: Object.keys(OrganizationEventOrigin).map((item) => item),
-        hideFilterNumber: true,
-        search: true,
-        sortAlphabetically: true,
-      },
-    ],
-    classNameTitle: 'justify-end',
-  },
-]
+    },
+    {
+      title: 'Event',
+      filter: [
+        {
+          title: 'Filter by event',
+          key: 'event_type',
+          itemsCustom: Object.keys(OrganizationEventType).map((item) => item),
+          hideFilterNumber: true,
+          search: true,
+          sortAlphabetically: true,
+        },
+      ],
+    },
+    {
+      title: 'Target',
+    },
+    {
+      title: 'Target type',
+      filter: [
+        {
+          title: 'Filter by target type',
+          key: 'target_type',
+          itemsCustom: Object.keys(OrganizationEventTargetType).map((item) => item),
+          hideFilterNumber: true,
+          search: true,
+          sortAlphabetically: true,
+        },
+      ],
+    },
+    {
+      title: 'User',
+      filter: [
+        {
+          title: 'Filter by user',
+          key: 'triggered_by',
+          hideFilterNumber: true,
+          search: true,
+          sortAlphabetically: true,
+        },
+      ],
+    },
+    {
+      title: 'Source',
+      filter: [
+        {
+          title: 'Filter by source',
+          key: 'origin',
+          itemsCustom: Object.keys(OrganizationEventOrigin).map((item) => item),
+          hideFilterNumber: true,
+          search: true,
+          sortAlphabetically: true,
+        },
+      ],
+      classNameTitle: 'justify-end',
+    },
+  ]
+  return dataHead
+}
 
 const columnsWidth = '18% 15% 25% 15% 15% 12%'
 
@@ -111,10 +184,14 @@ export function PageGeneral({
   const auditLogsRetentionInDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 30
   const [expandedEventTimestamp, setExpandedEventTimestamp] = useState<string | null>(null)
 
+  const [queryParams, setQueryParams] = useQueryParams(queryParamsValues)
+  const timestamps = getDefaultTimestamps(queryParams, organization)
+  const dataHead = createDataHead(timestamps, organization)
+
   return (
     <Section className="grow p-8">
       <div className="mb-4 flex h-9 items-center">
-        <CustomFilterFeature handleClearFilter={handleClearFilter} />
+        {/*<CustomFilterFeature handleClearFilter={handleClearFilter} />*/}
       </div>
 
       <Table

@@ -1,5 +1,6 @@
 import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
+import { TableHeadDatePickerData, TableHeadDatePickerFilter } from './table-head-datepicker/table-head-datepicker'
 import { TableHeadFilter } from './table-head-filter/table-head-filter'
 import TableHeadSort from './table-head-sort/table-head-sort'
 
@@ -30,6 +31,8 @@ export interface TableHeadProps<T> {
   sort?: {
     key: string
   }
+  // This option lets display a datepicker and not show menus
+  datePickerData?: TableHeadDatePickerData
 }
 
 export interface TableHeadCustomFilterProps<T> {
@@ -78,15 +81,32 @@ export function Table<T>({
       >
         {dataHead.map(
           (
-            { title, className = 'px-4 py-2', classNameTitle = 'text-neutral-400 ', filter: hasFilter, sort },
+            {
+              title,
+              className = 'px-4 py-2',
+              classNameTitle = 'text-neutral-400 ',
+              filter: hasFilter,
+              sort,
+              datePickerData,
+            },
             index
           ) => (
             <div key={index} className={className}>
-              {!sort && !hasFilter && (
+              {!datePickerData && !sort && !hasFilter && (
                 <span data-testid="table-head-title" className={`text-xs font-medium ${classNameTitle}`}>
                   {title}
                 </span>
               )}
+              {datePickerData && setFilter && filter && (
+                <TableHeadDatePickerFilter
+                  title={title}
+                  classNameTitle={classNameTitle}
+                  datePickerData={datePickerData}
+                  filter={filter}
+                  setFilter={setFilter}
+                />
+              )}
+
               {hasFilter && data && filter && setFilter && (
                 <TableHeadFilter
                   title={title}
