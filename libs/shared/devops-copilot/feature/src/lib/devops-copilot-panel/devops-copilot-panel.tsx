@@ -3,89 +3,32 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import mermaid from 'mermaid'
-import { type ComponentProps, forwardRef, useEffect, useMemo, useRef, useState } from 'react'
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
+import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
+import { type CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
-import { AnimatedGradientText, Button, DropdownMenu, Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
-import { ToastEnum, toast } from '@qovery/shared/ui'
-import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
+import { type AnyService } from '@qovery/domains/services/data-access'
+import { SETTINGS_AI_COPILOT_URL, SETTINGS_URL } from '@qovery/shared/routes'
+import { AnimatedGradientText, Button, Callout, Icon, Link, Tooltip } from '@qovery/shared/ui'
+import { QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
-import { RenderMarkdown } from '../devops-render-markdown/devops-render-markdown'
 import { DotStatus } from '../dot-status/dot-status'
-import { useConfig } from '../hooks/use-config/use-config'
+import { useAICopilotConfig } from '../hooks/use-ai-copilot-config/use-ai-copilot-config'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
 import { useQoveryContext } from '../hooks/use-qovery-context/use-qovery-context'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
 import { useThreadState } from '../hooks/use-thread-state/use-thread-state'
 import { useThreads } from '../hooks/use-threads/use-threads'
-import { MermaidChart } from '../mermaid-chart/mermaid-chart'
 import { getIconClass, getIconName } from '../utils/icon-utils/icon-utils'
+import { AssistantMessage } from './assistant-message/assistant-message'
 import DevopsCopilotHistory from './devops-copilot-history'
-import { submitMessage } from './submit-message'
-import { submitVote } from './submit-vote'
-
-interface InputProps extends ComponentProps<'textarea'> {
-  loading: boolean
-  onClick?: () => void
-  stop?: () => void
-}
-
-const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, stop, loading, ...props }, ref) => {
-  const [isFocus, setIsFocus] = useState(false)
-
-  return (
-    <div
-      className={twMerge(
-        clsx(
-          'relative z-[1] flex rounded-xl border border-neutral-250 bg-white dark:border-neutral-500 dark:bg-neutral-550',
-          {
-            'border-brand-500 outline outline-[3px] outline-brand-100 dark:outline-1 dark:outline-brand-500': isFocus,
-          }
-        )
-      )}
-    >
-      <textarea
-        ref={ref}
-        placeholder="Ask Qovery Copilot"
-        autoFocus
-        className="min-h-12 w-full resize-none rounded-xl px-4 py-[13px] text-sm leading-[22px] text-neutral-400 transition-[height] placeholder:text-neutral-350 focus-visible:outline-none dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250"
-        onFocus={() => setIsFocus(true)}
-        onBlur={() => setIsFocus(false)}
-        {...props}
-      />
-      <div className="flex items-end justify-end p-2">
-        <Tooltip content={loading ? 'Stop generation' : 'Send now'} delayDuration={400} classNameContent="z-10">
-          <Button
-            type="button"
-            variant="surface"
-            radius="full"
-            className="group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-500 transition-colors dark:text-white"
-            onClick={() => {
-              if (loading) {
-                stop?.()
-              } else {
-                onClick?.()
-              }
-            }}
-          >
-            {!loading ? (
-              <Icon iconName="arrow-up" className={loading ? 'opacity-0' : ''} />
-            ) : (
-              <>
-                <LoaderSpinner className="absolute left-0 right-0 m-auto group-hover:opacity-0" theme="dark" />
-                <Icon
-                  className="absolute left-0 right-0 m-auto opacity-0 group-hover:opacity-100"
-                  iconName="stop"
-                  iconStyle="light"
-                />
-              </>
-            )}
-          </Button>
-        </Tooltip>
-      </div>
-    </div>
-  )
-})
+import { Header } from './header/header'
+import { useMessageSubmission } from './hooks/use-message-submission/use-message-submission'
+import { useVoteHandler } from './hooks/use-vote-handler/use-vote-handler'
+import { Input } from './input/input'
+import { renderStreamingMessageWithMermaid } from './streaming-mermaid-renderer/streaming-mermaid-renderer'
+import { StreamingMessage } from './streaming-message/streaming-message'
 
 export type Message = {
   id: string
@@ -100,46 +43,28 @@ export type Thread = Message[]
 export interface DevopsCopilotPanelProps {
   onClose: () => void
   smaller?: boolean
-  style?: React.CSSProperties
+  style?: CSSProperties
 }
 
-const StreamingMermaidChart = ({ code, index }: { code: string; index: number }) => {
-  const memoizedCode = useMemo(() => code, [code])
-  return <MermaidChart key={`mermaid-${index}`} code={memoizedCode} />
+export type PlanStep = {
+  messageId: string
+  description: string
+  toolName: string
+  status: 'not_started' | 'in_progress' | 'completed' | 'waiting' | 'error'
 }
 
-const renderStreamingMessageWithMermaid = (input: string) => {
-  const parts = []
-  let lastIndex = 0
-  const regex = /```mermaid([\s\S]*?)```/g
-  let match
-  let mermaidIndex = 0
-
-  while ((match = regex.exec(input)) !== null) {
-    const start = match.index
-    const end = regex.lastIndex
-    const mermaidCode = match[1].trim()
-
-    if (start > lastIndex) {
-      const textPart = input.slice(lastIndex, start)
-      if (textPart) {
-        parts.push(<RenderMarkdown key={'md-' + lastIndex}>{textPart}</RenderMarkdown>)
+export type CopilotContextData = {
+  organization?: Organization
+  cluster?: Cluster
+  project?: Project
+  environment?: Environment
+  service?: AnyService
+  deployment?:
+    | {
+        execution_id?: string
       }
-    }
-    parts.push(
-      <StreamingMermaidChart key={`streaming-mermaid-${mermaidIndex}`} code={mermaidCode} index={mermaidIndex} />
-    )
-    mermaidIndex++
-    lastIndex = end
-  }
-
-  if (lastIndex < input.length) {
-    const textPart = input.slice(lastIndex)
-    if (textPart) {
-      parts.push(<RenderMarkdown key={'md-' + lastIndex}>{textPart}</RenderMarkdown>)
-    }
-  }
-  return parts
+    | undefined
+  readOnly?: boolean
 }
 
 export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) {
@@ -149,6 +74,9 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const docLinks = useContextualDocLinks()
   const { context, current } = useQoveryContext()
   const { user, getAccessTokenSilently } = useAuth0()
+  const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot-config-panel')
+
+  const organizationId = context?.organization?.id ?? ''
 
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -163,20 +91,14 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [isFinish, setIsFinish] = useState(false)
   const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
-  const { data: readOnlyData } = useConfig({
-    organizationId: context?.organization?.id ?? '',
+  const { data: readOnlyData } = useAICopilotConfig({
+    organizationId,
   })
 
-  const isReadOnly = readOnlyData?.org_config?.read_only ?? true
+  const [isReadOnly, setIsReadOnly] = useState(true)
+  const isCopilotEnabled = readOnlyData?.org_config?.enabled ?? false
 
-  const [plan, setPlan] = useState<
-    {
-      messageId: string
-      description: string
-      toolName: string
-      status: 'not_started' | 'in_progress' | 'completed' | 'waiting' | 'error'
-    }[]
-  >([])
+  const [plan, setPlan] = useState<PlanStep[]>([])
   const [showPlans, setShowPlans] = useState<Record<string, boolean>>({})
 
   const pendingThreadId = useRef<string>()
@@ -185,32 +107,75 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     threads = [],
     error: errorThreads,
     isLoading: isLoadingThreads,
-    refetchThreads: refetchThreads,
-  } = useThreads({ organizationId: context?.organization?.id ?? '', owner: user?.sub ?? '' })
+    refetchThreads,
+  } = useThreads({ organizationId, owner: user?.sub ?? '' })
 
   const { thread, setThread } = useThreadState({
-    organizationId: context?.organization?.id ?? '',
+    organizationId,
     threadId,
+  })
+
+  const handleVote = useVoteHandler({
+    thread,
+    setThread,
+    userId: user?.sub ?? '',
+    withContext,
+    context,
+  })
+
+  const { handleSendMessage, lastSubmitResult } = useMessageSubmission({
+    refs: {
+      controller: controllerRef,
+      scrollArea: scrollAreaRef,
+      input: inputRef,
+      pendingThreadId,
+    },
+    state: {
+      inputMessage,
+      thread,
+      threadId,
+      withContext,
+      context,
+      isReadOnly,
+      userId: user?.sub ?? '',
+    },
+    actions: {
+      setIsFinish,
+      setStreamingMessage,
+      setDisplayedStreamingMessage,
+      setIsStopped,
+      setLoadingText,
+      setInputMessage,
+      setIsLoading,
+      setThreadId,
+      setPlan,
+      setThread,
+      refetchThreads,
+      getAccessTokenSilently,
+    },
   })
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
-  const handleOnClose = () => {
+  const handleOnClose = useCallback(() => {
     onClose()
     setInputMessage('')
-  }
+  }, [onClose])
 
-  const adjustTextareaHeight = (element: HTMLTextAreaElement) => {
-    element.style.height = 'auto'
+  const adjustTextareaHeight = useCallback(
+    (element: HTMLTextAreaElement) => {
+      element.style.height = 'auto'
 
-    if (thread.length > 0) return
+      if (thread.length > 0) return
 
-    if (element.scrollHeight < 240) {
-      element.style.height = `${element.scrollHeight}px`
-    } else {
-      element.style.height = '240px'
-    }
-  }
+      if (element.scrollHeight < 240) {
+        element.style.height = `${element.scrollHeight}px`
+      } else {
+        element.style.height = '240px'
+      }
+    },
+    [thread.length]
+  )
 
   const hasMermaidChart = (messages: Message[], streamingText?: string) =>
     messages.some((msg) => msg.text.includes('```mermaid')) || (streamingText?.includes('```mermaid') ?? false)
@@ -228,7 +193,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
         inputRef.current.scrollTop = inputRef.current.scrollHeight
       }
     }, 50)
-  }, [])
+  }, [adjustTextareaHeight])
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
@@ -238,163 +203,14 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     }
     document.addEventListener('keydown', down)
     return () => document.removeEventListener('keydown', down)
-  }, [thread])
-
-  const handleVote = async (messageId: string, vote: 'upvote' | 'downvote') => {
-    const currentMessage = thread.find((msg) => msg.id === messageId)
-    const currentVote = currentMessage?.vote
-    const nextVote = currentVote === vote ? undefined : vote
-
-    const updatedThread = thread.map((msg) => (msg.id === messageId ? { ...msg, vote: nextVote } : msg))
-    setThread(updatedThread)
-
-    try {
-      const response = await submitVote(
-        user?.sub ?? '',
-        messageId,
-        vote,
-        withContext ? context : { organization: context.organization }
-      )
-
-      if (!response) {
-        const updatedThread = thread.map((msg) => (msg.id === messageId ? { ...msg, vote: currentVote } : msg))
-        setThread(updatedThread)
-      } else {
-        if (nextVote) {
-          toast(ToastEnum.SUCCESS, `Message successfully ${nextVote === 'upvote' ? 'upvoted' : 'downvoted'}`)
-        }
-      }
-    } catch (error) {
-      console.error('Erro r sending vote:', error)
-      const updatedThread = thread.map((msg) => (msg.id === messageId ? { ...msg, vote: currentVote } : msg))
-      setThread(updatedThread)
-    }
-  }
-
-  const lastSubmitResult = useRef<{ id: string; messageId: string } | null>(null)
-  const handleSendMessage = async (value?: string) => {
-    controllerRef.current = new AbortController()
-    lastSubmitResult.current = null
-    const node = scrollAreaRef.current
-    if (node) {
-      node.scrollTo({
-        top: node.scrollHeight,
-        behavior: 'smooth',
-      })
-    }
-    setIsFinish(false)
-    setStreamingMessage('')
-    setDisplayedStreamingMessage('')
-    setIsStopped(false)
-    setLoadingText('Loading...')
-    let fullContent = ''
-    const trimmedInputMessage = typeof value === 'string' ? value.trim() : inputMessage.trim()
-
-    if (trimmedInputMessage) {
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        text: trimmedInputMessage,
-        owner: 'user',
-        timestamp: Date.now(),
-      }
-      const updatedThread = [...thread, newMessage]
-      setThread(updatedThread)
-
-      setInputMessage('')
-      setIsLoading(true)
-      setStreamingMessage('')
-      if (inputRef.current) {
-        inputRef.current.style.height = 'initial'
-      }
-
-      try {
-        const token = await getAccessTokenSilently()
-        const response = await submitMessage(
-          user?.sub ?? '',
-          trimmedInputMessage,
-          token,
-          threadId,
-          withContext ? context : { organization: context.organization },
-          (chunk) => {
-            try {
-              const parsed = JSON.parse(chunk)
-              if (parsed.type === 'start' && parsed.content.thread_id) {
-                pendingThreadId.current = parsed.content.thread_id
-                setThreadId(parsed.content.thread_id)
-                refetchThreads()
-                return
-              }
-              if (parsed.type === 'chunk' && parsed.content) {
-                if (parsed.content.includes('__plan__:')) {
-                  try {
-                    const planArray = JSON.parse(parsed.content.replace('__plan__:', ''))
-                    setPlan(
-                      planArray.map((step: { description: string; tool_name: string }) => ({
-                        messageId: 'temp',
-                        description: step.description,
-                        toolName: step.tool_name,
-                        status: 'not_started',
-                      }))
-                    )
-                  } catch (e) {
-                    console.error(e)
-                  }
-                } else if (parsed.content.includes('__step__:')) {
-                  const stepDescription = parsed.content.replace('__step__:', '').replaceAll('_', ' ')
-                  setLoadingText(stepDescription.charAt(0).toUpperCase() + stepDescription.slice(1))
-                } else if (parsed.content.includes('__stepPlan__:generating_a_new_plan')) {
-                  setPlan([])
-                  setLoadingText('Generating a new plan...')
-                } else if (parsed.content.includes('__stepPlan__:')) {
-                  try {
-                    const stepPlanContent = parsed.content.replace('__stepPlan__:', '').trim()
-                    if (!stepPlanContent || !stepPlanContent.startsWith('{')) {
-                      return
-                    }
-                    const stepObj = JSON.parse(stepPlanContent)
-                    const { description, status } = stepObj
-                    if (description && status) {
-                      setLoadingText(description.charAt(0).toUpperCase() + description.slice(1))
-                      setPlan((prev) =>
-                        prev.map((step) =>
-                          step.description.toLowerCase().includes(description.toLowerCase())
-                            ? { ...step, status }
-                            : step
-                        )
-                      )
-                    }
-                  } catch (e) {
-                    console.error('Failed to parse stepPlan object', e)
-                  }
-                } else {
-                  fullContent += parsed.content
-                  setStreamingMessage(fullContent)
-                }
-              }
-            } catch (error) {
-              console.error('Erreur parsing chunk:', error)
-            }
-          },
-          controllerRef.current.signal
-        )
-        lastSubmitResult.current = response
-      } catch (error) {
-        console.error('Error fetching response:', error)
-      } finally {
-        setIsFinish(true)
-      }
-    }
-  }
+  }, [handleOnClose])
 
   const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
 
   const [isAtBottom, setIsAtBottom] = useState(true)
   const panelRef = useRef<HTMLDivElement>(null)
 
-  const mermaidRenderCache = useRef<Map<string, JSX.Element>>(new Map())
-
   useEffect(() => {
-    // Once the animation is finished, we can stop the loading and set the message
     if (
       (isLoading && isFinish && displayedStreamingMessage.length >= streamingMessage.length) ||
       (isStopped && isLoading && isFinish)
@@ -431,7 +247,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
       setStreamingMessage('')
     }
     if (!streamingMessage || displayedStreamingMessage === streamingMessage) return
-  }, [streamingMessage, displayedStreamingMessage, isStopped, isFinish])
+  }, [streamingMessage, displayedStreamingMessage, isStopped, isFinish, isLoading, lastSubmitResult, setThread, thread])
 
   useEffect(() => {
     if (streamingMessage.length === 0 || streamingMessage.length <= displayedStreamingMessage.length) {
@@ -493,13 +309,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
       }
     }
 
-    // Handle visibility change: show all content immediately when tab becomes visible
     const handleVisibilityChange = () => {
       if (document.hidden) {
         isPaused = true
       } else {
         isPaused = false
-        // Catch up immediately when tab becomes visible
         setDisplayedStreamingMessage(streamingMessage)
       }
     }
@@ -654,125 +468,62 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
               }}
               threadId={threadId}
               setThreadId={setThreadId}
-              organizationId={context?.organization?.id ?? ''}
+              organizationId={organizationId}
             />
           )}
           <div className="flex h-full w-full flex-col justify-between">
-            <div className="flex animate-[fadein_0.22s_ease-in-out_forwards] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 opacity-0 dark:border-neutral-500">
-              <div className="flex items-center font-bold">
-                <span className="text-sm text-neutral-500 dark:text-white">
-                  {!threadId || threads.length === 0
-                    ? 'New conversation'
-                    : currentThreadHistoryTitle.length >= 45
-                      ? currentThreadHistoryTitle + '...'
-                      : currentThreadHistoryTitle}
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <DropdownMenu.Root>
-                  <DropdownMenu.Trigger asChild>
-                    <span>
-                      <Tooltip content="Options" delayDuration={400} classNameContent="z-10">
-                        <Button type="button" variant="plain" className="text-neutral-500 dark:text-white">
-                          <Icon iconName="ellipsis" />
-                        </Button>
-                      </Tooltip>
-                    </span>
-                  </DropdownMenu.Trigger>
-                  <DropdownMenu.Content className="z-10 mr-10">
-                    <DropdownMenu.Item asChild>
-                      <button
-                        className="flex h-11 w-full items-center gap-2 text-sm"
-                        type="button"
-                        onClick={() => {
-                          controllerRef.current?.abort()
-                          setThread([])
-                          setThreadId(undefined)
-                          setIsLoading(false)
-                          setPlan([])
-                        }}
-                      >
-                        <span className="w-4">
-                          <Icon iconName="pen-to-square" className="text-brand-500" />
-                        </span>
-                        <span>New chat</span>
-                      </button>
-                    </DropdownMenu.Item>
-                    {!expand && (
-                      <DropdownMenu.Item asChild>
-                        <button
-                          className="flex h-11 w-full items-center gap-2 text-sm"
-                          type="button"
-                          onClick={() => setExpand(true)}
-                        >
-                          <span className="w-4">
-                            <Icon iconName="file-archive" className="text-brand-500" />
-                          </span>
-                          <span>Show history</span>
-                        </button>
-                      </DropdownMenu.Item>
-                    )}
-                    <DropdownMenu.Item asChild>
-                      <a
-                        className="flex h-11 w-full items-center gap-2 text-sm"
-                        href={QOVERY_FORUM_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <span className="w-4">
-                          <Icon iconName="user-group" className="text-brand-500" />
-                        </span>
-                        <span>Community forum</span>
-                      </a>
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item asChild>
-                      <a
-                        className="flex h-11 w-full items-center gap-2 text-sm"
-                        href={QOVERY_FEEDBACK_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <span className="w-4">
-                          <Icon iconName="comment-lines" className="text-brand-500" />
-                        </span>
-                        <span>Feedback</span>
-                      </a>
-                    </DropdownMenu.Item>
-                  </DropdownMenu.Content>
-                </DropdownMenu.Root>
-                <div className="mx-1 h-5 w-[1px] bg-neutral-200 dark:bg-neutral-500"></div>
-                <Tooltip
-                  content={expand ? 'Collapse modal' : 'Take conversation to immersive'}
-                  delayDuration={400}
-                  classNameContent="z-10"
-                >
-                  <Button
-                    type="button"
-                    variant="plain"
-                    className="text-neutral-500 dark:text-white"
-                    onClick={() => setExpand(!expand)}
-                  >
-                    <Icon iconName={expand ? 'compress' : 'expand'} />
-                  </Button>
-                </Tooltip>
-                <Tooltip content="Close" delayDuration={400} classNameContent="z-10">
-                  <Button
-                    type="button"
-                    variant="plain"
-                    onClick={handleOnClose}
-                    className="text-neutral-500 dark:text-white"
-                  >
-                    <Icon iconName="xmark" />
-                  </Button>
-                </Tooltip>
-              </div>
-            </div>
+            <Header
+              threadId={threadId}
+              threads={threads}
+              currentThreadHistoryTitle={currentThreadHistoryTitle}
+              userAccess={readOnlyData?.user_access}
+              isReadOnly={isReadOnly}
+              setIsReadOnly={setIsReadOnly}
+              threadLength={thread.length}
+              expand={expand}
+              setExpand={setExpand}
+              handleOnClose={handleOnClose}
+              controllerRef={controllerRef}
+              setThread={setThread}
+              setThreadId={setThreadId}
+              setIsLoading={setIsLoading}
+              setPlan={setPlan}
+            />
             <div className="flex grow flex-col">
+              {!isReadOnly && (
+                <div className="animate-[fadein_0.22s_ease-in-out_forwards] px-4 pb-2 pt-4 opacity-0">
+                  <Callout.Root color="yellow">
+                    <Callout.Icon>
+                      <Icon iconName="triangle-exclamation" />
+                    </Callout.Icon>
+                    <Callout.Text>
+                      <Callout.TextHeading>Read-write mode enabled</Callout.TextHeading>
+                      <Callout.TextDescription>
+                        The copilot can perform actions on your infrastructure.
+                        {thread.length === 0 && ' Mode cannot be changed after the conversation has started.'}
+                      </Callout.TextDescription>
+                    </Callout.Text>
+                  </Callout.Root>
+                </div>
+              )}
               {thread.length === 0 && (
                 <span className="mx-auto w-full max-w-[430px] animate-[fadein_0.22s_ease-in-out_forwards_0.05s] py-4 text-center text-ssm opacity-0">
                   I'm your <span className="font-medium text-brand-500">DevOps AI Copilot</span> - I can help you to fix
                   your deployments, optimize your infrastructure costs, audit your security and do everything you would
                   expect from a complete DevOps Engineering team.
+                  {isDevopsCopilotPanelFeatureFlag && !isCopilotEnabled && (
+                    <span className="mt-4 block">
+                      I'm not enabled yet,{' '}
+                      <Link
+                        to={`${SETTINGS_URL(context?.organization?.id)}${SETTINGS_AI_COPILOT_URL}`}
+                        color="brand"
+                        underline
+                      >
+                        configure me in your organization settings
+                      </Link>{' '}
+                      to get started.
+                    </span>
+                  )}
                 </span>
               )}
               <ScrollArea
@@ -784,7 +535,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   })
                 )}
               >
-                {thread.length === 0 && docLinks.length > 0 && expand && (
+                {thread.length === 0 && docLinks.length > 0 && expand && isCopilotEnabled && (
                   <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col gap-2 text-center">
                     <Icon
                       iconName="sparkles"
@@ -814,79 +565,25 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     </div>
                   </div>
                 )}
-                {thread.map((thread) => {
-                  return match(thread.owner)
+                {thread.map((message: Message) => {
+                  return match(message.owner)
                     .with('user', () => (
                       <div
-                        key={thread.id}
+                        key={message.id}
                         className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-brand-50 px-5 py-2.5 text-sm dark:text-neutral-500"
                       >
-                        <div className="whitespace-pre-wrap">{thread.text}</div>
+                        <div className="whitespace-pre-wrap">{message.text}</div>
                       </div>
                     ))
                     .with('assistant', () => (
-                      <div key={thread.id} className="group text-sm">
-                        {plan.filter((p) => p.messageId === thread.id).length > 0 && (
-                          <div
-                            className="plan-toggle group mt-2 flex cursor-pointer items-center gap-2"
-                            onClick={() => setShowPlans((prev) => ({ ...prev, [thread.id]: !prev[thread.id] }))}
-                          >
-                            <div className="w-fit text-ssm font-medium italic text-gray-600">Plan steps</div>
-                            <div className="">
-                              <Icon
-                                iconName={showPlans[thread.id] ? 'chevron-circle-up' : 'chevron-circle-down'}
-                                iconStyle="regular"
-                                className="transform transition-transform group-hover:scale-110"
-                              />
-                            </div>
-                          </div>
-                        )}
-                        {plan.filter((p) => p.messageId === thread.id).length > 0 && showPlans[thread.id] && (
-                          <div className="mt-2 flex flex-col gap-2">
-                            {plan
-                              .filter((p) => p.messageId === thread.id)
-                              .map((step, index) => (
-                                <div key={index} className="flex items-start gap-2 text-sm">
-                                  <Icon iconName={getIconName(step.status)} className={getIconClass(step.status)} />
-                                  <div className="flex flex-col">
-                                    <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
-                                      {step.description}
-                                    </span>
-                                    <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
-                                  </div>
-                                </div>
-                              ))}
-                          </div>
-                        )}
-                        {(() => {
-                          if (!mermaidRenderCache.current.has(thread.id)) {
-                            mermaidRenderCache.current.set(thread.id, <RenderMarkdown>{thread.text}</RenderMarkdown>)
-                          }
-                          return mermaidRenderCache.current.get(thread.id)
-                        })()}{' '}
-                        <div className="invisible mt-2 flex gap-2 text-xs text-neutral-400 group-hover:visible">
-                          <Button
-                            type="button"
-                            variant="surface"
-                            className={clsx('flex items-center gap-1 px-2 py-1', {
-                              'text-brand-500': thread.vote === 'upvote',
-                            })}
-                            onClick={() => handleVote(thread.id, 'upvote')}
-                          >
-                            <Icon iconName="thumbs-up" />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="surface"
-                            className={clsx('flex items-center gap-1 px-2 py-1', {
-                              'text-brand-500': thread.vote === 'downvote',
-                            })}
-                            onClick={() => handleVote(thread.id, 'downvote')}
-                          >
-                            <Icon iconName="thumbs-down" />
-                          </Button>
-                        </div>
-                      </div>
+                      <AssistantMessage
+                        key={message.id}
+                        message={message}
+                        plan={plan}
+                        showPlans={showPlans}
+                        setShowPlans={setShowPlans}
+                        handleVote={handleVote}
+                      />
                     ))
                     .exhaustive()
                 })}
@@ -894,7 +591,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   <div className="relative top-2 mt-auto">
                     <div
                       className="group flex cursor-pointer items-center gap-2"
-                      onClick={() => setShowPlans((prev) => ({ ...prev, ['temp']: !prev['temp'] }))}
+                      onClick={() => setShowPlans((prev) => ({ ...prev, temp: !prev['temp'] }))}
                     >
                       <AnimatedGradientText className="w-fit text-ssm font-medium">{loadingText}</AnimatedGradientText>
                       {plan.filter((p) => p.messageId === 'temp').length > 0 && (
@@ -925,58 +622,13 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   </div>
                 )}
                 {isLoading && streamingMessage.length > 0 && pendingThreadId.current === threadId && (
-                  <div className="streaming text-sm">
-                    {plan.filter((p) => p.messageId === 'temp').length > 0 && (
-                      <div
-                        className="plan-toggle group mt-2 flex cursor-pointer items-center gap-2"
-                        onClick={() => setShowPlans((prev) => ({ ...prev, ['temp']: !prev['temp'] }))}
-                      >
-                        <div className="w-fit text-ssm font-medium italic text-gray-600">Plan steps</div>
-                        <Icon
-                          iconName={
-                            showPlans['temp'] !== undefined && showPlans['temp']
-                              ? 'chevron-circle-up'
-                              : 'chevron-circle-down'
-                          }
-                          iconStyle="regular"
-                          className="transform transition-transform group-hover:scale-110"
-                        />
-                      </div>
-                    )}
-                    {plan.filter((p) => p.messageId === 'temp').length > 0 &&
-                      showPlans['temp'] !== undefined &&
-                      showPlans['temp'] && (
-                        <div className="mt-2 flex flex-col gap-2">
-                          {plan
-                            .filter((p) => p.messageId === 'temp')
-                            .map((step, index) => (
-                              <div key={index} className="flex items-start gap-2 text-sm">
-                                <Icon iconName={getIconName(step.status)} className={getIconClass(step.status)} />
-                                <div className="flex flex-col">
-                                  <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
-                                    {step.description}
-                                  </span>
-                                  <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
-                                </div>
-                              </div>
-                            ))}
-                        </div>
-                      )}
-                    {(() => {
-                      const input = displayedStreamingMessage
-                      const startMatches = [...input.matchAll(/```mermaid/g)]
-                      const endMatches = [...input.matchAll(/```(?!mermaid)/g)]
-                      let renderInput = input
-                      if (startMatches.length > endMatches.length) {
-                        const lastStart = startMatches.at(-1)
-                        if (lastStart) {
-                          const cutoffIndex = lastStart.index ?? input.length
-                          renderInput = input.slice(0, cutoffIndex) + 'Generating charts…'
-                        }
-                      }
-                      return renderStreamingMessageWithMermaid(renderInput)
-                    })()}
-                  </div>
+                  <StreamingMessage
+                    displayedStreamingMessage={displayedStreamingMessage}
+                    plan={plan}
+                    showPlans={showPlans}
+                    setShowPlans={setShowPlans}
+                    renderStreamingMessageWithMermaid={renderStreamingMessageWithMermaid}
+                  />
                 )}
                 <div className="sticky bottom-0 left-full z-10 ml-[-40px] w-fit">
                   {!isAtBottom && (
@@ -1055,7 +707,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     </div>
                   )}
                   <Input
-                    disabled={appStatus?.status !== 'OPERATIONAL'}
+                    disabled={!isCopilotEnabled}
                     ref={inputRef}
                     value={inputMessage}
                     rows={1}
