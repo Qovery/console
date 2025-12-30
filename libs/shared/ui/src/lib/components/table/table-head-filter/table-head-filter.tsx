@@ -13,6 +13,7 @@ export interface TableHeadFilterProps<T> {
   defaultData: T[]
   setFilter: Dispatch<SetStateAction<TableFilterProps[]>>
   filter: TableFilterProps[]
+  classNameTitle?: string
 }
 
 export const ALL = 'ALL'
@@ -211,7 +212,14 @@ export function groupBy<T>(
 /**
  * @deprecated Prefer TablePrimitives + tanstack-table for type-safety and documentation
  */
-export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFilter }: TableHeadFilterProps<T>) {
+export function TableHeadFilter<T>({
+  title,
+  dataHead,
+  defaultData,
+  filter,
+  setFilter,
+  classNameTitle,
+}: TableHeadFilterProps<T>) {
   const [currentFilter, setCurrentFilter] = useState(ALL)
 
   const hasFilter = filter?.some((item) => item.key === dataHead.filter?.[0].key && item.value !== ALL)
@@ -250,7 +258,7 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
   const isDark = document.documentElement.classList.contains('dark')
 
   return (
-    <div className="flex items-center">
+    <div className={`flex items-center ${classNameTitle ?? ''}`}>
       <Menu
         open={isOpen}
         onOpen={setOpen}
