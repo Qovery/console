@@ -94,6 +94,7 @@ export function Table<T>({
                   defaultData={data}
                   filter={filter}
                   setFilter={setFilter}
+                  classNameTitle={classNameTitle}
                 />
               )}
               {sort && data && (

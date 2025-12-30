@@ -37,7 +37,7 @@ describe('RowEvent', () => {
     screen.getByTestId('tag')
     screen.getByText(upperCaseFirstLetter(mockEvent.target_type))
     screen.getByText(mockEvent.target_name!)
-    screen.getByText(upperCaseFirstLetter(mockEvent.sub_target_type!)?.replace('_', ' '))
+    screen.getByText(': ' + upperCaseFirstLetter(mockEvent.sub_target_type!)?.replace('_', ' '))
     screen.getByText(mockEvent.triggered_by!)
     screen.getByText(upperCaseFirstLetter(mockEvent.origin)!)
   })
