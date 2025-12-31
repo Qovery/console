@@ -23,7 +23,7 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      class="rounded border border-neutral bg-surface-neutral shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative divide-y p-0 text-sm text-neutral-350 data-[state=open]:block data-[state=closed]:hidden"
+      class="rounded border border-neutral bg-surface-neutral shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded text-neutral relative divide-y p-0 text-sm data-[state=open]:block data-[state=closed]:hidden"
       data-align="start"
       data-side="bottom"
       data-state="open"
@@ -36,7 +36,7 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
         class="flex flex-col gap-3 p-4"
       >
         <h6
-          class="flex items-center gap-1.5 font-medium text-neutral-400"
+          class="text-neutral flex items-center gap-1.5 font-medium"
         >
           EKS private subnet IDs
           <span
@@ -50,7 +50,7 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
           </span>
         </h6>
         <div
-          class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700"
+          class="flex flex-row gap-x-3 p-3 border rounded text-sm border-warning-component bg-surface-warning-subtle text-warning"
           data-accent-color="yellow"
         >
           <div
@@ -62,7 +62,7 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
             />
           </div>
           <div
-            class="-order-1 mr-auto gap-x-3 text-neutral-400"
+            class="-order-1 mr-auto gap-x-3 text-neutral"
           >
             <span
               class="block font-medium leading-6"
@@ -75,7 +75,7 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
           class="flex flex-col gap-3"
         >
           <li
-            class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium text-neutral-350"
+            class="text-neutral-subtle grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium"
           >
             <span>
               IDs zone A
@@ -233,7 +233,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      class="rounded border border-neutral bg-surface-neutral shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative divide-y p-0 text-sm text-neutral-350 data-[state=open]:block data-[state=closed]:hidden"
+      class="rounded border border-neutral bg-surface-neutral shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded text-neutral relative divide-y p-0 text-sm data-[state=open]:block data-[state=closed]:hidden"
       data-align="start"
       data-side="bottom"
       data-state="open"
@@ -246,7 +246,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
         class="flex flex-col gap-3 p-4"
       >
         <h6
-          class="flex items-center gap-1.5 font-medium text-neutral-400"
+          class="text-neutral flex items-center gap-1.5 font-medium"
         >
           EKS private subnet IDs
           <span
@@ -260,7 +260,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
           </span>
         </h6>
         <div
-          class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700"
+          class="flex flex-row gap-x-3 p-3 border rounded text-sm border-warning-component bg-surface-warning-subtle text-warning"
           data-accent-color="yellow"
         >
           <div
@@ -272,7 +272,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
             />
           </div>
           <div
-            class="-order-1 mr-auto gap-x-3 text-neutral-400"
+            class="-order-1 mr-auto gap-x-3 text-neutral"
           >
             <span
               class="block font-medium leading-6"
@@ -285,7 +285,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
           class="flex flex-col gap-3"
         >
           <li
-            class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium text-neutral-350"
+            class="text-neutral-subtle grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium"
           >
             <span>
               IDs zone A
