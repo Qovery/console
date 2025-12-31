@@ -1,5 +1,5 @@
 import { type AlertRuleResponse } from 'qovery-typescript-axios'
-import { Button, Icon, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { Button, Icon, ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useDeleteAlertRule } from '../../../hooks/use-delete-alert-rule/use-delete-alert-rule'
 import { AlertRulesCloneModal } from '../../alert-rules-clone-modal/alert-rules-clone-modal'
@@ -34,6 +34,7 @@ export function AlertRulesActionBar({
           await Promise.allSettled(
             deletableAlertRules.map((alertRule) => deleteAlertRule({ alertRuleId: alertRule.id }))
           )
+          toast(ToastEnum.SUCCESS, 'Alert rules deleted successfully')
           resetRowSelection()
         } catch (error) {
           console.error(error)
