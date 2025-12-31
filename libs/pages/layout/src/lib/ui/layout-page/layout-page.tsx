@@ -16,6 +16,7 @@ import {
   INFRA_LOGS_URL,
 } from '@qovery/shared/routes'
 import { Banner, WarningScreenMobile } from '@qovery/shared/ui'
+import { AnnouncementBanner } from '../../feature/announcement-banner/announcement-banner'
 import SpotlightTrigger from '../../feature/spotlight-trigger/spotlight-trigger'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
@@ -136,6 +137,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
           actions.
         </Banner>
       )}
+      <AnnouncementBanner />
       {!isQoveryUserWithMobileCheck && <WarningScreenMobile />}
       <main className="bg-neutral-200 dark:h-full dark:bg-neutral-900">
         <div className="flex">
