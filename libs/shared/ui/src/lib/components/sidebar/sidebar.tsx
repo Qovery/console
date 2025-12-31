@@ -5,10 +5,12 @@ import {
   type ComponentProps,
   type ComponentPropsWithoutRef,
   type ElementRef,
+  type KeyboardEvent,
   type PropsWithChildren,
   type ReactNode,
   createContext,
   forwardRef,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -105,9 +107,49 @@ const SidebarRoot = forwardRef<ElementRef<'div'>, SidebarRootProps>(function Sid
   const routerState = useRouterState()
   const pathname = routerState.location.pathname
 
+  const handleKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return
+
+    const container = event.currentTarget
+    const getFocusableElements = (): HTMLElement[] => {
+      const selectors = ['a[href]', 'button:not([disabled])']
+      const elements: HTMLElement[] = []
+      selectors.forEach((selector) => {
+        elements.push(...Array.from(container.querySelectorAll<HTMLElement>(selector)))
+      })
+      return elements.filter((el) => el.tabIndex !== -1 || el.getAttribute('tabindex') !== '-1')
+    }
+
+    const focusableElements = getFocusableElements()
+    if (focusableElements.length === 0) return
+
+    const currentIndex = focusableElements.findIndex((el) => el === document.activeElement)
+
+    let nextIndex: number
+    if (event.key === 'ArrowDown') {
+      if (currentIndex === -1 || currentIndex === focusableElements.length - 1) {
+        nextIndex = 0
+      } else {
+        nextIndex = currentIndex + 1
+      }
+    } else {
+      if (currentIndex === -1 || currentIndex === 0) {
+        nextIndex = focusableElements.length - 1
+      } else {
+        nextIndex = currentIndex - 1
+      }
+    }
+
+    event.preventDefault()
+    const nextElement = focusableElements[nextIndex]
+    if (nextElement) {
+      nextElement.focus()
+    }
+  }, [])
+
   return (
     <SidebarContext.Provider value={{ pathname }}>
-      <div ref={ref} className={twMerge('flex flex-col', className)} {...props}>
+      <div ref={ref} className={twMerge('flex flex-col', className)} onKeyDown={handleKeyDown} {...props}>
         {children}
       </div>
     </SidebarContext.Provider>
