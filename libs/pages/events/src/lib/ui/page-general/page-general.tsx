@@ -21,6 +21,7 @@ import {
 import { SelectedTimestamps } from '../../../../../../shared/ui/src/lib/components/table/table-head-datepicker/table-head-datepicker'
 import { queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
+import FilterSection from '../filter-section/filter-section'
 
 export interface PageGeneralProps {
   isLoading: boolean
@@ -40,9 +41,6 @@ export interface PageGeneralProps {
   organization?: Organization
 }
 
-// ---------------------------------------------
-// Methods used to build datepicker requirements
-// ---------------------------------------------
 // Calculate default timestamps for display (not stored in URL)
 function getDefaultTimestamps(
   queryParams: DecodedValueMap<typeof queryParamsValues>,
@@ -83,9 +81,8 @@ function getDefaultTimestamps(
   }
 }
 // ---------------------------------------------
-// ---------------------------------------------
 
-function createDataHead(
+function createTableDataHead(
   timestamps: SelectedTimestamps,
   organization?: Organization
 ): TableHeadProps<OrganizationEventResponse>[] {
@@ -186,12 +183,13 @@ export function PageGeneral({
 
   const [queryParams, setQueryParams] = useQueryParams(queryParamsValues)
   const timestamps = getDefaultTimestamps(queryParams, organization)
-  const dataHead = createDataHead(timestamps, organization)
+  const dataHead = createTableDataHead(timestamps, organization)
 
   return (
     <Section className="grow p-8">
+      <h3>Audit logs</h3>
       <div className="mb-4 flex h-9 items-center">
-        {/*<CustomFilterFeature handleClearFilter={handleClearFilter} />*/}
+        <FilterSection clearFilter={handleClearFilter} queryParams={queryParams} setFilter={setFilter} />
       </div>
 
       <Table
