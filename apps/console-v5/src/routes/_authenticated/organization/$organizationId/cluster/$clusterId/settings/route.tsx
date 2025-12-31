@@ -50,16 +50,20 @@ function RouteComponent() {
 
   return (
     <div className="flex h-full gap-4">
-      <div className="sticky top-0 min-w-52 border-r border-neutral">
-        <Sidebar.Root className="mt-6">
-          {LINKS_SETTINGS.map((link) => (
-            <Sidebar.Item key={link.to} to={link.to} icon={link.icon}>
-              {link.title}
-            </Sidebar.Item>
-          ))}
-        </Sidebar.Root>
+      <div className="relative h-full min-w-52 border-r border-neutral">
+        <div className="sticky top-11">
+          <Sidebar.Root className="mt-6">
+            {LINKS_SETTINGS.map((link) => (
+              <Sidebar.Item key={link.to} to={link.to} icon={link.icon}>
+                {link.title}
+              </Sidebar.Item>
+            ))}
+          </Sidebar.Root>
+        </div>
       </div>
-      <Outlet />
+      <div className="container mx-auto max-w-content-with-navigation-left flex-1 overflow-auto">
+        <Outlet />
+      </div>
     </div>
   )
 }
