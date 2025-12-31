@@ -4,7 +4,17 @@ import { type AlertRuleResponse, type AlertTargetType, type ServiceLightResponse
 import { useMemo, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
-import { Button, Icon, LoaderSpinner, ModalCrud, Popover, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
+import {
+  Button,
+  Icon,
+  LoaderSpinner,
+  ModalCrud,
+  Popover,
+  ToastEnum,
+  Truncate,
+  dropdownMenuItemVariants,
+  toast,
+} from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useClusters } from '../../hooks/use-clusters/use-clusters'
 import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create-alert-rule'
@@ -67,7 +77,7 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
   register('selectedServices', {
     validate: (value: string[]) => value.length > 0 || 'At least one service must be selected',
   })
-  const { mutateAsync: cloneAlertRule, isLoading: isCloneAlertRuleLoading } = useCreateAlertRule({
+  const { mutateAsync: cloneAlertRule } = useCreateAlertRule({
     organizationId,
   })
   const { data: clusters = [] } = useClusters({ organizationId })
@@ -79,6 +89,7 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
   const [searchValue, setSearchValue] = useState('')
   const [selectedServiceIds, setSelectedServiceIds] = useState<Set<string>>(new Set())
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isCloning, setIsCloning] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const filteredServices = useMemo(() => {
@@ -118,6 +129,7 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
       return
     }
 
+    setIsCloning(true)
     try {
       await Promise.all(
         rulesToClone.flatMap((rule) =>
@@ -144,9 +156,12 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
           )
         )
       )
+      toast(ToastEnum.SUCCESS, 'Alert rules cloned successfully')
       onClose()
     } catch (error) {
       console.error('Error cloning alert rules:', error)
+    } finally {
+      setIsCloning(false)
     }
   })
 
@@ -161,7 +176,7 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
         }
         onClose={onClose}
         onSubmit={onSubmit}
-        loading={isCloneAlertRuleLoading}
+        loading={isCloning}
         submitLabel="Clone alerts"
       >
         <div className="flex flex-col gap-4">
