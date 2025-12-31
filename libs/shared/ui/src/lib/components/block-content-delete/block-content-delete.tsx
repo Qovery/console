@@ -39,15 +39,15 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
   const { openModalConfirmation } = useModalConfirmation()
 
   return (
-    <div className={`rounded border border-red-300 bg-red-50 ${className} ${customWidth}`}>
-      <div className="flex h-9 items-center justify-between border-b border-red-300 px-4">
-        <h2 className="text-ssm font-medium text-neutral-400">{title}</h2>
+    <div className={`rounded border border-negative-subtle bg-surface-negative-subtle ${className} ${customWidth}`}>
+      <div className="flex h-9 items-center justify-between border-b border-negative-subtle px-4">
+        <h2 className="text-ssm font-medium text-neutral">{title}</h2>
       </div>
       <div className="p-5">
-        <p className="mb-5 text-sm text-neutral-400">{description}</p>
+        <p className="mb-5 text-sm text-neutral">{description}</p>
         {list?.map((element, index) => (
-          <p key={index} data-testid={element.text} className="mb-2 text-sm font-medium text-neutral-400">
-            <Icon name={element.icon || 'icon-solid-trash'} className="mr-3 text-red-500" />
+          <p key={index} data-testid={element.text} className="mb-2 text-sm font-medium text-neutral">
+            <Icon name={element.icon || 'icon-solid-trash'} className="mr-3 text-neutral" />
             {element.text}
           </p>
         ))}
