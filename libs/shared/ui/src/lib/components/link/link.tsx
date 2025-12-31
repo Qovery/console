@@ -7,7 +7,16 @@ import { buttonVariants } from '../button-primitive/button-primitive'
 import Icon from '../icon/icon'
 
 export const linkVariants = cva(
-  ['cursor-pointer', 'transition', 'duration-100', 'font-medium', 'inline-flex', 'items-center', 'hover:brightness-75'],
+  [
+    'cursor-pointer',
+    'transition',
+    'duration-100',
+    'font-medium',
+    'inline-flex',
+    'items-center',
+    'gap-1',
+    'hover:brightness-75',
+  ],
   {
     variants: {
       color: {
