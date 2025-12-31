@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Banner } from '@qovery/shared/ui'
+import { Banner, Icon } from '@qovery/shared/ui'
 import { type AnnouncementBannerPayload, useAnnouncementBanner } from './use-announcement-banner'
 
 const VARIANT_TO_COLOR_MAP: Record<AnnouncementBannerPayload['variant'], 'brand' | 'yellow' | 'red'> = {
@@ -16,25 +16,42 @@ export function AnnouncementBanner() {
     return null
   }
 
-  const { title, message, variant, dismissible } = bannerData
+  const { title, message, variant, dismissible, buttonLabel, buttonUrl } = bannerData
   const color = VARIANT_TO_COLOR_MAP[variant]
 
-  const handleDismiss = () => {
-    if (dismissible) {
-      setIsDismissed(true)
+  const hasActionButton = buttonLabel && buttonUrl
+
+  const handleActionButtonClick = () => {
+    if (hasActionButton) {
+      window.open(buttonUrl, '_blank', 'noopener,noreferrer')
     }
   }
 
+  const handleDismiss = () => {
+    setIsDismissed(true)
+  }
+
   return (
-    <Banner
-      color={color}
-      buttonLabel={dismissible ? 'Dismiss' : undefined}
-      buttonIconRight={dismissible ? 'xmark' : undefined}
-      onClickButton={handleDismiss}
-    >
-      {title && <strong className="mr-2">{title}</strong>}
-      {message}
-    </Banner>
+    <div className="relative">
+      <Banner
+        color={color}
+        buttonLabel={hasActionButton ? buttonLabel : undefined}
+        buttonIconRight={hasActionButton ? 'arrow-up-right-from-square' : undefined}
+        onClickButton={hasActionButton ? handleActionButtonClick : undefined}
+      >
+        {title && <strong className="mr-2">{title}</strong>}
+        {message}
+      </Banner>
+      {dismissible && (
+        <button
+          onClick={handleDismiss}
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 hover:bg-black/10"
+          aria-label="Dismiss"
+        >
+          <Icon name="icon-solid-xmark" className="h-4 w-4" />
+        </button>
+      )}
+    </div>
   )
 }
 

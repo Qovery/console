@@ -61,7 +61,7 @@ describe('AnnouncementBanner', () => {
     expect(screen.getByText('This is an error message')).toBeInTheDocument()
   })
 
-  it('should render dismiss button when dismissible is true', () => {
+  it('should render dismiss icon when dismissible is true', () => {
     mockUseAnnouncementBanner.mockReturnValue({
       message: 'Dismissible message',
       variant: 'info',
@@ -111,5 +111,68 @@ describe('AnnouncementBanner', () => {
 
     expect(screen.getByText('Message only')).toBeInTheDocument()
     expect(screen.queryByRole('strong')).not.toBeInTheDocument()
+  })
+
+  it('should render action button when buttonUrl and buttonLabel are provided', () => {
+    mockUseAnnouncementBanner.mockReturnValue({
+      message: 'New feature available',
+      variant: 'info',
+      dismissible: false,
+      buttonLabel: 'Learn more',
+      buttonUrl: 'https://docs.qovery.com',
+    })
+
+    renderWithProviders(<AnnouncementBanner />)
+
+    expect(screen.getByRole('button', { name: 'Learn more' })).toBeInTheDocument()
+  })
+
+  it('should open URL in new tab when action button is clicked', async () => {
+    const windowOpenSpy = jest.spyOn(window, 'open').mockImplementation()
+
+    mockUseAnnouncementBanner.mockReturnValue({
+      message: 'New feature available',
+      variant: 'info',
+      dismissible: false,
+      buttonLabel: 'Learn more',
+      buttonUrl: 'https://docs.qovery.com',
+    })
+
+    const { userEvent } = renderWithProviders(<AnnouncementBanner />)
+
+    const actionButton = screen.getByRole('button', { name: 'Learn more' })
+    await userEvent.click(actionButton)
+
+    expect(windowOpenSpy).toHaveBeenCalledWith('https://docs.qovery.com', '_blank', 'noopener,noreferrer')
+
+    windowOpenSpy.mockRestore()
+  })
+
+  it('should show both action button and dismiss icon when both are enabled', () => {
+    mockUseAnnouncementBanner.mockReturnValue({
+      message: 'New feature available',
+      variant: 'info',
+      dismissible: true,
+      buttonLabel: 'Learn more',
+      buttonUrl: 'https://docs.qovery.com',
+    })
+
+    renderWithProviders(<AnnouncementBanner />)
+
+    expect(screen.getByRole('button', { name: 'Learn more' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Dismiss' })).toBeInTheDocument()
+  })
+
+  it('should not render action button when buttonUrl is provided without buttonLabel', () => {
+    mockUseAnnouncementBanner.mockReturnValue({
+      message: 'Test message',
+      variant: 'info',
+      dismissible: false,
+      buttonUrl: 'https://docs.qovery.com',
+    })
+
+    renderWithProviders(<AnnouncementBanner />)
+
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 })

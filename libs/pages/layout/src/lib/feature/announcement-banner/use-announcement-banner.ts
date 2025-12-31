@@ -6,6 +6,8 @@ export interface AnnouncementBannerPayload {
   message: string
   variant: 'info' | 'warning' | 'error'
   dismissible: boolean
+  buttonLabel?: string
+  buttonUrl?: string
 }
 
 export function useAnnouncementBanner() {
@@ -41,6 +43,8 @@ export function useAnnouncementBanner() {
           message: typedPayload['message'],
           variant: typedPayload['variant'],
           dismissible: typedPayload['dismissible'],
+          buttonLabel: typeof typedPayload['buttonLabel'] === 'string' ? typedPayload['buttonLabel'] : undefined,
+          buttonUrl: typeof typedPayload['buttonUrl'] === 'string' ? typedPayload['buttonUrl'] : undefined,
         })
       } else {
         setBannerData(null)

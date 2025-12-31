@@ -164,4 +164,68 @@ describe('useAnnouncementBanner', () => {
 
     expect(result.current).toBeNull()
   })
+
+  it('should return banner data with optional buttonLabel and buttonUrl', () => {
+    mockIsFeatureEnabled.mockReturnValue(true)
+    mockGetFeatureFlagPayload.mockReturnValue({
+      message: 'New feature available',
+      variant: 'info',
+      dismissible: false,
+      buttonLabel: 'Learn more',
+      buttonUrl: 'https://docs.qovery.com',
+    })
+
+    const { result } = renderHook(() => useAnnouncementBanner())
+
+    expect(result.current).toEqual({
+      title: undefined,
+      message: 'New feature available',
+      variant: 'info',
+      dismissible: false,
+      buttonLabel: 'Learn more',
+      buttonUrl: 'https://docs.qovery.com',
+    })
+  })
+
+  it('should return banner data without button fields when not provided', () => {
+    mockIsFeatureEnabled.mockReturnValue(true)
+    mockGetFeatureFlagPayload.mockReturnValue({
+      message: 'Simple message',
+      variant: 'warning',
+      dismissible: true,
+    })
+
+    const { result } = renderHook(() => useAnnouncementBanner())
+
+    expect(result.current).toEqual({
+      title: undefined,
+      message: 'Simple message',
+      variant: 'warning',
+      dismissible: true,
+      buttonLabel: undefined,
+      buttonUrl: undefined,
+    })
+  })
+
+  it('should ignore non-string buttonLabel and buttonUrl', () => {
+    mockIsFeatureEnabled.mockReturnValue(true)
+    mockGetFeatureFlagPayload.mockReturnValue({
+      message: 'Test message',
+      variant: 'info',
+      dismissible: false,
+      buttonLabel: 123,
+      buttonUrl: true,
+    } as never)
+
+    const { result } = renderHook(() => useAnnouncementBanner())
+
+    expect(result.current).toEqual({
+      title: undefined,
+      message: 'Test message',
+      variant: 'info',
+      dismissible: false,
+      buttonLabel: undefined,
+      buttonUrl: undefined,
+    })
+  })
 })
