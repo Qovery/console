@@ -1,5 +1,5 @@
+import { useParams } from '@tanstack/react-router'
 import { type CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
-import { useParams } from 'react-router-dom'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
 import { ClusterCredentialsModal } from '@qovery/domains/clusters/feature'
 import { useModal } from '@qovery/shared/ui'
@@ -14,7 +14,7 @@ export function ClusterCredentialsSettingsFeature({
   cloudProvider,
   isSetting,
 }: ClusterCredentialsSettingsFeatureProps) {
-  const { organizationId = '', clusterId } = useParams()
+  const { organizationId = '', clusterId } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const { data: credentials = [], isLoading: isLoadingCloudProviderCredentials } = useCloudProviderCredentials({
     organizationId,
