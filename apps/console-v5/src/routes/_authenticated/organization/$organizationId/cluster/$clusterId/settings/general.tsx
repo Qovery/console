@@ -74,45 +74,47 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
       <div className="flex w-full flex-col justify-between">
         <Section className="p-8">
           <SettingsHeading title="General settings" />
-          {cluster.cloud_provider !== 'ON_PREMISE' && (
-            <Callout.Root color="sky" className="mb-4">
-              <Callout.Icon>
-                <Icon iconName="circle-exclamation" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
-                <Callout.TextDescription>
-                  Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
-                  <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
-                  drift in the configuration.
-                  <br />
-                  <ExternalLink
-                    size="sm"
-                    href="https://www.qovery.com/docs/configuration/clusters#faq"
-                    className="mt-3"
-                  >
-                    Click here for more details
-                  </ExternalLink>
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
-          )}
-          <form onSubmit={onSubmit}>
-            <BlockContent title="General information">
-              <ClusterGeneralSettings fromDetail />
-            </BlockContent>
-            <div className="flex justify-end">
-              <Button
-                data-testid="submit-button"
-                type="submit"
-                size="lg"
-                loading={isEditClusterLoading}
-                disabled={!methods.formState.isValid}
-              >
-                Save
-              </Button>
-            </div>
-          </form>
+          <div className="max-w-content-with-navigation-left">
+            {cluster.cloud_provider !== 'ON_PREMISE' && (
+              <Callout.Root color="sky" className="mb-4">
+                <Callout.Icon>
+                  <Icon iconName="circle-exclamation" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
+                  <Callout.TextDescription>
+                    Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
+                    <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk
+                    a drift in the configuration.
+                    <br />
+                    <ExternalLink
+                      size="sm"
+                      href="https://www.qovery.com/docs/configuration/clusters#faq"
+                      className="mt-3"
+                    >
+                      Click here for more details
+                    </ExternalLink>
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
+            )}
+            <form onSubmit={onSubmit}>
+              <BlockContent title="General information">
+                <ClusterGeneralSettings fromDetail />
+              </BlockContent>
+              <div className="flex justify-end">
+                <Button
+                  data-testid="submit-button"
+                  type="submit"
+                  size="lg"
+                  loading={isEditClusterLoading}
+                  disabled={!methods.formState.isValid}
+                >
+                  Save
+                </Button>
+              </div>
+            </form>
+          </div>
         </Section>
       </div>
     </FormProvider>
