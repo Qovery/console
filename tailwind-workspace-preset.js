@@ -106,6 +106,14 @@ module.exports = {
   darkMode: ['selector', '[data-theme="dark"]'],
   theme: {
     extend: {
+      zIndex: {
+        header: 'var(--header-zindex)',
+        dropdown: 'var(--dropdown-zindex)',
+        overlay: 'var(--overlay-zindex)',
+        modal: 'var(--modal-zindex)',
+        tooltip: 'var(--tooltip-zindex)',
+        toast: 'var(--toast-zindex)',
+      },
       transitionProperty: {
         label: 'transform, font-size',
       },
