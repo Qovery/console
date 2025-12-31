@@ -25,7 +25,7 @@ export function Header() {
   }
 
   return (
-    <header className="w-full bg-background-secondary py-4 pl-3 pr-4">
+    <header className="relative z-header w-full bg-background-secondary py-4 pl-3 pr-4">
       <div className="flex items-center gap-4">
         <LogoIcon />
         <Separator />
