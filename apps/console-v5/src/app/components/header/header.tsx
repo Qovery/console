@@ -35,7 +35,7 @@ export function Header() {
             <DropdownMenu.Trigger asChild>
               <Button variant="outline">Toggle theme</Button>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content align="end">
+            <DropdownMenu.Content align="end" className="z-dropdown">
               <DropdownMenu.Item onClick={() => setTheme('light')}>Light</DropdownMenu.Item>
               <DropdownMenu.Item onClick={() => setTheme('dark')}>Dark</DropdownMenu.Item>
               <DropdownMenu.Item onClick={() => setTheme('system')}>System</DropdownMenu.Item>
