@@ -615,18 +615,12 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [isResizing, setIsResizing] = useState(false)
 
   return (
-    <Dialog.Root
-      open={true}
-      modal={true}
-      onOpenChange={() => {
-        document.body.style.pointerEvents = 'initial'
-      }}
-    >
+    <Dialog.Root open={true} modal={true}>
       <Dialog.Portal>
         {expand && (
           <Dialog.Overlay
             style={style}
-            className="absolute left-0 top-0 z-0 h-screen w-screen animate-[fadein_0.22s_ease-in-out_forwards_0.05s] bg-black/50 opacity-0 backdrop-blur-[2px] "
+            className="absolute left-0 top-0 z-overlay h-screen w-screen animate-[fadein_0.22s_ease-in-out_forwards_0.05s] bg-black/50 opacity-0 backdrop-blur-[2px] "
             onClick={handleOnClose}
           />
         )}
@@ -634,7 +628,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
           ref={panelRef}
           className={twMerge(
             clsx(
-              'fixed bottom-2 right-2 z-[1] flex rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
+              'fixed bottom-2 right-2 z-modal flex rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
               {
                 'left-4 top-4 animate-[scalein_0.22s_ease_both] opacity-0': expand,
                 'animate-slidein-up-sm-faded': !expand,
