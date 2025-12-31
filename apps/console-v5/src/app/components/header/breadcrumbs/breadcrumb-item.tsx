@@ -110,7 +110,7 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
             </button>
           </Popover.Trigger>
           <DropdownMenu.Content asChild>
-            <Popover.Content className="z-20 -ml-2.5 flex w-[340px] flex-col gap-3 p-3 pb-0">
+            <Popover.Content className="z-dropdown -ml-2.5 flex w-[340px] flex-col gap-3 p-3 pb-0">
               {/* 
               Transfer focus from input to list when using arrow keys
               This enables keyboard navigation while keeping the input functional
