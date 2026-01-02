@@ -1,6 +1,6 @@
 import { subDays } from 'date-fns'
-import { type Dispatch, type MouseEvent, type SetStateAction, useState } from 'react'
-import { DatePicker, type TableFilterProps } from '@qovery/shared/ui'
+import { type Dispatch, type MouseEvent, type SetStateAction, useEffect, useState } from 'react'
+import { ALL, DatePicker, type TableFilterProps } from '@qovery/shared/ui'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import { Button } from '../../button/button'
 import Icon from '../../icon/icon'
@@ -49,6 +49,12 @@ export function TableHeadDatePickerFilter({
   const fromTimestampProperty = 'from_timestamp'
   const toTimestampProperty = 'to_timestamp'
 
+  useEffect(() => {
+    const hasFromTimeStampValue = filter.some((props) => props.key === fromTimestampProperty && props.value !== ALL)
+    const hasToTimestampValue = filter.some((props) => props.key === toTimestampProperty && props.value !== ALL)
+    setHasFilter(hasFromTimeStampValue && hasToTimestampValue)
+  }, [filter])
+
   // Called when timestamp has been defined
   const onChangeTimestamp = (startDate: Date, endDate: Date) => {
     setIsOpenTimestamp(!isOpenTimestamp)
@@ -72,7 +78,9 @@ export function TableHeadDatePickerFilter({
   const cleanFilter = (event: MouseEvent) => {
     event.preventDefault()
     setFilter((prev) => [
-      ...prev.filter((currentValue) => currentValue.key !== 'from_timestamp' && currentValue.key !== 'to_timestamp'),
+      ...prev.filter(
+        (currentValue) => currentValue.key !== fromTimestampProperty && currentValue.key !== toTimestampProperty
+      ),
       {
         key: fromTimestampProperty,
         value: 'ALL',
