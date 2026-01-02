@@ -72,7 +72,7 @@ function deleteFilter(key: string, setFilter?: Dispatch<SetStateAction<TableFilt
     // Handle 'timestamp' key as it wraps 2 distinct filters
     if (key === 'timestamp') {
       setFilter((prev) => [
-        ...prev.filter((currentValue) => currentValue.key !== key),
+        ...prev.filter((currentValue) => currentValue.key !== 'from_timestamp' && currentValue.key !== 'to_timestamp'),
         {
           key: 'from_timestamp',
           value: 'ALL',
