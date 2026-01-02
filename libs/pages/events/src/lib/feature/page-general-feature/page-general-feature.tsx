@@ -42,25 +42,69 @@ export function PageGeneralFeature() {
 
   // Sync queryParams -> table filters
   useEffect(() => {
-    if (queryParams.origin)
-      setFilter((prev) => {
-        const isAlreadyPresent = prev.some((item) => item.key === 'origin' && item.value === queryParams.origin)
-        if (!isAlreadyPresent) {
-          const updatedFilters = [...prev, { key: 'origin', value: queryParams.origin || '' }]
-          return updatedFilters
-        }
-        return prev
-      })
-
-    if (queryParams.eventType)
+    if (queryParams.eventType) {
       setFilter((prev) => {
         const isAlreadyPresent = prev.some((item) => item.key === 'event_type' && item.value === queryParams.eventType)
         if (!isAlreadyPresent) {
-          const updatedFilters = [...prev, { key: 'event_type', value: queryParams.eventType || '' }]
-          return updatedFilters
+          return [...prev, { key: 'event_type', value: queryParams.eventType || '' }]
         }
         return prev
       })
+    }
+
+    if (queryParams.targetType) {
+      setFilter((prev) => {
+        const isAlreadyPresent = prev.some(
+          (item) => item.key === 'target_type' && item.value === queryParams.targetType
+        )
+        if (!isAlreadyPresent) {
+          return [...prev, { key: 'target_type', value: queryParams.targetType || '' }]
+        }
+        return prev
+      })
+    }
+
+    if (queryParams.triggeredBy) {
+      setFilter((prev) => {
+        const isAlreadyPresent = prev.some(
+          (item) => item.key === 'triggered_by' && item.value === queryParams.triggeredBy
+        )
+        if (!isAlreadyPresent) {
+          return [...prev, { key: 'triggered_by', value: queryParams.triggeredBy || '' }]
+        }
+        return prev
+      })
+    }
+
+    if (queryParams.origin) {
+      setFilter((prev) => {
+        const isAlreadyPresent = prev.some((item) => item.key === 'origin' && item.value === queryParams.origin)
+        if (!isAlreadyPresent) {
+          return [...prev, { key: 'origin', value: queryParams.origin || '' }]
+        }
+        return prev
+      })
+    }
+
+    // Special case to handle the Timestamp filter as it relies
+    if (queryParams.fromTimestamp && queryParams.toTimestamp) {
+      setFilter((prev) => {
+        const fromTimestampAlreadyPresent = prev.some(
+          (item) => item.key === 'from_timestamp' && item.value === queryParams.fromTimestamp
+        )
+        const toTimestampAlreadyPresent = prev.some(
+          (item) => item.key === 'to_timestamp' && item.value === queryParams.toTimestamp
+        )
+        if (!fromTimestampAlreadyPresent && !toTimestampAlreadyPresent) {
+          return [
+            ...prev,
+            { key: 'from_timestamp', value: queryParams.fromTimestamp || '' },
+            { key: 'to_timestamp', value: queryParams.toTimestamp || '' },
+          ]
+        }
+        return prev
+      })
+    }
   }, [queryParams])
 
   // Sync table filters -> queryParams
