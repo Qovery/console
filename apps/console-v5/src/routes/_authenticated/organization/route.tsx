@@ -50,7 +50,7 @@ const ORGANIZATION_TABS: NavigationTab[] = [
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
-    routeId: '/_authenticated/organization/$organizationId/settings',
+    routeId: '/_authenticated/organization/$organizationId/settings/general',
   },
 ]
 
@@ -215,19 +215,21 @@ function OrganizationRoute() {
   const needsFullWidth = useFullWidthLayout()
 
   return (
-    <div className="h-full min-h-dvh w-full bg-background">
-      <Header />
+    <div className="flex h-dvh w-full flex-col bg-background">
       {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
-      <main className={`flex flex-1 flex-col ${needsFullWidth ? 'h-full' : '!h-full min-h-0'}`}>
+      <div className="min-h-0 flex-1 overflow-auto">
+        <Header />
+
         <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
           <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
             {navigationContext && <NavigationBar context={navigationContext} />}
           </Navbar.Root>
         </div>
-        <div className={needsFullWidth ? 'w-full flex-1' : 'container mx-auto h-full w-full px-4'}>
+
+        <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>
           <Outlet />
         </div>
-      </main>
+      </div>
     </div>
   )
 }
