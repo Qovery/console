@@ -56,6 +56,7 @@ export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>
             buttonVariants({ color })
           )}
           onClick={onDismiss}
+          aria-label="Dismiss"
         >
           <Icon iconName="xmark" iconStyle="solid" />
         </Button>
