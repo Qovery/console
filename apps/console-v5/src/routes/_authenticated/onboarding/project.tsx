@@ -14,7 +14,7 @@ function Project() {
   }
 
   return (
-    <Container params={{ '*': '/project' }}>
+    <Container>
       <OnboardingProject />
     </Container>
   )

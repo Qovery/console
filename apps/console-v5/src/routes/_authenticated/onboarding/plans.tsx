@@ -14,7 +14,7 @@ function Plans() {
   }
 
   return (
-    <Container params={{ '*': '/plans' }}>
+    <Container>
       <OnboardingPlans />
     </Container>
   )

@@ -34,23 +34,18 @@ const defaultContext: DefaultContextProps = {
 
 export const ContextOnboarding = createContext<DefaultContextProps>(defaultContext)
 
-export interface ContainerProps {
-  params: Readonly<Record<string, string>>
-}
-
-export function Container(props: PropsWithChildren<ContainerProps>) {
-  const { children, params } = props
-
+export function Container(props: PropsWithChildren) {
+  const { children } = props
   const navigate = useNavigate()
   const location = useLocation()
-  const [step, setStep] = useState(params['*'])
+  const [step, setStep] = useState(location.pathname.split('/').pop())
   const [contextValue, setContextValue] = useState(defaultContext)
   const { data: organizations = [] } = useOrganizations()
   const { data: userSignUp } = useUserSignUp()
 
   useEffect(() => {
-    setStep(params['*'])
-  }, [params, setStep, step, navigate])
+    setStep(location.pathname.split('/').pop())
+  }, [location.pathname, setStep, step, navigate])
 
   const currentStepPosition = (routes: Route[]) =>
     routes.findIndex((route: Route) => route.path.replace('/:plan', '') === `/${step?.split('/')[0]}`) + 1

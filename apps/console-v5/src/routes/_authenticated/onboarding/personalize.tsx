@@ -14,7 +14,7 @@ function Personalize() {
   }
 
   return (
-    <Container params={{ '*': '/personalize' }}>
+    <Container>
       <OnboardingPersonalize />
     </Container>
   )
