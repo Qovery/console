@@ -51,7 +51,10 @@ export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>
       {dismissible && (
         <Button
           type="button"
-          className={twMerge('absolute right-2 top-1/2 -translate-y-1/2', buttonVariants({ color }))}
+          className={twMerge(
+            'absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 justify-center',
+            buttonVariants({ color })
+          )}
           onClick={onDismiss}
         >
           <Icon iconName="xmark" iconStyle="solid" />
