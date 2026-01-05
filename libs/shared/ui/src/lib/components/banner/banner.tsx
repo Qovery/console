@@ -31,19 +31,30 @@ export interface BannerProps extends VariantProps<typeof bannerVariants> {
   buttonLabel?: string
   buttonIconRight?: IconName
   onClickButton?: () => void
+  dismissible?: boolean
+  onDismiss?: () => void
 }
 
 export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>(function Banner(
-  { children, buttonLabel, buttonIconRight, onClickButton, color = 'yellow' },
+  { children, buttonLabel, buttonIconRight, onClickButton, color = 'yellow', dismissible = false, onDismiss },
   forwardedRef
 ) {
   return (
-    <div className={bannerVariants({ color })} ref={forwardedRef}>
+    <div className={twMerge(bannerVariants({ color }), 'relative')} ref={forwardedRef}>
       {children}
       {buttonLabel && (
         <Button type="button" className={twMerge('gap-1', buttonVariants({ color }))} onClick={onClickButton}>
           {buttonLabel}
           {buttonIconRight && <Icon iconName={buttonIconRight} />}
+        </Button>
+      )}
+      {dismissible && (
+        <Button
+          type="button"
+          className={twMerge('absolute right-2 top-1/2 -translate-y-1/2', buttonVariants({ color }))}
+          onClick={onDismiss}
+        >
+          <Icon iconName="xmark" iconStyle="solid" />
         </Button>
       )}
     </div>
