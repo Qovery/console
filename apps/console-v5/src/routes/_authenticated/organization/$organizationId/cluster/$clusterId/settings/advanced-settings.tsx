@@ -47,6 +47,13 @@ function RouteComponent() {
   const onSubmit = methods.handleSubmit((data) => {
     let dataFormatted = { ...data }
 
+    // below is a hack to handle the weird way the payload behaves
+    // empty string must be sent as ''
+    // empty numbers must be sent as null
+    // the thing is we don't know in advance if the value is a string or a number
+    // the interface has this information, but we can't check the type of the property of the interface
+    // we can't do ClusterAdvanceSettings[key] === 'string' or 'number'
+    // so if field is empty string replace by value found in defaultSettings (because default value is well typed)
     Object.keys(dataFormatted).forEach((key) => {
       if (key.includes('.')) {
         delete dataFormatted[key]
@@ -56,6 +63,7 @@ function RouteComponent() {
     dataFormatted = objectFlattener(dataFormatted)
 
     Object.keys(dataFormatted).forEach((key) => {
+      // check if we can convert this string to object
       try {
         JSON.parse(dataFormatted[key])
       } catch (e) {
