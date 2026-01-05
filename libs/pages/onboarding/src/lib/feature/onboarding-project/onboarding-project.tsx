@@ -98,10 +98,8 @@ export function OnboardingProject() {
 
   const handleBack = () => {
     if (shouldSkipBilling) {
-      // TODO: change that
       navigate({ to: `${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}` })
     } else {
-      // TODO: change that
       navigate({ to: `${ONBOARDING_URL}/plans` })
     }
   }
@@ -141,7 +139,6 @@ export function OnboardingProject() {
         plan: planToUse,
       })
 
-      // TODO: change that
       navigate({ to: `${ENVIRONMENTS_URL(createdOrganizationId, project.id)}${ENVIRONMENTS_GENERAL_URL}` })
     } catch (error) {
       if ((error as SerializedError).code === '409') {
@@ -157,7 +154,6 @@ export function OnboardingProject() {
         }
       }
       const fallbackRoute = shouldSkipBilling ? ONBOARDING_PERSONALIZE_URL : ONBOARDING_PLANS_URL
-      // TODO: change that
       navigate({ to: `${ONBOARDING_URL}${fallbackRoute}` })
     } finally {
       setIsSubmitting(false)

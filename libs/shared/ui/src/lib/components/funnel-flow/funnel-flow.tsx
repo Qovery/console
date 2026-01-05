@@ -20,7 +20,6 @@ const FunnelFlowContent = (props: FunnelFlowProps) => {
         <div className="flex h-full items-center">
           <div className="pr-4">
             <LogoIcon />
-            {/* <img className="w-[90px] shrink-0" src="assets/logos/logo-black.svg" alt="Qovery logo black" /> */}
           </div>
           <div className="flex h-full items-center gap-4 border-l border-l-surface-neutral-subtle pl-4">
             <div className="flex h-5 items-center rounded-md bg-brand-500 px-1 text-2xs font-medium text-white">

@@ -164,7 +164,6 @@ export function OnboardingPlans() {
     event.preventDefault()
 
     if (shouldSkipBilling) {
-      // TODO: change that
       navigate({ to: `${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}` })
       return
     }
@@ -216,7 +215,6 @@ export function OnboardingPlans() {
       })
 
       await refetchUserSignUp()
-      // TODO: change that
       navigate({ to: `${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}` })
     } catch (error) {
       console.error(error)

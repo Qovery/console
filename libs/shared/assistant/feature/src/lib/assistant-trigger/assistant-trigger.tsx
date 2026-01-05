@@ -14,7 +14,6 @@ export interface AssistantTriggerProps {
 export function AssistantTrigger({ defaultOpen = false }: AssistantTriggerProps) {
   const { initChat } = useSupportChat()
   const { assistantOpen, setAssistantOpen } = useContext(AssistantContext)
-  console.log('🚀 ~ AssistantTrigger ~ assistantOpen:', assistantOpen)
   const [assistantIcon] = useLocalStorage<AssistantIcon>(AssistantIconKey, 'QUESTION_MARK')
 
   useEffect(() => {

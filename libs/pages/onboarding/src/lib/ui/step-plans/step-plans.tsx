@@ -1,7 +1,7 @@
 import { CardCVV, CardComponent, CardExpiry, CardNumber, Provider } from '@chargebee/chargebee-js-react-wrapper'
 import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type FormEvent, type MutableRefObject, useMemo } from 'react'
 import { ENVIRONMENTS_URL, ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
@@ -30,6 +30,7 @@ export interface StepPlansProps {
 }
 
 export default function StepPlans(props: StepPlansProps) {
+  const router = useRouter()
   const {
     onSubmit,
     selectedPlan,
@@ -183,7 +184,7 @@ export default function StepPlans(props: StepPlansProps) {
                       if (currentOrganizationId) {
                         navigate({ to: ENVIRONMENTS_URL(currentOrganizationId, currentProjectId) })
                       } else {
-                        navigate({ to: '/onboarding/personalize' })
+                        router.history.back()
                       }
                     }}
                   >

@@ -131,7 +131,6 @@ export function FormUser() {
       })
 
       const nextStep = userSignUp?.dx_auth ? ONBOARDING_PROJECT_URL : ONBOARDING_PLANS_URL
-      // TODO: change that
       navigate({ to: `${ONBOARDING_URL}${nextStep}` })
     } catch (error) {
       console.error(error)
