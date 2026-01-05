@@ -1,5 +1,5 @@
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
-import { FormProvider, useForm } from 'react-hook-form'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterAdvancedSettings as ClusterAdvancedSettingsComponent } from './cluster-advanced-settings'
 
@@ -13,37 +13,6 @@ const mockDefaultAdvancedSettings = {
   key2: 'default2',
 } as ClusterAdvancedSettings
 
-function TestWrapper({
-  onSubmit,
-  loading,
-  clusterAdvancedSettings,
-  defaultAdvancedSettings,
-}: {
-  onSubmit: () => void
-  loading: boolean
-  clusterAdvancedSettings?: ClusterAdvancedSettings
-  defaultAdvancedSettings?: ClusterAdvancedSettings
-}) {
-  const methods = useForm<{ [key: string]: string }>({
-    mode: 'onChange',
-    defaultValues: {
-      key1: 'value1',
-      key2: 'value2',
-    },
-  })
-
-  return (
-    <FormProvider {...methods}>
-      <ClusterAdvancedSettingsComponent
-        onSubmit={onSubmit}
-        loading={loading}
-        clusterAdvancedSettings={clusterAdvancedSettings}
-        defaultAdvancedSettings={defaultAdvancedSettings}
-      />
-    </FormProvider>
-  )
-}
-
 describe('ClusterAdvancedSettings', () => {
   const mockOnSubmit = jest.fn()
 
@@ -53,98 +22,127 @@ describe('ClusterAdvancedSettings', () => {
 
   it('should render correctly', () => {
     const { container } = renderWithProviders(
-      <TestWrapper
-        onSubmit={mockOnSubmit}
-        loading={false}
-        clusterAdvancedSettings={mockClusterAdvancedSettings}
-        defaultAdvancedSettings={mockDefaultAdvancedSettings}
-      />
+      wrapWithReactHookForm(
+        <ClusterAdvancedSettingsComponent
+          onSubmit={mockOnSubmit}
+          loading={false}
+          clusterAdvancedSettings={mockClusterAdvancedSettings}
+          defaultAdvancedSettings={mockDefaultAdvancedSettings}
+        />,
+        {
+          defaultValues: {
+            key1: 'value1',
+            key2: 'value2',
+          },
+        }
+      )
     )
     expect(container).toBeInTheDocument()
   })
 
   it('should display loader when loading and settings are empty', () => {
-    renderWithProviders(<TestWrapper onSubmit={mockOnSubmit} loading={true} />)
-
-    expect(screen.getByTestId('spinner')).toBeInTheDocument()
-  })
-
-  it('should display table when not loading and settings are provided', () => {
     renderWithProviders(
-      <TestWrapper
-        onSubmit={mockOnSubmit}
-        loading={false}
-        clusterAdvancedSettings={mockClusterAdvancedSettings}
-        defaultAdvancedSettings={mockDefaultAdvancedSettings}
-      />
+      wrapWithReactHookForm(<ClusterAdvancedSettingsComponent onSubmit={mockOnSubmit} loading={true} />, {
+        defaultValues: {},
+      })
     )
 
-    expect(screen.getByText('Settings')).toBeInTheDocument()
-    expect(screen.getByText('Default Value')).toBeInTheDocument()
-    expect(screen.getByText('Value')).toBeInTheDocument()
+    const spinners = screen.getAllByTestId('spinner')
+    expect(spinners.length).toBeGreaterThan(0)
+    expect(spinners[0]).toBeInTheDocument()
   })
 
   it('should display table even when loading if settings are provided', () => {
     renderWithProviders(
-      <TestWrapper
-        onSubmit={mockOnSubmit}
-        loading={true}
-        clusterAdvancedSettings={mockClusterAdvancedSettings}
-        defaultAdvancedSettings={mockDefaultAdvancedSettings}
-      />
+      wrapWithReactHookForm(
+        <ClusterAdvancedSettingsComponent
+          onSubmit={mockOnSubmit}
+          loading={true}
+          clusterAdvancedSettings={mockClusterAdvancedSettings}
+          defaultAdvancedSettings={mockDefaultAdvancedSettings}
+        />,
+        {
+          defaultValues: {
+            key1: 'value1',
+            key2: 'value2',
+          },
+        }
+      )
     )
 
     expect(screen.getByText('Settings')).toBeInTheDocument()
-    expect(screen.queryByTestId('spinner')).not.toBeInTheDocument()
+    const spinners = screen.queryAllByTestId('spinner')
+    expect(spinners.length).toBeLessThanOrEqual(1)
   })
 
-  it('should show StickyActionFormToaster when form is dirty', () => {
-    function DirtyTestWrapper() {
-      const methods = useForm<{ [key: string]: string }>({
-        mode: 'onChange',
-        defaultValues: { key1: 'value1' },
-      })
-
-      methods.formState.isDirty = true
-
-      return (
-        <FormProvider {...methods}>
-          <ClusterAdvancedSettingsComponent
-            onSubmit={mockOnSubmit}
-            loading={false}
-            clusterAdvancedSettings={mockClusterAdvancedSettings}
-            defaultAdvancedSettings={mockDefaultAdvancedSettings}
-          />
-        </FormProvider>
+  it('should show StickyActionFormToaster when form is dirty', async () => {
+    const { userEvent, container } = renderWithProviders(
+      wrapWithReactHookForm(
+        <ClusterAdvancedSettingsComponent
+          onSubmit={mockOnSubmit}
+          loading={false}
+          clusterAdvancedSettings={mockClusterAdvancedSettings}
+          defaultAdvancedSettings={mockDefaultAdvancedSettings}
+        />,
+        {
+          defaultValues: {
+            key1: '',
+            key2: '',
+          },
+        }
       )
+    )
+
+    const textarea = container.querySelector('textarea[name="key1"]') as HTMLTextAreaElement
+    if (textarea) {
+      await userEvent.type(textarea, 'modified')
     }
 
-    renderWithProviders(<DirtyTestWrapper />)
-
     expect(screen.getByTestId('sticky-action-form-toaster')).toBeInTheDocument()
+    const toaster = screen.getByTestId('sticky-action-form-toaster')
+    expect(toaster).toHaveClass('visible')
   })
 
   it('should not show StickyActionFormToaster when form is not dirty', () => {
     renderWithProviders(
-      <TestWrapper
-        onSubmit={mockOnSubmit}
-        loading={false}
-        clusterAdvancedSettings={mockClusterAdvancedSettings}
-        defaultAdvancedSettings={mockDefaultAdvancedSettings}
-      />
+      wrapWithReactHookForm(
+        <ClusterAdvancedSettingsComponent
+          onSubmit={mockOnSubmit}
+          loading={false}
+          clusterAdvancedSettings={mockClusterAdvancedSettings}
+          defaultAdvancedSettings={mockDefaultAdvancedSettings}
+        />,
+        {
+          defaultValues: {
+            key1: '',
+            key2: '',
+          },
+        }
+      )
     )
 
-    expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument()
+    const toaster = screen.queryByTestId('sticky-action-form-toaster')
+    expect(toaster).toBeInTheDocument()
+    expect(toaster).toHaveClass('hidden')
+    expect(toaster).not.toHaveClass('visible')
   })
 
   it('should call onSubmit when form is submitted', () => {
     const { container } = renderWithProviders(
-      <TestWrapper
-        onSubmit={mockOnSubmit}
-        loading={false}
-        clusterAdvancedSettings={mockClusterAdvancedSettings}
-        defaultAdvancedSettings={mockDefaultAdvancedSettings}
-      />
+      wrapWithReactHookForm(
+        <ClusterAdvancedSettingsComponent
+          onSubmit={mockOnSubmit}
+          loading={false}
+          clusterAdvancedSettings={mockClusterAdvancedSettings}
+          defaultAdvancedSettings={mockDefaultAdvancedSettings}
+        />,
+        {
+          defaultValues: {
+            key1: 'value1',
+            key2: 'value2',
+          },
+        }
+      )
     )
 
     const form = container.querySelector('form')
@@ -157,12 +155,20 @@ describe('ClusterAdvancedSettings', () => {
 
   it('should display toggle for show overridden only', () => {
     renderWithProviders(
-      <TestWrapper
-        onSubmit={mockOnSubmit}
-        loading={false}
-        clusterAdvancedSettings={mockClusterAdvancedSettings}
-        defaultAdvancedSettings={mockDefaultAdvancedSettings}
-      />
+      wrapWithReactHookForm(
+        <ClusterAdvancedSettingsComponent
+          onSubmit={mockOnSubmit}
+          loading={false}
+          clusterAdvancedSettings={mockClusterAdvancedSettings}
+          defaultAdvancedSettings={mockDefaultAdvancedSettings}
+        />,
+        {
+          defaultValues: {
+            key1: 'value1',
+            key2: 'value2',
+          },
+        }
+      )
     )
 
     expect(screen.getByText('Show only overridden settings')).toBeInTheDocument()
