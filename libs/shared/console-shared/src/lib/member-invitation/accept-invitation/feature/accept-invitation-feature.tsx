@@ -1,5 +1,5 @@
+import { useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useInviteMember } from '@qovery/shared/auth'
 import { LOGIN_URL } from '@qovery/shared/routes'
 import AcceptInvitation from '../ui/accept-invitation/accept-invitation'
@@ -18,7 +18,7 @@ export function AcceptInvitationFeature() {
 
   useEffect(() => {
     if (displayInvitation === false) {
-      navigate(LOGIN_URL)
+      navigate({ to: LOGIN_URL })
     }
   }, [displayInvitation, navigate])
 

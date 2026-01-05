@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { type InviteMember } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
 import { useAcceptInviteMember, useMemberInvitation, useOrganizations } from '@qovery/domains/organizations/feature'
 import { ACCEPT_INVITATION_URL, LOGIN_URL, LOGOUT_URL } from '@qovery/shared/routes'
 import useAuth from '../use-auth/use-auth'
@@ -58,7 +58,7 @@ export function useInviteMember() {
 
   const redirectToAcceptPageGuard = useCallback(() => {
     if (displayInvitation && pathname.indexOf(ACCEPT_INVITATION_URL) === -1 && pathname.indexOf(LOGIN_URL) === -1) {
-      navigate(ACCEPT_INVITATION_URL)
+      navigate({ to: ACCEPT_INVITATION_URL })
     }
   }, [pathname, displayInvitation, navigate])
 
@@ -86,7 +86,7 @@ export function useInviteMember() {
           window.location.assign(`/`)
         })
 
-        navigate(LOGOUT_URL)
+        navigate({ to: LOGOUT_URL })
       }
     }
   }

@@ -15,6 +15,7 @@ import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as LoginAuth0CallbackRouteImport } from './routes/login/auth0-callback'
 import { Route as AuthenticatedOrganizationRouteRouteImport } from './routes/_authenticated/organization/route'
 import { Route as AuthenticatedOrganizationIndexRouteImport } from './routes/_authenticated/organization/index'
+import { Route as AuthenticatedAcceptInvitationIndexRouteImport } from './routes/_authenticated/accept-invitation/index'
 import { Route as AuthenticatedOnboardingProjectRouteImport } from './routes/_authenticated/onboarding/project'
 import { Route as AuthenticatedOnboardingPlansRouteImport } from './routes/_authenticated/onboarding/plans'
 import { Route as AuthenticatedOnboardingPersonalizeRouteImport } from './routes/_authenticated/onboarding/personalize'
@@ -67,6 +68,12 @@ const AuthenticatedOrganizationIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedOrganizationRouteRoute,
+  } as any)
+const AuthenticatedAcceptInvitationIndexRoute =
+  AuthenticatedAcceptInvitationIndexRouteImport.update({
+    id: '/accept-invitation/',
+    path: '/accept-invitation/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedOnboardingProjectRoute =
   AuthenticatedOnboardingProjectRouteImport.update({
@@ -232,6 +239,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
   '/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
+  '/accept-invitation': typeof AuthenticatedAcceptInvitationIndexRoute
   '/organization/': typeof AuthenticatedOrganizationIndexRoute
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
   '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
@@ -259,6 +267,7 @@ export interface FileRoutesByTo {
   '/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
   '/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
+  '/accept-invitation': typeof AuthenticatedAcceptInvitationIndexRoute
   '/organization': typeof AuthenticatedOrganizationIndexRoute
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
   '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
@@ -288,6 +297,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/_authenticated/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
   '/_authenticated/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
+  '/_authenticated/accept-invitation/': typeof AuthenticatedAcceptInvitationIndexRoute
   '/_authenticated/organization/': typeof AuthenticatedOrganizationIndexRoute
   '/_authenticated/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
   '/_authenticated/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
@@ -318,6 +328,7 @@ export interface FileRouteTypes {
     | '/onboarding/personalize'
     | '/onboarding/plans'
     | '/onboarding/project'
+    | '/accept-invitation'
     | '/organization/'
     | '/organization/$organizationId/alerts'
     | '/organization/$organizationId/audit-logs'
@@ -345,6 +356,7 @@ export interface FileRouteTypes {
     | '/onboarding/personalize'
     | '/onboarding/plans'
     | '/onboarding/project'
+    | '/accept-invitation'
     | '/organization'
     | '/organization/$organizationId/alerts'
     | '/organization/$organizationId/audit-logs'
@@ -373,6 +385,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding/personalize'
     | '/_authenticated/onboarding/plans'
     | '/_authenticated/onboarding/project'
+    | '/_authenticated/accept-invitation/'
     | '/_authenticated/organization/'
     | '/_authenticated/organization/$organizationId/alerts'
     | '/_authenticated/organization/$organizationId/audit-logs'
@@ -444,6 +457,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/organization/'
       preLoaderRoute: typeof AuthenticatedOrganizationIndexRouteImport
       parentRoute: typeof AuthenticatedOrganizationRouteRoute
+    }
+    '/_authenticated/accept-invitation/': {
+      id: '/_authenticated/accept-invitation/'
+      path: '/accept-invitation'
+      fullPath: '/accept-invitation'
+      preLoaderRoute: typeof AuthenticatedAcceptInvitationIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/onboarding/project': {
       id: '/_authenticated/onboarding/project'
@@ -680,6 +700,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedOnboardingPersonalizeRoute: typeof AuthenticatedOnboardingPersonalizeRoute
   AuthenticatedOnboardingPlansRoute: typeof AuthenticatedOnboardingPlansRoute
   AuthenticatedOnboardingProjectRoute: typeof AuthenticatedOnboardingProjectRoute
+  AuthenticatedAcceptInvitationIndexRoute: typeof AuthenticatedAcceptInvitationIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -689,6 +710,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedOnboardingPersonalizeRoute,
   AuthenticatedOnboardingPlansRoute: AuthenticatedOnboardingPlansRoute,
   AuthenticatedOnboardingProjectRoute: AuthenticatedOnboardingProjectRoute,
+  AuthenticatedAcceptInvitationIndexRoute:
+    AuthenticatedAcceptInvitationIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
