@@ -121,7 +121,9 @@ export function AlertRulesOverview({
         const searchTerm = filter.toLowerCase()
         const statusConfig = getStatusConfig(alertRule.state, alertRule.source)
         return (
-          alertRule.name.toLowerCase().includes(searchTerm) || statusConfig.label.toLowerCase().includes(searchTerm)
+          alertRule.name.toLowerCase().includes(searchTerm) ||
+          statusConfig.label.toLowerCase().includes(searchTerm) ||
+          alertRule.target?.service?.name.toLowerCase().includes(searchTerm)
         )
       })
     : allAlertRules

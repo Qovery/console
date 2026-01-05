@@ -16,7 +16,7 @@ export function OrganizationAlerting() {
       </div>
       <div className="flex flex-col gap-3">
         <InputSearch
-          placeholder="Search alert by name, status…"
+          placeholder="Search alert by name, status, target…"
           className="w-72"
           onChange={(value) => setFilter(value)}
         />
