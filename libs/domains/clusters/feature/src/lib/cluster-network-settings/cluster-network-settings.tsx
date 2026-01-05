@@ -53,9 +53,9 @@ function Subnets({ title, value }: { title: string; value?: string[] | null }) {
 
 function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) {
   return (
-    <div className="mb-5 flex flex-col justify-between rounded border border-neutral-250 bg-neutral-100 p-4">
-      <h4 className="mb-1 text-sm font-medium text-neutral-400">Deploy on an existing VPC</h4>
-      <p className="mb-4 text-sm text-neutral-350">In your VPC settings, you have to enable DNS hostnames.</p>
+    <div className="mb-5 flex flex-col justify-between rounded border border-neutral bg-surface-neutral-component p-4">
+      <h4 className="mb-1 text-sm font-medium text-neutral">Deploy on an existing VPC</h4>
+      <p className="mb-4 text-sm text-neutral-subtle">In your VPC settings, you have to enable DNS hostnames.</p>
       <InputText name="vpc_id" label="VPC ID" value={feature.aws_vpc_eks_id} className="mb-4" disabled />
       <InputToggle
         title="Private nodes"
@@ -67,7 +67,7 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
         disabled
       />
       <ul className="grid gap-4">
-        <li className="text-neutral-400">
+        <li className="text-neutral">
           <span className="mb-1 flex items-center text-xs font-medium">
             <Icon name={IconEnum.EKS} width="16" className="mr-2" />
             EKS public subnet IDs
@@ -79,7 +79,7 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
           </ul>
         </li>
 
-        <li className="text-neutral-400">
+        <li className="text-neutral">
           <span className="mb-1 flex items-center text-xs font-medium">
             <Icon name={IconEnum.EKS} width="16" className="mr-2" />
             EKS private subnet IDs
@@ -91,7 +91,7 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
           </ul>
         </li>
 
-        <li className="text-neutral-400">
+        <li className="text-neutral">
           <span className="mb-1 flex items-center text-xs font-medium">
             <Icon name={IconEnum.MONGODB} width="16" className="mr-2" />
             MongoDB subnet IDs
@@ -103,7 +103,7 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
           </ul>
         </li>
 
-        <li className="text-neutral-400">
+        <li className="text-neutral">
           <span className="mb-1 flex items-center text-xs font-medium">
             <Icon name={IconEnum.REDIS} width="16" className="mr-2" />
             Redis subnet IDs
@@ -115,7 +115,7 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
           </ul>
         </li>
 
-        <li className="text-neutral-400">
+        <li className="text-neutral">
           <span className="mb-1 flex items-center text-xs font-medium">MySQL/PostgreSQL subnet IDs</span>
           <ul className="grid grid-cols-3 gap-4">
             <Subnets title="Zone A:" value={feature.rds_subnets_zone_a_ids} />
@@ -130,9 +130,9 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
 
 function GcpExistingVPC({ feature }: { feature: ClusterFeatureGcpExistingVpc }) {
   return (
-    <div className="flex flex-col justify-between gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
+    <div className="flex flex-col justify-between gap-4 rounded border border-neutral bg-surface-neutral-component p-4">
       <div>
-        <h4 className="text-sm font-medium text-neutral-400">Deploy on an existing VPC</h4>
+        <h4 className="mb-1 text-sm font-medium text-neutral">Deploy on an existing VPC</h4>
         <ExternalLink
           size="xs"
           href="https://www.qovery.com/docs/configuration/integrations/kubernetes/gke/managed#use-existing-vpc"
