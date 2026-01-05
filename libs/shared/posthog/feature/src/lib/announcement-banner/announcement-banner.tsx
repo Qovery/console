@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { Banner, Icon } from '@qovery/shared/ui'
-import { type AnnouncementBannerPayload, useAnnouncementBanner } from './use-announcement-banner'
+import {
+  type AnnouncementBannerPayload,
+  useAnnouncementBanner,
+} from '../hooks/use-announcement-banner/use-announcement-banner'
 
 const VARIANT_TO_COLOR_MAP: Record<AnnouncementBannerPayload['variant'], 'brand' | 'yellow' | 'red'> = {
   info: 'brand',
@@ -48,7 +51,7 @@ export function AnnouncementBanner() {
           className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 hover:bg-black/10"
           aria-label="Dismiss"
         >
-          <Icon name="icon-solid-xmark" className="h-4 w-4" />
+          <Icon iconName="xmark" iconStyle="solid" className="h-4 w-4" />
         </button>
       )}
     </div>

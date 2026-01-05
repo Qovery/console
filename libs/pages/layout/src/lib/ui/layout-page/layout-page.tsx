@@ -9,6 +9,7 @@ import { FreeTrialBanner, InvoiceBanner, useOrganization } from '@qovery/domains
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton, DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
+import { AnnouncementBanner } from '@qovery/shared/posthog/feature'
 import {
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_URL,
@@ -16,7 +17,6 @@ import {
   INFRA_LOGS_URL,
 } from '@qovery/shared/routes'
 import { Banner, WarningScreenMobile } from '@qovery/shared/ui'
-import { AnnouncementBanner } from '../../feature/announcement-banner/announcement-banner'
 import SpotlightTrigger from '../../feature/spotlight-trigger/spotlight-trigger'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'

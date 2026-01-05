@@ -1,8 +1,8 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import * as useAnnouncementBannerModule from '../hooks/use-announcement-banner/use-announcement-banner'
 import { AnnouncementBanner } from './announcement-banner'
-import * as useAnnouncementBannerModule from './use-announcement-banner'
 
-jest.mock('./use-announcement-banner')
+jest.mock('../hooks/use-announcement-banner/use-announcement-banner')
 
 describe('AnnouncementBanner', () => {
   const mockUseAnnouncementBanner = useAnnouncementBannerModule.useAnnouncementBanner as jest.MockedFunction<
