@@ -56,6 +56,37 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
             if (onChange) onChange(e)
             setCurrentValue(e.currentTarget.value)
           }}
+          onKeyDown={(e) => {
+            // Handle Tab key for indentation
+            if (e.key === 'Tab') {
+              e.preventDefault()
+              const target = e.currentTarget
+              const start = target.selectionStart
+              const end = target.selectionEnd
+              const value = target.value
+
+              // Insert 2 spaces at cursor position
+              const newValue = value.substring(0, start) + '  ' + value.substring(end)
+
+              // Update the textarea value directly
+              target.value = newValue
+              setCurrentValue(newValue)
+
+              // Trigger onChange with the updated textarea
+              if (onChange) {
+                const event = {
+                  currentTarget: target,
+                  target: target,
+                } as unknown as FormEvent<HTMLTextAreaElement>
+                onChange(event)
+              }
+
+              // Move cursor after the inserted spaces
+              setTimeout(() => {
+                target.selectionStart = target.selectionEnd = start + 2
+              }, 0)
+            }
+          }}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           disabled={props.disabled}
