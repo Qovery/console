@@ -71,6 +71,7 @@ export function PageApplicationCreateFeature() {
     gpu: 0,
     min_running_instances: 1,
     max_running_instances: 2,
+    autoscaling_mode: 'NONE',
   })
 
   const variablesForm = useForm<FlowVariableData>({

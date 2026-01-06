@@ -44,4 +44,21 @@ export interface ApplicationResourcesData {
   gpu: number
   min_running_instances: number
   max_running_instances: number
+
+  // Autoscaling mode selection
+  autoscaling_mode?: 'NONE' | 'HPA' | 'KEDA'
+
+  // HPA fields
+  hpa_metric_type?: 'CPU' | 'MEMORY'
+  hpa_average_utilization_percent?: number
+
+  // KEDA fields
+  autoscaling_enabled?: boolean
+  scalers?: Array<{ type: string; config: string; triggerAuthentication?: string; trigger_authentication_id?: string }>
+  autoscaling_polling_interval?: number
+  autoscaling_cooldown_period?: number
+
+  // Legacy KEDA fields (backward compatibility)
+  autoscaling_scaler_type?: string
+  autoscaling?: string
 }
