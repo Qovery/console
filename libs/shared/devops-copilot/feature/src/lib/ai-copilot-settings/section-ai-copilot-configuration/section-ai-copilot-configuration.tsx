@@ -1,3 +1,4 @@
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Organization } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import {
@@ -59,11 +60,15 @@ export function SectionAICopilotConfiguration({
 }: SectionAICopilotConfigurationProps) {
   const { openModal, closeModal } = useModal()
   const [selectedMode, setSelectedMode] = useState<'read-only' | 'read-write' | null>(null)
+  const hasReadWriteAccess = useFeatureFlagVariantKey('copilot-read-write-access')
   const mode = selectedMode ?? currentMode
   const hasUnsavedChanges = selectedMode !== null && selectedMode !== currentMode
 
   const handleSaveMode = () => {
     if (selectedMode) {
+      if (selectedMode === 'read-write' && !hasReadWriteAccess) {
+        return
+      }
       onModeChange(selectedMode)
       setSelectedMode(null)
     }
@@ -129,7 +134,7 @@ export function SectionAICopilotConfiguration({
                 options={modeOptions}
                 portal
                 label="Right access"
-                disabled={isUpdating}
+                disabled={isUpdating || !hasReadWriteAccess}
               />
 
               {hasUnsavedChanges && (

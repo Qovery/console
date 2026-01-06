@@ -1,3 +1,4 @@
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { organizationFactoryMock } from '@qovery/shared/factories'
 import { render, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { SectionAICopilotConfiguration } from './section-ai-copilot-configuration'
@@ -9,6 +10,12 @@ jest.mock('@qovery/shared/ui', () => ({
     closeModal: jest.fn(),
   }),
 }))
+
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagVariantKey: jest.fn(),
+}))
+
+const mockUseFeatureFlagVariantKey = useFeatureFlagVariantKey as jest.Mock
 
 describe('SectionAICopilotConfiguration', () => {
   const mockOrganization = organizationFactoryMock(1)[0]
@@ -26,6 +33,7 @@ describe('SectionAICopilotConfiguration', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseFeatureFlagVariantKey.mockReturnValue('control')
   })
 
   it('should render section heading', () => {
@@ -64,6 +72,7 @@ describe('SectionAICopilotConfiguration', () => {
   })
 
   it('should show save buttons when mode is changed', async () => {
+    mockUseFeatureFlagVariantKey.mockReturnValue('test')
     const { userEvent } = renderWithProviders(
       <SectionAICopilotConfiguration {...defaultProps} currentMode="read-only" />
     )
@@ -81,6 +90,7 @@ describe('SectionAICopilotConfiguration', () => {
   })
 
   it('should call onModeChange when saving mode change', async () => {
+    mockUseFeatureFlagVariantKey.mockReturnValue('test')
     const { userEvent } = renderWithProviders(
       <SectionAICopilotConfiguration {...defaultProps} currentMode="read-only" />
     )
@@ -98,6 +108,7 @@ describe('SectionAICopilotConfiguration', () => {
   })
 
   it('should reset selection when canceling mode change', async () => {
+    mockUseFeatureFlagVariantKey.mockReturnValue('test')
     const { userEvent } = renderWithProviders(
       <SectionAICopilotConfiguration {...defaultProps} currentMode="read-only" />
     )
