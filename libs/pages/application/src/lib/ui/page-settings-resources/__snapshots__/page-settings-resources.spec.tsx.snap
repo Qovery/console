@@ -163,7 +163,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
           <h2
             class="text-neutral-400 text-base font-bold"
           >
-            Instances
+            Instances & Autoscaling
           </h2>
           <div
             class="grid grid-cols-2 gap-4"
@@ -233,56 +233,176 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               </div>
             </div>
           </div>
-          <p
-            class="text-xs text-neutral-350"
+          <div
+            class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 mt-3"
+            data-accent-color="sky"
           >
             <div
-              class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 mt-3"
-              data-accent-color="sky"
-              data-testid="banner-box"
+              class="-order-2 text-lg leading-6"
             >
-              <div
-                class="-order-2 text-lg leading-6"
-              >
-                <i
-                  aria-hidden="true"
-                  class="fa-regular fa-circle-exclamation "
-                />
-              </div>
-              <div
-                class="-order-1 mr-auto gap-x-3 text-neutral-400"
-              >
-                Auto-scaling adds instances when your application's average CPU usage exceeds 60% (default) for a continuous 5-minute period. Scaling stops once the Maximum Instances limit is reached.
-              </div>
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-circle-info "
+              />
             </div>
             <div
-              class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700 mt-3"
-              data-accent-color="yellow"
-              data-testid="banner-box"
+              class="-order-1 mr-auto gap-x-3 text-neutral-400"
+            >
+              Auto-scaling will automatically scale your service based on
+               
+              CPU
+               utilization. Scaling occurs when the average exceeds
+               60%
+               
+              for a continuous period.
+            </div>
+          </div>
+          <div
+            class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700 mt-3"
+            data-accent-color="yellow"
+          >
+            <div
+              class="-order-2 text-lg leading-6"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-triangle-exclamation "
+              />
+            </div>
+            <div
+              class="-order-1 mr-auto gap-x-3 text-neutral-400"
+            >
+              <p>
+                Always assume one instance may fail due to node maintenance or issues.
+              </p>
+              <p>
+                To ensure high availability, set Minimum Instances to 2 if your app can run on 1 instance.
+              </p>
+              <p>
+                If your application requires more than one instance to handle necessary traffic, set the minimum to 3 or higher to guarantee redundancy during a single failure.
+              </p>
+            </div>
+          </div>
+          <div
+            class="mb-5"
+          >
+            <label
+              class="mb-3 block text-sm font-medium text-neutral-400"
+            >
+              Autoscaling metric
+            </label>
+            <div
+              aria-required="false"
+              class="flex flex-col gap-3"
+              dir="ltr"
+              role="radiogroup"
+              style="outline: none;"
+              tabindex="0"
+            >
+              <label
+                class="flex cursor-pointer items-start gap-3 rounded border border-neutral-250 bg-neutral-100 p-4"
+              >
+                <button
+                  aria-checked="false"
+                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
+                  data-radix-collection-item=""
+                  data-state="unchecked"
+                  role="radio"
+                  tabindex="-1"
+                  type="button"
+                  value="CPU"
+                />
+                <input
+                  aria-hidden="true"
+                  style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+                  tabindex="-1"
+                  type="radio"
+                  value="CPU"
+                />
+                <div
+                  class="flex flex-col gap-1"
+                >
+                  <span
+                    class="font-medium text-neutral-400"
+                  >
+                    CPU only
+                  </span>
+                  <span
+                    class="text-sm text-neutral-350"
+                  >
+                    Scale based on CPU usage
+                  </span>
+                </div>
+              </label>
+              <label
+                class="flex cursor-pointer items-start gap-3 rounded border border-neutral-250 bg-neutral-100 p-4"
+              >
+                <button
+                  aria-checked="false"
+                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
+                  data-radix-collection-item=""
+                  data-state="unchecked"
+                  role="radio"
+                  tabindex="-1"
+                  type="button"
+                  value="CPU_AND_MEMORY"
+                />
+                <input
+                  aria-hidden="true"
+                  style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+                  tabindex="-1"
+                  type="radio"
+                  value="CPU_AND_MEMORY"
+                />
+                <div
+                  class="flex flex-col gap-1"
+                >
+                  <span
+                    class="font-medium text-neutral-400"
+                  >
+                    CPU + Memory
+                  </span>
+                  <span
+                    class="text-sm text-neutral-350"
+                  >
+                    Scale based on CPU and memory usage
+                  </span>
+                </div>
+              </label>
+            </div>
+          </div>
+          <div
+            class=""
+            data-testid="input-text-wrapper"
+          >
+            <div
+              class="relative"
             >
               <div
-                class="-order-2 text-lg leading-6"
+                aria-label="input-container"
+                class="input     "
               >
-                <i
-                  aria-hidden="true"
-                  class="fa-regular fa-triangle-exclamation "
-                />
-              </div>
-              <div
-                class="-order-1 mr-auto gap-x-3 text-neutral-400"
-              >
-                <p>
-                  Always assume one instance may fail due to node maintenance or issues.
-                </p>
-                <p>
-                  To ensure high availability, set Minimum Instances to 2 if your app can run on 1 instance.
-                </p>
-                <p>
-                  If your application requires more than one instance to handle necessary traffic, set the minimum to 3 or higher to guarantee redundancy during a single failure.
-                </p>
+                <div
+                  class=""
+                >
+                  <label
+                    class="translate-y-2 text-sm"
+                    for="CPU average utilization (%)"
+                  >
+                    CPU average utilization (%)
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-text"
+                    id="CPU average utilization (%)"
+                    name="hpa_cpu_average_utilization_percent"
+                    type="number"
+                    value=""
+                  />
+                </div>
               </div>
             </div>
-          </p>
+          </div>
         </section>
         <div
           class="flex justify-end"

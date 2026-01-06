@@ -1,3 +1,4 @@
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
@@ -17,6 +18,7 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster) => {
 export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: Cluster; organizationId: string }) {
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
   const { isQoveryAdminUser } = useUserRole()
+  const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
 
   const methods = useForm({
     mode: 'onChange',
@@ -53,7 +55,9 @@ export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: C
             enabled: false,
           }
         }
+      }
 
+      if (isKedaFeatureEnabled) {
         cloneCluster.keda = {
           enabled: !!data.keda?.enabled,
         }
