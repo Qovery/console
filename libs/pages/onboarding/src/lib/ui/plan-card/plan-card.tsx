@@ -34,10 +34,10 @@ export function PlanCard(props: PlanCardProps) {
   }
 
   return (
-    <div className="flex h-full w-full flex-col rounded border border-neutral-250 bg-neutral-100 px-5 py-4">
-      <h2 className="h5 mb-1 text-neutral-400">{title}</h2>
-      <p className="mb-2 text-sm text-neutral-400">{text}</p>
-      <p className="mb-4 flex items-center text-xs text-neutral-400">{getPriceDisplay()}</p>
+    <div className="flex h-full w-full flex-col rounded border border-neutral bg-surface-neutral px-5 py-4">
+      <h2 className="h5 mb-1 text-neutral">{title}</h2>
+      <p className="mb-2 text-sm text-neutral-subtle">{text}</p>
+      <p className="mb-4 flex items-center text-xs text-neutral">{getPriceDisplay()}</p>
       <Button
         type="button"
         className="mb-4 w-full justify-center"
@@ -49,8 +49,8 @@ export function PlanCard(props: PlanCardProps) {
       </Button>
       <ul>
         {list.map((line: string, index: number) => (
-          <li key={index} className="mb-2 text-sm text-neutral-400 last:mb-10">
-            <Icon iconName="circle-check" className="fa-regular mr-1.5 text-green-500" />
+          <li key={index} className="mb-2 text-sm text-neutral-subtle">
+            <Icon iconName="circle-check" iconStyle="regular" className="mr-1.5 text-positive" />
             {line}
           </li>
         ))}

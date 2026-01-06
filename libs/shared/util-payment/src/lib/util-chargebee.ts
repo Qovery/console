@@ -2,6 +2,7 @@ import type { Component } from '@chargebee/chargebee-js-types/cb-types/hosted_fi
 import type { Events } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/enums'
 import type { CbToken, ComponentOptions } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/types'
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
+import Color from 'color'
 import { CHARGEBEE_PUBLISHABLE_KEY } from '@qovery/shared/util-node-env'
 
 interface ChargebeeTokenizeResult extends CbToken {
@@ -249,31 +250,38 @@ export async function createIndividualCardFields(
   return combinedComponent
 }
 
-export const fieldCardStyles = {
-  base: {
-    color: 'var(--color-brand-9)',
-    fontWeight: '400',
-    fontFamily: 'Roboto, Helvetica, sans-serif',
-    fontSize: '14px',
-    lineHeight: '1.25rem',
-    letterSpacing: '0.0025em',
-    fontSmoothing: 'antialiased',
-    '::placeholder': {
-      color: 'var(--color-neutral-disabled)',
+export const fieldCardStyles = () => {
+  const styles = getComputedStyle(document.documentElement)
+  const getColor = (color: string) => Color(styles.getPropertyValue(color)).rgb().string()
+
+  return {
+    base: {
+      color: getColor('--neutral-12'),
+      iconColor: getColor('--neutral-10'),
+      fontWeight: '400',
+      fontFamily: 'Roboto, Helvetica, sans-serif',
+      fontSize: '14px',
+      lineHeight: '1.25rem',
+      letterSpacing: '0.0025em',
+      fontSmoothing: 'antialiased',
+      '::placeholder': {
+        color: getColor('--neutral-10'),
+      },
+      ':focus': {
+        color: getColor('--neutral-12'),
+      },
+      ':hover': {
+        color: getColor('--neutral-12'),
+      },
     },
-    ':focus': {
-      color: 'var(--color-neutral)',
+    invalid: {
+      color: getColor('--negative-11'),
+      iconColor: getColor('--negative-11'),
+      ':focus': {
+        color: getColor('--negative-11'),
+      },
     },
-    ':hover': {
-      color: 'var(--color-neutral)',
-    },
-  },
-  invalid: {
-    color: 'var(--color-red-500)',
-    ':focus': {
-      color: 'var(--color-red-500)',
-    },
-  },
+  }
 }
 
 /**
@@ -295,7 +303,7 @@ export async function createCardComponent(containerId: string, currency = 'USD')
 
   const cardComponent = cbInstance.createComponent('card', {
     currency,
-    style: fieldCardStyles,
+    style: fieldCardStyles(),
     classes: {
       focus: 'chargebee-field-focus',
       invalid: 'chargebee-field-invalid',

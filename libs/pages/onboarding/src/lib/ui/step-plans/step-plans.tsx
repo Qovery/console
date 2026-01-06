@@ -4,7 +4,7 @@ import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-in
 import { useNavigate, useRouter } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type FormEvent, type MutableRefObject, useMemo } from 'react'
-import { ENVIRONMENTS_URL, ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { Button, ExternalLink, Heading, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { fieldCardStyles } from '@qovery/shared/util-payment'
@@ -76,7 +76,7 @@ export default function StepPlans(props: StepPlansProps) {
   const showCardFields = cbInstance !== null
 
   return (
-    <Section className="mx-auto flex max-w-[1024px] flex-row gap-16 ">
+    <Section className="mx-auto flex max-w-[1024px] flex-row gap-16">
       <div className="relative flex flex-1 flex-col">
         <div
           className={twMerge(
@@ -113,7 +113,7 @@ export default function StepPlans(props: StepPlansProps) {
                 <Provider cbInstance={cbInstance}>
                   <CardComponent
                     ref={cardRef}
-                    styles={fieldCardStyles}
+                    styles={fieldCardStyles()}
                     locale="en"
                     currency="USD"
                     onReady={onCardReady}
@@ -168,7 +168,7 @@ export default function StepPlans(props: StepPlansProps) {
                     color="neutral"
                     variant="surface"
                     className="gap-2"
-                    onClick={() => navigate({ to: `${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}` })}
+                    onClick={() => navigate({ to: '/onboarding/personalize' })}
                   >
                     <Icon iconName="arrow-left" iconStyle="solid" />
                     Back

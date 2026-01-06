@@ -7,16 +7,16 @@ export function BenefitsCard() {
   ]
 
   return (
-    <div className="w-80 rounded-md border border-neutral-250 bg-white">
+    <div className="w-80 rounded-md border border-surface-neutral-componentHover bg-surface-neutral-component">
       <div className="p-8">
         <span className="text-4xl" role="img" aria-label="light">
           💡
         </span>
-        <h2 className="h5 mb-5 mt-5 text-neutral-400">What is an organization, what is a project?</h2>
+        <h2 className="h5 mb-5 mt-5 text-neutral">What is an organization, what is a project?</h2>
         <ul className="ml-2 text-sm">
           {LIST.map((l, index) => (
             <li
-              className="mb-2 flex gap-3 text-neutral-400 before:mt-2 before:h-1 before:w-1 before:shrink-0 before:rounded-full before:bg-neutral-400 before:content-['']"
+              className="mb-2 flex gap-3 text-neutral-subtle before:mt-2 before:h-1 before:w-1 before:shrink-0 before:rounded-full before:bg-surface-neutral-solid before:content-['']"
               key={index}
             >
               {l}

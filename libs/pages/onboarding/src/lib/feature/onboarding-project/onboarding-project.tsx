@@ -13,13 +13,7 @@ import {
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import {
-  ENVIRONMENTS_GENERAL_URL,
-  ENVIRONMENTS_URL,
-  ONBOARDING_PERSONALIZE_URL,
-  ONBOARDING_PLANS_URL,
-  ONBOARDING_URL,
-} from '@qovery/shared/routes'
+import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, ONBOARDING_PERSONALIZE_URL } from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type SerializedError } from '@qovery/shared/utils'
@@ -98,9 +92,9 @@ export function OnboardingProject() {
 
   const handleBack = () => {
     if (shouldSkipBilling) {
-      navigate({ to: `${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}` })
+      navigate({ to: '/onboarding/personalize' })
     } else {
-      navigate({ to: `${ONBOARDING_URL}/plans` })
+      navigate({ to: '/onboarding/plans' })
     }
   }
 

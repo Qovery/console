@@ -338,7 +338,7 @@ export function InputSelect({
         <input type="hidden" name={label} value={selectedValue} />
         {!isFilter && (
           <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
-            <Icon name="icon-solid-angle-down" className="text-sm text-neutral-subtle" />
+            <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />
           </div>
         )}
         {currentIcon?.onClickEditable && (

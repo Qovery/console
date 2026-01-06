@@ -80,7 +80,7 @@
   }
 
   .input-select__checkbox {
-    @apply flex h-4 w-4 shrink-0 items-center justify-center rounded-md border-2 border-neutral-350 bg-white;
+    @apply flex h-4 w-4 shrink-0 items-center justify-center rounded-md border-2 border-neutral bg-surface-neutral;
   }
 
   &:hover {
