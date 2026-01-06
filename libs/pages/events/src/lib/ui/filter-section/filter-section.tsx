@@ -1,6 +1,6 @@
-import type { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { DecodedValueMap } from 'use-query-params'
-import { Button, Icon, Link, type TableFilterProps } from '@qovery/shared/ui'
+import { Button, Icon, Link, SelectedItem, type TableFilterProps } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
@@ -8,6 +8,7 @@ import { queryParamsValues } from '../../feature/page-general-feature/page-gener
 export interface CustomFilterProps {
   clearFilter: () => void
   queryParams: DecodedValueMap<typeof queryParamsValues>
+  targetTypeSelectedItems: SelectedItem[]
   setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
 }
 
@@ -18,7 +19,10 @@ interface Badge {
 }
 
 // TODO (qov-1236) At the moment, no cache is used for pre-selected project / env / service names
-function buildBadges(queryParams: DecodedValueMap<typeof queryParamsValues>): Badge[] {
+function buildBadges(
+  queryParams: DecodedValueMap<typeof queryParamsValues>,
+  selectedItemsTargetType: SelectedItem[]
+): Badge[] {
   const badges: Badge[] = []
   if (queryParams.fromTimestamp && queryParams.toTimestamp) {
     const fromDate = new Date(parseInt(queryParams.fromTimestamp, 10) * 1000)
@@ -26,7 +30,6 @@ function buildBadges(queryParams: DecodedValueMap<typeof queryParamsValues>): Ba
     badges.push({
       key: 'timestamp',
       displayedName: 'Timestamp',
-      // TODO (qov-1236) Set special format to timestamp range
       value:
         'From "' +
         dateYearMonthDayHourMinuteSecond(fromDate, true, false) +
@@ -35,6 +38,7 @@ function buildBadges(queryParams: DecodedValueMap<typeof queryParamsValues>): Ba
         '"',
     })
   }
+  // TODO (qov-1236) Factorize all those blocks
   if (queryParams.eventType) {
     badges.push({
       key: 'event_type',
@@ -61,6 +65,37 @@ function buildBadges(queryParams: DecodedValueMap<typeof queryParamsValues>): Ba
       key: 'origin',
       displayedName: 'Source',
       value: upperCaseFirstLetter(queryParams.origin).split('_').join(' '),
+    })
+  }
+  if (queryParams.projectId) {
+    const projectName =
+      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'project_id')?.item?.name ?? 'Unknown'
+    badges.push({
+      key: 'project_id',
+      displayedName: 'Project',
+      value: projectName,
+    })
+  }
+  if (queryParams.environmentId) {
+    const environmentName =
+      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'environment_id')?.item?.name ??
+      'Unknown'
+    badges.push({
+      key: 'environment_id',
+      displayedName: 'Environment',
+      value: environmentName,
+    })
+  }
+
+  if (queryParams.targetId) {
+    const targetName =
+      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'target_id')?.item?.name ?? 'Unknown'
+    const targetType =
+      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'target_type')?.item?.name ?? 'Unknown'
+    badges.push({
+      key: 'target_id',
+      displayedName: targetType,
+      value: targetName,
     })
   }
 
@@ -94,8 +129,11 @@ function deleteFilter(key: string, setFilter?: Dispatch<SetStateAction<TableFilt
   }
 }
 
-export function FilterSection({ clearFilter, queryParams, setFilter }: CustomFilterProps) {
-  const badges = buildBadges(queryParams)
+export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItems, setFilter }: CustomFilterProps) {
+  const [badges, setBadges] = useState<Badge[]>(buildBadges(queryParams, targetTypeSelectedItems))
+  useEffect(() => {
+    setBadges(buildBadges(queryParams, targetTypeSelectedItems))
+  }, [queryParams, targetTypeSelectedItems])
 
   return (
     <>
