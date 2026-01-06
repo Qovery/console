@@ -6,21 +6,27 @@ import {
   OrganizationEventTargetType,
   OrganizationEventType,
 } from 'qovery-typescript-axios'
-import { type Dispatch, type SetStateAction, useState } from 'react'
+import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react'
 import { DecodedValueMap, useQueryParams } from 'use-query-params'
 import {
   Button,
+  HierarchicalFilterResult,
+  HierarchicalMenuItem,
   Icon,
+  NavigationLevel,
   Pagination,
   Section,
+  SelectedItem,
   Skeleton,
   Table,
   type TableFilterProps,
   type TableHeadProps,
 } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { SelectedTimestamps } from '../../../../../../shared/ui/src/lib/components/table/table-head-datepicker/table-head-datepicker'
 import { queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
+import { computeDisplayByLabel, computeMenusToDisplay } from '../../utils/target-type-selection-utils'
 import FilterSection from '../filter-section/filter-section'
 
 export interface PageGeneralProps {
@@ -39,6 +45,7 @@ export interface PageGeneralProps {
   setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
   filter?: TableFilterProps[]
   organization?: Organization
+  queryParams: DecodedValueMap<typeof queryParamsValues>
 }
 
 // Calculate default timestamps for display (not stored in URL)
@@ -80,15 +87,24 @@ function getDefaultTimestamps(
     toTimestamp: undefined,
   }
 }
-// ---------------------------------------------
+
+const HACK_ORG_ID_CACHE = new Map<string, string>()
 
 function createTableDataHead(
   timestamps: SelectedTimestamps,
+  queryParams: React.RefObject<DecodedValueMap<typeof queryParamsValues>>,
+  setTargetTypeSelectedItems: Dispatch<SetStateAction<SelectedItem[]>>,
   organization?: Organization
 ): TableHeadProps<OrganizationEventResponse>[] {
   // Calculate retention days and determine if we need to enforce 30-day limit
-  const retentionDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 30
+  const retentionDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 15
   const maxRangeInDays = retentionDays > 30 ? 30 : undefined
+
+  // TODO (qov-1236) Weird behavior: if I don't store the org_id outside of this 'createTableDataHead' method scope, it results in a 'undefined' value when I need it.
+  //                 Note: the org_id is used only in the hierarchical "item click" method, seems to be a react lifecycle wrong
+  if (organization?.id) {
+    HACK_ORG_ID_CACHE.set('orgid', organization.id)
+  }
 
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
@@ -118,16 +134,24 @@ function createTableDataHead(
     },
     {
       title: 'Target type',
-      filter: [
-        {
-          title: 'Filter by target type',
-          key: 'target_type',
-          itemsCustom: Object.keys(OrganizationEventTargetType).map((item) => item),
-          hideFilterNumber: true,
-          search: true,
-          sortAlphabetically: true,
+      hierarchicalFilter: {
+        key: 'target_type',
+        initialData: Object.keys(OrganizationEventTargetType).map((item) => {
+          return {
+            value: item,
+            name: upperCaseFirstLetter(item),
+          }
+        }),
+        onLoadMenusToDisplay: (selectedItems: SelectedItem[], navigationStack: NavigationLevel[]) => {
+          const hackOrganizationId = HACK_ORG_ID_CACHE.get('orgid') ?? 'undefined'
+          const queryParamsValue = queryParams.current ?? undefined
+          return computeMenusToDisplay(hackOrganizationId, selectedItems, navigationStack, queryParamsValue)
         },
-      ],
+        onSelectionChange: (selectedItems: SelectedItem[]) => {
+          setTargetTypeSelectedItems(selectedItems)
+        },
+        computeDisplayByLabel: computeDisplayByLabel,
+      },
     },
     {
       title: 'User',
@@ -177,19 +201,32 @@ export function PageGeneral({
   organization,
   showIntercom,
   organizationMaxLimitReached,
+  queryParams,
 }: PageGeneralProps) {
   const auditLogsRetentionInDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 30
   const [expandedEventTimestamp, setExpandedEventTimestamp] = useState<string | null>(null)
 
-  const [queryParams, setQueryParams] = useQueryParams(queryParamsValues)
+  // Use ref of queryParams to always have the latest filters active when filtering the target type menus
+  const queryParamsRef = useRef(queryParams)
+  useEffect(() => {
+    queryParamsRef.current = queryParams
+  }, [queryParams])
+
+  const [targetTypeSelectedItems, setTargetTypeSelectedItems] = useState<SelectedItem[]>([])
+
   const timestamps = getDefaultTimestamps(queryParams, organization)
-  const dataHead = createTableDataHead(timestamps, organization)
+  const dataHead = createTableDataHead(timestamps, queryParamsRef, setTargetTypeSelectedItems, organization)
 
   return (
     <Section className="grow p-8">
       <h3>Audit logs</h3>
       <div className="mb-4 flex h-9 items-center">
-        <FilterSection clearFilter={handleClearFilter} queryParams={queryParams} setFilter={setFilter} />
+        <FilterSection
+          clearFilter={handleClearFilter}
+          queryParams={queryParams}
+          setFilter={setFilter}
+          targetTypeSelectedItems={targetTypeSelectedItems}
+        />
       </div>
 
       <Table

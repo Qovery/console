@@ -2,6 +2,11 @@ import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useState
 import { twMerge } from '@qovery/shared/util-js'
 import { TableHeadDatePickerData, TableHeadDatePickerFilter } from './table-head-datepicker/table-head-datepicker'
 import { TableHeadFilter } from './table-head-filter/table-head-filter'
+import TableHeadHierarchicalFilter, {
+  HierarchicalMenuItem,
+  NavigationLevel,
+  SelectedItem,
+} from './table-head-hierarchical-filter/table-head-hierarchical-filter'
 import TableHeadSort from './table-head-sort/table-head-sort'
 
 export interface TableFilterProps {
@@ -33,6 +38,25 @@ export interface TableHeadProps<T> {
   }
   // This option lets display a datepicker and not show menus
   datePickerData?: TableHeadDatePickerData
+  // This option displays a hierarchic filter
+  hierarchicalFilter?: TableHierarchicalFilterProps
+}
+
+export interface HierarchicalFilterResult {
+  items: HierarchicalMenuItem[]
+  shouldDrillDown: boolean
+  filterKey: string
+}
+
+export interface TableHierarchicalFilterProps {
+  key: string
+  initialData: HierarchicalMenuItem[]
+  onLoadMenusToDisplay: (
+    selectedItems: SelectedItem[],
+    navigationStack: NavigationLevel[]
+  ) => Promise<HierarchicalFilterResult | null>
+  computeDisplayByLabel: (filterKey: string, selectedItem?: SelectedItem) => string
+  onSelectionChange: (selectedItems: SelectedItem[]) => void
 }
 
 export interface TableHeadCustomFilterProps<T> {
@@ -88,11 +112,12 @@ export function Table<T>({
               filter: hasFilter,
               sort,
               datePickerData,
+              hierarchicalFilter,
             },
             index
           ) => (
             <div key={index} className={className}>
-              {!datePickerData && !sort && !hasFilter && (
+              {!datePickerData && !hierarchicalFilter && !sort && !hasFilter && (
                 <span data-testid="table-head-title" className={`text-xs font-medium ${classNameTitle}`}>
                   {title}
                 </span>
@@ -102,6 +127,19 @@ export function Table<T>({
                   title={title}
                   classNameTitle={classNameTitle}
                   datePickerData={datePickerData}
+                  filter={filter}
+                  setFilter={setFilter}
+                />
+              )}
+              {hierarchicalFilter && setFilter && filter && (
+                <TableHeadHierarchicalFilter
+                  title={title}
+                  classNameTitle={classNameTitle}
+                  initialData={hierarchicalFilter.initialData}
+                  filterKey={hierarchicalFilter.key}
+                  onLoadMenusToDisplay={hierarchicalFilter.onLoadMenusToDisplay}
+                  onSelectionChange={hierarchicalFilter.onSelectionChange}
+                  computeDisplayByLabel={hierarchicalFilter.computeDisplayByLabel}
                   filter={filter}
                   setFilter={setFilter}
                 />
