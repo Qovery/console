@@ -190,7 +190,11 @@ const SidebarItem = forwardRef<ElementRef<'a'>, SidebarItemProps>(function Sideb
       aria-current={isActive ? 'page' : undefined}
       {...props}
     >
-      {icon && <Icon iconName={icon} className="inline-block text-sm" iconStyle={iconStyle} />}
+      {icon && (
+        <span className="inline-block w-4 text-sm">
+          <Icon iconName={icon} iconStyle={iconStyle} />
+        </span>
+      )}
       {children}
       {badge && <SidebarBadge>{badge}</SidebarBadge>}
     </Link>
@@ -260,7 +264,11 @@ const SidebarGroup = forwardRef<ElementRef<'div'>, SidebarGroupProps>(function S
         onClick={() => setOpen(!open)}
         className={twMerge(sidebarItemVariants())}
       >
-        {icon && <Icon iconName={icon} className="inline-block text-sm" iconStyle={iconStyle} />}
+        {icon && (
+          <span className="inline-block w-4 text-sm">
+            <Icon iconName={icon} iconStyle={iconStyle} />
+          </span>
+        )}
         {title}
         <Icon
           iconName="chevron-down"

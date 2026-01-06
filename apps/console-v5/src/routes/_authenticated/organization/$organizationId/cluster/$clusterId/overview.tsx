@@ -131,7 +131,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
           }
         />
       )}
-      <Section className="m-6 gap-6 pb-6">
+      <Section className="my-6 gap-6 pb-6">
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
