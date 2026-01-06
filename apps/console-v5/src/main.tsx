@@ -10,11 +10,12 @@ import {
 } from '@tanstack/react-query'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import axios from 'axios'
+import posthog from 'posthog-js'
 import { StrictMode } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
 import { LoaderSpinner, ModalProvider, ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { QOVERY_API } from '@qovery/shared/util-node-env'
+import { POSTHOG, POSTHOG_APIHOST, QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
 // TODO: Improve this import to use the shared/ui package
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -56,6 +57,11 @@ declare module '@tanstack/react-query' {
   interface MutationMeta extends _MutationMeta {}
   interface QueryMeta extends _QueryMeta {}
 }
+
+// posthog init
+posthog.init(POSTHOG, {
+  api_host: POSTHOG_APIHOST,
+})
 
 const queryClient = new QueryClient({
   defaultOptions: {
