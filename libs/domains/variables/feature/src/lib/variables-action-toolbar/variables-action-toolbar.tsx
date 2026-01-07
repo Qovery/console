@@ -40,6 +40,9 @@ export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...p
           {...props}
         />
       ),
+      options: {
+        fakeModal: true,
+      },
     })
 
   return (
