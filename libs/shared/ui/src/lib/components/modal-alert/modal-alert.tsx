@@ -12,11 +12,11 @@ export function ModalAlert(props: ModalAlertProps) {
   return (
     <Dialog.Root open={props.isOpen} onOpenChange={() => setModalAlertOpen(!props.isOpen)}>
       <Dialog.Portal>
-        <Dialog.Overlay className="modal__overlay fixed left-0 top-0 z-40 flex h-screen w-full bg-neutral-700/40" />
+        <Dialog.Overlay className="modal__overlay fixed left-0 top-0 z-overlay flex h-screen w-full bg-neutral-700/40" />
         <Dialog.Content
           data-testid="modal-alert"
           style={{ width: `470px`, top: '200px' }}
-          className="modal__content fixed left-1/2 top-[84px] z-40 rounded-md bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)]"
+          className="modal__content fixed left-1/2 top-[84px] z-modal rounded-md bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)]"
         >
           <div className="max-h-[80vh] overflow-auto p-6">
             <h2 className="h4 mb-2 text-neutral-400">Discard changes?</h2>

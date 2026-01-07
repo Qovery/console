@@ -55,18 +55,14 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
                 menuListButton={{
                   title: 'Select credential',
                   label: 'New credential',
-                  icon: <Icon iconName="circle-plus" className="text-brand-500" />,
+                  icon: <Icon iconName="circle-plus" className="text-brand" />,
                   onClick: () => openCredentialsModal(undefined, field.onChange),
                 }}
               />
             )}
           />
 
-          <Link
-            color="current"
-            to={`${SETTINGS_URL(organizationId)}${SETTINGS_CREDENTIALS_URL}`}
-            className="flex gap-1 text-brand-500"
-          >
+          <Link color="brand" to={`${SETTINGS_URL(organizationId)}${SETTINGS_CREDENTIALS_URL}`} className="flex gap-1">
             See and edit all Cloud credentials
             <Icon iconName="key" iconStyle="regular" />
           </Link>

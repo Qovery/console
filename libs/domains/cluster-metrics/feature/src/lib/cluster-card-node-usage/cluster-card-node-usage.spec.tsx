@@ -1,3 +1,4 @@
+import { useRouter } from '@tanstack/react-router'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
@@ -18,6 +19,11 @@ describe('ClusterCardNodeUsage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(useRouter as jest.Mock).mockReturnValue({
+      buildLocation: jest.fn(() => ({
+        href: '/organization/org-123/cluster/cluster-456/settings/resources',
+      })),
+    })
   })
 
   const setupMocks = (clusterProvider = 'AWS', instanceType = 'KARPENTER', runningStatus = null, metrics = null) => {

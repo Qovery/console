@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { render } from '@qovery/shared/util-tests'
 import BlockContent from './block-content'
 
 describe('BlockContent', () => {

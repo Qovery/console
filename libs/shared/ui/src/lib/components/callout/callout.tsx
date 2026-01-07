@@ -5,11 +5,11 @@ import { twMerge } from '@qovery/shared/util-js'
 const calloutRootVariants = cva(['flex', 'flex-row', 'gap-x-3', 'p-3', 'border', 'rounded', 'text-sm'], {
   variants: {
     color: {
-      green: ['border-green-600', 'bg-green-50', 'text-green-500'],
-      red: ['border-red-500', 'bg-red-50', 'text-red-500'],
-      sky: ['border-sky-500', 'bg-sky-50', 'text-sky-500'],
-      yellow: ['border-yellow-600', 'bg-yellow-50', 'text-yellow-700'],
-      neutral: ['bg-neutral-100', 'border-neutral-250', 'text-neutral-350'],
+      green: ['border-positive-component', 'bg-surface-positive-subtle', 'text-positive'],
+      red: ['border-negative-component', 'bg-surface-negative-subtle', 'text-negative'],
+      sky: ['border-info-component', 'bg-surface-info-subtle', 'text-info'],
+      yellow: ['border-warning-component', 'bg-surface-warning-subtle', 'text-warning'],
+      neutral: ['bg-surface-neutral-subtle', 'border-surface-neutral-component', 'text-neutral'],
     },
   },
 })
@@ -49,7 +49,7 @@ const CalloutText = forwardRef<ElementRef<'div'>, CalloutTextProps>(function Cal
   ref
 ) {
   return (
-    <div {...props} className={twMerge('-order-1 mr-auto gap-x-3 text-neutral-400', className)} ref={ref}>
+    <div {...props} className={twMerge('-order-1 mr-auto gap-x-3 text-neutral', className)} ref={ref}>
       {children}
     </div>
   )
@@ -73,7 +73,7 @@ interface CalloutTextDescriptionProps extends ComponentPropsWithoutRef<'span'> {
 const CalloutTextDescription = forwardRef<ElementRef<'span'>, CalloutTextDescriptionProps>(
   function CalloutTextDescription({ children, className, ...props }, ref) {
     return (
-      <span {...props} className={twMerge('text-neutral-400', className)} ref={ref}>
+      <span {...props} className={twMerge('text-neutral-subtle', className)} ref={ref}>
         {children}
       </span>
     )

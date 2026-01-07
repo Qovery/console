@@ -26,11 +26,11 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay
-          className="modal__overlay fixed left-0 top-0 flex h-full w-full bg-neutral-700/20"
+          className="modal__overlay fixed left-0 top-0 z-overlay flex h-full w-full bg-neutral-700/20"
           onClick={() => handleOpenChange(false)}
         />
         <Dialog.Content
-          className="modal__content fixed left-1/2 top-6 h-[calc(100vh-48px)] w-[calc(100vw-48px)] rounded-md bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)]"
+          className="modal__content fixed left-1/2 top-6 z-modal h-[calc(100vh-48px)] w-[calc(100vw-48px)] rounded-md bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)]"
           aria-describedby={description ? 'modal-description' : undefined}
         >
           <Section>

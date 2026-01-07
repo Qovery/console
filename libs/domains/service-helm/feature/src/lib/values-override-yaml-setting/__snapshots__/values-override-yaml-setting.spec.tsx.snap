@@ -24,7 +24,7 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
         >
           <i
             aria-hidden="true"
-            class="fa-solid fa-wave-pulse text-neutral-350"
+            class="fa-regular fa-wave-pulse text-neutral-350"
           />
           <p
             class="mb-3 mt-1 text-xs font-medium text-neutral-350"
@@ -37,7 +37,7 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-plus mr-2"
+              class="fa-regular fa-plus mr-2"
             />
             Create override
           </button>

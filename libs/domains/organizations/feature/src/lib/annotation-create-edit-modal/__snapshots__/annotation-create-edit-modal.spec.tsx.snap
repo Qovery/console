@@ -129,7 +129,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-trash text-neutral-400"
+                    class="fa-regular fa-trash text-neutral-400"
                   />
                 </button>
               </div>
@@ -142,7 +142,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             Add annotation
             <i
               aria-hidden="true"
-              class="fa-solid fa-plus ml-2"
+              class="fa-regular fa-plus ml-2"
             />
           </button>
         </div>

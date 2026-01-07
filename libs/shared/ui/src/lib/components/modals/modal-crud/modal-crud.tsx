@@ -50,13 +50,13 @@ export function ModalCrud(props: ModalCrudProps) {
 
   return (
     <div className="p-5" ref={forwardRef}>
-      <h2 className="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50">{title}</h2>
-      {description && <p className="mt-2 text-sm text-neutral-350 dark:text-neutral-50">{description}</p>}
+      <h2 className="h4 max-w-sm truncate text-neutral">{title}</h2>
+      {description && <p className="mt-2 text-sm text-neutral-subtle">{description}</p>}
       {forServiceName && (
-        <div className="mt-4 flex items-center justify-between text-sm text-neutral-400 dark:text-neutral-50">
+        <div className="mt-4 flex items-center justify-between text-sm text-neutral-subtle">
           <p>
             For{' '}
-            <strong className="font-medium text-neutral-400 dark:text-neutral-50">
+            <strong className="font-medium">
               <Truncate truncateLimit={60} text={forServiceName} />
             </strong>
           </p>

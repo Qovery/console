@@ -103,7 +103,7 @@ export function SubnetsForm({ control, name, title, callout, required = false }:
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <h6 className="flex items-center gap-1.5 font-medium text-neutral-400">
+      <h6 className="flex items-center gap-1.5 font-medium text-neutral">
         {title}
         <Tooltip content="These subnets are used for AWS Fargate profile">
           <span className="text-sm0">
@@ -114,7 +114,7 @@ export function SubnetsForm({ control, name, title, callout, required = false }:
       {callout}
       {fields.length > 0 && (
         <ul className="flex flex-col gap-3">
-          <li className="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium text-neutral-350">
+          <li className="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium text-neutral-subtle">
             <span>IDs zone A</span>
             <span>IDs zone B</span>
             <span>IDs zone C</span>
@@ -173,7 +173,7 @@ export function ButtonPopoverSubnets({ children, disabled }: ButtonPopoverSubnet
       </Popover.Trigger>
       <Popover.Content
         side="bottom"
-        className="relative divide-y p-0 text-sm text-neutral-350 data-[state=open]:block data-[state=closed]:hidden"
+        className="relative divide-y p-0 text-sm text-neutral data-[state=open]:block data-[state=closed]:hidden"
         style={{ width: 648 }}
         forceMount
       >

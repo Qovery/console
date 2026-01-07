@@ -191,7 +191,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 }
                 classNameContent="max-w-96"
               >
-                <span className="text-sm text-neutral-400">
+                <span className="text-sm text-neutral-subtle">
                   <Icon iconName="info-circle" iconStyle="regular" />
                 </span>
               </Tooltip>
@@ -245,7 +245,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                           />
                         </ButtonPopoverSubnets>
                       ) : (
-                        <p className="mb-2 max-w-[70%] text-sm text-neutral-400">
+                        <p className="mb-2 max-w-[70%] text-sm text-neutral-subtle">
                           Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time.
                         </p>
                       )}
@@ -280,7 +280,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                         >
                           <div className="flex flex-col">
                             {!watchKarpenterEnabled && (
-                              <div className="border-t border-neutral-250 p-4">
+                              <div className="border-t border-neutral p-4">
                                 <Callout.Root color="yellow">
                                   <Callout.Icon>
                                     <Icon iconName="circle-info" iconStyle="regular" />
@@ -298,7 +298,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                 </Callout.Root>
                               </div>
                             )}
-                            <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
+                            <div className="flex border-t border-neutral p-4 text-sm font-medium text-neutral">
                               <div className="w-full">
                                 <p className="mb-2">
                                   Instance types scope{' '}
@@ -306,7 +306,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                     classNameContent="max-w-80"
                                     content="Karpenter will create nodes based on the specified list of instance types. By selecting specific instance types, you can control the performance, cost, and architecture of the nodes in your cluster."
                                   >
-                                    <span className="text-neutral-400">
+                                    <span className="text-neutral-subtle">
                                       <Icon iconName="info-circle" iconStyle="regular" />
                                     </span>
                                   </Tooltip>
@@ -349,7 +349,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                 Edit <Icon iconName="pen" iconStyle="solid" />
                               </Button>
                             </div>
-                            <div className="flex flex-col gap-4 border-t border-neutral-250 p-4">
+                            <div className="flex flex-col gap-4 border-t border-neutral p-4">
                               <Controller
                                 name="karpenter.spot_enabled"
                                 control={control}
@@ -386,7 +386,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                               )}
                             </div>
                             {props.fromDetail && (
-                              <div className="flex border-t border-neutral-250 p-4">
+                              <div className="flex border-t border-neutral p-4">
                                 <Controller
                                   name="karpenter.disk_size_in_gib"
                                   control={control}
@@ -443,7 +443,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   className="overflow-hidden"
                 >
                   <GpuResourcesSettings cluster={props.cluster} clusterRegion={props.clusterRegion} />
-                  <div className="flex flex-col gap-4 border-t border-neutral-250 p-4">
+                  <div className="flex flex-col gap-4 border-t border-neutral p-4">
                     <Controller
                       name="karpenter.qovery_node_pools.gpu_override.spot_enabled"
                       control={control}
@@ -481,7 +481,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     />
                   </div>
                   {props.fromDetail && (
-                    <div className="flex border-t border-neutral-250 p-4">
+                    <div className="flex border-t border-neutral p-4">
                       <Controller
                         name="karpenter.qovery_node_pools.gpu_override.disk_size_in_gib"
                         control={control}
@@ -537,7 +537,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   error={error?.message}
                   options={instanceTypeOptions}
                 />
-                <p className="ml-3 text-xs text-neutral-350">Instance type to be used to run your Kubernetes nodes.</p>
+                <p className="ml-3 text-xs text-neutral-subtle">
+                  Instance type to be used to run your Kubernetes nodes.
+                </p>
                 {warningInstance && (
                   <Callout.Root className="mb-3 mt-1" color="yellow" data-testid="warning-instance">
                     <Callout.Icon>
@@ -612,10 +614,10 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             render={({ field }) => (
               <div>
                 {watchNodes && (
-                  <p className="mb-3 font-medium text-neutral-400">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
+                  <p className="mb-3 font-medium text-neutral-subtle">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
                 )}
                 <Slider onChange={field.onChange} value={field.value} max={200} min={3} step={1} />
-                <p className="mt-3 text-xs text-neutral-350">
+                <p className="mt-3 text-xs text-neutral-subtle">
                   Cluster can scale up to "max" nodes depending on its usage
                 </p>
               </div>

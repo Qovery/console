@@ -29,6 +29,21 @@ const colorsIndigo = {
   900: '#130F66',
 }
 
+const colorsBrand = {
+  1: 'var(--brand-1)',
+  2: 'var(--brand-2)',
+  3: 'var(--brand-3)',
+  4: 'var(--brand-4)',
+  5: 'var(--brand-5)',
+  6: 'var(--brand-6)',
+  7: 'var(--brand-7)',
+  8: 'var(--brand-8)',
+  9: 'var(--brand-9)',
+  10: 'var(--brand-10)',
+  11: 'var(--brand-11)',
+  12: 'var(--brand-12)',
+}
+
 const slideEntrances = () => {
   const genSlide = (suffix, offset) => ({
     [`slidein-up-${suffix}`]: {
@@ -88,9 +103,17 @@ const easingFunctions = {
 
 // tailwind-workspace-preset.js
 module.exports = {
-  darkMode: ['class'],
+  darkMode: ['selector', '[data-theme="dark"]'],
   theme: {
     extend: {
+      zIndex: {
+        header: 'var(--header-zindex)',
+        dropdown: 'var(--dropdown-zindex)',
+        overlay: 'var(--overlay-zindex)',
+        modal: 'var(--modal-zindex)',
+        tooltip: 'var(--tooltip-zindex)',
+        toast: 'var(--toast-zindex)',
+      },
       transitionProperty: {
         label: 'transform, font-size',
       },
@@ -166,7 +189,7 @@ module.exports = {
           'radial-gradient(farthest-side at 50% 0,rgba(0,0,0,.13),transparent),linear-gradient(180deg,hsla(0,0%,100%,0) 40%,hsla(0,0%,100%,0))',
       },
       colors: {
-        brand: colorsIndigo,
+        brand: { ...colorsBrand, ...colorsIndigo },
         indigo: colorsIndigo,
         purple: {
           50: '#FCF4FF',
@@ -254,6 +277,106 @@ module.exports = {
         },
         zink: colorsZinc,
         neutral: colorsZinc,
+        background: {
+          DEFAULT: 'var(--background-1)',
+          secondary: 'var(--background-2)',
+          overlay: 'var(--background-overlay)',
+        },
+        surface: {
+          neutral: {
+            DEFAULT: 'var(--neutral-1)',
+            subtle: 'var(--neutral-2)',
+            component: 'var(--neutral-3)',
+            componentHover: 'var(--neutral-4)',
+            componentActive: 'var(--neutral-5)',
+            solid: 'var(--neutral-9)',
+            invert: 'var(--neutral-12)',
+          },
+          brand: {
+            solid: 'var(--brand-9)',
+            component: 'var(--brand-3)',
+            subtle: 'var(--brand-2)',
+          },
+          negative: {
+            solid: 'var(--negative-9)',
+            component: 'var(--negative-3)',
+            subtle: 'var(--negative-2)',
+          },
+          positive: {
+            solid: 'var(--positive-9)',
+            component: 'var(--positive-3)',
+            subtle: 'var(--positive-2)',
+          },
+          warning: {
+            solid: 'var(--warning-9)',
+            component: 'var(--warning-3)',
+            subtle: 'var(--warning-2)',
+          },
+          info: {
+            solid: 'var(--info-9)',
+            component: 'var(--info-3)',
+            subtle: 'var(--info-2)',
+          },
+          accent1: {
+            solid: 'var(--accent-9)',
+            component: 'var(--accent-3)',
+          },
+        },
+      },
+      textColor: {
+        neutral: {
+          DEFAULT: 'var(--neutral-12)',
+          subtle: 'var(--neutral-11)',
+          disabled: 'var(--neutral-10)',
+          contrasted: 'var(--contrast)',
+        },
+        neutralInvert: {
+          DEFAULT: 'var(--neutral-1)',
+          contrasted: 'var(--contrast-inverted)',
+        },
+        brand: { DEFAULT: 'var(--brand-11)' },
+        info: { DEFAULT: 'var(--info-11)' },
+        positive: { DEFAULT: 'var(--positive-11)' },
+        negative: { DEFAULT: 'var(--negative-11)' },
+        warning: { DEFAULT: 'var(--warning-11)' },
+        accent1: { DEFAULT: 'var(--accent-11)' },
+      },
+      borderColor: {
+        neutral: {
+          DEFAULT: 'var(--neutral-6)',
+          component: 'var(--neutral-7)',
+          strong: 'var(--neutral-9)',
+          invert: 'var(--neutral-11)',
+        },
+        brand: {
+          strong: 'var(--brand-9)',
+          component: 'var(--brand-7)',
+          subtle: 'var(--brand-6)',
+        },
+        info: {
+          strong: 'var(--info-9)',
+          component: 'var(--info-7)',
+          subtle: 'var(--info-6)',
+        },
+        positive: {
+          strong: 'var(--positive-9)',
+          component: 'var(--positive-7)',
+          subtle: 'var(--positive-6)',
+        },
+        negative: {
+          strong: 'var(--negative-9)',
+          component: 'var(--negative-7)',
+          subtle: 'var(--negative-6)',
+        },
+        warning: {
+          strong: 'var(--warning-9)',
+          component: 'var(--warning-7)',
+          subtle: 'var(--warning-6)',
+        },
+        accent1: {
+          strong: 'var(--accent-9)',
+          subtle: 'var(--accent-6)',
+        },
       },
       animation: {
         'action-bar-fade-in': '0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards actionBarFadeIn',
