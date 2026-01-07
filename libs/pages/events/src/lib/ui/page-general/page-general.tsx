@@ -24,7 +24,11 @@ import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type SelectedTimestamps } from '../../../../../../shared/ui/src/lib/components/table/table-head-datepicker/table-head-datepicker'
 import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
-import { computeDisplayByLabel, computeMenusToDisplay } from '../../utils/target-type-selection-utils'
+import {
+  computeDisplayByLabel,
+  computeMenusToDisplay,
+  computeSelectedItemsFromFilter,
+} from '../../utils/target-type-selection-utils'
 import FilterSection from '../filter-section/filter-section'
 
 export interface PageGeneralProps {
@@ -159,6 +163,9 @@ function createTableDataHead(
           setTargetTypeSelectedItems(selectedItems)
         },
         computeDisplayByLabel: computeDisplayByLabel,
+        onFilterChange: (filter, currentSelectedItems) => {
+          return computeSelectedItemsFromFilter(filter, currentSelectedItems)
+        },
       },
     },
     {
