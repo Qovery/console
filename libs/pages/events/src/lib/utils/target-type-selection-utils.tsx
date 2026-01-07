@@ -303,6 +303,51 @@ export async function initializeSelectedItemsFromQueryParams(
   return { selectedItems, navigationStack, level }
 }
 
+export function computeSelectedItemsFromFilter(
+  filter: { key?: string; value?: string }[],
+  currentSelectedItems: SelectedItem[]
+): SelectedItem[] {
+  console.log('[computeSelectedItemsFromFilter] Computing from filter', { filter, currentSelectedItems })
+
+  // Extract hierarchical filter values
+  const targetTypeFilter = filter.find((f) => f.key === 'target_type')
+  const projectIdFilter = filter.find((f) => f.key === 'project_id')
+  const environmentIdFilter = filter.find((f) => f.key === 'environment_id')
+  const targetIdFilter = filter.find((f) => f.key === 'target_id')
+
+  // Build new selected items based on what's still in the filter
+  const newSelectedItems: SelectedItem[] = []
+
+  for (const selected of currentSelectedItems) {
+    let filterValue: string | undefined
+
+    switch (selected.filterKey) {
+      case 'target_type':
+        filterValue = targetTypeFilter?.value
+        break
+      case 'project_id':
+        filterValue = projectIdFilter?.value
+        break
+      case 'environment_id':
+        filterValue = environmentIdFilter?.value
+        break
+      case 'target_id':
+        filterValue = targetIdFilter?.value
+        break
+    }
+
+    if (filterValue && filterValue !== 'ALL') {
+      newSelectedItems.push(selected)
+    } else {
+      // Stop at first removed filter (hierarchical)
+      break
+    }
+  }
+
+  console.log('[computeSelectedItemsFromFilter] Result:', newSelectedItems)
+  return newSelectedItems
+}
+
 export function computeDisplayByLabel(filterKey: string, selectedItem?: SelectedItem): string {
   switch (filterKey) {
     case 'target_type':
