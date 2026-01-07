@@ -82,7 +82,7 @@ export function DropdownVariable({
                     <DropdownMenu.Item
                       className={twMerge(
                         dropdownMenuItemVariants({ color: 'brand' }),
-                        'flex h-[52px] items-center justify-between gap-1 px-2 py-1.5',
+                        'flex h-[52px] items-start justify-between gap-1 px-2 py-1.5',
                         isDisabled && 'cursor-not-allowed opacity-50'
                       )}
                       onClick={() => !isDisabled && onChange(variable.key)}
@@ -90,35 +90,39 @@ export function DropdownVariable({
                     >
                       <div className="flex flex-col items-start justify-center gap-1">
                         <span className="text-sm font-medium">
-                          <Truncate text={variable.key} truncateLimit={35} />
+                          <Truncate text={variable.key} truncateLimit={38} />
                         </span>
 
                         {variable.service_name ? (
                           <span className="truncate text-xs font-normal">
-                            <Truncate text={variable.service_name} truncateLimit={40} />
+                            <Truncate text={variable.service_name} truncateLimit={44} />
                           </span>
                         ) : (
-                          <span className="text-xs font-normal text-neutral-300">no service</span>
+                          <span className="text-xs font-normal text-neutral-300">
+                            Defined at the project or environment level
+                          </span>
                         )}
                       </div>
-                      {isDisabled ? (
-                        <Tooltip
-                          content="Built-in variables injection is not supported for Helm. Please create an alias to use this variable."
-                          side="left"
-                        >
-                          <span>
-                            <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-400" />
-                          </span>
-                        </Tooltip>
-                      ) : (
-                        variable.description && (
-                          <Tooltip content={variable.description} side="bottom">
+                      <div className="flex-shrink-0 pt-0.5">
+                        {isDisabled ? (
+                          <Tooltip
+                            content="Built-in variables injection is not supported for Helm. Please create an alias to use this variable."
+                            side="left"
+                          >
                             <span>
-                              <Icon iconName="info-circle" iconStyle="regular" className="text-neutral-400" />
+                              <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-400" />
                             </span>
                           </Tooltip>
-                        )
-                      )}
+                        ) : (
+                          variable.description && (
+                            <Tooltip content={variable.description} side="bottom">
+                              <span>
+                                <Icon iconName="info-circle" iconStyle="regular" className="text-neutral-400" />
+                              </span>
+                            </Tooltip>
+                          )
+                        )}
+                      </div>
                     </DropdownMenu.Item>
                   )
 
