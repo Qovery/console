@@ -24,6 +24,7 @@ export interface TableHeadHierarchicalFilterProps {
   computeDisplayByLabel: (filterKey: string, selectedItem?: SelectedItem) => string
   setFilter: Dispatch<SetStateAction<TableFilterProps[]>>
   filter: TableFilterProps[]
+  onFilterChange?: (filter: TableFilterProps[], currentSelectedItems: SelectedItem[]) => SelectedItem[]
 }
 
 // This represents a level of navigation in the hierarchical filter menu
@@ -64,6 +65,7 @@ export function TableHeadHierarchicalFilter({
   computeDisplayByLabel,
   setFilter,
   filter,
+  onFilterChange,
 }: TableHeadHierarchicalFilterProps) {
   const [isOpen, setOpen] = useState(false)
   const [level, setLevel] = useState(0)
@@ -76,9 +78,6 @@ export function TableHeadHierarchicalFilter({
   const [isLoading, setIsLoading] = useState(false)
 
   const [hasFilter, setHasFilter] = useState(false)
-  useEffect(() => {
-    setHasFilter(filter?.some((item) => item.key === filterKey && item.value !== 'ALL'))
-  }, [filter])
 
   // Initialize from pre-built navigation stack (if available)
   useEffect(() => {
@@ -103,6 +102,50 @@ export function TableHeadHierarchicalFilter({
     hasInitialized.current = true
     selectedItemsRef.current = initialSelectedItems
   }, [initialNavigationStack, initialLevel, initialSelectedItems])
+
+  // Watch filter changes to rebuild navigation stack when badges are removed
+  useEffect(() => {
+    setHasFilter(filter?.some((item) => item.key === filterKey && item.value !== 'ALL'))
+
+    if (!hasInitialized.current || !onFilterChange) {
+      return
+    }
+
+    // Call parent's callback to compute new selected items based on filter
+    const newSelectedItems = onFilterChange(filter, selectedItemsRef.current)
+
+    // If filters were removed (fewer selected items)
+    if (newSelectedItems.length < selectedItemsRef.current.length) {
+      selectedItemsRef.current = newSelectedItems
+      onSelectionChange(newSelectedItems)
+
+      // Rebuild navigation stack progressively
+      const rebuildStack = async () => {
+        setIsLoading(true)
+        const stack: NavigationLevel[] = [{ items: [{ value: 'ALL', name: 'All' }, ...initialData], filterKey }]
+
+        try {
+          for (let i = 0; i < newSelectedItems.length; i++) {
+            const currentItems = newSelectedItems.slice(0, i + 1)
+            const result = await onLoadMenusToDisplay(currentItems, stack)
+
+            if (result) {
+              stack.push({ items: result.items, filterKey: result.filterKey })
+            }
+          }
+
+          setNavigationStack(stack)
+          setLevel(stack.length - 1)
+        } catch (error) {
+          console.error('[TableHeadHierarchicalFilter] Error rebuilding navigation stack:', error)
+        } finally {
+          setIsLoading(false)
+        }
+      }
+
+      rebuildStack()
+    }
+  }, [filter])
 
   const isDark = document.documentElement.classList.contains('dark')
 

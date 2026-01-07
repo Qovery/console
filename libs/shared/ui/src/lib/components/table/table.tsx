@@ -60,6 +60,7 @@ export interface TableHierarchicalFilterProps {
   ) => Promise<HierarchicalFilterResult | null>
   computeDisplayByLabel: (filterKey: string, selectedItem?: SelectedItem) => string
   onSelectionChange: (selectedItems: SelectedItem[]) => void
+  onFilterChange?: (filter: TableFilterProps[], currentSelectedItems: SelectedItem[]) => SelectedItem[]
 }
 
 export interface TableHeadCustomFilterProps<T> {
@@ -146,6 +147,7 @@ export function Table<T>({
                   onLoadMenusToDisplay={hierarchicalFilter.onLoadMenusToDisplay}
                   onSelectionChange={hierarchicalFilter.onSelectionChange}
                   computeDisplayByLabel={hierarchicalFilter.computeDisplayByLabel}
+                  onFilterChange={hierarchicalFilter.onFilterChange}
                   filter={filter}
                   setFilter={setFilter}
                 />
