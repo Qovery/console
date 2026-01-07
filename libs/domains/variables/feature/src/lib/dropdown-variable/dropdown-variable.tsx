@@ -2,16 +2,14 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useCallback, useState } from 'react'
 import { type VariableScope } from '@qovery/domains/variables/data-access'
-import { Icon, InputSearch, Popover, Tooltip, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
+import { Icon, InputSearch, Popover, Tooltip, dropdownMenuItemVariants } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
 
 export interface DropdownVariableProps extends PropsWithChildren {
   environmentId: string
-  projectId?: string
   onChange: (value: string) => void
   onOpenChange?: (open: boolean) => void
-  container?: HTMLElement | null
   serviceId?: string
   scope?: VariableScope
   disableBuiltInVariables?: boolean
@@ -19,13 +17,11 @@ export interface DropdownVariableProps extends PropsWithChildren {
 
 export function DropdownVariable({
   environmentId,
-  projectId,
   serviceId,
   scope,
   onChange,
   children,
   onOpenChange,
-  container,
   disableBuiltInVariables = false,
 }: DropdownVariableProps) {
   // Determine which scope to query based on provided props
@@ -63,7 +59,6 @@ export function DropdownVariable({
         <Popover.Trigger>{children}</Popover.Trigger>
         <DropdownMenu.Content asChild>
           <Popover.Content
-            container={container}
             side="right"
             align="start"
             sideOffset={8}
@@ -113,9 +108,11 @@ export function DropdownVariable({
                       disabled={isDisabled}
                     >
                       <div className="flex w-full min-w-0 items-center gap-2">
-                        <span className="min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">
-                          {variable.key}
-                        </span>
+                        <Tooltip content={variable.key} side="bottom">
+                          <span className="min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">
+                            {variable.key}
+                          </span>
+                        </Tooltip>
                         {isDisabled ? (
                           <Tooltip
                             content="Built-in variables injection is not supported for Helm. Please create an alias to use this variable."

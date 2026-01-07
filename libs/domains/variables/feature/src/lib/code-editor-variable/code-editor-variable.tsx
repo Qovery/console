@@ -9,8 +9,6 @@ import { useVariables } from '../hooks/use-variables/use-variables'
 
 interface CodeEditorVariableProps extends ComponentProps<typeof CodeEditor> {
   environmentId: string
-  projectId?: string
-  container?: HTMLElement | null
   serviceId?: string
   scope?: VariableScope
   disableBuiltInVariables?: boolean
@@ -18,8 +16,6 @@ interface CodeEditorVariableProps extends ComponentProps<typeof CodeEditor> {
 
 export function CodeEditorVariable({
   environmentId,
-  projectId,
-  container,
   serviceId,
   scope,
   disableBuiltInVariables = false,
@@ -98,12 +94,10 @@ export function CodeEditorVariable({
       />
       <DropdownVariable
         environmentId={environmentId}
-        projectId={projectId}
         serviceId={serviceId}
         scope={scope}
         disableBuiltInVariables={disableBuiltInVariables}
         onChange={handleVariableChange}
-        container={container}
       >
         <Button size="md" type="button" color="neutral" variant="surface" className="absolute right-4 top-4 px-2.5">
           <Icon className="text-sm" iconName="wand-magic-sparkles" />
