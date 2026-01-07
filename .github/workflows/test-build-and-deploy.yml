@@ -74,8 +74,16 @@ jobs:
           script: |
             const varsFromJSON = ${{ toJSON(vars) }}
             const variables = []
+            // List of variable name patterns that might contain sensitive data
+            const sensitivePatterns = ['KEY', 'SECRET', 'TOKEN', 'PASSWORD', 'CREDENTIAL', 'API']
             for (const v in varsFromJSON) {
-              variables.push(v + '=' + varsFromJSON[v])
+              const value = varsFromJSON[v]
+              // Mask values that match sensitive patterns to prevent exposure in logs
+              const isSensitive = sensitivePatterns.some(pattern => v.toUpperCase().includes(pattern))
+              if (isSensitive && value) {
+                core.setSecret(value)
+              }
+              variables.push(v + '=' + value)
             }
             core.setOutput('variables', variables.join('\n'))
 
@@ -138,15 +146,20 @@ jobs:
           name: dist-and-coverage-artifacts
           path: coverage
           merge-multiple: true
-      - name: Display structure of downloaded files
-        run: ls -R
+      - name: Verify coverage artifacts exist
+        run: |
+          if [ -d "./coverage" ]; then
+            echo "Coverage directory found"
+          else
+            echo "Warning: coverage directory not found"
+          fi
       - uses: codecov/codecov-action@v4
         with:
           directory: ./coverage/coverage
           flags: unittests # optional
           fail_ci_if_error: false # optional (default = false)
           token: ${{ secrets.codecov-token }}
-          verbose: true # optional (default = false)
+          verbose: false # disabled to avoid exposing sensitive info in logs
 
   deploy:
     name: Deploy to S3
@@ -161,9 +174,15 @@ jobs:
           name: dist-and-coverage-artifacts
           path: dist/
           merge-multiple: true
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.aws-access-key-id }}
+          aws-secret-access-key: ${{ secrets.aws-secret-access-key }}
+          aws-region: ${{ secrets.aws-region }}
       - name: Copy assets to S3
         run: |
-          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/ s3://${{ secrets.s3-bucket-name }}/  --recursive --exclude "index.html"
+          aws s3 cp ./dist/dist/apps/console/ s3://${{ secrets.s3-bucket-name }}/ --recursive --exclude "index.html"
       - name: Copy index.html to S3 last
         run: |
-          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/index.html s3://${{ secrets.s3-bucket-name }}/
+          aws s3 cp ./dist/dist/apps/console/index.html s3://${{ secrets.s3-bucket-name }}/
