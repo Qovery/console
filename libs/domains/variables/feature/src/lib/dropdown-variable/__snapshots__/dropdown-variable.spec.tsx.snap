@@ -4,7 +4,7 @@ exports[`DropdownVariable should render dropdown content when clicked 1`] = `
 <div
   aria-labelledby="radix-:rf:"
   aria-orientation="vertical"
-  class="rounded bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded dark:border dark:border-neutral-500 dark:bg-neutral-550 flex h-auto max-h-[240px] w-[400px] max-w-[400px] flex-col p-2"
+  class="rounded bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded dark:border dark:border-neutral-500 dark:bg-neutral-550 flex max-h-60 w-[400px] min-w-[400px] flex-col p-2"
   data-align="center"
   data-orientation="vertical"
   data-radix-menu-content=""
@@ -17,10 +17,10 @@ exports[`DropdownVariable should render dropdown content when clicked 1`] = `
   tabindex="-1"
 >
   <div
-    class="mb-1 bg-white dark:bg-neutral-700"
+    class="bg-white dark:bg-neutral-700"
   >
     <div
-      class="relative w-full"
+      class="relative w-full mb-1"
     >
       <span
         class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-400 dark:text-white"
@@ -39,7 +39,7 @@ exports[`DropdownVariable should render dropdown content when clicked 1`] = `
     class="max-h-[200px] overflow-y-auto"
   >
     <div
-      class="text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 flex h-[52px] flex-col items-start justify-center px-2 py-1.5"
+      class="text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 flex h-[52px] items-center justify-between gap-1 px-2 py-1.5"
       data-orientation="vertical"
       data-radix-collection-item=""
       role="menuitem"
@@ -47,28 +47,34 @@ exports[`DropdownVariable should render dropdown content when clicked 1`] = `
       type="button"
     >
       <div
-        class="flex w-full min-w-0 items-center gap-2"
+        class="flex flex-col items-start justify-center gap-1"
       >
         <span
-          class="min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium"
-          data-state="closed"
+          class="text-sm font-medium"
         >
-          QOVERY_CONTAINER_Z04308DE2_HOST_INTERNAL
+          <span
+            class=""
+            data-state="closed"
+            data-testid="truncate-text"
+          >
+            QOVERY_CONTAINER_Z04308DE2_HOST_INT
+            ...
+          </span>
         </span>
         <span
-          class="flex-shrink-0"
-          data-state="closed"
+          class="truncate text-xs font-normal"
         >
-          <i
-            aria-hidden="true"
-            class="fa-regular fa-info-circle text-neutral-400"
-          />
+          back-end-A
         </span>
       </div>
       <span
-        class="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-xs font-normal"
+        class=""
+        data-state="closed"
       >
-        back-end-A
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-info-circle text-neutral-400"
+        />
       </span>
     </div>
   </div>
