@@ -18,6 +18,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSetting
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/general'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/index'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/network'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/resources'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/route'
 import { Route as AuthenticatedOrganizationOrganizationIdClustersRouteImport } from './routes/_authenticated/organization/$organizationId/clusters'
@@ -137,6 +138,12 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRo
     path: '/resources',
     getParentRoute: () => AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
   } as any)
+const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRoute =
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRouteImport.update({
+    id: '/network',
+    path: '/network',
+    getParentRoute: () => AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
+  } as any)
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRoute =
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRouteImport.update({
     id: '/image-registry',
@@ -190,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/cluster/$clusterId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
   '/organization/$organizationId/cluster/$clusterId/settings/general': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRoute
   '/organization/$organizationId/cluster/$clusterId/settings/image-registry': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRoute
+  '/organization/$organizationId/cluster/$clusterId/settings/network': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRoute
   '/organization/$organizationId/cluster/$clusterId/settings/resources': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRoute
   '/organization/$organizationId/cluster/$clusterId/settings/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
 }
@@ -213,6 +221,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/cluster/$clusterId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
   '/organization/$organizationId/cluster/$clusterId/settings/general': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRoute
   '/organization/$organizationId/cluster/$clusterId/settings/image-registry': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRoute
+  '/organization/$organizationId/cluster/$clusterId/settings/network': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRoute
   '/organization/$organizationId/cluster/$clusterId/settings/resources': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRoute
   '/organization/$organizationId/cluster/$clusterId/settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
 }
@@ -240,6 +249,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/general': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRoute
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/network': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/resources': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
 }
@@ -267,6 +277,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
     | '/organization/$organizationId/cluster/$clusterId/settings/general'
     | '/organization/$organizationId/cluster/$clusterId/settings/image-registry'
+    | '/organization/$organizationId/cluster/$clusterId/settings/network'
     | '/organization/$organizationId/cluster/$clusterId/settings/resources'
     | '/organization/$organizationId/cluster/$clusterId/settings/'
   fileRoutesByTo: FileRoutesByTo
@@ -290,6 +301,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
     | '/organization/$organizationId/cluster/$clusterId/settings/general'
     | '/organization/$organizationId/cluster/$clusterId/settings/image-registry'
+    | '/organization/$organizationId/cluster/$clusterId/settings/network'
     | '/organization/$organizationId/cluster/$clusterId/settings/resources'
     | '/organization/$organizationId/cluster/$clusterId/settings'
   id:
@@ -316,6 +328,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/general'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry'
+    | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/network'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/resources'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/'
   fileRoutesById: FileRoutesById
@@ -462,6 +475,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute
     }
+    '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/network': {
+      id: '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/network'
+      path: '/network'
+      fullPath: '/organization/$organizationId/cluster/$clusterId/settings/network'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute
+    }
     '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry': {
       id: '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry'
       path: '/image-registry'
@@ -506,6 +526,7 @@ interface AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRo
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRoute
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
 }
@@ -522,6 +543,8 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteC
       AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRoute,
     AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRoute:
       AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRoute,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRoute,
     AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRoute:
       AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRoute,
     AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute:
