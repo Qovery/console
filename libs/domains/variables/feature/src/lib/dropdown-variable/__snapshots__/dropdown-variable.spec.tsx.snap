@@ -51,6 +51,7 @@ exports[`DropdownVariable should render dropdown content when clicked 1`] = `
       >
         <span
           class="min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium"
+          data-state="closed"
         >
           QOVERY_CONTAINER_Z04308DE2_HOST_INTERNAL
         </span>
