@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from '@tanstack/react-router'
 import { type InviteMember } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { useAcceptInviteMember, useMemberInvitation, useOrganizations } from '@qovery/domains/organizations/feature'
+import { useAuth } from '@qovery/shared/auth'
 import { ACCEPT_INVITATION_URL, LOGIN_URL, LOGOUT_URL } from '@qovery/shared/routes'
-import useAuth from '../use-auth/use-auth'
 
 export function useInviteMember() {
   const [displayInvitation, setDisplayInvitation] = useState<boolean | undefined>(undefined)
