@@ -51,6 +51,9 @@ export interface HierarchicalFilterResult {
 export interface TableHierarchicalFilterProps {
   key: string
   initialData: HierarchicalMenuItem[]
+  initialSelectedItems?: SelectedItem[]
+  initialNavigationStack?: NavigationLevel[]
+  initialLevel?: number
   onLoadMenusToDisplay: (
     selectedItems: SelectedItem[],
     navigationStack: NavigationLevel[]
@@ -136,6 +139,9 @@ export function Table<T>({
                   title={title}
                   classNameTitle={classNameTitle}
                   initialData={hierarchicalFilter.initialData}
+                  initialSelectedItems={hierarchicalFilter.initialSelectedItems}
+                  initialNavigationStack={hierarchicalFilter.initialNavigationStack}
+                  initialLevel={hierarchicalFilter.initialLevel}
                   filterKey={hierarchicalFilter.key}
                   onLoadMenusToDisplay={hierarchicalFilter.onLoadMenusToDisplay}
                   onSelectionChange={hierarchicalFilter.onSelectionChange}

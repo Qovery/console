@@ -12,6 +12,9 @@ export interface TableHeadHierarchicalFilterProps {
   title: string
   classNameTitle?: string
   initialData: HierarchicalMenuItem[]
+  initialSelectedItems?: SelectedItem[]
+  initialNavigationStack?: NavigationLevel[]
+  initialLevel?: number
   filterKey: string
   onLoadMenusToDisplay: (
     selectedItems: SelectedItem[],
@@ -52,6 +55,9 @@ export function TableHeadHierarchicalFilter({
   title,
   classNameTitle,
   initialData,
+  initialSelectedItems,
+  initialNavigationStack,
+  initialLevel,
   filterKey,
   onLoadMenusToDisplay,
   onSelectionChange,
@@ -60,12 +66,12 @@ export function TableHeadHierarchicalFilter({
   filter,
 }: TableHeadHierarchicalFilterProps) {
   const [isOpen, setOpen] = useState(false)
-  // TODO (qov-1236) Handle when req params are already there
   const [level, setLevel] = useState(0)
   const [navigationStack, setNavigationStack] = useState<NavigationLevel[]>(
     initializeInitialData(initialData, filterKey)
   )
   const selectedItemsRef = useRef<SelectedItem[]>([])
+  const hasInitialized = useRef(false)
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -73,6 +79,30 @@ export function TableHeadHierarchicalFilter({
   useEffect(() => {
     setHasFilter(filter?.some((item) => item.key === filterKey && item.value !== 'ALL'))
   }, [filter])
+
+  // Initialize from pre-built navigation stack (if available)
+  useEffect(() => {
+    if (hasInitialized.current) {
+      return
+    }
+
+    // If we have a pre-built navigation stack, use it directly to avoid fetching
+    if (initialNavigationStack && initialLevel !== undefined && initialSelectedItems) {
+      hasInitialized.current = true
+      selectedItemsRef.current = initialSelectedItems
+      setNavigationStack(initialNavigationStack)
+      setLevel(initialLevel)
+      return
+    }
+
+    // Fallback: no pre-built data, nothing to initialize
+    if (!initialSelectedItems || initialSelectedItems.length === 0) {
+      return
+    }
+
+    hasInitialized.current = true
+    selectedItemsRef.current = initialSelectedItems
+  }, [initialNavigationStack, initialLevel, initialSelectedItems])
 
   const isDark = document.documentElement.classList.contains('dark')
 

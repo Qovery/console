@@ -7,11 +7,9 @@ import {
   OrganizationEventType,
 } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react'
-import { DecodedValueMap, useQueryParams } from 'use-query-params'
+import { type DecodedValueMap } from 'use-query-params'
 import {
   Button,
-  HierarchicalFilterResult,
-  HierarchicalMenuItem,
   Icon,
   NavigationLevel,
   Pagination,
@@ -23,8 +21,8 @@ import {
   type TableHeadProps,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { SelectedTimestamps } from '../../../../../../shared/ui/src/lib/components/table/table-head-datepicker/table-head-datepicker'
-import { queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
+import { type SelectedTimestamps } from '../../../../../../shared/ui/src/lib/components/table/table-head-datepicker/table-head-datepicker'
+import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 import { computeDisplayByLabel, computeMenusToDisplay } from '../../utils/target-type-selection-utils'
 import FilterSection from '../filter-section/filter-section'
@@ -46,6 +44,10 @@ export interface PageGeneralProps {
   filter?: TableFilterProps[]
   organization?: Organization
   queryParams: DecodedValueMap<typeof queryParamsValues>
+  targetTypeSelectedItems: SelectedItem[]
+  setTargetTypeSelectedItems: Dispatch<SetStateAction<SelectedItem[]>>
+  targetTypeNavigationStack?: NavigationLevel[]
+  targetTypeLevel?: number
 }
 
 // Calculate default timestamps for display (not stored in URL)
@@ -94,6 +96,9 @@ function createTableDataHead(
   timestamps: SelectedTimestamps,
   queryParams: React.RefObject<DecodedValueMap<typeof queryParamsValues>>,
   setTargetTypeSelectedItems: Dispatch<SetStateAction<SelectedItem[]>>,
+  targetTypeSelectedItems: SelectedItem[],
+  targetTypeNavigationStack?: NavigationLevel[],
+  targetTypeLevel?: number,
   organization?: Organization
 ): TableHeadProps<OrganizationEventResponse>[] {
   // Calculate retention days and determine if we need to enforce 30-day limit
@@ -142,6 +147,9 @@ function createTableDataHead(
             name: upperCaseFirstLetter(item),
           }
         }),
+        initialSelectedItems: targetTypeSelectedItems,
+        initialNavigationStack: targetTypeNavigationStack,
+        initialLevel: targetTypeLevel,
         onLoadMenusToDisplay: (selectedItems: SelectedItem[], navigationStack: NavigationLevel[]) => {
           const hackOrganizationId = HACK_ORG_ID_CACHE.get('orgid') ?? 'undefined'
           const queryParamsValue = queryParams.current ?? undefined
@@ -202,6 +210,10 @@ export function PageGeneral({
   showIntercom,
   organizationMaxLimitReached,
   queryParams,
+  targetTypeSelectedItems,
+  setTargetTypeSelectedItems,
+  targetTypeNavigationStack,
+  targetTypeLevel,
 }: PageGeneralProps) {
   const auditLogsRetentionInDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 30
   const [expandedEventTimestamp, setExpandedEventTimestamp] = useState<string | null>(null)
@@ -212,10 +224,16 @@ export function PageGeneral({
     queryParamsRef.current = queryParams
   }, [queryParams])
 
-  const [targetTypeSelectedItems, setTargetTypeSelectedItems] = useState<SelectedItem[]>([])
-
   const timestamps = getDefaultTimestamps(queryParams, organization)
-  const dataHead = createTableDataHead(timestamps, queryParamsRef, setTargetTypeSelectedItems, organization)
+  const dataHead = createTableDataHead(
+    timestamps,
+    queryParamsRef,
+    setTargetTypeSelectedItems,
+    targetTypeSelectedItems,
+    targetTypeNavigationStack,
+    targetTypeLevel,
+    organization
+  )
 
   return (
     <Section className="grow p-8">

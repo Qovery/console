@@ -4,16 +4,18 @@ import {
   OrganizationEventTargetType,
   OrganizationEventType,
 } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { createEnumParam } from 'serialize-query-params'
 import { NumberParam, StringParam, useQueryParams, withDefault } from 'use-query-params'
 import { type EventQueryParams, useFetchEvents } from '@qovery/domains/event'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { eventsFactoryMock } from '@qovery/shared/factories'
-import { ALL, type TableFilterProps } from '@qovery/shared/ui'
+import { ALL, type NavigationLevel, type SelectedItem, type TableFilterProps } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import PageGeneral from '../../ui/page-general/page-general'
+import { initializeSelectedItemsFromQueryParams } from '../../utils/target-type-selection-utils'
 
 export const queryParamsValues = {
   pageSize: withDefault(NumberParam, 30),
@@ -36,9 +38,45 @@ export function PageGeneralFeature() {
   const { organizationId = '' } = useParams()
   const [queryParams, setQueryParams] = useQueryParams(queryParamsValues)
   const [filter, setFilter] = useState<TableFilterProps[]>([])
+  const [targetTypeSelectedItems, setTargetTypeSelectedItems] = useState<SelectedItem[]>([])
+  const [targetTypeNavigationStack, setTargetTypeNavigationStack] = useState<NavigationLevel[] | undefined>(undefined)
+  const [targetTypeLevel, setTargetTypeLevel] = useState<number | undefined>(undefined)
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
   const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId })
   const { showChat } = useSupportChat()
+
+  // Ref to prevent double-initialization (React strict mode can cause double-mounting in dev)
+  const hasInitializedRef = useRef(false)
+
+  // Initialize targetTypeSelectedItems from query params on mount
+  useEffect(() => {
+    if (hasInitializedRef.current) {
+      return
+    }
+
+    const hasHierarchicalFilters =
+      queryParams.targetType || queryParams.projectId || queryParams.environmentId || queryParams.targetId
+
+    if (!hasHierarchicalFilters || !organizationId) {
+      return
+    }
+
+    hasInitializedRef.current = true
+    const initialData = Object.keys(OrganizationEventTargetType).map((item) => ({
+      value: item,
+      name: upperCaseFirstLetter(item),
+    }))
+
+    initializeSelectedItemsFromQueryParams(organizationId, initialData, 'target_type', queryParams)
+      .then((initData) => {
+        setTargetTypeSelectedItems(initData.selectedItems)
+        setTargetTypeNavigationStack(initData.navigationStack)
+        setTargetTypeLevel(initData.level)
+      })
+      .catch((error) => {
+        console.error('[PageGeneralFeature] Error initializing targetTypeSelectedItems:', error)
+      })
+  }, []) // Empty deps = run only on mount
 
   // Sync queryParams -> table filters
   useEffect(() => {
@@ -101,6 +139,36 @@ export function PageGeneralFeature() {
             { key: 'from_timestamp', value: queryParams.fromTimestamp || '' },
             { key: 'to_timestamp', value: queryParams.toTimestamp || '' },
           ]
+        }
+        return prev
+      })
+    }
+
+    if (queryParams.projectId) {
+      setFilter((prev) => {
+        const isAlreadyPresent = prev.some((item) => item.key === 'project_id' && item.value === queryParams.projectId)
+        if (!isAlreadyPresent) {
+          return [...prev, { key: 'project_id', value: queryParams.projectId || '' }]
+        }
+        return prev
+      })
+    }
+    if (queryParams.environmentId) {
+      setFilter((prev) => {
+        const isAlreadyPresent = prev.some(
+          (item) => item.key === 'environment_id' && item.value === queryParams.environmentId
+        )
+        if (!isAlreadyPresent) {
+          return [...prev, { key: 'environment_id', value: queryParams.environmentId || '' }]
+        }
+        return prev
+      })
+    }
+    if (queryParams.targetId) {
+      setFilter((prev) => {
+        const isAlreadyPresent = prev.some((item) => item.key === 'target_id' && item.value === queryParams.targetId)
+        if (!isAlreadyPresent) {
+          return [...prev, { key: 'target_id', value: queryParams.targetId || '' }]
         }
         return prev
       })
@@ -175,6 +243,10 @@ export function PageGeneralFeature() {
       organization={organization}
       showIntercom={showChat}
       queryParams={queryParams}
+      targetTypeSelectedItems={targetTypeSelectedItems}
+      setTargetTypeSelectedItems={setTargetTypeSelectedItems}
+      targetTypeNavigationStack={targetTypeNavigationStack}
+      targetTypeLevel={targetTypeLevel}
     />
   )
 }
