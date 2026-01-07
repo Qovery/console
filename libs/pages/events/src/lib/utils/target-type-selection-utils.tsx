@@ -190,6 +190,119 @@ export async function computeMenusToDisplay(
   return null
 }
 
+export interface InitializationData {
+  selectedItems: SelectedItem[]
+  navigationStack: NavigationLevel[]
+  level: number
+}
+
+export async function initializeSelectedItemsFromQueryParams(
+  organizationId: string,
+  initialData: HierarchicalMenuItem[],
+  rootFilterKey: string,
+  queryParams: DecodedValueMap<typeof queryParamsValues>
+): Promise<InitializationData> {
+  const selectedItems: SelectedItem[] = []
+  const navigationStack: NavigationLevel[] = [
+    { items: [{ value: 'ALL', name: 'All' }, ...initialData], filterKey: rootFilterKey },
+  ]
+  let level = 0
+
+  const targetTypeValue = queryParams.targetType
+  const projectIdValue = queryParams.projectId
+  const environmentIdValue = queryParams.environmentId
+  const targetIdValue = queryParams.targetId
+
+  // If no target type, nothing to initialize
+  if (!targetTypeValue) {
+    return { selectedItems, navigationStack, level }
+  }
+
+  // Check if it's a service type
+  const isServiceType = SERVICE_TARGET_TYPES.has(targetTypeValue)
+  if (!isServiceType) {
+    // For non-service types, just add the target type
+    const targetTypeItem = initialData.find((item) => item.value === targetTypeValue)
+    if (targetTypeItem) {
+      selectedItems.push({ filterKey: 'target_type', item: targetTypeItem })
+    }
+    return { selectedItems, navigationStack, level }
+  }
+
+  // Add target type
+  const targetTypeItem = initialData.find((item) => item.value === targetTypeValue)
+  if (!targetTypeItem) {
+    return { selectedItems, navigationStack, level }
+  }
+  selectedItems.push({ filterKey: 'target_type', item: targetTypeItem })
+
+  // Always fetch projects for service types (to show available options at level 1)
+  const projects = await fetchTargetProjects(
+    organizationId,
+    targetTypeValue as OrganizationEventTargetType,
+    queryParams
+  )
+
+  // Add projects to navigation stack
+  navigationStack.push({ items: projects, filterKey: 'project_id' })
+  level = 1
+
+  // If projectId is provided, find it and add to selectedItems
+  if (projectIdValue) {
+    const projectItem = projects.find((p) => p.value === projectIdValue)
+
+    if (projectItem) {
+      selectedItems.push({ filterKey: 'project_id', item: projectItem })
+
+      // Fetch environments (to show available options at level 2)
+      const environments = await fetchTargetEnvironments(
+        organizationId,
+        projectIdValue,
+        targetTypeValue as OrganizationEventTargetType,
+        queryParams
+      )
+
+      // Add environments to navigation stack
+      navigationStack.push({ items: environments, filterKey: 'environment_id' })
+      level = 2
+
+      // If environmentId is provided, find it and add to selectedItems
+      if (environmentIdValue) {
+        const environmentItem = environments.find((e) => e.value === environmentIdValue)
+
+        if (environmentItem) {
+          selectedItems.push({ filterKey: 'environment_id', item: environmentItem })
+
+          // Fetch targets (to show available options at level 3)
+          const targets = await fetchTargetsAsync(
+            organizationId,
+            targetTypeValue as OrganizationEventTargetType,
+            queryParams,
+            '',
+            projectIdValue,
+            environmentIdValue
+          )
+
+          // Add targets to navigation stack
+          navigationStack.push({ items: targets, filterKey: 'target_id' })
+          level = 3
+
+          // If targetId is provided, find it and add to selectedItems
+          if (targetIdValue) {
+            const targetItem = targets.find((t) => t.value === targetIdValue)
+
+            if (targetItem) {
+              selectedItems.push({ filterKey: 'target_id', item: targetItem })
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return { selectedItems, navigationStack, level }
+}
+
 export function computeDisplayByLabel(filterKey: string, selectedItem?: SelectedItem): string {
   switch (filterKey) {
     case 'target_type':
