@@ -3,7 +3,7 @@ import { type PropsWithChildren, type ReactNode, useEffect, useState } from 'rea
 import { type Control, Controller, type FieldValues, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
 import { ExternalLink, Icon, InputSelect, InputToggle, Tooltip } from '@qovery/shared/ui'
 
-export interface CardClusterFeatureProps extends PropsWithChildren {
+export interface ClusterCardFeatureProps extends PropsWithChildren {
   feature: ClusterFeatureResponse
   cloudProvider?: CloudVendorEnum
   disabled?: boolean
@@ -13,7 +13,7 @@ export interface CardClusterFeatureProps extends PropsWithChildren {
   tooltip?: ReactNode
 }
 
-export function CardClusterFeature({
+export function ClusterCardFeature({
   feature,
   cloudProvider,
   disabled = false,
@@ -22,7 +22,7 @@ export function CardClusterFeature({
   control,
   children,
   tooltip,
-}: CardClusterFeatureProps) {
+}: ClusterCardFeatureProps) {
   const [currentDisabled, setCurrentDisabled] = useState<boolean>(disabled)
 
   const name = watch && watch(`features.${feature.id}.value`)
@@ -44,8 +44,8 @@ export function CardClusterFeature({
     <div
       data-testid="feature"
       className={`flex flex-col justify-between px-4 py-3 ${
-        control ? 'rounded border bg-neutral-100' : 'border-b last:border-0'
-      } mb-4 border-neutral-250 last:mb-0`}
+        control ? 'rounded border bg-surface-neutral' : 'border-b last:border-0'
+      } mb-4 border-neutral last:mb-0`}
       onClick={() => {
         if (feature.id && !disabled && setValue) {
           setValue(`features.${feature.id}.value`, !name)
@@ -79,7 +79,7 @@ export function CardClusterFeature({
           </Tooltip>
         )}
         <div className="basis-full">
-          <h4 className="mb-1 flex justify-between text-ssm font-medium text-neutral-400">
+          <h4 className="mb-1 flex justify-between text-ssm font-medium text-neutral">
             <span>{feature.title}</span>
             {feature.is_cloud_provider_paying_feature && (
               <Tooltip content={`Billed by ${cloudProvider}`}>
@@ -98,7 +98,7 @@ export function CardClusterFeature({
               </Tooltip>
             )}
           </h4>
-          <p className="max-w-lg text-xs text-neutral-350">{feature.description}</p>
+          <p className="max-w-lg text-xs text-neutral-subtle">{feature.description}</p>
           {typeof feature.value_object?.value === 'string' && (
             <div onClick={(e) => e.stopPropagation()}>
               {control ? (
@@ -153,5 +153,3 @@ export function CardClusterFeature({
     </div>
   )
 }
-
-export default CardClusterFeature

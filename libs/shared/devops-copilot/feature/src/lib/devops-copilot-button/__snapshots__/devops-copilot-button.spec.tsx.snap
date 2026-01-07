@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`DevopsCopilotButton should match snapshot 1`] = `
+<body>
+  <div>
+    <button
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 ml-4 mr-4 h-[38px] gap-3 px-3 dark:ml-3 dark:h-9"
+      type="button"
+    >
+      <span
+        class="flex items-center gap-1.5 text-neutral-400 dark:text-white"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-light fa-sparkles relative top-[1px] text-sm text-brand-500 dark:text-white"
+        />
+        AI Copilot
+      </span>
+      <div
+        class="ml-auto flex gap-1 text-neutral-400"
+      >
+        <kbd
+          class="flex h-4 items-center rounded bg-neutral-150 px-1 text-xs text-neutral-350 dark:bg-neutral-400 dark:text-white"
+        >
+          ⌘
+        </kbd>
+        <kbd
+          class="flex h-4 items-center rounded bg-neutral-150 px-1 text-neutral-350 dark:bg-neutral-400 dark:text-white text-2xs"
+        >
+          i
+        </kbd>
+      </div>
+    </button>
+  </div>
+</body>
+`;

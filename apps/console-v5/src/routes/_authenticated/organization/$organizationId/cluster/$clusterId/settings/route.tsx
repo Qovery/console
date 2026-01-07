@@ -111,8 +111,8 @@ function RouteComponent() {
     .otherwise(() => [])
 
   return (
-    <div className="flex h-full gap-4">
-      <div className="relative h-full min-w-52 border-r border-neutral">
+    <div className="flex min-h-0 flex-1">
+      <aside className="relative min-h-[calc(100vh-2.75rem-4rem)] w-52 shrink-0 self-stretch border-r border-neutral">
         <div className="sticky top-16">
           <Sidebar.Root className="mt-6">
             {LINKS_SETTINGS.map((link) => (
@@ -122,9 +122,11 @@ function RouteComponent() {
             ))}
           </Sidebar.Root>
         </div>
-      </div>
-      <div className="container mx-auto flex-1 overflow-auto">
-        <Outlet />
+      </aside>
+      <div className="min-w-0 flex-1">
+        <div className="container mx-auto px-0">
+          <Outlet />
+        </div>
       </div>
     </div>
   )

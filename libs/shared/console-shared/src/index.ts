@@ -17,7 +17,6 @@ export * from './lib/git-repository-settings/ui/git-repository-settings/git-repo
 export * from './lib/git-repository-settings/feature/edit-git-repository-settings-feature/edit-git-repository-settings-feature'
 export * from './lib/cluster-settings/ui/cluster-general-settings/cluster-general-settings'
 export * from './lib/cluster-settings/feature/cluster-credentials-settings-feature/cluster-credentials-settings-feature'
-export * from './lib/cluster-settings/ui/card-cluster-feature/card-cluster-feature'
 export * from './lib/add-credit-card-modal/feature/add-credit-card-modal-feature'
 export * from './lib/layout-logs/layout-logs'
 export * from './lib/layout-logs/card-cluster/card-cluster'

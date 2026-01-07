@@ -9,6 +9,7 @@ import { FreeTrialBanner, InvoiceBanner, useOrganization } from '@qovery/domains
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton, DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
+import { AnnouncementBanner } from '@qovery/shared/posthog/feature'
 import {
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_URL,
@@ -136,6 +137,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
           actions.
         </Banner>
       )}
+      <AnnouncementBanner />
       {!isQoveryUserWithMobileCheck && <WarningScreenMobile />}
       <main className="bg-neutral-200 dark:h-full dark:bg-neutral-900">
         <div className="flex">

@@ -2,6 +2,55 @@ import { createQueryKeys } from '@lukemorales/query-key-factory'
 import axios from 'axios'
 import { DEVOPS_COPILOT_API_BASE_URL } from '@qovery/shared/util-node-env'
 
+export interface RecurringTask {
+  id: string
+  user_id: string
+  user_intent: string
+  cron_expression: string
+  enabled: boolean
+  environment: string
+  created_at: string
+  updated_at: string
+  last_run_at?: string
+  next_run_at?: string
+  error_count: number
+  last_error?: string
+}
+
+export interface RecurringTasksResponse {
+  tasks: RecurringTask[]
+}
+
+export interface AICopilotOrgConfig {
+  enabled: boolean
+  read_only: boolean
+  instructions?: string
+}
+
+export interface AICopilotRoleConfig {
+  id: string
+  organization_id: string
+  role_id: string
+  role_name: string
+  enabled: boolean
+  read_only: boolean
+  instructions?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface AICopilotUserAccess {
+  enabled: boolean
+  read_only: boolean
+  instructions?: string
+}
+
+export interface AICopilotConfigResponse {
+  org_config: AICopilotOrgConfig
+  role_configs: AICopilotRoleConfig[]
+  user_access?: AICopilotUserAccess
+}
+
 // Create a dedicated axios instance for DevOps Copilot
 export const devopsCopilotAxios = axios.create({
   baseURL: DEVOPS_COPILOT_API_BASE_URL,
@@ -29,8 +78,18 @@ export const devopsCopilot = createQueryKeys('devopsCopilot', {
   }),
   config: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
-    async queryFn() {
-      const response = await devopsCopilotAxios.get(`/organization/${organizationId}/config`)
+    async queryFn(): Promise<AICopilotConfigResponse> {
+      const response = await devopsCopilotAxios.get<AICopilotConfigResponse>(`/organization/${organizationId}/config`)
+
+      return response.data
+    },
+  }),
+  recurringTasks: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn(): Promise<RecurringTasksResponse> {
+      const response = await devopsCopilotAxios.get<RecurringTasksResponse>(
+        `/organization/${organizationId}/recurring-tasks`
+      )
 
       return response.data
     },
@@ -95,13 +154,16 @@ export const mutations = {
     userSub,
     organizationId,
     message,
+    readOnly = true,
   }: {
     userSub: string
     organizationId: string
     message: string
+    readOnly?: boolean
   }) => {
     const response = await devopsCopilotAxios.post(`/owner/${userSub}/organization/${organizationId}/thread`, {
       title: message.substring(0, 50),
+      read_only: readOnly,
     })
 
     return response
@@ -128,5 +190,37 @@ export const mutations = {
     )
 
     return response
+  },
+
+  toggleRecurringTask: async ({ organizationId, taskId }: { organizationId: string; taskId: string }) => {
+    const response = await devopsCopilotAxios.post(`/organization/${organizationId}/recurring-tasks/${taskId}/toggle`)
+
+    return response.data
+  },
+
+  deleteRecurringTask: async ({ organizationId, taskId }: { organizationId: string; taskId: string }) => {
+    const response = await devopsCopilotAxios.delete(`/organization/${organizationId}/recurring-tasks/${taskId}`)
+
+    return response.data
+  },
+
+  updateOrgConfig: async ({
+    organizationId,
+    enabled,
+    readOnly,
+    instructions,
+  }: {
+    organizationId: string
+    enabled: boolean
+    readOnly: boolean
+    instructions?: string
+  }) => {
+    const response = await devopsCopilotAxios.put(`/organization/${organizationId}/config/org`, {
+      enabled,
+      read_only: readOnly,
+      instructions: instructions || '',
+    })
+
+    return response.data
   },
 }

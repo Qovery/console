@@ -9,9 +9,9 @@ export interface Config {
   organization_id: string
 }
 
-export const useConfig = ({ organizationId }: { organizationId: string }) => {
+export const useAICopilotConfig = ({ organizationId }: { organizationId: string }) => {
   return useQuery({
     ...queries.devopsCopilot.config({ organizationId }),
-    enabled: !!organizationId,
+    enabled: !!organizationId, // Don't fetch until organizationId is available
   })
 }

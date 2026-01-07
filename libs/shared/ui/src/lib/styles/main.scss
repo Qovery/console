@@ -137,7 +137,7 @@
 @include meta.load-css('components/date-picker');
 
 body {
-  overflow-x: hidden;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizelegibility;
