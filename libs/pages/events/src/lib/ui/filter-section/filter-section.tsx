@@ -90,8 +90,9 @@ function buildBadges(
   if (queryParams.targetId) {
     const targetName =
       selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'target_id')?.item?.name ?? 'Unknown'
-    const targetType =
-      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'target_type')?.item?.name ?? 'Unknown'
+    const targetType = upperCaseFirstLetter(queryParams.targetType ?? 'Unknown')
+      .split('_')
+      .join(' ')
     badges.push({
       key: 'target_id',
       displayedName: targetType,
