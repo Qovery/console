@@ -2,6 +2,7 @@ import { type QueryClient } from '@tanstack/react-query'
 import { AttachAddon } from '@xterm/addon-attach'
 import { FitAddon } from '@xterm/addon-fit'
 import { type ITerminalAddon } from '@xterm/xterm'
+import Color from 'color'
 import { DebugFlavor } from 'qovery-ws-typescript-axios'
 import { type MouseEvent as MouseDownEvent, memo, useCallback, useContext, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -35,6 +36,16 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
   const isTerminalLoading = addons.length < 2 || isRunningStatusesLoading
   const [showDelayedLoader, setShowDelayedLoader] = useState(true)
   const fitAddon = addons[0] as FitAddon | undefined
+
+  const getCssVariableHex = (variableName: string): string => {
+    const styles = getComputedStyle(document.documentElement)
+    return Color(styles.getPropertyValue(variableName)).hex()
+  }
+
+  const backgroundColor = getCssVariableHex('--neutral-2')
+  const foreground = getCssVariableHex('--neutral-12')
+  const selectionBackground = getCssVariableHex('--brand-3')
+  const selectionForeground = getCssVariableHex('--neutral-12')
 
   // Lock body scroll when terminal is open
   useEffect(() => {
@@ -121,15 +132,15 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
   }
 
   return createPortal(
-    <div className="dark fixed bottom-0 left-0 w-full animate-slidein-up-md-faded bg-neutral-650">
+    <div className="fixed bottom-0 left-0 z-dropdown w-full animate-slidein-up-md-faded bg-surface-neutral-subtle shadow-[0_-4px_60px_rgba(0,0,0,0.08)]">
       <button
-        className="flex h-4 w-full items-center justify-center border-t border-neutral-500 bg-neutral-550 transition-colors hover:bg-neutral-650"
+        className="flex h-4 w-full items-center justify-center border-t border-neutral bg-surface-neutral-componentActive transition-colors hover:bg-surface-neutral-componentHover"
         type="button"
         onMouseDown={handleMouseDown}
       >
-        <Icon iconName="grip-lines" iconStyle="regular" className="text-white" />
+        <Icon iconName="grip-lines" iconStyle="regular" className="text-neutral" />
       </button>
-      <div className="flex h-11 justify-end border-y border-neutral-500 px-4 py-2">
+      <div className="flex h-11 justify-end border-y border-neutral px-4 py-2">
         <div className="flex items-center gap-1">
           {fitAddon && !showDelayedLoader && (
             <Button
@@ -153,16 +164,32 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
           </Button>
         </div>
       </div>
-      <div className="relative min-h-[248px] bg-neutral-700 px-4 py-2" style={{ height: terminalParentHeight }}>
+      <div
+        className="relative min-h-[248px] border-neutral bg-surface-neutral-subtle px-4 py-2"
+        style={{ height: terminalParentHeight }}
+      >
         {isTerminalLoading ? (
           <div className="flex h-40 items-start justify-center p-5">
             <LoaderSpinner />
           </div>
         ) : (
           <>
-            <MemoizedXTerm className="h-full" addons={addons} />
+            <MemoizedXTerm
+              className="h-full"
+              addons={addons}
+              options={{
+                theme: {
+                  background: backgroundColor,
+                  foreground: foreground,
+                  cursor: foreground,
+                  cursorAccent: backgroundColor,
+                  selectionBackground: selectionBackground,
+                  selectionForeground: selectionForeground,
+                },
+              }}
+            />
             {showDelayedLoader && (
-              <div className="absolute inset-0 flex items-start justify-center bg-neutral-700 pt-7">
+              <div className="absolute inset-0 flex items-start justify-center border-neutral bg-surface-neutral-subtle pt-7">
                 <LoaderSpinner />
               </div>
             )}
