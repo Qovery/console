@@ -18,7 +18,6 @@ interface Badge {
   value: string
 }
 
-// TODO (qov-1236) At the moment, no cache is used for pre-selected project / env / service names
 function buildBadges(
   queryParams: DecodedValueMap<typeof queryParamsValues>,
   selectedItemsTargetType: SelectedItem[]
@@ -69,7 +68,7 @@ function buildBadges(
   }
   if (queryParams.projectId) {
     const projectName =
-      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'project_id')?.item?.name ?? 'Unknown'
+      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'project_id')?.item?.name ?? '...'
     badges.push({
       key: 'project_id',
       displayedName: 'Project',
@@ -78,8 +77,7 @@ function buildBadges(
   }
   if (queryParams.environmentId) {
     const environmentName =
-      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'environment_id')?.item?.name ??
-      'Unknown'
+      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'environment_id')?.item?.name ?? '...'
     badges.push({
       key: 'environment_id',
       displayedName: 'Environment',
@@ -89,8 +87,8 @@ function buildBadges(
 
   if (queryParams.targetId) {
     const targetName =
-      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'target_id')?.item?.name ?? 'Unknown'
-    const targetType = upperCaseFirstLetter(queryParams.targetType ?? 'Unknown')
+      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'target_id')?.item?.name ?? '...'
+    const targetType = upperCaseFirstLetter(queryParams.targetType ?? '...')
       .split('_')
       .join(' ')
     badges.push({

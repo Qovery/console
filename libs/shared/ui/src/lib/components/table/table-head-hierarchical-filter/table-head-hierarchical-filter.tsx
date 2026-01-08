@@ -4,7 +4,6 @@ import { Button } from '../../button/button'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Menu from '../../menu/menu'
-import menu from '../../menu/menu'
 import { type MenuItemProps } from '../../menu/menu-item/menu-item'
 import { type HierarchicalFilterResult, type TableFilterProps } from '../table'
 
@@ -248,14 +247,23 @@ export function TableHeadHierarchicalFilter({
     }
 
     // Build items from current level
+    let menuItemSelected: HierarchicalMenuItem | undefined = undefined
+    if (selectedItemsRef.current && selectedItemsRef.current.length > 0) {
+      menuItemSelected = selectedItemsRef.current.find(
+        (selectedItem) => selectedItem.filterKey === currentNavigationLevel.filterKey
+      )?.item
+    }
+
     currentNavigationLevel.items.forEach((item) => {
       items.push({
         name: upperCaseFirstLetter(item.name.toLowerCase())?.replace(/_/g, ' '),
-        // The check here is needed only for the first level of menu on the 'ALL' case
+        // The check here is needed:
+        // * for the first level of menu on the 'ALL' case
+        // * for existing selected item when using the 'Back' button
         contentLeft: (
           <Icon
             name={IconAwesomeEnum.CHECK}
-            className={`text-sm ${'ALL' === item.value ? 'text-green-400' : 'text-transparent'}`}
+            className={`text-sm ${('ALL' === item.value && !menuItemSelected) || menuItemSelected?.value === item.value ? 'text-green-400' : 'text-transparent'}`}
           />
         ),
         // Show ">" icon for all items to indicate they are clickable
