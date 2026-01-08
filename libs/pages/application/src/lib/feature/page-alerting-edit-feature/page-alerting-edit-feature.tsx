@@ -37,7 +37,9 @@ export function PageAlertingEditFeature() {
   })
   const { mutateAsync: editAlertRule, isLoading: isLoadingEditAlertRule } = useEditAlertRule({ organizationId })
 
-  const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
+  const hasStorage =
+    (service?.serviceType === 'CONTAINER' || service?.serviceType === 'APPLICATION') &&
+    (service.storage || []).length > 0
 
   const now = new Date()
   const oneHourAgo = subHours(now, 1)

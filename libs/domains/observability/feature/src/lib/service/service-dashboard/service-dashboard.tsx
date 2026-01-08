@@ -54,7 +54,9 @@ function ServiceDashboardContent() {
     ((service?.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => !port.publicly_accessible)) ||
       (service?.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => !port.publicly_accessible)))
 
-  const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
+  const hasStorage =
+    (service?.serviceType === 'CONTAINER' || service?.serviceType === 'APPLICATION') &&
+    (service.storage || []).length > 0
 
   const now = new Date()
   const oneHourAgo = subHours(now, 1)
