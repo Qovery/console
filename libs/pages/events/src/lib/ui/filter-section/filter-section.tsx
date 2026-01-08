@@ -66,35 +66,42 @@ function buildBadges(
     })
   }
   if (queryParams.projectId) {
-    const projectName =
-      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'project_id')?.item?.name ?? '...'
-    badges.push({
-      key: 'project_id',
-      displayedName: 'Project',
-      value: projectName,
-    })
+    const selectedItem = selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'project_id')
+    if (selectedItem) {
+      const projectName =
+        selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'project_id')?.item?.name ?? '...'
+      badges.push({
+        key: 'project_id',
+        displayedName: 'Project',
+        value: projectName,
+      })
+    }
   }
   if (queryParams.environmentId) {
-    const environmentName =
-      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'environment_id')?.item?.name ?? '...'
-    badges.push({
-      key: 'environment_id',
-      displayedName: 'Environment',
-      value: environmentName,
-    })
+    const selectedItem = selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'environment_id')
+    if (selectedItem) {
+      const environmentName =
+        selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'environment_id')?.item?.name ?? '...'
+      badges.push({
+        key: 'environment_id',
+        displayedName: 'Environment',
+        value: environmentName,
+      })
+    }
   }
-
   if (queryParams.targetId) {
-    const targetName =
-      selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'target_id')?.item?.name ?? '...'
-    const targetType = upperCaseFirstLetter(queryParams.targetType ?? '...')
-      .split('_')
-      .join(' ')
-    badges.push({
-      key: 'target_id',
-      displayedName: targetType,
-      value: targetName,
-    })
+    const selectedItem = selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'target_id')
+    if (selectedItem) {
+      const targetName = selectedItem?.item?.name ?? '...'
+      const targetType = upperCaseFirstLetter(queryParams.targetType ?? '...')
+        .split('_')
+        .join(' ')
+      badges.push({
+        key: 'target_id',
+        displayedName: targetType,
+        value: targetName,
+      })
+    }
   }
 
   return badges
