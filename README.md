@@ -8,8 +8,8 @@
 </a>
 </p>
 
-<h3 align="center">Web Console</h3>
-        <p align="center">Website: https://www.qovery.com</p>
+<h3 align="center"><a href="https://console.qovery.com">Web Console</a></h3>
+<p align="center">Website: <a href="https://www.qovery.com">https://www.qovery.com</a></p>
 
 <p align="center">
 <a href="https://opensource.org/licenses"><img alt="GPLv3 License" src="https://img.shields.io/badge/License-GPL%20v3-yellow.svg"></a>
