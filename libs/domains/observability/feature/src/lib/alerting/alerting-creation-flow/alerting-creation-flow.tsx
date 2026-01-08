@@ -84,7 +84,10 @@ export function AlertingCreationFlow({
     setCurrentStepIndex(index)
   }
 
-  const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
+  const hasStorage =
+    (service?.serviceType === 'CONTAINER' || service?.serviceType === 'APPLICATION') &&
+    'storage' in service &&
+    (service.storage || []).length > 0
 
   const { now, oneHourAgo } = useMemo(() => {
     const now = new Date()
