@@ -134,26 +134,63 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
     setBadges(buildBadges(queryParams, targetTypeSelectedItems))
   }, [queryParams, targetTypeSelectedItems])
 
+  const priorityKeys = new Set(['target_type', 'target_id', 'project_id', 'environment_id'])
+
   return (
     <>
       <div className="flex w-full items-center gap-2">
-        {badges.map((badge) => (
-          <Button
-            radius="full"
-            variant="surface"
-            color="neutral"
-            size="xs"
-            className="pl-9.5 justify-center gap-1.5"
-            key={badge.key}
-          >
-            {badge.displayedName}: {badge.value}
-            <Icon
-              iconName="xmark"
-              className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
-              onClick={() => deleteFilter(badge.key, setFilter)}
-            />
-          </Button>
-        ))}
+        {badges
+          .filter((badge) => !priorityKeys.has(badge.key))
+          .map((badge) => (
+            <Button
+              radius="full"
+              variant="surface"
+              color="neutral"
+              size="xs"
+              className="pl-9.5 justify-center gap-1.5"
+              key={badge.key}
+            >
+              {badge.displayedName}: {badge.value}
+              <Icon
+                iconName="xmark"
+                className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
+                onClick={() => deleteFilter(badge.key, setFilter)}
+              />
+            </Button>
+          ))}
+        <div className="flex">
+          {badges
+            .filter((badge) => priorityKeys.has(badge.key))
+            .map((badge, index, array) => {
+              const isFirst = index === 0
+              const isLast = index === array.length - 1
+              const roundedClass =
+                isFirst && isLast
+                  ? 'rounded-l-full rounded-r-full'
+                  : isFirst
+                    ? 'rounded-l-full rounded-r-none'
+                    : isLast
+                      ? 'rounded-l-none rounded-r-full'
+                      : 'rounded-none'
+
+              return (
+                <Button
+                  variant="surface"
+                  color="neutral"
+                  size="xs"
+                  className={`pl-9.5 justify-center gap-1.5 ${roundedClass}`}
+                  key={badge.key}
+                >
+                  {badge.displayedName}: {badge.value}
+                  <Icon
+                    iconName="xmark"
+                    className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
+                    onClick={() => deleteFilter(badge.key, setFilter)}
+                  />
+                </Button>
+              )
+            })}
+        </div>
       </div>
       {badges.length > 0 && (
         <div className="flex items-center justify-end text-xs text-neutral-400">
