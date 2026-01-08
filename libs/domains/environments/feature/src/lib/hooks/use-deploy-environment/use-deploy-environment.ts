@@ -15,7 +15,7 @@ export function useDeployEnvironment({ projectId, logsLink }: { projectId: strin
       queryClient.invalidateQueries({
         queryKey: queries.environments.deploymentHistory({ environmentId }).queryKey,
       })
-      // NOTE: Sub-optimal because API doesn't directly provides impacted services but mitigated by short lived deployment history cache
+      // NOTE: Sub-optimal because API doesn't directly provide impacted services but mitigated by short lived deployment history cache
       queryClient.invalidateQueries({
         queryKey: queries.services.deploymentHistory._def,
       })
