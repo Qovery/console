@@ -82,7 +82,7 @@ export type ClusterFeaturesData = {
     aws_vpc_eks_id: string
     eks_create_nodes_in_private_subnet: boolean
     eks_subnets?: Subnets[]
-    eks_karpenter_fargate_subnets?: Subnets[]
+    eks_private_subnets?: Subnets[]
     mongodb_subnets?: Subnets[]
     rds_subnets?: Subnets[]
     redis_subnets?: Subnets[]
