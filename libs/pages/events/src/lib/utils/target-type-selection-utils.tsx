@@ -3,9 +3,6 @@ import { DecodedValueMap } from 'use-query-params'
 import { HierarchicalFilterResult, HierarchicalMenuItem, NavigationLevel, SelectedItem } from '@qovery/shared/ui'
 import { queryParamsValues } from '../feature/page-general-feature/page-general-feature'
 
-// Global cache to store selected options
-const SELECTED_OPTIONS_BY_KEY = new Map<string, HierarchicalMenuItem>()
-
 const SERVICE_TARGET_TYPES: ReadonlySet<string> = new Set([
   'APPLICATION',
   'DATABASE',
@@ -15,10 +12,15 @@ const SERVICE_TARGET_TYPES: ReadonlySet<string> = new Set([
   'TERRAFORM',
 ])
 
-function getServiceTypeSelected(selectedItems: SelectedItem[]): string | undefined {
-  return selectedItems.find((selectedItem) => {
-    return selectedItem.filterKey === 'target_type' && SERVICE_TARGET_TYPES.has(selectedItem.item.value)
+function getTargetTypeSelected(selectedItems: SelectedItem[]): string | undefined {
+  const selectedTargetType = selectedItems.find((selectedItem) => {
+    return selectedItem.filterKey === 'target_type'
   })?.item?.value
+  // 'ALL' is considered as no target type filter
+  if (selectedTargetType === 'ALL') {
+    return undefined
+  }
+  return selectedTargetType
 }
 
 function getProjectIdSelected(selectedItems: SelectedItem[]): string | undefined {
@@ -119,15 +121,20 @@ export async function computeMenusToDisplay(
     return null
   }
 
-  const serviceTypeSelected = getServiceTypeSelected(selectedItems)
+  const targetTypeSelected = getTargetTypeSelected(selectedItems)
+  if (!targetTypeSelected) {
+    return null
+  }
+
+  const isServiceTypeSelected = SERVICE_TARGET_TYPES.has(targetTypeSelected ?? '')
   const projectIdSelected = getProjectIdSelected(selectedItems)
   const environmentIdSelected = getEnvironmentIdSelected(selectedItems)
   const targetIdSelected = getTargetIdSelected(selectedItems)
 
-  if (serviceTypeSelected) {
+  if (isServiceTypeSelected) {
     // Fetch projects if no project selected
     if (!projectIdSelected) {
-      const targetTypeToSearch = serviceTypeSelected as OrganizationEventTargetType
+      const targetTypeToSearch = targetTypeSelected as OrganizationEventTargetType
       const projects = await fetchTargetProjects(organizationId, targetTypeToSearch, queryParams)
       return {
         items: projects.map((p) => {
@@ -142,7 +149,7 @@ export async function computeMenusToDisplay(
     }
     // Fetch environments if no environment selected
     if (!environmentIdSelected) {
-      const targetTypeToSearch = serviceTypeSelected as OrganizationEventTargetType
+      const targetTypeToSearch = targetTypeSelected as OrganizationEventTargetType
       const environments = await fetchTargetEnvironments(
         organizationId,
         projectIdSelected,
@@ -162,8 +169,8 @@ export async function computeMenusToDisplay(
     }
 
     if (!targetIdSelected) {
-      const targetTypeToSearch = serviceTypeSelected as OrganizationEventTargetType
-      const environments = await fetchTargetsAsync(
+      const targetTypeToSearch = targetTypeSelected as OrganizationEventTargetType
+      const targets = await fetchTargetsAsync(
         organizationId,
         targetTypeToSearch,
         queryParams,
@@ -172,7 +179,7 @@ export async function computeMenusToDisplay(
         environmentIdSelected
       )
       return {
-        items: environments.map((p) => {
+        items: targets.map((p) => {
           return {
             value: p.value,
             name: p.name,
@@ -185,6 +192,60 @@ export async function computeMenusToDisplay(
 
     // All service hierarchical menu items have been selected
     return null
+  }
+
+  // TODO (qov-1236) Handle Environment level
+  const isEnvironmentSelected = targetTypeSelected === 'ENVIRONMENT'
+  if (isEnvironmentSelected) {
+    const targetTypeToSearch = targetTypeSelected as OrganizationEventTargetType
+    if (!projectIdSelected) {
+      const projects = await fetchTargetProjects(organizationId, targetTypeToSearch, queryParams)
+      return {
+        items: projects.map((p) => {
+          return {
+            value: p.value,
+            name: p.name,
+          }
+        }),
+        shouldDrillDown: false,
+        filterKey: 'project_id',
+      }
+    }
+    if (!environmentIdSelected) {
+      const environments = await fetchTargetEnvironments(
+        organizationId,
+        projectIdSelected,
+        targetTypeToSearch,
+        queryParams
+      )
+      return {
+        items: environments.map((p) => {
+          return {
+            value: p.value,
+            name: p.name,
+          }
+        }),
+        shouldDrillDown: false,
+        filterKey: 'environment_id',
+      }
+    }
+    return null
+  }
+
+  // Global case (selected target type + target id)
+  if (targetTypeSelected && !targetIdSelected) {
+    const targetTypeToSearch = targetTypeSelected as OrganizationEventTargetType
+    const targets = await fetchTargetsAsync(organizationId, targetTypeToSearch, queryParams, '')
+    return {
+      items: targets.map((p) => {
+        return {
+          value: p.value,
+          name: p.name,
+        }
+      }),
+      shouldDrillDown: false,
+      filterKey: 'target_id',
+    }
   }
 
   return null
@@ -209,94 +270,116 @@ export async function initializeSelectedItemsFromQueryParams(
   let level = 0
 
   const targetTypeValue = queryParams.targetType
-  const projectIdValue = queryParams.projectId
-  const environmentIdValue = queryParams.environmentId
-  const targetIdValue = queryParams.targetId
 
   // If no target type, nothing to initialize
   if (!targetTypeValue) {
     return { selectedItems, navigationStack, level }
   }
 
-  // Check if it's a service type
-  const isServiceType = SERVICE_TARGET_TYPES.has(targetTypeValue)
-  if (!isServiceType) {
-    // For non-service types, just add the target type
+  const projectIdValue = queryParams.projectId
+  const environmentIdValue = queryParams.environmentId
+  const targetIdValue = queryParams.targetId
+  const isServiceTypeSelected = SERVICE_TARGET_TYPES.has(targetTypeValue)
+
+  // TODO (qov-1236) Handle environment use case
+
+  // Handle service type selected (this means targetType / project / environment / service are present in request params)
+  if (isServiceTypeSelected) {
     const targetTypeItem = initialData.find((item) => item.value === targetTypeValue)
-    if (targetTypeItem) {
-      selectedItems.push({ filterKey: 'target_type', item: targetTypeItem })
+    if (!targetTypeItem) {
+      return { selectedItems, navigationStack, level }
     }
-    return { selectedItems, navigationStack, level }
-  }
+    selectedItems.push({ filterKey: 'target_type', item: targetTypeItem })
 
-  // Add target type
-  const targetTypeItem = initialData.find((item) => item.value === targetTypeValue)
-  if (!targetTypeItem) {
-    return { selectedItems, navigationStack, level }
-  }
-  selectedItems.push({ filterKey: 'target_type', item: targetTypeItem })
+    // Always fetch projects for service types (to show available options at level 1)
+    const projects = await fetchTargetProjects(
+      organizationId,
+      targetTypeValue as OrganizationEventTargetType,
+      queryParams
+    )
 
-  // Always fetch projects for service types (to show available options at level 1)
-  const projects = await fetchTargetProjects(
-    organizationId,
-    targetTypeValue as OrganizationEventTargetType,
-    queryParams
-  )
+    // Add projects to navigation stack
+    navigationStack.push({ items: projects, filterKey: 'project_id' })
+    level = 1
 
-  // Add projects to navigation stack
-  navigationStack.push({ items: projects, filterKey: 'project_id' })
-  level = 1
+    // If projectId is provided, find it and add to selectedItems
+    if (projectIdValue) {
+      const projectItem = projects.find((p) => p.value === projectIdValue)
 
-  // If projectId is provided, find it and add to selectedItems
-  if (projectIdValue) {
-    const projectItem = projects.find((p) => p.value === projectIdValue)
+      if (projectItem) {
+        selectedItems.push({ filterKey: 'project_id', item: projectItem })
 
-    if (projectItem) {
-      selectedItems.push({ filterKey: 'project_id', item: projectItem })
+        // Fetch environments (to show available options at level 2)
+        const environments = await fetchTargetEnvironments(
+          organizationId,
+          projectIdValue,
+          targetTypeValue as OrganizationEventTargetType,
+          queryParams
+        )
 
-      // Fetch environments (to show available options at level 2)
-      const environments = await fetchTargetEnvironments(
-        organizationId,
-        projectIdValue,
-        targetTypeValue as OrganizationEventTargetType,
-        queryParams
-      )
+        // Add environments to navigation stack
+        navigationStack.push({ items: environments, filterKey: 'environment_id' })
+        level = 2
 
-      // Add environments to navigation stack
-      navigationStack.push({ items: environments, filterKey: 'environment_id' })
-      level = 2
+        // If environmentId is provided, find it and add to selectedItems
+        if (environmentIdValue) {
+          const environmentItem = environments.find((e) => e.value === environmentIdValue)
 
-      // If environmentId is provided, find it and add to selectedItems
-      if (environmentIdValue) {
-        const environmentItem = environments.find((e) => e.value === environmentIdValue)
+          if (environmentItem) {
+            selectedItems.push({ filterKey: 'environment_id', item: environmentItem })
 
-        if (environmentItem) {
-          selectedItems.push({ filterKey: 'environment_id', item: environmentItem })
+            // Fetch targets (to show available options at level 3)
+            const targets = await fetchTargetsAsync(
+              organizationId,
+              targetTypeValue as OrganizationEventTargetType,
+              queryParams,
+              '',
+              projectIdValue,
+              environmentIdValue
+            )
 
-          // Fetch targets (to show available options at level 3)
-          const targets = await fetchTargetsAsync(
-            organizationId,
-            targetTypeValue as OrganizationEventTargetType,
-            queryParams,
-            '',
-            projectIdValue,
-            environmentIdValue
-          )
+            // Add targets to navigation stack
+            navigationStack.push({ items: targets, filterKey: 'target_id' })
+            level = 3
 
-          // Add targets to navigation stack
-          navigationStack.push({ items: targets, filterKey: 'target_id' })
-          level = 3
+            // If targetId is provided, find it and add to selectedItems
+            if (targetIdValue) {
+              const targetItem = targets.find((t) => t.value === targetIdValue)
 
-          // If targetId is provided, find it and add to selectedItems
-          if (targetIdValue) {
-            const targetItem = targets.find((t) => t.value === targetIdValue)
-
-            if (targetItem) {
-              selectedItems.push({ filterKey: 'target_id', item: targetItem })
+              if (targetItem) {
+                selectedItems.push({ filterKey: 'target_id', item: targetItem })
+              }
             }
           }
         }
       }
+    }
+    return { selectedItems, navigationStack, level }
+  }
+
+  // Global case (selected target type + target id)
+  const targetTypeItem = initialData.find((item) => item.value === targetTypeValue)
+  if (targetTypeItem) {
+    selectedItems.push({ filterKey: 'target_type', item: targetTypeItem })
+  }
+
+  const targets = await fetchTargetsAsync(
+    organizationId,
+    targetTypeValue as OrganizationEventTargetType,
+    queryParams,
+    ''
+  )
+
+  // Add targets to navigation stack
+  navigationStack.push({ items: targets, filterKey: 'target_id' })
+  level = 1
+
+  // If targetId is provided, find it and add to selectedItems
+  if (targetIdValue) {
+    const targetItem = targets.find((t) => t.value === targetIdValue)
+
+    if (targetItem) {
+      selectedItems.push({ filterKey: 'target_id', item: targetItem })
     }
   }
 
@@ -307,8 +390,6 @@ export function computeSelectedItemsFromFilter(
   filter: { key?: string; value?: string }[],
   currentSelectedItems: SelectedItem[]
 ): SelectedItem[] {
-  console.log('[computeSelectedItemsFromFilter] Computing from filter', { filter, currentSelectedItems })
-
   // Extract hierarchical filter values
   const targetTypeFilter = filter.find((f) => f.key === 'target_type')
   const projectIdFilter = filter.find((f) => f.key === 'project_id')
@@ -344,7 +425,6 @@ export function computeSelectedItemsFromFilter(
     }
   }
 
-  console.log('[computeSelectedItemsFromFilter] Result:', newSelectedItems)
   return newSelectedItems
 }
 
