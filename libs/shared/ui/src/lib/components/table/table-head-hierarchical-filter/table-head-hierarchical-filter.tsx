@@ -1,3 +1,4 @@
+import { p } from 'framer-motion/m'
 import { type Dispatch, type MouseEvent, type SetStateAction, useEffect, useRef, useState } from 'react'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { Button } from '../../button/button'
@@ -111,7 +112,9 @@ export function TableHeadHierarchicalFilter({
     }
 
     // Call parent's callback to compute new selected items based on filter
-    const newSelectedItems = onFilterChange(filter, selectedItemsRef.current)
+    const newSelectedItems = onFilterChange(filter, selectedItemsRef.current).filter(
+      (item) => item.item.value !== 'ALL'
+    )
 
     // If filters were removed (fewer selected items)
     if (newSelectedItems.length < selectedItemsRef.current.length) {
@@ -149,28 +152,13 @@ export function TableHeadHierarchicalFilter({
   const isDark = document.documentElement.classList.contains('dark')
 
   // Get current navigation level
-  const currentNavigationLevel = navigationStack[navigationStack.length - 1]
-  const isRootLevel = navigationStack.length === 1
+  const currentNavigationLevel = navigationStack[level]
+  const isRootLevel = level === 0
 
   // Handle going back in navigation
   const handleBack = () => {
     if (navigationStack.length > 1) {
-      // const filterKeyToRemove = navigationStack[navigationStack.length - 2].filterKey
-      const filterKeyToRemove = selectedItemsRef.current[selectedItemsRef.current.length - 1].filterKey
       setLevel(level - 1)
-      setNavigationStack((prev) => prev.slice(0, -1))
-      selectedItemsRef.current = selectedItemsRef.current.slice(0, -1)
-      setFilter((prev) => {
-        return prev.map((p) => {
-          // Put explicitly 'ALL' when going back for the last filter applied
-          if (p.key === filterKeyToRemove) {
-            return { key: filterKeyToRemove, value: 'ALL' }
-          } else {
-            return p
-          }
-        })
-      })
-      // Keep menu open when going back
       setOpen(true)
     }
   }
@@ -180,11 +168,36 @@ export function TableHeadHierarchicalFilter({
     setIsLoading(true)
     // Keep menu open during async operation
     setOpen(true)
-    // Set internal selected items
-    selectedItemsRef.current = [
-      ...selectedItemsRef.current.filter((prev) => prev.filterKey !== currentNavigationLevel.filterKey),
-      { item: item, filterKey: currentNavigationLevel.filterKey },
-    ]
+
+    // If we have some selected items at lower level + other hierarchy is selected, we must clean them
+    let filterKeysToReset: string[] = []
+    if (selectedItemsRef.current && selectedItemsRef.current.length > level) {
+      const selectedItem = selectedItemsRef.current[level]
+      // Handle the case where nothing needs to be reload
+      if (selectedItem.filterKey === currentNavigationLevel.filterKey && selectedItem.item.value === item.value) {
+        setIsLoading(false)
+        if (navigationStack.length > level + 1) {
+          setLevel(level + 1)
+          setOpen(true)
+        } else {
+          setOpen(false)
+        }
+        return
+      }
+
+      // Compute filter keys to be removed and set properly selected items by removing lower levels.
+      filterKeysToReset = selectedItemsRef.current.slice(level + 1).map((item) => item.filterKey)
+      selectedItemsRef.current = [
+        ...selectedItemsRef.current.slice(0, level),
+        { item: item, filterKey: currentNavigationLevel.filterKey },
+      ]
+    } else {
+      // Set internal selected items
+      selectedItemsRef.current = [
+        ...selectedItemsRef.current.filter((prev) => prev.filterKey !== currentNavigationLevel.filterKey),
+        { item: item, filterKey: currentNavigationLevel.filterKey },
+      ]
+    }
     onSelectionChange(selectedItemsRef.current)
 
     try {
@@ -197,8 +210,13 @@ export function TableHeadHierarchicalFilter({
       }
       setFilter((prev) => {
         // We need to remove first the filter if it is already applied
-        const filterRemovedOfCurrentFilterKey = prev.filter((p) => p.key !== currentNavigationLevel.filterKey)
-        return [...filterRemovedOfCurrentFilterKey, filterToApply]
+        const filterRemovedOfCurrentFilterKey = prev.filter(
+          (p) => p.key !== currentNavigationLevel.filterKey && !filterKeysToReset.some((f) => f === p.key)
+        )
+        const enforceFilteredRemoved = filterKeysToReset.map((f) => {
+          return { key: f, value: 'ALL' }
+        })
+        return [...filterRemovedOfCurrentFilterKey, ...enforceFilteredRemoved, filterToApply]
       })
 
       // The last possible element in the hierarchy has been selected, so close the menu
@@ -207,14 +225,17 @@ export function TableHeadHierarchicalFilter({
         setOpen(false)
       } else {
         // Drill down to next level
-        setNavigationStack((prev) => [...prev, { items: result.items, filterKey: result.filterKey }])
+        setNavigationStack((prev) => {
+          // Lower levels need to be removed if there are any
+          const newNavigationStack = prev.slice(0, level + 1)
+          return [...newNavigationStack, { items: result.items, filterKey: result.filterKey }]
+        })
         setLevel(level + 1)
         // Explicitly keep menu open for next level
         setOpen(true)
         setIsLoading(false)
       }
     } catch (error) {
-      console.error('Error fetching hierarchical filter data:', error)
       setIsLoading(false)
     }
   }
@@ -307,7 +328,7 @@ export function TableHeadHierarchicalFilter({
     } else {
       setFilterByLabel('Target Type')
     }
-  }, [navigationStack])
+  }, [level, navigationStack])
 
   return (
     <div className={`flex items-center ${classNameTitle ?? ''}`}>
