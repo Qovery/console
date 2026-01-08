@@ -34,6 +34,7 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { type ValidTargetIds } from '@qovery/domains/event'
 
 export interface RowEventProps {
   event: OrganizationEventResponse
@@ -41,6 +42,7 @@ export interface RowEventProps {
   columnsWidth: string
   setExpanded: (expanded: boolean) => void
   isPlaceholder?: boolean
+  validTargetIds?: ValidTargetIds
 }
 
 const formatEventName = (eventName: string) => {
@@ -67,12 +69,33 @@ export const getSourceIcon = (origin?: OrganizationEventOrigin) => {
 }
 
 export function RowEvent(props: RowEventProps) {
-  const { event, expanded, setExpanded, isPlaceholder, columnsWidth } = props
+  const { event, expanded, setExpanded, isPlaceholder, columnsWidth, validTargetIds } = props
   const { organizationId = '' } = useParams()
   const [diffStats, setDiffStats] = useState<DiffStats>({ additions: 0, deletions: 0 })
 
   const renderLink = (targetType: OrganizationEventTargetType) => {
     const { event_type, target_name, project_id, environment_id, target_id } = event
+
+    // Check if target still exists
+    const targetExists = (() => {
+      if (!validTargetIds || !target_id) return true // If no validation data, assume exists
+
+      switch (targetType) {
+        case OrganizationEventTargetType.APPLICATION:
+        case OrganizationEventTargetType.CONTAINER:
+        case OrganizationEventTargetType.JOB:
+        case OrganizationEventTargetType.HELM:
+        case OrganizationEventTargetType.TERRAFORM:
+        case OrganizationEventTargetType.DATABASE:
+          return validTargetIds.services.has(target_id)
+        case OrganizationEventTargetType.PROJECT:
+          return validTargetIds.projects.has(target_id)
+        case OrganizationEventTargetType.ENVIRONMENT:
+          return validTargetIds.environments.has(target_id)
+        default:
+          return true // For other types, assume they exist
+      }
+    })()
 
     const customLink = (url: string, content = target_name) => (
       <Link
@@ -113,7 +136,7 @@ export function RowEvent(props: RowEventProps) {
       [OrganizationEventTargetType.HELM_REPOSITORY]: () => <span>NOT_IMPLEMENTED</span>,
     }
 
-    if (event_type !== OrganizationEventType.DELETE) {
+    if (event_type !== OrganizationEventType.DELETE && targetExists) {
       return linkConfig[targetType]()
     } else {
       return <span className="truncate">{target_name}</span>
