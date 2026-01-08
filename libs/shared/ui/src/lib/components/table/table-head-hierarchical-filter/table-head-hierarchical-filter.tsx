@@ -43,6 +43,8 @@ export interface SelectedItem {
 export interface HierarchicalMenuItem {
   value: string
   name: string
+  // This property is only to be able to
+  isLeaf?: boolean
 }
 
 function initializeInitialData(initialData: HierarchicalMenuItem[], filterKey: string): NavigationLevel[] {
@@ -288,7 +290,12 @@ export function TableHeadHierarchicalFilter({
           />
         ),
         // Show ">" icon for all items to indicate they are clickable
-        contentRight: <Icon name={IconAwesomeEnum.ARROW_RIGHT} className="text-sm text-neutral-400" />,
+        contentRight: (
+          <Icon
+            name={IconAwesomeEnum.ARROW_RIGHT}
+            className={`text-sm text-neutral-400 ${!item.isLeaf ? 'text-neutral-400' : 'text-transparent'}`}
+          />
+        ),
         onClick: (e) => {
           // Prevent menu from auto-closing
           e.keepOpen = true
