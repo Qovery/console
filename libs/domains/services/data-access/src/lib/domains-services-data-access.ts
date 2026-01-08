@@ -395,6 +395,11 @@ export const services = createQueryKeys('services', {
         .exhaustive()
       return commits
     },
+    // Aggressive caching to reduce high-frequency API calls to Git providers
+    // Context: Services list page was generating 20k API calls in 30 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes - commit history doesn't change frequently
+    gcTime: 30 * 60 * 1000, // 30 minutes - keep in cache for navigation back to page
+    refetchOnWindowFocus: false, // Prevent refetch on tab switching (major source of excessive calls)
   }),
   deploymentHistory: ({
     serviceId,
