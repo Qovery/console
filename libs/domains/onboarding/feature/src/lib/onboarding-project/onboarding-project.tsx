@@ -13,12 +13,12 @@ import {
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, ONBOARDING_PERSONALIZE_URL } from '@qovery/shared/routes'
+import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type SerializedError } from '@qovery/shared/utils'
-import { StepProject } from '../../ui/step-project/step-project'
 import { ContextOnboarding } from '../container/container'
+import { StepProject } from '../step-project/step-project'
 
 export function OnboardingProject() {
   useDocumentTitle('Onboarding Organization - Qovery')
@@ -147,8 +147,8 @@ export function OnboardingProject() {
           console.error('Failed to clean up organization after card failure', cleanupError)
         }
       }
-      const fallbackRoute = shouldSkipBilling ? ONBOARDING_PERSONALIZE_URL : ONBOARDING_PLANS_URL
-      navigate({ to: `${ONBOARDING_URL}${fallbackRoute}` })
+      const fallbackRoute = shouldSkipBilling ? '/personalize' : '/plans'
+      navigate({ to: `/onboarding${fallbackRoute}` })
     } finally {
       setIsSubmitting(false)
     }

@@ -12,9 +12,9 @@ import { ExternalLink, Heading, Section, toastError, useModal } from '@qovery/sh
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { loadChargebee } from '@qovery/shared/util-payment'
 import { type SerializedError } from '@qovery/shared/utils'
-import PlanCard from '../../ui/plan-card/plan-card'
-import StepPlans from '../../ui/step-plans/step-plans'
 import { ContextOnboarding } from '../container/container'
+import PlanCard from '../plan-card/plan-card'
+import StepPlans from '../step-plans/step-plans'
 
 const PLANS = [
   {
@@ -129,10 +129,10 @@ export function OnboardingPlans() {
       content: (
         <Section className="h-full p-8">
           <div>
-            <Heading level={1} className="mb-1 text-neutral">
+            <Heading level={1} className="text-neutral mb-1">
               Change your plan
             </Heading>
-            <p className="mb-6 text-sm text-neutral">Choose the plan that suits you the best.</p>
+            <p className="text-neutral mb-6 text-sm">Choose the plan that suits you the best.</p>
           </div>
           <div className="mb-8 flex flex-col gap-5 md:flex-row">
             {selectablePlans.map((planOption) => (
@@ -142,7 +142,7 @@ export function OnboardingPlans() {
             ))}
           </div>
           <div className="mt-auto flex items-center justify-between">
-            <p className="text-sm text-neutral">
+            <p className="text-neutral text-sm">
               You have specific needs? Book a demo with us and unlock a trial that truly suits you.
             </p>
             <ExternalLink
