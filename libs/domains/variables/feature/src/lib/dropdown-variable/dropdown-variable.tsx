@@ -1,5 +1,7 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useCallback, useState } from 'react'
+import { type VariableScope } from '@qovery/domains/variables/data-access'
 import { Icon, InputSearch, Popover, Tooltip, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
@@ -8,12 +10,27 @@ export interface DropdownVariableProps extends PropsWithChildren {
   environmentId: string
   onChange: (value: string) => void
   onOpenChange?: (open: boolean) => void
+  serviceId?: string
+  scope?: VariableScope
+  disableBuiltInVariables?: boolean
 }
 
-export function DropdownVariable({ environmentId, onChange, children, onOpenChange }: DropdownVariableProps) {
+export function DropdownVariable({
+  environmentId,
+  serviceId,
+  scope,
+  onChange,
+  children,
+  onOpenChange,
+  disableBuiltInVariables = false,
+}: DropdownVariableProps) {
+  // Determine which scope to query based on provided props
+  const parentIdToUse = serviceId || environmentId
+  const scopeToUse = serviceId && scope ? scope : 'ENVIRONMENT'
+
   const { data: variables = [] } = useVariables({
-    parentId: environmentId,
-    scope: 'ENVIRONMENT',
+    parentId: parentIdToUse,
+    scope: scopeToUse,
   })
   const [open, setOpen] = useState(false)
 
@@ -41,11 +58,11 @@ export function DropdownVariable({ environmentId, onChange, children, onOpenChan
       <Popover.Root open={open} onOpenChange={_onOpenChange}>
         <Popover.Trigger>{children}</Popover.Trigger>
         <DropdownMenu.Content asChild>
-          <Popover.Content className="flex max-h-60 w-[248px] min-w-[248px] flex-col p-2">
-            {/* 
+          <Popover.Content className="flex max-h-60 w-[400px] min-w-[400px] flex-col p-2">
+            {/*
                 `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
                 fix issue with item focus if we use input search
-                https://github.com/radix-ui/primitives/issues/2193#issuecomment-1790564604 
+                https://github.com/radix-ui/primitives/issues/2193#issuecomment-1790564604
               */}
             <div className="bg-white dark:bg-neutral-700" onKeyDown={(e) => e.stopPropagation()}>
               <InputSearch
@@ -55,40 +72,67 @@ export function DropdownVariable({ environmentId, onChange, children, onOpenChan
                 autofocus
               />
             </div>
-            <div className="overflow-y-auto">
+            <div className="max-h-[200px] overflow-y-auto">
               {filteredVariables.length > 0 ? (
-                filteredVariables.map((variable) => (
-                  <Popover.Close key={variable.key} onClick={() => setSearchTerm('')}>
+                filteredVariables.map((variable) => {
+                  const isBuiltIn = variable.scope === APIVariableScopeEnum.BUILT_IN
+                  const isDisabled = isBuiltIn && disableBuiltInVariables
+
+                  const itemContent = (
                     <DropdownMenu.Item
                       className={twMerge(
-                        dropdownMenuItemVariants({ color: 'brand' }),
-                        'flex h-[52px] items-center justify-between gap-1 px-2 py-1.5'
+                        dropdownMenuItemVariants({ color: 'brand', disabled: isDisabled }),
+                        'flex h-[52px] items-start justify-between gap-1 px-2 py-1.5'
                       )}
-                      onClick={() => onChange(variable.key)}
+                      onClick={() => !isDisabled && onChange(variable.key)}
+                      disabled={isDisabled}
                     >
                       <div className="flex flex-col items-start justify-center gap-1">
                         <span className="text-sm font-medium">
-                          <Truncate text={variable.key} truncateLimit={21} />
+                          <Truncate text={variable.key} truncateLimit={38} />
                         </span>
 
                         {variable.service_name ? (
                           <span className="truncate text-xs font-normal">
-                            <Truncate text={variable.service_name} truncateLimit={30} />
+                            <Truncate text={variable.service_name} truncateLimit={44} />
                           </span>
                         ) : (
-                          <span className="text-xs font-normal text-neutral-300">no service</span>
+                          <span className="text-xs font-normal text-neutral-300">
+                            Defined at the project or environment level
+                          </span>
                         )}
                       </div>
-                      {variable.description && (
-                        <Tooltip content={variable.description} side="bottom">
-                          <span>
-                            <Icon iconName="info-circle" iconStyle="regular" className="text-neutral-400" />
-                          </span>
-                        </Tooltip>
-                      )}
+                      <div className="flex-shrink-0 pt-0.5">
+                        {isDisabled ? (
+                          <Tooltip
+                            content="Built-in variables injection is not supported for Helm. Please create an alias to use this variable."
+                            side="left"
+                          >
+                            <span>
+                              <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-400" />
+                            </span>
+                          </Tooltip>
+                        ) : (
+                          variable.description && (
+                            <Tooltip content={variable.description} side="bottom">
+                              <span>
+                                <Icon iconName="info-circle" iconStyle="regular" className="text-neutral-400" />
+                              </span>
+                            </Tooltip>
+                          )
+                        )}
+                      </div>
                     </DropdownMenu.Item>
-                  </Popover.Close>
-                ))
+                  )
+
+                  return isDisabled ? (
+                    <div key={variable.key}>{itemContent}</div>
+                  ) : (
+                    <Popover.Close key={variable.key} onClick={() => setSearchTerm('')}>
+                      {itemContent}
+                    </Popover.Close>
+                  )
+                })
               ) : (
                 <div className="px-3 py-6 text-center">
                   <Icon iconName="wave-pulse" className="text-neutral-350" />

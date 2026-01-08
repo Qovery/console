@@ -1,6 +1,7 @@
 import { type Monaco } from '@monaco-editor/react'
 import { type editor } from 'monaco-editor'
 import { type ComponentProps, useRef } from 'react'
+import { type VariableScope } from '@qovery/domains/variables/data-access'
 import { Button, CodeEditor, Icon } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import DropdownVariable from '../dropdown-variable/dropdown-variable'
@@ -8,18 +9,27 @@ import { useVariables } from '../hooks/use-variables/use-variables'
 
 interface CodeEditorVariableProps extends ComponentProps<typeof CodeEditor> {
   environmentId: string
+  serviceId?: string
+  scope?: VariableScope
+  disableBuiltInVariables?: boolean
 }
 
 export function CodeEditorVariable({
   environmentId,
+  serviceId,
+  scope,
+  disableBuiltInVariables = false,
   language = 'json',
   options,
   className,
   ...props
 }: CodeEditorVariableProps) {
+  const parentIdToUse = serviceId || environmentId
+  const scopeToUse = serviceId && scope ? scope : 'ENVIRONMENT'
+
   const { refetch: refetchVariables } = useVariables({
-    parentId: environmentId,
-    scope: 'ENVIRONMENT',
+    parentId: parentIdToUse,
+    scope: scopeToUse,
   })
 
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
@@ -82,7 +92,13 @@ export function CodeEditorVariable({
         }}
         {...props}
       />
-      <DropdownVariable environmentId={environmentId} onChange={handleVariableChange}>
+      <DropdownVariable
+        environmentId={environmentId}
+        serviceId={serviceId}
+        scope={scope}
+        disableBuiltInVariables={disableBuiltInVariables}
+        onChange={handleVariableChange}
+      >
         <Button size="md" type="button" color="neutral" variant="surface" className="absolute right-4 top-4 px-2.5">
           <Icon className="text-sm" iconName="wand-magic-sparkles" />
         </Button>

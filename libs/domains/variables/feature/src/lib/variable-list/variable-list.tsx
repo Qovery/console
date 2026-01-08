@@ -114,6 +114,9 @@ export function VariableList({
           {...props}
         />
       ),
+      options: {
+        fakeModal: true,
+      },
     })
   }
 
@@ -129,6 +132,9 @@ export function VariableList({
           {...props}
         />
       ),
+      options: {
+        fakeModal: true,
+      },
     })
   }
 

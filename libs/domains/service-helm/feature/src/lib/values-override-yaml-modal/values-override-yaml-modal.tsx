@@ -6,6 +6,7 @@ import useHelmDefaultValues from '../hooks/use-helm-default-values/use-helm-defa
 
 export interface ValuesOverrideYamlModalProps {
   environmentId: string
+  serviceId?: string
   source: HelmRequestAllOfSource
   onSubmit: (value?: string) => void
   onClose: () => void
@@ -15,6 +16,7 @@ export interface ValuesOverrideYamlModalProps {
 export function ValuesOverrideYamlModal({
   source,
   environmentId,
+  serviceId,
   onClose,
   onSubmit,
   content,
@@ -59,6 +61,9 @@ export function ValuesOverrideYamlModal({
               render={({ field }) => (
                 <CodeEditorVariable
                   environmentId={environmentId}
+                  serviceId={serviceId}
+                  scope="HELM"
+                  disableBuiltInVariables={true}
                   width="100%"
                   height="calc(100vh - 278px)"
                   language="yaml"
