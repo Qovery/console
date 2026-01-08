@@ -29,6 +29,15 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterIdIndexRouteImpo
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/overview'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/eks-anywhere'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/general'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/index'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/network'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/resources'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/route'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/resources'
@@ -223,6 +232,17 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhere
         AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
     } as any,
   )
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRouteImport.update({
+    id: '/general',
+    path: '/general',
+    getParentRoute: () => AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRoute =
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRouteImport.update({
+    id: '/eks-anywhere',
+    path: '/eks-anywhere',
+    getParentRoute: () => AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
+  } as any)
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute =
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRouteImport.update(
     {
