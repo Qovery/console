@@ -183,6 +183,7 @@ export async function computeMenusToDisplay(
           return {
             value: p.value,
             name: p.name,
+            isLeaf: true,
           }
         }),
         shouldDrillDown: false,
@@ -223,6 +224,7 @@ export async function computeMenusToDisplay(
           return {
             value: p.value,
             name: p.name,
+            isLeaf: true,
           }
         }),
         shouldDrillDown: false,
@@ -241,6 +243,7 @@ export async function computeMenusToDisplay(
         return {
           value: p.value,
           name: p.name,
+          isLeaf: true,
         }
       }),
       shouldDrillDown: false,
