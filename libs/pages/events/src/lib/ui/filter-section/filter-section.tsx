@@ -124,13 +124,29 @@ function deleteFilter(key: string, setFilter?: Dispatch<SetStateAction<TableFilt
         },
       ])
     } else {
-      setFilter((prev) => [
-        ...prev.filter((currentValue) => currentValue.key !== key),
-        {
-          key: key,
-          value: 'ALL',
-        },
-      ])
+      // We need to manually handle the hierarchic filter keys removal
+      let allKeysToRemove: string[] = []
+      if (key === 'target_type') {
+        allKeysToRemove = ['target_type', 'project_id', 'environment_id', 'target_id']
+      } else if (key === 'project_id') {
+        allKeysToRemove = ['project_id', 'environment_id', 'target_id']
+      } else if (key === 'environment_id') {
+        allKeysToRemove = ['environment_id', 'target_id']
+      } else {
+        allKeysToRemove = [key]
+      }
+      setFilter((prev) => {
+        const enforceKeysToRemove = allKeysToRemove.map((keyToRemove) => {
+          return {
+            key: keyToRemove,
+            value: 'ALL',
+          }
+        })
+        return [
+          ...prev.filter((currentValue) => !allKeysToRemove.includes(currentValue.key ?? '')),
+          ...enforceKeysToRemove,
+        ]
+      })
     }
   }
 }
