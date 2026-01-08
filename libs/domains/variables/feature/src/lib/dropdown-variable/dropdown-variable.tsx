@@ -81,9 +81,8 @@ export function DropdownVariable({
                   const itemContent = (
                     <DropdownMenu.Item
                       className={twMerge(
-                        dropdownMenuItemVariants({ color: 'brand' }),
-                        'flex h-[52px] items-start justify-between gap-1 px-2 py-1.5',
-                        isDisabled && 'cursor-not-allowed opacity-50'
+                        dropdownMenuItemVariants({ color: 'brand', disabled: isDisabled }),
+                        'flex h-[52px] items-start justify-between gap-1 px-2 py-1.5'
                       )}
                       onClick={() => !isDisabled && onChange(variable.key)}
                       disabled={isDisabled}
