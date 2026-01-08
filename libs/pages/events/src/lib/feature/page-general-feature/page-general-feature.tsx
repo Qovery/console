@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { createEnumParam } from 'serialize-query-params'
 import { NumberParam, StringParam, useQueryParams, withDefault } from 'use-query-params'
-import { type EventQueryParams, useFetchEvents } from '@qovery/domains/event'
+import { type EventQueryParams, useFetchEvents, useFetchValidTargetIds } from '@qovery/domains/event'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { ALL, type NavigationLevel, type SelectedItem, type TableFilterProps } from '@qovery/shared/ui'
@@ -43,6 +43,7 @@ export function PageGeneralFeature() {
   const [targetTypeLevel, setTargetTypeLevel] = useState<number | undefined>(undefined)
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
   const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId })
+  const { data: validTargetIds } = useFetchValidTargetIds(organizationId)
   const { showChat } = useSupportChat()
 
   // Ref to prevent double-initialization (React strict mode can cause double-mounting in dev)
@@ -247,6 +248,7 @@ export function PageGeneralFeature() {
       setTargetTypeSelectedItems={setTargetTypeSelectedItems}
       targetTypeNavigationStack={targetTypeNavigationStack}
       targetTypeLevel={targetTypeLevel}
+      validTargetIds={validTargetIds}
     />
   )
 }

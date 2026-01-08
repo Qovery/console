@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import {
+  EnvironmentsApi,
   OrganizationEventApi,
+  OrganizationMainCallsApi,
+  ProjectsApi,
   type OrganizationEventResponseList,
   type OrganizationEventTargetResponseList,
 } from 'qovery-typescript-axios'
@@ -13,6 +16,9 @@ import {
 import { toastError } from '@qovery/shared/ui'
 
 const eventsApi = new OrganizationEventApi()
+const organizationApi = new OrganizationMainCallsApi()
+const projectsApi = new ProjectsApi()
+const environmentsApi = new EnvironmentsApi()
 
 export interface EventQueryParams {
   pageSize?: number | null
@@ -111,6 +117,48 @@ export const useFetchEventTargets = (organizationId: string, queryParams: EventQ
     {
       onError: (err) => toastError(err),
       enabled: enabled,
+    }
+  )
+}
+
+export interface ValidTargetIds {
+  services: Set<string>
+  projects: Set<string>
+  environments: Set<string>
+}
+
+export const useFetchValidTargetIds = (organizationId: string) => {
+  return useQuery<ValidTargetIds, Error>(
+    ['organization', organizationId, 'valid-target-ids'],
+    async () => {
+      // Fetch all services
+      const servicesResponse = await organizationApi.listServicesByOrganizationId(organizationId)
+      const services = servicesResponse.data.results || []
+
+      // Fetch all projects
+      const projectsResponse = await projectsApi.listProject(organizationId)
+      const projects = projectsResponse.data.results || []
+
+      // Fetch all environments for each project
+      // TODO (qov-1236) Fetching environments should pass through the new org environments endpoint
+      const environmentsPromises = projects.map((project) =>
+        project.id ? environmentsApi.listEnvironment(project.id) : Promise.resolve({ data: { results: [] } })
+      )
+      const environmentsResponses = await Promise.all(environmentsPromises)
+      const allEnvironments = environmentsResponses.flatMap((response) => response.data.results || [])
+
+      const validTargetIds: ValidTargetIds = {
+        services: new Set(services.map((service) => service.id).filter((id): id is string => !!id)),
+        projects: new Set(projects.map((project) => project.id).filter((id): id is string => !!id)),
+        environments: new Set(allEnvironments.map((env) => env.id).filter((id): id is string => !!id)),
+      }
+
+      return validTargetIds
+    },
+    {
+      refetchInterval: 60000, // Refetch every 60 seconds
+      staleTime: 60000, // Consider data stale after 60 seconds
+      onError: (err) => toastError(err),
     }
   )
 }
