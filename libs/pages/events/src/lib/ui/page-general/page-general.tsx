@@ -22,6 +22,7 @@ import {
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type SelectedTimestamps } from '../../../../../../shared/ui/src/lib/components/table/table-head-datepicker/table-head-datepicker'
+import { type ValidTargetIds } from '@qovery/domains/event'
 import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 import {
@@ -52,6 +53,7 @@ export interface PageGeneralProps {
   setTargetTypeSelectedItems: Dispatch<SetStateAction<SelectedItem[]>>
   targetTypeNavigationStack?: NavigationLevel[]
   targetTypeLevel?: number
+  validTargetIds?: ValidTargetIds
 }
 
 // Calculate default timestamps for display (not stored in URL)
@@ -221,6 +223,7 @@ export function PageGeneral({
   setTargetTypeSelectedItems,
   targetTypeNavigationStack,
   targetTypeLevel,
+  validTargetIds,
 }: PageGeneralProps) {
   const auditLogsRetentionInDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 30
   const [expandedEventTimestamp, setExpandedEventTimestamp] = useState<string | null>(null)
@@ -273,6 +276,7 @@ export function PageGeneral({
                 isPlaceholder
                 expandedEventTimestamp={expandedEventTimestamp}
                 setExpandedEventTimestamp={setExpandedEventTimestamp}
+                validTargetIds={validTargetIds}
               />
             ))
           ) : !organizationMaxLimitReached && events?.length === 0 ? (
@@ -294,6 +298,7 @@ export function PageGeneral({
                   columnsWidth={columnsWidth}
                   expandedEventTimestamp={expandedEventTimestamp}
                   setExpandedEventTimestamp={setExpandedEventTimestamp}
+                  validTargetIds={validTargetIds}
                 />
               ))}
               <div className="flex h-14 items-center justify-center border-b border-neutral-200">
@@ -329,6 +334,7 @@ export function PageGeneral({
                 columnsWidth={columnsWidth}
                 expandedEventTimestamp={expandedEventTimestamp}
                 setExpandedEventTimestamp={setExpandedEventTimestamp}
+                validTargetIds={validTargetIds}
               />
             ))
           )}
