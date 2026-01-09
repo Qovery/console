@@ -6,6 +6,7 @@ import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Menu from '../../menu/menu'
 import { type MenuItemProps } from '../../menu/menu-item/menu-item'
+import { truncateText } from '../../truncate/truncate'
 import { type HierarchicalFilterResult, type TableFilterProps } from '../table'
 
 export interface TableHeadHierarchicalFilterProps {
@@ -275,8 +276,12 @@ export function TableHeadHierarchicalFilter({
     }
 
     currentNavigationLevel.items.forEach((item) => {
+      const itemName =
+        item.name.length > 23
+          ? `${truncateText(upperCaseFirstLetter(item.name.toLowerCase())?.replace(/_/g, ' '), 20)}...`
+          : item.name
       items.push({
-        name: upperCaseFirstLetter(item.name.toLowerCase())?.replace(/_/g, ' '),
+        name: itemName,
         // The check here is needed:
         // * for the first level of menu on the 'ALL' case
         // * for existing selected item when using the 'Back' button
