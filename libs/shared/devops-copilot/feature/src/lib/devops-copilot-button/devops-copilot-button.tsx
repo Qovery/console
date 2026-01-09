@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { useContext, useEffect } from 'react'
-import { Button, Icon, Kbd } from '@qovery/shared/ui'
+import { Badge, Button, Icon, Kbd, Tooltip } from '@qovery/shared/ui'
 import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 import { DevopsCopilotContext } from '../devops-copilot-context/devops-copilot-context'
 
@@ -39,6 +39,14 @@ export function DevopsCopilotButton() {
           className="relative top-[1px] text-sm text-brand-500 dark:text-white"
         />
         AI Copilot
+        <Tooltip
+          content="This is an experimental feature. Functionality may change, and billing terms are not final."
+          delayDuration={400}
+        >
+          <Badge color="purple" variant="surface" size="sm" className="ml-0.5">
+            Beta
+          </Badge>
+        </Tooltip>
       </span>
       <div className="ml-auto flex gap-1 text-neutral-400">
         <Kbd>{metaKey}</Kbd>

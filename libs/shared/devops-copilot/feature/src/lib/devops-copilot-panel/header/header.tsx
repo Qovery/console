@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { type MutableRefObject } from 'react'
-import { Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
+import { Badge, Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL } from '@qovery/shared/util-const'
 import type { Message, PlanStep } from '../devops-copilot-panel'
 
@@ -49,6 +49,15 @@ export function Header({
               ? currentThreadHistoryTitle + '...'
               : currentThreadHistoryTitle}
         </span>
+        <Tooltip
+          content="This is an experimental feature. Functionality may change, and billing terms are not final."
+          delayDuration={400}
+          classNameContent="z-10"
+        >
+          <Badge color="purple" variant="surface" size="sm">
+            Beta
+          </Badge>
+        </Tooltip>
         {userAccess?.read_only === false && (
           <>
             <div className="mx-1 h-5 w-[1px] bg-neutral-200 dark:bg-neutral-500"></div>
