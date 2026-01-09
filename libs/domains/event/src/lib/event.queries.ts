@@ -140,17 +140,13 @@ export const useFetchValidTargetIds = (organizationId: string) => {
       const projects = projectsResponse.data.results || []
 
       // Fetch all environments for each project
-      // TODO (qov-1236) Fetching environments should pass through the new org environments endpoint
-      const environmentsPromises = projects.map((project) =>
-        project.id ? environmentsApi.listEnvironment(project.id) : Promise.resolve({ data: { results: [] } })
-      )
-      const environmentsResponses = await Promise.all(environmentsPromises)
-      const allEnvironments = environmentsResponses.flatMap((response) => response.data.results || [])
+      const environmentsResponse = await organizationApi.listEnvironmentsByOrganizationId(organizationId)
+      const environments = environmentsResponse.data.results || []
 
       const validTargetIds: ValidTargetIds = {
         services: new Set(services.map((service) => service.id).filter((id): id is string => !!id)),
         projects: new Set(projects.map((project) => project.id).filter((id): id is string => !!id)),
-        environments: new Set(allEnvironments.map((env) => env.id).filter((id): id is string => !!id)),
+        environments: new Set(environments.map((env) => env.id).filter((id): id is string => !!id)),
       }
 
       return validTargetIds
