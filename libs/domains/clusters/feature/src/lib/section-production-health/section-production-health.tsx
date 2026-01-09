@@ -2,7 +2,7 @@ import { type IconName } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { type ReactNode, useMemo } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
-import { Button, EmptyState, Heading, Icon, LogoIcon, Section } from '@qovery/shared/ui'
+import { EmptyState, Heading, Icon, Link, LogoIcon, Section } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { ClusterProductionCard } from '../cluster-production-card/cluster-production-card'
 import { useClusterStatuses } from '../hooks/use-cluster-statuses/use-cluster-statuses'
@@ -95,10 +95,17 @@ export function SectionProductionHealth({ organizationId }: { organizationId: st
             description="Create your first production cluster and start tracking your production health"
             icon="cube"
           >
-            <Button color="neutral" size="md" className="gap-1.5">
+            <Link
+              as="button"
+              color="neutral"
+              size="md"
+              className="gap-1.5"
+              to="/organization/$organizationId/cluster/new"
+              params={{ organizationId }}
+            >
               <Icon iconName="circle-plus" />
               Create cluster
-            </Button>
+            </Link>
           </EmptyState>
         ) : (
           <div className="flex flex-col gap-5 rounded-lg border border-neutral bg-surface-neutral p-4 text-sm">

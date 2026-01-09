@@ -155,6 +155,33 @@ function useNavigationContext(): NavigationContext | null {
   return null
 }
 
+function getBaseRouteSegment(routePath: string): string | null {
+  const segments = routePath.split('/').filter(Boolean)
+  const lastSegment = segments[segments.length - 1]
+  if (!lastSegment) return null
+
+  if (lastSegment.endsWith('s') && lastSegment.length > 1) {
+    return lastSegment.slice(0, -1)
+  }
+  return null
+}
+
+function matchesTabRoute(pathname: string, tabPath: string): boolean {
+  if (pathname === tabPath || pathname.startsWith(tabPath + '/')) {
+    return true
+  }
+
+  const baseSegment = getBaseRouteSegment(tabPath)
+  if (baseSegment) {
+    const basePattern = tabPath.replace(`/${baseSegment}s`, `/${baseSegment}/`)
+    if (pathname.startsWith(basePattern)) {
+      return true
+    }
+  }
+
+  return false
+}
+
 function useActiveTabId(context: NavigationContext | null): string {
   const location = useLocation()
   const pathname = location.pathname
@@ -165,7 +192,9 @@ function useActiveTabId(context: NavigationContext | null): string {
 
   for (const tab of context.tabs) {
     const tabPath = buildRoutePath(tab.routeId, context.params)
-    if (pathname === tabPath || pathname.startsWith(tabPath + '/')) {
+    // Match the tab route with the pathname, including the base route segment
+    // Example: /organization/123/clusters -> /organization/123/cluster/new
+    if (matchesTabRoute(pathname, tabPath)) {
       return tab.id
     }
   }

@@ -1,12 +1,14 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { ClusterCard, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { EmptyState, Heading, Icon, Link, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/clusters')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
+  useDocumentTitle('Clusters - Manage your clusters')
   const { organizationId = '' } = useParams({ strict: false })
   const { data: clusters = [], isLoading: isLoadingCluster } = useClusters({ organizationId: organizationId })
   const { data: clusterStatuses = [], isLoading: isLoadingClusterStatus } = useClusterStatuses({
@@ -19,7 +21,19 @@ function RouteComponent() {
     <div className="container mx-auto mt-6 pb-10">
       <Section className="gap-8">
         <div className="flex flex-col gap-6">
-          <Heading>Clusters</Heading>
+          <div className="flex justify-between">
+            <Heading>Clusters</Heading>
+            <Link
+              to="/organization/$organizationId/cluster/new"
+              params={{ organizationId }}
+              as="button"
+              className="gap-2"
+              size="md"
+            >
+              New Cluster
+              <Icon iconName="circle-plus" iconStyle="regular" />
+            </Link>
+          </div>
           <hr className="w-full border-neutral" />
         </div>
         <div>
