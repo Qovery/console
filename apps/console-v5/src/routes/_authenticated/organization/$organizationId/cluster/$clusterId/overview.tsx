@@ -29,8 +29,15 @@ import { IconEnum } from '@qovery/shared/enums'
 import { Badge, ErrorBoundary, Heading, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
+type OverviewSearch = {
+  hasShell?: boolean
+}
+
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/overview')({
   component: RouteComponent,
+  validateSearch: (search: Record<string, unknown>): OverviewSearch => ({
+    hasShell: search.hasShell === 'true' || search.hasShell === true,
+  }),
 })
 
 function TableSkeleton() {
@@ -133,7 +140,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
       )}
       <Section className="my-6 gap-6 pb-6">
         <div className="flex flex-col gap-6">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-4">
             <div className="flex items-center gap-2">
               <Skeleton width={40} height={40} show={!cluster} rounded>
                 <ClusterAvatar cluster={cluster} />
@@ -142,8 +149,8 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
                 <Heading>{cluster?.name}</Heading>
               </Skeleton>
             </div>
-            <div className="h-4 w-0 border-r border-neutral" />
-            <div className="flex flex-row items-center gap-2">
+            <div className="hidden h-4 w-0 border-r border-neutral lg:block" />
+            <div className="flex flex-wrap items-center gap-2">
               {cluster?.production && (
                 <Badge variant="surface" color="red">
                   Production
@@ -205,7 +212,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
                 </Badge>
               )}
             </div>
-            <div className="ml-auto">
+            <div className="order-last flex w-full lg:order-none lg:ml-auto lg:w-auto">
               <Skeleton width={150} height={36} show={!cluster && !clusterStatus}>
                 {cluster && clusterStatus ? (
                   <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} />
@@ -217,7 +224,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
           </div>
           <hr className="w-full border-neutral" />
         </div>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 lg:grid-cols-3">
           <ClusterCardNodeUsage organizationId={organizationId} clusterId={clusterId} />
           <ClusterCardResources organizationId={organizationId} clusterId={clusterId} />
           <ClusterCardSetup organizationId={organizationId} clusterId={clusterId} />

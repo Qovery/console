@@ -1,5 +1,5 @@
-import { useLocation } from '@tanstack/react-router'
-import { type PropsWithChildren, createContext, useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate, useSearch } from '@tanstack/react-router'
+import { type PropsWithChildren, createContext, useCallback, useEffect, useState } from 'react'
 
 export const ClusterTerminalContext = createContext<{
   open: boolean
@@ -12,21 +12,34 @@ export const ClusterTerminalContext = createContext<{
 
 export const ClusterTerminalProvider = ({ children }: PropsWithChildren) => {
   const location = useLocation()
-  const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search])
-  const [open, setOpen] = useState(searchParams.has('hasShell'))
+  const navigate = useNavigate()
+  const search = useSearch({ strict: false }) as { hasShell?: boolean }
+  const [open, setOpen] = useState(Boolean(search.hasShell))
 
-  // If the state has a hasShell property, set the open state to true
   useEffect(() => {
-    if (searchParams.has('hasShell')) {
-      setOpen(true)
-    }
-  }, [searchParams])
+    setOpen(Boolean(search.hasShell))
+  }, [search.hasShell])
+
+  const handleSetOpen = useCallback(
+    (newOpen: boolean) => {
+      setOpen(newOpen)
+      if (!newOpen) {
+        navigate({
+          to: location.pathname,
+          search: {
+            hasShell: undefined,
+          },
+        })
+      }
+    },
+    [location.pathname, navigate]
+  )
 
   return (
     <ClusterTerminalContext.Provider
       value={{
         open,
-        setOpen,
+        setOpen: handleSetOpen,
       }}
     >
       {children}
