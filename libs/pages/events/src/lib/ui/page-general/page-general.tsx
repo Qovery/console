@@ -156,10 +156,10 @@ function createTableDataHead(
         initialSelectedItems: targetTypeSelectedItems,
         initialNavigationStack: targetTypeNavigationStack,
         initialLevel: targetTypeLevel,
-        onLoadMenusToDisplay: (selectedItems: SelectedItem[], navigationStack: NavigationLevel[]) => {
+        onLoadMenusToDisplay: (selectedItems: SelectedItem[]) => {
           const hackOrganizationId = HACK_ORG_ID_CACHE.get('orgid') ?? 'undefined'
           const queryParamsValue = queryParams.current ?? undefined
-          return computeMenusToDisplay(hackOrganizationId, selectedItems, navigationStack, queryParamsValue)
+          return computeMenusToDisplay(hackOrganizationId, selectedItems, queryParamsValue)
         },
         onSelectionChange: (selectedItems: SelectedItem[]) => {
           setTargetTypeSelectedItems(selectedItems)

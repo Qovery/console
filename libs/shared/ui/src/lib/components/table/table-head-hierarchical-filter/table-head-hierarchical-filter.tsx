@@ -16,10 +16,7 @@ export interface TableHeadHierarchicalFilterProps {
   initialNavigationStack?: NavigationLevel[]
   initialLevel?: number
   filterKey: string
-  onLoadMenusToDisplay: (
-    selectedItems: SelectedItem[],
-    navigationStack: NavigationLevel[]
-  ) => Promise<HierarchicalFilterResult | null>
+  onLoadMenusToDisplay: (selectedItems: SelectedItem[]) => Promise<HierarchicalFilterResult | null>
   onSelectionChange: (selectedItems: SelectedItem[]) => void
   computeDisplayByLabel: (filterKey: string, selectedItem?: SelectedItem) => string
   setFilter: Dispatch<SetStateAction<TableFilterProps[]>>
@@ -131,7 +128,7 @@ export function TableHeadHierarchicalFilter({
         try {
           for (let i = 0; i < newSelectedItems.length; i++) {
             const currentItems = newSelectedItems.slice(0, i + 1)
-            const result = await onLoadMenusToDisplay(currentItems, stack)
+            const result = await onLoadMenusToDisplay(currentItems)
 
             if (result) {
               stack.push({ items: result.items, filterKey: result.filterKey })
@@ -203,7 +200,7 @@ export function TableHeadHierarchicalFilter({
     onSelectionChange(selectedItemsRef.current)
 
     try {
-      const result = await onLoadMenusToDisplay(selectedItemsRef.current, navigationStack)
+      const result = await onLoadMenusToDisplay(selectedItemsRef.current)
 
       // Apply the filter of the item clicked
       const filterToApply: TableFilterProps = {
