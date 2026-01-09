@@ -30,6 +30,7 @@
       "@qovery/domains/observability/feature": ["libs/domains/observability/feature/src/index.ts"],
       "@qovery/domains/organizations/data-access": ["libs/domains/organizations/data-access/src/index.ts"],
       "@qovery/domains/organizations/feature": ["libs/domains/organizations/feature/src/index.ts"],
+      "@qovery/domains/onboarding/feature": ["libs/domains/onboarding/feature/src/index.ts"],
       "@qovery/domains/projects/data-access": ["libs/domains/projects/data-access/src/index.ts"],
       "@qovery/domains/projects/feature": ["libs/domains/projects/feature/src/index.ts"],
       "@qovery/domains/service-helm/data-access": ["libs/domains/service-helm/data-access/src/index.ts"],

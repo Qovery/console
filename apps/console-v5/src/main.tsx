@@ -14,8 +14,9 @@ import posthog from 'posthog-js'
 import { StrictMode } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
+import { IntercomProvider } from 'react-use-intercom'
 import { LoaderSpinner, ModalProvider, ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { POSTHOG, POSTHOG_APIHOST, QOVERY_API } from '@qovery/shared/util-node-env'
+import { INTERCOM, POSTHOG, POSTHOG_APIHOST, QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
 // TODO: Improve this import to use the shared/ui package
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -165,7 +166,12 @@ export default App
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <StrictMode>
-    <FlatProviders providers={[makeProvider(QueryClientProvider, { client: queryClient })]}>
+    <FlatProviders
+      providers={[
+        makeProvider(QueryClientProvider, { client: queryClient }),
+        makeProvider(IntercomProvider, { appId: INTERCOM }),
+      ]}
+    >
       <ThemeProvider>
         <TooltipProvider>
           <ModalProvider>

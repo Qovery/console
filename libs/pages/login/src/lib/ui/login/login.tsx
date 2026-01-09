@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { AuthEnum, useInviteMember } from '@qovery/shared/auth'
-import { InviteDetailsFeature } from '@qovery/shared/console-shared'
+import { AuthEnum } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
 import { Button, DropdownMenu, Icon, InputTextSmall } from '@qovery/shared/ui'
 import useAuth0Error from '../../hooks/auth0-error/use-auth0-error'
@@ -12,7 +11,6 @@ export interface ILoginProps {
 }
 
 export function Login({ onClickAuthLogin, loading }: ILoginProps) {
-  const { displayInvitation, checkTokenInStorage } = useInviteMember()
   const [ssoFormVisible, setSsoFormVisible] = useState(false)
   const { auth0Error, setAuth0Error } = useAuth0Error()
 
@@ -22,10 +20,6 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
       ssoDomain: '',
     },
   })
-
-  useEffect(() => {
-    checkTokenInStorage()
-  }, [checkTokenInStorage])
 
   const validateAndConnect = () => {
     // Split domain by dots and validate each part
@@ -41,15 +35,9 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
       <div className="ml-auto mr-auto flex h-screen">
         <div className="w-full px-4 motion-safe:animate-[fadein_0.5s_ease-in-out_forwards] motion-safe:opacity-0 lg:w-1/2 lg:px-20">
           <div className="mx-auto mt-[30%] max-w-lg">
-            {!displayInvitation ? (
-              <h1 className="mb-4 text-[28px] text-neutral-400">Connect to Qovery</h1>
-            ) : (
-              <div className="mb-2">
-                <InviteDetailsFeature />
-              </div>
-            )}
+            <h1 className="mb-4 text-[28px] text-neutral">Connect to Qovery</h1>
 
-            <p className="mb-10 text-sm text-neutral-400">
+            <p className="mb-10 text-sm text-neutral-subtle">
               By registering and using Qovery, you agree to the processing of your personal data by Qovery as described
               in the
               <a href="https://www.qovery.com/terms" className="link ml-1 text-sky-500">
@@ -142,8 +130,10 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
               ) : (
                 <FormProvider {...methods}>
                   <div className="flex flex-col">
-                    <h2 className="text-xl font-medium text-neutral-400">Enterprise Single Sign-On</h2>
-                    <p className="mb-5 mt-1 text-sm text-neutral-350">Enter your company domain to connect with SSO</p>
+                    <h2 className="text-xl font-medium text-neutral">Enterprise Single Sign-On</h2>
+                    <p className="mb-5 mt-1 text-sm text-neutral-subtle">
+                      Enter your company domain to connect with SSO
+                    </p>
                     <div className="flex items-start gap-2">
                       <div className="relative flex-1">
                         <Controller

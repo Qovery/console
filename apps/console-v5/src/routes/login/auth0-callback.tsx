@@ -3,6 +3,7 @@ import { Navigate, createFileRoute, useNavigate } from '@tanstack/react-router'
 import axios from 'axios'
 import { useEffect } from 'react'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
+import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
@@ -26,22 +27,9 @@ function useRedirectIfLogged() {
   const { data: organizations = [], isFetched: isFetchedOrganizations } = useOrganizations({
     enabled: isAuthenticated,
   })
+  const { refetch: refetchUserSignUp } = useUserSignUp({ enabled: false })
 
   useEffect(() => {
-    // TODO: double check if this is needed
-
-    // const connectionParam = searchParams.get('connection')
-    // if (connectionParam && !isAuthenticated) {
-    //   const domainWithoutDots = connectionParam.trim().replace(/\./g, '')
-
-    //   // Trigger the auth login with the domain from URL parameter
-    //   authLogin(domainWithoutDots).catch((error) => {
-    //     console.error('Auto-connection failed:', error)
-    //   })
-
-    //   return // Exit early to prevent further processing
-    // }
-
     async function fetchData() {
       if (!isFetchedOrganizations) {
         return
@@ -50,24 +38,20 @@ function useRedirectIfLogged() {
       // User has at least 1 organization attached
       if (organizations.length > 0) {
         navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0]?.id } })
+      } else {
+        const { data: userSignUp } = await refetchUserSignUp()
+        if (userSignUp?.dx_auth) {
+          navigate({ to: '/onboarding/project' })
+        } else {
+          navigate({ to: '/onboarding/personalize' })
+        }
       }
-      // TODO: onboarding here
-
-      // else {
-      // const { data: userSignUp } = await refetchUserSignUp()
-      // if (userSignUp?.dx_auth) {
-      //   navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL)
-      // } else {
-      //   // sendDataToGTM({ event: 'new_signup', value: user?.email })
-      //   navigate(ONBOARDING_URL + ONBOARDING_PERSONALIZE_URL)
-      // }
-      // }
     }
 
     if (isAuthenticated) {
       fetchData()
     }
-  }, [navigate, isAuthenticated, organizations, isFetchedOrganizations])
+  }, [navigate, isAuthenticated, organizations, isFetchedOrganizations, refetchUserSignUp])
 }
 
 function PageRedirectLogin() {

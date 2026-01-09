@@ -193,8 +193,8 @@ svg:focus,
   min-height: 52px;
   cursor: pointer;
   border-radius: 0.25rem;
-  border: 1px solid var(--color-neutral-250);
-  background-color: white;
+  border: 1px solid var(--neutral-7);
+  background-color: var(--bg-background);
   padding: 0.5rem 0.75rem;
   transition:
     all 120ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -221,7 +221,7 @@ svg:focus,
   font-size: 0.75rem;
   line-height: 1rem;
   letter-spacing: 0.002em;
-  color: var(--color-neutral-350);
+  color: var(--color-neutral-subtle);
   font-family: Roboto, Helvetica, sans-serif;
   font-weight: 400;
   margin-bottom: 0.25rem;
@@ -254,4 +254,8 @@ svg:focus,
   display: block !important;
   width: 100% !important;
   min-height: 20px !important;
+}
+
+.chargebee-field-wrapper input {
+  color: green;
 }
