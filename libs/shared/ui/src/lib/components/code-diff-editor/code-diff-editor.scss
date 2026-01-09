@@ -31,7 +31,7 @@
   .view-line,
   .line-numbers {
     font-family: monospace !important;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
   }
 
   // JSON values in the diff
@@ -58,7 +58,6 @@
   span.mtk1.bracket-highlighting-3,
   span.mtk1.bracket-highlighting-4,
   span.mtk1.bracket-highlighting-5 {
-    //font-family: 'Roboto', monospace !important;
     color: #ab6400 !important;
   }
 }
