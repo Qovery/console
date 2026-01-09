@@ -62,7 +62,7 @@ function buildBadges(
     badges.push({
       key: 'triggered_by',
       displayedName: 'User',
-      value: upperCaseFirstLetter(queryParams.triggeredBy).split('_').join(' '),
+      value: truncateIfNecessary(upperCaseFirstLetter(queryParams.triggeredBy).split('_').join(' ')),
     })
   }
   if (queryParams.origin) {
@@ -166,8 +166,9 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
   const priorityKeys = new Set(['target_type', 'target_id', 'project_id', 'environment_id'])
 
   return (
-    <>
-      <div className="flex w-full items-center gap-2">
+    <div className="flex w-full gap-4">
+      {/* LEFT: Badges container with wrapping */}
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
         {badges
           .filter((badge) => !priorityKeys.has(badge.key))
           .map((badge) => (
@@ -221,17 +222,17 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
             })}
         </div>
       </div>
+
+      {/* RIGHT: Button stays fixed at top-right */}
       {badges.length > 0 && (
-        <div className="flex items-center justify-end text-xs text-neutral-400">
-          <span className="flex items-center gap-1">
-            <Button className="ml-1 gap-2" size="xs" color="neutral" variant="surface" onClick={clearFilter}>
-              Clear all filters
-              <Icon iconName="xmark" iconStyle="regular" />
-            </Button>
-          </span>
+        <div className="flex-shrink-0 self-start">
+          <Button className="gap-2" size="xs" color="neutral" variant="surface" onClick={clearFilter}>
+            Clear all filters
+            <Icon iconName="xmark" iconStyle="regular" />
+          </Button>
         </div>
       )}
-    </>
+    </div>
   )
 }
 

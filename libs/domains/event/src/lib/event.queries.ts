@@ -2,10 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 import {
   EnvironmentsApi,
   OrganizationEventApi,
-  OrganizationMainCallsApi,
-  ProjectsApi,
   type OrganizationEventResponseList,
   type OrganizationEventTargetResponseList,
+  OrganizationMainCallsApi,
+  ProjectsApi,
 } from 'qovery-typescript-axios'
 import {
   type OrganizationEventOrigin,
