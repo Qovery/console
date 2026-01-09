@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { DecodedValueMap } from 'use-query-params'
-import { Button, Icon, Link, SelectedItem, type TableFilterProps } from '@qovery/shared/ui'
+import { Button, Icon, SelectedItem, type TableFilterProps, truncateText } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
@@ -16,6 +16,13 @@ interface Badge {
   key: string
   displayedName: string
   value: string
+}
+
+function truncateIfNecessary(text: string): string {
+  if (text.length > 23) {
+    return `${truncateText(text, 20)}...`
+  }
+  return text
 }
 
 function buildBadges(
@@ -73,7 +80,7 @@ function buildBadges(
       badges.push({
         key: 'project_id',
         displayedName: 'Project',
-        value: projectName,
+        value: truncateIfNecessary(projectName),
       })
     }
   }
@@ -85,7 +92,7 @@ function buildBadges(
       badges.push({
         key: 'environment_id',
         displayedName: 'Environment',
-        value: environmentName,
+        value: truncateIfNecessary(environmentName),
       })
     }
   }
@@ -99,7 +106,7 @@ function buildBadges(
       badges.push({
         key: 'target_id',
         displayedName: targetType,
-        value: targetName,
+        value: truncateIfNecessary(targetName),
       })
     }
   }

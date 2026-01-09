@@ -8,6 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react'
 import { type DecodedValueMap } from 'use-query-params'
+import { type ValidTargetIds } from '@qovery/domains/event'
 import {
   Button,
   Icon,
@@ -22,7 +23,6 @@ import {
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type SelectedTimestamps } from '../../../../../../shared/ui/src/lib/components/table/table-head-datepicker/table-head-datepicker'
-import { type ValidTargetIds } from '@qovery/domains/event'
 import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 import {

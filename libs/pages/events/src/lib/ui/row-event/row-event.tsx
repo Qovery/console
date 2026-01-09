@@ -7,6 +7,7 @@ import {
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { type ValidTargetIds } from '@qovery/domains/event'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   APPLICATION_URL,
@@ -34,7 +35,6 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { type ValidTargetIds } from '@qovery/domains/event'
 
 export interface RowEventProps {
   event: OrganizationEventResponse
