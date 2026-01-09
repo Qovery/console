@@ -6,19 +6,19 @@ exports[`ClusterTerminal should match snapshot 1`] = `
 >
   <div />
   <div
-    class="dark fixed bottom-0 left-0 w-full animate-slidein-up-md-faded bg-neutral-650"
+    class="fixed bottom-0 left-0 z-dropdown w-full animate-slidein-up-md-faded bg-surface-neutral-subtle shadow-[0_-4px_60px_rgba(0,0,0,0.08)]"
   >
     <button
-      class="flex h-4 w-full items-center justify-center border-t border-neutral-500 bg-neutral-550 transition-colors hover:bg-neutral-650"
+      class="flex h-4 w-full items-center justify-center border-t border-neutral bg-surface-neutral-componentActive transition-colors hover:bg-surface-neutral-componentHover"
       type="button"
     >
       <i
         aria-hidden="true"
-        class="fa-regular fa-grip-lines text-white"
+        class="fa-regular fa-grip-lines text-neutral"
       />
     </button>
     <div
-      class="flex h-11 justify-end border-y border-neutral-500 px-4 py-2"
+      class="flex h-11 justify-end border-y border-neutral px-4 py-2"
     >
       <div
         class="flex items-center gap-1"
@@ -35,7 +35,7 @@ exports[`ClusterTerminal should match snapshot 1`] = `
       </div>
     </div>
     <div
-      class="relative min-h-[248px] bg-neutral-700 px-4 py-2"
+      class="relative min-h-[248px] border-neutral bg-surface-neutral-subtle px-4 py-2"
       style="height: 248px;"
     >
       <div
