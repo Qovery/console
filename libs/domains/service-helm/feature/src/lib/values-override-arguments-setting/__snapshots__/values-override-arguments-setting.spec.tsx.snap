@@ -402,7 +402,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
     </section>
   </div>
   <script
-    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs/loader.js"
+    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs/loader.js"
   />
 </body>
 `;

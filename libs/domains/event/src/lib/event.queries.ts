@@ -1,8 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import {
+  EnvironmentsApi,
   OrganizationEventApi,
   type OrganizationEventResponseList,
   type OrganizationEventTargetResponseList,
+  OrganizationMainCallsApi,
+  ProjectsApi,
 } from 'qovery-typescript-axios'
 import {
   type OrganizationEventOrigin,
@@ -13,6 +16,9 @@ import {
 import { toastError } from '@qovery/shared/ui'
 
 const eventsApi = new OrganizationEventApi()
+const organizationApi = new OrganizationMainCallsApi()
+const projectsApi = new ProjectsApi()
+const environmentsApi = new EnvironmentsApi()
 
 export interface EventQueryParams {
   pageSize?: number | null
@@ -38,6 +44,8 @@ export const useFetchEvents = (organizationId: string, queryParams: EventQueryPa
   queryParams.subTargetType ??= undefined
   queryParams.triggeredBy ??= undefined
   queryParams.origin ??= undefined
+  queryParams.projectId ??= undefined
+  queryParams.environmentId ??= undefined
   const {
     pageSize,
     eventType,
@@ -50,6 +58,8 @@ export const useFetchEvents = (organizationId: string, queryParams: EventQueryPa
     fromTimestamp,
     continueToken,
     stepBackToken,
+    projectId,
+    environmentId,
   } = queryParams
   return useQuery<OrganizationEventResponseList, Error>(
     ['organization', organizationId, 'events', queryParams],
@@ -66,7 +76,9 @@ export const useFetchEvents = (organizationId: string, queryParams: EventQueryPa
         targetId,
         subTargetType,
         triggeredBy,
-        origin
+        origin,
+        projectId,
+        environmentId
       )
       return response.data
     },
@@ -105,6 +117,44 @@ export const useFetchEventTargets = (organizationId: string, queryParams: EventQ
     {
       onError: (err) => toastError(err),
       enabled: enabled,
+    }
+  )
+}
+
+export interface ValidTargetIds {
+  services: Set<string>
+  projects: Set<string>
+  environments: Set<string>
+}
+
+export const useFetchValidTargetIds = (organizationId: string) => {
+  return useQuery<ValidTargetIds, Error>(
+    ['organization', organizationId, 'valid-target-ids'],
+    async () => {
+      // Fetch all services
+      const servicesResponse = await organizationApi.listServicesByOrganizationId(organizationId)
+      const services = servicesResponse.data.results || []
+
+      // Fetch all projects
+      const projectsResponse = await projectsApi.listProject(organizationId)
+      const projects = projectsResponse.data.results || []
+
+      // Fetch all environments for each project
+      const environmentsResponse = await organizationApi.listEnvironmentsByOrganizationId(organizationId)
+      const environments = environmentsResponse.data.results || []
+
+      const validTargetIds: ValidTargetIds = {
+        services: new Set(services.map((service) => service.id).filter((id): id is string => !!id)),
+        projects: new Set(projects.map((project) => project.id).filter((id): id is string => !!id)),
+        environments: new Set(environments.map((env) => env.id).filter((id): id is string => !!id)),
+      }
+
+      return validTargetIds
+    },
+    {
+      refetchInterval: 60000, // Refetch every 60 seconds
+      staleTime: 60000, // Consider data stale after 60 seconds
+      onError: (err) => toastError(err),
     }
   )
 }
