@@ -26,18 +26,10 @@ import { Route as AuthenticatedOrganizationOrganizationIdClustersRouteImport } f
 import { Route as AuthenticatedOrganizationOrganizationIdAuditLogsRouteImport } from './routes/_authenticated/organization/$organizationId/audit-logs'
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsRouteImport } from './routes/_authenticated/organization/$organizationId/alerts'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/$clusterId/index'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterNewRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/new'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/overview'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/eks-anywhere'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/general'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/index'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/network'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/resources'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/route'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/resources'
@@ -48,16 +40,6 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSetting
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterNewRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/new'
-import { Route as AuthenticatedOrganizationOrganizationIdClustersRouteImport } from './routes/_authenticated/organization/$organizationId/clusters'
-import { Route as AuthenticatedOrganizationOrganizationIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/index'
-import { Route as AuthenticatedOrganizationOrganizationIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/overview'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsRouteImport } from './routes/_authenticated/organization/$organizationId/settings'
-import { Route as AuthenticatedOrganizationIndexRouteImport } from './routes/_authenticated/organization/index'
-import { Route as AuthenticatedOrganizationRouteRouteImport } from './routes/_authenticated/organization/route'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as LoginAuth0CallbackRouteImport } from './routes/login/auth0-callback'
-import { Route as LoginIndexRouteImport } from './routes/login/index'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -248,17 +230,6 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhere
         AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
     } as any,
   )
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRouteImport.update({
-    id: '/general',
-    path: '/general',
-    getParentRoute: () => AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
-  } as any)
-const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRoute =
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRouteImport.update({
-    id: '/eks-anywhere',
-    path: '/eks-anywhere',
-    getParentRoute: () => AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
-  } as any)
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute =
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRouteImport.update(
     {
@@ -780,6 +751,8 @@ const AuthenticatedOrganizationRouteRouteChildren: AuthenticatedOrganizationRout
       AuthenticatedOrganizationOrganizationIdSettingsRoute,
     AuthenticatedOrganizationOrganizationIdIndexRoute:
       AuthenticatedOrganizationOrganizationIdIndexRoute,
+    AuthenticatedOrganizationOrganizationIdClusterNewRoute:
+      AuthenticatedOrganizationOrganizationIdClusterNewRoute,
     AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute:
       AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute,
     AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute:
@@ -791,26 +764,6 @@ const AuthenticatedOrganizationRouteRouteChildren: AuthenticatedOrganizationRout
     AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute:
       AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute,
   }
-const AuthenticatedOrganizationRouteRouteChildren: AuthenticatedOrganizationRouteRouteChildren = {
-  AuthenticatedOrganizationIndexRoute: AuthenticatedOrganizationIndexRoute,
-  AuthenticatedOrganizationOrganizationIdAlertsRoute: AuthenticatedOrganizationOrganizationIdAlertsRoute,
-  AuthenticatedOrganizationOrganizationIdAuditLogsRoute: AuthenticatedOrganizationOrganizationIdAuditLogsRoute,
-  AuthenticatedOrganizationOrganizationIdClustersRoute: AuthenticatedOrganizationOrganizationIdClustersRoute,
-  AuthenticatedOrganizationOrganizationIdOverviewRoute: AuthenticatedOrganizationOrganizationIdOverviewRoute,
-  AuthenticatedOrganizationOrganizationIdSettingsRoute: AuthenticatedOrganizationOrganizationIdSettingsRoute,
-  AuthenticatedOrganizationOrganizationIdIndexRoute: AuthenticatedOrganizationOrganizationIdIndexRoute,
-  AuthenticatedOrganizationOrganizationIdClusterNewRoute: AuthenticatedOrganizationOrganizationIdClusterNewRoute,
-  AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute:
-    AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute,
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute:
-    AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteWithChildren,
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute:
-    AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute,
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute:
-    AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute,
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute:
-    AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute,
-}
 
 const AuthenticatedOrganizationRouteRouteWithChildren =
   AuthenticatedOrganizationRouteRoute._addFileChildren(
