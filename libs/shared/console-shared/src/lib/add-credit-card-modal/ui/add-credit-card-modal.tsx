@@ -4,7 +4,6 @@ import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-in
 import { type FormEvent, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ModalCrud } from '@qovery/shared/ui'
-import { fieldStyles } from '@qovery/shared/util-payment'
 
 export interface AddCreditCardModalProps {
   closeModal: () => void
@@ -46,7 +45,7 @@ export function AddCreditCardModal(props: AddCreditCardModalProps) {
       >
         {props.cbInstance && (
           <Provider cbInstance={props.cbInstance}>
-            <CardComponent ref={cardRef} styles={fieldStyles} locale="en" currency="USD" onReady={handleReady}>
+            <CardComponent ref={cardRef} locale="en" currency="USD" onReady={handleReady}>
               <div className="chargebee-field-wrapper">
                 <label className="chargebee-field-label">Card Number</label>
                 <CardNumber placeholder="1234 1234 1234 1234" />
