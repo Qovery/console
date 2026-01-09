@@ -1,6 +1,6 @@
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
 import { type DecodedValueMap } from 'use-query-params'
-import { Button, Icon, type SelectedItem, type TableFilterProps, truncateText } from '@qovery/shared/ui'
+import { Button, Icon, type SelectedItem, type TableFilterProps, Tooltip, truncateText } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
@@ -18,7 +18,10 @@ interface Badge {
   value: string
 }
 
-function truncateIfNecessary(text: string): string {
+function truncateIfNecessary(key: string, text: string): string {
+  if (key === 'timestamp') {
+    return text
+  }
   if (text.length > 23) {
     return `${truncateText(text, 20)}...`
   }
@@ -62,7 +65,7 @@ function buildBadges(
     badges.push({
       key: 'triggered_by',
       displayedName: 'User',
-      value: truncateIfNecessary(upperCaseFirstLetter(queryParams.triggeredBy).split('_').join(' ')),
+      value: upperCaseFirstLetter(queryParams.triggeredBy).split('_').join(' '),
     })
   }
   if (queryParams.origin) {
@@ -80,7 +83,7 @@ function buildBadges(
       badges.push({
         key: 'project_id',
         displayedName: 'Project',
-        value: truncateIfNecessary(projectName),
+        value: projectName,
       })
     }
   }
@@ -92,7 +95,7 @@ function buildBadges(
       badges.push({
         key: 'environment_id',
         displayedName: 'Environment',
-        value: truncateIfNecessary(environmentName),
+        value: environmentName,
       })
     }
   }
@@ -106,7 +109,7 @@ function buildBadges(
       badges.push({
         key: 'target_id',
         displayedName: targetType,
-        value: truncateIfNecessary(targetName),
+        value: targetName,
       })
     }
   }
@@ -172,21 +175,23 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
         {badges
           .filter((badge) => !priorityKeys.has(badge.key))
           .map((badge) => (
-            <Button
-              radius="full"
-              variant="surface"
-              color="neutral"
-              size="xs"
-              className="pl-9.5 justify-center gap-1.5"
-              key={badge.key}
-            >
-              {badge.displayedName}: {badge.value}
-              <Icon
-                iconName="xmark"
-                className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
-                onClick={() => deleteFilter(badge.key, setFilter)}
-              />
-            </Button>
+            <Tooltip key={badge.key} content={badge.value}>
+              <Button
+                radius="full"
+                variant="surface"
+                color="neutral"
+                size="xs"
+                className="pl-9.5 justify-center gap-1.5"
+                key={badge.key}
+              >
+                {badge.displayedName}: {truncateIfNecessary(badge.key, badge.value)}
+                <Icon
+                  iconName="xmark"
+                  className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
+                  onClick={() => deleteFilter(badge.key, setFilter)}
+                />
+              </Button>
+            </Tooltip>
           ))}
         <div className="flex">
           {badges
@@ -204,20 +209,22 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                       : 'rounded-none'
 
               return (
-                <Button
-                  variant="surface"
-                  color="neutral"
-                  size="xs"
-                  className={`pl-9.5 justify-center gap-1.5 ${roundedClass}`}
-                  key={badge.key}
-                >
-                  {badge.displayedName}: {badge.value}
-                  <Icon
-                    iconName="xmark"
-                    className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
-                    onClick={() => deleteFilter(badge.key, setFilter)}
-                  />
-                </Button>
+                <Tooltip key={badge.key} content={badge.value}>
+                  <Button
+                    variant="surface"
+                    color="neutral"
+                    size="xs"
+                    className={`pl-9.5 justify-center gap-1.5 ${roundedClass}`}
+                    key={badge.key}
+                  >
+                    {badge.displayedName}: {truncateIfNecessary(badge.key, badge.value)}
+                    <Icon
+                      iconName="xmark"
+                      className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
+                      onClick={() => deleteFilter(badge.key, setFilter)}
+                    />
+                  </Button>
+                </Tooltip>
               )
             })}
         </div>
