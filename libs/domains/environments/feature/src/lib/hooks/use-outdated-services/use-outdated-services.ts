@@ -30,6 +30,9 @@ export function useOutdatedServices({ environmentId }: UseOutdatedServicesProps)
   const queryResults = useQueries({
     queries: gitServices.map(({ id, serviceType }) => ({
       ...queries.services.listCommits({ serviceId: id, serviceType }),
+      staleTime: 3 * 60 * 1000, // 3 minutes - commit history doesn't change frequently
+      retry: false,
+      refetchOnWindowFocus: false,
     })),
   })
 
