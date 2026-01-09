@@ -54,10 +54,7 @@ export interface TableHierarchicalFilterProps {
   initialSelectedItems?: SelectedItem[]
   initialNavigationStack?: NavigationLevel[]
   initialLevel?: number
-  onLoadMenusToDisplay: (
-    selectedItems: SelectedItem[],
-    navigationStack: NavigationLevel[]
-  ) => Promise<HierarchicalFilterResult | null>
+  onLoadMenusToDisplay: (selectedItems: SelectedItem[]) => Promise<HierarchicalFilterResult | null>
   computeDisplayByLabel: (filterKey: string, selectedItem?: SelectedItem) => string
   onSelectionChange: (selectedItems: SelectedItem[]) => void
   onFilterChange?: (filter: TableFilterProps[], currentSelectedItems: SelectedItem[]) => SelectedItem[]

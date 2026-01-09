@@ -112,8 +112,6 @@ async function fetchTargetsAsync(
 export async function computeMenusToDisplay(
   organizationId: string,
   selectedItems: SelectedItem[],
-  // TODO (qov-1236) If no need for auto-fetch request param when they are set (to have tsarget names), to be removed
-  navigationStack: NavigationLevel[],
   queryParams?: DecodedValueMap<typeof queryParamsValues>
 ): Promise<HierarchicalFilterResult | null> {
   // Early return if queryParams not set
