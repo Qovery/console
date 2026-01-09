@@ -30,6 +30,21 @@ import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared
 import { joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
+// TODO: Temporary fix for API type mismatch - remove when API is fixed
+const fixAutoscalingForRequest = (autoscaling: any) => {
+  if (!autoscaling) return autoscaling
+  if (autoscaling.scalers) {
+    return {
+      ...autoscaling,
+      scalers: autoscaling.scalers.map((scaler: any) => ({
+        ...scaler,
+        config_json: scaler.config_json === null ? undefined : scaler.config_json,
+      })),
+    }
+  }
+  return autoscaling
+}
+
 export const handleGitApplicationSubmit = (
   data: ApplicationGeneralData,
   application: Application,
@@ -38,6 +53,7 @@ export const handleGitApplicationSubmit = (
 ): ApplicationEditRequest => {
   let cloneApplication: ApplicationEditRequest = {
     ...application,
+    autoscaling: fixAutoscalingForRequest(application.autoscaling) as any,
     dockerfile_path: undefined,
     docker_target_build_stage: undefined,
     git_repository: undefined,
@@ -89,6 +105,7 @@ export const handleContainerSubmit = (
 ): ContainerRequest => {
   return {
     ...container,
+    autoscaling: fixAutoscalingForRequest(container.autoscaling) as any,
     name: data.name,
     description: data.description || '',
     icon_uri: data.icon_uri,
