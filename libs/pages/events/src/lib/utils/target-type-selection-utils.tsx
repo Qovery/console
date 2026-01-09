@@ -193,7 +193,6 @@ export async function computeMenusToDisplay(
     return null
   }
 
-  // TODO (qov-1236) Handle Environment level
   const isEnvironmentSelected = targetTypeSelected === 'ENVIRONMENT'
   if (isEnvironmentSelected) {
     const targetTypeToSearch = targetTypeSelected as OrganizationEventTargetType
@@ -282,8 +281,6 @@ export async function initializeSelectedItemsFromQueryParams(
   const targetIdValue = queryParams.targetId
   const isServiceTypeSelected = SERVICE_TARGET_TYPES.has(targetTypeValue)
 
-  // TODO (qov-1236) Handle environment use case
-
   // Handle service type selected (this means targetType / project / environment / service are present in request params)
   if (isServiceTypeSelected) {
     const targetTypeItem = initialData.find((item) => item.value === targetTypeValue)
@@ -351,6 +348,57 @@ export async function initializeSelectedItemsFromQueryParams(
                 selectedItems.push({ filterKey: 'target_id', item: targetItem })
               }
             }
+          }
+        }
+      }
+    }
+    return { selectedItems, navigationStack, level }
+  }
+
+  // Handle Environment selected
+  if (targetTypeValue === 'ENVIRONMENT') {
+    const targetTypeItem = initialData.find((item) => item.value === targetTypeValue)
+    if (!targetTypeItem) {
+      return { selectedItems, navigationStack, level }
+    }
+    selectedItems.push({ filterKey: 'target_type', item: targetTypeItem })
+
+    // Always fetch projects for service types (to show available options at level 1)
+    const projects = await fetchTargetProjects(
+      organizationId,
+      targetTypeValue as OrganizationEventTargetType,
+      queryParams
+    )
+
+    // Add projects to navigation stack
+    navigationStack.push({ items: projects, filterKey: 'project_id' })
+    level = 1
+
+    // If projectId is provided, find it and add to selectedItems
+    if (projectIdValue) {
+      const projectItem = projects.find((p) => p.value === projectIdValue)
+
+      if (projectItem) {
+        selectedItems.push({ filterKey: 'project_id', item: projectItem })
+
+        // Fetch environments (to show available options at level 2)
+        const environments = await fetchTargetEnvironments(
+          organizationId,
+          projectIdValue,
+          targetTypeValue as OrganizationEventTargetType,
+          queryParams
+        )
+
+        // Add environments to navigation stack
+        navigationStack.push({ items: environments, filterKey: 'environment_id' })
+        level = 2
+
+        // If environmentId is provided, find it and add to selectedItems
+        if (environmentIdValue) {
+          const environmentItem = environments.find((e) => e.value === environmentIdValue)
+
+          if (environmentItem) {
+            selectedItems.push({ filterKey: 'environment_id', item: environmentItem })
           }
         }
       }
