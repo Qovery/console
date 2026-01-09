@@ -1,18 +1,6 @@
-import type { Component } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/base-types'
-import type { Events } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/enums'
-import type { CbToken, ComponentOptions } from '@chargebee/chargebee-js-types/cb-types/hosted_fields/common/types'
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import Color from 'color'
 import { CHARGEBEE_PUBLISHABLE_KEY } from '@qovery/shared/util-node-env'
-
-interface ChargebeeTokenizeResult extends CbToken {
-  card?: {
-    last4: string
-    brand: string
-    expiry_month: number
-    expiry_year: number
-  }
-}
 
 type ChargebeeGlobal = {
   init(config: { site: string; publishableKey: string }): CbInstance
