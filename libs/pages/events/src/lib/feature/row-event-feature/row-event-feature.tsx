@@ -12,7 +12,14 @@ export interface RowEventFeatureProps {
 }
 
 export function RowEventFeature(props: RowEventFeatureProps) {
-  const { event, isPlaceholder = false, columnsWidth, expandedEventTimestamp, setExpandedEventTimestamp, validTargetIds } = props
+  const {
+    event,
+    isPlaceholder = false,
+    columnsWidth,
+    expandedEventTimestamp,
+    setExpandedEventTimestamp,
+    validTargetIds,
+  } = props
   const expanded = expandedEventTimestamp === event.timestamp
 
   const handleSetExpanded = (shouldExpand: boolean) => {
