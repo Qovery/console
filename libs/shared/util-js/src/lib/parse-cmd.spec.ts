@@ -43,6 +43,24 @@ describe('parseCmd function', () => {
     expect(result).toEqual(['run', '--access-token', '$TOKEN', '--secret', '$(SECRET_KEY)'])
   })
 
+  it('should handle env variables with ${VAR} format', () => {
+    const cmd = 'my-cmd --token ${MY_SECRET_TOKEN} --env prod'
+    const result = parseCmd(cmd)
+    expect(result).toEqual(['my-cmd', '--token', '${MY_SECRET_TOKEN}', '--env', 'prod'])
+  })
+
+  it('should handle malformed shell syntax gracefully', () => {
+    const cmd = '${ i'
+    const result = parseCmd(cmd)
+    expect(result).toEqual(['${', 'i'])
+  })
+
+  it('should handle incomplete ${} syntax gracefully', () => {
+    const cmd = 'run ${incomplete'
+    const result = parseCmd(cmd)
+    expect(result).toEqual(['run', '${incomplete'])
+  })
+
   it('should handle complex arguments and operations together', () => {
     const cmd = 'docker run -v "/data:/mnt/data" -p 8080:80 nginx "arg arg" # start nginx container'
     const result = parseCmd(cmd)
