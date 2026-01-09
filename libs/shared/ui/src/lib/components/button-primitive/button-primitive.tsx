@@ -18,10 +18,10 @@ const _buttonVariants = cva(
   {
     variants: {
       variant: {
-        solid: [],
-        surface: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none'],
-        outline: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none', 'bg-white', 'dark:bg-neutral-600'],
-        plain: [],
+        solid: [''],
+        surface: [''],
+        outline: [''],
+        plain: [''],
       },
       color: {
         brand: ['outline-neutral'],
@@ -31,29 +31,87 @@ const _buttonVariants = cva(
         yellow: ['outline-yellow-600'],
       },
       size: {
-        xs: ['text-xs', 'h-6', 'px-2'],
+        xs: ['text-xs', 'h-6', 'px-1.5'],
         sm: ['text-xs', 'h-7', 'px-2'],
-        md: ['text-sm', 'h-9', 'px-3'],
-        lg: ['text-sm', 'h-11', 'px-5'],
+        md: ['text-sm', 'h-8', 'px-2.5'],
+        lg: ['text-sm', 'h-10', 'px-3'],
       },
       radius: {
         none: [],
-        rounded: ['rounded-md'],
+        rounded: [],
         full: ['rounded-full'],
       },
     },
     compoundVariants: [
+      //sizes
+      {
+        size: 'xs',
+        radius: 'rounded',
+        className: ['rounded'],
+      },
+      {
+        size: 'sm',
+        radius: 'rounded',
+        className: ['rounded'],
+      },
+      {
+        size: 'md',
+        radius: 'rounded',
+        className: ['rounded-md'],
+      },
+      {
+        size: 'lg',
+        radius: 'rounded',
+        className: ['rounded-lg'],
+      },
+      //solid variants
+      {
+        variant: 'solid',
+        color: 'brand',
+        className: ['bg-surface-brand-solid', 'hover:bg-surface-brand-solidHover', 'text-neutralInvert'],
+      },
+      {
+        variant: 'solid',
+        color: 'neutral',
+        className: ['bg-surface-neutralInvert', 'hover:bg-surface-neutralInvert-component', 'text-neutralInvert'],
+      },
+      {
+        variant: 'solid',
+        color: 'green',
+        className: ['bg-surface-positive-solid', 'hover:bg-surface-positive-solidHover', 'text-neutral-contrasted'],
+      },
+      {
+        variant: 'solid',
+        color: 'red',
+        className: ['bg-surface-negative-solid', 'hover:bg-surface-negative-solidHover', 'text-neutral-contrasted'],
+      },
+      {
+        variant: 'solid',
+        color: 'yellow',
+        className: ['bg-surface-warning-solid', 'hover:bg-surface-warning-solidHover', 'text-black'],
+      },
+      {
+        variant: ['surface', 'outline'],
+        color: ['neutral', 'red'],
+        className: [
+          'border',
+          'border-neutral-250',
+          'text-neutral-400',
+          'hover:[&:not(:active)]:border-neutral-300',
+          'active:bg-neutral-150',
+          'disabled:text-neutral-300',
+          'disabled:bg-neutral-100',
+          'disabled:border-none',
+        ],
+      },
       {
         variant: ['surface', 'outline'],
         color: 'neutral',
         className: [
           'border',
           'border-neutral-250',
-          'dark:border-neutral-400',
           'text-neutral-400',
-          'dark:text-white',
           'hover:[&:not(:active)]:border-neutral-300',
-          'dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350',
           'active:bg-neutral-150',
           'disabled:text-neutral-300',
           'disabled:bg-neutral',
@@ -67,9 +125,7 @@ const _buttonVariants = cva(
           'border',
           'border-red-500',
           'text-neutral-400',
-          'dark:text-white',
           'hover:[&:not(:active)]:border-red-500',
-          'dark:hover:[&:not(:active):not(:disabled)]:border-red-500',
           'active:bg-neutral-150',
           'disabled:text-neutral-300',
           'disabled:bg-neutral',
@@ -79,12 +135,7 @@ const _buttonVariants = cva(
       {
         variant: 'surface',
         color: 'neutral',
-        className: [
-          'bg-neutral-100',
-          'dark:bg-neutral-500',
-          'hover:[&:not(:active):not(:disabled)]:bg-white',
-          'dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400',
-        ],
+        className: ['bg-neutral-100', 'hover:[&:not(:active):not(:disabled)]:bg-white'],
       },
       {
         // Incomplete, waiting for other occurences to standardize
@@ -96,9 +147,6 @@ const _buttonVariants = cva(
           'border-brand-500',
           'text-brand-500',
           'hover:[&:not(:active):not(:disabled)]:bg-white',
-          'dark:border-brand-400',
-          'dark:text-brand-400',
-          'dark:disabled:bg-transparent',
         ],
       },
       {
@@ -107,12 +155,14 @@ const _buttonVariants = cva(
         className: [
           'border',
           'border-transparent',
-          'text-neutral',
-          'focus-visible:text-neutral',
-          'active:bg-surface-neutral-subtle',
-          'active:text-neutral',
-          'disabled:text-neutral-disabled',
-          'disabled:bg-neutral',
+          'text-neutral-350',
+          'hover:[&:not(:active):not(:focus-visible)]:border-neutral-300',
+          'hover:[&:not(:disabled)]:text-neutral-400',
+          'focus-visible:text-neutral-400',
+          'active:bg-neutral-150',
+          'active:text-neutral-400',
+          'disabled:text-neutral-300',
+          'disabled:bg-neutral-150',
           'disabled:border-none',
           'hover:bg-surface-neutral-subtle',
         ],
@@ -135,82 +185,6 @@ const _buttonVariants = cva(
           'disabled:bg-neutral',
           'disabled:border-none',
           'p-0',
-        ],
-      },
-      /*
-    // Generate all colors
-      ...['brand', 'neutral', 'green', 'red'].map((color) => ({
-        variant: 'solid',
-        color,
-        className: [
-          `bg-${color}-500`,
-          `active:bg-${color}-600`,
-          `hover:bg-${color}-400`,
-          'text-white',
-          'disabled:text-${color}-300',
-          `disabled:bg-${color}-100`,
-        ],
-      })),
-    */
-
-      {
-        variant: 'solid',
-        color: 'brand',
-        className: [
-          'bg-brand-500',
-          'active:bg-brand-600',
-          'hover:bg-brand-400',
-          'text-white',
-          'disabled:text-neutral-disabled',
-          'disabled:bg-surface-neutral-subtle',
-        ],
-      },
-      {
-        variant: 'solid',
-        color: 'neutral',
-        className: [
-          'bg-neutral-500',
-          'active:bg-neutral-600',
-          'hover:bg-neutral-400',
-          'text-white',
-          'disabled:text-neutral-300',
-          'disabled:bg-neutral-3',
-        ],
-      },
-      {
-        variant: 'solid',
-        color: 'green',
-        className: [
-          'bg-green-500',
-          'active:bg-green-600',
-          'hover:bg-green-400',
-          'text-white',
-          'disabled:text-green-300',
-          'disabled:bg-green-100',
-        ],
-      },
-      {
-        variant: 'solid',
-        color: 'red',
-        className: [
-          'bg-red-500',
-          'active:bg-red-600',
-          'hover:bg-red-400',
-          'text-white',
-          'disabled:text-red-300',
-          'disabled:bg-red-100',
-        ],
-      },
-      {
-        variant: 'solid',
-        color: 'yellow',
-        className: [
-          'bg-yellow-500',
-          'active:bg-yellow-600',
-          'hover:bg-yellow-400',
-          'text-black',
-          'disabled:text-yellow-300',
-          'disabled:bg-yellow-100',
         ],
       },
     ],
