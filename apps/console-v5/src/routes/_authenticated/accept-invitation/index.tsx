@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { AcceptInvitation } from '@qovery/domains/onboarding/feature'
-import { useInviteMember } from '@qovery/shared/auth'
+import { AcceptInvitation, useInviteMember } from '@qovery/domains/onboarding/feature'
 
 export const Route = createFileRoute('/_authenticated/accept-invitation/')({
   component: RouteComponent,
