@@ -48,8 +48,9 @@ export function ThemeProvider({
     )
     document.head.appendChild(css)
 
+    const systemThemeQuery = window.matchMedia('(prefers-color-scheme: dark)')
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      const systemTheme = systemThemeQuery.matches ? 'dark' : 'light'
       root.setAttribute('data-theme', systemTheme)
     } else {
       root.setAttribute('data-theme', theme)
@@ -59,6 +60,19 @@ export function ThemeProvider({
     void window.getComputedStyle(css).opacity
     // Remove the stylesheet to re-enable transitions
     document.head.removeChild(css)
+
+    const themeChangeHandler = (event: MediaQueryListEvent) => {
+      if (theme === 'system') {
+        const newColorScheme = event.matches ? 'dark' : 'light'
+        root.setAttribute('data-theme', newColorScheme)
+      }
+    }
+
+    systemThemeQuery.addEventListener('change', themeChangeHandler)
+
+    return () => {
+      systemThemeQuery.removeEventListener('change', themeChangeHandler)
+    }
   }, [theme])
 
   const value = {

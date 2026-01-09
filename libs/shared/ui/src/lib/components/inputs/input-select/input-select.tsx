@@ -130,9 +130,7 @@ export function InputSelect({
       <components.MenuList {...props}>
         {menuListButton && (
           <div className={`flex h-9 items-start p-1 ${menuListButton.title ? 'justify-between' : 'justify-end'}`}>
-            {menuListButton.title && (
-              <span className="text-sm font-medium text-neutral-350">{menuListButton.title}</span>
-            )}
+            {menuListButton.title && <span className="text-sm font-medium text-neutral">{menuListButton.title}</span>}
             <button
               type="button"
               data-testid="input-menu-list-button"
@@ -159,7 +157,7 @@ export function InputSelect({
               {props.isSelected && <Icon iconName="check" className="text-xs" />}
             </span>
           ) : props.isSelected ? (
-            <Icon iconName="check" className="text-green-500" />
+            <Icon iconName="check" className="text-brand" />
           ) : props.data.icon ? (
             <div className="flex h-full w-4 items-center justify-center">{props.data.icon}</div>
           ) : (
@@ -175,14 +173,14 @@ export function InputSelect({
   }
 
   const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
-    <span className="mr-1 flex text-sm text-neutral-400">
+    <span className="mr-1 flex text-sm text-neutral">
       {props.data.label}
       {props.index + 1 !== (selectedItems as MultiValue<Value>).length && ', '}
     </span>
   )
 
   const SingleValue = (props: SingleValueProps<Value>) => (
-    <span className="mr-1 text-sm text-neutral-400">
+    <span className="mr-1 text-sm text-neutral">
       {props.data.label}
       {props.data.description ? `: ${props.data.description}` : ''}
     </span>
@@ -195,7 +193,7 @@ export function InputSelect({
       return (
         <components.NoOptionsMessage {...props}>
           <div className="px-3 py-1 text-center">
-            <p className="text-xs font-medium text-neutral-350">
+            <p className="text-xs font-medium text-neutral">
               Search input must be at least {minInputLength} characters.
             </p>
           </div>{' '}
@@ -206,8 +204,8 @@ export function InputSelect({
     return (
       <components.NoOptionsMessage {...props}>
         <div className="px-3 py-6 text-center">
-          <Icon iconName="wave-pulse" className="text-neutral-350" />
-          <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
+          <Icon iconName="wave-pulse" className="text-neutral" />
+          <p className="mt-1 text-xs font-medium text-neutral">No result for this search</p>
         </div>
       </components.NoOptionsMessage>
     )
@@ -271,6 +269,15 @@ export function InputSelect({
     onFocus: () => setFocused(true),
     onBlur: () => setFocused(false),
     styles: {
+      menu: (base) => ({
+        ...base,
+        backgroundColor: 'var(--neutral-2)',
+        borderRadius: '6px',
+      }),
+      menuList: (base) => ({
+        ...base,
+        backgroundColor: 'var(--neutral-2)',
+      }),
       menuPortal: (base) => ({
         ...base,
         pointerEvents: 'auto',
@@ -331,13 +338,13 @@ export function InputSelect({
         <input type="hidden" name={label} value={selectedValue} />
         {!isFilter && (
           <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
-            <Icon name="icon-solid-angle-down" className="text-sm text-neutral-400" />
+            <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />
           </div>
         )}
         {currentIcon?.onClickEditable && (
           <div
             data-testid="selected-edit-icon"
-            className="absolute right-8 top-[10px] flex h-8 w-8 cursor-pointer items-center justify-center text-sm text-neutral-400 hover:text-brand-500"
+            className="absolute right-8 top-[10px] flex h-8 w-8 cursor-pointer items-center justify-center text-sm text-neutral-subtle"
             onClick={(event) => {
               event.stopPropagation()
               currentIcon.onClickEditable && currentIcon.onClickEditable()
@@ -347,8 +354,8 @@ export function InputSelect({
           </div>
         )}
       </div>
-      {hint && <p className="mt-0.5 px-3 text-xs font-normal text-neutral-350">{hint}</p>}
-      {error && <p className="mt-0.5 px-3 text-xs font-medium text-red-500">{error}</p>}
+      {hint && <p className="mt-0.5 px-3 text-xs font-normal text-neutral-subtle">{hint}</p>}
+      {error && <p className="mt-0.5 px-3 text-xs font-medium text-negative">{error}</p>}
     </div>
   )
 }
