@@ -229,7 +229,12 @@ export function TableHeadFilter<T>({
 
   const key = dataHead.filter?.[0].key || ''
   useEffect(() => {
-    filter.find((item) => item.key === key && item.value !== ALL && setCurrentFilter(item.value || ALL))
+    const filterFound = filter.find((item) => item.key === key)
+    if (filterFound && filterFound.value === ALL) {
+      setCurrentFilter(ALL)
+    } else {
+      filter.find((item) => item.key === key && item.value !== ALL && setCurrentFilter(item.value || ALL))
+    }
   }, [filter])
 
   function cleanFilter(event: MouseEvent) {
