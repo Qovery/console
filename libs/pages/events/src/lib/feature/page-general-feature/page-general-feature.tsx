@@ -178,7 +178,6 @@ export function PageGeneralFeature() {
 
   // Sync table filters -> queryParams
   useEffect(() => {
-    console.log('Filter changed ?', filter)
     for (let i = 0; i < filter.length; i++) {
       const currentFilter: TableFilterProps = filter[i]
       const key = currentFilter.key as keyof EventQueryParams
