@@ -12,17 +12,17 @@ import { type ValidTargetIds } from '@qovery/domains/event'
 import {
   Button,
   Icon,
-  NavigationLevel,
+  type NavigationLevel,
   Pagination,
   Section,
-  SelectedItem,
+  type SelectedItem,
   Skeleton,
   Table,
   type TableFilterProps,
   type TableHeadProps,
 } from '@qovery/shared/ui'
+import { type SelectedTimestamps } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { type SelectedTimestamps } from '../../../../../../shared/ui/src/lib/components/table/table-head-datepicker/table-head-datepicker'
 import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 import {

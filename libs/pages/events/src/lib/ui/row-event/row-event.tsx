@@ -210,7 +210,7 @@ export function RowEvent(props: RowEventProps) {
     .otherwise(() => false)
 
   const getRowBgClass = () => {
-    if (isEventTypeFailed) return 'bg-[rgb(252,242,242)] hover:bg-[rgb(250,227,226)]'
+    if (isEventTypeFailed) return 'bg-red-50 hover:bg-neutral-100'
     if (isSuccess) return 'hover:bg-neutral-100'
     return 'hover:bg-neutral-100'
   }
@@ -219,7 +219,7 @@ export function RowEvent(props: RowEventProps) {
     <>
       <div
         data-testid="row-event"
-        className={`group grid h-12 items-center border-b border-b-neutral-200 py-2.5 text-xs font-normal text-neutral-400 last:border-b-0 hover:bg-neutral-100 ${getRowBgClass()}`}
+        className={`group grid h-12 cursor-pointer items-center border-b border-b-neutral-200 py-2.5 text-xs font-normal text-neutral-400 last:border-b-0 hover:bg-neutral-100 ${getRowBgClass()}`}
         style={{ gridTemplateColumns: columnsWidth }}
         onClick={() => setExpanded(!expanded)}
       >

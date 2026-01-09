@@ -30,8 +30,8 @@
   // Enforce font-family for line and number sections
   .view-line,
   .line-numbers {
-    font-family: 'Roboto', monospace !important;
-    font-size: 13px;
+    font-family: monospace !important;
+    font-size: 0.75rem;
   }
 
   // JSON values in the diff

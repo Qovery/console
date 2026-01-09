@@ -1,9 +1,12 @@
 import { subDays } from 'date-fns'
 import { type Dispatch, type MouseEvent, type SetStateAction, useEffect, useState } from 'react'
-import { ALL, DatePicker, type TableFilterProps } from '@qovery/shared/ui'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import { Button } from '../../button/button'
+import { DatePicker } from '../../date-picker/date-picker'
 import Icon from '../../icon/icon'
+import { type TableFilterProps } from '../table'
+
+const ALL = 'ALL'
 
 export interface SelectedTimestamps {
   automaticallySelected: boolean
