@@ -27,7 +27,8 @@ export function createFilter<T>(
   currentFilter: string,
   setCurrentFilter: Dispatch<SetStateAction<string>>,
   setDataFilterNumber: Dispatch<SetStateAction<number>>,
-  setFilter: Dispatch<SetStateAction<TableFilterProps[]>>
+  setFilter: Dispatch<SetStateAction<TableFilterProps[]>>,
+  hideFilterNumber?: boolean
 ) {
   const keys: string[] = []
   const menus = []
@@ -49,7 +50,8 @@ export function createFilter<T>(
         setCurrentFilter,
         setDataFilterNumber,
         setFilter,
-        dataHead?.filter?.[i]
+        dataHead?.filter?.[i],
+        hideFilterNumber
       )
 
     if (menu) {
@@ -74,7 +76,8 @@ export function groupBy<T>(
   setCurrentFilter: Dispatch<SetStateAction<string>>,
   setDataFilterNumber: Dispatch<SetStateAction<number>>,
   setFilter: Dispatch<SetStateAction<TableFilterProps[]>>,
-  dataHeadFilter?: TableHeadCustomFilterProps<T>
+  dataHeadFilter?: TableHeadCustomFilterProps<T>,
+  hideFilterNumber?: boolean
 ) {
   if (dataHeadFilter?.itemsCustom) {
     // custom list without datas from array of string
@@ -169,7 +172,7 @@ export function groupBy<T>(
           className={`text-sm ${currentFilter === key ? 'text-green-400' : 'text-transparent'}`}
         />
       ),
-      contentRight: (
+      contentRight: !hideFilterNumber && (
         <span className="rounded-sm bg-neutral-200 px-1 text-xs font-bold text-neutral-350">
           {dataByKeys[key].length}
         </span>
@@ -249,6 +252,7 @@ export function TableHeadFilter<T>({
       })
   }
 
+  const hideFilterNumber: boolean = dataHead.filter?.some((item) => item.hideFilterNumber) || false
   const menus = createFilter(
     dataHead,
     defaultData,
@@ -256,10 +260,10 @@ export function TableHeadFilter<T>({
     currentFilter,
     setCurrentFilter,
     setDataFilterNumber,
-    setFilter
+    setFilter,
+    hideFilterNumber
   )
 
-  const hideFilterNumber: boolean = dataHead.filter?.some((item) => item.hideFilterNumber) || false
   const isDark = document.documentElement.classList.contains('dark')
 
   return (
