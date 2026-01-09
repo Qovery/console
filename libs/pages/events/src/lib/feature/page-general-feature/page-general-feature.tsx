@@ -246,6 +246,7 @@ export function PageGeneralFeature() {
       filter={filter}
       setFilter={setFilter}
       organization={organization}
+      organizationId={organizationId}
       showIntercom={showChat}
       queryParams={queryParams}
       targetTypeSelectedItems={targetTypeSelectedItems}
