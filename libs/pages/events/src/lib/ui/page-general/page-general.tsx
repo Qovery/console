@@ -6,7 +6,7 @@ import {
   OrganizationEventTargetType,
   OrganizationEventType,
 } from 'qovery-typescript-axios'
-import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react'
+import { type Dispatch, type SetStateAction, useEffect, useMemo, useRef, useState } from 'react'
 import { type DecodedValueMap } from 'use-query-params'
 import { type ValidTargetIds } from '@qovery/domains/event'
 import {
@@ -96,8 +96,6 @@ function getDefaultTimestamps(
   }
 }
 
-const HACK_ORG_ID_CACHE = new Map<string, string>()
-
 function createTableDataHead(
   timestamps: SelectedTimestamps,
   queryParams: React.RefObject<DecodedValueMap<typeof queryParamsValues>>,
@@ -105,17 +103,12 @@ function createTableDataHead(
   targetTypeSelectedItems: SelectedItem[],
   targetTypeNavigationStack?: NavigationLevel[],
   targetTypeLevel?: number,
-  organization?: Organization
+  organization?: Organization,
+  organizationId?: string
 ): TableHeadProps<OrganizationEventResponse>[] {
   // Calculate retention days and determine if we need to enforce 30-day limit
   const retentionDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 15
   const maxRangeInDays = retentionDays > 30 ? 30 : undefined
-
-  // TODO (qov-1236) Weird behavior: if I don't store the org_id outside of this 'createTableDataHead' method scope, it results in a 'undefined' value when I need it.
-  //                 Note: the org_id is used only in the hierarchical "item click" method, seems to be a react lifecycle wrong
-  if (organization?.id) {
-    HACK_ORG_ID_CACHE.set('orgid', organization.id)
-  }
 
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
@@ -157,9 +150,8 @@ function createTableDataHead(
         initialNavigationStack: targetTypeNavigationStack,
         initialLevel: targetTypeLevel,
         onLoadMenusToDisplay: (selectedItems: SelectedItem[]) => {
-          const hackOrganizationId = HACK_ORG_ID_CACHE.get('orgid') ?? 'undefined'
           const queryParamsValue = queryParams.current ?? undefined
-          return computeMenusToDisplay(hackOrganizationId, selectedItems, queryParamsValue)
+          return computeMenusToDisplay(organizationId ?? '', selectedItems, queryParamsValue)
         },
         onSelectionChange: (selectedItems: SelectedItem[]) => {
           setTargetTypeSelectedItems(selectedItems)
@@ -235,14 +227,27 @@ export function PageGeneral({
   }, [queryParams])
 
   const timestamps = getDefaultTimestamps(queryParams, organization)
-  const dataHead = createTableDataHead(
-    timestamps,
-    queryParamsRef,
-    setTargetTypeSelectedItems,
-    targetTypeSelectedItems,
-    targetTypeNavigationStack,
-    targetTypeLevel,
-    organization
+  const dataHead = useMemo(
+    () =>
+      createTableDataHead(
+        timestamps,
+        queryParamsRef,
+        setTargetTypeSelectedItems,
+        targetTypeSelectedItems,
+        targetTypeNavigationStack,
+        targetTypeLevel,
+        organization,
+        organization?.id
+      ),
+    [
+      timestamps,
+      queryParamsRef,
+      setTargetTypeSelectedItems,
+      targetTypeSelectedItems,
+      targetTypeNavigationStack,
+      targetTypeLevel,
+      organization?.id,
+    ]
   )
 
   return (
