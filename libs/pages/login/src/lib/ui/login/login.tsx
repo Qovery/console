@@ -35,9 +35,9 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
       <div className="ml-auto mr-auto flex h-screen">
         <div className="w-full px-4 motion-safe:animate-[fadein_0.5s_ease-in-out_forwards] motion-safe:opacity-0 lg:w-1/2 lg:px-20">
           <div className="mx-auto mt-[30%] max-w-lg">
-            <h1 className="mb-4 text-[28px] text-neutral-400">Connect to Qovery</h1>
+            <h1 className="mb-4 text-[28px] text-neutral">Connect to Qovery</h1>
 
-            <p className="mb-10 text-sm text-neutral-400">
+            <p className="mb-10 text-sm text-neutral-subtle">
               By registering and using Qovery, you agree to the processing of your personal data by Qovery as described
               in the
               <a href="https://www.qovery.com/terms" className="link ml-1 text-sky-500">
@@ -130,8 +130,10 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
               ) : (
                 <FormProvider {...methods}>
                   <div className="flex flex-col">
-                    <h2 className="text-xl font-medium text-neutral-400">Enterprise Single Sign-On</h2>
-                    <p className="mb-5 mt-1 text-sm text-neutral-350">Enter your company domain to connect with SSO</p>
+                    <h2 className="text-xl font-medium text-neutral">Enterprise Single Sign-On</h2>
+                    <p className="mb-5 mt-1 text-sm text-neutral-subtle">
+                      Enter your company domain to connect with SSO
+                    </p>
                     <div className="flex items-start gap-2">
                       <div className="relative flex-1">
                         <Controller

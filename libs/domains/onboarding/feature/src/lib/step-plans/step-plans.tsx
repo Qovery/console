@@ -160,7 +160,7 @@ export default function StepPlans(props: StepPlansProps) {
                 </ExternalLink>{' '}
                 with us and unlock a trial that truly suits you.
               </p>
-              <div className="mt-4 flex justify-between border-t border-surface-neutral-subtle pt-5">
+              <div className="mt-4 flex justify-between border-t border-neutral pt-5">
                 {!backButton ? (
                   <Button
                     type="button"
