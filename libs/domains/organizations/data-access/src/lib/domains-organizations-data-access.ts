@@ -12,8 +12,6 @@ import {
   HelmRepositoriesApi,
   type HelmRepositoryRequest,
   type InviteMemberRequest,
-  KedaTriggerAuthenticationApi,
-  type KedaTriggerAuthenticationRequest,
   type MemberRoleUpdateRequest,
   MembersApi,
   OrganizationAccountGitRepositoriesApi,
@@ -55,7 +53,6 @@ const billingApi = new BillingApi()
 const customRolesApi = new OrganizationCustomRoleApi()
 const membersApi = new MembersApi()
 const githubAppApi = new GithubAppApi()
-const kedaTriggerAuthApi = new KedaTriggerAuthenticationApi()
 
 export const organizations = createQueryKeys('organizations', {
   listCredentials: ({ organizationId }: { organizationId: string }) => ({
@@ -409,26 +406,6 @@ export const organizations = createQueryKeys('organizations', {
         git_repository: repository,
       })
       return response.data.results
-    },
-  }),
-  kedaTriggerAuthentications: ({ organizationId }: { organizationId: string }) => ({
-    queryKey: [organizationId],
-    async queryFn() {
-      const response = await kedaTriggerAuthApi.listKedaTriggerAuthentications(organizationId)
-      return response.data.results
-    },
-  }),
-  kedaTriggerAuthentication: ({
-    organizationId,
-    triggerAuthenticationId,
-  }: {
-    organizationId: string
-    triggerAuthenticationId: string
-  }) => ({
-    queryKey: [organizationId, triggerAuthenticationId],
-    async queryFn() {
-      const response = await kedaTriggerAuthApi.getKedaTriggerAuthentication(organizationId, triggerAuthenticationId)
-      return response.data
     },
   }),
 })
@@ -805,45 +782,6 @@ export const mutations = {
   },
   async changePlan({ organizationId, plan }: { organizationId: string; plan: PlanEnum }) {
     const response = await billingApi.changePlan(organizationId, { plan })
-    return response.data
-  },
-  async createKedaTriggerAuthentication({
-    organizationId,
-    kedaTriggerAuthenticationRequest,
-  }: {
-    organizationId: string
-    kedaTriggerAuthenticationRequest: KedaTriggerAuthenticationRequest
-  }) {
-    const response = await kedaTriggerAuthApi.createKedaTriggerAuthentication(
-      organizationId,
-      kedaTriggerAuthenticationRequest
-    )
-    return response.data
-  },
-  async deleteKedaTriggerAuthentication({
-    organizationId,
-    triggerAuthenticationId,
-  }: {
-    organizationId: string
-    triggerAuthenticationId: string
-  }) {
-    const response = await kedaTriggerAuthApi.deleteKedaTriggerAuthentication(organizationId, triggerAuthenticationId)
-    return response.data
-  },
-  async updateKedaTriggerAuthentication({
-    organizationId,
-    triggerAuthenticationId,
-    kedaTriggerAuthenticationRequest,
-  }: {
-    organizationId: string
-    triggerAuthenticationId: string
-    kedaTriggerAuthenticationRequest: KedaTriggerAuthenticationRequest
-  }) {
-    const response = await kedaTriggerAuthApi.updateKedaTriggerAuthentication(
-      organizationId,
-      triggerAuthenticationId,
-      kedaTriggerAuthenticationRequest
-    )
     return response.data
   },
 }

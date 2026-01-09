@@ -35,8 +35,9 @@ type ApplicationEditRequestWithKeda = ApplicationEditRequest & {
   autoscaling_cooldown_period?: number
   scalers?: Array<{ type: string; config: string }>
   autoscaling_mode?: 'NONE' | 'HPA' | 'KEDA'
-  hpa_metric_type?: 'CPU' | 'MEMORY'
-  hpa_average_utilization_percent?: number
+  hpa_metric_type?: 'CPU' | 'CPU_AND_MEMORY'
+  hpa_cpu_average_utilization_percent?: number
+  hpa_memory_average_utilization_percent?: number
 }
 
 type ContainerRequestWithKeda = ContainerRequest & {
@@ -46,8 +47,9 @@ type ContainerRequestWithKeda = ContainerRequest & {
   autoscaling_cooldown_period?: number
   scalers?: Array<{ type: string; config: string }>
   autoscaling_mode?: 'NONE' | 'HPA' | 'KEDA'
-  hpa_metric_type?: 'CPU' | 'MEMORY'
-  hpa_average_utilization_percent?: number
+  hpa_metric_type?: 'CPU' | 'CPU_AND_MEMORY'
+  hpa_cpu_average_utilization_percent?: number
+  hpa_memory_average_utilization_percent?: number
 }
 
 type AutoscalingPolicyResponseWithFields = AutoscalingPolicyResponse & {
@@ -59,7 +61,10 @@ type AutoscalingPolicyResponseWithFields = AutoscalingPolicyResponse & {
     role: string
     config_json?: Record<string, unknown>
     config_yaml?: string
-    trigger_authentication_id?: string
+    trigger_authentication?: {
+      name?: string
+      config_yaml?: string
+    }
   }>
 }
 
@@ -72,7 +77,10 @@ type AutoscalingPolicyRequestWithFields = AutoscalingPolicyRequest & {
     role: 'PRIMARY' | 'SAFETY'
     config_json?: Record<string, unknown>
     config_yaml?: string
-    trigger_authentication_id?: string
+    trigger_authentication?: {
+      name?: string // Optional - backend auto-generates if null
+      config_yaml?: string
+    }
   }>
 }
 
@@ -131,9 +139,14 @@ export function convertAutoscalingResponseToRequest(
     scaler_type: scaler.scaler_type,
     enabled: scaler.enabled,
     role: scaler.role as 'PRIMARY' | 'SAFETY',
-    config_json: scaler.config_json ?? undefined,
+    config_json: scaler.config_json ? (scaler.config_json as Record<string, unknown>) : undefined,
     config_yaml: scaler.config_yaml ?? undefined,
-    trigger_authentication_id: (scaler as any).trigger_authentication_id,
+    trigger_authentication: scaler.trigger_authentication
+      ? {
+          name: scaler.trigger_authentication.name || '',
+          config_yaml: scaler.trigger_authentication.config_yaml || '',
+        }
+      : undefined,
   }))
 
   return {
@@ -179,7 +192,11 @@ function parseAutoscalingYaml(
 }
 
 function parseAutoscalingScalers(
-  scalers?: Array<{ type: string; config: string; trigger_authentication_id?: string }>,
+  scalers?: Array<{
+    type: string
+    config: string
+    trigger_authentication?: { name: string; config_yaml: string }
+  }>,
   pollingInterval?: number,
   cooldownPeriod?: number
 ): AutoscalingPolicyRequestWithFields | undefined {
@@ -200,7 +217,7 @@ function parseAutoscalingScalers(
       role: index === 0 ? 'PRIMARY' : 'SAFETY',
       config_json: undefined,
       config_yaml: scaler.config,
-      trigger_authentication_id: scaler.trigger_authentication_id,
+      trigger_authentication: scaler.trigger_authentication,
     }))
 
     const autoscalingPolicy: AutoscalingPolicyRequestWithFields = {
@@ -346,9 +363,10 @@ function refactoApplication({ service: application, request = {} }: applicationP
     autoscaling_polling_interval: ___,
     autoscaling_cooldown_period: ____,
     scalers: _____,
-    autoscaling_mode: ______,
-    hpa_metric_type: _______,
-    hpa_average_utilization_percent: ________,
+    autoscaling_mode: _autoscalingModeIgnored,
+    hpa_metric_type: _hpaMetricTypeIgnored,
+    hpa_cpu_average_utilization_percent: _hpaCpuAverageIgnored,
+    hpa_memory_average_utilization_percent: _hpaMemoryAverageIgnored,
     ...requestWithoutAutoscaling
   } = requestWithKeda
 
@@ -433,9 +451,10 @@ function refactoContainer({ service: container, request = {} }: containerProps):
     autoscaling_polling_interval: ___,
     autoscaling_cooldown_period: ____,
     scalers: _____,
-    autoscaling_mode: ______,
-    hpa_metric_type: _______,
-    hpa_average_utilization_percent: ________,
+    autoscaling_mode: _autoscalingModeIgnored,
+    hpa_metric_type: _hpaMetricTypeIgnored,
+    hpa_cpu_average_utilization_percent: _hpaCpuAverageIgnored,
+    hpa_memory_average_utilization_percent: _hpaMemoryAverageIgnored,
     ...requestWithoutAutoscaling
   } = requestWithKeda
 

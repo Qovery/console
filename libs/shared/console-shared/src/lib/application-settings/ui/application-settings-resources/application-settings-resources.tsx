@@ -66,6 +66,9 @@ export function ApplicationSettingsResources({
 
   const minRunningInstances = watch('min_running_instances')
   const scalers = watch('scalers') || []
+  const hpaMetricType = watch('hpa_metric_type') || 'CPU'
+  const hpaAverageUtilizationPercent = watch('hpa_cpu_average_utilization_percent') ?? 60
+  const hpaMemoryAverageUtilizationPercent = watch('hpa_memory_average_utilization_percent') ?? 60
 
   const handleAddScaler = () => {
     setValue('scalers', [...scalers, { type: '', config: '' }])
@@ -460,8 +463,12 @@ export function ApplicationSettingsResources({
                 </Callout.Icon>
                 <Callout.Text>
                   Auto-scaling will automatically scale your service based on{' '}
-                  {watch('hpa_metric_type') === 'MEMORY' ? 'memory' : 'CPU'} utilization. Scaling occurs when the
-                  average exceeds {watch('hpa_average_utilization_percent') || 60}% for a continuous period.
+                  {hpaMetricType === 'CPU_AND_MEMORY' ? 'CPU and Memory' : 'CPU'} utilization. Scaling occurs when the
+                  average exceeds
+                  {hpaMetricType === 'CPU_AND_MEMORY'
+                    ? ` CPU ${hpaAverageUtilizationPercent}% and Memory ${hpaMemoryAverageUtilizationPercent}%`
+                    : ` ${hpaAverageUtilizationPercent}%`}{' '}
+                  for a continuous period.
                 </Callout.Text>
               </Callout.Root>
 
@@ -487,7 +494,7 @@ export function ApplicationSettingsResources({
                     label="Metric type"
                     options={[
                       { label: 'CPU', value: 'CPU' },
-                      { label: 'Memory', value: 'MEMORY' },
+                      { label: 'CPU and Memory', value: 'CPU_AND_MEMORY' },
                     ]}
                     onChange={field.onChange}
                     value={field.value || 'CPU'}
@@ -496,7 +503,7 @@ export function ApplicationSettingsResources({
               />
 
               <Controller
-                name="hpa_average_utilization_percent"
+                name="hpa_cpu_average_utilization_percent"
                 control={control}
                 rules={{
                   min: 1,
@@ -505,7 +512,9 @@ export function ApplicationSettingsResources({
                 render={({ field, fieldState: { error } }) => (
                   <InputText
                     type="number"
-                    label="Average utilization (%)"
+                    label={
+                      hpaMetricType === 'CPU_AND_MEMORY' ? 'CPU average utilization (%)' : 'Average utilization (%)'
+                    }
                     name={field.name}
                     value={field.value ?? 60}
                     onChange={field.onChange}
@@ -516,6 +525,34 @@ export function ApplicationSettingsResources({
                   />
                 )}
               />
+
+              {hpaMetricType === 'CPU_AND_MEMORY' && (
+                <Controller
+                  name="hpa_memory_average_utilization_percent"
+                  control={control}
+                  rules={{
+                    min: 1,
+                    max: 100,
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      type="number"
+                      label="Memory average utilization (%)"
+                      name={field.name}
+                      value={field.value ?? 60}
+                      onChange={field.onChange}
+                      hint="Scaling triggers when average memory utilization exceeds this percentage (default: 60%)"
+                      error={
+                        error?.type === 'min'
+                          ? 'Minimum is 1%.'
+                          : error?.type === 'max'
+                            ? 'Maximum is 100%.'
+                            : undefined
+                      }
+                    />
+                  )}
+                />
+              )}
             </>
           )}
 

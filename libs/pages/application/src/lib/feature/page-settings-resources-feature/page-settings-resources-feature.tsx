@@ -1,11 +1,9 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { type Environment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-import { useCreateKedaTriggerAuthentication } from '@qovery/domains/organizations/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
 import {
   useAdvancedSettings,
@@ -13,9 +11,7 @@ import {
   useEditService,
   useService,
 } from '@qovery/domains/services/feature'
-import { sanitizeKubernetesName } from '@qovery/shared/util-js'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
-import { queries } from '@qovery/state/util-queries'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
 type AutoscalingWithKedaFields = {
@@ -28,7 +24,10 @@ type AutoscalingWithKedaFields = {
     role?: string
     config_json?: Record<string, unknown>
     config_yaml?: string
-    trigger_authentication_id?: string
+    trigger_authentication?: {
+      name?: string
+      config_yaml?: string
+    }
   }>
 }
 
@@ -38,8 +37,6 @@ export interface SettingsResourcesFeatureProps {
 }
 
 export function SettingsResourcesFeature({ service, environment }: SettingsResourcesFeatureProps) {
-  const queryClient = useQueryClient()
-
   const { mutate: editService, isLoading: isLoadingService } = useEditService({
     organizationId: environment.organization.id,
     projectId: environment.project.id,
@@ -56,8 +53,6 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
     serviceId: service.id,
     serviceType: service.serviceType,
   })
-
-  const { mutateAsync: createKedaTriggerAuth } = useCreateKedaTriggerAuthentication()
 
   const defaultInstances = match(service)
     .with({ serviceType: 'JOB' }, () => ({}))
@@ -98,28 +93,29 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
 
       // HPA fields
       hpa_metric_type: (() => {
-        // Check if hpa.memory exists in advanced settings (flattened keys)
         const settings = advancedSettings as Record<string, any> | undefined
         const hpaMemoryValue = settings?.['hpa.memory.average_utilization_percent']
 
         if (hpaMemoryValue != null) {
-          return 'MEMORY'
+          return 'CPU_AND_MEMORY'
         }
         return 'CPU'
       })(),
-      hpa_average_utilization_percent: (() => {
-        // Get the value from advanced settings based on the metric type
+      hpa_cpu_average_utilization_percent: (() => {
         const settings = advancedSettings as Record<string, any> | undefined
-        const hpaMemoryValue = settings?.['hpa.memory.average_utilization_percent']
         const hpaCpuValue = settings?.['hpa.cpu.average_utilization_percent']
 
-        // If memory is set, use memory value
-        if (hpaMemoryValue != null) {
-          return hpaMemoryValue as number
-        }
-        // Otherwise use CPU value if available
         if (hpaCpuValue != null) {
           return hpaCpuValue as number
+        }
+        return 60
+      })(),
+      hpa_memory_average_utilization_percent: (() => {
+        const settings = advancedSettings as Record<string, any> | undefined
+        const hpaMemoryValue = settings?.['hpa.memory.average_utilization_percent']
+
+        if (hpaMemoryValue != null) {
+          return hpaMemoryValue as number
         }
         return 60
       })(),
@@ -136,8 +132,7 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
             autoscalingWithFields.scalers?.map((scaler) => ({
               type: scaler.scaler_type || '',
               config: scaler.config_yaml || '',
-              triggerAuthentication: '', // Will be loaded later from API if trigger_authentication_id exists
-              trigger_authentication_id: scaler.trigger_authentication_id,
+              triggerAuthentication: scaler.trigger_authentication?.config_yaml || '',
             })) || []
           )
         })
@@ -161,76 +156,22 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
   // Update form values when advanced settings are loaded
   useEffect(() => {
     if (advancedSettings) {
-      // Check for flattened keys
       const settings = advancedSettings as Record<string, any>
       const hpaMemoryValue = settings['hpa.memory.average_utilization_percent']
       const hpaCpuValue = settings['hpa.cpu.average_utilization_percent']
 
-      // If memory is set, update metric type to MEMORY
       if (hpaMemoryValue != null) {
-        methods.setValue('hpa_metric_type', 'MEMORY', { shouldDirty: false })
-        methods.setValue('hpa_average_utilization_percent', hpaMemoryValue as number, { shouldDirty: false })
-      }
-      // Otherwise if CPU is set, use CPU value
-      else if (hpaCpuValue != null) {
+        methods.setValue('hpa_metric_type', 'CPU_AND_MEMORY', { shouldDirty: false })
+        methods.setValue('hpa_memory_average_utilization_percent', hpaMemoryValue as number, { shouldDirty: false })
+        methods.setValue('hpa_cpu_average_utilization_percent', (hpaCpuValue as number) ?? 60, { shouldDirty: false })
+      } else if (hpaCpuValue != null) {
         methods.setValue('hpa_metric_type', 'CPU', { shouldDirty: false })
-        methods.setValue('hpa_average_utilization_percent', hpaCpuValue as number, { shouldDirty: false })
+        methods.setValue('hpa_cpu_average_utilization_percent', hpaCpuValue as number, { shouldDirty: false })
+        methods.setValue('hpa_memory_average_utilization_percent', 60, { shouldDirty: false })
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [advancedSettings])
-
-  // Load trigger authentications for existing scalers
-  useEffect(() => {
-    const loadTriggerAuthentications = async () => {
-      const scalers = methods.getValues('scalers') as Array<{
-        type: string
-        config: string
-        triggerAuthentication?: string
-        trigger_authentication_id?: string
-      }>
-
-      if (!scalers || scalers.length === 0) return
-
-      const updatedScalers = await Promise.all(
-        scalers.map(async (scaler) => {
-          // If scaler has trigger_authentication_id but no triggerAuthentication YAML, load it
-          if (
-            scaler.trigger_authentication_id &&
-            (!scaler.triggerAuthentication || scaler.triggerAuthentication === '')
-          ) {
-            try {
-              const triggerAuth = await queryClient.fetchQuery(
-                queries.organizations.kedaTriggerAuthentication({
-                  organizationId: environment.organization.id,
-                  triggerAuthenticationId: scaler.trigger_authentication_id,
-                })
-              )
-              if (triggerAuth) {
-                return {
-                  ...scaler,
-                  triggerAuthentication: triggerAuth.config_yaml || '',
-                }
-              }
-            } catch (error) {
-              console.error('Failed to load trigger authentication:', error)
-            }
-          }
-          // Ensure triggerAuthentication is always defined (at least empty string)
-          return {
-            ...scaler,
-            triggerAuthentication: scaler.triggerAuthentication || '',
-          }
-        })
-      )
-
-      // Update the form with loaded trigger authentications
-      methods.setValue('scalers', updatedScalers as any, { shouldDirty: false })
-    }
-
-    loadTriggerAuthentications()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [service.id])
 
   const onSubmit = methods.handleSubmit(async (data: FieldValues) => {
     const request = {
@@ -255,12 +196,16 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
             autoscaling_cooldown_period: null,
             autoscaling_mode: 'NONE',
             hpa_metric_type: undefined,
-            hpa_average_utilization_percent: undefined,
+            hpa_cpu_average_utilization_percent: undefined,
+            hpa_memory_average_utilization_percent: undefined,
           }
           break
 
-        case 'HPA':
+        case 'HPA': {
           // HPA mode: min !== max, HPA autoscaling
+          const metricChoice = data['hpa_metric_type'] === 'CPU_AND_MEMORY' ? 'CPU_AND_MEMORY' : 'CPU'
+          const cpuAverageUtilization = Number(data['hpa_cpu_average_utilization_percent']) || 60
+
           requestWithInstances = {
             ...request,
             min_running_instances: data['min_running_instances'],
@@ -269,61 +214,37 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
             autoscaling_polling_interval: null,
             autoscaling_cooldown_period: null,
             autoscaling_mode: 'HPA',
-            hpa_metric_type: data['hpa_metric_type'] || 'CPU',
-            hpa_average_utilization_percent: Number(data['hpa_average_utilization_percent']) || 60,
+            hpa_metric_type: 'CPU',
+            hpa_cpu_average_utilization_percent: cpuAverageUtilization,
+            hpa_memory_average_utilization_percent:
+              metricChoice === 'CPU_AND_MEMORY'
+                ? Number(data['hpa_memory_average_utilization_percent']) || 60
+                : undefined,
           }
           break
+        }
 
         case 'KEDA': {
-          // KEDA mode: create trigger authentications for scalers that need them
-          const scalersWithAuth = await Promise.all(
-            (data['scalers'] || []).map(async (scaler: any, index: number) => {
-              // If scaler has triggerAuthentication YAML and no existing ID, create new
-              if (
-                scaler.triggerAuthentication &&
-                scaler.triggerAuthentication.trim() !== '' &&
-                !scaler.trigger_authentication_id
-              ) {
-                try {
-                  const sanitizedServiceName = sanitizeKubernetesName(service.name)
-                  const triggerAuth = await createKedaTriggerAuth({
-                    organizationId: environment.organization.id,
-                    kedaTriggerAuthenticationRequest: {
-                      name: `${sanitizedServiceName}-scaler-${index + 1}-trigger-auth`,
-                      config_yaml: scaler.triggerAuthentication,
-                    },
-                  })
+          // KEDA mode: include trigger authentication directly in scaler payload
+          const scalersWithAuth = (data['scalers'] || []).map((scaler: any) => {
+            const baseScaler = {
+              type: scaler.type,
+              config: scaler.config,
+            }
 
-                  return {
-                    type: scaler.type,
-                    config: scaler.config,
-                    trigger_authentication_id: triggerAuth.id,
-                  }
-                } catch (error) {
-                  console.error('Failed to create trigger authentication:', error)
-                  return {
-                    type: scaler.type,
-                    config: scaler.config,
-                  }
-                }
-              }
-
-              // If scaler already has trigger_authentication_id, keep it
-              if (scaler.trigger_authentication_id) {
-                return {
-                  type: scaler.type,
-                  config: scaler.config,
-                  trigger_authentication_id: scaler.trigger_authentication_id,
-                }
-              }
-
-              // No trigger authentication needed
+            // If scaler has triggerAuthentication YAML, include it inline
+            if (scaler.triggerAuthentication && scaler.triggerAuthentication.trim() !== '') {
               return {
-                type: scaler.type,
-                config: scaler.config,
+                ...baseScaler,
+                trigger_authentication: {
+                  config_yaml: scaler.triggerAuthentication,
+                },
               }
-            })
-          )
+            }
+
+            // No trigger authentication needed
+            return baseScaler
+          })
 
           requestWithInstances = {
             ...request,
@@ -338,7 +259,8 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
               : undefined,
             autoscaling_mode: 'KEDA',
             hpa_metric_type: undefined,
-            hpa_average_utilization_percent: undefined,
+            hpa_cpu_average_utilization_percent: undefined,
+            hpa_memory_average_utilization_percent: undefined,
           }
           break
         }
@@ -385,19 +307,20 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
           // If HPA mode, also save advanced settings
           const autoscalingMode = data['autoscaling_mode']
           if (autoscalingMode === 'HPA') {
-            const hpaMetricType = data['hpa_metric_type'] || 'CPU'
-            const hpaAverageUtilizationPercent = Number(data['hpa_average_utilization_percent']) || 60
+            const metricChoice = data['hpa_metric_type'] === 'CPU_AND_MEMORY' ? 'CPU_AND_MEMORY' : 'CPU'
+            const cpuAverageUtilizationPercent = Number(data['hpa_cpu_average_utilization_percent']) || 60
+            const memoryAverageUtilizationPercent = Number(data['hpa_memory_average_utilization_percent']) || 60
 
-            // Build advanced settings key based on metric type
-            const advancedSettingsKey =
-              hpaMetricType === 'CPU' ? 'hpa.cpu.average_utilization_percent' : 'hpa.memory.average_utilization_percent'
+            const advancedPayload = {
+              serviceType: service.serviceType,
+              'hpa.cpu.average_utilization_percent': cpuAverageUtilizationPercent,
+              'hpa.memory.average_utilization_percent':
+                metricChoice === 'CPU_AND_MEMORY' ? memoryAverageUtilizationPercent : null,
+            }
 
             editAdvancedSettings({
               serviceId: service.id,
-              payload: {
-                serviceType: service.serviceType,
-                [advancedSettingsKey]: hpaAverageUtilizationPercent,
-              },
+              payload: advancedPayload as any,
             })
           }
         },

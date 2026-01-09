@@ -9,12 +9,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import {
-  useAnnotationsGroups,
-  useContainerRegistry,
-  useCreateKedaTriggerAuthentication,
-  useLabelsGroups,
-} from '@qovery/domains/organizations/feature'
+import { useAnnotationsGroups, useContainerRegistry, useLabelsGroups } from '@qovery/domains/organizations/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { type VariableData } from '@qovery/shared/interfaces'
@@ -28,7 +23,6 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { sanitizeKubernetesName } from '@qovery/shared/util-js'
 import StepSummary from '../../../ui/page-application-create/step-summary/step-summary'
 import { steps, useApplicationContainerCreateContext } from '../page-application-create-feature'
 
@@ -66,7 +60,6 @@ export function StepSummaryFeature() {
   const { mutateAsync: createService } = useCreateService({ organizationId })
   const { mutateAsync: importVariables } = useImportVariables()
   const { mutate: deployService } = useDeployService({ organizationId, projectId, environmentId })
-  const { mutateAsync: createKedaTriggerAuth } = useCreateKedaTriggerAuthentication()
 
   const variablesData = variablesForm.getValues().variables
 
@@ -122,39 +115,29 @@ export function StepSummaryFeature() {
           )
 
           if (validScalers.length > 0) {
-            // Create trigger authentications first if needed
-            const scalersWithAuth = await Promise.all(
-              validScalers.map(
-                async (scaler: { type: string; config: string; triggerAuthentication?: string }, index: number) => {
-                  let trigger_authentication_id: string | undefined = undefined
+            // Include trigger authentication directly in scaler payload
+            const scalersWithAuth = validScalers.map(
+              (scaler: { type: string; config: string; triggerAuthentication?: string }, index: number) => {
+                const baseScaler = {
+                  scaler_type: scaler.type,
+                  enabled: true,
+                  role: index === 0 ? 'PRIMARY' : 'SAFETY',
+                  config_json: undefined,
+                  config_yaml: scaler.config,
+                }
 
-                  // Create trigger authentication if YAML is provided
-                  if (scaler.triggerAuthentication && scaler.triggerAuthentication.trim() !== '') {
-                    try {
-                      const sanitizedServiceName = sanitizeKubernetesName(generalData.name)
-                      const triggerAuth = await createKedaTriggerAuth({
-                        organizationId,
-                        kedaTriggerAuthenticationRequest: {
-                          name: `${sanitizedServiceName}-scaler-${index + 1}-trigger-auth`,
-                          config_yaml: scaler.triggerAuthentication,
-                        },
-                      })
-                      trigger_authentication_id = triggerAuth.id
-                    } catch (error) {
-                      console.error('Failed to create trigger authentication:', error)
-                    }
-                  }
-
+                // Include trigger authentication inline if YAML is provided
+                if (scaler.triggerAuthentication && scaler.triggerAuthentication.trim() !== '') {
                   return {
-                    scaler_type: scaler.type,
-                    enabled: true,
-                    role: index === 0 ? 'PRIMARY' : 'SAFETY',
-                    config_json: undefined,
-                    config_yaml: scaler.config,
-                    trigger_authentication_id,
+                    ...baseScaler,
+                    trigger_authentication: {
+                      config_yaml: scaler.triggerAuthentication,
+                    },
                   }
                 }
-              )
+
+                return baseScaler
+              }
             )
 
             autoscaling = {
