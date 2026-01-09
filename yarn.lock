@@ -5617,6 +5617,7 @@ __metadata:
     "@types/chance": ^1.1.3
     "@types/downloadjs": ^1.4.3
     "@types/jest": 30.0.0
+    "@types/js-yaml": ^4.0.9
     "@types/node": 20.19.9
     "@types/react": 18.3.1
     "@types/react-beautiful-dnd": ^13.1.2
@@ -5670,6 +5671,7 @@ __metadata:
     jest-environment-node: ^29.7.0
     jest-util: 30.0.5
     jest-websocket-mock: ^2.4.1
+    js-yaml: ^4.1.1
     jwt-decode: ^4.0.0
     lint-staged: ^13.0.3
     mermaid: ^11.6.0
@@ -5681,8 +5683,8 @@ __metadata:
     prettier: ^3.2.5
     prettier-plugin-tailwindcss: ^0.5.14
     pretty-quick: ^4.0.0
-    qovery-typescript-axios: ^1.1.795
-    qovery-ws-typescript-axios: ^0.1.420
+    qovery-typescript-axios: ^1.1.800
+    qovery-ws-typescript-axios: ^0.1.497
     react: 18.3.1
     react-country-flag: ^3.0.2
     react-datepicker: ^4.12.0
@@ -8890,6 +8892,13 @@ __metadata:
   version: 1.1.1
   resolution: "@types/js-levenshtein@npm:1.1.1"
   checksum: 1d1ff1ee2ad551909e47f3ce19fcf85b64dc5146d3b531c8d26fc775492d36e380b32cf5ef68ff301e812c3b00282f37aac579ebb44498b94baff0ace7509769
+  languageName: node
+  linkType: hard
+
+"@types/js-yaml@npm:^4.0.9":
+  version: 4.0.9
+  resolution: "@types/js-yaml@npm:4.0.9"
+  checksum: e5e5e49b5789a29fdb1f7d204f82de11cb9e8f6cb24ab064c616da5d6e1b3ccfbf95aa5d1498a9fbd3b9e745564e69b4a20b6c530b5a8bbb2d4eb830cda9bc69
   languageName: node
   linkType: hard
 
@@ -19390,6 +19399,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-yaml@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "js-yaml@npm:4.1.1"
+  dependencies:
+    argparse: ^2.0.1
+  bin:
+    js-yaml: bin/js-yaml.js
+  checksum: ea2339c6930fe048ec31b007b3c90be2714ab3e7defcc2c27ebf30c74fd940358f29070b4345af0019ef151875bf3bc3f8644bea1bab0372652b5044813ac02d
+  languageName: node
+  linkType: hard
+
 "jsbn@npm:~0.1.0":
   version: 0.1.1
   resolution: "jsbn@npm:0.1.1"
@@ -24513,21 +24533,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qovery-typescript-axios@npm:^1.1.795":
-  version: 1.1.795
-  resolution: "qovery-typescript-axios@npm:1.1.795"
+"qovery-typescript-axios@npm:^1.1.800":
+  version: 1.1.800
+  resolution: "qovery-typescript-axios@npm:1.1.800"
   dependencies:
     axios: 1.12.2
-  checksum: ba045dd4d4b98294594743de69e2eef1a55f9e32ae9a70329bdc15cb89b09e66159c52d7d4bde4b53528d00b0c17dde1c71104b1b07291a1274aed3f0864949a
+  checksum: 236a5f28c1c78db3dd5147d3676a586b5fb769fd7590261b928029b6f3e7dc13c4d90cc753b4b07b096a90d8a00455a399d946f8b579a6ceb8d447aae40a6893
   languageName: node
   linkType: hard
 
-"qovery-ws-typescript-axios@npm:^0.1.420":
-  version: 0.1.421
-  resolution: "qovery-ws-typescript-axios@npm:0.1.421"
+"qovery-ws-typescript-axios@npm:^0.1.497":
+  version: 0.1.497
+  resolution: "qovery-ws-typescript-axios@npm:0.1.497"
   dependencies:
     axios: 1.12.2
-  checksum: d88ce8ff41d759f5629282099b8c1d265f19c3aa4fbced1c732c6daeca285ca3d1dfcd27d9bd0582a5271928441999e825610d7c53068c58befdaf62abca7b96
+  checksum: 771aa93fe841c8b779fe3c2d14de13c0065afcf6f191da856ac99cd4c78d4a260085d12467e56eda7cf3b9927a97233fd51e89d1da88b91bef1d453c7c4ecdd9
   languageName: node
   linkType: hard
 

@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { useMemo } from 'react'
 import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
+import { PodStatusesCallout, PodsMetrics, ScaledObjectStatus, ServiceDetails } from '@qovery/domains/services/feature'
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { Button, ExternalLink, Icon, useModal } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
@@ -197,6 +197,7 @@ export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }:
             </div>
           )}
         </PodsMetrics>
+        <ScaledObjectStatus environmentId={environmentId} serviceId={serviceId} />
         {isLifecycleJobOrTerraform && <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} />}
       </div>
       <ServiceDetails

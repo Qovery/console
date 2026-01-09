@@ -1,6 +1,8 @@
 import {
   type ApplicationEditRequest,
   type ApplicationGitRepositoryRequest,
+  type AutoscalingPolicyRequest,
+  type AutoscalingPolicyResponse,
   type ContainerRequest,
   type DatabaseEditRequest,
   DatabaseModeEnum,
@@ -25,6 +27,54 @@ import {
   type TerraformType,
 } from '@qovery/domains/services/data-access'
 import { isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
+
+type ApplicationEditRequestWithKeda = ApplicationEditRequest & {
+  autoscaling?: string
+  autoscaling_scaler_type?: string
+  autoscaling_polling_interval?: number
+  autoscaling_cooldown_period?: number
+  scalers?: Array<{ type: string; config: string }>
+  autoscaling_mode?: 'NONE' | 'HPA' | 'KEDA'
+  hpa_metric_type?: 'CPU' | 'MEMORY'
+  hpa_average_utilization_percent?: number
+}
+
+type ContainerRequestWithKeda = ContainerRequest & {
+  autoscaling?: string
+  autoscaling_scaler_type?: string
+  autoscaling_polling_interval?: number
+  autoscaling_cooldown_period?: number
+  scalers?: Array<{ type: string; config: string }>
+  autoscaling_mode?: 'NONE' | 'HPA' | 'KEDA'
+  hpa_metric_type?: 'CPU' | 'MEMORY'
+  hpa_average_utilization_percent?: number
+}
+
+type AutoscalingPolicyResponseWithFields = AutoscalingPolicyResponse & {
+  polling_interval_seconds?: number
+  cooldown_period_seconds?: number
+  scalers: Array<{
+    scaler_type: string
+    enabled: boolean
+    role: string
+    config_json?: Record<string, unknown>
+    config_yaml?: string
+    trigger_authentication_id?: string
+  }>
+}
+
+type AutoscalingPolicyRequestWithFields = AutoscalingPolicyRequest & {
+  polling_interval_seconds?: number
+  cooldown_period_seconds?: number
+  scalers: Array<{
+    scaler_type: string
+    enabled: boolean
+    role: 'PRIMARY' | 'SAFETY'
+    config_json?: Record<string, unknown>
+    config_yaml?: string
+    trigger_authentication_id?: string
+  }>
+}
 
 type applicationProps = {
   service: Application
@@ -63,6 +113,109 @@ export type responseToRequestProps =
   | jobProps
   | helmProps
   | terraformProps
+
+/**
+ * Converts AutoscalingPolicyResponse (from API) to AutoscalingPolicyRequest (for API requests)
+ * Removes response-only fields like id, created_at, updated_at, service_id
+ */
+export function convertAutoscalingResponseToRequest(
+  response: AutoscalingPolicyResponse | undefined
+): AutoscalingPolicyRequestWithFields | undefined {
+  if (!response) {
+    return undefined
+  }
+
+  const responseWithFields = response as AutoscalingPolicyResponseWithFields
+
+  const scalers = responseWithFields.scalers.map((scaler) => ({
+    scaler_type: scaler.scaler_type,
+    enabled: scaler.enabled,
+    role: scaler.role as 'PRIMARY' | 'SAFETY',
+    config_json: scaler.config_json ?? undefined,
+    config_yaml: scaler.config_yaml ?? undefined,
+    trigger_authentication_id: (scaler as any).trigger_authentication_id,
+  }))
+
+  return {
+    mode: response.mode,
+    polling_interval_seconds: responseWithFields.polling_interval_seconds,
+    cooldown_period_seconds: responseWithFields.cooldown_period_seconds,
+    scalers,
+  }
+}
+
+function parseAutoscalingYaml(
+  yamlString?: string,
+  scalerType?: string,
+  pollingInterval?: number,
+  cooldownPeriod?: number
+): AutoscalingPolicyRequestWithFields | undefined {
+  if (!scalerType || !yamlString || yamlString.trim() === '') {
+    return undefined
+  }
+
+  try {
+    const scaler: AutoscalingPolicyRequestWithFields['scalers'][0] = {
+      scaler_type: scalerType || 'cpu', // Default to 'cpu' if not provided
+      enabled: true,
+      role: 'PRIMARY',
+      config_json: undefined,
+      config_yaml: yamlString && yamlString.trim() !== '' ? yamlString : undefined,
+    }
+
+    const autoscalingPolicy: AutoscalingPolicyRequestWithFields = {
+      mode: 'KEDA',
+      polling_interval_seconds: pollingInterval ?? 30,
+      cooldown_period_seconds: cooldownPeriod ?? 300,
+      scalers: [scaler],
+    }
+
+    return autoscalingPolicy
+  } catch (error) {
+    console.error('Failed to parse KEDA autoscaling YAML:', error)
+
+    return undefined
+  }
+}
+
+function parseAutoscalingScalers(
+  scalers?: Array<{ type: string; config: string; trigger_authentication_id?: string }>,
+  pollingInterval?: number,
+  cooldownPeriod?: number
+): AutoscalingPolicyRequestWithFields | undefined {
+  if (!scalers || scalers.length === 0) {
+    return undefined
+  }
+
+  const validScalers = scalers.filter((s) => s.type && s.type.trim() !== '' && s.config && s.config.trim() !== '')
+
+  if (validScalers.length === 0) {
+    return undefined
+  }
+
+  try {
+    const parsedScalers: AutoscalingPolicyRequestWithFields['scalers'] = validScalers.map((scaler, index) => ({
+      scaler_type: scaler.type,
+      enabled: true,
+      role: index === 0 ? 'PRIMARY' : 'SAFETY',
+      config_json: undefined,
+      config_yaml: scaler.config,
+      trigger_authentication_id: scaler.trigger_authentication_id,
+    }))
+
+    const autoscalingPolicy: AutoscalingPolicyRequestWithFields = {
+      mode: 'KEDA',
+      polling_interval_seconds: pollingInterval ?? 30,
+      cooldown_period_seconds: cooldownPeriod ?? 300,
+      scalers: parsedScalers,
+    }
+
+    return autoscalingPolicy
+  } catch (error) {
+    console.error('Failed to parse KEDA autoscaling scalers:', error)
+    return undefined
+  }
+}
 
 export function buildEditServicePayload(
   props: applicationProps
@@ -142,6 +295,63 @@ function refactoApplication({ service: application, request = {} }: applicationP
         : []
   }
 
+  const convertedAutoscaling = convertAutoscalingResponseToRequest(application.autoscaling)
+
+  let parsedAutoscaling: AutoscalingPolicyRequestWithFields | undefined = undefined
+
+  const requestWithKeda = request as Partial<ApplicationEditRequestWithKeda>
+
+  // Check autoscaling mode
+  const autoscalingMode = requestWithKeda.autoscaling_mode
+
+  if (autoscalingMode === 'HPA') {
+    // HPA mode: no autoscaling policy needed
+    // Backend detects HPA automatically when min != max and no KEDA scalers
+    // HPA-specific settings will be sent via advanced settings API separately
+    parsedAutoscaling = undefined
+  } else if (autoscalingMode === 'KEDA') {
+    // KEDA mode: use scalers
+    const scalers = requestWithKeda.scalers
+    const pollingInterval = requestWithKeda.autoscaling_polling_interval
+    const cooldownPeriod = requestWithKeda.autoscaling_cooldown_period
+    parsedAutoscaling = parseAutoscalingScalers(scalers, pollingInterval, cooldownPeriod)
+  } else if (autoscalingMode === 'NONE') {
+    // No autoscaling: set to undefined
+    parsedAutoscaling = undefined
+  }
+  // Legacy format handling (backward compatibility)
+  else if ('scalers' in requestWithKeda) {
+    const scalers = requestWithKeda.scalers
+    const pollingInterval = requestWithKeda.autoscaling_polling_interval
+    const cooldownPeriod = requestWithKeda.autoscaling_cooldown_period
+    parsedAutoscaling = parseAutoscalingScalers(scalers, pollingInterval, cooldownPeriod)
+  } else if ('autoscaling' in requestWithKeda || 'autoscaling_scaler_type' in requestWithKeda) {
+    const autoscalingString = requestWithKeda.autoscaling
+    const scalerType = requestWithKeda.autoscaling_scaler_type
+    const pollingInterval = requestWithKeda.autoscaling_polling_interval
+    const cooldownPeriod = requestWithKeda.autoscaling_cooldown_period
+
+    if (scalerType && autoscalingString && autoscalingString.trim() !== '') {
+      parsedAutoscaling = parseAutoscalingYaml(autoscalingString, scalerType, pollingInterval, cooldownPeriod)
+    } else {
+      parsedAutoscaling = undefined
+    }
+  } else {
+    parsedAutoscaling = convertedAutoscaling
+  }
+
+  const {
+    autoscaling: _,
+    autoscaling_scaler_type: __,
+    autoscaling_polling_interval: ___,
+    autoscaling_cooldown_period: ____,
+    scalers: _____,
+    autoscaling_mode: ______,
+    hpa_metric_type: _______,
+    hpa_average_utilization_percent: ________,
+    ...requestWithoutAutoscaling
+  } = requestWithKeda
+
   const applicationRequestPayload: ApplicationEditRequest = {
     name: application.name,
     icon_uri: application.icon_uri,
@@ -162,13 +372,74 @@ function refactoApplication({ service: application, request = {} }: applicationP
     min_running_instances: application.min_running_instances,
     entrypoint: application.entrypoint,
     arguments: application.arguments,
+    autoscaling: parsedAutoscaling,
   }
 
-  return { ...applicationRequestPayload, ...request }
+  return {
+    ...applicationRequestPayload,
+    ...requestWithoutAutoscaling,
+  }
 }
 
 function refactoContainer({ service: container, request = {} }: containerProps): ContainerRequest {
-  const containerRequestPayload = {
+  const convertedAutoscaling = convertAutoscalingResponseToRequest(container.autoscaling)
+
+  let parsedAutoscaling: AutoscalingPolicyRequestWithFields | undefined = undefined
+
+  const requestWithKeda = request as Partial<ContainerRequestWithKeda>
+
+  // Check autoscaling mode
+  const autoscalingMode = requestWithKeda.autoscaling_mode
+
+  if (autoscalingMode === 'HPA') {
+    // HPA mode: no autoscaling policy needed
+    // Backend detects HPA automatically when min != max and no KEDA scalers
+    // HPA-specific settings will be sent via advanced settings API separately
+    parsedAutoscaling = undefined
+  } else if (autoscalingMode === 'KEDA') {
+    // KEDA mode: use scalers
+    const scalers = requestWithKeda.scalers
+    const pollingInterval = requestWithKeda.autoscaling_polling_interval
+    const cooldownPeriod = requestWithKeda.autoscaling_cooldown_period
+    parsedAutoscaling = parseAutoscalingScalers(scalers, pollingInterval, cooldownPeriod)
+  } else if (autoscalingMode === 'NONE') {
+    // No autoscaling: set to undefined
+    parsedAutoscaling = undefined
+  }
+  // Legacy format handling (backward compatibility)
+  else if ('scalers' in requestWithKeda) {
+    const scalers = requestWithKeda.scalers
+    const pollingInterval = requestWithKeda.autoscaling_polling_interval
+    const cooldownPeriod = requestWithKeda.autoscaling_cooldown_period
+    parsedAutoscaling = parseAutoscalingScalers(scalers, pollingInterval, cooldownPeriod)
+  } else if ('autoscaling' in requestWithKeda || 'autoscaling_scaler_type' in requestWithKeda) {
+    const autoscalingString = requestWithKeda.autoscaling
+    const scalerType = requestWithKeda.autoscaling_scaler_type
+    const pollingInterval = requestWithKeda.autoscaling_polling_interval
+    const cooldownPeriod = requestWithKeda.autoscaling_cooldown_period
+
+    if (scalerType && autoscalingString && autoscalingString.trim() !== '') {
+      parsedAutoscaling = parseAutoscalingYaml(autoscalingString, scalerType, pollingInterval, cooldownPeriod)
+    } else {
+      parsedAutoscaling = undefined
+    }
+  } else {
+    parsedAutoscaling = convertedAutoscaling
+  }
+
+  const {
+    autoscaling: _,
+    autoscaling_scaler_type: __,
+    autoscaling_polling_interval: ___,
+    autoscaling_cooldown_period: ____,
+    scalers: _____,
+    autoscaling_mode: ______,
+    hpa_metric_type: _______,
+    hpa_average_utilization_percent: ________,
+    ...requestWithoutAutoscaling
+  } = requestWithKeda
+
+  const containerRequestPayload: ContainerRequest = {
     name: container.name || '',
     icon_uri: container.icon_uri,
     description: container.description || '',
@@ -187,9 +458,13 @@ function refactoContainer({ service: container, request = {} }: containerProps):
     auto_preview: container.auto_preview,
     auto_deploy: container.auto_deploy,
     healthchecks: container.healthchecks,
+    autoscaling: parsedAutoscaling,
   }
 
-  return { ...containerRequestPayload, ...request }
+  return {
+    ...containerRequestPayload,
+    ...requestWithoutAutoscaling,
+  }
 }
 
 function refactoJob({ service: job, request = {} }: jobProps): JobRequest {

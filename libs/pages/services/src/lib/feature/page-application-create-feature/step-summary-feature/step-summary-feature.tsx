@@ -2,13 +2,19 @@ import posthog from 'posthog-js'
 import {
   APIVariableScopeEnum,
   type ApplicationRequest,
+  type AutoscalingPolicyRequest,
   BuildModeEnum,
   type ContainerRequest,
   type VariableImportRequest,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useAnnotationsGroups, useContainerRegistry, useLabelsGroups } from '@qovery/domains/organizations/feature'
+import {
+  useAnnotationsGroups,
+  useContainerRegistry,
+  useCreateKedaTriggerAuthentication,
+  useLabelsGroups,
+} from '@qovery/domains/organizations/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { type VariableData } from '@qovery/shared/interfaces'
@@ -22,6 +28,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { sanitizeKubernetesName } from '@qovery/shared/util-js'
 import StepSummary from '../../../ui/page-application-create/step-summary/step-summary'
 import { steps, useApplicationContainerCreateContext } from '../page-application-create-feature'
 
@@ -59,6 +66,7 @@ export function StepSummaryFeature() {
   const { mutateAsync: createService } = useCreateService({ organizationId })
   const { mutateAsync: importVariables } = useImportVariables()
   const { mutate: deployService } = useDeployService({ organizationId, projectId, environmentId })
+  const { mutateAsync: createKedaTriggerAuth } = useCreateKedaTriggerAuthentication()
 
   const variablesData = variablesForm.getValues().variables
 
@@ -100,6 +108,71 @@ export function StepSummaryFeature() {
       const gpu = Number(resourcesData['gpu'])
       const variableImportRequest = prepareVariableImportRequest(variablesData)
 
+      // Parse KEDA autoscaling if autoscaling mode is KEDA (or legacy autoscaling_enabled for backward compatibility)
+      let autoscaling: AutoscalingPolicyRequest | undefined = undefined
+      if (
+        (resourcesData.autoscaling_mode === 'KEDA' || resourcesData.autoscaling_enabled) &&
+        resourcesData.scalers &&
+        resourcesData.scalers.length > 0
+      ) {
+        try {
+          const validScalers = resourcesData.scalers.filter(
+            (s: { type: string; config: string; triggerAuthentication?: string }) =>
+              s.type && s.type.trim() !== '' && s.config && s.config.trim() !== ''
+          )
+
+          if (validScalers.length > 0) {
+            // Create trigger authentications first if needed
+            const scalersWithAuth = await Promise.all(
+              validScalers.map(
+                async (scaler: { type: string; config: string; triggerAuthentication?: string }, index: number) => {
+                  let trigger_authentication_id: string | undefined = undefined
+
+                  // Create trigger authentication if YAML is provided
+                  if (scaler.triggerAuthentication && scaler.triggerAuthentication.trim() !== '') {
+                    try {
+                      const sanitizedServiceName = sanitizeKubernetesName(generalData.name)
+                      const triggerAuth = await createKedaTriggerAuth({
+                        organizationId,
+                        kedaTriggerAuthenticationRequest: {
+                          name: `${sanitizedServiceName}-scaler-${index + 1}-trigger-auth`,
+                          config_yaml: scaler.triggerAuthentication,
+                        },
+                      })
+                      trigger_authentication_id = triggerAuth.id
+                    } catch (error) {
+                      console.error('Failed to create trigger authentication:', error)
+                    }
+                  }
+
+                  return {
+                    scaler_type: scaler.type,
+                    enabled: true,
+                    role: index === 0 ? 'PRIMARY' : 'SAFETY',
+                    config_json: undefined,
+                    config_yaml: scaler.config,
+                    trigger_authentication_id,
+                  }
+                }
+              )
+            )
+
+            autoscaling = {
+              mode: 'KEDA',
+              polling_interval_seconds: resourcesData.autoscaling_polling_interval
+                ? Number(resourcesData.autoscaling_polling_interval)
+                : 30,
+              cooldown_period_seconds: resourcesData.autoscaling_cooldown_period
+                ? Number(resourcesData.autoscaling_cooldown_period)
+                : 300,
+              scalers: scalersWithAuth,
+            } as AutoscalingPolicyRequest
+          }
+        } catch (error) {
+          console.error('Failed to parse KEDA autoscaling:', error)
+        }
+      }
+
       if (generalData.serviceType === 'APPLICATION') {
         const applicationRequest: ApplicationRequest = {
           name: generalData.name,
@@ -133,6 +206,7 @@ export function StepSummaryFeature() {
           annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
           labels_groups: labelsGroup.filter((group) => generalData.labels_groups?.includes(group.id)),
           docker_target_build_stage: generalData.docker_target_build_stage || undefined,
+          autoscaling,
         }
 
         applicationRequest.dockerfile_path = generalData.dockerfile_path
@@ -202,6 +276,7 @@ export function StepSummaryFeature() {
           auto_deploy: generalData.auto_deploy,
           annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
           labels_groups: labelsGroup.filter((group) => generalData.labels_groups?.includes(group.id)),
+          autoscaling,
         }
 
         try {
