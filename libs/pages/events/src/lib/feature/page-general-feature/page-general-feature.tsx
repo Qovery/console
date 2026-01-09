@@ -223,7 +223,11 @@ export function PageGeneralFeature() {
 
   const handleClearFilter = () => {
     setQueryParams({}, 'push')
-    setFilter([])
+    setFilter((prev) =>
+      prev.map((p) => {
+        return { key: p.key, value: 'ALL' }
+      })
+    )
   }
 
   return (
