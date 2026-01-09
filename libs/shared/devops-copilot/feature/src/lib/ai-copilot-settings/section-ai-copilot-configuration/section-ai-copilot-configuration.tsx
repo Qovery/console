@@ -84,6 +84,18 @@ export function SectionAICopilotConfiguration({
         <Heading className="mb-2">AI Copilot Configuration</Heading>
         <p className="text-xs text-neutral-400">Configure your Copilot</p>
       </div>
+      <Callout.Root color="purple" className="mb-6">
+        <Callout.Icon>
+          <Icon iconName="flask" />
+        </Callout.Icon>
+        <Callout.Text>
+          <Callout.TextHeading>Beta Feature</Callout.TextHeading>
+          <Callout.TextDescription>
+            The AI Copilot is currently in beta. This is an experimental feature and functionality may change. Billing
+            terms are not final and will be communicated before any charges apply.
+          </Callout.TextDescription>
+        </Callout.Text>
+      </Callout.Root>
       <BlockContent title="Configuration" classNameContent="p-0">
         {isLoading ? (
           <div className="flex justify-center p-5">

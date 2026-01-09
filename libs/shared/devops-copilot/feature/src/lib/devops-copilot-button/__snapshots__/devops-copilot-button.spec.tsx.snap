@@ -15,6 +15,13 @@ exports[`DevopsCopilotButton should match snapshot 1`] = `
           class="fa-light fa-sparkles relative top-[1px] text-sm text-brand-500 dark:text-white"
         />
         AI Copilot
+        <span
+          class="inline-flex items-center shrink-0 text-xs px-1.5 h-5 text-purple-500 border rounded-md bg-purple-50 border-purple-500 ml-0.5"
+          data-accent-color="purple"
+          data-state="closed"
+        >
+          Beta
+        </span>
       </span>
       <div
         class="ml-auto flex gap-1 text-neutral-400"
