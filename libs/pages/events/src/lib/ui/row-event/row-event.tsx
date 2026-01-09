@@ -73,29 +73,33 @@ export function RowEvent(props: RowEventProps) {
   const { organizationId = '' } = useParams()
   const [diffStats, setDiffStats] = useState<DiffStats>({ additions: 0, deletions: 0 })
 
+  // Check if target still exists
+  const checkTargetExists = (targetType: OrganizationEventTargetType): boolean => {
+    const { target_id } = event
+
+    if (!validTargetIds || !target_id) return true // If no validation data, assume exists
+
+    switch (targetType) {
+      case OrganizationEventTargetType.APPLICATION:
+      case OrganizationEventTargetType.CONTAINER:
+      case OrganizationEventTargetType.JOB:
+      case OrganizationEventTargetType.HELM:
+      case OrganizationEventTargetType.TERRAFORM:
+      case OrganizationEventTargetType.DATABASE:
+        return validTargetIds.services.has(target_id)
+      case OrganizationEventTargetType.PROJECT:
+        return validTargetIds.projects.has(target_id)
+      case OrganizationEventTargetType.ENVIRONMENT:
+        return validTargetIds.environments.has(target_id)
+      default:
+        return true // For other types, assume they exist
+    }
+  }
+
   const renderLink = (targetType: OrganizationEventTargetType) => {
     const { event_type, target_name, project_id, environment_id, target_id } = event
 
-    // Check if target still exists
-    const targetExists = (() => {
-      if (!validTargetIds || !target_id) return true // If no validation data, assume exists
-
-      switch (targetType) {
-        case OrganizationEventTargetType.APPLICATION:
-        case OrganizationEventTargetType.CONTAINER:
-        case OrganizationEventTargetType.JOB:
-        case OrganizationEventTargetType.HELM:
-        case OrganizationEventTargetType.TERRAFORM:
-        case OrganizationEventTargetType.DATABASE:
-          return validTargetIds.services.has(target_id)
-        case OrganizationEventTargetType.PROJECT:
-          return validTargetIds.projects.has(target_id)
-        case OrganizationEventTargetType.ENVIRONMENT:
-          return validTargetIds.environments.has(target_id)
-        default:
-          return true // For other types, assume they exist
-      }
-    })()
+    const targetExists = checkTargetExists(targetType)
 
     const customLink = (url: string, content = target_name) => (
       <Link
@@ -156,7 +160,7 @@ export function RowEvent(props: RowEventProps) {
       OrganizationEventType.DEPLOYED,
       OrganizationEventType.STOPPED,
       OrganizationEventType.DEPLOYED_DRY_RUN,
-      () => <Icon iconName="circle-check" className="text-[#30a46c]" />
+      () => <Icon iconName="circle-check" className="text-green-500" />
     )
     .with(
       OrganizationEventType.DELETE_QUEUED,
@@ -168,7 +172,7 @@ export function RowEvent(props: RowEventProps) {
       OrganizationEventType.FORCE_RUN_QUEUED_DELETE,
       OrganizationEventType.FORCE_RUN_QUEUED_DEPLOY,
       OrganizationEventType.FORCE_RUN_QUEUED_STOP,
-      () => <Icon iconName="hourglass-start" />
+      () => <Icon iconName="hourglass-start" className="text-neutral-350" />
     )
     .with(
       OrganizationEventType.TRIGGER_CANCEL,
@@ -186,12 +190,12 @@ export function RowEvent(props: RowEventProps) {
       OrganizationEventType.TRIGGER_STOP,
       OrganizationEventType.TRIGGER_TERRAFORM_FORCE_UNLOCK,
       OrganizationEventType.TRIGGER_TERRAFORM_MIGRATE_STATE,
-      () => <Icon iconName="rocket-launch" />
+      () => <Icon iconName="rocket-launch" className="text-neutral-350" />
     )
     .with(OrganizationEventType.DELETE, OrganizationEventType.DELETED, () => (
       <Icon iconName="trash-can" className="text-neutral-350" />
     ))
-    .otherwise(() => (isEventTypeFailed ? <Icon iconName="circle-exclamation" className="text-[#e54d2e]" /> : null))
+    .otherwise(() => (isEventTypeFailed ? <Icon iconName="circle-exclamation" className="text-red-500" /> : null))
 
   const isSuccess = match(event.event_type)
     .with(
@@ -271,13 +275,30 @@ export function RowEvent(props: RowEventProps) {
                 </div>
               }
             >
-              <div className="flex -translate-x-3 items-center gap-1 truncate pr-2 transition-transform duration-200 hover:text-[rgb(93,48,245)] group-hover:translate-x-0">
-                <Icon
-                  iconName="arrow-right"
-                  className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                />
-                {event.target_type && renderLink(event.target_type)}
-              </div>
+              {(() => {
+                const targetExists =
+                  event.target_type &&
+                  event.event_type !== OrganizationEventType.DELETE &&
+                  checkTargetExists(event.target_type)
+
+                return (
+                  <div
+                    className={`flex items-center gap-1 truncate pr-2 ${
+                      targetExists
+                        ? '-translate-x-3 transition-transform duration-200 hover:text-brand-500 group-hover:translate-x-0'
+                        : ''
+                    }`}
+                  >
+                    {targetExists && (
+                      <Icon
+                        iconName="arrow-right"
+                        className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                      />
+                    )}
+                    {event.target_type && renderLink(event.target_type)}
+                  </div>
+                )
+              })()}
             </Tooltip>
           </Skeleton>
         </div>
@@ -308,7 +329,7 @@ export function RowEvent(props: RowEventProps) {
       event.original_change &&
       event.change &&
       event.original_change !== event.change ? (
-        <div className="relative flex flex-col bg-white" data-testid="expanded-panel">
+        <div className="relative flex flex-col border-b border-b-neutral-200 bg-white" data-testid="expanded-panel">
           <div className="flex h-7 items-center justify-between bg-[#faf9fb] px-4 text-xs text-neutral-100">
             <div className="flex items-center gap-2">
               <span className="font-bold text-[#30a46c]">+{diffStats.additions}</span>
@@ -327,7 +348,7 @@ export function RowEvent(props: RowEventProps) {
         </div>
       ) : (
         expanded && (
-          <div className="relative flex flex-col bg-white" data-testid="expanded-panel">
+          <div className="relative flex flex-col border-b border-b-neutral-200 bg-white" data-testid="expanded-panel">
             <CodeEditor
               key={event.timestamp}
               value={JSON.stringify(JSON.parse(event.change || ''), null, 2)}
