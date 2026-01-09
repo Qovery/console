@@ -48,6 +48,7 @@ export interface PageGeneralProps {
   setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
   filter?: TableFilterProps[]
   organization?: Organization
+  organizationId: string
   queryParams: DecodedValueMap<typeof queryParamsValues>
   targetTypeSelectedItems: SelectedItem[]
   setTargetTypeSelectedItems: Dispatch<SetStateAction<SelectedItem[]>>
@@ -208,6 +209,7 @@ export function PageGeneral({
   filter,
   handleClearFilter,
   organization,
+  organizationId,
   showIntercom,
   organizationMaxLimitReached,
   queryParams,
@@ -237,7 +239,7 @@ export function PageGeneral({
         targetTypeNavigationStack,
         targetTypeLevel,
         organization,
-        organization?.id
+        organizationId
       ),
     [
       timestamps,
@@ -246,7 +248,7 @@ export function PageGeneral({
       targetTypeSelectedItems,
       targetTypeNavigationStack,
       targetTypeLevel,
-      organization?.id,
+      organizationId,
     ]
   )
 

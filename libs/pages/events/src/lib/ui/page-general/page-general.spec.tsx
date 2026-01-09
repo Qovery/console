@@ -33,6 +33,7 @@ const props: PageGeneralProps = {
   filter: [{ key: 'origin', value: 'origin-1' }],
   showIntercom: jest.fn(),
   organizationMaxLimitReached: false,
+  organizationId: 'test-org-id',
   targetTypeSelectedItems: [],
   setTargetTypeSelectedItems: jest.fn(),
 }
