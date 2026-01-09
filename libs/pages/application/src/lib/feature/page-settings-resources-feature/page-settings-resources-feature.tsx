@@ -5,7 +5,10 @@ import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-import { useCreateKedaTriggerAuthentication } from '@qovery/domains/organizations/feature'
+import {
+  useCreateKedaTriggerAuthentication,
+  useUpdateKedaTriggerAuthentication,
+} from '@qovery/domains/organizations/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
 import {
   useAdvancedSettings,
@@ -58,6 +61,7 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
   })
 
   const { mutateAsync: createKedaTriggerAuth } = useCreateKedaTriggerAuthentication()
+  const { mutateAsync: updateKedaTriggerAuth } = useUpdateKedaTriggerAuthentication()
 
   const defaultInstances = match(service)
     .with({ serviceType: 'JOB' }, () => ({}))
@@ -308,7 +312,39 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
                 }
               }
 
-              // If scaler already has trigger_authentication_id, keep it
+              // If scaler already has trigger_authentication_id and YAML, update it
+              if (
+                scaler.trigger_authentication_id &&
+                scaler.triggerAuthentication &&
+                scaler.triggerAuthentication.trim() !== ''
+              ) {
+                try {
+                  const sanitizedServiceName = sanitizeKubernetesName(service.name)
+                  await updateKedaTriggerAuth({
+                    organizationId: environment.organization.id,
+                    triggerAuthenticationId: scaler.trigger_authentication_id,
+                    kedaTriggerAuthenticationRequest: {
+                      name: `${sanitizedServiceName}-scaler-${index + 1}-trigger-auth`,
+                      config_yaml: scaler.triggerAuthentication,
+                    },
+                  })
+
+                  return {
+                    type: scaler.type,
+                    config: scaler.config,
+                    trigger_authentication_id: scaler.trigger_authentication_id,
+                  }
+                } catch (error) {
+                  console.error('Failed to update trigger authentication:', error)
+                  return {
+                    type: scaler.type,
+                    config: scaler.config,
+                    trigger_authentication_id: scaler.trigger_authentication_id,
+                  }
+                }
+              }
+
+              // If scaler already has trigger_authentication_id but no YAML, keep it as is
               if (scaler.trigger_authentication_id) {
                 return {
                   type: scaler.type,
