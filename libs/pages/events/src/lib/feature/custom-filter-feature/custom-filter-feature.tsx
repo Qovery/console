@@ -1,45 +1,13 @@
 import { subDays } from 'date-fns'
-import { type Organization, OrganizationEventApi, OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { type Organization } from 'qovery-typescript-axios'
+import { memo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { type DecodedValueMap, useQueryParams } from 'use-query-params'
 import { useOrganization } from '@qovery/domains/organizations/feature'
-import type { Option } from '@qovery/shared/ui'
+import { type SelectedTimestamps } from '@qovery/shared/ui'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
-import { SelectedTimestamps } from '../../../../../../shared/ui/src/lib/components/table/table-head-datepicker/table-head-datepicker'
 import CustomFilter from '../../ui/custom-filter/custom-filter'
 import { queryParamsValues } from '../page-general-feature/page-general-feature'
-
-const VALID_FILTER_KEYS = ['targetType', 'targetId', 'projectId', 'environmentId', 'subTargetType']
-
-function buildQueryParams(options: Option[]) {
-  const queryParams: Omit<
-    DecodedValueMap<typeof queryParamsValues>,
-    'fromTimestamp' | 'toTimestamp' | 'continueToken' | 'stepBackToken' | 'pageSize' | 'eventType'
-  > = {
-    targetType: undefined,
-    targetId: undefined,
-    subTargetType: undefined,
-    projectId: undefined,
-    environmentId: undefined,
-    triggeredBy: undefined,
-    origin: undefined,
-  }
-
-  options.forEach((option) => {
-    const splitOption = option.value.split(':')
-    const filterKey = splitOption[0]
-    const filterValue = splitOption[1]
-    const isValidFilter = VALID_FILTER_KEYS.includes(filterKey)
-
-    if (isValidFilter && filterValue) {
-      const typedQueryParams = queryParams as Record<string, string>
-      typedQueryParams[filterKey] = filterValue
-    }
-  })
-
-  return queryParams
-}
 
 // Calculate default timestamps for display (not stored in URL)
 function getDefaultTimestamps(
@@ -94,11 +62,6 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
   const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId })
 
   const selectedTimestamps = getDefaultTimestamps(queryParams, organization)
-
-  // Sync the input value with query params when they change (async with global cache)
-  // useEffect(() => {
-  //   buildAuditLogsSelectedOptions(queryParams, organizationId).then(setSelectedOptions)
-  // }, [queryParams, organizationId])
 
   const onChangeTimestamp = (startDate: Date, endDate: Date) => {
     setQueryParams({

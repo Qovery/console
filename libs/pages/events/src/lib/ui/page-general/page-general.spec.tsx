@@ -5,7 +5,21 @@ import PageGeneral, { type PageGeneralProps } from './page-general'
 
 const props: PageGeneralProps = {
   placeholderEvents: eventsFactoryMock(5),
-  queryParams: {},
+  queryParams: {
+    pageSize: 10,
+    origin: undefined,
+    subTargetType: undefined,
+    triggeredBy: undefined,
+    targetId: undefined,
+    targetType: undefined,
+    eventType: undefined,
+    toTimestamp: undefined,
+    fromTimestamp: undefined,
+    continueToken: undefined,
+    stepBackToken: undefined,
+    projectId: undefined,
+    environmentId: undefined,
+  },
   pageSize: '10',
   handleClearFilter: jest.fn(),
   nextDisabled: false,
@@ -17,6 +31,10 @@ const props: PageGeneralProps = {
   events: eventsFactoryMock(10),
   setFilter: jest.fn(),
   filter: [{ key: 'origin', value: 'origin-1' }],
+  showIntercom: jest.fn(),
+  organizationMaxLimitReached: false,
+  targetTypeSelectedItems: [],
+  setTargetTypeSelectedItems: jest.fn(),
 }
 
 describe('PageGeneral', () => {

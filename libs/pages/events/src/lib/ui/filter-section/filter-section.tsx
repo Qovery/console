@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { DecodedValueMap } from 'use-query-params'
-import { Button, Icon, SelectedItem, type TableFilterProps, truncateText } from '@qovery/shared/ui'
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
+import { type DecodedValueMap } from 'use-query-params'
+import { Button, Icon, type SelectedItem, type TableFilterProps, truncateText } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
+import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
 
 export interface CustomFilterProps {
   clearFilter: () => void

@@ -1,7 +1,12 @@
 import { OrganizationEventApi, OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { DecodedValueMap } from 'use-query-params'
-import { HierarchicalFilterResult, HierarchicalMenuItem, NavigationLevel, SelectedItem } from '@qovery/shared/ui'
-import { queryParamsValues } from '../feature/page-general-feature/page-general-feature'
+import { type DecodedValueMap } from 'use-query-params'
+import {
+  type HierarchicalFilterResult,
+  type HierarchicalMenuItem,
+  type NavigationLevel,
+  type SelectedItem,
+} from '@qovery/shared/ui'
+import { type queryParamsValues } from '../feature/page-general-feature/page-general-feature'
 
 const SERVICE_TARGET_TYPES: ReadonlySet<string> = new Set([
   'APPLICATION',

@@ -1,11 +1,11 @@
 import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
-import { TableHeadDatePickerData, TableHeadDatePickerFilter } from './table-head-datepicker/table-head-datepicker'
+import { type TableHeadDatePickerData, TableHeadDatePickerFilter } from './table-head-datepicker/table-head-datepicker'
 import { TableHeadFilter } from './table-head-filter/table-head-filter'
 import TableHeadHierarchicalFilter, {
-  HierarchicalMenuItem,
-  NavigationLevel,
-  SelectedItem,
+  type HierarchicalMenuItem,
+  type NavigationLevel,
+  type SelectedItem,
 } from './table-head-hierarchical-filter/table-head-hierarchical-filter'
 import TableHeadSort from './table-head-sort/table-head-sort'
 

@@ -1,9 +1,8 @@
 import { subDays } from 'date-fns'
 import { type Organization } from 'qovery-typescript-axios'
 import { useSearchParams } from 'react-router-dom'
-import { Button, DatePicker, Icon, type Option } from '@qovery/shared/ui'
+import { Button, DatePicker, Icon, type SelectedTimestamps } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
-import { SelectedTimestamps } from '../../../../../../shared/ui/src/lib/components/table/table-head-datepicker/table-head-datepicker'
 
 export interface CustomFilterProps {
   onChangeTimestamp: (startDate: Date, endDate: Date) => void
