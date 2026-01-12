@@ -57,7 +57,7 @@ export function PageGeneralFeature() {
 
     const organizationEventTargetTypes = Object.keys(OrganizationEventTargetType).map((item) => ({
       value: item,
-      name: upperCaseFirstLetter(item),
+      name: upperCaseFirstLetter(item).replace(/_/g, ' '),
     }))
 
     initializeSelectedItemsFromQueryParams(organizationId, organizationEventTargetTypes, 'target_type', queryParams)

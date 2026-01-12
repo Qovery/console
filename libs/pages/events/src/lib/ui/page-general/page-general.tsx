@@ -145,7 +145,7 @@ function createTableDataHead(
         initialData: Object.keys(OrganizationEventTargetType).map((item) => {
           return {
             value: item,
-            name: upperCaseFirstLetter(item),
+            name: upperCaseFirstLetter(item).replace(/_/g, ' '),
           }
         }),
         initialSelectedItems: targetTypeSelectedItems,
