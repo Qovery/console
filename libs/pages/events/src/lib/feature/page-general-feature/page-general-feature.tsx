@@ -46,15 +46,8 @@ export function PageGeneralFeature() {
   const { data: validTargetIds } = useFetchValidTargetIds(organizationId)
   const { showChat } = useSupportChat()
 
-  // Ref to prevent double-initialization (React strict mode can cause double-mounting in dev)
-  const hasInitializedRef = useRef(false)
-
   // Initialize targetTypeSelectedItems from query params on mount
   useEffect(() => {
-    if (hasInitializedRef.current) {
-      return
-    }
-
     const hasHierarchicalFilters =
       queryParams.targetType || queryParams.projectId || queryParams.environmentId || queryParams.targetId
 
@@ -62,7 +55,6 @@ export function PageGeneralFeature() {
       return
     }
 
-    hasInitializedRef.current = true
     const organizationEventTargetTypes = Object.keys(OrganizationEventTargetType).map((item) => ({
       value: item,
       name: upperCaseFirstLetter(item),
