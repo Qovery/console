@@ -11,6 +11,7 @@ import { type DecodedValueMap } from 'use-query-params'
 import { type ValidTargetIds } from '@qovery/domains/event'
 import {
   Button,
+  Heading,
   Icon,
   type NavigationLevel,
   Pagination,
@@ -254,7 +255,7 @@ export function PageGeneral({
 
   return (
     <Section className="grow p-8">
-      <h3>Audit logs</h3>
+      <Heading level={1}>Audit logs</Heading>
       <div className="mb-4 flex min-h-9 items-start">
         <FilterSection
           clearFilter={handleClearFilter}

@@ -168,7 +168,6 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
   }, [queryParams, targetTypeSelectedItems])
 
   const priorityKeys = new Set(['target_type', 'target_id', 'project_id', 'environment_id'])
-  const relativePositionRightByIndex: string[] = ['8', '5', '2.5', '0']
 
   return (
     <div className="mt-1 flex w-full gap-4">

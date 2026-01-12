@@ -63,12 +63,12 @@ export function PageGeneralFeature() {
     }
 
     hasInitializedRef.current = true
-    const initialData = Object.keys(OrganizationEventTargetType).map((item) => ({
+    const organizationEventTargetTypes = Object.keys(OrganizationEventTargetType).map((item) => ({
       value: item,
       name: upperCaseFirstLetter(item),
     }))
 
-    initializeSelectedItemsFromQueryParams(organizationId, initialData, 'target_type', queryParams)
+    initializeSelectedItemsFromQueryParams(organizationId, organizationEventTargetTypes, 'target_type', queryParams)
       .then((initData) => {
         setTargetTypeSelectedItems(initData.selectedItems)
         setTargetTypeNavigationStack(initData.navigationStack)
@@ -77,7 +77,7 @@ export function PageGeneralFeature() {
       .catch((error) => {
         console.error('[PageGeneralFeature] Error initializing targetTypeSelectedItems:', error)
       })
-  }, []) // Empty deps = run only on mount
+  }, [])
 
   // Sync queryParams -> table filters
   useEffect(() => {
