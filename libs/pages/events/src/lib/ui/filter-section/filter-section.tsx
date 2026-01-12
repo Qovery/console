@@ -1,9 +1,10 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { DecodedValueMap } from 'use-query-params'
-import { Button, Icon, Link, SelectedItem, type TableFilterProps } from '@qovery/shared/ui'
+import clsx from 'clsx'
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
+import type { DecodedValueMap } from 'use-query-params'
+import { Button, Icon, type SelectedItem, type TableFilterProps } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
+import type { queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
 
 export interface CustomFilterProps {
   clearFilter: () => void
@@ -181,36 +182,52 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
               />
             </Button>
           ))}
-        <div className="flex">
+        <div className="flex flex-row-reverse">
           {badges
             .filter((badge) => priorityKeys.has(badge.key))
-            .map((badge, index, array) => {
-              const isFirst = index === 0
-              const isLast = index === array.length - 1
-              const roundedClass =
-                isFirst && isLast
-                  ? 'rounded-l-full rounded-r-full'
-                  : isFirst
-                    ? 'rounded-l-full rounded-r-none'
-                    : isLast
-                      ? 'rounded-l-none rounded-r-full'
-                      : 'rounded-none'
+            .slice()
+            .reverse()
+            .map((badge, reversedIndex, array) => {
+              const isFirst = reversedIndex === array.length - 1
+              const isLast = reversedIndex === 0
 
               return (
-                <Button
-                  variant="surface"
-                  color="neutral"
-                  size="xs"
-                  className={`pl-9.5 justify-center gap-1.5 ${roundedClass}`}
-                  key={badge.key}
-                >
-                  {badge.displayedName}: {badge.value}
-                  <Icon
-                    iconName="xmark"
-                    className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
-                    onClick={() => deleteFilter(badge.key, setFilter)}
-                  />
-                </Button>
+                <div key={badge.key} className={clsx('group relative flex', { 'right-2.5': !isFirst })}>
+                  <Button
+                    variant="surface"
+                    color="neutral"
+                    size="xs"
+                    className={clsx('justify-center gap-1.5', {
+                      'rounded-l-full rounded-r-none border-r-0 pr-4': isFirst && !isLast,
+                      'rounded-full': isFirst && isLast,
+                      'rounded-l-none rounded-r-full border-l-0 pl-4': isLast && !isFirst,
+                      'rounded-none border-x-0 pl-4 pr-4': !isFirst && !isLast,
+                    })}
+                    style={
+                      !isLast
+                        ? { clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%)' }
+                        : undefined
+                    }
+                  >
+                    {badge.displayedName}: {badge.value}
+                    <button onClick={() => deleteFilter(badge.key, setFilter)} aria-label="Delete filter">
+                      <Icon iconName="xmark" className="text-sm leading-4 text-neutral-300 hover:text-neutral-400" />
+                    </button>
+                  </Button>
+                  {!isLast && (
+                    <svg
+                      className="pointer-events-none absolute right-0 top-0 h-6 w-[11px]"
+                      viewBox="0 0 11 25"
+                      fill="none"
+                    >
+                      <path
+                        className="stroke-neutral-250 group-hover:stroke-neutral-300"
+                        d="M0.390869 0.311768L9.96074 12.3118L0.390869 24.3118"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
+                </div>
               )
             })}
         </div>
