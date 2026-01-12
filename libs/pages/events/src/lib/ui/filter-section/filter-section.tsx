@@ -1,10 +1,10 @@
 import clsx from 'clsx'
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
-import { type DecodedValueMap } from 'use-query-params';
-import { Button, Icon, type SelectedItem, type TableFilterProps, Tooltip, truncateText } from '@qovery/shared/ui';
-import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates';
-import { upperCaseFirstLetter } from '@qovery/shared/util-js';
-import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature';
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
+import { type DecodedValueMap } from 'use-query-params'
+import { Button, Icon, type SelectedItem, type TableFilterProps, Tooltip, truncateText } from '@qovery/shared/ui'
+import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
 
 export interface CustomFilterProps {
   clearFilter: () => void
@@ -168,6 +168,7 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
   }, [queryParams, targetTypeSelectedItems])
 
   const priorityKeys = new Set(['target_type', 'target_id', 'project_id', 'environment_id'])
+  const relativePositionRightByIndex: string[] = ['8', '5', '2.5', '0']
 
   return (
     <div className="mt-1 flex w-full gap-4">
@@ -202,9 +203,25 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
             .map((badge, index, array) => {
               const isFirst = index === array.length - 1
               const isLast = index === 0
+              const relativePositionClassName: (index: number, arrayLength: number) => string = (
+                index: number,
+                arrayLength: number
+              ): string => {
+                if (arrayLength === 2) {
+                  return index === 0 ? 'right-2.5' : ''
+                } else if (arrayLength === 3) {
+                  return index === 0 ? 'right-5' : index === 1 ? 'right-2.5' : ''
+                } else if (arrayLength === 4) {
+                  return index === 0 ? 'right-8' : index === 1 ? 'right-5' : index === 2 ? 'right-2.5' : ''
+                }
+                return ''
+              }
 
               return (
-                <div key={badge.key} className={clsx('group relative flex', { 'right-2.5': !isFirst })}>
+                <div
+                  key={badge.key}
+                  className={clsx('group relative flex', relativePositionClassName(index, array.length))}
+                >
                   <Button
                     variant="surface"
                     color="neutral"
@@ -221,7 +238,7 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                         : undefined
                     }
                   >
-                    {badge.displayedName}: {badge.value} {isFirst ? 'IsFirst' : isLast ? 'IsLast' : 'None'}
+                    {badge.displayedName}: {badge.value}
                     <button onClick={() => deleteFilter(badge.key, setFilter)} aria-label="Delete filter">
                       <Icon iconName="xmark" className="text-sm leading-4 text-neutral-300 hover:text-neutral-400" />
                     </button>
