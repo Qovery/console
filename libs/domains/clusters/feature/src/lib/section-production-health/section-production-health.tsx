@@ -1,12 +1,13 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { useQuery } from '@tanstack/react-query'
+import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type ReactNode, useMemo } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import { EmptyState, Heading, Icon, Link, LogoIcon, Section } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
+import { queries } from '@qovery/state/util-queries'
 import { ClusterProductionCard } from '../cluster-production-card/cluster-production-card'
-import { useClusterStatuses } from '../hooks/use-cluster-statuses/use-cluster-statuses'
-import { useClusters } from '../hooks/use-clusters/use-clusters'
 
 const CLUSTERS_OPTIONS: {
   highlight: boolean
@@ -70,18 +71,18 @@ const RELATED_DOCUMENTATION: { title: string; url: string }[] = [
   },
 ]
 
-export function SectionProductionHealth({ organizationId }: { organizationId: string }) {
-  const { data: clusters = [], isFetched: isFetchedClusters } = useClusters({ organizationId })
-  const { data: clusterStatuses = [], isFetched: isFetchedClusterStatuses } = useClusterStatuses({
-    organizationId,
-    refetchInterval: 3000,
+export function SectionProductionHealth() {
+  const { organizationId = '' }: { organizationId: string } = useParams({ strict: false })
+  const { data: clusters } = useQuery({
+    ...queries.clusters.list({ organizationId }),
+    suspense: true,
+  })
+  const { data: clusterStatuses } = useQuery({
+    ...queries.clusters.listStatuses({ organizationId }),
+    suspense: true,
   })
 
   const clusterProduction = useMemo(() => clusters?.filter((cluster) => cluster.production), [clusters]) ?? []
-
-  if (!isFetchedClusters || !isFetchedClusterStatuses) {
-    return null
-  }
 
   return (
     <Section className="flex w-full flex-col gap-3">
@@ -89,7 +90,7 @@ export function SectionProductionHealth({ organizationId }: { organizationId: st
         {clusterProduction.length > 0 ? 'Your production health' : 'Production health'}
       </Heading>
       {clusterProduction.length === 0 ? (
-        clusters?.length > 0 ? (
+        (clusters?.length ?? 0) > 0 ? (
           <EmptyState
             title="No production cluster created yet"
             description="Create your first production cluster and start tracking your production health"
@@ -198,7 +199,7 @@ export function SectionProductionHealth({ organizationId }: { organizationId: st
           <ClusterProductionCard
             key={cluster.id}
             cluster={cluster}
-            clusterStatus={clusterStatuses.find((c) => c.cluster_id === cluster.id)}
+            clusterStatus={clusterStatuses?.find((c) => c.cluster_id === cluster.id)}
           />
         ))
       )}
