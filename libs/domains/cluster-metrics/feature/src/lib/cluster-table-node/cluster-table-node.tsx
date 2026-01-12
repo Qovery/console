@@ -49,7 +49,7 @@ function MetricProgressBar({
       <Tooltip
         content={
           <div className="flex flex-col gap-1 font-normal">
-            <div className="border-neutral-invert flex items-center justify-between border-b">
+            <div className="flex items-center justify-between border-b border-neutralInvert">
               <span className="px-2.5 py-1.5">{type === 'cpu' ? 'CPU' : 'Memory'}</span>
             </div>
             <div className="flex flex-col gap-1 px-2.5 py-1.5">
@@ -63,7 +63,7 @@ function MetricProgressBar({
                 </span>
               </div>
             </div>
-            <div className="border-neutral-invert flex items-center justify-between border-t px-2.5 py-1.5">
+            <div className="flex items-center justify-between border-t border-neutralInvert px-2.5 py-1.5">
               <span>Total Available</span>
               <span className="ml-auto block">
                 {total} {unit}
