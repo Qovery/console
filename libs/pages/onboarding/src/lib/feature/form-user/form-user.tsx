@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
-import { ONBOARDING_PLANS_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { Icon } from '@qovery/shared/ui'
 import { StepPersonalize } from '../../ui/step-personalize/step-personalize'
 
@@ -130,8 +130,7 @@ export function FormUser() {
         infrastructure_hosting: normalizedData.infrastructure_hosting,
       })
 
-      const nextStep = userSignUp?.dx_auth ? ONBOARDING_PROJECT_URL : ONBOARDING_PLANS_URL
-      navigate(`${ONBOARDING_URL}${nextStep}`)
+      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
     } catch (error) {
       console.error(error)
     }

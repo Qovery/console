@@ -65,6 +65,10 @@ const PLANS = [
   },
 ]
 
+/**
+ * @deprecated This component is no longer used. The credit card form is now after free trial activation.
+ * @returns {React.ReactNode}
+ */
 export function OnboardingPlans() {
   useDocumentTitle('Onboarding Free trial activation - Qovery')
 
