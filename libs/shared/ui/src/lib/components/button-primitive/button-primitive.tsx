@@ -160,7 +160,7 @@ const _buttonVariants = cva(
       {
         variant: 'plain',
         color: 'neutral',
-        className: ['text-neutral-350', 'hover:bg-surface-neutral-subtle'],
+        className: ['text-neutral-subtle', 'hover:bg-surface-neutral-subtle'],
       },
     ],
     defaultVariants: {
