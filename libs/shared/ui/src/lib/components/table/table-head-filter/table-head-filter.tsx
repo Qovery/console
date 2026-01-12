@@ -275,10 +275,13 @@ export function TableHeadFilter<T>({
         width={dataHead.menuWidth || 280}
         isFilter
         trigger={
-          <div className="flex">
+          <div className="relative flex">
             {hasFilter ? (
-              <Button type="button" size="xs" className="whitespace-nowrap pr-6">
+              <Button type="button" size="xs" className="whitespace-nowrap">
                 {title} {!hideFilterNumber ? `(${dataFilterNumber})` : ''}
+                <span role="button" className="left-6 flex" onClick={(event) => cleanFilter(event)}>
+                  <Icon iconName="xmark" className="pl-2" />
+                </span>
               </Button>
             ) : (
               <Button
@@ -295,15 +298,6 @@ export function TableHeadFilter<T>({
           </div>
         }
       />
-      {hasFilter && (
-        <span
-          role="button"
-          className="relative -left-6 flex h-6 cursor-pointer items-center px-2 text-xs text-neutral-50"
-          onClick={(event) => cleanFilter(event)}
-        >
-          <Icon iconName="xmark" />
-        </span>
-      )}
     </div>
   )
 }
