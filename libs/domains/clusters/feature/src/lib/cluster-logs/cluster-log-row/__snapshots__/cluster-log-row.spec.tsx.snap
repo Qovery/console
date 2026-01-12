@@ -3,7 +3,7 @@
 exports[`ClusterLogRow should display cell error message 1`] = `
 <div>
   <div
-    class="group flex min-h-6 select-none justify-between font-code text-xs hover:bg-surface-neutral-subtle text-neutralInvert bg-surface-negative-component"
+    class="group flex min-h-6 select-none justify-between font-code text-xs hover:bg-surface-neutral-subtle bg-surface-negative-component text-neutralInvert"
   >
     <div
       class="flex"
@@ -55,9 +55,9 @@ exports[`ClusterLogRow should display cell error message 1`] = `
         />
       </span>
       <span
-        title="Fri, 26 Dec 2025 11:02:13 GMT"
+        title="Mon, 12 Jan 2026 15:57:33 GMT"
       >
-        26 Dec, 12:02:13.00
+        12 Jan, 15:57:33.00
       </span>
     </div>
   </div>
@@ -119,9 +119,9 @@ exports[`ClusterLogRow should display cell message 1`] = `
         />
       </span>
       <span
-        title="Fri, 26 Dec 2025 11:02:13 GMT"
+        title="Mon, 12 Jan 2026 15:57:33 GMT"
       >
-        26 Dec, 12:02:13.00
+        12 Jan, 15:57:33.00
       </span>
     </div>
   </div>

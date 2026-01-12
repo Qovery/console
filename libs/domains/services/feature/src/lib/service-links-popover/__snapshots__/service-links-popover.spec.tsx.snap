@@ -1,5 +1,170 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`ServiceLinksPopover Gateway API / Envoy stack separator should show divider and label when both nginx and gateway-api links exist 1`] = `
+<body
+  data-scroll-locked="1"
+  style="pointer-events: none;"
+>
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+  <button
+    aria-controls="radix-:rk:"
+    aria-expanded="true"
+    aria-haspopup="dialog"
+    aria-hidden="true"
+    class=""
+    data-aria-hidden="true"
+    data-state="open"
+    type="button"
+  >
+    links
+  </button>
+  <div
+    data-radix-popper-content-wrapper=""
+    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 100% 0px;"
+  >
+    <div
+      class="rounded border bg-surface-neutral shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded max-w-[280px] border-transparent p-2 text-sm text-neutral-350"
+      data-align="end"
+      data-side="bottom"
+      data-state="open"
+      id="radix-:rk:"
+      role="dialog"
+      style="--radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
+      tabindex="-1"
+    >
+      <div
+        class="flex items-center justify-between p-2"
+      >
+        <p
+          class="font-medium text-neutral-350 dark:text-neutral-250"
+        >
+          2
+           
+          links
+           attached
+        </p>
+        <a
+          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-surface-brand-solid text-ssm"
+          to="/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/domain"
+          type="button"
+        >
+          Customize
+          <i
+            aria-hidden="true"
+            class="fa-regular fa-circle-plus text-xs"
+          />
+        </a>
+      </div>
+      <ul
+        class="max-h-96 overflow-y-auto"
+      >
+        <li
+          class="flex p-2"
+        >
+          <span
+            class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-[''] mr-2 text-brand-500 hover:text-brand-600 dark:hover:text-brand-400"
+            data-state="closed"
+            data-testid="copy-container"
+          >
+            <span
+              class="icon-solid-copy shrink-0 "
+              role="img"
+            />
+          </span>
+          <a
+            class="flex w-full items-center justify-between text-neutral-400 transition hover:text-brand-500 dark:text-neutral-50 dark:hover:text-brand-400"
+            href="https://nginx.qovery.com"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <div
+              class="mr-2 text-ssm font-medium"
+            >
+              https://nginx.qovery.com
+            </div>
+            <div
+              class="text-xs text-neutral-350 dark:text-neutral-250"
+            >
+              8080
+            </div>
+          </a>
+        </li>
+        <li
+          class="my-2 border-t border-neutral-200 dark:border-neutral-600"
+        />
+        <li
+          class="flex items-center gap-1 px-2 pb-1 text-xs font-medium text-neutral-350 dark:text-neutral-250"
+        >
+          <span>
+            Gateway API / Envoy stack
+          </span>
+          <span
+            class="inline-flex cursor-help"
+            data-state="closed"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-circle-info text-neutral-350 hover:text-neutral-400 dark:text-neutral-250 dark:hover:text-neutral-200"
+            />
+          </span>
+        </li>
+        <li
+          class="flex p-2"
+        >
+          <span
+            class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-[''] mr-2 text-brand-500 hover:text-brand-600 dark:hover:text-brand-400"
+            data-state="closed"
+            data-testid="copy-container"
+          >
+            <span
+              class="icon-solid-copy shrink-0 "
+              role="img"
+            />
+          </span>
+          <a
+            class="flex w-full items-center justify-between text-neutral-400 transition hover:text-brand-500 dark:text-neutral-50 dark:hover:text-brand-400"
+            href="https://gateway-api.qovery.com"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <div
+              class="mr-2 text-ssm font-medium"
+            >
+              <span
+                class=""
+                data-state="closed"
+                data-testid="truncate-text"
+              >
+                https://gateway-api.qovery
+                ...
+              </span>
+            </div>
+            <div
+              class="text-xs text-neutral-350 dark:text-neutral-250"
+            >
+              8081
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+</body>
+`;
+
 exports[`ServiceLinksPopover should match snapshot 1`] = `
 <body
   data-scroll-locked="1"

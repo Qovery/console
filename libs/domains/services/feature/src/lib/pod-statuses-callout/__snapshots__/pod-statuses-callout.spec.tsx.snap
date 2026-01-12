@@ -4,7 +4,7 @@ exports[`PodStatusesCallout should render successfully 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-row gap-x-3 p-3 border rounded text-sm border-red-500 bg-red-50 text-red-500"
+      class="flex flex-row gap-x-3 p-3 border rounded text-sm border-negative-component bg-surface-negative-subtle text-negative"
       data-accent-color="red"
     >
       <div
@@ -16,7 +16,7 @@ exports[`PodStatusesCallout should render successfully 1`] = `
         />
       </div>
       <div
-        class="-order-1 mr-auto gap-x-3 text-neutral-400"
+        class="-order-1 mr-auto gap-x-3 text-neutral"
       >
         <span
           class="block font-medium leading-6"
@@ -25,7 +25,7 @@ exports[`PodStatusesCallout should render successfully 1`] = `
           Application pods are in error
         </span>
         <span
-          class="text-neutral-400"
+          class="text-neutral-subtle"
         >
           Some pods are experiencing issues. Have a look at the table below for investigation.
         </span>
@@ -34,7 +34,7 @@ exports[`PodStatusesCallout should render successfully 1`] = `
         class="flex flex-row items-center gap-1.5"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
           disabled=""
           type="button"
         >
@@ -44,7 +44,7 @@ exports[`PodStatusesCallout should render successfully 1`] = `
           />
         </button>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
           type="button"
         >
           <i
