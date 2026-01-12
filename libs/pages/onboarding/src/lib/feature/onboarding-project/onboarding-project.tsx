@@ -35,22 +35,11 @@ export function OnboardingProject() {
   const { getAccessTokenSilently } = useAuth()
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject()
-  const { mutateAsync: addCreditCard } = useAddCreditCard()
   const { mutateAsync: editBillingInfo } = useEditBillingInfo()
   const { mutateAsync: deleteOrganization } = useDeleteOrganization()
   const { handleSubmit, control, setValue } = useForm<{ project_name: string; organization_name: string }>()
   const { data: userSignUp } = useUserSignUp()
-  const {
-    organization_name,
-    project_name,
-    admin_email,
-    selectedPlan,
-    setContextValue,
-    cardToken,
-    cardLast4,
-    cardExpiryMonth,
-    cardExpiryYear,
-  } = useContext(ContextOnboarding)
+  const { organization_name, project_name, admin_email, selectedPlan, setContextValue } = useContext(ContextOnboarding)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const shouldSkipBilling = userSignUp?.dx_auth === true
@@ -76,26 +65,6 @@ export function OnboardingProject() {
         country_code: 'US',
       },
     })
-  }
-
-  const addCardIfPresent = async (organizationId: string) => {
-    if (!cardToken || shouldSkipBilling) {
-      await updateBillingInfo(organizationId)
-      return
-    }
-
-    await addCreditCard({
-      organizationId,
-      creditCardRequest: {
-        token: cardToken,
-        cvv: '',
-        number: cardLast4 ? `****${cardLast4}` : '',
-        expiry_year: cardExpiryYear ?? 0,
-        expiry_month: cardExpiryMonth ?? 0,
-      },
-    })
-
-    await updateBillingInfo(organizationId)
   }
 
   const handleBack = () => {
@@ -130,7 +99,7 @@ export function OnboardingProject() {
       createdOrganizationId = organization.id
       await getAccessTokenSilently({ cacheMode: 'off' })
 
-      await addCardIfPresent(createdOrganizationId)
+      await updateBillingInfo(createdOrganizationId)
 
       const project = await createProject({
         organizationId: createdOrganizationId,
