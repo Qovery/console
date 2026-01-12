@@ -355,7 +355,9 @@ module.exports = {
           DEFAULT: 'var(--neutral-6)',
           component: 'var(--neutral-7)',
           strong: 'var(--neutral-9)',
-          invert: 'var(--neutral-11)',
+        },
+        neutralInvert: {
+          DEFAULT: 'var(--neutral-invert-6)',
         },
         brand: {
           strong: 'var(--brand-9)',

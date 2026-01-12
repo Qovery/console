@@ -15,7 +15,7 @@ const tooltipContentVariants = cva(['rounded', 'px-2', 'py-1.5', 'text-xs', 'fon
 const tooltipArrowVariants = cva('', {
   variants: {
     color: {
-      neutral: ['fill-surface-neutral-invert'],
+      neutral: ['fill-surface-neutralInvert'],
       orange: ['fill-orange-500'],
     },
   },

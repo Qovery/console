@@ -3,7 +3,7 @@
 exports[`ClusterLogRow should display cell error message 1`] = `
 <div>
   <div
-    class="group flex min-h-6 select-none justify-between font-code text-xs hover:bg-surface-neutral-subtle text-neutral-invert bg-surface-negative-component"
+    class="group flex min-h-6 select-none justify-between font-code text-xs hover:bg-surface-neutral-subtle text-neutralInvert bg-surface-negative-component"
   >
     <div
       class="flex"
