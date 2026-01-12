@@ -40,7 +40,7 @@ export function ClusterLogRow({ index, data, firstDate }: ClusterLogRowProps) {
       className={twMerge(
         clsx('group flex min-h-6 select-none justify-between font-code text-xs hover:bg-surface-neutral-subtle', {
           'bg-surface-positive-subtle text-positive': success,
-          'text-neutral-invert bg-surface-negative-component': realError,
+          'bg-surface-negative-component text-neutralInvert': realError,
         })
       )}
     >

@@ -14,7 +14,7 @@ exports[`Input should match snapshot when loading 1`] = `
         class="flex items-end justify-end p-2"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs px-2 rounded-full border border-neutral-250 dark:border-neutral-400 hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-500 transition-colors dark:text-white"
+          class="inline-flex items-center shrink-0 font-medium active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-xs px-2 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-500 transition-colors dark:text-white"
           data-state="closed"
           type="button"
         >
@@ -47,13 +47,13 @@ exports[`Input should match snapshot when not loading 1`] = `
         class="flex items-end justify-end p-2"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs px-2 rounded-full border border-neutral-250 dark:border-neutral-400 hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-500 transition-colors dark:text-white"
+          class="inline-flex items-center shrink-0 font-medium active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-xs px-2 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-500 transition-colors dark:text-white"
           data-state="closed"
           type="button"
         >
           <i
             aria-hidden="true"
-            class="fa-solid fa-arrow-up "
+            class="fa-regular fa-arrow-up "
           />
         </button>
       </div>
