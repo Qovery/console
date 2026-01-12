@@ -1,18 +1,14 @@
-import { useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { Button, EmptyState, Heading, Icon, Section, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { pluralize } from '@qovery/shared/util-js'
-import { queries } from '@qovery/state/util-queries'
 import CreateProjectModal from '../create-project-modal/create-project-modal'
+import { useProjects } from '../hooks/use-projects/use-projects'
 
 export function ProjectList() {
   const { organizationId = '' }: { organizationId: string } = useParams({ strict: false })
-  const { data: projects } = useQuery({
-    ...queries.projects.list({ organizationId }),
-    suspense: true,
-  })
+  const { data: projects = [] } = useProjects({ organizationId, suspense: true })
   const { openModal, closeModal } = useModal()
 
   const createProjectModal = () => {

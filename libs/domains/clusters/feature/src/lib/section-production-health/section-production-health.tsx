@@ -1,13 +1,13 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type ReactNode, useMemo } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import { EmptyState, Heading, Icon, Link, LogoIcon, Section } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import { queries } from '@qovery/state/util-queries'
 import { ClusterProductionCard } from '../cluster-production-card/cluster-production-card'
+import useClusterStatuses from '../hooks/use-cluster-statuses/use-cluster-statuses'
+import useClusters from '../hooks/use-clusters/use-clusters'
 
 const CLUSTERS_OPTIONS: {
   highlight: boolean
@@ -73,12 +73,10 @@ const RELATED_DOCUMENTATION: { title: string; url: string }[] = [
 
 export function SectionProductionHealth() {
   const { organizationId = '' }: { organizationId: string } = useParams({ strict: false })
-  const { data: clusters } = useQuery({
-    ...queries.clusters.list({ organizationId }),
-    suspense: true,
-  })
-  const { data: clusterStatuses } = useQuery({
-    ...queries.clusters.listStatuses({ organizationId }),
+  const { data: clusters = [] } = useClusters({ organizationId, suspense: true })
+  const { data: clusterStatuses = [] } = useClusterStatuses({
+    organizationId,
+    refetchInterval: 3000,
     suspense: true,
   })
 

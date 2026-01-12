@@ -1,10 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
-import { ClusterCard } from '@qovery/domains/clusters/feature'
+import { ClusterCard, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { EmptyState, Heading, Icon, Link, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { queries } from '@qovery/state/util-queries'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/clusters')({
   component: RouteComponent,
@@ -12,11 +10,8 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 
 const Clusters = () => {
   const { organizationId = '' } = useParams({ strict: false })
-  const { data: clusters = [] } = useQuery({ ...queries.clusters.list({ organizationId }), suspense: true })
-  const { data: clusterStatuses = [] } = useQuery({
-    ...queries.clusters.listStatuses({ organizationId }),
-    suspense: true,
-  })
+  const { data: clusters = [] } = useClusters({ organizationId, suspense: true })
+  const { data: clusterStatuses = [] } = useClusterStatuses({ organizationId, suspense: true })
 
   if (clusters.length === 0) {
     return (

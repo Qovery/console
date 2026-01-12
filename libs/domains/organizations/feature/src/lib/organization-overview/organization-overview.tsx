@@ -1,17 +1,13 @@
-import { useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { type PropsWithChildren } from 'react'
 import { Avatar, Heading, Section } from '@qovery/shared/ui'
-import { queries } from '@qovery/state/util-queries'
+import useOrganization from '../hooks/use-organization/use-organization'
 import { SectionChangelog } from './section-changelog/section-changelog'
 import { SectionLinks } from './section-links/section-links'
 
 export function OrganizationOverview({ children }: PropsWithChildren) {
   const { organizationId = '' }: { organizationId: string } = useParams({ strict: false })
-  const { data: organization } = useQuery({
-    ...queries.organizations.details({ organizationId }),
-    suspense: true,
-  })
+  const { data: organization } = useOrganization({ organizationId, suspense: true })
 
   return (
     <div className="container mx-auto pb-10">
