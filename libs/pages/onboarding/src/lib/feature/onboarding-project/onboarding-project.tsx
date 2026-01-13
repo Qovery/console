@@ -1,4 +1,3 @@
-import { useAuth0 } from '@auth0/auth0-react'
 import posthog from 'posthog-js'
 import { PlanEnum, type SignUpRequest } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
@@ -25,8 +24,7 @@ export function OnboardingProject() {
 
   const navigate = useNavigate()
   const location = useLocation()
-  const { user } = useAuth0()
-  const { getAccessTokenSilently } = useAuth()
+  const { user, getAccessTokenSilently } = useAuth()
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject()
   const { mutateAsync: editBillingInfo } = useEditBillingInfo()
