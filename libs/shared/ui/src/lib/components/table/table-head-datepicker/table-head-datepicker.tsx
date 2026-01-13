@@ -112,7 +112,12 @@ export function TableHeadDatePickerFilter({
         <div className="flex">
           {hasFilter ? (
             <>
-              <Button type="button" size="xs" className="whitespace-nowrap pr-6">
+              <Button
+                type="button"
+                size="xs"
+                className="whitespace-nowrap pr-6"
+                onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
+              >
                 {title}
               </Button>
               <span
@@ -130,7 +135,10 @@ export function TableHeadDatePickerFilter({
               color="neutral"
               size="xs"
               className="items-center gap-1.5"
-              onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
+              onClick={() => {
+                console.log('set on click timestamp')
+                setIsOpenTimestamp(!isOpenTimestamp)
+              }}
             >
               {title}
               <Icon iconName="angle-down" className="relative top-[1px]" />
