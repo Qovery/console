@@ -1,7 +1,15 @@
 import clsx from 'clsx'
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
 import { type DecodedValueMap } from 'use-query-params'
-import { Button, Icon, type SelectedItem, type TableFilterProps, Tooltip, truncateText } from '@qovery/shared/ui'
+import {
+  Button,
+  Icon,
+  type SelectedItem,
+  type TableFilterProps,
+  Tooltip,
+  Truncate,
+  truncateText,
+} from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
@@ -17,16 +25,6 @@ interface Badge {
   key: string
   displayedName: string
   value: string
-}
-
-function truncateIfNecessary(key: string, text: string): string {
-  if (key === 'timestamp') {
-    return text
-  }
-  if (text.length > 23) {
-    return `${truncateText(text, 20)}...`
-  }
-  return text
 }
 
 function buildBadges(
@@ -185,7 +183,9 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                 className="pl-9.5 justify-center gap-1.5 active:scale-[1]"
                 key={badge.key}
               >
-                {badge.displayedName}: {truncateIfNecessary(badge.key, badge.value)}
+                {`${badge.displayedName}: `}
+                {badge.key === 'timestamp' && badge.value}
+                {badge.key !== 'timestamp' && <Truncate text={badge.value} truncateLimit={23} />}
                 <Icon
                   iconName="xmark"
                   className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
@@ -238,7 +238,8 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                           : undefined
                       }
                     >
-                      {badge.displayedName}: {truncateIfNecessary(badge.key, badge.value)}
+                      {/*{badge.displayedName}: {truncateIfNecessary(badge.key, badge.value)}*/}
+                      {badge.displayedName}: <Truncate text={badge.value} truncateLimit={23} />
                       <button onClick={() => deleteFilter(badge.key, setFilter)} aria-label="Delete filter">
                         <Icon iconName="xmark" className="text-sm leading-4 text-neutral-300 hover:text-neutral-400" />
                       </button>
