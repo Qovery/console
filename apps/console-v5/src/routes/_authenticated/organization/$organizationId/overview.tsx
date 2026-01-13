@@ -1,4 +1,4 @@
-import { createFileRoute, useParams } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { SectionProductionHealth } from '@qovery/domains/clusters/feature'
 import { OrganizationOverview } from '@qovery/domains/organizations/feature'
 import { ProjectList } from '@qovery/domains/projects/feature'
@@ -9,18 +9,13 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 })
 
 function RouteComponent() {
-  const { organizationId } = useParams({ strict: false })
   useDocumentTitle('Organization - Overview')
-
-  if (!organizationId) {
-    return null
-  }
 
   return (
     <div className="mt-6">
-      <OrganizationOverview organizationId={organizationId}>
-        <SectionProductionHealth organizationId={organizationId} />
-        <ProjectList organizationId={organizationId} />
+      <OrganizationOverview>
+        <SectionProductionHealth />
+        <ProjectList />
       </OrganizationOverview>
     </div>
   )
