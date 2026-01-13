@@ -1,4 +1,3 @@
-import { p } from 'framer-motion/m'
 import { type Dispatch, type MouseEvent, type SetStateAction, useEffect, useRef, useState } from 'react'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { Button } from '../../button/button'
@@ -248,13 +247,13 @@ export function TableHeadHierarchicalFilter({
     if (!isRootLevel) {
       items.push({
         name: 'Back',
-        contentLeft: <Icon name={IconAwesomeEnum.ARROW_LEFT} className="text-sm text-neutral-400" />,
+        contentLeft: <Icon name={IconAwesomeEnum.ARROW_LEFT} className="text-sm text-neutral-350 delete-hover" />,
         onClick: (e) => {
           // Prevent menu from auto-closing
           e.keepOpen = true
           handleBack()
         },
-        containerClassName: 'border-b border-neutral-200',
+        textClassName: "text-neutral-350 delete-hover"
       })
     }
 
@@ -295,7 +294,8 @@ export function TableHeadHierarchicalFilter({
         contentRight: (
           <Icon
             name={IconAwesomeEnum.ARROW_RIGHT}
-            className={`text-sm text-neutral-400 ${!item.isLeaf ? 'text-neutral-400' : 'text-transparent'}`}
+            // Adding menu-item__name class to have same hover css added on menu items
+            className={`text-sm text-neutral-400 ${!item.isLeaf ? 'menu-item__name text-neutral-400' : 'text-transparent'}`}
           />
         ),
         onClick: (e) => {
