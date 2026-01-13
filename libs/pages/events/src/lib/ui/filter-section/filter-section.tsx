@@ -182,7 +182,7 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                 variant="surface"
                 color="neutral"
                 size="xs"
-                className="pl-9.5 justify-center gap-1.5"
+                className="pl-9.5 justify-center gap-1.5 active:scale-[1]"
                 key={badge.key}
               >
                 {badge.displayedName}: {truncateIfNecessary(badge.key, badge.value)}
@@ -221,27 +221,29 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                   key={badge.key}
                   className={clsx('group relative flex', relativePositionClassName(index, array.length))}
                 >
-                  <Button
-                    variant="surface"
-                    color="neutral"
-                    size="xs"
-                    className={clsx('justify-center gap-1.5', {
-                      'rounded-l-full rounded-r-none border-r-0 pr-4': isFirst && !isLast,
-                      'rounded-full': isFirst && isLast,
-                      'rounded-l-none rounded-r-full border-l-0 pl-4': isLast && !isFirst,
-                      'rounded-none border-x-0 pl-4 pr-4': !isFirst && !isLast,
-                    })}
-                    style={
-                      !isLast
-                        ? { clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%)' }
-                        : undefined
-                    }
-                  >
-                    {badge.displayedName}: {badge.value}
-                    <button onClick={() => deleteFilter(badge.key, setFilter)} aria-label="Delete filter">
-                      <Icon iconName="xmark" className="text-sm leading-4 text-neutral-300 hover:text-neutral-400" />
-                    </button>
-                  </Button>
+                  <Tooltip key={badge.key} content={badge.value}>
+                    <Button
+                      variant="surface"
+                      color="neutral"
+                      size="xs"
+                      className={clsx('justify-center gap-1.5 active:scale-[1]', {
+                        'rounded-l-full rounded-r-none border-r-0 pr-4': isFirst && !isLast,
+                        'rounded-full': isFirst && isLast,
+                        'rounded-l-none rounded-r-full border-l-0 pl-4': isLast && !isFirst,
+                        'rounded-none border-x-0 pl-4 pr-4': !isFirst && !isLast,
+                      })}
+                      style={
+                        !isLast
+                          ? { clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%)' }
+                          : undefined
+                      }
+                    >
+                      {badge.displayedName}: {truncateIfNecessary(badge.key, badge.value)}
+                      <button onClick={() => deleteFilter(badge.key, setFilter)} aria-label="Delete filter">
+                        <Icon iconName="xmark" className="text-sm leading-4 text-neutral-300 hover:text-neutral-400" />
+                      </button>
+                    </Button>
+                  </Tooltip>
                   {!isLast && (
                     <svg
                       className="pointer-events-none absolute right-0 top-0 h-6 w-[11px]"
