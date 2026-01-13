@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { Button, EmptyState, Heading, Icon, Section, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -5,13 +6,10 @@ import { pluralize } from '@qovery/shared/util-js'
 import CreateProjectModal from '../create-project-modal/create-project-modal'
 import { useProjects } from '../hooks/use-projects/use-projects'
 
-export function ProjectList({ organizationId }: { organizationId: string }) {
-  const { data: projects = [], isFetched: isProjectsFetched } = useProjects({ organizationId })
+export function ProjectList() {
+  const { organizationId = '' }: { organizationId: string } = useParams({ strict: false })
+  const { data: projects = [] } = useProjects({ organizationId, suspense: true })
   const { openModal, closeModal } = useModal()
-
-  if (!isProjectsFetched) {
-    return null
-  }
 
   const createProjectModal = () => {
     openModal({
@@ -22,13 +20,15 @@ export function ProjectList({ organizationId }: { organizationId: string }) {
   return (
     <Section className="flex flex-col gap-3">
       <div className="flex justify-between gap-4">
-        <Heading className="flex items-center gap-2">Your {pluralize(projects.length, 'project', 'projects')}</Heading>
+        <Heading className="flex items-center gap-2">
+          Your {pluralize(projects?.length ?? 0, 'project', 'projects')}
+        </Heading>
         <Button type="button" color="brand" size="sm" className="gap-1.5" onClick={() => createProjectModal()}>
           <Icon iconName="circle-plus" />
           New project
         </Button>
       </div>
-      {projects.length === 0 ? (
+      {projects?.length === 0 ? (
         <EmptyState
           title="No projects created yet"
           description="Create your first project and environments to start deploying apps"
@@ -43,7 +43,7 @@ export function ProjectList({ organizationId }: { organizationId: string }) {
         <div
           className={twMerge(
             clsx('grid grid-cols-1 gap-3', {
-              'grid-cols-1 lg:grid-cols-3': projects?.length > 3,
+              'grid-cols-1 lg:grid-cols-3': (projects?.length ?? 0) > 3,
             })
           )}
         >

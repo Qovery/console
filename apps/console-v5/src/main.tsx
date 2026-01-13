@@ -134,7 +134,7 @@ const queryClient = new QueryClient({
   }),
 })
 
-function InnerApp() {
+function App() {
   const auth = useAuth0Context()
 
   // Create a new router instance
@@ -153,32 +153,20 @@ function InnerApp() {
   return <RouterProvider router={router} context={{ auth, queryClient }} />
 }
 
-function App() {
-  return (
-    <Auth0Wrapper>
-      <InnerApp />
-    </Auth0Wrapper>
-  )
-}
-
-export default App
-
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <StrictMode>
     <FlatProviders
       providers={[
+        ThemeProvider,
+        TooltipProvider,
+        ModalProvider,
+        Auth0Wrapper,
         makeProvider(QueryClientProvider, { client: queryClient }),
         makeProvider(IntercomProvider, { appId: INTERCOM }),
       ]}
     >
-      <ThemeProvider>
-        <TooltipProvider>
-          <ModalProvider>
-            <App />
-          </ModalProvider>
-        </TooltipProvider>
-      </ThemeProvider>
+      <App />
     </FlatProviders>
   </StrictMode>
 )
