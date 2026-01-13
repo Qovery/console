@@ -160,6 +160,8 @@ export function RowEvent(props: RowEventProps) {
       OrganizationEventType.DEPLOYED,
       OrganizationEventType.STOPPED,
       OrganizationEventType.DEPLOYED_DRY_RUN,
+      OrganizationEventType.TERRAFORM_FORCE_UNLOCK_SUCCEEDED,
+      OrganizationEventType.TERRAFORM_MIGRATE_STATE_SUCCEEDED,
       () => <Icon iconName="circle-check" className="text-green-500" />
     )
     .with(
@@ -195,6 +197,14 @@ export function RowEvent(props: RowEventProps) {
     .with(OrganizationEventType.DELETE, OrganizationEventType.DELETED, () => (
       <Icon iconName="trash-can" className="text-neutral-350" />
     ))
+    .with(OrganizationEventType.CLONE, () => <Icon iconName="copy" className="text-neutral-350" />)
+    .with(OrganizationEventType.DRY_RUN, () => <Icon iconName="rotate-right" className="text-neutral-350" />)
+    .with(OrganizationEventType.MAINTENANCE, () => <Icon iconName="wrench" className="text-neutral-350" />)
+    .with(OrganizationEventType.FORCE_RUN_SUCCEEDED, () => (
+      <Icon iconName="circle-check" className="text-neutral-350" />
+    ))
+    .with(OrganizationEventType.REMOTE_DEBUG, () => <Icon iconName="cloud-arrow-up" className="text-neutral-350" />)
+    .with(OrganizationEventType.SHELL, () => <Icon iconName="terminal" className="text-neutral-350" />)
     .otherwise(() => (isEventTypeFailed ? <Icon iconName="circle-exclamation" className="text-red-500" /> : null))
 
   const isSuccess = match(event.event_type)
