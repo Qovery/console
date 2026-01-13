@@ -45,6 +45,7 @@ export const handleGitApplicationSubmit = (
     description: data.description || '',
     icon_uri: data.icon_uri,
     auto_deploy: data.auto_deploy,
+    autoscaling: undefined,
   }
   cloneApplication.auto_deploy = data.auto_deploy
 
@@ -100,6 +101,7 @@ export const handleContainerSubmit = (
     registry_id: data.registry || '',
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
     labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id)),
+    autoscaling: undefined,
   }
 }
 
