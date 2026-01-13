@@ -1,11 +1,18 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import { Icon, Navbar } from '@qovery/shared/ui'
+import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
 import { type FileRouteTypes } from '../../../routeTree.gen'
 
 export const Route = createFileRoute('/_authenticated/organization')({
   component: OrganizationRoute,
+  loader: async ({ context }) => {
+    // Preload data (organizations) without waiting for the queries to complete
+    context.queryClient.prefetchQuery({
+      ...queries.organizations.list,
+    })
+  },
 })
 
 type NavigationContext = {
