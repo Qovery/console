@@ -94,6 +94,7 @@ export function TableHeadHierarchicalFilter({
         const selectedItem = selectedItemsRef.current.length > 0 ? selectedItemsRef.current[0] : undefined
         const filterKey = currentNavigationStack.filterKey
         setEmptyResultTextIndication(getEmptyResultText(filterKey, selectedItem))
+        console.log('1. set empty result text indication')
       }
       setNavigationStack(initialNavigationStack)
       setLevel(initialLevel)
@@ -139,10 +140,10 @@ export function TableHeadHierarchicalFilter({
 
             if (result) {
               if (result.items.length > 0) {
-                // TODO (qov-1236) Find a way to pass selectedItem
-                setEmptyResultTextIndication(getEmptyResultText(result.filterKey, undefined))
-              } else {
                 setEmptyResultTextIndication(undefined)
+              } else {
+                const selectedItem = newSelectedItems[stack.length - 1]
+                setEmptyResultTextIndication(getEmptyResultText(result.filterKey, selectedItem))
               }
               stack.push({ items: result.items, filterKey: result.filterKey })
             }
@@ -240,6 +241,7 @@ export function TableHeadHierarchicalFilter({
         if (result.items.length === 0) {
           const selectedItem = selectedItemsRef.current[level]
           setEmptyResultTextIndication(getEmptyResultText(result.filterKey, selectedItem))
+          console.log('3. set empty result text indication')
         } else {
           setEmptyResultTextIndication(undefined)
         }
