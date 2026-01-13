@@ -113,6 +113,7 @@ export function OnboardingProject() {
         },
       })
 
+      // Note: Refresh tokens do not work in private browsers without our Auth0 domain
       await getAccessTokenSilently({ cacheMode: 'off' })
 
       await updateBillingInfo(organization.id)
