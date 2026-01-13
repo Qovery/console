@@ -12,6 +12,9 @@ export const Route = createFileRoute('/_authenticated/organization')({
     context.queryClient.prefetchQuery({
       ...queries.organizations.list,
     })
+    context.queryClient.prefetchQuery({
+      ...queries.user.account,
+    })
   },
 })
 

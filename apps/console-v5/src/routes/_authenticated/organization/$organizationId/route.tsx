@@ -7,12 +7,15 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
   component: RouteComponent,
   loader: async ({ context, params }) => {
     const { organizationId } = params
-    // Preload data (organization and clusters) without waiting for the queries to complete
+    // Preload data (organization, clusters and projects) without waiting for the queries to complete
     context.queryClient.prefetchQuery({
       ...queries.organizations.details({ organizationId }),
     })
     context.queryClient.prefetchQuery({
       ...queries.clusters.list({ organizationId }),
+    })
+    context.queryClient.prefetchQuery({
+      ...queries.projects.list({ organizationId }),
     })
   },
 })
