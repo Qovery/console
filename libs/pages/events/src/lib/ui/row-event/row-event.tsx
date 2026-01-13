@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import {
   OrganizationEventOrigin,
   type OrganizationEventResponse,
@@ -34,7 +35,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface RowEventProps {
   event: OrganizationEventResponse
@@ -229,7 +230,13 @@ export function RowEvent(props: RowEventProps) {
     <>
       <div
         data-testid="row-event"
-        className={`group grid h-12 cursor-pointer items-center border-b border-b-neutral-200 py-2.5 text-xs font-normal text-neutral-400 last:border-b-0 hover:bg-neutral-100 ${getRowBgClass()}`}
+        className={twMerge(
+          clsx(
+            'group grid h-12 cursor-pointer items-center border-b border-b-neutral-200 py-2.5 text-xs font-normal text-neutral-400 last:border-b-0 hover:bg-neutral-100',
+            isEventTypeFailed && 'bg-red-50 hover:bg-neutral-100',
+            isSuccess && 'hover:bg-neutral-100'
+          )
+        )}
         style={{ gridTemplateColumns: columnsWidth }}
         onClick={() => setExpanded(!expanded)}
       >
