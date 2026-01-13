@@ -273,8 +273,10 @@ export function PageGeneral({
 
   return (
     <Section className="grow p-8">
-      <Heading level={1}>Audit logs</Heading>
-      <div className="mb-4 flex min-h-9 items-start">
+      <Heading level={1} className="mb-4">
+        Audit logs
+      </Heading>
+      <div className="flex items-start">
         <FilterSection
           clearFilter={handleClearFilter}
           queryParams={queryParams}
