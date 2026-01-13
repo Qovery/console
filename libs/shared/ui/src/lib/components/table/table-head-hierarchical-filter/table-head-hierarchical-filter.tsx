@@ -22,6 +22,7 @@ export interface TableHeadHierarchicalFilterProps {
   setFilter: Dispatch<SetStateAction<TableFilterProps[]>>
   filter: TableFilterProps[]
   onFilterChange?: (filter: TableFilterProps[], currentSelectedItems: SelectedItem[]) => SelectedItem[]
+  getEmptyResultText: (filterKey: string, selectedItem?: SelectedItem) => string
 }
 
 // This represents a level of navigation in the hierarchical filter menu
@@ -65,6 +66,7 @@ export function TableHeadHierarchicalFilter({
   setFilter,
   filter,
   onFilterChange,
+  getEmptyResultText,
 }: TableHeadHierarchicalFilterProps) {
   const [isOpen, setOpen] = useState(false)
   const [level, setLevel] = useState(0)
@@ -73,10 +75,9 @@ export function TableHeadHierarchicalFilter({
   )
   const selectedItemsRef = useRef<SelectedItem[]>([])
   const hasInitialized = useRef(false)
-
   const [isLoading, setIsLoading] = useState(false)
-
   const [hasFilter, setHasFilter] = useState(false)
+  const [getEmptyResultTextIndication, setEmptyResultTextIndication] = useState<string | undefined>(undefined)
 
   // Initialize from pre-built navigation stack (if available)
   useEffect(() => {
@@ -88,6 +89,12 @@ export function TableHeadHierarchicalFilter({
     if (initialNavigationStack && initialLevel !== undefined && initialSelectedItems) {
       hasInitialized.current = true
       selectedItemsRef.current = initialSelectedItems
+      const currentNavigationStack = initialNavigationStack[initialLevel]
+      if (currentNavigationStack.items.length === 0) {
+        const selectedItem = selectedItemsRef.current.length > 0 ? selectedItemsRef.current[0] : undefined
+        const filterKey = currentNavigationStack.filterKey
+        setEmptyResultTextIndication(getEmptyResultText(filterKey, selectedItem))
+      }
       setNavigationStack(initialNavigationStack)
       setLevel(initialLevel)
       return
@@ -131,6 +138,12 @@ export function TableHeadHierarchicalFilter({
             const result = await onLoadMenusToDisplay(currentItems)
 
             if (result) {
+              if (result.items.length > 0) {
+                // TODO (qov-1236) Find a way to pass selectedItem
+                setEmptyResultTextIndication(getEmptyResultText(result.filterKey, undefined))
+              } else {
+                setEmptyResultTextIndication(undefined)
+              }
               stack.push({ items: result.items, filterKey: result.filterKey })
             }
           }
@@ -156,6 +169,7 @@ export function TableHeadHierarchicalFilter({
 
   // Handle going back in navigation
   const handleBack = () => {
+    setEmptyResultTextIndication(undefined)
     if (navigationStack.length > 1) {
       setLevel(level - 1)
       setOpen(true)
@@ -223,6 +237,12 @@ export function TableHeadHierarchicalFilter({
         setIsLoading(false)
         setOpen(false)
       } else {
+        if (result.items.length === 0) {
+          const selectedItem = selectedItemsRef.current[level]
+          setEmptyResultTextIndication(getEmptyResultText(result.filterKey, selectedItem))
+        } else {
+          setEmptyResultTextIndication(undefined)
+        }
         // Drill down to next level
         setNavigationStack((prev) => {
           // Lower levels need to be removed if there are any
@@ -247,13 +267,13 @@ export function TableHeadHierarchicalFilter({
     if (!isRootLevel) {
       items.push({
         name: 'Back',
-        contentLeft: <Icon name={IconAwesomeEnum.ARROW_LEFT} className="text-sm text-neutral-350 delete-hover" />,
+        contentLeft: <Icon name={IconAwesomeEnum.ARROW_LEFT} className="delete-hover text-sm text-neutral-350" />,
         onClick: (e) => {
           // Prevent menu from auto-closing
           e.keepOpen = true
           handleBack()
         },
-        textClassName: "text-neutral-350 delete-hover"
+        textClassName: 'text-neutral-350 delete-hover',
       })
     }
 
@@ -353,6 +373,7 @@ export function TableHeadHierarchicalFilter({
             title: 'Filter by ' + filterByLabel,
           },
         ]}
+        emptyResultText={getEmptyResultTextIndication}
         width={280}
         isFilter
         trigger={

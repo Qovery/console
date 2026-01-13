@@ -103,13 +103,13 @@ function createTableDataHead(
   queryParams: React.RefObject<DecodedValueMap<typeof queryParamsValues>>,
   setTargetTypeSelectedItems: Dispatch<SetStateAction<SelectedItem[]>>,
   targetTypeSelectedItems: SelectedItem[],
+  organizationRef: React.RefObject<Organization | undefined>,
   targetTypeNavigationStack?: NavigationLevel[],
   targetTypeLevel?: number,
-  organization?: Organization,
   organizationId?: string
 ): TableHeadProps<OrganizationEventResponse>[] {
   // Calculate retention days and determine if we need to enforce 30-day limit
-  const retentionDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 15
+  const retentionDays = organizationRef.current?.organization_plan?.audit_logs_retention_in_days ?? 15
   const maxRangeInDays = retentionDays > 30 ? 30 : undefined
 
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
@@ -161,6 +161,17 @@ function createTableDataHead(
         computeDisplayByLabel: computeDisplayByLabel,
         onFilterChange: (filter, currentSelectedItems) => {
           return computeSelectedItemsFromFilter(filter, currentSelectedItems)
+        },
+        getEmptyResultText: (filterKey: string, selectedItem?: SelectedItem) => {
+          const queryParamsValue = queryParams.current ?? undefined
+          const retentionDays = organizationRef.current?.organization_plan?.audit_logs_retention_in_days ?? 30
+          let maxRangeInDays = retentionDays > 30 ? 'last 30 days' : `last ${retentionDays} days`
+          if (queryParamsValue?.fromTimestamp && queryParamsValue?.toTimestamp) {
+            maxRangeInDays = 'selected timestamp period'
+          }
+
+          const targetTypeName = computeDisplayByLabel(filterKey, selectedItem)
+          return `No ${targetTypeName} found in the ${maxRangeInDays}.`
         },
       },
     },
@@ -229,6 +240,12 @@ export function PageGeneral({
     queryParamsRef.current = queryParams
   }, [queryParams])
 
+  // Use ref to avoid undefined retention days for empty results indication concerning filter hierarchy header
+  const organizationRef = useRef(organization)
+  useEffect(() => {
+    organizationRef.current = organization
+  }, [organization])
+
   const timestamps = getDefaultTimestamps(queryParams, organization)
   const dataHead = useMemo(
     () =>
@@ -237,9 +254,9 @@ export function PageGeneral({
         queryParamsRef,
         setTargetTypeSelectedItems,
         targetTypeSelectedItems,
+        organizationRef,
         targetTypeNavigationStack,
         targetTypeLevel,
-        organization,
         organizationId
       ),
     [
@@ -250,6 +267,7 @@ export function PageGeneral({
       targetTypeNavigationStack,
       targetTypeLevel,
       organizationId,
+      organizationRef,
     ]
   )
 

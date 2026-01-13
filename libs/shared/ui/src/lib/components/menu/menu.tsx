@@ -64,6 +64,8 @@ export interface MenuProps {
   onOpen?: (e: boolean) => void
   isFilter?: boolean
   portal?: boolean
+  // Show description when empty results happens
+  emptyResultText?: string
 }
 
 /*
@@ -86,6 +88,7 @@ export function Menu(props: MenuProps) {
     isFilter,
     triggerTooltip,
     portal = true,
+    emptyResultText,
   } = props
 
   const ref = useRef(null)
@@ -111,6 +114,7 @@ export function Menu(props: MenuProps) {
           paddingMenuY={paddingMenuY}
           style={{ width }}
           isFilter={isFilter}
+          emptyResultText={emptyResultText}
         />
       )),
     [menusStringify]

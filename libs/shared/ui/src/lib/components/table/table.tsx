@@ -58,6 +58,7 @@ export interface TableHierarchicalFilterProps {
   computeDisplayByLabel: (filterKey: string, selectedItem?: SelectedItem) => string
   onSelectionChange: (selectedItems: SelectedItem[]) => void
   onFilterChange?: (filter: TableFilterProps[], currentSelectedItems: SelectedItem[]) => SelectedItem[]
+  getEmptyResultText: (filterKey: string, selectedItem?: SelectedItem) => string
 }
 
 export interface TableHeadCustomFilterProps<T> {
@@ -145,6 +146,7 @@ export function Table<T>({
                   onSelectionChange={hierarchicalFilter.onSelectionChange}
                   computeDisplayByLabel={hierarchicalFilter.computeDisplayByLabel}
                   onFilterChange={hierarchicalFilter.onFilterChange}
+                  getEmptyResultText={hierarchicalFilter.getEmptyResultText}
                   filter={filter}
                   setFilter={setFilter}
                 />
