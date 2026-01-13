@@ -98,6 +98,10 @@ export function InputSelect({
       if (values) {
         onChange && onChange((values as Value).value)
         setSelectedValue((values as Value).value)
+      } else {
+        // Handle clearing the selection
+        onChange && onChange('')
+        setSelectedValue('')
       }
     }
   }
@@ -183,7 +187,7 @@ export function InputSelect({
 
   const SingleValue = (props: SingleValueProps<Value>) => (
     <span className="mr-1 text-sm text-neutral-400">
-      {props.data.label}
+      {props.data.selectedLabel ?? props.data.label}
       {props.data.description ? `: ${props.data.description}` : ''}
     </span>
   )

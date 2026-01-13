@@ -8,4 +8,6 @@ export interface Value {
   onClickEditable?: () => void
   description?: string
   searchText?: string
+  /** Optional label to display when this option is selected (in the closed dropdown). Falls back to `label` if not provided. */
+  selectedLabel?: ReactNode
 }
