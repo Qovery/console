@@ -243,7 +243,7 @@ export function RowEvent(props: RowEventProps) {
               />
               {event.timestamp && (
                 <Tooltip content={dateUTCString(event.timestamp)}>
-                  <span className="truncate">{dateFullFormat(event.timestamp)}</span>
+                  <span className="truncate">{dateFullFormat(event.timestamp, undefined, 'dd MMM, y, HH:mm:ss')}</span>
                 </Tooltip>
               )}
             </div>
