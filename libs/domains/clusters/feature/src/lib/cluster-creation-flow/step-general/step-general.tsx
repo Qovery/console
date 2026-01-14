@@ -3,7 +3,7 @@ import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { useCloudProviderCredentials, useCloudProviders } from '@qovery/domains/cloud-providers/feature'
-import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
+import { type ClusterGeneralData, type Value } from '@qovery/shared/interfaces'
 import {
   Button,
   Callout,
@@ -20,37 +20,7 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ClusterCredentialsSettings } from '../../cluster-credentials-settings/cluster-credentials-settings'
 import { ClusterGeneralSettings } from '../../cluster-general-settings/cluster-general-settings'
-
-export const defaultResourcesData: ClusterResourcesData = {
-  cluster_type: 'MANAGED',
-  disk_size: 50,
-  instance_type: '',
-  nodes: [3, 10],
-  karpenter: {
-    enabled: false,
-    default_service_architecture: 'AMD64',
-    disk_size_in_gib: 50,
-    spot_enabled: false,
-    qovery_node_pools: {
-      requirements: [],
-    },
-  },
-  infrastructure_charts_parameters: {
-    cert_manager_parameters: {
-      kubernetes_namespace: '',
-    },
-    metal_lb_parameters: {
-      ip_address_pools: [],
-    },
-    nginx_parameters: {
-      replica_count: 1,
-      default_ssl_certificate: '',
-      publish_status_address: '',
-      annotation_metal_lb_load_balancer_ips: '',
-      annotation_external_dns_kubernetes_target: '',
-    },
-  },
-}
+import { defaultResourcesData, useClusterContainerCreateContext } from '../cluster-creation-flow'
 
 export interface StepGeneralProps {
   organizationId: string
@@ -60,13 +30,19 @@ export interface StepGeneralProps {
 export function StepGeneral({ organizationId, onSubmit }: StepGeneralProps) {
   useDocumentTitle('General - Create Cluster')
 
-  const [generalData, setGeneralData] = useState<ClusterGeneralData | undefined>()
-  const [, setResourcesData] = useState<ClusterResourcesData | undefined>(defaultResourcesData)
+  const { generalData, setGeneralData, setResourcesData } = useClusterContainerCreateContext()
 
   const methods = useForm<ClusterGeneralData>({
     defaultValues: { installation_type: 'LOCAL_DEMO', production: false, ...generalData },
     mode: 'onChange',
   })
+
+  // Sync form values when context generalData changes (from slug defaults)
+  useEffect(() => {
+    if (generalData) {
+      methods.reset({ production: false, ...generalData })
+    }
+  }, [generalData, methods])
 
   const { control, formState, watch } = methods
 

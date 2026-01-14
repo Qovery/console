@@ -1,9 +1,35 @@
 import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { type PropsWithChildren } from 'react'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import {
+  ClusterContainerCreateContext,
+  type ClusterContainerCreateContextInterface,
+  defaultResourcesData,
+} from '../cluster-creation-flow'
 import StepGeneral, { type StepGeneralProps } from './step-general'
 
 const mockOnSubmit = jest.fn()
+
+const mockContextValue: ClusterContainerCreateContextInterface = {
+  currentStep: 1,
+  setCurrentStep: jest.fn(),
+  generalData: undefined,
+  setGeneralData: jest.fn(),
+  resourcesData: defaultResourcesData,
+  setResourcesData: jest.fn(),
+  featuresData: { vpc_mode: undefined, features: {} },
+  setFeaturesData: jest.fn(),
+  kubeconfigData: undefined,
+  setKubeconfigData: jest.fn(),
+  creationFlowUrl: '/organization/org-123/cluster/create/aws',
+}
+
+function Wrapper({ children }: PropsWithChildren) {
+  return (
+    <ClusterContainerCreateContext.Provider value={mockContextValue}>{children}</ClusterContainerCreateContext.Provider>
+  )
+}
 
 jest.mock('@qovery/shared/util-hooks', () => ({
   ...jest.requireActual('@qovery/shared/util-hooks'),
@@ -66,7 +92,7 @@ describe('StepGeneral', () => {
   })
 
   it('should render general settings form', () => {
-    renderWithProviders(<StepGeneral {...defaultProps} />)
+    renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
 
     expect(screen.getByTestId('input-name')).toBeInTheDocument()
     expect(screen.getByTestId('input-description')).toBeInTheDocument()
@@ -76,13 +102,13 @@ describe('StepGeneral', () => {
   it('should show loader when cloud providers are not loaded', () => {
     useCloudProvidersMockSpy.mockReturnValue({ data: [] })
 
-    renderWithProviders(<StepGeneral {...defaultProps} />)
+    renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
 
     expect(screen.getByTestId('spinner')).toBeInTheDocument()
   })
 
   it('should have submit button disabled when form is invalid', () => {
-    renderWithProviders(<StepGeneral {...defaultProps} />)
+    renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
 
     expect(screen.getByTestId('button-submit')).toBeDisabled()
   })

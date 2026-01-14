@@ -17,12 +17,6 @@ import {
   type ClusterKubeconfigData,
   type ClusterResourcesData,
 } from '@qovery/shared/interfaces'
-import {
-  CLUSTERS_CREATION_URL,
-  CLUSTERS_NEW_URL,
-  CLUSTERS_TEMPLATE_CREATION_URL,
-  CLUSTERS_URL,
-} from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -138,30 +132,29 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
 
   useDocumentTitle('Creation - Cluster')
 
-  const pathCreate = slug ? CLUSTERS_TEMPLATE_CREATION_URL(slug) : CLUSTERS_CREATION_URL
-  const creationFlowUrl = CLUSTERS_URL(organizationId) + pathCreate
+  const creationFlowUrl = `/organization/${organizationId}/cluster/create/${slug}`
 
   useEffect(() => {
     if (slug) {
       const defaultOptions: Partial<ClusterGeneralData> | undefined = match(slug)
-        .with('AWS-eks-anywhere', () => ({
+        .with('aws-eks-anywhere', () => ({
           installation_type: 'PARTIALLY_MANAGED' as ClusterGeneralData['installation_type'],
           cloud_provider: CloudProviderEnum.AWS,
           region: 'eu-west-3', // This value is hardcoded because the API doesn't support it yet
         }))
-        .with('AWS', () => ({
+        .with('aws', () => ({
           installation_type: 'MANAGED' as ClusterGeneralData['installation_type'],
           cloud_provider: CloudProviderEnum.AWS,
         }))
-        .with('SCW', () => ({
+        .with('scw', () => ({
           installation_type: 'MANAGED' as ClusterGeneralData['installation_type'],
           cloud_provider: CloudProviderEnum.SCW,
         }))
-        .with('GCP', () => ({
+        .with('gcp', () => ({
           installation_type: 'MANAGED' as ClusterGeneralData['installation_type'],
           cloud_provider: CloudProviderEnum.GCP,
         }))
-        .with('AZURE', () => ({
+        .with('azure', () => ({
           installation_type: 'MANAGED' as ClusterGeneralData['installation_type'],
           cloud_provider: CloudProviderEnum.AZURE,
         }))

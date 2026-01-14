@@ -5,12 +5,13 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 })
 
 function RouteComponent() {
-  const { organizationId } = useParams({ strict: false })
+  const { organizationId, slug = 'new' } = useParams({ strict: false })
 
   return (
     <Navigate
       to="/organization/$organizationId/cluster/create/$slug/general"
-      params={{ organizationId, slug: 'new' }}
+      params={{ organizationId, slug }}
+      replace
     />
   )
 }
