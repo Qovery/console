@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { LogoIcon } from '@qovery/shared/ui'
 import { Breadcrumbs } from './breadcrumbs/breadcrumbs'
 import { UserMenu } from './user-menu/user-menu'
@@ -21,7 +22,9 @@ export function Header() {
       <div className="flex items-center gap-4">
         <LogoIcon />
         <Separator />
+        {/* <Suspense fallback={<div>Loading...</div>}> */}
         <Breadcrumbs />
+        {/* </Suspense> */}
         <div className="ml-auto">
           <UserMenu />
         </div>
