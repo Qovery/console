@@ -220,12 +220,6 @@ export function RowEvent(props: RowEventProps) {
     )
     .otherwise(() => false)
 
-  const getRowBgClass = () => {
-    if (isEventTypeFailed) return 'bg-red-50 hover:bg-neutral-100'
-    if (isSuccess) return 'hover:bg-neutral-100'
-    return 'hover:bg-neutral-100'
-  }
-
   return (
     <>
       <div
