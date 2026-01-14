@@ -8,6 +8,7 @@ export function useCommits(props: UseCommitsProps) {
     ...queries.services.listCommits(props),
     staleTime: 3 * 60 * 1000, // 3 minutes - commit history doesn't change frequently
     retry: false,
+    retryOnMount: false,
     refetchOnWindowFocus: false,
   })
 }
