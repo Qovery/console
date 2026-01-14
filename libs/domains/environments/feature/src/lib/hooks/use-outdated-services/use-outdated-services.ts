@@ -32,6 +32,7 @@ export function useOutdatedServices({ environmentId }: UseOutdatedServicesProps)
       ...queries.services.listCommits({ serviceId: id, serviceType }),
       staleTime: 3 * 60 * 1000, // 3 minutes - commit history doesn't change frequently
       retry: false,
+      retryOnMount: false,
       refetchOnWindowFocus: false,
     })),
   })
