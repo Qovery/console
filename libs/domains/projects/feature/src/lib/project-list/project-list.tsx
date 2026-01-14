@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router'
+import { Link, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { Button, EmptyState, Heading, Icon, Section, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -10,7 +10,6 @@ export function ProjectList() {
   const { organizationId = '' }: { organizationId: string } = useParams({ strict: false })
   const { data: projects = [] } = useProjects({ organizationId, suspense: true })
   const { openModal, closeModal } = useModal()
-
   const createProjectModal = () => {
     openModal({
       content: <CreateProjectModal onClose={closeModal} organizationId={organizationId} />,
@@ -48,8 +47,10 @@ export function ProjectList() {
           )}
         >
           {projects?.map((project) => (
-            <button
+            <Link
               key={project.id}
+              to="/organization/$organizationId/project/$projectId/overview"
+              params={{ organizationId, projectId: project.id }}
               className="group flex items-center justify-between rounded-lg border border-neutral bg-surface-neutral p-4 text-left text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle"
             >
               <div className="min-w-0 flex-1">
@@ -63,7 +64,7 @@ export function ProjectList() {
                 iconName="angle-right"
                 className="text-base text-neutral-subtle transition-colors group-hover:text-neutral"
               />
-            </button>
+            </Link>
           ))}
         </div>
       )}

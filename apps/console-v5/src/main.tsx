@@ -160,13 +160,14 @@ root.render(
       providers={[
         ThemeProvider,
         TooltipProvider,
-        ModalProvider,
         Auth0Wrapper,
         makeProvider(QueryClientProvider, { client: queryClient }),
         makeProvider(IntercomProvider, { appId: INTERCOM }),
       ]}
     >
-      <App />
+      <ModalProvider>
+        <App />
+      </ModalProvider>
     </FlatProviders>
   </StrictMode>
 )
