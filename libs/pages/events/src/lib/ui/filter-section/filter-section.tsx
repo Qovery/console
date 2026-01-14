@@ -238,7 +238,6 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                           : undefined
                       }
                     >
-                      {/*{badge.displayedName}: {truncateIfNecessary(badge.key, badge.value)}*/}
                       {badge.displayedName}: <Truncate text={badge.value} truncateLimit={23} />
                       <button onClick={() => deleteFilter(badge.key, setFilter)} aria-label="Delete filter">
                         <Icon iconName="xmark" className="text-sm leading-4 text-neutral-300 hover:text-neutral-400" />

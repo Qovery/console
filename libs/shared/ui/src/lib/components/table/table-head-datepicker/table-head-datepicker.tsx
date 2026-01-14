@@ -136,7 +136,6 @@ export function TableHeadDatePickerFilter({
               size="xs"
               className="items-center gap-1.5"
               onClick={() => {
-                console.log('set on click timestamp')
                 setIsOpenTimestamp(!isOpenTimestamp)
               }}
             >
