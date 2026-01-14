@@ -248,10 +248,26 @@ function useFullWidthLayout(): boolean {
   )
 }
 
+const hiddenLayoutRouteIds: FileRouteTypes['id'][] = [
+  '/_authenticated/organization/$organizationId/cluster/create/$slug',
+]
+
+function useHiddenLayout(): boolean {
+  const matches = useMatches()
+  return matches.some((match) =>
+    hiddenLayoutRouteIds.some((routeId) => match.routeId === routeId || match.routeId?.startsWith(routeId + '/'))
+  )
+}
+
 function OrganizationRoute() {
   const navigationContext = useNavigationContext()
   const activeTabId = useActiveTabId(navigationContext)
   const needsFullWidth = useFullWidthLayout()
+  const hiddenLayout = useHiddenLayout()
+
+  if (hiddenLayout) {
+    return <Outlet />
+  }
 
   return (
     <div className="flex h-dvh w-full flex-col bg-background">

@@ -7,8 +7,12 @@ import {
 import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
-import { useClusterCloudProviderInfo, useEditCloudProviderInfo } from '@qovery/domains/clusters/feature'
-import { ClusterCredentialsSettingsFeature, SettingsHeading } from '@qovery/shared/console-shared'
+import {
+  ClusterCredentialsSettings,
+  useClusterCloudProviderInfo,
+  useEditCloudProviderInfo,
+} from '@qovery/domains/clusters/feature'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { ToastEnum, toast } from '@qovery/shared/toast'
 import { BlockContent, Button, Section } from '@qovery/shared/ui'
 
@@ -82,10 +86,7 @@ function ClusterCredentialsSettingsForm() {
           <div className="max-w-content-with-navigation-left">
             <form onSubmit={onSubmit}>
               <BlockContent title="Configured credentials">
-                <ClusterCredentialsSettingsFeature
-                  cloudProvider={clusterCloudProviderInfo?.cloud_provider}
-                  isSetting={true}
-                />
+                <ClusterCredentialsSettings cloudProvider={clusterCloudProviderInfo?.cloud_provider} isSetting={true} />
               </BlockContent>
               <div className="flex justify-end">
                 <Button
