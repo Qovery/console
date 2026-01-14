@@ -93,7 +93,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                 <>
                   You have contracted a free 14-days trial on{' '}
                   {trialStartDate ? format(trialStartDate, 'MMMM d, yyyy') : '...'}. At the end of this plan your user
-                  subscription will start unless you cancel your trial
+                  subscription will start. You cancel your trial by deleting your organization.
                 </>
               ) : (
                 <>Add a payment method to avoid service interruption at the end of your trial.</>
