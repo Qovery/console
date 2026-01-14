@@ -1,7 +1,8 @@
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useCreditCards, useCurrentCost } from '@qovery/domains/organizations/feature'
 import { AddCreditCardModalFeature } from '@qovery/shared/console-shared'
 import { useUserRole } from '@qovery/shared/iam/feature'
+import { SETTINGS_DANGER_ZONE_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import PageOrganizationBillingSummary from '../../ui/page-organization-billing-summary/page-organization-billing-summary'
@@ -15,10 +16,11 @@ export function PageOrganizationBillingSummaryFeature() {
   const { openModal, closeModal } = useModal()
 
   const { organizationId = '' } = useParams()
+  const navigate = useNavigate()
 
   const { data: creditCards = [], isLoading: isLoadingCreditCards } = useCreditCards({ organizationId })
   const { data: currentCost } = useCurrentCost({ organizationId })
-  const { showChat, showPylonForm } = useSupportChat()
+  const { showChat } = useSupportChat()
   const { isQoveryAdminUser } = useUserRole()
 
   const openPromoCodeModal = () => {
@@ -54,7 +56,7 @@ export function PageOrganizationBillingSummaryFeature() {
   }
 
   const handleCancelTrialClick = () => {
-    showPylonForm('cancel-free-trial')
+    navigate(SETTINGS_URL(organizationId) + SETTINGS_DANGER_ZONE_URL)
   }
 
   const handleAddCreditCardClick = () => {
