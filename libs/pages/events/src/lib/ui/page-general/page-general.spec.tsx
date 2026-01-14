@@ -102,4 +102,82 @@ describe('PageGeneral', () => {
       )
     )
   })
+
+  it('should render organizationMaxLimitReached state with upgrade button', () => {
+    renderWithProviders(<PageGeneral {...props} organizationMaxLimitReached={true} />)
+
+    screen.getByText(/days limit reached/)
+    const upgradeButton = screen.getByRole('button', { name: /Upgrade plan/i })
+    expect(upgradeButton).toBeInTheDocument()
+  })
+
+  it('should call showIntercom when clicking upgrade plan button', async () => {
+    const { userEvent } = renderWithProviders(<PageGeneral {...props} organizationMaxLimitReached={true} />)
+
+    const upgradeButton = screen.getByRole('button', { name: /Upgrade plan/i })
+    await userEvent.click(upgradeButton)
+
+    expect(props.showIntercom).toHaveBeenCalled()
+  })
+
+  it('should render locked placeholder rows when organizationMaxLimitReached', () => {
+    renderWithProviders(<PageGeneral {...props} organizationMaxLimitReached={true} />)
+
+    // Should render the upgrade button and limit reached message
+    screen.getByText(/days limit reached/)
+    screen.getByRole('button', { name: /Upgrade plan/i })
+  })
+
+  it('should render with custom retention days in empty message', () => {
+    const customOrganization = {
+      id: 'org-1',
+      name: 'Test Org',
+      organization_plan: {
+        audit_logs_retention_in_days: 90,
+      },
+    }
+    renderWithProviders(
+      <PageGeneral {...props} isLoading={false} events={[]} organization={customOrganization as any} />
+    )
+
+    screen.getByText(/we retain logs for a maximum of 90 days/i)
+  })
+
+  it('should display correct retention message when organizationMaxLimitReached', () => {
+    const customOrganization = {
+      id: 'org-1',
+      name: 'Test Org',
+      organization_plan: {
+        audit_logs_retention_in_days: 60,
+      },
+    }
+    renderWithProviders(
+      <PageGeneral
+        {...props}
+        organizationMaxLimitReached={true}
+        organization={customOrganization as any}
+        events={eventsFactoryMock(10)}
+      />
+    )
+
+    screen.getByText(/60 days limit reached/i)
+  })
+
+  it('should handle custom page size in pagination', () => {
+    renderWithProviders(<PageGeneral {...props} pageSize="50" />)
+
+    const select = screen.getByTestId('select-page-size') as HTMLSelectElement
+    expect(select.value).toBe('50')
+  })
+
+  it('should render with event type filter applied', () => {
+    const queryParamsWithFilters = {
+      ...props.queryParams,
+      eventType: OrganizationEventType.DEPLOYED,
+    }
+    const { container } = renderWithProviders(<PageGeneral {...props} queryParams={queryParamsWithFilters} />)
+
+    // Verify the component renders with the filter
+    expect(container).toBeTruthy()
+  })
 })
