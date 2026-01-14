@@ -209,16 +209,19 @@ export const mutations = {
     enabled,
     readOnly,
     instructions,
+    userEmail,
   }: {
     organizationId: string
     enabled: boolean
     readOnly: boolean
     instructions?: string
+    userEmail?: string
   }) => {
     const response = await devopsCopilotAxios.put(`/organization/${organizationId}/config/org`, {
       enabled,
       read_only: readOnly,
       instructions: instructions || '',
+      user_email: userEmail,
     })
 
     return response.data
