@@ -102,8 +102,8 @@
     &:hover {
       background-color: transparent;
 
-      * {
-        color: theme('colors.brand.600');
+      .delete-hover {
+        color: theme('colors.brand.400');
       }
     }
   }

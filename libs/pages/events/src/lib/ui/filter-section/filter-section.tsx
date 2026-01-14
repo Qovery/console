@@ -168,7 +168,7 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
   const priorityKeys = new Set(['target_type', 'target_id', 'project_id', 'environment_id'])
 
   return (
-    <div className="mb-2 flex w-full">
+    <div className="mb-3 flex w-full">
       {/* LEFT: Badges container with wrapping */}
       <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
         {badges
