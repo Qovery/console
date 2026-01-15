@@ -1,7 +1,8 @@
 import { type Cluster } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { ClusterResourcesSettingsFeature, SettingsHeading } from '@qovery/shared/console-shared'
+import { ClusterResourcesSettings } from '@qovery/domains/clusters/feature'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
@@ -20,7 +21,7 @@ export function PageSettingsResources({ cluster, onSubmit, loading }: PageSettin
       <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading title="Resources settings" />
         <form onSubmit={onSubmit}>
-          <ClusterResourcesSettingsFeature
+          <ClusterResourcesSettings
             cluster={cluster}
             cloudProvider={cluster.cloud_provider}
             clusterRegion={cluster.region}
