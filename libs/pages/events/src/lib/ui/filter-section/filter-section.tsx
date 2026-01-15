@@ -1,15 +1,7 @@
 import clsx from 'clsx'
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
 import { type DecodedValueMap } from 'use-query-params'
-import {
-  Button,
-  Icon,
-  type SelectedItem,
-  type TableFilterProps,
-  Tooltip,
-  Truncate,
-  truncateText,
-} from '@qovery/shared/ui'
+import { Button, Icon, type SelectedItem, type TableFilterProps, Truncate } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
@@ -174,25 +166,23 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
         {badges
           .filter((badge) => !priorityKeys.has(badge.key))
           .map((badge) => (
-            <Tooltip key={badge.key} content={badge.value}>
-              <Button
-                radius="full"
-                variant="surface"
-                color="neutral"
-                size="xs"
-                className="pl-9.5 justify-center gap-1.5 active:scale-[1]"
-                key={badge.key}
-              >
-                {`${badge.displayedName}: `}
-                {badge.key === 'timestamp' && badge.value}
-                {badge.key !== 'timestamp' && <Truncate text={badge.value} truncateLimit={23} />}
-                <Icon
-                  iconName="xmark"
-                  className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
-                  onClick={() => deleteFilter(badge.key, setFilter)}
-                />
-              </Button>
-            </Tooltip>
+            <Button
+              radius="full"
+              variant="surface"
+              color="neutral"
+              size="xs"
+              className="pl-9.5 justify-center gap-1.5 active:scale-[1]"
+              key={badge.key}
+            >
+              {`${badge.displayedName}: `}
+              {badge.key === 'timestamp' && badge.value}
+              {badge.key !== 'timestamp' && <Truncate text={badge.value} truncateLimit={23} />}
+              <Icon
+                iconName="xmark"
+                className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
+                onClick={() => deleteFilter(badge.key, setFilter)}
+              />
+            </Button>
           ))}
         <div className="flex flex-row-reverse">
           {badges
@@ -221,29 +211,27 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                   key={badge.key}
                   className={clsx('group relative flex', relativePositionClassName(index, array.length))}
                 >
-                  <Tooltip key={badge.key} content={badge.value}>
-                    <Button
-                      variant="surface"
-                      color="neutral"
-                      size="xs"
-                      className={clsx('justify-center gap-1.5 active:scale-[1]', {
-                        'rounded-l-full rounded-r-none border-r-0 pr-4': isFirst && !isLast,
-                        'rounded-full': isFirst && isLast,
-                        'rounded-l-none rounded-r-full border-l-0 pl-4': isLast && !isFirst,
-                        'rounded-none border-x-0 pl-4 pr-4': !isFirst && !isLast,
-                      })}
-                      style={
-                        !isLast
-                          ? { clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%)' }
-                          : undefined
-                      }
-                    >
-                      {badge.displayedName}: <Truncate text={badge.value} truncateLimit={23} />
-                      <button onClick={() => deleteFilter(badge.key, setFilter)} aria-label="Delete filter">
-                        <Icon iconName="xmark" className="text-sm leading-4 text-neutral-300 hover:text-neutral-400" />
-                      </button>
-                    </Button>
-                  </Tooltip>
+                  <Button
+                    variant="surface"
+                    color="neutral"
+                    size="xs"
+                    className={clsx('justify-center gap-1.5 active:scale-[1]', {
+                      'rounded-l-full rounded-r-none border-r-0 pr-4': isFirst && !isLast,
+                      'rounded-full': isFirst && isLast,
+                      'rounded-l-none rounded-r-full border-l-0 pl-4': isLast && !isFirst,
+                      'rounded-none border-x-0 pl-4 pr-4': !isFirst && !isLast,
+                    })}
+                    style={
+                      !isLast
+                        ? { clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%)' }
+                        : undefined
+                    }
+                  >
+                    {badge.displayedName}: <Truncate text={badge.value} truncateLimit={23} />
+                    <button onClick={() => deleteFilter(badge.key, setFilter)} aria-label="Delete filter">
+                      <Icon iconName="xmark" className="text-sm leading-4 text-neutral-300 hover:text-neutral-400" />
+                    </button>
+                  </Button>
                   {!isLast && (
                     <svg
                       className="pointer-events-none absolute right-0 top-0 h-6 w-[11px]"
