@@ -3,6 +3,16 @@ import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterGeneralSettings, { type ClusterGeneralSettingsProps } from './cluster-general-settings'
 
+jest.mock('@qovery/shared/iam/feature', () => ({
+  ...jest.requireActual('@qovery/shared/iam/feature'),
+  useUserRole: () => ({
+    isQoveryAdminUser: false,
+    isQoveryUser: false,
+    loading: false,
+    roles: [],
+  }),
+}))
+
 describe('ClusterGeneralSettings', () => {
   const props: ClusterGeneralSettingsProps = {
     fromDetail: false,

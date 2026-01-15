@@ -109,7 +109,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
     ))
     .with({ selectedInstallationType: 'managed' }, ({ selectedInstallationType }) => (
       <Link
-        to="/organization/$organizationId/clusters/create/$slug"
+        to="/organization/$organizationId/cluster/create/$slug"
         params={{ organizationId, slug: selectedCloudProvider.toLowerCase() }}
         className={baseClassNames}
         onClick={() => handleAnalytics(selectedInstallationType)}
@@ -122,7 +122,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
       return match({ isEksAnywhereEnabled })
         .with({ isEksAnywhereEnabled: true }, () => (
           <Link
-            to="/organization/$organizationId/clusters/create/$slug"
+            to="/organization/$organizationId/cluster/create/$slug"
             params={{ organizationId, slug: `${selectedCloudProvider.toLowerCase()}-eks-anywhere` }}
             className={baseClassNames}
             onClick={() => handleAnalytics(selectedInstallationType)}
