@@ -4,7 +4,7 @@ import { type Params, useLocation, useNavigate } from 'react-router-dom'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
-import { ONBOARDING_PLANS_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, type Route } from '@qovery/shared/routes'
+import { ONBOARDING_PROJECT_URL, ONBOARDING_URL, type Route } from '@qovery/shared/routes'
 import { FunnelFlow, FunnelFlowBody } from '@qovery/shared/ui'
 import { ROUTER_ONBOARDING } from '../../router/router'
 import OnboardingRightContent from '../../ui/onboarding-right-content/onboarding-right-content'
@@ -67,7 +67,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const totalSteps = hasExistingOrganization || hasDxAuth ? 2 : ROUTER_ONBOARDING.length
 
   useEffect(() => {
-    if (hasDxAuth && currentPath === ONBOARDING_PLANS_URL) {
+    if (hasDxAuth) {
       navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`, {
         state: location.state,
       })

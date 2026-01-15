@@ -24,7 +24,7 @@ import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/feature'
 import { ProtectedRoute } from '@qovery/shared/router'
 import { HELM_DEFAULT_VALUES, KUBECONFIG, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useCaptureUtmParams, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { DEVOPS_COPILOT_API_BASE_URL } from '@qovery/shared/util-node-env'
 import { GIT_SHA, GTM, NODE_ENV, QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
@@ -34,6 +34,7 @@ import { ROUTER } from './router/main.router'
 
 export function App() {
   useDocumentTitle('Loading...')
+  useCaptureUtmParams()
   const { isLoading } = useAuth()
   const { redirectToAcceptPageGuard, onSearchUpdate, checkTokenInStorage } = useInviteMember()
   const [assistantOpen, setAssistantOpen] = useState(false)

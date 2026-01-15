@@ -1,23 +1,16 @@
-import { useAuth0 } from '@auth0/auth0-react'
 import posthog from 'posthog-js'
-import { PlanEnum } from 'qovery-typescript-axios'
+import { PlanEnum, type SignUpRequest } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
-import {
-  useAddCreditCard,
-  useCreateOrganization,
-  useDeleteOrganization,
-  useEditBillingInfo,
-} from '@qovery/domains/organizations/feature'
+import { useCreateOrganization, useEditBillingInfo } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
-import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
+import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import {
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
   ONBOARDING_PERSONALIZE_URL,
-  ONBOARDING_PLANS_URL,
   ONBOARDING_URL,
 } from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
@@ -31,26 +24,14 @@ export function OnboardingProject() {
 
   const navigate = useNavigate()
   const location = useLocation()
-  const { user } = useAuth0()
-  const { getAccessTokenSilently } = useAuth()
+  const { user, getAccessTokenSilently } = useAuth()
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject()
-  const { mutateAsync: addCreditCard } = useAddCreditCard()
   const { mutateAsync: editBillingInfo } = useEditBillingInfo()
-  const { mutateAsync: deleteOrganization } = useDeleteOrganization()
   const { handleSubmit, control, setValue } = useForm<{ project_name: string; organization_name: string }>()
   const { data: userSignUp } = useUserSignUp()
-  const {
-    organization_name,
-    project_name,
-    admin_email,
-    selectedPlan,
-    setContextValue,
-    cardToken,
-    cardLast4,
-    cardExpiryMonth,
-    cardExpiryYear,
-  } = useContext(ContextOnboarding)
+  const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
+  const { organization_name, project_name, admin_email, selectedPlan, setContextValue } = useContext(ContextOnboarding)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const shouldSkipBilling = userSignUp?.dx_auth === true
@@ -78,24 +59,29 @@ export function OnboardingProject() {
     })
   }
 
-  const addCardIfPresent = async (organizationId: string) => {
-    if (!cardToken || shouldSkipBilling) {
-      await updateBillingInfo(organizationId)
-      return
+  const createCargoSignup = async () => {
+    const hasRequiredSignUpFields =
+      !!userSignUp?.first_name && !!userSignUp?.last_name && !!userSignUp?.user_email && !!userSignUp?.qovery_usage
+
+    if (hasRequiredSignUpFields) {
+      const signUpPayload: SignUpRequest = {
+        first_name: userSignUp.first_name,
+        last_name: userSignUp.last_name,
+        user_email: userSignUp.user_email,
+        type_of_use: userSignUp.type_of_use,
+        qovery_usage: userSignUp.qovery_usage,
+        company_name: userSignUp.company_name ?? undefined,
+        company_size: userSignUp.company_size ?? undefined,
+        user_role: userSignUp.user_role ?? undefined,
+        qovery_usage_other: userSignUp.qovery_usage_other ?? undefined,
+        user_questions: userSignUp.user_questions ?? undefined,
+        current_step: 'billing',
+        dx_auth: userSignUp.dx_auth ?? undefined,
+        infrastructure_hosting: userSignUp.infrastructure_hosting ?? undefined,
+      }
+
+      await createUserSignUp(signUpPayload)
     }
-
-    await addCreditCard({
-      organizationId,
-      creditCardRequest: {
-        token: cardToken,
-        cvv: '',
-        number: cardLast4 ? `****${cardLast4}` : '',
-        expiry_year: cardExpiryYear ?? 0,
-        expiry_month: cardExpiryMonth ?? 0,
-      },
-    })
-
-    await updateBillingInfo(organizationId)
   }
 
   const handleBack = () => {
@@ -117,7 +103,6 @@ export function OnboardingProject() {
     setContextValue?.(currentData)
 
     setIsSubmitting(true)
-    let createdOrganizationId: string | null = null
 
     try {
       const organization = await createOrganization({
@@ -127,38 +112,31 @@ export function OnboardingProject() {
           admin_emails: admin_email.length > 0 ? [admin_email] : user?.email ? [user.email] : [],
         },
       })
-      createdOrganizationId = organization.id
+
+      // Note: Refresh tokens do not work in private browsers without our Auth0 domain and Safari (private and normal mode)
       await getAccessTokenSilently({ cacheMode: 'off' })
 
-      await addCardIfPresent(createdOrganizationId)
+      await updateBillingInfo(organization.id)
 
       const project = await createProject({
-        organizationId: createdOrganizationId,
+        organizationId: organization.id,
         projectRequest: {
           name: data.project_name,
         },
       })
 
+      await createCargoSignup()
+
       posthog.capture('onboarding-organization-created', {
         plan: planToUse,
       })
 
-      navigate(ENVIRONMENTS_URL(createdOrganizationId, project.id) + ENVIRONMENTS_GENERAL_URL)
+      navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
     } catch (error) {
       if ((error as SerializedError).code === '409') {
         toastError(error as unknown as SerializedError)
         return
       }
-
-      if (createdOrganizationId) {
-        try {
-          await deleteOrganization({ organizationId: createdOrganizationId })
-        } catch (cleanupError) {
-          console.error('Failed to clean up organization after card failure', cleanupError)
-        }
-      }
-      const fallbackRoute = shouldSkipBilling ? ONBOARDING_PERSONALIZE_URL : ONBOARDING_PLANS_URL
-      navigate(`${ONBOARDING_URL}${fallbackRoute}`)
     } finally {
       setIsSubmitting(false)
     }

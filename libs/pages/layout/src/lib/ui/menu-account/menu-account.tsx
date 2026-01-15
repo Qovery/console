@@ -1,6 +1,6 @@
 import { type Organization } from 'qovery-typescript-axios'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { LOGOUT_URL, ONBOARDING_PLANS_URL, ONBOARDING_URL, ORGANIZATION_URL, USER_URL } from '@qovery/shared/routes'
+import { LOGOUT_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, ORGANIZATION_URL, USER_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum, LegacyAvatar, Menu, MenuAlign, type MenuData, MenuDirection } from '@qovery/shared/ui'
 
 export interface MenuAccountProps {
@@ -45,7 +45,7 @@ export function MenuAccount(props: MenuAccountProps) {
       button: {
         label: <Icon iconName="circle-plus" iconStyle="regular" className="link mr-3 !text-base text-brand-500" />,
         onClick: () =>
-          navigate(ONBOARDING_URL + ONBOARDING_PLANS_URL, {
+          navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL, {
             state: {
               previousUrl: location.pathname,
             },
