@@ -70,209 +70,418 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
 
                   <div className="max-h-80 overflow-y-auto rounded border border-neutral-250 bg-white p-4">
                     <h3 className="mb-3 text-sm font-semibold text-neutral-400">
-                      Qovery AI Copilot - Additional Terms of Service
+                      Qovery AI DevOps Copilot - AI service terms and conditions
                     </h3>
                     <div className="space-y-4 text-xs text-neutral-350">
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">1. Introduction</p>
+                        <p className="mb-2 font-semibold text-neutral-400">1. Company information</p>
                         <p>
-                          These AI Copilot Additional Terms ("AI Terms") supplement and are incorporated into the Qovery
-                          Terms of Service. By enabling the AI Copilot feature, you agree to these AI Terms on behalf of
-                          your organization.
+                          BIRDSIGHT is a French simplified joint stock company, registered under number 852 571 108 with
+                          the Registry of Trade and Companies of Paris, whose head office is located at 128 rue de la
+                          Boétie, 75008 PARIS (the "Company").
                         </p>
                         <p className="mt-2">
-                          The AI Copilot is an optional feature that leverages Anthropic's Claude AI model (Sonnet) to
-                          assist users with the Qovery platform through intelligent documentation retrieval and
-                          automated actions (subject to user confirmation).
+                          The Company may be contacted via the following email address: support@qovery.com
                         </p>
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">2. Feature Description</p>
-                        <p className="mb-1">The AI Copilot provides:</p>
-                        <ul className="ml-4 list-disc space-y-1">
-                          <li>Intelligent assistance for using the Qovery service</li>
-                          <li>Execution of platform actions based on user instructions (after confirmation)</li>
-                          <li>Contextual documentation and guidance retrieval</li>
-                          <li>Integration with your Qovery organization's resources and configurations</li>
-                        </ul>
-                        <p className="mt-2">The AI Copilot operates in two modes:</p>
-                        <ul className="ml-4 list-disc space-y-1">
-                          <li>
-                            <span className="font-medium">Read-Only Mode:</span> The AI Copilot can view your
-                            infrastructure configuration, provide recommendations, and answer questions, but cannot make
-                            any modifications to your resources
-                          </li>
-                          <li>
-                            <span className="font-medium">Read-Write Mode:</span> The AI Copilot can view and modify
-                            your infrastructure configuration after explicit user confirmation for each action
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div>
-                        <p className="mb-2 font-semibold text-neutral-400">3. Enablement and Authorization</p>
+                        <p className="mb-2 font-semibold text-neutral-400">2. Company's AI Service</p>
                         <p className="mb-2">
-                          <span className="font-medium">3.1. Administrator Activation:</span> Only users with
-                          Administrator-level privileges may accept these AI Terms and enable the AI Copilot for their
-                          organization.
-                        </p>
-                        <p className="mb-2">
-                          <span className="font-medium">3.2. Organization-Wide Scope:</span> By enabling the AI Copilot,
-                          the Administrator activates the feature for all team members within the organization.
+                          The Company offers to its customers (the "Customer(s)") services enabling them to deploy their
+                          applications on their cloud provider (hereinafter referred to as the "Applications") (the
+                          "Services") via an API or the tool https://console.qovery.com (hereinafter together referred
+                          to as the "Platform").
                         </p>
                         <p>
-                          <span className="font-medium">3.3. Voluntary Adoption:</span> Use of the AI Copilot is
-                          entirely optional and not required to use the Qovery platform.
-                        </p>
-                      </div>
-
-                      <div>
-                        <p className="mb-2 font-semibold text-neutral-400">4. Third-Party AI Services</p>
-                        <p className="mb-2">
-                          <span className="font-medium">4.1. Anthropic Integration:</span> The AI Copilot is powered by
-                          Anthropic's Claude AI model, subject to Anthropic's Commercial Terms.
-                        </p>
-                        <p>
-                          <span className="font-medium">4.2. Data Processing:</span> By enabling this feature, you
-                          acknowledge that your queries and relevant platform context may be processed by Anthropic's AI
-                          services in accordance with their terms and privacy policies.
+                          Among the services, the Company offers access to an AI-based assistance feature that performs
+                          actions based on the Customers' instructions or helps them with documentation (hereinafter
+                          referred to as the "AI Service").
                         </p>
                       </div>
 
                       <div>
                         <p className="mb-2 font-semibold text-neutral-400">
-                          5. User Responsibilities and Acceptable Use
+                          3. Contractual documents and information regarding the AI Service Terms and Conditions
                         </p>
                         <p className="mb-2">
-                          <span className="font-medium">5.1. Proper Usage:</span> You agree to use the AI Copilot solely
-                          for its intended purpose of assisting with legitimate Qovery platform operations.
+                          <span className="font-medium">Function of the AI Service Terms and Conditions:</span> These
+                          terms and conditions (the "AI Service Terms and Conditions") complete the General Terms and
+                          Conditions (the "General Terms and Conditions") that govern the terms and conditions of the
+                          different services provided by the Company through the Platform.
+                        </p>
+                        <p className="mb-1">The AI Service Terms and Conditions specifically define:</p>
+                        <ul className="ml-4 list-disc space-y-1">
+                          <li>the terms of use of the AI Service,</li>
+                          <li>the respective obligations of the parties in connection with the AI Service.</li>
+                        </ul>
+                        <p className="mt-2">
+                          In the event of contradiction between the General Terms and Conditions and the AI Service
+                          Terms and Conditions, the latter shall prevail.
+                        </p>
+                        <p className="mt-2">
+                          The Customer acknowledges that the AI Service is based on Anthropic's large language models.
+                          The Customer undertakes to have read the Anthropic's Terms of Service available here:{' '}
+                          <a
+                            href="https://www.anthropic.com/legal/commercial-terms"
+                            className="text-brand-500 hover:underline"
+                          >
+                            https://www.anthropic.com/legal/commercial-terms
+                          </a>
+                          .
+                        </p>
+                        <p className="mt-2">
+                          <span className="font-medium">Location of the AI Service Terms and Conditions:</span> The
+                          Customer can find them in the AI Service activation settings on the Platform.
+                        </p>
+                        <p className="mt-2">
+                          <span className="font-medium">Acceptance of the AI Service Terms and Conditions:</span> The
+                          Customer accepts the AI Service Terms and Conditions by ticking a box when activating the AI
+                          Service on the Platform. If the Customer does not accept all the AI Service Terms and
+                          Conditions, they cannot access the AI Service.
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="mb-2 font-semibold text-neutral-400">4. Access to the AI Service</p>
+                        <p className="mb-2">
+                          The Customer can access the AI Service by going directly to the Platform, in the settings of
+                          their account, and activate the AI Service. The AI Service can only be activated by
+                          administrator accounts.
+                        </p>
+                        <p className="mb-2">
+                          Once activated, the AI Service will only be accessible to the Users whose accesses have been
+                          created by the Customer in accordance with the conditions set out in the Company's General
+                          Terms and Conditions (the "Users").
+                        </p>
+                        <p>
+                          The Customer is solely responsible for creating accesses for Users, for setting their access
+                          rights to the AI Service and for their personal use of the Platform.
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="mb-2 font-semibold text-neutral-400">5. Duration of the AI Service</p>
+                        <p>
+                          The AI service may only be provided to the Customer during the active subscription period in
+                          effect according to the General Terms and Conditions.
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="mb-2 font-semibold text-neutral-400">6. Financial terms</p>
+                        <p className="mb-2">
+                          The price of the AI Service is indicated on the Platform or in the specific quotation accepted
+                          by the Customer, if any.
+                        </p>
+                        <p className="mb-2">
+                          Unless otherwise specified in the quotation, if any, the applicable payment terms are those
+                          set out in the Company's Terms and Conditions.
                         </p>
                         <p className="mb-1">
-                          <span className="font-medium">5.2. Prohibited Activities:</span> You must not:
+                          The Customer is hereby informed and expressly agrees that any payment delay of all or part of
+                          any payable amount due to the Company at its due term shall automatically entail, and from the
+                          day following the payment date indicated on the invoice:
                         </p>
                         <ul className="ml-4 list-disc space-y-1">
-                          <li>Attempt to manipulate, jailbreak, or bypass the AI model's safety mechanisms</li>
-                          <li>Use the AI Copilot for purposes unrelated to the Qovery platform</li>
-                          <li>Exploit the feature to gain unauthorized access or perform malicious activities</li>
                           <li>
-                            Share, distribute, or repurpose AI-generated content in ways that violate applicable laws or
-                            third-party rights
+                            The forfeiture of the term of all amounts payable by the Customer and their immediate
+                            payability, regardless of the terms of payment that had been provided;
+                          </li>
+                          <li>The immediate suspension of the AI Service until full payment of all amounts due;</li>
+                          <li>
+                            If the Customer is a professional, invoicing of a late payment interest, for the Company's
+                            benefit, at the rate of 3 times the legal interest rate, calculated on the total of all
+                            amounts due by the Customer, and a flat indemnity of 40 euros as recovery fees, without
+                            prejudice of any further compensation in the event effective recovery fees should be higher
+                            than this amount.
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div>
+                        <p className="mb-2 font-semibold text-neutral-400">7. Intellectual property rights</p>
+                        <p className="mb-2">
+                          <span className="font-medium">7.1 Intellectual property rights of the Company:</span> The
+                          systems, software, structures, infrastructures, databases and content (text, images, graphics,
+                          music, logos, trademarks, databases, etc.) used by the Company on the Platform, are protected
+                          by all intellectual property rights, or rights for the creators of databases, in force. Any
+                          dismantling, decompilation, deciphering, extracting, reusing, copying and, more generally, any
+                          reproduction, representation, publishing or use of all or part of any of these items, without
+                          the Company's authorization, is strictly prohibited and could lead to prosecution.
+                        </p>
+                        <p className="mb-2">
+                          The license granted to the Customer and the Users for the duration specified in the article
+                          "Duration of the AI Service", which is non-exclusive, personal and non-transferable, does not
+                          entail any transfer of ownership.
+                        </p>
+                        <p className="mb-2">
+                          <span className="font-medium">7.2 Intellectual Property of the Customers:</span> The purpose
+                          of the AI Service is to assist the Customers in deploying their Applications.
+                        </p>
+                        <p className="mb-2">
+                          In order to use the AI Service, the Customer must provide instructions to the AI tool by
+                          uploading content to the Platform ("Content").
+                        </p>
+                        <p>
+                          Customers acknowledge and accept that through placing Content on the Platform, they
+                          voluntarily provide access to their code and data related to their Applications. This access
+                          does not confer to the Company any intellectual property rights relating to the Customer's
+                          code, Content and Applications, which remain entirely and exclusively the property of the
+                          Customer.
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="mb-2 font-semibold text-neutral-400">8. Company's obligations</p>
+                        <p className="mb-1">
+                          The Company undertakes to ensure that the results of its use of the AI Service comply with the
+                          Company's obligations under the General Terms and Conditions, and in particular:
+                        </p>
+                        <ul className="ml-4 list-disc space-y-1">
+                          <li>Not infringe in any way on the rights of third parties;</li>
+                          <li>Not contain any vulnerabilities or security flaws.</li>
+                        </ul>
+                        <p className="mt-2">
+                          The Company undertakes, to the extent possible, to assist the Customer in fulfilling its
+                          obligations in accordance with applicable regulations, in particular Regulation (EU) 2024/
+                          1689 of the European Parliament and of the Council of June 13, 2024, laying down harmonized
+                          rules concerning artificial intelligence (the "AI Regulation"). In this regard, the Company
+                          undertakes to cooperate in good faith with the Customer for any request related to compliance
+                          with the AI Regulation.
+                        </p>
+                        <p className="mt-2">
+                          In the event of the discovery of an incident, risk, or non-compliance related to data or
+                          development practices, the Company will immediately inform the Customer by any appropriate
+                          written means and propose appropriate corrective measures.
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="mb-2 font-semibold text-neutral-400">9. Customer's obligations</p>
+                        <p className="mb-2">
+                          <span className="font-medium">8.1 Concerning the provision of information:</span> The Customer
+                          undertakes to provide the Company with all the information required to activate and use the AI
+                          Service.
+                        </p>
+                        <p className="mb-2">
+                          <span className="font-medium">8.2 Concerning the Customer's account:</span> The Customer is
+                          solely responsible for creating access for Users and for setting their access rights to the AI
+                          Service.
+                        </p>
+                        <p className="mb-2">
+                          The Customer must immediately contact the Company using the contact details provided in
+                          article "Company information" if they find that their account has been used to use the AI
+                          Service without their knowledge. The Customer acknowledges that the Company shall have the
+                          right to take all appropriate measures in such a case.
+                        </p>
+                        <p className="mb-2">
+                          <span className="font-medium">8.3 Concerning the use of the AI Service:</span> The Customer is
+                          responsible for the use of the AI Service by the Users and any information they share in this
+                          context. They are also responsible for the use of the AI Service and any information shared by
+                          Users including as Content. The Customer undertakes to ensure that the AI Service is used
+                          exclusively by them and/or Users, who are subject to the same obligations as the Customer in
+                          their use of the AI Service.
+                        </p>
+                        <p className="mb-2">
+                          The Company shall not be held liable for the use of the AI Service by the Customer and/or
+                          Users, nor for any harmful consequences of such use for the Customer or third parties.
+                          Furthermore, the Company cannot be held liable for any use or any decision made by the
+                          Customer on the basis of their use of the AI Service, it is reminded that the AI Service is
+                          only an assistance tool.
+                        </p>
+                        <p className="mb-2">
+                          It is the responsibility of the Customer and Users to exercise discretion in interpreting and
+                          using this information generated by the AI Service.
+                        </p>
+                        <p className="mb-2">
+                          The Customer acknowledges that AI systems may be subject to bias and that this may potentially
+                          affect the results, recommendations, or decisions generated by the AI Service.
+                        </p>
+                        <p className="mb-2">
+                          The Company does not wish the AI Service to be used for high-risk purposes and does not wish
+                          to be a provider of high-risk AI. Consequently:
+                        </p>
+                        <ul className="ml-4 list-disc space-y-1">
+                          <li>
+                            the Customer shall refrain from modifying the AI Service and/or using it for high-risk
+                            purposes,
+                          </li>
+                          <li>
+                            the Customer shall refrain from using the AI Service for any purpose indicated as high-risk
+                            by the regulations on AI.
                           </li>
                         </ul>
                         <p className="mt-2">
-                          <span className="font-medium">5.3. Confirmation of Actions:</span> You are responsible for
-                          reviewing and confirming all actions proposed by the AI Copilot before execution. The
-                          confirmation step is a critical safeguard that you must not circumvent.
+                          The Customer undertakes to comply with the conditions of use set forth in the Anthropic's
+                          Terms of Service (
+                          <a
+                            href="https://www.anthropic.com/legal/commercial-terms"
+                            className="text-brand-500 hover:underline"
+                          >
+                            https://www.anthropic.com/legal/commercial-terms
+                          </a>
+                          ).
                         </p>
-                      </div>
-
-                      <div>
-                        <p className="mb-2 font-semibold text-neutral-400">6. Limitations of Liability</p>
-                        <p className="mb-2">
-                          <span className="font-medium">6.1. AI-Generated Responses:</span> The AI Copilot provides
-                          suggestions and executes actions based on AI-generated interpretations. Qovery makes no
-                          warranties regarding the accuracy, completeness, or appropriateness of AI-generated responses.
-                        </p>
-                        <p className="mb-1">
-                          <span className="font-medium">6.2. User Accountability:</span> You acknowledge and agree that:
+                        <p className="mb-1 mt-2">
+                          The Customer undertakes not to use the AI Service for purposes other than those for which it
+                          was designed, and in particular to:
                         </p>
                         <ul className="ml-4 list-disc space-y-1">
-                          <li>You bear sole responsibility for all actions taken using the AI Copilot</li>
+                          <li>engage in any illegal or fraudulent activity,</li>
+                          <li>undermine public order and morality,</li>
+                          <li>infringe the rights of third parties in any way whatsoever,</li>
+                          <li>violate any contractual, legislative or regulatory provision,</li>
                           <li>
-                            Qovery is not liable for any damages, losses, or service disruptions resulting from AI
-                            Copilot usage, including but not limited to: misconfigured resources, unintended deletions
-                            or modifications, service interruptions, or data loss
+                            engage in any activity likely to interfere with a third party's computer system, in
+                            particular for the purpose of violating its integrity or security,
+                          </li>
+                          <li>promote their services and/or websites or those of a third party,</li>
+                          <li>
+                            assist or incite a third party to commit one or more of the acts or activities listed above.
+                          </li>
+                        </ul>
+                        <p className="mb-1 mt-2">The Customer also refrains from:</p>
+                        <ul className="ml-4 list-disc space-y-1">
+                          <li>
+                            copying, modifying or misappropriating any element belonging to the Company or any concepts
+                            it exploits within the framework of the AI Service,
+                          </li>
+                          <li>
+                            engaging in any behavior likely to interfere with or hijack the Company's computer systems
+                            or undermine its computer security measures,
+                          </li>
+                          <li>infringing Company's financial, commercial or moral rights and interests,</li>
+                          <li>
+                            marketing, transferring or otherwise giving access in any way whatsoever to the AI Service,
+                            to information hosted on the Platform or to any element belonging to the Company.
                           </li>
                         </ul>
                         <p className="mt-2">
-                          <span className="font-medium">6.3. No Guarantee of Safeguards:</span> While Qovery implements
-                          safeguards and confirmation mechanisms, you acknowledge that no system is infallible, and you
-                          assume all risk associated with using the AI Copilot.
+                          The quality of the AI Service depends directly on the clarity of the Content uploaded by the
+                          Customer.
                         </p>
                         <p className="mt-2">
-                          <span className="font-medium">6.4. AS-IS Provision:</span> THE AI COPILOT IS PROVIDED "AS IS"
-                          AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED.
+                          The Customer is solely responsible for Content of any kind that they upload using the AI
+                          Service, including the accuracy and completeness of the Content, and the Company cannot be
+                          held liable in any way for any errors, typos, omissions or information that may mislead the AI
+                          Service.
+                        </p>
+                        <p className="mb-1 mt-2">
+                          The Customer agrees not to upload any Content (this list is not exhaustive):
+                        </p>
+                        <ul className="ml-4 list-disc space-y-1">
+                          <li>
+                            infringing public order and morality (pornographic, obscene, indecent, shocking or
+                            unsuitable for a family audience, defamatory, abusive, violent, racist, xenophobic or
+                            revisionist),
+                          </li>
+                          <li>
+                            infringing the rights of third parties (counterfeit content, infringement of personality
+                            rights, etc.) and more generally violating a contractual, legislative or regulatory
+                            provision,
+                          </li>
+                          <li>prejudicial to third parties in any way whatsoever,</li>
+                          <li>harmful to the computer systems of third parties.</li>
+                        </ul>
+                        <p className="mt-2">
+                          The Customer shall indemnify the Company against any claim and/or action that may be brought
+                          against it as a result of the breach of any of the Customer's obligations. The Customer shall
+                          indemnify the Company for any loss suffered and reimburse the Company for any sums it may have
+                          to bear as a result.
                         </p>
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">7. Suspension and Termination Rights</p>
+                        <p className="mb-2 font-semibold text-neutral-400">9 End of AI Service</p>
                         <p className="mb-2">
-                          <span className="font-medium">7.1. Qovery's Rights:</span> Qovery reserves the right, at its
-                          sole discretion and without prior notice, to suspend or revoke access to the AI Copilot
-                          feature for your organization, suspend or terminate your Qovery account and services, or
-                          investigate suspected violations of these AI Terms.
+                          The Customer may terminate the AI Service by going directly to the Platform, in the settings
+                          of their account, and deactivate the AI Service. The AI Service can only be deactivated by
+                          administrator accounts. The Customer and/or the users no longer have access to the AI Service
+                          once deactivated.
                         </p>
                         <p>
-                          <span className="font-medium">7.2. Grounds for Suspension:</span> Actions that may result in
-                          suspension or termination include, but are not limited to: attempts to jailbreak, manipulate,
-                          or bypass AI model constraints, abusive or malicious use, violations of applicable laws, or
-                          any violation of these AI Terms or the Qovery Terms of Service.
+                          The AI Service will be automatically terminated with the end of the Company's services in
+                          accordance with the General Terms and Conditions.
                         </p>
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">8. Changes to These Terms</p>
-                        <p>
-                          Qovery may modify these AI Terms at any time. Continued use of the AI Copilot after changes
-                          constitutes acceptance of the modified terms. Material changes will be communicated through
-                          the Qovery platform or via email.
+                        <p className="mb-2 font-semibold text-neutral-400">10 Sanctions in the event of breach</p>
+                        <p className="mb-1">
+                          In the event of a breach of any of the Customer's obligations under the AI Service Terms and
+                          Conditions, the Company may:
+                        </p>
+                        <ul className="ml-4 list-disc space-y-1">
+                          <li>suspend or terminate the Customer's access to the AI Service,</li>
+                          <li>publish on the Platform any information message the Company deems useful,</li>
+                          <li>
+                            notify any competent authority, cooperate with it and provide it with any information that
+                            may be useful in investigating and punishing illegal or illicit activities,
+                          </li>
+                          <li>take any legal action.</li>
+                        </ul>
+                        <p className="mt-2">
+                          These sanctions are without prejudice to any damages that the Company may claim from the
+                          Customer.
+                        </p>
+                        <p className="mt-2">
+                          The Company will request the Customer by any useful written means to remedy the breach within
+                          a maximum period of 15 calendar days. AI Service will be terminated at the end of this period
+                          if the breach is not remedied, without any right for the Customer to be reimbursed for any
+                          prepaid fees.
                         </p>
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">9. Data and Privacy</p>
+                        <p className="mb-2 font-semibold text-neutral-400">
+                          11 Modification of AI Service Terms and Conditions
+                        </p>
                         <p className="mb-2">
-                          <span className="font-medium">9.1. Data Usage:</span> Information processed through the AI
-                          Copilot, including queries, commands, and platform context, may be used to provide the service
-                          and improve feature functionality.
+                          The Company may modify the AI Service Terms and Conditions at any time and will inform the
+                          Customer by any pertinent channel.
+                        </p>
+                        <p className="mb-2">
+                          Modified AI Service Terms and Conditions apply when the Customer's subscription is renewed.
+                        </p>
+                        <p className="mb-2">
+                          Any Customer who does not agree with the amended AI Service Terms and Conditions must
+                          unsubscribe from the AI Service according to the provisions set out in Article "End of AI
+                          Service".
                         </p>
                         <p>
-                          <span className="font-medium">9.2. Retention:</span> Conversation history and AI interactions
-                          are stored in accordance with Qovery's data retention policies and applicable privacy
-                          regulations.
-                        </p>
-                      </div>
-
-                      <div>
-                        <p className="mb-2 font-semibold text-neutral-400">10. Severability</p>
-                        <p>
-                          If any provision of these AI Terms is found to be unenforceable or invalid, that provision
-                          will be limited or eliminated to the minimum extent necessary, and the remaining provisions
-                          will remain in full force and effect.
+                          If the Customer uses the AI Service after the entry into force of the modified AI Service
+                          Terms and Conditions, the Company considers that the Customer has accepted them.
                         </p>
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">11. Governing Law</p>
-                        <p>
-                          These AI Terms are governed by the same laws and jurisdiction provisions as the Qovery Terms
-                          of Service.
+                        <p className="mb-2 font-semibold text-neutral-400">12 Consumer Mediation</p>
+                        <p className="mb-2">
+                          In the event of any dispute with the Company, in relation to these AI Service Terms and
+                          Conditions, individual Customers have the right to seek recourse, free of charge, to a
+                          consumer mediator, for purposes of finding an amicable settlement, pursuant to articles L611-1
+                          et seq. and articles R152-1 et seq. of the French Consumer Code.
                         </p>
-                      </div>
-
-                      <div>
-                        <p className="mb-2 font-semibold text-neutral-400">12. Contact</p>
-                        <p>
-                          For questions regarding these AI Terms, please contact:{' '}
-                          <a href="mailto:support@qovery.com" className="text-brand-500 hover:underline">
-                            support@qovery.com
+                        <p className="mb-1">
+                          To this end, individual Customers may contact the following consumer mediator:
+                        </p>
+                        <p className="mt-2">
+                          Centre de médiation de la consommation de conciliateurs de justice (CM2C)
+                          <br />
+                          Postal address: 14 rue Saint Jean 75017 Paris
+                          <br />
+                          Phone : 06 09 20 48 86
+                          <br />
+                          <a href="https://www.cm2c.net" className="text-brand-500 hover:underline">
+                            https://www.cm2c.net
                           </a>
                         </p>
                       </div>
 
-                      <div className="border-t border-neutral-250 pt-4">
-                        <p className="font-medium text-neutral-400">
-                          By clicking "I Accept" and enabling the AI Copilot, you acknowledge that you:
-                        </p>
-                        <ul className="ml-4 mt-2 list-disc space-y-1">
-                          <li>Have read and understood these AI Copilot Additional Terms</li>
-                          <li>Have the authority to bind your organization to these terms</li>
-                          <li>Accept these terms on behalf of your organization and all its users</li>
-                          <li>Understand the risks associated with AI-assisted operations</li>
-                          <li>Agree to use the AI Copilot responsibly and in compliance with these terms</li>
-                        </ul>
+                      <div>
+                        <p className="mb-2 font-semibold text-neutral-400">13 Applicable law</p>
+                        <p>The AI Service Terms and Conditions are governed by French law.</p>
                       </div>
                     </div>
                   </div>

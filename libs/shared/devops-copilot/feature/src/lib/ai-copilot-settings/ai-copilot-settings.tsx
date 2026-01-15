@@ -1,5 +1,7 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Organization } from 'qovery-typescript-axios'
+import { useAuth } from '@qovery/shared/auth'
+import { useUserAccount } from '@qovery/shared/iam/feature'
 import { useAICopilotConfig } from '../hooks/use-ai-copilot-config/use-ai-copilot-config'
 import { useAICopilotRecurringTasks } from '../hooks/use-ai-copilot-recurring-tasks/use-ai-copilot-recurring-tasks'
 import { useDeleteAICopilotRecurringTask } from '../hooks/use-delete-ai-copilot-recurring-task/use-delete-ai-copilot-recurring-task'
@@ -16,6 +18,10 @@ export interface AICopilotSettingsProps {
 export function AICopilotSettings(props: AICopilotSettingsProps) {
   const { organization } = props
   const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot-config-panel')
+
+  const { data: userAccount } = useUserAccount()
+  const { user: authUser } = useAuth()
+  const userEmail = userAccount?.communication_email ?? authUser?.email
 
   const { data: configData, isLoading: isLoadingConfig } = useAICopilotConfig({
     organizationId: organization.id,
@@ -38,7 +44,7 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
   })
 
   const handleToggleCopilot = (enabled: boolean) => {
-    updateConfigMutation.mutate({ enabled, readOnly: true })
+    updateConfigMutation.mutate({ enabled, readOnly: true, userEmail })
   }
 
   if (!isDevopsCopilotPanelFeatureFlag) {

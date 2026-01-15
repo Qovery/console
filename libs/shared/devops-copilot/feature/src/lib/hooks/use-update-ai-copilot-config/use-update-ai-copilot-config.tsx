@@ -11,12 +11,13 @@ export function useUpdateAICopilotConfig({ organizationId, instructions }: UseUp
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ enabled, readOnly }: { enabled: boolean; readOnly: boolean }) =>
+    mutationFn: ({ enabled, readOnly, userEmail }: { enabled: boolean; readOnly: boolean; userEmail?: string }) =>
       mutations.updateOrgConfig({
         organizationId,
         enabled,
         readOnly,
         instructions: instructions || '',
+        userEmail,
       }),
     onMutate: async ({ readOnly }) => {
       await queryClient.cancelQueries({
