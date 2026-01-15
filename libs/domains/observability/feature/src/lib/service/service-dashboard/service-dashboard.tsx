@@ -147,11 +147,7 @@ function ServiceDashboardContent() {
                 setIsLiveUpdateEnabled(!isLiveUpdateEnabled)
               }}
             >
-              <Icon
-                iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'}
-                iconStyle="regular"
-                className="relative top-[1px]"
-              />
+              <Icon iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'} iconStyle="regular" />
               Live
             </Button>
           </Tooltip>

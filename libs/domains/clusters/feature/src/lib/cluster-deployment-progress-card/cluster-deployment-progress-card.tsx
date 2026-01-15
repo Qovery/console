@@ -71,13 +71,7 @@ function Item({ cluster, project }: { cluster: Cluster; project: Project }) {
         <AccordionPrimitive.Trigger className="group relative flex w-full items-center justify-between gap-4 overflow-hidden bg-white p-4 text-sm shadow-sm outline-none [&:only-child]:rounded-xl">
           <div className="flex shrink-0 items-center gap-2 text-neutral-400">
             <span aria-hidden="true" className="inline-flex h-[14px] w-[14px] items-center justify-center">
-              <svg
-                className="relative top-[1px] -rotate-90"
-                width="14"
-                height="14"
-                viewBox="0 0 14 14"
-                role="presentation"
-              >
+              <svg className="-rotate-90" width="14" height="14" viewBox="0 0 14 14" role="presentation">
                 <circle
                   cx="7"
                   cy="7"

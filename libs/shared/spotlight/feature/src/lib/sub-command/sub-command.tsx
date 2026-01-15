@@ -161,7 +161,7 @@ export function SubCommand({
               </CustomKbd>
               <span className="mx-0.5 block h-3 w-[1px] bg-neutral-250"></span>
               <CustomKbd className="w-4 text-sm">
-                <span className="relative top-[1px]">{metaKey}</span>
+                <span>{metaKey}</span>
               </CustomKbd>
               <CustomKbd className="w-4">K</CustomKbd>
             </Button>

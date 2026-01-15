@@ -709,7 +709,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                           inputRef.current?.focus()
                         }}
                       >
-                        <Icon iconName="arrow-turn-down-right" iconStyle="regular" className="relative top-[1px]" />
+                        <Icon iconName="arrow-turn-down-right" iconStyle="regular" />
                         Confirm search
                       </CommandItem>
                     </CommandGroup>
