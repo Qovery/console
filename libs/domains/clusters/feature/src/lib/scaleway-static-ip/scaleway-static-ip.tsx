@@ -159,7 +159,10 @@ export function ScalewayStaticIp({
           </div>
         )}
 
-        <ExternalLink size="xs" href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features">
+        <ExternalLink
+          size="xs"
+          href="https://www.qovery.com/docs/configuration/integrations/kubernetes/scaleway/managed#static-ip-for-egress-traffic"
+        >
           Documentation link
         </ExternalLink>
       </div>
