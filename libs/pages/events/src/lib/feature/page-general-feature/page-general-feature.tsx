@@ -223,7 +223,7 @@ export function PageGeneralFeature() {
 
   return (
     <PageGeneral
-      events={eventsData?.events || eventsFactoryMock(30)}
+      events={eventsData?.events ?? []}
       organizationMaxLimitReached={eventsData?.organization_max_limit_reached ?? false}
       isLoading={isLoading}
       onNext={onNext}
