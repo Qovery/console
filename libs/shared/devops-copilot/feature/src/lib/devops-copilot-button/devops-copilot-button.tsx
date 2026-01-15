@@ -33,7 +33,7 @@ export function DevopsCopilotButton() {
       })}
     >
       <span className="flex items-center gap-1.5 text-neutral-400 dark:text-white">
-        <Icon iconName="sparkles" iconStyle="light" className="relative text-sm text-brand-500 dark:text-white" />
+        <Icon iconName="sparkles" iconStyle="light" className="text-sm text-brand-500 dark:text-white" />
         AI Copilot
         <Tooltip
           content="This is an experimental feature. Functionality may change, and billing terms are not final."

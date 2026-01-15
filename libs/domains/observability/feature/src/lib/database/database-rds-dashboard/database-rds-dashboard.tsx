@@ -76,11 +76,7 @@ function DatabaseRdsDashboardContent() {
                 setIsLiveUpdateEnabled(!isLiveUpdateEnabled)
               }}
             >
-              <Icon
-                iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'}
-                iconStyle="regular"
-                className="relative"
-              />
+              <Icon iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'} iconStyle="regular" />
               Live
             </Button>
           </Tooltip>
