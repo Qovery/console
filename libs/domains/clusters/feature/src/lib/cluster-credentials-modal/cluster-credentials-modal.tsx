@@ -428,11 +428,11 @@ export function ClusterCredentialsModal({
                     <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
                       <div>
                         <span className="select-none">$ </span>
-                        curl https://hub.qovery.com/files/create_credentials_gcp.sh | \ bash -s -- $GOOGLE_CLOUD_PROJECT
+                        curl https://setup.qovery.com/create_credentials_gcp.sh | \ bash -s -- $GOOGLE_CLOUD_PROJECT
                         qovery_role qovery-service-account{' '}
                       </div>
                       <CopyButton
-                        content=" curl https://hub.qovery.com/files/create_credentials_gcp.sh | \
+                        content=" curl https://setup.qovery.com/create_credentials_gcp.sh | \
 bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                       />
                     </div>
@@ -755,7 +755,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
             .with(
               { cloudProviderLocal: 'AZURE', watchAzureApplicationId: P.string, watchAzureSubscriptionId: P.string },
               ({ watchAzureApplicationId, watchAzureSubscriptionId }) => {
-                const snippet = `bash <(curl -s https://hub.qovery.com/files/create_credentials_azure.sh) --qovery-app-id ${watchAzureApplicationId}  --subscription-id ${watchAzureSubscriptionId}`
+                const snippet = `bash <(curl -s https://setup.qovery.com/create_credentials_azure.sh) --qovery-app-id ${watchAzureApplicationId}  --subscription-id ${watchAzureSubscriptionId}`
 
                 return (
                   <>
