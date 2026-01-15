@@ -100,7 +100,7 @@ export function ContainerRegistryForm({
   const isClusterDemo = cluster?.is_demo
   const isClusterOnPremise = cluster?.cloud_provider === 'ON_PREMISE'
 
-  const snippet = `curl https://hub.qovery.com/files/create_credentials_azure.sh | bash -s -- --qovery-app-id ${watchAzureApplicationId} --subscription-id ${watchAzureSubscriptionId}`
+  const snippet = `curl https://setup.qovery.com/create_credentials_azure.sh | bash -s -- --qovery-app-id ${watchAzureApplicationId} --subscription-id ${watchAzureSubscriptionId}`
 
   return (
     <div className="flex flex-col gap-y-4">
