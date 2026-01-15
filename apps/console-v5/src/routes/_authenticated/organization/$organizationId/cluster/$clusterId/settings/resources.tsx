@@ -9,11 +9,12 @@ import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { SCW_CONTROL_PLANE_FEATURE_ID } from '@qovery/domains/cloud-providers/feature'
 import {
   ClusterMigrationModal,
+  ClusterResourcesSettings,
   useCluster,
   useEditCluster,
   useUpdateKarpenterPrivateFargate,
 } from '@qovery/domains/clusters/feature'
-import { ClusterResourcesSettingsFeature, SettingsHeading } from '@qovery/shared/console-shared'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type ClusterResourcesEdit, type SCWControlPlaneFeatureType } from '@qovery/shared/interfaces'
 import { Button, Section, useModal } from '@qovery/shared/ui'
 
@@ -171,7 +172,7 @@ function ClusterResourcesSettingsForm({ cluster }: { cluster: Cluster }) {
         <Section className="p-8">
           <SettingsHeading title="Resources settings" />
           <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
-            <ClusterResourcesSettingsFeature
+            <ClusterResourcesSettings
               cluster={cluster}
               cloudProvider={cluster.cloud_provider}
               clusterRegion={cluster.region}
