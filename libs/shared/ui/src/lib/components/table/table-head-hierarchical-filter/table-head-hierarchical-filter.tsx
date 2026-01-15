@@ -267,13 +267,15 @@ export function TableHeadHierarchicalFilter({
     if (!isRootLevel) {
       items.push({
         name: 'Back',
-        contentLeft: <Icon iconName="arrow-left" className="delete-hover text-ssm text-neutral-350" />,
+        contentLeft: (
+          <Icon iconName="arrow-left" className="text-ssm text-neutral-350 hover:bg-blue-400 hover:text-red-600" />
+        ),
         onClick: (e) => {
           // Prevent menu from auto-closing
           e.keepOpen = true
           handleBack()
         },
-        textClassName: 'text-neutral-350 delete-hover font-light',
+        textClassName: 'text-neutral-350 hover:text-red-600 hover:bg-blue-400 font-light',
       })
     }
 

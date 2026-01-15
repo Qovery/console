@@ -3,7 +3,7 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
 import { type DecodedValueMap } from 'use-query-params'
 import { Button, Icon, type SelectedItem, type TableFilterProps, Truncate } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
 
 export interface CustomFilterProps {
@@ -192,24 +192,20 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
             .map((badge, index, array) => {
               const isFirst = index === array.length - 1
               const isLast = index === 0
-              const relativePositionClassName: (index: number, arrayLength: number) => string = (
-                index: number,
-                arrayLength: number
-              ): string => {
-                if (arrayLength === 2) {
-                  return index === 0 ? 'right-2.5' : ''
-                } else if (arrayLength === 3) {
-                  return index === 0 ? 'right-5' : index === 1 ? 'right-2.5' : ''
-                } else if (arrayLength === 4) {
-                  return index === 0 ? 'right-8' : index === 1 ? 'right-5' : index === 2 ? 'right-2.5' : ''
-                }
-                return ''
-              }
 
               return (
                 <div
                   key={badge.key}
-                  className={clsx('group relative flex', relativePositionClassName(index, array.length))}
+                  className={twMerge(
+                    clsx('group relative flex', {
+                      'right-2.5':
+                        (array.length === 2 && index === 0) ||
+                        (array.length === 3 && index === 1) ||
+                        (array.length === 4 && index === 2),
+                      'right-5': (array.length === 3 && index === 0) || (array.length === 4 && index === 1),
+                      'right-8': array.length === 4 && index === 0,
+                    })
+                  )}
                 >
                   <Button
                     variant="surface"
@@ -228,7 +224,11 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                     }
                   >
                     {badge.displayedName}: <Truncate text={badge.value} truncateLimit={23} />
-                    <button onClick={() => deleteFilter(badge.key, setFilter)} aria-label="Delete filter">
+                    <button
+                      className="relative top-[1px]"
+                      onClick={() => deleteFilter(badge.key, setFilter)}
+                      aria-label="Delete filter"
+                    >
                       <Icon iconName="xmark" className="text-sm leading-4 text-neutral-300 hover:text-neutral-400" />
                     </button>
                   </Button>
