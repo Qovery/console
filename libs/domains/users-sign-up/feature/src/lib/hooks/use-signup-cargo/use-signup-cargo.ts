@@ -9,6 +9,11 @@ export interface CargoSignupPayload {
   job_title: string
   signup_source: string
   phone: string
+  utm_source?: string | null
+  utm_medium?: string | null
+  utm_campaign?: string | null
+  utm_term?: string | null
+  utm_content?: string | null
 }
 
 const CARGO_API_URL = 'https://api.getcargo.io/v1/models/7e42e545-bdee-438b-b2dc-3799e95bf046/records/ingest'
