@@ -267,7 +267,7 @@ export function TableHeadHierarchicalFilter({
     if (!isRootLevel) {
       items.push({
         name: 'Back',
-        contentLeft: <Icon name={IconAwesomeEnum.ARROW_LEFT} className="delete-hover text-ssm text-neutral-350" />,
+        contentLeft: <Icon iconName="arrow-left" className="delete-hover text-ssm text-neutral-350" />,
         onClick: (e) => {
           // Prevent menu from auto-closing
           e.keepOpen = true
@@ -306,14 +306,14 @@ export function TableHeadHierarchicalFilter({
         // * for existing selected item when using the 'Back' button
         contentLeft: (
           <Icon
-            name={IconAwesomeEnum.CHECK}
+            iconName="check"
             className={`text-sm ${('ALL' === item.value && !menuItemSelected) || menuItemSelected?.value === item.value ? 'text-green-400' : 'text-transparent'}`}
           />
         ),
         // Show ">" icon for all items to indicate they are clickable
         contentRight: (
           <Icon
-            name={IconAwesomeEnum.ARROW_RIGHT}
+            iconName="arrow-right"
             // Adding menu-item__name class to have same hover css added on menu items
             className={`text-sm text-neutral-400 ${!item.isLeaf ? 'menu-item__name text-neutral-400' : 'text-transparent'}`}
           />

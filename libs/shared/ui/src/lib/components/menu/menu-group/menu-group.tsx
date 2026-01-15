@@ -119,7 +119,7 @@ export function MenuGroup(props: MenuGroupProps) {
         <div className="pb-2 pl-2 pr-2">
           <div className="rounded-sm border border-neutral-250 bg-neutral-100 p-5 text-center text-neutral-350">
             <div>
-              <Icon name="icon-solid-magnifying-glass" className="text-neutral-350" />
+              <Icon iconName="magnifying-glass" className="text-neutral-350" />
             </div>
             <div className="text-sm">{props?.emptyResultText}</div>
           </div>

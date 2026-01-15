@@ -1,4 +1,4 @@
-import { OrganizationEventOrigin, OrganizationEventType } from 'qovery-typescript-axios'
+import { OrganizationEventOrigin, OrganizationEventType, PlanEnum } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageGeneral, { type PageGeneralProps } from './page-general'
@@ -132,13 +132,13 @@ describe('PageGeneral', () => {
     const customOrganization = {
       id: 'org-1',
       name: 'Test Org',
+      plan: PlanEnum.FREE,
       organization_plan: {
         audit_logs_retention_in_days: 90,
       },
+      created_at: '2022-07-28T15:04:33.511216Z',
     }
-    renderWithProviders(
-      <PageGeneral {...props} isLoading={false} events={[]} organization={customOrganization as any} />
-    )
+    renderWithProviders(<PageGeneral {...props} isLoading={false} events={[]} organization={customOrganization} />)
 
     screen.getByText(/we retain logs for a maximum of 90 days/i)
   })
@@ -147,15 +147,17 @@ describe('PageGeneral', () => {
     const customOrganization = {
       id: 'org-1',
       name: 'Test Org',
+      plan: PlanEnum.FREE,
       organization_plan: {
         audit_logs_retention_in_days: 60,
       },
+      created_at: '2022-07-28T15:04:33.511216Z',
     }
     renderWithProviders(
       <PageGeneral
         {...props}
         organizationMaxLimitReached={true}
-        organization={customOrganization as any}
+        organization={customOrganization}
         events={eventsFactoryMock(10)}
       />
     )
