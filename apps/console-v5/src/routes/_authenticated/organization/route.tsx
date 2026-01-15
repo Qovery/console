@@ -248,14 +248,14 @@ function useFullWidthLayout(): boolean {
   )
 }
 
-const hiddenLayoutRouteIds: FileRouteTypes['id'][] = [
+const bypassLayoutRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/cluster/create/$slug',
 ]
 
-function useHiddenLayout(): boolean {
+function useBypassLayout(): boolean {
   const matches = useMatches()
   return matches.some((match) =>
-    hiddenLayoutRouteIds.some((routeId) => match.routeId === routeId || match.routeId?.startsWith(routeId + '/'))
+    bypassLayoutRouteIds.some((routeId) => match.routeId === routeId || match.routeId?.startsWith(routeId + '/'))
   )
 }
 
@@ -263,9 +263,9 @@ function OrganizationRoute() {
   const navigationContext = useNavigationContext()
   const activeTabId = useActiveTabId(navigationContext)
   const needsFullWidth = useFullWidthLayout()
-  const hiddenLayout = useHiddenLayout()
+  const bypassLayout = useBypassLayout()
 
-  if (hiddenLayout) {
+  if (bypassLayout) {
     return <Outlet />
   }
 

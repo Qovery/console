@@ -1,5 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import { type CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
+import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
 import {
@@ -28,25 +29,30 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting }: Cluster
   })
   const sortedCredentials = credentials.sort((a, b) => a.name.localeCompare(b.name))
 
-  const openCredentialsModal = (id?: string, onChange?: (e: string | string[]) => void) => {
-    openModal({
-      content: (
-        <ClusterCredentialsModal
-          organizationId={organizationId}
-          clusterId={clusterId}
-          onClose={(response) => {
-            response && onChange?.(response.id)
-            closeModal()
-          }}
-          credential={sortedCredentials.find((currentCredentials: ClusterCredentials) => currentCredentials.id === id)}
-          cloudProvider={cloudProvider}
-        />
-      ),
-      options: {
-        width: 680,
-      },
-    })
-  }
+  const openCredentialsModal = useCallback(
+    (id?: string, onChange?: (e: string | string[]) => void) => {
+      openModal({
+        content: (
+          <ClusterCredentialsModal
+            organizationId={organizationId}
+            clusterId={clusterId}
+            onClose={(response) => {
+              response && onChange?.(response.id)
+              closeModal()
+            }}
+            credential={sortedCredentials.find(
+              (currentCredentials: ClusterCredentials) => currentCredentials.id === id
+            )}
+            cloudProvider={cloudProvider}
+          />
+        ),
+        options: {
+          width: 680,
+        },
+      })
+    },
+    [cloudProvider, clusterId, closeModal, openModal, organizationId, sortedCredentials]
+  )
 
   const buildCredentials = sortedCredentials.map((item: ClusterCredentials) => ({
     label: `${item.name}${'access_key_id' in item ? ` (${item.access_key_id})` : ''}`,
