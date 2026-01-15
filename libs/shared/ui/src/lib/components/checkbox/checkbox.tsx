@@ -7,44 +7,41 @@ import Icon from '../icon/icon'
 const checkboxVariants = cva(
   [
     'group',
-    'transition',
-    'bg-neutral-100',
-    'dark:bg-neutral-500',
+    'inline-flex',
+    'shrink-0',
+    'items-center',
+    'justify-center',
+    'h-4',
+    'w-4',
+    'rounded',
     'border',
-    'border-neutral-300',
-    'dark:border-neutral-350',
-    'rounded-sm',
-    'w-[18px]',
-    'h-[18px]',
-    'hover:border-2',
-    'data-[state=checked]:border',
-    'data-[state=indeterminate]:border-2',
-    'disabled:border',
-    'disabled:border-neutral-250',
+    'border-neutral',
+    'bg-surface-neutral',
+    'transition-colors',
+    'disabled:cursor-not-allowed',
+    'disabled:border-neutral',
+    'disabled:bg-surface-neutral-subtle',
+    'disabled:hover:border-neutral',
+    'disabled:data-[state=checked]:bg-surface-neutral-subtle',
+    'disabled:data-[state=checked]:border-neutral',
+    'disabled:data-[state=indeterminate]:border-neutral',
   ],
   {
     variants: {
       color: {
         brand: [
-          'hover:border-brand-500',
-          'dark:hover:border-brand-500',
-          'data-[state=checked]:bg-brand-500',
-          'dark:data-[state=checked]:bg-brand-500',
-          'data-[state=checked]:border-brand-500',
-          'dark:data-[state=checked]:border-brand-500',
-          'data-[state=indeterminate]:border-brand-500',
-          'disabled:data-[state=checked]:border-brand-300',
-          'disabled:data-[state=checked]:bg-brand-300',
-          'disabled:data-[state=indeterminate]:border-brand-300',
+          'hover:border-brand-strong',
+          'data-[state=checked]:bg-surface-brand-solid',
+          'hover:data-[state=checked]:bg-surface-brand-solidHover',
+          'data-[state=checked]:border-brand-strong',
+          'data-[state=indeterminate]:border-brand-strong',
         ],
         red: [
-          'hover:border-red-500',
-          'data-[state=checked]:bg-red-500',
-          'data-[state=checked]:border-red-500',
-          'data-[state=indeterminate]:border-red-500',
-          'disabled:data-[state=checked]:border-red-300',
-          'disabled:data-[state=checked]:bg-red-300',
-          'disabled:data-[state=indeterminate]:border-red-300',
+          'hover:border-negative-strong',
+          'data-[state=checked]:bg-surface-negative-solid',
+          'hover:data-[state=checked]:bg-surface-negative-solidHover',
+          'data-[state=checked]:border-negative-strong',
+          'data-[state=indeterminate]:border-negative-strong',
         ],
       },
     },
@@ -54,11 +51,19 @@ const checkboxVariants = cva(
   }
 )
 
-const indeterminateVariants = cva(['h-[10px]', 'w-[10px]'], {
+const indeterminateVariants = cva(['h-3', 'w-3', 'rounded-[2px]'], {
   variants: {
     color: {
-      brand: ['bg-brand-500', 'group-disabled:bg-brand-300'],
-      red: ['bg-red-500', 'group-disabled:bg-red-300'],
+      brand: [
+        'bg-surface-brand-solid',
+        'hover:bg-surface-brand-solidHover',
+        'group-disabled:bg-surface-neutral-componentHover',
+      ],
+      red: [
+        'bg-surface-negative-solid',
+        'hover:bg-surface-negative-solidHover',
+        'group-disabled:bg-surface-neutral-componentHover',
+      ],
     },
   },
   defaultVariants: {
@@ -86,7 +91,10 @@ const Checkbox = forwardRef<ElementRef<typeof CheckboxPrimitive.Root>, CheckboxP
           {props.checked === 'indeterminate' ? (
             <span className={indeterminateVariants({ color })} />
           ) : (
-            <Icon iconName="check" className="text-xs leading-[18px] text-white" />
+            <Icon
+              iconName="check"
+              className="text-xs leading-[16px] text-neutralInvert group-disabled:text-neutral-disabled"
+            />
           )}
         </span>
       </CheckboxPrimitive.Indicator>
