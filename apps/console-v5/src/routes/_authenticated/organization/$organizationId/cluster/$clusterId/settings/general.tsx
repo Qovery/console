@@ -1,8 +1,8 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { type Cluster } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
-import { ClusterGeneralSettings, SettingsHeading } from '@qovery/shared/console-shared'
+import { ClusterGeneralSettings, useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { BlockContent, Button, Callout, ExternalLink, Icon, Section } from '@qovery/shared/ui'
 

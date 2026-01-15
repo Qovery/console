@@ -1,6 +1,8 @@
-import { type ClusterCredentials } from 'qovery-typescript-axios'
+import { useParams } from '@tanstack/react-router'
+import { type CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
+import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
+import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
 import {
   CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
   CLUSTER_SETTINGS_URL,
@@ -8,21 +10,51 @@ import {
   SETTINGS_CREDENTIALS_URL,
   SETTINGS_URL,
 } from '@qovery/shared/routes'
-import { Callout, ExternalLink, Icon, InputSelect, Link, LoaderSpinner } from '@qovery/shared/ui'
+import { Callout, ExternalLink, Icon, InputSelect, Link, LoaderSpinner, useModal } from '@qovery/shared/ui'
+import { ClusterCredentialsModal } from '../cluster-credentials-modal/cluster-credentials-modal'
 
 export interface ClusterCredentialsSettingsProps {
-  openCredentialsModal: (id?: string, onChange?: (e: string | string[]) => void) => void
-  loading: boolean
-  credentials?: ClusterCredentials[]
+  cloudProvider?: CloudProviderEnum
   isSetting?: boolean
 }
 
-export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProps) {
-  const { organizationId = '', clusterId } = useParams()
-  const { credentials, openCredentialsModal, loading, isSetting } = props
+export function ClusterCredentialsSettings({ cloudProvider, isSetting }: ClusterCredentialsSettingsProps) {
+  const { organizationId = '', clusterId } = useParams({ strict: false })
   const { control, formState } = useFormContext()
+  const { openModal, closeModal } = useModal()
 
-  const buildCredentials = credentials?.map((item: ClusterCredentials) => ({
+  const { data: credentials = [], isLoading } = useCloudProviderCredentials({
+    organizationId,
+    cloudProvider,
+  })
+  const sortedCredentials = credentials.sort((a, b) => a.name.localeCompare(b.name))
+
+  const openCredentialsModal = useCallback(
+    (id?: string, onChange?: (e: string | string[]) => void) => {
+      openModal({
+        content: (
+          <ClusterCredentialsModal
+            organizationId={organizationId}
+            clusterId={clusterId}
+            onClose={(response) => {
+              response && onChange?.(response.id)
+              closeModal()
+            }}
+            credential={sortedCredentials.find(
+              (currentCredentials: ClusterCredentials) => currentCredentials.id === id
+            )}
+            cloudProvider={cloudProvider}
+          />
+        ),
+        options: {
+          width: 680,
+        },
+      })
+    },
+    [cloudProvider, clusterId, closeModal, openModal, organizationId, sortedCredentials]
+  )
+
+  const buildCredentials = sortedCredentials.map((item: ClusterCredentials) => ({
     label: `${item.name}${'access_key_id' in item ? ` (${item.access_key_id})` : ''}`,
     value: item.id,
     onClickEditable: !isSetting ? () => openCredentialsModal(item.id) : undefined,
@@ -30,7 +62,7 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
 
   return (
     <div>
-      {loading ? (
+      {isLoading ? (
         <div className="mt-2 flex justify-center">
           <LoaderSpinner className="w-4" />
         </div>
@@ -47,7 +79,7 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
                 dataTestId="input-credentials"
                 label="Credentials"
                 className="mb-3"
-                options={buildCredentials || []}
+                options={buildCredentials}
                 onChange={field.onChange}
                 value={field.value}
                 error={error?.message}

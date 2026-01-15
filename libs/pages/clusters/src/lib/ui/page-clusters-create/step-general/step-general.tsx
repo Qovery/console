@@ -4,7 +4,7 @@ import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
+import { ClusterCredentialsSettings, ClusterGeneralSettings } from '@qovery/domains/clusters/feature'
 import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_NEW_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, Callout, Heading, Icon, IconFlag, InputSelect, LoaderSpinner, Section } from '@qovery/shared/ui'
@@ -121,7 +121,7 @@ export function StepGeneral(props: StepGeneralProps) {
                     )}
                   />
 
-                  <ClusterCredentialsSettingsFeature
+                  <ClusterCredentialsSettings
                     cloudProvider={currentProvider.short_name as CloudProviderEnum}
                     isSetting={false}
                   />
