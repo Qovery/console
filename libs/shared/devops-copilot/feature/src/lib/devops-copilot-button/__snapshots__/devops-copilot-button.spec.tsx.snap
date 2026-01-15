@@ -12,7 +12,7 @@ exports[`DevopsCopilotButton should match snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-light fa-sparkles relative top-[1px] text-sm text-brand-500 dark:text-white"
+          class="fa-light fa-sparkles text-sm text-brand-500 dark:text-white"
         />
         AI Copilot
         <span

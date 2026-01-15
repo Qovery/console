@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`DockerfileSettings should match snapshot 1`] = `
 <body>
@@ -212,7 +212,7 @@ exports[`DockerfileSettings should match snapshot 1`] = `
     </div>
   </div>
   <script
-    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs/loader.js"
+    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs/loader.js"
   />
 </body>
 `;
