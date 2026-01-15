@@ -1,6 +1,7 @@
 import { MenuDivider } from '@szhsin/react-menu'
 import { type ReactNode, useEffect, useState } from 'react'
 import { sortByKey } from '@qovery/shared/util-js'
+import Icon from '../../icon/icon'
 import InputSearch from '../../inputs/input-search/input-search'
 import { MenuItem, type MenuItemProps } from '../menu-item/menu-item'
 
@@ -22,6 +23,7 @@ export interface MenuGroupProps {
   style?: object
   isFilter?: boolean
   dontOrderAlphabetically?: boolean
+  emptyResultText?: string
 }
 
 export function MenuGroup(props: MenuGroupProps) {
@@ -112,6 +114,16 @@ export function MenuGroup(props: MenuGroupProps) {
       )}
       {!isFilter && !isLast && filteredItems.length > 0 && (
         <MenuDivider className="m-0 mx-3 bg-neutral-200 dark:bg-neutral-600" />
+      )}
+      {props?.emptyResultText && (
+        <div className="pb-2 pl-2 pr-2">
+          <div className="rounded-sm border border-neutral-250 bg-neutral-100 p-5 text-center text-neutral-350">
+            <div>
+              <Icon iconName="magnifying-glass" className="text-neutral-350" />
+            </div>
+            <div className="text-sm">{props?.emptyResultText}</div>
+          </div>
+        </div>
       )}
     </div>
   )

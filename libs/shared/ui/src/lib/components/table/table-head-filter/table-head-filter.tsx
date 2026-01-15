@@ -13,6 +13,7 @@ export interface TableHeadFilterProps<T> {
   defaultData: T[]
   setFilter: Dispatch<SetStateAction<TableFilterProps[]>>
   filter: TableFilterProps[]
+  classNameTitle?: string
 }
 
 export const ALL = 'ALL'
@@ -26,7 +27,8 @@ export function createFilter<T>(
   currentFilter: string,
   setCurrentFilter: Dispatch<SetStateAction<string>>,
   setDataFilterNumber: Dispatch<SetStateAction<number>>,
-  setFilter: Dispatch<SetStateAction<TableFilterProps[]>>
+  setFilter: Dispatch<SetStateAction<TableFilterProps[]>>,
+  hideFilterNumber?: boolean
 ) {
   const keys: string[] = []
   const menus = []
@@ -48,7 +50,8 @@ export function createFilter<T>(
         setCurrentFilter,
         setDataFilterNumber,
         setFilter,
-        dataHead?.filter?.[i]
+        dataHead?.filter?.[i],
+        hideFilterNumber
       )
 
     if (menu) {
@@ -73,7 +76,8 @@ export function groupBy<T>(
   setCurrentFilter: Dispatch<SetStateAction<string>>,
   setDataFilterNumber: Dispatch<SetStateAction<number>>,
   setFilter: Dispatch<SetStateAction<TableFilterProps[]>>,
-  dataHeadFilter?: TableHeadCustomFilterProps<T>
+  dataHeadFilter?: TableHeadCustomFilterProps<T>,
+  hideFilterNumber?: boolean
 ) {
   if (dataHeadFilter?.itemsCustom) {
     // custom list without datas from array of string
@@ -168,7 +172,7 @@ export function groupBy<T>(
           className={`text-sm ${currentFilter === key ? 'text-green-400' : 'text-transparent'}`}
         />
       ),
-      contentRight: (
+      contentRight: !hideFilterNumber && (
         <span className="rounded-sm bg-neutral-200 px-1 text-xs font-bold text-neutral-350">
           {dataByKeys[key].length}
         </span>
@@ -211,7 +215,14 @@ export function groupBy<T>(
 /**
  * @deprecated Prefer TablePrimitives + tanstack-table for type-safety and documentation
  */
-export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFilter }: TableHeadFilterProps<T>) {
+export function TableHeadFilter<T>({
+  title,
+  dataHead,
+  defaultData,
+  filter,
+  setFilter,
+  classNameTitle,
+}: TableHeadFilterProps<T>) {
   const [currentFilter, setCurrentFilter] = useState(ALL)
 
   const hasFilter = filter?.some((item) => item.key === dataHead.filter?.[0].key && item.value !== ALL)
@@ -221,7 +232,12 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
 
   const key = dataHead.filter?.[0].key || ''
   useEffect(() => {
-    filter.find((item) => item.key === key && item.value !== ALL && setCurrentFilter(item.value || ALL))
+    const filterFound = filter.find((item) => item.key === key)
+    if (filterFound && filterFound.value === ALL) {
+      setCurrentFilter(ALL)
+    } else {
+      filter.find((item) => item.key === key && item.value !== ALL && setCurrentFilter(item.value || ALL))
+    }
   }, [filter])
 
   function cleanFilter(event: MouseEvent) {
@@ -236,6 +252,7 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
       })
   }
 
+  const hideFilterNumber: boolean = dataHead.filter?.some((item) => item.hideFilterNumber) || false
   const menus = createFilter(
     dataHead,
     defaultData,
@@ -243,14 +260,14 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
     currentFilter,
     setCurrentFilter,
     setDataFilterNumber,
-    setFilter
+    setFilter,
+    hideFilterNumber
   )
 
-  const hideFilterNumber: boolean = dataHead.filter?.some((item) => item.hideFilterNumber) || false
   const isDark = document.documentElement.classList.contains('dark')
 
   return (
-    <div className="flex items-center">
+    <div className={`flex items-center ${classNameTitle ?? ''}`}>
       <Menu
         open={isOpen}
         onOpen={setOpen}
@@ -258,10 +275,13 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
         width={dataHead.menuWidth || 280}
         isFilter
         trigger={
-          <div className="flex">
+          <div className="relative flex">
             {hasFilter ? (
-              <Button type="button" size="xs" className="whitespace-nowrap pr-6">
+              <Button type="button" size="xs" className="whitespace-nowrap">
                 {title} {!hideFilterNumber ? `(${dataFilterNumber})` : ''}
+                <span role="button" className="left-6 flex" onClick={(event) => cleanFilter(event)}>
+                  <Icon iconName="xmark" className="pl-2" />
+                </span>
               </Button>
             ) : (
               <Button
@@ -278,15 +298,6 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
           </div>
         }
       />
-      {hasFilter && (
-        <span
-          role="button"
-          className="relative -left-6 flex h-6 cursor-pointer items-center px-2 text-xs text-neutral-50"
-          onClick={(event) => cleanFilter(event)}
-        >
-          <Icon iconName="xmark" />
-        </span>
-      )}
     </div>
   )
 }

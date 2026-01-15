@@ -1,5 +1,6 @@
 import { Editor as CodeEditorMonaco, type EditorProps as CodeEditorMonacoProps } from '@monaco-editor/react'
 import LoaderSpinner from '../loader-spinner/loader-spinner'
+import './code-editor.scss'
 
 export interface CodeEditorProps extends CodeEditorMonacoProps {
   readOnly?: boolean

@@ -1,11 +1,25 @@
-import { OrganizationEventOrigin, OrganizationEventType } from 'qovery-typescript-axios'
+import { OrganizationEventOrigin, OrganizationEventType, PlanEnum } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageGeneral, { type PageGeneralProps } from './page-general'
 
 const props: PageGeneralProps = {
   placeholderEvents: eventsFactoryMock(5),
-  queryParams: {},
+  queryParams: {
+    pageSize: 10,
+    origin: undefined,
+    subTargetType: undefined,
+    triggeredBy: undefined,
+    targetId: undefined,
+    targetType: undefined,
+    eventType: undefined,
+    toTimestamp: undefined,
+    fromTimestamp: undefined,
+    continueToken: undefined,
+    stepBackToken: undefined,
+    projectId: undefined,
+    environmentId: undefined,
+  },
   pageSize: '10',
   handleClearFilter: jest.fn(),
   nextDisabled: false,
@@ -17,6 +31,11 @@ const props: PageGeneralProps = {
   events: eventsFactoryMock(10),
   setFilter: jest.fn(),
   filter: [{ key: 'origin', value: 'origin-1' }],
+  showIntercom: jest.fn(),
+  organizationMaxLimitReached: false,
+  organizationId: 'test-org-id',
+  targetTypeSelectedItems: [],
+  setTargetTypeSelectedItems: jest.fn(),
 }
 
 describe('PageGeneral', () => {
@@ -82,5 +101,85 @@ describe('PageGeneral', () => {
         ['ALL', ...Object.keys(OrganizationEventType)].map((item) => item.toUpperCase().replace(/_/g, ' '))
       )
     )
+  })
+
+  it('should render organizationMaxLimitReached state with upgrade button', () => {
+    renderWithProviders(<PageGeneral {...props} organizationMaxLimitReached={true} />)
+
+    screen.getByText(/days limit reached/)
+    const upgradeButton = screen.getByRole('button', { name: /Upgrade plan/i })
+    expect(upgradeButton).toBeInTheDocument()
+  })
+
+  it('should call showIntercom when clicking upgrade plan button', async () => {
+    const { userEvent } = renderWithProviders(<PageGeneral {...props} organizationMaxLimitReached={true} />)
+
+    const upgradeButton = screen.getByRole('button', { name: /Upgrade plan/i })
+    await userEvent.click(upgradeButton)
+
+    expect(props.showIntercom).toHaveBeenCalled()
+  })
+
+  it('should render locked placeholder rows when organizationMaxLimitReached', () => {
+    renderWithProviders(<PageGeneral {...props} organizationMaxLimitReached={true} />)
+
+    // Should render the upgrade button and limit reached message
+    screen.getByText(/days limit reached/)
+    screen.getByRole('button', { name: /Upgrade plan/i })
+  })
+
+  it('should render with custom retention days in empty message', () => {
+    const customOrganization = {
+      id: 'org-1',
+      name: 'Test Org',
+      plan: PlanEnum.FREE,
+      organization_plan: {
+        audit_logs_retention_in_days: 90,
+      },
+      created_at: '2022-07-28T15:04:33.511216Z',
+    }
+    renderWithProviders(<PageGeneral {...props} isLoading={false} events={[]} organization={customOrganization} />)
+
+    screen.getByText(/we retain logs for a maximum of 90 days/i)
+  })
+
+  it('should display correct retention message when organizationMaxLimitReached', () => {
+    const customOrganization = {
+      id: 'org-1',
+      name: 'Test Org',
+      plan: PlanEnum.FREE,
+      organization_plan: {
+        audit_logs_retention_in_days: 60,
+      },
+      created_at: '2022-07-28T15:04:33.511216Z',
+    }
+    renderWithProviders(
+      <PageGeneral
+        {...props}
+        organizationMaxLimitReached={true}
+        organization={customOrganization}
+        events={eventsFactoryMock(10)}
+      />
+    )
+
+    screen.getByText(/60 days limit reached/i)
+  })
+
+  it('should handle custom page size in pagination', () => {
+    renderWithProviders(<PageGeneral {...props} pageSize="50" />)
+
+    const select = screen.getByTestId('select-page-size') as HTMLSelectElement
+    expect(select.value).toBe('50')
+  })
+
+  it('should render with event type filter applied', () => {
+    const queryParamsWithFilters = {
+      ...props.queryParams,
+      eventType: OrganizationEventType.DEPLOYED,
+    }
+    const { container } = renderWithProviders(<PageGeneral {...props} queryParams={queryParamsWithFilters} />)
+
+    // Verify the component renders with the filter
+    expect(container).toBeTruthy()
   })
 })

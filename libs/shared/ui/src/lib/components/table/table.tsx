@@ -1,6 +1,12 @@
 import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
+import { type TableHeadDatePickerData, TableHeadDatePickerFilter } from './table-head-datepicker/table-head-datepicker'
 import { TableHeadFilter } from './table-head-filter/table-head-filter'
+import TableHeadHierarchicalFilter, {
+  type HierarchicalMenuItem,
+  type NavigationLevel,
+  type SelectedItem,
+} from './table-head-hierarchical-filter/table-head-hierarchical-filter'
 import TableHeadSort from './table-head-sort/table-head-sort'
 
 export interface TableFilterProps {
@@ -30,6 +36,29 @@ export interface TableHeadProps<T> {
   sort?: {
     key: string
   }
+  // This option lets display a datepicker and not show menus
+  datePickerData?: TableHeadDatePickerData
+  // This option displays a hierarchic filter
+  hierarchicalFilter?: TableHierarchicalFilterProps
+}
+
+export interface HierarchicalFilterResult {
+  items: HierarchicalMenuItem[]
+  shouldDrillDown: boolean
+  filterKey: string
+}
+
+export interface TableHierarchicalFilterProps {
+  key: string
+  initialData: HierarchicalMenuItem[]
+  initialSelectedItems?: SelectedItem[]
+  initialNavigationStack?: NavigationLevel[]
+  initialLevel?: number
+  onLoadMenusToDisplay: (selectedItems: SelectedItem[]) => Promise<HierarchicalFilterResult | null>
+  computeDisplayByLabel: (filterKey: string, selectedItem?: SelectedItem) => string
+  onSelectionChange: (selectedItems: SelectedItem[]) => void
+  onFilterChange?: (filter: TableFilterProps[], currentSelectedItems: SelectedItem[]) => SelectedItem[]
+  getEmptyResultText: (filterKey: string, selectedItem?: SelectedItem) => string
 }
 
 export interface TableHeadCustomFilterProps<T> {
@@ -78,15 +107,51 @@ export function Table<T>({
       >
         {dataHead.map(
           (
-            { title, className = 'px-4 py-2', classNameTitle = 'text-neutral-400 ', filter: hasFilter, sort },
+            {
+              title,
+              className = 'px-4 py-2',
+              classNameTitle = 'text-neutral-400 ',
+              filter: hasFilter,
+              sort,
+              datePickerData,
+              hierarchicalFilter,
+            },
             index
           ) => (
             <div key={index} className={className}>
-              {!sort && !hasFilter && (
+              {!datePickerData && !hierarchicalFilter && !sort && !hasFilter && (
                 <span data-testid="table-head-title" className={`text-xs font-medium ${classNameTitle}`}>
                   {title}
                 </span>
               )}
+              {datePickerData && setFilter && filter && (
+                <TableHeadDatePickerFilter
+                  title={title}
+                  classNameTitle={classNameTitle}
+                  datePickerData={datePickerData}
+                  filter={filter}
+                  setFilter={setFilter}
+                />
+              )}
+              {hierarchicalFilter && setFilter && filter && (
+                <TableHeadHierarchicalFilter
+                  title={title}
+                  classNameTitle={classNameTitle}
+                  initialData={hierarchicalFilter.initialData}
+                  initialSelectedItems={hierarchicalFilter.initialSelectedItems}
+                  initialNavigationStack={hierarchicalFilter.initialNavigationStack}
+                  initialLevel={hierarchicalFilter.initialLevel}
+                  filterKey={hierarchicalFilter.key}
+                  onLoadMenusToDisplay={hierarchicalFilter.onLoadMenusToDisplay}
+                  onSelectionChange={hierarchicalFilter.onSelectionChange}
+                  computeDisplayByLabel={hierarchicalFilter.computeDisplayByLabel}
+                  onFilterChange={hierarchicalFilter.onFilterChange}
+                  getEmptyResultText={hierarchicalFilter.getEmptyResultText}
+                  filter={filter}
+                  setFilter={setFilter}
+                />
+              )}
+
               {hasFilter && data && filter && setFilter && (
                 <TableHeadFilter
                   title={title}
@@ -94,6 +159,7 @@ export function Table<T>({
                   defaultData={data}
                   filter={filter}
                   setFilter={setFilter}
+                  classNameTitle={classNameTitle}
                 />
               )}
               {sort && data && (

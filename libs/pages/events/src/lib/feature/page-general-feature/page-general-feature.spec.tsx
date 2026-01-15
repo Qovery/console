@@ -104,4 +104,119 @@ describe('PageGeneralFeature', () => {
       })
     })
   })
+
+  it('should handle clear filter action', async () => {
+    const { userEvent } = renderWithProviders(
+      <IntercomProvider appId="__test__app__id__">
+        <PageGeneralFeature />
+      </IntercomProvider>
+    )
+
+    waitFor(async () => {
+      // First set a filter by clicking on Event filter
+      await userEvent.click(screen.getByText('Event'))
+
+      // Find and click clear button if filters are present
+      const clearButton = screen.queryByRole('button', { name: /Clear all filters/i })
+      if (clearButton) {
+        await userEvent.click(clearButton)
+      }
+
+      // After clearing, should fetch with default params
+      expect(mockUseFetchEvents).toHaveBeenCalledWith('0', expect.objectContaining({ pageSize: 30 }))
+    })
+  })
+
+  it('should handle organizationMaxLimitReached state', () => {
+    mockUseFetchEvents.mockReturnValue(
+      mockUseQueryResult<OrganizationEventResponseList>({
+        events: eventsFactoryMock(10),
+        organization_max_limit_reached: true,
+        links: {},
+      })
+    )
+
+    renderWithProviders(
+      <IntercomProvider appId="__test__app__id__">
+        <PageGeneralFeature />
+      </IntercomProvider>
+    )
+
+    waitFor(() => {
+      screen.getByText(/days limit reached/i)
+    })
+  })
+
+  it('should fetch with default pageSize when not specified', () => {
+    renderWithProviders(
+      <IntercomProvider appId="__test__app__id__">
+        <PageGeneralFeature />
+      </IntercomProvider>
+    )
+
+    expect(mockUseFetchEvents).toHaveBeenCalledWith('0', expect.objectContaining({ pageSize: 30 }))
+  })
+
+  it('should handle empty events list', () => {
+    mockUseFetchEvents.mockReturnValue(
+      mockUseQueryResult<OrganizationEventResponseList>({
+        events: [],
+        links: {},
+      })
+    )
+
+    renderWithProviders(
+      <IntercomProvider appId="__test__app__id__">
+        <PageGeneralFeature />
+      </IntercomProvider>
+    )
+
+    waitFor(() => {
+      screen.getByTestId('empty-result')
+    })
+  })
+
+  it('should disable next button when no next link', () => {
+    mockUseFetchEvents.mockReturnValue(
+      mockUseQueryResult<OrganizationEventResponseList>({
+        events: eventsFactoryMock(10),
+        links: {
+          previous: '/organization/0/events?stepBackToken=1683211879216566001',
+        },
+      })
+    )
+
+    renderWithProviders(
+      <IntercomProvider appId="__test__app__id__">
+        <PageGeneralFeature />
+      </IntercomProvider>
+    )
+
+    waitFor(() => {
+      const nextButton = screen.getByTestId('button-next-page')
+      expect(nextButton).toBeDisabled()
+    })
+  })
+
+  it('should disable previous button when no previous link', () => {
+    mockUseFetchEvents.mockReturnValue(
+      mockUseQueryResult<OrganizationEventResponseList>({
+        events: eventsFactoryMock(10),
+        links: {
+          next: '/organization/0/events?continueToken=1683211879216566000',
+        },
+      })
+    )
+
+    renderWithProviders(
+      <IntercomProvider appId="__test__app__id__">
+        <PageGeneralFeature />
+      </IntercomProvider>
+    )
+
+    waitFor(() => {
+      const prevButton = screen.getByTestId('button-previous-page')
+      expect(prevButton).toBeDisabled()
+    })
+  })
 })

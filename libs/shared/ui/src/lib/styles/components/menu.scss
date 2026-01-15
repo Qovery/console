@@ -94,6 +94,19 @@
       color: theme('colors.brand.500');
     }
   }
+
+  // Special case: menu items with delete-hover elements
+  &:has(.delete-hover) {
+    &.szh-menu__item--hover,
+    &.menu-item--hover,
+    &:hover {
+      background-color: transparent;
+
+      .delete-hover {
+        color: theme('colors.brand.400');
+      }
+    }
+  }
 }
 
 // dark
