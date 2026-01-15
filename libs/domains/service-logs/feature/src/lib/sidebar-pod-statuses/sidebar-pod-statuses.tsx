@@ -238,7 +238,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                         ([status, { count, color, message }]) =>
                           count > 0 && (
                             <p key={status} className="flex items-center gap-2">
-                              <span className={`relative top-[1px] block h-2 w-2 rounded-full ${color}`}></span>
+                              <span className={`relative block h-2 w-2 rounded-full ${color}`}></span>
                               {count} {message}
                             </p>
                           )

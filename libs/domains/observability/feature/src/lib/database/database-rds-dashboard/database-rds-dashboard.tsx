@@ -79,7 +79,7 @@ function DatabaseRdsDashboardContent() {
               <Icon
                 iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'}
                 iconStyle="regular"
-                className="relative top-[1px]"
+                className="relative"
               />
               Live
             </Button>

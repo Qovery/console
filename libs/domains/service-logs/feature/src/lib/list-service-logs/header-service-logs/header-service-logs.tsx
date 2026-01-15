@@ -100,7 +100,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
               {isLiveMode ? (
                 <Icon iconName="loader" iconStyle="regular" className="absolute left-0 animate-spin" />
               ) : (
-                <Icon iconName="circle-play" iconStyle="regular" className="absolute left-0 top-[1px]" />
+                <Icon iconName="circle-play" iconStyle="regular" className="absolute left-0" />
               )}
             </span>
             Live

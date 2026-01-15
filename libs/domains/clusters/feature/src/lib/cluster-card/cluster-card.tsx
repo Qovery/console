@@ -30,7 +30,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
         <AnimatedGradientText shimmerWidth={80} className="group-hover:text-brand-500">
           <span className="flex items-center gap-0.5">
             {s === 'DRY_RUN' ? 'Evaluating changes (dry-run) ' : upperCaseFirstLetter(s) + '...'}{' '}
-            <Icon iconName="arrow-up-right" className="relative top-[1px]" />
+            <Icon iconName="arrow-up-right" className="relative" />
           </span>
         </AnimatedGradientText>
       </LinkUI>
@@ -45,7 +45,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
         onClick={(e) => e.stopPropagation()}
       >
         Last deployment failed
-        <Icon iconName="arrow-up-right" className="relative top-[1px]" />
+        <Icon iconName="arrow-up-right" />
       </LinkUI>
     ))
     .with('INVALID_CREDENTIALS', () => (
@@ -57,7 +57,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
         onClick={(e) => e.stopPropagation()}
       >
         Invalid cloud credentials
-        <Icon iconName="arrow-up-right" className="relative top-[1px]" />
+        <Icon iconName="arrow-up-right" />
       </LinkUI>
     ))
     .otherwise(

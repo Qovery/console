@@ -92,7 +92,7 @@ function SystemNodepool({ organizationId, clusterId, untrackedNodes, nodeWarning
           <div className="flex w-1/4 flex-col justify-start gap-3 border-r border-neutral-200 px-5 pt-0.5">
             <div className="flex w-full items-center justify-between">
               <span className="flex items-center gap-2 text-sm text-neutral-350">
-                <Icon iconName="microchip" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
+                <Icon iconName="microchip" iconStyle="regular" className="relative text-neutral-300" />
                 <span>
                   <Tooltip content="Capacity">
                     <span className="font-medium text-neutral-400">{untrackedMetrics.cpuReserved} vCPU</span>
@@ -104,7 +104,7 @@ function SystemNodepool({ organizationId, clusterId, untrackedNodes, nodeWarning
           <div className="flex w-1/4 flex-col justify-start gap-3 border-r border-neutral-200 px-5 pt-0.5">
             <div className="flex w-full items-center justify-between">
               <span className="flex items-center gap-2 text-sm text-neutral-350">
-                <Icon iconName="memory" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
+                <Icon iconName="memory" iconStyle="regular" className="relative text-neutral-300" />
                 <span>
                   <Tooltip content="Capacity">
                     <span className="font-medium text-neutral-400">{untrackedMetrics.memoryReserved} GB</span>
@@ -362,7 +362,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
               <div className="flex w-1/4 flex-col justify-start gap-3 border-r border-neutral-200 px-5 pt-0.5">
                 <div className="flex w-full items-center justify-between">
                   <span className="flex items-center gap-2 text-sm text-neutral-350">
-                    <Icon iconName="microchip" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
+                    <Icon iconName="microchip" iconStyle="regular" className="relative text-neutral-300" />
                     <span>
                       <Tooltip content="Capacity">
                         <span className="font-medium text-neutral-400">{metrics.cpuUsed} vCPU</span>
@@ -372,7 +372,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       ) : (
                         <span>
                           {' '}
-                          (limit: <span className="relative top-[1px]">∞</span>)
+                          (limit: <span className="relative">∞</span>)
                         </span>
                       )}
                     </span>
@@ -407,7 +407,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
               <div className="flex w-1/4 flex-col justify-start gap-3 border-r border-neutral-200 px-5 pt-0.5">
                 <div className="flex w-full items-center justify-between">
                   <span className="flex items-center gap-2 text-sm text-neutral-350">
-                    <Icon iconName="memory" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
+                    <Icon iconName="memory" iconStyle="regular" className="relative text-neutral-300" />
                     <span>
                       <Tooltip content="Capacity">
                         <span className="font-medium text-neutral-400">{metrics.memoryUsed} GB</span>
@@ -417,7 +417,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       ) : (
                         <span>
                           {' '}
-                          (limit: <span className="relative top-[1px]">∞</span>)
+                          (limit: <span className="relative">∞</span>)
                         </span>
                       )}
                     </span>

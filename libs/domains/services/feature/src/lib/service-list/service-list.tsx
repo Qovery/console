@@ -150,7 +150,7 @@ function ServiceNameCell({
           onClick={(e) => e.stopPropagation()}
         >
           Last deployment failed
-          <Icon iconName="arrow-up-right" className="relative top-[1px]" />
+          <Icon iconName="arrow-up-right" />
         </Link>
       ))
       .otherwise(() => null)
