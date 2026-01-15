@@ -2,8 +2,6 @@
 // Please use util or domain libraries instead
 export * from './lib/credit-card-form/ui/credit-card-form'
 export * from './lib/github-application-callback/github-application-callback-feature/github-application-callback-feature'
-export * from './lib/cluster-settings/feature/cluster-resources-settings-feature/cluster-resources-settings-feature'
-export * from './lib/cluster-settings/ui/cluster-resources-settings/cluster-resources-settings'
 export * from './lib/force-run-modal/feature/force-run-modal-feature'
 export * from './lib/force-run-modal/ui/force-run-modal'
 export * from './lib/job-configure-settings/ui/job-configure-settings'

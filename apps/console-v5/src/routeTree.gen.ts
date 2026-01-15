@@ -28,6 +28,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSetting
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/route'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/general'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/index'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/resources'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/route'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterNewRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/new'
 import { Route as AuthenticatedOrganizationOrganizationIdClustersRouteImport } from './routes/_authenticated/organization/$organizationId/clusters'
@@ -186,6 +187,12 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute 
     path: '/',
     getParentRoute: () => AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
   } as any)
+const AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRoute =
+  AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRouteImport.update({
+    id: '/resources',
+    path: '/resources',
+    getParentRoute: () => AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRoute,
+  } as any)
 const AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRoute =
   AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRouteImport.update({
     id: '/general',
@@ -274,6 +281,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/cluster/$clusterId/settings/network': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRoute
   '/organization/$organizationId/cluster/$clusterId/settings/resources': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRoute
   '/organization/$organizationId/cluster/create/$slug/general': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRoute
+  '/organization/$organizationId/cluster/create/$slug/resources': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRoute
   '/organization/$organizationId/cluster/$clusterId/settings/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
   '/organization/$organizationId/cluster/create/$slug/': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute
 }
@@ -306,6 +314,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/cluster/$clusterId/settings/network': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRoute
   '/organization/$organizationId/cluster/$clusterId/settings/resources': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRoute
   '/organization/$organizationId/cluster/create/$slug/general': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRoute
+  '/organization/$organizationId/cluster/create/$slug/resources': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRoute
   '/organization/$organizationId/cluster/$clusterId/settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
   '/organization/$organizationId/cluster/create/$slug': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute
 }
@@ -344,6 +353,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/network': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/resources': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRoute
   '/_authenticated/organization/$organizationId/cluster/create/$slug/general': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRoute
+  '/_authenticated/organization/$organizationId/cluster/create/$slug/resources': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
   '/_authenticated/organization/$organizationId/cluster/create/$slug/': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute
 }
@@ -382,6 +392,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/$clusterId/settings/network'
     | '/organization/$organizationId/cluster/$clusterId/settings/resources'
     | '/organization/$organizationId/cluster/create/$slug/general'
+    | '/organization/$organizationId/cluster/create/$slug/resources'
     | '/organization/$organizationId/cluster/$clusterId/settings/'
     | '/organization/$organizationId/cluster/create/$slug/'
   fileRoutesByTo: FileRoutesByTo
@@ -414,6 +425,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/$clusterId/settings/network'
     | '/organization/$organizationId/cluster/$clusterId/settings/resources'
     | '/organization/$organizationId/cluster/create/$slug/general'
+    | '/organization/$organizationId/cluster/create/$slug/resources'
     | '/organization/$organizationId/cluster/$clusterId/settings'
     | '/organization/$organizationId/cluster/create/$slug'
   id:
@@ -451,6 +463,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/network'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/resources'
     | '/_authenticated/organization/$organizationId/cluster/create/$slug/general'
+    | '/_authenticated/organization/$organizationId/cluster/create/$slug/resources'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/'
     | '/_authenticated/organization/$organizationId/cluster/create/$slug/'
   fileRoutesById: FileRoutesById
@@ -646,6 +659,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute
     }
+    '/_authenticated/organization/$organizationId/cluster/create/$slug/resources': {
+      id: '/_authenticated/organization/$organizationId/cluster/create/$slug/resources'
+      path: '/resources'
+      fullPath: '/organization/$organizationId/cluster/create/$slug/resources'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRoute
+    }
     '/_authenticated/organization/$organizationId/cluster/create/$slug/general': {
       id: '/_authenticated/organization/$organizationId/cluster/create/$slug/general'
       path: '/general'
@@ -753,6 +773,7 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteW
 
 interface AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRoute
+  AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRoute: typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRoute
   AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute
 }
 
@@ -760,6 +781,8 @@ const AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRouteChildren
   {
     AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRoute:
       AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRoute,
+    AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRoute:
+      AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRoute,
     AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute:
       AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute,
   }

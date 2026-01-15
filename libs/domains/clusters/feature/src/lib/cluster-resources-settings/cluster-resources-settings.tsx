@@ -17,7 +17,6 @@ import {
   useCloudProviderInstanceTypes,
   useCloudProviderInstanceTypesKarpenter,
 } from '@qovery/domains/cloud-providers/feature'
-import { GpuResourcesSettings, NodepoolsResourcesSettings } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import {
@@ -35,19 +34,19 @@ import {
   Tooltip,
   useModal,
 } from '@qovery/shared/ui'
-import { listInstanceTypeFormatter } from '../../feature/cluster-resources-settings-feature/utils/list-instance-type-formatter'
+import { GpuResourcesSettings } from '../gpu-resources-settings/gpu-resources-settings'
+import { NodepoolsResourcesSettings } from '../nodepools-resources-settings/nodepools-resources-settings'
 import { ButtonPopoverSubnets } from './button-popover-subnets/button-popover-subnets'
 import KarpenterImage from './karpenter-image.svg'
+import { listInstanceTypeFormatter } from './utils/list-instance-type-formatter'
 
 export interface ClusterResourcesSettingsProps {
   cluster?: Cluster
   fromDetail?: boolean
-  clusterTypeOptions?: Value[]
   cloudProvider?: CloudVendorEnum
   clusterRegion?: string
-  showWarningInstance?: boolean
-  hasAlreadyKarpenter?: boolean
   isProduction?: boolean
+  hasAlreadyKarpenter?: boolean
 }
 
 export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
@@ -67,6 +66,13 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const isKarpenter = Boolean(props.cluster?.features?.find((f) => f.id === 'KARPENTER'))
 
   const [isGpuEnabled, setIsGpuEnabled] = useState(!!watchKarpenter?.qovery_node_pools?.gpu_override)
+
+  // Set default cluster type based on cloud provider
+  useEffect(() => {
+    if (!props.fromDetail && !watchClusterType) {
+      setValue('cluster_type', KubernetesEnum.MANAGED)
+    }
+  }, [props.cloudProvider, setValue, watchClusterType, props.fromDetail])
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
     match(props.cloudProvider || CloudVendorEnum.AWS)
@@ -113,7 +119,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
     if (instanceType) {
       setWarningInstance(instanceType.label?.toString().indexOf('ARM') !== -1)
     }
-  }, [watchInstanceType])
+  }, [watchInstanceType, instanceTypeOptions])
 
   // XXX: Hotfix waiting deprecated managed cluster to be removed
   useEffect(() => {
@@ -628,7 +634,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
 
       {!props.fromDetail && props.cloudProvider === CloudVendorEnum.AWS && (
         <Callout.Root className="items-center" color="sky" data-testid="aws-cost-banner">
-          <Callout.Icon className="flex h-12 w-12 items-center justify-center rounded-full bg-white">
+          <Callout.Icon className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-neutral">
             <Icon name={IconEnum.AWS} />
           </Callout.Icon>
           <Callout.Text>
