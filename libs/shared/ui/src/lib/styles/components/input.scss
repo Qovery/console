@@ -27,7 +27,7 @@
 }
 
 .input--small {
-  @apply relative h-9 min-h-[36px] rounded;
+  @apply relative h-9 min-h-[36px];
 }
 
 .input__value {
@@ -52,7 +52,7 @@
     @apply translate-y-0 text-xs;
   }
   .input__value[type='time'] {
-    color: theme('colors.neutral.400');
+    @apply text-neutral;
   }
 }
 
@@ -75,9 +75,9 @@
   }
 
   .input-select__placeholder {
+    @apply text-neutral-disabled;
     display: block !important;
     font-size: theme('fontSize.ssm') !important;
-    color: theme('colors.neutral.300') !important;
     font-weight: 400;
   }
 }

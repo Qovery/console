@@ -343,7 +343,7 @@ module.exports = {
           DEFAULT: 'var(--neutral-invert-12)',
           contrasted: 'var(--contrast-inverted)',
         },
-        brand: { DEFAULT: 'var(--brand-11)' },
+        brand: { DEFAULT: 'var(--brand-11)', hover: 'var(--brand-10)' },
         info: { DEFAULT: 'var(--info-11)' },
         positive: { DEFAULT: 'var(--positive-11)' },
         negative: { DEFAULT: 'var(--negative-11)' },

@@ -1,7 +1,7 @@
 .input-select__control .input-select__input-container {
   @apply text-sm;
   margin: 0;
-  color: theme('colors.neutral.400');
+  color: theme('textColor.neutral.DEFAULT');
 }
 
 .input-select__control {
@@ -28,10 +28,10 @@
 
 // state
 .input-select--error {
-  @apply border-red-500;
+  @apply border-negative-strong;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
   &:hover {
-    @apply border-red-500;
+    @apply border-negative-strong;
   }
 }
 
@@ -42,10 +42,10 @@
 }
 
 .input-select--disabled {
-  @apply pointer-events-none border-neutral-250 bg-neutral-100;
+  @apply pointer-events-none border-neutral bg-surface-neutral-subtle;
 
   & > label {
-    @apply text-neutral-350;
+    @apply text-neutral-subtle;
   }
 }
 
@@ -70,7 +70,7 @@
 .input-select__option,
 .input-select__button {
   display: flex !important;
-  background: var(--neutral-2) !important;
+  background: var(--neutral-1) !important;
   padding: 8px !important;
   cursor: pointer !important;
   @apply items-center gap-2 rounded-md;
@@ -80,29 +80,25 @@
   }
 
   .input-select__checkbox {
-    @apply flex h-4 w-4 shrink-0 items-center justify-center rounded-md border-2 border-neutral bg-surface-neutral;
-  }
-
-  &:hover {
-    background: var(--neutral-2) !important;
+    @apply flex h-4 w-4 shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral;
   }
 }
 
 .input-select__option--is-disabled {
   label {
-    @apply text-neutral-300;
+    @apply text-neutral-disabled;
   }
 }
 
 .input-select__option--is-selected {
-  background: theme('colors.white');
+  background: theme('colors.background.DEFAULT');
 
   label {
     @apply text-neutral;
   }
 
   .input-select__checkbox {
-    @apply border-0 bg-brand-500;
+    @apply border-0 bg-surface-brand-solid;
   }
 }
 
@@ -114,8 +110,8 @@
 .input-select__option--is-focused.input-select__option--is-selected,
 .input-select__button:hover,
 .input-select__option--is-focused:hover {
-  background: var(--neutral-4) !important;
+  background: var(--brand-3) !important;
   label {
-    color: var(--brand-9) !important;
+    color: var(--brand-10) !important;
   }
 }
