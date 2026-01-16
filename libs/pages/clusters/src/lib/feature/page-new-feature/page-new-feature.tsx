@@ -12,8 +12,10 @@ import { type MutableRefObject, type ReactElement, cloneElement, useState } from
 import { NavLink, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ClusterInstallationGuideModal } from '@qovery/domains/clusters/feature'
-import { CLUSTERS_TEMPLATE_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { Button, ExternalLink, Heading, Icon, Link, Section, Tooltip, useModal } from '@qovery/shared/ui'
+import { useClusterCreationRestriction } from '@qovery/domains/organizations/feature'
+import { AddCreditCardModalFeature } from '@qovery/shared/console-shared'
+import { CLUSTERS_TEMPLATE_CREATION_URL, CLUSTERS_URL, SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
+import { Button, Callout, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
 import { useClickAway, useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 
@@ -29,6 +31,8 @@ type CardOptionProps = {
   recommended?: boolean
   icon?: string | ReactElement
   selectedCloudProvider: Exclude<keyof typeof ExtendedCloudProviderEnum, 'ON_PREMISE'>
+  disabled?: boolean
+  onDisabledClick?: () => void
 } & (
   | {
       selectedInstallationType: 'managed'
@@ -42,7 +46,16 @@ type CardOptionProps = {
     }
 )
 
-function CardOption({ icon, title, description, selectedCloudProvider, recommended, ...props }: CardOptionProps) {
+function CardOption({
+  icon,
+  title,
+  description,
+  selectedCloudProvider,
+  recommended,
+  disabled,
+  onDisabledClick,
+  ...props
+}: CardOptionProps) {
   const { organizationId = '' } = useParams()
   const { showPylonForm } = useSupportChat()
 
@@ -58,9 +71,11 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
 
   const renderContent = () => (
     <span>
-      <span className="flex flex-col text-base font-semibold text-neutral-400">
+      <span
+        className={twMerge('flex flex-col text-base font-semibold text-neutral-400', disabled && 'text-neutral-300')}
+      >
         {title}
-        {recommended && (
+        {recommended && !disabled && (
           <span>
             {match({ selectedCloudProvider })
               .with({ selectedCloudProvider: 'AZURE' }, () => (
@@ -78,7 +93,9 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
           </span>
         )}
       </span>
-      <span className="inline-block text-sm text-neutral-350">{description}</span>
+      <span className={twMerge('inline-block text-sm text-neutral-350', disabled && 'text-neutral-300')}>
+        {description}
+      </span>
     </span>
   )
 
@@ -91,6 +108,22 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
 
   const baseClassNames =
     'flex text-left items-start gap-4 relative rounded shadow border border-neutral-200 outline outline-2 outline-transparent transition-all hover:border-brand-500 -outline-offset-2 hover:outline-brand-500 bg-white p-5 transition w-[397px] xl:w-[calc(100%/3-20px)]'
+
+  const disabledClassNames =
+    'cursor-not-allowed opacity-60 shadow-none hover:border-neutral-200 hover:outline-transparent'
+
+  if (disabled) {
+    return (
+      <button
+        className={twMerge(baseClassNames, disabledClassNames, 'cursor-pointer')}
+        onClick={onDisabledClick}
+        type="button"
+      >
+        {renderIcon('opacity-70')}
+        {renderContent()}
+      </button>
+    )
+  }
 
   return match(props)
     .with({ selectedInstallationType: 'self-managed' }, ({ selectedInstallationType, openInstallationGuideModal }) => (
@@ -167,6 +200,8 @@ type CardClusterProps = {
   description?: string
   icon: string | ReactElement
   index?: number
+  disabled?: boolean
+  onDisabledClick?: () => void
 } & (
   | {
       options: CardOptionProps[]
@@ -186,7 +221,7 @@ type CardClusterProps = {
     }
 )
 
-function CardCluster({ title, description, icon, index = 1, ...props }: CardClusterProps) {
+function CardCluster({ title, description, icon, index = 1, disabled, onDisabledClick, ...props }: CardClusterProps) {
   const [expanded, setExpanded] = useState(false)
 
   const ref = useClickAway(() => {
@@ -260,7 +295,12 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
                 </div>
                 <div className="flex gap-5">
                   {options.map((optionProps) => (
-                    <CardOption key={optionProps.title} {...optionProps} />
+                    <CardOption
+                      key={optionProps.title}
+                      {...optionProps}
+                      disabled={disabled}
+                      onDisabledClick={onDisabledClick}
+                    />
                   ))}
                 </div>
                 <Button
@@ -280,33 +320,61 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
   } else {
     const { selectedCloudProvider, selectedInstallationType, openInstallationGuideModal } = props
 
+    const isDisabled = disabled && selectedInstallationType !== 'demo'
+
+    const disabledButtonClassNames =
+      'cursor-not-allowed opacity-60 shadow-none hover:border-neutral-200 hover:outline-transparent'
+
     return (
       <button
-        className="relative flex h-32 w-[calc(100%/2-20px)] cursor-pointer justify-between gap-4 rounded border border-neutral-200 p-5 shadow-sm outline outline-transparent transition hover:border-brand-500 hover:-outline-offset-2 hover:outline-brand-500 lg:w-[calc(100%/3-20px)]"
+        className={twMerge(
+          'relative flex h-32 w-[calc(100%/2-20px)] cursor-pointer justify-between gap-4 rounded border border-neutral-200 p-5 shadow-sm outline outline-transparent transition hover:border-brand-500 hover:-outline-offset-2 hover:outline-brand-500 lg:w-[calc(100%/3-20px)]',
+          isDisabled && disabledButtonClassNames
+        )}
         onClick={() => {
+          if (isDisabled) {
+            onDisabledClick?.()
+            return
+          }
           posthog.capture('select-cluster', {
             selectedCloudProvider,
             selectedInstallationType,
           })
           openInstallationGuideModal()
         }}
+        type="button"
       >
         <div className="flex flex-col gap-4">
           <div>
             {typeof icon === 'string' ? (
-              <img className="select-none" width={48} height={48} src={icon} alt={title} />
+              <img
+                className={twMerge('select-none', isDisabled && 'opacity-70')}
+                width={48}
+                height={48}
+                src={icon}
+                alt={title}
+              />
             ) : (
-              cloneElement(icon as ReactElement, { className: 'w-[48px] h-[48px]' })
+              cloneElement(icon as ReactElement, {
+                className: twMerge('h-[48px] w-[48px]', isDisabled && 'opacity-70'),
+              })
             )}
           </div>
-          <p className="truncate text-base font-semibold text-neutral-400">{title}</p>
+          <p className={twMerge('truncate text-base font-semibold text-neutral-400', isDisabled && 'text-neutral-300')}>
+            {title}
+          </p>
         </div>
         {selectedInstallationType === 'demo' ? (
           <span className="absolute right-5 top-5 flex h-5 min-w-min items-center justify-center truncate rounded-lg bg-brand-500 px-1.5 text-[11px] font-medium leading-6 text-neutral-50">
             3min to setup
           </span>
         ) : (
-          <div className="absolute right-5 top-5 flex items-center gap-2.5 text-neutral-400">
+          <div
+            className={twMerge(
+              'absolute right-5 top-5 flex items-center gap-2.5 text-neutral-400',
+              isDisabled && 'text-neutral-300'
+            )}
+          >
             <span className="flex h-5 items-center justify-center truncate rounded-lg border border-neutral-200 px-1.5 text-[11px] font-semibold leading-6">
               Self-managed
             </span>
@@ -323,6 +391,8 @@ export function PageNewFeature() {
   useDocumentTitle('Create new cluster - Qovery')
   const { openModal, closeModal } = useModal()
 
+  const { isClusterCreationRestricted } = useClusterCreationRestriction({ organizationId })
+
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
     openModal({
       options: {
@@ -338,6 +408,11 @@ export function PageNewFeature() {
           }}
         />
       ),
+    })
+
+  const openCreditCardModal = () =>
+    openModal({
+      content: <AddCreditCardModalFeature organizationId={organizationId} />,
     })
 
   const cloudProviders: CardClusterProps[] = [
@@ -527,9 +602,40 @@ export function PageNewFeature() {
             <Heading>Or choose your hosting mode</Heading>
             <p className="text-sm text-neutral-350">Manage your infrastructure across different hosting mode.</p>
           </div>
+          {isClusterCreationRestricted && (
+            <Callout.Root color="sky" className="mb-5">
+              <Callout.Icon>
+                <Icon iconName="circle-info" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>Add a credit card to create a cluster</Callout.TextHeading>
+                <Callout.TextDescription>
+                  You need to add a credit card to your account before creating a cluster on a cloud provider. You won’t
+                  be charged until your trial ends.
+                  <br />
+                  <Link
+                    as="button"
+                    color="neutral"
+                    variant="outline"
+                    className="mt-2"
+                    to={SETTINGS_URL(organizationId) + SETTINGS_BILLING_URL}
+                  >
+                    Add credit card
+                    <Icon iconName="arrow-right" className="ml-1" iconStyle="regular" />
+                  </Link>
+                </Callout.TextDescription>
+              </Callout.Text>
+            </Callout.Root>
+          )}
           <div className="flex w-[calc(100%+20px)] flex-wrap gap-5">
             {cloudProviders.slice(1).map((props, index) => (
-              <CardCluster key={props.title} index={index} {...props} />
+              <CardCluster
+                key={props.title}
+                index={index}
+                disabled={isClusterCreationRestricted}
+                onDisabledClick={openCreditCardModal}
+                {...props}
+              />
             ))}
           </div>
         </Section>
