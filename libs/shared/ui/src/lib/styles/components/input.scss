@@ -27,7 +27,7 @@
 }
 
 .input--small {
-  @apply relative h-9 min-h-[36px];
+  @apply relative h-9 min-h-[36px] rounded;
 }
 
 .input__value {
@@ -41,7 +41,7 @@
 
 .input--focused,
 .input__button--focused {
-  outline: 1px solid var(--brand-9);
+  outline: 2px solid var(--brand-4);
   label {
     @apply translate-y-0 text-xs;
   }
@@ -60,7 +60,7 @@
   min-height: theme('space.9');
   height: theme('space.9');
   padding: theme('space.2');
-  background-color: theme('colors.neutral.150');
+  @apply bg-surface-neutral-component;
   padding-top: 0;
   border-color: transparent;
 
@@ -83,11 +83,11 @@
 }
 
 .input--disabled {
-  @apply pointer-events-none border-neutral-250 bg-neutral-100;
+  @apply pointer-events-none border-neutral bg-surface-neutral-subtle;
   box-shadow: none !important;
 
   label {
-    @apply text-neutral-350;
+    @apply text-neutral-disabled;
   }
 
   .input__button--focused {
@@ -97,20 +97,20 @@
 
 .input--error,
 .input--error .input__button {
-  @apply border-red-500;
+  @apply border-negative-strong;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
 
   &:hover {
-    @apply border-red-500;
+    @apply border-negative-strong;
   }
 }
 
 .input--error.input--focused {
-  outline: 1px solid theme('colors.red.500');
+  outline: 2px solid var(--negative-4);
 }
 
 .input--success {
-  @apply border-green-500;
+  @apply border-positive-strong;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
 }
 
@@ -125,13 +125,13 @@
   &:hover,
   &:focus,
   &[aria-expanded='true'] {
-    @apply border-brand-500;
+    @apply border-brand-strong;
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
   }
 }
 
 .input__list {
-  @apply pointer-events-auto mt-2 max-h-96 w-full list-none overflow-scroll rounded border-neutral-250 bg-white p-2 text-neutral-400 focus-within:outline-none;
+  @apply pointer-events-auto mt-2 max-h-96 w-full list-none overflow-scroll rounded border-neutral bg-white p-2 text-neutral focus-within:outline-none;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 
   ul {
@@ -140,17 +140,17 @@
 }
 
 .input__item {
-  @apply mb-1 cursor-pointer select-none rounded px-3 py-2 text-sm font-medium text-neutral-400 last:mb-0 hover:bg-neutral-150 hover:text-neutral-400;
+  @apply mb-1 cursor-pointer select-none rounded px-3 py-2 text-sm font-medium text-neutral last:mb-0 hover:bg-surface-neutral-component hover:text-neutral;
 
   &.is-active,
   &[data-current-selected],
   &[data-current-nav] {
-    @apply bg-neutral-150 text-neutral-400;
+    @apply bg-surface-neutral-component text-neutral;
   }
 }
 
 .input__arrow {
-  @apply absolute right-4 top-1/2 -translate-y-1/2 text-sm text-neutral-400;
+  @apply absolute right-4 top-1/2 -translate-y-1/2 text-sm text-neutral;
 }
 
 // time
