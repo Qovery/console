@@ -18,6 +18,7 @@ const _buttonVariants = cva(
     'disabled:bg-surface-neutral-component',
     'focus-visible:[&:not(:active)]:outline-2',
     'outline-0',
+    'select-none',
   ],
   {
     variants: {
