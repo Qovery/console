@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider, createHashHistory, createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
 import '../src/lib/styles/main.scss'
 
+document.body.classList.add('overflow-auto')
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
