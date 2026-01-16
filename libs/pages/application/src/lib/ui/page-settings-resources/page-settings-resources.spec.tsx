@@ -16,7 +16,12 @@ const props: PageSettingsResourcesProps = {
 jest.mock('react-hook-form', () => ({
   ...jest.requireActual('react-hook-form'),
   useFormContext: () => ({
-    watch: () => jest.fn(),
+    watch: (name: string) => {
+      if (name === 'autoscaling_mode') return 'HPA'
+      if (name === 'hpa_metric_type') return 'CPU'
+      return undefined
+    },
+    setValue: jest.fn(),
     formState: {
       isValid: true,
     },
