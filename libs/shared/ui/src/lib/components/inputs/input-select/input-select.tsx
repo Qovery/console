@@ -354,7 +354,7 @@ export function InputSelect({
           </div>
         )}
       </div>
-      {hint && <p className="mt-0.5 px-3 text-xs font-normal text-neutral-subtle">{hint}</p>}
+      {hint && !error && <p className="mt-0.5 px-3 text-xs font-normal text-neutral-subtle">{hint}</p>}
       {error && <p className="mt-0.5 px-3 text-xs font-medium text-negative">{error}</p>}
     </div>
   )
