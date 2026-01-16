@@ -134,7 +134,7 @@ export function InputSelect({
             <button
               type="button"
               data-testid="input-menu-list-button"
-              className="inline-flex items-center gap-1 text-sm font-medium text-brand-500 transition duration-100 hover:text-brand-600"
+              className="hover:text-brand-hover inline-flex items-center gap-1 text-sm font-medium text-brand transition duration-100"
               onClick={menuListButton.onClick}
             >
               {menuListButton.label}
@@ -157,13 +157,13 @@ export function InputSelect({
               {props.isSelected && <Icon iconName="check" className="text-xs" />}
             </span>
           ) : props.isSelected ? (
-            <Icon iconName="check" className="text-brand" />
+            <Icon iconName="check" className="w-4 text-brand" />
           ) : props.data.icon ? (
             <div className="flex h-full w-4 items-center justify-center">{props.data.icon}</div>
           ) : (
-            <Icon iconName="check" className="opacity-0" />
+            <Icon iconName="check" className="w-4 opacity-0" />
           )}
-          <label id={id} className="ml-2 flex flex-col gap-0.5 truncate text-sm">
+          <label id={id} className="ml-1 flex flex-col gap-0.5 truncate text-sm">
             {props.label}
             {props.data.description && <span className="font-normal">{props.data.description}</span>}
           </label>
@@ -226,9 +226,9 @@ export function InputSelect({
 
   const inputActions =
     hasFocus && !disabled
-      ? '!border-brand-500 !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)] input--focused'
+      ? '!border-brand-strong !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)] input--focused'
       : disabled
-        ? '!bg-neutral-100 !border-neutral-250 !pointer-events-none'
+        ? '!bg-surface-neutral-subtle !border-neutral !pointer-events-none'
         : hasError
           ? 'input--error'
           : ''
@@ -271,12 +271,12 @@ export function InputSelect({
     styles: {
       menu: (base) => ({
         ...base,
-        backgroundColor: 'var(--neutral-2)',
+        backgroundColor: 'var(--neutral-1)',
         borderRadius: '6px',
       }),
       menuList: (base) => ({
         ...base,
-        backgroundColor: 'var(--neutral-2)',
+        backgroundColor: 'var(--neutral-1)',
       }),
       menuPortal: (base) => ({
         ...base,
@@ -305,7 +305,7 @@ export function InputSelect({
     <div className={className}>
       <div
         className={`input input--select ${hasIcon ? 'input--has-icon' : ''} ${inputActions} ${
-          disabled ? '!border-neutral-250 !bg-neutral-100' : ''
+          disabled ? '!border-neutral !bg-surface-neutral-subtle' : ''
         } ${isFilter ? 'input--filter' : ''}`}
         data-testid={dataTestId || 'select'}
       >
