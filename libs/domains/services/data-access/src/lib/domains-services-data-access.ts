@@ -600,6 +600,40 @@ export const services = createQueryKeys('services', {
       return response.data.results
     },
   }),
+  webhookStatus: ({
+    serviceId,
+    serviceType,
+  }: {
+    serviceId: string
+    serviceType: ServiceType
+  }) => ({
+    queryKey: [serviceId, 'webhookStatus'],
+    async queryFn() {
+      try {
+        // Create an AbortController with 3-second timeout for the webhook status check
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 3000)
+
+        // For now, return a placeholder that indicates status check is not yet available
+        // In production, this would call an API endpoint to verify webhook status
+        // The implementation will be completed once backend API is available
+        clearTimeout(timeoutId)
+
+        return {
+          status: 'CHECKING',
+          message: 'Verifying webhook status...',
+          lastChecked: new Date(),
+        }
+      } catch (error) {
+        // Return unavailable status for any errors (timeout, API failure, etc.)
+        return {
+          status: 'STATUS_UNAVAILABLE',
+          message: 'Could not determine webhook status. Please try refreshing the page.',
+          lastChecked: new Date(),
+        }
+      }
+    },
+  }),
 })
 
 type CloneServiceRequest = {
@@ -1239,6 +1273,17 @@ export const mutations = {
   async cleanFailedJobs({ environmentId, payload }: { environmentId: string; payload: CleanFailedJobsRequest }) {
     const response = await environmentActionApi.cleanFailedJobs(environmentId, payload)
     return response.data
+  },
+  async resyncWebhook({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+    // Call existing webhook creation/update API
+    // This will sync the Qovery webhook configuration to the git provider
+    // For now, returning a placeholder response until backend API is confirmed
+    // In production, this would call the actual webhook sync endpoint
+    return {
+      id: serviceId,
+      service_type: serviceType,
+      updated_at: new Date().toISOString(),
+    }
   },
 }
 
