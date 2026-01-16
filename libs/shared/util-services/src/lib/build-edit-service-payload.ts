@@ -25,6 +25,7 @@ import {
   type TerraformType,
 } from '@qovery/domains/services/data-access'
 import { isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
+import { extractAndProcessAutoscaling } from './keda/autoscaling-payload/autoscaling-payload'
 
 type applicationProps = {
   service: Application
@@ -116,7 +117,7 @@ function refactoTerraform({ service, request = {} }: terraformProps): TerraformR
 }
 
 function refactoApplication({ service: application, request = {} }: applicationProps): ApplicationEditRequest {
-  // refacto because we can't send all git data
+  // Clean git repository data
   if (application.git_repository) {
     application.git_repository = {
       name: application.git_repository.name,
@@ -129,7 +130,7 @@ function refactoApplication({ service: application, request = {} }: applicationP
     }
   }
 
-  // refacto to remove the id by storage
+  // Clean storage data
   if (application.storage) {
     application.storage =
       application.storage.length > 0
@@ -142,7 +143,9 @@ function refactoApplication({ service: application, request = {} }: applicationP
         : []
   }
 
-  const applicationRequestPayload: ApplicationEditRequest = {
+  const { autoscaling, cleanedRequest } = extractAndProcessAutoscaling(request, application.autoscaling)
+
+  return {
     name: application.name,
     icon_uri: application.icon_uri,
     storage: application.storage,
@@ -162,13 +165,15 @@ function refactoApplication({ service: application, request = {} }: applicationP
     min_running_instances: application.min_running_instances,
     entrypoint: application.entrypoint,
     arguments: application.arguments,
+    autoscaling,
+    ...cleanedRequest,
   }
-
-  return { ...applicationRequestPayload, ...request }
 }
 
 function refactoContainer({ service: container, request = {} }: containerProps): ContainerRequest {
-  const containerRequestPayload = {
+  const { autoscaling, cleanedRequest } = extractAndProcessAutoscaling(request, container.autoscaling)
+
+  return {
     name: container.name || '',
     icon_uri: container.icon_uri,
     description: container.description || '',
@@ -187,9 +192,9 @@ function refactoContainer({ service: container, request = {} }: containerProps):
     auto_preview: container.auto_preview,
     auto_deploy: container.auto_deploy,
     healthchecks: container.healthchecks,
+    autoscaling,
+    ...cleanedRequest,
   }
-
-  return { ...containerRequestPayload, ...request }
 }
 
 function refactoJob({ service: job, request = {} }: jobProps): JobRequest {
