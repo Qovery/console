@@ -37,9 +37,8 @@ export const handleGitApplicationSubmit = (
   labelsGroups: OrganizationLabelsGroupEnrichedResponse[],
   annotationsGroups: OrganizationAnnotationsGroupResponse[]
 ): ApplicationEditRequest => {
-  const { autoscaling, ...applicationWithoutAutoscaling } = application
   let cloneApplication: ApplicationEditRequest = {
-    ...applicationWithoutAutoscaling,
+    ...application,
     dockerfile_path: undefined,
     docker_target_build_stage: undefined,
     git_repository: undefined,
@@ -47,7 +46,7 @@ export const handleGitApplicationSubmit = (
     description: data.description || '',
     icon_uri: data.icon_uri,
     auto_deploy: data.auto_deploy,
-    autoscaling: convertAutoscalingResponseToRequest(autoscaling),
+    autoscaling: convertAutoscalingResponseToRequest(application.autoscaling),
   }
   cloneApplication.auto_deploy = data.auto_deploy
 
@@ -90,9 +89,8 @@ export const handleContainerSubmit = (
   labelsGroups: OrganizationLabelsGroupEnrichedResponse[],
   annotationsGroups: OrganizationAnnotationsGroupResponse[]
 ): ContainerRequest => {
-  const { autoscaling, ...containerWithoutAutoscaling } = container
   return {
-    ...containerWithoutAutoscaling,
+    ...container,
     name: data.name,
     description: data.description || '',
     icon_uri: data.icon_uri,
@@ -102,9 +100,9 @@ export const handleContainerSubmit = (
     arguments: data.cmd_arguments?.length ? parseCmd(data.cmd_arguments) : [],
     entrypoint: data.image_entry_point || '',
     registry_id: data.registry || '',
-    autoscaling: convertAutoscalingResponseToRequest(autoscaling),
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
     labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id)),
+    autoscaling: convertAutoscalingResponseToRequest(container.autoscaling),
   }
 }
 

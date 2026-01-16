@@ -1,5 +1,5 @@
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { hasGpuInstance, useCluster } from '@qovery/domains/clusters/feature'
@@ -11,18 +11,18 @@ import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } fro
 import {
   Button,
   Callout,
-  CodeEditor,
   ExternalLink,
   Heading,
   Icon,
+  InputRadio,
   InputSelect,
   InputText,
-  InputTextArea,
   InputToggle,
   Link,
   Section,
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
+import { InstancesRangeInputs, KedaSettings } from './components'
 
 type ClusterWithKeda = {
   keda?: {
@@ -64,24 +64,16 @@ export function ApplicationSettingsResources({
 
   const maxMemoryBySize = service && 'maximum_memory' in service ? service.maximum_memory : 128000
 
+  const scalersFieldArray = useFieldArray({
+    control,
+    name: 'scalers',
+  })
+
   const minRunningInstances = watch('min_running_instances')
-  const scalers = watch('scalers') || []
   const hpaMetricType = watch('hpa_metric_type') || 'CPU'
+  const autoscalingMode = watch('autoscaling_mode') || 'NONE'
   const hpaAverageUtilizationPercent = watch('hpa_cpu_average_utilization_percent') ?? 60
   const hpaMemoryAverageUtilizationPercent = watch('hpa_memory_average_utilization_percent') ?? 60
-
-  const handleAddScaler = () => {
-    setValue('scalers', [...scalers, { type: '', config: '' }])
-  }
-
-  const handleRemoveScaler = (index: number) => {
-    setValue(
-      'scalers',
-      scalers.filter((_: unknown, i: number) => i !== index)
-    )
-  }
-
-  const autoscalingMode = watch('autoscaling_mode') || 'NONE'
 
   // Determine the current saved autoscaling mode (not the form value)
   const currentAutoscalingMode = match(service)
@@ -383,79 +375,14 @@ export function ApplicationSettingsResources({
           {/* Mode HPA: Horizontal Pod Autoscaler */}
           {autoscalingMode === 'HPA' && (
             <>
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="min_running_instances"
-                  control={control}
-                  rules={{
-                    required: true,
-                    min: minInstances,
-                    max: maxInstances,
-                  }}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputText
-                      type="number"
-                      label="Instances min"
-                      name={field.name}
-                      value={isNaN(field.value) || field.value === 0 ? '' : field.value.toString()}
-                      onChange={(e) => {
-                        const output = parseInt(e.target.value, 10)
-                        const value = isNaN(output) ? 0 : output
-                        field.onChange(value)
-                      }}
-                      error={
-                        error?.type === 'required'
-                          ? 'Please enter a size.'
-                          : error?.type === 'max'
-                            ? `Maximum allowed is: ${maxInstances}.`
-                            : error?.type === 'min'
-                              ? `Minimum allowed is: ${minInstances}.`
-                              : undefined
-                      }
-                    />
-                  )}
-                />
-                <Controller
-                  name="max_running_instances"
-                  control={control}
-                  rules={{
-                    required: true,
-                    max: maxInstances,
-                    min: minRunningInstances,
-                  }}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputText
-                      type="number"
-                      label="Instances max"
-                      name={field.name}
-                      value={isNaN(field.value) || field.value === 0 ? '' : field.value.toString()}
-                      onChange={(e) => {
-                        const output = parseInt(e.target.value, 10)
-                        const value = isNaN(output) ? 0 : output
-                        field.onChange(value)
-                      }}
-                      error={
-                        error?.type === 'required'
-                          ? 'Please enter a size.'
-                          : error?.type === 'max'
-                            ? `Maximum allowed is: ${maxInstances}.`
-                            : error?.type === 'min'
-                              ? `Minimum allowed is: ${minRunningInstances}.`
-                              : undefined
-                      }
-                    />
-                  )}
-                />
-              </div>
-
-              <p className="text-xs text-neutral-350">
-                {runningStatuses?.pods && (
-                  <span className="mb-1 flex">
-                    Current consumption: {runningStatuses.pods.length} instance
-                    {runningStatuses.pods.length > 1 ? 's' : ''}
-                  </span>
-                )}
-              </p>
+              <InstancesRangeInputs
+                control={control}
+                minInstances={minInstances}
+                maxInstances={maxInstances}
+                minRunningInstances={minRunningInstances}
+                showMaxField={true}
+                runningPods={runningStatuses?.pods?.length}
+              />
 
               <Callout.Root color="sky" className="mt-3">
                 <Callout.Icon>
@@ -558,239 +485,15 @@ export function ApplicationSettingsResources({
 
           {/* Mode KEDA: Event-driven autoscaling */}
           {autoscalingMode === 'KEDA' && (
-            <>
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="min_running_instances"
-                  control={control}
-                  rules={{
-                    required: true,
-                    min: minInstances,
-                    max: maxInstances,
-                  }}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputText
-                      type="number"
-                      label="Instances min"
-                      name={field.name}
-                      value={isNaN(field.value) || field.value === 0 ? '' : field.value.toString()}
-                      onChange={(e) => {
-                        const output = parseInt(e.target.value, 10)
-                        const value = isNaN(output) ? 0 : output
-                        field.onChange(value)
-                      }}
-                      disabled={currentAutoscalingMode === 'HPA'}
-                      error={
-                        error?.type === 'required'
-                          ? 'Please enter a size.'
-                          : error?.type === 'max'
-                            ? `Maximum allowed is: ${maxInstances}.`
-                            : error?.type === 'min'
-                              ? `Minimum allowed is: ${minInstances}.`
-                              : undefined
-                      }
-                    />
-                  )}
-                />
-                <Controller
-                  name="max_running_instances"
-                  control={control}
-                  rules={{
-                    required: true,
-                    max: maxInstances,
-                    min: minRunningInstances,
-                  }}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputText
-                      type="number"
-                      label="Instances max"
-                      name={field.name}
-                      value={isNaN(field.value) || field.value === 0 ? '' : field.value.toString()}
-                      onChange={(e) => {
-                        const output = parseInt(e.target.value, 10)
-                        const value = isNaN(output) ? 0 : output
-                        field.onChange(value)
-                      }}
-                      disabled={currentAutoscalingMode === 'HPA'}
-                      error={
-                        error?.type === 'required'
-                          ? 'Please enter a size.'
-                          : error?.type === 'max'
-                            ? `Maximum allowed is: ${maxInstances}.`
-                            : error?.type === 'min'
-                              ? `Minimum allowed is: ${minRunningInstances}.`
-                              : undefined
-                      }
-                    />
-                  )}
-                />
-              </div>
-
-              <p className="text-xs text-neutral-350">
-                {runningStatuses?.pods && (
-                  <span className="mb-1 flex">
-                    Current consumption: {runningStatuses.pods.length} instance
-                    {runningStatuses.pods.length > 1 ? 's' : ''}
-                  </span>
-                )}
-              </p>
-
-              <Callout.Root color="yellow" className="mt-3">
-                <Callout.Icon>
-                  <Icon iconName="triangle-exclamation" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text>
-                  <p>Always assume one instance may fail due to node maintenance or issues.</p>
-                  <p>To ensure high availability, set Minimum Instances to 2 if your app can run on 1 instance.</p>
-                  <p>
-                    If your application requires more than one instance to handle necessary traffic, set the minimum to
-                    3 or higher to guarantee redundancy during a single failure.
-                  </p>
-                </Callout.Text>
-              </Callout.Root>
-
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="autoscaling_polling_interval"
-                  control={control}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputText
-                      type="number"
-                      name={field.name}
-                      label="Polling Interval (seconds)"
-                      value={field.value ?? ''}
-                      onChange={field.onChange}
-                      disabled={currentAutoscalingMode === 'HPA'}
-                      hint="Default: 30 seconds"
-                      error={error?.message}
-                    />
-                  )}
-                />
-                <Controller
-                  name="autoscaling_cooldown_period"
-                  control={control}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputText
-                      type="number"
-                      name={field.name}
-                      label="Cooldown Period (seconds)"
-                      value={field.value ?? ''}
-                      onChange={field.onChange}
-                      disabled={currentAutoscalingMode === 'HPA'}
-                      hint="Default: 300 seconds"
-                      error={error?.message}
-                    />
-                  )}
-                />
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-neutral-400">Scalers</label>
-                  <Button size="xs" type="button" onClick={handleAddScaler} disabled={currentAutoscalingMode === 'HPA'}>
-                    Add scaler
-                  </Button>
-                </div>
-
-                {scalers.length === 0 && (
-                  <p className="text-xs text-neutral-350">No scalers configured. Click "Add scaler" to get started.</p>
-                )}
-
-                {scalers.map((_: unknown, index: number) => (
-                  <div
-                    key={index}
-                    className="flex flex-col gap-3 rounded border border-neutral-250 bg-neutral-100 p-4"
-                    data-testid="scaler-row"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-neutral-400">Scaler #{index + 1}</span>
-                      <Button
-                        size="xs"
-                        type="button"
-                        variant="surface"
-                        color="red"
-                        onClick={() => handleRemoveScaler(index)}
-                        disabled={currentAutoscalingMode === 'HPA'}
-                      >
-                        Remove
-                      </Button>
-                    </div>
-
-                    <Controller
-                      name={`scalers.${index}.type`}
-                      control={control}
-                      render={({ field, fieldState: { error } }) => (
-                        <InputText
-                          name={field.name}
-                          label="Scaler Type"
-                          value={field.value ?? ''}
-                          onChange={field.onChange}
-                          disabled={currentAutoscalingMode === 'HPA'}
-                          hint="Type: 'cpu', 'memory', 'prometheus', 'aws-sqs', etc."
-                          error={error?.message}
-                        />
-                      )}
-                    />
-
-                    <Controller
-                      name={`scalers.${index}.config`}
-                      control={control}
-                      render={({ field }) => {
-                        const lineCount = (field.value ?? '').split('\n').length
-                        const displayLines = Math.min(Math.max(lineCount, 3), 5)
-                        const height = `${displayLines * 19 + 10}px`
-
-                        return (
-                          <div className="flex flex-col gap-1">
-                            <label className="text-sm font-medium text-neutral-400">Configuration (YAML)</label>
-                            <CodeEditor
-                              height={height}
-                              language="yaml"
-                              value={field.value ?? ''}
-                              onChange={(value) => field.onChange(value ?? '')}
-                              options={{
-                                readOnly: currentAutoscalingMode === 'HPA',
-                              }}
-                            />
-                            <p className="text-xs text-neutral-350">Paste raw YAML for this scaler</p>
-                          </div>
-                        )
-                      }}
-                    />
-
-                    <Controller
-                      name={`scalers.${index}.triggerAuthentication`}
-                      control={control}
-                      render={({ field }) => {
-                        const lineCount = (field.value ?? '').split('\n').length
-                        const displayLines = Math.min(Math.max(lineCount, 3), 5)
-                        const height = `${displayLines * 19 + 10}px`
-
-                        return (
-                          <div className="flex flex-col gap-1">
-                            <label className="text-sm font-medium text-neutral-400">
-                              Trigger Authentication (YAML) - Optional
-                            </label>
-                            <CodeEditor
-                              height={height}
-                              language="yaml"
-                              value={field.value ?? ''}
-                              onChange={(value) => field.onChange(value ?? '')}
-                              options={{
-                                readOnly: currentAutoscalingMode === 'HPA',
-                              }}
-                            />
-                            <p className="text-xs text-neutral-350">
-                              Paste raw YAML for the trigger authentication (optional)
-                            </p>
-                          </div>
-                        )
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </>
+            <KedaSettings
+              control={control}
+              scalersFieldArray={scalersFieldArray}
+              minInstances={minInstances}
+              maxInstances={maxInstances}
+              minRunningInstances={minRunningInstances}
+              disabled={currentAutoscalingMode === 'HPA'}
+              runningPods={runningStatuses?.pods?.length}
+            />
           )}
 
           {autoscalingMode === 'NONE' &&
@@ -812,5 +515,3 @@ export function ApplicationSettingsResources({
     </>
   )
 }
-
-export default ApplicationSettingsResources

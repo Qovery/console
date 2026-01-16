@@ -174,6 +174,12 @@ export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }:
     [service]
   )
   const isCronJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'CRON', [service])
+  const isKedaAutoscaling = useMemo(
+    () =>
+      (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
+      service.autoscaling?.mode === 'KEDA',
+    [service]
+  )
 
   return (
     <div className="flex grow flex-row">
@@ -197,7 +203,7 @@ export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }:
             </div>
           )}
         </PodsMetrics>
-        <ScaledObjectStatus environmentId={environmentId} serviceId={serviceId} />
+        {isKedaAutoscaling && <ScaledObjectStatus environmentId={environmentId} serviceId={serviceId} />}
         {isLifecycleJobOrTerraform && <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} />}
       </div>
       <ServiceDetails

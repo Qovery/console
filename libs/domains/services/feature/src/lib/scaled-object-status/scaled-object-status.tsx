@@ -86,5 +86,3 @@ export function ScaledObjectStatus({ environmentId, serviceId }: ScaledObjectSta
     </Section>
   )
 }
-
-export default ScaledObjectStatus
