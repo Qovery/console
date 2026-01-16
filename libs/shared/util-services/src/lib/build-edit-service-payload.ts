@@ -28,7 +28,7 @@ import {
 } from '@qovery/domains/services/data-access'
 import { isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
 
-type ApplicationEditRequestWithKeda = ApplicationEditRequest & {
+interface KedaAutoscalingFields {
   autoscaling?: string
   autoscaling_scaler_type?: string
   autoscaling_polling_interval?: number
@@ -40,17 +40,9 @@ type ApplicationEditRequestWithKeda = ApplicationEditRequest & {
   hpa_memory_average_utilization_percent?: number
 }
 
-type ContainerRequestWithKeda = ContainerRequest & {
-  autoscaling?: string
-  autoscaling_scaler_type?: string
-  autoscaling_polling_interval?: number
-  autoscaling_cooldown_period?: number
-  scalers?: Array<{ type: string; config: string }>
-  autoscaling_mode?: 'NONE' | 'HPA' | 'KEDA'
-  hpa_metric_type?: 'CPU' | 'CPU_AND_MEMORY'
-  hpa_cpu_average_utilization_percent?: number
-  hpa_memory_average_utilization_percent?: number
-}
+type ApplicationEditRequestWithKeda = ApplicationEditRequest & KedaAutoscalingFields
+
+type ContainerRequestWithKeda = ContainerRequest & KedaAutoscalingFields
 
 type AutoscalingPolicyResponseWithFields = AutoscalingPolicyResponse & {
   polling_interval_seconds?: number

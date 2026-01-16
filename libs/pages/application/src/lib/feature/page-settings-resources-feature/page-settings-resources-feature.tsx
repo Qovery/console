@@ -1,4 +1,8 @@
-import { type Environment } from 'qovery-typescript-axios'
+import {
+  type ApplicationAdvancedSettings,
+  type ContainerAdvancedSettings,
+  type Environment,
+} from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
@@ -29,6 +33,14 @@ type AutoscalingWithKedaFields = {
       config_yaml?: string
     }
   }>
+}
+
+type AdvancedSettingsWithHpa = ApplicationAdvancedSettings | ContainerAdvancedSettings
+
+type ScalerFormData = {
+  type: string
+  config: string
+  triggerAuthentication?: string
 }
 
 export interface SettingsResourcesFeatureProps {
@@ -93,7 +105,7 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
 
       // HPA fields
       hpa_metric_type: (() => {
-        const settings = advancedSettings as Record<string, any> | undefined
+        const settings = advancedSettings as AdvancedSettingsWithHpa | undefined
         const hpaMemoryValue = settings?.['hpa.memory.average_utilization_percent']
 
         if (hpaMemoryValue != null) {
@@ -102,20 +114,20 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
         return 'CPU'
       })(),
       hpa_cpu_average_utilization_percent: (() => {
-        const settings = advancedSettings as Record<string, any> | undefined
+        const settings = advancedSettings as AdvancedSettingsWithHpa | undefined
         const hpaCpuValue = settings?.['hpa.cpu.average_utilization_percent']
 
         if (hpaCpuValue != null) {
-          return hpaCpuValue as number
+          return hpaCpuValue
         }
         return 60
       })(),
       hpa_memory_average_utilization_percent: (() => {
-        const settings = advancedSettings as Record<string, any> | undefined
+        const settings = advancedSettings as AdvancedSettingsWithHpa | undefined
         const hpaMemoryValue = settings?.['hpa.memory.average_utilization_percent']
 
         if (hpaMemoryValue != null) {
-          return hpaMemoryValue as number
+          return hpaMemoryValue
         }
         return 60
       })(),
@@ -156,17 +168,17 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
   // Update form values when advanced settings are loaded
   useEffect(() => {
     if (advancedSettings) {
-      const settings = advancedSettings as Record<string, any>
+      const settings = advancedSettings as AdvancedSettingsWithHpa
       const hpaMemoryValue = settings['hpa.memory.average_utilization_percent']
       const hpaCpuValue = settings['hpa.cpu.average_utilization_percent']
 
       if (hpaMemoryValue != null) {
         methods.setValue('hpa_metric_type', 'CPU_AND_MEMORY', { shouldDirty: false })
-        methods.setValue('hpa_memory_average_utilization_percent', hpaMemoryValue as number, { shouldDirty: false })
-        methods.setValue('hpa_cpu_average_utilization_percent', (hpaCpuValue as number) ?? 60, { shouldDirty: false })
+        methods.setValue('hpa_memory_average_utilization_percent', hpaMemoryValue, { shouldDirty: false })
+        methods.setValue('hpa_cpu_average_utilization_percent', hpaCpuValue ?? 60, { shouldDirty: false })
       } else if (hpaCpuValue != null) {
         methods.setValue('hpa_metric_type', 'CPU', { shouldDirty: false })
-        methods.setValue('hpa_cpu_average_utilization_percent', hpaCpuValue as number, { shouldDirty: false })
+        methods.setValue('hpa_cpu_average_utilization_percent', hpaCpuValue, { shouldDirty: false })
         methods.setValue('hpa_memory_average_utilization_percent', 60, { shouldDirty: false })
       }
     }
@@ -174,158 +186,186 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
   }, [advancedSettings])
 
   const onSubmit = methods.handleSubmit(async (data: FieldValues) => {
-    const request = {
-      memory: Number(data['memory']),
-      cpu: Number(data['cpu']),
-      gpu: Number(data['gpu']),
-    }
+    try {
+      const request = {
+        memory: Number(data['memory']),
+        cpu: Number(data['cpu']),
+        gpu: Number(data['gpu']),
+      }
 
-    let requestWithInstances = {}
-    if (service.serviceType !== 'JOB') {
-      const autoscalingMode = data['autoscaling_mode'] || 'NONE'
+      let requestWithInstances = {}
+      if (service.serviceType !== 'JOB') {
+        const autoscalingMode = data['autoscaling_mode'] || 'NONE'
 
-      switch (autoscalingMode) {
-        case 'NONE':
-          // Fixed instances: min = max, no autoscaling
-          requestWithInstances = {
-            ...request,
-            min_running_instances: data['min_running_instances'],
-            max_running_instances: data['min_running_instances'], // Force max = min
-            scalers: null,
-            autoscaling_polling_interval: null,
-            autoscaling_cooldown_period: null,
-            autoscaling_mode: 'NONE',
-            hpa_metric_type: undefined,
-            hpa_cpu_average_utilization_percent: undefined,
-            hpa_memory_average_utilization_percent: undefined,
+        switch (autoscalingMode) {
+          case 'NONE':
+            // Fixed instances: min = max, no autoscaling
+            requestWithInstances = {
+              ...request,
+              min_running_instances: data['min_running_instances'],
+              max_running_instances: data['min_running_instances'], // Force max = min
+              scalers: null,
+              autoscaling_polling_interval: null,
+              autoscaling_cooldown_period: null,
+              autoscaling_mode: 'NONE',
+              hpa_metric_type: undefined,
+              hpa_cpu_average_utilization_percent: undefined,
+              hpa_memory_average_utilization_percent: undefined,
+            }
+            break
+
+          case 'HPA': {
+            // HPA mode: min !== max, HPA autoscaling
+            const metricChoice = data['hpa_metric_type'] === 'CPU_AND_MEMORY' ? 'CPU_AND_MEMORY' : 'CPU'
+            const cpuAverageUtilization = Number(data['hpa_cpu_average_utilization_percent']) || 60
+
+            requestWithInstances = {
+              ...request,
+              min_running_instances: data['min_running_instances'],
+              max_running_instances: data['max_running_instances'],
+              scalers: null,
+              autoscaling_polling_interval: null,
+              autoscaling_cooldown_period: null,
+              autoscaling_mode: 'HPA',
+              hpa_metric_type: 'CPU',
+              hpa_cpu_average_utilization_percent: cpuAverageUtilization,
+              hpa_memory_average_utilization_percent:
+                metricChoice === 'CPU_AND_MEMORY'
+                  ? Number(data['hpa_memory_average_utilization_percent']) || 60
+                  : undefined,
+            }
+            break
           }
-          break
 
-        case 'HPA': {
-          // HPA mode: min !== max, HPA autoscaling
-          const metricChoice = data['hpa_metric_type'] === 'CPU_AND_MEMORY' ? 'CPU_AND_MEMORY' : 'CPU'
-          const cpuAverageUtilization = Number(data['hpa_cpu_average_utilization_percent']) || 60
+          case 'KEDA': {
+            // KEDA mode: include trigger authentication directly in scaler payload
+            const scalersWithAuth = (data['scalers'] || []).map((scaler: ScalerFormData) => {
+              const baseScaler = {
+                type: scaler.type,
+                config: scaler.config,
+              }
 
-          requestWithInstances = {
-            ...request,
-            min_running_instances: data['min_running_instances'],
-            max_running_instances: data['max_running_instances'],
-            scalers: null,
-            autoscaling_polling_interval: null,
-            autoscaling_cooldown_period: null,
-            autoscaling_mode: 'HPA',
-            hpa_metric_type: 'CPU',
-            hpa_cpu_average_utilization_percent: cpuAverageUtilization,
-            hpa_memory_average_utilization_percent:
-              metricChoice === 'CPU_AND_MEMORY'
-                ? Number(data['hpa_memory_average_utilization_percent']) || 60
+              // If scaler has triggerAuthentication YAML, include it inline
+              if (scaler.triggerAuthentication && scaler.triggerAuthentication.trim() !== '') {
+                return {
+                  ...baseScaler,
+                  trigger_authentication: {
+                    config_yaml: scaler.triggerAuthentication,
+                  },
+                }
+              }
+
+              // No trigger authentication needed
+              return baseScaler
+            })
+
+            requestWithInstances = {
+              ...request,
+              min_running_instances: data['min_running_instances'],
+              max_running_instances: data['max_running_instances'],
+              scalers: scalersWithAuth,
+              autoscaling_polling_interval: data['autoscaling_polling_interval']
+                ? Number(data['autoscaling_polling_interval'])
                 : undefined,
+              autoscaling_cooldown_period: data['autoscaling_cooldown_period']
+                ? Number(data['autoscaling_cooldown_period'])
+                : undefined,
+              autoscaling_mode: 'KEDA',
+              hpa_metric_type: undefined,
+              hpa_cpu_average_utilization_percent: undefined,
+              hpa_memory_average_utilization_percent: undefined,
+            }
+            break
           }
-          break
+        }
+      }
+
+      const payload = match(service)
+        .with({ serviceType: 'JOB' }, (service) => buildEditServicePayload({ service, request }))
+        .with({ serviceType: 'APPLICATION' }, (service) =>
+          buildEditServicePayload({
+            service,
+            request: requestWithInstances,
+          })
+        )
+        .with({ serviceType: 'CONTAINER' }, (service) =>
+          buildEditServicePayload({
+            service,
+            request: requestWithInstances,
+          })
+        )
+        .with({ serviceType: 'TERRAFORM' }, (service) =>
+          buildEditServicePayload({
+            service,
+            request: {
+              job_resources: {
+                cpu_milli: Number(data['cpu']),
+                ram_mib: Number(data['memory']),
+                storage_gib: Number(data['storage_gib']),
+                gpu: Number(data['gpu']),
+              },
+            },
+          })
+        )
+        .exhaustive()
+
+      // Save service resources
+      await new Promise<void>((resolve, reject) => {
+        editService(
+          {
+            serviceId: service.id,
+            payload,
+          },
+          {
+            onSuccess: () => resolve(),
+            onError: (error) => reject(error),
+          }
+        )
+      })
+
+      // If HPA mode, also save advanced settings
+      const autoscalingMode = data['autoscaling_mode']
+      if (autoscalingMode === 'HPA') {
+        const metricChoice = data['hpa_metric_type'] === 'CPU_AND_MEMORY' ? 'CPU_AND_MEMORY' : 'CPU'
+        const cpuAverageUtilizationPercent = Number(data['hpa_cpu_average_utilization_percent']) || 60
+        const memoryAverageUtilizationPercent = Number(data['hpa_memory_average_utilization_percent']) || 60
+
+        const hpaSettings = {
+          'hpa.cpu.average_utilization_percent': cpuAverageUtilizationPercent,
+          'hpa.memory.average_utilization_percent':
+            metricChoice === 'CPU_AND_MEMORY' ? memoryAverageUtilizationPercent : undefined,
         }
 
-        case 'KEDA': {
-          // KEDA mode: include trigger authentication directly in scaler payload
-          const scalersWithAuth = (data['scalers'] || []).map((scaler: any) => {
-            const baseScaler = {
-              type: scaler.type,
-              config: scaler.config,
-            }
-
-            // If scaler has triggerAuthentication YAML, include it inline
-            if (scaler.triggerAuthentication && scaler.triggerAuthentication.trim() !== '') {
-              return {
-                ...baseScaler,
-                trigger_authentication: {
-                  config_yaml: scaler.triggerAuthentication,
-                },
-              }
-            }
-
-            // No trigger authentication needed
-            return baseScaler
+        const payload = match(service)
+          .with({ serviceType: 'APPLICATION' }, (s) => ({
+            serviceType: s.serviceType,
+            ...hpaSettings,
+          }))
+          .with({ serviceType: 'CONTAINER' }, (s) => ({
+            serviceType: s.serviceType,
+            ...hpaSettings,
+          }))
+          .otherwise(() => {
+            throw new Error('Unsupported service type for HPA settings')
           })
 
-          requestWithInstances = {
-            ...request,
-            min_running_instances: data['min_running_instances'],
-            max_running_instances: data['max_running_instances'],
-            scalers: scalersWithAuth,
-            autoscaling_polling_interval: data['autoscaling_polling_interval']
-              ? Number(data['autoscaling_polling_interval'])
-              : undefined,
-            autoscaling_cooldown_period: data['autoscaling_cooldown_period']
-              ? Number(data['autoscaling_cooldown_period'])
-              : undefined,
-            autoscaling_mode: 'KEDA',
-            hpa_metric_type: undefined,
-            hpa_cpu_average_utilization_percent: undefined,
-            hpa_memory_average_utilization_percent: undefined,
-          }
-          break
-        }
-      }
-    }
-
-    const payload = match(service)
-      .with({ serviceType: 'JOB' }, (service) => buildEditServicePayload({ service, request }))
-      .with({ serviceType: 'APPLICATION' }, (service) =>
-        buildEditServicePayload({
-          service,
-          request: requestWithInstances,
-        })
-      )
-      .with({ serviceType: 'CONTAINER' }, (service) =>
-        buildEditServicePayload({
-          service,
-          request: requestWithInstances,
-        })
-      )
-      .with({ serviceType: 'TERRAFORM' }, (service) =>
-        buildEditServicePayload({
-          service,
-          request: {
-            job_resources: {
-              cpu_milli: Number(data['cpu']),
-              ram_mib: Number(data['memory']),
-              storage_gib: Number(data['storage_gib']),
-              gpu: Number(data['gpu']),
-            },
-          },
-        })
-      )
-      .exhaustive()
-
-    // Save service resources
-    editService(
-      {
-        serviceId: service.id,
-        payload,
-      },
-      {
-        onSuccess: () => {
-          // If HPA mode, also save advanced settings
-          const autoscalingMode = data['autoscaling_mode']
-          if (autoscalingMode === 'HPA') {
-            const metricChoice = data['hpa_metric_type'] === 'CPU_AND_MEMORY' ? 'CPU_AND_MEMORY' : 'CPU'
-            const cpuAverageUtilizationPercent = Number(data['hpa_cpu_average_utilization_percent']) || 60
-            const memoryAverageUtilizationPercent = Number(data['hpa_memory_average_utilization_percent']) || 60
-
-            const advancedPayload = {
-              serviceType: service.serviceType,
-              'hpa.cpu.average_utilization_percent': cpuAverageUtilizationPercent,
-              'hpa.memory.average_utilization_percent':
-                metricChoice === 'CPU_AND_MEMORY' ? memoryAverageUtilizationPercent : null,
-            }
-
-            editAdvancedSettings({
+        await new Promise<void>((resolve, reject) => {
+          editAdvancedSettings(
+            {
               serviceId: service.id,
-              payload: advancedPayload as any,
-            })
-          }
-        },
+              payload,
+            },
+            {
+              onSuccess: () => resolve(),
+              onError: (error) => reject(error),
+            }
+          )
+        })
       }
-    )
+    } catch (error) {
+      console.error('Failed to save settings:', error)
+      throw error
+    }
   })
 
   const displayWarningCpu: boolean =
