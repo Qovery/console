@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { useMemo } from 'react'
 import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -169,6 +170,7 @@ function ObservabilityCallout() {
 }
 
 export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }: PageGeneralProps) {
+  const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
   const isLifecycleJobOrTerraform = useMemo(
     () => (service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE') || service?.serviceType === 'TERRAFORM',
     [service]
@@ -176,9 +178,10 @@ export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }:
   const isCronJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'CRON', [service])
   const isKedaAutoscaling = useMemo(
     () =>
+      isKedaFeatureEnabled &&
       (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
       service.autoscaling?.mode === 'KEDA',
-    [service]
+    [service, isKedaFeatureEnabled]
   )
 
   return (

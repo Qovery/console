@@ -1,4 +1,6 @@
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
+import { useEffect, useRef } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -50,6 +52,7 @@ export function ApplicationSettingsResources({
   const { data: environment } = useEnvironment({ environmentId })
   const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId })
   const { isQoveryAdminUser } = useUserRole()
+  const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
   const clusterFeatureKarpenter = cluster?.features?.find((f) => f.id === 'KARPENTER')
   const isKarpenterCluster = Boolean(clusterFeatureKarpenter)
   const clusterWithKeda = cluster as ClusterWithKeda | undefined
@@ -69,10 +72,25 @@ export function ApplicationSettingsResources({
   })
 
   const minRunningInstances = watch('min_running_instances')
+  const maxRunningInstances = watch('max_running_instances')
   const hpaMetricType = watch('hpa_metric_type') || 'CPU'
   const autoscalingMode = watch('autoscaling_mode') || 'NONE'
   const hpaAverageUtilizationPercent = watch('hpa_cpu_average_utilization_percent') ?? 60
   const hpaMemoryAverageUtilizationPercent = watch('hpa_memory_average_utilization_percent') ?? 60
+  const previousAutoscalingModeRef = useRef(autoscalingMode)
+
+  // Adjust min/max values when switching from NONE to HPA or KEDA
+  useEffect(() => {
+    const previousMode = previousAutoscalingModeRef.current
+    if (previousMode === 'NONE' && (autoscalingMode === 'HPA' || autoscalingMode === 'KEDA')) {
+      // When switching from no autoscaling to HPA/KEDA, set min=1 and max=2
+      if (minRunningInstances === maxRunningInstances) {
+        setValue('min_running_instances', 1)
+        setValue('max_running_instances', 2)
+      }
+    }
+    previousAutoscalingModeRef.current = autoscalingMode
+  }, [autoscalingMode, minRunningInstances, maxRunningInstances, setValue])
 
   // Determine the current saved autoscaling mode (not the form value)
   const currentAutoscalingMode = match(service)
@@ -288,26 +306,33 @@ export function ApplicationSettingsResources({
         <Section className="gap-4">
           <Heading>Instances & Autoscaling</Heading>
 
-          {isQoveryAdminUser && cloudProvider === 'AWS' && isKedaCluster ? (
+          {cloudProvider === 'AWS' && isKedaCluster ? (
             <>
               <Controller
                 name="autoscaling_mode"
                 control={control}
-                render={({ field }) => (
-                  <InputSelect
-                    label="Autoscaling mode"
-                    options={[
-                      { label: 'No autoscaling (fixed instances)', value: 'NONE' },
-                      { label: 'HPA (Horizontal Pod Autoscaler)', value: 'HPA' },
-                      { label: 'KEDA (Event-driven autoscaling)', value: 'KEDA' },
-                    ]}
-                    onChange={field.onChange}
-                    value={field.value || 'NONE'}
-                    hint="Choose how instances should scale"
-                  />
-                )}
+                render={({ field }) => {
+                  const options = [
+                    { label: 'No autoscaling (fixed instances)', value: 'NONE' },
+                    { label: 'HPA (Horizontal Pod Autoscaler)', value: 'HPA' },
+                  ]
+
+                  if (isKedaFeatureEnabled) {
+                    options.push({ label: 'KEDA (Event-driven autoscaling)', value: 'KEDA' })
+                  }
+
+                  return (
+                    <InputSelect
+                      label="Autoscaling mode"
+                      options={options}
+                      onChange={field.onChange}
+                      value={field.value || 'NONE'}
+                      hint="Choose how instances should scale"
+                    />
+                  )
+                }}
               />
-              {currentAutoscalingMode === 'HPA' && autoscalingMode === 'KEDA' && (
+              {currentAutoscalingMode === 'HPA' && autoscalingMode === 'KEDA' && isKedaFeatureEnabled && (
                 <Callout.Root color="yellow">
                   <Callout.Icon>
                     <Icon iconName="circle-info" />
