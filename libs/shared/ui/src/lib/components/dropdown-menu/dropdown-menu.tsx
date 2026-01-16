@@ -5,7 +5,7 @@ import { type ComponentPropsWithoutRef, type ElementRef, type ReactElement, clon
 import { twMerge } from '@qovery/shared/util-js'
 
 const dropdownMenuItemVariants = cva(
-  ['px-3', 'flex', 'items-center', 'h-8', 'text-sm', 'font-medium', 'rounded-sm', 'outline-none'],
+  ['px-3', 'flex', 'items-center', 'h-8', 'text-sm', 'font-medium', 'rounded-sm', 'outline-none', 'select-none'],
   {
     variants: {
       color: {
