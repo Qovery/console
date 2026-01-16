@@ -1,7 +1,7 @@
 import type { ScaledObjectStatusDto } from 'qovery-ws-typescript-axios/dist/api'
 import { match } from 'ts-pattern'
 import { Badge, Heading, Icon, Section, Skeleton, StatusChip } from '@qovery/shared/ui'
-import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
+import { useRunningStatus } from '../../hooks/use-running-status/use-running-status'
 
 export interface ScaledObjectStatusProps {
   environmentId: string

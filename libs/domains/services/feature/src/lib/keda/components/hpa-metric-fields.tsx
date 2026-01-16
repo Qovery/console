@@ -1,5 +1,5 @@
 import { type Control, Controller, type FieldValues, type UseFormSetValue } from 'react-hook-form'
-import { InputRadio, InputText } from '@qovery/shared/ui'
+import { InputText, RadioGroup } from '@qovery/shared/ui'
 
 export interface HpaMetricFieldsProps {
   control: Control
@@ -17,30 +17,22 @@ export function HpaMetricFields({ control, setValue, hpaMetricType }: HpaMetricF
         render={({ field }) => (
           <div className="mb-5">
             <label className="mb-3 block text-sm font-medium text-neutral-400">Autoscaling metric</label>
-            <div className="flex flex-col gap-3">
-              <InputRadio
-                name={field.name}
-                value="CPU"
-                label="CPU only"
-                description="Scale based on CPU usage"
-                isChecked={field.value === 'CPU'}
-                onChange={() => {
-                  field.onChange('CPU')
-                }}
-                formValue={field.value}
-              />
-              <InputRadio
-                name={field.name}
-                value="CPU_AND_MEMORY"
-                label="CPU + Memory"
-                description="Scale based on CPU and memory usage"
-                isChecked={field.value === 'CPU_AND_MEMORY'}
-                onChange={() => {
-                  field.onChange('CPU_AND_MEMORY')
-                }}
-                formValue={field.value}
-              />
-            </div>
+            <RadioGroup.Root onValueChange={field.onChange} value={field.value} className="flex flex-col gap-3">
+              <label className="flex cursor-pointer items-start gap-3 rounded border border-neutral-250 bg-neutral-100 p-4">
+                <RadioGroup.Item value="CPU" />
+                <div className="flex flex-col gap-1">
+                  <span className="font-medium text-neutral-400">CPU only</span>
+                  <span className="text-sm text-neutral-350">Scale based on CPU usage</span>
+                </div>
+              </label>
+              <label className="flex cursor-pointer items-start gap-3 rounded border border-neutral-250 bg-neutral-100 p-4">
+                <RadioGroup.Item value="CPU_AND_MEMORY" />
+                <div className="flex flex-col gap-1">
+                  <span className="font-medium text-neutral-400">CPU + Memory</span>
+                  <span className="text-sm text-neutral-350">Scale based on CPU and memory usage</span>
+                </div>
+              </label>
+            </RadioGroup.Root>
           </div>
         )}
       />

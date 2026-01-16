@@ -5,24 +5,6 @@ import {
   extractAndProcessAutoscaling,
 } from './autoscaling-payload'
 
-type TestAutoscalingRequest = {
-  memory: number
-  cpu: number
-  gpu?: number
-  scalers?: Array<{
-    type: string
-    config: string
-    trigger_authentication?: { name?: string; config_yaml?: string }
-    triggerAuthentication?: string
-  }>
-  autoscaling_polling_interval?: number
-  autoscaling_cooldown_period?: number
-  autoscaling_mode?: 'NONE' | 'HPA' | 'KEDA'
-  hpa_cpu_average_utilization_percent?: number
-  hpa_memory_average_utilization_percent?: number
-  hpa_metric_type?: 'CPU' | 'CPU_AND_MEMORY'
-} & Record<string, unknown>
-
 describe('autoscaling-payload', () => {
   describe('convertAutoscalingResponseToRequest', () => {
     it('should convert KEDA response to request format', () => {
@@ -42,9 +24,9 @@ describe('autoscaling-payload', () => {
             },
           },
         ],
-      }
+      } as unknown as AutoscalingPolicyResponse
 
-      const result = convertAutoscalingResponseToRequest(response as any)
+      const result = convertAutoscalingResponseToRequest(response)
 
       expect(result).toEqual({
         mode: 'KEDA',
@@ -68,9 +50,9 @@ describe('autoscaling-payload', () => {
     it('should handle HPA mode', () => {
       const response = {
         mode: 'HPA',
-      }
+      } as unknown as AutoscalingPolicyResponse
 
-      const result = convertAutoscalingResponseToRequest(response as any)
+      const result = convertAutoscalingResponseToRequest(response)
 
       expect(result).toMatchObject({
         mode: 'HPA',
@@ -78,7 +60,7 @@ describe('autoscaling-payload', () => {
     })
 
     it('should return undefined for null input', () => {
-      const result = convertAutoscalingResponseToRequest(null as any)
+      const result = convertAutoscalingResponseToRequest(undefined)
 
       expect(result).toBeUndefined()
     })
@@ -87,9 +69,9 @@ describe('autoscaling-payload', () => {
       const response = {
         mode: 'KEDA',
         scalers: [],
-      }
+      } as unknown as AutoscalingPolicyResponse
 
-      const result = convertAutoscalingResponseToRequest(response as any)
+      const result = convertAutoscalingResponseToRequest(response)
 
       expect(result).toMatchObject({
         mode: 'KEDA',
@@ -108,9 +90,9 @@ describe('autoscaling-payload', () => {
             config_yaml: 'type: cpu',
           },
         ],
-      }
+      } as unknown as AutoscalingPolicyResponse
 
-      const result = convertAutoscalingResponseToRequest(response as any)
+      const result = convertAutoscalingResponseToRequest(response)
 
       expect(result?.scalers?.[0]?.trigger_authentication).toBeUndefined()
     })
@@ -118,7 +100,7 @@ describe('autoscaling-payload', () => {
 
   describe('extractAndProcessAutoscaling', () => {
     it('should extract KEDA autoscaling from request', () => {
-      const request = {
+      const request: Record<string, unknown> = {
         memory: 512,
         cpu: 250,
         scalers: [
@@ -135,9 +117,9 @@ describe('autoscaling-payload', () => {
 
       const existingAutoscaling = {
         mode: 'KEDA',
-      }
+      } as unknown as AutoscalingPolicyResponse
 
-      const result = extractAndProcessAutoscaling(request as any, existingAutoscaling as any)
+      const result = extractAndProcessAutoscaling(request, existingAutoscaling)
 
       expect(result.autoscaling).toEqual({
         mode: 'KEDA',
@@ -164,13 +146,13 @@ describe('autoscaling-payload', () => {
     })
 
     it('should handle HPA mode', () => {
-      const request = {
+      const request: Record<string, unknown> = {
         memory: 512,
         cpu: 250,
         autoscaling_mode: 'HPA',
       }
 
-      const result = extractAndProcessAutoscaling(request as any, undefined)
+      const result = extractAndProcessAutoscaling(request, undefined)
 
       expect(result.autoscaling).toBeUndefined()
       expect(result.cleanedRequest).toEqual({
@@ -180,13 +162,13 @@ describe('autoscaling-payload', () => {
     })
 
     it('should handle NONE mode', () => {
-      const request = {
+      const request: Record<string, unknown> = {
         memory: 512,
         cpu: 250,
         autoscaling_mode: 'NONE',
       }
 
-      const result = extractAndProcessAutoscaling(request as any, undefined)
+      const result = extractAndProcessAutoscaling(request, undefined)
 
       expect(result.autoscaling).toBeUndefined()
       expect(result.cleanedRequest).toEqual({
@@ -196,7 +178,7 @@ describe('autoscaling-payload', () => {
     })
 
     it('should remove KEDA fields from cleaned request', () => {
-      const request = {
+      const request: Record<string, unknown> = {
         memory: 512,
         cpu: 250,
         scalers: [{ type: 'cpu', config: 'type: cpu' }],
@@ -205,7 +187,7 @@ describe('autoscaling-payload', () => {
         autoscaling_mode: 'KEDA',
       }
 
-      const result = extractAndProcessAutoscaling(request as TestAutoscalingRequest, undefined)
+      const result = extractAndProcessAutoscaling(request, undefined)
       const cleaned = result.cleanedRequest as Record<string, unknown>
 
       expect(cleaned['scalers']).toBeUndefined()
@@ -284,7 +266,7 @@ describe('autoscaling-payload', () => {
     })
 
     it('should build request for KEDA mode', () => {
-      const formData: any = {
+      const formData: Record<string, unknown> = {
         memory: 512,
         cpu: 250,
         autoscaling_mode: 'KEDA',
@@ -334,7 +316,7 @@ describe('autoscaling-payload', () => {
     })
 
     it('should handle KEDA mode with empty scalers', () => {
-      const formData: any = {
+      const formData: Record<string, unknown> = {
         memory: 512,
         cpu: 250,
         autoscaling_mode: 'KEDA',
@@ -356,7 +338,7 @@ describe('autoscaling-payload', () => {
     })
 
     it('should handle KEDA scaler without trigger authentication', () => {
-      const formData: any = {
+      const formData: Record<string, unknown> = {
         memory: 512,
         cpu: 250,
         autoscaling_mode: 'KEDA',
@@ -386,7 +368,7 @@ describe('autoscaling-payload', () => {
     })
 
     it('should use default values for KEDA when not provided', () => {
-      const formData: any = {
+      const formData: Record<string, unknown> = {
         memory: 512,
         cpu: 250,
         autoscaling_mode: 'KEDA',
@@ -409,7 +391,7 @@ describe('autoscaling-payload', () => {
     })
 
     it('should include gpu in base request if provided', () => {
-      const formData: any = {
+      const formData: Record<string, unknown> = {
         memory: 512,
         cpu: 250,
         gpu: 1,

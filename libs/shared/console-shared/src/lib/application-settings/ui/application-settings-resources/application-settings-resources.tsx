@@ -5,7 +5,7 @@ import { match } from 'ts-pattern'
 import { hasGpuInstance, useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
-import { useRunningStatus } from '@qovery/domains/services/feature'
+import { HpaMetricFields, InstancesRangeInputs, KedaSettings, useRunningStatus } from '@qovery/domains/services/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import {
@@ -22,7 +22,6 @@ import {
   Section,
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
-import { InstancesRangeInputs, KedaSettings } from './components'
 
 type ClusterWithKeda = {
   keda?: {
@@ -382,6 +381,7 @@ export function ApplicationSettingsResources({
                 minRunningInstances={minRunningInstances}
                 showMaxField={true}
                 runningPods={runningStatuses?.pods?.length}
+                requireMinLessThanMax={true}
               />
 
               <Callout.Root color="sky" className="mt-3">
@@ -413,73 +413,7 @@ export function ApplicationSettingsResources({
                 </Callout.Text>
               </Callout.Root>
 
-              <Controller
-                name="hpa_metric_type"
-                control={control}
-                render={({ field }) => (
-                  <InputSelect
-                    label="Metric type"
-                    options={[
-                      { label: 'CPU', value: 'CPU' },
-                      { label: 'CPU and Memory', value: 'CPU_AND_MEMORY' },
-                    ]}
-                    onChange={field.onChange}
-                    value={field.value || 'CPU'}
-                  />
-                )}
-              />
-
-              <Controller
-                name="hpa_cpu_average_utilization_percent"
-                control={control}
-                rules={{
-                  min: 1,
-                  max: 100,
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    type="number"
-                    label={
-                      hpaMetricType === 'CPU_AND_MEMORY' ? 'CPU average utilization (%)' : 'Average utilization (%)'
-                    }
-                    name={field.name}
-                    value={field.value ?? 60}
-                    onChange={field.onChange}
-                    hint="Scaling triggers when average utilization exceeds this percentage (default: 60%)"
-                    error={
-                      error?.type === 'min' ? 'Minimum is 1%.' : error?.type === 'max' ? 'Maximum is 100%.' : undefined
-                    }
-                  />
-                )}
-              />
-
-              {hpaMetricType === 'CPU_AND_MEMORY' && (
-                <Controller
-                  name="hpa_memory_average_utilization_percent"
-                  control={control}
-                  rules={{
-                    min: 1,
-                    max: 100,
-                  }}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputText
-                      type="number"
-                      label="Memory average utilization (%)"
-                      name={field.name}
-                      value={field.value ?? 60}
-                      onChange={field.onChange}
-                      hint="Scaling triggers when average memory utilization exceeds this percentage (default: 60%)"
-                      error={
-                        error?.type === 'min'
-                          ? 'Minimum is 1%.'
-                          : error?.type === 'max'
-                            ? 'Maximum is 100%.'
-                            : undefined
-                      }
-                    />
-                  )}
-                />
-              )}
+              <HpaMetricFields control={control} setValue={setValue} hpaMetricType={hpaMetricType} />
             </>
           )}
 

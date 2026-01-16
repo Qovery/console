@@ -1,4 +1,4 @@
-import { type Control, Controller, type FieldErrors } from 'react-hook-form'
+import { type Control, Controller, type FieldErrors, useWatch } from 'react-hook-form'
 import { InputText } from '@qovery/shared/ui'
 
 export interface InstancesRangeInputsProps {
@@ -9,6 +9,7 @@ export interface InstancesRangeInputsProps {
   disabled?: boolean
   showMaxField?: boolean
   runningPods?: number
+  requireMinLessThanMax?: boolean
 }
 
 export function InstancesRangeInputs({
@@ -19,15 +20,19 @@ export function InstancesRangeInputs({
   disabled = false,
   showMaxField = true,
   runningPods,
+  requireMinLessThanMax = false,
 }: InstancesRangeInputsProps) {
+  const minRunningInstancesValue = useWatch({ control, name: 'min_running_instances' })
+
   const getErrorMessage = (error: FieldErrors[string], fieldName: string) => {
     if (!error) return undefined
     if (error.type === 'required') return 'Please enter a size.'
     if (error.type === 'max') return `Maximum allowed is: ${maxInstances}.`
     if (error.type === 'min') {
-      const minValue = fieldName === 'max_running_instances' ? minRunningInstances : minInstances
+      const minValue = fieldName === 'max_running_instances' ? minRunningInstancesValue : minInstances
       return `Minimum allowed is: ${minValue}.`
     }
+    if (error.type === 'validate') return error.message as string
     return undefined
   }
 
@@ -66,7 +71,15 @@ export function InstancesRangeInputs({
             rules={{
               required: true,
               max: maxInstances,
-              min: minRunningInstances,
+              min: minRunningInstancesValue,
+              validate: requireMinLessThanMax
+                ? (value: number) => {
+                    if (value <= minRunningInstancesValue) {
+                      return 'Maximum instances must be greater than minimum instances.'
+                    }
+                    return true
+                  }
+                : undefined,
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText

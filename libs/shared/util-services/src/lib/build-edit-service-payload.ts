@@ -25,7 +25,7 @@ import {
   type TerraformType,
 } from '@qovery/domains/services/data-access'
 import { isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
-import { extractAndProcessAutoscaling } from './autoscaling-payload'
+import { extractAndProcessAutoscaling } from './keda/autoscaling-payload/autoscaling-payload'
 
 type applicationProps = {
   service: Application

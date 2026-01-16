@@ -1,11 +1,22 @@
 import { type Environment } from 'qovery-typescript-axios'
+import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
-import { useEditService, useService } from '@qovery/domains/services/feature'
-import { buildAutoscalingRequestFromForm, buildEditServicePayload } from '@qovery/shared/util-services'
+import {
+  useAdvancedSettings,
+  useEditAdvancedSettings,
+  useEditService,
+  useService,
+} from '@qovery/domains/services/feature'
+import {
+  buildAutoscalingRequestFromForm,
+  buildEditServicePayload,
+  buildHpaAdvancedSettingsPayload,
+  loadHpaSettingsFromAdvancedSettings,
+} from '@qovery/shared/util-services'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
 export interface SettingsResourcesFeatureProps {
@@ -15,6 +26,13 @@ export interface SettingsResourcesFeatureProps {
 
 export function SettingsResourcesFeature({ service, environment }: SettingsResourcesFeatureProps) {
   const { mutate: editService, isLoading: isLoadingService } = useEditService({
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
+    environmentId: environment.id,
+  })
+
+  const { data: advancedSettings } = useAdvancedSettings({ serviceId: service.id, serviceType: service.serviceType })
+  const { mutateAsync: editAdvancedSettings } = useEditAdvancedSettings({
     organizationId: environment.organization.id,
     projectId: environment.project.id,
     environmentId: environment.id,
@@ -88,11 +106,23 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
         })
         .otherwise(() => undefined),
 
+      ...loadHpaSettingsFromAdvancedSettings(advancedSettings),
+
       ...defaultInstances,
     },
   })
 
-  const onSubmit = methods.handleSubmit((data: FieldValues) => {
+  // Update form values when advanced settings change (e.g., after save)
+  useEffect(() => {
+    if (advancedSettings) {
+      const hpaSettings = loadHpaSettingsFromAdvancedSettings(advancedSettings)
+      methods.setValue('hpa_metric_type', hpaSettings.hpa_metric_type)
+      methods.setValue('hpa_cpu_average_utilization_percent', hpaSettings.hpa_cpu_average_utilization_percent)
+      methods.setValue('hpa_memory_average_utilization_percent', hpaSettings.hpa_memory_average_utilization_percent)
+    }
+  }, [advancedSettings, methods])
+
+  const onSubmit = methods.handleSubmit(async (data: FieldValues) => {
     const baseRequest = {
       memory: Number(data['memory']),
       cpu: Number(data['cpu']),
@@ -130,6 +160,17 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
         })
       )
       .exhaustive()
+
+    // Save HPA advanced settings if in HPA mode
+    if (data['autoscaling_mode'] === 'HPA' && advancedSettings) {
+      await editAdvancedSettings({
+        serviceId: service.id,
+        payload: {
+          serviceType: service.serviceType,
+          ...buildHpaAdvancedSettingsPayload(data, advancedSettings),
+        },
+      })
+    }
 
     editService({
       serviceId: service.id,

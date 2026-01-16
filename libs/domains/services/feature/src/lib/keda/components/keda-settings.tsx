@@ -32,6 +32,7 @@ export function KedaSettings({
         disabled={disabled}
         showMaxField={true}
         runningPods={runningPods}
+        requireMinLessThanMax={true}
       />
 
       <Callout.Root color="yellow" className="mt-3">
