@@ -32,7 +32,7 @@
     width: theme('spacing.7');
     margin-right: theme('spacing.1');
     font-size: theme('fontSize.xs');
-    color: theme('colors.neutral.400');
+    color: theme('textColor.neutral.DEFAULT');
 
     &:last-child {
       margin-right: 0;
@@ -55,8 +55,8 @@
   .react-datepicker__day:hover,
   .react-datepicker__day--range-start,
   .react-datepicker__day--range-end {
-    background-color: theme('colors.brand.500') !important;
-    color: theme('colors.neutral.100') !important;
+    background-color: theme('colors.surface.neutralInvert.DEFAULT') !important;
+    color: theme('textColor.neutralInvert.DEFAULT') !important;
   }
 
   .react-datepicker__day--range-start,
@@ -77,15 +77,15 @@
       .react-datepicker__quarter-text--in-range,
       .react-datepicker__year-text--in-range
     ) {
-    background-color: theme('colors.brand.50');
-    color: theme('colors.brand.500');
+    background-color: theme('colors.surface.neutral.component');
+    color: theme('textColor.neutral.DEFAULT');
   }
 
   // Ensure range start is always highlighted like hover
   .react-datepicker__day--selected.react-datepicker__day--range-start,
   .react-datepicker__day--selected:not(.react-datepicker__day--in-range) {
-    background-color: theme('colors.brand.500') !important;
-    color: theme('colors.neutral.100') !important;
+    background-color: theme('colors.surface.neutralInvert.DEFAULT') !important;
+    color: theme('textColor.neutralInvert.DEFAULT') !important;
     border-radius: theme('spacing.1');
   }
 
@@ -101,7 +101,7 @@
   // Apply same style than disabled days for those that are above the max-range
   .react-datepicker__day--max-range-exceeded.react-datepicker__day--in-selecting-range,
   .react-datepicker__day--max-range-exceeded.react-datepicker__day--in-selecting-range.react-datepicker__day--keyboard-selected {
-    color: theme('colors.neutral.250');
+    color: theme('textColor.neutral.disabled');
     background-color: theme('colors.neutral.50');
   }
 
@@ -153,20 +153,4 @@
   animation-duration: 0.6s;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   animation-fill-mode: forwards;
-}
-
-.dark {
-  .react-datepicker {
-    background-color: theme('colors.neutral.550');
-    color: theme('colors.neutral.50');
-  }
-  .react-datepicker__day-name {
-    color: theme('colors.neutral.50');
-  }
-  .react-datepicker__day {
-    color: theme('colors.neutral.50');
-  }
-  .react-datepicker__day--disabled {
-    color: theme('colors.neutral.250');
-  }
 }
