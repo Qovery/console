@@ -28,7 +28,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input     "
+              class="input group     "
             >
               <div
                 class=""
@@ -93,7 +93,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+                      class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                       data-testid="annotations.0.key"
                       name="annotations.0.key"
                       spellcheck="false"
@@ -114,7 +114,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+                      class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                       data-testid="annotations.0.value"
                       name="annotations.0.value"
                       spellcheck="false"
@@ -124,7 +124,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
                   </div>
                 </div>
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle"
                   type="button"
                 >
                   <i
@@ -136,7 +136,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             </li>
           </ul>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-neutral text-xs h-7 px-2 rounded bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert mt-3"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-xs h-7 px-2 rounded bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert mt-3"
             type="button"
           >
             Add annotation
@@ -159,7 +159,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           >
             <button
               aria-checked="false"
-              class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 h-4 w-4"
+              class="group inline-flex shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong mr-3 h-4 w-4"
               data-state="unchecked"
               id="CRON_JOBS"
               role="checkbox"
@@ -186,7 +186,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           >
             <button
               aria-checked="false"
-              class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 h-4 w-4"
+              class="group inline-flex shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong mr-3 h-4 w-4"
               data-state="unchecked"
               id="DEPLOYMENTS"
               role="checkbox"
@@ -213,7 +213,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           >
             <button
               aria-checked="false"
-              class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 h-4 w-4"
+              class="group inline-flex shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong mr-3 h-4 w-4"
               data-state="unchecked"
               id="HPA"
               role="checkbox"
@@ -240,7 +240,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           >
             <button
               aria-checked="false"
-              class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 h-4 w-4"
+              class="group inline-flex shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong mr-3 h-4 w-4"
               data-state="unchecked"
               id="INGRESS"
               role="checkbox"
@@ -267,7 +267,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           >
             <button
               aria-checked="false"
-              class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 h-4 w-4"
+              class="group inline-flex shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong mr-3 h-4 w-4"
               data-state="unchecked"
               id="JOBS"
               role="checkbox"
@@ -294,7 +294,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           >
             <button
               aria-checked="false"
-              class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 h-4 w-4"
+              class="group inline-flex shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong mr-3 h-4 w-4"
               data-state="unchecked"
               id="PODS"
               role="checkbox"
@@ -321,7 +321,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           >
             <button
               aria-checked="false"
-              class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 h-4 w-4"
+              class="group inline-flex shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong mr-3 h-4 w-4"
               data-state="unchecked"
               id="SECRETS"
               role="checkbox"
@@ -348,7 +348,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           >
             <button
               aria-checked="false"
-              class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 h-4 w-4"
+              class="group inline-flex shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong mr-3 h-4 w-4"
               data-state="unchecked"
               id="SERVICES"
               role="checkbox"
@@ -375,7 +375,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           >
             <button
               aria-checked="false"
-              class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 mr-3 h-4 w-4"
+              class="group inline-flex shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong mr-3 h-4 w-4"
               data-state="unchecked"
               id="STATEFUL_SETS"
               role="checkbox"
@@ -402,14 +402,14 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           class="mt-6 flex justify-end gap-3"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
             data-testid="cancel-button"
             type="button"
           >
             Cancel
           </button>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-neutral text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
             data-testid="submit-button"
             disabled=""
             type="submit"

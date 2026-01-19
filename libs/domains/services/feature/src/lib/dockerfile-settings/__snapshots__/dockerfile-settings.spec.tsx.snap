@@ -126,7 +126,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input    input--label-up "
+              class="input group    input--label-up "
             >
               <div
                 class=""
@@ -149,7 +149,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
             </div>
           </div>
           <p
-            class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+            class="mt-0.5 px-3 text-xs text-neutral-subtle"
           >
             <span>
               Specify the location of your dockerfile. Expected format: myapp/Dockerfile
@@ -177,7 +177,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input     "
+              class="input group     "
             >
               <div
                 class=""
@@ -200,7 +200,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
             </div>
           </div>
           <p
-            class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+            class="mt-0.5 px-3 text-xs text-neutral-subtle"
           >
             Specify the target stage to build in a multi-stage Dockerfile
           </p>
@@ -342,7 +342,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input    input--label-up "
+              class="input group    input--label-up "
             >
               <div
                 class=""
@@ -365,7 +365,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
             </div>
           </div>
           <p
-            class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+            class="mt-0.5 px-3 text-xs text-neutral-subtle"
           >
             <span>
               Specify the location of your dockerfile. Expected format: myapp/Dockerfile
@@ -393,7 +393,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input     "
+              class="input group     "
             >
               <div
                 class=""
@@ -416,7 +416,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
             </div>
           </div>
           <p
-            class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+            class="mt-0.5 px-3 text-xs text-neutral-subtle"
           >
             Specify the target stage to build in a multi-stage Dockerfile
           </p>

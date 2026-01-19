@@ -40,7 +40,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
             >
               <div
                 aria-label="input-container"
-                class="input     "
+                class="input group     "
               >
                 <div
                   class=""
@@ -168,7 +168,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
             >
               <div
                 aria-label="input-container"
-                class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+                class="input group input--disabled input--disabled !border-neutral  input--label-up "
               >
                 <div
                   class="pointer-events-none"
@@ -201,7 +201,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
             >
               <div
                 aria-label="input-container"
-                class="input     "
+                class="input group     "
               >
                 <div
                   class=""
@@ -234,7 +234,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
               >
                 <div
                   aria-label="input-container"
-                  class="input     "
+                  class="input group     "
                 >
                   <div
                     class=""
@@ -269,14 +269,14 @@ port from the internet. Default value is p&lt;port_number&gt;-&lt;service_name&g
           class="mt-6 flex justify-end gap-3"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
             data-testid="cancel-button"
             type="button"
           >
             Cancel
           </button>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-neutral text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
             data-testid="submit-button"
             disabled=""
             type="submit"
@@ -330,7 +330,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
             >
               <div
                 aria-label="input-container"
-                class="input    input--label-up "
+                class="input group    input--label-up "
               >
                 <div
                   class=""
@@ -362,7 +362,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
             >
               <div
                 aria-label="input-container"
-                class="input    input--label-up "
+                class="input group    input--label-up "
               >
                 <div
                   class=""
@@ -490,7 +490,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
             >
               <div
                 aria-label="input-container"
-                class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+                class="input group input--disabled input--disabled !border-neutral  input--label-up "
               >
                 <div
                   class="pointer-events-none"
@@ -523,7 +523,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
             >
               <div
                 aria-label="input-container"
-                class="input    input--label-up "
+                class="input group    input--label-up "
               >
                 <div
                   class=""
@@ -556,7 +556,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
               >
                 <div
                   aria-label="input-container"
-                  class="input    input--label-up "
+                  class="input group    input--label-up "
                 >
                   <div
                     class=""
@@ -591,14 +591,14 @@ port from the internet. Default value is p&lt;port_number&gt;-&lt;service_name&g
           class="mt-6 flex justify-end gap-3"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
             data-testid="cancel-button"
             type="button"
           >
             Cancel
           </button>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-neutral text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
             data-testid="submit-button"
             disabled=""
             type="submit"

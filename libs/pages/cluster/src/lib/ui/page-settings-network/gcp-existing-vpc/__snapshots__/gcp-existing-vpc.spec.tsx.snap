@@ -34,7 +34,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral  input--label-up "
           >
             <div
               class="pointer-events-none"
@@ -67,7 +67,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral  input--label-up "
           >
             <div
               class="pointer-events-none"
@@ -100,7 +100,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral  input--label-up "
           >
             <div
               class="pointer-events-none"
@@ -133,7 +133,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral  input--label-up "
           >
             <div
               class="pointer-events-none"
@@ -166,7 +166,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral  input--label-up "
           >
             <div
               class="pointer-events-none"
@@ -199,7 +199,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral  input--label-up "
           >
             <div
               class="pointer-events-none"

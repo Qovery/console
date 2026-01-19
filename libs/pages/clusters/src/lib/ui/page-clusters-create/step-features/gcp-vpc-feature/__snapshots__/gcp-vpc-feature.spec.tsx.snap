@@ -38,7 +38,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""
@@ -70,7 +70,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""
@@ -115,7 +115,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""
@@ -147,7 +147,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""
@@ -179,7 +179,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""
@@ -211,7 +211,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""

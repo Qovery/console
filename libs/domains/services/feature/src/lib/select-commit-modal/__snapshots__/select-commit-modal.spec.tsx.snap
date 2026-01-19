@@ -73,7 +73,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
               <div>
                 <button
                   aria-checked="false"
-                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
+                  class="group transition bg-surface-neutral border border-neutral w-[20px] h-[20px] rounded-full hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid data-[state=checked]:border-0 hover:data-[state=checked]:bg-surface-brand-solidHover disabled:cursor-not-allowed disabled:hover:border disabled:bg-surface-neutral-component disabled:border-neutral-component disabled:data-[state=checked]:border-0 disabled:data-[state=checked]:bg-surface-brand-component"
                   data-radix-collection-item=""
                   data-state="unchecked"
                   role="radio"
@@ -175,7 +175,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
               <div>
                 <button
                   aria-checked="true"
-                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
+                  class="group transition bg-surface-neutral border border-neutral w-[20px] h-[20px] rounded-full hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid data-[state=checked]:border-0 hover:data-[state=checked]:bg-surface-brand-solidHover disabled:cursor-not-allowed disabled:hover:border disabled:bg-surface-neutral-component disabled:border-neutral-component disabled:data-[state=checked]:border-0 disabled:data-[state=checked]:bg-surface-brand-component"
                   data-disabled=""
                   data-radix-collection-item=""
                   data-state="checked"
@@ -192,7 +192,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-regular fa-check text-xs text-white"
+                      class="fa-regular fa-check text-xs text-neutralInvert"
                     />
                   </span>
                 </button>
@@ -277,12 +277,12 @@ exports[`SelectCommitModal should match snapshot 1`] = `
       class="absolute bottom-0 left-0 flex w-full justify-end gap-3 rounded-b-md bg-white p-5"
     >
       <button
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-10 px-3 rounded-lg bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-10 px-3 rounded-lg bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
       >
         Cancel
       </button>
       <button
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-neutral text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
         disabled=""
       >
         Deploy

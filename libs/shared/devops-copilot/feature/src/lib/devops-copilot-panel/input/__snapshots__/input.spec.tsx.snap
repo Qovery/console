@@ -14,7 +14,7 @@ exports[`Input should match snapshot when loading 1`] = `
         class="flex items-end justify-end p-2"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-xs px-2 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-500 transition-colors dark:text-white"
+          class="inline-flex items-center shrink-0 font-medium active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-xs px-2 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-500 transition-colors dark:text-white"
           data-state="closed"
           type="button"
         >
@@ -47,7 +47,7 @@ exports[`Input should match snapshot when not loading 1`] = `
         class="flex items-end justify-end p-2"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-xs px-2 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-500 transition-colors dark:text-white"
+          class="inline-flex items-center shrink-0 font-medium active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-xs px-2 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-500 transition-colors dark:text-white"
           data-state="closed"
           type="button"
         >

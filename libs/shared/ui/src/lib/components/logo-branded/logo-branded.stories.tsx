@@ -1,9 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-webpack5'
-import { LogoBrandedIcon } from './logo'
+import { LogoBrandedIcon } from './logo-branded'
 
 const meta: Meta<typeof LogoBrandedIcon> = {
   component: LogoBrandedIcon,
-  title: 'Logo',
+  title: 'LogoBranded',
 }
 
 export default meta
