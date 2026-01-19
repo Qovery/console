@@ -7,6 +7,7 @@ export interface Thread {
   created_at: string
   updated_at: string
   organization_id: string
+  read_only?: boolean
 }
 
 interface UseThreadsReturn {

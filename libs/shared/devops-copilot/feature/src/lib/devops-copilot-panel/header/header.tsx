@@ -58,7 +58,7 @@ export function Header({
             Beta
           </Badge>
         </Tooltip>
-        {userAccess?.read_only === false && (
+        {userAccess?.read_only === false && threadLength == 0 && (
           <>
             <div className="mx-1 h-5 w-[1px] bg-neutral-200 dark:bg-neutral-500"></div>
             <div className="flex items-center gap-2">
@@ -66,28 +66,18 @@ export function Header({
                 {isReadOnly ? 'Read-only' : 'Read-write'}
               </span>
               <Tooltip
-                content={
-                  threadLength > 0
-                    ? 'Mode cannot be changed after the conversation has started'
-                    : isReadOnly
-                      ? 'Enable read-write mode'
-                      : 'Disable read-write mode'
-                }
+                content={isReadOnly ? 'Enable read-write mode' : 'Disable read-write mode'}
                 delayDuration={400}
                 classNameContent="z-10"
               >
                 <button
                   type="button"
-                  onClick={() => threadLength === 0 && setIsReadOnly(!isReadOnly)}
-                  disabled={threadLength > 0}
+                  onClick={() => setIsReadOnly(!isReadOnly)}
                   className={clsx(
                     'relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
                     {
-                      'bg-orange-500': !isReadOnly && threadLength === 0,
-                      'bg-orange-300': !isReadOnly && threadLength > 0,
-                      'bg-neutral-300 dark:bg-neutral-400': isReadOnly && threadLength === 0,
-                      'bg-neutral-200 dark:bg-neutral-500': isReadOnly && threadLength > 0,
-                      'cursor-not-allowed opacity-60': threadLength > 0,
+                      'bg-orange-500': !isReadOnly,
+                      'bg-neutral-300': isReadOnly,
                     }
                   )}
                 >
@@ -125,6 +115,7 @@ export function Header({
                   setThreadId(undefined)
                   setIsLoading(false)
                   setPlan([])
+                  setIsReadOnly(true)
                 }}
               >
                 <span className="w-4">

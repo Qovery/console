@@ -74,7 +74,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const docLinks = useContextualDocLinks()
   const { context, current } = useQoveryContext()
   const { user, getAccessTokenSilently } = useAuth0()
-  const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot-config-panel')
+  const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
 
   const organizationId = context?.organization?.id ?? ''
 
@@ -109,6 +109,15 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     isLoading: isLoadingThreads,
     refetchThreads,
   } = useThreads({ organizationId, owner: user?.sub ?? '' })
+
+  useEffect(() => {
+    if (threadId && threads.length > 0) {
+      const currentThread = threads.find((t) => t.id === threadId)
+      if (currentThread && currentThread.read_only !== undefined) {
+        setIsReadOnly(currentThread.read_only)
+      }
+    }
+  }, [threadId, threads])
 
   const { thread, setThread } = useThreadState({
     organizationId,
