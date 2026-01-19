@@ -348,7 +348,7 @@ exports[`SourceSetting should match snapshot helm chart settings with OCI kind 1
       >
         <div
           aria-label="input-container"
-          class="input    input--label-up "
+          class="input group    input--label-up "
         >
           <div
             class=""
@@ -380,7 +380,7 @@ exports[`SourceSetting should match snapshot helm chart settings with OCI kind 1
       >
         <div
           aria-label="input-container"
-          class="input    input--label-up "
+          class="input group    input--label-up "
         >
           <div
             class=""

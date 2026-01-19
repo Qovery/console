@@ -13,7 +13,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""
@@ -58,7 +58,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
       >
         <div
           aria-label="input-container"
-          class="input     "
+          class="input group     "
         >
           <div
             class=""
@@ -91,7 +91,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input    input--label-up "
+            class="input group    input--label-up "
           >
             <div
               class=""

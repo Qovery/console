@@ -1,0 +1,421 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ButtonPopoverSubnets should match snapshot 1`] = `
+<body>
+  <span
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+  <div
+    aria-controls="radix-:rf:"
+    aria-expanded="true"
+    aria-haspopup="dialog"
+    data-state="open"
+    type="button"
+  >
+    <button>
+      children
+    </button>
+  </div>
+  <div
+    data-radix-popper-content-wrapper=""
+    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
+  >
+    <div
+      class="rounded border border-neutral bg-surface-neutral shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative divide-y p-0 text-sm text-neutral data-[state=open]:block data-[state=closed]:hidden"
+      data-align="start"
+      data-side="bottom"
+      data-state="open"
+      id="radix-:rf:"
+      role="dialog"
+      style="width: 648px; --radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height);"
+      tabindex="-1"
+    >
+      <div
+        class="flex flex-col gap-3 p-4"
+      >
+        <h6
+          class="flex items-center gap-1.5 font-medium text-neutral"
+        >
+          EKS private subnet IDs
+          <span
+            class="text-sm0"
+            data-state="closed"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-circle-info "
+            />
+          </span>
+        </h6>
+        <div
+          class="flex flex-row gap-x-3 p-3 border rounded text-sm border-warning-component bg-surface-warning-subtle text-warning"
+          data-accent-color="yellow"
+        >
+          <div
+            class="-order-2 text-lg leading-6"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-exclamation-circle "
+            />
+          </div>
+          <div
+            class="-order-1 mr-auto gap-x-3 text-neutral"
+          >
+            <span
+              class="block font-medium leading-6"
+            >
+              These subnets have to be private and connected to internet through a NAT Gateway.
+            </span>
+          </div>
+        </div>
+        <ul
+          class="flex flex-col gap-3"
+        >
+          <li
+            class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium text-neutral-subtle"
+          >
+            <span>
+              IDs zone A
+            </span>
+            <span>
+              IDs zone B
+            </span>
+            <span>
+              IDs zone C
+            </span>
+            <span />
+          </li>
+          <li
+            class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
+          >
+            <div
+              class="w-full"
+              data-testid="input-small-wrapper"
+            >
+              <div
+                class="input input--small flex-grow"
+                data-testid="input"
+              >
+                <label
+                  class="hidden"
+                />
+                <input
+                  class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
+                  data-testid="input-value"
+                  name="aws_existing_vpc.eks_subnets.0.A"
+                  spellcheck="false"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+            <div
+              class="w-full"
+              data-testid="input-small-wrapper"
+            >
+              <div
+                class="input input--small flex-grow"
+                data-testid="input"
+              >
+                <label
+                  class="hidden"
+                />
+                <input
+                  class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
+                  data-testid="input-value"
+                  name="aws_existing_vpc.eks_subnets.0.B"
+                  spellcheck="false"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+            <div
+              class="w-full"
+              data-testid="input-small-wrapper"
+            >
+              <div
+                class="input input--small flex-grow"
+                data-testid="input"
+              >
+                <label
+                  class="hidden"
+                />
+                <input
+                  class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
+                  data-testid="input-value"
+                  name="aws_existing_vpc.eks_subnets.0.C"
+                  spellcheck="false"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle w-full"
+              type="button"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-trash-can text-base"
+              />
+            </button>
+          </li>
+        </ul>
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle self-end"
+          type="button"
+        >
+          Add subnets
+          <i
+            aria-hidden="true"
+            class="fa-regular fa-plus ml-2 text-base"
+          />
+        </button>
+      </div>
+      <div
+        class="flex flex-col gap-4 p-4 text-right text-base"
+      >
+        <div>
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle mr-1"
+            type="button"
+          >
+            Cancel
+          </button>
+          <span
+            type="button"
+          >
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-8 px-2.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+              data-state="closed"
+              disabled=""
+              type="button"
+            >
+              Confirm
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+</body>
+`;
+
+exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
+<body>
+  <span
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+  <div
+    aria-controls="radix-:ro:"
+    aria-expanded="true"
+    aria-haspopup="dialog"
+    data-state="open"
+    type="button"
+  >
+    <button>
+      children
+    </button>
+  </div>
+  <div
+    data-radix-popper-content-wrapper=""
+    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
+  >
+    <div
+      class="rounded border border-neutral bg-surface-neutral shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative divide-y p-0 text-sm text-neutral data-[state=open]:block data-[state=closed]:hidden"
+      data-align="start"
+      data-side="bottom"
+      data-state="open"
+      id="radix-:ro:"
+      role="dialog"
+      style="width: 648px; --radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height);"
+      tabindex="-1"
+    >
+      <div
+        class="flex flex-col gap-3 p-4"
+      >
+        <h6
+          class="flex items-center gap-1.5 font-medium text-neutral"
+        >
+          EKS private subnet IDs
+          <span
+            class="text-sm0"
+            data-state="closed"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-circle-info "
+            />
+          </span>
+        </h6>
+        <div
+          class="flex flex-row gap-x-3 p-3 border rounded text-sm border-warning-component bg-surface-warning-subtle text-warning"
+          data-accent-color="yellow"
+        >
+          <div
+            class="-order-2 text-lg leading-6"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-exclamation-circle "
+            />
+          </div>
+          <div
+            class="-order-1 mr-auto gap-x-3 text-neutral"
+          >
+            <span
+              class="block font-medium leading-6"
+            >
+              These subnets have to be private and connected to internet through a NAT Gateway.
+            </span>
+          </div>
+        </div>
+        <ul
+          class="flex flex-col gap-3"
+        >
+          <li
+            class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium text-neutral-subtle"
+          >
+            <span>
+              IDs zone A
+            </span>
+            <span>
+              IDs zone B
+            </span>
+            <span>
+              IDs zone C
+            </span>
+            <span />
+          </li>
+          <li
+            class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
+          >
+            <div
+              class="w-full"
+              data-testid="input-small-wrapper"
+            >
+              <div
+                class="input input--small flex-grow"
+                data-testid="input"
+              >
+                <label
+                  class="hidden"
+                />
+                <input
+                  class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
+                  data-testid="input-value"
+                  name="aws_existing_vpc.eks_subnets.0.A"
+                  spellcheck="false"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+            <div
+              class="w-full"
+              data-testid="input-small-wrapper"
+            >
+              <div
+                class="input input--small flex-grow"
+                data-testid="input"
+              >
+                <label
+                  class="hidden"
+                />
+                <input
+                  class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
+                  data-testid="input-value"
+                  name="aws_existing_vpc.eks_subnets.0.B"
+                  spellcheck="false"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+            <div
+              class="w-full"
+              data-testid="input-small-wrapper"
+            >
+              <div
+                class="input input--small flex-grow"
+                data-testid="input"
+              >
+                <label
+                  class="hidden"
+                />
+                <input
+                  class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
+                  data-testid="input-value"
+                  name="aws_existing_vpc.eks_subnets.0.C"
+                  spellcheck="false"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle w-full"
+              type="button"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-trash-can text-base"
+              />
+            </button>
+          </li>
+        </ul>
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle self-end"
+          type="button"
+        >
+          Add subnets
+          <i
+            aria-hidden="true"
+            class="fa-regular fa-plus ml-2 text-base"
+          />
+        </button>
+      </div>
+      <div
+        class="flex flex-col gap-4 p-4 text-right text-base"
+      >
+        <div>
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle mr-1"
+            type="button"
+          >
+            Cancel
+          </button>
+          <span
+            type="button"
+          >
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-8 px-2.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+              data-state="closed"
+              disabled=""
+              type="button"
+            >
+              Confirm
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+</body>
+`;

@@ -30,7 +30,7 @@ exports[`ServiceListActionBar should match snapshot 1`] = `
               class="flex gap-3"
             >
               <button
-                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-neutral text-sm h-8 px-2.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert items-center gap-2"
+                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-8 px-2.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert items-center gap-2"
               >
                 Deploy selected 
                 <i
@@ -41,7 +41,7 @@ exports[`ServiceListActionBar should match snapshot 1`] = `
               <button
                 aria-expanded="false"
                 aria-haspopup="menu"
-                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral items-center gap-2"
+                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral items-center gap-2"
                 data-state="closed"
                 id="radix-:rf:"
                 type="button"

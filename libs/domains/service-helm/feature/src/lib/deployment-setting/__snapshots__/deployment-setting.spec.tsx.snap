@@ -16,7 +16,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input    input--label-up "
+              class="input group    input--label-up "
             >
               <div
                 class=""
@@ -67,7 +67,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input    input--label-up "
+            class="input group    input--label-up "
           >
             <div
               class=""
@@ -110,7 +110,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
           >
             <div
               aria-label="circle"
-              class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
+              class="w-3.5 h-3.5 transform rounded-full bg-surface-neutral shadow-lg  "
             />
           </div>
         </div>

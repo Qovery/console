@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`GeneralSetting should match snapshot 1`] = `
 <body>
@@ -18,7 +18,7 @@ exports[`GeneralSetting should match snapshot 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input     "
+              class="input group     "
             >
               <div
                 class=""
@@ -57,7 +57,7 @@ exports[`GeneralSetting should match snapshot 1`] = `
           Description (optional)
         </label>
         <textarea
-          class="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral-400 outline-0"
+          class="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral outline-0"
           id="Description (optional)"
           name="description"
         />

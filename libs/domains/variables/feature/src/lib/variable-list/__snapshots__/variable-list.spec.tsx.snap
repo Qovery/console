@@ -19,7 +19,7 @@ exports[`VariableList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
@@ -70,7 +70,7 @@ exports[`VariableList should match snapshot 1`] = `
                 aria-controls="radix-:r26:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral gap-1 whitespace-nowrap text-xs"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral gap-1 whitespace-nowrap text-xs"
                 data-state="closed"
                 type="button"
               >
@@ -93,7 +93,7 @@ exports[`VariableList should match snapshot 1`] = `
                 aria-controls="radix-:r29:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral gap-1 whitespace-nowrap text-xs"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral gap-1 whitespace-nowrap text-xs"
                 data-state="closed"
                 type="button"
               >
@@ -116,7 +116,7 @@ exports[`VariableList should match snapshot 1`] = `
                 aria-controls="radix-:r2c:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral gap-1 whitespace-nowrap text-xs"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral gap-1 whitespace-nowrap text-xs"
                 data-state="closed"
                 type="button"
               >
@@ -182,7 +182,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-expanded="false"
               aria-haspopup="menu"
               aria-label="actions"
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
               data-state="closed"
               id="radix-:r2e:"
               type="button"
@@ -266,7 +266,7 @@ exports[`VariableList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
@@ -321,7 +321,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-expanded="false"
               aria-haspopup="menu"
               aria-label="actions"
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
               data-state="closed"
               id="radix-:r2k:"
               type="button"
@@ -375,7 +375,7 @@ exports[`VariableList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
@@ -430,7 +430,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-expanded="false"
               aria-haspopup="menu"
               aria-label="actions"
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
               data-state="closed"
               id="radix-:r2o:"
               type="button"
@@ -484,7 +484,7 @@ exports[`VariableList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
@@ -528,7 +528,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-expanded="false"
               aria-haspopup="menu"
               aria-label="actions"
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
               data-state="closed"
               id="radix-:r2s:"
               type="button"
@@ -690,7 +690,7 @@ exports[`VariableList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
@@ -729,7 +729,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-expanded="false"
               aria-haspopup="menu"
               aria-label="actions"
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
               data-state="closed"
               id="radix-:r30:"
               type="button"
@@ -806,7 +806,7 @@ exports[`VariableList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
@@ -845,7 +845,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-expanded="false"
               aria-haspopup="menu"
               aria-label="actions"
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
               data-state="closed"
               id="radix-:r36:"
               type="button"
@@ -1013,7 +1013,7 @@ exports[`VariableList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
@@ -1102,7 +1102,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-expanded="false"
               aria-haspopup="menu"
               aria-label="actions"
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
               data-state="closed"
               id="radix-:r3c:"
               type="button"
@@ -1270,7 +1270,7 @@ exports[`VariableList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
@@ -1318,7 +1318,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-expanded="false"
               aria-haspopup="menu"
               aria-label="actions"
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
               data-state="closed"
               id="radix-:r3i:"
               type="button"
@@ -1395,7 +1395,7 @@ exports[`VariableList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
@@ -1450,7 +1450,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-expanded="false"
               aria-haspopup="menu"
               aria-label="actions"
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
               data-state="closed"
               id="radix-:r3o:"
               type="button"
@@ -1521,7 +1521,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="flex gap-3"
             >
               <button
-                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-red-500 text-sm h-8 px-2.5 rounded-md bg-surface-negative-solid hover:bg-surface-negative-solidHover border border-negative-component text-neutral-contrasted items-center gap-2"
+                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-red-500 text-sm h-8 px-2.5 rounded-md bg-surface-negative-solid hover:bg-surface-negative-solidHover border border-negative-component text-neutral-contrasted items-center gap-2"
                 data-state="closed"
                 disabled=""
               >
