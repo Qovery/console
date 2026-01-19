@@ -82,7 +82,7 @@ export function InputFile(props: InputFileProps) {
         </>
       ) : (
         <svg
-          className="relative input-file-icon"
+          className="input-file-icon relative"
           xmlns="http://www.w3.org/2000/svg"
           width="17"
           height="14"

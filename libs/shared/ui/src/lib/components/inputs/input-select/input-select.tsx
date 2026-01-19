@@ -134,7 +134,7 @@ export function InputSelect({
             <button
               type="button"
               data-testid="input-menu-list-button"
-              className="hover:text-brand-hover inline-flex items-center gap-1 text-sm font-medium text-brand transition duration-100"
+              className="inline-flex items-center gap-1 text-sm font-medium text-brand transition duration-100 hover:text-brand-hover"
               onClick={menuListButton.onClick}
             >
               {menuListButton.label}

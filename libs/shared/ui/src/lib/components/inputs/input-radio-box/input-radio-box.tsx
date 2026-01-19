@@ -18,7 +18,9 @@ export function InputRadioBox(props: InputRadioBoxProps) {
       data-testid="input-radio-box"
       onClick={() => onChange(value)}
       className={`mb-2 rounded border p-4 transition-all ${
-        fieldValue === value ? 'border-brand-strong bg-surface-brand-subtle' : 'border-neutral bg-surface-neutral-subtle'
+        fieldValue === value
+          ? 'border-brand-strong bg-surface-brand-subtle'
+          : 'border-neutral bg-surface-neutral-subtle'
       }`}
     >
       <InputRadio big name={name} value={value} label={label} onChange={onChange} formValue={fieldValue} />

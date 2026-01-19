@@ -91,10 +91,7 @@ const Checkbox = forwardRef<ElementRef<typeof CheckboxPrimitive.Root>, CheckboxP
           {props.checked === 'indeterminate' ? (
             <span className={indeterminateVariants({ color })} />
           ) : (
-            <Icon
-              iconName="check"
-              className="text-xs text-neutralInvert group-disabled:text-neutral-disabled"
-            />
+            <Icon iconName="check" className="text-xs text-neutralInvert group-disabled:text-neutral-disabled" />
           )}
         </span>
       </CheckboxPrimitive.Indicator>

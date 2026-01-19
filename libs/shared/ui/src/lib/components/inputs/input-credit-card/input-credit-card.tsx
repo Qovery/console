@@ -79,7 +79,6 @@ export function InputCreditCard(props: InputCreditCardProps) {
 
   const inputActions = hasFocus ? 'input--focused' : disabled ? 'input--disabled' : ''
 
-
   const isDisabled = disabled ? 'input--disabled !border-neutral' : ''
 
   useEffect(() => {
