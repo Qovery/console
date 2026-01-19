@@ -57,7 +57,7 @@ export const EnvironmentMode = forwardRef<ElementRef<typeof Badge>, EnvironmentM
           className={twMerge(className, environmentModeVariants({ variant }))}
           {...props}
         >
-          {variant === 'full' ? 'Preview' : 'V'}
+          {variant === 'full' ? 'Ephemeral' : 'E'}
         </Badge>
       ))
       .with('STAGING', () => (

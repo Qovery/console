@@ -4,10 +4,10 @@ import { Suspense, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
 import { useClusters } from '@qovery/domains/clusters/feature'
-import { CreateCloneEnvironmentModal, useEnvironments } from '@qovery/domains/environments/feature'
+import { CreateCloneEnvironmentModal, EnvironmentMode, useEnvironments } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import { useServices } from '@qovery/domains/services/feature'
-import { Button, EnvType, Heading, Icon, LoaderSpinner, Section, TablePrimitives, useModal } from '@qovery/shared/ui'
+import { Button, Heading, Icon, LoaderSpinner, Section, TablePrimitives, useModal } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 
 const { Table } = TablePrimitives
@@ -55,26 +55,26 @@ function EnvironmentSection({
   items,
   onCreateEnvClicked,
 }: {
-  type: 'production' | 'staging' | 'development' | 'ephemeral'
+  type: EnvironmentModeEnum
   items: Environment[]
   onCreateEnvClicked: () => void
 }) {
   const title = match(type)
-    .with('production', () => 'Production')
-    .with('staging', () => 'Staging')
-    .with('development', () => 'Development')
-    .with('ephemeral', () => 'Ephemeral')
+    .with('PRODUCTION', () => 'Production')
+    .with('STAGING', () => 'Staging')
+    .with('DEVELOPMENT', () => 'Development')
+    .with('PREVIEW', () => 'Ephemeral')
     .exhaustive()
 
   return (
     <Section className="flex flex-col gap-3.5">
       <div className="flex items-center gap-2">
-        <EnvType type={type} size="lg" />
+        <EnvironmentMode mode={type} variant="shrink" />
         <Heading level={3}>{title}</Heading>
       </div>
       {items.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-md border border-neutral bg-surface-neutral-subtle p-8">
-          <EnvType type={type} size="lg" />
+          <EnvironmentMode mode={type} variant="shrink" />
           <span className="text-sm text-neutral-subtle">No {title.toLowerCase()} environment created yet</span>
           <Button size="md" variant="outline" className="gap-2" onClick={onCreateEnvClicked}>
             <Icon iconName="circle-plus" iconStyle="regular" />
@@ -168,22 +168,22 @@ function ProjectOverview() {
         </div>
         <div className="flex flex-col gap-8">
           <EnvironmentSection
-            type="production"
+            type="PRODUCTION"
             items={groupedEnvs?.get('PRODUCTION') || []}
             onCreateEnvClicked={onCreateEnvClicked}
           />
           <EnvironmentSection
-            type="staging"
+            type="STAGING"
             items={groupedEnvs?.get('STAGING') || []}
             onCreateEnvClicked={onCreateEnvClicked}
           />
           <EnvironmentSection
-            type="development"
+            type="DEVELOPMENT"
             items={groupedEnvs?.get('DEVELOPMENT') || []}
             onCreateEnvClicked={onCreateEnvClicked}
           />
           <EnvironmentSection
-            type="ephemeral"
+            type="PREVIEW"
             items={groupedEnvs?.get('PREVIEW') || []}
             onCreateEnvClicked={onCreateEnvClicked}
           />
