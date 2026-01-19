@@ -8,6 +8,7 @@ import { CreateCloneEnvironmentModal, EnvironmentMode, useEnvironments } from '@
 import { useProject } from '@qovery/domains/projects/feature'
 import { useServices } from '@qovery/domains/services/feature'
 import { Button, Heading, Icon, LoaderSpinner, Section, TablePrimitives, useModal } from '@qovery/shared/ui'
+import { timeAgo } from '@qovery/shared/util-dates'
 import { pluralize } from '@qovery/shared/util-js'
 
 const { Table } = TablePrimitives
@@ -44,7 +45,9 @@ function EnvRow({ environment }: { environment: Environment }) {
           {clusters?.find((cluster) => cluster.id === environment.cluster_id)?.name}
         </div>
       </Table.Cell>
-      <Table.Cell className="h-12 border-l border-neutral">–</Table.Cell>
+      <Table.Cell className="h-12 border-l border-neutral">
+        {timeAgo(new Date(environment.updated_at ?? Date.now()))} ago
+      </Table.Cell>
       <Table.Cell className="h-12 border-l border-neutral">–</Table.Cell>
     </Table.Row>
   )
@@ -82,7 +85,7 @@ function EnvironmentSection({
           </Button>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral-subtle">
+        <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral">
           <Suspense
             fallback={
               <div className="flex w-full items-center justify-center py-8">
