@@ -83,7 +83,7 @@ export function InputToggle(props: InputToggleProps) {
         >
           <div
             aria-label="circle"
-            className={`${toggleSizeCircle} transform rounded-full bg-white shadow-lg ${
+            className={`${toggleSizeCircle} transform rounded-full bg-surface-neutral shadow-lg ${
               animateEnabled ? 'duration-300 ease-in-out' : ''
             } ${toggleActive ? `${small ? 'translate-x-3.5' : 'translate-x-6'}` : ''}`}
           />

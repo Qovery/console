@@ -1,7 +1,7 @@
 @use '../base/variable';
 
 .input {
-  @apply relative min-h-[52px] cursor-pointer rounded-md border border-neutral-component bg-background px-3 py-2 hover:bg-surface-neutral-component;
+  @apply relative min-h-[52px] cursor-pointer rounded-md border border-neutral-component bg-surface-neutral px-3 py-2 hover:bg-surface-neutral-component;
   transition:
     120ms all variable.$timing-cubic,
     0 outline;
@@ -39,6 +39,10 @@
   color: transparent;
 }
 
+.input-file-icon {
+  color: theme('textColor.neutral.disabled');
+}
+
 .input--focused,
 .input__button--focused {
   outline: 2px solid var(--brand-4);
@@ -57,8 +61,8 @@
 }
 
 .input--filter {
-  min-height: theme('space.9');
-  height: theme('space.9');
+  min-height: theme('space.7');
+  height: theme('space.7');
   padding: theme('space.2');
   @apply bg-surface-neutral-component;
   padding-top: 0;

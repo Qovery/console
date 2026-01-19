@@ -26,6 +26,10 @@
   transition-property: transform;
 }
 
+.input--filter .input-select__control {
+  height:28px;
+}
+
 // state
 .input-select--error {
   @apply border-negative-strong;
