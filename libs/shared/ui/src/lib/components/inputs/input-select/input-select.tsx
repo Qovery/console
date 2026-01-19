@@ -280,6 +280,7 @@ export function InputSelect({
       }),
       menuPortal: (base) => ({
         ...base,
+        zIndex: 90,
         pointerEvents: 'auto',
         marginTop: `-${document.body.style.marginTop ? document.body.style.marginTop : 0}`,
       }),
