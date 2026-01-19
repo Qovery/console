@@ -139,8 +139,6 @@ export function SubnetsForm({ control, name, title, callout, required = false }:
   )
 }
 
-// XXX: This component is inspired by `/page-clusters-create/step-features/button-popover-subnets/button-popover-subnets.tsx`
-// This component should be removed after Karpenter support
 export function ButtonPopoverSubnets({ children, disabled }: ButtonPopoverSubnetsProps) {
   const { control, setValue, watch } = useFormContext()
   const watchKarpenterEnabled = watch('karpenter.enabled')
