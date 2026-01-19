@@ -74,13 +74,13 @@ export function InputTags(props: InputTagsProps) {
           <div
             data-testid={`input-tags-${index}`}
             key={index}
-            className="relative mr-1 mt-1 inline-flex h-7 select-none items-center rounded-[33px] border border-neutral-300 bg-neutral-100 pl-3 pr-7 text-sm text-neutral-400"
+            className="relative mr-1 mt-1 inline-flex h-7 select-none items-center rounded-full border border-neutral bg-surface-neutral-subtle pl-2 pr-6 text-sm text-neutral"
           >
             <span className="text">{tag}</span>
             <div
               data-testid={`input-tags-remove-${index}`}
               onClick={() => removeTag(index)}
-              className="transition-background absolute right-1 top-[6px] flex h-4 w-4 cursor-pointer items-center justify-center rounded-full text-xs duration-200 ease-out hover:bg-neutral-200 "
+              className="transition-background absolute right-1 top-[6px] flex h-4 w-4 cursor-pointer items-center justify-center rounded-full text-xs duration-200 ease-out hover:bg-surface-neutral-componentHover"
             >
               <Icon iconName="xmark" />
             </div>
@@ -91,10 +91,10 @@ export function InputTags(props: InputTagsProps) {
           data-testid="input-tags-field"
           onKeyDown={handleKeyDown}
           type="text"
-          className={`${!focused ? 'text-transparent' : ''} ${
+          className={`bg-transparent ${!focused ? 'text-transparent' : ''} ${
             focused || currentTags?.length > 0 || inputValue.length > 0
-              ? 'inline-flex text-ssm text-neutral-400'
-              : 'absolute left-0 top-0 h-full w-full bg-transparent'
+              ? 'inline-flex text-ssm text-neutral'
+              : 'absolute left-0 top-0 h-full w-full'
           }`}
           placeholder={currentTags?.length > 0 ? placeholder : ''}
           onChange={(e) => setInputValue(e.currentTarget.value)}

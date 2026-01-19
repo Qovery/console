@@ -33,7 +33,7 @@ const checkboxVariants = cva(
           'hover:border-brand-strong',
           'data-[state=checked]:bg-surface-brand-solid',
           'hover:data-[state=checked]:bg-surface-brand-solidHover',
-          'data-[state=checked]:border-brand-strong',
+          'data-[state=checked]:border-0',
           'data-[state=indeterminate]:border-brand-strong',
         ],
         red: [
@@ -93,7 +93,7 @@ const Checkbox = forwardRef<ElementRef<typeof CheckboxPrimitive.Root>, CheckboxP
           ) : (
             <Icon
               iconName="check"
-              className="text-xs leading-[16px] text-neutralInvert group-disabled:text-neutral-disabled"
+              className="text-xs text-neutralInvert group-disabled:text-neutral-disabled"
             />
           )}
         </span>
