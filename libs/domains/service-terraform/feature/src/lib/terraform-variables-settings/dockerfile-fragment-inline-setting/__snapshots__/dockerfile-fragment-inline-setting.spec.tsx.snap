@@ -21,7 +21,7 @@ exports[`DockerfileFragmentInlineSetting should match snapshot with content 1`] 
           Commands
         </h2>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-xs h-6 rounded bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral aspect-square justify-center p-0 hover:text-neutral-400"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-xs h-6 rounded bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral aspect-square justify-center p-0 hover:text-neutral-400"
           type="button"
         >
           <i
@@ -91,7 +91,7 @@ exports[`DockerfileFragmentInlineSetting should match snapshot without content 1
             No commands defined.
           </p>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
             type="button"
           >
             <i

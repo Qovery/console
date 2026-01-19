@@ -78,7 +78,7 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
             qovery cluster install
           </span>
           <button
-            class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral cursor-pointer gap-2 font-sans font-medium"
+            class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral cursor-pointer gap-2 font-sans font-medium"
             type="button"
           >
             Copy

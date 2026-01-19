@@ -26,7 +26,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
               Define and manage the labels & annotations to be used within your organization.
             </p>
             <button
-              class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-neutral text-xs h-6 px-1.5 rounded bg-surface-brand-subtle border border-brand-subtle text-brand hover:bg-surface-brand-component w-fit items-center gap-1"
+              class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-xs h-6 px-1.5 rounded bg-surface-brand-subtle border border-brand-subtle text-brand hover:bg-surface-brand-component w-fit items-center gap-1"
             >
               <i
                 aria-hidden="true"
@@ -40,7 +40,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
           <button
             aria-expanded="false"
             aria-haspopup="menu"
-            class="inline-flex items-center font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-neutral text-sm h-8 px-2.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert shrink-0 gap-2"
+            class="inline-flex items-center font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-8 px-2.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert shrink-0 gap-2"
             data-state="closed"
             id="radix-:r6:"
             type="button"
@@ -108,7 +108,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
                   class="flex gap-2"
                 >
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative mr-2"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative mr-2"
                   >
                     <span
                       class="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white"
@@ -119,7 +119,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
                     />
                   </button>
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
                   >
                     <i
                       aria-hidden="true"
@@ -127,7 +127,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
                     />
                   </button>
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
                     data-state="closed"
                     disabled=""
                   >
@@ -198,7 +198,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
                   class="flex gap-2"
                 >
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative mr-2"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative mr-2"
                   >
                     <span
                       class="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white"
@@ -209,7 +209,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
                     />
                   </button>
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
                   >
                     <i
                       aria-hidden="true"
@@ -217,7 +217,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
                     />
                   </button>
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
                     data-state="closed"
                     disabled=""
                   >

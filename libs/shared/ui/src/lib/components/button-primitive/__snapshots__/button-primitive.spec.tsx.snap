@@ -4,7 +4,7 @@ exports[`ButtonPrimitive should match snapshot 1`] = `
 <body>
   <div>
     <button
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-neutral text-xs h-7 px-2 rounded bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-xs h-7 px-2 rounded bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
       type="button"
     >
       Foobar

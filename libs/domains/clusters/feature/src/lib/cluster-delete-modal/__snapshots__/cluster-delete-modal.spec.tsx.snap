@@ -33,7 +33,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
               class="hidden"
             />
             <input
-              class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+              class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
               data-testid="input-value"
               name="name"
               placeholder="Enter "delete""
@@ -155,7 +155,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-red-500 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 data-[state=indeterminate]:border-red-500 disabled:data-[state=checked]:border-red-300 disabled:data-[state=checked]:bg-red-300 disabled:data-[state=indeterminate]:border-red-300 shrink-0"
+                class="group inline-flex items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-negative-strong data-[state=checked]:bg-surface-negative-solid hover:data-[state=checked]:bg-surface-negative-solidHover data-[state=checked]:border-negative-strong data-[state=indeterminate]:border-negative-strong shrink-0"
                 data-state="unchecked"
                 id="confirm_qovery_config"
                 role="checkbox"
@@ -186,7 +186,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-red-500 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 data-[state=indeterminate]:border-red-500 disabled:data-[state=checked]:border-red-300 disabled:data-[state=checked]:bg-red-300 disabled:data-[state=indeterminate]:border-red-300 shrink-0"
+                class="group inline-flex items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-negative-strong data-[state=checked]:bg-surface-negative-solid hover:data-[state=checked]:bg-surface-negative-solidHover data-[state=checked]:border-negative-strong data-[state=indeterminate]:border-negative-strong shrink-0"
                 data-state="unchecked"
                 id="confirm_cloud_provider"
                 role="checkbox"
@@ -252,13 +252,13 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
           class="flex justify-end gap-3"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
             type="button"
           >
             Cancel
           </button>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-red-500 text-sm h-10 px-3 rounded-lg bg-surface-negative-solid hover:bg-surface-negative-solidHover border border-negative-component text-neutral-contrasted"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-red-500 text-sm h-10 px-3 rounded-lg bg-surface-negative-solid hover:bg-surface-negative-solidHover border border-negative-component text-neutral-contrasted"
             disabled=""
             type="submit"
           >

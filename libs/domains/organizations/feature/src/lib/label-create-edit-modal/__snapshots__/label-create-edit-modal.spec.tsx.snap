@@ -28,7 +28,7 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input     "
+              class="input group     "
             >
               <div
                 class=""
@@ -107,7 +107,7 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+                      class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                       data-testid="labels.0.key"
                       name="labels.0.key"
                       spellcheck="false"
@@ -128,7 +128,7 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+                      class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                       data-testid="labels.0.value"
                       name="labels.0.value"
                       spellcheck="false"
@@ -157,13 +157,13 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                     >
                       <div
                         aria-label="circle"
-                        class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
+                        class="w-3.5 h-3.5 transform rounded-full bg-surface-neutral shadow-lg  "
                       />
                     </div>
                   </div>
                 </div>
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle"
                   type="button"
                 >
                   <i
@@ -175,7 +175,7 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
             </li>
           </ul>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-neutral text-xs h-7 px-2 rounded bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert mt-3"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-xs h-7 px-2 rounded bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert mt-3"
             type="button"
           >
             Add label
@@ -189,14 +189,14 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
           class="mt-6 flex justify-end gap-3"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
             data-testid="cancel-button"
             type="button"
           >
             Cancel
           </button>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-neutral text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
             data-testid="submit-button"
             disabled=""
             type="submit"

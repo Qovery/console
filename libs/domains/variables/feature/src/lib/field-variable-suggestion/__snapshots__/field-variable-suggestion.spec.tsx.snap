@@ -39,7 +39,7 @@ exports[`FieldVariableSuggestion should render dropdown content when clicked 1`]
     class="overflow-y-auto"
   >
     <div
-      class="text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral flex h-[52px] items-center justify-between gap-1 px-2 py-1.5"
+      class="text-sm font-medium rounded-sm outline-none select-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral flex h-[52px] items-center justify-between gap-1 px-2 py-1.5"
       data-orientation="vertical"
       data-radix-collection-item=""
       role="menuitem"

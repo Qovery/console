@@ -23,221 +23,11 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      class="rounded border border-neutral bg-surface-neutral shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded text-neutral relative divide-y p-0 text-sm data-[state=open]:block data-[state=closed]:hidden"
+      class="rounded border border-neutral bg-surface-neutral shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative divide-y p-0 text-sm text-neutral data-[state=open]:block data-[state=closed]:hidden"
       data-align="start"
       data-side="bottom"
       data-state="open"
       id="radix-:rf:"
-      role="dialog"
-      style="width: 648px; --radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height);"
-      tabindex="-1"
-    >
-      <div
-        class="flex flex-col gap-3 p-4"
-      >
-        <h6
-          class="text-neutral flex items-center gap-1.5 font-medium"
-        >
-          EKS private subnet IDs
-          <span
-            class="text-sm0"
-            data-state="closed"
-          >
-            <i
-              aria-hidden="true"
-              class="fa-regular fa-circle-info "
-            />
-          </span>
-        </h6>
-        <div
-          class="flex flex-row gap-x-3 p-3 border rounded text-sm border-warning-component bg-surface-warning-subtle text-warning"
-          data-accent-color="yellow"
-        >
-          <div
-            class="-order-2 text-lg leading-6"
-          >
-            <i
-              aria-hidden="true"
-              class="fa-regular fa-exclamation-circle "
-            />
-          </div>
-          <div
-            class="-order-1 mr-auto gap-x-3 text-neutral"
-          >
-            <span
-              class="block font-medium leading-6"
-            >
-              These subnets have to be private and connected to internet through a NAT Gateway.
-            </span>
-          </div>
-        </div>
-        <ul
-          class="flex flex-col gap-3"
-        >
-          <li
-            class="text-neutral-subtle grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium"
-          >
-            <span>
-              IDs zone A
-            </span>
-            <span>
-              IDs zone B
-            </span>
-            <span>
-              IDs zone C
-            </span>
-            <span />
-          </li>
-          <li
-            class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
-          >
-            <div
-              class="w-full"
-              data-testid="input-small-wrapper"
-            >
-              <div
-                class="input input--small flex-grow"
-                data-testid="input"
-              >
-                <label
-                  class="hidden"
-                />
-                <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
-                  data-testid="input-value"
-                  name="aws_existing_vpc.eks_subnets.0.A"
-                  spellcheck="false"
-                  type="text"
-                  value=""
-                />
-              </div>
-            </div>
-            <div
-              class="w-full"
-              data-testid="input-small-wrapper"
-            >
-              <div
-                class="input input--small flex-grow"
-                data-testid="input"
-              >
-                <label
-                  class="hidden"
-                />
-                <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
-                  data-testid="input-value"
-                  name="aws_existing_vpc.eks_subnets.0.B"
-                  spellcheck="false"
-                  type="text"
-                  value=""
-                />
-              </div>
-            </div>
-            <div
-              class="w-full"
-              data-testid="input-small-wrapper"
-            >
-              <div
-                class="input input--small flex-grow"
-                data-testid="input"
-              >
-                <label
-                  class="hidden"
-                />
-                <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
-                  data-testid="input-value"
-                  name="aws_existing_vpc.eks_subnets.0.C"
-                  spellcheck="false"
-                  type="text"
-                  value=""
-                />
-              </div>
-            </div>
-            <button
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-9 px-3 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none w-full"
-              type="button"
-            >
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-trash-can text-base"
-              />
-            </button>
-          </li>
-        </ul>
-        <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-9 px-3 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none self-end"
-          type="button"
-        >
-          Add subnets
-          <i
-            aria-hidden="true"
-            class="fa-regular fa-plus ml-2 text-base"
-          />
-        </button>
-      </div>
-      <div
-        class="flex flex-col gap-4 p-4 text-right text-base"
-      >
-        <div>
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-9 px-3 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none mr-1"
-            type="button"
-          >
-            Cancel
-          </button>
-          <span
-            type="button"
-          >
-            <button
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-9 px-3 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
-              data-state="closed"
-              disabled=""
-              type="button"
-            >
-              Confirm
-            </button>
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>
-  <span
-    data-radix-focus-guard=""
-    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
-    tabindex="0"
-  />
-</body>
-`;
-
-exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
-<body>
-  <span
-    data-radix-focus-guard=""
-    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
-    tabindex="0"
-  />
-  <div
-    aria-controls="radix-:ro:"
-    aria-expanded="false"
-    aria-haspopup="dialog"
-    data-state="closed"
-    type="button"
-  >
-    <button>
-      children
-    </button>
-  </div>
-  <div
-    data-radix-popper-content-wrapper=""
-    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
-  >
-    <div
-      class="rounded border border-neutral bg-surface-neutral shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative divide-y p-0 text-sm text-neutral data-[state=open]:block data-[state=closed]:hidden"
-      data-align="start"
-      data-side="bottom"
-      data-state="closed"
-      id="radix-:ro:"
       role="dialog"
       style="width: 648px; --radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height);"
       tabindex="-1"
@@ -306,19 +96,19 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
               data-testid="input-small-wrapper"
             >
               <div
-                class="input input--small flex-grow input--focused"
+                class="input input--small flex-grow"
                 data-testid="input"
               >
                 <label
                   class="hidden"
                 />
                 <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+                  class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                   data-testid="input-value"
                   name="aws_existing_vpc.eks_subnets.0.A"
                   spellcheck="false"
                   type="text"
-                  value="test"
+                  value=""
                 />
               </div>
             </div>
@@ -334,12 +124,12 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
                   class="hidden"
                 />
                 <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+                  class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                   data-testid="input-value"
                   name="aws_existing_vpc.eks_subnets.0.B"
                   spellcheck="false"
                   type="text"
-                  value="test"
+                  value=""
                 />
               </div>
             </div>
@@ -355,7 +145,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
                   class="hidden"
                 />
                 <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+                  class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                   data-testid="input-value"
                   name="aws_existing_vpc.eks_subnets.0.C"
                   spellcheck="false"
@@ -365,7 +155,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
               </div>
             </div>
             <button
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle w-full"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle w-full"
               type="button"
             >
               <i
@@ -376,7 +166,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
           </li>
         </ul>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle self-end"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle self-end"
           type="button"
         >
           Add subnets
@@ -391,7 +181,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
       >
         <div>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle mr-1"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle mr-1"
             type="button"
           >
             Cancel
@@ -400,7 +190,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
             type="button"
           >
             <button
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-neutral text-sm h-8 px-2.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-8 px-2.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
               data-state="closed"
               disabled=""
               type="button"
@@ -420,7 +210,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
 </body>
 `;
 
-exports[`ButtonPopoverSubnets should match snapshot with invalid state 2`] = `
+exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
 <body>
   <span
     data-radix-focus-guard=""
@@ -523,7 +313,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 2`] = `
                   class="hidden"
                 />
                 <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+                  class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                   data-testid="input-value"
                   name="aws_existing_vpc.eks_subnets.0.A"
                   spellcheck="false"
@@ -544,7 +334,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 2`] = `
                   class="hidden"
                 />
                 <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+                  class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                   data-testid="input-value"
                   name="aws_existing_vpc.eks_subnets.0.B"
                   spellcheck="false"
@@ -565,7 +355,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 2`] = `
                   class="hidden"
                 />
                 <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+                  class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                   data-testid="input-value"
                   name="aws_existing_vpc.eks_subnets.0.C"
                   spellcheck="false"
@@ -575,7 +365,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 2`] = `
               </div>
             </div>
             <button
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle w-full"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle w-full"
               type="button"
             >
               <i
@@ -586,7 +376,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 2`] = `
           </li>
         </ul>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle self-end"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle self-end"
           type="button"
         >
           Add subnets
@@ -601,7 +391,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 2`] = `
       >
         <div>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle mr-1"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle mr-1"
             type="button"
           >
             Cancel
@@ -610,7 +400,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 2`] = `
             type="button"
           >
             <button
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-neutral text-sm h-8 px-2.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-8 px-2.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
               data-state="closed"
               disabled=""
               type="button"

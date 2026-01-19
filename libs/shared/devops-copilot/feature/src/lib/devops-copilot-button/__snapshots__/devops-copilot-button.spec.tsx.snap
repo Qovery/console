@@ -4,7 +4,7 @@ exports[`DevopsCopilotButton should match snapshot 1`] = `
 <body>
   <div>
     <button
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 outline-brand text-xs rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral ml-4 mr-4 h-[38px] gap-3 px-3 dark:ml-3 dark:h-9"
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-xs rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral ml-4 mr-4 h-[38px] gap-3 px-3 dark:ml-3 dark:h-9"
       type="button"
     >
       <span
