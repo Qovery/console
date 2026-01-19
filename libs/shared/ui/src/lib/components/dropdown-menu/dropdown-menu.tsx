@@ -5,15 +5,15 @@ import { type ComponentPropsWithoutRef, type ElementRef, type ReactElement, clon
 import { twMerge } from '@qovery/shared/util-js'
 
 const dropdownMenuItemVariants = cva(
-  ['px-3', 'flex', 'items-center', 'h-8', 'text-sm', 'font-medium', 'rounded-sm', 'outline-none', 'select-none'],
+  ['px-3', 'flex', 'items-center', 'h-8', 'text-sm', 'font-medium', 'rounded-sm', 'outline-none', 'select-none', 'rounded'],
   {
     variants: {
       color: {
         brand: [
-          'data-[highlighted]:bg-brand-2',
-          'data-[highlighted]:text-brand-11',
-          'hover:bg-brand-2',
-          'hover:text-brand-11',
+          'data-[highlighted]:bg-surface-brand-component',
+          'data-[highlighted]:text-brand',
+          'hover:bg-surface-brand-component',
+          'hover:text-brand',
         ],
         red: [
           'data-[highlighted]:bg-surface-negative-component',
@@ -29,7 +29,7 @@ const dropdownMenuItemVariants = cva(
         ],
       },
       disabled: {
-        true: ['cursor-not-allowed'],
+        true: ['cursor-not-allowed, hover:bg-transparent, hover:text-neutral-disabled'],
         false: ['cursor-pointer'],
       },
     },
@@ -67,7 +67,7 @@ const dropdownMenuItemVariants = cva(
   }
 )
 
-const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-3'], {
+const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-2'], {
   variants: {
     color: {
       brand: [],
@@ -145,7 +145,7 @@ const DropdownMenuContent = forwardRef<ElementRef<typeof DropdownMenuPrimitive.C
           sideOffset={sideOffset}
           align={align}
           className={twMerge(
-            'flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded',
+            'flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-down-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-up-md-faded',
             className
           )}
           ref={ref}
