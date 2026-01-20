@@ -140,17 +140,11 @@ describe('Header', () => {
       expect(mockSetIsReadOnly).not.toHaveBeenCalled()
     })
 
-    it('should disable toggle button when thread has messages', () => {
-      const { container } = renderWithProviders(
-        <Header {...defaultProps} userAccess={{ read_only: false }} threadLength={3} />
-      )
+    it('should not show toggle button when thread has messages', () => {
+      renderWithProviders(<Header {...defaultProps} userAccess={{ read_only: false }} threadLength={3} />)
 
-      const toggles = container.querySelectorAll('button')
-      const toggle = Array.from(toggles).find(
-        (button) => button.className.includes('rounded-full') && button.className.includes('cursor-not-allowed')
-      )
-
-      expect(toggle).toBeDisabled()
+      expect(screen.queryByText('Read-only')).not.toBeInTheDocument()
+      expect(screen.queryByText('Read-write')).not.toBeInTheDocument()
     })
   })
 
@@ -309,18 +303,11 @@ describe('Header', () => {
       expect(readOnlyToggle).toBeInTheDocument()
     })
 
-    it('should have tooltip explaining disabled toggle', () => {
-      const { container } = renderWithProviders(
-        <Header {...defaultProps} userAccess={{ read_only: false }} threadLength={5} />
-      )
+    it('should not show toggle when thread has messages', () => {
+      renderWithProviders(<Header {...defaultProps} userAccess={{ read_only: false }} threadLength={5} />)
 
-      const toggles = container.querySelectorAll('button')
-      const readOnlyToggle = Array.from(toggles).find(
-        (button) => button.className.includes('rounded-full') && button.className.includes('cursor-not-allowed')
-      )
-
-      expect(readOnlyToggle).toBeInTheDocument()
-      expect(readOnlyToggle).toBeDisabled()
+      expect(screen.queryByText('Read-only')).not.toBeInTheDocument()
+      expect(screen.queryByText('Read-write')).not.toBeInTheDocument()
     })
   })
 })
