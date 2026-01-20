@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
 import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
+import { TerraformResourcesSection } from '@qovery/domains/service-terraform/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
-import { TerraformResourcesSection } from '@qovery/domains/service-terraform/feature'
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { Button, ExternalLink, Icon, TabsPrimitives, useModal } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
@@ -171,12 +171,7 @@ function ObservabilityCallout() {
   )
 }
 
-export function PageGeneral({
-  serviceId,
-  environmentId,
-  service,
-  hasNoMetrics,
-}: PageGeneralProps) {
+export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }: PageGeneralProps) {
   const [activeTab, setActiveTab] = useState('variables')
 
   const isLifecycleJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE', [service])
@@ -207,9 +202,7 @@ export function PageGeneral({
             )}
           </PodsMetrics>
         )}
-        {isLifecycleJob && (
-          <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} />
-        )}
+        {isLifecycleJob && <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} />}
         {isTerraformService && (
           <Tabs.Root value={activeTab} onValueChange={setActiveTab} className="w-full">
             <Tabs.List>

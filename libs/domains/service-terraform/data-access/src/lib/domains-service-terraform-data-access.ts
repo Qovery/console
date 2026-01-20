@@ -29,7 +29,7 @@ function transformApiResponse(response: TerraformResourcesResponse): TerraformRe
       provider: item.provider,
       mode: item.mode,
       attributes: item.attributes,
-      extractedAt: item.extractedAt || '',
+      extractedAt: item.extracted_at || '',
       displayName,
     } as TerraformResource
   })

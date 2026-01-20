@@ -1,13 +1,7 @@
-import { type ReactElement, useState } from 'react';
-import { type TerraformResource } from '@qovery/domains/service-terraform/data-access';
-import { EmptyState, Icon, TablePrimitives } from '@qovery/shared/ui';
-import { twMerge } from '@qovery/shared/util-js';
-
-
-
-
-
-
+import { type ReactElement, useState } from 'react'
+import { type TerraformResource } from '@qovery/domains/service-terraform/data-access'
+import { EmptyState, Icon, TablePrimitives } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 
 const { Table } = TablePrimitives
 
