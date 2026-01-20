@@ -1,4 +1,5 @@
 import { type AutoscalingPolicyRequest, type AutoscalingPolicyResponse } from 'qovery-typescript-axios'
+import { P, match } from 'ts-pattern'
 
 /**
  * Extended autoscaling fields for KEDA support
@@ -89,42 +90,34 @@ function processAutoscalingRequest(
   request: Partial<KedaAutoscalingFields>,
   currentAutoscaling?: AutoscalingPolicyResponse
 ): AutoscalingPolicyRequestWithFields | undefined {
-  const autoscalingMode = request.autoscaling_mode
+  return match(request)
+    .with({ autoscaling_mode: 'KEDA', scalers: P.when((s) => Array.isArray(s) && s.length > 0) }, (req) => {
+      const validScalers = req.scalers!.filter((s) => s.type?.trim() && s.config?.trim())
+      if (validScalers.length === 0) return undefined
 
-  // KEDA mode: use scalers
-  if (autoscalingMode === 'KEDA' && request.scalers?.length) {
-    const validScalers = request.scalers.filter((s) => s.type?.trim() && s.config?.trim())
-    if (validScalers.length === 0) return undefined
-
-    return {
-      mode: 'KEDA',
-      polling_interval_seconds: request.autoscaling_polling_interval ?? 30,
-      cooldown_period_seconds: request.autoscaling_cooldown_period ?? 300,
-      scalers: validScalers.map((scaler, index) => ({
-        scaler_type: scaler.type,
-        enabled: true,
-        role: index === 0 ? 'PRIMARY' : 'SAFETY',
-        config_json: undefined,
-        config_yaml: scaler.config,
-        trigger_authentication: scaler.trigger_authentication
-          ? {
-              // Inline trigger authentication must not have a name (will be auto-generated)
-              // Only include name if explicitly provided (for referencing existing trigger authentication)
-              ...(scaler.trigger_authentication.name ? { name: scaler.trigger_authentication.name } : {}),
-              config_yaml: scaler.trigger_authentication.config_yaml,
-            }
-          : undefined,
-      })),
-    } as AutoscalingPolicyRequestWithFields
-  }
-
-  // HPA or NONE mode: no autoscaling policy
-  if (autoscalingMode === 'HPA' || autoscalingMode === 'NONE') {
-    return undefined
-  }
-
-  // No mode specified: keep existing autoscaling
-  return convertAutoscalingResponseToRequest(currentAutoscaling)
+      return {
+        mode: 'KEDA',
+        polling_interval_seconds: req.autoscaling_polling_interval ?? 30,
+        cooldown_period_seconds: req.autoscaling_cooldown_period ?? 300,
+        scalers: validScalers.map((scaler, index) => ({
+          scaler_type: scaler.type,
+          enabled: true,
+          role: index === 0 ? 'PRIMARY' : 'SAFETY',
+          config_json: undefined,
+          config_yaml: scaler.config,
+          trigger_authentication: scaler.trigger_authentication
+            ? {
+                // Inline trigger authentication must not have a name (will be auto-generated)
+                // Only include name if explicitly provided (for referencing existing trigger authentication)
+                ...(scaler.trigger_authentication.name ? { name: scaler.trigger_authentication.name } : {}),
+                config_yaml: scaler.trigger_authentication.config_yaml,
+              }
+            : undefined,
+        })),
+      } as AutoscalingPolicyRequestWithFields
+    })
+    .with({ autoscaling_mode: P.union('HPA', 'NONE') }, () => undefined)
+    .otherwise(() => convertAutoscalingResponseToRequest(currentAutoscaling))
 }
 
 /**
@@ -185,8 +178,8 @@ export function buildAutoscalingRequestFromForm(
 ): Record<string, unknown> {
   const autoscalingMode = formData['autoscaling_mode'] || 'NONE'
 
-  switch (autoscalingMode) {
-    case 'NONE':
+  return match(autoscalingMode)
+    .with('NONE', () => {
       // Fixed instances: min = max, no autoscaling
       return {
         ...baseRequest,
@@ -200,8 +193,8 @@ export function buildAutoscalingRequestFromForm(
         hpa_cpu_average_utilization_percent: undefined,
         hpa_memory_average_utilization_percent: undefined,
       }
-
-    case 'HPA': {
+    })
+    .with('HPA', () => {
       // HPA mode: min !== max, HPA autoscaling
       const metricChoice = formData['hpa_metric_type'] === 'CPU_AND_MEMORY' ? 'CPU_AND_MEMORY' : 'CPU'
       const cpuAverageUtilization = Number(formData['hpa_cpu_average_utilization_percent']) || 60
@@ -221,9 +214,8 @@ export function buildAutoscalingRequestFromForm(
             ? Number(formData['hpa_memory_average_utilization_percent']) || 60
             : undefined,
       }
-    }
-
-    case 'KEDA': {
+    })
+    .with('KEDA', () => {
       // KEDA mode: include trigger authentication directly in scaler payload
       const scalersWithAuth = ((formData['scalers'] || []) as ScalerFormData[]).map((scaler) => {
         const baseScaler = {
@@ -261,9 +253,6 @@ export function buildAutoscalingRequestFromForm(
         hpa_cpu_average_utilization_percent: undefined,
         hpa_memory_average_utilization_percent: undefined,
       }
-    }
-
-    default:
-      return baseRequest
-  }
+    })
+    .otherwise(() => baseRequest)
 }
