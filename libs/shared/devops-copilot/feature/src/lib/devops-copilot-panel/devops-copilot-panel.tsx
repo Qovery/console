@@ -663,7 +663,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   'shadow-[0_-8px_16px_-6px_rgba(0,0,0,0.05)]': thread.length > 0,
                 })}
               >
-                {thread.length === 0 && docLinks.length > 0 && !expand && (
+                {thread.length === 0 && docLinks.length > 0 && !expand && isCopilotEnabled && (
                   <div className="flex animate-[fadein_0.22s_ease-in-out_forwards_0.10s] flex-col gap-2 opacity-0">
                     <span className="text-[11px] font-semibold text-neutral-400 dark:text-white">
                       Ask for a contextual suggestion:
