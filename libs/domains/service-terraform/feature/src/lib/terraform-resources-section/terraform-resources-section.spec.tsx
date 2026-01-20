@@ -51,7 +51,7 @@ describe('TerraformResourcesSection', () => {
 
   it('should render empty state when no resources', () => {
     mockUseTerraformResources.mockReturnValue({
-      data: { resources: [] },
+      data: [],
       isLoading: false,
       error: null,
     } as any)
@@ -63,7 +63,7 @@ describe('TerraformResourcesSection', () => {
 
   it('should render resources with tree list and details', () => {
     mockUseTerraformResources.mockReturnValue({
-      data: { resources: [mockResource] },
+      data: [mockResource],
       isLoading: false,
       error: null,
     } as any)
@@ -78,7 +78,7 @@ describe('TerraformResourcesSection', () => {
   it('should render split panel with resources', () => {
     const resources = [mockResource]
     mockUseTerraformResources.mockReturnValue({
-      data: { resources },
+      data: resources,
       isLoading: false,
       error: null,
     } as any)
@@ -91,7 +91,7 @@ describe('TerraformResourcesSection', () => {
 
   it('should select first resource on load', () => {
     mockUseTerraformResources.mockReturnValue({
-      data: { resources: [mockResource] },
+      data: [mockResource],
       isLoading: false,
       error: null,
     } as any)
@@ -114,7 +114,7 @@ describe('TerraformResourcesSection', () => {
     ]
 
     mockUseTerraformResources.mockReturnValue({
-      data: { resources },
+      data: resources,
       isLoading: false,
       error: null,
     } as any)
@@ -135,7 +135,7 @@ describe('TerraformResourcesSection', () => {
 
   it('should show empty search state when no matches', async () => {
     mockUseTerraformResources.mockReturnValue({
-      data: { resources: [mockResource] },
+      data: [mockResource],
       isLoading: false,
       error: null,
     } as any)
@@ -160,7 +160,7 @@ describe('TerraformResourcesSection', () => {
     ]
 
     mockUseTerraformResources.mockReturnValue({
-      data: { resources },
+      data: resources,
       isLoading: false,
       error: null,
     } as any)
