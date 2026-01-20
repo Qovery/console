@@ -7,7 +7,7 @@ import { match } from 'ts-pattern'
 import { hasGpuInstance, useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
-import { HpaMetricFields, InstancesRangeInputs, KedaSettings, useRunningStatus } from '@qovery/domains/services/feature'
+import { KedaSettings, useRunningStatus } from '@qovery/domains/services/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import {
@@ -24,6 +24,8 @@ import {
   Section,
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
+import { FixedInstancesMode } from './fixed-instances-mode'
+import { HpaAutoscalingMode } from './hpa-autoscaling-mode'
 
 type ClusterWithKeda = {
   keda?: {
@@ -351,95 +353,27 @@ export function ApplicationSettingsResources({
 
           {/* Mode NONE: Fixed instances */}
           {autoscalingMode === 'NONE' && (
-            <>
-              <Controller
-                name="min_running_instances"
-                control={control}
-                rules={{
-                  required: true,
-                  min: minInstances,
-                  max: maxInstances,
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    type="number"
-                    label="Number of instances"
-                    name={field.name}
-                    value={isNaN(field.value) || field.value === 0 ? '' : field.value.toString()}
-                    onChange={(e) => {
-                      const output = parseInt(e.target.value, 10)
-                      const value = isNaN(output) ? 0 : output
-                      field.onChange(value)
-                      // Set max = min for fixed instances
-                      setValue('max_running_instances', value)
-                    }}
-                    error={
-                      error?.type === 'required'
-                        ? 'Please enter a size.'
-                        : error?.type === 'max'
-                          ? `Maximum allowed is: ${maxInstances}.`
-                          : error?.type === 'min'
-                            ? `Minimum allowed is: ${minInstances}.`
-                            : undefined
-                    }
-                  />
-                )}
-              />
-              <Callout.Root color="sky" className="mt-3">
-                <Callout.Icon>
-                  <Icon iconName="circle-info" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text>
-                  With fixed instances, your service will always run the exact number of instances specified above.
-                </Callout.Text>
-              </Callout.Root>
-            </>
+            <FixedInstancesMode
+              control={control}
+              setValue={setValue}
+              minInstances={minInstances}
+              maxInstances={maxInstances}
+            />
           )}
 
           {/* Mode HPA: Horizontal Pod Autoscaler */}
           {autoscalingMode === 'HPA' && (
-            <>
-              <InstancesRangeInputs
-                control={control}
-                minInstances={minInstances}
-                maxInstances={maxInstances}
-                minRunningInstances={minRunningInstances}
-                showMaxField={true}
-                runningPods={runningStatuses?.pods?.length}
-                requireMinLessThanMax={true}
-              />
-
-              <Callout.Root color="sky" className="mt-3">
-                <Callout.Icon>
-                  <Icon iconName="circle-info" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text>
-                  Auto-scaling will automatically scale your service based on{' '}
-                  {hpaMetricType === 'CPU_AND_MEMORY' ? 'CPU and Memory' : 'CPU'} utilization. Scaling occurs when the
-                  average exceeds
-                  {hpaMetricType === 'CPU_AND_MEMORY'
-                    ? ` CPU ${hpaAverageUtilizationPercent}% and Memory ${hpaMemoryAverageUtilizationPercent}%`
-                    : ` ${hpaAverageUtilizationPercent}%`}{' '}
-                  for a continuous period.
-                </Callout.Text>
-              </Callout.Root>
-
-              <Callout.Root color="yellow" className="mt-3">
-                <Callout.Icon>
-                  <Icon iconName="triangle-exclamation" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text>
-                  <p>Always assume one instance may fail due to node maintenance or issues.</p>
-                  <p>To ensure high availability, set Minimum Instances to 2 if your app can run on 1 instance.</p>
-                  <p>
-                    If your application requires more than one instance to handle necessary traffic, set the minimum to
-                    3 or higher to guarantee redundancy during a single failure.
-                  </p>
-                </Callout.Text>
-              </Callout.Root>
-
-              <HpaMetricFields control={control} setValue={setValue} hpaMetricType={hpaMetricType} />
-            </>
+            <HpaAutoscalingMode
+              control={control}
+              setValue={setValue}
+              minInstances={minInstances}
+              maxInstances={maxInstances}
+              minRunningInstances={minRunningInstances}
+              hpaMetricType={hpaMetricType}
+              hpaAverageUtilizationPercent={hpaAverageUtilizationPercent}
+              hpaMemoryAverageUtilizationPercent={hpaMemoryAverageUtilizationPercent}
+              runningPods={runningStatuses?.pods?.length}
+            />
           )}
 
           {/* Mode KEDA: Event-driven autoscaling */}
