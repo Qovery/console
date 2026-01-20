@@ -1,7 +1,7 @@
 import { subDays } from 'date-fns'
 import { useState } from 'react'
 import { StringParam, useQueryParam } from 'use-query-params'
-import { DatePicker, DatePickerTrigger, InputSelectSmall } from '@qovery/shared/ui'
+import { Button, DatePicker, Icon, InputSelectSmall } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 import { type TimeRangeOption, timeRangeOptions } from '../../../util-filter/time-range'
@@ -52,30 +52,45 @@ export function SelectTimeRange() {
         }}
       >
         {queryTimeRange !== 'custom' ? (
-          <DatePickerTrigger
-            mode="icon"
+          <Button
+            type="button"
+            variant="surface"
+            color="neutral"
+            size="md"
             className="rounded-r-none border-r-0 active:scale-100"
             onClick={() => {
               setIsOpenTimestamp(!isOpenTimestamp)
               setIsDatePickerOpen(!isOpenTimestamp)
             }}
-          />
+          >
+            <Icon iconName="calendar" iconStyle="regular" />
+          </Button>
         ) : (
-          <DatePickerTrigger
-            mode="range"
+          <Button
+            type="button"
+            variant="surface"
+            color="neutral"
+            size="md"
             className="active:scale-100"
             onClick={() => {
               setIsOpenTimestamp(!isOpenTimestamp)
               setIsDatePickerOpen(!isOpenTimestamp)
             }}
-            onClear={() => {
-              handleTimeRangeChange(lastDropdownTimeRange)
-              setQueryTimeRange(lastDropdownTimeRange)
-            }}
           >
             from: {dateFullFormat(startDate, useLocalTime ? undefined : 'UTC', 'dd MMM, HH:mm:ss')} - to:{' '}
             {dateFullFormat(endDate, useLocalTime ? undefined : 'UTC', 'dd MMM, HH:mm:ss')}
-          </DatePickerTrigger>
+            <span
+              className="relative left-1 px-1 py-1"
+              role="button"
+              onClick={(event) => {
+                event.stopPropagation()
+                handleTimeRangeChange(lastDropdownTimeRange)
+                setQueryTimeRange(lastDropdownTimeRange)
+              }}
+            >
+              <Icon iconName="xmark" />
+            </span>
+          </Button>
         )}
       </DatePicker>
       {queryTimeRange !== 'custom' && (

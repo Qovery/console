@@ -2,8 +2,7 @@
 
 .date-picker {
   &.date-picker--open {
-    transform: translateY(0);
-    animation-name: menuOpenBottom;
+    animation-name: menuOpenTop;
   }
 
   .react-datepicker__header--custom,

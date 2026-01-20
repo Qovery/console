@@ -1,5 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-webpack5'
 import { useEffect, useState } from 'react'
+import Button from '../button/button'
+import Icon from '../icon/icon'
 import { DatePicker } from './date-picker'
 
 const periodOptions = [
@@ -50,12 +52,17 @@ type Story = StoryObj<typeof DatePicker>
 export const Playground: Story = {
   render: (args) => {
     const [, setDate] = useState<[Date, Date] | undefined>()
+    const [isOpen, setIsOpen] = useState(Boolean(args.isOpen))
     const [useLocalTime, setUseLocalTime] = useState(Boolean(args.useLocalTime))
     const [periodValue, setPeriodValue] = useState(args.periodValue)
 
     const handleChange = (startDate: Date, endDate?: Date) => {
       if (endDate) setDate([startDate, endDate])
     }
+
+    useEffect(() => {
+      setIsOpen(Boolean(args.isOpen))
+    }, [args.isOpen])
 
     useEffect(() => {
       setUseLocalTime(Boolean(args.useLocalTime))
@@ -69,14 +76,25 @@ export const Playground: Story = {
       <div style={{ height: '600px', paddingBottom: '400px', paddingLeft: '20px' }}>
         <DatePicker
           {...args}
-          isOpen={args.isOpen}
-          onChange={handleChange}
+          isOpen={isOpen}
+          onChange={(startDate, endDate) => {
+            handleChange(startDate, endDate)
+            if (endDate) {
+              setIsOpen(false)
+            }
+          }}
           useLocalTime={useLocalTime}
           onTimezoneChange={setUseLocalTime}
           periodOptions={periodOptions}
           periodValue={periodValue}
           onPeriodChange={setPeriodValue}
-        />
+          onClickOutside={() => setIsOpen(false)}
+        >
+          <Button type="button" variant="surface" color="neutral" size="md" onClick={() => setIsOpen((open) => !open)}>
+            Select a range
+            <Icon iconName="calendar" iconStyle="regular" className="ml-2" />
+          </Button>
+        </DatePicker>
       </div>
     )
   },
