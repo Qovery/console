@@ -183,7 +183,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               >
                 <span
                   class="css-1f43avz-a11yText-A11yText"
-                  id="react-select-X-live-region"
+                  id="react-select-4-live-region"
                 />
                 <span
                   aria-atomic="false"
