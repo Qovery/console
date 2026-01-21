@@ -168,25 +168,38 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
   }
 
   const resources = match(service)
-    .with(
-      { serviceType: ServiceTypeEnum.CONTAINER },
-      { serviceType: ServiceTypeEnum.APPLICATION },
-      ({ cpu, memory, min_running_instances, max_running_instances, gpu }) => (
+    .with({ serviceType: ServiceTypeEnum.CONTAINER }, { serviceType: ServiceTypeEnum.APPLICATION }, (s) => {
+      const { cpu, memory, min_running_instances, max_running_instances, gpu } = s
+
+      // Determine autoscaling mode using the same logic as other parts of the app
+      let autoscalingMode = 'Fixed'
+      if (s.autoscaling?.mode === 'KEDA') {
+        autoscalingMode = 'KEDA'
+      } else if (min_running_instances !== max_running_instances) {
+        autoscalingMode = 'HPA'
+      }
+
+      const isFixed = autoscalingMode === 'Fixed'
+
+      return (
         <>
+          <ResourceUnit value={autoscalingMode} description="Scaling method" />
           <ResourceUnit
             value={
               Number.isNaN(min_running_instances) || Number.isNaN(max_running_instances)
                 ? undefined
-                : `${min_running_instances}/${max_running_instances}`
+                : isFixed
+                  ? `${min_running_instances}`
+                  : `${min_running_instances}/${max_running_instances}`
             }
-            description="Instances (min/max)"
+            description={isFixed ? 'Instances' : 'Instances (min/max)'}
           />
           <ResourceUnit value={cpu && formatMetric({ current: cpu, unit: 'mCPU' })} description="vCPU (max)" />
           <ResourceUnit value={memory && formatMetric({ current: memory, unit: 'MiB' })} description="Memory (max)" />
           <ResourceUnit value={gpu && formatMetric({ current: gpu, unit: 'GPU' })} description="GPU (max)" />
         </>
       )
-    )
+    })
     .with({ serviceType: ServiceTypeEnum.DATABASE }, ({ cpu, memory, storage, instance_type, mode }) => (
       <>
         {mode !== 'MANAGED' && (

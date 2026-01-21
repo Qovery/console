@@ -1,4 +1,5 @@
-import { type Control, Controller, type FieldValues, type UseFormSetValue } from 'react-hook-form'
+import { EnvironmentModeEnum } from 'qovery-typescript-axios'
+import { type Control, Controller, type FieldValues, type UseFormSetValue, useWatch } from 'react-hook-form'
 import { Callout, Icon, InputText } from '@qovery/shared/ui'
 
 export interface FixedInstancesModeProps {
@@ -6,9 +7,20 @@ export interface FixedInstancesModeProps {
   setValue: UseFormSetValue<FieldValues>
   minInstances: number
   maxInstances: number
+  environmentMode?: EnvironmentModeEnum
 }
 
-export function FixedInstancesMode({ control, setValue, minInstances, maxInstances }: FixedInstancesModeProps) {
+export function FixedInstancesMode({
+  control,
+  setValue,
+  minInstances,
+  maxInstances,
+  environmentMode,
+}: FixedInstancesModeProps) {
+  const minRunningInstances = useWatch({ control, name: 'min_running_instances' })
+  const isProduction = environmentMode === EnvironmentModeEnum.PRODUCTION
+  const hasSingleInstance = minRunningInstances === 1
+
   return (
     <>
       <Controller
@@ -44,14 +56,18 @@ export function FixedInstancesMode({ control, setValue, minInstances, maxInstanc
           />
         )}
       />
-      <Callout.Root color="sky" className="mt-3">
-        <Callout.Icon>
-          <Icon iconName="circle-info" iconStyle="regular" />
-        </Callout.Icon>
-        <Callout.Text>
-          With fixed instances, your service will always run the exact number of instances specified above.
-        </Callout.Text>
-      </Callout.Root>
+      {isProduction && hasSingleInstance && (
+        <Callout.Root color="yellow" className="mt-3">
+          <Callout.Icon>
+            <Icon iconName="triangle-exclamation" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>
+            We strongly discourage running your production environment with only one instance. This setup might create
+            service downtime in case of cluster upgrades. Set a minimum of 2 instances for your service to ensure high
+            availability.
+          </Callout.Text>
+        </Callout.Root>
+      )}
     </>
   )
 }

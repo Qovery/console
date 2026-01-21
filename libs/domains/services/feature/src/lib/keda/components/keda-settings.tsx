@@ -1,3 +1,4 @@
+import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { type Control, type UseFieldArrayReturn } from 'react-hook-form'
 import { Callout, Icon } from '@qovery/shared/ui'
 import { InstancesRangeInputs } from './instances-range-inputs'
@@ -11,6 +12,7 @@ export interface KedaSettingsProps {
   minRunningInstances?: number
   disabled?: boolean
   runningPods?: number
+  environmentMode?: EnvironmentModeEnum
 }
 
 export function KedaSettings({
@@ -21,7 +23,11 @@ export function KedaSettings({
   minRunningInstances,
   disabled = false,
   runningPods,
+  environmentMode,
 }: KedaSettingsProps) {
+  const isProduction = environmentMode === EnvironmentModeEnum.PRODUCTION
+  const hasLowMinimum = (minRunningInstances ?? 0) <= 1
+
   return (
     <>
       <InstancesRangeInputs
@@ -35,16 +41,14 @@ export function KedaSettings({
         requireMinLessThanMax={true}
       />
 
-      <Callout.Root color="yellow" className="mt-3">
+      <Callout.Root color="sky" className="mt-3">
         <Callout.Icon>
-          <Icon iconName="triangle-exclamation" iconStyle="regular" />
+          <Icon iconName="circle-info" iconStyle="regular" />
         </Callout.Icon>
         <Callout.Text>
-          <p>Always assume one instance may fail due to node maintenance or issues.</p>
-          <p>To ensure high availability, set Minimum Instances to 2 if your app can run on 1 instance.</p>
           <p>
-            If your application requires more than one instance to handle necessary traffic, set the minimum to 3 or
-            higher to guarantee redundancy during a single failure.
+            For applications requiring high availability, set Minimum Instances to at least 2 to maintain service
+            availability during pod failures or cluster maintenance.
           </p>
         </Callout.Text>
       </Callout.Root>

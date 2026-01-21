@@ -335,30 +335,6 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
             </div>
           </div>
           <div
-            class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 mt-3"
-            data-accent-color="sky"
-          >
-            <div
-              class="-order-2 text-lg leading-6"
-            >
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-circle-info "
-              />
-            </div>
-            <div
-              class="-order-1 mr-auto gap-x-3 text-neutral-400"
-            >
-              Auto-scaling will automatically scale your service based on
-               
-              CPU
-               utilization. Scaling occurs when the average exceeds
-               60%
-               
-              for a continuous period.
-            </div>
-          </div>
-          <div
             class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700 mt-3"
             data-accent-color="yellow"
           >

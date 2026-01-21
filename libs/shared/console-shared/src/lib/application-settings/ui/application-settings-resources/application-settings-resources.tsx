@@ -364,6 +364,7 @@ export function ApplicationSettingsResources({
               setValue={setValue}
               minInstances={minInstances}
               maxInstances={maxInstances}
+              environmentMode={environmentMode}
             />
           )}
 
@@ -379,6 +380,7 @@ export function ApplicationSettingsResources({
               hpaAverageUtilizationPercent={hpaAverageUtilizationPercent}
               hpaMemoryAverageUtilizationPercent={hpaMemoryAverageUtilizationPercent}
               runningPods={runningStatuses?.pods?.length}
+              environmentMode={environmentMode}
             />
           )}
 
@@ -392,23 +394,9 @@ export function ApplicationSettingsResources({
               minRunningInstances={minRunningInstances}
               disabled={currentAutoscalingMode === 'HPA'}
               runningPods={runningStatuses?.pods?.length}
+              environmentMode={environmentMode}
             />
           )}
-
-          {(autoscalingMode === 'NONE' || autoscalingMode === 'HPA') &&
-            environmentMode === EnvironmentModeEnum.PRODUCTION &&
-            minRunningInstances === 1 && (
-              <Callout.Root color="yellow" className="mt-3">
-                <Callout.Icon>
-                  <Icon iconName="triangle-exclamation" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text>
-                  We strongly discourage running your production environment with only one instance. This setup might
-                  create service downtime in case of cluster upgrades. Set a minimum of 2 instances for your service to
-                  ensure high availability.
-                </Callout.Text>
-              </Callout.Root>
-            )}
         </Section>
       )}
     </>

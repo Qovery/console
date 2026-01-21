@@ -1,3 +1,4 @@
+import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { type Control, type FieldValues, type UseFormSetValue } from 'react-hook-form'
 import { HpaMetricFields, InstancesRangeInputs } from '@qovery/domains/services/feature'
 import { Callout, Icon } from '@qovery/shared/ui'
@@ -12,6 +13,7 @@ export interface HpaAutoscalingModeProps {
   hpaAverageUtilizationPercent: number
   hpaMemoryAverageUtilizationPercent: number
   runningPods?: number
+  environmentMode?: EnvironmentModeEnum
 }
 
 export function HpaAutoscalingMode({
@@ -24,7 +26,11 @@ export function HpaAutoscalingMode({
   hpaAverageUtilizationPercent,
   hpaMemoryAverageUtilizationPercent,
   runningPods,
+  environmentMode,
 }: HpaAutoscalingModeProps) {
+  const isProduction = environmentMode === EnvironmentModeEnum.PRODUCTION
+  const hasSingleInstance = minRunningInstances === 1
+
   return (
     <>
       <InstancesRangeInputs
@@ -37,21 +43,6 @@ export function HpaAutoscalingMode({
         requireMinLessThanMax={true}
       />
 
-      <Callout.Root color="sky" className="mt-3">
-        <Callout.Icon>
-          <Icon iconName="circle-info" iconStyle="regular" />
-        </Callout.Icon>
-        <Callout.Text>
-          Auto-scaling will automatically scale your service based on{' '}
-          {hpaMetricType === 'CPU_AND_MEMORY' ? 'CPU and Memory' : 'CPU'} utilization. Scaling occurs when the average
-          exceeds
-          {hpaMetricType === 'CPU_AND_MEMORY'
-            ? ` CPU ${hpaAverageUtilizationPercent}% and Memory ${hpaMemoryAverageUtilizationPercent}%`
-            : ` ${hpaAverageUtilizationPercent}%`}{' '}
-          for a continuous period.
-        </Callout.Text>
-      </Callout.Root>
-
       <Callout.Root color="yellow" className="mt-3">
         <Callout.Icon>
           <Icon iconName="triangle-exclamation" iconStyle="regular" />
@@ -63,6 +54,12 @@ export function HpaAutoscalingMode({
             If your application requires more than one instance to handle necessary traffic, set the minimum to 3 or
             higher to guarantee redundancy during a single failure.
           </p>
+          {isProduction && hasSingleInstance && (
+            <p className="mt-2 font-medium">
+              We strongly discourage running your production environment with only one instance. This setup might create
+              service downtime in case of cluster upgrades.
+            </p>
+          )}
         </Callout.Text>
       </Callout.Root>
 

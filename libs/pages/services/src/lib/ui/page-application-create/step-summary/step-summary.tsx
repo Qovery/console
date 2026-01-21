@@ -166,8 +166,20 @@ export function StepSummary({
                 <strong className="font-medium">Memory:</strong> {resourcesData.memory} MB
               </li>
               <li>
-                <strong className="font-medium">Instances:</strong> {resourcesData.min_running_instances} -{' '}
-                {resourcesData.max_running_instances}
+                <strong className="font-medium">
+                  {resourcesData.autoscaling_mode === 'NONE' ? 'Instances:' : 'Instances (min/max):'}
+                </strong>{' '}
+                {resourcesData.autoscaling_mode === 'NONE'
+                  ? resourcesData.min_running_instances
+                  : `${resourcesData.min_running_instances} - ${resourcesData.max_running_instances}`}
+              </li>
+              <li>
+                <strong className="font-medium">Scaling method:</strong>{' '}
+                {resourcesData.autoscaling_mode === 'KEDA'
+                  ? 'KEDA'
+                  : resourcesData.autoscaling_mode === 'HPA'
+                    ? 'HPA'
+                    : 'Fixed'}
               </li>
               <li>
                 <strong className="font-medium">GPU:</strong> {resourcesData.gpu}
