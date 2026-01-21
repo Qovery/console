@@ -1,15 +1,24 @@
 import { Link, createFileRoute, useParams } from '@tanstack/react-router'
-import { type Environment, type EnvironmentModeEnum } from 'qovery-typescript-axios'
+import { type EnvironmentModeEnum, type EnvironmentOverviewResponse } from 'qovery-typescript-axios'
 import { Suspense, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
-import { useClusters } from '@qovery/domains/clusters/feature'
 import { CreateCloneEnvironmentModal, EnvironmentMode, useEnvironments } from '@qovery/domains/environments/feature'
-import { useProject } from '@qovery/domains/projects/feature'
-import { useServices } from '@qovery/domains/services/feature'
-import { Button, Heading, Icon, LoaderSpinner, Section, TablePrimitives, useModal } from '@qovery/shared/ui'
+import { useEnvironmentsOverview, useProject } from '@qovery/domains/projects/feature'
+import {
+  Button,
+  Heading,
+  Icon,
+  LoaderSpinner,
+  Section,
+  StatusChip,
+  TablePrimitives,
+  Tooltip,
+  Truncate,
+  useModal,
+} from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
-import { pluralize } from '@qovery/shared/util-js'
+import { pluralize, twMerge } from '@qovery/shared/util-js'
 
 const { Table } = TablePrimitives
 
@@ -17,38 +26,57 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
   component: RouteComponent,
 })
 
-function EnvRow({ environment }: { environment: Environment }) {
+const gridLayoutClassName = 'grid grid-cols-[3fr_2fr_2fr_180px_100px]'
+
+function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const { organizationId, projectId } = useParams({ strict: false })
-  const { data: clusters } = useClusters({ organizationId, suspense: true })
-  const { data: services } = useServices({ environmentId: environment.id, suspense: true })
+  const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
+  const environment = environments.find((env) => env.id === overview.id)
+  const runningStatus = environment?.runningStatus
 
   return (
-    <Table.Row key={environment.id}>
+    <Table.Row key={overview.id} className={twMerge('w-full', gridLayoutClassName)}>
       <Table.Cell className="h-12">
-        <div className="flex items-center justify-between">
+        <div className="flex h-full items-center justify-between">
           <Link
             to="/organization/$organizationId/project/$projectId/environment/$environmentId/"
-            params={{ organizationId, projectId, environmentId: environment.id }}
+            params={{ organizationId, projectId, environmentId: overview.id }}
             className="text-sm font-medium"
           >
-            {environment.name}
+            <Truncate text={overview.name} truncateLimit={54} />
           </Link>
-          <span className="font-normal text-neutral-subtle">
-            {services?.length} {pluralize(services?.length ?? 0, 'service')}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="font-normal text-neutral-subtle">
+              {overview.service_count} {pluralize(overview.service_count, 'service')}
+            </span>
+            {runningStatus && (
+              <Tooltip content={runningStatus?.stateLabel}>
+                <StatusChip status={runningStatus.state} />
+              </Tooltip>
+            )}
+          </div>
         </div>
       </Table.Cell>
-      <Table.Cell className="h-12 border-l border-neutral">–</Table.Cell>
       <Table.Cell className="h-12 border-l border-neutral">
-        <div className="flex items-center gap-2">
-          <ClusterAvatar cluster={clusters?.find((cluster) => cluster.id === environment.cluster_id)} size="sm" />
-          {clusters?.find((cluster) => cluster.id === environment.cluster_id)?.name}
+        <div className="flex h-full items-center justify-between">
+          {timeAgo(new Date(overview.deployment_status?.last_deployment_date ?? Date.now()))} ago
+          <StatusChip status={overview.deployment_status?.last_deployment_state} />
         </div>
       </Table.Cell>
       <Table.Cell className="h-12 border-l border-neutral">
-        {timeAgo(new Date(environment.updated_at ?? Date.now()))} ago
+        {overview.cluster && (
+          <div className="flex h-full items-center">
+            <ClusterAvatar cluster={overview.cluster} size="sm" />
+            {overview.cluster?.name}
+          </div>
+        )}
       </Table.Cell>
-      <Table.Cell className="h-12 border-l border-neutral">–</Table.Cell>
+      <Table.Cell className="h-12 border-l border-neutral">
+        <div className="flex h-full items-center">{timeAgo(new Date(overview.updated_at ?? Date.now()))} ago</div>
+      </Table.Cell>
+      <Table.Cell className="h-12 border-l border-neutral">
+        <div className="flex h-full items-center"></div>
+      </Table.Cell>
     </Table.Row>
   )
 }
@@ -59,7 +87,7 @@ function EnvironmentSection({
   onCreateEnvClicked,
 }: {
   type: EnvironmentModeEnum
-  items: Environment[]
+  items: EnvironmentOverviewResponse[]
   onCreateEnvClicked: () => void
 }) {
   const title = match(type)
@@ -86,39 +114,33 @@ function EnvironmentSection({
         </div>
       ) : (
         <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral">
-          <Suspense
-            fallback={
-              <div className="flex w-full items-center justify-center py-8">
-                <LoaderSpinner className="w-6" />
-              </div>
-            }
-          >
-            <Table.Root className="divide-y divide-neutral">
-              <Table.Header>
-                <Table.Row className="text-xs">
-                  <Table.ColumnHeaderCell className="h-9 text-neutral-subtle">Environment</Table.ColumnHeaderCell>
-                  <Table.ColumnHeaderCell className="h-9 border-l border-neutral text-neutral-subtle">
-                    Last operation
-                  </Table.ColumnHeaderCell>
-                  <Table.ColumnHeaderCell className="h-9 border-l border-neutral text-neutral-subtle">
-                    Cluster
-                  </Table.ColumnHeaderCell>
-                  <Table.ColumnHeaderCell className="h-9 border-l border-neutral text-neutral-subtle">
-                    Last update
-                  </Table.ColumnHeaderCell>
-                  <Table.ColumnHeaderCell className="h-9 border-l border-neutral text-right text-neutral-subtle">
-                    Actions
-                  </Table.ColumnHeaderCell>
-                </Table.Row>
-              </Table.Header>
+          <Table.Root className="divide-y divide-neutral">
+            <Table.Header>
+              <Table.Row className={twMerge('w-full items-center text-xs', gridLayoutClassName)}>
+                <Table.ColumnHeaderCell className="flex h-9 items-center text-neutral-subtle">
+                  Environment
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                  Last operation
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                  Cluster
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                  Last update
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-right text-neutral-subtle">
+                  Actions
+                </Table.ColumnHeaderCell>
+              </Table.Row>
+            </Table.Header>
 
-              <Table.Body className="divide-y divide-neutral">
-                {items.map((environment) => (
-                  <EnvRow key={environment.id} environment={environment} />
-                ))}
-              </Table.Body>
-            </Table.Root>
-          </Suspense>
+            <Table.Body className="divide-y divide-neutral">
+              {items.map((environmentOverview) => (
+                <EnvRow key={environmentOverview.id} overview={environmentOverview} />
+              ))}
+            </Table.Body>
+          </Table.Root>
         </div>
       )}
     </Section>
@@ -129,14 +151,14 @@ function ProjectOverview() {
   const { openModal, closeModal } = useModal()
   const { organizationId, projectId } = useParams({ strict: false })
   const { data: project } = useProject({ organizationId, projectId, suspense: true })
-  const { data: environments } = useEnvironments({ projectId, suspense: true })
+  const { data: environmentsOverview } = useEnvironmentsOverview({ projectId, suspense: true })
 
   const groupedEnvs = useMemo(() => {
-    return environments?.reduce((acc, env) => {
+    return environmentsOverview?.reduce((acc, env) => {
       acc.set(env.mode, [...(acc.get(env.mode) || []), env])
       return acc
-    }, new Map<EnvironmentModeEnum, Environment[]>())
-  }, [environments])
+    }, new Map<EnvironmentModeEnum, EnvironmentOverviewResponse[]>())
+  }, [environmentsOverview])
 
   const onCreateEnvClicked = () => {
     openModal({

@@ -1,6 +1,9 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
+import { memo } from 'react'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import { LoaderSpinner } from '@qovery/shared/ui'
+import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { queries } from '@qovery/state/util-queries'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId')({
@@ -28,10 +31,35 @@ const Loader = () => {
   )
 }
 
+const StatusWebSocketListenerMemo = memo(StatusWebSocketListener)
+
 function RouteComponent() {
+  const { organizationId = '', projectId = '', environmentId = '', versionId = '' } = useParams({ strict: false })
+  const { data: clusters } = useClusters({ organizationId })
+
   return (
-    <Suspense fallback={<Loader />}>
-      <Outlet />
-    </Suspense>
+    <>
+      <Suspense fallback={<Loader />}>
+        <Outlet />
+      </Suspense>
+
+      {/**
+       * Here we are limited by the websocket API which requires a clusterId
+       * We need to instantiate one hook per clusterId to get the complete environment statuses of the page
+       */
+      clusters?.map(
+        ({ id }) =>
+          organizationId && (
+            <StatusWebSocketListenerMemo
+              key={id}
+              organizationId={organizationId}
+              clusterId={id}
+              projectId={projectId}
+              environmentId={environmentId}
+              versionId={versionId}
+            />
+          )
+      )}
+    </>
   )
 }

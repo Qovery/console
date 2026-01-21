@@ -12,3 +12,4 @@ export * from './lib/hooks/use-create-deployment-rule/use-create-deployment-rule
 export * from './lib/hooks/use-edit-deployment-rule/use-edit-deployment-rule'
 export * from './lib/hooks/use-delete-deployment-rule/use-delete-deployment-rule'
 export * from './lib/hooks/use-edit-deployment-rules-priority-order/use-edit-deployment-rules-priority-order'
+export * from './lib/hooks/use-environments-overview/use-environments-overview'

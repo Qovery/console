@@ -1,11 +1,11 @@
-import { type CloudProviderEnum, type Cluster } from 'qovery-typescript-axios'
+import { type CloudProviderEnum, type Cluster, type ClusterOverviewResponse } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { match } from 'ts-pattern'
 import { Avatar, Icon } from '@qovery/shared/ui'
 
 export interface ClusterAvatarProps extends Omit<ComponentPropsWithoutRef<typeof Avatar>, 'fallback'> {
   cloudProvider?: CloudProviderEnum
-  cluster?: Cluster
+  cluster?: Cluster | ClusterOverviewResponse
 }
 
 export const ClusterAvatar = forwardRef<ElementRef<typeof Avatar>, ClusterAvatarProps>(function ClusterAvatar(
