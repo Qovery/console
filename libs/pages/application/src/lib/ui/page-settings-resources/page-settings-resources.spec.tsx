@@ -67,17 +67,19 @@ describe('PageSettingsResources', () => {
   it('should render warning box and icon for cpu', async () => {
     props.displayWarningCpu = true
 
-    const { container } = renderWithProviders(
+    renderWithProviders(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
         defaultValues: { cpu: 10, min_running_instances: 1, max_running_instances: 1, memory: 323 },
       })
     )
 
     const submitButton = await screen.findByRole('button', { name: /save/i })
-    // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(submitButton).toBeInTheDocument()
 
-    expect(container).toMatchSnapshot()
+    // Verify warning box is displayed
+    expect(screen.getByTestId('banner-box')).toBeInTheDocument()
+    expect(screen.getByText(/not enough resources/i)).toBeInTheDocument()
+    expect(screen.getByText(/increase the capacity of your cluster nodes/i)).toBeInTheDocument()
   })
 
   it('should submit the form', async () => {

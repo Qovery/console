@@ -20,6 +20,7 @@ import {
   Section,
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
+import { loadHpaSettingsFromAdvancedSettings } from '@qovery/shared/util-services'
 import { FixedInstancesMode } from './fixed-instances-mode'
 import { HpaAutoscalingMode } from './hpa-autoscaling-mode'
 
@@ -35,6 +36,7 @@ export interface ApplicationSettingsResourcesProps {
   service?: Exclude<AnyService, Helm | Database>
   minInstances?: number
   maxInstances?: number
+  advancedSettings?: unknown
 }
 
 export function ApplicationSettingsResources({
@@ -43,6 +45,7 @@ export function ApplicationSettingsResources({
   service,
   minInstances = 1,
   maxInstances = 1000,
+  advancedSettings,
 }: ApplicationSettingsResourcesProps) {
   const { control, watch, setValue } = useFormContext()
   const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
@@ -70,7 +73,8 @@ export function ApplicationSettingsResources({
 
   const minRunningInstances = watch('min_running_instances')
   const maxRunningInstances = watch('max_running_instances')
-  const hpaMetricType = watch('hpa_metric_type') || 'CPU'
+  const hpaMetricTypeRaw = watch('hpa_metric_type')
+  const hpaMetricType = hpaMetricTypeRaw || 'CPU'
   const autoscalingMode = watch('autoscaling_mode') || 'NONE'
   const hpaAverageUtilizationPercent = watch('hpa_cpu_average_utilization_percent') ?? 60
   const hpaMemoryAverageUtilizationPercent = watch('hpa_memory_average_utilization_percent') ?? 60
@@ -86,8 +90,17 @@ export function ApplicationSettingsResources({
         setValue('max_running_instances', 2)
       }
     }
+
+    // Set default HPA settings when switching to HPA mode
+    if (autoscalingMode === 'HPA' && !hpaMetricTypeRaw) {
+      const hpaSettings = loadHpaSettingsFromAdvancedSettings(advancedSettings)
+      setValue('hpa_metric_type', hpaSettings.hpa_metric_type)
+      setValue('hpa_cpu_average_utilization_percent', hpaSettings.hpa_cpu_average_utilization_percent)
+      setValue('hpa_memory_average_utilization_percent', hpaSettings.hpa_memory_average_utilization_percent)
+    }
+
     previousAutoscalingModeRef.current = autoscalingMode
-  }, [autoscalingMode, minRunningInstances, maxRunningInstances, setValue])
+  }, [autoscalingMode, minRunningInstances, maxRunningInstances, hpaMetricTypeRaw, advancedSettings, setValue])
 
   // Determine the current saved autoscaling mode (not the form value)
   const currentAutoscalingMode = match(service)
@@ -303,48 +316,46 @@ export function ApplicationSettingsResources({
         <Section className="gap-4">
           <Heading>Instances & Autoscaling</Heading>
 
-          {cloudProvider === 'AWS' && isKedaCluster ? (
-            <>
-              <Controller
-                name="autoscaling_mode"
-                control={control}
-                render={({ field }) => {
-                  const options = [
-                    { label: 'No autoscaling (fixed instances)', value: 'NONE' },
-                    { label: 'HPA (Horizontal Pod Autoscaler)', value: 'HPA' },
-                  ]
+          <>
+            <Controller
+              name="autoscaling_mode"
+              control={control}
+              render={({ field }) => {
+                const options = [
+                  { label: 'No autoscaling (fixed instances)', value: 'NONE' },
+                  { label: 'HPA (Horizontal Pod Autoscaler)', value: 'HPA' },
+                ]
 
-                  if (isKedaFeatureEnabled) {
-                    options.push({ label: 'KEDA (Event-driven autoscaling)', value: 'KEDA' })
-                  }
+                if (cloudProvider === 'AWS' && isKedaCluster && isKedaFeatureEnabled) {
+                  options.push({ label: 'KEDA (Event-driven autoscaling)', value: 'KEDA' })
+                }
 
-                  return (
-                    <InputSelect
-                      label="Autoscaling mode"
-                      options={options}
-                      onChange={field.onChange}
-                      value={field.value || 'NONE'}
-                      hint="Choose how instances should scale"
-                    />
-                  )
-                }}
-              />
-              {currentAutoscalingMode === 'HPA' && autoscalingMode === 'KEDA' && isKedaFeatureEnabled && (
-                <Callout.Root color="yellow">
-                  <Callout.Icon>
-                    <Icon iconName="circle-info" />
-                  </Callout.Icon>
-                  <Callout.Text>
-                    <Callout.TextHeading>KEDA migration restriction</Callout.TextHeading>
-                    <Callout.TextDescription className="text-xs">
-                      You cannot migrate directly from HPA to KEDA. Please first switch to "No autoscaling" mode, save
-                      the changes, and then you can configure KEDA autoscaling.
-                    </Callout.TextDescription>
-                  </Callout.Text>
-                </Callout.Root>
-              )}
-            </>
-          ) : null}
+                return (
+                  <InputSelect
+                    label="Autoscaling mode"
+                    options={options}
+                    onChange={field.onChange}
+                    value={field.value || 'NONE'}
+                    hint="Choose how instances should scale"
+                  />
+                )
+              }}
+            />
+            {currentAutoscalingMode === 'HPA' && autoscalingMode === 'KEDA' && isKedaFeatureEnabled && (
+              <Callout.Root color="yellow">
+                <Callout.Icon>
+                  <Icon iconName="circle-info" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>KEDA migration restriction</Callout.TextHeading>
+                  <Callout.TextDescription className="text-xs">
+                    You cannot migrate directly from HPA to KEDA. Please first switch to "No autoscaling" mode, save the
+                    changes and deploy your service, and then you can configure KEDA autoscaling.
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
+            )}
+          </>
 
           {/* Mode NONE: Fixed instances */}
           {autoscalingMode === 'NONE' && (
@@ -384,7 +395,7 @@ export function ApplicationSettingsResources({
             />
           )}
 
-          {autoscalingMode === 'NONE' &&
+          {(autoscalingMode === 'NONE' || autoscalingMode === 'HPA') &&
             environmentMode === EnvironmentModeEnum.PRODUCTION &&
             minRunningInstances === 1 && (
               <Callout.Root color="yellow" className="mt-3">

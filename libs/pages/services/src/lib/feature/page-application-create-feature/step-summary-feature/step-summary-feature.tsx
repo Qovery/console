@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAnnotationsGroups, useContainerRegistry, useLabelsGroups } from '@qovery/domains/organizations/feature'
-import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { useCreateService, useDeployService, useEditAdvancedSettings } from '@qovery/domains/services/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { type VariableData } from '@qovery/shared/interfaces'
 import {
@@ -23,6 +23,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { buildHpaAdvancedSettingsPayload } from '@qovery/shared/util-services'
 import StepSummary from '../../../ui/page-application-create/step-summary/step-summary'
 import { steps, useApplicationContainerCreateContext } from '../page-application-create-feature'
 
@@ -60,6 +61,11 @@ export function StepSummaryFeature() {
   const { mutateAsync: createService } = useCreateService({ organizationId })
   const { mutateAsync: importVariables } = useImportVariables()
   const { mutate: deployService } = useDeployService({ organizationId, projectId, environmentId })
+  const { mutateAsync: editAdvancedSettings } = useEditAdvancedSettings({
+    organizationId,
+    projectId,
+    environmentId,
+  })
 
   const variablesData = variablesForm.getValues().variables
 
@@ -211,6 +217,17 @@ export function StepSummaryFeature() {
             })
           }
 
+          // Create HPA advanced settings if autoscaling mode is HPA
+          if (resourcesData.autoscaling_mode === 'HPA') {
+            await editAdvancedSettings({
+              serviceId: service.id,
+              payload: {
+                serviceType: 'APPLICATION',
+                ...buildHpaAdvancedSettingsPayload(resourcesData as unknown as Record<string, unknown>, {}),
+              },
+            })
+          }
+
           if (withDeploy) {
             deployService({
               serviceId: service.id,
@@ -276,6 +293,17 @@ export function StepSummaryFeature() {
               serviceType: 'CONTAINER',
               serviceId: service.id,
               variableImportRequest,
+            })
+          }
+
+          // Create HPA advanced settings if autoscaling mode is HPA
+          if (resourcesData.autoscaling_mode === 'HPA') {
+            await editAdvancedSettings({
+              serviceId: service.id,
+              payload: {
+                serviceType: 'CONTAINER',
+                ...buildHpaAdvancedSettingsPayload(resourcesData as unknown as Record<string, unknown>, {}),
+              },
             })
           }
 

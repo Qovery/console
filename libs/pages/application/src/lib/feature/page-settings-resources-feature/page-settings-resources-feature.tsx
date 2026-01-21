@@ -188,6 +188,7 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
         loading={isLoadingService}
         service={service}
         displayWarningCpu={displayWarningCpu}
+        advancedSettings={advancedSettings}
       />
     </FormProvider>
   )
