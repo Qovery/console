@@ -46,16 +46,8 @@ export const serviceTerraform = createQueryKeys('serviceTerraform', {
   listResources: (terraformId: string) => ({
     queryKey: [terraformId, 'resources'],
     async queryFn(): Promise<TerraformResource[]> {
-      try {
-        const response = await terraformResourcesApi.getTerraformResources(terraformId)
-        return transformApiResponse(response.data)
-      } catch (error) {
-        const axiosError = error as AxiosError
-        if (axiosError.response?.status === 404) {
-          throw new ResourcesNotAppliedError()
-        }
-        throw error
-      }
+      const response = await terraformResourcesApi.getTerraformResources(terraformId)
+      return transformApiResponse(response.data)
     },
   }),
 })

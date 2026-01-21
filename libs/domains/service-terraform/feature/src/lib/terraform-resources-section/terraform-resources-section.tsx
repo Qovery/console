@@ -90,15 +90,17 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search resources..."
                 className="w-full"
+                inputClassName="pr-8"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-350 transition-colors hover:text-neutral-400"
+                  className="absolute right-2 top-1/2 z-10 -translate-y-1/2 text-neutral-350 transition-colors hover:text-neutral-400"
                   title="Clear search"
+                  data-testid="clear-search-button"
                 >
-                  <Icon name="icon-solid-times" className="text-sm" />
+                  <Icon iconName="times" iconStyle="solid" className="text-sm" />
                 </button>
               )}
             </div>

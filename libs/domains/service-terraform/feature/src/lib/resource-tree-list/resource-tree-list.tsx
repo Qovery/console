@@ -114,7 +114,6 @@ export function ResourceTreeList({
                         type="button"
                         onClick={() => onSelectResource(resource.id)}
                         className={getButtonClassName()}
-                        title={!matches ? 'Does not match search query' : undefined}
                       >
                         <Icon iconName="file" className="fa-regular text-xs" />
                         <span className="truncate">{resource.name}</span>

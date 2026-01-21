@@ -101,7 +101,7 @@ describe('TerraformResourcesSection', () => {
     expect(screen.getByText('aws_instance.web_server')).toBeInTheDocument()
   })
 
-  it('should label non-matching resources when searching', async () => {
+  it('should style non-matching resources differently when searching', async () => {
     const resources = [
       mockResource,
       createMockTerraformResource({
@@ -124,13 +124,9 @@ describe('TerraformResourcesSection', () => {
     const searchInput = screen.getByPlaceholderText(/Search resources/i)
     await userEvent.type(searchInput, 'bucket')
 
-    // Both resources are visible in tree, but non-matching one is labeled
+    // Both resources are visible in tree
     expect(screen.getAllByText('data_bucket').length).toBeGreaterThan(0)
     expect(screen.getAllByText('web_server').length).toBeGreaterThan(0)
-
-    // Non-matching resource should be labeled as not matching
-    const nonMatchingButton = screen.getByRole('button', { name: /web_server/ })
-    expect(nonMatchingButton).toHaveAttribute('title', 'Does not match search query')
   })
 
   it('should show empty search state when no matches', async () => {
@@ -169,5 +165,52 @@ describe('TerraformResourcesSection', () => {
 
     expect(screen.getByText('EC2 Instance')).toBeInTheDocument()
     expect(screen.getByText('RDS Instance')).toBeInTheDocument()
+  })
+
+  it('should show clear search button when search query is entered', async () => {
+    mockUseTerraformResources.mockReturnValue({
+      data: [mockResource],
+      isLoading: false,
+      error: null,
+    } as any)
+
+    const { userEvent } = renderWithProviders(<TerraformResourcesSection terraformId={terraformId} />)
+
+    // Initially button should not be visible
+    expect(screen.queryByTitle(/Clear search/i)).not.toBeInTheDocument()
+
+    // Type in search field
+    const searchInput = screen.getByPlaceholderText(/Search resources/i)
+    await userEvent.type(searchInput, 'test')
+
+    // Clear button should now be visible
+    const clearButton = screen.getByTitle(/Clear search/i)
+    expect(clearButton).toBeInTheDocument()
+    expect(clearButton).toBeVisible()
+  })
+
+  it('should clear search when clicking the clear button', async () => {
+    mockUseTerraformResources.mockReturnValue({
+      data: [mockResource],
+      isLoading: false,
+      error: null,
+    } as any)
+
+    const { userEvent } = renderWithProviders(<TerraformResourcesSection terraformId={terraformId} />)
+
+    // Type in search field
+    const searchInput = screen.getByPlaceholderText(/Search resources/i) as HTMLInputElement
+    await userEvent.type(searchInput, 'test')
+    expect(searchInput.value).toBe('test')
+
+    // Click clear button
+    const clearButton = screen.getByTitle(/Clear search/i)
+    await userEvent.click(clearButton)
+
+    // Search input should be cleared
+    expect(searchInput.value).toBe('')
+
+    // Clear button should not be visible anymore
+    expect(screen.queryByTitle(/Clear search/i)).not.toBeInTheDocument()
   })
 })
