@@ -21,7 +21,7 @@ export function ResourceDetails({ resource }: ResourceDetailsProps): ReactElemen
     return (
       <div className="px-3 py-8 text-center">
         <Icon iconName="wave-pulse" className="text-neutral-350" />
-        <p className="mt-1 text-xs font-medium text-neutral-350">No resources selected</p>
+        <p className="mt-1 text-xs font-medium text-neutral-350">No resource selected</p>
         <p className="mt-1 text-xs text-neutral-350">Select a resource from the list to view details.</p>
       </div>
     )
