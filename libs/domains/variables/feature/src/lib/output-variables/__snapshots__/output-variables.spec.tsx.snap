@@ -4,10 +4,10 @@ exports[`OutputVariables when serviceType is JOB should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="overflow-hidden rounded border"
+      class="overflow-hidden"
     >
       <table
-        class="min-w-full divide-y divide-neutral-200 text-neutral-400 w-full text-xs"
+        class="min-w-full divide-y divide-neutral-200 text-neutral-400 w-full text-ssm"
       >
         <thead>
           <tr>
@@ -97,10 +97,10 @@ exports[`OutputVariables when serviceType is TERRAFORM should match snapshot 1`]
 <body>
   <div>
     <div
-      class="overflow-hidden rounded border"
+      class="overflow-hidden"
     >
       <table
-        class="min-w-full divide-y divide-neutral-200 text-neutral-400 w-full text-xs"
+        class="min-w-full divide-y divide-neutral-200 text-neutral-400 w-full text-ssm"
       >
         <thead>
           <tr>

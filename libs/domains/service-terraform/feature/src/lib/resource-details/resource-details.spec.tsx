@@ -16,7 +16,7 @@ describe('ResourceDetails', () => {
   it('should show empty state when no resource is selected', () => {
     renderWithProviders(<ResourceDetails resource={null} />)
 
-    expect(screen.getByText('No resource selected')).toBeInTheDocument()
+    expect(screen.getByText('No resources selected')).toBeInTheDocument()
   })
 
   it('should display resource metadata when resource is provided', () => {

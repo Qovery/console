@@ -1,5 +1,5 @@
 import { type ReactElement, useEffect, useMemo, useState } from 'react'
-import { EmptyState, Icon, InputText, LoaderSpinner } from '@qovery/shared/ui'
+import { Icon, InputTextSmall, LoaderSpinner } from '@qovery/shared/ui'
 import { useTerraformResources } from '../hooks/use-terraform-resources/use-terraform-resources'
 import { ResourceDetails } from '../resource-details/resource-details'
 import { ResourceTreeList } from '../resource-tree-list/resource-tree-list'
@@ -64,23 +64,26 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
   // Empty state (no resources at all)
   if (!data || data.length === 0) {
     return (
-      <EmptyState
-        title="No infrastructure resources found"
-        description="Terraform resources will appear here after your first successful deployment."
-      />
+      <div className="px-3 py-8 text-center">
+        <Icon iconName="wave-pulse" className="text-neutral-350" />
+        <p className="mt-1 text-xs font-medium text-neutral-350">No infrastructure resources found</p>
+        <p className="mt-1 text-xs text-neutral-350">
+          Terraform resources will appear here after your first successful deployment.
+        </p>
+      </div>
     )
   }
 
   return (
     <div className="flex flex-col gap-4">
       {/* Split panel: Tree list (with search) and Details */}
-      <div className="flex min-h-0 gap-4 overflow-hidden rounded border border-neutral-250 bg-neutral-100">
+      <div className="flex min-h-0 overflow-hidden">
         {/* Left panel: Search + Resource tree list */}
-        <div className="flex w-1/3 flex-shrink-0 flex-col border-r border-neutral-250">
+        <div className="flex w-1/4 flex-shrink-0 flex-col border-r border-neutral-200">
           {/* Search bar */}
-          <div className="flex-shrink-0 border-b border-neutral-250 p-4 pb-3">
+          <div className="flex-shrink-0 p-4 pb-0">
             <div className="relative">
-              <InputText
+              <InputTextSmall
                 label="Search"
                 name="search"
                 value={searchQuery}
@@ -113,7 +116,7 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
         </div>
 
         {/* Right panel: Resource details */}
-        <div className="w-2/3 flex-1 overflow-hidden p-4">
+        <div className="w-3/4 flex-1 overflow-hidden">
           <ResourceDetails resource={selectedResource} />
         </div>
       </div>

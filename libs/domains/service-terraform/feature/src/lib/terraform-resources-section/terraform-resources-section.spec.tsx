@@ -101,7 +101,7 @@ describe('TerraformResourcesSection', () => {
     expect(screen.getByText('aws_instance.web_server')).toBeInTheDocument()
   })
 
-  it('should dim non-matching resources when searching', async () => {
+  it('should label non-matching resources when searching', async () => {
     const resources = [
       mockResource,
       createMockTerraformResource({
@@ -124,13 +124,13 @@ describe('TerraformResourcesSection', () => {
     const searchInput = screen.getByPlaceholderText(/Search resources/i)
     await userEvent.type(searchInput, 'bucket')
 
-    // Both resources are visible in tree, but non-matching one is dimmed
+    // Both resources are visible in tree, but non-matching one is labeled
     expect(screen.getAllByText('data_bucket').length).toBeGreaterThan(0)
     expect(screen.getAllByText('web_server').length).toBeGreaterThan(0)
 
-    // Non-matching resource should have dimmed styling
+    // Non-matching resource should be labeled as not matching
     const nonMatchingButton = screen.getByRole('button', { name: /web_server/ })
-    expect(nonMatchingButton).toHaveClass('text-neutral-250')
+    expect(nonMatchingButton).toHaveAttribute('title', 'Does not match search query')
   })
 
   it('should show empty search state when no matches', async () => {

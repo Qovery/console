@@ -1,6 +1,6 @@
 import { type ReactElement, useEffect, useMemo, useState } from 'react'
 import { type TerraformResource } from '@qovery/domains/service-terraform/data-access'
-import { EmptyState, Icon, TreeView } from '@qovery/shared/ui'
+import { Icon, TreeView } from '@qovery/shared/ui'
 import { matchesSearch } from '../utils/matches-search'
 
 export interface ResourceTreeListProps {
@@ -61,15 +61,26 @@ export function ResourceTreeList({
   const hasMatches = Array.from(resourceMatchMap.values()).some((match) => match)
 
   if (resources.length === 0) {
-    return <EmptyState title="No resources found" description="No terraform resources available." />
+    return (
+      <div className="px-3 pb-8 pt-6 text-center">
+        <Icon iconName="wave-pulse" className="text-neutral-350" />
+        <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
+      </div>
+    )
   }
 
   if (searchQuery && !hasMatches) {
-    return <EmptyState title="No resources match" description={`No resources found for "${searchQuery}"`} />
+    return (
+      <div className="px-3 py-8 text-center">
+        <Icon iconName="search" className="text-neutral-350" />
+        <p className="mt-1 text-xs font-medium text-neutral-350">No resources match</p>
+        <p className="mt-1 text-xs text-neutral-350">No resources found for ${searchQuery}</p>
+      </div>
+    )
   }
 
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto pr-4">
+    <div className="flex flex-col gap-2 overflow-y-auto">
       <TreeView.Root type="multiple" value={expandedGroups} onValueChange={setExpandedGroups}>
         {groupedResources.map((group) => (
           <TreeView.Item key={group.resourceType} value={group.resourceType}>
@@ -87,14 +98,14 @@ export function ResourceTreeList({
 
                   function getButtonClassName(): string {
                     const base =
-                      'w-full cursor-pointer rounded px-2 py-1.5 text-left text-sm transition-colors flex items-center gap-2'
+                      'w-full cursor-pointer rounded h-8 px-2 gap-2 text-sm transition-colors flex items-center mb-1'
                     if (isSelected) {
-                      return `${base} bg-neutral-200 font-medium text-neutral-400`
+                      return `${base} bg-brand-50 text-brand-500`
                     }
                     if (matches) {
-                      return `${base} text-neutral-350 hover:bg-neutral-150`
+                      return `${base} text-neutral-350 hover:bg-neutral-100`
                     }
-                    return `${base} text-neutral-250 hover:bg-neutral-150/50`
+                    return `${base} text-neutral-250 hover:bg-neutral-100`
                   }
 
                   return (
@@ -105,7 +116,7 @@ export function ResourceTreeList({
                         className={getButtonClassName()}
                         title={!matches ? 'Does not match search query' : undefined}
                       >
-                        <Icon iconName="box" className="flex-shrink-0 text-xs" />
+                        <Icon iconName="file" className="fa-regular text-xs" />
                         <span className="truncate">{resource.name}</span>
                       </button>
                     </li>

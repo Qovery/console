@@ -43,7 +43,7 @@ describe('ResourceTreeList', () => {
       />
     )
 
-    expect(screen.getByText('No resources found')).toBeInTheDocument()
+    expect(screen.getByText('No result for this search')).toBeInTheDocument()
   })
 
   it('should group resources by type', () => {
@@ -74,7 +74,7 @@ describe('ResourceTreeList', () => {
     )
 
     const selectedButton = screen.getByRole('button', { name: /app_bucket/ })
-    expect(selectedButton).toHaveClass('bg-neutral-200')
+    expect(selectedButton).toHaveClass('bg-brand-50')
   })
 
   it('should call onSelectResource when clicking a resource', async () => {

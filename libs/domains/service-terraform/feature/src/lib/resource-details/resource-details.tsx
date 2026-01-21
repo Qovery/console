@@ -1,6 +1,6 @@
 import { type ReactElement, useState } from 'react'
 import { type TerraformResource } from '@qovery/domains/service-terraform/data-access'
-import { EmptyState, Icon, TablePrimitives } from '@qovery/shared/ui'
+import { CopyToClipboardButtonIcon, Icon, TablePrimitives } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
 const { Table } = TablePrimitives
@@ -18,7 +18,13 @@ export function ResourceDetails({ resource }: ResourceDetailsProps): ReactElemen
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   if (!resource) {
-    return <EmptyState title="No resource selected" description="Select a resource from the list to view details." />
+    return (
+      <div className="px-3 py-8 text-center">
+        <Icon iconName="wave-pulse" className="text-neutral-350" />
+        <p className="mt-1 text-xs font-medium text-neutral-350">No resources selected</p>
+        <p className="mt-1 text-xs text-neutral-350">Select a resource from the list to view details.</p>
+      </div>
+    )
   }
 
   const extractedAtDate = new Date(resource.extractedAt).toLocaleString()
@@ -38,16 +44,14 @@ export function ResourceDetails({ resource }: ResourceDetailsProps): ReactElemen
 
   return (
     <div className="flex flex-col overflow-y-auto">
-      <div className="overflow-hidden rounded border border-neutral-250">
-        <Table.Root className="w-full text-xs">
+      <div className="overflow-hidden">
+        <Table.Root className="w-full text-ssm">
           <Table.Header>
             <Table.Row>
-              <Table.ColumnHeaderCell className="border-r border-neutral-250 font-medium" style={{ width: '30%' }}>
+              <Table.ColumnHeaderCell className="w-2/4 border-r border-neutral-200 font-medium">
                 Key
               </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="font-medium" style={{ width: '70%' }}>
-                Value
-              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="w-2/4 font-medium">Value</Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -58,26 +62,15 @@ export function ResourceDetails({ resource }: ResourceDetailsProps): ReactElemen
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
-                <Table.Cell style={{ width: '30%' }} className="border-r border-neutral-250 text-neutral-350">
-                  {row.key}
-                </Table.Cell>
-                <Table.Cell
-                  style={{ width: '70%' }}
-                  className={twMerge(
-                    'flex items-center justify-between gap-2 text-neutral-400',
-                    hoveredIndex === index && 'group'
-                  )}
-                >
-                  <span className="truncate break-all text-xs">{row.value}</span>
+                <Table.Cell className="w-1/2 border-r border-neutral-200 text-neutral-350">{row.key}</Table.Cell>
+                <Table.Cell className={twMerge('w-1/2 text-neutral-400', hoveredIndex === index && 'group')}>
+                  <span className="truncate break-all text-ssm">{row.value}</span>
                   {hoveredIndex === index && (
-                    <button
-                      type="button"
-                      onClick={() => navigator.clipboard.writeText(row.value)}
-                      className="flex-shrink-0 rounded p-1 transition-colors hover:bg-neutral-200"
-                      title="Copy to clipboard"
-                    >
-                      <Icon iconName="copy" className="text-xs text-neutral-350 hover:text-neutral-400" />
-                    </button>
+                    <CopyToClipboardButtonIcon
+                      content={row.value}
+                      tooltipContent="Copy to clipboard"
+                      className="ml-1.5 text-xs text-neutral-350 hover:text-brand-500"
+                    />
                   )}
                 </Table.Cell>
               </Table.Row>

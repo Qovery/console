@@ -1,4 +1,4 @@
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { OutputVariables } from './output-variables'
 
 jest.mock('../hooks/use-variables/use-variables', () => ({
@@ -630,6 +630,15 @@ describe('OutputVariables', () => {
       <OutputVariables serviceId="33962e52-7883-42fd-8613-85e04229a9b6" serviceType="JOB" />
     )
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should render empty state when no output variables are found', () => {
+    renderWithProviders(<OutputVariables serviceId="11111111-1111-1111-1111-111111111111" serviceType="JOB" />)
+
+    expect(screen.getByText('No output variables found')).toBeInTheDocument()
+    expect(
+      screen.getByText('Job output variables will appear here after your first successful deployment.')
+    ).toBeInTheDocument()
   })
 
   describe('when serviceType is TERRAFORM', () => {

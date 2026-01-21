@@ -204,8 +204,12 @@ export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }:
         )}
         {isLifecycleJob && <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} />}
         {isTerraformService && (
-          <Tabs.Root value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <Tabs.List>
+          <Tabs.Root
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full rounded-lg border border-neutral-200"
+          >
+            <Tabs.List className="rounded-t-lg border-b border-neutral-200 bg-neutral-100">
               <Tabs.Trigger value="variables">Output Variables</Tabs.Trigger>
               <Tabs.Trigger value="resources">Infrastructure Resources</Tabs.Trigger>
             </Tabs.List>
