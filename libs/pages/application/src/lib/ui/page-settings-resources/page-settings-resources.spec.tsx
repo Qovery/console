@@ -28,27 +28,6 @@ jest.mock('react-hook-form', () => ({
   }),
 }))
 
-// Helper function to normalize react-select dynamic IDs in snapshots
-function normalizeReactSelectIds(container: HTMLElement) {
-  // Replace dynamic react-select IDs with stable ones
-  const elements = container.querySelectorAll('[id^="react-select-"]')
-  elements.forEach((el: Element) => {
-    const id = el.getAttribute('id')
-    if (id && id.match(/^react-select-\d+-/)) {
-      el.setAttribute('id', id.replace(/react-select-\d+-/, 'react-select-X-'))
-    }
-  })
-
-  // Replace dynamic aria-labelledby
-  const ariaElements = container.querySelectorAll('[aria-labelledby^="react-select-"]')
-  ariaElements.forEach((el: Element) => {
-    const ariaLabelledby = el.getAttribute('aria-labelledby')
-    if (ariaLabelledby && ariaLabelledby.match(/^react-select-\d+-/)) {
-      el.setAttribute('aria-labelledby', ariaLabelledby.replace(/react-select-\d+-/, 'react-select-X-'))
-    }
-  })
-}
-
 describe('PageSettingsResources', () => {
   let defaultValues: ApplicationResourcesData
 
@@ -96,9 +75,6 @@ describe('PageSettingsResources', () => {
 
     const submitButton = await screen.findByRole('button', { name: /save/i })
     expect(submitButton).toBeInTheDocument()
-
-    // Normalize react-select IDs before snapshot
-    normalizeReactSelectIds(container)
 
     // Verify warning box is displayed
     expect(container).toMatchSnapshot()
