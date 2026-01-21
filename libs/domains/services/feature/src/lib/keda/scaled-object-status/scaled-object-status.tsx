@@ -49,8 +49,7 @@ export function ScaledObjectStatus({ environmentId, serviceId }: ScaledObjectSta
                 // Only show Paused if it's True (paused)
                 if (condition.type === 'Paused' && condition.status !== 'True') return false
                 // Only show Active if it's True (if False, all scalers have correct values, not an issue)
-                if (condition.type === 'Active' && condition.status !== 'True') return false
-                return true
+                return !(condition.type === 'Active' && condition.status !== 'True')
               })
               .map((condition, index) => {
                 const chipStatus = match({ type: condition.type, status: condition.status })

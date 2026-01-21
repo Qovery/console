@@ -9,9 +9,10 @@ import {
 } from '../page-application-create-feature'
 import StepSummaryFeature from './step-summary-feature'
 
-const mockCreateService = jest.fn()
+const mockCreateService = jest.fn().mockResolvedValue({ id: 'test-service-id' })
 
 jest.mock('@qovery/domains/services/feature', () => ({
+  ...jest.requireActual('@qovery/domains/services/feature'),
   useCreateService: () => ({
     mutateAsync: mockCreateService,
   }),
@@ -21,34 +22,22 @@ jest.mock('@qovery/domains/services/feature', () => ({
   useDeployService: () => ({
     mutate: jest.fn(),
   }),
+  useEditAdvancedSettings: () => ({
+    mutateAsync: jest.fn(),
+  }),
 }))
 
-const mockContext: Required<ApplicationContainerCreateContextInterface> = {
-  currentStep: 1,
-  setCurrentStep: jest.fn(),
-  generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION, auto_deploy: true },
-  setGeneralData: jest.fn(),
-  resourcesData: {
-    memory: 512,
-    cpu: 500,
-    gpu: 1,
-    min_running_instances: 1,
-    max_running_instances: 12,
-  },
-  setResourcesData: jest.fn(),
-  setPortData: jest.fn(),
-  portData: {
-    ports: [
-      {
-        application_port: 80,
-        external_port: 443,
-        is_public: true,
-        protocol: PortProtocolEnum.HTTP,
-        name: 'p80',
-      },
-    ],
-  },
-}
+jest.mock('@qovery/domains/variables/feature', () => ({
+  useImportVariables: () => ({
+    mutateAsync: jest.fn(),
+  }),
+}))
+
+jest.mock('@qovery/domains/organizations/feature', () => ({
+  useAnnotationsGroups: () => ({ data: [] }),
+  useLabelsGroups: () => ({ data: [] }),
+  useContainerRegistry: () => ({ data: undefined }),
+}))
 
 describe('PageApplicationPostFeature', () => {
   const { result: variablesForm } = renderHook(() =>
@@ -65,6 +54,37 @@ describe('PageApplicationPostFeature', () => {
       },
     })
   )
+
+  const mockContext: Required<ApplicationContainerCreateContextInterface> = {
+    currentStep: 1,
+    setCurrentStep: jest.fn(),
+    generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION, auto_deploy: true },
+    setGeneralData: jest.fn(),
+    resourcesData: {
+      memory: 512,
+      cpu: 500,
+      gpu: 1,
+      min_running_instances: 1,
+      max_running_instances: 12,
+      autoscaling_mode: 'NONE',
+    },
+    setResourcesData: jest.fn(),
+    setPortData: jest.fn(),
+    portData: {
+      ports: [
+        {
+          application_port: 80,
+          external_port: 443,
+          is_public: true,
+          protocol: PortProtocolEnum.HTTP,
+          name: 'p80',
+        },
+      ],
+    },
+    creationFlowUrl: '/test-url',
+    variablesForm: variablesForm.current,
+  }
+
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
       <ApplicationContainerCreateContext.Provider
@@ -90,10 +110,10 @@ describe('PageApplicationPostFeature', () => {
             ...mockContext.generalData,
             name: 'test',
             serviceType: ServiceTypeEnum.APPLICATION,
+            auto_deploy: true,
             provider: 'GITHUB',
             dockerfile_path: 'Dockerfile',
             docker_target_build_stage: 'build-stage',
-            repository: 'Qovery/test_http_server',
             git_repository: {
               provider: 'GITHUB',
               url: 'https://github.com/Qovery/test_http_server.git',
@@ -158,6 +178,7 @@ describe('PageApplicationPostFeature', () => {
             name: 'test',
             description: '',
             serviceType: ServiceTypeEnum.CONTAINER,
+            auto_deploy: true,
             cmd_arguments: '["test"]',
             cmd: ['test'],
             registry: '123',

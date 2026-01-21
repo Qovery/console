@@ -10,10 +10,11 @@ export interface PageSettingsResourcesProps {
   displayWarningCpu: boolean
   service: Exclude<AnyService, Helm | Database>
   loading: boolean
+  advancedSettings?: unknown
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, service, displayWarningCpu } = props
+  const { onSubmit, loading, service, displayWarningCpu, advancedSettings } = props
   const { formState, watch } = useFormContext()
 
   const autoscalingMode = watch('autoscaling_mode') || 'NONE'
@@ -36,7 +37,11 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
       <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading title="Resources" description="Manage the resources assigned to the service." />
         <form className="space-y-10" onSubmit={onSubmit}>
-          <ApplicationSettingsResources displayWarningCpu={displayWarningCpu} service={service} />
+          <ApplicationSettingsResources
+            displayWarningCpu={displayWarningCpu}
+            service={service}
+            advancedSettings={advancedSettings}
+          />
           <div className="flex justify-end">
             <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid || isHpaToKedaMigration}>
               Save
