@@ -19,5 +19,5 @@ export function GithubWhiteIcon(props: IconProps) {
 }
 
 export function GithubIcon(props: IconProps) {
-  return icon(props, '#212346')
+  return icon(props, props.fill || '#212346')
 }
