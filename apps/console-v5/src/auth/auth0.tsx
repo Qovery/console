@@ -21,6 +21,10 @@ export function Auth0Wrapper({ children }: { children: React.ReactNode }) {
         redirect_uri: `${window.location.origin}/login/auth0-callback`,
         audience: OAUTH_AUDIENCE,
       }}
+      useRefreshTokensFallback={true}
+      useRefreshTokens={true}
+      cacheLocation="localstorage"
+      skipRedirectCallback={window.location.pathname !== '/login/auth0-callback'}
     >
       <Auth0ContextProvider>{children}</Auth0ContextProvider>
     </Auth0Provider>
