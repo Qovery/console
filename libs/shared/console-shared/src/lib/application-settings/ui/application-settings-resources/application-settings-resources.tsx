@@ -1,5 +1,4 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { useEffect, useRef } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
@@ -394,7 +393,6 @@ export function ApplicationSettingsResources({
               minRunningInstances={minRunningInstances}
               disabled={currentAutoscalingMode === 'HPA'}
               runningPods={runningStatuses?.pods?.length}
-              environmentMode={environmentMode}
             />
           )}
         </Section>

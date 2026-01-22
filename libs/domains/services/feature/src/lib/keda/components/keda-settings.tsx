@@ -1,4 +1,3 @@
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { type Control, type UseFieldArrayReturn } from 'react-hook-form'
 import { Callout, Icon } from '@qovery/shared/ui'
 import { InstancesRangeInputs } from './instances-range-inputs'
@@ -12,7 +11,6 @@ export interface KedaSettingsProps {
   minRunningInstances?: number
   disabled?: boolean
   runningPods?: number
-  environmentMode?: EnvironmentModeEnum
 }
 
 export function KedaSettings({
@@ -23,11 +21,7 @@ export function KedaSettings({
   minRunningInstances,
   disabled = false,
   runningPods,
-  environmentMode,
 }: KedaSettingsProps) {
-  const isProduction = environmentMode === EnvironmentModeEnum.PRODUCTION
-  const hasLowMinimum = (minRunningInstances ?? 0) <= 1
-
   return (
     <>
       <InstancesRangeInputs
