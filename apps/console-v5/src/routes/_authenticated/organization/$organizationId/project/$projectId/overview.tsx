@@ -3,9 +3,16 @@ import { type EnvironmentModeEnum, type EnvironmentOverviewResponse } from 'qove
 import { Suspense, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
-import { CreateCloneEnvironmentModal, EnvironmentMode, useEnvironments } from '@qovery/domains/environments/feature'
+import {
+  CreateCloneEnvironmentModal,
+  EnvironmentMode,
+  MenuManageDeployment,
+  MenuOtherActions,
+  useEnvironments,
+} from '@qovery/domains/environments/feature'
 import { useEnvironmentsOverview, useProject } from '@qovery/domains/projects/feature'
 import {
+  ActionToolbar,
   Button,
   Heading,
   Icon,
@@ -26,7 +33,7 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
   component: RouteComponent,
 })
 
-const gridLayoutClassName = 'grid grid-cols-[3fr_2fr_2fr_180px_100px]'
+const gridLayoutClassName = 'grid grid-cols-[3fr_2fr_2fr_180px_106px]'
 
 function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const { organizationId, projectId } = useParams({ strict: false })
@@ -72,17 +79,31 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
       </Table.Cell>
       <Table.Cell className="h-12 border-l border-neutral">
         {overview.cluster && (
-          <div className="flex h-full items-center">
+          <Link
+            to={`/organization/${organizationId}/cluster/${overview.cluster.id}/overview`}
+            className="flex h-full items-center"
+          >
             <ClusterAvatar cluster={overview.cluster} size="sm" />
             {overview.cluster?.name}
-          </div>
+          </Link>
         )}
       </Table.Cell>
       <Table.Cell className="h-12 border-l border-neutral">
         <div className="flex h-full items-center">{timeAgo(new Date(overview.updated_at ?? Date.now()))} ago</div>
       </Table.Cell>
       <Table.Cell className="h-12 border-l border-neutral">
-        <div className="flex h-full items-center"></div>
+        <div className="flex h-full items-center">
+          {environment && overview.deployment_status && overview.service_count > 0 && (
+            <ActionToolbar.Root>
+              <MenuManageDeployment
+                environment={environment}
+                deploymentStatus={overview.deployment_status}
+                variant="default"
+              />
+              <MenuOtherActions environment={environment} state={overview.deployment_status?.last_deployment_state} />
+            </ActionToolbar.Root>
+          )}
+        </div>
       </Table.Cell>
     </Table.Row>
   )
