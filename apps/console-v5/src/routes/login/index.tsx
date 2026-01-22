@@ -4,7 +4,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useAuth0Error } from '@qovery/pages/login'
 import { AuthEnum, useAuth } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
-import { Button, DropdownMenu, Icon, InputTextSmall } from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, InputTextSmall, LogoBrandedIcon } from '@qovery/shared/ui'
 
 export const Route = createFileRoute('/login/')({
   validateSearch: (search) => ({
@@ -60,18 +60,18 @@ export function Login() {
   }
 
   return (
-    <div className="relative bg-white">
-      <img className="absolute left-8 top-6 w-[135px]" src="/assets/logos/logo-black.svg" alt="Qovery logo black" />
+    <div className="relative bg-background">
+      <LogoBrandedIcon className="absolute left-8 top-0 w-[135px]" />
       <div className="ml-auto mr-auto flex h-screen">
         <div className="w-full px-4 motion-safe:animate-[fadein_0.5s_ease-in-out_forwards] motion-safe:opacity-0 lg:w-1/2 lg:px-20">
           <div className="mx-auto mt-[30%] max-w-lg">
             {!displayInvitation ? (
-              <h1 className="mb-4 text-[28px] text-neutral-400">Connect to Qovery</h1>
+              <h1 className="mb-4 text-[28px] text-neutral">Connect to Qovery</h1>
             ) : (
               <div className="mb-2">{/* <InviteDetailsFeature /> */}</div>
             )}
 
-            <p className="mb-10 text-sm text-neutral-400">
+            <p className="mb-10 text-sm text-neutral-subtle">
               By registering and using Qovery, you agree to the processing of your personal data by Qovery as described
               in the
               <a href="https://www.qovery.com/terms" className="link ml-1 text-sky-500">
@@ -92,7 +92,8 @@ export function Login() {
                   >
                     <Icon
                       width="20"
-                      className={`mr-3 ${loading?.provider === AuthEnum.GITHUB ? 'opacity-0' : ''}`}
+                      className={`mr-3 ${loading?.provider === AuthEnum.GITHUB ? 'opacity-0' : ''} text-neutral-subtle`}
+                      fill="currentColor"
                       name={IconEnum.GITHUB}
                     />
                     Continue with Github
@@ -107,7 +108,8 @@ export function Login() {
                   >
                     <Icon
                       width="20"
-                      className={`mr-3 ${loading?.provider === AuthEnum.GOOGLE_SSO ? 'opacity-0' : ''}`}
+                      className={`mr-3 ${loading?.provider === AuthEnum.GOOGLE_SSO ? 'opacity-0' : ''} text-neutral-subtle`}
+                      fill="currentColor"
                       name={IconEnum.GOOGLE}
                     />
                     Continue with Google
