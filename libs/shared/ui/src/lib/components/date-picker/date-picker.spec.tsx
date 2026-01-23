@@ -32,7 +32,9 @@ describe('DatePicker', () => {
     const startDate = new Date('2023-12-01T10:30:00.000Z')
     const endDate = new Date('2023-12-02T15:45:00.000Z')
 
-    renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showTimeInput defaultDates={[startDate, endDate]} />)
+    renderWithProviders(
+      <DatePicker onChange={mockOnChange} isOpen showDateTimeInputs defaultDates={[startDate, endDate]} />
+    )
 
     const inputs = screen.getAllByTestId('input-value')
     expect(inputs[0]).toHaveValue('2023-12-01')
@@ -54,7 +56,7 @@ describe('DatePicker', () => {
   })
 
   it('calls onChange when Apply is clicked with time inputs', async () => {
-    const { userEvent } = renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showTimeInput />)
+    const { userEvent } = renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showDateTimeInputs />)
 
     const inputs = screen.getAllByTestId('input-value')
 
@@ -75,7 +77,7 @@ describe('DatePicker', () => {
 
   it('calls error when date and time inputs are wrong', async () => {
     const { userEvent } = renderWithProviders(
-      <DatePicker onChange={mockOnChange} isOpen showTimeInput maxRangeInDays={3} />
+      <DatePicker onChange={mockOnChange} isOpen showDateTimeInputs maxRangeInDays={3} />
     )
 
     const inputs = screen.getAllByTestId('input-value')
@@ -97,7 +99,7 @@ describe('DatePicker', () => {
 
   it('calls onChange when Apply is clicked with time inputs and max range in days is set and date is outside max', async () => {
     const { userEvent } = renderWithProviders(
-      <DatePicker onChange={mockOnChange} isOpen showTimeInput maxRangeInDays={3} />
+      <DatePicker onChange={mockOnChange} isOpen showDateTimeInputs maxRangeInDays={3} />
     )
 
     const inputs = screen.getAllByTestId('input-value')
@@ -117,8 +119,8 @@ describe('DatePicker', () => {
     expect(mockOnChange).toHaveBeenCalledWith(expect.any(Date), expect.any(Date))
   })
 
-  it('shows time inputs when showTimeInput prop is true', () => {
-    renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showTimeInput />)
+  it('shows time inputs when showDateTimeInputs prop is true', () => {
+    renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showDateTimeInputs />)
 
     // Check that we have 4 inputs (2 dates + 2 times)
     const inputs = screen.getAllByTestId('input-value')
@@ -137,7 +139,7 @@ describe('DatePicker', () => {
       <DatePicker
         onChange={mockOnChange}
         isOpen
-        showTimeInput
+        showDateTimeInputs
         defaultDates={[startDate, endDate]}
         useLocalTime={false}
       />

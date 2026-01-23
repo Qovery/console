@@ -118,7 +118,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
             maxDate={new Date()}
             minDate={subDays(new Date(), 84)}
             defaultDates={startDate && endDate ? [startDate, endDate] : undefined}
-            showTimeInput
+            showDateTimeInputs
             useLocalTime
             onClickOutside={() => setIsOpenDatePicker(false)}
           >

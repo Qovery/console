@@ -1,8 +1,7 @@
 import { type PropsWithChildren, useEffect, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
-import Icon from '../icon/icon'
-import DatePickerCalendar from './date-picker-calendar'
-import DatePickerPeriodList from './date-picker-period-list'
+import DatePickerCalendar from './date-picker-calendar/date-picker-calendar'
+import DatePickerPeriodList from './date-picker-period-list/date-picker-period-list'
 import { type DatePickerProps } from './date-picker.types'
 import { getPeriodDates } from './date-picker.utils'
 

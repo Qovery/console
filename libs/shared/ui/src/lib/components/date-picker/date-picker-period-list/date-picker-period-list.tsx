@@ -1,6 +1,6 @@
 import { twMerge } from '@qovery/shared/util-js'
-import Icon from '../icon/icon'
-import { type DatePickerPeriodOption } from './date-picker.types'
+import Icon from '../../icon/icon'
+import { type DatePickerPeriodOption } from '../date-picker.types'
 
 export interface DatePickerPeriodListProps {
   options: DatePickerPeriodOption[]

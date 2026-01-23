@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import DatePickerLib, { type ReactDatePickerCustomHeaderProps } from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import Button from '../button/button'
-import Icon from '../icon/icon'
-import InputTextSmall from '../inputs/input-text-small/input-text-small'
-import DatePickerHeader from './date-picker-header/date-picker-header'
-import { type DatePickerCalendarProps } from './date-picker.types'
+import Button from '../../button/button'
+import Icon from '../../icon/icon'
+import InputTextSmall from '../../inputs/input-text-small/input-text-small'
+import DatePickerHeader from '../date-picker-header/date-picker-header'
+import { type DatePickerCalendarProps } from '../date-picker.types'
 import {
   clampEndDateForMaxRange,
   formatDateInput,
@@ -13,13 +13,13 @@ import {
   getDateTimeInputErrors,
   validateDate,
   validateTime,
-} from './date-picker.utils'
+} from '../date-picker.utils'
 
 export function DatePickerCalendar({
   onChange,
   minDate,
   maxDate,
-  showTimeInput,
+  showDateTimeInputs,
   defaultDates,
   onClickOutside,
   useLocalTime = false,
@@ -39,13 +39,13 @@ export function DatePickerCalendar({
   const [startTimeError, setStartTimeError] = useState('')
   const [endDateError, setEndDateError] = useState('')
   const [endTimeError, setEndTimeError] = useState('')
-  const localTimeZone = (() => {
+  const localTimeZone = useMemo(() => {
     try {
       return Intl.DateTimeFormat().resolvedOptions().timeZone
-    } catch {
-      return ''
+    } catch (error) {
+      return 'Local'
     }
-  })()
+  }, [])
   const timezoneOptions = [
     { label: localTimeZone ? `Browser time (${localTimeZone})` : 'Browser time', value: 'local' },
     { label: 'UTC', value: 'utc' },
@@ -228,7 +228,7 @@ export function DatePickerCalendar({
 
   const handleApply = () => {
     try {
-      if (showTimeInput) {
+      if (showDateTimeInputs) {
         const hasErrors =
           !validateDate(startDateText) ||
           !validateTime(startTimeText) ||
@@ -307,7 +307,7 @@ export function DatePickerCalendar({
         onClickOutside={handleClickOutside}
       />
       <div className="border-t border-neutral px-4 py-3">
-        {showTimeInput && (
+        {showDateTimeInputs && (
           <div className="space-y-3">
             <div>
               <div className="mb-1 flex items-center justify-between">
@@ -365,7 +365,7 @@ export function DatePickerCalendar({
         )}
         <Button
           type="button"
-          className={`${showTimeInput ? 'mt-4' : ''} ${showTimezoneSelect ? 'mb-2' : ''} w-full justify-center`}
+          className={`${showDateTimeInputs ? 'mt-4' : ''} ${showTimezoneSelect ? 'mb-2' : ''} w-full justify-center`}
           size="md"
           onClick={handleApply}
         >

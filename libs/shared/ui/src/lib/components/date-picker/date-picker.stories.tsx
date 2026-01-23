@@ -25,7 +25,7 @@ const meta: Meta<typeof DatePicker> = {
     showCalendar: { control: 'boolean' },
     showPeriodSelect: { control: 'boolean' },
     showTimezoneSelect: { control: 'boolean' },
-    showTimeInput: { control: 'boolean' },
+    showDateTimeInputs: { control: 'boolean' },
     useLocalTime: { control: 'boolean' },
     maxRangeInDays: { control: 'number' },
     periodValue: {
@@ -38,7 +38,7 @@ const meta: Meta<typeof DatePicker> = {
     showCalendar: true,
     showPeriodSelect: true,
     showTimezoneSelect: true,
-    showTimeInput: true,
+    showDateTimeInputs: true,
     useLocalTime: true,
     timezoneLabel: 'Timezone',
     lockedLabel: 'Unlock Observe',

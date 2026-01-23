@@ -8,7 +8,7 @@ export interface DatePickerBaseProps {
   onChange: (startDate: Date, endDate: Date) => void
   minDate?: Date
   maxDate?: Date
-  showTimeInput?: boolean
+  showDateTimeInputs?: boolean
   defaultDates?: [Date, Date]
   onClickOutside?: () => void
   useLocalTime?: boolean

@@ -44,7 +44,7 @@ export function SelectTimeRange() {
         maxDate={new Date()}
         minDate={subDays(new Date(), 30)}
         defaultDates={startDateValid && endDateValid ? [new Date(startTimestamp), new Date(endTimestamp)] : undefined}
-        showTimeInput
+        showDateTimeInputs
         useLocalTime={useLocalTime}
         onClickOutside={() => {
           setIsOpenTimestamp(!isOpenTimestamp)
