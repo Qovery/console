@@ -1,4 +1,6 @@
 import {
+  type AlertReceiverCreationRequest,
+  type AlertReceiverEditRequest,
   type AlertReceiverResponse,
   type AlertReceiverType,
   type SlackAlertReceiverCreationRequest,
@@ -76,12 +78,13 @@ export function NotificationChannelModal({
       const webhookUrlValue = webhook_url === FAKE_PLACEHOLDER ? undefined : webhook_url
       const editPayload: SlackAlertReceiverEditRequest = {
         ...restData,
+        type: 'SLACK',
         description: alertReceiver.description ?? 'Webhook for Qovery alerts',
         ...(webhookUrlValue && webhookUrlValue.trim() !== '' ? { webhook_url: webhookUrlValue } : {}),
       }
 
       try {
-        await editAlertReceiver({ alertReceiverId: alertReceiver.id, payload: editPayload })
+        await editAlertReceiver({ alertReceiverId: alertReceiver.id, payload: editPayload as AlertReceiverEditRequest })
         onClose()
       } catch (error) {
         console.error(error)
@@ -89,12 +92,13 @@ export function NotificationChannelModal({
     } else {
       const createRequest: SlackAlertReceiverCreationRequest = {
         ...data,
+        type: 'SLACK',
         description: 'Webhook for Qovery alerts',
         organization_id: organizationId,
       }
 
       try {
-        await createAlertReceiver({ payload: createRequest })
+        await createAlertReceiver({ payload: createRequest as AlertReceiverCreationRequest })
         onClose()
       } catch (error) {
         console.error(error)
@@ -115,13 +119,14 @@ export function NotificationChannelModal({
       const formData = methods.getValues()
       const alertReceiverPayload: SlackAlertReceiverCreationRequest = {
         ...formData,
+        type: 'SLACK',
         organization_id: organizationId,
         description: 'Webhook for Qovery alerts',
-        webhook_url: webhookUrl,
+        webhook_url: webhookUrl ?? '',
       }
       validateAlertReceiver({
         payload: {
-          alert_receiver: alertReceiverPayload,
+          alert_receiver: alertReceiverPayload as AlertReceiverCreationRequest,
         },
       })
     }
