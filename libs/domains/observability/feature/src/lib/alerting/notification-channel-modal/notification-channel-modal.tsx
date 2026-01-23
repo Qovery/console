@@ -400,7 +400,7 @@ export function NotificationChannelModal({
                       value={field.value}
                       onChange={field.onChange}
                       error={error?.message}
-                      placeholder="user1@example.com, user2@example.com"
+                      placeholder="user@example.com"
                     />
                   )}
                 />
@@ -452,7 +452,7 @@ export function NotificationChannelModal({
                       className="mb-1"
                       name={field.name}
                       label="SMTP Username"
-                      value={field.value}
+                      value={field.value ?? ''}
                       onChange={field.onChange}
                       placeholder="username@example.com"
                     />

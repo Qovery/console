@@ -136,10 +136,10 @@ describe('NotificationChannelModal', () => {
 
       expect(await screen.findByText('New email')).toBeInTheDocument()
       expect(await screen.findByLabelText('Display name')).toBeInTheDocument()
-      expect(await screen.findByLabelText('Email address')).toBeInTheDocument()
+      expect(await screen.findByLabelText('To email')).toBeInTheDocument()
       expect(await screen.findByLabelText('From email')).toBeInTheDocument()
       expect(await screen.findByLabelText('SMTP Server')).toBeInTheDocument()
-      expect(await screen.findByLabelText('SMTP Username (optional)')).toBeInTheDocument()
+      expect(await screen.findByLabelText('SMTP Username')).toBeInTheDocument()
       expect(await screen.findByLabelText('SMTP Password')).toBeInTheDocument()
       expect(await screen.findByText('Require TLS')).toBeInTheDocument()
     })
@@ -152,7 +152,9 @@ describe('NotificationChannelModal', () => {
       expect(await screen.findByText('Edit email')).toBeInTheDocument()
       expect(await screen.findByDisplayValue('Email Notifications')).toBeInTheDocument()
       expect(await screen.findByDisplayValue('ops@example.com')).toBeInTheDocument()
-      expect(await screen.findByDisplayValue('alerts@example.com')).toBeInTheDocument()
+      // Both "From email" and "SMTP Username" have the same value, so we check both exist
+      const alertsEmails = await screen.findAllByDisplayValue('alerts@example.com')
+      expect(alertsEmails).toHaveLength(2) // From email + SMTP Username
       expect(await screen.findByDisplayValue('smtp.gmail.com:587')).toBeInTheDocument()
     })
 

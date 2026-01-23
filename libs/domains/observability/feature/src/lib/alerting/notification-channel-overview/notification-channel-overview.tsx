@@ -196,7 +196,7 @@ export function NotificationChannelOverview() {
                   const emailReceiver = receiver as EmailAlertReceiverResponse
                   return (
                     <Table.Row key={receiver.id}>
-                      <Table.RowHeaderCell>{emailReceiver.to}</Table.RowHeaderCell>
+                      <Table.RowHeaderCell>{emailReceiver.to ?? ''}</Table.RowHeaderCell>
                       <Table.Cell>{receiver.name}</Table.Cell>
                       <Table.Cell>
                         <div className="flex items-center justify-end gap-2">
