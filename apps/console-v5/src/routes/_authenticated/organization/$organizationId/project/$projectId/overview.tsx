@@ -14,6 +14,7 @@ import { useEnvironmentsOverview, useProject } from '@qovery/domains/projects/fe
 import {
   ActionToolbar,
   Button,
+  DeploymentAction,
   Heading,
   Icon,
   LoaderSpinner,
@@ -25,7 +26,7 @@ import {
   useModal,
 } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
-import { pluralize, twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { pluralize, twMerge } from '@qovery/shared/util-js'
 
 const { Table } = TablePrimitives
 
@@ -67,9 +68,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
       <Table.Cell className="h-12 border-l border-neutral">
         <div className="flex h-full items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-neutral">
-              {upperCaseFirstLetter(overview.deployment_status?.last_deployment_state.replace('_', ' '))}
-            </span>
+            <DeploymentAction status={overview.deployment_status?.last_deployment_state} />
             <span className="text-neutral-subtle">
               {timeAgo(new Date(overview.deployment_status?.last_deployment_date ?? Date.now()))} ago
             </span>
