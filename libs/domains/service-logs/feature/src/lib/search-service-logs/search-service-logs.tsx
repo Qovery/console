@@ -9,9 +9,9 @@ import { useServiceInstances } from '../hooks/use-service-instances/use-service-
 import { useServiceLevels } from '../hooks/use-service-levels/use-service-levels'
 import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
-const VALID_FILTER_KEYS = ['level', 'instance', 'message', 'nginx', 'search', 'deploymentId']
+export const VALID_FILTER_KEYS = ['level', 'instance', 'message', 'nginx', 'envoy', 'search', 'deploymentId']
 
-function buildValueOptions(queryParams: DecodedValueMap<typeof queryParamsServiceLogs>): Option[] {
+export function buildValueOptions(queryParams: DecodedValueMap<typeof queryParamsServiceLogs>): Option[] {
   const options: Option[] = []
 
   if (queryParams.level) {
@@ -38,6 +38,10 @@ function buildValueOptions(queryParams: DecodedValueMap<typeof queryParamsServic
     const value = 'nginx:true'
     options.push({ value, label: value })
   }
+  if (queryParams.envoy) {
+    const value = 'envoy:true'
+    options.push({ value, label: value })
+  }
   if (queryParams.deploymentId) {
     const value = `deploymentId:${queryParams.deploymentId}`
     options.push({ value, label: value })
@@ -50,7 +54,7 @@ function buildValueOptions(queryParams: DecodedValueMap<typeof queryParamsServic
   return options
 }
 
-function buildQueryParams(value: string) {
+export function buildQueryParams(value: string) {
   const filterRegex = /(\w+)[:]([^\s]*)/g
   const matches = value.match(filterRegex)
   const queryParams: Omit<DecodedValueMap<typeof queryParamsServiceLogs>, 'startDate' | 'endDate'> = {
@@ -60,6 +64,7 @@ function buildQueryParams(value: string) {
     version: undefined,
     message: undefined,
     nginx: undefined,
+    envoy: undefined,
     search: undefined,
     deploymentId: undefined,
     mode: undefined,
@@ -79,6 +84,9 @@ function buildQueryParams(value: string) {
       }
       if (filterKey === 'nginx') {
         queryParams.nginx = true
+      }
+      if (filterKey === 'envoy') {
+        queryParams.envoy = true
       }
     })
   }
@@ -206,6 +214,11 @@ export function SearchServiceLogs({
       value: 'nginx:true',
       label: 'nginx:true',
       description: '[activate nginx logs]',
+    },
+    {
+      value: 'envoy:true',
+      label: 'envoy:true',
+      description: '[activate envoy logs]',
     },
   ]
 

@@ -38,6 +38,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
   const serviceType = service?.serviceType
 
   const isNginx = log.app === 'ingress-nginx'
+  const isEnvoy = log.app === 'envoy'
 
   const { updateTimeContextValue } = useServiceLogsContext()
   const { utc } = updateTimeContextValue
@@ -84,7 +85,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
   return (
     <>
       <Table.Row
-        onClick={() => !isNginx && setIsExpanded(!isExpanded)}
+        onClick={() => !isNginx && !isEnvoy && setIsExpanded(!isExpanded)}
         className={twMerge(
           clsx('sl-row sl-row-appear group relative mt-0.5 cursor-pointer text-xs', {
             'bg-red-500/10': isErrorOrCritical,
@@ -104,7 +105,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
               )}
             />
           </Tooltip>
-          {!isNginx && (
+          {!isNginx && !isEnvoy && (
             <span className="flex h-3 w-3 items-center justify-center">
               <Icon className="text-neutral-300" iconName={isExpanded ? 'chevron-down' : 'chevron-right'} />
             </span>
@@ -112,6 +113,10 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
           {isNginx ? (
             <Badge variant="outline" color="neutral" className="ml-5 h-5 gap-1.5 rounded px-1.5 font-code">
               NGINX
+            </Badge>
+          ) : isEnvoy ? (
+            <Badge variant="outline" color="neutral" className="ml-5 h-5 gap-1.5 rounded px-1.5 font-code">
+              ENVOY
             </Badge>
           ) : (
             <Tooltip content={log.instance} delayDuration={300}>
@@ -140,8 +145,8 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
             {dateFullFormat(timestamp, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
           </span>
         </Table.Cell>
-        {hasMultipleContainers && isNginx && <Table.Cell className="flex h-0 w-0 p-0"></Table.Cell>}
-        {hasMultipleContainers && !isNginx && (
+        {hasMultipleContainers && (isNginx || isEnvoy) && <Table.Cell className="flex h-0 w-0 p-0"></Table.Cell>}
+        {hasMultipleContainers && !isNginx && !isEnvoy && (
           <Table.Cell className="flex h-min min-h-7 select-none items-center gap-2 whitespace-nowrap px-1.5">
             <Tooltip content={log.container} delayDuration={300}>
               <Button

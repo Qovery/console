@@ -1,5 +1,6 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import { ClustersApi } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 
 const clusterApi = new ClustersApi()
 
@@ -26,12 +27,18 @@ export interface LogFilters {
   deploymentId?: string
 }
 
-export function buildLokiQuery(filters: LogFilters, isNginx = false): string {
-  const labels: string[] = isNginx
-    ? [
-        `{app="ingress-nginx"} | level=~"error|warn" or (qovery_com_associated_service_id="${filters.serviceId}" and level!~"error|warn")`,
-      ]
-    : [`qovery_com_service_id="${filters.serviceId}"`]
+export type LogType = 'service' | 'nginx' | 'envoy'
+
+export function buildLokiQuery(filters: LogFilters, logType: LogType = 'service'): string {
+  const labels: string[] = match(logType)
+    .with('nginx', () => [
+      `{app="ingress-nginx"} | level=~"error|warn" or (qovery_com_associated_service_id="${filters.serviceId}" and level!~"error|warn")`,
+    ])
+    .with('envoy', () => [
+      `{app="envoy"} | level=~"error|warn" or (qovery_com_associated_service_id="${filters.serviceId}" and level!~"error|warn")`,
+    ])
+    .with('service', () => [`qovery_com_service_id="${filters.serviceId}"`])
+    .exhaustive()
 
   if (filters.level) {
     labels.push(`level="${filters.level}"`)
@@ -57,7 +64,9 @@ export function buildLokiQuery(filters: LogFilters, isNginx = false): string {
     labels.push(`qovery_com_deployment_id="${filters.deploymentId}"`)
   }
 
-  let query = isNginx ? `(${labels.join(',')})` : `{${labels.join(',')}}`
+  let query = match(logType)
+    .with('service', () => `{${labels.join(',')}}`)
+    .otherwise(() => `(${labels.join(',')})`)
 
   if (filters.message || filters.search) {
     query += ` |= "${filters.message ? filters.message : ''}${filters.search ? `${filters.search}` : ''}"`
@@ -187,7 +196,7 @@ export const serviceLogs = createQueryKeys('serviceLogs', {
     filters,
     limit,
     direction,
-    isNginx = false,
+    logType = 'service',
   }: {
     clusterId: string
     serviceId: string
@@ -197,16 +206,16 @@ export const serviceLogs = createQueryKeys('serviceLogs', {
     filters?: Omit<LogFilters, 'serviceId'>
     limit?: number
     direction?: 'forward' | 'backward'
-    isNginx?: boolean
+    logType?: LogType
   }) => ({
-    queryKey: [clusterId, timeRange, startDate, endDate, serviceId, filters, limit, direction, isNginx],
+    queryKey: [clusterId, timeRange, startDate, endDate, serviceId, filters, limit, direction, logType],
     async queryFn() {
       // Convert Date objects to nanosecond Unix epoch format for Loki API
       // https://grafana.com/docs/loki/latest/reference/loki-http-api/#timestamps
       const startTimestamp = startDate ? (startDate.getTime() * 1000000).toString() : undefined
       const endTimestamp = endDate ? (endDate.getTime() * 1000000).toString() : undefined
 
-      const query = buildLokiQuery({ serviceId, ...filters }, isNginx)
+      const query = buildLokiQuery({ serviceId, ...filters }, logType)
 
       const response = await clusterApi.getClusterLogs(
         clusterId,

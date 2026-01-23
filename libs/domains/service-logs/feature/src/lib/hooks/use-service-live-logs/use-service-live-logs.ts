@@ -32,7 +32,6 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
   const [isFetched, setIsFetched] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  const [enabledNginx, setEnabledNginx] = useState(false)
   const [debouncedLogs, setDebouncedLogs] = useState<NormalizedServiceLog[]>([])
 
   const flushBufferedLogs = useCallback(() => {
@@ -103,6 +102,27 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     [scheduleFlush]
   )
 
+  const onLogHandlerEnvoy = useCallback(
+    (
+      _: QueryClient,
+      log: {
+        created_at?: number
+        message?: string
+        pod_name?: string
+        container_name?: string
+        version?: string
+      }
+    ) => {
+      setNewLogsAvailable(true)
+      const normalizedLog = normalizeWebSocketLog(log)
+
+      // Temporary fix to show Envoy logs as unknown to avoid UI issues
+      serviceLogsBuffer.current.push({ ...normalizedLog, level: 'unknown' })
+      scheduleFlush()
+    },
+    [scheduleFlush]
+  )
+
   const onCloseHandler = useCallback((_: QueryClient) => {
     setDebouncedLogs([])
     serviceLogsBuffer.current = []
@@ -152,7 +172,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
         search: queryParams.search || undefined,
         version: queryParams.version || undefined,
       },
-      Boolean(queryParams.nginx)
+      'nginx'
     )
   }, [
     serviceId,
@@ -162,7 +182,31 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     queryParams.message,
     queryParams.search,
     queryParams.version,
-    queryParams.nginx,
+  ])
+
+  const dynamicQueryEnvoy = useMemo(() => {
+    if (!serviceId) return ''
+
+    return buildLokiQuery(
+      {
+        serviceId,
+        level: queryParams.level || undefined,
+        instance: queryParams.instance || undefined,
+        container: queryParams.container || undefined,
+        message: queryParams.message || undefined,
+        search: queryParams.search || undefined,
+        version: queryParams.version || undefined,
+      },
+      'envoy'
+    )
+  }, [
+    serviceId,
+    queryParams.level,
+    queryParams.instance,
+    queryParams.container,
+    queryParams.message,
+    queryParams.search,
+    queryParams.version,
   ])
 
   useReactQueryWsSubscription({
@@ -200,6 +244,24 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     onOpen: onOpenHandler,
   })
 
+  useReactQueryWsSubscription({
+    url: QOVERY_WS + '/service/logs',
+    urlSearchParams: {
+      organization: organizationId,
+      project: projectId,
+      environment: environmentId,
+      service: serviceId,
+      cluster: clusterId,
+      query: dynamicQueryEnvoy,
+      limit: LIMIT.toString(),
+    },
+    enabled:
+      Boolean(clusterId) && Boolean(serviceId) && Boolean(dynamicQueryEnvoy) && Boolean(queryParams.envoy) && enabled,
+    onMessage: onLogHandlerEnvoy,
+    onClose: onCloseHandler,
+    onOpen: onOpenHandler,
+  })
+
   const pausedDataLogs = useMemo(
     () => debouncedLogs.sort((a, b) => Number(a?.timestamp) - Number(b?.timestamp)),
     [debouncedLogs]
@@ -211,8 +273,6 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     setPauseLogs,
     setNewLogsAvailable,
     newLogsAvailable,
-    enabledNginx,
-    setEnabledNginx,
     isFetched,
     isLoading,
   }
