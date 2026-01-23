@@ -290,6 +290,7 @@ module.exports = {
             componentHover: 'var(--neutral-4)',
             componentActive: 'var(--neutral-5)',
             solid: 'var(--neutral-9)',
+            contrasted: 'var(--contrast)',
           },
           neutralInvert: {
             DEFAULT: 'var(--neutral-invert-1)',

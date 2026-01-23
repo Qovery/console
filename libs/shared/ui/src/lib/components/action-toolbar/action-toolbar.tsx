@@ -46,6 +46,9 @@ const toolbarButtonVariants = cva(['active:scale-100'], {
       className: [
         'first:rounded-l',
         'last:rounded-r',
+        'first:border-r-0',
+        'first:border-x',
+        'border-l-0',
         'hover:border-brand-strong',
         'data-[state=open]:bg-surface-brand-subtle',
         'data-[state=open]:border-brand-strong',
