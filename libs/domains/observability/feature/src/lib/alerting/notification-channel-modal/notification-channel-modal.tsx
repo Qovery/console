@@ -122,7 +122,7 @@ export function NotificationChannelModal({
         type: 'SLACK',
         organization_id: organizationId,
         description: 'Webhook for Qovery alerts',
-        webhook_url: webhookUrl,
+        webhook_url: webhookUrl ?? '',
       }
       validateAlertReceiver({
         payload: {
