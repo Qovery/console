@@ -44,7 +44,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
   const { organizationId = '' } = useParams({ strict: false })
   const { showPylonForm } = useSupportChat()
 
-  const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
+  const isEksAnywhereEnabled = false
 
   const renderIcon = (className?: string) => {
     return typeof icon === 'string' ? (
@@ -63,13 +63,13 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
             {match({ selectedCloudProvider })
               .with({ selectedCloudProvider: 'AZURE' }, () => (
                 <div className="absolute right-5 top-5 flex h-5 gap-2">
-                  <span className="rounded-lg bg-surface-brand-solid px-1.5 text-[11px] font-semibold leading-5 text-neutralInvert">
+                  <span className="rounded-full bg-surface-brand-solid px-1.5 text-[11px] font-semibold leading-5 text-neutralInvert">
                     recommended
                   </span>
                 </div>
               ))
               .otherwise(() => (
-                <span className="absolute right-5 top-5 h-5 rounded-lg bg-surface-brand-solid px-1.5 text-[11px] font-semibold leading-5 text-neutralInvert">
+                <span className="absolute right-5 top-5 h-5 rounded-full bg-surface-brand-solid px-1.5 text-[11px] font-semibold leading-5 text-neutralInvert">
                   recommended
                 </span>
               ))}
@@ -88,7 +88,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
   }
 
   const baseClassNames =
-    'flex text-left items-start gap-4 relative rounded shadow border border-neutral outline outline-2 outline-transparent transition-all hover:border-surface-brand-solid -outline-offset-2 hover:outline-brand-500 bg-surface-neutral-subtle p-5 transition w-[397px] xl:w-full'
+    'flex text-left items-start gap-4 relative rounded border border-neutral transition-all hover:border-brand-strong bg-surface-neutral p-5 transition w-[397px]'
 
   return match(props)
     .with({ selectedInstallationType: 'self-managed' }, ({ selectedInstallationType, openInstallationGuideModal }) => (
@@ -135,14 +135,14 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
           <div
             className={twMerge(
               baseClassNames,
-              'cursor-default shadow-none hover:border-neutral hover:outline-transparent'
+              'cursor-default bg-surface-neutral-component shadow-none hover:border-neutral hover:outline-transparent'
             )}
           >
             {renderIcon()}
             <div className="grid w-full grid-cols-[1fr_auto] gap-2">
               <div>
-                <span className="flex flex-col text-base font-semibold text-neutral">{title}</span>
-                <span className="inline-block text-sm text-neutral-subtle">
+                <span className="flex flex-col text-base font-semibold text-neutral-subtle">{title}</span>
+                <span className="inline-block text-sm text-neutral-disabled">
                   EKS Anywhere is not available for your organization yet. Please contact us to enable it.
                 </span>
               </div>
@@ -213,9 +213,9 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
           onClick={() => setExpanded(!expanded)}
           className={twMerge(
             clsx(
-              'flex h-32 w-full cursor-pointer justify-start gap-4 rounded border border-neutral p-5 shadow-sm outline outline-2 outline-transparent transition hover:border-surface-brand-solid hover:-outline-offset-2 hover:outline-surface-brand-solid',
+              'flex h-32 w-full cursor-pointer justify-start gap-4 rounded border border-neutral p-5 shadow-sm transition hover:border-brand-strong',
               {
-                'border-surface-brand-solid -outline-offset-2 outline-surface-brand-solid': expanded,
+                'border-brand-strong': expanded,
               }
             )
           )}
@@ -234,7 +234,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
             <span className="flex h-6 w-6 items-center justify-center rounded-md border border-neutral text-xs font-medium">
               {options.length}
             </span>
-            <Icon iconName={expanded ? 'angle-up' : 'angle-up'} className={expanded ? 'rotate-180' : 'rotate-0'} />
+            <Icon iconName={expanded ? 'angle-up' : 'angle-down'} />
           </div>
         </button>
 
@@ -247,7 +247,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
               transition={{ duration: 0.15 }}
               className={getExpanderPosition('relative mt-5 overflow-hidden', index)}
             >
-              <div className="flex flex-col gap-6 rounded border border-neutral bg-surface-neutral-component p-5">
+              <div className="flex flex-col gap-6 rounded border border-neutral bg-surface-neutral-subtle p-5">
                 <div className="flex gap-6 font-bold">
                   <div>
                     {typeof icon === 'string' ? (
@@ -282,7 +282,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
 
     return (
       <button
-        className="relative flex h-32 w-[calc(100%/2-20px)] cursor-pointer justify-between gap-4 rounded border border-neutral p-5 shadow-sm outline outline-transparent transition hover:border-surface-brand-solid hover:-outline-offset-2 hover:outline-surface-brand-solid lg:w-[calc(100%/3-20px)]"
+        className="relative flex h-32 w-[calc(100%/2-20px)] cursor-pointer justify-between gap-4 rounded border border-neutral p-5 shadow-sm transition hover:border-brand-strong lg:w-[calc(100%/3-20px)]"
         onClick={() => {
           posthog.capture('select-cluster', {
             selectedCloudProvider,
@@ -302,7 +302,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
           <p className="truncate text-base font-semibold text-neutral">{title}</p>
         </div>
         {selectedInstallationType === 'demo' ? (
-          <span className="absolute right-5 top-5 flex h-5 min-w-min items-center justify-center truncate rounded-lg bg-surface-brand-solid px-1.5 text-[11px] font-medium leading-6 text-neutralInvert">
+          <span className="absolute right-5 top-5 flex h-5 min-w-min items-center justify-center truncate rounded-full bg-surface-brand-solid px-1.5 text-[11px] font-medium leading-6 text-neutralInvert">
             3min to setup
           </span>
         ) : (
