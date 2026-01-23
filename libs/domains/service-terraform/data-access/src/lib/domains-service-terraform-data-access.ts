@@ -6,13 +6,6 @@ import { type TerraformResource } from './terraform.interface'
 const terraformMainCallsApi = new TerraformMainCallsApi()
 const terraformResourcesApi = new TerraformResourcesApi()
 
-class ResourcesNotAppliedError extends Error {
-  constructor() {
-    super('Terraform resources have not been applied yet')
-    this.name = 'ResourcesNotAppliedError'
-  }
-}
-
 function transformApiResponse(response: TerraformResourcesResponse): TerraformResource[] {
   return response.results.map((item) => {
     const resourceType = item.resource_type || ''
