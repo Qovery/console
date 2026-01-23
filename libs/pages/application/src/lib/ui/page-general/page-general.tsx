@@ -1,11 +1,14 @@
 import { motion } from 'framer-motion'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
+import { TerraformResourcesSection } from '@qovery/domains/service-terraform/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
 import { OutputVariables } from '@qovery/domains/variables/feature'
-import { Button, ExternalLink, Icon, useModal } from '@qovery/shared/ui'
+import { Button, ExternalLink, Icon, TabsPrimitives, useModal } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
+
+const { Tabs } = TabsPrimitives
 
 export interface PageGeneralProps {
   serviceId: string
@@ -169,10 +172,10 @@ function ObservabilityCallout() {
 }
 
 export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }: PageGeneralProps) {
-  const isLifecycleJobOrTerraform = useMemo(
-    () => (service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE') || service?.serviceType === 'TERRAFORM',
-    [service]
-  )
+  const [activeTab, setActiveTab] = useState('variables')
+
+  const isLifecycleJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE', [service])
+  const isTerraformService = useMemo(() => service?.serviceType === 'TERRAFORM', [service])
   const isCronJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'CRON', [service])
 
   return (
@@ -180,24 +183,44 @@ export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }:
       <div className="flex min-h-0 flex-1 grow flex-col gap-6 overflow-y-auto px-10 py-7">
         {hasNoMetrics && <ObservabilityCallout />}
         <PodStatusesCallout environmentId={environmentId} serviceId={serviceId} />
-        <PodsMetrics environmentId={environmentId} serviceId={serviceId}>
-          {isCronJob && (
-            <div className="grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 rounded border border-neutral-250 bg-neutral-100 p-3 text-xs text-neutral-350">
-              <Icon className="row-span-2" iconName="circle-info" iconStyle="regular" />
-              <p>
-                The number of past Completed or Failed job execution retained in the history and their TTL can be
-                customized in the advanced settings.
-              </p>
-              <ExternalLink
-                className="text-xs"
-                href="https://www.qovery.com/docs/configuration/service-advanced-settings#cronjob-failed-jobs-history-limit"
-              >
-                See documentation
-              </ExternalLink>
-            </div>
-          )}
-        </PodsMetrics>
-        {isLifecycleJobOrTerraform && <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} />}
+        {!isTerraformService && (
+          <PodsMetrics environmentId={environmentId} serviceId={serviceId}>
+            {isCronJob && (
+              <div className="grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 rounded border border-neutral-250 bg-neutral-100 p-3 text-xs text-neutral-350">
+                <Icon className="row-span-2" iconName="circle-info" iconStyle="regular" />
+                <p>
+                  The number of past Completed or Failed job execution retained in the history and their TTL can be
+                  customized in the advanced settings.
+                </p>
+                <ExternalLink
+                  className="text-xs"
+                  href="https://www.qovery.com/docs/configuration/service-advanced-settings#cronjob-failed-jobs-history-limit"
+                >
+                  See documentation
+                </ExternalLink>
+              </div>
+            )}
+          </PodsMetrics>
+        )}
+        {isLifecycleJob && <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} />}
+        {isTerraformService && (
+          <Tabs.Root
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full rounded-lg border border-neutral-200"
+          >
+            <Tabs.List className="rounded-t-lg border-b border-neutral-200 bg-neutral-100">
+              <Tabs.Trigger value="variables">Output Variables</Tabs.Trigger>
+              <Tabs.Trigger value="resources">Infrastructure Resources</Tabs.Trigger>
+            </Tabs.List>
+            <Tabs.Content value="variables">
+              <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} />
+            </Tabs.Content>
+            <Tabs.Content value="resources">
+              <TerraformResourcesSection terraformId={serviceId} />
+            </Tabs.Content>
+          </Tabs.Root>
+        )}
       </div>
       <ServiceDetails
         className="w-1/4 max-w-[360px] flex-1 border-l"
