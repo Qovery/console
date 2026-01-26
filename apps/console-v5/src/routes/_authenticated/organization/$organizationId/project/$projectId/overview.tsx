@@ -21,7 +21,6 @@ import {
   Section,
   StatusChip,
   TablePrimitives,
-  Tooltip,
   Truncate,
   useModal,
 } from '@qovery/shared/ui'
@@ -54,18 +53,14 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
             <Truncate text={overview.name} truncateLimit={54} />
           </Link>
           <div className="flex items-center gap-2">
-            <span className="font-normal text-neutral-subtle">
+            <span className="text-neutral-subtle font-normal">
               {overview.service_count} {pluralize(overview.service_count, 'service')}
             </span>
-            {runningStatus && (
-              <Tooltip content={runningStatus?.stateLabel}>
-                <StatusChip status={runningStatus.state} />
-              </Tooltip>
-            )}
+            {runningStatus && <StatusChip status={runningStatus.state} />}
           </div>
         </div>
       </Table.Cell>
-      <Table.Cell className="h-12 border-l border-neutral">
+      <Table.Cell className="border-neutral h-12 border-l">
         <div className="flex h-full items-center justify-between">
           <div className="flex items-center gap-2">
             <DeploymentAction status={overview.deployment_status?.last_deployment_state} />
@@ -76,7 +71,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
           <StatusChip status={overview.deployment_status?.last_deployment_state} />
         </div>
       </Table.Cell>
-      <Table.Cell className="h-12 border-l border-neutral">
+      <Table.Cell className="border-neutral h-12 border-l">
         {overview.cluster && (
           <Link
             to={`/organization/${organizationId}/cluster/${overview.cluster.id}/overview`}
@@ -87,10 +82,10 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
           </Link>
         )}
       </Table.Cell>
-      <Table.Cell className="h-12 border-l border-neutral">
+      <Table.Cell className="border-neutral h-12 border-l">
         <div className="flex h-full items-center">{timeAgo(new Date(overview.updated_at ?? Date.now()))} ago</div>
       </Table.Cell>
-      <Table.Cell className="h-12 border-l border-neutral">
+      <Table.Cell className="border-neutral h-12 border-l">
         <div className="flex h-full items-center">
           {environment && overview.deployment_status && overview.service_count > 0 && (
             <ActionToolbar.Root>
@@ -131,38 +126,38 @@ function EnvironmentSection({
         <Heading level={3}>{title}</Heading>
       </div>
       {items.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-md border border-neutral bg-surface-neutral-subtle p-8">
+        <div className="border-neutral bg-surface-neutral-subtle flex flex-col items-center gap-3 rounded-md border p-8">
           <EnvironmentMode mode={type} variant="shrink" />
-          <span className="text-sm text-neutral-subtle">No {title.toLowerCase()} environment created yet</span>
+          <span className="text-neutral-subtle text-sm">No {title.toLowerCase()} environment created yet</span>
           <Button size="md" variant="outline" className="gap-2" onClick={onCreateEnvClicked}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Create
           </Button>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral">
-          <Table.Root className="divide-y divide-neutral">
+        <div className="border-neutral bg-surface-neutral overflow-hidden rounded-md border">
+          <Table.Root className="divide-neutral divide-y">
             <Table.Header>
               <Table.Row className={twMerge('w-full items-center text-xs', gridLayoutClassName)}>
-                <Table.ColumnHeaderCell className="flex h-9 items-center text-neutral-subtle">
+                <Table.ColumnHeaderCell className="text-neutral-subtle flex h-9 items-center">
                   Environment
                 </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                <Table.ColumnHeaderCell className="border-neutral text-neutral-subtle flex h-9 items-center border-l">
                   Last operation
                 </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                <Table.ColumnHeaderCell className="border-neutral text-neutral-subtle flex h-9 items-center border-l">
                   Cluster
                 </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                <Table.ColumnHeaderCell className="border-neutral text-neutral-subtle flex h-9 items-center border-l">
                   Last update
                 </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-right text-neutral-subtle">
+                <Table.ColumnHeaderCell className="border-neutral text-neutral-subtle flex h-9 items-center border-l text-right">
                   Actions
                 </Table.ColumnHeaderCell>
               </Table.Row>
             </Table.Header>
 
-            <Table.Body className="divide-y divide-neutral">
+            <Table.Body className="divide-neutral divide-y">
               {items.map((environmentOverview) => (
                 <EnvRow key={environmentOverview.id} overview={environmentOverview} />
               ))}
@@ -216,7 +211,7 @@ function ProjectOverview() {
               New Environment
             </Button>
           </div>
-          <hr className="w-full border-neutral" />
+          <hr className="border-neutral w-full" />
         </div>
         <div className="flex flex-col gap-8">
           <EnvironmentSection
