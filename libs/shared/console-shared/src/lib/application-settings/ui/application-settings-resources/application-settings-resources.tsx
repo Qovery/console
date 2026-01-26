@@ -23,12 +23,6 @@ import { loadHpaSettingsFromAdvancedSettings } from '@qovery/shared/util-service
 import { FixedInstancesMode } from './fixed-instances-mode'
 import { HpaAutoscalingMode } from './hpa-autoscaling-mode'
 
-type ClusterWithKeda = {
-  keda?: {
-    enabled?: boolean
-  }
-}
-
 export interface ApplicationSettingsResourcesProps {
   displayWarningCpu: boolean
   displayInstanceLimits?: boolean
@@ -54,8 +48,7 @@ export function ApplicationSettingsResources({
   const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
   const clusterFeatureKarpenter = cluster?.features?.find((f) => f.id === 'KARPENTER')
   const isKarpenterCluster = Boolean(clusterFeatureKarpenter)
-  const clusterWithKeda = cluster as ClusterWithKeda | undefined
-  const isKedaCluster = Boolean(clusterWithKeda?.keda?.enabled)
+  const isKedaCluster = Boolean(cluster?.keda?.enabled)
   const canSetGPU = hasGpuInstance(cluster)
 
   const clusterId = environment?.cluster_id

@@ -59,7 +59,7 @@ export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: C
 
       if (isKedaFeatureEnabled) {
         cloneCluster.keda = {
-          enabled: !!data.keda?.enabled,
+          enabled: Boolean(data.keda?.enabled),
         }
       }
 

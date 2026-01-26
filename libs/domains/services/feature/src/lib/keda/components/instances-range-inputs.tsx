@@ -1,5 +1,6 @@
 import { type Control, Controller, type FieldErrors, useWatch } from 'react-hook-form'
 import { InputText } from '@qovery/shared/ui'
+import { pluralize } from '@qovery/shared/util-js'
 
 export interface InstancesRangeInputsProps {
   control: Control
@@ -16,7 +17,6 @@ export function InstancesRangeInputs({
   control,
   minInstances,
   maxInstances,
-  minRunningInstances,
   disabled = false,
   showMaxField = true,
   runningPods,
@@ -103,7 +103,7 @@ export function InstancesRangeInputs({
       {runningPods !== undefined && (
         <p className="text-xs text-neutral-350">
           <span className="mb-1 flex">
-            Current consumption: {runningPods} instance{runningPods > 1 ? 's' : ''}
+            Current consumption: {runningPods} ${pluralize(runningPods, 'instance')}
           </span>
         </p>
       )}
