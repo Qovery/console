@@ -518,9 +518,9 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                 )}
                 {thread.length === 0 && (
                   <span className="mx-auto w-full max-w-[430px] animate-[fadein_0.22s_ease-in-out_forwards_0.05s] py-4 text-center text-ssm opacity-0">
-                    I'm your <span className="font-medium text-brand-500">DevOps AI Copilot</span> - I can help you to fix
-                    your deployments, optimize your infrastructure costs, audit your security and do everything you would
-                    expect from a complete DevOps Engineering team.
+                    I'm your <span className="font-medium text-brand-500">DevOps AI Copilot</span> - I can help you to
+                    fix your deployments, optimize your infrastructure costs, audit your security and do everything you
+                    would expect from a complete DevOps Engineering team.
                   </span>
                 )}
                 <ScrollArea
@@ -590,7 +590,9 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                         className="group flex cursor-pointer items-center gap-2"
                         onClick={() => setShowPlans((prev) => ({ ...prev, temp: !prev['temp'] }))}
                       >
-                        <AnimatedGradientText className="w-fit text-ssm font-medium">{loadingText}</AnimatedGradientText>
+                        <AnimatedGradientText className="w-fit text-ssm font-medium">
+                          {loadingText}
+                        </AnimatedGradientText>
                         {plan.filter((p) => p.messageId === 'temp').length > 0 && (
                           <Icon
                             iconName={showPlans['temp'] ? 'chevron-circle-up' : 'chevron-circle-down'}
@@ -769,22 +771,37 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                 </div>
               </div>
             ) : (
-              <div className='flex flex-col grow items-center justify-center gap-4 bg-neutral-100 p-8'>
+              <div className="flex grow flex-col items-center justify-center gap-4 bg-neutral-100 p-8">
                 <div className="relative flex h-10 w-10 items-center justify-center bg-neutral-150">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" viewBox="0 0 40 40" className="absolute inset-0">
-                    <path fill="#67778e" d="M4 0v1H1v3H0V0zM36 0v1h3v3h1V0zM4 40v-1H1v-3H0v4zM36 40v-1h3v-3h1v4z"></path>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="40"
+                    height="40"
+                    fill="none"
+                    viewBox="0 0 40 40"
+                    className="absolute inset-0"
+                  >
+                    <path
+                      fill="#67778e"
+                      d="M4 0v1H1v3H0V0zM36 0v1h3v3h1V0zM4 40v-1H1v-3H0v4zM36 40v-1h3v-3h1v4z"
+                    ></path>
                   </svg>
                   <Icon iconName="robot" iconStyle="light" className="relative z-10 text-neutral-350" />
                 </div>
                 <div className="flex max-w-md flex-col gap-1 text-center">
                   <span className="text-ssm font-semibold">AI Copilot not activated yet</span>
                   <span className="text-ssm text-neutral-400">
-                    Our DevOps AI Copilot can help you fix your deployments, optimize your infrastructure costs, audit your security and do everything you would expect from a complete DevOps Engineering team. Enable it in your organization settings to get started.
+                    Our DevOps AI Copilot can help you fix your deployments, optimize your infrastructure costs, audit
+                    your security and do everything you would expect from a complete DevOps Engineering team. Enable it
+                    in your organization settings to get started.
                   </span>
                 </div>
-                
-                <Link to={`${SETTINGS_URL(context?.organization?.id)}${SETTINGS_AI_COPILOT_URL}`} onClick={handleOnClose}>
-                  <Button className='flex gap-2'>
+
+                <Link
+                  to={`${SETTINGS_URL(context?.organization?.id)}${SETTINGS_AI_COPILOT_URL}`}
+                  onClick={handleOnClose}
+                >
+                  <Button className="flex gap-2">
                     <Icon iconName="sparkles" />
                     Enable AI Copilot
                   </Button>
