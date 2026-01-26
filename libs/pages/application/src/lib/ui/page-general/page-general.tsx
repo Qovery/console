@@ -207,14 +207,14 @@ export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }:
           <Tabs.Root
             value={activeTab}
             onValueChange={setActiveTab}
-            className="w-full rounded-lg border border-neutral-200"
+            className="border-neutral-200x w-full rounded-lg border"
           >
             <Tabs.List className="rounded-t-lg border-b border-neutral-200 bg-neutral-100">
               <Tabs.Trigger value="variables">Output Variables</Tabs.Trigger>
               <Tabs.Trigger value="resources">Infrastructure Resources</Tabs.Trigger>
             </Tabs.List>
             <Tabs.Content value="variables">
-              <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} />
+              <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} className="table-fixed" />
             </Tabs.Content>
             <Tabs.Content value="resources">
               <TerraformResourcesSection terraformId={serviceId} />

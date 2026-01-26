@@ -45,7 +45,7 @@ export function ResourceDetails({ resource }: ResourceDetailsProps): ReactElemen
   return (
     <div className="flex flex-col overflow-y-auto">
       <div className="overflow-hidden">
-        <Table.Root className="w-full text-ssm">
+        <Table.Root className="text-ssm">
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeaderCell className="w-2/4 border-r border-neutral-200 font-medium">
@@ -58,13 +58,14 @@ export function ResourceDetails({ resource }: ResourceDetailsProps): ReactElemen
             {tableData.map((row, index) => (
               <Table.Row
                 key={index}
-                className="h-12"
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
-                <Table.Cell className="w-1/2 border-r border-neutral-200 text-neutral-350">{row.key}</Table.Cell>
-                <Table.Cell className={twMerge('w-1/2 text-neutral-400', hoveredIndex === index && 'group')}>
-                  <span className="truncate break-all text-ssm">{row.value}</span>
+                <Table.Cell className="h-10 w-1/2 border-r border-neutral-200 py-3 text-neutral-350">
+                  {row.key}
+                </Table.Cell>
+                <Table.Cell className={twMerge('h-10 w-1/2 py-3 text-neutral-400', hoveredIndex === index && 'group')}>
+                  <span className="whitespace-normal break-all text-ssm">{row.value}</span>
                   {hoveredIndex === index && (
                     <CopyToClipboardButtonIcon
                       content={row.value}

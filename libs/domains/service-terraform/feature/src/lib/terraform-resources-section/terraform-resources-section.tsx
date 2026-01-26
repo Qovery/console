@@ -75,11 +75,11 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-[calc(100dvh-theme(spacing.navbar-height)-4rem)] flex-col gap-4">
       {/* Split panel: Tree list (with search) and Details */}
-      <div className="flex min-h-0 overflow-hidden">
+      <div className="flex h-full">
         {/* Left panel: Search + Resource tree list */}
-        <div className="flex w-1/4 flex-shrink-0 flex-col border-r border-neutral-200">
+        <div className="flex w-1/4 flex-shrink-0 flex-col overflow-y-scroll border-r border-neutral-200">
           {/* Search bar */}
           <div className="flex-shrink-0 p-4 pb-0">
             <div className="relative">
@@ -107,7 +107,7 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
           </div>
 
           {/* Tree list */}
-          <div className="flex-1 overflow-hidden p-4">
+          <div className="flex-1 p-4">
             <ResourceTreeList
               resources={data}
               selectedResourceId={selectedResourceId}
@@ -118,7 +118,7 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
         </div>
 
         {/* Right panel: Resource details */}
-        <div className="w-3/4 flex-1 overflow-hidden">
+        <div className="w-3/4 flex-1 overflow-y-scroll">
           <ResourceDetails resource={selectedResource} />
         </div>
       </div>
