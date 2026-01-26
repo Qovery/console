@@ -44,8 +44,8 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
       storage_gib: s.job_resources.storage_gib,
     }))
     .otherwise((s) => ({
-      min_running_instances: s.min_running_instances || 1,
-      max_running_instances: s.max_running_instances || 1,
+      min_running_instances: s.min_running_instances ?? 1,
+      max_running_instances: s.max_running_instances ?? 1,
     }))
 
   const methods = useForm({

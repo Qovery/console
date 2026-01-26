@@ -196,6 +196,9 @@ export function ApplicationSettingsResources({
     </>
   )
 
+  // KEDA allows 0 instances (scale to zero), other modes require at least 1
+  const effectiveMinInstances = autoscalingMode === 'KEDA' ? 0 : minInstances
+
   return (
     <>
       <Section className="gap-4">
@@ -354,7 +357,7 @@ export function ApplicationSettingsResources({
             <FixedInstancesMode
               control={control}
               setValue={setValue}
-              minInstances={minInstances}
+              minInstances={effectiveMinInstances}
               maxInstances={maxInstances}
               environmentMode={environmentMode}
             />
@@ -365,7 +368,7 @@ export function ApplicationSettingsResources({
             <HpaAutoscalingMode
               control={control}
               setValue={setValue}
-              minInstances={minInstances}
+              minInstances={effectiveMinInstances}
               maxInstances={maxInstances}
               minRunningInstances={minRunningInstances}
               hpaMetricType={hpaMetricType}
@@ -381,7 +384,7 @@ export function ApplicationSettingsResources({
             <KedaSettings
               control={control}
               scalersFieldArray={scalersFieldArray}
-              minInstances={minInstances}
+              minInstances={effectiveMinInstances}
               maxInstances={maxInstances}
               minRunningInstances={minRunningInstances}
               disabled={currentAutoscalingMode === 'HPA'}
