@@ -367,7 +367,7 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
         .filter((v) => isVariableChanged(v) || isCustomVariable(v)) // Only serialize variables that are changed or custom
         .map((v) => ({
           key: v.key,
-          value: v.value,
+          value: v.value.trim(),
           secret: v.secret,
         })),
     [vars]
