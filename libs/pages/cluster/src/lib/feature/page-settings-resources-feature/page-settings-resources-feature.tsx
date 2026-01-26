@@ -13,7 +13,12 @@ import {
   useEditCluster,
   useUpdateKarpenterPrivateFargate,
 } from '@qovery/domains/clusters/feature'
-import { type ClusterResourcesEdit, type SCWControlPlaneFeatureType } from '@qovery/shared/interfaces'
+import {
+  type ClusterExtended,
+  type ClusterFeatureKarpenterParametersResponseExtended,
+  type ClusterResourcesEdit,
+  type SCWControlPlaneFeatureType,
+} from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { PageSettingsResources } from '../../ui/page-settings-resources/page-settings-resources'
 
@@ -21,7 +26,7 @@ function getValueByKey(key: string, data: { [key: string]: string }[] = []): str
   return data.filter((obj) => key in obj).map((obj) => obj[key])
 }
 
-export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
+export const handleSubmit = (data: FieldValues, cluster: ClusterExtended): ClusterExtended => {
   const payload = {
     ...cluster,
     max_running_nodes: data['nodes'][1],
@@ -86,13 +91,13 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
 }
 
 export interface SettingsResourcesFeatureProps {
-  cluster: Cluster
+  cluster: ClusterExtended
 }
 
 function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
   const karpenterFeature = cluster.features?.find(
     (feature) => feature.id === 'KARPENTER'
-  ) as ClusterFeatureKarpenterParametersResponse
+  ) as ClusterFeatureKarpenterParametersResponseExtended
   const scwFeature = cluster.features?.find(
     (feature) => feature.id === SCW_CONTROL_PLANE_FEATURE_ID
   ) as ClusterFeatureStringResponse

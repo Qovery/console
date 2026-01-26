@@ -1,8 +1,4 @@
-import {
-  type CloudProviderEnum,
-  type ClusterFeatureKarpenterParameters,
-  type ClusterKeda,
-} from 'qovery-typescript-axios'
+import { type CloudProviderEnum, type ClusterFeatureKarpenterParameters } from 'qovery-typescript-axios'
 
 export interface ClusterGeneralData {
   name: string
@@ -24,7 +20,7 @@ export interface ClusterGeneralData {
       }
     }
   }
-  keda?: ClusterKeda
+  keda?: unknown
 }
 
 export type SCWControlPlaneFeatureType = 'KAPSULE' | 'KAPSULE_DEDICATED4' | 'KAPSULE_DEDICATED8' | 'KAPSULE_DEDICATED16'
@@ -35,10 +31,16 @@ export interface ClusterKubeconfigData {
   file_size: number
 }
 
-export interface KarpenterData extends ClusterFeatureKarpenterParameters {
+export interface KarpenterData extends Omit<ClusterFeatureKarpenterParameters, 'qovery_node_pools'> {
   enabled: boolean
   disk_iops?: number
   disk_throughput?: number
+  qovery_node_pools: ClusterFeatureKarpenterParameters['qovery_node_pools'] & {
+    gpu_override?: ClusterFeatureKarpenterParameters['qovery_node_pools']['gpu_override'] & {
+      disk_iops?: number
+      disk_throughput?: number
+    }
+  }
 }
 
 export interface ClusterResourcesData {

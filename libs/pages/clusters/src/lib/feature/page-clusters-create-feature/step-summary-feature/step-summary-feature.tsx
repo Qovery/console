@@ -255,7 +255,7 @@ export function StepSummaryFeature() {
             disk_throughput: resourcesData.karpenter.disk_throughput,
             default_service_architecture: resourcesData.karpenter.default_service_architecture,
             qovery_node_pools: resourcesData.karpenter.qovery_node_pools,
-          },
+          } as any,
         })
       }
 
