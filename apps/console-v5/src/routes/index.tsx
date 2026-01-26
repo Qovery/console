@@ -7,15 +7,17 @@ export const Route = createFileRoute('/')({
   component: Index,
   loader: async ({ context }) => {
     // Preload data (organizations) without waiting for the queries to complete
-    context.queryClient.prefetchQuery({
-      ...queries.organizations.list,
-    })
+    if (context.auth.isAuthenticated) {
+      context.queryClient.prefetchQuery({
+        ...queries.organizations.list,
+      })
+    }
   },
 })
 
 function Index() {
   const { isAuthenticated } = useAuth0()
-  const { data: organizations = [] } = useOrganizations({ enabled: true, suspense: true })
+  const { data: organizations = [] } = useOrganizations({ enabled: isAuthenticated, suspense: true })
 
   // Redirect to latest selected organization
   const currentOrganizationId = localStorage.getItem('currentOrganizationId') || ''
