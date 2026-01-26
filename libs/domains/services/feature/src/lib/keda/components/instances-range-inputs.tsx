@@ -52,7 +52,7 @@ export function InstancesRangeInputs({
               type="number"
               label={showMaxField ? 'Instances min' : 'Number of instances'}
               name={field.name}
-              value={isNaN(field.value) || field.value === 0 ? '' : field.value.toString()}
+              value={isNaN(field.value) ? '' : field.value.toString()}
               onChange={(e) => {
                 const output = parseInt(e.target.value, 10)
                 const value = isNaN(output) ? 0 : output
@@ -86,7 +86,7 @@ export function InstancesRangeInputs({
                 type="number"
                 label="Instances max"
                 name={field.name}
-                value={isNaN(field.value) || field.value === 0 ? '' : field.value.toString()}
+                value={isNaN(field.value) ? '' : field.value.toString()}
                 onChange={(e) => {
                   const output = parseInt(e.target.value, 10)
                   const value = isNaN(output) ? 0 : output
@@ -103,7 +103,7 @@ export function InstancesRangeInputs({
       {runningPods !== undefined && (
         <p className="text-xs text-neutral-350">
           <span className="mb-1 flex">
-            Current consumption: {runningPods} ${pluralize(runningPods, 'instance')}
+            Current consumption: {runningPods} {pluralize(runningPods, 'instance')}
           </span>
         </p>
       )}
