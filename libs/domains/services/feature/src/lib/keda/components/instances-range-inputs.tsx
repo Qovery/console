@@ -103,7 +103,7 @@ export function InstancesRangeInputs({
       {runningPods !== undefined && (
         <p className="text-xs text-neutral-350">
           <span className="mb-1 flex">
-            Current consumption: {runningPods} ${pluralize(runningPods, 'instance')}
+            Current consumption: {runningPods} {pluralize(runningPods, 'instance')}
           </span>
         </p>
       )}
