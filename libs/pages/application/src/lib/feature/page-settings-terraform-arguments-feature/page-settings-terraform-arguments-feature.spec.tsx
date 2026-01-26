@@ -9,7 +9,7 @@ const useEditServiceSpy = jest.spyOn(servicesDomain, 'useEditService') as jest.M
 
 jest.mock('@qovery/domains/variables/feature', () => ({
   ...jest.requireActual('@qovery/domains/variables/feature'),
-  DropdownVariable: ({ children, onChange }: any) => (
+  DropdownVariable: ({ children, onChange }: { children: React.ReactNode; onChange: (value: string) => void }) => (
     <div data-testid="dropdown-variable" onClick={() => onChange('MY_VARIABLE')}>
       {children}
     </div>
