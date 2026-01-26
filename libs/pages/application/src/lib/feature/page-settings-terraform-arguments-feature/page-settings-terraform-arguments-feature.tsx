@@ -1,8 +1,10 @@
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useEditService, useService } from '@qovery/domains/services/feature'
+import { DropdownVariable } from '@qovery/domains/variables/feature'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
-import { Button, Heading, InputText, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputText, Section } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 const DELIMETER = ' '
@@ -138,6 +140,25 @@ export function PageSettingsTerraformArgumentsFeature() {
                       onChange={(e) => field.onChange(e.target.value.split(DELIMETER).filter((arg) => arg !== ''))}
                       label={`Arguments for ${command.name}`}
                       hint={command.hint}
+                      rightElement={
+                        <DropdownVariable
+                          environmentId={environmentId}
+                          onChange={(val) => {
+                            const currentValue = field.value?.join(DELIMETER) || ''
+                            const newValue = currentValue ? `${currentValue} {{${val}}}` : `{{${val}}}`
+                            field.onChange(newValue.split(DELIMETER).filter((arg) => arg !== ''))
+                          }}
+                        >
+                          <button
+                            className={twMerge(
+                              'flex items-center justify-center border-none bg-transparent px-1 text-neutral-350 hover:text-neutral-400'
+                            )}
+                            type="button"
+                          >
+                            <Icon className="text-sm" iconName="wand-magic-sparkles" />
+                          </button>
+                        </DropdownVariable>
+                      }
                     />
                   )}
                 />
