@@ -71,6 +71,9 @@ export function PageApplicationCreateFeature() {
     gpu: 0,
     min_running_instances: 1,
     max_running_instances: 2,
+    autoscaling_mode: 'HPA',
+    hpa_metric_type: 'CPU',
+    hpa_cpu_average_utilization_percent: 60,
   })
 
   const variablesForm = useForm<FlowVariableData>({
