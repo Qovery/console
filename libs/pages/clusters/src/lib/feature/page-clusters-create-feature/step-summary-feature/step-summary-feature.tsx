@@ -251,6 +251,8 @@ export function StepSummaryFeature() {
           value: {
             spot_enabled: resourcesData.karpenter.spot_enabled,
             disk_size_in_gib: resourcesData.karpenter.disk_size_in_gib,
+            disk_iops: resourcesData.karpenter.disk_iops,
+            disk_throughput: resourcesData.karpenter.disk_throughput,
             default_service_architecture: resourcesData.karpenter.default_service_architecture,
             qovery_node_pools: resourcesData.karpenter.qovery_node_pools,
           },
@@ -341,6 +343,8 @@ export function StepSummaryFeature() {
               min_running_nodes: resourcesData.nodes[0],
               max_running_nodes: resourcesData.nodes[1],
               disk_size: resourcesData.disk_size,
+              disk_iops: generalData.cloud_provider === 'AWS' ? resourcesData.disk_iops : undefined,
+              disk_throughput: generalData.cloud_provider === 'AWS' ? resourcesData.disk_throughput : undefined,
               instance_type: resourcesData.instance_type,
               kubernetes: resourcesData.cluster_type as KubernetesEnum,
               features: formatFeatures as ClusterRequestFeaturesInner[],

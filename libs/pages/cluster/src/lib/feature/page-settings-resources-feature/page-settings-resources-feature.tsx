@@ -27,6 +27,8 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
     max_running_nodes: data['nodes'][1],
     min_running_nodes: data['nodes'][0],
     disk_size: data['disk_size'],
+    disk_iops: cluster.cloud_provider === 'AWS' ? data['disk_iops'] : undefined,
+    disk_throughput: cluster.cloud_provider === 'AWS' ? data['disk_throughput'] : undefined,
     instance_type: data['instance_type'],
   }
 
@@ -40,6 +42,8 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
         value: {
           spot_enabled: data['karpenter'].spot_enabled ?? false,
           disk_size_in_gib: data['karpenter'].disk_size_in_gib,
+          disk_iops: data['karpenter'].disk_iops,
+          disk_throughput: data['karpenter'].disk_throughput,
           default_service_architecture: data['karpenter'].default_service_architecture,
           qovery_node_pools: data['karpenter'].qovery_node_pools,
         },
@@ -53,6 +57,8 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
           value: {
             spot_enabled: data['karpenter'].spot_enabled ?? false,
             disk_size_in_gib: data['karpenter'].disk_size_in_gib,
+            disk_iops: data['karpenter'].disk_iops,
+            disk_throughput: data['karpenter'].disk_throughput,
             default_service_architecture: data['karpenter'].default_service_architecture,
             qovery_node_pools: data['karpenter'].qovery_node_pools,
           },
@@ -100,11 +106,15 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
       instance_type: cluster.instance_type,
       nodes: [cluster.min_running_nodes || 1, cluster.max_running_nodes || 1],
       disk_size: cluster.disk_size || 0,
+      disk_iops: cluster.disk_iops,
+      disk_throughput: cluster.disk_throughput,
       karpenter: karpenterFeature
         ? {
             enabled: true,
             spot_enabled: karpenterFeature.value.spot_enabled,
             disk_size_in_gib: karpenterFeature.value.disk_size_in_gib,
+            disk_iops: karpenterFeature.value.disk_iops,
+            disk_throughput: karpenterFeature.value.disk_throughput,
             default_service_architecture: karpenterFeature.value.default_service_architecture,
             qovery_node_pools: karpenterFeature.value.qovery_node_pools,
           }
