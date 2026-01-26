@@ -55,9 +55,9 @@ exports[`ClusterLogRow should display cell error message 1`] = `
         />
       </span>
       <span
-        title="Mon, 19 Jan 2026 13:44:04 GMT"
+        title="Tue, 20 Jan 2026 16:30:36 GMT"
       >
-        19 Jan, 13:44:04.00
+        20 Jan, 16:30:36.00
       </span>
     </div>
   </div>
@@ -119,9 +119,9 @@ exports[`ClusterLogRow should display cell message 1`] = `
         />
       </span>
       <span
-        title="Mon, 19 Jan 2026 13:44:04 GMT"
+        title="Tue, 20 Jan 2026 16:30:36 GMT"
       >
-        19 Jan, 13:44:04.00
+        20 Jan, 16:30:36.00
       </span>
     </div>
   </div>

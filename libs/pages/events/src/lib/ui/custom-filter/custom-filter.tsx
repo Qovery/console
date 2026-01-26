@@ -46,7 +46,7 @@ export function CustomFilter({
           maxDate={new Date()}
           minDate={subDays(new Date(), retentionDays)}
           defaultDates={getDefaultDates(timestamps)}
-          showTimeInput
+          showDateTimeInputs
           useLocalTime
           onClickOutside={() => setIsOpenTimestamp(!isOpenTimestamp)}
           maxRangeInDays={maxRangeInDays}
