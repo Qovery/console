@@ -22,8 +22,8 @@ export const formatLocalDate = (date: Date): string => {
   )
 }
 
-export const formatDateInput = (date: Date, useLocalTime: boolean): string => {
-  return useLocalTime ? formatLocalDate(date) : date.toISOString().split('T')[0]
+export const formatDateInput = (date: Date | undefined, useLocalTime: boolean): string => {
+  return date ? (useLocalTime ? formatLocalDate(date) : date.toISOString().split('T')[0]) : ''
 }
 
 export const getCombinedDateTime = (dateStr: string, timeStr: string, useLocalTime: boolean): Date => {
