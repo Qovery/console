@@ -196,7 +196,7 @@ export function PageSettingsGeneral({
                 </Section>
               </>
             ))
-            .with({ serviceType: 'CONTAINER' }, () => (
+            .with({ serviceType: 'CONTAINER' }, (container) => (
               <>
                 <Section className="gap-4">
                   <Heading>Source</Heading>
@@ -205,7 +205,7 @@ export function PageSettingsGeneral({
                 <Section className="gap-4">
                   <Heading>Deploy</Heading>
                   <EntrypointCmdInputs />
-                  <AutoDeploySection serviceId={service.id} source="CONTAINER_REGISTRY" />
+                  <AutoDeploySection serviceId={container.id} source="CONTAINER_REGISTRY" />
                 </Section>
                 <Section className="gap-4">
                   <Heading>Extra labels/annotations</Heading>

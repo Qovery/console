@@ -1,5 +1,5 @@
 export * from './lib/auto-deploy-setting/auto-deploy-setting'
-export * from './lib/auto-deploy-section'
+export * from './lib/auto-deploy-section/auto-deploy-section'
 export * from './lib/git-webhook-status-badge/git-webhook-status-badge'
 export * from './lib/hooks/use-git-webhook-status/use-git-webhook-status'
 export * from './lib/hooks/use-sync-git-webhook/use-sync-git-webhook'

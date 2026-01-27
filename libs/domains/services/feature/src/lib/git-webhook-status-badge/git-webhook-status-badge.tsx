@@ -1,5 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { type GitWebhookStatusResponse } from '@qovery/domains/services/data-access'
+import { type GitWebhookStatusResponse } from 'qovery-typescript-axios'
 import { Badge, Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { useGitWebhookStatus } from '../hooks/use-git-webhook-status/use-git-webhook-status'
 

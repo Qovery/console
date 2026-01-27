@@ -35,7 +35,6 @@ import {
   EnvironmentActionsApi,
   EnvironmentMainCallsApi,
   type EnvironmentServiceIdsAllRequest,
-  type GitWebhookStatusResponse,
   HelmActionsApi,
   type HelmAdvancedSettings,
   HelmConfigurationApi,
@@ -612,8 +611,6 @@ export const services = createQueryKeys('services', {
     },
   }),
 })
-
-export type { GitWebhookStatusResponse }
 
 type CloneServiceRequest = {
   serviceId: string
