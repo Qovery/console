@@ -418,7 +418,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                         onChange={field.onChange}
                                         value={field.value}
                                         className="w-full"
-                                        hint="I/O operations per second for EBS gp3 volumes (3000-16000). Only available with gp3 storage class."
+                                        hint="I/O operations per second for EBS gp3 volumes (3000-16000)."
                                       />
                                     )}
                                   />
@@ -433,7 +433,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                         onChange={field.onChange}
                                         value={field.value}
                                         className="w-full"
-                                        hint="Throughput in MB/s for EBS gp3 volumes (125-1000). Only available with gp3 storage class."
+                                        hint="Throughput in MB/s for EBS gp3 volumes (125-1000)."
                                       />
                                     )}
                                   />
@@ -545,7 +545,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                               onChange={field.onChange}
                               value={field.value}
                               className="w-full"
-                              hint="I/O operations per second for EBS gp3 volumes (3000-16000). Only available with gp3 storage class."
+                              hint="I/O operations per second for EBS gp3 volumes (3000-16000)."
                             />
                           )}
                         />
@@ -560,7 +560,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                               onChange={field.onChange}
                               value={field.value}
                               className="w-full"
-                              hint="Throughput in MB/s for EBS gp3 volumes (125-1000). Only available with gp3 storage class."
+                              hint="Throughput in MB/s for EBS gp3 volumes (125-1000)."
                             />
                           )}
                         />
@@ -660,7 +660,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                         }}
                         value={field.value}
                         label="Disk IOPS (optional)"
-                        hint="I/O operations per second for EBS gp3 volumes (3000-16000). Only available with gp3 storage class."
+                        hint="I/O operations per second for EBS gp3 volumes (3000-16000)."
                       />
                     )}
                   />
@@ -679,7 +679,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                         }}
                         value={field.value}
                         label="Disk throughput (optional)"
-                        hint="Throughput in MB/s for EBS gp3 volumes (125-1000). Only available with gp3 storage class."
+                        hint="Throughput in MB/s for EBS gp3 volumes (125-1000)."
                       />
                     )}
                   />
