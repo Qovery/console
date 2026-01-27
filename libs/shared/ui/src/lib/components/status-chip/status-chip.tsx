@@ -9,7 +9,7 @@ import {
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type RunningState } from '@qovery/shared/enums'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import {
   BuildErrorIcon,
   BuildingIcon,
@@ -45,6 +45,8 @@ export interface StatusChipProps {
   className?: string
   appendTooltipMessage?: string
   disabledTooltip?: boolean
+  variant?: 'default' | 'monochrome'
+  size?: 'sm' | 'xs'
 }
 
 export function StatusChip({
@@ -52,12 +54,17 @@ export function StatusChip({
   className = '',
   appendTooltipMessage = '',
   disabledTooltip = false,
+  variant = 'default',
+  size = 'sm',
 }: StatusChipProps) {
+  const iconClass = twMerge(variant === 'monochrome' && 'text-neutral-subtle', size === 'xs' && 'h-full w-full')
+  const wrapperClassName = twMerge(className, size === 'xs' && 'h-[14px] w-[14px]')
+
   if (!status)
     return (
       <Tooltip content="Stopped">
-        <div className={className}>
-          <StoppedIcon />
+        <div className={wrapperClassName}>
+          <StoppedIcon className={iconClass} />
         </div>
       </Tooltip>
     )
@@ -68,9 +75,9 @@ export function StatusChip({
 
   const icon = match(status)
     // success
-    .with('READY', () => <StoppedIcon />)
-    .with('DEPLOYED', 'RUNNING', 'COMPLETED', 'SUCCESS', 'DONE', 'DEPLOY', () => <DeployedIcon />)
-    .with('RESTARTED', 'RESTART', () => <RestartedIcon />)
+    .with('READY', () => <StoppedIcon className={iconClass} />)
+    .with('DEPLOYED', 'RUNNING', 'COMPLETED', 'SUCCESS', 'DONE', 'DEPLOY', () => <DeployedIcon className={iconClass} />)
+    .with('RESTARTED', 'RESTART', () => <RestartedIcon className={iconClass} />)
     // spinner
     .with(
       'QUEUED',
@@ -89,21 +96,21 @@ export function StatusChip({
       'TERRAFORM_FORCE_UNLOCK_STATE',
       () => <QueuedIcon />
     )
-    .with('DEPLOYING', 'STARTING', 'ONGOING', 'DRY_RUN', 'EXECUTING', () => <DeployingIcon />)
-    .with('RESTARTING', () => <RestartingIcon />)
-    .with('BUILDING', () => <BuildingIcon />)
-    .with('STOPPING', () => <StoppingIcon />)
-    .with('CANCELING', () => <CancelingIcon />)
-    .with('DELETING', () => <DeletingIcon />)
+    .with('DEPLOYING', 'STARTING', 'ONGOING', 'DRY_RUN', 'EXECUTING', () => <DeployingIcon className={iconClass} />)
+    .with('RESTARTING', () => <RestartingIcon className={iconClass} />)
+    .with('BUILDING', () => <BuildingIcon className={iconClass} />)
+    .with('STOPPING', () => <StoppingIcon className={iconClass} />)
+    .with('CANCELING', () => <CancelingIcon className={iconClass} />)
+    .with('DELETING', () => <DeletingIcon className={iconClass} />)
     // stopped
-    .with('STOPPED', 'STOP', () => <StoppedIcon />)
-    .with('CANCELED', 'CANCEL', () => <CanceledIcon />)
-    .with('SKIP', 'SKIPPED', () => <SkipIcon />)
-    .with('DELETED', 'DELETE', () => <DeletedIcon />)
+    .with('STOPPED', 'STOP', () => <StoppedIcon className={iconClass} />)
+    .with('CANCELED', 'CANCEL', () => <CanceledIcon className={iconClass} />)
+    .with('SKIP', 'SKIPPED', () => <SkipIcon className={iconClass} />)
+    .with('DELETED', 'DELETE', () => <DeletedIcon className={iconClass} />)
     // unknow / error / warning
-    .with('UNKNOWN', 'NEVER', () => <UnknownIcon />)
-    .with('BUILD_ERROR', () => <BuildErrorIcon />)
-    .with('WARNING', () => <WarningIcon />)
+    .with('UNKNOWN', 'NEVER', () => <UnknownIcon className={iconClass} />)
+    .with('BUILD_ERROR', () => <BuildErrorIcon className={iconClass} />)
+    .with('WARNING', () => <WarningIcon className={iconClass} />)
     .with(
       'DEPLOYMENT_ERROR',
       'STOP_ERROR',
@@ -112,18 +119,13 @@ export function StatusChip({
       'ERROR',
       'INVALID_CREDENTIALS',
       'RECAP',
-      () => (
-        <span className="relative flex">
-          <span className="absolute inline-flex h-full w-full animate-ping-small rounded-full bg-red-500 opacity-75" />
-          <ErrorIcon className="relative rounded-full bg-white" />
-        </span>
-      )
+      () => <ErrorIcon className={iconClass} />
     )
     .exhaustive()
 
   return (
     <Tooltip content={tooltipContent} disabled={disabledTooltip}>
-      <div className={className}>{icon}</div>
+      <div className={wrapperClassName}>{icon}</div>
     </Tooltip>
   )
 }

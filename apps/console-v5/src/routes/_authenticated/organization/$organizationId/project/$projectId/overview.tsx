@@ -68,7 +68,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
               {timeAgo(new Date(overview.deployment_status?.last_deployment_date ?? Date.now()))} ago
             </span>
           </div>
-          <StatusChip status={overview.deployment_status?.last_deployment_state} />
+          <StatusChip status={overview.deployment_status?.last_deployment_state} variant="monochrome" size="xs" />
         </div>
       </Table.Cell>
       <Table.Cell className="border-neutral h-12 border-l">
