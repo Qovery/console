@@ -30,6 +30,7 @@ export interface ApplicationGeneralData {
   // application
   branch?: string
   git_repository?: ApplicationGitRepositoryRequest
+  repository?: string
   is_public_repository?: boolean
   provider?: keyof typeof GitProviderEnum
   git_token_id?: GitTokenResponse['id']
