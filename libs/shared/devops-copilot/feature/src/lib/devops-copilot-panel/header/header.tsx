@@ -40,7 +40,7 @@ export function Header({
   setPlan,
 }: HeaderProps) {
   return (
-    <div className="flex animate-[fadein_0.22s_ease-in-out_forwards] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 opacity-0 dark:border-neutral-500">
+    <div className="flex animate-[fadein_0.22s_ease-in-out_forwards] justify-between overflow-hidden border-b border-neutral-200 py-2 pl-4 pr-2 opacity-0 dark:border-neutral-500">
       <div className="flex items-center gap-2">
         <span className="text-sm font-bold text-neutral-500 dark:text-white">
           {!threadId || threads.length === 0

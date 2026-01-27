@@ -457,7 +457,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
           ref={panelRef}
           className={twMerge(
             clsx(
-              'fixed bottom-2 right-2 z-[1] flex rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
+              'fixed bottom-2 right-2 z-[1] flex overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
               {
                 'left-4 top-4 animate-[scalein_0.22s_ease_both] opacity-0': expand,
                 'animate-slidein-up-sm-faded': !expand,
@@ -789,8 +789,8 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   <Icon iconName="robot" iconStyle="light" className="relative z-10 text-neutral-350" />
                 </div>
                 <div className="flex max-w-md flex-col gap-1 text-center">
-                  <span className="text-ssm font-semibold">AI Copilot not activated yet</span>
-                  <span className="text-ssm text-neutral-400">
+                  <span className="text-sm font-medium text-neutral-400">AI Copilot not activated yet</span>
+                  <span className="text-sm text-neutral-400">
                     Our DevOps AI Copilot can help you fix your deployments, optimize your infrastructure costs, audit
                     your security and do everything you would expect from a complete DevOps Engineering team. Enable it
                     in your organization settings to get started.
@@ -801,7 +801,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   to={`${SETTINGS_URL(context?.organization?.id)}${SETTINGS_AI_COPILOT_URL}`}
                   onClick={handleOnClose}
                 >
-                  <Button className="flex gap-2">
+                  <Button className="flex gap-2" size={'md'}>
                     <Icon iconName="sparkles" />
                     Enable AI Copilot
                   </Button>
