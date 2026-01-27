@@ -5,7 +5,7 @@ import { match } from 'ts-pattern'
 import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
+import { AutoDeploySection, GeneralSetting } from '@qovery/domains/services/feature'
 import {
   EditGitRepositorySettingsFeature,
   EntrypointCmdInputs,
@@ -150,7 +150,10 @@ export function PageSettingsGeneral({
                   <Heading>{isJobGitSource(job.source) ? 'Build and deploy' : 'Deploy'}</Heading>
                   {isJobGitSource(job.source) && blockContentBuildDeploy}
                   {job.job_type === 'CRON' && <EntrypointCmdInputs />}
-                  <AutoDeploySetting source={isJobGitSource(job.source) ? 'GIT' : 'CONTAINER_REGISTRY'} />
+                  <AutoDeploySection
+                    serviceId={job.id}
+                    source={isJobGitSource(job.source) ? 'GIT' : 'CONTAINER_REGISTRY'}
+                  />
                 </Section>
                 <Section className="gap-4">
                   <Heading>Extra labels/annotations</Heading>
@@ -159,7 +162,7 @@ export function PageSettingsGeneral({
                 </Section>
               </>
             ))
-            .with({ serviceType: 'APPLICATION' }, () => (
+            .with({ serviceType: 'APPLICATION' }, (app) => (
               <>
                 <Section className="gap-4">
                   <Heading>Source</Heading>
@@ -169,7 +172,7 @@ export function PageSettingsGeneral({
                   <Heading>Build and deploy</Heading>
                   {blockContentBuildDeploy}
                   {watchBuildMode === BuildModeEnum.DOCKER && <EntrypointCmdInputs />}
-                  <AutoDeploySetting source="GIT" />
+                  <AutoDeploySection serviceId={app.id} source="GIT" />
                 </Section>
                 <Section className="gap-4">
                   <Heading>Extra labels/annotations</Heading>
@@ -178,7 +181,7 @@ export function PageSettingsGeneral({
                 </Section>
               </>
             ))
-            .with({ serviceType: 'TERRAFORM' }, () => (
+            .with({ serviceType: 'TERRAFORM' }, (terraform) => (
               <>
                 <Section className="gap-4">
                   <Heading>Source</Heading>
@@ -189,7 +192,7 @@ export function PageSettingsGeneral({
                 </Section>
                 <Section className="gap-4">
                   <Heading>Build and deploy</Heading>
-                  <AutoDeploySetting source="TERRAFORM" />
+                  <AutoDeploySection serviceId={terraform.id} source="TERRAFORM" />
                 </Section>
               </>
             ))
@@ -202,7 +205,7 @@ export function PageSettingsGeneral({
                 <Section className="gap-4">
                   <Heading>Deploy</Heading>
                   <EntrypointCmdInputs />
-                  <AutoDeploySetting source="CONTAINER_REGISTRY" />
+                  <AutoDeploySection serviceId={service.id} source="CONTAINER_REGISTRY" />
                 </Section>
                 <Section className="gap-4">
                   <Heading>Extra labels/annotations</Heading>
@@ -211,7 +214,7 @@ export function PageSettingsGeneral({
                 </Section>
               </>
             ))
-            .with({ serviceType: 'HELM' }, () => (
+            .with({ serviceType: 'HELM' }, (helm) => (
               <>
                 <Section className="gap-4">
                   <Heading>Source</Heading>
@@ -225,7 +228,7 @@ export function PageSettingsGeneral({
                 <Section className="gap-4">
                   <Heading>Deploy</Heading>
                   <DeploymentSetting />
-                  {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" />}
+                  {watchFieldProvider === 'GIT' && <AutoDeploySection serviceId={helm.id} source="GIT" />}
                   {watchFieldProvider === 'HELM_REPOSITORY' && (
                     <Callout.Root color="sky" className="mt-5 items-center">
                       <Callout.Icon>

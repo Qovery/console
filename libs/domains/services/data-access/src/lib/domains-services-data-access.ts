@@ -35,6 +35,7 @@ import {
   EnvironmentActionsApi,
   EnvironmentMainCallsApi,
   type EnvironmentServiceIdsAllRequest,
+  type GitWebhookStatusResponse,
   HelmActionsApi,
   type HelmAdvancedSettings,
   HelmConfigurationApi,
@@ -58,6 +59,7 @@ import {
   type JobRequest,
   JobsApi,
   type RebootServicesRequest,
+  ServiceMainCallsApi,
   type Status,
   TerraformActionsApi,
   type TerraformAdvancedSettings,
@@ -135,6 +137,8 @@ const customDomainContainerApi = new ContainerCustomDomainApi()
 const customDomainHelmApi = new HelmCustomDomainApi()
 
 const deploymentQueueActionsApi = new DeploymentQueueActionsApi()
+
+const serviceMainCallsApi = new ServiceMainCallsApi()
 
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
@@ -600,7 +604,16 @@ export const services = createQueryKeys('services', {
       return response.data.results
     },
   }),
+  gitWebhookStatus: (serviceId: string) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      const response = await serviceMainCallsApi.getServiceGitWebhookStatus(serviceId)
+      return response.data
+    },
+  }),
 })
+
+export type { GitWebhookStatusResponse }
 
 type CloneServiceRequest = {
   serviceId: string
@@ -1238,6 +1251,10 @@ export const mutations = {
   },
   async cleanFailedJobs({ environmentId, payload }: { environmentId: string; payload: CleanFailedJobsRequest }) {
     const response = await environmentActionApi.cleanFailedJobs(environmentId, payload)
+    return response.data
+  },
+  async syncGitWebhook({ serviceId }: { serviceId: string }) {
+    const response = await serviceMainCallsApi.syncServiceGitWebhook(serviceId)
     return response.data
   },
 }
