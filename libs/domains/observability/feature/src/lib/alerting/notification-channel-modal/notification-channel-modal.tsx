@@ -52,62 +52,6 @@ type EmailFormData = {
 
 type AlertReceiverFormData = SlackFormData | EmailFormData
 
-const validateSlackForm = (values: SlackFormData, isEdit: boolean) => {
-  const errors: Record<string, { type: string; message: string }> = {}
-
-  if (!values.name || values.name.trim() === '') {
-    errors['name'] = { type: 'required', message: 'Please enter a display name.' }
-  }
-
-  if (!isEdit && (!values.webhook_url || values.webhook_url.trim() === '')) {
-    errors['webhook_url'] = { type: 'required', message: 'Please enter a webhook URL.' }
-  }
-
-  return { values, errors }
-}
-
-const validateEmailForm = (values: EmailFormData, isEdit: boolean) => {
-  const errors: Record<string, { type: string; message: string }> = {}
-
-  if (!values.name || values.name.trim() === '') {
-    errors['name'] = { type: 'required', message: 'Please enter a display name.' }
-  }
-
-  // Validation multi-emails
-  if (!values.to || values.to.trim() === '') {
-    errors['to'] = { type: 'required', message: 'Please enter at least one email address.' }
-  } else {
-    const emails = values.to.split(',').map((e) => e.trim())
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    const allValid = emails.every((email) => emailRegex.test(email))
-    if (!allValid) {
-      errors['to'] = { type: 'pattern', message: 'Please enter valid email addresses' }
-    }
-  }
-
-  // Validation from
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!values.from || !emailRegex.test(values.from)) {
-    errors['from'] = { type: 'pattern', message: 'Please enter a valid sender email' }
-  }
-
-  // Validation smarthost
-  const smarthostRegex = /^[^:]+:\d+$/
-  if (!values.smarthost || !smarthostRegex.test(values.smarthost)) {
-    errors['smarthost'] = {
-      type: 'pattern',
-      message: 'Format must be host:port (e.g., smtp.gmail.com:587)',
-    }
-  }
-
-  // Validation password
-  if (!isEdit && (!values.auth_password || values.auth_password.trim() === '')) {
-    errors['auth_password'] = { type: 'required', message: 'Please enter SMTP password.' }
-  }
-
-  return { values, errors }
-}
-
 const buildCreationPayload = (
   type: AlertReceiverType,
   formData: AlertReceiverFormData,
@@ -226,12 +170,6 @@ export function NotificationChannelModal({
   const methods = useForm<AlertReceiverFormData>({
     mode: 'onChange',
     defaultValues,
-    resolver: (values) => {
-      return match(values.type)
-        .with('SLACK', () => validateSlackForm(values as SlackFormData, isEdit))
-        .with('EMAIL', () => validateEmailForm(values as EmailFormData, isEdit))
-        .exhaustive()
-    },
   })
 
   const handleSubmit = methods.handleSubmit(async (data) => {
@@ -391,7 +329,15 @@ export function NotificationChannelModal({
                   key="to"
                   name="to"
                   control={methods.control}
-                  rules={{ required: 'Please enter at least one email address.' }}
+                  rules={{
+                    required: 'Please enter at least one email address.',
+                    validate: (value) => {
+                      const emails = value.split(',').map((e) => e.trim())
+                      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                      const allValid = emails.every((email) => emailRegex.test(email))
+                      return allValid || 'Please enter valid email addresses'
+                    },
+                  }}
                   render={({ field, fieldState: { error } }) => (
                     <InputText
                       className="mb-1"
@@ -409,7 +355,13 @@ export function NotificationChannelModal({
                   key="from"
                   name="from"
                   control={methods.control}
-                  rules={{ required: 'Please enter sender email address.' }}
+                  rules={{
+                    required: 'Please enter sender email address.',
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: 'Please enter a valid sender email',
+                    },
+                  }}
                   render={({ field, fieldState: { error } }) => (
                     <InputText
                       className="mb-1"
@@ -428,7 +380,13 @@ export function NotificationChannelModal({
                   key="smarthost"
                   name="smarthost"
                   control={methods.control}
-                  rules={{ required: 'Please enter SMTP server.' }}
+                  rules={{
+                    required: 'Please enter SMTP server.',
+                    pattern: {
+                      value: /^[^:]+:\d+$/,
+                      message: 'Format must be host:port (e.g., smtp.gmail.com:587)',
+                    },
+                  }}
                   render={({ field, fieldState: { error } }) => (
                     <InputText
                       className="mb-1"
