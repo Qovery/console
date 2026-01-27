@@ -62,7 +62,7 @@ export function CardStorage({ serviceId, clusterId }: { serviceId: string; clust
   })
 
   const rawValue = Number(metricsPercentage?.data?.result[0]?.value[1])
-  const value = Number.isFinite(rawValue) ? Math.round(rawValue) : 0
+  const value = Number.isFinite(rawValue) ? rawValue : 0
 
   const maxUsageBytes = Number(metricsMaxStorage?.data?.result[0]?.value[1])
 
@@ -89,8 +89,14 @@ export function CardStorage({ serviceId, clusterId }: { serviceId: string; clust
   const totalStorageGiB = value > 0 ? maxUsageGiB / (value / 100) : 0
 
   const title = `${maxUsageDisplay} ${maxUsageUnit} max storage usage`
-  const description =
-    value > 0 ? `${value}% of your ${totalStorageGiB.toFixed(1)} GiB storage allowance` : `No storage usage data`
+
+  let description
+  if (value > 0) {
+    const displayValue = value < 0.01 ? '< 0.01' : value < 1 ? value.toFixed(2) : Math.round(value).toString()
+    description = `${displayValue}% of your ${totalStorageGiB.toFixed(1)} GiB storage allowance`
+  } else {
+    description = 'No storage usage data'
+  }
 
   return (
     <>

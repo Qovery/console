@@ -1,6 +1,7 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
@@ -8,6 +9,7 @@ import {
   EnableObservabilityButtonContactUs,
   EnableObservabilityContent,
   EnableObservabilityVideo,
+  ServiceDashboard,
 } from '@qovery/domains/observability/feature'
 import { type Database } from '@qovery/domains/services/data-access'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
@@ -30,11 +32,17 @@ export function PageMonitoringFeature() {
 
   const hasMetrics = useMemo(
     () =>
-      cluster?.cloud_provider === 'AWS' &&
-      cluster?.metrics_parameters?.enabled &&
-      cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled &&
       service?.serviceType === 'DATABASE' &&
-      (service as Database)?.mode === DatabaseModeEnum.MANAGED,
+      cluster?.metrics_parameters?.enabled &&
+      match((service as Database)?.mode)
+        .with(DatabaseModeEnum.MANAGED, () => {
+          return (
+            cluster?.cloud_provider === 'AWS' &&
+            cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled
+          )
+        })
+        .with(DatabaseModeEnum.CONTAINER, () => true)
+        .otherwise(() => false),
     [
       cluster?.cloud_provider,
       cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled,
@@ -73,17 +81,19 @@ export function PageMonitoringFeature() {
       </div>
     )
 
-  return noMetricsAvailable ? (
-    <div className="px-10 py-7">
-      <div className="flex flex-col items-center gap-1 rounded border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
-        <Icon className="text-md text-neutral-300" iconStyle="regular" iconName="circle-question" />
-        <span className="font-medium">Monitoring is not available</span>
-        <span>Deploy this database to view monitoring data</span>
+  if (noMetricsAvailable) {
+    return (
+      <div className="px-10 py-7">
+        <div className="flex flex-col items-center gap-1 rounded border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
+          <Icon className="text-md text-neutral-300" iconStyle="regular" iconName="circle-question" />
+          <span className="font-medium">Monitoring is not available</span>
+          <span>Deploy this database to view monitoring data</span>
+        </div>
       </div>
-    </div>
-  ) : (
-    <DatabaseRdsDashboard />
-  )
+    )
+  }
+
+  return (service as Database)?.mode === DatabaseModeEnum.CONTAINER ? <ServiceDashboard /> : <DatabaseRdsDashboard />
 }
 
 export default PageMonitoringFeature

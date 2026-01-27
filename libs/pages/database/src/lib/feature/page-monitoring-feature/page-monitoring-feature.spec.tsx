@@ -35,6 +35,7 @@ jest.mock('@qovery/domains/observability/feature', () => ({
   EnableObservabilityContent: () => <div>Enable Content</div>,
   EnableObservabilityVideo: () => <div>Enable Video</div>,
   DatabaseRdsDashboard: () => <div>Database RDS Dashboard</div>,
+  ServiceDashboard: () => <div>Service Dashboard</div>,
 }))
 
 jest.mock('./placeholder-monitoring', () => ({
@@ -131,7 +132,7 @@ describe('PageMonitoringFeature', () => {
     expect(screen.getByText('Database RDS Dashboard')).toBeInTheDocument()
   })
 
-  it('should not show monitoring for non-AWS providers', () => {
+  it('should not show monitoring for managed databases on non-AWS providers', () => {
     mockUseService.mockReturnValue({
       data: { serviceType: 'DATABASE', mode: DatabaseModeEnum.MANAGED },
       isFetched: true,
@@ -149,7 +150,25 @@ describe('PageMonitoringFeature', () => {
     expect(screen.getByText('Enable Content')).toBeInTheDocument()
   })
 
-  it('should not show monitoring for container mode databases', () => {
+  it('should show service dashboard for container databases on GCP when metrics are enabled', () => {
+    mockUseService.mockReturnValue({
+      data: { serviceType: 'DATABASE', mode: DatabaseModeEnum.CONTAINER },
+      isFetched: true,
+    })
+    mockUseCluster.mockReturnValue({
+      data: {
+        cloud_provider: 'GCP',
+        metrics_parameters: { enabled: true },
+      },
+      isFetched: true,
+    })
+    mockUseDeploymentStatus.mockReturnValue({ data: { state: 'RUNNING' } })
+
+    render(<PageMonitoringFeature />)
+    expect(screen.getByText('Service Dashboard')).toBeInTheDocument()
+  })
+
+  it('should show service dashboard for container mode databases when metrics are enabled', () => {
     mockUseService.mockReturnValue({
       data: { serviceType: 'DATABASE', mode: DatabaseModeEnum.CONTAINER },
       isFetched: true,
@@ -159,7 +178,26 @@ describe('PageMonitoringFeature', () => {
         cloud_provider: 'AWS',
         metrics_parameters: {
           enabled: true,
-          configuration: { cloud_watch_export_config: { enabled: true } },
+        },
+      },
+      isFetched: true,
+    })
+    mockUseDeploymentStatus.mockReturnValue({ data: { state: 'RUNNING' } })
+
+    render(<PageMonitoringFeature />)
+    expect(screen.getByText('Service Dashboard')).toBeInTheDocument()
+  })
+
+  it('should show upsell for container mode databases when metrics are disabled', () => {
+    mockUseService.mockReturnValue({
+      data: { serviceType: 'DATABASE', mode: DatabaseModeEnum.CONTAINER },
+      isFetched: true,
+    })
+    mockUseCluster.mockReturnValue({
+      data: {
+        cloud_provider: 'AWS',
+        metrics_parameters: {
+          enabled: false,
         },
       },
       isFetched: true,

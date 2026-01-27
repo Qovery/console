@@ -6,30 +6,48 @@ import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
-const queryDiskReadNvme = (containerName: string) => `
-  sum by (device) (rate(container_fs_reads_bytes_total{container="${containerName}", device=~"/dev/nvme0.*"}[1m]))
-`
+const queryDiskReadNvme = (containerName: string, podNames?: string[]) => {
+  if (podNames && podNames.length > 0) {
+    const podFilter = podNames.join('|')
+    return `sum (rate(container_fs_reads_bytes_total{pod=~"${podFilter}", device=~"/dev/nvme.*"}[1m]))`
+  }
+  return `sum by (device) (rate(container_fs_reads_bytes_total{container="${containerName}", device=~"/dev/nvme.*"}[1m]))`
+}
 
-const queryDiskReadNonNvme = (containerName: string) => `
-  sum by (device) (rate(container_fs_reads_bytes_total{container="${containerName}", device!~"/dev/nvme0.*", device!=""}[1m]))
-`
+const queryDiskReadNonNvme = (containerName: string, podNames?: string[]) => {
+  if (podNames && podNames.length > 0) {
+    const podFilter = podNames.join('|')
+    return `sum by (device) (rate(container_fs_reads_bytes_total{pod=~"${podFilter}", device!~"/dev/nvme.*", device!=""}[1m]))`
+  }
+  return `sum by (device) (rate(container_fs_reads_bytes_total{container="${containerName}", device!~"/dev/nvme.*", device!=""}[1m]))`
+}
 
-const queryDiskWriteNvme = (containerName: string) => `
-  sum by (device) (rate(container_fs_writes_bytes_total{container="${containerName}", device=~"/dev/nvme0.*"}[1m]))
-`
+const queryDiskWriteNvme = (containerName: string, podNames?: string[]) => {
+  if (podNames && podNames.length > 0) {
+    const podFilter = podNames.join('|')
+    return `sum by (device) (rate(container_fs_writes_bytes_total{pod=~"${podFilter}", device=~"/dev/nvme.*"}[1m]))`
+  }
+  return `sum by (device) (rate(container_fs_writes_bytes_total{container="${containerName}", device=~"/dev/nvme.*"}[1m]))`
+}
 
-const queryDiskWriteNonNvme = (containerName: string) => `
-  sum by (device) (rate(container_fs_writes_bytes_total{container=${containerName}"", device!~"/dev/nvme0.*", device!=""}[1m]))
-`
+const queryDiskWriteNonNvme = (containerName: string, podNames?: string[]) => {
+  if (podNames && podNames.length > 0) {
+    const podFilter = podNames.join('|')
+    return `sum by (device) (rate(container_fs_writes_bytes_total{pod=~"${podFilter}", device!~"/dev/nvme.*", device!=""}[1m]))`
+  }
+  return `sum by (device) (rate(container_fs_writes_bytes_total{container="${containerName}", device!~"/dev/nvme.*", device!=""}[1m]))`
+}
 
 export function DiskChart({
   clusterId,
   serviceId,
   containerName,
+  podNames,
 }: {
   clusterId: string
   serviceId: string
   containerName: string
+  podNames?: string[]
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
 
@@ -37,7 +55,7 @@ export function DiskChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryDiskReadNvme(containerName),
+    query: queryDiskReadNvme(containerName, podNames),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'disk_chart_read_ephemeral',
@@ -47,7 +65,7 @@ export function DiskChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryDiskReadNonNvme(containerName),
+    query: queryDiskReadNonNvme(containerName, podNames),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'disk_chart_read_persistent',
@@ -57,7 +75,7 @@ export function DiskChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryDiskWriteNvme(containerName),
+    query: queryDiskWriteNvme(containerName, podNames),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'disk_chart_read_ephemeral',
@@ -67,7 +85,7 @@ export function DiskChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryDiskWriteNonNvme(containerName),
+    query: queryDiskWriteNonNvme(containerName, podNames),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'disk_chart_write_persistent',

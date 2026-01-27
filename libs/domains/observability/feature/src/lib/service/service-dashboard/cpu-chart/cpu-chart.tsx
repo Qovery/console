@@ -9,26 +9,40 @@ import { convertPodName } from '../../../util-chart/convert-pod-name'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
-const queryCpuUsage = (rateInterval: string, containerName: string) => `
-  sum by (pod) (rate(container_cpu_usage_seconds_total{container="${containerName}"}[${rateInterval}]))
-`
+const queryCpuUsage = (rateInterval: string, containerName: string, podNames?: string[]) => {
+  if (podNames && podNames.length > 0) {
+    const podFilter = podNames.join('|')
+    return `sum by (pod) (rate(container_cpu_usage_seconds_total{pod=~"${podFilter}"}[${rateInterval}]))`
+  }
+  return `sum by (pod) (rate(container_cpu_usage_seconds_total{container="${containerName}"}[${rateInterval}]))`
+}
 
-const queryCpuLimit = (containerName: string) => `
-  sum (bottomk(1, kube_pod_container_resource_limits{resource="cpu",container="${containerName}"}))
-`
+const queryCpuLimit = (containerName: string, podNames?: string[]) => {
+  if (podNames && podNames.length > 0) {
+    const podFilter = podNames.join('|')
+    return `sum (bottomk(1, kube_pod_container_resource_limits{resource="cpu",pod=~"${podFilter}"}))`
+  }
+  return `sum (bottomk(1, kube_pod_container_resource_limits{resource="cpu",container="${containerName}"}))`
+}
 
-const queryCpuRequest = (containerName: string) => `
-  sum (bottomk(1, kube_pod_container_resource_requests{resource="cpu",container="${containerName}"}))
-`
+const queryCpuRequest = (containerName: string, podNames?: string[]) => {
+  if (podNames && podNames.length > 0) {
+    const podFilter = podNames.join('|')
+    return `sum (bottomk(1, kube_pod_container_resource_requests{resource="cpu",pod=~"${podFilter}"}))`
+  }
+  return `sum (bottomk(1, kube_pod_container_resource_requests{resource="cpu",container="${containerName}"}))`
+}
 
 export function CpuChart({
   clusterId,
   serviceId,
   containerName,
+  podNames,
 }: {
   clusterId: string
   serviceId: string
   containerName: string
+  podNames?: string[]
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
   const getColorByPod = usePodColor()
@@ -58,7 +72,7 @@ export function CpuChart({
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: queryCpuUsage(rateInterval, containerName),
+    query: queryCpuUsage(rateInterval, containerName, podNames),
     startTimestamp,
     endTimestamp,
     timeRange,
@@ -68,7 +82,7 @@ export function CpuChart({
 
   const { data: limitMetrics, isLoading: isLoadingLimit } = useMetrics({
     clusterId,
-    query: queryCpuLimit(containerName),
+    query: queryCpuLimit(containerName, podNames),
     startTimestamp,
     endTimestamp,
     timeRange,
@@ -78,7 +92,7 @@ export function CpuChart({
 
   const { data: requestMetrics, isLoading: isLoadingRequest } = useMetrics({
     clusterId,
-    query: queryCpuRequest(containerName),
+    query: queryCpuRequest(containerName, podNames),
     startTimestamp,
     endTimestamp,
     timeRange,

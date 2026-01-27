@@ -11,8 +11,16 @@ export interface UseContainerNameProps {
 
 // Retrieves the container name associated with a specific service
 export function useContainerName({ clusterId, serviceId, resourceType, startDate, endDate }: UseContainerNameProps) {
+  const queryOptions = observability.containerName({
+    clusterId,
+    serviceId,
+    resourceType,
+    startDate,
+    endDate,
+  })
+
   return useQuery({
-    ...observability.containerName({ clusterId, serviceId, resourceType, startDate, endDate }),
+    ...queryOptions,
     enabled: Boolean(clusterId && serviceId),
   })
 }

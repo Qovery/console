@@ -15,7 +15,25 @@ sum by (condition) (
 )
 `
 
-const queryRestartWithReason = (containerName: string, timeRange: string) => `
+const queryRestartWithReason = (containerName: string, timeRange: string, podNames?: string[]) => {
+  if (podNames && podNames.length > 0) {
+    const podFilter = podNames.join('|')
+    return `
+sum by (reason) (
+  sum by (pod) (
+    increase(kube_pod_container_status_restarts_total{pod=~"${podFilter}"}[${timeRange}])
+  )
+  *
+  on(pod) group_left(reason)
+  sum by (pod, reason) (
+    max without(instance, job, endpoint, service, prometheus, uid) (
+      kube_pod_container_status_last_terminated_reason{pod=~"${podFilter}"}
+    )
+  )
+)
+`
+  }
+  return `
 sum by (reason) (
   sum by (pod) (
     increase(kube_pod_container_status_restarts_total{container="${containerName}"}[${timeRange}])
@@ -29,6 +47,7 @@ sum by (reason) (
   )
 )
 `
+}
 
 const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
   sum by (pod,reason)(
@@ -199,12 +218,14 @@ export function InstanceStatusChart({
   containerName,
   isFullscreen,
   namespace,
+  podNames,
 }: {
   clusterId: string
   serviceId: string
   containerName: string
   namespace: string
   isFullscreen?: boolean
+  podNames?: string[]
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, timeRange } = useDashboardContext()
 
@@ -239,7 +260,7 @@ export function InstanceStatusChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryRestartWithReason(containerName, timeRange),
+    query: queryRestartWithReason(containerName, timeRange, podNames),
     boardShortName: 'service_overview',
     metricShortName: 'instance_status_restart',
   })

@@ -15,7 +15,6 @@ import {
 const clusterApi = new ClustersApi()
 const alertRulesApi = new AlertRulesApi()
 const alertReceiversApi = new AlertReceiversApi()
-const organizationApi = new OrganizationMainCallsApi()
 
 export const observability = createQueryKeys('observability', {
   containerName: ({
@@ -165,6 +164,40 @@ export const observability = createQueryKeys('observability', {
         'namespace'
       )
       return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
+    },
+  }),
+  podNames: ({
+    clusterId,
+    statefulsetName,
+    startDate,
+    endDate,
+  }: {
+    clusterId: string
+    statefulsetName: string
+    startDate: string
+    endDate: string
+  }) => ({
+    queryKey: ['podNames', clusterId, statefulsetName],
+    async queryFn() {
+      const endpoint = `api/v1/label/pod/values?match[]=kube_pod_owner{owner_kind="StatefulSet",owner_name="${statefulsetName}"}`
+      const response = await clusterApi.getClusterMetrics(
+        clusterId,
+        endpoint,
+        '',
+        startDate,
+        endDate,
+        undefined,
+        undefined,
+        undefined,
+        'True',
+        'True',
+        undefined,
+        'prometheus',
+        'false',
+        'service_overview',
+        'pod_names'
+      )
+      return response.data.metrics && (JSON.parse(response.data.metrics).data as string[])
     },
   }),
   metrics: ({

@@ -1,12 +1,15 @@
 import clsx from 'clsx'
 import { subHours } from 'date-fns'
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
+import { type Database } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { Button, Callout, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useContainerName } from '../../hooks/use-container-name/use-container-name'
 import { useEnvironment } from '../../hooks/use-environment/use-environment'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
 import { useNamespace } from '../../hooks/use-namespace/use-namespace'
+import { usePodNames } from '../../hooks/use-pod-names/use-pod-names'
 import { DashboardProvider, useDashboardContext } from '../../util-filter/dashboard-context'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
@@ -27,9 +30,10 @@ import { PrivateNetworkRequestStatusChart } from './private-network-request-stat
 import { SelectTimeRange } from './select-time-range/select-time-range'
 
 function ServiceDashboardContent() {
-  const { environmentId = '', applicationId = '' } = useParams()
+  const { environmentId = '', applicationId = '', databaseId = '' } = useParams()
 
-  const { data: service } = useService({ serviceId: applicationId })
+  const serviceId = applicationId || databaseId
+  const { data: service } = useService({ serviceId })
   const { data: environment } = useEnvironment({ environmentId })
   const {
     expandCharts,
@@ -55,23 +59,40 @@ function ServiceDashboardContent() {
       (service?.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => !port.publicly_accessible)))
 
   const hasStorage =
-    (service?.serviceType === 'CONTAINER' || service?.serviceType === 'APPLICATION') &&
-    (service.storage || []).length > 0
+    service?.serviceType === 'DATABASE' ||
+    ((service?.serviceType === 'CONTAINER' || service?.serviceType === 'APPLICATION') &&
+      Array.isArray(service.storage) &&
+      service.storage.length > 0)
 
   const now = new Date()
   const oneHourAgo = subHours(now, 1)
 
   const { data: containerName, isFetched: isFetchedContainerName } = useContainerName({
     clusterId: environment?.cluster_id ?? '',
-    serviceId: applicationId,
+    serviceId: serviceId,
     resourceType: hasStorage ? 'statefulset' : 'deployment',
     startDate: oneHourAgo.toISOString(),
     endDate: now.toISOString(),
   })
 
+  // For container databases, retrieve pod names via kube_pod_owner
+  const isContainerDatabase =
+    service?.serviceType === 'DATABASE' && (service as Database)?.mode === DatabaseModeEnum.CONTAINER
+
+  const { data: podNamesData, isFetched: isFetchedPodNames } = usePodNames({
+    clusterId: environment?.cluster_id ?? '',
+    statefulsetName: containerName ?? '',
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+    enabled: isContainerDatabase,
+  })
+
+  // Ensure podNames is always an array or undefined
+  const podNames = isContainerDatabase && Array.isArray(podNamesData) ? podNamesData : undefined
+
   const { data: namespace, isFetched: isFetchedNamespace } = useNamespace({
     clusterId: environment?.cluster_id ?? '',
-    serviceId: applicationId,
+    serviceId: serviceId,
     resourceType: hasStorage ? 'statefulset' : 'deployment',
     startDate: oneHourAgo.toISOString(),
     endDate: now.toISOString(),
@@ -79,7 +100,7 @@ function ServiceDashboardContent() {
 
   const { data: ingressName = '' } = useIngressName({
     clusterId: environment?.cluster_id ?? '',
-    serviceId: applicationId,
+    serviceId: serviceId,
     enabled: hasPublicPort,
     startDate: oneHourAgo.toISOString(),
     endDate: now.toISOString(),
@@ -113,7 +134,8 @@ function ServiceDashboardContent() {
     )
   }
 
-  if (!environment || !service || !containerName || !namespace)
+  // For container databases, wait for podNames to be loaded before rendering
+  if (!environment || !service || !containerName || !namespace || (isContainerDatabase && !podNames))
     return (
       <div className="flex h-full w-full items-center justify-center p-5">
         <Chart.Loader />
@@ -190,23 +212,24 @@ function ServiceDashboardContent() {
           <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <CardInstanceStatus
               clusterId={environment.cluster_id}
-              serviceId={applicationId}
+              serviceId={serviceId}
               containerName={containerName}
               namespace={namespace}
+              podNames={podNames}
             />
             <div className="flex h-full flex-col gap-3">
               <CardLogErrors
                 organizationId={environment.organization.id}
                 projectId={environment.project.id}
                 environmentId={environment.id}
-                serviceId={applicationId}
+                serviceId={serviceId}
                 clusterId={environment.cluster_id}
                 containerName={containerName}
               />
               {hasPublicPort && (
                 <CardHTTPErrors
                   clusterId={environment.cluster_id}
-                  serviceId={applicationId}
+                  serviceId={serviceId}
                   containerName={containerName}
                   ingressName={ingressName}
                 />
@@ -214,22 +237,18 @@ function ServiceDashboardContent() {
               {hasOnlyPrivatePorts && (
                 <CardPrivateHTTPErrors
                   clusterId={environment.cluster_id}
-                  serviceId={applicationId}
+                  serviceId={serviceId}
                   containerName={containerName}
                 />
               )}
-              {hasStorage && <CardStorage clusterId={environment.cluster_id} serviceId={applicationId} />}
+              {hasStorage && <CardStorage clusterId={environment.cluster_id} serviceId={serviceId} />}
               {hasPublicPort && (
-                <CardPercentile99
-                  clusterId={environment.cluster_id}
-                  serviceId={applicationId}
-                  ingressName={ingressName}
-                />
+                <CardPercentile99 clusterId={environment.cluster_id} serviceId={serviceId} ingressName={ingressName} />
               )}
               {hasOnlyPrivatePorts && (
                 <CardPrivatePercentile99
                   clusterId={environment.cluster_id}
-                  serviceId={applicationId}
+                  serviceId={serviceId}
                   containerName={containerName}
                 />
               )}
@@ -240,14 +259,29 @@ function ServiceDashboardContent() {
           <Heading weight="medium">Resources</Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded border border-neutral-250">
-              <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
+              <CpuChart
+                clusterId={environment.cluster_id}
+                serviceId={serviceId}
+                containerName={containerName}
+                podNames={podNames}
+              />
             </div>
             <div className="overflow-hidden rounded border border-neutral-250">
-              <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
+              <MemoryChart
+                clusterId={environment.cluster_id}
+                serviceId={serviceId}
+                containerName={containerName}
+                podNames={podNames}
+              />
             </div>
             {hasStorage && (
               <div className="overflow-hidden rounded border border-neutral-250">
-                <DiskChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
+                <DiskChart
+                  clusterId={environment.cluster_id}
+                  serviceId={serviceId}
+                  containerName={containerName}
+                  podNames={podNames}
+                />
               </div>
             )}
           </div>
@@ -259,21 +293,21 @@ function ServiceDashboardContent() {
               <div className="overflow-hidden rounded border border-neutral-250">
                 <NetworkRequestStatusChart
                   clusterId={environment.cluster_id}
-                  serviceId={applicationId}
+                  serviceId={serviceId}
                   ingressName={ingressName}
                 />
               </div>
               <div className="overflow-hidden rounded border border-neutral-250">
                 <NetworkRequestDurationChart
                   clusterId={environment.cluster_id}
-                  serviceId={applicationId}
+                  serviceId={serviceId}
                   ingressName={ingressName}
                 />
               </div>
               <div className="overflow-hidden rounded border border-neutral-250">
                 <NetworkRequestSizeChart
                   clusterId={environment.cluster_id}
-                  serviceId={applicationId}
+                  serviceId={serviceId}
                   ingressName={ingressName}
                 />
               </div>
@@ -287,21 +321,21 @@ function ServiceDashboardContent() {
               <div className="overflow-hidden rounded border border-neutral-250">
                 <PrivateNetworkRequestStatusChart
                   clusterId={environment.cluster_id}
-                  serviceId={applicationId}
+                  serviceId={serviceId}
                   containerName={containerName}
                 />
               </div>
               <div className="overflow-hidden rounded border border-neutral-250">
                 <PrivateNetworkRequestDurationChart
                   clusterId={environment.cluster_id}
-                  serviceId={applicationId}
+                  serviceId={serviceId}
                   containerName={containerName}
                 />
               </div>
               <div className="overflow-hidden rounded border border-neutral-250">
                 <PrivateNetworkRequestSizeChart
                   clusterId={environment.cluster_id}
-                  serviceId={applicationId}
+                  serviceId={serviceId}
                   containerName={containerName}
                 />
               </div>

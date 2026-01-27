@@ -1,2 +1,2 @@
 export * from './lib/domains-service-terraform-data-access'
-export * from './lib/terraform.interface'
+export type { TerraformResource } from './lib/terraform.interface'

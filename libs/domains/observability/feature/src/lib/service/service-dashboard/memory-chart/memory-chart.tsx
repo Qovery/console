@@ -9,26 +9,40 @@ import { convertPodName } from '../../../util-chart/convert-pod-name'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
-const queryMemoryUsage = (containerName: string) => `
-  sum by (pod) (container_memory_working_set_bytes{container="${containerName}"})
-`
+const queryMemoryUsage = (containerName: string, podNames?: string[]) => {
+  if (podNames && podNames.length > 0) {
+    const podFilter = podNames.join('|')
+    return `sum by (pod) (container_memory_working_set_bytes{pod=~"${podFilter}"})`
+  }
+  return `sum by (pod) (container_memory_working_set_bytes{container="${containerName}"})`
+}
 
-const queryMemoryLimit = (containerName: string) => `
-  sum (bottomk(1, kube_pod_container_resource_limits{resource="memory", container="${containerName}"}))
-`
+const queryMemoryLimit = (containerName: string, podNames?: string[]) => {
+  if (podNames && podNames.length > 0) {
+    const podFilter = podNames.join('|')
+    return `sum (bottomk(1, kube_pod_container_resource_limits{resource="memory", pod=~"${podFilter}"}))`
+  }
+  return `sum (bottomk(1, kube_pod_container_resource_limits{resource="memory", container="${containerName}"}))`
+}
 
-const queryMemoryRequest = (containerName: string) => `
-  sum (bottomk(1, kube_pod_container_resource_requests{resource="memory", container="${containerName}"}))
-`
+const queryMemoryRequest = (containerName: string, podNames?: string[]) => {
+  if (podNames && podNames.length > 0) {
+    const podFilter = podNames.join('|')
+    return `sum (bottomk(1, kube_pod_container_resource_requests{resource="memory", pod=~"${podFilter}"}))`
+  }
+  return `sum (bottomk(1, kube_pod_container_resource_requests{resource="memory", container="${containerName}"}))`
+}
 
 export function MemoryChart({
   clusterId,
   serviceId,
   containerName,
+  podNames,
 }: {
   clusterId: string
   serviceId: string
   containerName: string
+  podNames?: string[]
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
   const getColorByPod = usePodColor()
@@ -55,7 +69,7 @@ export function MemoryChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMemoryUsage(containerName),
+    query: queryMemoryUsage(containerName, podNames),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'memory',
@@ -65,7 +79,7 @@ export function MemoryChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMemoryLimit(containerName),
+    query: queryMemoryLimit(containerName, podNames),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'memory_limit',
@@ -75,7 +89,7 @@ export function MemoryChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMemoryRequest(containerName),
+    query: queryMemoryRequest(containerName, podNames),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'memory_request',
