@@ -12,6 +12,8 @@ const mockUseServiceLevels = useServiceLevels as jest.Mock
 const mockUseServiceInstances = useServiceInstances as jest.Mock
 const mockUseServiceDeploymentId = useServiceDeploymentId as jest.Mock
 
+const mockRefetchHistoryLogs = jest.fn()
+
 describe('SearchServiceLogs', () => {
   beforeEach(() => {
     mockUseServiceLevels.mockReturnValue({
@@ -30,7 +32,7 @@ describe('SearchServiceLogs', () => {
 
   it('renders search input when data is fetched', () => {
     const { container } = renderWithProviders(
-      <SearchServiceLogs clusterId="cluster-1" serviceId="service-1" isLoading={false} />
+      <SearchServiceLogs clusterId="cluster-1" serviceId="service-1" refetchHistoryLogs={mockRefetchHistoryLogs} />
     )
 
     expect(container.querySelector('input[placeholder="Search logs and filter by message…"]')).toBeInTheDocument()
@@ -47,7 +49,7 @@ describe('SearchServiceLogs', () => {
     })
 
     const { container } = renderWithProviders(
-      <SearchServiceLogs clusterId="cluster-1" serviceId="service-1" isLoading={false} />
+      <SearchServiceLogs clusterId="cluster-1" serviceId="service-1" refetchHistoryLogs={mockRefetchHistoryLogs} />
     )
 
     expect(container.querySelector('input')).not.toBeInTheDocument()
