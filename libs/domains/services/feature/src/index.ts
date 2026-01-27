@@ -1,3 +1,4 @@
+export * from './lib/auto-deploy-badge/auto-deploy-badge'
 export * from './lib/auto-deploy-setting/auto-deploy-setting'
 export * from './lib/auto-deploy-section/auto-deploy-section'
 export * from './lib/git-webhook-status-badge/git-webhook-status-badge'
