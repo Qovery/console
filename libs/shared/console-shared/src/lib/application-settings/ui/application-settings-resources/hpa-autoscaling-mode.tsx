@@ -23,13 +23,11 @@ export function HpaAutoscalingMode({
   maxInstances,
   minRunningInstances,
   hpaMetricType,
-  hpaAverageUtilizationPercent,
-  hpaMemoryAverageUtilizationPercent,
   runningPods,
   environmentMode,
 }: HpaAutoscalingModeProps) {
   const isProduction = environmentMode === EnvironmentModeEnum.PRODUCTION
-  const hasSingleInstance = minRunningInstances === 1
+  const hasSingleInstance = minRunningInstances <= 1
 
   return (
     <>
@@ -43,25 +41,25 @@ export function HpaAutoscalingMode({
         requireMinLessThanMax={true}
       />
 
-      <Callout.Root color="yellow" className="mt-3">
-        <Callout.Icon>
-          <Icon iconName="triangle-exclamation" iconStyle="regular" />
-        </Callout.Icon>
-        <Callout.Text>
-          <p>Always assume one instance may fail due to node maintenance or issues.</p>
-          <p>To ensure high availability, set Minimum Instances to 2 if your app can run on 1 instance.</p>
-          <p>
-            If your application requires more than one instance to handle necessary traffic, set the minimum to 3 or
-            higher to guarantee redundancy during a single failure.
-          </p>
-          {isProduction && hasSingleInstance && (
+      {isProduction && hasSingleInstance && (
+        <Callout.Root color="yellow" className="mt-3">
+          <Callout.Icon>
+            <Icon iconName="triangle-exclamation" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>
+            <p>Always assume one instance may fail due to node maintenance or issues.</p>
+            <p>To ensure high availability, set Minimum Instances to 2 if your app can run on 1 instance.</p>
+            <p>
+              If your application requires more than one instance to handle necessary traffic, set the minimum to 3 or
+              higher to guarantee redundancy during a single failure.
+            </p>
             <p className="mt-2 font-medium">
               We strongly discourage running your production environment with only one instance. This setup might create
               service downtime in case of cluster upgrades.
             </p>
-          )}
-        </Callout.Text>
-      </Callout.Root>
+          </Callout.Text>
+        </Callout.Root>
+      )}
 
       <HpaMetricFields control={control} setValue={setValue} hpaMetricType={hpaMetricType} />
     </>

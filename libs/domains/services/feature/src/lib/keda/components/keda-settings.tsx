@@ -35,18 +35,6 @@ export function KedaSettings({
         requireMinLessThanMax={true}
       />
 
-      <Callout.Root color="sky" className="mt-3">
-        <Callout.Icon>
-          <Icon iconName="circle-info" iconStyle="regular" />
-        </Callout.Icon>
-        <Callout.Text>
-          <p>
-            For applications requiring high availability, set Minimum Instances to at least 2 to maintain service
-            availability during pod failures or cluster maintenance.
-          </p>
-        </Callout.Text>
-      </Callout.Root>
-
       <KedaScalersFields control={control} scalersFieldArray={scalersFieldArray} disabled={disabled} />
     </>
   )
