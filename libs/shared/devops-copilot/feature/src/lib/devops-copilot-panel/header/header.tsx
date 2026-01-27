@@ -58,7 +58,7 @@ export function Header({
             Beta
           </Badge>
         </Tooltip>
-        {userAccess?.read_only === false && threadLength == 0 && (
+        {userAccess?.read_only === false && threadLength === 0 && (
           <>
             <div className="mx-1 h-5 w-[1px] bg-neutral-200 dark:bg-neutral-500"></div>
             <div className="flex items-center gap-2">

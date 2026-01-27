@@ -3,7 +3,6 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import mermaid from 'mermaid'
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { type CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
@@ -74,7 +73,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const docLinks = useContextualDocLinks()
   const { context, current } = useQoveryContext()
   const { user, getAccessTokenSilently } = useAuth0()
-  const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
 
   const organizationId = context?.organization?.id ?? ''
 
@@ -801,7 +799,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   to={`${SETTINGS_URL(context?.organization?.id)}${SETTINGS_AI_COPILOT_URL}`}
                   onClick={handleOnClose}
                 >
-                  <Button className="flex gap-2" size={'md'}>
+                  <Button className="flex gap-2" size="md">
                     <Icon iconName="sparkles" />
                     Enable AI Copilot
                   </Button>
