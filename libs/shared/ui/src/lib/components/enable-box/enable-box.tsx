@@ -34,7 +34,9 @@ export function EnableBox(props: EnableBoxProps) {
     if (currentChecked !== checked) setChecked(currentChecked)
   }, [currentChecked, setChecked, checked])
 
-  const checkedClasses = currentChecked ? 'bg-brand-50 border border-brand-500' : ' bg-neutral-100  border-neutral-250'
+  const checkedClasses = currentChecked
+    ? 'bg-surface-brand-subtle border border-brand-strong'
+    : ' bg-surface-neutral-subtle border-neutral'
 
   return (
     <div
@@ -50,11 +52,11 @@ export function EnableBox(props: EnableBoxProps) {
             checked={currentChecked ?? false}
             onCheckedChange={(checked) => setCurrentChecked(checked as boolean)}
           />
-          <label htmlFor={name} className="cursor-pointer select-none text-sm font-medium text-neutral-400">
+          <label htmlFor={name} className="cursor-pointer select-none text-sm font-medium text-neutral">
             {title}
           </label>
         </div>
-        {description && <p className="ml-8 text-sm text-neutral-400">{description}</p>}
+        {description && <p className="ml-8 text-sm text-neutral">{description}</p>}
       </div>
 
       {currentChecked && <div onClick={(e) => e.stopPropagation()}>{children}</div>}

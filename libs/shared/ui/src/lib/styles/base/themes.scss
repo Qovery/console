@@ -28,6 +28,7 @@
   --neutral-invert-2: hsla(270, 4%, 10%, 1);
   --neutral-invert-3: hsla(260, 4%, 14%, 1);
   --neutral-invert-6: hsla(270, 5%, 24%, 1);
+  --neutral-invert-11: hsla(258, 7%, 72%, 1);
   --neutral-invert-12: hsla(300, 100%, 100%, 1);
 
   /* Brand */
@@ -60,6 +61,9 @@
   --positive-11: hsla(154, 60%, 32%, 1);
   --positive-12: hsla(155, 40%, 16%, 1);
 
+  /* Positive invert */
+  --positive-invert-11: hsla(151, 65%, 54%, 1);
+
   /* Warning */
   --warning-1: hsla(40, 60%, 99%, 1);
   --warning-2: hsla(51, 91%, 95%, 1);
@@ -74,6 +78,9 @@
   --warning-10: hsla(42, 100%, 55%, 1);
   --warning-11: hsla(35, 100%, 34%, 1);
   --warning-12: hsla(24, 40%, 22%, 1);
+
+  /* Warning Invert */
+  --warning-invert-11: hsla(46, 100%, 54%, 1);
 
   /* Negative */
   --negative-1: hsla(0, 100%, 99%, 1);
@@ -90,6 +97,9 @@
   --negative-11: hsla(10, 82%, 45%, 1);
   --negative-12: hsla(8, 50%, 24%, 1);
 
+  /* Negative invert */
+  --negative-invert-11: hsla(12, 100%, 75%, 1);
+
   /* Info */
   --info-1: hsla(210, 100%, 99%, 1);
   --info-2: hsla(207, 100%, 98%, 1);
@@ -104,6 +114,9 @@
   --info-10: hsla(207, 96%, 48%, 1);
   --info-11: hsla(208, 88%, 43%, 1);
   --info-12: hsla(216, 71%, 23%, 1);
+
+  /* Info invert */
+  --info-invert-11: hsla(210, 100%, 72%, 1);
 
   /* Accent */
   --accent-3: hsla(341, 100%, 96%, 1);
@@ -140,6 +153,7 @@
   --neutral-invert-2: hsla(270, 20%, 98%, 1);
   --neutral-invert-3: hsla(285, 14%, 95%, 1);
   --neutral-invert-6: hsla(263, 11%, 86%, 1);
+  --neutral-invert-11: hsla(252, 5%, 41%, 1);
   --neutral-invert-12: hsla(257, 10%, 14%, 1);
 
   /* Brand */
@@ -172,6 +186,9 @@
   --positive-11: hsla(151, 65%, 54%, 1);
   --positive-12: hsla(144, 70%, 82%, 1);
 
+  /* Positive invert */
+  --positive-invert-11: hsla(154, 60%, 32%, 1);
+
   /* Warning */
   --warning-1: hsla(36, 29%, 7%, 1);
   --warning-2: hsla(39, 32%, 9%, 1);
@@ -186,6 +203,9 @@
   --warning-10: hsla(50, 100%, 52%, 1);
   --warning-11: hsla(46, 100%, 54%, 1);
   --warning-12: hsla(41, 100%, 85%, 1);
+
+  /* Warning Invert */
+  --warning-invert-11: hsla(35, 100%, 34%, 1);
 
   /* Negative */
   --negative-1: hsla(0, 17%, 8%, 1);
@@ -202,6 +222,9 @@
   --negative-11: hsla(12, 100%, 75%, 1);
   --negative-12: hsla(10, 86%, 89%, 1);
 
+  /* Negative invert */
+  --negative-invert-11: hsla(10, 82%, 45%, 1);
+
   /* Info */
   --info-1: hsla(215, 42%, 9%, 1);
   --info-2: hsla(218, 39%, 11%, 1);
@@ -216,6 +239,9 @@
   --info-10: hsla(210, 100%, 62%, 1);
   --info-11: hsla(210, 100%, 72%, 1);
   --info-12: hsla(205, 100%, 88%, 1);
+
+  /* Info invert */
+  --info-invert-11: hsla(208, 88%, 43%, 1);
 
   /* Accent */
   --accent-3: hsla(333, 45%, 15%, 1);

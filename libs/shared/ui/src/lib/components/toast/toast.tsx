@@ -40,25 +40,25 @@ export const ToastContent = (
   return (
     <div
       data-testid="toast"
-      className="group relative cursor-pointer rounded bg-neutral-900 shadow-[0_16px_24px_rgba(0,0,0,0.12)]"
+      className="group relative cursor-pointer rounded bg-surface-neutralInvert shadow-[0_16px_24px_rgba(0,0,0,0.12)]"
       onClick={() => options && toastAction.dismiss(options.id)}
     >
       <div className="flex">
         <div className="mt-[1px] flex h-full justify-center pl-4 pt-2">
-          {status === ToastEnum.SUCCESS && <Icon name="icon-solid-check" className="text-green-500" />}
-          {status === ToastEnum.ERROR && <Icon name="icon-solid-circle-exclamation" className="text-red-500" />}
-          {status === ToastEnum.WARNING && <Icon name="icon-solid-circle-exclamation" className="text-yellow-500" />}
+          {status === ToastEnum.SUCCESS && <Icon name="icon-solid-check" className="text-positiveInvert" />}
+          {status === ToastEnum.ERROR && <Icon name="icon-solid-circle-exclamation" className="text-negativeInvert" />}
+          {status === ToastEnum.WARNING && <Icon name="icon-solid-circle-exclamation" className="text-warningInvert" />}
         </div>
         <div className="max-w-[256px] break-words py-2 pl-3 pr-4">
           {title && (
-            <p data-testid="toast-title" className="font-medium text-white">
+            <p data-testid="toast-title" className="font-medium text-neutralInvert">
               {title}
             </p>
           )}
           {description && (
             <span
               data-testid="toast-description"
-              className={`block text-sm font-medium text-neutral-300 ${!labelAction ? 'mb-1' : ''}`}
+              className={`text-neutralInvert-subtle block text-sm font-medium ${!labelAction ? 'mb-1' : ''}`}
             >
               {description}
             </span>
@@ -68,7 +68,7 @@ export const ToastContent = (
             <button
               data-testid="label-action"
               onClick={(e) => onLabelClick(e)}
-              className="-mt-1 mb-1 cursor-pointer text-sm font-medium text-blue-400"
+              className="text-infoInvert -mt-1 mb-1 cursor-pointer text-sm font-medium"
             >
               {labelAction}
             </button>
@@ -76,23 +76,23 @@ export const ToastContent = (
         </div>
         {!labelAction && options && callback && (
           <div
-            className="flex items-center justify-end rounded-r border-l border-neutral-500 px-4 transition duration-150 ease-in-out hover:bg-neutral-700"
+            className="flex items-center justify-end rounded-r border-l border-neutralInvert px-4 transition duration-150 ease-in-out hover:bg-surface-neutralInvert-subtle"
             onClick={() => {
               toastAction.dismiss(options.id)
               callback()
             }}
           >
             {iconAction ? (
-              <Icon iconName={iconAction} className="text-sm text-white" />
+              <Icon iconName={iconAction} className="text-sm text-neutralInvert" />
             ) : (
-              <Icon iconName="gear" className="text-sm text-white" />
+              <Icon iconName="gear" className="text-sm text-neutralInvert" />
             )}
           </div>
         )}
 
         {options && (
           <button
-            className="absolute left-[-8px] top-[-8px] flex h-6 w-6 items-center justify-center rounded-full border border-neutral-400 bg-neutral-600 text-white opacity-0 duration-150 ease-out hover:bg-neutral-700 group-hover:opacity-100"
+            className="absolute left-[-8px] top-[-8px] flex h-6 w-6 items-center justify-center rounded-full border border-neutralInvert bg-surface-neutralInvert text-neutralInvert opacity-0 duration-150 ease-out hover:bg-surface-neutralInvert-subtle group-hover:opacity-100"
             onClick={() => toastAction.dismiss(options.id)}
           >
             <Icon iconName="xmark" className="text-sm" />

@@ -40,7 +40,7 @@ export function LegacyAvatar(props: LegacyAvatarProps) {
     noTooltip = false,
   } = props
 
-  const defineClass = `${style === LegacyAvatarStyle.STROKED ? 'border border-neutral-200' : ''} ${
+  const defineClass = `${style === LegacyAvatarStyle.STROKED ? 'border border-neutral' : ''} ${
     onClick ? 'cursor-pointer' : ''
   }`
 
@@ -54,8 +54,8 @@ export function LegacyAvatar(props: LegacyAvatarProps) {
       {url ? (
         <img src={url} alt={alt} className="h-full w-full rounded-full" />
       ) : (
-        <div className="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-center">
-          <span className="relative text-xs font-medium text-neutral-400">
+        <div className="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center">
+          <span className="relative text-xs font-medium text-neutral">
             {firstName && firstName.charAt(0).toUpperCase()}
             {lastName && lastName.charAt(0).toUpperCase()}
           </span>
@@ -70,11 +70,11 @@ export function LegacyAvatar(props: LegacyAvatarProps) {
           className="absolute -right-[2px] top-[24px] flex h-[18px] w-[18px] items-center rounded-full text-sm font-medium"
         >
           {logoUrl ? (
-            <span className="flex h-full w-full items-center justify-center rounded-full bg-neutral-50 p-[2px]">
+            <span className="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral p-[2px]">
               <img src={logoUrl} alt="Logo Organization" />
             </span>
           ) : (
-            <span className="flex h-full w-full items-center justify-center rounded-full border border-neutral-50 bg-neutral-150 text-2xs uppercase text-neutral-350">
+            <span className="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-2xs uppercase text-neutral-subtle">
               {logoText}
             </span>
           )}

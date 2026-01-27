@@ -342,14 +342,19 @@ module.exports = {
         },
         neutralInvert: {
           DEFAULT: 'var(--neutral-invert-12)',
+          subtle: 'var(--neutral-invert-11)',
           contrasted: 'var(--contrast-inverted)',
         },
         brand: { DEFAULT: 'var(--brand-11)', hover: 'var(--brand-10)' },
-        info: { DEFAULT: 'var(--info-11)' },
-        positive: { DEFAULT: 'var(--positive-11)' },
-        negative: { DEFAULT: 'var(--negative-11)' },
-        warning: { DEFAULT: 'var(--warning-11)' },
-        accent1: { DEFAULT: 'var(--accent-11)' },
+        info: { DEFAULT: 'var(--info-11)', hover: 'var(--info-10)' },
+        infoInvert: { DEFAULT: 'var(--info-invert-11)' },
+        positive: { DEFAULT: 'var(--positive-11)', hover: 'var(--positive-10)' },
+        positiveInvert: { DEFAULT: 'var(--positive-invert-11)' },
+        negative: { DEFAULT: 'var(--negative-11)', hover: 'var(--negative-10)' },
+        negativeInvert: { DEFAULT: 'var(--negative-invert-11)' },
+        warning: { DEFAULT: 'var(--warning-11)', hover: 'var(--warning-10)' },
+        warningInvert: { DEFAULT: 'var(--warning-invert-11)' },
+        accent1: { DEFAULT: 'var(--accent-11)', hover: 'var(--accent1-10)' },
       },
       borderColor: {
         neutral: {
@@ -455,40 +460,34 @@ module.exports = {
         },
         loaderDots: {
           '0%': {
-            boxShadow:
-              '0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0)',
+            boxShadow: '0px 0 transparent, 0px 0 transparent, 0px 0 transparent, 0px 0 transparent',
           },
           '12%': {
-            boxShadow:
-              '100px 0 rgba(255, 255, 255, 1), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0)',
+            boxShadow: '100px 0 var(--neutral-5), 0px 0 transparent, 0px 0 transparent, 0px 0 transparent',
           },
           '25%': {
-            boxShadow:
-              '110px 0 rgba(255, 255, 255, 1), 100px 0 rgba(255, 255, 255, 1), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0)',
+            boxShadow: '110px 0 var(--neutral-5), 100px 0 var(--neutral-5), 0px 0 transparent, 0px 0 transparent',
           },
           '36%': {
             boxShadow:
-              '120px 0 rgba(255, 255, 255, 1), 110px 0 rgba(255, 255, 255, 1), 100px 0 rgba(255, 255, 255, 1), 0px 0 rgba(255, 255, 255, 0)',
+              '120px 0 var(--neutral-5), 110px 0 var(--neutral-5), 100px 0 var(--neutral-5), 0px 0 transparent',
           },
           '50%': {
             boxShadow:
-              '130px 0 rgba(255, 255, 255, 1), 120px 0 rgba(255, 255, 255, 1), 110px 0 rgba(255, 255, 255, 1), 100px 0 rgba(255, 255, 255, 1)',
+              '130px 0 var(--neutral-5), 120px 0 var(--neutral-5), 110px 0 var(--neutral-5), 100px 0 var(--neutral-5)',
           },
           '62%': {
             boxShadow:
-              '200px 0 rgba(255, 255, 255, 0), 130px 0 rgba(255, 255, 255, 1), 120px 0 rgba(255, 255, 255, 1), 110px 0 rgba(255, 255, 255, 1)',
+              '200px 0 transparent, 130px 0 var(--neutral-5), 120px 0 var(--neutral-5), 110px 0 var(--neutral-5)',
           },
           '75%': {
-            boxShadow:
-              '200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 rgba(255, 255, 255, 1), 120px 0 rgba(255, 255, 255, 1)',
+            boxShadow: '200px 0 transparent, 200px 0 transparent, 130px 0 var(--neutral-5), 120px 0 var(--neutral-5)',
           },
           '87%': {
-            boxShadow:
-              '200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 rgba(255, 255, 255, 1)',
+            boxShadow: '200px 0 transparent, 200px 0 transparent, 200px 0 transparent, 130px 0 var(--neutral-5)',
           },
           '100%': {
-            boxShadow:
-              '200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0)',
+            boxShadow: '200px 0 transparent, 200px 0 transparent, 200px 0 transparent, 200px 0 transparent',
           },
         },
         'shiny-text': {
@@ -527,5 +526,9 @@ module.exports = {
       after: ['last'],
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addVariant }) {
+      addVariant('retina', '@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)')
+    },
+  ],
 }

@@ -12,7 +12,7 @@ const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function Table
   return (
     <table
       ref={ref}
-      className={twMerge('min-w-full divide-y divide-neutral-200 text-sm text-neutral-400', className)}
+      className={twMerge('min-w-full divide-y divide-neutral text-sm text-neutral', className)}
       {...rest}
     >
       {children}
@@ -37,7 +37,7 @@ const TableBody = forwardRef<ElementRef<'tbody'>, TableBodyProps>(function Table
   ref
 ) {
   return (
-    <tbody className={twMerge('divide-y divide-neutral-200', className)} ref={ref} {...rest}>
+    <tbody className={twMerge('divide-y divide-neutral', className)} ref={ref} {...rest}>
       {children}
     </tbody>
   )

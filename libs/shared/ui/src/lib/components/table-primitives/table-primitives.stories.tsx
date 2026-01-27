@@ -6,7 +6,7 @@ const Story: Meta<typeof Table.Root> = {
   title: 'Table Primitives',
   decorators: [
     (Story) => (
-      <div style={{ background: 'white', padding: '3em' }}>
+      <div style={{ background: 'bg-white', padding: '3em' }}>
         <Story />
       </div>
     ),
