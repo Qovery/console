@@ -23,7 +23,7 @@ import useEnvironments from '../../hooks/use-environments/use-environments'
 const { Table } = TablePrimitives
 
 const gridLayoutClassName =
-  'grid w-full grid-cols-[1fr_20%_min(20%,160px)_min(15%,120px)_max(10%,106px)] xl:grid-cols-[1fr_25%_min(20%,220px)_160px_106px]'
+  'grid w-full grid-cols-[1fr_20%_min(20%,160px)_min(15%,120px)_max(10%,106px)] xl:grid-cols-[1fr_25%_min(20%,240px)_160px_106px]'
 
 function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const { organizationId, projectId } = useParams({ strict: false })
@@ -73,10 +73,12 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
           {overview.cluster && (
             <Link
               to={`/organization/${organizationId}/cluster/${overview.cluster.id}/overview`}
-              className="text-wrap break-all hover:underline lg:inline-flex lg:items-center lg:gap-2"
+              className="group lg:inline-flex lg:items-center lg:gap-2"
             >
               <ClusterAvatar cluster={overview.cluster} size="sm" className="hidden lg:inline-block" />
-              <Truncate text={overview.cluster?.name} truncateLimit={isDesktopOrLaptop ? 40 : 20} />
+              <span className="text-wrap break-all group-hover:underline">
+                <Truncate text={overview.cluster?.name} truncateLimit={isDesktopOrLaptop ? 40 : 20} />
+              </span>
             </Link>
           )}
         </div>
