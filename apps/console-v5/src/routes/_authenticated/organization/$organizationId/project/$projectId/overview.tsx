@@ -1,6 +1,7 @@
 import { Link, createFileRoute, useParams } from '@tanstack/react-router'
 import { EnvironmentModeEnum, type EnvironmentOverviewResponse } from 'qovery-typescript-axios'
-import { type ReactNode, Suspense, useMemo } from 'react'
+import { Suspense, useMemo } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
 import {
@@ -33,26 +34,34 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
   component: RouteComponent,
 })
 
-const gridLayoutClassName = 'grid grid-cols-[3fr_2fr_2fr_180px_106px]'
+const gridLayoutClassName =
+  'grid w-full grid-cols-[1fr_20%_min(20%,160px)_min(15%,120px)_max(10%,106px)] xl:grid-cols-[1fr_25%_min(20%,220px)_160px_106px]'
 
 function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const { organizationId, projectId } = useParams({ strict: false })
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const environment = environments.find((env) => env.id === overview.id)
   const runningStatus = environment?.runningStatus
+  const cellClassName = 'h-auto border-l border-neutral py-2'
+  const isDesktopOrLaptop = useMediaQuery({
+    query: '(min-width: 1280px)',
+  })
+  const isVeryLargeScreen = useMediaQuery({
+    query: '(min-width: 1536px)',
+  })
 
   return (
     <Table.Row key={overview.id} className={twMerge('w-full hover:bg-surface-neutral-subtle', gridLayoutClassName)}>
-      <Table.Cell className="h-12">
-        <div className="flex h-full items-center justify-between">
+      <Table.Cell className={twMerge(cellClassName, 'border-none')}>
+        <div className="flex h-full flex-col justify-center gap-1 xl:flex-row xl:items-center xl:justify-between xl:gap-2">
           <Link
             to="/organization/$organizationId/project/$projectId/environment/$environmentId/"
             params={{ organizationId, projectId, environmentId: overview.id }}
-            className="text-sm font-medium"
+            className="text-wrap break-all text-sm font-medium"
           >
-            <Truncate text={overview.name} truncateLimit={54} />
+            <Truncate text={overview.name} truncateLimit={isVeryLargeScreen ? 72 : isDesktopOrLaptop ? 50 : 40} />
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-shrink-0 items-center gap-2">
             <span className="font-normal text-neutral-subtle">
               {overview.service_count} {pluralize(overview.service_count, 'service')}
             </span>
@@ -60,32 +69,34 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
           </div>
         </div>
       </Table.Cell>
-      <Table.Cell className="h-12 border-l border-neutral">
+      <Table.Cell className={cellClassName}>
         <div className="flex h-full items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-1 xl:flex-row xl:items-center xl:gap-2">
             <DeploymentAction status={overview.deployment_status?.last_deployment_state} />
             <span className="text-neutral-subtle">
               {timeAgo(new Date(overview.deployment_status?.last_deployment_date ?? Date.now()))} ago
             </span>
           </div>
-          <StatusChip status={overview.deployment_status?.last_deployment_state} variant="monochrome" size="xs" />
+          <StatusChip status={overview.deployment_status?.last_deployment_state} variant="monochrome" />
         </div>
       </Table.Cell>
-      <Table.Cell className="h-12 border-l border-neutral">
-        {overview.cluster && (
-          <Link
-            to={`/organization/${organizationId}/cluster/${overview.cluster.id}/overview`}
-            className="group flex h-full items-center"
-          >
-            <ClusterAvatar cluster={overview.cluster} size="sm" />
-            <span className="group-hover:underline">{overview.cluster?.name}</span>
-          </Link>
-        )}
+      <Table.Cell className={cellClassName}>
+        <div className="flex h-full items-center justify-between">
+          {overview.cluster && (
+            <Link
+              to={`/organization/${organizationId}/cluster/${overview.cluster.id}/overview`}
+              className="text-wrap break-all hover:underline lg:inline-flex lg:items-center lg:gap-2"
+            >
+              <ClusterAvatar cluster={overview.cluster} size="sm" className="hidden lg:inline-block" />
+              <Truncate text={overview.cluster?.name} truncateLimit={isDesktopOrLaptop ? 40 : 20} />
+            </Link>
+          )}
+        </div>
       </Table.Cell>
-      <Table.Cell className="h-12 border-l border-neutral">
+      <Table.Cell className={cellClassName}>
         <div className="flex h-full items-center">{timeAgo(new Date(overview.updated_at ?? Date.now()))} ago</div>
       </Table.Cell>
-      <Table.Cell className="h-12 border-l border-neutral">
+      <Table.Cell className={cellClassName}>
         <div className="flex h-full items-center">
           {environment && overview.deployment_status && overview.service_count > 0 && (
             <ActionToolbar.Root>
