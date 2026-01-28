@@ -97,52 +97,79 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       filters,
       direction: 'backward',
       limit: LOGS_PER_BATCH,
-      isNginx: Boolean(queryParams.nginx) ?? false,
+      logType: 'nginx',
     }),
-    enabled: Boolean(clusterId) && Boolean(serviceId) && isHistoryMode && enabled,
+    enabled: Boolean(clusterId) && Boolean(serviceId) && isHistoryMode && Boolean(queryParams.nginx) && enabled,
   })
 
-  const isFetched = isFetchedLogs || isNginxFetched
+  const {
+    data: envoyLogs = [],
+    isFetched: isEnvoyFetched,
+    isFetching: isEnvoyLoading,
+    refetch: refetchEnvoyLogs,
+  } = useQuery({
+    ...serviceLogs.serviceLogs({
+      clusterId,
+      serviceId,
+      startDate,
+      endDate: currentEndDate ?? undefined,
+      filters,
+      direction: 'backward',
+      limit: LOGS_PER_BATCH,
+      logType: 'envoy',
+    }),
+    enabled: Boolean(clusterId) && Boolean(serviceId) && isHistoryMode && Boolean(queryParams.envoy) && enabled,
+  })
+
+  const isFetched = useMemo(
+    () => isFetchedLogs || isNginxFetched || isEnvoyFetched,
+    [isFetchedLogs, isNginxFetched, isEnvoyFetched]
+  )
 
   useEffect(() => {
-    if (isFetched && (logs.length > 0 || nginxLogs.length > 0)) {
+    if (isFetched && (logs.length > 0 || nginxLogs.length > 0 || envoyLogs.length > 0)) {
       setAccumulatedLogs((prev) => {
         const existingKeys = new Set(prev.map((log) => `${log.timestamp}|${log.message}`))
         const newLogs = logs.filter((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
         const newNginxLogs = nginxLogs.filter((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
-        return [...newLogs, ...newNginxLogs, ...prev]
+        const newEnvoyLogs = envoyLogs.filter((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
+        return [...newLogs, ...newNginxLogs, ...newEnvoyLogs, ...prev]
       })
       setIsPaginationLoading(false)
     }
-  }, [isFetched, logs, nginxLogs, resetCounter])
+  }, [isFetched, logs, nginxLogs, envoyLogs, resetCounter])
 
   useEffect(() => {
     if (isFetched && isPaginationLoading) {
-      if (logs.length === 0 && nginxLogs.length === 0) {
+      if (logs.length === 0 && nginxLogs.length === 0 && envoyLogs.length === 0) {
         setHasMoreLogs(false)
         setIsPaginationLoading(false)
         return
       }
 
-      if (logs.length > 0 || nginxLogs.length > 0) {
+      if (logs.length > 0 || nginxLogs.length > 0 || envoyLogs.length > 0) {
         const existingKeys = new Set(accumulatedLogs.map((log) => `${log.timestamp}|${log.message}`))
         const hasNewAppLogs = logs.some((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
         const hasNewNginxLogs = nginxLogs.some((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
+        const hasNewEnvoyLogs = envoyLogs.some((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
 
-        if (!hasNewAppLogs && !hasNewNginxLogs) {
+        if (!hasNewAppLogs && !hasNewNginxLogs && !hasNewEnvoyLogs) {
           setHasMoreLogs(false)
           setIsPaginationLoading(false)
         }
       }
     }
-  }, [isFetched, logs, nginxLogs, accumulatedLogs, isPaginationLoading])
+  }, [isFetched, logs, nginxLogs, envoyLogs, accumulatedLogs, isPaginationLoading])
 
   const refetch = useCallback(() => {
     refetchLogs()
     if (queryParams.nginx) {
       refetchNginxLogs()
     }
-  }, [refetchLogs, refetchNginxLogs, queryParams.nginx])
+    if (queryParams.envoy) {
+      refetchEnvoyLogs()
+    }
+  }, [refetchLogs, refetchNginxLogs, refetchEnvoyLogs, queryParams.nginx, queryParams.envoy])
 
   const loadPreviousLogs = useCallback(async () => {
     if (accumulatedLogs.length === 0 || !hasMoreLogs || isPaginationLoading) return
@@ -202,11 +229,16 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     }
   }, [isFetched, logs.length, accumulatedLogs.length])
 
+  const isLoading = useMemo(
+    () => isLoadingLogs || isNginxLoading || isEnvoyLoading || isPaginationLoading,
+    [isLoadingLogs, isNginxLoading, isEnvoyLoading, isPaginationLoading]
+  )
+
   return {
     data: normalizedLogs,
     refetch,
     isFetched,
-    isLoading: isLoadingLogs || isNginxLoading || isPaginationLoading,
+    isLoading,
     loadPreviousLogs,
     hasMoreLogs,
   }

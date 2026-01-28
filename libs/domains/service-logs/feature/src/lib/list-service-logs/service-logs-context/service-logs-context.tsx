@@ -36,6 +36,7 @@ export const queryParamsServiceLogs = {
   level: StringParam,
   search: StringParam,
   nginx: BooleanParam,
+  envoy: BooleanParam,
   deploymentId: StringParam,
   mode: StringParam,
 }

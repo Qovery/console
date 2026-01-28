@@ -1,6 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import ApplicationSettingsResources, { type ApplicationSettingsResourcesProps } from './application-settings-resources'
+import { ApplicationSettingsResources, type ApplicationSettingsResourcesProps } from './application-settings-resources'
 
 const props: ApplicationSettingsResourcesProps = {
   service: undefined,

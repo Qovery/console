@@ -58,7 +58,7 @@ export function StepGeneralFeature() {
           dockerfileCheckRequest: {
             git_repository: {
               provider: data.provider ?? 'GITHUB',
-              url: data.git_repository?.url ?? '',
+              url: data.git_repository?.url ?? data.repository ?? '',
               root_path: data.root_path,
               branch: data.branch,
               git_token_id: data.git_token_id,

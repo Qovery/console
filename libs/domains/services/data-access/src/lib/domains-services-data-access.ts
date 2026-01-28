@@ -58,6 +58,7 @@ import {
   type JobRequest,
   JobsApi,
   type RebootServicesRequest,
+  ServiceMainCallsApi,
   type Status,
   TerraformActionsApi,
   type TerraformAdvancedSettings,
@@ -135,6 +136,8 @@ const customDomainContainerApi = new ContainerCustomDomainApi()
 const customDomainHelmApi = new HelmCustomDomainApi()
 
 const deploymentQueueActionsApi = new DeploymentQueueActionsApi()
+
+const serviceMainCallsApi = new ServiceMainCallsApi()
 
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
@@ -598,6 +601,13 @@ export const services = createQueryKeys('services', {
         .exhaustive()
       const response = await query(serviceId)
       return response.data.results
+    },
+  }),
+  gitWebhookStatus: (serviceId: string) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      const response = await serviceMainCallsApi.getServiceGitWebhookStatus(serviceId)
+      return response.data
     },
   }),
 })
@@ -1238,6 +1248,10 @@ export const mutations = {
   },
   async cleanFailedJobs({ environmentId, payload }: { environmentId: string; payload: CleanFailedJobsRequest }) {
     const response = await environmentActionApi.cleanFailedJobs(environmentId, payload)
+    return response.data
+  },
+  async syncGitWebhook({ serviceId }: { serviceId: string }) {
+    const response = await serviceMainCallsApi.syncServiceGitWebhook(serviceId)
     return response.data
   },
 }
