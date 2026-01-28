@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import posthog from 'posthog-js'
 import { mutations } from '@qovery/domains/clusters/data-access'
 import { queries } from '@qovery/state/util-queries'
 import { useDeployCluster } from '../use-deploy-cluster/use-deploy-cluster'
@@ -8,13 +9,21 @@ export function useEditCluster() {
   const { mutateAsync: deployCluster } = useDeployCluster()
 
   return useMutation(mutations.editCluster, {
-    onSuccess(_, { organizationId, clusterId }) {
+    onSuccess(_, { organizationId, clusterId, clusterRequest }) {
       queryClient.invalidateQueries({
         queryKey: queries.clusters.list({ organizationId }).queryKey,
       })
       queryClient.invalidateQueries({
         queryKey: queries.clusters.kubeconfig({ organizationId, clusterId }).queryKey,
       })
+
+      if (clusterRequest.keda?.enabled) {
+        posthog.capture('cluster-keda-enabled', {
+          organization_id: organizationId,
+          cluster_id: clusterId,
+          cloud_provider: clusterRequest.cloud_provider,
+        })
+      }
     },
     meta: {
       notifyOnSuccess(_: unknown, variables: unknown) {
