@@ -33,10 +33,10 @@ export function TagCommit(props: TagCommitProps) {
   const contentTag = (
     <Tag
       data-testid="tag-commit"
-      className={`flex items-center justify-center border font-medium ${withBackground ? 'bg-white dark:bg-transparent' : ''} ${
+      className={`flex items-center justify-center border font-medium ${withBackground ? 'bg-background' : ''} ${
         commitDeltaCount
-          ? 'border-orange-500 text-orange-500'
-          : 'w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400'
+          ? 'border-negative-strong text-negative'
+          : 'w-[90px] border-neutral text-neutral-subtle hover:bg-surface-neutral-subtle'
       }`}
     >
       {!hover ? (
@@ -50,7 +50,9 @@ export function TagCommit(props: TagCommitProps) {
       )}
       {commitId.substring(0, 7)}
       {commitDeltaCount ? (
-        <span className="ml-1 inline-block h-4 rounded-[34px] bg-orange-500 px-1 text-white">{commitDeltaCount}</span>
+        <span className="ml-1 inline-block h-4 rounded-[34px] bg-surface-negative-solid px-1 text-neutral-contrasted">
+          {commitDeltaCount}
+        </span>
       ) : null}
     </Tag>
   )
@@ -58,7 +60,7 @@ export function TagCommit(props: TagCommitProps) {
   const copyTag = (
     <Tag
       data-testid="tag-commit"
-      className="flex h-7 w-[70px] items-center justify-center bg-green-500 font-medium text-white"
+      className="flex h-7 w-[70px] items-center justify-center bg-surface-positive-solid font-medium text-neutral-contrasted"
     >
       <Icon iconName="check" iconStyle="regular" className="mr-1 w-4" />
       Copied

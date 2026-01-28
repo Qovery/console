@@ -58,7 +58,7 @@ export const ToastContent = (
           {description && (
             <span
               data-testid="toast-description"
-              className={`text-neutralInvert-subtle block text-sm font-medium ${!labelAction ? 'mb-1' : ''}`}
+              className={`block text-sm font-medium text-neutralInvert-subtle ${!labelAction ? 'mb-1' : ''}`}
             >
               {description}
             </span>
@@ -68,7 +68,7 @@ export const ToastContent = (
             <button
               data-testid="label-action"
               onClick={(e) => onLabelClick(e)}
-              className="text-infoInvert -mt-1 mb-1 cursor-pointer text-sm font-medium"
+              className="-mt-1 mb-1 cursor-pointer text-sm font-medium text-infoInvert"
             >
               {labelAction}
             </button>

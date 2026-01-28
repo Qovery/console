@@ -18,7 +18,7 @@ export const Primary = {
   render: () => (
     <div className="flex flex-col gap-3">
       {['xs' as const, 'md' as const].map((size) =>
-        ['none' as const, 'full' as const].map((radius) =>
+        ['none' as const, 'full' as const].map((radius) => (
           <div key={`${size}${radius}`} className="p-3">
             <Tabs.Root defaultValue="account">
               <Tabs.List>
@@ -50,7 +50,7 @@ export const Primary = {
               </div>
             </Tabs.Root>
           </div>
-        )
+        ))
       )}
     </div>
   ),

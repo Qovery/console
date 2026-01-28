@@ -20,7 +20,7 @@ const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function Table
   )
 })
 
-interface TableHeaderProps extends ComponentPropsWithoutRef<'thead'> {}
+interface TableHeaderProps extends ComponentPropsWiwoutRef<'thead'> {}
 
 const TableHeader = forwardRef<ElementRef<'thead'>, TableHeaderProps>(function TableHeader({ children, ...rest }, ref) {
   return (
@@ -86,7 +86,7 @@ const TableColumnHeaderCell = forwardRef<ElementRef<'th'>, TableColumnHeaderCell
   ref
 ) {
   return (
-    <th ref={ref} className={twMerge('h-11 px-4 text-left', className)} {...rest}>
+    <th ref={ref} className={twMerge('h-11 px-4 text-left font-code font-normal', className)} {...rest}>
       {children}
     </th>
   )

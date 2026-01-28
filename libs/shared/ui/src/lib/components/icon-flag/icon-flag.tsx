@@ -10,7 +10,7 @@ export function IconFlag(props: IconFlagProps) {
 
   return (
     <ReactCountryFlag
-      className={`retina:border-[0.5px] !h-[11px] !w-[14px] rounded-sm border border-neutral ${className}`}
+      className={`!h-[11px] !w-[14px] rounded-sm border border-neutral retina:border-[0.5px] ${className}`}
       countryCode={code}
       svg
     />
