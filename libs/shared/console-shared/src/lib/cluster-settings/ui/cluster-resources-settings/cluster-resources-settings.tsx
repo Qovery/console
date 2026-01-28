@@ -386,7 +386,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                               )}
                             </div>
                             {props.fromDetail && (
-                              <div className="flex border-t border-neutral-250 p-4">
+                              <div className="flex flex-col gap-3 border-t border-neutral-250 p-4">
                                 <Controller
                                   name="karpenter.disk_size_in_gib"
                                   control={control}
@@ -406,6 +406,38 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                     />
                                   )}
                                 />
+                                <div className="grid grid-cols-2 gap-3">
+                                  <Controller
+                                    name="karpenter.disk_iops"
+                                    control={control}
+                                    render={({ field }) => (
+                                      <InputText
+                                        label="Disk IOPS (optional)"
+                                        type="number"
+                                        name={field.name}
+                                        onChange={field.onChange}
+                                        value={field.value}
+                                        className="w-full"
+                                        hint="I/O operations per second for EBS gp3 volumes (3000-16000)."
+                                      />
+                                    )}
+                                  />
+                                  <Controller
+                                    name="karpenter.disk_throughput"
+                                    control={control}
+                                    render={({ field }) => (
+                                      <InputText
+                                        label="Disk throughput (optional)"
+                                        type="number"
+                                        name={field.name}
+                                        onChange={field.onChange}
+                                        value={field.value}
+                                        className="w-full"
+                                        hint="Throughput in MB/s for EBS gp3 volumes (125-1000)."
+                                      />
+                                    )}
+                                  />
+                                </div>
                               </div>
                             )}
                           </div>
@@ -481,7 +513,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     />
                   </div>
                   {props.fromDetail && (
-                    <div className="flex border-t border-neutral-250 p-4">
+                    <div className="flex flex-col gap-3 border-t border-neutral-250 p-4">
                       <Controller
                         name="karpenter.qovery_node_pools.gpu_override.disk_size_in_gib"
                         control={control}
@@ -501,6 +533,38 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                           />
                         )}
                       />
+                      <div className="grid grid-cols-2 gap-3">
+                        <Controller
+                          name="karpenter.qovery_node_pools.gpu_override.disk_iops"
+                          control={control}
+                          render={({ field }) => (
+                            <InputText
+                              label="GPU disk IOPS (optional)"
+                              type="number"
+                              name={field.name}
+                              onChange={field.onChange}
+                              value={field.value}
+                              className="w-full"
+                              hint="I/O operations per second for EBS gp3 volumes (3000-16000)."
+                            />
+                          )}
+                        />
+                        <Controller
+                          name="karpenter.qovery_node_pools.gpu_override.disk_throughput"
+                          control={control}
+                          render={({ field }) => (
+                            <InputText
+                              label="GPU disk throughput (optional)"
+                              type="number"
+                              name={field.name}
+                              onChange={field.onChange}
+                              value={field.value}
+                              className="w-full"
+                              hint="Throughput in MB/s for EBS gp3 volumes (125-1000)."
+                            />
+                          )}
+                        />
+                      </div>
                     </div>
                   )}
                   {watchKarpenterEnabled && props.cluster && (
@@ -556,28 +620,72 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             )}
           />
           {props.fromDetail && (
-            <Controller
-              name="disk_size"
-              control={control}
-              rules={{
-                required: 'Please select a disk size',
-              }}
-              render={({ field }) => (
-                <InputText
-                  type="number"
-                  name={field.name}
-                  onChange={(event) => {
-                    field.onChange(event)
-                    if (props.fromDetail) {
-                      setWarningClusterNodes(true)
-                    }
-                  }}
-                  value={field.value}
-                  label="Disk size (GB)"
-                  hint="Storage allocated to your Kubernetes nodes to store files, application images etc.."
-                />
+            <>
+              <Controller
+                name="disk_size"
+                control={control}
+                rules={{
+                  required: 'Please select a disk size',
+                }}
+                render={({ field }) => (
+                  <InputText
+                    type="number"
+                    name={field.name}
+                    onChange={(event) => {
+                      field.onChange(event)
+                      if (props.fromDetail) {
+                        setWarningClusterNodes(true)
+                      }
+                    }}
+                    value={field.value}
+                    label="Disk size (GB)"
+                    hint="Storage allocated to your Kubernetes nodes to store files, application images etc.."
+                  />
+                )}
+              />
+              {props.cloudProvider === 'AWS' && (
+                <div className="grid grid-cols-2 gap-3">
+                  <Controller
+                    name="disk_iops"
+                    control={control}
+                    render={({ field }) => (
+                      <InputText
+                        type="number"
+                        name={field.name}
+                        onChange={(event) => {
+                          field.onChange(event)
+                          if (props.fromDetail) {
+                            setWarningClusterNodes(true)
+                          }
+                        }}
+                        value={field.value}
+                        label="Disk IOPS (optional)"
+                        hint="I/O operations per second for EBS gp3 volumes (3000-16000)."
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="disk_throughput"
+                    control={control}
+                    render={({ field }) => (
+                      <InputText
+                        type="number"
+                        name={field.name}
+                        onChange={(event) => {
+                          field.onChange(event)
+                          if (props.fromDetail) {
+                            setWarningClusterNodes(true)
+                          }
+                        }}
+                        value={field.value}
+                        label="Disk throughput (optional)"
+                        hint="Throughput in MB/s for EBS gp3 volumes (125-1000)."
+                      />
+                    )}
+                  />
+                </div>
               )}
-            />
+            </>
           )}
           {warningClusterNodes && (
             <Callout.Root color="yellow">

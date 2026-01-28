@@ -18,6 +18,8 @@ export const clusterFactoryMock = (howMany: number, customCloudProvider?: CloudP
     min_running_nodes: 1,
     max_running_nodes: 5,
     disk_size: 20,
+    disk_iops: customCloudProvider === CloudProviderEnum.AWS ? 3000 : undefined,
+    disk_throughput: customCloudProvider === CloudProviderEnum.AWS ? 125 : undefined,
     status: chance.pickone(Object.values(ClusterStateEnum)),
     is_default: false,
     version: '1.22',

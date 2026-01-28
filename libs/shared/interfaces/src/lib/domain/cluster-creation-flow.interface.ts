@@ -37,6 +37,12 @@ export interface ClusterKubeconfigData {
 
 export interface KarpenterData extends ClusterFeatureKarpenterParameters {
   enabled: boolean
+  qovery_node_pools: ClusterFeatureKarpenterParameters['qovery_node_pools'] & {
+    gpu_override?: ClusterFeatureKarpenterParameters['qovery_node_pools']['gpu_override'] & {
+      disk_iops?: number
+      disk_throughput?: number
+    }
+  }
 }
 
 export interface ClusterResourcesData {
@@ -44,6 +50,8 @@ export interface ClusterResourcesData {
   instance_type: string
   nodes: [number, number]
   disk_size: number
+  disk_iops?: number
+  disk_throughput?: number
   karpenter?: KarpenterData
   scw_control_plane?: SCWControlPlaneFeatureType
   infrastructure_charts_parameters?: {
