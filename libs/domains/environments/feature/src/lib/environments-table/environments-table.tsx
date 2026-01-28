@@ -1,10 +1,17 @@
 import { useParams } from '@tanstack/react-router'
-import type { EnvironmentModeEnum, EnvironmentOverviewResponse } from 'qovery-typescript-axios'
-import { useMemo } from 'react'
+import { EnvironmentModeEnum, type EnvironmentOverviewResponse } from 'qovery-typescript-axios'
+import { useCallback, useMemo } from 'react'
 import { useEnvironmentsOverview, useProject } from '@qovery/domains/projects/feature'
 import { Button, Heading, Icon, Section, useModal } from '@qovery/shared/ui'
 import CreateCloneEnvironmentModal from '../create-clone-environment-modal/create-clone-environment-modal'
 import { EnvironmentSection } from './environment-section/environment-section'
+
+const SECTIONS: EnvironmentModeEnum[] = [
+  EnvironmentModeEnum.PRODUCTION,
+  EnvironmentModeEnum.STAGING,
+  EnvironmentModeEnum.DEVELOPMENT,
+  EnvironmentModeEnum.PREVIEW,
+]
 
 export function EnvironmentsTable() {
   const { openModal, closeModal } = useModal()
@@ -19,21 +26,43 @@ export function EnvironmentsTable() {
     }, new Map<EnvironmentModeEnum, EnvironmentOverviewResponse[]>())
   }, [environmentsOverview])
 
-  const onCreateEnvClicked = (type?: EnvironmentModeEnum) => {
-    openModal({
-      content: (
-        <CreateCloneEnvironmentModal
-          onClose={closeModal}
-          projectId={projectId}
-          organizationId={organizationId}
-          type={type}
-        />
-      ),
-      options: {
-        fakeModal: true,
-      },
-    })
-  }
+  const onCreateEnvClicked = useCallback(
+    (type?: EnvironmentModeEnum) => {
+      openModal({
+        content: (
+          <CreateCloneEnvironmentModal
+            onClose={closeModal}
+            projectId={projectId}
+            organizationId={organizationId}
+            type={type}
+          />
+        ),
+        options: {
+          fakeModal: true,
+        },
+      })
+    },
+    [projectId, organizationId, closeModal, openModal]
+  )
+
+  const Sections = useCallback(
+    () => (
+      <>
+        {Array.from(groupedEnvs ?? []).map(([key, value]) => (
+          <EnvironmentSection key={key} type={key} items={value} onCreateEnvClicked={() => onCreateEnvClicked(key)} />
+        ))}
+        {SECTIONS.filter((section) => !groupedEnvs?.has(section)).map((section) => (
+          <EnvironmentSection
+            key={section}
+            type={section}
+            items={groupedEnvs?.get(section) || []}
+            onCreateEnvClicked={() => onCreateEnvClicked(section)}
+          />
+        ))}
+      </>
+    ),
+    [groupedEnvs, onCreateEnvClicked]
+  )
 
   return (
     <div className="container mx-auto mt-6 pb-10">
@@ -56,22 +85,7 @@ export function EnvironmentsTable() {
           <hr className="w-full border-neutral" />
         </div>
         <div className="flex flex-col gap-8">
-          <EnvironmentSection
-            type="PRODUCTION"
-            items={groupedEnvs?.get('PRODUCTION') || []}
-            onCreateEnvClicked={() => onCreateEnvClicked('PRODUCTION')}
-          />
-          <EnvironmentSection
-            type="STAGING"
-            items={groupedEnvs?.get('STAGING') || []}
-            onCreateEnvClicked={() => onCreateEnvClicked('STAGING')}
-          />
-          <EnvironmentSection
-            type="DEVELOPMENT"
-            items={groupedEnvs?.get('DEVELOPMENT') || []}
-            onCreateEnvClicked={() => onCreateEnvClicked('DEVELOPMENT')}
-          />
-          <EnvironmentSection type="PREVIEW" items={groupedEnvs?.get('PREVIEW') || []} />
+          <Sections />
         </div>
       </Section>
     </div>
