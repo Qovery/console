@@ -5,33 +5,19 @@ import { usePodColor } from '@qovery/shared/util-hooks'
 import { calculateRateInterval, useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
+import { buildPromSelector } from '../../../util-chart/build-selector'
 import { convertPodName } from '../../../util-chart/convert-pod-name'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
-const queryCpuUsage = (rateInterval: string, containerName: string, podNames?: string[]) => {
-  if (podNames && podNames.length > 0) {
-    const podFilter = podNames.join('|')
-    return `sum by (pod) (rate(container_cpu_usage_seconds_total{pod=~"${podFilter}"}[${rateInterval}]))`
-  }
-  return `sum by (pod) (rate(container_cpu_usage_seconds_total{container="${containerName}"}[${rateInterval}]))`
-}
+const queryCpuUsage = (rateInterval: string, selector: string) =>
+  `sum by (pod) (rate(container_cpu_usage_seconds_total{${selector}}[${rateInterval}]))`
 
-const queryCpuLimit = (containerName: string, podNames?: string[]) => {
-  if (podNames && podNames.length > 0) {
-    const podFilter = podNames.join('|')
-    return `sum (bottomk(1, kube_pod_container_resource_limits{resource="cpu",pod=~"${podFilter}"}))`
-  }
-  return `sum (bottomk(1, kube_pod_container_resource_limits{resource="cpu",container="${containerName}"}))`
-}
+const queryCpuLimit = (selector: string) =>
+  `sum (bottomk(1, kube_pod_container_resource_limits{resource="cpu",${selector}}))`
 
-const queryCpuRequest = (containerName: string, podNames?: string[]) => {
-  if (podNames && podNames.length > 0) {
-    const podFilter = podNames.join('|')
-    return `sum (bottomk(1, kube_pod_container_resource_requests{resource="cpu",pod=~"${podFilter}"}))`
-  }
-  return `sum (bottomk(1, kube_pod_container_resource_requests{resource="cpu",container="${containerName}"}))`
-}
+const queryCpuRequest = (selector: string) =>
+  `sum (bottomk(1, kube_pod_container_resource_requests{resource="cpu",${selector}}))`
 
 export function CpuChart({
   clusterId,
@@ -70,9 +56,11 @@ export function CpuChart({
     [startTimestamp, endTimestamp]
   )
 
+  const selector = useMemo(() => buildPromSelector(containerName, podNames), [containerName, podNames])
+
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: queryCpuUsage(rateInterval, containerName, podNames),
+    query: queryCpuUsage(rateInterval, selector),
     startTimestamp,
     endTimestamp,
     timeRange,
@@ -82,7 +70,7 @@ export function CpuChart({
 
   const { data: limitMetrics, isLoading: isLoadingLimit } = useMetrics({
     clusterId,
-    query: queryCpuLimit(containerName, podNames),
+    query: queryCpuLimit(selector),
     startTimestamp,
     endTimestamp,
     timeRange,
@@ -92,7 +80,7 @@ export function CpuChart({
 
   const { data: requestMetrics, isLoading: isLoadingRequest } = useMetrics({
     clusterId,
-    query: queryCpuRequest(containerName, podNames),
+    query: queryCpuRequest(selector),
     startTimestamp,
     endTimestamp,
     timeRange,

@@ -1,22 +1,23 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
 import { Heading, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 import { useInstantMetrics } from '../../../hooks/use-instant-metrics/use-instant-metrics'
 import { ModalChart } from '../../../modal-chart/modal-chart'
+import { buildPromSelector } from '../../../util-chart/build-selector'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 import { CardMetricButton } from '../card-metric/card-metric'
 import { InstanceStatusChart } from '../instance-status-chart/instance-status-chart'
 
-const query = (timeRange: string, containerName: string) => `
-  sum(increase(kube_pod_container_status_restarts_total{container="${containerName}"}[${timeRange}]))
+const query = (timeRange: string, selector: string) => `
+  sum(increase(kube_pod_container_status_restarts_total{${selector}}[${timeRange}]))
   +
   count(
     max by (pod) (
       max_over_time(
         kube_pod_container_status_waiting_reason{
-          container="${containerName}",
+          ${selector},
           reason!~"ContainerCreating|PodInitializing|Completed"
         }[${timeRange}]
       )
@@ -69,10 +70,12 @@ export function CardInstanceStatus({
   const { queryTimeRange, subQueryTimeRange, startTimestamp, endTimestamp } = useDashboardContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
+  const selector = useMemo(() => buildPromSelector(containerName, podNames), [containerName, podNames])
+
   const { data: service } = useService({ serviceId })
   const { data: metricsInstanceErrors, isLoading: isLoadingMetricsInstanceErrors } = useInstantMetrics({
     clusterId,
-    query: query(queryTimeRange, containerName),
+    query: query(queryTimeRange, selector),
     startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',

@@ -87,8 +87,7 @@ function ServiceDashboardContent() {
     enabled: isContainerDatabase,
   })
 
-  // Ensure podNames is always an array or undefined
-  const podNames = isContainerDatabase && Array.isArray(podNamesData) ? podNamesData : undefined
+  const podNames = isContainerDatabase && Array.isArray(podNamesData) ? podNamesData : []
 
   const { data: namespace, isFetched: isFetchedNamespace } = useNamespace({
     clusterId: environment?.cluster_id ?? '',
@@ -134,8 +133,8 @@ function ServiceDashboardContent() {
     )
   }
 
-  // For container databases, wait for podNames to be loaded before rendering
-  if (!environment || !service || !containerName || !namespace || (isContainerDatabase && !podNames))
+  // For container databases, wait for podNames fetch to settle (even if empty)
+  if (!environment || !service || !containerName || !namespace || (isContainerDatabase && !isFetchedPodNames))
     return (
       <div className="flex h-full w-full items-center justify-center p-5">
         <Chart.Loader />

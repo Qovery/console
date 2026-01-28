@@ -9,7 +9,6 @@ import {
   type AlertRuleEditRequest,
   AlertRulesApi,
   ClustersApi,
-  OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
 
 const clusterApi = new ClustersApi()
