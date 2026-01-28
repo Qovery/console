@@ -20,6 +20,7 @@ export interface CreateCloneEnvironmentModalProps {
   organizationId: string
   environmentToClone?: Environment
   onClose: () => void
+  type?: EnvironmentModeEnum
 }
 
 export function CreateCloneEnvironmentModal({
@@ -27,6 +28,7 @@ export function CreateCloneEnvironmentModal({
   organizationId,
   environmentToClone,
   onClose,
+  type,
 }: CreateCloneEnvironmentModalProps) {
   const navigate = useNavigate()
   const { enableAlertClickOutside } = useModal()
@@ -41,7 +43,7 @@ export function CreateCloneEnvironmentModal({
     defaultValues: {
       name: environmentToClone?.name ? environmentToClone.name + '-clone' : '',
       cluster: clusters.find(({ is_default }) => is_default)?.id,
-      mode: EnvironmentModeEnum.DEVELOPMENT,
+      mode: type ?? EnvironmentModeEnum.DEVELOPMENT,
       project_id: projectId,
     },
   })

@@ -1,6 +1,6 @@
 import { Link, createFileRoute, useParams } from '@tanstack/react-router'
-import { type EnvironmentModeEnum, type EnvironmentOverviewResponse } from 'qovery-typescript-axios'
-import { Suspense, useMemo } from 'react'
+import { EnvironmentModeEnum, type EnvironmentOverviewResponse } from 'qovery-typescript-axios'
+import { type ReactNode, Suspense, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
 import {
@@ -42,7 +42,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const runningStatus = environment?.runningStatus
 
   return (
-    <Table.Row key={overview.id} className={twMerge('w-full', gridLayoutClassName)}>
+    <Table.Row key={overview.id} className={twMerge('w-full hover:bg-surface-neutral-subtle', gridLayoutClassName)}>
       <Table.Cell className="h-12">
         <div className="flex h-full items-center justify-between">
           <Link
@@ -53,14 +53,14 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
             <Truncate text={overview.name} truncateLimit={54} />
           </Link>
           <div className="flex items-center gap-2">
-            <span className="text-neutral-subtle font-normal">
+            <span className="font-normal text-neutral-subtle">
               {overview.service_count} {pluralize(overview.service_count, 'service')}
             </span>
             {runningStatus && <StatusChip status={runningStatus.state} />}
           </div>
         </div>
       </Table.Cell>
-      <Table.Cell className="border-neutral h-12 border-l">
+      <Table.Cell className="h-12 border-l border-neutral">
         <div className="flex h-full items-center justify-between">
           <div className="flex items-center gap-2">
             <DeploymentAction status={overview.deployment_status?.last_deployment_state} />
@@ -71,21 +71,21 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
           <StatusChip status={overview.deployment_status?.last_deployment_state} variant="monochrome" size="xs" />
         </div>
       </Table.Cell>
-      <Table.Cell className="border-neutral h-12 border-l">
+      <Table.Cell className="h-12 border-l border-neutral">
         {overview.cluster && (
           <Link
             to={`/organization/${organizationId}/cluster/${overview.cluster.id}/overview`}
-            className="flex h-full items-center"
+            className="group flex h-full items-center"
           >
             <ClusterAvatar cluster={overview.cluster} size="sm" />
-            {overview.cluster?.name}
+            <span className="group-hover:underline">{overview.cluster?.name}</span>
           </Link>
         )}
       </Table.Cell>
-      <Table.Cell className="border-neutral h-12 border-l">
+      <Table.Cell className="h-12 border-l border-neutral">
         <div className="flex h-full items-center">{timeAgo(new Date(overview.updated_at ?? Date.now()))} ago</div>
       </Table.Cell>
-      <Table.Cell className="border-neutral h-12 border-l">
+      <Table.Cell className="h-12 border-l border-neutral">
         <div className="flex h-full items-center">
           {environment && overview.deployment_status && overview.service_count > 0 && (
             <ActionToolbar.Root>
@@ -110,7 +110,7 @@ function EnvironmentSection({
 }: {
   type: EnvironmentModeEnum
   items: EnvironmentOverviewResponse[]
-  onCreateEnvClicked: () => void
+  onCreateEnvClicked?: () => void
 }) {
   const title = match(type)
     .with('PRODUCTION', () => 'Production')
@@ -119,6 +119,30 @@ function EnvironmentSection({
     .with('PREVIEW', () => 'Ephemeral')
     .exhaustive()
 
+  const EmptyState = () =>
+    match(type)
+      .with(EnvironmentModeEnum.PREVIEW, () => {
+        return (
+          <div className="flex flex-col items-center">
+            <span className="text-sm font-semibold text-neutral-subtle">No ephemeral environment configured</span>
+            <span className="text-sm text-neutral-subtle">
+              An ephemeral environment will be created automatically when a pull request is opened.
+            </span>
+          </div>
+        )
+      })
+      .otherwise(() => {
+        return (
+          <>
+            <span className="text-sm text-neutral-subtle">No {title.toLowerCase()} environment created yet</span>
+            <Button size="md" variant="outline" className="gap-2" onClick={onCreateEnvClicked}>
+              <Icon iconName="circle-plus" iconStyle="regular" />
+              Create
+            </Button>
+          </>
+        )
+      })
+
   return (
     <Section className="flex flex-col gap-3.5">
       <div className="flex items-center gap-2">
@@ -126,38 +150,34 @@ function EnvironmentSection({
         <Heading level={3}>{title}</Heading>
       </div>
       {items.length === 0 ? (
-        <div className="border-neutral bg-surface-neutral-subtle flex flex-col items-center gap-3 rounded-md border p-8">
+        <div className="flex flex-col items-center gap-3 rounded-md border border-neutral bg-surface-neutral-subtle p-8">
           <EnvironmentMode mode={type} variant="shrink" />
-          <span className="text-neutral-subtle text-sm">No {title.toLowerCase()} environment created yet</span>
-          <Button size="md" variant="outline" className="gap-2" onClick={onCreateEnvClicked}>
-            <Icon iconName="circle-plus" iconStyle="regular" />
-            Create
-          </Button>
+          <EmptyState />
         </div>
       ) : (
-        <div className="border-neutral bg-surface-neutral overflow-hidden rounded-md border">
-          <Table.Root className="divide-neutral divide-y">
+        <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral">
+          <Table.Root className="divide-y divide-neutral">
             <Table.Header>
               <Table.Row className={twMerge('w-full items-center text-xs', gridLayoutClassName)}>
-                <Table.ColumnHeaderCell className="text-neutral-subtle flex h-9 items-center">
+                <Table.ColumnHeaderCell className="flex h-9 items-center text-neutral-subtle">
                   Environment
                 </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="border-neutral text-neutral-subtle flex h-9 items-center border-l">
+                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
                   Last operation
                 </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="border-neutral text-neutral-subtle flex h-9 items-center border-l">
+                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
                   Cluster
                 </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="border-neutral text-neutral-subtle flex h-9 items-center border-l">
+                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
                   Last update
                 </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="border-neutral text-neutral-subtle flex h-9 items-center border-l text-right">
+                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-right text-neutral-subtle">
                   Actions
                 </Table.ColumnHeaderCell>
               </Table.Row>
             </Table.Header>
 
-            <Table.Body className="divide-neutral divide-y">
+            <Table.Body className="divide-y divide-neutral">
               {items.map((environmentOverview) => (
                 <EnvRow key={environmentOverview.id} overview={environmentOverview} />
               ))}
@@ -182,10 +202,15 @@ function ProjectOverview() {
     }, new Map<EnvironmentModeEnum, EnvironmentOverviewResponse[]>())
   }, [environmentsOverview])
 
-  const onCreateEnvClicked = () => {
+  const onCreateEnvClicked = (type?: EnvironmentModeEnum) => {
     openModal({
       content: (
-        <CreateCloneEnvironmentModal onClose={closeModal} projectId={projectId} organizationId={organizationId} />
+        <CreateCloneEnvironmentModal
+          onClose={closeModal}
+          projectId={projectId}
+          organizationId={organizationId}
+          type={type}
+        />
       ),
       options: {
         fakeModal: true,
@@ -211,29 +236,25 @@ function ProjectOverview() {
               New Environment
             </Button>
           </div>
-          <hr className="border-neutral w-full" />
+          <hr className="w-full border-neutral" />
         </div>
         <div className="flex flex-col gap-8">
           <EnvironmentSection
             type="PRODUCTION"
             items={groupedEnvs?.get('PRODUCTION') || []}
-            onCreateEnvClicked={onCreateEnvClicked}
+            onCreateEnvClicked={() => onCreateEnvClicked('PRODUCTION')}
           />
           <EnvironmentSection
             type="STAGING"
             items={groupedEnvs?.get('STAGING') || []}
-            onCreateEnvClicked={onCreateEnvClicked}
+            onCreateEnvClicked={() => onCreateEnvClicked('STAGING')}
           />
           <EnvironmentSection
             type="DEVELOPMENT"
             items={groupedEnvs?.get('DEVELOPMENT') || []}
-            onCreateEnvClicked={onCreateEnvClicked}
+            onCreateEnvClicked={() => onCreateEnvClicked('DEVELOPMENT')}
           />
-          <EnvironmentSection
-            type="PREVIEW"
-            items={groupedEnvs?.get('PREVIEW') || []}
-            onCreateEnvClicked={onCreateEnvClicked}
-          />
+          <EnvironmentSection type="PREVIEW" items={groupedEnvs?.get('PREVIEW') || []} />
         </div>
       </Section>
     </div>

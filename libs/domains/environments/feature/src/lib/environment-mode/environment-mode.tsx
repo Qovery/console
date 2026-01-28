@@ -8,7 +8,7 @@ import { twMerge } from '@qovery/shared/util-js'
 const environmentModeVariants = cva('', {
   variants: {
     variant: {
-      shrink: ['flex', 'h-4', 'w-4', 'justify-center', 'p-0', 'font-semibold'],
+      shrink: ['flex', 'h-4', 'w-4', 'justify-center', 'p-0', 'font-semibold', 'rounded'],
       full: [],
     },
   },

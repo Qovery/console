@@ -46,7 +46,6 @@ export interface StatusChipProps {
   appendTooltipMessage?: string
   disabledTooltip?: boolean
   variant?: 'default' | 'monochrome'
-  size?: 'sm' | 'xs'
 }
 
 export function StatusChip({
@@ -55,10 +54,9 @@ export function StatusChip({
   appendTooltipMessage = '',
   disabledTooltip = false,
   variant = 'default',
-  size = 'sm',
 }: StatusChipProps) {
-  const iconClass = twMerge(variant === 'monochrome' && 'text-neutral-subtle', size === 'xs' && 'h-full w-full')
-  const wrapperClassName = twMerge(className, size === 'xs' && 'h-[14px] w-[14px]')
+  const iconClass = twMerge('h-full w-full', variant === 'monochrome' && 'text-neutral-subtle')
+  const wrapperClassName = twMerge('h-[14px] w-[14px]', className)
 
   if (!status)
     return (
@@ -94,7 +92,7 @@ export function StatusChip({
       'TERRAFORM_PLAN_AND_APPLY',
       'TERRAFORM_DESTROY',
       'TERRAFORM_FORCE_UNLOCK_STATE',
-      () => <QueuedIcon />
+      () => <QueuedIcon className={iconClass} />
     )
     .with('DEPLOYING', 'STARTING', 'ONGOING', 'DRY_RUN', 'EXECUTING', () => <DeployingIcon className={iconClass} />)
     .with('RESTARTING', () => <RestartingIcon className={iconClass} />)
