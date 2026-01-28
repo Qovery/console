@@ -684,7 +684,8 @@ export function MetricConfigurationStep({
                       label: (
                         <span className="flex items-center gap-1">
                           {match(receiver.type)
-                            .with('SLACK', (v) => <Icon name={v} width={14} height={14} />)
+                            .with('SLACK', () => <Icon name="SLACK" width={14} height={14} />)
+                            .with('EMAIL', () => <Icon iconName="envelope" iconStyle="regular" className="text-xs" />)
                             .otherwise(() => (
                               <Icon iconName="webhook" iconStyle="regular" className="text-xs" />
                             ))}
