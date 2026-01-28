@@ -116,9 +116,8 @@ export function KedaScalersFields({
                   name={field.name}
                   label="Scaler Type"
                   value={field.value ?? ''}
-                  onChange={field.onChange}
-                  onBlur={(e) => {
-                    field.onBlur()
+                  onChange={(e) => {
+                    field.onChange(e)
                     if (e.target.value) {
                       posthog.capture('service-keda-scaler-type-set', {
                         scaler_type: e.target.value,
