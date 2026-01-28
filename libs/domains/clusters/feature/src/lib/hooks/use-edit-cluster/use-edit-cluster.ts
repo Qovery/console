@@ -19,8 +19,6 @@ export function useEditCluster() {
 
       if (clusterRequest.keda?.enabled) {
         posthog.capture('cluster-keda-enabled', {
-          organization_id: organizationId,
-          cluster_id: clusterId,
           cloud_provider: clusterRequest.cloud_provider,
         })
       }

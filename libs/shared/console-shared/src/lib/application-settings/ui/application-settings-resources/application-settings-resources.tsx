@@ -333,13 +333,8 @@ export function ApplicationSettingsResources({
                     onChange={(value) => {
                       field.onChange(value)
 
-                      // Track KEDA mode selection in PostHog
                       if (value === 'KEDA') {
                         posthog.capture('service-autoscaling-keda-selected', {
-                          organization_id: organizationId,
-                          environment_id: environmentId,
-                          service_id: applicationId,
-                          service_type: service?.serviceType,
                           min_running_instances: minRunningInstances,
                           max_running_instances: maxRunningInstances,
                         })
@@ -404,7 +399,6 @@ export function ApplicationSettingsResources({
               minRunningInstances={minRunningInstances}
               disabled={currentAutoscalingMode === 'HPA'}
               runningPods={runningStatuses?.pods?.length}
-              serviceType={service?.serviceType}
             />
           )}
         </Section>
