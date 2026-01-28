@@ -14,7 +14,6 @@ import {
   useUpdateKarpenterPrivateFargate,
 } from '@qovery/domains/clusters/feature'
 import {
-  type ClusterExtended,
   type ClusterFeatureKarpenterParametersResponseExtended,
   type ClusterResourcesEdit,
   type SCWControlPlaneFeatureType,
@@ -26,7 +25,7 @@ function getValueByKey(key: string, data: { [key: string]: string }[] = []): str
   return data.filter((obj) => key in obj).map((obj) => obj[key])
 }
 
-export const handleSubmit = (data: FieldValues, cluster: ClusterExtended): ClusterExtended => {
+export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
   const payload = {
     ...cluster,
     max_running_nodes: data['nodes'][1],

@@ -1,21 +1,20 @@
 import {
-  type Cluster,
   type ClusterFeatureKarpenterParameters,
   type ClusterFeatureKarpenterParametersResponse,
   type KarpenterGpuNodePoolOverride,
 } from 'qovery-typescript-axios'
 
 // Extended GPU override with disk_iops and disk_throughput
+// TODO: Remove this extension once KarpenterGpuNodePoolOverride includes disk_iops and disk_throughput in the generated client
 export interface KarpenterGpuNodePoolOverrideExtended extends KarpenterGpuNodePoolOverride {
   disk_iops?: number
   disk_throughput?: number
 }
 
-// Extended Karpenter parameters with disk_iops and disk_throughput
+// Extended Karpenter parameters with gpu_override extension
+// Only needed to extend gpu_override with disk_iops/disk_throughput fields
 export interface ClusterFeatureKarpenterParametersExtended
   extends Omit<ClusterFeatureKarpenterParameters, 'qovery_node_pools'> {
-  disk_iops?: number
-  disk_throughput?: number
   qovery_node_pools: Omit<ClusterFeatureKarpenterParameters['qovery_node_pools'], 'gpu_override'> & {
     gpu_override?: KarpenterGpuNodePoolOverrideExtended
   }
@@ -25,11 +24,4 @@ export interface ClusterFeatureKarpenterParametersExtended
 export interface ClusterFeatureKarpenterParametersResponseExtended
   extends Omit<ClusterFeatureKarpenterParametersResponse, 'value'> {
   value: ClusterFeatureKarpenterParametersExtended
-}
-
-// Extended Cluster type with disk_iops and disk_throughput fields
-// These will be available once the API client is regenerated
-export interface ClusterExtended extends Cluster {
-  disk_iops?: number
-  disk_throughput?: number
 }

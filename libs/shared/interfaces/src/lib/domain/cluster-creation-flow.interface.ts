@@ -35,10 +35,8 @@ export interface ClusterKubeconfigData {
   file_size: number
 }
 
-export interface KarpenterData extends Omit<ClusterFeatureKarpenterParameters, 'qovery_node_pools'> {
+export interface KarpenterData extends ClusterFeatureKarpenterParameters {
   enabled: boolean
-  disk_iops?: number
-  disk_throughput?: number
   qovery_node_pools: ClusterFeatureKarpenterParameters['qovery_node_pools'] & {
     gpu_override?: ClusterFeatureKarpenterParameters['qovery_node_pools']['gpu_override'] & {
       disk_iops?: number
