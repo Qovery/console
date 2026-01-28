@@ -1,5 +1,4 @@
 import { type Control, type UseFieldArrayReturn } from 'react-hook-form'
-import { Callout, Icon } from '@qovery/shared/ui'
 import { InstancesRangeInputs } from './instances-range-inputs'
 import { KedaScalersFields } from './keda-scalers-fields'
 

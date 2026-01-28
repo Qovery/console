@@ -1,4 +1,5 @@
-import { type Control, Controller, type UseFieldArrayReturn } from 'react-hook-form'
+import posthog from 'posthog-js'
+import { type Control, Controller, type UseFieldArrayReturn, useFormContext } from 'react-hook-form'
 import { Button, CodeEditor, InputText } from '@qovery/shared/ui'
 
 export interface KedaScalersFieldsProps {
@@ -17,9 +18,19 @@ export function KedaScalersFields({
   cooldownPeriod,
 }: KedaScalersFieldsProps) {
   const { fields: scalers, append, remove } = scalersFieldArray
+  const { watch } = useFormContext()
+
+  const minRunningInstances = watch('min_running_instances')
+  const maxRunningInstances = watch('max_running_instances')
 
   const handleAddScaler = () => {
     append({ type: '', config: '', triggerAuthentication: '' })
+
+    posthog.capture('service-keda-scaler-added', {
+      min_running_instances: minRunningInstances,
+      max_running_instances: maxRunningInstances,
+      scaler_count: scalers.length + 1,
+    })
   }
 
   const handleRemoveScaler = (index: number) => {
@@ -105,7 +116,16 @@ export function KedaScalersFields({
                   name={field.name}
                   label="Scaler Type"
                   value={field.value ?? ''}
-                  onChange={field.onChange}
+                  onChange={(e) => {
+                    field.onChange(e)
+                    if (e.target.value) {
+                      posthog.capture('service-keda-scaler-type-set', {
+                        scaler_type: e.target.value,
+                        min_running_instances: minRunningInstances,
+                        max_running_instances: maxRunningInstances,
+                      })
+                    }
+                  }}
                   disabled={disabled}
                   hint="Type: 'cpu', 'memory', 'prometheus', 'aws-sqs', etc."
                   error={error?.message}

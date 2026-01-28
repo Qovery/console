@@ -1,3 +1,4 @@
+import posthog from 'posthog-js'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { useEffect, useRef } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
@@ -329,7 +330,16 @@ export function ApplicationSettingsResources({
                   <InputSelect
                     label="Autoscaling mode"
                     options={options}
-                    onChange={field.onChange}
+                    onChange={(value) => {
+                      field.onChange(value)
+
+                      if (value === 'KEDA') {
+                        posthog.capture('service-autoscaling-keda-selected', {
+                          min_running_instances: minRunningInstances,
+                          max_running_instances: maxRunningInstances,
+                        })
+                      }
+                    }}
                     value={field.value || 'NONE'}
                     hint="Choose how instances should scale"
                   />
