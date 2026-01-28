@@ -1,8 +1,8 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { type GitWebhookStatusResponse } from 'qovery-typescript-axios'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { APPLICATION_SETTINGS_GENERAL_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
-import { Badge, Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
+import { Icon, Link, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { useGitWebhookStatus } from '../hooks/use-git-webhook-status/use-git-webhook-status'
 
 export interface AutoDeployBadgeProps {
@@ -13,28 +13,28 @@ const webhookStatusConfig: Record<
   GitWebhookStatusResponse['status'],
   {
     icon: IconName
-    color: 'green' | 'yellow' | 'red' | 'neutral'
+    iconClassName: string
     tooltip: string
   }
 > = {
   ACTIVE: {
     icon: 'circle-check',
-    color: 'green',
+    iconClassName: 'text-green-500',
     tooltip: 'Webhook is correctly configured. Auto-deploy will trigger on git events.',
   },
   NOT_CONFIGURED: {
     icon: 'circle-question',
-    color: 'red',
+    iconClassName: 'text-red-500',
     tooltip: 'No webhook found for auto-deployment. Click to configure it in settings.',
   },
   MISCONFIGURED: {
     icon: 'triangle-exclamation',
-    color: 'yellow',
+    iconClassName: 'text-yellow-500',
     tooltip: 'Webhook is missing required events. Click to fix it in settings.',
   },
   UNABLE_TO_VERIFY: {
     icon: 'circle-exclamation',
-    color: 'neutral',
+    iconClassName: 'text-neutral-350',
     tooltip:
       "Couldn't verify webhook status. This could be due to expired credentials, insufficient permissions, or git provider API unavailability.",
   },
@@ -54,29 +54,14 @@ export function AutoDeployBadge({ serviceId }: AutoDeployBadgeProps) {
 
   return (
     <Tooltip content={tooltipContent}>
-      <Link to={settingsUrl}>
-        <Badge variant="surface" className="cursor-pointer gap-1.5">
-          <Icon className="text-neutral-350" iconName="arrows-rotate" />
-          <span className="text-neutral-400">Auto-deploy</span>
-          {isLoading ? (
-            <LoaderSpinner classWidth="w-3" />
-          ) : (
-            config && (
-              <Icon
-                iconName={config.icon}
-                className={`text-xs ${
-                  config.color === 'green'
-                    ? 'text-green-500'
-                    : config.color === 'yellow'
-                      ? 'text-yellow-500'
-                      : config.color === 'red'
-                        ? 'text-red-500'
-                        : 'text-neutral-350'
-                }`}
-              />
-            )
-          )}
-        </Badge>
+      <Link as="button" color="neutral" variant="surface" size="xs" to={settingsUrl}>
+        <Icon className="text-neutral-350" iconName="arrows-rotate" />
+        <span className="ml-1.5">Auto-deploy</span>
+        {isLoading ? (
+          <LoaderSpinner classWidth="w-3" />
+        ) : (
+          config && <Icon iconName={config.icon} className={`ml-1 text-xs ${config.iconClassName}`} />
+        )}
       </Link>
     </Tooltip>
   )
