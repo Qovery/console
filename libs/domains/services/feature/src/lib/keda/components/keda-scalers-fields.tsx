@@ -1,4 +1,6 @@
-import { type Control, Controller, type UseFieldArrayReturn } from 'react-hook-form'
+import posthog from 'posthog-js'
+import { type Control, Controller, type UseFieldArrayReturn, useFormContext } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 import { Button, CodeEditor, InputText } from '@qovery/shared/ui'
 
 export interface KedaScalersFieldsProps {
@@ -7,6 +9,7 @@ export interface KedaScalersFieldsProps {
   disabled?: boolean
   pollingInterval?: number
   cooldownPeriod?: number
+  serviceType?: string
 }
 
 export function KedaScalersFields({
@@ -15,11 +18,28 @@ export function KedaScalersFields({
   disabled = false,
   pollingInterval,
   cooldownPeriod,
+  serviceType,
 }: KedaScalersFieldsProps) {
   const { fields: scalers, append, remove } = scalersFieldArray
+  const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
+  const { watch } = useFormContext()
+
+  const minRunningInstances = watch('min_running_instances')
+  const maxRunningInstances = watch('max_running_instances')
 
   const handleAddScaler = () => {
     append({ type: '', config: '', triggerAuthentication: '' })
+
+    // Track scaler addition in PostHog
+    posthog.capture('service-keda-scaler-added', {
+      organization_id: organizationId,
+      environment_id: environmentId,
+      service_id: applicationId,
+      service_type: serviceType,
+      min_running_instances: minRunningInstances,
+      max_running_instances: maxRunningInstances,
+      scaler_count: scalers.length + 1,
+    })
   }
 
   const handleRemoveScaler = (index: number) => {
@@ -106,6 +126,21 @@ export function KedaScalersFields({
                   label="Scaler Type"
                   value={field.value ?? ''}
                   onChange={field.onChange}
+                  onBlur={(e) => {
+                    field.onBlur()
+                    // Track scaler type when user finishes entering it
+                    if (e.target.value) {
+                      posthog.capture('service-keda-scaler-type-set', {
+                        organization_id: organizationId,
+                        environment_id: environmentId,
+                        service_id: applicationId,
+                        service_type: serviceType,
+                        scaler_type: e.target.value,
+                        min_running_instances: minRunningInstances,
+                        max_running_instances: maxRunningInstances,
+                      })
+                    }
+                  }}
                   disabled={disabled}
                   hint="Type: 'cpu', 'memory', 'prometheus', 'aws-sqs', etc."
                   error={error?.message}

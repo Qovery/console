@@ -11,6 +11,7 @@ export interface KedaSettingsProps {
   minRunningInstances?: number
   disabled?: boolean
   runningPods?: number
+  serviceType?: string
 }
 
 export function KedaSettings({
@@ -21,6 +22,7 @@ export function KedaSettings({
   minRunningInstances,
   disabled = false,
   runningPods,
+  serviceType,
 }: KedaSettingsProps) {
   return (
     <>
@@ -35,7 +37,12 @@ export function KedaSettings({
         requireMinLessThanMax={true}
       />
 
-      <KedaScalersFields control={control} scalersFieldArray={scalersFieldArray} disabled={disabled} />
+      <KedaScalersFields
+        control={control}
+        scalersFieldArray={scalersFieldArray}
+        disabled={disabled}
+        serviceType={serviceType}
+      />
     </>
   )
 }
