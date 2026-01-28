@@ -14,7 +14,6 @@ import {
   useUpdateKarpenterPrivateFargate,
 } from '@qovery/domains/clusters/feature'
 import {
-  type ClusterFeatureKarpenterParametersResponseExtended,
   type ClusterResourcesEdit,
   type SCWControlPlaneFeatureType,
 } from '@qovery/shared/interfaces'
@@ -90,13 +89,13 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
 }
 
 export interface SettingsResourcesFeatureProps {
-  cluster: ClusterExtended
+  cluster: Cluster
 }
 
 function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
   const karpenterFeature = cluster.features?.find(
     (feature) => feature.id === 'KARPENTER'
-  ) as ClusterFeatureKarpenterParametersResponseExtended
+  ) as ClusterFeatureKarpenterParametersResponse
   const scwFeature = cluster.features?.find(
     (feature) => feature.id === SCW_CONTROL_PLANE_FEATURE_ID
   ) as ClusterFeatureStringResponse
