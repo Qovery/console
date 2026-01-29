@@ -135,7 +135,7 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
           )}
         </>
       )}
-      {fromDetail && cloudProvider === 'AWS' && isKedaFeatureEnabled && (
+      {fromDetail && (cloudProvider === 'AWS' || cloudProvider === 'GCP') && isKedaFeatureEnabled && (
         <Controller
           name="keda.enabled"
           control={control}
