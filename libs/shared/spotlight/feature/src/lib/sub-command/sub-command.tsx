@@ -43,7 +43,6 @@ export function SubCommand({
   service?: ServiceLightResponse
   onSpotlightOpenChange?: (open: boolean) => void
 }) {
-  // TODO: testing-only - migrate to TanStack Router hooks for console-v5.
   const navigate = useNavigate()
   const metaKey = useFormatHotkeys('meta')
   const { toggleFavoriteService, isServiceFavorite } = useFavoriteServices({ organizationId })
