@@ -6,7 +6,7 @@ const Story: Meta<typeof TreeView.Root> = {
   title: 'TreeView',
   decorators: [
     (Story) => (
-      <div style={{ background: 'white', padding: '3em' }}>
+      <div style={{ background: 'bg-background', padding: '3em' }}>
         <Story />
       </div>
     ),

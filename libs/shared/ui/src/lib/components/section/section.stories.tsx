@@ -7,7 +7,7 @@ const Story: Meta<typeof Section> = {
   title: 'Section',
   decorators: [
     (Story) => (
-      <div style={{ background: 'white', padding: '3em' }}>
+      <div style={{ background: 'bg-white', padding: '3em' }}>
         <Story />
       </div>
     ),

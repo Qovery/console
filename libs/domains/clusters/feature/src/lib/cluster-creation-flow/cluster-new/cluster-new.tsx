@@ -56,7 +56,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
 
   const renderContent = () => (
     <span>
-      <span className="text-neutral-neutral flex flex-col text-base font-semibold">
+      <span className="flex flex-col text-base font-semibold text-neutral">
         {title}
         {recommended && (
           <span>

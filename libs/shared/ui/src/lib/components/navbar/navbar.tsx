@@ -43,8 +43,8 @@ const navbarItemVariants = cva(
   {
     variants: {
       active: {
-        true: ['text-brand-11'],
-        false: ['text-neutral-subtle', 'hover:text-brand-11'],
+        true: ['text-brand'],
+        false: ['text-neutral-subtle', 'hover:text-brand'],
       },
     },
     defaultVariants: {

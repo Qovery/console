@@ -194,7 +194,7 @@ const BoardColumn = <T extends Card>({
 
   return (
     <motion.div layout="position" layoutId={columnId} className="flex w-60 shrink-0 flex-col rounded">
-      <div className="flex h-[58px] items-center justify-between rounded-t border border-neutral-250 bg-neutral-100 px-3 py-2">
+      <div className="flex h-[58px] items-center justify-between rounded-t-lg border border-neutral bg-surface-neutral-subtle px-3 py-2 text-neutral">
         {heading}
       </div>
 
@@ -202,7 +202,7 @@ const BoardColumn = <T extends Card>({
         onDrop={(e) => handleDragEnd(e)}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`w-full rounded-b border border-t-0 border-neutral-250 px-1 transition-colors ${active ? 'bg-green-100' : 'bg-neutral-200'}`}
+        className={`w-full rounded-b-lg border border-t-0 border-neutral px-1 text-neutral transition-colors ${active ? 'bg-surface-neutral-componentHover' : 'bg-surface-neutral-component'}`}
       >
         {children}
         <BoardDropIndicator columnId={columnId} />
@@ -227,7 +227,7 @@ const BoardCard = ({ children, cardId, columnId }: BoardCardProps) => {
         layoutId={cardId}
         draggable="true"
         onDragStart={(e) => handleDragStart(e as unknown as DragEvent)}
-        className="cursor-grab rounded border border-neutral-200 bg-neutral-50 px-2 py-3 active:cursor-grabbing active:outline active:outline-green-500"
+        className="cursor-grab rounded border border-neutral bg-surface-neutral px-2 py-3 text-neutral active:cursor-grabbing active:border-neutral-strong"
       >
         {children}
       </motion.div>
@@ -248,7 +248,7 @@ const BoardDropIndicator = ({ beforeId, columnId }: BoardDropIndicatorProps) => 
       data-before={beforeId ?? '-1'}
       data-board={boardId}
       data-column={columnId}
-      className="my-0.5 h-0.5 w-full bg-violet-400 opacity-0"
+      className="my-0.5 h-0.5 w-full bg-surface-neutral-solid opacity-0"
     />
   )
 }

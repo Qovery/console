@@ -1,27 +1,8 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
-import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentProps, type ElementRef, type ReactNode, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
-const tooltipContentVariants = cva(['rounded', 'px-2', 'py-1.5', 'text-xs', 'font-medium'], {
-  variants: {
-    color: {
-      neutral: ['bg-surface-neutralInvert', 'text-neutralInvert'],
-      orange: ['bg-orange-500', 'text-neutral-50'],
-    },
-  },
-})
-
-const tooltipArrowVariants = cva('', {
-  variants: {
-    color: {
-      neutral: ['fill-surface-neutralInvert'],
-      orange: ['fill-orange-500'],
-    },
-  },
-})
-
-export interface TooltipProps extends VariantProps<typeof tooltipContentVariants>, TooltipPrimitive.TooltipProps {
+export interface TooltipProps extends TooltipPrimitive.TooltipProps {
   content: ReactNode
   container?: ComponentProps<typeof TooltipPrimitive.Portal>['container']
   side?: 'top' | 'right' | 'bottom' | 'left'
@@ -44,7 +25,6 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, T
     delayDuration = 200,
     classNameTrigger = '',
     classNameContent = '',
-    color = 'neutral',
     disabled = false,
   },
   forwardedRef
@@ -63,13 +43,16 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, T
       </TooltipPrimitive.Trigger>
       <TooltipPrimitive.Portal container={container}>
         <TooltipPrimitive.Content
-          className={twMerge('z-[10000]', tooltipContentVariants({ color }), classNameContent)}
+          className={twMerge(
+            'z-[10000] rounded bg-surface-neutralInvert px-2 py-1.5 text-xs font-medium text-neutralInvert',
+            classNameContent
+          )}
           side={side}
           sideOffset={6}
           align={align}
         >
           {content}
-          <TooltipPrimitive.Arrow className={tooltipArrowVariants({ color })} offset={10} width={11} height={5} />
+          <TooltipPrimitive.Arrow className="fill-surface-neutralInvert" offset={10} width={11} height={5} />
         </TooltipPrimitive.Content>
       </TooltipPrimitive.Portal>
     </TooltipPrimitive.Root>

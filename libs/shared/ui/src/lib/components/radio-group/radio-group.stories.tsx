@@ -17,19 +17,19 @@ export default Story
 export const Primary = {
   render: () => (
     <RadioGroup.Root defaultValue="1">
-      <label className="flex items-center gap-3">
+      <label className="flex items-center gap-3 text-neutral">
         <RadioGroup.Item value="1" /> Value 1
       </label>
-      <label className="flex items-center gap-3">
+      <label className="flex items-center gap-3 text-neutral">
         <RadioGroup.Item value="2" /> Value 2
       </label>
-      <label className="flex items-center gap-3">
+      <label className="flex items-center gap-3 text-neutral">
         <RadioGroup.Item value="3" /> Value 3
       </label>
-      <label className="flex items-center gap-3">
+      <label className="flex items-center gap-3 text-neutral">
         <RadioGroup.Item value="4" disabled /> Value 4
       </label>
-      <label className="flex items-center gap-3">
+      <label className="flex items-center gap-3 text-neutral">
         <RadioGroup.Item value="5" disabled checked /> Value 5
       </label>
     </RadioGroup.Root>

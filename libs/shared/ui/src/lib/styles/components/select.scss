@@ -63,6 +63,9 @@
   width: calc(100% + 2rem) !important;
   left: -1rem;
   margin-top: 1rem !important;
+  box-shadow:
+    0 0 0 1px var(--neutral-6),
+    0 4px 11px hsla(0, 0, 0, 0.1) !important;
   @apply p-2;
 }
 
@@ -84,7 +87,7 @@
   }
 
   .input-select__checkbox {
-    @apply flex h-4 w-4 shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral;
+    @apply flex h-4 w-4 shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral text-neutralInvert;
   }
 }
 

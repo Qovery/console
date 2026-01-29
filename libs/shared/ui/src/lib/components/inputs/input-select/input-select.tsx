@@ -226,7 +226,7 @@ export function InputSelect({
 
   const inputActions =
     hasFocus && !disabled
-      ? '!border-brand-strong !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)] input--focused'
+      ? '!border-brand-strong input--focused'
       : disabled
         ? '!bg-surface-neutral-subtle !border-neutral !pointer-events-none'
         : hasError
@@ -273,6 +273,7 @@ export function InputSelect({
         ...base,
         backgroundColor: 'var(--neutral-1)',
         borderRadius: '6px',
+        borderColor: 'var(--neutral-6)',
       }),
       menuList: (base) => ({
         ...base,

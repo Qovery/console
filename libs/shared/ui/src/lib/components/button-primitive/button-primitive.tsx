@@ -158,10 +158,26 @@ const _buttonVariants = cva(
           'hover:bg-surface-brand-component',
         ],
       },
+      //plain
       {
         variant: 'plain',
         color: 'neutral',
-        className: ['text-neutral-subtle', 'hover:bg-surface-neutral-subtle'],
+        className: ['text-neutral-subtle', 'border-0', 'border-neutral-subtle', 'hover:border'],
+      },
+      {
+        variant: 'plain',
+        color: 'red',
+        className: ['text-negative', 'border-0', 'border-negative-subtle', 'hover:border'],
+      },
+      {
+        variant: 'plain',
+        color: 'yellow',
+        className: ['text-warning', 'border-0', 'border-warning-subtle', 'hover:border'],
+      },
+      {
+        variant: 'plain',
+        color: 'brand',
+        className: ['text-brand', 'border-0', 'border-brand-subtle', 'hover:border'],
       },
     ],
     defaultVariants: {

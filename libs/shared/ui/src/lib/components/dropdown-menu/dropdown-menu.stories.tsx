@@ -7,6 +7,13 @@ import { DropdownMenu } from './dropdown-menu'
 const Story: Meta<typeof DropdownMenu.Root> = {
   component: DropdownMenu.Root,
   title: 'DropdownMenu',
+  argTypes: {
+    side: {
+      control: { type: 'inline-radio' },
+      options: ['bottom', 'left', 'right', 'top'],
+      labels: { bottom: 'down' },
+    },
+  },
   decorators: [
     (Story) => (
       <div style={{ background: 'white', padding: '3em' }}>
@@ -18,14 +25,17 @@ const Story: Meta<typeof DropdownMenu.Root> = {
 export default Story
 
 export const Primary = {
-  render: () => (
+  args: {
+    side: 'bottom',
+  },
+  render: (args: { side: 'bottom' | 'left' | 'right' | 'top' }) => (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <Button size="md" variant="outline" color="neutral">
           Trigger
         </Button>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content>
+      <DropdownMenu.Content side={args.side}>
         <DropdownMenu.Item icon={<Icon iconName="play" />}>Deploy</DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="play" />} color="yellow">
           Update
