@@ -322,7 +322,7 @@ export function ApplicationSettingsResources({
                   { label: 'HPA (Horizontal Pod Autoscaler)', value: 'HPA' },
                 ]
 
-                if (cloudProvider === 'AWS' && isKedaCluster && isKedaFeatureEnabled) {
+                if ((cloudProvider === 'AWS' || cloudProvider === 'GCP') && isKedaCluster && isKedaFeatureEnabled) {
                   options.push({ label: 'KEDA (Event-driven autoscaling)', value: 'KEDA' })
                 }
 
