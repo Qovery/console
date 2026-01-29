@@ -2,32 +2,37 @@ import { useParams, useRouter } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { ClusterAvatar, useClusters } from '@qovery/domains/clusters/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
+import { useProjects } from '@qovery/domains/projects/feature'
 import { Avatar } from '@qovery/shared/ui'
 import { Separator } from '../header'
 import { BreadcrumbItem, type BreadcrumbItemData } from './breadcrumb-item'
 
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
-  const { organizationId, clusterId } = useParams({ strict: false })
+  const { organizationId, clusterId, projectId } = useParams({ strict: false })
 
   const { data: organizations = [] } = useOrganizations({
     enabled: true,
+    suspense: true,
   })
-  const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId })
-  const { data: clusters = [] } = useClusters({ organizationId })
+  const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId, suspense: true })
+  const { data: clusters = [] } = useClusters({ organizationId, suspense: true })
+  const { data: projects = [] } = useProjects({ organizationId, suspense: true })
 
   // Necessary to keep the organization from client by Qovery team
   const allOrganizations =
     organizations.find((org) => org.id !== organizationId) && organization
-      ? [...organizations, organization]
+      ? [...organizations.filter((org) => org.id !== organizationId), organization]
       : organizations
 
-  const orgItems: BreadcrumbItemData[] = allOrganizations.map((organization) => ({
-    id: organization.id,
-    label: organization.name,
-    path: buildLocation({ to: '/organization/$organizationId', params: { organizationId: organization.id } }).href,
-    logo_url: organization.logo_url ?? undefined,
-  }))
+  const orgItems: BreadcrumbItemData[] = allOrganizations
+    .sort((a, b) => a.name.trim().localeCompare(b.name.trim()))
+    .map((organization) => ({
+      id: organization.id,
+      label: organization.name,
+      path: buildLocation({ to: '/organization/$organizationId', params: { organizationId: organization.id } }).href,
+      logo_url: organization.logo_url ?? undefined,
+    }))
 
   const currentOrg = useMemo(
     () => orgItems.find((organization) => organization.id === organizationId),
@@ -43,9 +48,25 @@ export function Breadcrumbs() {
     }).href,
   }))
 
+  const projectItems: BreadcrumbItemData[] = projects
+    .sort((a, b) => a.name.trim().localeCompare(b.name.trim()))
+    .map((project) => ({
+      id: project.id,
+      label: project.name,
+      path: buildLocation({
+        to: '/organization/$organizationId/project/$projectId/overview',
+        params: { organizationId, projectId: project.id },
+      }).href,
+    }))
+
   const currentCluster = useMemo(
     () => clusterItems.find((cluster) => cluster.id === clusterId),
     [clusterId, clusterItems]
+  )
+
+  const currentProject = useMemo(
+    () => projectItems.find((project) => project.id === projectId),
+    [projectId, projectItems]
   )
 
   const breadcrumbData: Array<{ item: BreadcrumbItemData; items: BreadcrumbItemData[] }> = []
@@ -75,6 +96,16 @@ export function Breadcrumbs() {
         prefix: <ClusterAvatar cluster={clusters.find((cluster) => cluster.id === clusterId)} size="sm" />,
       },
       items: clusterItems,
+    })
+  }
+
+  if (currentProject) {
+    breadcrumbData.push({
+      item: {
+        ...currentProject,
+        // prefix: <ProjectAvatar project={projects.find((project) => project.id === projectId)} size="sm" />,
+      },
+      items: projectItems,
     })
   }
 

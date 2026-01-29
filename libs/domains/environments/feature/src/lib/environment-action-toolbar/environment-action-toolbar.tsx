@@ -39,7 +39,7 @@ import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
 type ActionToolbarVariant = 'default' | 'deployment'
 
-function MenuManageDeployment({
+export function MenuManageDeployment({
   environment,
   deploymentStatus,
   variant,
@@ -163,15 +163,14 @@ function MenuManageDeployment({
             <div className="flex h-full w-full items-center justify-center">
               {match(state)
                 .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', () => (
-                  <Icon iconName="loader" className="mr-3 animate-spin" />
+                  <Icon iconName="loader" className="animate-spin" />
                 ))
                 .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', () => (
-                  <Icon iconName="clock" iconStyle="regular" className="mr-3" />
+                  <Icon iconName="clock" iconStyle="regular" />
                 ))
                 .otherwise(() => (
-                  <Icon iconName="play" className="mr-4" />
+                  <Icon iconName="rocket" />
                 ))}
-              <Icon iconName="chevron-down" />
             </div>
           </Tooltip>
         </ActionToolbar.Button>
@@ -243,7 +242,7 @@ function MenuManageDeployment({
   )
 }
 
-function MenuOtherActions({ state, environment }: { state: StateEnum; environment: Environment }) {
+export function MenuOtherActions({ state, environment }: { state: StateEnum; environment: Environment }) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteEnvironment } = useDeleteEnvironment({ projectId: environment.project.id })

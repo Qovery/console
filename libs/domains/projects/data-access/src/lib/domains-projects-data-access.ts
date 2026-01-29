@@ -1,5 +1,6 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  EnvironmentsApi,
   ProjectDeploymentRuleApi,
   type ProjectDeploymentRuleRequest,
   type ProjectDeploymentRulesPriorityOrderRequest,
@@ -11,12 +12,19 @@ import {
 const projectsApi = new ProjectsApi()
 const projectMainCalls = new ProjectMainCallsApi()
 const deploymentRulesApi = new ProjectDeploymentRuleApi()
+const environmentsApi = new EnvironmentsApi()
 
 export const projects = createQueryKeys('projects', {
   list: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
       return (await projectsApi.listProject(organizationId)).data.results
+    },
+  }),
+  environmentsOverview: ({ projectId }: { projectId: string }) => ({
+    queryKey: [projectId, 'environments-overview'],
+    async queryFn() {
+      return (await environmentsApi.getProjectEnvironmentsOverview(projectId)).data.results
     },
   }),
   listDeploymentRules: ({ projectId }: { projectId: string }) => ({

@@ -1,6 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
-import { Icon, Navbar } from '@qovery/shared/ui'
+import { Suspense } from 'react'
+import { Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
 import { type FileRouteTypes } from '../../../routeTree.gen'
@@ -85,6 +86,24 @@ const CLUSTER_TABS: NavigationTab[] = [
   },
 ]
 
+const PROJECT_TABS: NavigationTab[] = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    iconName: 'table-layout',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/overview',
+  },
+]
+
+const ENVIRONMENT_TABS: NavigationTab[] = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    iconName: 'table-layout',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+  },
+]
+
 function createRoutePatternRegex(routeIdPattern: string): RegExp {
   const patternPath = routeIdPattern.replace('/_authenticated/organization', '/organization')
   return new RegExp('^' + patternPath.replace(/\$(\w+)/g, '[^/]+') + '(/.*)?$')
@@ -107,6 +126,18 @@ const NAVIGATION_CONTEXTS: Array<{
   tabs: NavigationTab[]
   paramNames: string[]
 }> = [
+  {
+    type: 'environment',
+    routeIdPattern: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId',
+    tabs: ENVIRONMENT_TABS,
+    paramNames: ['organizationId', 'projectId', 'environmentId'],
+  },
+  {
+    type: 'project',
+    routeIdPattern: '/_authenticated/organization/$organizationId/project/$projectId',
+    tabs: PROJECT_TABS,
+    paramNames: ['organizationId', 'projectId'],
+  },
   {
     type: 'cluster',
     routeIdPattern: '/_authenticated/organization/$organizationId/cluster/$clusterId',
@@ -259,6 +290,14 @@ function useBypassLayout(): boolean {
   )
 }
 
+function MainLoader() {
+  return (
+    <div className="flex h-full items-center justify-center">
+      <LoaderSpinner />
+    </div>
+  )
+}
+
 function OrganizationRoute() {
   const navigationContext = useNavigationContext()
   const activeTabId = useActiveTabId(navigationContext)
@@ -273,17 +312,21 @@ function OrganizationRoute() {
     <div className="flex h-dvh w-full flex-col bg-background">
       {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
       <div className="min-h-0 flex-1 overflow-auto">
-        <Header />
+        <Suspense fallback={<MainLoader />}>
+          <>
+            <Header />
 
-        <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
-          <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
-            {navigationContext && <NavigationBar context={navigationContext} />}
-          </Navbar.Root>
-        </div>
+            <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
+              <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
+                {navigationContext && <NavigationBar context={navigationContext} />}
+              </Navbar.Root>
+            </div>
 
-        <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>
-          <Outlet />
-        </div>
+            <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>
+              <Outlet />
+            </div>
+          </>
+        </Suspense>
       </div>
     </div>
   )
