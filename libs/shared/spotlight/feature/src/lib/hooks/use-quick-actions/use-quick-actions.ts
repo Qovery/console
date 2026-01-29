@@ -1,5 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { useMatch } from 'react-router-dom'
+import { useLocation, useParams } from '@tanstack/react-router'
 import {
   APPLICATION_URL,
   AUDIT_LOGS_PARAMS_URL,
@@ -16,22 +16,45 @@ import useServiceType from '../use-service-type/use-service-type'
 
 export type QuickAction = { label: string; iconName: IconName; link: string }
 
-export function useQuickActions(): QuickAction[] {
-  const applicationMatch = useMatch({ path: APPLICATION_URL(), end: false })
-  const databaseMatch = useMatch({ path: DATABASE_URL(), end: false })
-  const projectMatch = useMatch({ path: ENVIRONMENTS_URL(), end: false })
-  const environmentMatch = useMatch({ path: SERVICES_URL(), end: false })
-  const clusterMatch = useMatch({ path: CLUSTER_URL(), end: false })
+const createPathRegex = (pattern: string): RegExp => {
+  const escapedPattern = pattern.replace(/([.*+?^${}()|[\]\\])/g, '\\$1')
+  const withParams = escapedPattern.replace(/:([A-Za-z0-9_]+)/g, '[^/]+')
+  return new RegExp(`^${withParams}(?:/.*)?$`)
+}
 
-  const serviceId = applicationMatch?.params['applicationId'] ?? databaseMatch?.params['databaseId']
+export function useQuickActions(): QuickAction[] {
+  // TODO: testing-only - migrate to TanStack Router hooks for console-v5.
+  const { pathname } = useLocation()
+  const {
+    organizationId,
+    projectId,
+    environmentId,
+    applicationId,
+    databaseId,
+    clusterId,
+  }: {
+    organizationId?: string
+    projectId?: string
+    environmentId?: string
+    applicationId?: string
+    databaseId?: string
+    clusterId?: string
+  } = useParams({ strict: false })
+
+  const applicationMatch = createPathRegex(APPLICATION_URL()).test(pathname)
+  const databaseMatch = createPathRegex(DATABASE_URL()).test(pathname)
+  const projectMatch = createPathRegex(ENVIRONMENTS_URL()).test(pathname)
+  const environmentMatch = createPathRegex(SERVICES_URL()).test(pathname)
+  const clusterMatch = createPathRegex(CLUSTER_URL()).test(pathname)
+
+  const serviceId = applicationMatch ? applicationId : databaseMatch ? databaseId : undefined
 
   const { data: serviceType } = useServiceType({
     serviceId,
-    environmentId: applicationMatch?.params['environmentId'] ?? databaseMatch?.params['environmentId'],
+    environmentId: applicationMatch || databaseMatch ? environmentId : undefined,
   })
 
-  if (applicationMatch && serviceId) {
-    const { organizationId, projectId, environmentId } = applicationMatch.params
+  if (applicationMatch && serviceId && organizationId && projectId && environmentId) {
     return [
       {
         label: 'See deployment logs',
@@ -56,8 +79,7 @@ export function useQuickActions(): QuickAction[] {
     ]
   }
 
-  if (databaseMatch && serviceId) {
-    const { organizationId, projectId, environmentId } = databaseMatch.params
+  if (databaseMatch && serviceId && organizationId && projectId && environmentId) {
     return [
       {
         label: 'See deployment logs',
@@ -82,8 +104,7 @@ export function useQuickActions(): QuickAction[] {
     ]
   }
 
-  if (environmentMatch) {
-    const { organizationId, projectId, environmentId } = environmentMatch.params
+  if (environmentMatch && organizationId && projectId && environmentId) {
     return [
       {
         label: 'See logs',
@@ -102,8 +123,7 @@ export function useQuickActions(): QuickAction[] {
     ]
   }
 
-  if (projectMatch) {
-    const { organizationId, projectId } = projectMatch.params
+  if (projectMatch && organizationId && projectId) {
     return [
       {
         label: 'See audit logs',
@@ -117,8 +137,7 @@ export function useQuickActions(): QuickAction[] {
     ]
   }
 
-  if (clusterMatch) {
-    const { organizationId, clusterId } = clusterMatch.params
+  if (clusterMatch && organizationId && clusterId) {
     return [
       { label: 'See logs', iconName: 'scroll', link: INFRA_LOGS_URL(organizationId, clusterId) },
       {

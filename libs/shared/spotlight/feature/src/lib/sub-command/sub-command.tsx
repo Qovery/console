@@ -1,9 +1,9 @@
 import * as Popover from '@radix-ui/react-popover'
+import { useNavigate } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { Command as Cmdk } from 'cmdk'
 import { type ServiceLightResponse } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useFavoriteServices } from '@qovery/domains/services/feature'
 import { ENVIRONMENTS_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Command, Icon, Kbd, Truncate } from '@qovery/shared/ui'
@@ -14,7 +14,7 @@ const CustomKbd = ({ children, className }: PropsWithChildren<{ className?: stri
   return (
     <Kbd
       className={twMerge(
-        'h-4 min-w-4 justify-center border border-neutral-250 bg-neutral-150 px-0.5 text-2xs text-neutral-350',
+        'h-4 min-w-4 justify-center border border-neutral bg-surface-neutral-subtle px-0.5 text-2xs text-neutral-subtle',
         className
       )}
     >
@@ -43,6 +43,7 @@ export function SubCommand({
   service?: ServiceLightResponse
   onSpotlightOpenChange?: (open: boolean) => void
 }) {
+  // TODO: testing-only - migrate to TanStack Router hooks for console-v5.
   const navigate = useNavigate()
   const metaKey = useFormatHotkeys('meta')
   const { toggleFavoriteService, isServiceFavorite } = useFavoriteServices({ organizationId })
@@ -100,7 +101,7 @@ export function SubCommand({
   // Navigation and action handlers
   const navigateToProject = () => {
     if (service?.project_id) {
-      navigate(ENVIRONMENTS_URL(organizationId, service.project_id))
+      navigate({ to: ENVIRONMENTS_URL(organizationId, service.project_id) })
       onSpotlightOpenChange?.(false)
       setOpen(false)
       resetSelection()
@@ -109,7 +110,7 @@ export function SubCommand({
 
   const navigateToEnvironment = () => {
     if (service?.project_id && service?.environment_id) {
-      navigate(SERVICES_URL(organizationId, service.project_id, service.environment_id))
+      navigate({ to: SERVICES_URL(organizationId, service.project_id, service.environment_id) })
       onSpotlightOpenChange?.(false)
       setOpen(false)
       resetSelection()
@@ -124,8 +125,8 @@ export function SubCommand({
   }
 
   return (
-    <div className="flex h-9 items-center justify-end gap-4 border-t border-neutral-200 bg-neutral-100 px-2.5">
-      <span className="flex gap-1.5 text-xs text-neutral-350">
+    <div className="flex h-9 items-center justify-end gap-4 bg-surface-neutral-subtle px-2.5">
+      <span className="flex gap-1.5 text-xs text-neutral-subtle">
         Arrow to navigate
         <CustomKbd className="w-4">
           <Icon iconName="arrow-up" />
@@ -134,7 +135,7 @@ export function SubCommand({
           <Icon iconName="arrow-down" />
         </CustomKbd>
       </span>
-      <span className="flex gap-1.5 text-xs text-neutral-350">
+      <span className="flex gap-1.5 text-xs text-neutral-subtle">
         Enter to open
         <CustomKbd className="w-4">
           <Icon iconName="arrow-turn-down-left" />
@@ -147,7 +148,7 @@ export function SubCommand({
               size="xs"
               variant="outline"
               className={clsx('gap-1.5 bg-transparent px-1.5 font-normal', {
-                'bg-neutral-150': open,
+                'bg-surface-neutral-component': open,
               })}
             >
               Actions
@@ -159,7 +160,7 @@ export function SubCommand({
                   ></path>
                 </svg>
               </CustomKbd>
-              <span className="mx-0.5 block h-3 w-[1px] bg-neutral-250"></span>
+              <span className="mx-0.5 block h-3 w-[1px] bg-surface-neutral-component"></span>
               <CustomKbd className="w-4 text-sm">
                 <span>{metaKey}</span>
               </CustomKbd>
@@ -169,7 +170,7 @@ export function SubCommand({
           <Popover.Content
             side="top"
             align="end"
-            className="w-64 animate-[scalein_0.18s_ease_both] rounded-md border border-neutral-200 bg-white shadow-lg delay-[100ms]"
+            className="w-64 animate-[scalein_0.18s_ease_both] rounded-md border border-neutral bg-surface-neutral shadow-lg delay-[100ms]"
             sideOffset={16}
             alignOffset={0}
             onCloseAutoFocus={(e) => {
@@ -181,7 +182,7 @@ export function SubCommand({
               <Command.List className="m-2 mt-1 p-0 [&>[cmdk-list-sizer]]:m-0">
                 <Command.Empty>
                   <div className="pt-3 text-center">
-                    <p className="text-xs font-medium text-neutral-350">No result</p>
+                    <p className="text-xs font-medium text-neutral-subtle">No result</p>
                   </div>
                 </Command.Empty>
                 <Command.Group
@@ -201,8 +202,8 @@ export function SubCommand({
                       iconName="star"
                       iconStyle={isFavorite ? 'solid' : 'regular'}
                       className={twMerge(
-                        clsx('w-5 text-center text-sm text-neutral-300', {
-                          'text-yellow-500': isFavorite,
+                        clsx('w-5 text-center text-sm text-neutral-disabled', {
+                          'text-warning': isFavorite,
                         })
                       )}
                     />
@@ -214,7 +215,7 @@ export function SubCommand({
                 ref={subInputRef}
                 autoFocus
                 placeholder="Search for actions..."
-                className="border-b-0 border-t border-neutral-200 bg-transparent p-3 text-ssm"
+                className="border-b-0 border-t border-neutral bg-transparent p-3 text-ssm"
               />
             </Cmdk>
           </Popover.Content>
