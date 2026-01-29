@@ -46,8 +46,8 @@ function RouteComponent() {
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
                     <ActionToolbar.Button color="brand" variant="solid" size="md" className="gap-2">
-                      New variable
                       <Icon iconName="circle-plus" iconStyle="regular" />
+                      New variable
                     </ActionToolbar.Button>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content>

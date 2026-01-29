@@ -566,7 +566,7 @@ export function VariableList({
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
-              <Table.Row className="h-16 cursor-pointer hover:bg-surface-neutral-subtle">
+              <Table.Row className="h-16 hover:bg-surface-neutral-subtle">
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}
