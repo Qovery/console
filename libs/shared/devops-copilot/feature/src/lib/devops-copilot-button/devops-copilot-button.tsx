@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import posthog from 'posthog-js'
 import { useContext, useEffect } from 'react'
 import { Badge, Button, Icon, Kbd, Tooltip } from '@qovery/shared/ui'
 import { useFormatHotkeys } from '@qovery/shared/util-hooks'
@@ -14,6 +15,9 @@ export function DevopsCopilotButton() {
       if (event.key === 'i' && (event.metaKey || event.ctrlKey)) {
         event.preventDefault()
         setDevopsCopilotOpen(true)
+        posthog.capture('ai-copilot-opened', {
+          trigger: 'keyboard-shortcut',
+        })
       }
     }
 
@@ -27,7 +31,12 @@ export function DevopsCopilotButton() {
     <Button
       type="button"
       variant="surface"
-      onClick={() => setDevopsCopilotOpen(true)}
+      onClick={() => {
+        setDevopsCopilotOpen(true)
+        posthog.capture('ai-copilot-opened', {
+          trigger: 'button-click',
+        })
+      }}
       className={clsx('ml-4 mr-4 h-[38px] gap-3 px-3 dark:ml-3 dark:h-9', {
         'bg-neutral-50': devopsCopilotOpen,
       })}
