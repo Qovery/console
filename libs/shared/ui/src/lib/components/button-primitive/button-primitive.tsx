@@ -29,11 +29,11 @@ const _buttonVariants = cva(
         plain: [''],
       },
       color: {
-        brand: ['outline-neutral'],
-        neutral: ['outline-brand'],
-        green: ['outline-neutral-500'],
-        red: ['outline-red-500'],
-        yellow: ['outline-yellow-600'],
+        brand: ['outline-brand-strong'],
+        neutral: ['outline-neutral-strong'],
+        green: ['outline-positive-strong'],
+        red: ['outline-negative-strong'],
+        yellow: ['outline-warning-strong'],
       },
       size: {
         xs: ['text-xs', 'h-6', 'px-1.5'],
@@ -123,12 +123,39 @@ const _buttonVariants = cva(
       {
         variant: ['outline'],
         color: 'neutral',
-        className: ['bg-surface-neutral', 'border', 'border-neutral', 'hover:border-neutral-component', 'text-neutral'],
+        className: [
+          'bg-surface-neutral',
+          'border',
+          'border-neutral',
+          'hover:border-neutral-component',
+          'hover:bg-surface-neutral-subtle',
+          'data-[state=open]:bg-surface-neutral-subtle',
+          'text-neutral',
+        ],
       },
       {
         variant: ['outline'],
         color: 'red',
-        className: ['border', 'border-negative-subtle', 'text-negative', 'hover:border-negative-component'],
+        className: [
+          'border',
+          'border-negative-subtle',
+          'text-negative',
+          'hover:border-negative-component',
+          'hover:bg-surface-negative-subtle',
+          'data-[state=open]:bg-surface-negative-subtle',
+        ],
+      },
+      {
+        variant: ['outline'],
+        color: 'yellow',
+        className: [
+          'border',
+          'border-warning-subtle',
+          'text-warning',
+          'hover:border-warning-component',
+          'hover:bg-surface-warning-subtle',
+          'data-[state=open]:bg-surface-warning-subtle',
+        ],
       },
       //surface variant
       {
@@ -162,22 +189,22 @@ const _buttonVariants = cva(
       {
         variant: 'plain',
         color: 'neutral',
-        className: ['text-neutral-subtle', 'border-0', 'border-neutral-subtle', 'hover:border'],
+        className: ['text-neutral-subtle', 'hover:bg-surface-neutral-subtle'],
       },
       {
         variant: 'plain',
         color: 'red',
-        className: ['text-negative', 'border-0', 'border-negative-subtle', 'hover:border'],
+        className: ['text-negative', 'hover:bg-surface-negative-subtle'],
       },
       {
         variant: 'plain',
         color: 'yellow',
-        className: ['text-warning', 'border-0', 'border-warning-subtle', 'hover:border'],
+        className: ['text-warning', 'hover:bg-surface-warning-subtle'],
       },
       {
         variant: 'plain',
         color: 'brand',
-        className: ['text-brand', 'border-0', 'border-brand-subtle', 'hover:border'],
+        className: ['text-brand', 'hover:bg-surface-brand-subtle'],
       },
     ],
     defaultVariants: {

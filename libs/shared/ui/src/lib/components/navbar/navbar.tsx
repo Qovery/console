@@ -37,8 +37,6 @@ const navbarItemVariants = cva(
     'focus-visible:outline-brand-11',
     'font-medium',
     'rounded-md',
-    '[&_i]:relative',
-    '[&_i]:top-[1px]',
   ],
   {
     variants: {
