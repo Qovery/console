@@ -395,6 +395,7 @@ module.exports = {
           subtle: 'var(--accent-6)',
         },
       },
+      outlineColor: ({ theme }) => theme('borderColor'),
       animation: {
         'action-bar-fade-in': '0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards actionBarFadeIn',
         'action-bar-fade-out': '0.2s cubic-bezier(0.06, 0.71, 0.55, 1) 0s 1 normal forwards actionBarFadeOut',

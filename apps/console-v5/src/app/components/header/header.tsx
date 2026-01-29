@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import { SpotlightTrigger } from '@qovery/pages/layout'
 import { LogoIcon } from '@qovery/shared/ui'
 import { Breadcrumbs } from './breadcrumbs/breadcrumbs'
 import { UserMenu } from './user-menu/user-menu'
@@ -25,7 +26,8 @@ export function Header() {
         {/* <Suspense fallback={<div>Loading...</div>}> */}
         <Breadcrumbs />
         {/* </Suspense> */}
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-3">
+          <SpotlightTrigger />
           <UserMenu />
         </div>
       </div>
