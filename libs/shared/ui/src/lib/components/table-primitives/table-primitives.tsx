@@ -10,13 +10,15 @@ const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function Table
   ref
 ) {
   return (
-    <table
-      ref={ref}
-      className={twMerge('min-w-full divide-y divide-neutral text-sm text-neutral', className)}
-      {...rest}
-    >
-      {children}
-    </table>
+    <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral">
+      <table
+        ref={ref}
+        className={twMerge('min-w-full divide-y divide-neutral text-sm text-neutral', className)}
+        {...rest}
+      >
+        {children}
+      </table>
+    </div>
   )
 })
 

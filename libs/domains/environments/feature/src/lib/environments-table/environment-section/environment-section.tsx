@@ -156,35 +156,33 @@ export function EnvironmentSection({
           <EmptyState />
         </div>
       ) : (
-        <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral">
-          <Table.Root className="divide-y divide-neutral">
-            <Table.Header>
-              <Table.Row className={twMerge('w-full items-center text-xs', gridLayoutClassName)}>
-                <Table.ColumnHeaderCell className="flex h-9 items-center text-neutral-subtle">
-                  Environment
-                </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
-                  Last operation
-                </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
-                  Cluster
-                </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
-                  Last update
-                </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-right text-neutral-subtle">
-                  Actions
-                </Table.ColumnHeaderCell>
-              </Table.Row>
-            </Table.Header>
+        <Table.Root className="divide-y divide-neutral">
+          <Table.Header>
+            <Table.Row className={twMerge('w-full items-center text-xs', gridLayoutClassName)}>
+              <Table.ColumnHeaderCell className="flex h-9 items-center text-neutral-subtle">
+                Environment
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                Last operation
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                Cluster
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                Last update
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-right text-neutral-subtle">
+                Actions
+              </Table.ColumnHeaderCell>
+            </Table.Row>
+          </Table.Header>
 
-            <Table.Body className="divide-y divide-neutral">
-              {items.map((environmentOverview) => (
-                <EnvRow key={environmentOverview.id} overview={environmentOverview} />
-              ))}
-            </Table.Body>
-          </Table.Root>
-        </div>
+          <Table.Body className="divide-y divide-neutral">
+            {items.map((environmentOverview) => (
+              <EnvRow key={environmentOverview.id} overview={environmentOverview} />
+            ))}
+          </Table.Body>
+        </Table.Root>
       )}
     </Section>
   )

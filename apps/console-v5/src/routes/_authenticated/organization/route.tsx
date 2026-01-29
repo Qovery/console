@@ -93,6 +93,12 @@ const PROJECT_TABS: NavigationTab[] = [
     iconName: 'table-layout',
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/overview',
   },
+  {
+    id: 'variables',
+    label: 'Variables',
+    iconName: 'key',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/variables',
+  },
 ]
 
 const ENVIRONMENT_TABS: NavigationTab[] = [

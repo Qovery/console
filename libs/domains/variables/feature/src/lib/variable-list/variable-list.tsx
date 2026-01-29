@@ -450,7 +450,7 @@ export function VariableList({
             <Tooltip
               content={variable.updated_at ? dateUTCString(variable.updated_at) : dateUTCString(variable.created_at)}
             >
-              <span className="text-xs text-neutral-350">
+              <span className="text-sm text-neutral-subtle">
                 {timeAgo(variable.updated_at ? new Date(variable.updated_at) : new Date(variable.created_at))} ago
               </span>
             </Tooltip>
@@ -525,7 +525,7 @@ export function VariableList({
             <Table.Row key={headerGroup.id}>
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className={`${i === 2 ? 'border-r pl-0' : ''} relative font-medium`}
+                  className={`${i === 2 ? 'border-r border-neutral pl-0' : ''} relative font-medium`}
                   key={header.id}
                   style={{ width: i === 0 ? '20px' : i === 2 ? '50px' : `${header.getSize()}%` }}
                 >
@@ -566,11 +566,11 @@ export function VariableList({
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
-              <Table.Row className="h-16 cursor-pointer hover:bg-neutral-100">
+              <Table.Row className="h-16 hover:bg-surface-neutral-subtle">
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}
-                    className={`${i === 2 ? 'border-r pl-0' : ''} first:relative`}
+                    className={`${i === 2 ? 'border-r border-neutral pl-0' : ''} first:relative`}
                     style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
