@@ -34,7 +34,7 @@ const SegmentedControlRoot = forwardRef<ElementRef<typeof ToggleGroupPrimitive.R
       <ToggleGroupPrimitive.Root
         ref={forwardedRef}
         className={twMerge(
-          'relative inline-grid h-9 min-w-max auto-cols-[1fr] grid-flow-col items-stretch rounded bg-neutral-150 align-top font-medium text-neutral-300',
+          'relative inline-grid h-9 min-w-max auto-cols-[1fr] grid-flow-col items-stretch rounded bg-surface-neutral-component align-top font-medium text-neutral-disabled',
           className
         )}
         onValueChange={(value) => {
@@ -72,7 +72,7 @@ const SegmentedControlItem = forwardRef<ElementRef<typeof ToggleGroupPrimitive.I
         {/* SegmentedControlItemLabel */}
         <span className="box-border flex grow items-center justify-center">
           {/* SegmentedControlItemLabelActive */}
-          <span className="box-border flex h-9 grow items-center justify-center rounded border border-neutral-250 bg-white px-4 text-neutral-400 opacity-0 shadow-sm group-data-[state=on]:opacity-100">
+          <span className="box-border flex h-9 grow items-center justify-center rounded border border-neutral bg-surface-neutral px-4 text-neutral opacity-0 group-data-[state=on]:opacity-100">
             {children}
           </span>
           {/* SegmentedControlItemLabelInactive */}

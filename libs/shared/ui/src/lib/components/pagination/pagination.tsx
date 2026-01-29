@@ -18,7 +18,7 @@ export function Pagination(props: PaginationProps) {
       <div className="flex items-center gap-0.5">
         <Button
           data-testid="button-previous-page"
-          className="w-9 justify-center"
+          className="w-8 justify-center"
           variant="surface"
           color="neutral"
           size="md"
@@ -30,7 +30,7 @@ export function Pagination(props: PaginationProps) {
         </Button>
         <Button
           data-testid="button-next-page"
-          className="w-9 justify-center"
+          className="w-8 justify-center"
           variant="surface"
           color="neutral"
           size="md"

@@ -159,7 +159,7 @@ const SidebarRoot = forwardRef<ElementRef<'div'>, SidebarRootProps>(function Sid
 const SidebarBadge = ({ children }: PropsWithChildren) => (
   <span
     data-testid="sidebar-badge"
-    className="ml-auto rounded bg-surface-brand-solid px-1 text-3xs uppercase text-neutral-contrasted"
+    className="ml-auto rounded bg-surface-brand-solid px-1 text-3xs uppercase text-neutralInvert"
   >
     {children}
   </span>

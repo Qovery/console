@@ -6,9 +6,10 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseEnvironmentsProps {
   projectId: string
+  suspense?: boolean
 }
 
-export function useEnvironments({ projectId }: UseEnvironmentsProps) {
+export function useEnvironments({ projectId, suspense = false }: UseEnvironmentsProps) {
   const {
     data: environments,
     isLoading: isEnvironmentsLoading,
@@ -21,6 +22,7 @@ export function useEnvironments({ projectId }: UseEnvironmentsProps) {
     },
     enabled: projectId !== '',
     retry: 3,
+    suspense,
   })
 
   const runningStatusResults = useQueries({

@@ -7,23 +7,14 @@ import { buttonVariants } from '../button-primitive/button-primitive'
 import Icon from '../icon/icon'
 
 export const linkVariants = cva(
-  [
-    'cursor-pointer',
-    'transition',
-    'duration-100',
-    'font-medium',
-    'inline-flex',
-    'items-center',
-    'gap-1',
-    'hover:brightness-75',
-  ],
+  ['cursor-pointer', 'transition', 'duration-100', 'font-medium', 'inline-flex', 'items-center', 'gap-1'],
   {
     variants: {
       color: {
-        brand: ['text-surface-brand-solid'],
-        red: ['text-negative'],
-        sky: ['text-info'],
-        current: ['text-current'],
+        brand: ['text-brand', 'hover:text-brand-hover'],
+        red: ['text-negative', 'hover:text-negative-hover'],
+        sky: ['text-info', 'hover:text-info-hover'],
+        neutral: ['text-neutral', 'hover:text-neutral-subtle'],
       },
       size: {
         xs: ['text-xs'],

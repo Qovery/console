@@ -8,7 +8,7 @@ export const StoppedIcon = forwardRef<SVGSVGElement, IconSVGProps>(function Stop
 ) {
   return (
     <svg
-      className={twMerge('text-neutral-300', className)}
+      className={twMerge('text-neutral', className)}
       xmlns="http://www.w3.org/2000/svg"
       width="16"
       height="16"

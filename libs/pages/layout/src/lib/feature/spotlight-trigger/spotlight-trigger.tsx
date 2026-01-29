@@ -1,6 +1,5 @@
 import { useParams } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { useParams as useLegacyParams } from 'react-router-dom'
 import { Spotlight } from '@qovery/shared/spotlight/feature'
 import { Icon, Kbd } from '@qovery/shared/ui'
 import { useFormatHotkeys } from '@qovery/shared/util-hooks'
@@ -53,15 +52,10 @@ const SpotlightTriggerBase = ({ organizationId }: { organizationId: string }) =>
   )
 }
 
-export function SpotlightTriggerWithRouter() {
-  const { organizationId = '' } = useLegacyParams()
-  return <SpotlightTriggerBase organizationId={organizationId} />
-}
-
 export function SpotlightTrigger() {
   // TODO: testing-only - use TanStack Router params for console-v5.
   const { organizationId = '' } = useParams({ strict: false })
   return <SpotlightTriggerBase organizationId={organizationId} />
 }
 
-export default SpotlightTriggerWithRouter
+export default SpotlightTrigger

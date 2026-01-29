@@ -28,7 +28,7 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
     if (triggerTooltip) {
       return (
         <Tooltip content={triggerTooltip} delayDuration={100}>
-          <span className={`flex ${withRightBorder ? 'border-r border-r-neutral-250' : ''}`}>{content}</span>
+          <span className={`flex ${withRightBorder ? 'border-r border-r-neutral' : ''}`}>{content}</span>
         </Tooltip>
       )
     } else {

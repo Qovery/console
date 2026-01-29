@@ -47,7 +47,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
         <p className="mb-5 text-sm text-neutral">{description}</p>
         {list?.map((element, index) => (
           <p key={index} data-testid={element.text} className="mb-2 text-sm font-medium text-neutral">
-            <Icon name={element.icon || 'icon-solid-trash'} className="mr-3 text-neutral" />
+            <Icon name={element.icon || 'icon-solid-trash'} className="mr-3 text-negative" />
             {element.text}
           </p>
         ))}

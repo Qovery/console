@@ -35,7 +35,7 @@ const badgeVariants = cva(['text-neutral', 'inline-flex', 'items-center', 'shrin
     {
       variant: 'surface',
       color: 'red',
-      className: ['bg-surface-negative-subtle'],
+      className: ['bg-surface-negative-subtle', 'text-negative'],
     },
     {
       variant: 'outline',
@@ -45,7 +45,7 @@ const badgeVariants = cva(['text-neutral', 'inline-flex', 'items-center', 'shrin
     {
       variant: 'surface',
       color: 'purple',
-      className: ['bg-surface-accent1-component'],
+      className: ['bg-surface-accent1-component', 'text-accent1'],
     },
     {
       variant: 'outline',
@@ -55,7 +55,7 @@ const badgeVariants = cva(['text-neutral', 'inline-flex', 'items-center', 'shrin
     {
       variant: 'surface',
       color: 'sky',
-      className: ['bg-surface-info-subtle'],
+      className: ['bg-surface-info-subtle', 'text-info'],
     },
     {
       variant: 'outline',
@@ -65,7 +65,7 @@ const badgeVariants = cva(['text-neutral', 'inline-flex', 'items-center', 'shrin
     {
       variant: 'surface',
       color: 'green',
-      className: ['bg-surface-positive-subtle'],
+      className: ['bg-surface-positive-subtle', 'text-positive'],
     },
     {
       variant: 'outline',
@@ -75,7 +75,7 @@ const badgeVariants = cva(['text-neutral', 'inline-flex', 'items-center', 'shrin
     {
       variant: 'surface',
       color: 'yellow',
-      className: ['bg-surface-warning-subtle'],
+      className: ['bg-surface-warning-subtle', 'text-warning'],
     },
     {
       variant: 'outline',
@@ -85,7 +85,7 @@ const badgeVariants = cva(['text-neutral', 'inline-flex', 'items-center', 'shrin
     {
       variant: 'surface',
       color: 'brand',
-      className: ['bg-surface-brand-subtle'],
+      className: ['bg-surface-brand-subtle', 'text-brand'],
     },
     {
       variant: 'outline',
