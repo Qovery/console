@@ -3,6 +3,7 @@ import { Area, Line, ReferenceLine } from 'recharts'
 import { calculateDynamicRange, calculateRateInterval, useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart, type ReferenceLineEvent } from '../../../local-chart/local-chart'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
+import { buildPromSelector } from '../../../util-chart/build-selector'
 import { formatTimestamp } from '../../../util-chart/format-timestamp'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
@@ -15,20 +16,20 @@ sum by (condition) (
 )
 `
 
-const queryRestartWithReason = (containerName: string, timeRange: string) => `
-sum by (reason) (
-  sum by (pod) (
-    increase(kube_pod_container_status_restarts_total{container="${containerName}"}[${timeRange}])
-  )
-  *
-  on(pod) group_left(reason)
-  sum by (pod, reason) (
-    max without(instance, job, endpoint, service, prometheus, uid) (
-      kube_pod_container_status_last_terminated_reason{container="${containerName}"}
-    )
-  )
-)
-`
+const queryRestartWithReason = (selector: string, timeRange: string) => `
+ sum by (reason) (
+   sum by (pod) (
+     increase(kube_pod_container_status_restarts_total{${selector}}[${timeRange}])
+   )
+   *
+   on(pod) group_left(reason)
+   sum by (pod, reason) (
+     max without(instance, job, endpoint, service, prometheus, uid) (
+       kube_pod_container_status_last_terminated_reason{${selector}}
+     )
+   )
+ )
+ `
 
 const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
   sum by (pod,reason)(
@@ -199,12 +200,14 @@ export function InstanceStatusChart({
   containerName,
   isFullscreen,
   namespace,
+  podNames,
 }: {
   clusterId: string
   serviceId: string
   containerName: string
   namespace: string
   isFullscreen?: boolean
+  podNames?: string[]
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, timeRange } = useDashboardContext()
 
@@ -230,6 +233,8 @@ export function InstanceStatusChart({
     metricShortName: 'instance_status_health',
   })
 
+  const selector = useMemo(() => buildPromSelector(containerName, podNames), [containerName, podNames])
+
   const {
     data: metricsRestartsWithReason,
     isLoading: isLoadingMetricsRestartsWithReason,
@@ -239,7 +244,7 @@ export function InstanceStatusChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryRestartWithReason(containerName, timeRange),
+    query: queryRestartWithReason(selector, timeRange),
     boardShortName: 'service_overview',
     metricShortName: 'instance_status_restart',
   })

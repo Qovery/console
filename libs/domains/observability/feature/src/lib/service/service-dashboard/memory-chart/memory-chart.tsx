@@ -5,30 +5,29 @@ import { usePodColor } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
+import { buildPromSelector } from '../../../util-chart/build-selector'
 import { convertPodName } from '../../../util-chart/convert-pod-name'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
-const queryMemoryUsage = (containerName: string) => `
-  sum by (pod) (container_memory_working_set_bytes{container="${containerName}"})
-`
+const queryMemoryUsage = (selector: string) => `sum by (pod) (container_memory_working_set_bytes{${selector}})`
 
-const queryMemoryLimit = (containerName: string) => `
-  sum (bottomk(1, kube_pod_container_resource_limits{resource="memory", container="${containerName}"}))
-`
+const queryMemoryLimit = (selector: string) =>
+  `sum (bottomk(1, kube_pod_container_resource_limits{resource="memory", ${selector}}))`
 
-const queryMemoryRequest = (containerName: string) => `
-  sum (bottomk(1, kube_pod_container_resource_requests{resource="memory", container="${containerName}"}))
-`
+const queryMemoryRequest = (selector: string) =>
+  `sum (bottomk(1, kube_pod_container_resource_requests{resource="memory", ${selector}}))`
 
 export function MemoryChart({
   clusterId,
   serviceId,
   containerName,
+  podNames,
 }: {
   clusterId: string
   serviceId: string
   containerName: string
+  podNames?: string[]
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
   const getColorByPod = usePodColor()
@@ -51,11 +50,13 @@ export function MemoryChart({
     setLegendSelectedKeys(new Set())
   }
 
+  const selector = useMemo(() => buildPromSelector(containerName, podNames), [containerName, podNames])
+
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMemoryUsage(containerName),
+    query: queryMemoryUsage(selector),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'memory',
@@ -65,7 +66,7 @@ export function MemoryChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMemoryLimit(containerName),
+    query: queryMemoryLimit(selector),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'memory_limit',
@@ -75,7 +76,7 @@ export function MemoryChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMemoryRequest(containerName),
+    query: queryMemoryRequest(selector),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'memory_request',

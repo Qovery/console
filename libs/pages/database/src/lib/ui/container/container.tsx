@@ -51,12 +51,18 @@ export function Container({ service, environment, children }: PropsWithChildren<
 
   const hasMetrics = useMemo(
     () =>
-      cluster?.cloud_provider === 'AWS' &&
-      cluster?.metrics_parameters?.enabled &&
-      cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled &&
       service?.serviceType === 'DATABASE' &&
-      (service?.type === 'POSTGRESQL' || service?.type === 'MYSQL') &&
-      (service as Database)?.mode === DatabaseModeEnum.MANAGED,
+      cluster?.metrics_parameters?.enabled &&
+      match((service as Database)?.mode)
+        .with(DatabaseModeEnum.MANAGED, () => {
+          return (
+            cluster?.cloud_provider === 'AWS' &&
+            cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled &&
+            (service?.type === 'POSTGRESQL' || service?.type === 'MYSQL')
+          )
+        })
+        .with(DatabaseModeEnum.CONTAINER, () => true)
+        .otherwise(() => false),
     [
       cluster?.cloud_provider,
       cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled,
