@@ -70,8 +70,8 @@ export function PageApplicationCreateFeature() {
     cpu: 500,
     gpu: 0,
     min_running_instances: 1,
-    max_running_instances: 2,
-    autoscaling_mode: 'HPA',
+    max_running_instances: 1,
+    autoscaling_mode: 'NONE',
     hpa_metric_type: 'CPU',
     hpa_cpu_average_utilization_percent: 60,
   })

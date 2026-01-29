@@ -73,14 +73,22 @@ export function ApplicationSettingsResources({
   const hpaMemoryAverageUtilizationPercent = watch('hpa_memory_average_utilization_percent') ?? 60
   const previousAutoscalingModeRef = useRef(autoscalingMode)
 
-  // Adjust min/max values when switching from NONE to HPA or KEDA
+  // Adjust min/max values when switching between autoscaling modes
   useEffect(() => {
     const previousMode = previousAutoscalingModeRef.current
+
+    // When switching from no autoscaling to HPA/KEDA, set min=1 and max=2
     if (previousMode === 'NONE' && (autoscalingMode === 'HPA' || autoscalingMode === 'KEDA')) {
-      // When switching from no autoscaling to HPA/KEDA, set min=1 and max=2
       if (minRunningInstances === maxRunningInstances) {
         setValue('min_running_instances', 1)
         setValue('max_running_instances', 2)
+      }
+    }
+
+    // When switching to no autoscaling (NONE), ensure max equals min
+    if ((previousMode === 'HPA' || previousMode === 'KEDA') && autoscalingMode === 'NONE') {
+      if (minRunningInstances !== maxRunningInstances) {
+        setValue('max_running_instances', minRunningInstances)
       }
     }
 
