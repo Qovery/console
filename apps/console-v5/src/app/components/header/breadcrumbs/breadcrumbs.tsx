@@ -101,10 +101,7 @@ export function Breadcrumbs() {
 
   if (currentProject) {
     breadcrumbData.push({
-      item: {
-        ...currentProject,
-        // prefix: <ProjectAvatar project={projects.find((project) => project.id === projectId)} size="sm" />,
-      },
+      item: currentProject,
       items: projectItems,
     })
   }
