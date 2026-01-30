@@ -12,8 +12,8 @@ const Content = (props: ModalContentProps) => {
 
   return (
     <div className="px-5 py-4">
-      <h3 className="h3 text-base font-medium text-neutral-400">Title</h3>
-      <p className="mb-6 mt-2 text-sm text-neutral-350">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <h3 className="h3 text-base font-medium text-neutral">Title</h3>
+      <p className="mb-6 mt-2 text-sm text-neutral-subtle">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
       <div className="flex justify-end">
         <Button type="button" size="lg" onClick={() => setOpen && setOpen(false)}>
           Save changes
