@@ -15,7 +15,7 @@ import {
   Section,
 } from '@qovery/shared/ui'
 import { fieldStyles } from '@qovery/shared/util-payment'
-import BillingDetailsFeature from '../../feature/page-organization-billing-feature/billing-details-feature/billing-details-feature'
+import BillingDetails from './billing-details/billing-details'
 
 export interface PageOrganizationBillingProps {
   creditCards: CreditCard[]
@@ -170,7 +170,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
 
           <div className="my-6 border-t border-neutral-250" />
 
-          <BillingDetailsFeature
+          <BillingDetails
             countryValues={props.countryValues}
             loadingBillingInfos={props.loadingBillingInfos}
             editInProcess={props.editInProcess}
