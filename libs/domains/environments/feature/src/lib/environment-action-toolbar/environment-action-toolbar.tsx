@@ -35,6 +35,7 @@ import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployme
 import { useServiceCount } from '../hooks/use-service-count/use-service-count'
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
 import useUninstallEnvironment from '../hooks/use-uninstall-environment/use-uninstall-environment'
+import { DeployWithVersionModal } from '../deploy-with-version-modal/deploy-with-version-modal'
 import { TerraformExportModal } from '../terraform-export-modal/terraform-export-modal'
 import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
@@ -150,6 +151,16 @@ function MenuManageDeployment({
     })
   }
 
+  const openDeployWithVersionModal = () => {
+    openModal({
+      content: <DeployWithVersionModal environment={environment} />,
+      options: {
+        width: 800,
+        fakeModal: true, // Required for InputSelect scroll to work inside modal
+      },
+    })
+  }
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -237,6 +248,9 @@ function MenuManageDeployment({
               <DropdownMenu.Item icon={<Icon iconName="rotate" />} onSelect={openUpdateAllModal}>
                 Deploy latest version for..
               </DropdownMenu.Item>
+              <DropdownMenu.Item icon={<Icon iconName="code-branch" />} onSelect={openDeployWithVersionModal}>
+                Deploy with version selection..
+              </DropdownMenu.Item>
             </>
           ))}
       </DropdownMenu.Content>
@@ -245,7 +259,6 @@ function MenuManageDeployment({
 }
 
 function MenuOtherActions({ state, environment }: { state: StateEnum; environment: Environment }) {
-  const { pathname } = useLocation()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteEnvironment } = useDeleteEnvironment({ projectId: environment.project.id })
