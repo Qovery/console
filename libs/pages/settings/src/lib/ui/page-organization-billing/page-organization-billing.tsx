@@ -19,7 +19,7 @@ import BillingDetailsFeature from '../../feature/page-organization-billing-featu
 
 export interface PageOrganizationBillingProps {
   creditCards: CreditCard[]
-  onAddCard: () => void
+  onAddCard: (cardId?: string) => void
   onDeleteCard: (creditCard: CreditCard) => void
   creditCardLoading?: boolean
   showAddCard?: boolean
@@ -45,7 +45,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-medium text-neutral-400">Credit cards</h3>
               {props.creditCards.length === 0 && (
-                <Button onClick={props.onAddCard} size="md" className="gap-2" data-testid="add-new-card-button">
+                <Button onClick={() => props.onAddCard()} size="md" className="gap-2" data-testid="add-new-card-button">
                   Add new card
                   <Icon iconName="circle-plus" iconStyle="regular" />
                 </Button>
@@ -56,52 +56,58 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
               <div className="flex justify-center">
                 <LoaderSpinner />
               </div>
-            ) : props.creditCards.length > 0 ? (
-              <div className="flex flex-col">
-                {props.creditCards.map((creditCard) => (
-                  <div
-                    data-testid="credit-card-row"
-                    key={creditCard.id}
-                    className="mb-3 flex items-center justify-between gap-3"
-                  >
-                    <InputCreditCard
-                      type="number"
-                      name="Card number"
-                      label="Card number"
-                      brand={creditCard.brand?.toLowerCase()}
-                      value={`**** ${creditCard.last_digit}`}
-                      disabled
-                      className="grow"
-                    />
-                    <InputText
-                      name="Expiration date"
-                      label="Expiration date"
-                      className="grow"
-                      value={`${creditCard.expiry_month} / ${creditCard.expiry_year}`}
-                      disabled
-                    />
-                    <Button
-                      data-testid="edit-credit-card"
-                      className="h-[52px] w-[52px] justify-center"
-                      variant="surface"
-                      color="neutral"
-                      onClick={props.onAddCard}
-                    >
-                      <Icon iconName="pen" className="text-sm" />
-                    </Button>
-                    <Button
-                      data-testid="delete-credit-card"
-                      className="h-[52px] w-[52px] justify-center"
-                      variant="surface"
-                      color="neutral"
-                      onClick={() => props.onDeleteCard(creditCard)}
-                    >
-                      <Icon iconName="trash" className="text-sm" />
-                    </Button>
+            ) : (
+              <>
+                {/* Existing cards */}
+                {props.creditCards.length > 0 && !props.showAddCard && (
+                  <div className="flex flex-col">
+                    {props.creditCards.map((creditCard) => (
+                      <div
+                        data-testid="credit-card-row"
+                        key={creditCard.id}
+                        className="mb-3 flex items-center justify-between gap-3"
+                      >
+                        <InputCreditCard
+                          type="number"
+                          name="Card number"
+                          label="Card number"
+                          brand={creditCard.brand?.toLowerCase()}
+                          value={`**** ${creditCard.last_digit}`}
+                          disabled
+                          className="grow"
+                        />
+                        <InputText
+                          name="Expiration date"
+                          label="Expiration date"
+                          className="grow"
+                          value={`${creditCard.expiry_month} / ${creditCard.expiry_year}`}
+                          disabled
+                        />
+                        <Button
+                          data-testid="edit-credit-card"
+                          className="h-[52px] w-[52px] justify-center"
+                          variant="surface"
+                          color="neutral"
+                          onClick={() => props.onAddCard(creditCard.id)}
+                        >
+                          <Icon iconName="pen" className="text-sm" />
+                        </Button>
+                        <Button
+                          data-testid="delete-credit-card"
+                          className="h-[52px] w-[52px] justify-center"
+                          variant="surface"
+                          color="neutral"
+                          onClick={() => props.onDeleteCard(creditCard)}
+                        >
+                          <Icon iconName="trash" className="text-sm" />
+                        </Button>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : props.showAddCard ? (
+                )}
+
+                {/* Add/Edit card form */}
+                {props.showAddCard && (
               <>
                 <div className="mb-4 flex items-center justify-between">
                   <h4 className="text-sm font-medium text-neutral-400">Add credit card</h4>
@@ -145,13 +151,18 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                   </Provider>
                 )}
               </>
-            ) : (
-              <div data-testid="placeholder-credit-card" className="px-3 py-6 text-center">
-                <Icon iconName="wave-pulse" className="text-neutral-350" />
-                <p className="mt-1 text-xs font-medium text-neutral-350" data-testid="empty-credit-card">
-                  No credit cards found. <br /> Please add one.
-                </p>
-              </div>
+                )}
+
+                {/* Empty state */}
+                {!props.showAddCard && props.creditCards.length === 0 && (
+                  <div data-testid="placeholder-credit-card" className="px-3 py-6 text-center">
+                    <Icon iconName="wave-pulse" className="text-neutral-350" />
+                    <p className="mt-1 text-xs font-medium text-neutral-350" data-testid="empty-credit-card">
+                      No credit cards found. <br /> Please add one.
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </div>
 

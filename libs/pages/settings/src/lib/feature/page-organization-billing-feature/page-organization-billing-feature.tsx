@@ -34,6 +34,7 @@ export function PageOrganizationBillingFeature() {
   const [countryValues, setCountryValues] = useState<Value[]>([])
   const [cbInstance, setCbInstance] = useState<CbInstance | null>(null)
   const [isCardReady, setIsCardReady] = useState(false)
+  const [editingCardId, setEditingCardId] = useState<string | null>(null)
   const cardRef = useRef<FieldContainer>(null)
 
   const methods = useForm<BillingInfoRequest>({
@@ -89,8 +90,9 @@ export function PageOrganizationBillingFeature() {
     methods.reset(billingInfo as BillingInfoRequest)
   }, [billingInfo, methods])
 
-  const handleAddCard = () => {
+  const handleAddCard = (cardId?: string) => {
     setShowAddCard(true)
+    setEditingCardId(cardId || null)
     // Scroll to credit card section
     setTimeout(() => {
       const cardSection = document.querySelector('[data-credit-card-section]')
@@ -104,6 +106,7 @@ export function PageOrganizationBillingFeature() {
     setShowAddCard(false)
     setIsCardReady(false)
     setCbInstance(null)
+    setEditingCardId(null)
   }
 
   const onSubmit = methods.handleSubmit(async (data) => {
@@ -127,7 +130,7 @@ export function PageOrganizationBillingFeature() {
           throw new Error('No token returned from Chargebee')
         }
 
-        // Save the credit card
+        // Save the new credit card
         await addCreditCard({
           organizationId,
           creditCardRequest: {
@@ -139,10 +142,16 @@ export function PageOrganizationBillingFeature() {
           },
         })
 
+        // If we were editing a card, delete the old one after successfully adding the new one
+        if (editingCardId) {
+          await deleteCreditCard({ organizationId, creditCardId: editingCardId })
+        }
+
         // Reset card state after successful save
         setShowAddCard(false)
         setIsCardReady(false)
         setCbInstance(null)
+        setEditingCardId(null)
       }
     } catch (error) {
       console.error(error)
