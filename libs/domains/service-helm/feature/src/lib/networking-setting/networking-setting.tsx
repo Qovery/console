@@ -16,10 +16,14 @@ import {
   useModalMultiConfirmation,
 } from '@qovery/shared/ui'
 import { isTryingToRemoveLastPublicPort } from '@qovery/shared/util-services'
+import { usePortValidation } from '../hooks/use-port-validation'
 import { NetworkingPortSettingModal } from '../networking-port-setting-modal/networking-port-setting-modal'
+import { PortValidationStatus } from '../port-validation-status/port-validation-status'
+import { PortValidationWarning } from '../port-validation-warning/port-validation-warning'
 
 export interface NetworkingSettingProps extends PropsWithChildren {
   helmId: string
+  environmentId?: string
   ports: HelmPortRequestPortsInner[]
   onUpdatePorts: (ports: HelmPortRequestPortsInner[]) => void
   isSetting?: boolean
@@ -27,6 +31,7 @@ export interface NetworkingSettingProps extends PropsWithChildren {
 
 export function NetworkingSetting({
   helmId,
+  environmentId,
   ports,
   onUpdatePorts,
   isSetting = false,
@@ -39,6 +44,18 @@ export function NetworkingSetting({
   const { data: customDomains } = useCustomDomains({
     serviceId: helmId,
     serviceType: 'HELM',
+  })
+
+  // Port validation hook - only enabled when environmentId is provided
+  const {
+    canValidate,
+    validationReason,
+    results: validationResults,
+    retry,
+  } = usePortValidation({
+    helmId,
+    environmentId: environmentId ?? '',
+    ports,
   })
 
   const onAddPort = () =>
@@ -147,17 +164,30 @@ export function NetworkingSetting({
         </div>
       )}
       <form className="w-full">
+        {environmentId && !canValidate && validationReason && (
+          <PortValidationWarning reason={validationReason} onRetry={retry} />
+        )}
         <BlockContent title="Services exposed publicly" classNameContent="p-0">
           {ports.length > 0 ? (
             ports.map((port) => {
               const { service_name, internal_port, protocol, namespace, name } = port
+              const validation = validationResults.find((r) => r.portName === name)
               return (
                 <div
                   className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
                   key={name}
                 >
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium text-neutral-400">{service_name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-neutral-400">{service_name}</span>
+                      {environmentId && validation && (
+                        <PortValidationStatus
+                          status={validation.status}
+                          errorMessage={validation.errorMessage}
+                          data-testid={`port-validation-${name}`}
+                        />
+                      )}
+                    </div>
                     <div className="flex flex-row gap-2 text-xs text-neutral-350">
                       <span>Service port: {internal_port}</span>
                       <span>Protocol: {protocol}</span>

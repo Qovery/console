@@ -10,6 +10,20 @@ jest.mock('../hooks/use-kubernetes-services/use-kubernetes-services', () => ({
   }),
 }))
 
+jest.mock('../hooks/use-port-validation', () => ({
+  usePortValidation: () => ({
+    canValidate: false,
+    validationReason: null,
+    isLoading: false,
+    results: [],
+    retry: jest.fn(),
+  }),
+}))
+
+jest.mock('../port-validation-warning/port-validation-warning', () => ({
+  PortValidationWarning: () => null,
+}))
+
 describe('NetworkingSetting', () => {
   it('should match snapshot in empty state', () => {
     const { baseElement } = renderWithProviders(<NetworkingSetting ports={[]} onUpdatePorts={jest.fn()} />)
