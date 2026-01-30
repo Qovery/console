@@ -13,9 +13,11 @@ import BillingDetailsFeature from '../../feature/page-organization-billing-featu
 
 export interface PageOrganizationBillingProps {
   creditCards: CreditCard[]
-  openNewCreditCardModal: () => void
+  onAddCard: () => void
   onDeleteCard: (creditCard: CreditCard) => void
   creditCardLoading?: boolean
+  showAddCard?: boolean
+  onShowAddCardChange?: (show: boolean) => void
 }
 
 export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
@@ -29,7 +31,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
           <div className="mb-6">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-medium text-neutral-400">Credit cards</h3>
-              <Button onClick={props.openNewCreditCardModal} size="md" className="gap-2" data-testid="add-new-card-button">
+              <Button onClick={props.onAddCard} size="md" className="gap-2" data-testid="add-new-card-button">
                 Add new card
                 <Icon iconName="circle-plus" iconStyle="regular" />
               </Button>
@@ -92,7 +94,9 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
           <div className="my-6 border-t border-neutral-250" />
 
           {/* Billing details section */}
-          <BillingDetailsFeature />
+          <div data-billing-details-form>
+            <BillingDetailsFeature showAddCard={props.showAddCard} onShowAddCardChange={props.onShowAddCardChange} />
+          </div>
         </BlockContent>
       </Section>
     </div>
