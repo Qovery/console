@@ -13,10 +13,7 @@ import {
   useEditCluster,
   useUpdateKarpenterPrivateFargate,
 } from '@qovery/domains/clusters/feature'
-import {
-  type ClusterResourcesEdit,
-  type SCWControlPlaneFeatureType,
-} from '@qovery/shared/interfaces'
+import { type ClusterResourcesEdit, type SCWControlPlaneFeatureType } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { PageSettingsResources } from '../../ui/page-settings-resources/page-settings-resources'
 
