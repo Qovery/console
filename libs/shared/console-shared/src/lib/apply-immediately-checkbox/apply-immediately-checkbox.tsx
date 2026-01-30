@@ -17,12 +17,7 @@ export function ApplyImmediatelyCheckbox({ disabled = false }: ApplyImmediatelyC
         control={control}
         render={({ field }) => (
           <label className="flex cursor-pointer items-start gap-3">
-            <Checkbox
-              checked={field.value}
-              onCheckedChange={field.onChange}
-              disabled={disabled}
-              className="mt-0.5"
-            />
+            <Checkbox checked={field.value} onCheckedChange={field.onChange} disabled={disabled} className="mt-0.5" />
             <div className="flex-1">
               <span className="text-sm font-medium text-neutral-400">Apply changes immediately</span>
               <p className="mt-1 text-xs text-neutral-350">
