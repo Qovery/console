@@ -50,7 +50,7 @@ export function ApplyImmediatelyCheckbox({ disabled = false }: ApplyImmediatelyC
               </ExternalLink>
             </div>
             {applyImmediately && (
-              <div className="border-t border-yellow-400/30 pt-3">
+              <div className="border-t border-yellow-400/30 pt-3" data-testid="apply-immediately-warning">
                 <span className="font-medium">Warning:</span> Applying changes immediately may cause a brief service
                 interruption. The operation will be performed outside of your configured maintenance window.
               </div>
