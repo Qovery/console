@@ -151,14 +151,16 @@ export function BillingDetails(props: BillingDetailsProps) {
             <Controller
               control={control}
               name="country_code"
+              rules={{ required: 'Please select a country' }}
               render={({ field }) => (
                 <InputSelect
                   className="flex-1"
                   options={props.countryValues ?? []}
-                  label="Country (optional)"
+                  label="Country"
                   value={field.value}
                   onChange={field.onChange}
                   isSearchable
+                  error={formState.errors.country_code?.message}
                 />
               )}
             />
