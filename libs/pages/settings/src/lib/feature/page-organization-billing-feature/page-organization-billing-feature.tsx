@@ -1,5 +1,5 @@
-import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
-import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
+import { type default as FieldContainer } from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
+import { type default as CbInstance } from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { type BillingInfoRequest, type CreditCard } from 'qovery-typescript-axios'
 import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'

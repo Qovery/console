@@ -1,6 +1,6 @@
 import { CardCVV, CardComponent, CardExpiry, CardNumber, Provider } from '@chargebee/chargebee-js-react-wrapper'
-import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
-import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
+import { type default as FieldContainer } from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
+import { type default as CbInstance } from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { type CreditCard } from 'qovery-typescript-axios'
 import { type FormEventHandler, type RefObject } from 'react'
 import { type Value } from '@qovery/shared/interfaces'
