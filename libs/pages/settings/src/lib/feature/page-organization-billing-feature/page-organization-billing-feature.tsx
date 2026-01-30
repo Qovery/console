@@ -54,13 +54,6 @@ export function PageOrganizationBillingFeature() {
     try {
       const instance = await loadChargebee()
       setCbInstance(instance)
-
-      requestAnimationFrame(() => {
-        const cardSection = document.querySelector('[data-credit-card-section]')
-        if (cardSection) {
-          cardSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
-      })
     } catch (error) {
       return
     }
