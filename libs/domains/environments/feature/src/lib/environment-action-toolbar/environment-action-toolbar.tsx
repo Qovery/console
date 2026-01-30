@@ -8,16 +8,7 @@ import {
 import { match } from 'ts-pattern'
 import { useServices } from '@qovery/domains/services/feature'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
-import {
-  ActionToolbar,
-  DropdownMenu,
-  Icon,
-  Link,
-  Skeleton,
-  Tooltip,
-  useModal,
-  useModalConfirmation,
-} from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, Link, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
   isCancelBuildAvailable,
@@ -54,7 +45,7 @@ export function MenuManageDeployment({
 
   const tooltipService = (content: string) => (
     <Tooltip side="bottom" content={content}>
-      <div className="absolute right-2">
+      <div className="absolute right-5">
         <Icon iconName="circle-exclamation" iconStyle="regular" />
       </div>
     </Tooltip>
@@ -152,12 +143,12 @@ export function MenuManageDeployment({
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button
+        <Button
           aria-label="Manage Deployment"
           color={displayYellowColor ? 'yellow' : 'neutral'}
-          size={variant === 'default' ? 'md' : 'sm'}
-          variant={variant === 'default' ? 'outline' : 'surface'}
-          radius={variant === 'deployment' ? 'rounded' : 'none'}
+          size="sm"
+          variant="outline"
+          className="w-7"
         >
           <Tooltip content="Manage Deployment">
             <div className="flex h-full w-full items-center justify-center">
@@ -173,7 +164,7 @@ export function MenuManageDeployment({
                 ))}
             </div>
           </Tooltip>
-        </ActionToolbar.Button>
+        </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         {isCancelBuildAvailable(state) && (
@@ -283,13 +274,13 @@ export function MenuOtherActions({ state, environment }: { state: StateEnum; env
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button aria-label="Other actions">
+        <Button aria-label="Other actions" color="neutral" size="sm" variant="outline" className="w-7">
           <Tooltip content="Other actions">
             <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="ellipsis-v" iconStyle="solid" />
             </div>
           </Tooltip>
-        </ActionToolbar.Button>
+        </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
@@ -341,26 +332,28 @@ export function EnvironmentActionToolbar({ environment, variant = 'default' }: E
     return <Skeleton height={variant === 'default' ? 36 : 28} width={variant === 'default' ? 144 : 67} />
 
   return (
-    <ActionToolbar.Root>
+    <div className="flex items-center gap-2">
       {hasServices && (
         <MenuManageDeployment environment={environment} deploymentStatus={deploymentStatus} variant={variant} />
       )}
       {variant === 'default' && (
         <>
           <Tooltip content="Pipeline">
-            <ActionToolbar.Button asChild>
-              <Link
-                to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
-                // state={{ prevUrl: pathname }}
-              >
-                <Icon iconName="timeline" />
-              </Link>
-            </ActionToolbar.Button>
+            <Link
+              as="button"
+              to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+              className="w-7"
+              size="xs"
+              color="neutral"
+              variant="outline"
+            >
+              <Icon iconName="timeline" />
+            </Link>
           </Tooltip>
           <MenuOtherActions environment={environment} state={deploymentStatus.state} />
         </>
       )}
-    </ActionToolbar.Root>
+    </div>
   )
 }
 

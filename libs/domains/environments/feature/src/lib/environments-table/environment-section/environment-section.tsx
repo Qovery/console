@@ -4,7 +4,6 @@ import { useMediaQuery } from 'react-responsive'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
 import {
-  ActionToolbar,
   Button,
   DeploymentAction,
   Heading,
@@ -23,7 +22,7 @@ import useEnvironments from '../../hooks/use-environments/use-environments'
 const { Table } = TablePrimitives
 
 const gridLayoutClassName =
-  'grid w-full grid-cols-[1fr_20%_min(20%,160px)_min(15%,120px)_max(10%,106px)] xl:grid-cols-[1fr_25%_min(20%,240px)_160px_106px]'
+  'grid w-full grid-cols-[1fr_20%_min(20%,160px)_min(15%,120px)_max(10%,106px)] xl:grid-cols-[1fr_25%_min(20%,240px)_160px_96px]'
 
 function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const { organizationId, projectId } = useParams({ strict: false })
@@ -87,16 +86,16 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
         <div className="flex h-full items-center">{timeAgo(new Date(overview.updated_at ?? Date.now()))} ago</div>
       </Table.Cell>
       <Table.Cell className={cellClassName}>
-        <div className="flex h-full items-center">
+        <div className="flex h-full items-center justify-end gap-1.5">
           {environment && overview.deployment_status && overview.service_count > 0 && (
-            <ActionToolbar.Root>
+            <>
               <MenuManageDeployment
                 environment={environment}
                 deploymentStatus={overview.deployment_status}
                 variant="default"
               />
               <MenuOtherActions environment={environment} state={overview.deployment_status?.last_deployment_state} />
-            </ActionToolbar.Root>
+            </>
           )}
         </div>
       </Table.Cell>
@@ -171,7 +170,7 @@ export function EnvironmentSection({
               <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
                 Last update
               </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-right text-neutral-subtle">
+              <Table.ColumnHeaderCell className="flex h-9 items-center justify-end border-l border-neutral text-left text-neutral-subtle">
                 Actions
               </Table.ColumnHeaderCell>
             </Table.Row>

@@ -48,7 +48,7 @@ export function SubCommand({
   const { toggleFavoriteService, isServiceFavorite } = useFavoriteServices({ organizationId })
   const subInputRef = useRef<HTMLInputElement | null>(null)
 
-  const iconClassName = 'text-brand-500 text-sm text-center w-5'
+  const iconClassName = 'text-brand text-sm text-center w-5'
   const isFavorite = service && isServiceFavorite(service.id)
 
   useEffect(() => {
@@ -124,15 +124,17 @@ export function SubCommand({
   }
 
   return (
-    <div className="flex h-9 items-center justify-end gap-4 bg-surface-neutral-subtle px-2.5">
+    <div className="flex h-11 items-center justify-end gap-4 bg-surface-neutral-subtle px-2.5">
       <span className="flex gap-1.5 text-xs text-neutral-subtle">
         Arrow to navigate
-        <CustomKbd className="w-4">
-          <Icon iconName="arrow-up" />
-        </CustomKbd>
-        <CustomKbd className="w-4">
-          <Icon iconName="arrow-down" />
-        </CustomKbd>
+        <div className="flex gap-1">
+          <CustomKbd className="w-4">
+            <Icon iconName="arrow-up" />
+          </CustomKbd>
+          <CustomKbd className="w-4">
+            <Icon iconName="arrow-down" />
+          </CustomKbd>
+        </div>
       </span>
       <span className="flex gap-1.5 text-xs text-neutral-subtle">
         Enter to open
@@ -154,16 +156,18 @@ export function SubCommand({
               <CustomKbd className="w-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 10 10">
                   <path
-                    fill="#67778E"
+                    fill="var(--neutral-11)"
                     d="M5.167 4.861H2.042v1.667a2.43 2.43 0 0 0 2.43 2.43h1.39a2.43 2.43 0 0 0 2.43-2.43V4.86zM9.333 3.82v2.709A3.47 3.47 0 0 1 5.861 10H4.472A3.47 3.47 0 0 1 1 6.528V3.472A3.47 3.47 0 0 1 4.472 0h1.389a3.47 3.47 0 0 1 3.472 3.472zM4.646 1.042h-.174a2.43 2.43 0 0 0-2.43 2.43v.347h2.604z"
                   ></path>
                 </svg>
               </CustomKbd>
-              <span className="mx-0.5 block h-3 w-[1px] bg-surface-neutral-component"></span>
-              <CustomKbd className="w-4 text-sm">
-                <span>{metaKey}</span>
-              </CustomKbd>
-              <CustomKbd className="w-4">K</CustomKbd>
+              <div className="flex gap-1">
+                <span className="mx-0.5 block h-3 w-[1px] bg-surface-neutral-component"></span>
+                <CustomKbd className="w-4 pt-[1px] text-sm">
+                  <span>{metaKey}</span>
+                </CustomKbd>
+                <CustomKbd className="w-4">K</CustomKbd>
+              </div>
             </Button>
           </Popover.Trigger>
           <Popover.Content
