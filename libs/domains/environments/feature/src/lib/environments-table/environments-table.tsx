@@ -45,13 +45,12 @@ export function EnvironmentsTable() {
     [projectId, organizationId, closeModal, openModal]
   )
 
-  const Sections = useCallback(
-    () => (
+  const Sections = useCallback(() => {
+    const filledSections = SECTIONS.filter((section) => groupedEnvs?.has(section))
+    const emptySections = SECTIONS.filter((section) => !groupedEnvs?.has(section))
+    return (
       <>
-        {Array.from(groupedEnvs ?? []).map(([key, value]) => (
-          <EnvironmentSection key={key} type={key} items={value} onCreateEnvClicked={() => onCreateEnvClicked(key)} />
-        ))}
-        {SECTIONS.filter((section) => !groupedEnvs?.has(section)).map((section) => (
+        {[...filledSections, ...emptySections].map((section) => (
           <EnvironmentSection
             key={section}
             type={section}
@@ -60,9 +59,8 @@ export function EnvironmentsTable() {
           />
         ))}
       </>
-    ),
-    [groupedEnvs, onCreateEnvClicked]
-  )
+    )
+  }, [groupedEnvs, onCreateEnvClicked])
 
   return (
     <div className="container mx-auto mt-6 pb-10">
