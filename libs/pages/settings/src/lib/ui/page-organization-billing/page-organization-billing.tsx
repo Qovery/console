@@ -44,10 +44,12 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
           <div className="mb-6" data-credit-card-section>
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-medium text-neutral-400">Credit cards</h3>
-              <Button onClick={props.onAddCard} size="md" className="gap-2" data-testid="add-new-card-button">
-                Add new card
-                <Icon iconName="circle-plus" iconStyle="regular" />
-              </Button>
+              {props.creditCards.length === 0 && (
+                <Button onClick={props.onAddCard} size="md" className="gap-2" data-testid="add-new-card-button">
+                  Add new card
+                  <Icon iconName="circle-plus" iconStyle="regular" />
+                </Button>
+              )}
             </div>
 
             {props.creditCardLoading && props.creditCards.length === 0 && !props.showAddCard ? (
@@ -56,9 +58,6 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
               </div>
             ) : props.creditCards.length > 0 ? (
               <div className="flex flex-col">
-                <p className="mb-5 text-xs text-neutral-400">
-                  If you want to modify the card, delete the existing one and add a new.
-                </p>
                 {props.creditCards.map((creditCard) => (
                   <div
                     data-testid="credit-card-row"
@@ -81,6 +80,15 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                       value={`${creditCard.expiry_month} / ${creditCard.expiry_year}`}
                       disabled
                     />
+                    <Button
+                      data-testid="edit-credit-card"
+                      className="h-[52px] w-[52px] justify-center"
+                      variant="surface"
+                      color="neutral"
+                      onClick={props.onAddCard}
+                    >
+                      <Icon iconName="pen" className="text-sm" />
+                    </Button>
                     <Button
                       data-testid="delete-credit-card"
                       className="h-[52px] w-[52px] justify-center"
