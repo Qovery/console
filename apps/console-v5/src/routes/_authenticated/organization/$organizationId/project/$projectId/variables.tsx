@@ -41,7 +41,7 @@ function RouteComponent() {
         <Section className="gap-8">
           <div className="flex flex-col gap-6">
             <div className="flex justify-between">
-              <Heading>Variables</Heading>
+              <Heading>Project variables</Heading>
               <ActionToolbar.Root className="flex">
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
