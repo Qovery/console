@@ -40,16 +40,10 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
         <Heading className="mb-2">Payment method</Heading>
 
         <BlockContent title="Billing details" className="mt-10">
-          {/* Credit cards section */}
+          {/* Credit card section */}
           <div className="mb-6" data-credit-card-section>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-sm font-medium text-neutral-400">Credit cards</h3>
-              {props.creditCards.length === 0 && (
-                <Button onClick={() => props.onAddCard()} size="md" className="gap-2" data-testid="add-new-card-button">
-                  Add new card
-                  <Icon iconName="circle-plus" iconStyle="regular" />
-                </Button>
-              )}
+            <div className="mb-4">
+              <h3 className="text-sm font-medium text-neutral-400">Credit card</h3>
             </div>
 
             {props.creditCardLoading && props.creditCards.length === 0 && !props.showAddCard ? (
@@ -158,8 +152,14 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                   <div data-testid="placeholder-credit-card" className="px-3 py-6 text-center">
                     <Icon iconName="wave-pulse" className="text-neutral-350" />
                     <p className="mt-1 text-xs font-medium text-neutral-350" data-testid="empty-credit-card">
-                      No credit cards found. <br /> Please add one.
+                      No credit card found. <br /> Please add one.
                     </p>
+                    <div className="mt-4 flex justify-center">
+                      <Button onClick={() => props.onAddCard()} size="md" className="gap-2" data-testid="add-new-card-button">
+                        Add new card
+                        <Icon iconName="circle-plus" iconStyle="regular" />
+                      </Button>
+                    </div>
                   </div>
                 )}
               </>

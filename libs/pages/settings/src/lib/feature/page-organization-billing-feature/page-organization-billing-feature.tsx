@@ -69,7 +69,7 @@ export function PageOrganizationBillingFeature() {
 
         setCbInstance(instance)
       } catch (error) {
-        console.error('Failed to initialize Chargebee:', error)
+        // Error already handled by loadChargebee
       }
     }
 
@@ -154,7 +154,6 @@ export function PageOrganizationBillingFeature() {
         setEditingCardId(null)
       }
     } catch (error) {
-      console.error(error)
       toastError(error as unknown as SerializedError)
     } finally {
       setEditInProcess(false)
