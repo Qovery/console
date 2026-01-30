@@ -31,11 +31,16 @@ export function PageOrganizationBillingFeature() {
 
   const [showAddCard, setShowAddCard] = useState(false)
   const [editInProcess, setEditInProcess] = useState(false)
-  const [countryValues, setCountryValues] = useState<Value[]>([])
   const [cbInstance, setCbInstance] = useState<CbInstance | null>(null)
   const [isCardReady, setIsCardReady] = useState(false)
   const [editingCardId, setEditingCardId] = useState<string | null>(null)
   const cardRef = useRef<FieldContainer>(null)
+
+  const countryValues = countries.map((country) => ({
+    label: country.name,
+    value: country.code,
+    icon: <IconFlag code={country.code} />,
+  }))
 
   const methods = useForm<BillingInfoRequest>({
     mode: 'onChange',
@@ -53,7 +58,6 @@ export function PageOrganizationBillingFeature() {
     },
   })
 
-  // Initialize Chargebee when showAddCard becomes true
   useEffect(() => {
     if (!showAddCard) return
 
@@ -69,7 +73,7 @@ export function PageOrganizationBillingFeature() {
 
         setCbInstance(instance)
       } catch (error) {
-        // Error already handled by loadChargebee
+        return
       }
     }
 
@@ -81,19 +85,12 @@ export function PageOrganizationBillingFeature() {
   }, [showAddCard])
 
   useEffect(() => {
-    setCountryValues(
-      countries.map((country) => ({ label: country.name, value: country.code, icon: <IconFlag code={country.code} /> }))
-    )
-  }, [])
-
-  useEffect(() => {
     methods.reset(billingInfo as BillingInfoRequest)
   }, [billingInfo, methods])
 
   const handleAddCard = (cardId?: string) => {
     setShowAddCard(true)
     setEditingCardId(cardId || null)
-    // Scroll to credit card section
     setTimeout(() => {
       const cardSection = document.querySelector('[data-credit-card-section]')
       if (cardSection) {
@@ -115,14 +112,12 @@ export function PageOrganizationBillingFeature() {
     setEditInProcess(true)
 
     try {
-      // Save billing info first to validate it (especially VAT number)
       const response = await editBillingInfo({
         organizationId,
         billingInfoRequest: data,
       })
       methods.reset(response as BillingInfoRequest)
 
-      // Only if billing info is valid, then add the credit card
       if (showAddCard && isCardReady && cardRef.current) {
         const tokenData = await cardRef.current.tokenize({})
 
@@ -130,7 +125,6 @@ export function PageOrganizationBillingFeature() {
           throw new Error('No token returned from Chargebee')
         }
 
-        // Save the new credit card
         await addCreditCard({
           organizationId,
           creditCardRequest: {
@@ -142,12 +136,10 @@ export function PageOrganizationBillingFeature() {
           },
         })
 
-        // If we were editing a card, delete the old one after successfully adding the new one
         if (editingCardId) {
           await deleteCreditCard({ organizationId, creditCardId: editingCardId })
         }
 
-        // Reset card state after successful save
         setShowAddCard(false)
         setIsCardReady(false)
         setCbInstance(null)

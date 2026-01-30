@@ -40,7 +40,6 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
         <Heading className="mb-2">Payment method</Heading>
 
         <BlockContent title="Billing details" className="mt-10">
-          {/* Credit card section */}
           <div className="mb-6" data-credit-card-section>
             <div className="mb-4">
               <h3 className="text-sm font-medium text-neutral-400">Credit card</h3>
@@ -52,7 +51,6 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
               </div>
             ) : (
               <>
-                {/* Existing cards */}
                 {props.creditCards.length > 0 && !props.showAddCard && (
                   <div className="flex flex-col">
                     {props.creditCards.map((creditCard) => (
@@ -100,7 +98,6 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                   </div>
                 )}
 
-                {/* Add/Edit card form */}
                 {props.showAddCard && (
                   <>
                     <div className="mb-4 flex items-center justify-between">
@@ -147,7 +144,6 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                   </>
                 )}
 
-                {/* Empty state */}
                 {!props.showAddCard && props.creditCards.length === 0 && (
                   <div data-testid="placeholder-credit-card" className="px-3 py-6 text-center">
                     <Icon iconName="wave-pulse" className="text-neutral-350" />
@@ -172,10 +168,8 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
             )}
           </div>
 
-          {/* Divider */}
           <div className="my-6 border-t border-neutral-250" />
 
-          {/* Billing information section */}
           <BillingDetailsFeature
             countryValues={props.countryValues}
             loadingBillingInfos={props.loadingBillingInfos}
