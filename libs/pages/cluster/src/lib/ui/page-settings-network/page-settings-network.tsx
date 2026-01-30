@@ -2,7 +2,8 @@ import { type Cluster, type ClusterRoutingTableResultsInner } from 'qovery-types
 import { type FormEventHandler } from 'react'
 import { match } from 'ts-pattern'
 import { ScalewayStaticIp } from '@qovery/domains/clusters/feature'
-import { CardClusterFeature, SettingsHeading } from '@qovery/shared/console-shared'
+import { ClusterCardFeature } from '@qovery/domains/clusters/feature'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { BlockContent, Button, Icon, LoaderSpinner, Section, Tooltip } from '@qovery/shared/ui'
 import { AWSExistingVPC } from './aws-existing-vpc/aws-existing-vpc'
 import { GcpExistingVPC } from './gcp-existing-vpc/gcp-existing-vpc'
@@ -146,7 +147,7 @@ export function PageSettingsNetwork({
                     {cluster?.features
                       ?.filter(({ id }) => id !== 'EXISTING_VPC' && id !== 'KARPENTER')
                       .map((feature) => (
-                        <CardClusterFeature
+                        <ClusterCardFeature
                           key={feature.id}
                           feature={feature}
                           cloudProvider={cluster?.cloud_provider}

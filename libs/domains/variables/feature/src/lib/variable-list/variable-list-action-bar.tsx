@@ -43,17 +43,17 @@ export function VariableListActionBar({ selectedRows = [], resetRowSelection }: 
         >
           <div
             className={twMerge(
-              'flex h-[52px] items-center justify-between rounded bg-neutral-500 pl-5 pr-2 text-xs font-medium text-white shadow-xl',
+              'flex h-[52px] items-center justify-between rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-sm font-medium text-neutralInvert shadow-xl',
               hasSelection ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
             )}
           >
             <span>
               {selectedRows.length} selected {pluralize(selectedRows.length, 'variable')}
             </span>
-            <button className="h-8 px-3 underline" type="button" onClick={() => resetRowSelection()}>
-              Deselect
-            </button>
             <div className="flex gap-3">
+              <Button type="button" variant="surface" color="neutral" size="md" onClick={() => resetRowSelection()}>
+                Deselect
+              </Button>
               <Tooltip content="No deletable variables" disabled={deletableVariables.length !== 0}>
                 <Button
                   color="red"

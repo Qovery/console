@@ -7,7 +7,7 @@ const Story: Meta<typeof Board.Root> = {
   title: 'Board',
   decorators: [
     (Story) => (
-      <div style={{ background: 'white', padding: '3em' }}>
+      <div style={{ background: 'bg-surface-neutral', padding: '3em' }}>
         <Story />
       </div>
     ),

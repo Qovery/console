@@ -13,17 +13,7 @@ import Indicator from '../indicator/indicator'
 import StatusChip from '../status-chip/status-chip'
 
 const triggerActionVariants = cva(
-  [
-    'flex',
-    'items-center',
-    'justify-center',
-    'rounded-full',
-    'border',
-    'border-neutral-200',
-    'text-neutral-350',
-    'dark:border-neutral-400',
-    'dark:text-neutral-250',
-  ],
+  ['flex', 'items-center', 'justify-center', 'rounded-full', 'border', 'border-neutral', 'text-neutral-subtle'],
   {
     variants: {
       size: {
@@ -34,7 +24,7 @@ const triggerActionVariants = cva(
   }
 )
 
-const statusChipVariants = cva(['relative', 'rounded-full', 'bg-white', 'dark:bg-neutral-600'], {
+const statusChipVariants = cva(['relative', 'rounded-full', 'bg-background'], {
   variants: {
     size: {
       sm: ['-left-0.5', '-top-1'],
@@ -54,17 +44,17 @@ export function TriggerActionIcon({
     <span className={className}>
       {match(triggerAction)
         .with(undefined, 'UNKNOWN', () => <Icon iconStyle="regular" iconName="question-circle" />)
-        .with('DELETE', () => <Icon iconStyle="solid" iconName="trash-can-xmark" />)
-        .with('UNINSTALL', () => <Icon iconStyle="solid" iconName="trash-can-xmark" />)
-        .with('DEPLOY', () => <Icon iconStyle="solid" iconName="play" />)
-        .with('RESTART', () => <Icon iconStyle="solid" iconName="arrow-rotate-right" />)
-        .with('STOP', () => <Icon iconStyle="solid" iconName="stop" />)
-        .with('DEPLOY_DRY_RUN', () => <Icon iconStyle="solid" iconName="play" />)
-        .with('TERRAFORM_FORCE_UNLOCK', () => <Icon iconStyle="regular" iconName="circle-play" />)
-        .with('TERRAFORM_MIGRATE_STATE', () => <Icon iconStyle="regular" iconName="circle-play" />)
-        .with('DELETE_RESOURCES_ONLY', () => <Icon iconStyle="solid" iconName="trash-can-xmark" />)
-        .with('TERRAFORM_PLAN_ONLY', () => <Icon iconStyle="regular" iconName="circle-play" />)
-        .with('TERRAFORM_PLAN_AND_APPLY', () => <Icon iconStyle="regular" iconName="circle-play" />)
+        .with('DELETE', () => <Icon iconStyle="regular" iconName="trash-can" />)
+        .with('UNINSTALL', () => <Icon iconStyle="regular" iconName="trash-can" />)
+        .with('DEPLOY', () => <Icon iconStyle="regular" iconName="rocket" />)
+        .with('RESTART', () => <Icon iconStyle="regular" iconName="arrow-rotate-right" />)
+        .with('STOP', () => <Icon iconStyle="regular" iconName="circle-stop" />)
+        .with('DEPLOY_DRY_RUN', () => <Icon iconStyle="regular" iconName="rocket" />)
+        .with('TERRAFORM_FORCE_UNLOCK', () => <Icon iconStyle="regular" iconName="lock-keyhole-open" />)
+        .with('TERRAFORM_MIGRATE_STATE', () => <Icon iconStyle="regular" iconName="file-export" />)
+        .with('DELETE_RESOURCES_ONLY', () => <Icon iconStyle="regular" iconName="trash-can" />)
+        .with('TERRAFORM_PLAN_ONLY', () => <Icon iconStyle="regular" iconName="rectangle-list" />)
+        .with('TERRAFORM_PLAN_AND_APPLY', () => <Icon iconStyle="regular" iconName="rocket" />)
         .with('TERRAFORM_DESTROY', () => <Icon iconStyle="regular" iconName="fire" />)
         .with('TERRAFORM_FORCE_UNLOCK_STATE', () => <Icon iconStyle="regular" iconName="lock-keyhole-open" />)
         .exhaustive()}

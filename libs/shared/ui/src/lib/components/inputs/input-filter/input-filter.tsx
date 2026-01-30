@@ -14,6 +14,10 @@ export interface InputFilterProps {
   isLoading?: boolean
 }
 
+/*
+ * @deprecated Not used in audit logs an
+ */
+
 export function InputFilter({ name, nameKey, options, onChange, defaultValue, isLoading }: InputFilterProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [currentValue, setCurrentValue] = useState<string | string[] | undefined>(defaultValue)

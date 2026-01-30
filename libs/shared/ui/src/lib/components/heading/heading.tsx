@@ -5,11 +5,11 @@ import { LevelContext } from './level-context'
 
 type HX = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 
-const headingVariants = cva(['text-neutral-400'], {
+const headingVariants = cva(['text-neutral'], {
   variants: {
     level: {
       0: [], // not really possible
-      1: ['text-xl'],
+      1: ['text-2xl'],
       2: ['text-base'],
       3: ['text-sm'],
       4: ['text-xs'],

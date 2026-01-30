@@ -34,7 +34,7 @@ export function KarpenterInstanceTypePreview({
   const families = requirements?.find((f) => f.key === 'InstanceFamily')
 
   return (
-    <div className={twMerge('flex flex-col gap-1 text-sm text-neutral-400', className)}>
+    <div className={twMerge('flex flex-col gap-1 text-sm text-neutral', className)}>
       {defaultServiceArchitecture && architectures && architectures?.values.length > 0 && (
         <p className="font-normal">
           <span className="font-medium">

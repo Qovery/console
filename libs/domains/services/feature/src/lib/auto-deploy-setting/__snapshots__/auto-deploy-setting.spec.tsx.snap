@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`AutoDeploySetting should match snapshot 1`] = `
 <body>
@@ -19,11 +19,11 @@ exports[`AutoDeploySetting should match snapshot 1`] = `
         />
         <div
           aria-label="bg"
-          class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
+          class="w-8 h-4.5 flex items-center rounded-full p-0.5 bg-surface-neutral-componentActive"
         >
           <div
             aria-label="circle"
-            class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
+            class="w-3.5 h-3.5 transform rounded-full bg-surface-neutral shadow-lg  "
           />
         </div>
       </div>
@@ -31,12 +31,12 @@ exports[`AutoDeploySetting should match snapshot 1`] = `
         class="relative -top-0.5 ml-3 cursor-pointer flex flex-col gap-1"
       >
         <p
-          class="font-medium text-neutral-400"
+          class="font-medium text-neutral"
         >
           Auto-deploy
         </p>
         <div
-          class="text-neutral-350"
+          class="text-neutral-subtle"
         >
           The service will be automatically updated on every new commit on the branch.
         </div>

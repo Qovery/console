@@ -5,20 +5,10 @@ import {
   OrganizationEventTargetType,
   StateEnum,
 } from 'qovery-typescript-axios'
-import { useLocation } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useServices } from '@qovery/domains/services/feature'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
-import {
-  ActionToolbar,
-  DropdownMenu,
-  Icon,
-  Link,
-  Skeleton,
-  Tooltip,
-  useModal,
-  useModalConfirmation,
-} from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, Link, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
   isCancelBuildAvailable,
@@ -40,7 +30,7 @@ import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
 type ActionToolbarVariant = 'default' | 'deployment'
 
-function MenuManageDeployment({
+export function MenuManageDeployment({
   environment,
   deploymentStatus,
   variant,
@@ -55,7 +45,7 @@ function MenuManageDeployment({
 
   const tooltipService = (content: string) => (
     <Tooltip side="bottom" content={content}>
-      <div className="absolute right-2">
+      <div className="absolute right-5">
         <Icon iconName="circle-exclamation" iconStyle="regular" />
       </div>
     </Tooltip>
@@ -153,29 +143,28 @@ function MenuManageDeployment({
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button
+        <Button
           aria-label="Manage Deployment"
           color={displayYellowColor ? 'yellow' : 'neutral'}
-          size={variant === 'default' ? 'md' : 'sm'}
-          variant={variant === 'default' ? 'outline' : 'surface'}
-          radius={variant === 'deployment' ? 'rounded' : 'none'}
+          size="sm"
+          variant="outline"
+          className="w-7"
         >
           <Tooltip content="Manage Deployment">
             <div className="flex h-full w-full items-center justify-center">
               {match(state)
                 .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', () => (
-                  <Icon iconName="loader" className="mr-3 animate-spin" />
+                  <Icon iconName="loader" className="animate-spin" />
                 ))
                 .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', () => (
-                  <Icon iconName="clock" iconStyle="regular" className="mr-3" />
+                  <Icon iconName="clock" iconStyle="regular" />
                 ))
                 .otherwise(() => (
-                  <Icon iconName="play" className="mr-4" />
+                  <Icon iconName="rocket" />
                 ))}
-              <Icon iconName="chevron-down" />
             </div>
           </Tooltip>
-        </ActionToolbar.Button>
+        </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         {isCancelBuildAvailable(state) && (
@@ -244,8 +233,7 @@ function MenuManageDeployment({
   )
 }
 
-function MenuOtherActions({ state, environment }: { state: StateEnum; environment: Environment }) {
-  const { pathname } = useLocation()
+export function MenuOtherActions({ state, environment }: { state: StateEnum; environment: Environment }) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteEnvironment } = useDeleteEnvironment({ projectId: environment.project.id })
@@ -286,13 +274,13 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button aria-label="Other actions">
+        <Button aria-label="Other actions" color="neutral" size="sm" variant="outline" className="w-7">
           <Tooltip content="Other actions">
             <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="ellipsis-v" iconStyle="solid" />
             </div>
           </Tooltip>
-        </ActionToolbar.Button>
+        </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
@@ -335,7 +323,6 @@ export interface EnvironmentActionToolbarProps {
 }
 
 export function EnvironmentActionToolbar({ environment, variant = 'default' }: EnvironmentActionToolbarProps) {
-  const { pathname } = useLocation()
   const { data: countServices, isFetched: isFetchedServices } = useServiceCount({ environmentId: environment.id })
 
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
@@ -345,26 +332,28 @@ export function EnvironmentActionToolbar({ environment, variant = 'default' }: E
     return <Skeleton height={variant === 'default' ? 36 : 28} width={variant === 'default' ? 144 : 67} />
 
   return (
-    <ActionToolbar.Root>
+    <div className="flex items-center gap-2">
       {hasServices && (
         <MenuManageDeployment environment={environment} deploymentStatus={deploymentStatus} variant={variant} />
       )}
       {variant === 'default' && (
         <>
           <Tooltip content="Pipeline">
-            <ActionToolbar.Button asChild>
-              <Link
-                to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
-                state={{ prevUrl: pathname }}
-              >
-                <Icon iconName="timeline" />
-              </Link>
-            </ActionToolbar.Button>
+            <Link
+              as="button"
+              to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+              className="w-7"
+              size="xs"
+              color="neutral"
+              variant="outline"
+            >
+              <Icon iconName="timeline" />
+            </Link>
           </Tooltip>
           <MenuOtherActions environment={environment} state={deploymentStatus.state} />
         </>
       )}
-    </ActionToolbar.Root>
+    </div>
   )
 }
 

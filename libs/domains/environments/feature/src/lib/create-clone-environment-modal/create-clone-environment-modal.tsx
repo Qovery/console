@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import {
   type CreateEnvironmentModeEnum,
   type Environment,
@@ -6,11 +7,9 @@ import {
 } from 'qovery-typescript-axios'
 import { type FormEvent } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { ExternalLink, Icon, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
 import { EnvironmentMode } from '../environment-mode/environment-mode'
 import { useCloneEnvironment } from '../hooks/use-clone-environment/use-clone-environment'
@@ -21,6 +20,7 @@ export interface CreateCloneEnvironmentModalProps {
   organizationId: string
   environmentToClone?: Environment
   onClose: () => void
+  type?: EnvironmentModeEnum
 }
 
 export function CreateCloneEnvironmentModal({
@@ -28,6 +28,7 @@ export function CreateCloneEnvironmentModal({
   organizationId,
   environmentToClone,
   onClose,
+  type,
 }: CreateCloneEnvironmentModalProps) {
   const navigate = useNavigate()
   const { enableAlertClickOutside } = useModal()
@@ -42,7 +43,7 @@ export function CreateCloneEnvironmentModal({
     defaultValues: {
       name: environmentToClone?.name ? environmentToClone.name + '-clone' : '',
       cluster: clusters.find(({ is_default }) => is_default)?.id,
-      mode: EnvironmentModeEnum.DEVELOPMENT,
+      mode: type ?? EnvironmentModeEnum.DEVELOPMENT,
       project_id: projectId,
     },
   })
@@ -60,7 +61,9 @@ export function CreateCloneEnvironmentModal({
         },
       })
 
-      navigate(SERVICES_URL(organizationId, project_id, result.id) + SERVICES_GENERAL_URL)
+      navigate({
+        to: `/organization/${organizationId}/project/${project_id}/environment/${result.id}/overview`,
+      })
     } else {
       const result = await createEnvironment({
         projectId: project_id,
@@ -70,7 +73,9 @@ export function CreateCloneEnvironmentModal({
           cluster: cluster,
         },
       })
-      navigate(SERVICES_URL(organizationId, project_id, result.id) + SERVICES_GENERAL_URL)
+      navigate({
+        to: `/organization/${organizationId}/project/${project_id}/environment/${result.id}/overview`,
+      })
     }
     onClose()
   })

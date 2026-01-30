@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ServiceDetails should match application snapshot 1`] = `
 <body>
@@ -18,8 +18,8 @@ exports[`ServiceDetails should match application snapshot 1`] = `
             About
           </span>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
-            href="/settings/general"
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-current text-sm"
+            to="../settings/general"
           >
             <i
               aria-hidden="true"
@@ -80,8 +80,8 @@ exports[`ServiceDetails should match application snapshot 1`] = `
             Source
           </span>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
-            href="/settings/general"
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-current text-sm"
+            to="../settings/general"
           >
             <i
               aria-hidden="true"
@@ -113,8 +113,8 @@ exports[`ServiceDetails should match database snapshot 1`] = `
             About
           </span>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
-            href="/settings/general"
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-current text-sm"
+            to="../settings/general"
           >
             <i
               aria-hidden="true"
@@ -175,8 +175,8 @@ exports[`ServiceDetails should match database snapshot 1`] = `
             Source
           </span>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
-            href="/settings/general"
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-current text-sm"
+            to="../settings/general"
           >
             <i
               aria-hidden="true"
@@ -208,8 +208,8 @@ exports[`ServiceDetails should match job snapshot 1`] = `
             About
           </span>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
-            href="/settings/general"
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-current text-sm"
+            to="../settings/general"
           >
             <i
               aria-hidden="true"
@@ -270,8 +270,8 @@ exports[`ServiceDetails should match job snapshot 1`] = `
             Source
           </span>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
-            href="/settings/general"
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-current text-sm"
+            to="../settings/general"
           >
             <i
               aria-hidden="true"

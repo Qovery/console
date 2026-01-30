@@ -88,8 +88,8 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
 
   return (
     <div>
-      <div className="flex h-9 items-center justify-between border-y border-neutral-250 px-4">
-        <h2 className="text-ssm font-medium text-neutral-400">Nodepools configuration</h2>
+      <div className="flex h-9 items-center justify-between border-y border-neutral px-4">
+        <h2 className="text-ssm font-medium text-neutral">Nodepools configuration</h2>
         <Tooltip
           classNameContent="w-80"
           content="A NodePool is a group of nodes within a cluster that share the same configuration and characteristics. It allows you to manage resources efficiently by defining specific limits and settings for the group."
@@ -103,14 +103,14 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
         {match(filter)
           .with('default', () => (
             <>
-              <p className="text-ssm text-neutral-350">
+              <p className="text-ssm text-neutral-subtle">
                 Karpenter settings above will be applied to the following nodepools
               </p>
-              <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-150 p-4 text-sm">
+              <div className="flex flex-col gap-4 rounded border border-neutral bg-surface-neutral p-4 text-sm">
                 <div className="flex gap-10">
                   <div className="flex flex-col gap-1.5">
-                    <p className="font-medium text-neutral-400">Stable nodepool</p>
-                    <span className="text-ssm text-neutral-350">
+                    <p className="font-medium text-neutral">Stable nodepool</p>
+                    <span className="text-ssm text-neutral-subtle">
                       Used for single instances and internal Qovery applications, such as containerized databases, to
                       maintain stability.
                     </span>
@@ -139,8 +139,8 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                 </div>
                 <div className="flex justify-between gap-4">
                   <div className="flex w-1/2 flex-col gap-1">
-                    <span className="text-neutral-350">Consolidation</span>
-                    <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
+                    <span className="font-medium text-neutral">Consolidation</span>
+                    <div className="flex flex-col justify-between gap-4 text-sm text-neutral">
                       {watchStable?.consolidation?.enabled ? (
                         <span className="flex flex-col justify-center">
                           <span className="flex gap-1.5">
@@ -161,7 +161,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                     </div>
                   </div>
                   <div className="flex w-1/2 flex-col gap-1">
-                    <span className="text-neutral-350">Resources limit</span>
+                    <span className="font-medium text-neutral">Resources limit</span>
                     {watchStable?.limits?.enabled ? (
                       <span>
                         {watchStable.limits.max_cpu_in_vcpu && (
@@ -180,11 +180,11 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-150 p-4 text-sm">
+              <div className="flex flex-col gap-4 rounded border border-neutral bg-surface-neutral p-4 text-sm">
                 <div className="flex gap-10">
                   <div className="flex flex-col gap-1.5">
-                    <p className="font-medium text-neutral-400">Default nodepool</p>
-                    <span className="text-ssm text-neutral-350">
+                    <p className="font-medium text-neutral">Default nodepool</p>
+                    <span className="text-ssm text-neutral-subtle">
                       Designed to handle general workloads and serves as the foundation for deploying most applications.
                     </span>
                   </div>
@@ -212,8 +212,8 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                 </div>
                 <div className="flex gap-4">
                   <div className="flex w-1/2 flex-col gap-1">
-                    <span className="text-neutral-350">Consolidation</span>
-                    <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
+                    <span className="font-medium text-neutral">Consolidation</span>
+                    <div className="flex flex-col justify-between gap-4 text-sm text-neutral">
                       <span className="flex flex-col justify-center">
                         <span className="flex gap-1.5">
                           Operates every day,
@@ -228,7 +228,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                     </div>
                   </div>
                   <div className="flex w-1/2 flex-col gap-1">
-                    <span className="text-neutral-350">Resources limit</span>
+                    <span className="font-medium text-neutral">Resources limit</span>
                     {watchDefault?.limits?.enabled ? (
                       <span>
                         {watchDefault.limits.max_cpu_in_vcpu && (
@@ -250,11 +250,11 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
             </>
           ))
           .with('gpu', () => (
-            <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-150 p-4 text-sm">
+            <div className="flex flex-col gap-4 rounded border border-neutral bg-surface-neutral p-4 text-sm">
               <div className="flex justify-between gap-10">
                 <div className="flex flex-col gap-1.5">
-                  <p className="font-medium text-neutral-400">GPU nodepool</p>
-                  <span className="text-ssm text-neutral-350">
+                  <p className="font-medium text-neutral">GPU nodepool</p>
+                  <span className="text-ssm text-neutral-subtle">
                     Used for GPU workloads, such as machine learning and data processing.
                   </span>
                 </div>
@@ -286,8 +286,8 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
               </div>
               <div className="flex justify-between gap-4">
                 <div className="flex w-1/2 flex-col gap-1">
-                  <span className="text-neutral-350">Consolidation</span>
-                  <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
+                  <span className="font-medium text-neutral">Consolidation</span>
+                  <div className="flex flex-col justify-between gap-4 text-sm text-neutral">
                     {watchGpu?.consolidation?.enabled ? (
                       <span className="flex flex-col justify-center">
                         <span className="flex gap-1.5">
@@ -308,7 +308,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                   </div>
                 </div>
                 <div className="flex w-1/2 flex-col gap-1">
-                  <span className="text-neutral-350">Resources limit</span>
+                  <span className="font-medium text-neutral">Resources limit</span>
                   {watchGpu?.limits?.enabled ? (
                     <span>
                       {watchGpu.limits.max_cpu_in_vcpu && (

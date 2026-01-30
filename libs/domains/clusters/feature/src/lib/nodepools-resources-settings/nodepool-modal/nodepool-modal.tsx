@@ -39,7 +39,7 @@ function LimitsFields({ prefix }: { prefix: OverridePrefix }) {
                 classNameContent="w-80"
                 content={`This section is dedicated to configuring the ${prefix === 'gpu_override' ? 'CPU, GPU and memory' : 'CPU and memory'} limits for the Nodepool. Nodes can be deployed within these limits, ensuring that their total resources do not exceed the defined maximum. This configuration helps prevent unlimited resource allocation, avoiding excessive costs.`}
               >
-                <span className="text-neutral-400">
+                <span className="text-neutral-subtle">
                   <Icon iconName="circle-info" iconStyle="regular" />
                 </span>
               </Tooltip>
@@ -246,12 +246,12 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
         onClose={closeModal}
         submitLabel="Confirm"
       >
-        <div className="mb-6 flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
+        <div className="mb-6 flex flex-col gap-4 rounded border border-neutral bg-surface-neutral p-4">
           <LimitsFields prefix={prefix} />
         </div>
         {match(prefix)
           .with('default_override', () => (
-            <div className="flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
+            <div className="flex flex-col gap-4 rounded border border-neutral bg-surface-neutral p-4">
               <div className="flex gap-3">
                 <Tooltip content="Consolidation cannot be disabled on this NodePool">
                   <span>
@@ -259,8 +259,8 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                   </span>
                 </Tooltip>
                 <div className="relative -top-0.5 text-sm">
-                  <p className="font-medium text-neutral-400">Operates every day, 24 hours a day</p>
-                  <span className="text-neutral-350">
+                  <p className="font-medium text-neutral">Operates every day, 24 hours a day</p>
+                  <span className="text-neutral-subtle">
                     Define when consolidation occurs to optimize resource usage by reducing the number of active nodes.
                   </span>
                 </div>
@@ -268,7 +268,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
             </div>
           ))
           .with('stable_override', 'gpu_override', (prefix) => (
-            <div className="flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
+            <div className="flex flex-col gap-4 rounded border border-neutral bg-surface-neutral p-4">
               <Controller
                 name={`${prefix}.consolidation.enabled`}
                 control={methods.control}
@@ -286,7 +286,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                       classNameContent="w-80"
                       content="Consolidation optimizes resource usage by consolidating workloads onto fewer nodes. This schedule applies to Nodepools used by Qovery’s internal applications and single-instance applications (like container databases)"
                     >
-                      <span className="text-neutral-400">
+                      <span className="text-neutral-subtle">
                         <Icon iconName="circle-info" iconStyle="regular" />
                       </span>
                     </Tooltip>

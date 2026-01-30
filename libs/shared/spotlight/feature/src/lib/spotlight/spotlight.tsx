@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { useNavigate } from '@tanstack/react-router'
 import { type ServiceLightResponse } from 'qovery-typescript-axios'
 import { useCallback, useContext, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { ServiceAvatar, useFavoriteServices, useRecentServices } from '@qovery/domains/services/feature'
 import { AssistantContext } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
@@ -74,10 +74,10 @@ const ServiceItem = ({
       </span>
 
       <span className="flex items-center gap-3">
-        <span className="flex items-center gap-1 text-ssm font-normal text-neutral-350">
-          <Truncate text={project_name} truncateLimit={30} /> <span className="text-neutral-300">/</span>{' '}
+        <span className="flex items-center gap-1 text-ssm font-normal text-neutral-subtle">
+          <Truncate text={project_name} truncateLimit={30} /> <span className="text-neutral-disabled">/</span>{' '}
           <Truncate text={environment_name} truncateLimit={30} />
-          {isFavorite && <Icon iconName="star" iconStyle="solid" className="ml-2 text-yellow-500" />}
+          {isFavorite && <Icon iconName="star" iconStyle="solid" className="ml-2 text-warning" />}
         </span>
       </span>
     </Command.Item>
@@ -89,6 +89,7 @@ export interface SpotlightProps extends Pick<CommandDialogProps, 'open' | 'onOpe
 }
 
 export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps) {
+  // TODO: testing-only - migrate to TanStack Router hooks for console-v5.
   const navigate = useNavigate()
   const quickActions = useQuickActions()
   const { setAssistantOpen } = useContext(AssistantContext)
@@ -106,11 +107,11 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
   const recentServices = useMemo(() => getRecentServices(), [getRecentServices])
   const favoriteServices = useMemo(() => getFavoriteServices(), [getFavoriteServices])
 
-  const iconClassName = 'text-brand-500 text-sm text-center w-6'
+  const iconClassName = 'text-brand text-sm text-center w-6'
 
   const navigateTo = useCallback(
     (link: string) => () => {
-      navigate(link)
+      navigate({ to: link })
       onOpenChange?.(false)
     },
     [navigate, onOpenChange]
@@ -134,7 +135,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
       setSelectedService(undefined)
       setSearchInput('')
 
-      navigate(serviceLink)
+      navigate({ to: serviceLink })
       onOpenChange?.(false)
     },
     [addToRecentServices, navigate, onOpenChange, organizationId]
@@ -259,116 +260,119 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
       }}
       value={selectedValue}
       onValueChange={handleValueChange}
+      className="bg-surface-neutral-subtle"
       loop
     >
-      <div className="flex w-full items-center border-b border-neutral-200 pl-4 text-base text-neutral-350">
-        <Icon iconName="magnifying-glass" iconStyle="regular" />
-        <Command.Input
-          autoFocus
-          ref={inputRef}
-          placeholder="Search for actions or services..."
-          className="border-b-0"
-          value={searchInput}
-          onValueChange={handleSearchChange}
-        />
+      <div className="outline-neutral rounded-lg bg-surface-neutral outline outline-[1px]">
+        <div className="flex w-full items-center border-b border-neutral pl-4 text-base text-neutral-subtle">
+          <Icon iconName="magnifying-glass" iconStyle="regular" />
+          <Command.Input
+            autoFocus
+            ref={inputRef}
+            placeholder="Search for actions or services..."
+            className="border-b-0"
+            value={searchInput}
+            onValueChange={handleSearchChange}
+          />
+        </div>
+        <Command.List ref={listRef} className="focus:outline-none">
+          {isLoadingServices && <Command.Loading />}
+          <Command.Empty>
+            <div className="px-3 pb-8 pt-6 text-center">
+              <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+              <p className="mt-1 text-xs font-medium text-neutral-subtle">No result for this search</p>
+            </div>
+          </Command.Empty>
+
+          {searchInput.length === 0 && favoriteServices.length > 0 && (
+            <>
+              <Command.Group heading="Favorites services">
+                {favoriteServices.map((service) => (
+                  <ServiceItem
+                    key={'favorite-' + service.id}
+                    type="favorite"
+                    service={service}
+                    onSelect={() => navigateToService(service)}
+                  />
+                ))}
+              </Command.Group>
+              <Command.Separator />
+            </>
+          )}
+
+          {searchInput.length === 0 && recentServices.length > 0 && (
+            <>
+              <Command.Group heading="Last services opened">
+                {recentServices.map((service) => (
+                  <ServiceItem
+                    key={'recent-' + service.id}
+                    type="recent"
+                    service={service}
+                    onSelect={() => navigateToService(service)}
+                  />
+                ))}
+              </Command.Group>
+              <Command.Separator />
+            </>
+          )}
+
+          {filteredServices.length > 0 && (
+            <>
+              <Command.Group heading="Services">
+                {filteredServices.map((service) => (
+                  <ServiceItem
+                    key={'service-' + service.id}
+                    service={service}
+                    onSelect={() => navigateToService(service)}
+                    isFavorite={!!favoriteServices?.find((s) => s.id === service.id)}
+                  />
+                ))}
+              </Command.Group>
+              <Command.Separator />
+            </>
+          )}
+
+          {quickActions.length > 0 && (
+            <>
+              <Command.Group heading="Quick actions">
+                {quickActions.map(({ label, iconName, link }) => (
+                  <Command.Item key={link} onSelect={navigateTo(link)} value={label}>
+                    <Icon className={iconClassName} iconName={iconName} />
+                    {label}
+                  </Command.Item>
+                ))}
+              </Command.Group>
+              <Command.Separator />
+            </>
+          )}
+
+          <Command.Group heading="Settings">
+            {settingsItems.map(({ label, onSelect, ...props }) => (
+              <Command.Item key={label} onSelect={onSelect} value={label}>
+                {'iconName' in props ? (
+                  <Icon className={iconClassName} iconName={props.iconName} />
+                ) : (
+                  <Icon className={iconClassName} name={props.iconEnum} />
+                )}
+                {label}
+              </Command.Item>
+            ))}
+          </Command.Group>
+          <Command.Separator />
+          <Command.Group heading="Help">
+            {helpItems.map(({ label, onSelect, ...props }) => (
+              <Command.Item key={label} onSelect={onSelect} value={label}>
+                {'iconName' in props ? (
+                  <Icon className={iconClassName} iconName={props.iconName} />
+                ) : (
+                  <Icon className={iconClassName} name={props.iconEnum} />
+                )}
+                {label}
+              </Command.Item>
+            ))}
+          </Command.Group>
+        </Command.List>
       </div>
-      <Command.List ref={listRef}>
-        {isLoadingServices && <Command.Loading />}
-        <Command.Empty>
-          <div className="px-3 pb-8 pt-6 text-center">
-            <Icon iconName="wave-pulse" className="text-neutral-350" />
-            <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
-          </div>
-        </Command.Empty>
-
-        {searchInput.length === 0 && favoriteServices.length > 0 && (
-          <>
-            <Command.Group heading="Favorites services">
-              {favoriteServices.map((service) => (
-                <ServiceItem
-                  key={'favorite-' + service.id}
-                  type="favorite"
-                  service={service}
-                  onSelect={() => navigateToService(service)}
-                />
-              ))}
-            </Command.Group>
-            <Command.Separator />
-          </>
-        )}
-
-        {searchInput.length === 0 && recentServices.length > 0 && (
-          <>
-            <Command.Group heading="Last services opened">
-              {recentServices.map((service) => (
-                <ServiceItem
-                  key={'recent-' + service.id}
-                  type="recent"
-                  service={service}
-                  onSelect={() => navigateToService(service)}
-                />
-              ))}
-            </Command.Group>
-            <Command.Separator />
-          </>
-        )}
-
-        {filteredServices.length > 0 && (
-          <>
-            <Command.Group heading="Services">
-              {filteredServices.map((service) => (
-                <ServiceItem
-                  key={'service-' + service.id}
-                  service={service}
-                  onSelect={() => navigateToService(service)}
-                  isFavorite={!!favoriteServices?.find((s) => s.id === service.id)}
-                />
-              ))}
-            </Command.Group>
-            <Command.Separator />
-          </>
-        )}
-
-        {quickActions.length > 0 && (
-          <>
-            <Command.Group heading="Quick actions">
-              {quickActions.map(({ label, iconName, link }) => (
-                <Command.Item key={link} onSelect={navigateTo(link)} value={label}>
-                  <Icon className={iconClassName} iconName={iconName} />
-                  {label}
-                </Command.Item>
-              ))}
-            </Command.Group>
-            <Command.Separator />
-          </>
-        )}
-
-        <Command.Group heading="Settings">
-          {settingsItems.map(({ label, onSelect, ...props }) => (
-            <Command.Item key={label} onSelect={onSelect} value={label}>
-              {'iconName' in props ? (
-                <Icon className={iconClassName} iconName={props.iconName} />
-              ) : (
-                <Icon className={iconClassName} name={props.iconEnum} />
-              )}
-              {label}
-            </Command.Item>
-          ))}
-        </Command.Group>
-        <Command.Separator />
-        <Command.Group heading="Help">
-          {helpItems.map(({ label, onSelect, ...props }) => (
-            <Command.Item key={label} onSelect={onSelect} value={label}>
-              {'iconName' in props ? (
-                <Icon className={iconClassName} iconName={props.iconName} />
-              ) : (
-                <Icon className={iconClassName} name={props.iconEnum} />
-              )}
-              {label}
-            </Command.Item>
-          ))}
-        </Command.Group>
-      </Command.List>
       <SubCommand
         organizationId={organizationId}
         inputRef={inputRef}

@@ -1,9 +1,18 @@
 import type { Meta } from '@storybook/react-webpack5'
-import { Checkbox } from './checkbox'
+import { Checkbox, type CheckboxProps } from './checkbox'
 
 const Story: Meta<typeof Checkbox> = {
   component: Checkbox,
   title: 'Checkbox',
+  argTypes: {
+    color: {
+      control: { type: 'radio' },
+      options: ['brand', 'red'],
+    },
+  },
+  args: {
+    color: 'brand',
+  },
   decorators: [
     (Story) => (
       <div style={{ background: 'white', padding: '3em' }}>
@@ -15,27 +24,27 @@ const Story: Meta<typeof Checkbox> = {
 export default Story
 
 export const Primary = {
-  render: () => (
+  render: (args: CheckboxProps) => (
     <>
-      <label className="flex items-center gap-3">
-        <Checkbox />
+      <label className="flex items-center gap-2">
+        <Checkbox {...args} />
         Not checked
       </label>
-      <label className="flex items-center gap-3">
-        <Checkbox defaultChecked />
+      <label className="flex items-center gap-2">
+        <Checkbox {...args} defaultChecked />
         Checked
       </label>
-      <label className="flex items-center gap-3">
-        <Checkbox checked="indeterminate" /> Indeterminate
+      <label className="flex items-center gap-2">
+        <Checkbox {...args} checked="indeterminate" /> Indeterminate
       </label>
-      <label className="flex items-center gap-3">
-        <Checkbox disabled /> Not checked
+      <label className="flex items-center gap-2">
+        <Checkbox {...args} disabled /> Not checked
       </label>
-      <label className="flex items-center gap-3">
-        <Checkbox disabled defaultChecked /> Checked
+      <label className="flex items-center gap-2">
+        <Checkbox {...args} disabled defaultChecked /> Checked
       </label>
-      <label className="flex items-center gap-3">
-        <Checkbox disabled checked="indeterminate" /> Indeterminate
+      <label className="flex items-center gap-2">
+        <Checkbox {...args} disabled checked="indeterminate" /> Indeterminate
       </label>
     </>
   ),
