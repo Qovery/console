@@ -46,18 +46,18 @@ export function ModalMultiConfirmation({
   return (
     <Section className="p-5">
       <Dialog.Title asChild>
-        <Heading level={1} className="mb-2 max-w-sm text-2xl text-neutral-400">
+        <Heading level={1} className="mb-2 max-w-sm text-2xl text-neutral">
           {title}
         </Heading>
       </Dialog.Title>
-      <Dialog.Description className="mb-6 text-sm text-neutral-350">{description}</Dialog.Description>
+      <Dialog.Description className="mb-6 text-sm text-neutral-subtle">{description}</Dialog.Description>
 
       <form onSubmit={onSubmit}>
         {children}
         {(warning || checks) && (
           <Callout.Root className="mb-5 grid grid-cols-[1fr_auto] gap-y-3" color="red">
             <Callout.Icon>
-              <Icon iconName="triangle-exclamation" className="text-red-600" />
+              <Icon iconName="triangle-exclamation" className="text-negative" />
             </Callout.Icon>
 
             <Callout.Text>
@@ -89,7 +89,7 @@ export function ModalMultiConfirmation({
                             />
                             <label htmlFor={field.name}>{check}</label>
                           </div>
-                          {error && <p className="text-sm text-red-500">{error.message}</p>}
+                          {error && <p className="text-sm text-negative">{error.message}</p>}
                         </div>
                       )}
                     />
