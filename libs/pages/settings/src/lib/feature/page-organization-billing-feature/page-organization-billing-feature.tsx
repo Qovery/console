@@ -1,7 +1,7 @@
 import { type default as FieldContainer } from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import { type default as CbInstance } from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { type BillingInfoRequest, type CreditCard } from 'qovery-typescript-axios'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import {
@@ -44,53 +44,20 @@ export function PageOrganizationBillingFeature() {
 
   const methods = useForm<BillingInfoRequest>({
     mode: 'onChange',
-    defaultValues: {
-      city: '',
-      address: '',
-      state: '',
-      company: '',
-      zip: '',
-      email: '',
-      first_name: '',
-      last_name: '',
-      vat_number: '',
-      country_code: '',
-    },
+    values: billingInfo as BillingInfoRequest,
   })
 
-  useEffect(() => {
-    if (!showAddCard) return
-
-    let mounted = true
-
-    const initializeChargebee = async () => {
-      try {
-        const instance = await loadChargebee()
-
-        if (!mounted) {
-          return
-        }
-
-        setCbInstance(instance)
-      } catch (error) {
-        return
-      }
-    }
-
-    initializeChargebee()
-
-    return () => {
-      mounted = false
-    }
-  }, [showAddCard])
-
-  useEffect(() => {
-    methods.reset(billingInfo as BillingInfoRequest)
-  }, [billingInfo, methods])
-
-  const handleAddCard = (cardId?: string) => {
+  const handleAddCard = async (cardId?: string) => {
     setShowAddCard(true)
     setEditingCardId(cardId || null)
+
+    try {
+      const instance = await loadChargebee()
+      setCbInstance(instance)
+    } catch (error) {
+      return
+    }
+
     setTimeout(() => {
       const cardSection = document.querySelector('[data-credit-card-section]')
       if (cardSection) {
