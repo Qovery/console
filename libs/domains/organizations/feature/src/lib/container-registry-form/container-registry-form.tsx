@@ -431,7 +431,7 @@ export function ContainerRegistryForm({
         />
       )}
 
-      <hr />
+      <hr className="border-neutral" />
 
       {(cluster?.cloud_provider === 'AWS' || watchKind === ContainerRegistryKindEnum.ECR) && (
         <Controller

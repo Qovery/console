@@ -17,8 +17,8 @@ const Clusters = () => {
     return (
       <EmptyState title="Create your first cluster">
         <Link to="/" as="button" className="mt-4 items-center gap-2" size="md">
-          New Cluster
           <Icon iconName="circle-plus" iconStyle="regular" />
+          New Cluster
         </Link>
       </EmptyState>
     )
@@ -54,8 +54,8 @@ function RouteComponent() {
               className="gap-2"
               size="md"
             >
-              New Cluster
               <Icon iconName="circle-plus" iconStyle="regular" />
+              Add cluster
             </Link>
           </div>
           <hr className="w-full border-neutral" />

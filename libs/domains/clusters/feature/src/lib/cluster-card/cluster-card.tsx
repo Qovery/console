@@ -112,7 +112,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
           params: { organizationId: cluster.organization.id, clusterId: cluster.id },
         }).href
       }
-      className="duration-50 flex flex-col gap-5 rounded border border-neutral bg-surface-neutral p-5 outline outline-2 outline-transparent transition-all [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:border-brand-11 hover:-outline-offset-2 hover:outline-brand-11"
+      className="duration-50 flex flex-col gap-5 rounded-lg border border-neutral bg-surface-neutral p-5 shadow-sm transition-all hover:border-brand-strong"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 flex-1 items-center gap-3">
