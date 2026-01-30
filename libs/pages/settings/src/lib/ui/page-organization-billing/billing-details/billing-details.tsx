@@ -1,78 +1,18 @@
-import { CardCVV, CardComponent, CardExpiry, CardNumber, Provider } from '@chargebee/chargebee-js-react-wrapper'
-import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
-import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { type BillingInfoRequest } from 'qovery-typescript-axios'
-import { type FormEventHandler, type RefObject } from 'react'
+import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { Button, Icon, InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
-import { fieldStyles } from '@qovery/shared/util-payment'
+import { Button, InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface BillingDetailsProps {
-  onSubmit: FormEventHandler<HTMLFormElement>
+  onSubmit?: FormEventHandler<HTMLFormElement>
   loadingBillingInfos?: boolean
   editInProcess?: boolean
   countryValues?: Value[]
-  showAddCard?: boolean
-  cbInstance?: CbInstance | null
-  cardRef?: RefObject<FieldContainer>
-  onCardReady?: () => void
-  onAddCard?: () => void
-  onCancelAddCard?: () => void
-  showOnlyCardFields?: boolean
 }
 
 export function BillingDetails(props: BillingDetailsProps) {
   const { control, formState } = useFormContext<BillingInfoRequest>()
-
-  // If we only show card fields, render only the Chargebee form
-  if (props.showOnlyCardFields && props.showAddCard) {
-    return (
-      <>
-        <div className="mb-4 flex items-center justify-between">
-          <h4 className="text-sm font-medium text-neutral-400">Add credit card</h4>
-          <button
-            type="button"
-            onClick={props.onCancelAddCard}
-            className="text-sm text-neutral-350 hover:text-neutral-400"
-          >
-            Cancel
-          </button>
-        </div>
-
-        {!props.cbInstance ? (
-          <div className="flex justify-center py-4">
-            <LoaderSpinner />
-          </div>
-        ) : (
-          <Provider cbInstance={props.cbInstance}>
-            <CardComponent
-              ref={props.cardRef}
-              styles={fieldStyles}
-              locale="en"
-              currency="USD"
-              onReady={props.onCardReady}
-            >
-              <div className="chargebee-field-wrapper">
-                <label className="chargebee-field-label">Card Number</label>
-                <CardNumber placeholder="1234 1234 1234 1234" />
-              </div>
-              <div className="chargebee-fields-row">
-                <div className="chargebee-field-wrapper">
-                  <label className="chargebee-field-label">Expiry</label>
-                  <CardExpiry placeholder="MM / YY" />
-                </div>
-                <div className="chargebee-field-wrapper">
-                  <label className="chargebee-field-label">CVV</label>
-                  <CardCVV placeholder="CVV" />
-                </div>
-              </div>
-            </CardComponent>
-          </Provider>
-        )}
-      </>
-    )
-  }
 
   return (
     <>
@@ -225,7 +165,6 @@ export function BillingDetails(props: BillingDetailsProps) {
               )}
             />
           </div>
-
           <div className="flex justify-end">
             <Button
               data-testid="submit-button"

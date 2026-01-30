@@ -1,4 +1,9 @@
+import { CardCVV, CardComponent, CardExpiry, CardNumber, Provider } from '@chargebee/chargebee-js-react-wrapper'
+import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
+import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { type CreditCard } from 'qovery-typescript-axios'
+import { type FormEventHandler, type RefObject } from 'react'
+import { type Value } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,
@@ -9,6 +14,7 @@ import {
   LoaderSpinner,
   Section,
 } from '@qovery/shared/ui'
+import { fieldStyles } from '@qovery/shared/util-payment'
 import BillingDetailsFeature from '../../feature/page-organization-billing-feature/billing-details-feature/billing-details-feature'
 
 export interface PageOrganizationBillingProps {
@@ -17,7 +23,14 @@ export interface PageOrganizationBillingProps {
   onDeleteCard: (creditCard: CreditCard) => void
   creditCardLoading?: boolean
   showAddCard?: boolean
-  onShowAddCardChange?: (show: boolean) => void
+  onCancelAddCard?: () => void
+  cbInstance?: CbInstance | null
+  cardRef?: RefObject<FieldContainer>
+  onCardReady?: () => void
+  countryValues?: Value[]
+  loadingBillingInfos?: boolean
+  editInProcess?: boolean
+  onSubmit?: FormEventHandler<HTMLFormElement>
 }
 
 export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
@@ -28,7 +41,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
 
         <BlockContent title="Billing details" className="mt-10">
           {/* Credit cards section */}
-          <div className="mb-6">
+          <div className="mb-6" data-credit-card-section>
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-medium text-neutral-400">Credit cards</h3>
               <Button onClick={props.onAddCard} size="md" className="gap-2" data-testid="add-new-card-button">
@@ -81,9 +94,49 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                 ))}
               </div>
             ) : props.showAddCard ? (
-              <div data-billing-details-form>
-                <BillingDetailsFeature showAddCard={props.showAddCard} onShowAddCardChange={props.onShowAddCardChange} showOnlyCardFields />
-              </div>
+              <>
+                <div className="mb-4 flex items-center justify-between">
+                  <h4 className="text-sm font-medium text-neutral-400">Add credit card</h4>
+                  <button
+                    type="button"
+                    onClick={props.onCancelAddCard}
+                    className="text-sm text-neutral-350 hover:text-neutral-400"
+                  >
+                    Cancel
+                  </button>
+                </div>
+
+                {!props.cbInstance ? (
+                  <div className="flex justify-center py-4">
+                    <LoaderSpinner />
+                  </div>
+                ) : (
+                  <Provider cbInstance={props.cbInstance}>
+                    <CardComponent
+                      ref={props.cardRef}
+                      styles={fieldStyles}
+                      locale="en"
+                      currency="USD"
+                      onReady={props.onCardReady}
+                    >
+                      <div className="chargebee-field-wrapper">
+                        <label className="chargebee-field-label">Card Number</label>
+                        <CardNumber placeholder="1234 1234 1234 1234" />
+                      </div>
+                      <div className="chargebee-fields-row">
+                        <div className="chargebee-field-wrapper">
+                          <label className="chargebee-field-label">Expiry</label>
+                          <CardExpiry placeholder="MM / YY" />
+                        </div>
+                        <div className="chargebee-field-wrapper">
+                          <label className="chargebee-field-label">CVV</label>
+                          <CardCVV placeholder="CVV" />
+                        </div>
+                      </div>
+                    </CardComponent>
+                  </Provider>
+                )}
+              </>
             ) : (
               <div data-testid="placeholder-credit-card" className="px-3 py-6 text-center">
                 <Icon iconName="wave-pulse" className="text-neutral-350" />
@@ -98,7 +151,12 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
           <div className="my-6 border-t border-neutral-250" />
 
           {/* Billing information section */}
-          <BillingDetailsFeature showAddCard={false} onShowAddCardChange={props.onShowAddCardChange} />
+          <BillingDetailsFeature
+            countryValues={props.countryValues}
+            loadingBillingInfos={props.loadingBillingInfos}
+            editInProcess={props.editInProcess}
+            onSubmit={props.onSubmit}
+          />
         </BlockContent>
       </Section>
     </div>
