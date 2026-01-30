@@ -112,7 +112,14 @@ export function PageOrganizationBillingFeature() {
     setEditInProcess(true)
 
     try {
-      // If user has added card data, tokenize it first
+      // Save billing info first to validate it (especially VAT number)
+      const response = await editBillingInfo({
+        organizationId,
+        billingInfoRequest: data,
+      })
+      methods.reset(response as BillingInfoRequest)
+
+      // Only if billing info is valid, then add the credit card
       if (showAddCard && isCardReady && cardRef.current) {
         const tokenData = await cardRef.current.tokenize({})
 
@@ -137,13 +144,6 @@ export function PageOrganizationBillingFeature() {
         setIsCardReady(false)
         setCbInstance(null)
       }
-
-      // Save billing info
-      const response = await editBillingInfo({
-        organizationId,
-        billingInfoRequest: data,
-      })
-      methods.reset(response as BillingInfoRequest)
     } catch (error) {
       console.error(error)
       toastError(error as unknown as SerializedError)
