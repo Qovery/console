@@ -2,7 +2,7 @@ import { type BillingInfoRequest } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { BlockContent, Button, InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
+import { Button, InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface BillingDetailsProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -15,7 +15,8 @@ export function BillingDetails(props: BillingDetailsProps) {
   const { control, formState } = useFormContext<BillingInfoRequest>()
 
   return (
-    <BlockContent title="Billing details">
+    <>
+      <h3 className="mb-5 text-sm font-medium text-neutral-400">Billing information</h3>
       {props.loadingBillingInfos ? (
         <div className="flex justify-center">
           <LoaderSpinner />
@@ -178,7 +179,7 @@ export function BillingDetails(props: BillingDetailsProps) {
           </div>
         </>
       )}
-    </BlockContent>
+    </>
   )
 }
 
