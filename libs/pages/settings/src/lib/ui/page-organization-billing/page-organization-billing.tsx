@@ -37,7 +37,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
               </Button>
             </div>
 
-            {props.creditCardLoading && props.creditCards.length === 0 ? (
+            {props.creditCardLoading && props.creditCards.length === 0 && !props.showAddCard ? (
               <div className="flex justify-center">
                 <LoaderSpinner />
               </div>
@@ -80,6 +80,10 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                   </div>
                 ))}
               </div>
+            ) : props.showAddCard ? (
+              <div data-billing-details-form>
+                <BillingDetailsFeature showAddCard={props.showAddCard} onShowAddCardChange={props.onShowAddCardChange} showOnlyCardFields />
+              </div>
             ) : (
               <div data-testid="placeholder-credit-card" className="px-3 py-6 text-center">
                 <Icon iconName="wave-pulse" className="text-neutral-350" />
@@ -93,10 +97,8 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
           {/* Divider */}
           <div className="my-6 border-t border-neutral-250" />
 
-          {/* Billing details section */}
-          <div data-billing-details-form>
-            <BillingDetailsFeature showAddCard={props.showAddCard} onShowAddCardChange={props.onShowAddCardChange} />
-          </div>
+          {/* Billing information section */}
+          <BillingDetailsFeature showAddCard={false} onShowAddCardChange={props.onShowAddCardChange} />
         </BlockContent>
       </Section>
     </div>

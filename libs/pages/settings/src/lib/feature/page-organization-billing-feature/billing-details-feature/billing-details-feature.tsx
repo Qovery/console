@@ -15,6 +15,7 @@ import BillingDetails from '../../../ui/page-organization-billing/billing-detail
 export interface BillingDetailsFeatureProps {
   showAddCard?: boolean
   onShowAddCardChange?: (show: boolean) => void
+  showOnlyCardFields?: boolean
 }
 
 export function BillingDetailsFeature(props: BillingDetailsFeatureProps) {
@@ -152,6 +153,7 @@ export function BillingDetailsFeature(props: BillingDetailsFeatureProps) {
         onCardReady={() => setIsCardReady(true)}
         onAddCard={handleAddCard}
         onCancelAddCard={handleCancelAddCard}
+        showOnlyCardFields={props.showOnlyCardFields}
       />
     </FormProvider>
   )

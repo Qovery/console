@@ -19,10 +19,60 @@ export interface BillingDetailsProps {
   onCardReady?: () => void
   onAddCard?: () => void
   onCancelAddCard?: () => void
+  showOnlyCardFields?: boolean
 }
 
 export function BillingDetails(props: BillingDetailsProps) {
   const { control, formState } = useFormContext<BillingInfoRequest>()
+
+  // If we only show card fields, render only the Chargebee form
+  if (props.showOnlyCardFields && props.showAddCard) {
+    return (
+      <>
+        <div className="mb-4 flex items-center justify-between">
+          <h4 className="text-sm font-medium text-neutral-400">Add credit card</h4>
+          <button
+            type="button"
+            onClick={props.onCancelAddCard}
+            className="text-sm text-neutral-350 hover:text-neutral-400"
+          >
+            Cancel
+          </button>
+        </div>
+
+        {!props.cbInstance ? (
+          <div className="flex justify-center py-4">
+            <LoaderSpinner />
+          </div>
+        ) : (
+          <Provider cbInstance={props.cbInstance}>
+            <CardComponent
+              ref={props.cardRef}
+              styles={fieldStyles}
+              locale="en"
+              currency="USD"
+              onReady={props.onCardReady}
+            >
+              <div className="chargebee-field-wrapper">
+                <label className="chargebee-field-label">Card Number</label>
+                <CardNumber placeholder="1234 1234 1234 1234" />
+              </div>
+              <div className="chargebee-fields-row">
+                <div className="chargebee-field-wrapper">
+                  <label className="chargebee-field-label">Expiry</label>
+                  <CardExpiry placeholder="MM / YY" />
+                </div>
+                <div className="chargebee-field-wrapper">
+                  <label className="chargebee-field-label">CVV</label>
+                  <CardCVV placeholder="CVV" />
+                </div>
+              </div>
+            </CardComponent>
+          </Provider>
+        )}
+      </>
+    )
+  }
 
   return (
     <>
@@ -175,66 +225,6 @@ export function BillingDetails(props: BillingDetailsProps) {
               )}
             />
           </div>
-
-          {/* Credit card section */}
-          {props.showAddCard && (
-            <div className="mb-6 mt-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h4 className="text-sm font-medium text-neutral-400">Add credit card</h4>
-                <button
-                  type="button"
-                  onClick={props.onCancelAddCard}
-                  className="text-sm text-neutral-350 hover:text-neutral-400"
-                >
-                  Cancel
-                </button>
-              </div>
-
-              {!props.cbInstance ? (
-                <div className="flex justify-center py-4">
-                  <LoaderSpinner />
-                </div>
-              ) : (
-                <Provider cbInstance={props.cbInstance}>
-                  <CardComponent
-                    ref={props.cardRef}
-                    styles={fieldStyles}
-                    locale="en"
-                    currency="USD"
-                    onReady={props.onCardReady}
-                  >
-                    <div className="chargebee-field-wrapper">
-                      <label className="chargebee-field-label">Card Number</label>
-                      <CardNumber placeholder="1234 1234 1234 1234" />
-                    </div>
-                    <div className="chargebee-fields-row">
-                      <div className="chargebee-field-wrapper">
-                        <label className="chargebee-field-label">Expiry</label>
-                        <CardExpiry placeholder="MM / YY" />
-                      </div>
-                      <div className="chargebee-field-wrapper">
-                        <label className="chargebee-field-label">CVV</label>
-                        <CardCVV placeholder="CVV" />
-                      </div>
-                    </div>
-                  </CardComponent>
-                </Provider>
-              )}
-            </div>
-          )}
-
-          {!props.showAddCard && props.onAddCard && (
-            <div className="mb-6">
-              <button
-                type="button"
-                onClick={props.onAddCard}
-                className="flex items-center gap-2 text-sm text-brand-500 hover:text-brand-600"
-              >
-                <Icon iconName="circle-plus" iconStyle="regular" />
-                Add credit card
-              </button>
-            </div>
-          )}
 
           <div className="flex justify-end">
             <Button
