@@ -2,8 +2,7 @@ import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type Database } from '@qovery/domains/services/data-access'
-import { DatabaseSettingsResources } from '@qovery/shared/console-shared'
-import { SettingsHeading } from '@qovery/shared/console-shared'
+import { ApplyImmediatelyCheckbox, DatabaseSettingsResources, SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Callout, Heading, Icon, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
@@ -55,6 +54,11 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               displayStorageWarning={displayStorageWarning}
               isSetting
             />
+            {(displayInstanceTypesWarning || displayStorageWarning) && (
+              <div className="mt-3">
+                <ApplyImmediatelyCheckbox />
+              </div>
+            )}
           </Section>
 
           <div className="flex justify-end">

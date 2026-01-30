@@ -14,7 +14,10 @@ export const handleSubmit = (data: FieldValues, database: Database) => {
   cloneDatabase.storage = Number(data['storage'])
   cloneDatabase.instance_type = data['instance_type']
 
-  return cloneDatabase
+  return {
+    ...cloneDatabase,
+    apply_immediately: data['apply_immediately'],
+  }
 }
 
 export function PageSettingsResourcesFeature() {
@@ -36,6 +39,7 @@ export function PageSettingsResourcesFeature() {
       storage: database?.storage,
       cpu: database?.cpu || 10,
       instance_type: database?.instance_type,
+      apply_immediately: false,
     },
   })
 

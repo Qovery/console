@@ -41,6 +41,7 @@ export function PageSettingsGeneralFeature() {
       accessibility: database?.accessibility,
       annotations_groups: database?.annotations_groups?.map((group) => group.id),
       labels_groups: database?.labels_groups?.map((group) => group.id),
+      apply_immediately: false,
     },
   })
 

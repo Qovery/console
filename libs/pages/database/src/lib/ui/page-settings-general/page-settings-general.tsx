@@ -5,7 +5,7 @@ import { match } from 'ts-pattern'
 import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
 import { type Database } from '@qovery/domains/services/data-access'
 import { GeneralSetting } from '@qovery/domains/services/feature'
-import { SettingsHeading } from '@qovery/shared/console-shared'
+import { ApplyImmediatelyCheckbox, SettingsHeading } from '@qovery/shared/console-shared'
 import { type Value } from '@qovery/shared/interfaces'
 import {
   Button,
@@ -150,22 +150,7 @@ export function PageSettingsGeneral({
                   )}
 
                   {databaseMode === DatabaseModeEnum.MANAGED && formState.dirtyFields['version'] && (
-                    <Callout.Root color="yellow">
-                      <Callout.Icon>
-                        <Icon iconName="circle-info" />
-                      </Callout.Icon>
-                      <Callout.Text className="text-neutral-350">
-                        Once triggered, the update will be managed by your cloud provider and applied during the
-                        configured maintenance window. Moreover, the operation might cause a service interruption.{' '}
-                        <ExternalLink
-                          className="mt-1"
-                          href="https://www.qovery.com/docs/configuration/database#applying-changes-to-a-managed-database"
-                          size="xs"
-                        >
-                          Have a look at the documentation first
-                        </ExternalLink>
-                      </Callout.Text>
-                    </Callout.Root>
+                    <ApplyImmediatelyCheckbox />
                   )}
                 </>
               )}
