@@ -99,6 +99,12 @@ const PROJECT_TABS: NavigationTab[] = [
     iconName: 'key',
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/variables',
   },
+  {
+    id: 'settings',
+    label: 'Settings',
+    iconName: 'gear-complex',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/settings',
+  },
 ]
 
 const ENVIRONMENT_TABS: NavigationTab[] = [
@@ -276,6 +282,7 @@ function NavigationBar({ context }: { context: NavigationContext }) {
 const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
+  '/_authenticated/organization/$organizationId/project/$projectId/settings',
 ]
 
 function useFullWidthLayout(): boolean {
