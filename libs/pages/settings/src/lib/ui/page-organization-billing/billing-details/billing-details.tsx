@@ -2,10 +2,10 @@ import { type BillingInfoRequest } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { BlockContent, Button, InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
+import { Button, InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface BillingDetailsProps {
-  onSubmit: FormEventHandler<HTMLFormElement>
+  onSubmit?: FormEventHandler<HTMLFormElement>
   loadingBillingInfos?: boolean
   editInProcess?: boolean
   countryValues?: Value[]
@@ -15,7 +15,8 @@ export function BillingDetails(props: BillingDetailsProps) {
   const { control, formState } = useFormContext<BillingInfoRequest>()
 
   return (
-    <BlockContent title="Billing details">
+    <>
+      <h3 className="mb-5 text-sm font-medium text-neutral-400">Billing information</h3>
       {props.loadingBillingInfos ? (
         <div className="flex justify-center">
           <LoaderSpinner />
@@ -34,6 +35,7 @@ export function BillingDetails(props: BillingDetailsProps) {
                   label="First name"
                   value={field.value}
                   onChange={field.onChange}
+                  error={formState.errors.first_name?.message}
                 />
               )}
             />
@@ -48,6 +50,7 @@ export function BillingDetails(props: BillingDetailsProps) {
                   label="Last name"
                   value={field.value}
                   onChange={field.onChange}
+                  error={formState.errors.last_name?.message}
                 />
               )}
             />
@@ -69,13 +72,15 @@ export function BillingDetails(props: BillingDetailsProps) {
             <Controller
               control={control}
               name="vat_number"
+              rules={{ required: 'Please provide a VAT number' }}
               render={({ field }) => (
                 <InputText
                   className="mb-3 flex-grow"
                   name={field.name}
-                  label="Vat number"
+                  label="VAT number"
                   value={field.value}
                   onChange={field.onChange}
+                  error={formState.errors.vat_number?.message}
                 />
               )}
             />
@@ -91,19 +96,22 @@ export function BillingDetails(props: BillingDetailsProps) {
                 label="Billing email"
                 value={field.value}
                 onChange={field.onChange}
+                error={formState.errors.email?.message}
               />
             )}
           />
           <Controller
             control={control}
             name="address"
+            rules={{ required: 'Please provide an address' }}
             render={({ field }) => (
               <InputText
                 className="mb-3 flex-grow"
                 name={field.name}
-                label="Address (optional)"
+                label="Address"
                 value={field.value}
                 onChange={field.onChange}
+                error={formState.errors.address?.message}
               />
             )}
           />
@@ -111,26 +119,30 @@ export function BillingDetails(props: BillingDetailsProps) {
             <Controller
               control={control}
               name="city"
+              rules={{ required: 'Please provide a city' }}
               render={({ field }) => (
                 <InputText
                   className="mb-3 flex-grow"
                   name={field.name}
-                  label="City (optional)"
+                  label="City"
                   value={field.value}
                   onChange={field.onChange}
+                  error={formState.errors.city?.message}
                 />
               )}
             />
             <Controller
               control={control}
               name="zip"
+              rules={{ required: 'Please provide a zip code' }}
               render={({ field }) => (
                 <InputText
                   className="mb-3 flex-grow"
                   name={field.name}
-                  label="Zip code (optional)"
+                  label="Zip code"
                   value={field.value}
                   onChange={field.onChange}
+                  error={formState.errors.zip?.message}
                 />
               )}
             />
@@ -139,14 +151,16 @@ export function BillingDetails(props: BillingDetailsProps) {
             <Controller
               control={control}
               name="country_code"
+              rules={{ required: 'Please select a country' }}
               render={({ field }) => (
                 <InputSelect
                   className="flex-1"
                   options={props.countryValues ?? []}
-                  label="Country (optional)"
+                  label="Country"
                   value={field.value}
                   onChange={field.onChange}
                   isSearchable
+                  error={formState.errors.country_code?.message}
                 />
               )}
             />
@@ -169,7 +183,6 @@ export function BillingDetails(props: BillingDetailsProps) {
               data-testid="submit-button"
               type="submit"
               size="lg"
-              disabled={!formState.isValid}
               loading={props.editInProcess}
               onClick={props.onSubmit as () => void}
             >
@@ -178,7 +191,7 @@ export function BillingDetails(props: BillingDetailsProps) {
           </div>
         </>
       )}
-    </BlockContent>
+    </>
   )
 }
 
