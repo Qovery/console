@@ -36,10 +36,6 @@
   color: var(--accent-11);
 }
 
-.monaco-editor .mtk22 {
-  color: var(--accent-11);
-}
-
 .monaco-editor .mtk5 {
   color: var(--info-11);
 }
@@ -68,14 +64,7 @@
   background-color: var(--neutral-2) !important; /* no alpha */
 }
 
-.monaco-editor .selectionHighlight {
-  background-color: var(--neutral-1) !important;
-}
-
-.monaco-editor .selectionHighlight {
-  background-color: var(--neutral-1) !important;
-}
-
+.monaco-editor .selectionHighlight,
 .monaco-editor .wordHighlightStrong {
   background-color: var(--neutral-1) !important;
 }

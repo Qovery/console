@@ -263,7 +263,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
       className="bg-surface-neutral-subtle"
       loop
     >
-      <div className="outline-neutral rounded-lg bg-surface-neutral outline outline-[1px]">
+      <div className="rounded-lg bg-surface-neutral outline outline-[1px] outline-neutral">
         <div className="flex w-full items-center border-b border-neutral pl-4 text-base text-neutral-subtle">
           <Icon iconName="magnifying-glass" iconStyle="regular" />
           <Command.Input
