@@ -102,49 +102,49 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
 
                 {/* Add/Edit card form */}
                 {props.showAddCard && (
-              <>
-                <div className="mb-4 flex items-center justify-between">
-                  <h4 className="text-sm font-medium text-neutral-400">Add credit card</h4>
-                  <button
-                    type="button"
-                    onClick={props.onCancelAddCard}
-                    className="text-sm text-neutral-350 hover:text-neutral-400"
-                  >
-                    Cancel
-                  </button>
-                </div>
+                  <>
+                    <div className="mb-4 flex items-center justify-between">
+                      <h4 className="text-sm font-medium text-neutral-400">Add credit card</h4>
+                      <button
+                        type="button"
+                        onClick={props.onCancelAddCard}
+                        className="text-sm text-neutral-350 hover:text-neutral-400"
+                      >
+                        Cancel
+                      </button>
+                    </div>
 
-                {!props.cbInstance ? (
-                  <div className="flex justify-center py-4">
-                    <LoaderSpinner />
-                  </div>
-                ) : (
-                  <Provider cbInstance={props.cbInstance}>
-                    <CardComponent
-                      ref={props.cardRef}
-                      styles={fieldStyles}
-                      locale="en"
-                      currency="USD"
-                      onReady={props.onCardReady}
-                    >
-                      <div className="chargebee-field-wrapper">
-                        <label className="chargebee-field-label">Card Number</label>
-                        <CardNumber placeholder="1234 1234 1234 1234" />
+                    {!props.cbInstance ? (
+                      <div className="flex justify-center py-4">
+                        <LoaderSpinner />
                       </div>
-                      <div className="chargebee-fields-row">
-                        <div className="chargebee-field-wrapper">
-                          <label className="chargebee-field-label">Expiry</label>
-                          <CardExpiry placeholder="MM / YY" />
-                        </div>
-                        <div className="chargebee-field-wrapper">
-                          <label className="chargebee-field-label">CVV</label>
-                          <CardCVV placeholder="CVV" />
-                        </div>
-                      </div>
-                    </CardComponent>
-                  </Provider>
-                )}
-              </>
+                    ) : (
+                      <Provider cbInstance={props.cbInstance}>
+                        <CardComponent
+                          ref={props.cardRef}
+                          styles={fieldStyles}
+                          locale="en"
+                          currency="USD"
+                          onReady={props.onCardReady}
+                        >
+                          <div className="chargebee-field-wrapper">
+                            <label className="chargebee-field-label">Card Number</label>
+                            <CardNumber placeholder="1234 1234 1234 1234" />
+                          </div>
+                          <div className="chargebee-fields-row">
+                            <div className="chargebee-field-wrapper">
+                              <label className="chargebee-field-label">Expiry</label>
+                              <CardExpiry placeholder="MM / YY" />
+                            </div>
+                            <div className="chargebee-field-wrapper">
+                              <label className="chargebee-field-label">CVV</label>
+                              <CardCVV placeholder="CVV" />
+                            </div>
+                          </div>
+                        </CardComponent>
+                      </Provider>
+                    )}
+                  </>
                 )}
 
                 {/* Empty state */}
@@ -155,7 +155,13 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                       No credit card found. <br /> Please add one.
                     </p>
                     <div className="mt-4 flex justify-center">
-                      <Button onClick={() => props.onAddCard()} size="md" variant="outline" className="gap-2" data-testid="add-new-card-button">
+                      <Button
+                        onClick={() => props.onAddCard()}
+                        size="md"
+                        variant="outline"
+                        className="gap-2"
+                        data-testid="add-new-card-button"
+                      >
                         Add new card
                         <Icon iconName="circle-plus" iconStyle="regular" />
                       </Button>

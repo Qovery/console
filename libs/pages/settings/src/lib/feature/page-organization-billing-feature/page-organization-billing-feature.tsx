@@ -14,8 +14,8 @@ import {
 import { countries } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
 import { IconFlag, toastError, useModalConfirmation } from '@qovery/shared/ui'
-import { loadChargebee } from '@qovery/shared/util-payment'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { loadChargebee } from '@qovery/shared/util-payment'
 import { type SerializedError } from '@qovery/shared/utils'
 import PageOrganizationBilling from '../../ui/page-organization-billing/page-organization-billing'
 
