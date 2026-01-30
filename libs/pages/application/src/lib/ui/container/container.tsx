@@ -6,6 +6,7 @@ import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode, useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database } from '@qovery/domains/services/data-access'
 import {
+  AutoDeployBadge,
   NeedRedeployFlag,
   ServiceActionToolbar,
   ServiceAvatar,
@@ -15,7 +16,7 @@ import {
   useService,
 } from '@qovery/domains/services/feature'
 import { VariablesProvider } from '@qovery/domains/variables/feature'
-import { IconEnum } from '@qovery/shared/enums'
+import { IconEnum, isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import {
   APPLICATION_DEPLOYMENTS_URL,
   APPLICATION_GENERAL_URL,
@@ -155,14 +156,21 @@ export function Container({ children }: ContainerProps) {
             </Link>
           </Tooltip>
         </Skeleton>
-        <Skeleton width={22} height={24} show={!service}>
-          {service && 'auto_deploy' in service && service.auto_deploy && (
-            <Tooltip content="Auto-deploy">
-              <Badge variant="outline">
-                <Icon className="text-neutral-350" iconName="arrows-rotate" />
-              </Badge>
-            </Tooltip>
-          )}
+        <Skeleton width={120} height={24} show={!service}>
+          {service &&
+            'auto_deploy' in service &&
+            service.auto_deploy &&
+            match(service)
+              .with({ serviceType: 'APPLICATION' }, { serviceType: 'TERRAFORM' }, () => (
+                <AutoDeployBadge serviceId={service.id} />
+              ))
+              .with({ serviceType: 'JOB' }, (job) =>
+                isJobGitSource(job.source) ? <AutoDeployBadge serviceId={service.id} /> : null
+              )
+              .with({ serviceType: 'HELM' }, (helm) =>
+                isHelmGitSource(helm.source) ? <AutoDeployBadge serviceId={service.id} /> : null
+              )
+              .otherwise(() => null)}
         </Skeleton>
       </div>
     </div>

@@ -101,12 +101,20 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
   })
 
   if (variables.length === 0) {
-    return null
+    return (
+      <div className="px-3 py-8 text-center">
+        <Icon iconName="wave-pulse" className="text-neutral-350" />
+        <p className="mt-1 text-xs font-medium text-neutral-350">No output variables found</p>
+        <p className="mt-1 text-xs text-neutral-350">
+          {scopeName} output variables will appear here after your first successful deployment.
+        </p>
+      </div>
+    )
   }
 
   return (
-    <div className="overflow-hidden rounded border">
-      <Table.Root className={twMerge('w-full text-xs', className)} {...props}>
+    <div className="overflow-hidden">
+      <Table.Root className={twMerge('w-full text-ssm', className)} {...props}>
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id}>

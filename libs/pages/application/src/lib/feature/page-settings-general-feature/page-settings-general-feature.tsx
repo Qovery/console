@@ -28,6 +28,7 @@ import { type HelmGeneralData } from '@qovery/pages/services'
 import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
 import { joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
+import { convertAutoscalingResponseToRequest } from '@qovery/shared/util-services'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleGitApplicationSubmit = (
@@ -45,7 +46,7 @@ export const handleGitApplicationSubmit = (
     description: data.description || '',
     icon_uri: data.icon_uri,
     auto_deploy: data.auto_deploy,
-    autoscaling: undefined,
+    autoscaling: convertAutoscalingResponseToRequest(application.autoscaling),
   }
   cloneApplication.auto_deploy = data.auto_deploy
 
@@ -101,7 +102,7 @@ export const handleContainerSubmit = (
     registry_id: data.registry || '',
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
     labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id)),
-    autoscaling: undefined,
+    autoscaling: convertAutoscalingResponseToRequest(container.autoscaling),
   }
 }
 

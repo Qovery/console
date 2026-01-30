@@ -31,8 +31,9 @@ describe('FilterSection', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should not render any badges when no filters are applied', () => {
+  it('should render only Timestamp badge when no filters are applied', () => {
     renderWithProviders(<FilterSection {...props} />)
+    screen.getByText(/Timestamp:/)
     expect(screen.queryByRole('button', { name: /Clear all filters/i })).not.toBeInTheDocument()
   })
 
@@ -116,8 +117,8 @@ describe('FilterSection', () => {
     )
 
     screen.getByText(/Project:/)
-    const element = container.querySelector('button')
-    expect(element?.textContent).toContain('My Project')
+    const buttons = container.querySelectorAll('button')
+    expect(buttons[1]?.textContent).toContain('My Project')
   })
 
   it('should render environment badge when environmentId is set with selectedItems', () => {
@@ -139,8 +140,8 @@ describe('FilterSection', () => {
     )
 
     screen.getByText(/Environment:/)
-    const element = container.querySelector('button')
-    expect(element?.textContent).toContain('Production')
+    const buttons = container.querySelectorAll('button')
+    expect(buttons[1]?.textContent).toContain('Production')
   })
 
   it('should render target badge when targetId is set with selectedItems', () => {
@@ -163,8 +164,8 @@ describe('FilterSection', () => {
     )
 
     screen.getByText(/Application:/)
-    const element = container.querySelector('button')
-    expect(element?.textContent).toContain('My App')
+    const buttons = container.querySelectorAll('button')
+    expect(buttons[1]?.textContent).toContain('My App')
   })
 
   it('should render multiple badges when multiple filters are set', () => {

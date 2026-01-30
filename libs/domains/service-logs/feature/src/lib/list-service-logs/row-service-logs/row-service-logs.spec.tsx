@@ -63,4 +63,88 @@ describe('RowServiceLogs', () => {
 
     expect(screen.getAllByText('test-container')).toHaveLength(1)
   })
+
+  describe('nginx logs', () => {
+    const nginxLog = {
+      ...mockLog,
+      app: 'ingress-nginx',
+    }
+
+    it('should render NGINX badge for nginx logs', () => {
+      renderRowServiceLogs(nginxLog)
+
+      expect(screen.getByText('NGINX')).toBeInTheDocument()
+      expect(screen.queryByText('12345')).not.toBeInTheDocument()
+    })
+
+    it('should not expand nginx log row on click', async () => {
+      const { userEvent } = renderRowServiceLogs(nginxLog)
+
+      await userEvent.click(screen.getByText('Test log message'))
+      expect(screen.queryByText('Instance')).not.toBeInTheDocument()
+      expect(screen.queryByText('Container')).not.toBeInTheDocument()
+    })
+
+    it('should not show container cell for nginx logs when hasMultipleContainers is true', () => {
+      renderRowServiceLogs(nginxLog, true)
+
+      expect(screen.getByText('NGINX')).toBeInTheDocument()
+      expect(screen.queryByText('test-container')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('envoy logs', () => {
+    const envoyLog = {
+      ...mockLog,
+      app: 'envoy',
+    }
+
+    it('should render ENVOY badge for envoy logs', () => {
+      renderRowServiceLogs(envoyLog)
+
+      expect(screen.getByText('ENVOY')).toBeInTheDocument()
+      expect(screen.queryByText('12345')).not.toBeInTheDocument()
+    })
+
+    it('should not expand envoy log row on click', async () => {
+      const { userEvent } = renderRowServiceLogs(envoyLog)
+
+      await userEvent.click(screen.getByText('Test log message'))
+      expect(screen.queryByText('Instance')).not.toBeInTheDocument()
+      expect(screen.queryByText('Container')).not.toBeInTheDocument()
+    })
+
+    it('should not show container cell for envoy logs when hasMultipleContainers is true', () => {
+      renderRowServiceLogs(envoyLog, true)
+
+      expect(screen.getByText('ENVOY')).toBeInTheDocument()
+      expect(screen.queryByText('test-container')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('regular service logs', () => {
+    it('should render instance button for regular service logs', () => {
+      renderRowServiceLogs(mockLog)
+
+      expect(screen.getByText('12345')).toBeInTheDocument()
+      expect(screen.queryByText('NGINX')).not.toBeInTheDocument()
+      expect(screen.queryByText('ENVOY')).not.toBeInTheDocument()
+    })
+
+    it('should expand regular service log row on click', async () => {
+      const { userEvent } = renderRowServiceLogs(mockLog)
+
+      await userEvent.click(screen.getByText('Test log message'))
+      expect(screen.getByText('Instance')).toBeInTheDocument()
+      expect(screen.getByText('Container')).toBeInTheDocument()
+    })
+
+    it('should show container cell for regular logs when hasMultipleContainers is true', () => {
+      renderRowServiceLogs(mockLog, true)
+
+      expect(screen.getAllByText('test-container')).toHaveLength(1)
+      expect(screen.queryByText('NGINX')).not.toBeInTheDocument()
+      expect(screen.queryByText('ENVOY')).not.toBeInTheDocument()
+    })
+  })
 })

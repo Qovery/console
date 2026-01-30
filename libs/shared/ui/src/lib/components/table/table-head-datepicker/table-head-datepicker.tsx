@@ -134,7 +134,7 @@ export function TableHeadDatePickerFilter({
               variant={isDark ? 'solid' : 'surface'}
               color="neutral"
               size="xs"
-              className="items-center gap-1.5"
+              className="items-center gap-1.5 bg-brand-500 text-white active:bg-brand-600 hover:[&:not(:active):not(:disabled)]:bg-brand-400"
               onClick={() => {
                 setIsOpenTimestamp(!isOpenTimestamp)
               }}

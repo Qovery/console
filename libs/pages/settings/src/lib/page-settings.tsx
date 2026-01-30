@@ -28,7 +28,7 @@ import { Container } from './ui/container/container'
 
 export function PageSettings() {
   const { organizationId = '' } = useParams()
-  const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot-config-panel')
+  const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
 
   const pathSettings = SETTINGS_URL(organizationId)
   const { data: projects = [] } = useProjects({ organizationId })

@@ -17,7 +17,7 @@ export interface AICopilotSettingsProps {
 
 export function AICopilotSettings(props: AICopilotSettingsProps) {
   const { organization } = props
-  const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot-config-panel')
+  const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
 
   const { data: userAccount } = useUserAccount()
   const { user: authUser } = useAuth()

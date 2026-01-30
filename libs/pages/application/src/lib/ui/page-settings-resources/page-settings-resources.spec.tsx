@@ -16,7 +16,12 @@ const props: PageSettingsResourcesProps = {
 jest.mock('react-hook-form', () => ({
   ...jest.requireActual('react-hook-form'),
   useFormContext: () => ({
-    watch: () => jest.fn(),
+    watch: (name: string) => {
+      if (name === 'autoscaling_mode') return 'HPA'
+      if (name === 'hpa_metric_type') return 'CPU'
+      return undefined
+    },
+    setValue: jest.fn(),
     formState: {
       isValid: true,
     },
@@ -32,6 +37,7 @@ describe('PageSettingsResources', () => {
       max_running_instances: 18,
       cpu: 3,
       memory: 1024,
+      gpu: 0,
     }
   })
 
@@ -68,10 +74,13 @@ describe('PageSettingsResources', () => {
     )
 
     const submitButton = await screen.findByRole('button', { name: /save/i })
-    // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(submitButton).toBeInTheDocument()
 
+    // Verify warning box is displayed
     expect(container).toMatchSnapshot()
+    expect(screen.getByTestId('banner-box')).toBeInTheDocument()
+    expect(screen.getByText(/not enough resources/i)).toBeInTheDocument()
+    expect(screen.getByText(/increase the capacity of your cluster nodes/i)).toBeInTheDocument()
   })
 
   it('should submit the form', async () => {

@@ -17,6 +17,7 @@ interface Badge {
   key: string
   displayedName: string
   value: string
+  isDeletable: boolean
 }
 
 function buildBadges(
@@ -36,6 +37,14 @@ function buildBadges(
         '" To "' +
         dateYearMonthDayHourMinuteSecond(toDate, true, false) +
         '"',
+      isDeletable: true,
+    })
+  } else {
+    badges.push({
+      key: 'timestamp',
+      displayedName: 'Timestamp',
+      value: 'Last 30 days',
+      isDeletable: false,
     })
   }
   if (queryParams.eventType) {
@@ -43,6 +52,7 @@ function buildBadges(
       key: 'event_type',
       displayedName: 'Event Type',
       value: upperCaseFirstLetter(queryParams.eventType).split('_').join(' '),
+      isDeletable: true,
     })
   }
   if (queryParams.targetType) {
@@ -50,6 +60,7 @@ function buildBadges(
       key: 'target_type',
       displayedName: 'Target Type',
       value: upperCaseFirstLetter(queryParams.targetType).split('_').join(' '),
+      isDeletable: true,
     })
   }
   if (queryParams.triggeredBy) {
@@ -57,6 +68,7 @@ function buildBadges(
       key: 'triggered_by',
       displayedName: 'User',
       value: upperCaseFirstLetter(queryParams.triggeredBy).split('_').join(' '),
+      isDeletable: true,
     })
   }
   if (queryParams.origin) {
@@ -64,6 +76,7 @@ function buildBadges(
       key: 'origin',
       displayedName: 'Source',
       value: upperCaseFirstLetter(queryParams.origin).split('_').join(' '),
+      isDeletable: true,
     })
   }
   if (queryParams.projectId) {
@@ -75,6 +88,7 @@ function buildBadges(
         key: 'project_id',
         displayedName: 'Project',
         value: projectName,
+        isDeletable: true,
       })
     }
   }
@@ -87,6 +101,7 @@ function buildBadges(
         key: 'environment_id',
         displayedName: 'Environment',
         value: environmentName,
+        isDeletable: true,
       })
     }
   }
@@ -101,6 +116,7 @@ function buildBadges(
         key: 'target_id',
         displayedName: targetType,
         value: targetName,
+        isDeletable: true,
       })
     }
   }
@@ -177,11 +193,13 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
               {`${badge.displayedName}: `}
               {badge.key === 'timestamp' && badge.value}
               {badge.key !== 'timestamp' && <Truncate text={badge.value} truncateLimit={23} />}
-              <Icon
-                iconName="xmark"
-                className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
-                onClick={() => deleteFilter(badge.key, setFilter)}
-              />
+              {badge.isDeletable && (
+                <Icon
+                  iconName="xmark"
+                  className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
+                  onClick={() => deleteFilter(badge.key, setFilter)}
+                />
+              )}
             </Button>
           ))}
         <div className="flex flex-row-reverse">
@@ -229,7 +247,9 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                       onClick={() => deleteFilter(badge.key, setFilter)}
                       aria-label="Delete filter"
                     >
-                      <Icon iconName="xmark" className="text-sm leading-4 text-neutral-300 hover:text-neutral-400" />
+                      {badge.isDeletable && (
+                        <Icon iconName="xmark" className="text-sm leading-4 text-neutral-300 hover:text-neutral-400" />
+                      )}
                     </button>
                   </Button>
                   {!isLast && (
@@ -252,7 +272,7 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
       </div>
 
       {/* RIGHT: Button stays fixed at top-right */}
-      {badges.length > 0 && (
+      {badges.filter((b) => b.isDeletable).length > 0 && (
         <div className="flex-shrink-0 self-start">
           <Button className="gap-2" size="xs" color="neutral" variant="surface" onClick={clearFilter}>
             Clear all filters
