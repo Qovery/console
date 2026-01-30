@@ -155,7 +155,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                       No credit card found. <br /> Please add one.
                     </p>
                     <div className="mt-4 flex justify-center">
-                      <Button onClick={() => props.onAddCard()} size="md" className="gap-2" data-testid="add-new-card-button">
+                      <Button onClick={() => props.onAddCard()} size="md" variant="outline" className="gap-2" data-testid="add-new-card-button">
                         Add new card
                         <Icon iconName="circle-plus" iconStyle="regular" />
                       </Button>
