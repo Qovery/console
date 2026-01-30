@@ -54,7 +54,7 @@ const groupedOptions: Option[] = [
 ]
 
 const Template: Story<React.ComponentProps<typeof MultipleSelector>> = (args) => (
-  <div className="h-full w-full bg-neutral-600 p-10">
+  <div className="h-full w-full bg-background p-10">
     <div className="max-w-lg">
       <MultipleSelector {...args} />
     </div>
