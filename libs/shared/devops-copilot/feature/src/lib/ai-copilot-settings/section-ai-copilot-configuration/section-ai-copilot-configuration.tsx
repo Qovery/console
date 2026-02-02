@@ -133,21 +133,24 @@ export function SectionAICopilotConfiguration({
             </div>
 
             <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-neutral-400">Access Mode</label>
-                <p className="text-xs text-neutral-350">
-                  Choose the level of access the AI Copilot will have on your organization
-                </p>
-              </div>
-
-              <InputSelect
-                value={mode}
-                onChange={(value) => setSelectedMode(value as 'read-write' | 'read-only')}
-                options={modeOptions}
-                portal
-                label="Right access"
-                disabled={isUpdating || !hasReadWriteAccess}
-              />
+              {hasReadWriteAccess && (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-neutral-400">Access Mode</label>
+                    <p className="text-xs text-neutral-350">
+                      Choose the level of access the AI Copilot will have on your organization
+                    </p>
+                  </div>
+                  <InputSelect
+                    value={mode}
+                    onChange={(value) => setSelectedMode(value as 'read-write' | 'read-only')}
+                    options={modeOptions}
+                    portal
+                    label="Right access"
+                    disabled={isUpdating}
+                  />
+                </>
+              )}
 
               {hasUnsavedChanges && (
                 <div className="flex items-center gap-3">
