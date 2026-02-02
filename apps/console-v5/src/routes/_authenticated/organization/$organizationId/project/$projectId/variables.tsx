@@ -37,9 +37,9 @@ function RouteComponent() {
         </div>
       }
     >
-      <div className="container mx-auto mt-6 pb-10">
-        <Section className="gap-8">
-          <div className="flex flex-col gap-6">
+      <div className="container mx-auto flex min-h-page-container flex-col pt-6">
+        <Section className="min-h-0 flex-1 gap-8">
+          <div className="flex shrink-0 flex-col gap-6">
             <div className="flex justify-between">
               <Heading>Project variables</Heading>
               <ActionToolbar.Root className="flex">
@@ -66,7 +66,7 @@ function RouteComponent() {
             </div>
             <hr className="w-full border-neutral" />
           </div>
-          <div className="flex flex-col gap-8">
+          <div className="flex min-h-0 flex-1 flex-col gap-8">
             <VariableList
               scope="PROJECT"
               projectId={projectId}

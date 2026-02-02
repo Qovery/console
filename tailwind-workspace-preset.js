@@ -119,15 +119,18 @@ module.exports = {
       },
       spacing: {
         'right-help-sidebar': '22.5rem',
-        'navbar-height': '4rem',
+        'navbar-height': '2.75rem',
+        'breadcrumb-height': '4rem',
       },
       maxWidth: {
         'content-with-navigation-left': '44.5rem',
       },
       minHeight: {
-        'page-container': 'calc(100vh - theme(spacing.navbar-height))',
-        'page-container-wbanner': 'calc(100vh - theme(spacing.navbar-height) - 40px)',
-        'page-container-wprogressbar': 'calc(100vh - theme(spacing.navbar-height) - 6px)',
+        'page-container': 'calc(100vh - theme(spacing.navbar-height) - theme(spacing.breadcrumb-height))',
+        'page-container-wbanner':
+          'calc(100vh - theme(spacing.navbar-height) - theme(spacing.breadcrumb-height) - 40px)',
+        'page-container-wprogressbar':
+          'calc(100vh - theme(spacing.navbar-height) - theme(spacing.breadcrumb-height) - 6px)',
       },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],

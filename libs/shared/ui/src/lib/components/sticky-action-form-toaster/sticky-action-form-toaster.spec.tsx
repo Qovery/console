@@ -43,4 +43,11 @@ describe('StickyActionFormToaster', () => {
 
     expect(screen.getByTestId('submit-button')).toBeDisabled()
   })
+
+  it('should allow customizing submit button color', () => {
+    props.disabledValidation = false
+    renderWithProviders(<StickyActionFormToaster {...props} submitButtonColor="red" />)
+
+    expect(screen.getByTestId('submit-button')).toHaveClass('bg-surface-negative-solid')
+  })
 })
