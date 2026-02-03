@@ -88,6 +88,9 @@ export function ContainerRegistryCreateEditModal({
       ...rest
     } = containerRegistryRequest
     try {
+      // Normalize username to lowercase - Docker registry names must be lowercase
+      const normalizedConfig = config?.username ? { ...config, username: config.username.toLowerCase() } : config
+
       const commonPayload = {
         organizationId: organizationId,
         containerRegistryRequest: {
@@ -101,7 +104,7 @@ export function ContainerRegistryCreateEditModal({
                 }
               : {
                   role_arn: undefined,
-                  ...config,
+                  ...normalizedConfig,
                 },
         },
       }
