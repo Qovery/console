@@ -42,26 +42,30 @@ export const QUERY_HTTP_ERROR_ENVOY = (httpRouteName: string) => `
   )
 )`
 
-// Combined nginx + envoy HTTP error rate (aggregates both sources)
+// Combined nginx + envoy HTTP error rate (takes max of both sources to detect worst case)
 export const QUERY_HTTP_ERROR_COMBINED = (ingressName: string, httpRouteName: string) => `
-(
-  sum(
-    rate(nginx_ingress_controller_requests{ingress="${ingressName}", status=~"5.."}[1m])
-  )
-  +
-  sum(
-    rate(envoy_cluster_upstream_rq_xx{envoy_cluster_name=~".*", httproute_name="${httpRouteName}", envoy_response_code_class="5"}[1m])
-  )
-)
-/
-(
-  sum(
-    rate(nginx_ingress_controller_requests{ingress="${ingressName}"}[1m])
-  )
-  +
-  sum(
-    rate(envoy_cluster_upstream_rq_xx{envoy_cluster_name=~".*", httproute_name="${httpRouteName}"}[1m])
-  )
+max(
+  # NGINX error rate
+  (
+    sum by (namespace) (
+      rate(nginx_ingress_controller_requests{ingress="${ingressName}", status=~"5.."}[1m])
+    )
+  ) / (
+    sum by (namespace) (
+      rate(nginx_ingress_controller_requests{ingress="${ingressName}"}[1m])
+    )
+  ) or vector(0),
+
+  # ENVOY error rate
+  (
+    sum by (namespace) (
+      rate(envoy_cluster_upstream_rq_xx{envoy_cluster_name=~".*", httproute_name="${httpRouteName}", envoy_response_code_class="5"}[1m])
+    )
+  ) / (
+    sum by (namespace) (
+      rate(envoy_cluster_upstream_rq_xx{envoy_cluster_name=~".*", httproute_name="${httpRouteName}"}[1m])
+    )
+  ) or vector(0)
 )`
 
 // NGINX: Query for nginx HTTP latency p99 (to remove when migrating to envoy)
@@ -91,31 +95,35 @@ histogram_quantile(
   )
 ) / 1000`
 
-// Combined nginx + envoy HTTP latency p99 (takes max of both sources)
+// Combined nginx + envoy HTTP latency p99 (takes max of both sources to detect worst case)
 export const QUERY_HTTP_LATENCY_COMBINED = (ingressName: string, httpRouteName: string) => `
 max(
+  # NGINX p99 latency (in seconds)
   histogram_quantile(
     0.99,
-    sum by (namespace, ingress, le) (
+    sum by (namespace, le) (
       rate(
         nginx_ingress_controller_request_duration_seconds_bucket{
           ingress="${ingressName}"
         }[1m]
       )
     )
-  )
-  or
-  histogram_quantile(
-    0.99,
-    sum by (namespace, httproute_name, le) (
-      rate(
-        envoy_cluster_upstream_rq_time_bucket{
-          envoy_cluster_name=~".*",
-          httproute_name="${httpRouteName}"
-        }[1m]
+  ) or vector(0),
+
+  # ENVOY p99 latency (convert ms to seconds)
+  (
+    histogram_quantile(
+      0.99,
+      sum by (namespace, le) (
+        rate(
+          envoy_cluster_upstream_rq_time_bucket{
+            envoy_cluster_name=~".*",
+            httproute_name="${httpRouteName}"
+          }[1m]
+        )
       )
-    )
-  ) / 1000
+    ) / 1000
+  ) or vector(0)
 )`
 
 export const QUERY_INSTANCE_RESTART = (containerName: string) => `

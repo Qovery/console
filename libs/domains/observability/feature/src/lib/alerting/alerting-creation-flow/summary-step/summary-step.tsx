@@ -12,9 +12,7 @@ import { type AlertConfiguration } from '../alerting-creation-flow.types'
 import { ALERTING_CREATION_EDIT, ALERTING_CREATION_METRIC } from '../router'
 import {
   QUERY_CPU,
-  QUERY_HTTP_ERROR,
   QUERY_HTTP_ERROR_COMBINED,
-  QUERY_HTTP_LATENCY,
   QUERY_HTTP_LATENCY_COMBINED,
   QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
@@ -197,22 +195,16 @@ export function SummaryStep() {
                 .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
                 .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
                 .with('http_error', () => {
-                  // Use combined query if both sources available, otherwise fallback to single source
-                  if (ingressName && httpRouteName) {
-                    return QUERY_HTTP_ERROR_COMBINED(ingressName, httpRouteName)
-                  }
-                  if (ingressName) {
-                    return QUERY_HTTP_ERROR(ingressName)
+                  // Use combined query - works for nginx-only, envoy-only, or both
+                  if (ingressName || httpRouteName) {
+                    return QUERY_HTTP_ERROR_COMBINED(ingressName || '', httpRouteName || '')
                   }
                   return ''
                 })
                 .with('http_latency', () => {
-                  // Use combined query if both sources available, otherwise fallback to single source
-                  if (ingressName && httpRouteName) {
-                    return QUERY_HTTP_LATENCY_COMBINED(ingressName, httpRouteName)
-                  }
-                  if (ingressName) {
-                    return QUERY_HTTP_LATENCY(ingressName)
+                  // Use combined query - works for nginx-only, envoy-only, or both
+                  if (ingressName || httpRouteName) {
+                    return QUERY_HTTP_LATENCY_COMBINED(ingressName || '', httpRouteName || '')
                   }
                   return ''
                 })
