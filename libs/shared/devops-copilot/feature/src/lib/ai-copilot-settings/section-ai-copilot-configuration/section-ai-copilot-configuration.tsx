@@ -108,7 +108,7 @@ export function SectionAICopilotConfiguration({
           </div>
         ) : (
           <div className="space-y-6 p-6">
-            <div className="-mx-6 border-b border-neutral-250 px-6 pb-6">
+            <div className={`-mx-6 px-6 ${hasReadWriteAccess ? 'border-b border-neutral-250 pb-6' : ''}`}>
               <div className="flex items-center gap-4">
                 <div className="flex-1">
                   <div className="mb-2 flex items-center">
