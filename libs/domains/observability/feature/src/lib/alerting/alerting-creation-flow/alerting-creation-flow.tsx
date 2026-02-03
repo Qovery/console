@@ -8,6 +8,7 @@ import { ErrorBoundary, FunnelFlow } from '@qovery/shared/ui'
 import { useContainerName } from '../../hooks/use-container-name/use-container-name'
 import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create-alert-rule'
 import { useHpaName } from '../../hooks/use-hpa-name/use-hpa-name'
+import { useHttpRouteName } from '../../hooks/use-http-route-name/use-http-route-name'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
 import { generateConditionDescription } from '../../util-alerting/generate-condition-description'
 import { type AlertConfiguration, type MetricCategory } from './alerting-creation-flow.types'
@@ -16,7 +17,9 @@ import {
   QUERY_CPU,
   QUERY_HPA_ISSUE,
   QUERY_HTTP_ERROR,
+  QUERY_HTTP_ERROR_COMBINED,
   QUERY_HTTP_LATENCY,
+  QUERY_HTTP_LATENCY_COMBINED,
   QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
   QUERY_MISSING_INSTANCE,
@@ -43,6 +46,7 @@ interface AlertingCreationFlowContextInterface {
   totalSteps: number
   containerName?: string
   ingressName?: string
+  httpRouteName?: string
   onNavigateToMetric: (index: number) => void
   onComplete: (alerts: AlertConfiguration[]) => Promise<void>
   isLoading: boolean
@@ -103,7 +107,16 @@ export function AlertingCreationFlow({
     endDate: now.toISOString(),
   })
 
+  // NGINX: Fetch nginx ingress name (to remove when migrating to envoy)
   const { data: ingressName } = useIngressName({
+    clusterId: environment.cluster_id,
+    serviceId: service.id,
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+  })
+
+  // ENVOY: Fetch envoy HTTPRoute name
+  const { data: httpRouteName } = useHttpRouteName({
     clusterId: environment.cluster_id,
     serviceId: service.id,
     startDate: oneHourAgo.toISOString(),
@@ -155,7 +168,8 @@ export function AlertingCreationFlow({
       service?.min_running_instances !== service?.max_running_instances
 
     if (!containerName) return
-    if (hasPublicPort && !ingressName) return
+    // For HTTP alerts, require at least one of nginx or envoy to be present
+    if (hasPublicPort && !ingressName && !httpRouteName) return
     if (hasAutoscaling && !hpaName) return
 
     try {
@@ -201,8 +215,26 @@ export function AlertingCreationFlow({
                 .with('memory', () => QUERY_MEMORY(containerName))
                 .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
                 .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
-                .with('http_error', () => (ingressName ? QUERY_HTTP_ERROR(ingressName) : ''))
-                .with('http_latency', () => (ingressName ? QUERY_HTTP_LATENCY(ingressName) : ''))
+                .with('http_error', () => {
+                  // Use combined query if both sources available, otherwise fallback to single source
+                  if (ingressName && httpRouteName) {
+                    return QUERY_HTTP_ERROR_COMBINED(ingressName, httpRouteName)
+                  }
+                  if (ingressName) {
+                    return QUERY_HTTP_ERROR(ingressName)
+                  }
+                  return ''
+                })
+                .with('http_latency', () => {
+                  // Use combined query if both sources available, otherwise fallback to single source
+                  if (ingressName && httpRouteName) {
+                    return QUERY_HTTP_LATENCY_COMBINED(ingressName, httpRouteName)
+                  }
+                  if (ingressName) {
+                    return QUERY_HTTP_LATENCY(ingressName)
+                  }
+                  return ''
+                })
                 .with('hpa_limit', () => (hpaName ? QUERY_HPA_ISSUE(hpaName) : ''))
                 .otherwise(() => ''),
             },
@@ -237,6 +269,7 @@ export function AlertingCreationFlow({
         totalSteps,
         containerName,
         ingressName,
+        httpRouteName,
         onNavigateToMetric: handleNavigateToMetric,
         onComplete: handleComplete,
         isLoading,

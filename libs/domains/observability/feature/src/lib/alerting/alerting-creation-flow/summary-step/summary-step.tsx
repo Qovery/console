@@ -13,7 +13,9 @@ import { ALERTING_CREATION_EDIT, ALERTING_CREATION_METRIC } from '../router'
 import {
   QUERY_CPU,
   QUERY_HTTP_ERROR,
+  QUERY_HTTP_ERROR_COMBINED,
   QUERY_HTTP_LATENCY,
+  QUERY_HTTP_LATENCY_COMBINED,
   QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
   QUERY_MISSING_INSTANCE,
@@ -138,6 +140,7 @@ export function SummaryStep() {
     selectedMetrics,
     containerName,
     ingressName,
+    httpRouteName,
   } = useAlertingCreationFlowContext()
 
   useEffect(() => {
@@ -160,7 +163,10 @@ export function SummaryStep() {
   const handleConfirm = async () => {
     const activeAlerts = alerts.filter((alert) => !alert.skipped)
 
-    if (!service || !environment || !containerName || !ingressName) return
+    if (!service || !environment || !containerName) return
+    // For HTTP alerts, require at least one of nginx or envoy to be present
+    const hasPublicPort = activeAlerts.some((alert) => alert.tag === 'http_error' || alert.tag === 'http_latency')
+    if (hasPublicPort && !ingressName && !httpRouteName) return
 
     try {
       setIsCreatingAlertRule(true)
@@ -190,8 +196,26 @@ export function SummaryStep() {
                 .with('memory', () => QUERY_MEMORY(containerName))
                 .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
                 .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
-                .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
-                .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
+                .with('http_error', () => {
+                  // Use combined query if both sources available, otherwise fallback to single source
+                  if (ingressName && httpRouteName) {
+                    return QUERY_HTTP_ERROR_COMBINED(ingressName, httpRouteName)
+                  }
+                  if (ingressName) {
+                    return QUERY_HTTP_ERROR(ingressName)
+                  }
+                  return ''
+                })
+                .with('http_latency', () => {
+                  // Use combined query if both sources available, otherwise fallback to single source
+                  if (ingressName && httpRouteName) {
+                    return QUERY_HTTP_LATENCY_COMBINED(ingressName, httpRouteName)
+                  }
+                  if (ingressName) {
+                    return QUERY_HTTP_LATENCY(ingressName)
+                  }
+                  return ''
+                })
                 .otherwise(() => ''),
             },
             for_duration: alert.for_duration,

@@ -5,6 +5,7 @@ export const QUERY_MEMORY = (containerName: string) => `
 container_memory_working_set_bytes{container="${containerName}"} / on(pod, namespace, container) kube_pod_container_resource_requests{resource="memory", container="${containerName}"}
 `
 
+// NGINX: Query for nginx HTTP error rate (to remove when migrating to envoy)
 export const QUERY_HTTP_ERROR = (ingressName: string) => `
  (
   sum by (ingress, namespace) (
@@ -22,6 +23,48 @@ export const QUERY_HTTP_ERROR = (ingressName: string) => `
   )
 )`
 
+// ENVOY: Query for envoy HTTP error rate
+export const QUERY_HTTP_ERROR_ENVOY = (httpRouteName: string) => `
+(
+  sum by (httproute_name, namespace) (
+    rate(envoy_cluster_upstream_rq_xx{envoy_cluster_name=~".*",
+      httproute_name="${httpRouteName}",
+      envoy_response_code_class="5"
+    }[1m])
+  )
+)
+/
+(
+  sum by (httproute_name, namespace) (
+    rate(envoy_cluster_upstream_rq_xx{envoy_cluster_name=~".*",
+      httproute_name="${httpRouteName}"
+    }[1m])
+  )
+)`
+
+// Combined nginx + envoy HTTP error rate (aggregates both sources)
+export const QUERY_HTTP_ERROR_COMBINED = (ingressName: string, httpRouteName: string) => `
+(
+  sum(
+    rate(nginx_ingress_controller_requests{ingress="${ingressName}", status=~"5.."}[1m])
+  )
+  +
+  sum(
+    rate(envoy_cluster_upstream_rq_xx{envoy_cluster_name=~".*", httproute_name="${httpRouteName}", envoy_response_code_class="5"}[1m])
+  )
+)
+/
+(
+  sum(
+    rate(nginx_ingress_controller_requests{ingress="${ingressName}"}[1m])
+  )
+  +
+  sum(
+    rate(envoy_cluster_upstream_rq_xx{envoy_cluster_name=~".*", httproute_name="${httpRouteName}"}[1m])
+  )
+)`
+
+// NGINX: Query for nginx HTTP latency p99 (to remove when migrating to envoy)
 export const QUERY_HTTP_LATENCY = (ingressName: string) => `
  histogram_quantile(
     0.99,
@@ -33,6 +76,47 @@ export const QUERY_HTTP_LATENCY = (ingressName: string) => `
       )
     )
   )`
+
+// ENVOY: Query for envoy HTTP latency p99
+export const QUERY_HTTP_LATENCY_ENVOY = (httpRouteName: string) => `
+histogram_quantile(
+  0.99,
+  sum by (namespace, httproute_name, le) (
+    rate(
+      envoy_cluster_upstream_rq_time_bucket{
+        envoy_cluster_name=~".*",
+        httproute_name="${httpRouteName}"
+      }[1m]
+    )
+  )
+) / 1000`
+
+// Combined nginx + envoy HTTP latency p99 (takes max of both sources)
+export const QUERY_HTTP_LATENCY_COMBINED = (ingressName: string, httpRouteName: string) => `
+max(
+  histogram_quantile(
+    0.99,
+    sum by (namespace, ingress, le) (
+      rate(
+        nginx_ingress_controller_request_duration_seconds_bucket{
+          ingress="${ingressName}"
+        }[1m]
+      )
+    )
+  )
+  or
+  histogram_quantile(
+    0.99,
+    sum by (namespace, httproute_name, le) (
+      rate(
+        envoy_cluster_upstream_rq_time_bucket{
+          envoy_cluster_name=~".*",
+          httproute_name="${httpRouteName}"
+        }[1m]
+      )
+    )
+  ) / 1000
+)`
 
 export const QUERY_INSTANCE_RESTART = (containerName: string) => `
   (

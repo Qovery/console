@@ -7,6 +7,7 @@ import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
+// NGINX: Queries for nginx metrics (to remove when migrating to envoy)
 const queryResponseSize = (ingressName: string) => `
   sum(nginx:resp_bytes_rate:5m{ingress="${ingressName}"})
 `
@@ -15,14 +16,25 @@ const queryRequestSize = (ingressName: string) => `
    sum(nginx:req_bytes_rate:5m{ingress="${ingressName}"})
 `
 
+// ENVOY: Queries for envoy metrics
+const queryEnvoyResponseSize = (httpRouteName: string) => `
+  sum(envoy_proxy:resp_bytes_rate:5m{httproute_name="${httpRouteName}"})
+`
+
+const queryEnvoyRequestSize = (httpRouteName: string) => `
+   sum(envoy_proxy:req_bytes_rate:5m{httproute_name="${httpRouteName}"})
+`
+
 export function NetworkRequestSizeChart({
   clusterId,
   serviceId,
   ingressName,
+  httpRouteName,
 }: {
   clusterId: string
   serviceId: string
   ingressName: string
+  httpRouteName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
 
@@ -44,6 +56,7 @@ export function NetworkRequestSizeChart({
     setLegendSelectedKeys(new Set())
   }
 
+  // NGINX: Fetch nginx metrics (to remove when migrating to envoy)
   const { data: metricsResponseSize, isLoading: isLoadingMetricsResponseSize } = useMetrics({
     clusterId,
     startTimestamp,
@@ -64,8 +77,30 @@ export function NetworkRequestSizeChart({
     metricShortName: 'network_req_size',
   })
 
+  // ENVOY: Fetch envoy metrics
+  const { data: metricsEnvoyResponseSize, isLoading: isLoadingMetricsEnvoyResponseSize } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    timeRange,
+    query: queryEnvoyResponseSize(httpRouteName),
+    boardShortName: 'service_overview',
+    metricShortName: 'envoy_resp_size',
+  })
+
+  const { data: metricsEnvoyRequestSize, isLoading: isLoadingMetricsEnvoyRequestSize } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    timeRange,
+    query: queryEnvoyRequestSize(httpRouteName),
+    boardShortName: 'service_overview',
+    metricShortName: 'envoy_req_size',
+  })
+
   const chartData = useMemo(() => {
-    if (!metricsResponseSize?.data?.result) {
+    // Check if we have data from either source
+    if (!metricsResponseSize?.data?.result && !metricsEnvoyResponseSize?.data?.result) {
       return []
     }
 
@@ -74,30 +109,66 @@ export function NetworkRequestSizeChart({
       { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
     >()
 
-    // Process network response size metrics
-    processMetricsData(
-      metricsResponseSize,
-      timeSeriesMap,
-      () => 'Response size',
-      (value) => parseFloat(value), // Convert to bytes
-      useLocalTime
-    )
+    // NGINX: Process nginx size metrics (to remove when migrating to envoy)
+    if (metricsResponseSize?.data?.result) {
+      processMetricsData(
+        metricsResponseSize,
+        timeSeriesMap,
+        () => 'Response size (nginx)',
+        (value) => parseFloat(value),
+        useLocalTime
+      )
+    }
 
-    // Process network request size metrics
-    processMetricsData(
-      metricsRequestSize,
-      timeSeriesMap,
-      () => 'Request size',
-      (value) => parseFloat(value), // Convert to bytes
-      useLocalTime
-    )
+    if (metricsRequestSize?.data?.result) {
+      processMetricsData(
+        metricsRequestSize,
+        timeSeriesMap,
+        () => 'Request size (nginx)',
+        (value) => parseFloat(value),
+        useLocalTime
+      )
+    }
+
+    // ENVOY: Process envoy size metrics
+    if (metricsEnvoyResponseSize?.data?.result) {
+      processMetricsData(
+        metricsEnvoyResponseSize,
+        timeSeriesMap,
+        () => 'Response size (envoy)',
+        (value) => parseFloat(value),
+        useLocalTime
+      )
+    }
+
+    if (metricsEnvoyRequestSize?.data?.result) {
+      processMetricsData(
+        metricsEnvoyRequestSize,
+        timeSeriesMap,
+        () => 'Request size (envoy)',
+        (value) => parseFloat(value),
+        useLocalTime
+      )
+    }
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [metricsResponseSize, metricsRequestSize, useLocalTime, startTimestamp, endTimestamp])
+  }, [
+    metricsResponseSize,
+    metricsRequestSize,
+    metricsEnvoyResponseSize,
+    metricsEnvoyRequestSize,
+    useLocalTime,
+    startTimestamp,
+    endTimestamp,
+  ])
 
-  const isLoadingMetrics = isLoadingMetricsResponseSize || isLoadingMetricsRequestSize
+  const isLoadingMetrics =
+    isLoadingMetricsResponseSize ||
+    isLoadingMetricsRequestSize ||
+    isLoadingMetricsEnvoyResponseSize ||
+    isLoadingMetricsEnvoyRequestSize
 
   return (
     <LocalChart
@@ -110,34 +181,80 @@ export function NetworkRequestSizeChart({
       serviceId={serviceId}
       handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}
     >
+      {/* NGINX: Lines for nginx metrics (to remove when migrating to envoy) */}
       <Line
-        key="response-size"
-        dataKey="Response size"
+        key="response-size-nginx"
+        dataKey="Response size (nginx)"
         type="linear"
         stroke="var(--color-brand-400)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Response size') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Response size (nginx)')}
       />
       <Line
-        key="request-size"
-        dataKey="Request size"
+        key="request-size-nginx"
+        dataKey="Request size (nginx)"
         type="linear"
         stroke="var(--color-purple-400)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Request size') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Request size (nginx)')}
+      />
+      {/* ENVOY: Lines for envoy metrics */}
+      <Line
+        key="response-size-envoy"
+        dataKey="Response size (envoy)"
+        type="linear"
+        stroke="var(--color-green-400)"
+        strokeWidth={2}
+        dot={false}
+        connectNulls={false}
+        isAnimationActive={false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Response size (envoy)')}
+      />
+      <Line
+        key="request-size-envoy"
+        dataKey="Request size (envoy)"
+        type="linear"
+        stroke="var(--color-sky-400)"
+        strokeWidth={2}
+        dot={false}
+        connectNulls={false}
+        isAnimationActive={false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Request size (envoy)')}
       />
       {!isLoadingMetrics && chartData.length > 0 && (
         <Chart.Legend
           name="network-request-size"
           className="w-[calc(100%-0.5rem)] pb-1 pt-2"
           onClick={onClick}
-          content={(props) => <Chart.LegendContent selectedKeys={legendSelectedKeys} {...props} />}
+          content={(props) => {
+            const nginxSeries = ['Request size (nginx)', 'Response size (nginx)']
+            const envoySeries = ['Request size (envoy)', 'Response size (envoy)']
+
+            return (
+              <div className="flex flex-col -space-y-4">
+                {props.payload?.some((item) => nginxSeries.includes(item.dataKey as string)) && (
+                  <Chart.LegendContent
+                    selectedKeys={legendSelectedKeys}
+                    {...props}
+                    payload={props.payload?.filter((item) => nginxSeries.includes(item.dataKey as string))}
+                  />
+                )}
+                {props.payload?.some((item) => envoySeries.includes(item.dataKey as string)) && (
+                  <Chart.LegendContent
+                    selectedKeys={legendSelectedKeys}
+                    {...props}
+                    payload={props.payload?.filter((item) => envoySeries.includes(item.dataKey as string))}
+                  />
+                )}
+              </div>
+            )
+          }}
         />
       )}
     </LocalChart>

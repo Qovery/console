@@ -7,6 +7,7 @@ import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
+// NGINX: Queries for nginx metrics (to remove when migrating to envoy)
 const queryDuration50 = (ingressName: string) => `
   nginx:request_p50:5m{ingress="${ingressName}"}
 `
@@ -19,16 +20,31 @@ const queryDuration99 = (ingressName: string) => `
  nginx:request_p99:5m{ingress="${ingressName}"}
 `
 
+// ENVOY: Queries for envoy metrics
+const queryEnvoyDuration50 = (httpRouteName: string) => `
+  envoy_proxy:request_p50:5m{httproute_name="${httpRouteName}"}
+`
+
+const queryEnvoyDuration95 = (httpRouteName: string) => `
+  envoy_proxy:request_p95:5m{httproute_name="${httpRouteName}"}
+`
+
+const queryEnvoyDuration99 = (httpRouteName: string) => `
+  envoy_proxy:request_p99:5m{httproute_name="${httpRouteName}"}
+`
+
 export function NetworkRequestDurationChart({
   clusterId,
   serviceId,
   isFullscreen,
   ingressName,
+  httpRouteName,
 }: {
   clusterId: string
   serviceId: string
   isFullscreen?: boolean
   ingressName: string
+  httpRouteName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
 
@@ -50,6 +66,7 @@ export function NetworkRequestDurationChart({
     setLegendSelectedKeys(new Set())
   }
 
+  // NGINX: Fetch nginx metrics (to remove when migrating to envoy)
   const { data: metrics50, isLoading: isLoadingMetrics50 } = useMetrics({
     clusterId,
     startTimestamp,
@@ -80,8 +97,40 @@ export function NetworkRequestDurationChart({
     metricShortName: 'network_p95',
   })
 
+  // ENVOY: Fetch envoy metrics
+  const { data: metricsEnvoy50, isLoading: isLoadingMetricsEnvoy50 } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    timeRange,
+    query: queryEnvoyDuration50(httpRouteName),
+    boardShortName: 'service_overview',
+    metricShortName: 'envoy_p50',
+  })
+
+  const { data: metricsEnvoy99, isLoading: isLoadingMetricsEnvoy99 } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    timeRange,
+    query: queryEnvoyDuration99(httpRouteName),
+    boardShortName: 'service_overview',
+    metricShortName: 'envoy_p99',
+  })
+
+  const { data: metricsEnvoy95, isLoading: isLoadingMetricsEnvoy95 } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    timeRange,
+    query: queryEnvoyDuration95(httpRouteName),
+    boardShortName: 'service_overview',
+    metricShortName: 'envoy_p95',
+  })
+
   const chartData = useMemo(() => {
-    if (!metrics99?.data?.result) {
+    // Check if we have data from either source
+    if (!metrics99?.data?.result && !metricsEnvoy99?.data?.result) {
       return []
     }
 
@@ -90,39 +139,90 @@ export function NetworkRequestDurationChart({
       { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
     >()
 
-    // Process network duration 99th percentile metrics
-    processMetricsData(
-      metrics99,
-      timeSeriesMap,
-      () => '99th percentile',
-      (value) => parseFloat(value) * 1000, // Convert to ms
-      useLocalTime
-    )
+    // NGINX: Process nginx duration metrics (to remove when migrating to envoy)
+    if (metrics99?.data?.result) {
+      processMetricsData(
+        metrics99,
+        timeSeriesMap,
+        () => '99th percentile (nginx)',
+        (value) => parseFloat(value) * 1000, // Convert to ms
+        useLocalTime
+      )
+    }
 
-    // Process network duration 99th percentile metrics
-    processMetricsData(
-      metrics95,
-      timeSeriesMap,
-      () => '95th percentile',
-      (value) => parseFloat(value) * 1000, // Convert to ms
-      useLocalTime
-    )
+    if (metrics95?.data?.result) {
+      processMetricsData(
+        metrics95,
+        timeSeriesMap,
+        () => '95th percentile (nginx)',
+        (value) => parseFloat(value) * 1000, // Convert to ms
+        useLocalTime
+      )
+    }
 
-    // Process network duration 0.5th percentile metrics
-    processMetricsData(
-      metrics50,
-      timeSeriesMap,
-      () => '50th percentile',
-      (value) => parseFloat(value) * 1000, // Convert to ms
-      useLocalTime
-    )
+    if (metrics50?.data?.result) {
+      processMetricsData(
+        metrics50,
+        timeSeriesMap,
+        () => '50th percentile (nginx)',
+        (value) => parseFloat(value) * 1000, // Convert to ms
+        useLocalTime
+      )
+    }
+
+    // ENVOY: Process envoy duration metrics
+    if (metricsEnvoy99?.data?.result) {
+      processMetricsData(
+        metricsEnvoy99,
+        timeSeriesMap,
+        () => '99th percentile (envoy)',
+        (value) => parseFloat(value), // Already in ms
+        useLocalTime
+      )
+    }
+
+    if (metricsEnvoy95?.data?.result) {
+      processMetricsData(
+        metricsEnvoy95,
+        timeSeriesMap,
+        () => '95th percentile (envoy)',
+        (value) => parseFloat(value), // Already in ms
+        useLocalTime
+      )
+    }
+
+    if (metricsEnvoy50?.data?.result) {
+      processMetricsData(
+        metricsEnvoy50,
+        timeSeriesMap,
+        () => '50th percentile (envoy)',
+        (value) => parseFloat(value), // Already in ms
+        useLocalTime
+      )
+    }
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [metrics99, metrics95, metrics50, useLocalTime, startTimestamp, endTimestamp])
+  }, [
+    metrics99,
+    metrics95,
+    metrics50,
+    metricsEnvoy99,
+    metricsEnvoy95,
+    metricsEnvoy50,
+    useLocalTime,
+    startTimestamp,
+    endTimestamp,
+  ])
 
-  const isLoadingMetrics = isLoadingMetrics99 || isLoadingMetrics50 || isLoadingMetrics95
+  const isLoadingMetrics =
+    isLoadingMetrics99 ||
+    isLoadingMetrics50 ||
+    isLoadingMetrics95 ||
+    isLoadingMetricsEnvoy99 ||
+    isLoadingMetricsEnvoy50 ||
+    isLoadingMetricsEnvoy95
 
   return (
     <LocalChart
@@ -135,45 +235,102 @@ export function NetworkRequestDurationChart({
       unit="ms"
       handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}
     >
+      {/* NGINX: Lines for nginx metrics (to remove when migrating to envoy) */}
       <Line
-        key="50th-percentile"
-        dataKey="50th percentile"
+        key="50th-percentile-nginx"
+        dataKey="50th percentile (nginx)"
         type="linear"
         stroke="var(--color-purple-400)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('50th percentile') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('50th percentile (nginx)')}
       />
       <Line
-        key="95th-percentile"
-        dataKey="95th percentile"
+        key="95th-percentile-nginx"
+        dataKey="95th percentile (nginx)"
         type="linear"
         stroke="var(--color-brand-400)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('95th percentile') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('95th percentile (nginx)')}
       />
       <Line
-        key="99th-percentile"
-        dataKey="99th percentile"
+        key="99th-percentile-nginx"
+        dataKey="99th percentile (nginx)"
         type="linear"
         stroke="var(--color-purple-600)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('99th percentile') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('99th percentile (nginx)')}
+      />
+      {/* ENVOY: Lines for envoy metrics */}
+      <Line
+        key="50th-percentile-envoy"
+        dataKey="50th percentile (envoy)"
+        type="linear"
+        stroke="var(--color-green-400)"
+        strokeWidth={2}
+        dot={false}
+        connectNulls={false}
+        isAnimationActive={false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('50th percentile (envoy)')}
+      />
+      <Line
+        key="95th-percentile-envoy"
+        dataKey="95th percentile (envoy)"
+        type="linear"
+        stroke="var(--color-sky-400)"
+        strokeWidth={2}
+        dot={false}
+        connectNulls={false}
+        isAnimationActive={false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('95th percentile (envoy)')}
+      />
+      <Line
+        key="99th-percentile-envoy"
+        dataKey="99th percentile (envoy)"
+        type="linear"
+        stroke="var(--color-green-600)"
+        strokeWidth={2}
+        dot={false}
+        connectNulls={false}
+        isAnimationActive={false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('99th percentile (envoy)')}
       />
       {!isLoadingMetrics && chartData.length > 0 && (
         <Chart.Legend
           name="network-request-duration"
           className="w-[calc(100%-0.5rem)] pb-1 pt-2"
           onClick={onClick}
-          content={(props) => <Chart.LegendContent selectedKeys={legendSelectedKeys} {...props} />}
+          content={(props) => {
+            const nginxSeries = ['50th percentile (nginx)', '95th percentile (nginx)', '99th percentile (nginx)']
+            const envoySeries = ['50th percentile (envoy)', '95th percentile (envoy)', '99th percentile (envoy)']
+
+            return (
+              <div className="flex flex-col -space-y-4">
+                {props.payload?.some((item) => nginxSeries.includes(item.dataKey as string)) && (
+                  <Chart.LegendContent
+                    selectedKeys={legendSelectedKeys}
+                    {...props}
+                    payload={props.payload?.filter((item) => nginxSeries.includes(item.dataKey as string))}
+                  />
+                )}
+                {props.payload?.some((item) => envoySeries.includes(item.dataKey as string)) && (
+                  <Chart.LegendContent
+                    selectedKeys={legendSelectedKeys}
+                    {...props}
+                    payload={props.payload?.filter((item) => envoySeries.includes(item.dataKey as string))}
+                  />
+                )}
+              </div>
+            )
+          }}
         />
       )}
     </LocalChart>
