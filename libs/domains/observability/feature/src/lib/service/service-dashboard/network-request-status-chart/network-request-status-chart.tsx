@@ -201,7 +201,7 @@ export function NetworkRequestStatusChart({
             }
 
             return (
-              <div className="flex flex-col -space-y-4">
+              <div className="flex flex-col">
                 {nginxSeries.length > 0 && (
                   <Chart.LegendContent
                     selectedKeys={legendSelectedKeys}

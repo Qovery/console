@@ -237,7 +237,7 @@ export function NetworkRequestSizeChart({
             const envoySeries = ['Request size (envoy)', 'Response size (envoy)']
 
             return (
-              <div className="flex flex-col -space-y-4">
+              <div className="flex flex-col">
                 {props.payload?.some((item) => nginxSeries.includes(item.dataKey as string)) && (
                   <Chart.LegendContent
                     selectedKeys={legendSelectedKeys}

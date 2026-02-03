@@ -313,7 +313,7 @@ export function NetworkRequestDurationChart({
             const envoySeries = ['50th percentile (envoy)', '95th percentile (envoy)', '99th percentile (envoy)']
 
             return (
-              <div className="flex flex-col -space-y-4">
+              <div className="flex flex-col">
                 {props.payload?.some((item) => nginxSeries.includes(item.dataKey as string)) && (
                   <Chart.LegendContent
                     selectedKeys={legendSelectedKeys}
