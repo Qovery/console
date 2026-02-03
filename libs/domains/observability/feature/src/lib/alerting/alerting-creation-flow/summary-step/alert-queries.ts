@@ -43,8 +43,7 @@ export const QUERY_HTTP_ERROR_ENVOY = (httpRouteName: string) => `
 )`
 
 // Combined nginx + envoy HTTP error rate (takes max of both sources to detect worst case)
-export const QUERY_HTTP_ERROR_COMBINED = (ingressName: string, httpRouteName: string) => `
-max(
+export const QUERY_HTTP_ERROR_COMBINED = (ingressName: string, httpRouteName: string) => `max(
   # NGINX error rate
   (
     sum by (namespace) (
@@ -96,8 +95,7 @@ histogram_quantile(
 ) / 1000`
 
 // Combined nginx + envoy HTTP latency p99 (takes max of both sources to detect worst case)
-export const QUERY_HTTP_LATENCY_COMBINED = (ingressName: string, httpRouteName: string) => `
-max(
+export const QUERY_HTTP_LATENCY_COMBINED = (ingressName: string, httpRouteName: string) => `max(
   # NGINX p99 latency (in seconds)
   histogram_quantile(
     0.99,

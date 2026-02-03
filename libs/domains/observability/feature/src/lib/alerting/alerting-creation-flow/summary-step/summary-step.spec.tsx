@@ -138,4 +138,56 @@ describe('SummaryStep', () => {
 
     expect(screen.getByRole('button', { name: /confirm and create/i })).toBeEnabled()
   })
+
+  describe('HTTP Alert Query Selection', () => {
+    // Mock hooks for testing query selection logic
+    beforeEach(() => {
+      jest.clearAllMocks()
+    })
+
+    it('should use COMBINED query when both nginx and envoy are available', () => {
+      jest.mock('../../../hooks/use-ingress-name/use-ingress-name', () => ({
+        useIngressName: () => ({ data: 'my-ingress' }),
+      }))
+
+      jest.mock('../../../hooks/use-http-route-name/use-http-route-name', () => ({
+        useHttpRouteName: () => ({ data: 'my-route' }),
+      }))
+
+      const httpErrorAlert = createAlert({
+        tag: 'http_error',
+        name: 'HTTP Error Alert',
+      })
+
+      renderWithContext([httpErrorAlert], ['http_error'])
+
+      expect(screen.getByText('HTTP Error Alert')).toBeInTheDocument()
+    })
+
+    it('should handle http_latency alerts', () => {
+      const httpLatencyAlert = createAlert({
+        tag: 'http_latency',
+        name: 'HTTP Latency Alert',
+      })
+
+      renderWithContext([httpLatencyAlert], ['http_latency'])
+
+      expect(screen.getByText('HTTP Latency Alert')).toBeInTheDocument()
+    })
+
+    it('should handle multiple alert types including HTTP', () => {
+      const alerts = [
+        createAlert({ id: 'alert-1', name: 'CPU Alert', tag: 'cpu' }),
+        createAlert({ id: 'alert-2', name: 'HTTP Error Alert', tag: 'http_error' }),
+        createAlert({ id: 'alert-3', name: 'HTTP Latency Alert', tag: 'http_latency' }),
+      ]
+
+      renderWithContext(alerts, ['cpu', 'http_error', 'http_latency'])
+
+      expect(screen.getByText('Alerts included in creation (3)')).toBeInTheDocument()
+      expect(screen.getByText('CPU Alert')).toBeInTheDocument()
+      expect(screen.getByText('HTTP Error Alert')).toBeInTheDocument()
+      expect(screen.getByText('HTTP Latency Alert')).toBeInTheDocument()
+    })
+  })
 })
