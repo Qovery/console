@@ -23,14 +23,14 @@ export function BillingDetails(props: BillingDetailsProps) {
         </div>
       ) : (
         <>
-          <div className="flex gap-3">
+          <div className="flex items-start gap-3">
             <Controller
               control={control}
               name="first_name"
               rules={{ required: 'Please provide a first name' }}
               render={({ field }) => (
                 <InputText
-                  className="mb-3 flex-grow"
+                  className="mb-3 min-w-0 flex-1"
                   name={field.name}
                   label="First name"
                   value={field.value}
@@ -45,7 +45,7 @@ export function BillingDetails(props: BillingDetailsProps) {
               rules={{ required: 'Please provide a last name' }}
               render={({ field }) => (
                 <InputText
-                  className="mb-3 flex-grow"
+                  className="mb-3 min-w-0 flex-1"
                   name={field.name}
                   label="Last name"
                   value={field.value}
@@ -55,13 +55,13 @@ export function BillingDetails(props: BillingDetailsProps) {
               )}
             />
           </div>
-          <div className="flex gap-3">
+          <div className="flex items-start gap-3">
             <Controller
               control={control}
               name="company"
               render={({ field }) => (
                 <InputText
-                  className="mb-3 flex-grow"
+                  className="mb-3 min-w-0 flex-1"
                   name={field.name}
                   label="Company name (optional)"
                   value={field.value}
@@ -75,7 +75,7 @@ export function BillingDetails(props: BillingDetailsProps) {
               rules={{ required: 'Please provide a VAT number' }}
               render={({ field }) => (
                 <InputText
-                  className="mb-3 flex-grow"
+                  className="mb-3 min-w-0 flex-1"
                   name={field.name}
                   label="VAT number"
                   value={field.value}
@@ -91,7 +91,7 @@ export function BillingDetails(props: BillingDetailsProps) {
             rules={{ required: 'Please provide a billing email' }}
             render={({ field }) => (
               <InputText
-                className="mb-3 flex-grow"
+                className="mb-3 min-w-0 flex-1"
                 name={field.name}
                 label="Billing email"
                 value={field.value}
@@ -106,7 +106,7 @@ export function BillingDetails(props: BillingDetailsProps) {
             rules={{ required: 'Please provide an address' }}
             render={({ field }) => (
               <InputText
-                className="mb-3 flex-grow"
+                className="mb-3 min-w-0 flex-1"
                 name={field.name}
                 label="Address"
                 value={field.value}
@@ -115,14 +115,14 @@ export function BillingDetails(props: BillingDetailsProps) {
               />
             )}
           />
-          <div className="flex gap-3">
+          <div className="flex items-start gap-3">
             <Controller
               control={control}
               name="city"
               rules={{ required: 'Please provide a city' }}
               render={({ field }) => (
                 <InputText
-                  className="mb-3 flex-grow"
+                  className="mb-3 min-w-0 flex-1"
                   name={field.name}
                   label="City"
                   value={field.value}
@@ -137,7 +137,7 @@ export function BillingDetails(props: BillingDetailsProps) {
               rules={{ required: 'Please provide a zip code' }}
               render={({ field }) => (
                 <InputText
-                  className="mb-3 flex-grow"
+                  className="mb-3 min-w-0 flex-1"
                   name={field.name}
                   label="Zip code"
                   value={field.value}
