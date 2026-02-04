@@ -187,7 +187,7 @@ export function InputSelect({
 
   const SingleValue = (props: SingleValueProps<Value>) => (
     <span className="mr-1 text-sm text-neutral-400">
-      {props.data.selectedLabel ?? props.data.label}
+      {props.data.label}
       {props.data.description ? `: ${props.data.description}` : ''}
     </span>
   )

@@ -35,7 +35,6 @@ import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployme
 import { useServiceCount } from '../hooks/use-service-count/use-service-count'
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
 import useUninstallEnvironment from '../hooks/use-uninstall-environment/use-uninstall-environment'
-import { DeployWithVersionModal } from '../deploy-with-version-modal/deploy-with-version-modal'
 import { TerraformExportModal } from '../terraform-export-modal/terraform-export-modal'
 import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
@@ -147,15 +146,6 @@ function MenuManageDeployment({
       content: <UpdateAllModal environment={environment} />,
       options: {
         width: 676,
-      },
-    })
-  }
-
-  const openDeployWithVersionModal = () => {
-    openModal({
-      content: <DeployWithVersionModal environment={environment} />,
-      options: {
-        width: 800,
         fakeModal: true, // Required for InputSelect scroll to work inside modal
       },
     })
@@ -245,11 +235,8 @@ function MenuManageDeployment({
           .otherwise(() => (
             <>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item icon={<Icon iconName="rotate" />} onSelect={openUpdateAllModal}>
-                Deploy latest version for..
-              </DropdownMenu.Item>
-              <DropdownMenu.Item icon={<Icon iconName="code-branch" />} onSelect={openDeployWithVersionModal}>
-                Deploy with version selection..
+              <DropdownMenu.Item icon={<Icon iconName="code-branch" />} onSelect={openUpdateAllModal}>
+                Deploy by version
               </DropdownMenu.Item>
             </>
           ))}

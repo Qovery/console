@@ -51,25 +51,7 @@
 
 // buttons
 .input-select__indicators {
-  display: flex !important;
-  margin-right: 1.5rem; // Leave space for the custom chevron icon
-}
-
-.input-select__dropdown-indicator {
   display: none !important;
-}
-
-.input-select__indicator-separator {
-  display: none !important;
-}
-
-.input-select__clear-indicator {
-  @apply cursor-pointer text-neutral-350;
-  padding: 4px !important;
-
-  &:hover {
-    @apply text-neutral-400;
-  }
 }
 
 // menu
@@ -96,7 +78,6 @@
 
   label {
     @apply static translate-y-0 text-ssm font-medium text-neutral-400;
-    cursor: pointer !important;
   }
 
   .input-select__checkbox {

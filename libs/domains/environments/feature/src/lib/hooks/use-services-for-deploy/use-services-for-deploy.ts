@@ -36,7 +36,9 @@ export interface ServiceVersionInfo {
 export interface ServiceForDeploy {
   id: string
   name: string
+  icon_uri: string
   serviceType: ServiceType
+  job_type?: 'CRON' | 'LIFECYCLE'
   sourceType: VersionSourceType
   currentVersion?: ServiceVersionInfo
 
@@ -65,6 +67,7 @@ function mapServiceToDeployInfo(service: AnyService): ServiceForDeploy {
     return {
       id: service.id,
       name: service.name,
+      icon_uri: service.icon_uri,
       serviceType: 'APPLICATION',
       sourceType: 'git',
       currentVersion: gitRepo?.deployed_commit_id
@@ -87,6 +90,7 @@ function mapServiceToDeployInfo(service: AnyService): ServiceForDeploy {
     return {
       id: service.id,
       name: service.name,
+      icon_uri: service.icon_uri,
       serviceType: 'CONTAINER',
       sourceType: 'container',
       currentVersion: service.tag
@@ -111,7 +115,9 @@ function mapServiceToDeployInfo(service: AnyService): ServiceForDeploy {
       return {
         id: service.id,
         name: service.name,
+        icon_uri: service.icon_uri,
         serviceType: 'JOB',
+        job_type: service.job_type,
         sourceType: 'git',
         currentVersion: gitRepo?.deployed_commit_id
           ? {
@@ -133,7 +139,9 @@ function mapServiceToDeployInfo(service: AnyService): ServiceForDeploy {
       return {
         id: service.id,
         name: service.name,
+        icon_uri: service.icon_uri,
         serviceType: 'JOB',
+        job_type: service.job_type,
         sourceType: 'container',
         currentVersion: source.image?.tag
           ? {
@@ -156,7 +164,9 @@ function mapServiceToDeployInfo(service: AnyService): ServiceForDeploy {
     return {
       id: service.id,
       name: service.name,
+      icon_uri: service.icon_uri,
       serviceType: 'JOB',
+      job_type: service.job_type,
       sourceType: 'git',
     }
   }
@@ -169,6 +179,7 @@ function mapServiceToDeployInfo(service: AnyService): ServiceForDeploy {
       return {
         id: service.id,
         name: service.name,
+        icon_uri: service.icon_uri,
         serviceType: 'HELM',
         sourceType: 'git',
         currentVersion: gitRepo?.deployed_commit_id
@@ -193,6 +204,7 @@ function mapServiceToDeployInfo(service: AnyService): ServiceForDeploy {
       return {
         id: service.id,
         name: service.name,
+        icon_uri: service.icon_uri,
         serviceType: 'HELM',
         sourceType: 'helm-repository',
         currentVersion: repo?.chart_version
@@ -216,6 +228,7 @@ function mapServiceToDeployInfo(service: AnyService): ServiceForDeploy {
     return {
       id: service.id,
       name: service.name,
+      icon_uri: service.icon_uri,
       serviceType: 'HELM',
       sourceType: 'helm-repository',
     }
@@ -225,6 +238,7 @@ function mapServiceToDeployInfo(service: AnyService): ServiceForDeploy {
     return {
       id: service.id,
       name: service.name,
+      icon_uri: service.icon_uri,
       serviceType: 'DATABASE',
       sourceType: 'database',
       currentVersion: service.version
@@ -243,6 +257,7 @@ function mapServiceToDeployInfo(service: AnyService): ServiceForDeploy {
   return {
     id: service.id,
     name: service.name,
+    icon_uri: service.icon_uri,
     serviceType: 'TERRAFORM',
     sourceType: 'git',
     currentVersion: tfGitRepo?.deployed_commit_id
