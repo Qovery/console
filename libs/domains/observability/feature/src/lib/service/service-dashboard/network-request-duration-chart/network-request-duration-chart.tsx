@@ -219,23 +219,23 @@ export function NetworkRequestDurationChart({
     endTimestamp,
   ])
 
-  const isLoadingMetrics = useMemo(
-    () =>
+  const isLoadingMetrics = useMemo(() => {
+    const shouldWaitForEnvoy = !!httpRouteName
+    return (
       isLoadingMetrics99 ||
       isLoadingMetrics50 ||
       isLoadingMetrics95 ||
-      isLoadingMetricsEnvoy99 ||
-      isLoadingMetricsEnvoy50 ||
-      isLoadingMetricsEnvoy95,
-    [
-      isLoadingMetrics99,
-      isLoadingMetrics50,
-      isLoadingMetrics95,
-      isLoadingMetricsEnvoy99,
-      isLoadingMetricsEnvoy50,
-      isLoadingMetricsEnvoy95,
-    ]
-  )
+      (shouldWaitForEnvoy && (isLoadingMetricsEnvoy99 || isLoadingMetricsEnvoy50 || isLoadingMetricsEnvoy95))
+    )
+  }, [
+    isLoadingMetrics99,
+    isLoadingMetrics50,
+    isLoadingMetrics95,
+    isLoadingMetricsEnvoy99,
+    httpRouteName,
+    isLoadingMetricsEnvoy50,
+    isLoadingMetricsEnvoy95,
+  ])
 
   return (
     <LocalChart

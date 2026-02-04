@@ -166,19 +166,20 @@ export function NetworkRequestSizeChart({
     endTimestamp,
   ])
 
-  const isLoadingMetrics = useMemo(
-    () =>
+  const isLoadingMetrics = useMemo(() => {
+    const shouldWaitForEnvoy = !!httpRouteName
+    return (
       isLoadingMetricsResponseSize ||
       isLoadingMetricsRequestSize ||
-      isLoadingMetricsEnvoyResponseSize ||
-      isLoadingMetricsEnvoyRequestSize,
-    [
-      isLoadingMetricsResponseSize,
-      isLoadingMetricsRequestSize,
-      isLoadingMetricsEnvoyResponseSize,
-      isLoadingMetricsEnvoyRequestSize,
-    ]
-  )
+      (shouldWaitForEnvoy && (isLoadingMetricsEnvoyResponseSize || isLoadingMetricsEnvoyRequestSize))
+    )
+  }, [
+    isLoadingMetricsResponseSize,
+    isLoadingMetricsRequestSize,
+    isLoadingMetricsEnvoyResponseSize,
+    isLoadingMetricsEnvoyRequestSize,
+    httpRouteName,
+  ])
 
   return (
     <LocalChart
