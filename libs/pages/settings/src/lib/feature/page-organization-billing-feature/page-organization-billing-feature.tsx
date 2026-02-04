@@ -1,29 +1,116 @@
-import { type CreditCard } from 'qovery-typescript-axios'
+import { type default as FieldContainer } from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
+import { type default as CbInstance } from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
+import { type BillingInfoRequest, type CreditCard } from 'qovery-typescript-axios'
+import { useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { useCreditCards, useDeleteCreditCard } from '@qovery/domains/organizations/feature'
-import { AddCreditCardModalFeature, type CreditCardFormValues } from '@qovery/shared/console-shared'
-import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import {
+  useAddCreditCard,
+  useBillingInfo,
+  useCreditCards,
+  useDeleteCreditCard,
+  useEditBillingInfo,
+} from '@qovery/domains/organizations/feature'
+import { countries } from '@qovery/shared/enums'
+import { type Value } from '@qovery/shared/interfaces'
+import { IconFlag, toastError, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { loadChargebee } from '@qovery/shared/util-payment'
+import { type SerializedError } from '@qovery/shared/utils'
 import PageOrganizationBilling from '../../ui/page-organization-billing/page-organization-billing'
 
 export function PageOrganizationBillingFeature() {
   useDocumentTitle('Billing details - Organization settings')
   const { organizationId = '' } = useParams()
-  const { openModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { data: creditCards = [], isLoading: isLoadingCreditCards } = useCreditCards({ organizationId })
   const { mutateAsync: deleteCreditCard } = useDeleteCreditCard()
+  const { data: billingInfo, isLoading: isLoadingBillingInfo } = useBillingInfo({ organizationId })
+  const { mutateAsync: editBillingInfo } = useEditBillingInfo()
+  const { mutateAsync: addCreditCard } = useAddCreditCard()
 
-  const methods = useForm<CreditCardFormValues>({
+  const [showAddCard, setShowAddCard] = useState(false)
+  const [editInProcess, setEditInProcess] = useState(false)
+  const [cbInstance, setCbInstance] = useState<CbInstance | null>(null)
+  const [isCardReady, setIsCardReady] = useState(false)
+  const [editingCardId, setEditingCardId] = useState<string | null>(null)
+  const cardRef = useRef<FieldContainer>(null)
+
+  const countryValues = countries.map((country) => ({
+    label: country.name,
+    value: country.code,
+    icon: <IconFlag code={country.code} />,
+  }))
+
+  const methods = useForm<BillingInfoRequest>({
     mode: 'onChange',
+    values: billingInfo as BillingInfoRequest,
   })
 
-  const openNewCreditCardModal = () => {
-    openModal({
-      content: <AddCreditCardModalFeature organizationId={organizationId} />,
-    })
+  const handleAddCard = async (cardId?: string) => {
+    setShowAddCard(true)
+    setEditingCardId(cardId || null)
+
+    try {
+      const instance = await loadChargebee()
+      setCbInstance(instance)
+    } catch (error) {
+      return
+    }
   }
+
+  const handleCancelAddCard = () => {
+    setShowAddCard(false)
+    setIsCardReady(false)
+    setCbInstance(null)
+    setEditingCardId(null)
+  }
+
+  const onSubmit = methods.handleSubmit(async (data) => {
+    if (!organizationId) return
+
+    setEditInProcess(true)
+
+    try {
+      const response = await editBillingInfo({
+        organizationId,
+        billingInfoRequest: data,
+      })
+      methods.reset(response as BillingInfoRequest)
+
+      if (showAddCard && isCardReady && cardRef.current) {
+        const tokenData = await cardRef.current.tokenize({})
+
+        if (!tokenData.token) {
+          throw new Error('No token returned from Chargebee')
+        }
+
+        await addCreditCard({
+          organizationId,
+          creditCardRequest: {
+            token: tokenData.token,
+            cvv: '',
+            number: `****${tokenData.card?.last4 || ''}`,
+            expiry_year: tokenData.card?.expiry_year || 0,
+            expiry_month: tokenData.card?.expiry_month || 0,
+          },
+        })
+
+        if (editingCardId) {
+          await deleteCreditCard({ organizationId, creditCardId: editingCardId })
+        }
+
+        setShowAddCard(false)
+        setIsCardReady(false)
+        setCbInstance(null)
+        setEditingCardId(null)
+      }
+    } catch (error) {
+      toastError(error as unknown as SerializedError)
+    } finally {
+      setEditInProcess(false)
+    }
+  })
 
   const onDeleteCreditCard = (creditCard: CreditCard) => {
     openModalConfirmation({
@@ -40,9 +127,18 @@ export function PageOrganizationBillingFeature() {
     <FormProvider {...methods}>
       <PageOrganizationBilling
         creditCards={creditCards}
-        openNewCreditCardModal={openNewCreditCardModal}
+        onAddCard={handleAddCard}
         onDeleteCard={onDeleteCreditCard}
         creditCardLoading={isLoadingCreditCards}
+        showAddCard={showAddCard}
+        onCancelAddCard={handleCancelAddCard}
+        cbInstance={cbInstance}
+        cardRef={cardRef}
+        onCardReady={() => setIsCardReady(true)}
+        countryValues={countryValues}
+        loadingBillingInfos={isLoadingBillingInfo}
+        editInProcess={editInProcess}
+        onSubmit={onSubmit}
       />
     </FormProvider>
   )
