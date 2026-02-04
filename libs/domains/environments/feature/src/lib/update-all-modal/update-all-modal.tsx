@@ -213,8 +213,9 @@ function VersionSelector({
       })
       .with('helm-repository', () => {
         const chartVersions =
-          sortVersions(helmVersions?.find(({ chart_name }) => chart_name === helmRepository?.chartName)?.versions ?? []) ??
-          []
+          sortVersions(
+            helmVersions?.find(({ chart_name }) => chart_name === helmRepository?.chartName)?.versions ?? []
+          ) ?? []
         return chartVersions.map((version, index) => ({
           value: version,
           topLabel: version,
@@ -490,11 +491,7 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
 
     const nextSelections: ServiceSelectionState = new Map(
       supportedServices.map((service) => {
-        const {
-          isOutdated,
-          latestOutdatedVersion,
-          defaultVersion,
-        } = getServiceOutdatedState({
+        const { isOutdated, latestOutdatedVersion, defaultVersion } = getServiceOutdatedState({
           service,
           outdatedByHookVersion: outdatedById.get(service.id),
           latestVersion: latestVersionById.get(service.id),

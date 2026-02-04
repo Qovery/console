@@ -1,6 +1,9 @@
-import { sortVersions } from '@qovery/domains/organizations/feature'
 import { match } from 'ts-pattern'
-import { type ServiceForDeploy, type ServiceVersionInfo } from '../hooks/use-services-for-deploy/use-services-for-deploy'
+import { sortVersions } from '@qovery/domains/organizations/feature'
+import {
+  type ServiceForDeploy,
+  type ServiceVersionInfo,
+} from '../hooks/use-services-for-deploy/use-services-for-deploy'
 
 type CommitQueryServiceType = 'APPLICATION' | 'JOB' | 'HELM' | 'TERRAFORM'
 
@@ -23,7 +26,10 @@ export function getCommitQueryServiceType(service: ServiceForDeploy): CommitQuer
     .otherwise(() => undefined)
 }
 
-export function getLatestVersionFromQueryData(service: ServiceForDeploy, data: unknown): ServiceVersionInfo | undefined {
+export function getLatestVersionFromQueryData(
+  service: ServiceForDeploy,
+  data: unknown
+): ServiceVersionInfo | undefined {
   if (!data) return undefined
 
   return match(service.sourceType)
@@ -51,9 +57,7 @@ export function getLatestVersionFromQueryData(service: ServiceForDeploy, data: u
     .with('helm-repository', () => {
       const charts = data as { chart_name?: string; versions?: string[] }[]
       const versions =
-        charts
-          ?.find(({ chart_name }) => chart_name === service.helmRepository?.chartName)
-          ?.versions?.slice() ?? []
+        charts?.find(({ chart_name }) => chart_name === service.helmRepository?.chartName)?.versions?.slice() ?? []
 
       const sortedVersions = sortVersions(versions) ?? []
       const latestChartVersion = sortedVersions[0]

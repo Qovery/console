@@ -98,10 +98,6 @@ export function InputSelect({
       if (values) {
         onChange && onChange((values as Value).value)
         setSelectedValue((values as Value).value)
-      } else {
-        // Handle clearing the selection
-        onChange && onChange('')
-        setSelectedValue('')
       }
     }
   }

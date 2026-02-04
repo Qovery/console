@@ -146,7 +146,7 @@ function MenuManageDeployment({
       content: <UpdateAllModal environment={environment} />,
       options: {
         width: 676,
-        fakeModal: true, // Required for InputSelect scroll to work inside modal
+        fakeModal: true,
       },
     })
   }

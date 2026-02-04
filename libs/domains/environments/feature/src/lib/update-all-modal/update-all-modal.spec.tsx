@@ -72,8 +72,7 @@ jest.mock('../hooks/use-outdated-services/use-outdated-services', () => ({
 
 jest.mock('../hooks/use-services-for-deploy/use-services-for-deploy', () => ({
   useServicesForDeploy: ({ environmentId }: { environmentId: string }) => ({
-    data:
-      environmentId === 'env1' ? mockServicesForDeploy : environmentId === 'env2' ? [mockServicesForDeploy[1]] : [],
+    data: environmentId === 'env1' ? mockServicesForDeploy : environmentId === 'env2' ? [mockServicesForDeploy[1]] : [],
     isLoading: false,
     error: {},
   }),

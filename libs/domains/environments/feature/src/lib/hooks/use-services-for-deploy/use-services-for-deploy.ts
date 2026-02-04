@@ -3,12 +3,12 @@ import { type ContainerRegistryProviderDetailsResponse, type ContainerSource } f
 import { useMemo } from 'react'
 import {
   type AnyService,
+  type ServiceType,
   isApplication,
   isContainer,
   isDatabase,
   isHelm,
   isJob,
-  type ServiceType,
 } from '@qovery/domains/services/data-access'
 import {
   isHelmGitSource,

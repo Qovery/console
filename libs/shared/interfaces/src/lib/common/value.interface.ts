@@ -7,4 +7,5 @@ export interface Value {
   isDisabled?: boolean
   onClickEditable?: () => void
   description?: string
+  searchText?: string
 }
