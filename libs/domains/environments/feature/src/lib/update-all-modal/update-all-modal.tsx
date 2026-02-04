@@ -691,7 +691,7 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
               showBulkActions: true,
             })}
             {renderSection({
-              title: `${upToDateCount} up to date services`,
+              title: `${upToDateCount} up-to-date services`,
               servicesInSection: orderedServices.upToDate,
             })}
           </div>
