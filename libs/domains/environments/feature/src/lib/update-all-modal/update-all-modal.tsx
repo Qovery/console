@@ -95,7 +95,7 @@ function buildDeployAllPayload(selections: ServiceSelection[]): DeployAllRequest
       .with('TERRAFORM', () => {
         if (!selectedVersion) return
       })
-      .otherwise(() => {})
+      .otherwise(() => undefined)
   }
 
   if (payload.applications?.length === 0) delete payload.applications
