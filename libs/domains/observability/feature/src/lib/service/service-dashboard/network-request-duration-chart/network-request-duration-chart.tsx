@@ -97,7 +97,7 @@ export function NetworkRequestDurationChart({
     metricShortName: 'network_p95',
   })
 
-  // ENVOY: Fetch envoy metrics
+  // ENVOY: Fetch envoy metrics (only if httpRouteName is configured)
   const { data: metricsEnvoyP50InMs, isLoading: isLoadingMetricsEnvoy50 } = useMetrics({
     clusterId,
     startTimestamp,
@@ -106,6 +106,7 @@ export function NetworkRequestDurationChart({
     query: queryEnvoyDuration50(httpRouteName),
     boardShortName: 'service_overview',
     metricShortName: 'envoy_p50',
+    enabled: !!httpRouteName,
   })
 
   const { data: metricsEnvoyP99InMs, isLoading: isLoadingMetricsEnvoy99 } = useMetrics({
@@ -116,6 +117,7 @@ export function NetworkRequestDurationChart({
     query: queryEnvoyDuration99(httpRouteName),
     boardShortName: 'service_overview',
     metricShortName: 'envoy_p99',
+    enabled: !!httpRouteName,
   })
 
   const { data: metricsEnvoyP95InMs, isLoading: isLoadingMetricsEnvoy95 } = useMetrics({
@@ -126,6 +128,7 @@ export function NetworkRequestDurationChart({
     query: queryEnvoyDuration95(httpRouteName),
     boardShortName: 'service_overview',
     metricShortName: 'envoy_p95',
+    enabled: !!httpRouteName,
   })
 
   const chartData = useMemo(() => {
@@ -272,43 +275,47 @@ export function NetworkRequestDurationChart({
         isAnimationActive={false}
         hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('99th percentile (nginx)')}
       />
-      {/* ENVOY: Lines for envoy metrics */}
-      <Line
-        key="50th-percentile-envoy"
-        dataKey="50th percentile (envoy)"
-        name="50th percentile (envoy)"
-        type="linear"
-        stroke="var(--color-green-400)"
-        strokeWidth={2}
-        dot={false}
-        connectNulls={false}
-        isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('50th percentile (envoy)')}
-      />
-      <Line
-        key="95th-percentile-envoy"
-        dataKey="95th percentile (envoy)"
-        name="95th percentile (envoy)"
-        type="linear"
-        stroke="var(--color-sky-400)"
-        strokeWidth={2}
-        dot={false}
-        connectNulls={false}
-        isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('95th percentile (envoy)')}
-      />
-      <Line
-        key="99th-percentile-envoy"
-        dataKey="99th percentile (envoy)"
-        name="99th percentile (envoy)"
-        type="linear"
-        stroke="var(--color-green-600)"
-        strokeWidth={2}
-        dot={false}
-        connectNulls={false}
-        isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('99th percentile (envoy)')}
-      />
+      {/* ENVOY: Lines for envoy metrics (only shown if httpRouteName is configured) */}
+      {httpRouteName && (
+        <>
+          <Line
+            key="50th-percentile-envoy"
+            dataKey="50th percentile (envoy)"
+            name="50th percentile (envoy)"
+            type="linear"
+            stroke="var(--color-green-400)"
+            strokeWidth={2}
+            dot={false}
+            connectNulls={false}
+            isAnimationActive={false}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('50th percentile (envoy)')}
+          />
+          <Line
+            key="95th-percentile-envoy"
+            dataKey="95th percentile (envoy)"
+            name="95th percentile (envoy)"
+            type="linear"
+            stroke="var(--color-sky-400)"
+            strokeWidth={2}
+            dot={false}
+            connectNulls={false}
+            isAnimationActive={false}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('95th percentile (envoy)')}
+          />
+          <Line
+            key="99th-percentile-envoy"
+            dataKey="99th percentile (envoy)"
+            name="99th percentile (envoy)"
+            type="linear"
+            stroke="var(--color-green-600)"
+            strokeWidth={2}
+            dot={false}
+            connectNulls={false}
+            isAnimationActive={false}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('99th percentile (envoy)')}
+          />
+        </>
+      )}
       {!isLoadingMetrics && chartData.length > 0 && (
         <Chart.Legend
           name="network-request-duration"

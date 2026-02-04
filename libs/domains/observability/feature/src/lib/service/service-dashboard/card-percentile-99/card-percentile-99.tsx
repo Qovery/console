@@ -39,7 +39,7 @@ export function CardPercentile99({
     metricShortName: 'card_p99_count',
   })
 
-  // ENVOY: Fetch envoy metrics
+  // ENVOY: Fetch envoy metrics (only if httpRouteName is configured)
   const { data: metricsEnvoyInMs, isLoading: isLoadingMetricsEnvoy } = useInstantMetrics({
     clusterId,
     query: queryEnvoy(queryTimeRange, httpRouteName),
@@ -47,6 +47,7 @@ export function CardPercentile99({
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_envoy_p99_count',
+    enabled: !!httpRouteName,
   })
 
   // Use max of both sources (convert nginx seconds to ms, envoy already in ms)

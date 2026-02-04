@@ -23,6 +23,7 @@ interface UseMetricsProps {
   overriddenMaxPoints?: number
   boardShortName: 'service_overview' | 'rds_overview'
   metricShortName: string
+  enabled?: boolean
 }
 
 function useLiveUpdateSetting(): boolean {
@@ -42,6 +43,7 @@ export function useMetrics({
   overriddenMaxPoints,
   boardShortName,
   metricShortName,
+  enabled = true,
 }: UseMetricsProps) {
   // Get context and live update setting, but allow override
   const context = useDashboardContext()
@@ -87,6 +89,7 @@ export function useMetrics({
       traceId: context.traceId,
       alignedRange,
     }),
+    enabled,
     keepPreviousData: true,
     refetchInterval: finalLiveUpdateEnabled ? 30_000 : false, // Refetch every 30 seconds only if live update is enabled
     refetchIntervalInBackground: finalLiveUpdateEnabled,

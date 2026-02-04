@@ -60,7 +60,7 @@ export function NetworkRequestStatusChart({
     metricShortName: 'network_req_status',
   })
 
-  // ENVOY: Fetch envoy metrics
+  // ENVOY: Fetch envoy metrics (only if httpRouteName is configured)
   const { data: metricsEnvoy, isLoading: isLoadingMetricsEnvoy } = useMetrics({
     clusterId,
     startTimestamp,
@@ -69,6 +69,7 @@ export function NetworkRequestStatusChart({
     query: queryEnvoy(httpRouteName),
     boardShortName: 'service_overview',
     metricShortName: 'envoy_req_status',
+    enabled: !!httpRouteName,
   })
 
   const chartData = useMemo(() => {

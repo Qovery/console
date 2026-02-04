@@ -77,7 +77,7 @@ export function NetworkRequestSizeChart({
     metricShortName: 'network_req_size',
   })
 
-  // ENVOY: Fetch envoy metrics
+  // ENVOY: Fetch envoy metrics (only if httpRouteName is configured)
   const { data: metricsEnvoyResponseSize, isLoading: isLoadingMetricsEnvoyResponseSize } = useMetrics({
     clusterId,
     startTimestamp,
@@ -86,6 +86,7 @@ export function NetworkRequestSizeChart({
     query: queryEnvoyResponseSize(httpRouteName),
     boardShortName: 'service_overview',
     metricShortName: 'envoy_resp_size',
+    enabled: !!httpRouteName,
   })
 
   const { data: metricsEnvoyRequestSize, isLoading: isLoadingMetricsEnvoyRequestSize } = useMetrics({
@@ -96,6 +97,7 @@ export function NetworkRequestSizeChart({
     query: queryEnvoyRequestSize(httpRouteName),
     boardShortName: 'service_overview',
     metricShortName: 'envoy_req_size',
+    enabled: !!httpRouteName,
   })
 
   const chartData = useMemo(() => {
@@ -206,31 +208,35 @@ export function NetworkRequestSizeChart({
         isAnimationActive={false}
         hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Request size (nginx)')}
       />
-      {/* ENVOY: Lines for envoy metrics */}
-      <Line
-        key="response-size-envoy"
-        dataKey="Response size (envoy)"
-        name="Response size (envoy)"
-        type="linear"
-        stroke="var(--color-green-400)"
-        strokeWidth={2}
-        dot={false}
-        connectNulls={false}
-        isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Response size (envoy)')}
-      />
-      <Line
-        key="request-size-envoy"
-        dataKey="Request size (envoy)"
-        name="Request size (envoy)"
-        type="linear"
-        stroke="var(--color-sky-400)"
-        strokeWidth={2}
-        dot={false}
-        connectNulls={false}
-        isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Request size (envoy)')}
-      />
+      {/* ENVOY: Lines for envoy metrics (only shown if httpRouteName is configured) */}
+      {httpRouteName && (
+        <>
+          <Line
+            key="response-size-envoy"
+            dataKey="Response size (envoy)"
+            name="Response size (envoy)"
+            type="linear"
+            stroke="var(--color-green-400)"
+            strokeWidth={2}
+            dot={false}
+            connectNulls={false}
+            isAnimationActive={false}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Response size (envoy)')}
+          />
+          <Line
+            key="request-size-envoy"
+            dataKey="Request size (envoy)"
+            name="Request size (envoy)"
+            type="linear"
+            stroke="var(--color-sky-400)"
+            strokeWidth={2}
+            dot={false}
+            connectNulls={false}
+            isAnimationActive={false}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Request size (envoy)')}
+          />
+        </>
+      )}
       {!isLoadingMetrics && chartData.length > 0 && (
         <Chart.Legend
           name="network-request-size"

@@ -67,7 +67,7 @@ export function CardHTTPErrors({
     metricShortName: 'card_req_all_number',
   })
 
-  // ENVOY: Fetch envoy metrics
+  // ENVOY: Fetch envoy metrics (only if httpRouteName is configured)
   const { data: metricsEnvoyErrorRequest, isLoading: isLoadingMetricsEnvoyError } = useInstantMetrics({
     clusterId,
     query: queryEnvoyErrorRequest(queryTimeRange, httpRouteName),
@@ -75,6 +75,7 @@ export function CardHTTPErrors({
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_envoy_req_errors_number',
+    enabled: !!httpRouteName,
   })
 
   const { data: metricsEnvoyTotalRequest, isLoading: isLoadingMetricsEnvoyTotal } = useInstantMetrics({
@@ -84,6 +85,7 @@ export function CardHTTPErrors({
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_envoy_req_all_number',
+    enabled: !!httpRouteName,
   })
 
   // Aggregate nginx + envoy metrics
