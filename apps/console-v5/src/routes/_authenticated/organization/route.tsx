@@ -114,6 +114,12 @@ const ENVIRONMENT_TABS: NavigationTab[] = [
     iconName: 'table-layout',
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
   },
+  {
+    id: 'settings',
+    label: 'Settings',
+    iconName: 'gear-complex',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
+  },
 ]
 
 function createRoutePatternRegex(routeIdPattern: string): RegExp {
@@ -283,6 +289,7 @@ const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/settings',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
 ]
 
 function useFullWidthLayout(): boolean {
@@ -322,14 +329,14 @@ function OrganizationRoute() {
   }
 
   return (
-    <div className="flex h-dvh w-full flex-col bg-background">
+    <div className="bg-background flex h-dvh w-full flex-col">
       {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
       <div className="min-h-0 flex-1 overflow-auto">
         <Suspense fallback={<MainLoader />}>
           <>
             <Header />
 
-            <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
+            <div className="z-header border-neutral bg-background-secondary sticky top-0 border-b px-4">
               <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
                 {navigationContext && <NavigationBar context={navigationContext} />}
               </Navbar.Root>

@@ -1,28 +1,24 @@
 import { Outlet, createFileRoute, useParams } from '@tanstack/react-router'
 import { Sidebar } from '@qovery/shared/ui'
 
-export const Route = createFileRoute('/_authenticated/organization/$organizationId/project/$projectId/settings')({
+export const Route = createFileRoute(
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings'
+)({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const { organizationId, projectId } = useParams({ strict: false })
+  const { organizationId, projectId, environmentId } = useParams({ strict: false })
 
-  const pathSettings = `/organization/${organizationId}/project/${projectId}/settings`
+  const pathSettings = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/settings`
 
-  const generalLink = {
-    title: 'General',
-    to: `${pathSettings}/general`,
-    icon: 'gear' as const,
+  const deploymentRulesLink = {
+    title: 'Deployment rules',
+    to: `${pathSettings}/deployment-rules`,
+    icon: 'browsers' as const,
   }
 
-  const dangerZoneLink = {
-    title: 'Danger zone',
-    to: `${pathSettings}/danger-zone`,
-    icon: 'skull' as const,
-  }
-
-  const LINKS_SETTINGS = [generalLink, dangerZoneLink]
+  const LINKS_SETTINGS = [deploymentRulesLink]
 
   return (
     <div className="flex min-h-0 flex-1">
