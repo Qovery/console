@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import Button from '../button/button'
+import Button, { type ButtonProps } from '../button/button'
 
 export interface StickyActionFormToasterProps {
   visible?: boolean
@@ -8,6 +8,7 @@ export interface StickyActionFormToasterProps {
   resetLabel?: string
   onSubmit?: () => void
   submitLabel?: string
+  submitButtonColor?: ButtonProps['color']
   className?: string
   disabledValidation?: boolean
   loading?: boolean
@@ -22,6 +23,7 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
     onSubmit,
     className = '',
     visible = false,
+    submitButtonColor,
   } = props
 
   const [visibleState, setVisibleState] = useState(visible)
@@ -36,6 +38,8 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
       }, 500)
     }
   }, [visible])
+
+  const submitButtonColorValue = submitButtonColor ?? 'green'
 
   return (
     <div className={`sticky bottom-4 flex justify-center ${className} ${!visibleState ? 'mb-[52px]' : ''}`}>
@@ -54,7 +58,7 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
           )}
           {submitLabel && onSubmit && (
             <Button
-              color="green"
+              color={submitButtonColorValue}
               size="md"
               data-testid="submit-button"
               onClick={() => onSubmit()}

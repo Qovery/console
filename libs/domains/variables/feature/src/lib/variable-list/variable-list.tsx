@@ -209,7 +209,7 @@ export function VariableList({
           return (
             <div className="flex flex-col justify-center gap-1">
               <div className="flex items-center gap-2">
-                <div className="truncate">
+                <div className="flex items-center truncate">
                   {variable.owned_by === ExternalServiceEnum.DOPPLER && (
                     <span
                       data-testid="doppler-tag"
@@ -219,17 +219,17 @@ export function VariableList({
                     </span>
                   )}
                   {variable.aliased_variable && (
-                    <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
+                    <span className="mr-2 inline-flex h-4 items-center rounded bg-surface-info-component px-1 text-2xs font-bold text-info">
                       ALIAS
                     </span>
                   )}
                   {variable.overridden_variable && (
-                    <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-brand-500 px-1 text-2xs font-bold text-neutral-50">
+                    <span className="mr-2 inline-flex h-4 items-center rounded bg-surface-brand-component px-1 text-2xs font-bold text-brand">
                       OVERRIDE
                     </span>
                   )}
                   {variable.mount_path && (
-                    <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-purple-500 px-1 text-2xs font-bold text-neutral-50">
+                    <span className="mr-2 inline-flex h-4 items-center rounded bg-surface-accent1-component px-1 text-2xs font-bold text-accent1">
                       FILE
                     </span>
                   )}
@@ -247,14 +247,14 @@ export function VariableList({
                 {variable.description && (
                   <Tooltip content={variable.description}>
                     <span>
-                      <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-350" />
+                      <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
                     </span>
                   </Tooltip>
                 )}
               </div>
               {(variable.aliased_variable || variable.overridden_variable) && (
-                <div className="flex flex-row gap-1 text-2xs text-neutral-350">
-                  <Icon iconName="arrow-turn-down-right" iconStyle="regular" className="text-2xs text-neutral-300" />
+                <div className="flex flex-row gap-1 text-2xs text-neutral-subtle">
+                  <Icon iconName="arrow-turn-down-right" iconStyle="regular" className="text-2xs text-neutral-subtle" />
                   {variable.aliased_variable && <span>{variable.aliased_variable.key}</span>}
                   {variable.overridden_variable && <span>{variable.overridden_variable.key}</span>}
                 </div>
@@ -275,8 +275,8 @@ export function VariableList({
           return (
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
-                <Button variant="outline" size="md" aria-label="actions">
-                  <Icon iconName="ellipsis-vertical" iconStyle="regular" className="mx-1" />
+                <Button variant="outline" size="md" aria-label="actions" className="w-8 justify-center">
+                  <Icon iconName="ellipsis-vertical" iconStyle="regular" />
                 </Button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content>
@@ -352,11 +352,11 @@ export function VariableList({
             return (
               <div className="flex items-center gap-3" onClick={() => _onEditVariable(variable)}>
                 {variable.value !== null ? (
-                  <Icon className="ml-0.5 text-neutral-400" iconName="file-lines" />
+                  <Icon className="ml-0.5 text-neutral" iconName="file-lines" />
                 ) : (
-                  <Icon className="ml-0.5 text-neutral-400" iconName="file-lock" />
+                  <Icon className="ml-0.5 text-neutral" iconName="file-lock" />
                 )}
-                <span className="cursor-pointer text-sky-500 hover:underline">
+                <span className="cursor-pointer text-info hover:underline">
                   {getEnvironmentVariableFileMountPath(variable)}
                 </span>
               </div>
@@ -390,7 +390,7 @@ export function VariableList({
                 return (
                   <>
                     <span className="text-sm font-medium">{value ? upperCaseFirstLetter(value) : 'Null'}</span>
-                    <span className="text-xs text-neutral-350">{count}</span>
+                    <span className="text-xs text-neutral-subtle">{count}</span>
                   </>
                 )
               },
@@ -430,7 +430,7 @@ export function VariableList({
             return (
               <>
                 <span className="text-sm font-medium">{upperCaseFirstLetter(value)}</span>
-                <span className="text-xs text-neutral-350">{count}</span>
+                <span className="text-xs text-neutral-subtle">{count}</span>
               </>
             )
           },
@@ -510,7 +510,7 @@ export function VariableList({
       <EmptyState
         title="No variable found"
         description="You can create a variable from the button on the top"
-        className="mt-2 rounded-t-sm bg-white pt-10"
+        className="mt-2 rounded-t-sm bg-background pt-10"
       />
     )
   }
