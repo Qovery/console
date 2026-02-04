@@ -239,6 +239,7 @@ export function NetworkRequestDurationChart({
       <Line
         key="50th-percentile-nginx"
         dataKey="50th percentile (nginx)"
+        name="50th percentile (nginx)"
         type="linear"
         stroke="var(--color-purple-400)"
         strokeWidth={2}
@@ -250,6 +251,7 @@ export function NetworkRequestDurationChart({
       <Line
         key="95th-percentile-nginx"
         dataKey="95th percentile (nginx)"
+        name="95th percentile (nginx)"
         type="linear"
         stroke="var(--color-brand-400)"
         strokeWidth={2}
@@ -261,6 +263,7 @@ export function NetworkRequestDurationChart({
       <Line
         key="99th-percentile-nginx"
         dataKey="99th percentile (nginx)"
+        name="99th percentile (nginx)"
         type="linear"
         stroke="var(--color-purple-600)"
         strokeWidth={2}
@@ -273,6 +276,7 @@ export function NetworkRequestDurationChart({
       <Line
         key="50th-percentile-envoy"
         dataKey="50th percentile (envoy)"
+        name="50th percentile (envoy)"
         type="linear"
         stroke="var(--color-green-400)"
         strokeWidth={2}
@@ -284,6 +288,7 @@ export function NetworkRequestDurationChart({
       <Line
         key="95th-percentile-envoy"
         dataKey="95th percentile (envoy)"
+        name="95th percentile (envoy)"
         type="linear"
         stroke="var(--color-sky-400)"
         strokeWidth={2}
@@ -295,6 +300,7 @@ export function NetworkRequestDurationChart({
       <Line
         key="99th-percentile-envoy"
         dataKey="99th percentile (envoy)"
+        name="99th percentile (envoy)"
         type="linear"
         stroke="var(--color-green-600)"
         strokeWidth={2}

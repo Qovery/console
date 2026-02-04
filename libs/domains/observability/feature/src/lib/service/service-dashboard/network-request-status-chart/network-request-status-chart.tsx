@@ -153,6 +153,7 @@ export function NetworkRequestStatusChart({
         <Line
           key={name}
           dataKey={name}
+          name={name}
           type="linear"
           stroke={getColorByPod(name)}
           strokeWidth={2}

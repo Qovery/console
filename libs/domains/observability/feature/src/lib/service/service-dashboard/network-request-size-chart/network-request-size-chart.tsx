@@ -185,6 +185,7 @@ export function NetworkRequestSizeChart({
       <Line
         key="response-size-nginx"
         dataKey="Response size (nginx)"
+        name="Response size (nginx)"
         type="linear"
         stroke="var(--color-brand-400)"
         strokeWidth={2}
@@ -196,6 +197,7 @@ export function NetworkRequestSizeChart({
       <Line
         key="request-size-nginx"
         dataKey="Request size (nginx)"
+        name="Request size (nginx)"
         type="linear"
         stroke="var(--color-purple-400)"
         strokeWidth={2}
@@ -208,6 +210,7 @@ export function NetworkRequestSizeChart({
       <Line
         key="response-size-envoy"
         dataKey="Response size (envoy)"
+        name="Response size (envoy)"
         type="linear"
         stroke="var(--color-green-400)"
         strokeWidth={2}
@@ -219,6 +222,7 @@ export function NetworkRequestSizeChart({
       <Line
         key="request-size-envoy"
         dataKey="Request size (envoy)"
+        name="Request size (envoy)"
         type="linear"
         stroke="var(--color-sky-400)"
         strokeWidth={2}
