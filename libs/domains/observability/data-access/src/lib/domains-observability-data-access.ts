@@ -91,6 +91,41 @@ export const observability = createQueryKeys('observability', {
       return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
     },
   }),
+  httpRouteName: ({
+    clusterId,
+    serviceId,
+    startDate,
+    endDate,
+  }: {
+    clusterId: string
+    serviceId: string
+    startDate: string
+    endDate: string
+  }) => ({
+    queryKey: ['httpPortName', clusterId, serviceId],
+    async queryFn() {
+      const endpoint = `api/v1/label/httproute_name/values?match[]=kube_httproute_labels{qovery_com_associated_service_id="${serviceId}"}`
+      const response = await clusterApi.getClusterMetrics(
+        clusterId,
+        endpoint,
+        endpoint,
+        '',
+        startDate,
+        endDate,
+        undefined,
+        undefined,
+        undefined,
+        'True',
+        'True',
+        undefined,
+        'prometheus',
+        'false',
+        'service_overview',
+        'httpRouteName'
+      )
+      return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
+    },
+  }),
   hpaName: ({
     clusterId,
     serviceId,
