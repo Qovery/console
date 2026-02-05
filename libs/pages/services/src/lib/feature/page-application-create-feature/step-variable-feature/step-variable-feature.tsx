@@ -2,6 +2,7 @@ import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { FormProvider, useFieldArray } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { FlowCreateVariable } from '@qovery/domains/variables/feature'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -39,8 +40,9 @@ export function StepVariableFeature() {
 
   const onAddPort = () => {
     // Determine scope: if serviceType is APPLICATION use APPLICATION, otherwise use CONTAINER
-    const isApplication = generalData?.serviceType === 'APPLICATION'
-    const scope = isApplication ? 'APPLICATION' : 'CONTAINER'
+    const scope = match(generalData?.serviceType)
+      .with('APPLICATION', () => 'APPLICATION' as const)
+      .otherwise(() => 'CONTAINER' as const)
 
     append({
       variable: '',

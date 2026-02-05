@@ -9,6 +9,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { P, match } from 'ts-pattern'
 import { useAnnotationsGroups, useContainerRegistry, useLabelsGroups } from '@qovery/domains/organizations/feature'
 import { useCreateService, useDeployService, useEditAdvancedSettings } from '@qovery/domains/services/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
@@ -35,13 +36,12 @@ function prepareVariableImportRequest(variables: VariableData[]): VariableImport
   return {
     overwrite: true,
     vars: variables
-      .filter(({ scope }) => scope !== undefined)
-      .map(({ variable, scope, value, isSecret }) => ({
-        name: variable || '',
-        scope: scope!,
-        value: value || '',
-        is_secret: isSecret,
-      })),
+      .map(({ variable: name = '', scope, value = '', isSecret: is_secret }) =>
+        match(scope)
+          .with(P.nullish, () => undefined)
+          .otherwise((scope) => ({ name, scope, value, is_secret }))
+      )
+      .filter((i): i is NonNullable<typeof i> => !!i),
   }
 }
 
