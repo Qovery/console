@@ -72,6 +72,12 @@ export function getLatestVersionFromQueryData(
     .exhaustive()
 }
 
+export function isDeletedBranchFromQueryData(service: ServiceForDeploy, data: unknown) {
+  if (service.sourceType !== 'git') return false
+  if (!Array.isArray(data)) return false
+  return data.length === 0
+}
+
 export function getServiceOutdatedState({
   service,
   outdatedByHookVersion,

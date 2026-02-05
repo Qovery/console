@@ -17,6 +17,7 @@ import {
   getCommitQueryServiceType,
   getLatestVersionFromQueryData,
   getServiceOutdatedState,
+  isDeletedBranchFromQueryData,
   isOutdatedManagedByHook,
   isSupportedUpdateAllService,
 } from './update-all-modal.utils'
@@ -27,6 +28,7 @@ export interface UpdateAllModalProps {
 
 interface ServiceSelection extends ServiceForDeploy {
   isOutdated: boolean
+  isDeletedBranch: boolean
   isSelected: boolean
   selectedVersion?: ServiceVersionInfo
   latestOutdatedVersion?: ServiceVersionInfo
@@ -114,16 +116,16 @@ function CurrentVersionBadge({ version, isOutdated }: { version?: ServiceVersion
 
   if (version.type === 'commit') {
     return (
-      <span className="inline-flex h-7 items-center rounded border border-neutral-250 bg-white px-2 text-ssm font-normal text-neutral-400">
-        <Icon iconName="code-commit" iconStyle="regular" className="mr-1" />
-        {isOutdated ? version.displayValue : 'Latest'}
+      <span className="inline-flex h-7 max-w-28 items-center overflow-hidden rounded border border-neutral-250 bg-white px-2 text-ssm font-normal text-neutral-400">
+        <Icon iconName="code-commit" iconStyle="regular" className="mr-1 shrink-0" />
+        <span className="block min-w-0 max-w-full truncate">{isOutdated ? version.displayValue : 'Latest'}</span>
       </span>
     )
   }
 
   return (
-    <span className="inline-flex h-7 items-center rounded border border-neutral-250 bg-white px-2 font-mono text-xs text-neutral-400">
-      {version.displayValue}
+    <span className="inline-flex h-7 max-w-28 items-center overflow-hidden rounded border border-neutral-250 bg-white px-2 font-mono text-xs text-neutral-400">
+      <span className="block min-w-0 max-w-full truncate">{version.displayValue}</span>
     </span>
   )
 }
@@ -233,11 +235,13 @@ function VersionSelector({
   const isGitSelector = sourceType === 'git'
 
   const triggerLabel = selectedOption
-    ? selectedIsLatest
+    ? sourceType !== 'container' && selectedIsLatest
       ? 'Latest'
       : selectedOption.selectedLabel
     : currentVersion
-      ? 'Latest'
+      ? sourceType === 'container'
+        ? currentVersion.displayValue
+        : 'Latest'
       : 'Select target'
 
   const handleSelect = (option: VersionOption) => {
@@ -262,14 +266,14 @@ function VersionSelector({
       <Popover.Trigger>
         <button
           type="button"
-          className="inline-flex h-7 items-center justify-between gap-2 rounded border border-neutral-250 bg-white px-2 text-ssm font-normal text-neutral-400"
+          className="inline-flex h-7 w-fit max-w-28 items-center justify-between gap-2 overflow-hidden rounded border border-neutral-250 bg-white px-2 text-ssm font-normal text-neutral-400"
           data-testid={`target-version-select-${service.id}`}
         >
-          <span className="inline-flex min-w-0 items-center gap-1">
-            {isGitSelector && <Icon iconName="code-commit" iconStyle="regular" />}
-            <span className="truncate">{triggerLabel}</span>
+          <span className="inline-flex min-w-0 max-w-full items-center gap-1">
+            {isGitSelector && <Icon iconName="code-commit" iconStyle="regular" className="shrink-0" />}
+            <span className="block min-w-0 max-w-full truncate">{triggerLabel}</span>
           </span>
-          <Icon iconName="chevron-down" className="text-neutral-350" />
+          <Icon iconName="chevron-down" className="shrink-0 text-neutral-350" />
         </button>
       </Popover.Trigger>
       <Popover.Content
@@ -290,9 +294,9 @@ function VersionSelector({
                       isSelected ? 'bg-neutral-100' : 'bg-white hover:bg-neutral-50'
                     }`}
                   >
-                    <span className="inline-flex items-center gap-1 text-sm font-normal text-neutral-400">
-                      {option.topLabel}
-                      {isSelected && <Icon iconName="check" className="text-green-500" />}
+                    <span className="flex w-full min-w-0 items-center gap-1 text-sm font-normal text-neutral-400">
+                      <span className="block min-w-0 max-w-full truncate whitespace-nowrap">{option.topLabel}</span>
+                      {isSelected && <Icon iconName="check" className="shrink-0 text-green-500" />}
                     </span>
                     {option.bottomLabel ? (
                       <span className="block w-full max-w-full truncate whitespace-nowrap text-ssm font-normal text-neutral-350">
@@ -322,6 +326,7 @@ function ServiceCard({
   onToggle: () => void
   onVersionChange: (version: ServiceVersionInfo | undefined) => void
 }) {
+  const isSelectable = !service.isDeletedBranch
   const isChecked = service.isSelected
   const avatarService = match(service.serviceType)
     .with('JOB', () => ({
@@ -348,37 +353,49 @@ function ServiceCard({
     <li
       data-testid="service-row"
       className={`flex h-14 items-center justify-between border-b border-neutral-250 px-4 last:border-b-0 ${
-        isChecked ? 'bg-brand-50' : 'bg-white'
+        service.isDeletedBranch ? 'bg-neutral-100' : isChecked ? 'bg-brand-50' : 'bg-white'
       }`}
     >
       <div
-        className="flex min-w-0 cursor-pointer items-center gap-3"
-        onClick={onToggle}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault()
-            onToggle()
-          }
-        }}
+        className={`flex min-w-0 items-center gap-3 ${isSelectable ? 'cursor-pointer' : ''}`}
+        onClick={isSelectable ? onToggle : undefined}
+        role={isSelectable ? 'button' : undefined}
+        tabIndex={isSelectable ? 0 : undefined}
+        onKeyDown={
+          isSelectable
+            ? (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  onToggle()
+                }
+              }
+            : undefined
+        }
       >
-        <InputCheckbox name={service.id} value={service.id} isChecked={isChecked} />
+        {isSelectable ? <InputCheckbox name={service.id} value={service.id} isChecked={isChecked} /> : null}
         <ServiceAvatar
           size="xs"
           className="!h-5 !min-h-5 !w-5 !min-w-5 [&>*]:!h-5 [&>*]:!w-5"
           border="none"
           service={avatarService}
         />
-        <span className="min-w-0 text-sm font-medium text-neutral-400">
+        <span
+          className={`min-w-0 text-sm font-medium ${service.isDeletedBranch ? 'text-neutral-300' : 'text-neutral-400'}`}
+        >
           <Truncate text={service.name} truncateLimit={40} />
         </span>
       </div>
 
       <div className="ml-4 flex items-center gap-2">
-        <CurrentVersionBadge version={service.currentVersion} isOutdated={service.isOutdated} />
-        <Icon iconName="arrow-right" className="text-neutral-350" />
-        <VersionSelector service={service} organizationId={organizationId} onVersionChange={onVersionChange} />
+        {service.isDeletedBranch ? (
+          <CurrentVersionBadge version={service.currentVersion} isOutdated />
+        ) : (
+          <>
+            <CurrentVersionBadge version={service.currentVersion} isOutdated={service.isOutdated} />
+            <Icon iconName="arrow-right" className="text-neutral-350" />
+            <VersionSelector service={service} organizationId={organizationId} onVersionChange={onVersionChange} />
+          </>
+        )}
       </div>
     </li>
   )
@@ -486,25 +503,44 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
     return latestById
   }, [supportedServices, latestVersionQueries])
 
+  const deletedBranchById = useMemo(() => {
+    const deletedBranchIds = new Set(
+      outdatedServices.filter((service) => !service.commits?.[0]).map((service) => service.id)
+    )
+
+    supportedServices.forEach((service, index) => {
+      if (isDeletedBranchFromQueryData(service, latestVersionQueries[index]?.data)) {
+        deletedBranchIds.add(service.id)
+      }
+    })
+
+    return deletedBranchIds
+  }, [outdatedServices, supportedServices, latestVersionQueries])
+
   useEffect(() => {
     if (isInitialized || isServicesLoading || isOutdatedServicesLoading || isLatestVersionsLoading) return
 
     const nextSelections: ServiceSelectionState = new Map(
       supportedServices.map((service) => {
+        const isDeletedBranch = deletedBranchById.has(service.id)
         const { isOutdated, latestOutdatedVersion, defaultVersion } = getServiceOutdatedState({
           service,
           outdatedByHookVersion: outdatedById.get(service.id),
           latestVersion: latestVersionById.get(service.id),
         })
+        const isContainerSource = service.sourceType === 'container'
+        const computedIsOutdated = isDeletedBranch ? false : isContainerSource ? false : isOutdated
+        const computedDefaultVersion = isContainerSource ? service.currentVersion : defaultVersion
 
         return [
           service.id,
           {
             ...service,
-            isOutdated,
-            isSelected: isOutdated,
-            selectedVersion: defaultVersion,
-            latestOutdatedVersion,
+            isOutdated: computedIsOutdated,
+            isDeletedBranch,
+            isSelected: isDeletedBranch ? false : computedIsOutdated,
+            selectedVersion: isDeletedBranch ? undefined : computedDefaultVersion,
+            latestOutdatedVersion: isDeletedBranch ? undefined : latestOutdatedVersion,
           } satisfies ServiceSelection,
         ]
       })
@@ -520,13 +556,15 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
     supportedServices,
     outdatedById,
     latestVersionById,
+    deletedBranchById,
   ])
 
   const orderedServices = useMemo(() => {
     const values = Array.from(selections.values())
-    const outdated = values.filter((service) => service.isOutdated)
-    const upToDate = values.filter((service) => !service.isOutdated)
-    return { outdated, upToDate }
+    const deletedBranch = values.filter((service) => service.isDeletedBranch)
+    const outdated = values.filter((service) => service.isOutdated && !service.isDeletedBranch)
+    const upToDate = values.filter((service) => !service.isOutdated && !service.isDeletedBranch)
+    return { outdated, upToDate, deletedBranch }
   }, [selections])
 
   const selectedCount = useMemo(
@@ -535,7 +573,9 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
   )
   const outdatedCount = orderedServices.outdated.length
   const upToDateCount = orderedServices.upToDate.length
+  const deletedBranchCount = orderedServices.deletedBranch.length
   const outdatedSelectedCount = orderedServices.outdated.filter((service) => service.isSelected).length
+  const serviceLabel = (count: number) => (count > 1 ? 'services' : 'service')
 
   const onSubmit = () => {
     if (selectedCount === 0) return
@@ -686,13 +726,17 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
         ) : (
           <div className="space-y-4">
             {renderSection({
-              title: `${outdatedCount} outdated services`,
+              title: `${outdatedCount} outdated ${serviceLabel(outdatedCount)}`,
               servicesInSection: orderedServices.outdated,
               showBulkActions: true,
             })}
             {renderSection({
-              title: `${upToDateCount} up-to-date services`,
+              title: `${upToDateCount} up-to-date ${serviceLabel(upToDateCount)}`,
               servicesInSection: orderedServices.upToDate,
+            })}
+            {renderSection({
+              title: `${deletedBranchCount} ${serviceLabel(deletedBranchCount)} on deleted branch`,
+              servicesInSection: orderedServices.deletedBranch,
             })}
           </div>
         )}
