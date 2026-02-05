@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SelectCommitModal should match snapshot 1`] = `
 <div>
@@ -62,7 +62,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
             />
             Commit
              on 
-            Dec 31, 2023
+            Jan 01, 2024
           </div>
           <div
             class="border-l border-neutral-250 pb-5 pl-5 pt-3 dark:border-neutral-350"
@@ -164,7 +164,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
             />
             Commit
              on 
-            Jan 01, 2024
+            Jan 02, 2024
           </div>
           <div
             class="border-l border-neutral-250 pb-5 pl-5 pt-3 dark:border-neutral-350"

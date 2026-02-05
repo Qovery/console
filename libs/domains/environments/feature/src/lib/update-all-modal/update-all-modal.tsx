@@ -231,15 +231,16 @@ function VersionSelector({
 
   const selectedOption = options.find((option) => option.value === selectedVersion?.value)
   const selectedIsLatest = Boolean(selectedOption?.isLatest)
+  const isContainerLikeSource = sourceType === 'container' || sourceType === 'helm-repository'
 
   const isGitSelector = sourceType === 'git'
 
   const triggerLabel = selectedOption
-    ? sourceType !== 'container' && selectedIsLatest
+    ? !isContainerLikeSource && selectedIsLatest
       ? 'Latest'
       : selectedOption.selectedLabel
     : currentVersion
-      ? sourceType === 'container'
+      ? isContainerLikeSource
         ? currentVersion.displayValue
         : 'Latest'
       : 'Select target'
@@ -528,9 +529,9 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
           outdatedByHookVersion: outdatedById.get(service.id),
           latestVersion: latestVersionById.get(service.id),
         })
-        const isContainerSource = service.sourceType === 'container'
-        const computedIsOutdated = isDeletedBranch ? false : isContainerSource ? false : isOutdated
-        const computedDefaultVersion = isContainerSource ? service.currentVersion : defaultVersion
+        const isContainerLikeSource = service.sourceType === 'container' || service.sourceType === 'helm-repository'
+        const computedIsOutdated = isDeletedBranch ? false : isContainerLikeSource ? false : isOutdated
+        const computedDefaultVersion = isContainerLikeSource ? service.currentVersion : defaultVersion
 
         return [
           service.id,

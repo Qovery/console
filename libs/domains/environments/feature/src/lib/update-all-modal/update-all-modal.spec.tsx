@@ -310,11 +310,11 @@ describe('UpdateAllModal', () => {
 
   it('should submit payload with all covered service type branches', async () => {
     const { userEvent } = renderWithProviders(<UpdateAllModal {...props} />)
-    expect(await screen.findByText('Update 8 services')).toBeInTheDocument()
+    expect(await screen.findByText('Update 7 services')).toBeInTheDocument()
 
     await userEvent.click(screen.getByText('Container outdated'))
     await userEvent.click(screen.getByText('Job container'))
-    expect(screen.getByText('Update 10 services')).toBeInTheDocument()
+    expect(screen.getByText('Update 9 services')).toBeInTheDocument()
 
     await userEvent.click(screen.getByTestId('submit-button'))
 
@@ -347,11 +347,6 @@ describe('UpdateAllModal', () => {
         ],
         helms: [
           {
-            id: 'service-helm-repo',
-            chart_version: '3.0.0',
-            git_commit_id: undefined,
-          },
-          {
             id: 'service-helm-git',
             chart_version: undefined,
             git_commit_id: 'helm-new',
@@ -364,9 +359,9 @@ describe('UpdateAllModal', () => {
 
   it('should ignore toggle on unselectable row and toggle selected row with keyboard', async () => {
     const { userEvent } = renderWithProviders(<UpdateAllModal {...props} />)
-    expect(await screen.findByText('Update 8 services')).toBeInTheDocument()
+    expect(await screen.findByText('Update 7 services')).toBeInTheDocument()
     expect(screen.getByText('1 service on deleted branch')).toBeInTheDocument()
-    const upToDateHeading = screen.getByText('3 up-to-date services')
+    const upToDateHeading = screen.getByText('4 up-to-date services')
     const deletedBranchHeading = screen.getByText('1 service on deleted branch')
     expect(
       Boolean(upToDateHeading.compareDocumentPosition(deletedBranchHeading) & Node.DOCUMENT_POSITION_FOLLOWING)
@@ -377,18 +372,18 @@ describe('UpdateAllModal', () => {
     expect(document.querySelector('input[name="service-unconfigured-app"]')).toBeNull()
 
     await userEvent.click(screen.getByText('Unconfigured app'))
-    expect(screen.getByText('Update 8 services')).toBeInTheDocument()
+    expect(screen.getByText('Update 7 services')).toBeInTheDocument()
 
     const appRow = screen.getByText('App service').closest('[role="button"]')
     expect(appRow).toBeTruthy()
     fireEvent.keyDown(appRow!, { key: 'Enter' })
 
-    expect(screen.getByText('Update 7 services')).toBeInTheDocument()
+    expect(screen.getByText('Update 6 services')).toBeInTheDocument()
   })
 
   it('should show git fallback message and auto-select service when choosing a new version', async () => {
     const { userEvent } = renderWithProviders(<UpdateAllModal {...props} />)
-    expect(await screen.findByText('Update 8 services')).toBeInTheDocument()
+    expect(await screen.findByText('Update 7 services')).toBeInTheDocument()
     expect(screen.getByTestId('target-version-select-service-container-up-to-date')).toHaveTextContent('9.9.9')
 
     await userEvent.click(screen.getByTestId('target-version-select-service-job-git'))
@@ -397,12 +392,12 @@ describe('UpdateAllModal', () => {
     await userEvent.click(screen.getByTestId('target-version-select-service-container-up-to-date'))
     await userEvent.click(await screen.findByRole('button', { name: /9\.9\.8/ }))
 
-    expect(screen.getByText('Update 9 services')).toBeInTheDocument()
+    expect(screen.getByText('Update 8 services')).toBeInTheDocument()
   })
 
   it('should use the same truncated one-line option layout for git and container popovers', async () => {
     const { userEvent } = renderWithProviders(<UpdateAllModal {...props} />)
-    expect(await screen.findByText('Update 8 services')).toBeInTheDocument()
+    expect(await screen.findByText('Update 7 services')).toBeInTheDocument()
 
     await userEvent.click(screen.getByTestId('target-version-select-service-app'))
     const gitOption = await screen.findByRole('button', { name: /app-new/i })
