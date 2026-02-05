@@ -27,21 +27,23 @@ const [mockEnvironment, mockEmptyEnvironment] = environmentFactoryMock(2).map((e
 
 const mockMutate = jest.fn()
 
-const mockBaseApplications = applicationFactoryMock(2).map((app): OutdatedService => ({
-  ...app,
-  environment: { id: '1' },
-  healthchecks: {},
-  git_repository: {
-    ...app.git_repository,
-    url: '',
-    deployed_commit_contributor: '',
-    deployed_commit_date: '',
-    deployed_commit_id: 'commit-old',
-    deployed_commit_tag: '',
-  },
-  serviceType: ServiceTypeEnum.APPLICATION,
-  commits: [{ git_commit_id: 'commit-new' } as Commit],
-}))
+const mockBaseApplications = applicationFactoryMock(2).map(
+  (app): OutdatedService => ({
+    ...app,
+    environment: { id: '1' },
+    healthchecks: {},
+    git_repository: {
+      ...app.git_repository,
+      url: '',
+      deployed_commit_contributor: '',
+      deployed_commit_date: '',
+      deployed_commit_id: 'commit-old',
+      deployed_commit_tag: '',
+    },
+    serviceType: ServiceTypeEnum.APPLICATION,
+    commits: [{ git_commit_id: 'commit-new' } as Commit],
+  })
+)
 
 const mockServicesForDeploy: ServiceForDeploy[] = [
   {
@@ -275,32 +277,30 @@ describe('UpdateAllModal', () => {
       }))
     })
 
-    mockUseQuery.mockImplementation((options: {
-      queryKey?: unknown[]
-      enabled?: boolean
-      select?: (data: unknown) => unknown
-    }) => {
-      if (!options || options.enabled === false) {
-        return { data: undefined }
+    mockUseQuery.mockImplementation(
+      (options: { queryKey?: unknown[]; enabled?: boolean; select?: (data: unknown) => unknown }) => {
+        if (!options || options.enabled === false) {
+          return { data: undefined }
+        }
+
+        const queryKey = options.queryKey ?? []
+        let data: unknown
+
+        if (queryKey[0] === 'services' && queryKey[1] === 'listCommits') {
+          data = mockCommitsByServiceId[String(queryKey[2])] ?? []
+        } else if (queryKey[0] === 'organizations' && queryKey[1] === 'containerVersions') {
+          data = mockContainerVersionsByRegistryId[String(queryKey[3])] ?? []
+        } else if (queryKey[0] === 'serviceHelm' && queryKey[1] === 'helmCharts') {
+          data = mockHelmVersionsByRepositoryId[String(queryKey[3])] ?? []
+        }
+
+        if (options.select) {
+          return { data: options.select(data) }
+        }
+
+        return { data }
       }
-
-      const queryKey = options.queryKey ?? []
-      let data: unknown
-
-      if (queryKey[0] === 'services' && queryKey[1] === 'listCommits') {
-        data = mockCommitsByServiceId[String(queryKey[2])] ?? []
-      } else if (queryKey[0] === 'organizations' && queryKey[1] === 'containerVersions') {
-        data = mockContainerVersionsByRegistryId[String(queryKey[3])] ?? []
-      } else if (queryKey[0] === 'serviceHelm' && queryKey[1] === 'helmCharts') {
-        data = mockHelmVersionsByRepositoryId[String(queryKey[3])] ?? []
-      }
-
-      if (options.select) {
-        return { data: options.select(data) }
-      }
-
-      return { data }
-    })
+    )
   })
 
   it('should render successfully', () => {
@@ -412,9 +412,9 @@ describe('UpdateAllModal', () => {
     await userEvent.click(gitOption)
 
     await userEvent.click(screen.getByTestId('target-version-select-service-container-outdated'))
-    const containerOption = (
-      await screen.findAllByRole('button', { name: /^2\.0\.0$/ })
-    ).find((element) => element.className.includes('min-h-[62px]'))
+    const containerOption = (await screen.findAllByRole('button', { name: /^2\.0\.0$/ })).find((element) =>
+      element.className.includes('min-h-[62px]')
+    )
     expect(containerOption).toBeDefined()
     if (!containerOption) {
       throw new Error('Expected container option in popover')

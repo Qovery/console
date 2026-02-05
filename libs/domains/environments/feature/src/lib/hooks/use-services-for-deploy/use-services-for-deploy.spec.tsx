@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { renderHook } from '@testing-library/react'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   applicationFactoryMock,
   containerFactoryMock,
@@ -8,7 +9,6 @@ import {
   helmFactoryMock,
   terraformFactoryMock,
 } from '@qovery/shared/factories'
-import { type AnyService } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 import { useServicesForDeploy } from './use-services-for-deploy'
 
