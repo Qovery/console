@@ -141,6 +141,6 @@ describe('SelectCommitModal', () => {
     )
 
     expect(screen.queryByPlaceholderText(/search by commit message or commit id/i)).not.toBeInTheDocument()
-    expect(screen.getByText(/No commits available/i)).toBeInTheDocument()
+    expect(screen.getByText(/No commit available/i)).toBeInTheDocument()
   })
 })
