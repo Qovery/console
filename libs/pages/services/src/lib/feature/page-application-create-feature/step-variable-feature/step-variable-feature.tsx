@@ -1,5 +1,5 @@
 import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { FormProvider, useFieldArray } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { FlowCreateVariable } from '@qovery/domains/variables/feature'
@@ -21,7 +21,13 @@ export function StepVariableFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
   const pathCreate = SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_APPLICATION_CREATION_URL
-  const [availableScopes] = useState<APIVariableScopeEnum[]>(computeAvailableScope(undefined, false))
+
+  // Compute available scopes based on the service type (APPLICATION or CONTAINER)
+  const serviceType = generalData?.serviceType === 'APPLICATION' ? 'APPLICATION' : 'CONTAINER'
+  const availableScopes = useMemo<APIVariableScopeEnum[]>(
+    () => computeAvailableScope(undefined, false, serviceType),
+    [serviceType]
+  )
 
   useEffect(() => {
     setCurrentStep(5)
@@ -32,11 +38,15 @@ export function StepVariableFeature() {
   })
 
   const onAddPort = () => {
+    // Determine scope: if serviceType is APPLICATION use APPLICATION, otherwise use CONTAINER
+    const isApplication = generalData?.serviceType === 'APPLICATION'
+    const scope = isApplication ? 'APPLICATION' : 'CONTAINER'
+
     append({
       variable: '',
       isSecret: false,
       value: '',
-      scope: generalData?.serviceType === 'APPLICATION' ? 'APPLICATION' : 'CONTAINER',
+      scope,
     })
   }
 

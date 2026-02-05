@@ -133,7 +133,7 @@ export function VariableRow(props: VariableRowProps) {
               data-testid="scope"
               className="w-[188px]"
               name={field.name}
-              defaultValue={field.value}
+              value={field.value}
               onChange={(e) => {
                 field.onChange(e)
                 trigger(`variables.${index}.value`).then()

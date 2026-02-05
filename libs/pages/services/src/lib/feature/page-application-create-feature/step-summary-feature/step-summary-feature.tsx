@@ -34,12 +34,14 @@ function prepareVariableImportRequest(variables: VariableData[]): VariableImport
 
   return {
     overwrite: true,
-    vars: variables.map(({ variable, scope, value, isSecret }) => ({
-      name: variable || '',
-      scope: scope || APIVariableScopeEnum.PROJECT,
-      value: value || '',
-      is_secret: isSecret,
-    })),
+    vars: variables
+      .filter(({ scope }) => scope !== undefined)
+      .map(({ variable, scope, value, isSecret }) => ({
+        name: variable || '',
+        scope: scope!,
+        value: value || '',
+        is_secret: isSecret,
+      })),
   }
 }
 

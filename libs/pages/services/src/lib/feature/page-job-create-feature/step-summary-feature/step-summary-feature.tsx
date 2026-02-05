@@ -148,12 +148,14 @@ function prepareVariableImportRequest(variables: VariableData[]): VariableImport
 
   return {
     overwrite: true,
-    vars: variables.map(({ variable, scope, value, isSecret }) => ({
-      name: variable || '',
-      scope: scope || APIVariableScopeEnum.PROJECT,
-      value: value || '',
-      is_secret: isSecret,
-    })),
+    vars: variables
+      .filter(({ scope }) => scope !== undefined)
+      .map(({ variable, scope, value, isSecret }) => ({
+        name: variable || '',
+        scope: scope!,
+        value: value || '',
+        is_secret: isSecret,
+      })),
   }
 }
 
@@ -271,24 +273,26 @@ export function StepSummaryFeature() {
         }
 
         for (const fileVariable of fileVariables) {
-          createVariable({
-            variableRequest: {
-              key: fileVariable.variable ?? '',
-              value: fileVariable.value ?? '',
-              variable_scope: fileVariable.scope ?? APIVariableScopeEnum.PROJECT,
-              variable_parent_id: match(fileVariable.scope)
-                .with('JOB', () => service.id)
-                .with('ENVIRONMENT', () => service.environment.id)
-                .with('PROJECT', () => projectId)
-                .with('BUILT_IN', 'APPLICATION', 'CONTAINER', 'HELM', 'TERRAFORM', undefined, () => {
-                  throw new Error('Should not be possible')
-                })
-                .exhaustive(),
-              is_secret: fileVariable.isSecret,
-              mount_path: fileVariable.file.path,
-              enable_interpolation_in_file: fileVariable.file.enable_interpolation ?? false,
-            },
-          })
+          if (fileVariable.scope) {
+            createVariable({
+              variableRequest: {
+                key: fileVariable.variable ?? '',
+                value: fileVariable.value ?? '',
+                variable_scope: fileVariable.scope,
+                variable_parent_id: match(fileVariable.scope)
+                  .with('JOB', () => service.id)
+                  .with('ENVIRONMENT', () => service.environment.id)
+                  .with('PROJECT', () => projectId)
+                  .with('BUILT_IN', 'APPLICATION', 'CONTAINER', 'HELM', 'TERRAFORM', () => {
+                    throw new Error('Should not be possible')
+                  })
+                  .exhaustive(),
+                is_secret: fileVariable.isSecret,
+                mount_path: fileVariable.file.path,
+                enable_interpolation_in_file: fileVariable.file.enable_interpolation ?? false,
+              },
+            })
+          }
         }
 
         if (withDeploy) {
