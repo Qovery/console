@@ -108,7 +108,6 @@ export const observability = createQueryKeys('observability', {
       const response = await clusterApi.getClusterMetrics(
         clusterId,
         endpoint,
-        endpoint,
         '',
         startDate,
         endDate,

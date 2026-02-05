@@ -137,7 +137,7 @@ export function NetworkRequestStatusChart({
     return names
   }, [metrics, metricsEnvoy])
 
-  const isLoading = isLoadingMetrics || isLoadingMetricsEnvoy
+  const isLoading = useMemo(() => isLoadingMetrics || isLoadingMetricsEnvoy, [isLoadingMetrics, isLoadingMetricsEnvoy])
 
   return (
     <LocalChart

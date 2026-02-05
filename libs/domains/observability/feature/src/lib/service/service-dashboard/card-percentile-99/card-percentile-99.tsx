@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useInstantMetrics } from '../../../hooks/use-instant-metrics/use-instant-metrics'
 import ModalChart from '../../../modal-chart/modal-chart'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
@@ -60,13 +60,15 @@ export function CardPercentile99({
   const title = `${value}ms network request duration`
   const description = 'for p99'
 
+  const isLoading = useMemo(() => isLoadingMetrics || isLoadingMetricsEnvoy, [isLoadingMetrics, isLoadingMetricsEnvoy])
+
   return (
     <>
       <CardMetric
         title={title}
         description={description}
         status={isError ? 'RED' : 'GREEN'}
-        isLoading={isLoadingMetrics || isLoadingMetricsEnvoy}
+        isLoading={isLoading}
         onClick={() => setIsModalOpen(true)}
         hasModalLink
       />

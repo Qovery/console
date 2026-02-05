@@ -158,10 +158,15 @@ export function InstanceHTTPErrorsChart({
     return names
   }, [metricsHttpStatusErrorRatio, metricsEnvoyHttpStatusErrorRatio])
 
+  const isLoading = useMemo(
+    () => isLoadingHttpStatusErrorRatio || isLoadingEnvoyHttpStatusErrorRatio,
+    [isLoadingHttpStatusErrorRatio, isLoadingEnvoyHttpStatusErrorRatio]
+  )
+
   return (
     <LocalChart
       data={chartData || []}
-      isLoading={isLoadingHttpStatusErrorRatio || isLoadingEnvoyHttpStatusErrorRatio}
+      isLoading={isLoading}
       isEmpty={(chartData || []).length === 0}
       tooltipLabel="HTTP Error Rate"
       unit="%"

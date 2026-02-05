@@ -166,11 +166,19 @@ export function NetworkRequestSizeChart({
     endTimestamp,
   ])
 
-  const isLoadingMetrics =
-    isLoadingMetricsResponseSize ||
-    isLoadingMetricsRequestSize ||
-    isLoadingMetricsEnvoyResponseSize ||
-    isLoadingMetricsEnvoyRequestSize
+  const isLoadingMetrics = useMemo(
+    () =>
+      isLoadingMetricsResponseSize ||
+      isLoadingMetricsRequestSize ||
+      isLoadingMetricsEnvoyResponseSize ||
+      isLoadingMetricsEnvoyRequestSize,
+    [
+      isLoadingMetricsResponseSize,
+      isLoadingMetricsRequestSize,
+      isLoadingMetricsEnvoyResponseSize,
+      isLoadingMetricsEnvoyRequestSize,
+    ]
+  )
 
   return (
     <LocalChart

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { pluralize } from '@qovery/shared/util-js'
 import { useInstantMetrics } from '../../../hooks/use-instant-metrics/use-instant-metrics'
 import { ModalChart } from '../../../modal-chart/modal-chart'
@@ -102,14 +102,17 @@ export function CardHTTPErrors({
   const title = `${errorRate}% HTTP error rate`
   const description = `on ${totalRequest} ${pluralize(totalRequest, 'request', 'requests')}`
 
+  const isLoading = useMemo(
+    () => isLoadingMetrics || isLoadingMetricsTotalRequest || isLoadingMetricsEnvoyError || isLoadingMetricsEnvoyTotal,
+    [isLoadingMetrics, isLoadingMetricsTotalRequest, isLoadingMetricsEnvoyError, isLoadingMetricsEnvoyTotal]
+  )
+
   return (
     <>
       <CardMetric
         title={title}
         description={description}
-        isLoading={
-          isLoadingMetrics || isLoadingMetricsTotalRequest || isLoadingMetricsEnvoyError || isLoadingMetricsEnvoyTotal
-        }
+        isLoading={isLoading}
         onClick={isError ? () => setIsModalOpen(true) : undefined}
         hasModalLink={isError}
       />
