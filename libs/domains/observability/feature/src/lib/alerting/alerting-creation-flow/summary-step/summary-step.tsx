@@ -12,8 +12,8 @@ import { type AlertConfiguration } from '../alerting-creation-flow.types'
 import { ALERTING_CREATION_EDIT, ALERTING_CREATION_METRIC } from '../router'
 import {
   QUERY_CPU,
-  QUERY_HTTP_ERROR,
-  QUERY_HTTP_LATENCY,
+  QUERY_HTTP_ERROR_COMBINED,
+  QUERY_HTTP_LATENCY_COMBINED,
   QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
   QUERY_MISSING_INSTANCE,
@@ -138,6 +138,7 @@ export function SummaryStep() {
     selectedMetrics,
     containerName,
     ingressName,
+    httpRouteName,
   } = useAlertingCreationFlowContext()
 
   useEffect(() => {
@@ -190,8 +191,8 @@ export function SummaryStep() {
                 .with('memory', () => QUERY_MEMORY(containerName))
                 .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
                 .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
-                .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
-                .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
+                .with('http_error', () => QUERY_HTTP_ERROR_COMBINED(ingressName || '', httpRouteName || ''))
+                .with('http_latency', () => QUERY_HTTP_LATENCY_COMBINED(ingressName || '', httpRouteName || ''))
                 .otherwise(() => ''),
             },
             for_duration: alert.for_duration,
