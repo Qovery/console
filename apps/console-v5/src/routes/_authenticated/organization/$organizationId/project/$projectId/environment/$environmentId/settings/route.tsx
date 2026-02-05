@@ -9,9 +9,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { organizationId, projectId, environmentId } = useParams({ strict: false })
-
   const pathSettings = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/settings`
-
   const deploymentRulesLink = {
     title: 'Deployment rules',
     to: `${pathSettings}/deployment-rules`,
