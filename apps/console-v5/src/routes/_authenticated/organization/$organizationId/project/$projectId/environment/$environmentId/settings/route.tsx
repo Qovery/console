@@ -22,7 +22,7 @@ function RouteComponent() {
 
   return (
     <div className="flex min-h-0 flex-1">
-      <aside className="border-neutral relative min-h-[calc(100vh-2.75rem-4rem)] w-52 shrink-0 self-stretch border-r">
+      <aside className="relative min-h-[calc(100vh-2.75rem-4rem)] w-52 shrink-0 self-stretch border-r border-neutral">
         <div className="sticky top-16">
           <Sidebar.Root className="mt-6">
             {LINKS_SETTINGS.map((link) => (
