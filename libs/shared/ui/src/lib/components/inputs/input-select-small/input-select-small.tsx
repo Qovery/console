@@ -13,7 +13,6 @@ export interface InputSelectSmallProps {
   dataTestId?: string
   onChange?: (item: string | undefined) => void
   defaultValue?: string
-  value?: string
   inputClassName?: string
 }
 
@@ -23,7 +22,6 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
     label,
     items,
     defaultValue,
-    value: controlledValue,
     className = '',
     onChange,
     getValue,
@@ -31,31 +29,23 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
     inputClassName = '',
   } = props
 
-  const [internalValue, setInternalValue] = useState(defaultValue)
+  const [value, setValue] = useState(defaultValue)
 
-  // Use controlled value if provided, otherwise use internal state
-  const value = controlledValue !== undefined ? controlledValue : internalValue
-
-  const onClickItem = (newValue: string) => {
-    const selectedItem = items.find((i) => i.value === newValue) || null
+  const onClickItem = (value: string) => {
+    const selectedItem = items.find((i) => i.value === value) || null
     if (!selectedItem) return
-
-    // Only update internal state if not controlled
-    if (controlledValue === undefined) {
-      setInternalValue(newValue)
+    if (value !== defaultValue) {
+      setValue(value)
+      onChange && onChange(value)
     }
-
-    // Always call onChange
-    onChange && onChange(newValue)
-
     if (getValue) getValue(name, selectedItem)
   }
 
   useEffect(() => {
-    if (controlledValue === undefined && defaultValue) {
-      setInternalValue(defaultValue)
+    if (defaultValue) {
+      setValue(defaultValue)
     }
-  }, [defaultValue, controlledValue])
+  }, [defaultValue])
 
   return (
     <div className={`${className} relative flex items-center gap-4`}>

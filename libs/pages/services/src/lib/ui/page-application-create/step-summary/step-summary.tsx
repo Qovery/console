@@ -330,7 +330,8 @@ export function StepSummary({
                       {variable.variable} = {variable.isSecret ? '********' : variable.value}
                     </strong>
                     <span>
-                      <strong className="font-medium">Scope:</strong> {generateScopeLabel(variable.scope)}
+                      <strong className="font-medium">Scope:</strong>{' '}
+                      {variable.scope ? generateScopeLabel(variable.scope) : '-'}
                     </span>
                     <span>{variable.isSecret ? 'Secret' : 'Public'}</span>
                   </li>
