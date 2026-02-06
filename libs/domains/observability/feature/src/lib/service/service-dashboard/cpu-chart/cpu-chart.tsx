@@ -36,7 +36,8 @@ export function CpuChart({
   containerName: string
   podNames?: string[]
 }) {
-  const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
+  const { startTimestamp, endTimestamp, useLocalTime, timeRange, useAggregatedView, isPodCountLoading } =
+    useDashboardContext()
   const getColorByPod = usePodColor()
 
   const [legendSelectedKeys, setLegendSelectedKeys] = useState<Set<string>>(new Set())
@@ -64,7 +65,15 @@ export function CpuChart({
 
   const selector = useMemo(() => buildPromSelector(containerName, podNames), [containerName, podNames])
 
-  // Query for individual pods (always load to count them)
+  // Read aggregated view mode from context (determined by parent based on pod count)
+  const useAggregatedMetrics = useAggregatedView
+
+  // Reset legend filters when switching between pods and percentiles view, when timeRange changes, or when zooming
+  useEffect(() => {
+    setLegendSelectedKeys(new Set())
+  }, [useAggregatedMetrics, timeRange, startTimestamp, endTimestamp])
+
+  // Query for individual pods (only when NOT in aggregated mode AND pod count is loaded)
   const { data: podMetrics, isLoading: isLoadingPods } = useMetrics({
     clusterId,
     query: queryCpuUsageByPod(rateInterval, selector),
@@ -73,19 +82,10 @@ export function CpuChart({
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'cpu_by_pod',
+    enabled: !isPodCountLoading && !useAggregatedMetrics, // Wait for pod count, then fetch only if needed
   })
 
-  // Dynamically decide based on actual pod count (more performant than time-based threshold)
-  // If > 10 pods, use aggregated metrics (p50/p90) to avoid rendering too many series
-  const podCount = podMetrics?.data?.result?.length || 0
-  const useAggregatedMetrics = podCount > 10
-
-  // Reset legend filters when switching between pods and percentiles view
-  useEffect(() => {
-    setLegendSelectedKeys(new Set())
-  }, [useAggregatedMetrics])
-
-  // Queries for aggregated metrics (used when pod count > 10)
+  // Queries for aggregated metrics (only when in aggregated mode AND pod count is loaded)
   const { data: p50Metrics, isLoading: isLoadingP50 } = useMetrics({
     clusterId,
     query: queryCpuUsageP50(rateInterval, selector),
@@ -94,6 +94,7 @@ export function CpuChart({
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'cpu_p50',
+    enabled: !isPodCountLoading && useAggregatedMetrics, // Wait for pod count, then fetch only if needed
   })
 
   const { data: p90Metrics, isLoading: isLoadingP90 } = useMetrics({
@@ -104,6 +105,7 @@ export function CpuChart({
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'cpu_p90',
+    enabled: !isPodCountLoading && useAggregatedMetrics, // Wait for pod count, then fetch only if needed
   })
 
   const { data: limitMetrics, isLoading: isLoadingLimit } = useMetrics({
