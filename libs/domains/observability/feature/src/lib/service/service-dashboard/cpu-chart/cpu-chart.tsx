@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { type LegendPayload, Line } from 'recharts'
 import { Chart } from '@qovery/shared/ui'
 import { usePodColor } from '@qovery/shared/util-hooks'
@@ -79,6 +79,11 @@ export function CpuChart({
   // If > 10 pods, use aggregated metrics (p50/p90) to avoid rendering too many series
   const podCount = podMetrics?.data?.result?.length || 0
   const useAggregatedMetrics = podCount > 10
+
+  // Reset legend filters when switching between pods and percentiles view
+  useEffect(() => {
+    setLegendSelectedKeys(new Set())
+  }, [useAggregatedMetrics])
 
   // Queries for aggregated metrics (used when pod count > 10)
   const { data: p50Metrics, isLoading: isLoadingP50 } = useMetrics({
@@ -284,16 +289,16 @@ export function CpuChart({
           className="w-[calc(100%-0.5rem)] pb-1 pt-2"
           onClick={onClick}
           itemSorter={(item) => {
-            if (item.value === 'p50') {
+            if (item.value === 'Limit') {
               return -4
             }
-            if (item.value === 'p90') {
+            if (item.value === 'Request') {
               return -3
             }
-            if (item.value === 'Limit') {
+            if (item.value === 'p50') {
               return -2
             }
-            if (item.value === 'Request') {
+            if (item.value === 'p90') {
               return -1
             }
             return 0
