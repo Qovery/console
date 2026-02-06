@@ -10,13 +10,32 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { organizationId, projectId, environmentId } = useParams({ strict: false })
   const pathSettings = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/settings`
+
+  const generalLink = {
+    title: 'General',
+    to: `${pathSettings}/general`,
+    icon: 'gear' as const,
+  }
+
   const deploymentRulesLink = {
     title: 'Deployment rules',
     to: `${pathSettings}/deployment-rules`,
     icon: 'browsers' as const,
   }
 
-  const LINKS_SETTINGS = [deploymentRulesLink]
+  const previewEnvironmentsLink = {
+    title: 'Preview environments',
+    to: `${pathSettings}/preview-environments`,
+    icon: 'eye' as const,
+  }
+
+  const dangerZoneLink = {
+    title: 'Danger zone',
+    to: `${pathSettings}/danger-zone`,
+    icon: 'skull' as const,
+  }
+
+  const LINKS_SETTINGS = [generalLink, deploymentRulesLink, previewEnvironmentsLink, dangerZoneLink]
 
   return (
     <div className="flex min-h-0 flex-1">
