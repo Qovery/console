@@ -132,7 +132,7 @@ export function CpuChart({
       processMetricsData(
         p50Metrics,
         timeSeriesMap,
-        () => 'cpu-p50',
+        () => 'p50',
         (value) => parseFloat(value) * 1000, // Convert to mCPU
         useLocalTime
       )
@@ -140,7 +140,7 @@ export function CpuChart({
       processMetricsData(
         p90Metrics,
         timeSeriesMap,
-        () => 'cpu-p90',
+        () => 'p90',
         (value) => parseFloat(value) * 1000, // Convert to mCPU
         useLocalTime
       )
@@ -159,7 +159,7 @@ export function CpuChart({
     processMetricsData(
       limitMetrics,
       timeSeriesMap,
-      () => 'cpu-limit',
+      () => 'Limit',
       (value) => parseFloat(value) * 1000, // Convert to mCPU
       useLocalTime
     )
@@ -167,7 +167,7 @@ export function CpuChart({
     processMetricsData(
       requestMetrics,
       timeSeriesMap,
-      () => 'cpu-request',
+      () => 'Request',
       (value) => parseFloat(value) * 1000, // Convert to mCPU
       useLocalTime
     )
@@ -216,26 +216,26 @@ export function CpuChart({
       {useAggregatedMetrics ? (
         <>
           <Line
-            dataKey="cpu-p90"
-            name="cpu-p90"
+            dataKey="p90"
+            name="p90"
             type="linear"
             stroke="var(--color-red-400)"
             strokeWidth={2}
             connectNulls={false}
             dot={false}
             isAnimationActive={false}
-            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('cpu-p90') ? true : false}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p90') ? true : false}
           />
           <Line
-            dataKey="cpu-p50"
-            name="cpu-p50"
+            dataKey="p50"
+            name="p50"
             type="linear"
             stroke="#10B981"
             strokeWidth={2}
             connectNulls={false}
             dot={false}
             isAnimationActive={false}
-            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('cpu-p50') ? true : false}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p50') ? true : false}
           />
         </>
       ) : (
@@ -257,26 +257,26 @@ export function CpuChart({
         </>
       )}
       <Line
-        dataKey="cpu-request"
-        name="cpu-request"
+        dataKey="Request"
+        name="Request"
         type="linear"
         stroke="var(--color-neutral-300)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('cpu-request') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Request') ? true : false}
       />
       <Line
-        dataKey="cpu-limit"
-        name="cpu-limit"
+        dataKey="Limit"
+        name="Limit"
         type="linear"
         stroke="var(--color-red-500)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('cpu-limit') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Limit') ? true : false}
       />
       {!isLoading && chartData.length > 0 && (
         <Chart.Legend
@@ -284,16 +284,16 @@ export function CpuChart({
           className="w-[calc(100%-0.5rem)] pb-1 pt-2"
           onClick={onClick}
           itemSorter={(item) => {
-            if (item.value === 'cpu-p90') {
+            if (item.value === 'p50') {
               return -4
             }
-            if (item.value === 'cpu-p50') {
+            if (item.value === 'p90') {
               return -3
             }
-            if (item.value === 'cpu-limit') {
+            if (item.value === 'Limit') {
               return -2
             }
-            if (item.value === 'cpu-request') {
+            if (item.value === 'Request') {
               return -1
             }
             return 0
@@ -303,18 +303,18 @@ export function CpuChart({
               selectedKeys={legendSelectedKeys}
               formatter={(value) => {
                 if (useAggregatedMetrics) {
-                  if (value === 'cpu-p90') {
-                    return 'CPU p90'
+                  if (value === 'p90') {
+                    return 'p90'
                   }
-                  if (value === 'cpu-p50') {
-                    return 'CPU p50'
+                  if (value === 'p50') {
+                    return 'p50'
                   }
                 }
-                if (value === 'cpu-request') {
-                  return 'CPU Request'
+                if (value === 'Request') {
+                  return 'Request'
                 }
-                if (value === 'cpu-limit') {
-                  return 'CPU Limit'
+                if (value === 'Limit') {
+                  return 'Limit'
                 }
                 return value as string
               }}

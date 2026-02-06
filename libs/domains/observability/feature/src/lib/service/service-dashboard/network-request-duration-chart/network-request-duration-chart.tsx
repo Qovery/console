@@ -147,7 +147,7 @@ export function NetworkRequestDurationChart({
       processMetricsData(
         metricsP99InSeconds,
         timeSeriesMap,
-        () => '99th percentile (nginx)',
+        () => 'p99 (nginx)',
         (value) => parseFloat(value) * 1000, // Convert seconds to ms
         useLocalTime
       )
@@ -157,7 +157,7 @@ export function NetworkRequestDurationChart({
       processMetricsData(
         metricsP95InSeconds,
         timeSeriesMap,
-        () => '95th percentile (nginx)',
+        () => 'p95 (nginx)',
         (value) => parseFloat(value) * 1000, // Convert seconds to ms
         useLocalTime
       )
@@ -167,7 +167,7 @@ export function NetworkRequestDurationChart({
       processMetricsData(
         metricsP50InSeconds,
         timeSeriesMap,
-        () => '50th percentile (nginx)',
+        () => 'p50 (nginx)',
         (value) => parseFloat(value) * 1000, // Convert seconds to ms
         useLocalTime
       )
@@ -178,7 +178,7 @@ export function NetworkRequestDurationChart({
       processMetricsData(
         metricsEnvoyP99InMs,
         timeSeriesMap,
-        () => '99th percentile (envoy)',
+        () => 'p99 (envoy)',
         (value) => parseFloat(value), // Already in ms
         useLocalTime
       )
@@ -188,7 +188,7 @@ export function NetworkRequestDurationChart({
       processMetricsData(
         metricsEnvoyP95InMs,
         timeSeriesMap,
-        () => '95th percentile (envoy)',
+        () => 'p95 (envoy)',
         (value) => parseFloat(value), // Already in ms
         useLocalTime
       )
@@ -198,7 +198,7 @@ export function NetworkRequestDurationChart({
       processMetricsData(
         metricsEnvoyP50InMs,
         timeSeriesMap,
-        () => '50th percentile (envoy)',
+        () => 'p50 (envoy)',
         (value) => parseFloat(value), // Already in ms
         useLocalTime
       )
@@ -251,78 +251,78 @@ export function NetworkRequestDurationChart({
       {/* NGINX: Lines for nginx metrics (to remove when migrating to envoy) */}
       <Line
         key="50th-percentile-nginx"
-        dataKey="50th percentile (nginx)"
-        name="50th percentile (nginx)"
+        dataKey="p50 (nginx)"
+        name="p50 (nginx)"
         type="linear"
         stroke="var(--color-purple-400)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('50th percentile (nginx)')}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p50 (nginx)')}
       />
       <Line
         key="95th-percentile-nginx"
-        dataKey="95th percentile (nginx)"
-        name="95th percentile (nginx)"
+        dataKey="p95 (nginx)"
+        name="p95 (nginx)"
         type="linear"
         stroke="var(--color-brand-400)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('95th percentile (nginx)')}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p95 (nginx)')}
       />
       <Line
         key="99th-percentile-nginx"
-        dataKey="99th percentile (nginx)"
-        name="99th percentile (nginx)"
+        dataKey="p99 (nginx)"
+        name="p99 (nginx)"
         type="linear"
         stroke="var(--color-purple-600)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('99th percentile (nginx)')}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p99 (nginx)')}
       />
       {/* ENVOY: Lines for envoy metrics (only shown if httpRouteName is configured) */}
       {httpRouteName && (
         <>
           <Line
             key="50th-percentile-envoy"
-            dataKey="50th percentile (envoy)"
-            name="50th percentile (envoy)"
+            dataKey="p50 (envoy)"
+            name="p50 (envoy)"
             type="linear"
             stroke="var(--color-green-400)"
             strokeWidth={2}
             dot={false}
             connectNulls={false}
             isAnimationActive={false}
-            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('50th percentile (envoy)')}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p50 (envoy)')}
           />
           <Line
             key="95th-percentile-envoy"
-            dataKey="95th percentile (envoy)"
-            name="95th percentile (envoy)"
+            dataKey="p95 (envoy)"
+            name="p95 (envoy)"
             type="linear"
             stroke="var(--color-sky-400)"
             strokeWidth={2}
             dot={false}
             connectNulls={false}
             isAnimationActive={false}
-            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('95th percentile (envoy)')}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p95 (envoy)')}
           />
           <Line
             key="99th-percentile-envoy"
-            dataKey="99th percentile (envoy)"
-            name="99th percentile (envoy)"
+            dataKey="p99 (envoy)"
+            name="p99 (envoy)"
             type="linear"
             stroke="var(--color-green-600)"
             strokeWidth={2}
             dot={false}
             connectNulls={false}
             isAnimationActive={false}
-            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('99th percentile (envoy)')}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p99 (envoy)')}
           />
         </>
       )}

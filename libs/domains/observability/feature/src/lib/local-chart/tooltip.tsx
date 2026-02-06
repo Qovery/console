@@ -49,15 +49,12 @@ function getBaseNameFromLimitKey(seriesKey: string): string {
 
 // Returns a display name for a metric series key
 function getDisplayName(seriesKey: string): string {
-  if (seriesKey.endsWith('-request-limit')) {
-    const baseName = seriesKey.slice(0, -14) // Remove '-request-limit'
-    return `${baseName === 'cpu' ? 'CPU' : upperCaseFirstLetter(baseName)} Request/Limit`
-  } else if (seriesKey.endsWith('-limit')) {
-    const baseName = getBaseNameFromLimitKey(seriesKey)
-    return `${upperCaseFirstLetter(baseName)} Limit`
-  } else if (seriesKey.endsWith('-request')) {
-    const baseName = getBaseNameFromRequestKey(seriesKey)
-    return `${upperCaseFirstLetter(baseName)} Request`
+  if (seriesKey === 'Request-Limit' || seriesKey.endsWith('-request-limit')) {
+    return 'Request/Limit'
+  } else if (seriesKey === 'Limit' || seriesKey.endsWith('-limit')) {
+    return 'Limit'
+  } else if (seriesKey === 'Request' || seriesKey.endsWith('-request')) {
+    return 'Request'
   } else if (seriesKey.endsWith('-storage')) {
     return `${upperCaseFirstLetter(seriesKey)}`.replace(/-/g, ' ')
   }
@@ -75,8 +72,9 @@ function groupEntriesByType(payload: TooltipEntry[]): Map<string, GroupedEntry> 
   const groupedEntries = new Map<string, GroupedEntry>()
   payload.forEach((entry) => {
     const seriesKey = entry.dataKey
-    if (seriesKey.endsWith('-request')) {
-      const baseName = getBaseNameFromRequestKey(seriesKey)
+    // Handle both new format (Request/Limit) and old format (cpu-request/memory-limit)
+    if (seriesKey === 'Request' || seriesKey.endsWith('-request')) {
+      const baseName = seriesKey === 'Request' ? 'default' : getBaseNameFromRequestKey(seriesKey)
       if (!groupedEntries.has(baseName)) {
         groupedEntries.set(baseName, { request: undefined, limit: undefined, others: [] })
       }
@@ -84,8 +82,8 @@ function groupEntriesByType(payload: TooltipEntry[]): Map<string, GroupedEntry> 
       if (groupEntry) {
         groupEntry.request = entry
       }
-    } else if (seriesKey.endsWith('-limit')) {
-      const baseName = getBaseNameFromLimitKey(seriesKey)
+    } else if (seriesKey === 'Limit' || seriesKey.endsWith('-limit')) {
+      const baseName = seriesKey === 'Limit' ? 'default' : getBaseNameFromLimitKey(seriesKey)
       if (!groupedEntries.has(baseName)) {
         groupedEntries.set(baseName, { request: undefined, limit: undefined, others: [] })
       }
@@ -125,9 +123,10 @@ function processGroupedEntries(groupedEntries: Map<string, GroupedEntry>): Toolt
         const limitValue = parseFloat(limit.value?.toString() || '0')
         if (!isNaN(requestValue) && !isNaN(limitValue) && requestValue === limitValue) {
           // Same values - show combined entry
+          const combinedDataKey = baseName === 'default' ? 'Request-Limit' : `${baseName}-request-limit`
           const combinedEntry: TooltipEntry = {
             ...request,
-            dataKey: `${baseName}-request-limit`,
+            dataKey: combinedDataKey,
             color: limit.color, // Use limit color
           }
           processedEntries.push(combinedEntry)

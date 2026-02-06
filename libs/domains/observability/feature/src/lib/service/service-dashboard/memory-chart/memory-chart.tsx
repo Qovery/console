@@ -124,7 +124,7 @@ export function MemoryChart({
       processMetricsData(
         p50Metrics,
         timeSeriesMap,
-        () => 'memory-p50',
+        () => 'p50',
         (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
         useLocalTime
       )
@@ -132,7 +132,7 @@ export function MemoryChart({
       processMetricsData(
         p90Metrics,
         timeSeriesMap,
-        () => 'memory-p90',
+        () => 'p90',
         (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
         useLocalTime
       )
@@ -151,7 +151,7 @@ export function MemoryChart({
     processMetricsData(
       metricsLimit,
       timeSeriesMap,
-      () => 'memory-limit',
+      () => 'Limit',
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
       useLocalTime
     )
@@ -159,7 +159,7 @@ export function MemoryChart({
     processMetricsData(
       metricsRequest,
       timeSeriesMap,
-      () => 'memory-request',
+      () => 'Request',
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
       useLocalTime
     )
@@ -211,26 +211,26 @@ export function MemoryChart({
       {useAggregatedMetrics ? (
         <>
           <Line
-            dataKey="memory-p90"
-            name="memory-p90"
+            dataKey="p90"
+            name="p90"
             type="linear"
             stroke="var(--color-red-400)"
             strokeWidth={2}
             connectNulls={false}
             dot={false}
             isAnimationActive={false}
-            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-p90') ? true : false}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p90') ? true : false}
           />
           <Line
-            dataKey="memory-p50"
-            name="memory-p50"
+            dataKey="p50"
+            name="p50"
             type="linear"
             stroke="#10B981"
             strokeWidth={2}
             connectNulls={false}
             dot={false}
             isAnimationActive={false}
-            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-p50') ? true : false}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p50') ? true : false}
           />
         </>
       ) : (
@@ -252,42 +252,42 @@ export function MemoryChart({
         </>
       )}
       <Line
-        dataKey="memory-request"
-        name="memory-request"
+        dataKey="Request"
+        name="Request"
         type="linear"
         stroke="var(--color-neutral-300)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-request') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Request') ? true : false}
       />
       <Line
-        dataKey="memory-limit"
-        name="memory-limit"
+        dataKey="Limit"
+        name="Limit"
         type="linear"
         stroke="var(--color-red-500)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-limit') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Limit') ? true : false}
       />
       {!isLoading && chartData.length > 0 && (
         <Chart.Legend
           className="w-[calc(100%-0.5rem)] pb-1 pt-2"
           onClick={onClick}
           itemSorter={(item) => {
-            if (item.value === 'memory-p90') {
+            if (item.value === 'p50') {
               return -4
             }
-            if (item.value === 'memory-p50') {
+            if (item.value === 'p90') {
               return -3
             }
-            if (item.value === 'memory-limit') {
+            if (item.value === 'Limit') {
               return -2
             }
-            if (item.value === 'memory-request') {
+            if (item.value === 'Request') {
               return -1
             }
             return 0
@@ -298,18 +298,18 @@ export function MemoryChart({
               selectedKeys={legendSelectedKeys}
               formatter={(value) => {
                 if (useAggregatedMetrics) {
-                  if (value === 'memory-p90') {
-                    return 'Memory p90'
+                  if (value === 'p90') {
+                    return 'p90'
                   }
-                  if (value === 'memory-p50') {
-                    return 'Memory p50'
+                  if (value === 'p50') {
+                    return 'p50'
                   }
                 }
-                if (value === 'memory-request') {
-                  return 'Memory Request'
+                if (value === 'Request') {
+                  return 'Request'
                 }
-                if (value === 'memory-limit') {
-                  return 'Memory Limit'
+                if (value === 'Limit') {
+                  return 'Limit'
                 }
                 return value as string
               }}
