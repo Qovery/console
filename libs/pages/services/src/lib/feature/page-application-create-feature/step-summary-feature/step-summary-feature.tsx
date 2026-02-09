@@ -41,7 +41,7 @@ function prepareVariableImportRequest(variables: VariableData[]): VariableImport
           .with(P.nullish, () => undefined)
           .otherwise((scope) => ({ name, scope, value, is_secret }))
       )
-      .filter((i): i is NonNullable<typeof i> => !!i),
+      .filter((i) => !!i),
   }
 }
 
