@@ -8,18 +8,26 @@ import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
+// NGINX: Query for nginx metrics (to remove when migrating to envoy)
 const query = (ingressName: string) => `
    sum by(path,status)(nginx:req_rate:5m_by_path_status{ingress="${ingressName}"}) > 0
+`
+
+// ENVOY: Query for envoy metrics
+const queryEnvoy = (httpRouteName: string) => `
+   sum by(envoy_response_code)(envoy_proxy:req_rate:5m_by_status{httproute_name="${httpRouteName}"}) > 0
 `
 
 export function NetworkRequestStatusChart({
   clusterId,
   serviceId,
   ingressName,
+  httpRouteName,
 }: {
   clusterId: string
   serviceId: string
   ingressName: string
+  httpRouteName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
 
@@ -41,6 +49,7 @@ export function NetworkRequestStatusChart({
     setLegendSelectedKeys(new Set())
   }
 
+  // NGINX: Fetch nginx metrics (to remove when migrating to envoy)
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
     startTimestamp,
@@ -51,8 +60,21 @@ export function NetworkRequestStatusChart({
     metricShortName: 'network_req_status',
   })
 
+  // ENVOY: Fetch envoy metrics (only if httpRouteName is configured)
+  const { data: metricsEnvoy, isLoading: isLoadingMetricsEnvoy } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    timeRange,
+    query: queryEnvoy(httpRouteName),
+    boardShortName: 'service_overview',
+    metricShortName: 'envoy_req_status',
+    enabled: !!httpRouteName,
+  })
+
   const chartData = useMemo(() => {
-    if (!metrics?.data?.result) {
+    // Check if we have data from either source
+    if (!metrics?.data?.result && !metricsEnvoy?.data?.result) {
       return []
     }
 
@@ -61,31 +83,66 @@ export function NetworkRequestStatusChart({
       { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
     >()
 
-    // Process network request metrics
-    processMetricsData(
-      metrics,
-      timeSeriesMap,
-      (_, index) => JSON.stringify(metrics.data.result[index].metric),
-      (value) => parseFloat(value),
-      useLocalTime
-    )
+    // NGINX: Process nginx metrics (to remove when migrating to envoy)
+    if (metrics?.data?.result) {
+      processMetricsData(
+        metrics,
+        timeSeriesMap,
+        (_, index) => JSON.stringify({ ...metrics.data.result[index].metric, source: 'nginx' }),
+        (value) => parseFloat(value),
+        useLocalTime
+      )
+    }
+
+    // ENVOY: Process envoy metrics
+    if (metricsEnvoy?.data?.result) {
+      processMetricsData(
+        metricsEnvoy,
+        timeSeriesMap,
+        (_, index) => JSON.stringify({ ...metricsEnvoy.data.result[index].metric, source: 'envoy' }),
+        (value) => parseFloat(value),
+        useLocalTime
+      )
+    }
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [metrics, useLocalTime, startTimestamp, endTimestamp])
+  }, [metrics, metricsEnvoy, useLocalTime, startTimestamp, endTimestamp])
 
   const seriesNames = useMemo(() => {
-    if (!metrics?.data?.result) return []
-    return metrics.data.result.map((_: unknown, index: number) =>
-      JSON.stringify(metrics.data.result[index].metric)
-    ) as string[]
-  }, [metrics])
+    const names: string[] = []
+
+    // NGINX: Extract nginx series names (to remove when migrating to envoy)
+    if (metrics?.data?.result) {
+      names.push(
+        ...metrics.data.result.map((_: unknown, index: number) =>
+          JSON.stringify({ ...metrics.data.result[index].metric, source: 'nginx' })
+        )
+      )
+    }
+
+    // ENVOY: Extract envoy series names
+    if (metricsEnvoy?.data?.result) {
+      names.push(
+        ...metricsEnvoy.data.result
+          .filter((result: any) => {
+            const code = result.metric?.envoy_response_code
+            return code !== 'undefined' && code !== undefined && code !== ''
+          })
+          .map((result: any) => JSON.stringify({ ...result.metric, source: 'envoy' }))
+      )
+    }
+
+    return names
+  }, [metrics, metricsEnvoy])
+
+  const isLoading = useMemo(() => isLoadingMetrics || isLoadingMetricsEnvoy, [isLoadingMetrics, isLoadingMetricsEnvoy])
 
   return (
     <LocalChart
       data={chartData}
-      isLoading={isLoadingMetrics}
+      isLoading={isLoading}
       isEmpty={chartData.length === 0}
       label="Network request status (req/s)"
       description="Sudden drops or spikes may signal service instability"
@@ -97,30 +154,38 @@ export function NetworkRequestStatusChart({
         <Line
           key={name}
           dataKey={name}
+          name={name}
           type="linear"
           stroke={getColorByPod(name)}
           strokeWidth={2}
           dot={false}
           connectNulls={false}
           isAnimationActive={false}
-          hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? true : false}
+          hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name)}
         />
       ))}
-      {!isLoadingMetrics && chartData.length > 0 && (
+      {!isLoading && chartData.length > 0 && (
         <Chart.Legend
           name="network-request-status"
           className="w-[calc(100%-0.5rem)] pb-1 pt-2"
           onClick={onClick}
-          content={(props) => (
-            <Chart.LegendContent
-              selectedKeys={legendSelectedKeys}
-              formatter={(value: string) => {
-                const { path, status } = JSON.parse(value)
-                return `path: "${path}" status: "${status}"`
-              }}
-              {...props}
-            />
-          )}
+          content={(props) => {
+            // Group series by source
+            const formatter = (value: string) => {
+              const metric = JSON.parse(value)
+              const { source } = metric
+
+              if (source === 'nginx') {
+                const { path, status } = metric
+                return `path: "${path}" status: "${status}" (nginx)`
+              } else {
+                const { envoy_response_code } = metric
+                return `status: "${envoy_response_code}" (envoy)`
+              }
+            }
+
+            return <Chart.LegendContent selectedKeys={legendSelectedKeys} formatter={formatter} {...props} />
+          }}
         />
       )}
     </LocalChart>

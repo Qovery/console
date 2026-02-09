@@ -218,12 +218,14 @@ export const ChartLegendContent = ({
     style.id = styleId
 
     if (key) {
+      // Escape special characters in the key for CSS selector
+      const escapedKey = CSS.escape(key)
       // When highlighting, make non-highlighted paths semi-transparent
       style.textContent = `
-        path[name]:not([name="${key}"]) {
+        path[name]:not([name="${escapedKey}"]) {
           opacity: 0.15 !important;
         }
-        path[name="${key}"] {
+        path[name="${escapedKey}"] {
           opacity: 1 !important;
         }
       `

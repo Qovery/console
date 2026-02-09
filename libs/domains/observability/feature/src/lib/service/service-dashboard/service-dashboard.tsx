@@ -7,6 +7,7 @@ import { useService } from '@qovery/domains/services/feature'
 import { Button, Callout, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useContainerName } from '../../hooks/use-container-name/use-container-name'
 import { useEnvironment } from '../../hooks/use-environment/use-environment'
+import useHttpRouteName from '../../hooks/use-http-route-name/use-http-route-name'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
 import { useNamespace } from '../../hooks/use-namespace/use-namespace'
 import { usePodNames } from '../../hooks/use-pod-names/use-pod-names'
@@ -98,6 +99,14 @@ function ServiceDashboardContent() {
   })
 
   const { data: ingressName = '' } = useIngressName({
+    clusterId: environment?.cluster_id ?? '',
+    serviceId: serviceId,
+    enabled: hasPublicPort,
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+  })
+
+  const { data: httpRouteName = '' } = useHttpRouteName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: serviceId,
     enabled: hasPublicPort,
@@ -231,6 +240,7 @@ function ServiceDashboardContent() {
                   serviceId={serviceId}
                   containerName={containerName}
                   ingressName={ingressName}
+                  httpRouteName={httpRouteName}
                 />
               )}
               {hasOnlyPrivatePorts && (
@@ -242,7 +252,12 @@ function ServiceDashboardContent() {
               )}
               {hasStorage && <CardStorage clusterId={environment.cluster_id} serviceId={serviceId} />}
               {hasPublicPort && (
-                <CardPercentile99 clusterId={environment.cluster_id} serviceId={serviceId} ingressName={ingressName} />
+                <CardPercentile99
+                  clusterId={environment.cluster_id}
+                  serviceId={serviceId}
+                  ingressName={ingressName}
+                  httpRouteName={httpRouteName}
+                />
               )}
               {hasOnlyPrivatePorts && (
                 <CardPrivatePercentile99
@@ -294,6 +309,7 @@ function ServiceDashboardContent() {
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
                   ingressName={ingressName}
+                  httpRouteName={httpRouteName}
                 />
               </div>
               <div className="overflow-hidden rounded border border-neutral-250">
@@ -301,6 +317,7 @@ function ServiceDashboardContent() {
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
                   ingressName={ingressName}
+                  httpRouteName={httpRouteName}
                 />
               </div>
               <div className="overflow-hidden rounded border border-neutral-250">
@@ -308,6 +325,7 @@ function ServiceDashboardContent() {
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
                   ingressName={ingressName}
+                  httpRouteName={httpRouteName}
                 />
               </div>
             </div>

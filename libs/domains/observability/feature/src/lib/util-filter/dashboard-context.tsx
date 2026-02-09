@@ -163,11 +163,14 @@ export function DashboardProvider({ children }: PropsWithChildren) {
   const startTimestamp = startDate && convertDatetoTimestamp(startDate).toString()
   const endTimestamp = endDate && convertDatetoTimestamp(endDate).toString()
 
-  // Calculate the effective duration for Prometheus queries (accounts for zoom)
-  const queryTimeRange =
-    isAnyChartZoomed && startTimestamp && endTimestamp
-      ? `${Math.floor((parseInt(endTimestamp) - parseInt(startTimestamp)) / 60)}m`
-      : timeRange
+  // Calculate the effective duration for Prometheus queries (accounts for zoom and custom ranges)
+  const queryTimeRange = useMemo(() => {
+    // For custom time range or zoomed charts, calculate duration from timestamps
+    if ((timeRange === 'custom' || isAnyChartZoomed) && startTimestamp && endTimestamp) {
+      return `${Math.floor((parseInt(endTimestamp) - parseInt(startTimestamp)) / 60)}m`
+    }
+    return timeRange
+  }, [timeRange, isAnyChartZoomed, startTimestamp, endTimestamp])
 
   // Calculate the average over queryTimeRange with a sub-sampling every 5m or 1m
   const THREE_DAYS_IN_SECONDS = 3 * 24 * 60 * 60
