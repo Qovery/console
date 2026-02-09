@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import {
   type RowSelectionState,
   type SortingState,
@@ -12,7 +13,6 @@ import {
 } from '@tanstack/react-table'
 import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
 import { Fragment, useContext, useMemo, useState } from 'react'
-import { NavLink } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ExternalServiceEnum, IconEnum } from '@qovery/shared/enums'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
@@ -95,9 +95,13 @@ export function VariableList({
   const { showAllVariablesValues } = useContext(VariablesContext)
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const [builtInSorting, setBuiltInSorting] = useState<SortingState>([])
 
   const { mutateAsync: deleteVariable } = useDeleteVariable()
   const [globalFilter, setGlobalFilter] = useState('')
+  const [builtInGlobalFilter, setBuiltInGlobalFilter] = useState('')
+  const nonBuiltInVariables = useMemo(() => variables.filter((variable) => variable.scope !== 'BUILT_IN'), [variables])
+  const builtInVariables = useMemo(() => variables.filter((variable) => variable.scope === 'BUILT_IN'), [variables])
 
   const _onCreateVariable: (
     variable: VariableResponse,
@@ -150,6 +154,12 @@ export function VariableList({
     })
   }
   const showServiceLinkColumn = 'organizationId' in props
+  const gridLayoutClassName = showServiceLinkColumn
+    ? 'grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]'
+    : 'grid w-full grid-cols-[32px_minmax(0,45%)_50px_minmax(0,25%)_minmax(0,15%)_minmax(0,12%)]'
+  const builtInGridLayoutClassName = showServiceLinkColumn
+    ? 'grid w-full grid-cols-[minmax(0,calc(40%_+_20px))_50px_minmax(0,calc(20%_+_10%))_minmax(0,15%)_minmax(0,12%)]'
+    : 'grid w-full grid-cols-[minmax(0,calc(45%_+_20px))_50px_minmax(0,calc(25%_+_15%))_minmax(0,12%)]'
 
   const columnHelper = createColumnHelper<(typeof variables)[number]>()
   const columns = useMemo(
@@ -159,8 +169,7 @@ export function VariableList({
         enableColumnFilter: false,
         enableSorting: false,
         header: ({ table }) => (
-          <div className="h-5">
-            {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
+          <div className="flex h-5 items-center">
             <Checkbox
               checked={
                 table.getIsSomeRowsSelected()
@@ -196,10 +205,11 @@ export function VariableList({
       columnHelper.accessor('key', {
         id: 'key',
         header: ({ table }) => {
-          const isSearching = table.getRowCount() !== variables.length
+          const totalRows = table.getPreFilteredRowModel().rows.length
+          const isSearching = table.getRowCount() !== totalRows
           return isSearching
-            ? `${table.getRowCount()}/${variables.length} ${pluralize(table.getRowCount(), 'variable')}`
-            : `${variables.length} ${pluralize(variables.length, 'variable')}`
+            ? `${table.getRowCount()}/${totalRows} ${pluralize(table.getRowCount(), 'variable')}`
+            : `${totalRows} ${pluralize(totalRows, 'variable')}`
         },
         enableColumnFilter: false,
         size: showServiceLinkColumn ? 40 : 45,
@@ -398,7 +408,7 @@ export function VariableList({
             cell: (info) => {
               const variable = info.row.original
               return variable.service_name && variable.service_type && variable.service_id ? (
-                <NavLink
+                <Link
                   className="flex items-center gap-2 text-sm font-medium"
                   to={
                     variable.service_type !== 'DATABASE'
@@ -412,7 +422,7 @@ export function VariableList({
                     <Icon name={variable.service_type?.toString() || ''} className="w-4" />
                   )}
                   {variable.service_name}
-                </NavLink>
+                </Link>
               ) : null
             },
           }),
@@ -460,11 +470,34 @@ export function VariableList({
     ],
     [variables.length, _onCreateVariable, _onEditVariable, props.scope]
   )
+  const scopeSize = showServiceLinkColumn ? 10 : 15
+  const builtInColumns = useMemo(
+    () =>
+      columns
+        .filter((column) => {
+          const id = (column as { id?: string }).id
+          const accessorKey = (column as { accessorKey?: string }).accessorKey
+          if (id === 'select') return false
+          if (id === 'scope' || accessorKey === 'scope') return false
+          return true
+        })
+        .map((column) => {
+          const accessorKey = (column as { accessorKey?: string }).accessorKey
+          if (accessorKey === 'variable_kind') {
+            const size = (column as { size?: number }).size
+            if (typeof size === 'number') {
+              return { ...column, size: size + scopeSize }
+            }
+          }
+          return column
+        }),
+    [columns, scopeSize]
+  )
 
   const aliases = useMemo(() => variables.filter((sorted) => sorted.aliased_variable), [variables])
 
   const table = useReactTable({
-    data: variables,
+    data: nonBuiltInVariables,
     columns,
     state: {
       sorting,
@@ -501,6 +534,39 @@ export function VariableList({
     },
   })
 
+  const builtInTable = useReactTable({
+    data: builtInVariables,
+    columns: builtInColumns,
+    state: {
+      sorting: builtInSorting,
+      globalFilter: builtInGlobalFilter,
+    },
+    onSortingChange: setBuiltInSorting,
+    onGlobalFilterChange: setBuiltInGlobalFilter,
+    enableRowSelection: (row) => row.original.scope !== 'BUILT_IN',
+    globalFilterFn: (row, _, value) => {
+      const pattern = value?.toLowerCase?.()
+
+      const aliasedVariable = aliases.find(({ aliased_variable }) => row.original.key === aliased_variable?.key)
+
+      if (aliasedVariable && aliasedVariable.key.toLocaleLowerCase().includes(pattern)) {
+        return true
+      }
+
+      return row.original.key?.toLowerCase?.().includes?.(pattern)
+    },
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    defaultColumn: {
+      minSize: 0,
+      size: Number.MAX_SAFE_INTEGER,
+      maxSize: Number.MAX_SAFE_INTEGER,
+    },
+  })
+
   if (variables.length === 0 && isVariablesLoading) {
     return <VariableListSkeleton />
   }
@@ -515,72 +581,94 @@ export function VariableList({
     )
   }
 
+  const renderTable = (
+    tableInstance: typeof table,
+    filterValue: string,
+    setFilterValue: (value: string) => void,
+    rowGridClassName: string
+  ) => {
+    return (
+      <div className="flex grow flex-col justify-between">
+        <Table.Root className={twMerge('w-full min-w-[800px] text-xs', className)}>
+          <Table.Header>
+            {tableInstance.getHeaderGroups().map((headerGroup) => (
+              <Table.Row key={headerGroup.id} className={twMerge('w-full items-center text-xs', rowGridClassName)}>
+                {headerGroup.headers.map((header) => (
+                  <Table.ColumnHeaderCell
+                    className={`${header.column.id === 'actions' ? 'border-r border-neutral pl-0' : ''} relative flex items-center font-medium`}
+                    key={header.id}
+                  >
+                    {header.column.getCanFilter() ? (
+                      <TableFilter column={header.column} />
+                    ) : header.column.getCanSort() ? (
+                      <button
+                        type="button"
+                        className={twMerge(
+                          'flex items-center gap-1',
+                          header.column.getCanSort() ? 'cursor-pointer select-none' : ''
+                        )}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {match(header.column.getIsSorted())
+                          .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
+                          .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
+                          .with(false, () => null)
+                          .exhaustive()}
+                      </button>
+                    ) : (
+                      flexRender(header.column.columnDef.header, header.getContext())
+                    )}
+                    {header.column.id === 'key' && (
+                      <span className="absolute -right-9 top-[7px]">
+                        <TableFilterSearch
+                          value={filterValue ?? ''}
+                          onChange={(event) => setFilterValue(event.target.value)}
+                        />
+                      </span>
+                    )}
+                  </Table.ColumnHeaderCell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table.Header>
+          <Table.Body>
+            {tableInstance.getRowModel().rows.map((row) => (
+              <Fragment key={row.id}>
+                <Table.Row className={twMerge('h-16 items-center hover:bg-surface-neutral-subtle', rowGridClassName)}>
+                  {row.getVisibleCells().map((cell) => (
+                    <Table.Cell
+                      key={cell.id}
+                      className={`${cell.column.id === 'actions' ? 'border-r border-neutral pl-0' : ''} flex h-full items-center first:relative`}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </Table.Cell>
+                  ))}
+                </Table.Row>
+              </Fragment>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </div>
+    )
+  }
+
   const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
 
   return (
-    <div className="flex grow flex-col justify-between">
-      <Table.Root className={twMerge('w-full min-w-[800px] table-fixed text-xs', className)}>
-        <Table.Header>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <Table.Row key={headerGroup.id}>
-              {headerGroup.headers.map((header, i) => (
-                <Table.ColumnHeaderCell
-                  className={`${i === 2 ? 'border-r border-neutral pl-0' : ''} relative font-medium`}
-                  key={header.id}
-                  style={{ width: i === 0 ? '20px' : i === 2 ? '50px' : `${header.getSize()}%` }}
-                >
-                  {header.column.getCanFilter() ? (
-                    <TableFilter column={header.column} />
-                  ) : header.column.getCanSort() ? (
-                    <button
-                      type="button"
-                      className={twMerge(
-                        'flex items-center gap-1',
-                        header.column.getCanSort() ? 'cursor-pointer select-none' : ''
-                      )}
-                      onClick={header.column.getToggleSortingHandler()}
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                      {match(header.column.getIsSorted())
-                        .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
-                        .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
-                        .with(false, () => null)
-                        .exhaustive()}
-                    </button>
-                  ) : (
-                    flexRender(header.column.columnDef.header, header.getContext())
-                  )}
-                  {i === 1 && (
-                    <span className="absolute -right-9 top-[7px]">
-                      <TableFilterSearch
-                        value={globalFilter ?? ''}
-                        onChange={(event) => setGlobalFilter(event.target.value)}
-                      />
-                    </span>
-                  )}
-                </Table.ColumnHeaderCell>
-              ))}
-            </Table.Row>
-          ))}
-        </Table.Header>
-        <Table.Body>
-          {table.getRowModel().rows.map((row) => (
-            <Fragment key={row.id}>
-              <Table.Row className="h-16 hover:bg-surface-neutral-subtle">
-                {row.getVisibleCells().map((cell, i) => (
-                  <Table.Cell
-                    key={cell.id}
-                    className={`${i === 2 ? 'border-r border-neutral pl-0' : ''} first:relative`}
-                    style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Table.Cell>
-                ))}
-              </Table.Row>
-            </Fragment>
-          ))}
-        </Table.Body>
-      </Table.Root>
+    <div className="flex min-h-0 flex-col gap-8">
+      {nonBuiltInVariables.length > 0 && (
+        <section className="flex min-h-0 flex-col gap-4">
+          <h3 className="text-base font-medium text-neutral">Environment variables</h3>
+          {renderTable(table, globalFilter, setGlobalFilter, gridLayoutClassName)}
+        </section>
+      )}
+      {builtInVariables.length > 0 && (
+        <section className="flex min-h-0 flex-col gap-4">
+          <h3 className="text-base font-medium text-neutral">Built-in variables</h3>
+          {renderTable(builtInTable, builtInGlobalFilter, setBuiltInGlobalFilter, builtInGridLayoutClassName)}
+        </section>
+      )}
       <VariableListActionBar selectedRows={selectedRows} resetRowSelection={() => table.resetRowSelection()} />
     </div>
   )
