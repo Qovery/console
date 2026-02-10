@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '@tanstack/react-router'
 import { mutations } from '@qovery/domains/services/data-access'
 import {
   APPLICATION_DEPLOYMENTS_URL,
@@ -40,7 +40,9 @@ export function useRestartService({
           'Your service is queuing',
           undefined,
           () =>
-            navigate(APPLICATION_URL(organizationId, projectId, environmentId, data.id) + APPLICATION_DEPLOYMENTS_URL),
+            navigate({
+              to: APPLICATION_URL(organizationId, projectId, environmentId, data.id) + APPLICATION_DEPLOYMENTS_URL,
+            }),
           undefined,
           'See deployment queue'
         )
@@ -51,7 +53,10 @@ export function useRestartService({
           'SUCCESS',
           'Your service is restarting',
           undefined,
-          () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL()),
+          () =>
+            navigate({
+              to: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL(),
+            }),
           undefined,
           'See deployment logs'
         )

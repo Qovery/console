@@ -15,6 +15,9 @@ export function useDeleteEnvironment({ projectId, logsLink }: { projectId: strin
       queryClient.invalidateQueries({
         queryKey: queries.environments.list({ projectId }).queryKey,
       })
+      queryClient.invalidateQueries({
+        queryKey: queries.projects.environmentsOverview({ projectId }).queryKey,
+      })
     },
     meta: {
       notifyOnSuccess: {
