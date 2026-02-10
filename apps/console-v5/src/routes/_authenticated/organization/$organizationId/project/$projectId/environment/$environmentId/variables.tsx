@@ -2,9 +2,23 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { useDeployEnvironment, useEnvironment } from '@qovery/domains/environments/feature'
-import { CreateUpdateVariableModal, VariableList } from '@qovery/domains/variables/feature'
+import {
+  CreateUpdateVariableModal,
+  ImportEnvironmentVariableModalFeature,
+  VariableList,
+} from '@qovery/domains/variables/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
-import { Button, DropdownMenu, Heading, Icon, LoaderSpinner, Section, toast, useModal } from '@qovery/shared/ui'
+import {
+  Button,
+  DropdownMenu,
+  Heading,
+  Icon,
+  LoaderSpinner,
+  Section,
+  Tooltip,
+  toast,
+  useModal,
+} from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -47,6 +61,22 @@ function RouteComponent() {
       },
     })
 
+  const onImportEnvFile = () => {
+    openModal({
+      content: (
+        <ImportEnvironmentVariableModalFeature
+          scope="ENVIRONMENT"
+          projectId={projectId}
+          environmentId={environmentId}
+          closeModal={closeModal}
+        />
+      ),
+      options: {
+        width: 750,
+      },
+    })
+  }
+
   return (
     <Suspense
       fallback={
@@ -59,7 +89,7 @@ function RouteComponent() {
         <Section className="min-h-0 flex-1 gap-8">
           <div className="flex shrink-0 flex-col gap-6">
             <div className="flex justify-between">
-              <Heading>Variables</Heading>
+              <Heading>Environment variables</Heading>
               <div className="flex gap-3">
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
@@ -69,14 +99,23 @@ function RouteComponent() {
                     </Button>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content>
-                    <DropdownMenu.Item onSelect={() => onCreateVariable()} icon={<Icon iconName="key" />}>
-                      Variable
+                    <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="file-import" />}>
+                      Import from .env file
                     </DropdownMenu.Item>
-                    <DropdownMenu.Item
-                      onSelect={() => onCreateVariable(true)}
-                      icon={<Icon iconName="file-lines" iconStyle="regular" />}
-                    >
-                      Variable as file
+                    <DropdownMenu.Item asChild icon={<Icon iconName="circle-info" iconStyle="regular" />}>
+                      <a href="https://dashboard.doppler.com" target="_blank" rel="noopener noreferrer">
+                        Import from Doppler
+                        <Tooltip content="Documentation">
+                          <a
+                            className="ml-auto text-sm"
+                            href="https://www.qovery.com/docs/configuration/integrations/secret-managers/doppler#doppler"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+                          </a>
+                        </Tooltip>
+                      </a>
                     </DropdownMenu.Item>
                   </DropdownMenu.Content>
                 </DropdownMenu.Root>

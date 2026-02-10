@@ -153,13 +153,18 @@ export function VariableList({
       },
     })
   }
-  const showServiceLinkColumn = 'organizationId' in props
-  const gridLayoutClassName = showServiceLinkColumn
-    ? 'grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]'
-    : 'grid w-full grid-cols-[32px_minmax(0,45%)_50px_minmax(0,25%)_minmax(0,15%)_minmax(0,12%)]'
-  const builtInGridLayoutClassName = showServiceLinkColumn
-    ? 'grid w-full grid-cols-[minmax(0,calc(40%_+_20px))_50px_minmax(0,calc(20%_+_10%))_minmax(0,15%)_minmax(0,12%)]'
-    : 'grid w-full grid-cols-[minmax(0,calc(45%_+_20px))_50px_minmax(0,calc(25%_+_15%))_minmax(0,12%)]'
+  const isEnvironmentScope = props.scope === 'ENVIRONMENT'
+  const showServiceLinkColumn = props.scope !== 'PROJECT'
+  const gridLayoutClassName =
+    props.scope === 'PROJECT'
+      ? 'grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0%,40%)_minmax(0,12%)]'
+      : isEnvironmentScope
+        ? 'grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)]'
+        : 'grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]'
+  const builtInGridLayoutClassName =
+    props.scope === 'PROJECT'
+      ? 'grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_50px_minmax(0,40%)_minmax(0,12%)]'
+      : 'grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_50px_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)]'
 
   const columnHelper = createColumnHelper<(typeof variables)[number]>()
   const columns = useMemo(
@@ -470,6 +475,20 @@ export function VariableList({
     ],
     [variables.length, _onCreateVariable, _onEditVariable, props.scope]
   )
+  const nonBuiltInColumns = useMemo(() => {
+    if (!isEnvironmentScope && props.scope !== 'PROJECT') {
+      return columns
+    }
+    return columns.filter((column) => {
+      const id = (column as { id?: string }).id
+      const accessorKey = (column as { accessorKey?: string }).accessorKey
+      if (props.scope === 'PROJECT') {
+        return id !== 'scope' && accessorKey !== 'scope'
+      }
+      return id !== 'service_name' && accessorKey !== 'service_name'
+    })
+  }, [columns, isEnvironmentScope, props.scope])
+
   const scopeSize = showServiceLinkColumn ? 10 : 15
   const builtInColumns = useMemo(
     () =>
@@ -498,7 +517,7 @@ export function VariableList({
 
   const table = useReactTable({
     data: nonBuiltInVariables,
-    columns,
+    columns: nonBuiltInColumns,
     state: {
       sorting,
       rowSelection,
@@ -595,7 +614,7 @@ export function VariableList({
               <Table.Row key={headerGroup.id} className={twMerge('w-full items-center text-xs', rowGridClassName)}>
                 {headerGroup.headers.map((header) => (
                   <Table.ColumnHeaderCell
-                    className={`${header.column.id === 'actions' ? 'border-r border-neutral pl-0' : ''} relative flex items-center font-medium`}
+                    className={`${header.column.id === 'actions' ? 'border-r border-neutral pl-0' : ''} group relative flex items-center font-medium`}
                     key={header.id}
                   >
                     {header.column.getCanFilter() ? (
@@ -613,7 +632,12 @@ export function VariableList({
                         {match(header.column.getIsSorted())
                           .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
                           .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
-                          .with(false, () => null)
+                          .with(false, () => (
+                            <Icon
+                              className="text-xs opacity-0 transition-opacity group-hover:opacity-100"
+                              iconName="arrow-down-arrow-up"
+                            />
+                          ))
                           .exhaustive()}
                       </button>
                     ) : (
@@ -659,7 +683,7 @@ export function VariableList({
     <div className="flex min-h-0 flex-col gap-8">
       {nonBuiltInVariables.length > 0 && (
         <section className="flex min-h-0 flex-col gap-4">
-          <h3 className="text-base font-medium text-neutral">Environment variables</h3>
+          <h3 className="text-base font-medium text-neutral">Custom variables</h3>
           {renderTable(table, globalFilter, setGlobalFilter, gridLayoutClassName)}
         </section>
       )}
