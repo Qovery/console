@@ -728,10 +728,10 @@ function MenuOtherActions({
       description: 'Choose how to remove this service',
       entities: [
         <div className="flex items-center gap-2" key={`service-avatar-${service.id}`}>
-          <div className="flex h-5 w-5 items-center justify-center rounded-full border border-neutral-200">
+          <div className="flex h-5 w-5 items-center justify-center rounded-full border border-neutral">
             <ServiceAvatar service={service} size="xs" />
           </div>
-          <span className="text-sm font-medium text-neutral-400">{service.name}</span>
+          <span className="text-sm font-medium text-neutral">{service.name}</span>
         </div>,
       ],
       actions: [
@@ -739,20 +739,20 @@ function MenuOtherActions({
           id: 'uninstall',
           title: 'Uninstall',
           description: (
-            <div className="flex flex-col gap-2 text-neutral-350">
+            <div className="flex flex-col gap-2 text-neutral-subtle">
               <span>
                 Stop and remove the service but keep all Qovery configuration, data and settings.
                 <br />
                 You can easily reinstall or redeploy later with the same configuration.
               </span>
               <div>
-                <span className="font-medium text-neutral-400">What's deleted:</span>
+                <span className="font-medium text-neutral-subtle">What's deleted:</span>
                 <ul className="list-disc pl-4">
                   <li>All service data</li>
                 </ul>
               </div>
               <div>
-                <span className="font-medium text-neutral-400">What's kept:</span>
+                <span className="font-medium text-neutral-subtle">What's kept:</span>
                 <ul className="list-disc pl-4">
                   <li>Qovery configuration</li>
                   <li>Environment variables</li>
@@ -775,14 +775,14 @@ function MenuOtherActions({
           id: 'delete',
           title: 'Delete permanently',
           description: (
-            <div className="flex flex-col gap-2 text-neutral-350">
+            <div className="flex flex-col gap-2 text-neutral-subtle">
               <span>
                 Permanently remove the service and all associated data.
                 <br />
                 This action cannot be undone.
               </span>
               <div>
-                <span className="font-medium text-neutral-400">What's deleted:</span>
+                <span className="font-medium text-neutral-subtle">What's deleted:</span>
                 <ul className="list-disc pl-4">
                   <li>All service data</li>
                   <li>Qovery configuration</li>
