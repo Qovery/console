@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { type ComponentProps, forwardRef, useMemo, useRef, useState } from 'react'
+import { type ComponentProps, forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import * as RechartsPrimitive from 'recharts'
 import { twMerge } from '@qovery/shared/util-js'
 import { Button } from '../button/button'
@@ -214,10 +214,12 @@ export const ChartLegendContent = ({
   // Apply highlighting styles to chart paths
   const applyHighlightStyles = (key: string | null) => {
     const styleId = `${name ? name + '-' : ''}chart-highlight-style`
-    const style = document.getElementById(styleId) || document.createElement('style')
-    style.id = styleId
 
     if (key) {
+      // Create or get style element
+      const style = document.getElementById(styleId) || document.createElement('style')
+      style.id = styleId
+
       // Escape special characters in the key for CSS selector
       const escapedKey = CSS.escape(key)
       // When highlighting, make non-highlighted paths semi-transparent
@@ -229,17 +231,16 @@ export const ChartLegendContent = ({
           opacity: 1 !important;
         }
       `
-    } else {
-      // When not highlighting, reset all paths to full opacity
-      style.textContent = `
-        path[name] {
-          opacity: 1 !important;
-        }
-      `
-    }
 
-    if (!document.head.contains(style)) {
-      document.head.appendChild(style)
+      if (!document.head.contains(style)) {
+        document.head.appendChild(style)
+      }
+    } else {
+      // When not highlighting, REMOVE the style element completely
+      const existingStyle = document.getElementById(styleId)
+      if (existingStyle) {
+        existingStyle.remove()
+      }
     }
   }
 
@@ -274,6 +275,13 @@ export const ChartLegendContent = ({
     applyHighlightStyles(null)
     onMouseLeave?.(item, index, event)
   }
+
+  // Cleanup styles when data changes or component unmounts
+  useEffect(() => {
+    return () => {
+      applyHighlightStyles(null)
+    }
+  }, [name, payload])
 
   if (!payload?.length) {
     return null

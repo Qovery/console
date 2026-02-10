@@ -57,6 +57,12 @@ interface DashboardContextType {
   isAnyChartRefreshing: boolean
   setIsAnyChartRefreshing: (isRefreshing: boolean) => void
 
+  // View mode (aggregated vs pod-level)
+  useAggregatedView: boolean
+  setUseAggregatedView: (value: boolean) => void
+  isPodCountLoading: boolean
+  setIsPodCountLoading: (value: boolean) => void
+
   // Trace ID
   traceId: string
 }
@@ -116,6 +122,10 @@ export function DashboardProvider({ children }: PropsWithChildren) {
   const setIsAnyChartRefreshing = useCallback((isRefreshing: boolean) => {
     setRefreshingCount((prev) => (isRefreshing ? prev + 1 : Math.max(0, prev - 1)))
   }, [])
+
+  // View mode state (aggregated vs pod-level)
+  const [useAggregatedView, setUseAggregatedView] = useState(false)
+  const [isPodCountLoading, setIsPodCountLoading] = useState(true)
 
   const handleTimeRangeChange = useCallback(
     (range: TimeRangeOption) => {
@@ -302,6 +312,10 @@ export function DashboardProvider({ children }: PropsWithChildren) {
       lastDropdownTimeRange,
       isAnyChartRefreshing,
       setIsAnyChartRefreshing,
+      useAggregatedView,
+      setUseAggregatedView,
+      isPodCountLoading,
+      setIsPodCountLoading,
       traceId,
     }),
     [
@@ -333,6 +347,10 @@ export function DashboardProvider({ children }: PropsWithChildren) {
       lastDropdownTimeRange,
       isAnyChartRefreshing,
       setIsAnyChartRefreshing,
+      useAggregatedView,
+      setUseAggregatedView,
+      isPodCountLoading,
+      setIsPodCountLoading,
       subQueryTimeRange,
       traceId,
     ]

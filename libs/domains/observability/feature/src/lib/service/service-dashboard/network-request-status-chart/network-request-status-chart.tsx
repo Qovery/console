@@ -137,7 +137,11 @@ export function NetworkRequestStatusChart({
     return names
   }, [metrics, metricsEnvoy])
 
-  const isLoading = useMemo(() => isLoadingMetrics || isLoadingMetricsEnvoy, [isLoadingMetrics, isLoadingMetricsEnvoy])
+  const isLoading = useMemo(() => {
+    const shouldWaitForEnvoy = !!httpRouteName
+    const loading = isLoadingMetrics || (shouldWaitForEnvoy && isLoadingMetricsEnvoy)
+    return loading
+  }, [isLoadingMetrics, isLoadingMetricsEnvoy, httpRouteName])
 
   return (
     <LocalChart

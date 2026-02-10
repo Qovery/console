@@ -158,10 +158,10 @@ export function InstanceHTTPErrorsChart({
     return names
   }, [metricsHttpStatusErrorRatio, metricsEnvoyHttpStatusErrorRatio])
 
-  const isLoading = useMemo(
-    () => isLoadingHttpStatusErrorRatio || isLoadingEnvoyHttpStatusErrorRatio,
-    [isLoadingHttpStatusErrorRatio, isLoadingEnvoyHttpStatusErrorRatio]
-  )
+  const isLoading = useMemo(() => {
+    const shouldWaitForEnvoy = !!httpRouteName
+    return isLoadingHttpStatusErrorRatio || (shouldWaitForEnvoy && isLoadingEnvoyHttpStatusErrorRatio)
+  }, [isLoadingHttpStatusErrorRatio, isLoadingEnvoyHttpStatusErrorRatio, httpRouteName])
 
   return (
     <LocalChart

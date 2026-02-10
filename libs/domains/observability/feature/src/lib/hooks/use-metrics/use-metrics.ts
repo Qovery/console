@@ -125,6 +125,14 @@ export function useMetrics({
       context.setIsAnyChartRefreshing(isRefreshing)
       previousIsRefreshing.current = isRefreshing
     }
+
+    // Cleanup: if component unmounts while refreshing, decrement the counter
+    return () => {
+      if (context && previousIsRefreshing.current) {
+        context.setIsAnyChartRefreshing(false)
+        previousIsRefreshing.current = false
+      }
+    }
   }, [context, isRefreshing])
 
   return {

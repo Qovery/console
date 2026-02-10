@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { type LegendPayload, Line } from 'recharts'
 import { Chart } from '@qovery/shared/ui'
 import { usePodColor } from '@qovery/shared/util-hooks'
@@ -10,7 +10,11 @@ import { convertPodName } from '../../../util-chart/convert-pod-name'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
-const queryMemoryUsage = (selector: string) => `sum by (pod) (container_memory_working_set_bytes{${selector}})`
+const queryMemoryUsageByPod = (selector: string) => `sum by (pod) (container_memory_working_set_bytes{${selector}})`
+
+const queryMemoryUsageP50 = (selector: string) => `quantile(0.50, container_memory_working_set_bytes{${selector}})`
+
+const queryMemoryUsageP90 = (selector: string) => `quantile(0.90, container_memory_working_set_bytes{${selector}})`
 
 const queryMemoryLimit = (selector: string) =>
   `sum (bottomk(1, kube_pod_container_resource_limits{resource="memory", ${selector}}))`
@@ -29,7 +33,8 @@ export function MemoryChart({
   containerName: string
   podNames?: string[]
 }) {
-  const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
+  const { startTimestamp, endTimestamp, useLocalTime, timeRange, useAggregatedView, isPodCountLoading } =
+    useDashboardContext()
   const getColorByPod = usePodColor()
 
   const [legendSelectedKeys, setLegendSelectedKeys] = useState<Set<string>>(new Set())
@@ -52,14 +57,47 @@ export function MemoryChart({
 
   const selector = useMemo(() => buildPromSelector(containerName, podNames), [containerName, podNames])
 
-  const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
+  // Read aggregated view mode from context (determined by parent based on pod count)
+  const useAggregatedMetrics = useAggregatedView
+
+  // Reset legend filters when switching between pods and percentiles view, when timeRange changes, or when zooming
+  useEffect(() => {
+    setLegendSelectedKeys(new Set())
+  }, [useAggregatedMetrics, timeRange, startTimestamp, endTimestamp])
+
+  // Query for individual pods (only when NOT in aggregated mode AND pod count is loaded)
+  const { data: podMetrics, isLoading: isLoadingPods } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMemoryUsage(selector),
+    query: queryMemoryUsageByPod(selector),
     timeRange,
     boardShortName: 'service_overview',
-    metricShortName: 'memory',
+    metricShortName: 'memory_by_pod',
+    enabled: !isPodCountLoading && !useAggregatedMetrics, // Wait for pod count, then fetch only if needed
+  })
+
+  // Queries for aggregated metrics (only when in aggregated mode AND pod count is loaded)
+  const { data: p50Metrics, isLoading: isLoadingP50 } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: queryMemoryUsageP50(selector),
+    timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'memory_p50',
+    enabled: !isPodCountLoading && useAggregatedMetrics, // Wait for pod count, then fetch only if needed
+  })
+
+  const { data: p90Metrics, isLoading: isLoadingP90 } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: queryMemoryUsageP90(selector),
+    timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'memory_p90',
+    enabled: !isPodCountLoading && useAggregatedMetrics, // Wait for pod count, then fetch only if needed
   })
 
   const { data: metricsLimit, isLoading: isLoadingMetricsLimit } = useMetrics({
@@ -83,38 +121,52 @@ export function MemoryChart({
   })
 
   const chartData = useMemo(() => {
-    if (!metrics?.data?.result) {
-      return []
-    }
-
     const timeSeriesMap = new Map<
       number,
       { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
     >()
 
-    // Process regular CPU metrics (pods)
-    processMetricsData(
-      metrics,
-      timeSeriesMap,
-      (_, index) => convertPodName(metrics.data.result[index].metric.pod),
-      (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime
-    )
+    if (useAggregatedMetrics) {
+      // Process aggregated metrics (p50/p90) for time ranges > 1 hour
+      processMetricsData(
+        p50Metrics,
+        timeSeriesMap,
+        () => 'p50',
+        (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
+        useLocalTime
+      )
 
-    // Process memory limit metrics
+      processMetricsData(
+        p90Metrics,
+        timeSeriesMap,
+        () => 'p90',
+        (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
+        useLocalTime
+      )
+    } else {
+      // Process individual pod metrics for time ranges <= 1 day
+      processMetricsData(
+        podMetrics,
+        timeSeriesMap,
+        (_, index) => convertPodName(podMetrics?.data?.result?.[index]?.metric?.pod || ''),
+        (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
+        useLocalTime
+      )
+    }
+
+    // Always process memory limit and request metrics
     processMetricsData(
       metricsLimit,
       timeSeriesMap,
-      () => 'memory-limit',
+      () => 'Limit',
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
       useLocalTime
     )
 
-    // Process memory request metrics
     processMetricsData(
       metricsRequest,
       timeSeriesMap,
-      () => 'memory-request',
+      () => 'Request',
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
       useLocalTime
     )
@@ -122,16 +174,33 @@ export function MemoryChart({
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [metrics, metricsLimit, metricsRequest, useLocalTime, startTimestamp, endTimestamp])
+  }, [
+    useAggregatedMetrics,
+    p50Metrics,
+    p90Metrics,
+    podMetrics,
+    metricsLimit,
+    metricsRequest,
+    useLocalTime,
+    startTimestamp,
+    endTimestamp,
+  ])
 
   const seriesNames = useMemo(() => {
-    if (!metrics?.data?.result) return []
-    return metrics.data.result.map((_: unknown, index: number) =>
-      convertPodName(metrics.data.result[index].metric.pod)
+    if (useAggregatedMetrics || !podMetrics?.data?.result) return []
+    return podMetrics.data.result.map((_: unknown, index: number) =>
+      convertPodName(podMetrics.data.result[index].metric.pod)
     ) as string[]
-  }, [metrics])
+  }, [useAggregatedMetrics, podMetrics])
 
-  const isLoading = isLoadingMetrics || isLoadingMetricsLimit || isLoadingMetricsRequest
+  const isLoading = useMemo(
+    () =>
+      isLoadingPods ||
+      isLoadingMetricsLimit ||
+      isLoadingMetricsRequest ||
+      (useAggregatedMetrics && (isLoadingP50 || isLoadingP90)),
+    [isLoadingPods, isLoadingMetricsLimit, isLoadingMetricsRequest, useAggregatedMetrics, isLoadingP50, isLoadingP90]
+  )
 
   return (
     <LocalChart
@@ -140,57 +209,96 @@ export function MemoryChart({
       isLoading={isLoading}
       isEmpty={chartData.length === 0}
       label="Memory usage (MiB)"
-      description="Usage per instance in MiB of memory limit and request"
+      description={
+        useAggregatedMetrics
+          ? 'p50 and p90 memory usage across all pods with memory limit and request'
+          : 'Usage per instance in MiB of memory limit and request'
+      }
       tooltipLabel="Memory"
       serviceId={serviceId}
       handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}
     >
-      {seriesNames.map((name) => (
-        <Line
-          key={name}
-          dataKey={name}
-          name={name}
-          type="linear"
-          stroke={getColorByPod(name)}
-          strokeWidth={2}
-          dot={false}
-          connectNulls={false}
-          isAnimationActive={false}
-          hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? true : false}
-        />
-      ))}
+      {useAggregatedMetrics ? (
+        <>
+          <Line
+            dataKey="p90"
+            name="p90"
+            type="linear"
+            stroke="var(--color-red-400)"
+            strokeWidth={2}
+            connectNulls={false}
+            dot={false}
+            isAnimationActive={false}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p90') ? true : false}
+          />
+          <Line
+            dataKey="p50"
+            name="p50"
+            type="linear"
+            stroke="#10B981"
+            strokeWidth={2}
+            connectNulls={false}
+            dot={false}
+            isAnimationActive={false}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p50') ? true : false}
+          />
+        </>
+      ) : (
+        <>
+          {seriesNames.map((name) => (
+            <Line
+              key={name}
+              dataKey={name}
+              name={name}
+              type="linear"
+              stroke={getColorByPod(name)}
+              strokeWidth={2}
+              dot={false}
+              connectNulls={false}
+              isAnimationActive={false}
+              hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? true : false}
+            />
+          ))}
+        </>
+      )}
       <Line
-        dataKey="memory-request"
-        name="memory-request"
+        dataKey="Request"
+        name="Request"
         type="linear"
         stroke="var(--color-neutral-300)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-request') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Request') ? true : false}
       />
       <Line
-        dataKey="memory-limit"
-        name="memory-limit"
+        dataKey="Limit"
+        name="Limit"
         type="linear"
         stroke="var(--color-red-500)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-limit') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Limit') ? true : false}
       />
       {!isLoading && chartData.length > 0 && (
         <Chart.Legend
           className="w-[calc(100%-0.5rem)] pb-1 pt-2"
           onClick={onClick}
           itemSorter={(item) => {
-            if (item.value === 'memory-request') {
-              return -1
+            if (item.value === 'Limit') {
+              return -4
             }
-            if (item.value === 'memory-limit') {
+            if (item.value === 'Request') {
+              return -3
+            }
+            if (item.value === 'p50') {
               return -2
+            }
+            if (item.value === 'p90') {
+              return -1
             }
             return 0
           }}
@@ -199,11 +307,19 @@ export function MemoryChart({
               name="memory"
               selectedKeys={legendSelectedKeys}
               formatter={(value) => {
-                if (value === 'memory-request') {
-                  return 'Memory Request'
+                if (useAggregatedMetrics) {
+                  if (value === 'p90') {
+                    return 'p90'
+                  }
+                  if (value === 'p50') {
+                    return 'p50'
+                  }
                 }
-                if (value === 'memory-limit') {
-                  return 'Memory Limit'
+                if (value === 'Request') {
+                  return 'Request'
+                }
+                if (value === 'Limit') {
+                  return 'Limit'
                 }
                 return value as string
               }}
