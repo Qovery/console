@@ -34,6 +34,7 @@ const _buttonVariants = cva(
         green: ['outline-positive-strong'],
         red: ['outline-negative-strong'],
         yellow: ['outline-warning-strong'],
+        current: [''],
       },
       size: {
         xs: ['text-xs', 'h-6', 'px-1.5'],
