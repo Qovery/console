@@ -193,11 +193,14 @@ export function MemoryChart({
     ) as string[]
   }, [useAggregatedMetrics, podMetrics])
 
-  const isLoading =
-    isLoadingPods ||
-    isLoadingMetricsLimit ||
-    isLoadingMetricsRequest ||
-    (useAggregatedMetrics && (isLoadingP50 || isLoadingP90))
+  const isLoading = useMemo(
+    () =>
+      isLoadingPods ||
+      isLoadingMetricsLimit ||
+      isLoadingMetricsRequest ||
+      (useAggregatedMetrics && (isLoadingP50 || isLoadingP90)),
+    [isLoadingPods, isLoadingMetricsLimit, isLoadingMetricsRequest, useAggregatedMetrics, isLoadingP50, isLoadingP90]
+  )
 
   return (
     <LocalChart

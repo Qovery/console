@@ -201,8 +201,11 @@ export function CpuChart({
     ) as string[]
   }, [useAggregatedMetrics, podMetrics])
 
-  const isLoading =
-    isLoadingPods || isLoadingLimit || isLoadingRequest || (useAggregatedMetrics && (isLoadingP50 || isLoadingP90))
+  const isLoading = useMemo(
+    () =>
+      isLoadingPods || isLoadingLimit || isLoadingRequest || (useAggregatedMetrics && (isLoadingP50 || isLoadingP90)),
+    [isLoadingPods, isLoadingLimit, isLoadingRequest, useAggregatedMetrics, isLoadingP50, isLoadingP90]
+  )
 
   return (
     <LocalChart
