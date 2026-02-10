@@ -13,6 +13,7 @@ export interface ClusterGeneralData {
   credentials: string
   credentials_name: string
   installation_type: 'MANAGED' | 'SELF_MANAGED' | 'LOCAL_DEMO' | 'PARTIALLY_MANAGED'
+  labels_groups?: string[]
   metrics_parameters?: {
     enabled?: boolean
     configuration?: {
