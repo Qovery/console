@@ -67,7 +67,7 @@ const RadioGroupItem = forwardRef<ElementRef<typeof RadioGroupPrimitive.Item>, R
     return (
       <RadioGroupPrimitive.Item {...props} className={twMerge(itemVariants({ variant }), className)} ref={ref}>
         <RadioGroupPrimitive.Indicator className={indicatorVariants({ variant })}>
-          {variant === 'check' && <Icon iconName="check" className="text-xs text-neutralInvert" />}
+          {variant === 'check' && <Icon iconName="check" className="text-xs text-neutral" />}
         </RadioGroupPrimitive.Indicator>
       </RadioGroupPrimitive.Item>
     )
