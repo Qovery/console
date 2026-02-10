@@ -114,6 +114,12 @@ const ENVIRONMENT_TABS: NavigationTab[] = [
     iconName: 'table-layout',
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
   },
+  {
+    id: 'settings',
+    label: 'Settings',
+    iconName: 'gear-complex',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
+  },
 ]
 
 function createRoutePatternRegex(routeIdPattern: string): RegExp {
@@ -283,6 +289,7 @@ const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/settings',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
 ]
 
 function useFullWidthLayout(): boolean {
