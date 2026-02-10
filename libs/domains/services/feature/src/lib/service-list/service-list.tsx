@@ -255,7 +255,7 @@ function ServiceNameCell({
           {'auto_deploy' in service && service.auto_deploy && (
             <Tooltip content="Auto-deploy">
               <span>
-                <Icon className="text-neutral-300" iconName="arrows-rotate" />
+                <Icon className="text-neutral-subtle" iconName="arrows-rotate" />
               </span>
             </Tooltip>
           )}

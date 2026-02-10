@@ -65,16 +65,16 @@ export function ServiceLinksPopover({
       <Popover.Trigger className={filteredLinks.length === 0 ? 'hidden' : ''}>{children}</Popover.Trigger>
       <Popover.Content
         side={side}
-        className="max-w-[280px] border-transparent p-2 text-sm text-neutral-350"
+        className="max-w-[280px] border-transparent p-2 text-sm text-neutral-subtle"
         align={align}
       >
         <div className="flex items-center justify-between p-2">
-          <p className="font-medium text-neutral-350 dark:text-neutral-250">
+          <p className="font-medium text-neutral">
             {filteredLinks?.length ?? 0} {pluralize(filteredLinks?.length ?? 0, 'link')} attached
           </p>
           {serviceType !== 'HELM' && (
             <Popover.Close>
-              <Link to={pathDomainsSetting} color="brand" className="text-ssm">
+              <Link to={pathDomainsSetting} color="neutral" className="text-ssm">
                 Customize
                 <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
               </Link>
@@ -84,12 +84,9 @@ export function ServiceLinksPopover({
         <ul className="max-h-96 overflow-y-auto">
           {nginxLinks.map((link: LinkProps) => (
             <li key={link.url} className="flex p-2">
-              <CopyToClipboardButtonIcon
-                className="mr-2 text-brand-500 hover:text-brand-600 dark:hover:text-brand-400"
-                content={link.url ?? ''}
-              />
+              <CopyToClipboardButtonIcon className="mr-2 text-brand hover:text-brand-hover" content={link.url ?? ''} />
               <a
-                className="flex w-full items-center justify-between text-neutral-400 transition hover:text-brand-500 dark:text-neutral-50 dark:hover:text-brand-400"
+                className="flex w-full items-center justify-between text-brand transition hover:text-brand-hover"
                 href={link.url}
                 target="_blank"
                 rel="noreferrer"
@@ -97,14 +94,14 @@ export function ServiceLinksPopover({
                 <div className="mr-2 text-ssm font-medium">
                   <Truncate text={link.url ?? ''} truncateLimit={26} />
                 </div>
-                <div className="text-xs text-neutral-350 dark:text-neutral-250">{link.internal_port}</div>
+                <div className="text-xs text-neutral-subtle">{link.internal_port}</div>
               </a>
             </li>
           ))}
           {nginxLinks.length > 0 && gatewayApiLinks.length > 0 && (
             <>
-              <li className="my-2 border-t border-neutral-200 dark:border-neutral-600" />
-              <li className="flex items-center gap-1 px-2 pb-1 text-xs font-medium text-neutral-350 dark:text-neutral-250">
+              <li className="my-2 border-t border-neutral" />
+              <li className="flex items-center gap-1 px-2 pb-1 text-xs font-medium text-neutral">
                 <span>Gateway API / Envoy stack</span>
                 <Tooltip
                   content={
@@ -115,7 +112,7 @@ export function ServiceLinksPopover({
                         href="https://www.qovery.com/blog/nginx-ingress-controller-end-of-maintenance-by-march-2026"
                         target="_blank"
                         rel="noreferrer"
-                        className="underline hover:text-neutral-100"
+                        className="underline"
                       >
                         more info
                       </a>
@@ -125,11 +122,7 @@ export function ServiceLinksPopover({
                   classNameContent="max-w-xs"
                 >
                   <span className="inline-flex cursor-help">
-                    <Icon
-                      iconName="circle-info"
-                      iconStyle="regular"
-                      className="text-neutral-350 hover:text-neutral-400 dark:text-neutral-250 dark:hover:text-neutral-200"
-                    />
+                    <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
                   </span>
                 </Tooltip>
               </li>
@@ -137,12 +130,9 @@ export function ServiceLinksPopover({
           )}
           {gatewayApiLinks.map((link: LinkProps) => (
             <li key={link.url} className="flex p-2">
-              <CopyToClipboardButtonIcon
-                className="mr-2 text-brand-500 hover:text-brand-600 dark:hover:text-brand-400"
-                content={link.url ?? ''}
-              />
+              <CopyToClipboardButtonIcon className="mr-2 text-brand hover:text-brand-hover" content={link.url ?? ''} />
               <a
-                className="flex w-full items-center justify-between text-neutral-400 transition hover:text-brand-500 dark:text-neutral-50 dark:hover:text-brand-400"
+                className="flex w-full items-center justify-between text-brand transition hover:text-brand-hover"
                 href={link.url}
                 target="_blank"
                 rel="noreferrer"
@@ -150,7 +140,7 @@ export function ServiceLinksPopover({
                 <div className="mr-2 text-ssm font-medium">
                   <Truncate text={link.url ?? ''} truncateLimit={26} />
                 </div>
-                <div className="text-xs text-neutral-350 dark:text-neutral-250">{link.internal_port}</div>
+                <div className="text-xs text-neutral-subtle">{link.internal_port}</div>
               </a>
             </li>
           ))}
