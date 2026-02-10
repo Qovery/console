@@ -35,6 +35,7 @@ import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import {
   environmentVariableFile,
   getEnvironmentVariableFileMountPath,
+  getScopeHierarchy,
   pluralize,
   twMerge,
   upperCaseFirstLetter,
@@ -317,7 +318,7 @@ export function VariableList({
                         >
                           Create alias
                         </DropdownMenu.Item>
-                        {variable.scope !== 'BUILT_IN' && (
+                        {variable.scope !== 'BUILT_IN' && variable.scope !== props.scope && (
                           <DropdownMenu.Item
                             icon={<Icon iconName="pen-line" />}
                             disabled={disableOverride}

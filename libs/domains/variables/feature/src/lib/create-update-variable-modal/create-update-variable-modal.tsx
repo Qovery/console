@@ -395,7 +395,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                       type="button"
                       color="neutral"
                       variant="surface"
-                      className="absolute bottom-1.5 right-1.5 w-9 justify-center"
+                      className="absolute bottom-1.5 right-1.5 w-8 justify-center"
                     >
                       <Icon className="text-sm" iconName="wand-magic-sparkles" />
                     </Button>
