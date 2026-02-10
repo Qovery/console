@@ -76,8 +76,8 @@ export function SelectCommitModal({
   return (
     <div className="flex flex-col gap-6 p-5">
       <div className="flex flex-col gap-2 text-sm">
-        <h2 className="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50">{title}</h2>
-        <p className="text-neutral-350 dark:text-neutral-50">{description}</p>
+        <h2 className="h4 max-w-sm truncate text-neutral">{title}</h2>
+        <p className="text-neutral-subtle">{description}</p>
         {children}
       </div>
 
@@ -88,14 +88,11 @@ export function SelectCommitModal({
           <ScrollShadowWrapper className="max-h-[50vh] pb-[60px]">
             {Object.entries(filterCommits).map(([date, commits]) => (
               <div key={date} className="pl-2">
-                <div className="relative pl-5 text-sm font-medium text-neutral-350">
-                  <Icon
-                    iconName="code-commit"
-                    className="absolute left-0 top-1 -translate-x-1/2 text-neutral-300 dark:text-neutral-350"
-                  />
+                <div className="relative pl-5 text-sm font-medium text-neutral-subtle">
+                  <Icon iconName="code-commit" className="absolute left-0 top-1 -translate-x-1/2 text-neutral-subtle" />
                   {pluralize(commits.length, 'Commit')} on {dateToFormat(date, 'MMM dd, yyyy')}
                 </div>
-                <div className="border-l border-neutral-250 pb-5 pl-5 pt-3 dark:border-neutral-350">
+                <div className="border-l border-neutral pb-5 pl-5 pt-3">
                   {commits.map(
                     (
                       { author_name, author_avatar_url, commit_page_url, created_at, git_commit_id, message },
@@ -109,10 +106,10 @@ export function SelectCommitModal({
                         <label
                           key={git_commit_id}
                           className={twMerge(
-                            '-mt-px flex w-full flex-row gap-3 border border-neutral-250 p-3 first:rounded-t-md last:rounded-b-md dark:border-neutral-350',
-                            isCurrentDeployedCommit ? 'bg-neutral-100 dark:bg-neutral-500' : 'cursor-pointer',
+                            '-mt-px flex w-full flex-row gap-3 border border-neutral p-3 first:rounded-t-md last:rounded-b-md',
+                            isCurrentDeployedCommit ? 'bg-surface-neutral-subtle' : 'cursor-pointer',
                             clsx({
-                              'border-brand-500 bg-brand-50 dark:bg-neutral-600': isSelected,
+                              'border-surface-brand-solid bg-surface-brand-component': isSelected,
                               'border-t-transparent': isSelectedSiblings,
                             })
                           )}
@@ -130,17 +127,15 @@ export function SelectCommitModal({
                               target="_blank"
                               rel="noreferrer"
                               className={twMerge(
-                                'max-w-full truncate font-medium text-neutral-400 hover:text-brand-500 dark:text-neutral-50',
+                                'max-w-full truncate font-medium text-neutral',
                                 clsx({
-                                  'text-neutral-350': isCurrentDeployedCommit,
+                                  'text-brand': isCurrentDeployedCommit,
                                 })
                               )}
                             >
                               {message}
                             </a>
-                            <span className="text-neutral-350 dark:text-neutral-50">
-                              committed {timeAgo(new Date(created_at))} ago
-                            </span>
+                            <span className="text-neutral-subtle">committed {timeAgo(new Date(created_at))} ago</span>
                           </div>
                           <div className="flex flex-col items-end gap-2">
                             <div className="flex items-center gap-1.5">
@@ -179,12 +174,12 @@ export function SelectCommitModal({
           </ScrollShadowWrapper>
         </RadioGroup.Root>
       ) : (
-        <div className="px-3 py-6 text-center">
-          <Icon iconName="wave-pulse" className="text-neutral-350" />
-          <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
+        <div className="px-3 py-6 pb-[60px] text-center">
+          <Icon iconName="wave-pulse" className="text-neutral" />
+          <p className="mt-1 text-xs font-medium text-neutral">No result for this search</p>
         </div>
       )}
-      <div className="absolute bottom-0 left-0 flex w-full justify-end gap-3 rounded-b-md bg-white p-5">
+      <div className="absolute bottom-0 left-0 flex w-full justify-end gap-3 rounded-b-md bg-background p-5">
         <Button variant="outline" color="neutral" size="lg" onClick={() => onCancel()}>
           Cancel
         </Button>
