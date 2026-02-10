@@ -4,11 +4,25 @@ import { Icon, InputSelect, Tooltip, useModal } from '@qovery/shared/ui'
 import { useLabelsGroups } from '../hooks/use-labels-groups/use-labels-groups'
 import { LabelCreateEditModal } from '../label-create-edit-modal/label-create-edit-modal'
 
-export function LabelSetting() {
+export interface LabelSettingProps {
+  filterPropagateToCloudProvider?: boolean
+}
+
+export function LabelSetting({ filterPropagateToCloudProvider = false }: LabelSettingProps = {}) {
   const { control } = useFormContext()
   const { organizationId = '' } = useParams()
   const { data: labelsGroups = [] } = useLabelsGroups({ organizationId })
   const { openModal, closeModal } = useModal()
+
+  // Filter labels groups based on propagate_to_cloud_provider if needed
+  const filteredLabelsGroups = filterPropagateToCloudProvider
+    ? labelsGroups
+        .map((group) => ({
+          ...group,
+          labels: group.labels.filter((label) => label.propagate_to_cloud_provider),
+        }))
+        .filter((group) => group.labels.length > 0)
+    : labelsGroups
 
   return (
     <Controller
@@ -17,7 +31,7 @@ export function LabelSetting() {
       render={({ field, fieldState: { error } }) => (
         <InputSelect
           label="Label Groups (optional)"
-          options={labelsGroups.map((group) => ({
+          options={filteredLabelsGroups.map((group) => ({
             label: (
               <span className="flex items-center gap-3">
                 <span>{group.name}</span>
@@ -50,7 +64,10 @@ export function LabelSetting() {
                   <LabelCreateEditModal
                     organizationId={organizationId}
                     onClose={(response) => {
-                      response && field.onChange(response.id)
+                      if (response) {
+                        const currentValues = field.value || []
+                        field.onChange([...currentValues, response.id])
+                      }
                       closeModal()
                     }}
                   />
