@@ -32,14 +32,12 @@ export function CpuChart({
   containerName,
   podNames,
   podCountData,
-  onModeChange,
 }: {
   clusterId: string
   serviceId: string
   containerName: string
   podNames?: string[]
   podCountData?: { podCount: number; isResolved: boolean }
-  onModeChange?: (payload: { mode: 'pod' | 'aggregate'; isLoading: boolean }) => void
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
   const getColorByPod = usePodColor()
@@ -64,15 +62,6 @@ export function CpuChart({
   // Use aggregated view (p50/p90) if more than 10 pods. Only decide once pod count is resolved
   const useAggregatedMetrics = isPodCountResolved && effectivePodCount > 10
   const metricsEnabled = isPodCountResolved
-
-  useEffect(() => {
-    if (!onModeChange) return
-
-    onModeChange({
-      mode: useAggregatedMetrics ? 'aggregate' : 'pod',
-      isLoading: !isPodCountResolved,
-    })
-  }, [onModeChange, useAggregatedMetrics, isPodCountResolved])
 
   const onClick = (value: LegendPayload) => {
     if (!value?.dataKey) return

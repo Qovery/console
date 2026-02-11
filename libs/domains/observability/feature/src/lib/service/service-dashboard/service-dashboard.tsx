@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { subHours } from 'date-fns'
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { type Database } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
@@ -129,6 +129,17 @@ function ServiceDashboardContent() {
     podNames: podNames.length > 0 ? podNames : undefined,
     enabled: !!containerName,
   })
+
+  useEffect(() => {
+    const resolved = isFetchedPodCount && !isFetchingPodCount
+    if (!resolved) {
+      setResourcesModeLoading(true)
+      return
+    }
+    const mode = podCount > 10 ? 'aggregate' : 'pod'
+    setResourcesMode(mode)
+    setResourcesModeLoading(false)
+  }, [isFetchedPodCount, isFetchingPodCount, podCount])
 
   if ((!containerName && isFetchedContainerName) || (!namespace && isFetchedNamespace)) {
     return (
@@ -319,10 +330,6 @@ function ServiceDashboardContent() {
                 containerName={containerName}
                 podNames={podNames}
                 podCountData={{ podCount, isResolved: isFetchedPodCount && !isFetchingPodCount }}
-                onModeChange={({ mode, isLoading }) => {
-                  setResourcesMode(mode)
-                  setResourcesModeLoading(isLoading)
-                }}
               />
             </div>
             <div className="overflow-hidden rounded border border-neutral-250">
