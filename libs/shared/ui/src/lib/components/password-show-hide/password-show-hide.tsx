@@ -6,7 +6,6 @@ import { Tooltip } from '../tooltip/tooltip'
 
 export interface PasswordShowHideProps extends ComponentPropsWithoutRef<'input'> {
   value: string
-  defaultVisible?: boolean
   isSecret?: boolean
   canCopy?: boolean
   canEdit?: boolean
@@ -34,7 +33,7 @@ export function PasswordShowHide({
       </span>
     </span>
   ) : (
-    <span className={twMerge('group flex h-5 items-center gap-2 text-sm', className)} {...props}>
+    <span className={twMerge('group flex h-5 w-full items-center gap-2 text-sm', className)} {...props}>
       {canEdit ? (
         <input
           name="value"

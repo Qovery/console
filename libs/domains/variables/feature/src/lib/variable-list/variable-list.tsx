@@ -43,7 +43,6 @@ import {
 import { CreateUpdateVariableModal } from '../create-update-variable-modal/create-update-variable-modal'
 import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
 import { useVariables } from '../hooks/use-variables/use-variables'
-import { VariablesContext } from '../variables-context/variables-context'
 import { VariableListActionBar } from './variable-list-action-bar'
 import { VariableListSkeleton } from './variable-list-skeleton'
 
@@ -93,7 +92,6 @@ export function VariableList({
     parentId,
     scope: props.scope,
   })
-  const { showAllVariablesValues } = useContext(VariablesContext)
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [builtInSorting, setBuiltInSorting] = useState<SortingState>([])
@@ -366,13 +364,13 @@ export function VariableList({
           const variable = info.row.original
           if (environmentVariableFile(variable)) {
             return (
-              <div className="flex items-center gap-3" onClick={() => _onEditVariable(variable)}>
+              <div className="flex w-full items-center gap-2 text-sm" onClick={() => _onEditVariable(variable)}>
                 {variable.value !== null ? (
-                  <Icon className="ml-0.5 text-neutral" iconName="file-lines" />
+                  <Icon className="ml-0.5 text-neutral-subtle" iconName="file-lines" />
                 ) : (
-                  <Icon className="ml-0.5 text-neutral" iconName="file-lock" />
+                  <Icon className="ml-0.5 text-neutral-subtle" iconName="file-lock" />
                 )}
-                <span className="cursor-pointer text-info hover:underline">
+                <span className="cursor-pointer truncate hover:underline">
                   {getEnvironmentVariableFileMountPath(variable)}
                 </span>
               </div>
@@ -382,15 +380,9 @@ export function VariableList({
             return null
           }
           if (variable.value !== null) {
-            return (
-              <PasswordShowHide
-                value={variable.value}
-                isSecret={variable.is_secret}
-                defaultVisible={showAllVariablesValues}
-              />
-            )
+            return <PasswordShowHide value={variable.value} isSecret={variable.is_secret} />
           }
-          return <PasswordShowHide value="" isSecret={true} defaultVisible={showAllVariablesValues} />
+          return <PasswordShowHide value="" isSecret={true} />
         },
       }),
       ...match(props)

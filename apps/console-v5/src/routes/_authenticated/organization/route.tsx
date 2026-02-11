@@ -335,14 +335,14 @@ function OrganizationRoute() {
   }
 
   return (
-    <div className="bg-background flex h-dvh w-full flex-col">
+    <div className="flex h-dvh w-full flex-col bg-background">
       {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
       <div className="min-h-0 flex-1 overflow-auto">
         <Suspense fallback={<MainLoader />}>
           <>
             <Header />
 
-            <div className="z-header border-neutral bg-background-secondary sticky top-0 border-b px-4">
+            <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
               <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
                 {navigationContext && <NavigationBar context={navigationContext} />}
               </Navbar.Root>
