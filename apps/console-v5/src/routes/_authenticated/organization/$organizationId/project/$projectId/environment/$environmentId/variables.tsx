@@ -93,15 +93,11 @@ function RouteComponent() {
               <div className="flex gap-3">
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
-                    <Button color="neutral" variant="outline" size="md" className="gap-2">
-                      <Icon iconName="arrow-up-from-line" iconStyle="regular" />
-                      Import variable
+                    <Button color="neutral" variant="outline" size="md" className="flex w-8 justify-center">
+                      <Icon iconName="ellipsis-vertical" iconStyle="regular" />
                     </Button>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content>
-                    <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="file-import" />}>
-                      Import from .env file
-                    </DropdownMenu.Item>
                     <DropdownMenu.Item asChild icon={<Icon iconName="circle-info" iconStyle="regular" />}>
                       <a href="https://dashboard.doppler.com" target="_blank" rel="noopener noreferrer">
                         Import from Doppler
