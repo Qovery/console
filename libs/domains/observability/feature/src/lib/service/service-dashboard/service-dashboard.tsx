@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { subHours } from 'date-fns'
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { type Database } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
@@ -49,11 +49,10 @@ function ServiceDashboardContent() {
     setIsLiveUpdateEnabled,
     handleTimeRangeChange,
     timeRange,
-    useAggregatedView,
-    setUseAggregatedView,
-    isPodCountLoading,
-    setIsPodCountLoading,
   } = useDashboardContext()
+
+  const [resourcesMode, setResourcesMode] = useState<'pod' | 'aggregate' | null>(null)
+  const [resourcesModeLoading, setResourcesModeLoading] = useState(true)
 
   const hasPublicPort =
     (service?.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => port.publicly_accessible)) ||
@@ -120,21 +119,16 @@ function ServiceDashboardContent() {
     endDate: now.toISOString(),
   })
 
-  // Count pods using lightweight query
-  const { podCount, isLoading: isPodCountLoadingState } = usePodCount({
+  const {
+    podCount,
+    isFetched: isFetchedPodCount,
+    isFetching: isFetchingPodCount,
+  } = usePodCount({
     clusterId: environment?.cluster_id ?? '',
     containerName: containerName ?? '',
     podNames: podNames.length > 0 ? podNames : undefined,
     enabled: !!containerName,
   })
-
-  // Update context when pod count changes or loading state changes
-  // If > 10 pods, use aggregated metrics (p50/p90) for better performance
-  useEffect(() => {
-    const useAggregated = podCount > 10
-    setUseAggregatedView(useAggregated)
-    setIsPodCountLoading(isPodCountLoadingState)
-  }, [podCount, isPodCountLoadingState, setUseAggregatedView, setIsPodCountLoading])
 
   if ((!containerName && isFetchedContainerName) || (!namespace && isFetchedNamespace)) {
     return (
@@ -294,61 +288,51 @@ function ServiceDashboardContent() {
         <Section className="gap-4">
           <div className="flex items-center justify-between gap-2">
             <Heading weight="medium">Resources</Heading>
-            {!isPodCountLoading && (
+            {!resourcesModeLoading && resourcesMode && (
               <Tooltip
                 content={
-                  useAggregatedView
+                  resourcesMode === 'aggregate'
                     ? 'Used when more than 10 pods are displayed. Zoom in to see pod-level metrics'
                     : 'Showing metrics for individual pods. Aggregated view is available when more than 10 pods are displayed'
                 }
               >
                 <Badge
                   variant="surface"
-                  color={useAggregatedView ? 'sky' : 'purple'}
+                  color={resourcesMode === 'aggregate' ? 'sky' : 'purple'}
                   radius="full"
                   size="sm"
                   className="h-6 gap-1 text-ssm"
                 >
                   <Icon iconName="circle-info" iconStyle="regular" className="text-ssm" />
-                  <span className="font-medium">{useAggregatedView ? 'Aggregated view' : 'Pod-level view'}</span>
+                  <span className="font-medium">
+                    {resourcesMode === 'aggregate' ? 'Aggregated view' : 'Pod-level view'}
+                  </span>
                 </Badge>
               </Tooltip>
             )}
           </div>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded border border-neutral-250">
-              {isPodCountLoading ? (
-                <div className="flex h-[300px] items-center justify-center">
-                  <div className="flex flex-col items-center justify-center gap-2">
-                    <Chart.Loader />
-                    <div className="text-sm text-neutral-400">Fetching data...</div>
-                  </div>
-                </div>
-              ) : (
-                <CpuChart
-                  clusterId={environment.cluster_id}
-                  serviceId={serviceId}
-                  containerName={containerName}
-                  podNames={podNames}
-                />
-              )}
+              <CpuChart
+                clusterId={environment.cluster_id}
+                serviceId={serviceId}
+                containerName={containerName}
+                podNames={podNames}
+                podCountData={{ podCount, isResolved: isFetchedPodCount && !isFetchingPodCount }}
+                onModeChange={({ mode, isLoading }) => {
+                  setResourcesMode(mode)
+                  setResourcesModeLoading(isLoading)
+                }}
+              />
             </div>
             <div className="overflow-hidden rounded border border-neutral-250">
-              {isPodCountLoading ? (
-                <div className="flex h-[300px] items-center justify-center">
-                  <div className="flex flex-col items-center justify-center gap-2">
-                    <Chart.Loader />
-                    <div className="text-sm text-neutral-400">Fetching data...</div>
-                  </div>
-                </div>
-              ) : (
-                <MemoryChart
-                  clusterId={environment.cluster_id}
-                  serviceId={serviceId}
-                  containerName={containerName}
-                  podNames={podNames}
-                />
-              )}
+              <MemoryChart
+                clusterId={environment.cluster_id}
+                serviceId={serviceId}
+                containerName={containerName}
+                podNames={podNames}
+                podCountData={{ podCount, isResolved: isFetchedPodCount && !isFetchingPodCount }}
+              />
             </div>
             {hasStorage && (
               <div className="overflow-hidden rounded border border-neutral-250">

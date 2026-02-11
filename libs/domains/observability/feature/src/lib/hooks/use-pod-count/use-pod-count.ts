@@ -19,7 +19,7 @@ export function usePodCount({ clusterId, containerName, podNames, enabled = true
 
   const selector = buildPromSelector(containerName, podNames)
 
-  const query = `group by (pod) (container_cpu_usage_seconds_total{${selector}})`
+  const query = `count by (pod) (max_over_time(kube_pod_container_status_ready{${selector}}[5m]))`
 
   const queryResult = useQuery({
     ...observability.metrics({

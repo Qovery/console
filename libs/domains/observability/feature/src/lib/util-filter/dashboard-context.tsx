@@ -82,8 +82,8 @@ export function DashboardProvider({ children }: PropsWithChildren) {
   const [startDate = oneHourAgo.toISOString(), setStartDate] = useQueryParam('startDate', StringParam)
   const [endDate = now.toISOString(), setEndDate] = useQueryParam('endDate', StringParam)
 
-  // Trace ID for tracing requests
-  const traceId = uuidv4()
+  // Trace ID for tracing requests (stable across re-renders)
+  const [traceId] = useState(() => uuidv4())
 
   // Actions
   const [hideEvents = false, setHideEvents] = useQueryParam('hideEvents', BooleanParam)
