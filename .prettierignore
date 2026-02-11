@@ -7,3 +7,7 @@
 .yarn
 
 /.nx/workspace-data
+
+# Symlinked skill directories (cause EISDIR errors in prettier)
+.cursor/skills
+.claude/skills
