@@ -37,6 +37,7 @@ export function usePodCount({ clusterId, containerName, podNames, enabled = true
       alignedRange: '0',
     }),
     enabled,
+    keepPreviousData: true,
     staleTime: 30_000,
     refetchOnWindowFocus: false,
   })

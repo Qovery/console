@@ -11,7 +11,7 @@ import { useEnvironment } from '../../hooks/use-environment/use-environment'
 import useHttpRouteName from '../../hooks/use-http-route-name/use-http-route-name'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
 import { useNamespace } from '../../hooks/use-namespace/use-namespace'
-import { usePodCount } from '../../hooks/use-pod-count'
+import { usePodCount } from '../../hooks/use-pod-count/use-pod-count'
 import { usePodNames } from '../../hooks/use-pod-names/use-pod-names'
 import { DashboardProvider, useDashboardContext } from '../../util-filter/dashboard-context'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
@@ -318,8 +318,11 @@ function ServiceDashboardContent() {
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded border border-neutral-250">
               {isPodCountLoading ? (
-                <div className="flex h-[400px] items-center justify-center">
-                  <div className="text-sm text-neutral-400">Loading metrics...</div>
+                <div className="flex h-[300px] items-center justify-center">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <Chart.Loader />
+                    <div className="text-sm text-neutral-400">Fetching data...</div>
+                  </div>
                 </div>
               ) : (
                 <CpuChart
@@ -332,8 +335,11 @@ function ServiceDashboardContent() {
             </div>
             <div className="overflow-hidden rounded border border-neutral-250">
               {isPodCountLoading ? (
-                <div className="flex h-[400px] items-center justify-center">
-                  <div className="text-sm text-neutral-400">Loading metrics...</div>
+                <div className="flex h-[300px] items-center justify-center">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <Chart.Loader />
+                    <div className="text-sm text-neutral-400">Fetching data...</div>
+                  </div>
                 </div>
               ) : (
                 <MemoryChart
