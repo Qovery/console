@@ -3,6 +3,7 @@ import { type LegendPayload, Line } from 'recharts'
 import { Chart } from '@qovery/shared/ui'
 import { usePodColor } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
+import { usePodCount } from '../../../hooks/use-pod-count/use-pod-count'
 import { LocalChart } from '../../../local-chart/local-chart'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { buildPromSelector } from '../../../util-chart/build-selector'
@@ -27,17 +28,37 @@ export function MemoryChart({
   serviceId,
   containerName,
   podNames,
+  podCountData,
 }: {
   clusterId: string
   serviceId: string
   containerName: string
   podNames?: string[]
+  podCountData?: { podCount: number; isResolved: boolean }
 }) {
-  const { startTimestamp, endTimestamp, useLocalTime, timeRange, useAggregatedView, isPodCountLoading } =
-    useDashboardContext()
+  const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
   const getColorByPod = usePodColor()
 
   const [legendSelectedKeys, setLegendSelectedKeys] = useState<Set<string>>(new Set())
+
+  // Count pods using lightweight query to determine view mode
+  const {
+    podCount,
+    isFetched: isPodCountFetched,
+    isFetching: isFetchingPodCount,
+  } = usePodCount({
+    clusterId,
+    containerName,
+    podNames,
+    enabled: !!containerName && !podCountData,
+  })
+
+  const effectivePodCount = podCountData ? podCountData.podCount : podCount
+  const isPodCountResolved = podCountData ? podCountData.isResolved : isPodCountFetched && !isFetchingPodCount
+
+  // Use aggregated view (p50/p90) if more than 10 pods. Only decide once pod count is resolved
+  const useAggregatedMetrics = isPodCountResolved && effectivePodCount > 10
+  const metricsEnabled = isPodCountResolved
 
   const onClick = (value: LegendPayload) => {
     if (!value?.dataKey) return
@@ -57,15 +78,12 @@ export function MemoryChart({
 
   const selector = useMemo(() => buildPromSelector(containerName, podNames), [containerName, podNames])
 
-  // Read aggregated view mode from context (determined by parent based on pod count)
-  const useAggregatedMetrics = useAggregatedView
-
   // Reset legend filters when switching between pods and percentiles view, when timeRange changes, or when zooming
   useEffect(() => {
     setLegendSelectedKeys(new Set())
   }, [useAggregatedMetrics, timeRange, startTimestamp, endTimestamp])
 
-  // Query for individual pods (only when NOT in aggregated mode AND pod count is loaded)
+  // Query for individual pods (only when NOT in aggregated mode)
   const { data: podMetrics, isLoading: isLoadingPods } = useMetrics({
     clusterId,
     startTimestamp,
@@ -74,10 +92,10 @@ export function MemoryChart({
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'memory_by_pod',
-    enabled: !isPodCountLoading && !useAggregatedMetrics, // Wait for pod count, then fetch only if needed
+    enabled: metricsEnabled && !useAggregatedMetrics,
   })
 
-  // Queries for aggregated metrics (only when in aggregated mode AND pod count is loaded)
+  // Queries for aggregated metrics (only when in aggregated mode)
   const { data: p50Metrics, isLoading: isLoadingP50 } = useMetrics({
     clusterId,
     startTimestamp,
@@ -86,7 +104,7 @@ export function MemoryChart({
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'memory_p50',
-    enabled: !isPodCountLoading && useAggregatedMetrics, // Wait for pod count, then fetch only if needed
+    enabled: metricsEnabled && useAggregatedMetrics,
   })
 
   const { data: p90Metrics, isLoading: isLoadingP90 } = useMetrics({
@@ -97,7 +115,7 @@ export function MemoryChart({
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'memory_p90',
-    enabled: !isPodCountLoading && useAggregatedMetrics, // Wait for pod count, then fetch only if needed
+    enabled: metricsEnabled && useAggregatedMetrics,
   })
 
   const { data: metricsLimit, isLoading: isLoadingMetricsLimit } = useMetrics({
@@ -193,14 +211,22 @@ export function MemoryChart({
     ) as string[]
   }, [useAggregatedMetrics, podMetrics])
 
-  const isLoading = useMemo(
-    () =>
-      isLoadingPods ||
-      isLoadingMetricsLimit ||
-      isLoadingMetricsRequest ||
-      (useAggregatedMetrics && (isLoadingP50 || isLoadingP90)),
-    [isLoadingPods, isLoadingMetricsLimit, isLoadingMetricsRequest, useAggregatedMetrics, isLoadingP50, isLoadingP90]
-  )
+  const isLoading = useMemo(() => {
+    if (!isPodCountResolved) return true
+
+    const podLoading = useAggregatedMetrics ? false : isLoadingPods
+    const aggregatedLoading = useAggregatedMetrics ? isLoadingP50 || isLoadingP90 : false
+
+    return podLoading || aggregatedLoading || isLoadingMetricsLimit || isLoadingMetricsRequest
+  }, [
+    isPodCountResolved,
+    useAggregatedMetrics,
+    isLoadingPods,
+    isLoadingP50,
+    isLoadingP90,
+    isLoadingMetricsLimit,
+    isLoadingMetricsRequest,
+  ])
 
   return (
     <LocalChart

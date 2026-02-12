@@ -3,6 +3,7 @@ import { type LegendPayload, Line } from 'recharts'
 import { Chart } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
+import { type MetricData } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
@@ -126,11 +127,11 @@ export function NetworkRequestStatusChart({
     if (metricsEnvoy?.data?.result) {
       names.push(
         ...metricsEnvoy.data.result
-          .filter((result: any) => {
-            const code = result.metric?.envoy_response_code
+          .filter((result: MetricData) => {
+            const code = result.metric?.['envoy_response_code']
             return code !== 'undefined' && code !== undefined && code !== ''
           })
-          .map((result: any) => JSON.stringify({ ...result.metric, source: 'envoy' }))
+          .map((result: MetricData) => JSON.stringify({ ...result.metric, source: 'envoy' }))
       )
     }
 

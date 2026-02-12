@@ -77,13 +77,21 @@ export function DashboardProvider({ children }: PropsWithChildren) {
     'timeRange',
     StringParam as QueryParamConfig<TimeRangeOption, TimeRangeOption>
   )
-  const now = new Date()
-  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
-  const [startDate = oneHourAgo.toISOString(), setStartDate] = useQueryParam('startDate', StringParam)
-  const [endDate = now.toISOString(), setEndDate] = useQueryParam('endDate', StringParam)
+  const [defaultDateRange] = useState(() => {
+    const now = new Date()
+    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
+    return {
+      startDate: oneHourAgo.toISOString(),
+      endDate: now.toISOString(),
+    }
+  })
+  const [startDateParam, setStartDate] = useQueryParam('startDate', StringParam)
+  const [endDateParam, setEndDate] = useQueryParam('endDate', StringParam)
+  const startDate = startDateParam ?? defaultDateRange.startDate
+  const endDate = endDateParam ?? defaultDateRange.endDate
 
-  // Trace ID for tracing requests
-  const traceId = uuidv4()
+  // Trace ID for tracing requests (stable across re-renders)
+  const [traceId] = useState(() => uuidv4())
 
   // Actions
   const [hideEvents = false, setHideEvents] = useQueryParam('hideEvents', BooleanParam)
