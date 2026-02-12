@@ -86,14 +86,14 @@ export function ClusterCardFeature({
                 <ExternalLink
                   as="button"
                   href={feature.cloud_provider_feature_documentation ?? undefined}
-                  className="gap-1 px-1.5"
+                  className="gap-1 px-1.5 text-neutralInvert"
                   color="neutral"
-                  variant="solid"
+                  variant="surface"
                   size="xs"
                   radius="full"
                 >
-                  <Icon iconName="dollar-sign" iconStyle="solid" className="text-xs text-white" />
-                  <Icon name={cloudProvider} height="16" width="16" pathColor="#FFFFFF" />
+                  <Icon iconName="dollar-sign" iconStyle="solid" className="text-xs text-neutral" />
+                  <Icon name={cloudProvider} height="16" width="16" pathColor="currentColor" />
                 </ExternalLink>
               </Tooltip>
             )}
