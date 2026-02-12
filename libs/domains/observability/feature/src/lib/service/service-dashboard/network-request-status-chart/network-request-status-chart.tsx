@@ -128,7 +128,7 @@ export function NetworkRequestStatusChart({
       names.push(
         ...metricsEnvoy.data.result
           .filter((result: MetricData) => {
-            const code = result.metric?.envoy_response_code
+            const code = result.metric?.['envoy_response_code']
             return code !== 'undefined' && code !== undefined && code !== ''
           })
           .map((result: MetricData) => JSON.stringify({ ...result.metric, source: 'envoy' }))

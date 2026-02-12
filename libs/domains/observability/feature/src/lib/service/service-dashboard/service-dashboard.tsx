@@ -119,11 +119,7 @@ function ServiceDashboardContent() {
     endDate: now.toISOString(),
   })
 
-  const {
-    podCount,
-    isFetched: isFetchedPodCount,
-    isFetching: isFetchingPodCount,
-  } = usePodCount({
+  const { podCount, isFetched: isFetchedPodCount } = usePodCount({
     clusterId: environment?.cluster_id ?? '',
     containerName: containerName ?? '',
     podNames: podNames.length > 0 ? podNames : undefined,
@@ -131,7 +127,7 @@ function ServiceDashboardContent() {
   })
 
   useEffect(() => {
-    const resolved = isFetchedPodCount && !isFetchingPodCount
+    const resolved = isFetchedPodCount
     if (!resolved) {
       setResourcesModeLoading(true)
       return
@@ -139,7 +135,7 @@ function ServiceDashboardContent() {
     const mode = podCount > 10 ? 'aggregate' : 'pod'
     setResourcesMode(mode)
     setResourcesModeLoading(false)
-  }, [isFetchedPodCount, isFetchingPodCount, podCount])
+  }, [isFetchedPodCount, podCount])
 
   if ((!containerName && isFetchedContainerName) || (!namespace && isFetchedNamespace)) {
     return (
@@ -329,7 +325,7 @@ function ServiceDashboardContent() {
                 serviceId={serviceId}
                 containerName={containerName}
                 podNames={podNames}
-                podCountData={{ podCount, isResolved: isFetchedPodCount && !isFetchingPodCount }}
+                podCountData={{ podCount, isResolved: isFetchedPodCount }}
               />
             </div>
             <div className="overflow-hidden rounded border border-neutral-250">
@@ -338,7 +334,7 @@ function ServiceDashboardContent() {
                 serviceId={serviceId}
                 containerName={containerName}
                 podNames={podNames}
-                podCountData={{ podCount, isResolved: isFetchedPodCount && !isFetchingPodCount }}
+                podCountData={{ podCount, isResolved: isFetchedPodCount }}
               />
             </div>
             {hasStorage && (
