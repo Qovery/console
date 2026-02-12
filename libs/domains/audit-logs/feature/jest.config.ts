@@ -1,11 +1,11 @@
 /* eslint-disable */
 export default {
-  displayName: 'domains-event',
-  preset: '../../../jest.preset.js',
+  displayName: 'domains-audit-logs-feature',
+  preset: '../../../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/domains/event',
+  coverageDirectory: '../../../../coverage/libs/domains/audit-logs/feature',
 }

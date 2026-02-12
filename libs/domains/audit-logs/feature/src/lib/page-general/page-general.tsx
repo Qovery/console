@@ -8,7 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, useEffect, useMemo, useRef, useState } from 'react'
 import { type DecodedValueMap } from 'use-query-params'
-import { type ValidTargetIds } from '@qovery/domains/event'
+import { type ValidTargetIds } from '@qovery/domains/audit-logs/data-access'
 import {
   Button,
   Heading,
@@ -24,14 +24,15 @@ import {
 } from '@qovery/shared/ui'
 import { type SelectedTimestamps } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
-import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
+import FilterSection from '../filter-section/filter-section'
+import RowEventFeature from '../row-event-feature/row-event-feature'
 import {
   computeDisplayByLabel,
   computeMenusToDisplay,
   computeSelectedItemsFromFilter,
-} from '../../utils/target-type-selection-utils'
-import FilterSection from '../filter-section/filter-section'
+} from '../utils/target-type-selection-utils'
+
+// const { Table } = TablePrimitives
 
 export interface PageGeneralProps {
   isLoading: boolean
@@ -271,6 +272,8 @@ export function PageGeneral({
     ]
   )
 
+  const columnSizes = ['40%', '15%', '13%', '12%', '20%']
+
   return (
     <Section className="grow p-8">
       <Heading level={1} className="mb-4">
@@ -290,7 +293,7 @@ export function PageGeneral({
         data={events}
         filter={filter}
         setFilter={setFilter}
-        className="rounded border border-neutral-200"
+        className="rounded border border-neutral bg-background"
         classNameHead="rounded-t"
         columnsWidth={columnsWidth}
       >

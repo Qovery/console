@@ -1,3 +1,4 @@
+import { Link, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import {
   OrganizationEventOrigin,
@@ -6,7 +7,6 @@ import {
   OrganizationEventType,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type ValidTargetIds } from '@qovery/domains/event'
 import { IconEnum } from '@qovery/shared/enums'
@@ -69,9 +69,9 @@ export const getSourceIcon = (origin?: OrganizationEventOrigin) => {
   }
 }
 
-export function RowEvent(props: RowEventProps) {
+export const RowEvent = (props: RowEventProps) => {
   const { event, expanded, setExpanded, isPlaceholder, columnsWidth, validTargetIds } = props
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const [diffStats, setDiffStats] = useState<DiffStats>({ additions: 0, deletions: 0 })
 
   // Check if target still exists
@@ -163,7 +163,7 @@ export function RowEvent(props: RowEventProps) {
       OrganizationEventType.DEPLOYED_DRY_RUN,
       OrganizationEventType.TERRAFORM_FORCE_UNLOCK_SUCCEEDED,
       OrganizationEventType.TERRAFORM_MIGRATE_STATE_SUCCEEDED,
-      () => <Icon iconName="circle-check" className="text-green-500" />
+      () => <Icon iconName="circle-check" className="text-positive" />
     )
     .with(
       OrganizationEventType.DELETE_QUEUED,
@@ -175,7 +175,7 @@ export function RowEvent(props: RowEventProps) {
       OrganizationEventType.FORCE_RUN_QUEUED_DELETE,
       OrganizationEventType.FORCE_RUN_QUEUED_DEPLOY,
       OrganizationEventType.FORCE_RUN_QUEUED_STOP,
-      () => <Icon iconName="hourglass-start" className="text-neutral-350" />
+      () => <Icon iconName="hourglass-start" className="text-neutral-subtle" />
     )
     .with(
       OrganizationEventType.TRIGGER_CANCEL,
@@ -193,20 +193,20 @@ export function RowEvent(props: RowEventProps) {
       OrganizationEventType.TRIGGER_STOP,
       OrganizationEventType.TRIGGER_TERRAFORM_FORCE_UNLOCK,
       OrganizationEventType.TRIGGER_TERRAFORM_MIGRATE_STATE,
-      () => <Icon iconName="rocket-launch" className="text-neutral-350" />
+      () => <Icon iconName="rocket-launch" className="text-neutral-subtle" />
     )
     .with(OrganizationEventType.DELETE, OrganizationEventType.DELETED, () => (
-      <Icon iconName="trash-can" className="text-neutral-350" />
+      <Icon iconName="trash-can" className="text-neutral-subtle" />
     ))
-    .with(OrganizationEventType.CLONE, () => <Icon iconName="copy" className="text-neutral-350" />)
-    .with(OrganizationEventType.DRY_RUN, () => <Icon iconName="rotate-right" className="text-neutral-350" />)
-    .with(OrganizationEventType.MAINTENANCE, () => <Icon iconName="wrench" className="text-neutral-350" />)
+    .with(OrganizationEventType.CLONE, () => <Icon iconName="copy" className="text-neutral-subtle" />)
+    .with(OrganizationEventType.DRY_RUN, () => <Icon iconName="rotate-right" className="text-neutral-subtle" />)
+    .with(OrganizationEventType.MAINTENANCE, () => <Icon iconName="wrench" className="text-neutral-subtle" />)
     .with(OrganizationEventType.FORCE_RUN_SUCCEEDED, () => (
-      <Icon iconName="circle-check" className="text-neutral-350" />
+      <Icon iconName="circle-check" className="text-neutral-subtle" />
     ))
-    .with(OrganizationEventType.REMOTE_DEBUG, () => <Icon iconName="cloud-arrow-up" className="text-neutral-350" />)
-    .with(OrganizationEventType.SHELL, () => <Icon iconName="terminal" className="text-neutral-350" />)
-    .otherwise(() => (isEventTypeFailed ? <Icon iconName="circle-exclamation" className="text-red-500" /> : null))
+    .with(OrganizationEventType.REMOTE_DEBUG, () => <Icon iconName="cloud-arrow-up" className="text-neutral-subtle" />)
+    .with(OrganizationEventType.SHELL, () => <Icon iconName="terminal" className="text-neutral-subtle" />)
+    .otherwise(() => (isEventTypeFailed ? <Icon iconName="circle-exclamation" className="text-negative" /> : null))
 
   const isSuccess = match(event.event_type)
     .with(
@@ -226,9 +226,7 @@ export function RowEvent(props: RowEventProps) {
         data-testid="row-event"
         className={twMerge(
           clsx(
-            'group grid h-12 cursor-pointer items-center border-b border-b-neutral-200 py-2.5 text-xs font-normal text-neutral-400 last:border-b-0 hover:bg-neutral-100',
-            isEventTypeFailed && 'bg-red-50 hover:bg-neutral-100',
-            isSuccess && 'hover:bg-neutral-100'
+            'group grid h-12 cursor-pointer items-center border-b border-neutral py-2.5 text-sm font-normal text-neutral last:border-b-0 hover:bg-surface-neutral-subtle'
           )
         )}
         style={{ gridTemplateColumns: columnsWidth }}
@@ -239,7 +237,7 @@ export function RowEvent(props: RowEventProps) {
             <div className="flex gap-3">
               <Icon
                 name={IconAwesomeEnum.ANGLE_DOWN}
-                className={`block cursor-pointer text-xs ${expanded ? 'rotate-180' : ''}`}
+                className={`block cursor-pointer text-neutral-subtle ${expanded ? 'rotate-180' : ''}`}
               />
               {event.timestamp && (
                 <Tooltip content={dateUTCString(event.timestamp)}>
@@ -255,11 +253,11 @@ export function RowEvent(props: RowEventProps) {
         <div className="px-5" data-testid="tag">
           <Skeleton height={10} width={80} show={isPlaceholder}>
             <span>
-              <span className={isEventTypeFailed ? 'text-red-500' : 'text-brand-500'}>
+              <span className={isEventTypeFailed ? 'text-negative' : 'text-brand'}>
                 {formatEventName(event.event_type ?? '')}
               </span>
               {event.sub_target_type && (
-                <span className="text-neutral-400">
+                <span className="text-neutral">
                   {' '}
                   : {upperCaseFirstLetter(event.sub_target_type)?.replace(/_/g, ' ')}
                 </span>
@@ -296,7 +294,7 @@ export function RowEvent(props: RowEventProps) {
                   <div
                     className={`flex items-center gap-1 truncate pr-2 ${
                       targetExists
-                        ? '-translate-x-3 transition-transform duration-200 hover:text-brand-500 group-hover:translate-x-0'
+                        ? '-translate-x-3 transition-transform duration-200 hover:text-brand group-hover:translate-x-0'
                         : ''
                     }`}
                   >
@@ -313,23 +311,23 @@ export function RowEvent(props: RowEventProps) {
             </Tooltip>
           </Skeleton>
         </div>
-        <div className="px-4">
+        <div className="px-4 text-neutral-subtle">
           <Skeleton height={10} width={80} show={isPlaceholder}>
             <>{upperCaseFirstLetter(event.target_type ?? '')?.replace(/_/g, ' ')}</>
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={10} width={80} show={isPlaceholder} className="truncate">
+          <Skeleton height={10} width={80} show={isPlaceholder} className="truncate text-neutral-subtle">
             <Truncate truncateLimit={40} text={event.triggered_by ?? ''} />
           </Skeleton>
         </div>
         <div className="px-4">
           <Skeleton height={16} width={80} show={isPlaceholder} className="justify-end">
             <Tooltip content={event.user_agent} disabled={!event.user_agent} side="right">
-              <div className="truncate">
+              <div className="truncate text-neutral-subtle">
                 {upperCaseFirstLetter(event.origin)?.replace('_', ' ')}
                 {event.user_agent && <Icon iconName="info-circle" iconStyle="regular" className="ml-1.5" />}
-                <span className="ml-1.5 inline-block text-neutral-400">{getSourceIcon(event.origin)}</span>
+                <span className="ml-1.5 inline-block">{getSourceIcon(event.origin)}</span>
               </div>
             </Tooltip>
           </Skeleton>
@@ -340,8 +338,8 @@ export function RowEvent(props: RowEventProps) {
       event.original_change &&
       event.change &&
       event.original_change !== event.change ? (
-        <div className="relative flex flex-col border-b border-b-neutral-200 bg-white" data-testid="expanded-panel">
-          <div className="flex h-7 items-center justify-between bg-[#faf9fb] px-4 text-xs text-neutral-100">
+        <div className="relative flex flex-col border-b border-neutral bg-background" data-testid="expanded-panel">
+          <div className="flex h-7 items-center justify-between bg-[#faf9fb] px-4 text-xs">
             <div className="flex items-center gap-2">
               <span className="font-bold text-[#30a46c]">+{diffStats.additions}</span>
               <span className="font-bold text-[#e54d2e]">-{diffStats.deletions}</span>
@@ -359,7 +357,7 @@ export function RowEvent(props: RowEventProps) {
         </div>
       ) : (
         expanded && (
-          <div className="relative flex flex-col border-b border-b-neutral-200 bg-white" data-testid="expanded-panel">
+          <div className="relative flex flex-col border-b border-b-neutral-200" data-testid="expanded-panel">
             <CodeEditor
               key={event.timestamp}
               value={JSON.stringify(JSON.parse(event.change || ''), null, 2)}
@@ -388,5 +386,3 @@ export function RowEvent(props: RowEventProps) {
     </>
   )
 }
-
-export default RowEvent

@@ -1,7 +1,7 @@
 {
-  "name": "domains-event",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/domains/event/src",
+  "name": "domains-audit-logs-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domains/audit-logs/feature/src",
   "projectType": "library",
   "tags": [],
   "targets": {

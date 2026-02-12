@@ -4,7 +4,7 @@ import { type DecodedValueMap } from 'use-query-params'
 import { Button, Icon, type SelectedItem, type TableFilterProps, Truncate } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
+import { type queryParamsValues } from '../../../../../../pages/events/src/lib/feature/page-general-feature/page-general-feature'
 
 export interface CustomFilterProps {
   clearFilter: () => void

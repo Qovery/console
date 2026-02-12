@@ -1,7 +1,7 @@
 import { type DecodedValueMap } from 'use-query-params'
+import { type queryParamsValues } from '@qovery/pages/events'
 import { type SelectedItem } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { type queryParamsValues } from '../../feature/page-general-feature/page-general-feature'
 import FilterSection, { type CustomFilterProps } from './filter-section'
 
 const props: CustomFilterProps = {
