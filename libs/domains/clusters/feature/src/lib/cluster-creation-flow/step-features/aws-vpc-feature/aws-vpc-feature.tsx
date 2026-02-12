@@ -19,7 +19,7 @@ function TooltipContentSubnets({ children, subnets }: PropsWithChildren & { subn
   return (
     <div className="flex flex-col items-start gap-1">
       <span className="inline-flex items-center gap-1">
-        {children} <Icon iconName="check" className="text-green-500" />
+        {children} <Icon iconName="check" className="text-positive" />
       </span>
       <div>
         {subnets.map((item, index) => (
@@ -84,7 +84,7 @@ export function AWSVpcFeature({ isKarpenter = false }: AWSVpcFeatureProps) {
   }
 
   return (
-    <div className="flex flex-col justify-between rounded border border-neutral bg-surface-neutral-component p-4">
+    <div className="flex flex-col justify-between rounded border border-neutral bg-surface-neutral-subtle p-4">
       <div className="flex justify-between">
         <div>
           <h4 className="mb-1 text-sm font-medium text-neutral">Deploy on an existing VPC</h4>

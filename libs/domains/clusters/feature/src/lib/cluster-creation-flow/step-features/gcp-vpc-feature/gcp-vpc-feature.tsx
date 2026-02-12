@@ -49,7 +49,7 @@ export function GCPVpcFeature() {
               value={field.value}
               onChange={field.onChange}
             />
-            <p className="mb-3 ml-4 mt-1 text-xs text-neutral-350">
+            <p className="mb-3 ml-4 mt-1 text-xs text-neutral-subtle">
               By default: the project id used is the one specified in the credentials file
             </p>
           </>
@@ -69,7 +69,7 @@ export function GCPVpcFeature() {
       {openOptions && (
         <>
           <hr className="my-4" />
-          <h4 className="mb-4 text-sm font-medium text-neutral-400">Additional ranges (optional)</h4>
+          <h4 className="mb-4 text-sm font-medium text-neutral">Additional ranges (optional)</h4>
           <Controller
             name="gcp_existing_vpc.subnetwork_name"
             rules={{
