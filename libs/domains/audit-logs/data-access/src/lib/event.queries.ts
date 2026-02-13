@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import {
-  EnvironmentsApi,
   OrganizationEventApi,
   type OrganizationEventResponseList,
   type OrganizationEventTargetResponseList,
@@ -18,7 +17,6 @@ import { toastError } from '@qovery/shared/ui'
 const eventsApi = new OrganizationEventApi()
 const organizationApi = new OrganizationMainCallsApi()
 const projectsApi = new ProjectsApi()
-const environmentsApi = new EnvironmentsApi()
 
 export interface EventQueryParams {
   pageSize?: number | null

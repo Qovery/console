@@ -46,6 +46,8 @@
       "@qovery/domains/variables/data-access": ["libs/domains/variables/data-access/src/index.ts"],
       "@qovery/domains/variables/feature": ["libs/domains/variables/feature/src/index.ts"],
       "@qovery/domains/variables/util": ["libs/domains/variables/util/src/index.ts"],
+      "@qovery/domains/audit-logs/feature": ["libs/domains/audit-logs/feature/src/index.ts"],
+      "@qovery/domains/audit-logs/data-access": ["libs/domains/audit-logs/data-access/src/index.ts"],
       "@qovery/pages/application": ["libs/pages/application/src/index.ts"],
       "@qovery/pages/cluster": ["libs/pages/cluster/src/index.ts"],
       "@qovery/pages/clusters": ["libs/pages/clusters/src/index.ts"],
@@ -92,8 +94,8 @@
       "@qovery/shared/utils": ["libs/shared/utils/src/index.ts"],
       "@qovery/shared/webflow/data-access": ["libs/shared/webflow/data-access/src/index.ts"],
       "@qovery/shared/webflow/feature": ["libs/shared/webflow/feature/src/index.ts"],
-      "@qovery/state/util-queries": ["libs/state/util-queries/src/index.ts"]
-    }
+      "@qovery/state/util-queries": ["libs/state/util-queries/src/index.ts"],
+    },
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp"],
 }
