@@ -1,7 +1,8 @@
 import { Outlet, createFileRoute, useParams } from '@tanstack/react-router'
-import { Suspense } from 'react'
+import { ClusterStateEnum as ClusterState, type ClusterStateEnum } from 'qovery-typescript-axios'
+import { Suspense, useMemo } from 'react'
 import { memo } from 'react'
-import { useClusters } from '@qovery/domains/clusters/feature'
+import { ClusterDeploymentProgressCard, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { LoaderSpinner } from '@qovery/shared/ui'
 import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { queries } from '@qovery/state/util-queries'
@@ -33,9 +34,21 @@ const Loader = () => {
 
 const StatusWebSocketListenerMemo = memo(StatusWebSocketListener)
 
+const isDeployingStatus = (status?: ClusterStateEnum): boolean =>
+  status === ClusterState.DEPLOYMENT_QUEUED || status === ClusterState.DEPLOYING
+
 function RouteComponent() {
   const { organizationId = '', projectId = '', environmentId = '', versionId = '' } = useParams({ strict: false })
   const { data: clusters } = useClusters({ organizationId })
+  const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
+
+  const deployingClusters = useMemo(() => {
+    if (!clusters || !clusterStatuses) return []
+    return clusters.filter((cluster) => {
+      const status = clusterStatuses.find(({ cluster_id }) => cluster_id === cluster.id)?.status
+      return isDeployingStatus(status)
+    })
+  }, [clusters, clusterStatuses])
 
   return (
     <>
@@ -59,6 +72,9 @@ function RouteComponent() {
               versionId={versionId}
             />
           )
+      )}
+      {deployingClusters && deployingClusters.length > 0 && (
+        <ClusterDeploymentProgressCard organizationId={organizationId} clusters={deployingClusters} />
       )}
     </>
   )
