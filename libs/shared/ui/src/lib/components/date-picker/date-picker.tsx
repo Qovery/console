@@ -69,8 +69,8 @@ export function DatePicker({
     <div className="relative">
       {children}
       {isOpen && hasPanels && (
-        <div className={`date-picker absolute z-10 mt-2.5 ${isOpen ? 'date-picker--open' : ''}`}>
-          <div className="mt-2 inline-flex rounded-lg border border-neutral bg-surface-neutral shadow-[0_0_4px_rgba(0,0,0,0.01)]">
+        <div className={`date-picker z-modal absolute mt-2.5 ${isOpen ? 'date-picker--open' : ''}`}>
+          <div className="border-neutral bg-surface-neutral mt-2 inline-flex rounded-lg border shadow-[0_0_4px_rgba(0,0,0,0.01)]">
             <div className={twMerge('flex', shouldShowCalendar && shouldShowPeriodList ? 'items-stretch' : 'flex-col')}>
               {shouldShowPeriodList && (
                 <DatePickerPeriodList
@@ -78,7 +78,7 @@ export function DatePicker({
                   value={periodValue}
                   onChange={handlePeriodChange}
                   lockedLabel={lockedLabel}
-                  className={shouldShowCalendar ? 'border-r border-neutral' : ''}
+                  className={shouldShowCalendar ? 'border-neutral border-r' : ''}
                 />
               )}
               {shouldShowCalendar && (
