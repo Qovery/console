@@ -21,12 +21,27 @@ import { Route as AuthenticatedOnboardingPlansRouteImport } from './routes/_auth
 import { Route as AuthenticatedOnboardingPersonalizeRouteImport } from './routes/_authenticated/onboarding/personalize'
 import { Route as AuthenticatedOrganizationOrganizationIdRouteRouteImport } from './routes/_authenticated/organization/$organizationId/route'
 import { Route as AuthenticatedOrganizationOrganizationIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/index'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsRouteImport } from './routes/_authenticated/organization/$organizationId/settings'
 import { Route as AuthenticatedOrganizationOrganizationIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/overview'
 import { Route as AuthenticatedOrganizationOrganizationIdClustersRouteImport } from './routes/_authenticated/organization/$organizationId/clusters'
 import { Route as AuthenticatedOrganizationOrganizationIdAuditLogsRouteImport } from './routes/_authenticated/organization/$organizationId/audit-logs'
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsRouteImport } from './routes/_authenticated/organization/$organizationId/alerts'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/settings/route'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/settings/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/$clusterId/index'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport } from './routes/_authenticated/organization/$organizationId/settings/webhook'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsRolesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/roles'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsMembersRouteImport } from './routes/_authenticated/organization/$organizationId/settings/members'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/labels-annotations'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/helm-repositories'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRouteImport } from './routes/_authenticated/organization/$organizationId/settings/git-repository-access'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/settings/general'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/settings/danger-zone'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/container-registries'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/cloud-credentials'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing-summary'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing-details'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsApiTokenRouteImport } from './routes/_authenticated/organization/$organizationId/settings/api-token'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRouteImport } from './routes/_authenticated/organization/$organizationId/settings/ai-copilot'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterNewRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/new'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/index'
@@ -128,12 +143,6 @@ const AuthenticatedOrganizationOrganizationIdIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
   } as any)
-const AuthenticatedOrganizationOrganizationIdSettingsRoute =
-  AuthenticatedOrganizationOrganizationIdSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
-  } as any)
 const AuthenticatedOrganizationOrganizationIdOverviewRoute =
   AuthenticatedOrganizationOrganizationIdOverviewRouteImport.update({
     id: '/overview',
@@ -158,11 +167,136 @@ const AuthenticatedOrganizationOrganizationIdAlertsRoute =
     path: '/alerts',
     getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
   } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsRouteRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsRouteRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsIndexRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
 const AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute =
   AuthenticatedOrganizationOrganizationIdClusterIdIndexRouteImport.update({
     id: '/$clusterId/',
     path: '/$clusterId/',
     getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport.update({
+    id: '/webhook',
+    path: '/webhook',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsRolesRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsRolesRouteImport.update({
+    id: '/roles',
+    path: '/roles',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsMembersRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsMembersRouteImport.update({
+    id: '/members',
+    path: '/members',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRouteImport.update(
+    {
+      id: '/labels-annotations',
+      path: '/labels-annotations',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRouteImport.update(
+    {
+      id: '/helm-repositories',
+      path: '/helm-repositories',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRouteImport.update(
+    {
+      id: '/git-repository-access',
+      path: '/git-repository-access',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsGeneralRouteImport.update({
+    id: '/general',
+    path: '/general',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRouteImport.update({
+    id: '/danger-zone',
+    path: '/danger-zone',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRouteImport.update(
+    {
+      id: '/container-registries',
+      path: '/container-registries',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRouteImport.update(
+    {
+      id: '/cloud-credentials',
+      path: '/cloud-credentials',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRouteImport.update(
+    {
+      id: '/billing-summary',
+      path: '/billing-summary',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRouteImport.update(
+    {
+      id: '/billing-details',
+      path: '/billing-details',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsApiTokenRouteImport.update({
+    id: '/api-token',
+    path: '/api-token',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRouteImport.update({
+    id: '/ai-copilot',
+    path: '/ai-copilot',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
   } as any)
 const AuthenticatedOrganizationOrganizationIdClusterNewRoute =
   AuthenticatedOrganizationOrganizationIdClusterNewRouteImport.update({
@@ -458,14 +592,29 @@ export interface FileRoutesByFullPath {
   '/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
   '/accept-invitation': typeof AuthenticatedAcceptInvitationIndexRoute
   '/organization/': typeof AuthenticatedOrganizationIndexRoute
+  '/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
   '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   '/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   '/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
-  '/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRoute
   '/organization/$organizationId/': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/organization/$organizationId/cluster/new': typeof AuthenticatedOrganizationOrganizationIdClusterNewRoute
+  '/organization/$organizationId/settings/ai-copilot': typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
+  '/organization/$organizationId/settings/api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
+  '/organization/$organizationId/settings/billing-details': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
+  '/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
+  '/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
+  '/organization/$organizationId/settings/container-registries': typeof AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute
+  '/organization/$organizationId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute
+  '/organization/$organizationId/settings/general': typeof AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute
+  '/organization/$organizationId/settings/git-repository-access': typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
+  '/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
+  '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
+  '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
+  '/organization/$organizationId/settings/roles': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesRoute
+  '/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
+  '/organization/$organizationId/settings/': typeof AuthenticatedOrganizationOrganizationIdSettingsIndexRoute
   '/organization/$organizationId/cluster/$clusterId/settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteWithChildren
   '/organization/$organizationId/cluster/create/$slug': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRouteWithChildren
@@ -512,10 +661,24 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   '/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   '/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
-  '/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRoute
   '/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/organization/$organizationId/cluster/new': typeof AuthenticatedOrganizationOrganizationIdClusterNewRoute
+  '/organization/$organizationId/settings/ai-copilot': typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
+  '/organization/$organizationId/settings/api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
+  '/organization/$organizationId/settings/billing-details': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
+  '/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
+  '/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
+  '/organization/$organizationId/settings/container-registries': typeof AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute
+  '/organization/$organizationId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute
+  '/organization/$organizationId/settings/general': typeof AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute
+  '/organization/$organizationId/settings/git-repository-access': typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
+  '/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
+  '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
+  '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
+  '/organization/$organizationId/settings/roles': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesRoute
+  '/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
+  '/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsIndexRoute
   '/organization/$organizationId/cluster/$clusterId/cluster-logs': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute
   '/organization/$organizationId/cluster/$clusterId/overview': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute
   '/organization/$organizationId/project/$projectId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute
@@ -558,14 +721,29 @@ export interface FileRoutesById {
   '/_authenticated/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
   '/_authenticated/accept-invitation/': typeof AuthenticatedAcceptInvitationIndexRoute
   '/_authenticated/organization/': typeof AuthenticatedOrganizationIndexRoute
+  '/_authenticated/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
   '/_authenticated/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   '/_authenticated/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   '/_authenticated/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
-  '/_authenticated/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRoute
   '/_authenticated/organization/$organizationId/': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/_authenticated/organization/$organizationId/cluster/new': typeof AuthenticatedOrganizationOrganizationIdClusterNewRoute
+  '/_authenticated/organization/$organizationId/settings/ai-copilot': typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
+  '/_authenticated/organization/$organizationId/settings/api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
+  '/_authenticated/organization/$organizationId/settings/billing-details': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
+  '/_authenticated/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
+  '/_authenticated/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
+  '/_authenticated/organization/$organizationId/settings/container-registries': typeof AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute
+  '/_authenticated/organization/$organizationId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute
+  '/_authenticated/organization/$organizationId/settings/general': typeof AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute
+  '/_authenticated/organization/$organizationId/settings/git-repository-access': typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
+  '/_authenticated/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
+  '/_authenticated/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
+  '/_authenticated/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
+  '/_authenticated/organization/$organizationId/settings/roles': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesRoute
+  '/_authenticated/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/_authenticated/organization/$organizationId/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
+  '/_authenticated/organization/$organizationId/settings/': typeof AuthenticatedOrganizationOrganizationIdSettingsIndexRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/cluster/create/$slug': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRouteWithChildren
@@ -612,14 +790,29 @@ export interface FileRouteTypes {
     | '/onboarding/project'
     | '/accept-invitation'
     | '/organization/'
+    | '/organization/$organizationId/settings'
     | '/organization/$organizationId/alerts'
     | '/organization/$organizationId/audit-logs'
     | '/organization/$organizationId/clusters'
     | '/organization/$organizationId/overview'
-    | '/organization/$organizationId/settings'
     | '/organization/$organizationId/'
     | '/organization/$organizationId/cluster/new'
+    | '/organization/$organizationId/settings/ai-copilot'
+    | '/organization/$organizationId/settings/api-token'
+    | '/organization/$organizationId/settings/billing-details'
+    | '/organization/$organizationId/settings/billing-summary'
+    | '/organization/$organizationId/settings/cloud-credentials'
+    | '/organization/$organizationId/settings/container-registries'
+    | '/organization/$organizationId/settings/danger-zone'
+    | '/organization/$organizationId/settings/general'
+    | '/organization/$organizationId/settings/git-repository-access'
+    | '/organization/$organizationId/settings/helm-repositories'
+    | '/organization/$organizationId/settings/labels-annotations'
+    | '/organization/$organizationId/settings/members'
+    | '/organization/$organizationId/settings/roles'
+    | '/organization/$organizationId/settings/webhook'
     | '/organization/$organizationId/$clusterId'
+    | '/organization/$organizationId/settings/'
     | '/organization/$organizationId/cluster/$clusterId/settings'
     | '/organization/$organizationId/cluster/create/$slug'
     | '/organization/$organizationId/project/$projectId/settings'
@@ -666,10 +859,24 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/audit-logs'
     | '/organization/$organizationId/clusters'
     | '/organization/$organizationId/overview'
-    | '/organization/$organizationId/settings'
     | '/organization/$organizationId'
     | '/organization/$organizationId/cluster/new'
+    | '/organization/$organizationId/settings/ai-copilot'
+    | '/organization/$organizationId/settings/api-token'
+    | '/organization/$organizationId/settings/billing-details'
+    | '/organization/$organizationId/settings/billing-summary'
+    | '/organization/$organizationId/settings/cloud-credentials'
+    | '/organization/$organizationId/settings/container-registries'
+    | '/organization/$organizationId/settings/danger-zone'
+    | '/organization/$organizationId/settings/general'
+    | '/organization/$organizationId/settings/git-repository-access'
+    | '/organization/$organizationId/settings/helm-repositories'
+    | '/organization/$organizationId/settings/labels-annotations'
+    | '/organization/$organizationId/settings/members'
+    | '/organization/$organizationId/settings/roles'
+    | '/organization/$organizationId/settings/webhook'
     | '/organization/$organizationId/$clusterId'
+    | '/organization/$organizationId/settings'
     | '/organization/$organizationId/cluster/$clusterId/cluster-logs'
     | '/organization/$organizationId/cluster/$clusterId/overview'
     | '/organization/$organizationId/project/$projectId/overview'
@@ -711,14 +918,29 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding/project'
     | '/_authenticated/accept-invitation/'
     | '/_authenticated/organization/'
+    | '/_authenticated/organization/$organizationId/settings'
     | '/_authenticated/organization/$organizationId/alerts'
     | '/_authenticated/organization/$organizationId/audit-logs'
     | '/_authenticated/organization/$organizationId/clusters'
     | '/_authenticated/organization/$organizationId/overview'
-    | '/_authenticated/organization/$organizationId/settings'
     | '/_authenticated/organization/$organizationId/'
     | '/_authenticated/organization/$organizationId/cluster/new'
+    | '/_authenticated/organization/$organizationId/settings/ai-copilot'
+    | '/_authenticated/organization/$organizationId/settings/api-token'
+    | '/_authenticated/organization/$organizationId/settings/billing-details'
+    | '/_authenticated/organization/$organizationId/settings/billing-summary'
+    | '/_authenticated/organization/$organizationId/settings/cloud-credentials'
+    | '/_authenticated/organization/$organizationId/settings/container-registries'
+    | '/_authenticated/organization/$organizationId/settings/danger-zone'
+    | '/_authenticated/organization/$organizationId/settings/general'
+    | '/_authenticated/organization/$organizationId/settings/git-repository-access'
+    | '/_authenticated/organization/$organizationId/settings/helm-repositories'
+    | '/_authenticated/organization/$organizationId/settings/labels-annotations'
+    | '/_authenticated/organization/$organizationId/settings/members'
+    | '/_authenticated/organization/$organizationId/settings/roles'
+    | '/_authenticated/organization/$organizationId/settings/webhook'
     | '/_authenticated/organization/$organizationId/$clusterId/'
+    | '/_authenticated/organization/$organizationId/settings/'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings'
     | '/_authenticated/organization/$organizationId/cluster/create/$slug'
     | '/_authenticated/organization/$organizationId/project/$projectId/settings'
@@ -846,13 +1068,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdIndexRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
     }
-    '/_authenticated/organization/$organizationId/settings': {
-      id: '/_authenticated/organization/$organizationId/settings'
-      path: '/settings'
-      fullPath: '/organization/$organizationId/settings'
-      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
-    }
     '/_authenticated/organization/$organizationId/overview': {
       id: '/_authenticated/organization/$organizationId/overview'
       path: '/overview'
@@ -881,12 +1096,124 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAlertsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
     }
+    '/_authenticated/organization/$organizationId/settings': {
+      id: '/_authenticated/organization/$organizationId/settings'
+      path: '/settings'
+      fullPath: '/organization/$organizationId/settings'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/': {
+      id: '/_authenticated/organization/$organizationId/settings/'
+      path: '/'
+      fullPath: '/organization/$organizationId/settings/'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsIndexRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
     '/_authenticated/organization/$organizationId/$clusterId/': {
       id: '/_authenticated/organization/$organizationId/$clusterId/'
       path: '/$clusterId'
       fullPath: '/organization/$organizationId/$clusterId'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/webhook': {
+      id: '/_authenticated/organization/$organizationId/settings/webhook'
+      path: '/webhook'
+      fullPath: '/organization/$organizationId/settings/webhook'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/roles': {
+      id: '/_authenticated/organization/$organizationId/settings/roles'
+      path: '/roles'
+      fullPath: '/organization/$organizationId/settings/roles'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRolesRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/members': {
+      id: '/_authenticated/organization/$organizationId/settings/members'
+      path: '/members'
+      fullPath: '/organization/$organizationId/settings/members'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/labels-annotations': {
+      id: '/_authenticated/organization/$organizationId/settings/labels-annotations'
+      path: '/labels-annotations'
+      fullPath: '/organization/$organizationId/settings/labels-annotations'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/helm-repositories': {
+      id: '/_authenticated/organization/$organizationId/settings/helm-repositories'
+      path: '/helm-repositories'
+      fullPath: '/organization/$organizationId/settings/helm-repositories'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/git-repository-access': {
+      id: '/_authenticated/organization/$organizationId/settings/git-repository-access'
+      path: '/git-repository-access'
+      fullPath: '/organization/$organizationId/settings/git-repository-access'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/general': {
+      id: '/_authenticated/organization/$organizationId/settings/general'
+      path: '/general'
+      fullPath: '/organization/$organizationId/settings/general'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsGeneralRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/danger-zone': {
+      id: '/_authenticated/organization/$organizationId/settings/danger-zone'
+      path: '/danger-zone'
+      fullPath: '/organization/$organizationId/settings/danger-zone'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/container-registries': {
+      id: '/_authenticated/organization/$organizationId/settings/container-registries'
+      path: '/container-registries'
+      fullPath: '/organization/$organizationId/settings/container-registries'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/cloud-credentials': {
+      id: '/_authenticated/organization/$organizationId/settings/cloud-credentials'
+      path: '/cloud-credentials'
+      fullPath: '/organization/$organizationId/settings/cloud-credentials'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/billing-summary': {
+      id: '/_authenticated/organization/$organizationId/settings/billing-summary'
+      path: '/billing-summary'
+      fullPath: '/organization/$organizationId/settings/billing-summary'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/billing-details': {
+      id: '/_authenticated/organization/$organizationId/settings/billing-details'
+      path: '/billing-details'
+      fullPath: '/organization/$organizationId/settings/billing-details'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/api-token': {
+      id: '/_authenticated/organization/$organizationId/settings/api-token'
+      path: '/api-token'
+      fullPath: '/organization/$organizationId/settings/api-token'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/ai-copilot': {
+      id: '/_authenticated/organization/$organizationId/settings/ai-copilot'
+      path: '/ai-copilot'
+      fullPath: '/organization/$organizationId/settings/ai-copilot'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/cluster/new': {
       id: '/_authenticated/organization/$organizationId/cluster/new'
@@ -1122,6 +1449,63 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
+  AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
+  AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
+  AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
+  AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
+  AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
+  AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute
+  AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute
+  AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute
+  AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
+  AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
+  AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
+  AuthenticatedOrganizationOrganizationIdSettingsMembersRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
+  AuthenticatedOrganizationOrganizationIdSettingsRolesRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRolesRoute
+  AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
+  AuthenticatedOrganizationOrganizationIdSettingsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsIndexRoute
+}
+
+const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren =
+  {
+    AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsMembersRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsMembersRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsRolesRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsRolesRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsIndexRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsIndexRoute,
+  }
+
+const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren =
+  AuthenticatedOrganizationOrganizationIdSettingsRouteRoute._addFileChildren(
+    AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren,
+  )
+
 interface AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute
@@ -1231,11 +1615,11 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
   )
 
 interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
+  AuthenticatedOrganizationOrganizationIdSettingsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdAlertsRoute: typeof AuthenticatedOrganizationOrganizationIdAlertsRoute
   AuthenticatedOrganizationOrganizationIdAuditLogsRoute: typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   AuthenticatedOrganizationOrganizationIdClustersRoute: typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   AuthenticatedOrganizationOrganizationIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
-  AuthenticatedOrganizationOrganizationIdSettingsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRoute
   AuthenticatedOrganizationOrganizationIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   AuthenticatedOrganizationOrganizationIdClusterNewRoute: typeof AuthenticatedOrganizationOrganizationIdClusterNewRoute
   AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
@@ -1255,6 +1639,8 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
 
 const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOrganizationOrganizationIdRouteRouteChildren =
   {
+    AuthenticatedOrganizationOrganizationIdSettingsRouteRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdAlertsRoute:
       AuthenticatedOrganizationOrganizationIdAlertsRoute,
     AuthenticatedOrganizationOrganizationIdAuditLogsRoute:
@@ -1263,8 +1649,6 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdClustersRoute,
     AuthenticatedOrganizationOrganizationIdOverviewRoute:
       AuthenticatedOrganizationOrganizationIdOverviewRoute,
-    AuthenticatedOrganizationOrganizationIdSettingsRoute:
-      AuthenticatedOrganizationOrganizationIdSettingsRoute,
     AuthenticatedOrganizationOrganizationIdIndexRoute:
       AuthenticatedOrganizationOrganizationIdIndexRoute,
     AuthenticatedOrganizationOrganizationIdClusterNewRoute:
