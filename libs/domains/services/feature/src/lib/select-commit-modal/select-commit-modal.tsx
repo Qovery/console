@@ -40,6 +40,7 @@ export function SelectCommitModal({
 
   const [search, setSearch] = useState('')
   const [targetCommitId, setTargetCommitId] = useState<string | undefined>()
+  const hasCommits = (data.commits?.length ?? 0) > 0
 
   const commitsByDay = useMemo(
     () =>
@@ -81,7 +82,7 @@ export function SelectCommitModal({
         {children}
       </div>
 
-      <InputSearch placeholder="Search by commit message or commit id" onChange={setSearch} />
+      {hasCommits && <InputSearch placeholder="Search by commit message or commit id" onChange={setSearch} />}
 
       {isLoading || Object.keys(filterCommits).length > 0 ? (
         <RadioGroup.Root onValueChange={setTargetCommitId}>
@@ -178,6 +179,15 @@ export function SelectCommitModal({
             ))}
           </ScrollShadowWrapper>
         </RadioGroup.Root>
+      ) : !hasCommits ? (
+        <div className="pb-16">
+          <div className="rounded border border-neutral-250 bg-neutral-100 px-3 py-6 text-center">
+            <Icon iconName="wave-pulse" className="text-neutral-350" />
+            <p className="mt-1 text-xs font-medium text-neutral-350">
+              No commit available. This branch might have been deleted.
+            </p>
+          </div>
+        </div>
       ) : (
         <div className="px-3 py-6 text-center">
           <Icon iconName="wave-pulse" className="text-neutral-350" />

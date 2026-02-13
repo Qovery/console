@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = `
 <body
@@ -186,9 +186,9 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-rotate text-sm mr-3 text-brand-500"
+          class="fa-solid fa-code-branch text-sm mr-3 text-brand-500"
         />
-        Deploy latest version for..
+        Deploy by version
       </div>
     </div>
   </div>
