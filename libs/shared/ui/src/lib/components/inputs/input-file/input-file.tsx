@@ -75,7 +75,7 @@ export function InputFile(props: InputFileProps) {
               setSelectedImage(undefined)
               onChange && onChange(undefined)
             }}
-            className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-surface-brand-subtle text-neutral-subtle duration-150 ease-out hover:bg-surface-brand-component hover:text-brand"
+            className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-surface-neutral-component text-neutral-subtle duration-150 ease-out hover:bg-surface-brand-component hover:text-brand"
           >
             <Icon iconName="xmark" className="text-xs" />
           </span>
