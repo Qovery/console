@@ -154,7 +154,7 @@ export function CreateCloneEnvironmentModal({
       >
         {environmentToClone && (
           <InputText
-            className="mb-6"
+            className="mb-3"
             name="clone"
             value={environmentToClone.name}
             label="Environment to clone"
@@ -169,7 +169,7 @@ export function CreateCloneEnvironmentModal({
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
-              className="mb-6"
+              className="mb-3"
               name={field.name}
               onChange={(event: FormEvent<HTMLInputElement>) => {
                 field.onChange(event.currentTarget.value)
@@ -189,7 +189,7 @@ export function CreateCloneEnvironmentModal({
             }}
             render={({ field, fieldState: { error } }) => (
               <InputSelect
-                className="mb-6"
+                className="mb-3"
                 onChange={field.onChange}
                 value={field.value}
                 label="Target project"
@@ -212,7 +212,7 @@ export function CreateCloneEnvironmentModal({
           render={({ field, fieldState: { error } }) => (
             <InputSelect
               dataTestId="input-select-cluster"
-              className="mb-6"
+              className="mb-3"
               onChange={field.onChange}
               value={field.value}
               label="Cluster"
@@ -260,7 +260,7 @@ export function CreateCloneEnvironmentModal({
           }}
           render={({ field }) => (
             <InputSelect
-              className="mb-6"
+              className="mb-3"
               dataTestId="input-select-mode"
               options={environmentModes}
               onChange={field.onChange}

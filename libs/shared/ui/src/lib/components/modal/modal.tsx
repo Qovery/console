@@ -116,11 +116,11 @@ export const Modal = (props: ModalProps) => {
         <Dialog.Overlay
           data-testid="overlay"
           onClick={handleOutsideClick}
-          className="modal__overlay fixed left-0 top-0 z-overlay flex h-screen w-full bg-black/80"
+          className="modal__overlay fixed left-0 top-0 z-overlay flex h-screen w-full bg-background-overlay"
         />
         {fakeModal && (
           <div
-            className="modal__overlay fixed left-0 top-0 flex h-screen w-full bg-black/80"
+            className="modal__overlay fixed left-0 top-0 flex h-screen w-full bg-background-overlay"
             onClick={handleOutsideClick}
           />
         )}
