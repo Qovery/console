@@ -135,7 +135,7 @@ export const handleSubmit = (data: FieldValues, organization: Organization) => {
   }
 }
 
-export function PageOrganizationGeneralFeature() {
+export function SettingsGeneral() {
   const { organizationId = '' } = useParams({ strict: false })
   useDocumentTitle('General - Organization settings')
 
