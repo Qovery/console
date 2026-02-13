@@ -137,7 +137,6 @@ function Item({ cluster, project }: { cluster: Cluster; project: Project }) {
             <Link
               to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
               size="ssm"
-              color="current"
               className="inline-flex items-center gap-1 font-medium text-neutral-350 hover:text-neutral-400"
             >
               See cluster logs
@@ -164,7 +163,7 @@ function Item({ cluster, project }: { cluster: Cluster; project: Project }) {
         </div>
         <div className="flex min-w-0 items-center gap-3">
           {link && label && (
-            <Link to={link} size="ssm" color="current" className="text-neutral-350 hover:text-neutral-400">
+            <Link to={link} size="ssm" className="text-neutral-350 hover:text-neutral-400">
               {label}
               <Icon iconName="chevron-right" iconStyle="regular" />
             </Link>

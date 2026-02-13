@@ -1,3 +1,86 @@
+// Monaco base values
+.monaco-editor {
+  background-color: var(--neutral-1) !important;
+  color: var(--neutral-12) !important;
+}
+
+.monaco-editor .margin,
+.monaco-editor .sticky-widget-line-numbers,
+.monaco-editor .sticky-widget-lines-scrollable {
+  background-color: var(--neutral-1) !important;
+}
+
+.monaco-editor .sticky-widget {
+  box-shadow: 0 4px 2px -2px var(--background-1) !important;
+  border-bottom: 1px solid var(--neutral-6) !important;
+}
+
+.monaco-editor .scroll-decoration {
+  box-shadow: 0 6px 6px -6px inset var(--background-1) !important;
+}
+
+.monaco-editor .monaco-editor-background {
+  background-color: var(--neutral-1);
+}
+
+.monaco-editor .line-numbers,
+.monaco-editor .sticky-line-number-inner {
+  color: var(--neutral-11) !important;
+}
+
+.monaco-editor .line-numbers.active-line-number {
+  color: var(--neutral-12) !important;
+}
+
+.monaco-editor .mtk22 {
+  color: var(--accent-11);
+}
+
+.monaco-editor .mtk5 {
+  color: var(--info-11);
+}
+
+.monaco-editor .mtk1 {
+  color: var(--neutral-11);
+}
+
+.monaco-editor .lines-content .core-guide-indent {
+  box-shadow: 1px 0 0 0 var(--neutral-6) !important;
+}
+
+.monaco-editor .lines-content .core-guide-indent.indent-active {
+  box-shadow: 1px 0 0 0 var(--neutral-8) !important;
+}
+
+.monaco-editor .view-overlays .current-line-exact {
+  border: 2px solid var(--neutral-6) !important;
+}
+
+.monaco-editor .cursors-layer .cursor {
+  background-color: var(--neutral-11) !important; /* block caret */
+}
+
+.monaco-editor .selected-text {
+  background-color: var(--neutral-2) !important; /* no alpha */
+}
+
+.monaco-editor .selectionHighlight,
+.monaco-editor .wordHighlightStrong {
+  background-color: var(--neutral-1) !important;
+}
+
+.monaco-editor .codicon-folding-expanded {
+  color: var(--neutral-11) !important;
+}
+
+.monaco-editor .codicon-folding-expanded:hover {
+  color: var(--neutral-12) !important;
+}
+
+.monaco-editor .folded-background {
+  background-color: var(--info-3) !important;
+}
+
 // Audit logs simple editor
 .audit-logs-simple-code-editor > .monaco-editor,
 .audit-logs-failed-code-editor > .monaco-editor {
@@ -34,7 +117,6 @@
   }
 
   // JSON attributes + ':'
-  .mtk1,
   .mtk20 {
     color: #0d74ce !important;
   }

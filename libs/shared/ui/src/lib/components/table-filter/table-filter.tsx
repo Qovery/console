@@ -92,7 +92,7 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
                         ) : (
                           <>
                             <span className="text-sm font-medium">{value}</span>
-                            <span className="text-xs text-neutral-350">{hideCount ? null : count}</span>
+                            <span className="text-xs text-neutral-subtle">{hideCount ? null : count}</span>
                           </>
                         )}
                       </DropdownMenu.Item>

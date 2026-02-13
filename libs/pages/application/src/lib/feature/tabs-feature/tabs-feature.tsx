@@ -3,7 +3,7 @@ import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAccessModal, ServiceLinksPopover, useDeployService, useService } from '@qovery/domains/services/feature'
-import { ShowAllVariablesToggle, VariablesActionToolbar } from '@qovery/domains/variables/feature'
+import { VariablesActionToolbar } from '@qovery/domains/variables/feature'
 import { APPLICATION_URL, APPLICATION_VARIABLES_URL } from '@qovery/shared/routes'
 import { Button, Icon, Tabs, type TabsItem, toast, useModal } from '@qovery/shared/ui'
 import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
@@ -46,7 +46,6 @@ function ContentRightEnvVariable({
 
   return (
     <div className="flex items-center gap-2">
-      <ShowAllVariablesToggle />
       {scope && (
         <VariablesActionToolbar
           scope={scope}

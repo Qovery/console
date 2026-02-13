@@ -119,8 +119,8 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
       </Link>
     ))
     .with({ selectedInstallationType: 'partially-managed' }, ({ selectedInstallationType }) => {
-      return match({ isEksAnywhereEnabled })
-        .with({ isEksAnywhereEnabled: true }, () => (
+      if (isEksAnywhereEnabled) {
+        return (
           <Link
             to="/organization/$organizationId/cluster/create/$slug"
             params={{ organizationId, slug: `${selectedCloudProvider.toLowerCase()}-eks-anywhere` }}
@@ -130,8 +130,9 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
             {renderIcon()}
             {renderContent()}
           </Link>
-        ))
-        .otherwise(() => (
+        )
+      } else {
+        return (
           <div
             className={twMerge(
               baseClassNames,
@@ -156,7 +157,8 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
               </Button>
             </div>
           </div>
-        ))
+        )
+      }
     })
 
     .exhaustive()

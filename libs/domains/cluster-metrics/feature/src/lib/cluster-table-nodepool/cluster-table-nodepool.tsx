@@ -386,6 +386,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                     .otherwise(() => (
                       <Tooltip content="Edit limits">
                         <Link
+                          as="button"
                           color="current"
                           to="/organization/$organizationId/cluster/$clusterId/settings/resources"
                           params={{ organizationId, clusterId }}
@@ -428,6 +429,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                     .otherwise(() => (
                       <Tooltip content="Edit limits">
                         <Link
+                          as="button"
                           color="current"
                           to="/organization/$organizationId/cluster/$clusterId/settings/resources"
                           params={{ organizationId, clusterId }}

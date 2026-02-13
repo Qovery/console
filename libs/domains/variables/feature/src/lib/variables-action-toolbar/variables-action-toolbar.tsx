@@ -1,5 +1,5 @@
 import { type APIVariableScopeEnum, type VariableResponse } from 'qovery-typescript-axios'
-import { ActionToolbar, DropdownMenu, Icon, Tooltip, useModal } from '@qovery/shared/ui'
+import { ActionToolbar, Button, DropdownMenu, Icon, Tooltip, useModal } from '@qovery/shared/ui'
 import { CreateUpdateVariableModal } from '../create-update-variable-modal/create-update-variable-modal'
 
 type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
@@ -46,20 +46,30 @@ export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...p
     })
 
   return (
-    <ActionToolbar.Root className="flex">
+    <div className="flex gap-3">
       <DropdownMenu.Root>
-        <DropdownMenu.Trigger asChild>
-          <ActionToolbar.Button color="brand" variant="solid" className="justify-center border-r border-brand-400">
-            <Icon iconName="ellipsis-v" />
-          </ActionToolbar.Button>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content align="end">
+        {onImportEnvFile ? (
+          <DropdownMenu.Trigger asChild>
+            <Button color="neutral" variant="outline" size="md" className="gap-2">
+              <Icon iconName="arrow-up-from-line" iconStyle="regular" />
+              Import variable
+            </Button>
+          </DropdownMenu.Trigger>
+        ) : (
+          <DropdownMenu.Trigger asChild>
+            <Button color="neutral" variant="outline" size="md" className="flex w-8 justify-center">
+              <Icon iconName="ellipsis-vertical" iconStyle="regular" />
+            </Button>
+          </DropdownMenu.Trigger>
+        )}
+        <DropdownMenu.Content>
           {onImportEnvFile && (
-            <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="cloud-upload" />}>
+            <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="file-import" />}>
               Import from .env file
             </DropdownMenu.Item>
           )}
-          <DropdownMenu.Item asChild icon={<Icon iconName="rotate" />}>
+
+          <DropdownMenu.Item asChild icon={<Icon iconName="circle-info" iconStyle="regular" />}>
             <a href="https://dashboard.doppler.com" target="_blank" rel="noopener noreferrer">
               Import from Doppler
               <Tooltip content="Documentation">
@@ -69,7 +79,7 @@ export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...p
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-400" />
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
                 </a>
               </Tooltip>
             </a>
@@ -78,10 +88,10 @@ export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...p
       </DropdownMenu.Root>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
-          <ActionToolbar.Button color="brand" variant="solid" size="md" className="gap-2">
-            New variable
+          <Button color="brand" variant="solid" size="md" className="gap-2">
             <Icon iconName="circle-plus" iconStyle="regular" />
-          </ActionToolbar.Button>
+            New variable
+          </Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
           <DropdownMenu.Item onSelect={() => _onCreateVariable()} icon={<Icon iconName="key" />}>
@@ -95,7 +105,7 @@ export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...p
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
-    </ActionToolbar.Root>
+    </div>
   )
 }
 

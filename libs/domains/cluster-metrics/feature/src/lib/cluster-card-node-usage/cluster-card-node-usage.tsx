@@ -119,6 +119,7 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
               }
             >
               <Link
+                as="button"
                 color="current"
                 to="/organization/$organizationId/cluster/$clusterId/settings/resources"
                 params={{ organizationId, clusterId }}
