@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import { type Cluster } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { useClusters } from '@qovery/domains/clusters/feature'
@@ -10,6 +11,12 @@ import { BlockContent, InputSelect, InputText, Section } from '@qovery/shared/ui
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useEditEnvironment } from '../hooks/use-edit-environment/use-edit-environment'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
+
+interface PageSettingsGeneralProps {
+  clusters?: Cluster[]
+  onSubmit: () => void
+  loading: boolean
+}
 
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
   const { clusters, onSubmit, loading } = props

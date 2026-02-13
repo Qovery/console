@@ -5,6 +5,11 @@ import { BlockContentDelete } from '@qovery/shared/ui'
 import { useDeleteEnvironment } from '../hooks/use-delete-environment/use-delete-environment'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 
+interface PageSettingsDangerZoneProps {
+  deleteEnvironment: () => Promise<void>
+  environment?: Environment
+}
+
 export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
   const { deleteEnvironment, environment } = props
 

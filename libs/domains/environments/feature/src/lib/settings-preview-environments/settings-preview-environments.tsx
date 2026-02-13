@@ -12,6 +12,14 @@ import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-rule'
 import { useEditDeploymentRule } from '../hooks/use-edit-deployment-rule/use-edit-deployment-rule'
 
+interface PageSettingsPreviewEnvironmentsProps {
+  onSubmit: () => void
+  services?: AnyService[]
+  loading: boolean
+  toggleAll: (value: boolean) => void
+  toggleEnablePreview: (value: boolean) => void
+}
+
 export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnvironmentsProps) {
   const { onSubmit, services, loading, toggleAll, toggleEnablePreview } = props
   const { control, formState } = useFormContext()
@@ -64,13 +72,13 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                 />
               )}
             />
-            <div data-testid="toggles" className={services.length > 0 ? 'mt-5' : ''}>
-              {services.length > 0 && (
+            <div data-testid="toggles" className={services && services.length > 0 ? 'mt-5' : ''}>
+              {services && services.length > 0 && (
                 <h2 data-testid="services-title" className="mb-5 text-ssm font-medium text-neutral">
                   Create Preview for PR opened on those services
                 </h2>
               )}
-              {services.map(
+              {services?.map(
                 (service: AnyService) =>
                   service.serviceType !== 'DATABASE' && (
                     <div key={service.id} className="flex h-9 items-center">
@@ -141,8 +149,10 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
       })
 
       const updatePromises = services
-        .filter((service) => service.serviceType !== 'DATABASE')
-        .map(async (service: AnyService) => {
+        .filter(
+          (service): service is Exclude<AnyService, { serviceType: 'DATABASE' }> => service.serviceType !== 'DATABASE'
+        )
+        .map(async (service) => {
           const request = {
             auto_preview: data[service.id],
           }
@@ -200,10 +210,10 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
         : false
       const nextValues: Record<string, boolean> = {
         auto_preview: environmentDeploymentRules.auto_preview || isApplicationPreviewEnabled,
-        on_demand_preview: environmentDeploymentRules.on_demand_preview,
+        on_demand_preview: environmentDeploymentRules.on_demand_preview ?? false,
       }
       services.forEach((service) => {
-        nextValues[service.id] = 'auto_preview' in service && service.auto_preview
+        nextValues[service.id] = ('auto_preview' in service && service.auto_preview) ?? false
       })
       methods.reset(nextValues, { keepDirtyValues: true })
     }

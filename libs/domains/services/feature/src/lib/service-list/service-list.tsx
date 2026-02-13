@@ -170,7 +170,6 @@ function ServiceNameCell({
                   <Tooltip content={db.name}>
                     <Link
                       className="inline max-w-max truncate"
-                      color="current"
                       to={serviceLink}
                       underline
                       onClick={(e) => e.stopPropagation()}
@@ -208,7 +207,6 @@ function ServiceNameCell({
                   <Tooltip content={service.name}>
                     <Link
                       className="inline max-w-max truncate"
-                      color="current"
                       to={serviceLink}
                       underline
                       onClick={(e) => e.stopPropagation()}
@@ -231,7 +229,6 @@ function ServiceNameCell({
               <Tooltip content={service.name}>
                 <Link
                   className="inline max-w-max truncate"
-                  color="current"
                   to={serviceLink}
                   underline
                   onClick={(e) => e.stopPropagation()}
@@ -291,27 +288,25 @@ function ServiceNameCell({
               .with(
                 { serviceType: 'DATABASE', mode: 'CONTAINER' },
                 () => () =>
-                  navigate(
-                    DATABASE_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
+                  navigate({
+                    to:
+                      DATABASE_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
                       DATABASE_GENERAL_URL,
-                    {
-                      state: {
-                        hasShell: true,
-                      },
-                    }
-                  )
+                    state: {
+                      hasShell: true,
+                    } as any,
+                  })
               )
               .otherwise(
                 () => () =>
-                  navigate(
-                    APPLICATION_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
+                  navigate({
+                    to:
+                      APPLICATION_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
                       APPLICATION_GENERAL_URL,
-                    {
-                      state: {
-                        hasShell: true,
-                      },
-                    }
-                  )
+                    state: {
+                      hasShell: true,
+                    } as any,
+                  })
               )}
           />
         </div>
@@ -515,7 +510,6 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
                     <ExternalLink
                       href={gitRepository.url}
                       underline
-                      color="current"
                       size="ssm"
                       withIcon={false}
                       className="font-normal"
@@ -529,7 +523,6 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
                       <ExternalLink
                         href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
                         underline
-                        color="current"
                         size="ssm"
                         withIcon={false}
                         className="font-normal"
