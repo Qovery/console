@@ -60,7 +60,7 @@ function Item({ cluster, project }: { cluster: Cluster; project: Project }) {
                   cx="7"
                   cy="7"
                   r={6.25}
-                  stroke="var(--color-neutral-200)"
+                  stroke="var(--neutral-6)"
                   strokeWidth={1.5}
                   fill="none"
                   strokeLinecap="round"
@@ -69,7 +69,7 @@ function Item({ cluster, project }: { cluster: Cluster; project: Project }) {
                   cx="7"
                   cy="7"
                   r={6.25}
-                  stroke="var(--color-brand-500)"
+                  stroke="var(--brand-9)"
                   strokeWidth={1.5}
                   fill="none"
                   strokeLinecap="round"
