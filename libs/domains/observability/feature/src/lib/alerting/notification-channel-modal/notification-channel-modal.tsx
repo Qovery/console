@@ -27,6 +27,10 @@ const CHANNEL_TYPE_OPTIONS = [
   { value: 'SLACK', label: 'Slack' },
   { value: 'EMAIL', label: 'Email' },
 ]
+const DEFAULT_CHANNEL_NAME_BY_TYPE = {
+  SLACK: 'Input slack channel',
+  EMAIL: 'Email notifications',
+} as const
 
 const FAKE_PLACEHOLDER = 'fakewebhookurl'
 
@@ -146,7 +150,7 @@ export function NotificationChannelModal({
   const defaultValues = match(receiverType)
     .with('SLACK', () => ({
       type: 'SLACK' as const,
-      name: alertReceiver?.name ?? 'Input slack channel',
+      name: alertReceiver?.name ?? DEFAULT_CHANNEL_NAME_BY_TYPE.SLACK,
       send_resolved: alertReceiver?.send_resolved ?? true,
       webhook_url: isEdit ? FAKE_PLACEHOLDER : undefined,
     }))
@@ -154,7 +158,7 @@ export function NotificationChannelModal({
       const emailReceiver = alertReceiver as EmailAlertReceiverResponse | undefined
       return {
         type: 'EMAIL' as const,
-        name: emailReceiver?.name ?? 'Email notifications',
+        name: emailReceiver?.name ?? DEFAULT_CHANNEL_NAME_BY_TYPE.EMAIL,
         send_resolved: emailReceiver?.send_resolved ?? true,
         to: emailReceiver?.to ?? '',
         from: emailReceiver?.from ?? '',
@@ -281,7 +285,24 @@ export function NotificationChannelModal({
                   label="Channel type"
                   value={field.value}
                   options={CHANNEL_TYPE_OPTIONS}
-                  onChange={field.onChange}
+                  onChange={(nextValue) => {
+                    if (Array.isArray(nextValue)) {
+                      return
+                    }
+
+                    const previousType = field.value as AlertReceiverType
+                    const nextType = nextValue as AlertReceiverType
+                    const currentName = methods.getValues('name')
+                    const previousDefaultName = DEFAULT_CHANNEL_NAME_BY_TYPE[previousType]
+
+                    field.onChange(nextType)
+
+                    if (!currentName || currentName === previousDefaultName) {
+                      methods.setValue('name', DEFAULT_CHANNEL_NAME_BY_TYPE[nextType], {
+                        shouldValidate: true,
+                      })
+                    }
+                  }}
                   error={error?.message}
                 />
               )}

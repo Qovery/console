@@ -105,6 +105,34 @@ describe('NotificationChannelModal', () => {
     expect(screen.queryByText(/^Webhook$/)).not.toBeInTheDocument()
   })
 
+  it('should update display name default when switching from Slack to Email', async () => {
+    const { userEvent } = await renderNotificationChannelModal(
+      <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" />
+    )
+
+    const channelTypeSelect = screen.getByLabelText('Channel type')
+    await userEvent.click(channelTypeSelect)
+    await userEvent.click(await screen.findByText('Email'))
+
+    expect(screen.getByLabelText('Display name')).toHaveValue('Email notifications')
+  })
+
+  it('should keep custom display name when switching from Slack to Email', async () => {
+    const { userEvent } = await renderNotificationChannelModal(
+      <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" />
+    )
+
+    const displayNameInput = screen.getByLabelText('Display name')
+    await userEvent.clear(displayNameInput)
+    await userEvent.type(displayNameInput, 'My custom channel')
+
+    const channelTypeSelect = screen.getByLabelText('Channel type')
+    await userEvent.click(channelTypeSelect)
+    await userEvent.click(await screen.findByText('Email'))
+
+    expect(screen.getByLabelText('Display name')).toHaveValue('My custom channel')
+  })
+
   it('should send test notification request when button is clicked in create mode', async () => {
     const mockValidateAlertReceiver = jest.fn()
     mockUseValidateAlertReceiver.mockReturnValue({
