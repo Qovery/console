@@ -54,19 +54,24 @@ describe('CreateGeneralContainer', () => {
     await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
     await selectEvent.select(screen.getByLabelText('Image name'), ['my-image'])
     await selectEvent.select(screen.getByLabelText('Image tag'), ['3.0.0'])
+    expect(screen.getByText('Image name')).toBeInTheDocument()
+    expect(screen.getByText('Image tag')).toBeInTheDocument()
+    expect(screen.getAllByText('3.0.0').length).toBeGreaterThan(0)
   })
 
   it('should render inputs NOT available in the requests', async () => {
-    const { debug, baseElement, userEvent } = renderWithProviders(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />)
     )
     // Registry
     await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
 
     // Image name
-    await userEvent.type(screen.getByLabelText('Image name'), 'my-custom-image')
-    await selectEvent.select(screen.getByLabelText('Image name'), ['Select "my-custom-image" - not found in registry'])
+    await userEvent.type(screen.getByLabelText('Image name'), 'my-custom-image{enter}')
+    expect(screen.getByText('my-custom-image')).toBeInTheDocument()
+
     // Image tag
     await userEvent.type(screen.getByLabelText('Image tag'), '12.0.0')
+    expect(screen.getByDisplayValue('12.0.0')).toBeInTheDocument()
   })
 })

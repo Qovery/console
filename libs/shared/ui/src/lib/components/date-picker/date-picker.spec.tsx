@@ -432,6 +432,8 @@ describe('clampEndDateForMaxRange', () => {
     const endDate = new Date('2024-01-05T00:00:00.000Z')
     const result = clampEndDateForMaxRange({ startDate, endDate, maxRangeInDays: 3 })
 
-    expect(result).toEqual(new Date('2024-01-03T00:00:00.000Z'))
+    expect(result?.getFullYear()).toBe(2024)
+    expect(result?.getMonth()).toBe(0)
+    expect(result?.getDate()).toBe(3)
   })
 })

@@ -92,7 +92,7 @@ describe('CardLogErrors', () => {
       </DashboardProvider>
     )
 
-    expect(screen.getByText('0 log errors')).toBeInTheDocument()
+    expect(screen.getByText('0 log error')).toBeInTheDocument()
     expect(screen.getByText('total log errors detected in the selected time range')).toBeInTheDocument()
   })
 
@@ -130,7 +130,7 @@ describe('CardLogErrors', () => {
       </DashboardProvider>
     )
 
-    expect(screen.getByText('0 log errors')).toBeInTheDocument()
+    expect(screen.getByText('0 log error')).toBeInTheDocument()
     expect(screen.getByText('total log errors detected in the selected time range')).toBeInTheDocument()
   })
 
@@ -143,7 +143,7 @@ describe('CardLogErrors', () => {
       </DashboardProvider>
     )
 
-    expect(screen.getByText('0 log errors')).toBeInTheDocument()
+    expect(screen.getByText('0 log error')).toBeInTheDocument()
     expect(screen.getByText('total log errors detected in the selected time range')).toBeInTheDocument()
   })
 

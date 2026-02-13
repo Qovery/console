@@ -5,8 +5,19 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterLogRow, { type ClusterLogRowProps } from './cluster-log-row'
 
 describe('ClusterLogRow', () => {
-  const baseData = clusterLogFactoryMock(1, true)[0]
-  const firstDate = new Date()
+  beforeAll(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-02-13T16:15:10.000Z'))
+  })
+
+  afterAll(() => {
+    jest.useRealTimers()
+  })
+
+  const baseData = {
+    ...clusterLogFactoryMock(1, true)[0],
+    timestamp: '2026-02-13T16:16:19.000Z',
+  }
+  const firstDate = new Date('2026-02-13T16:16:19.000Z')
 
   it('should render successfully', () => {
     const props: ClusterLogRowProps = {
@@ -75,8 +86,9 @@ describe('ClusterLogRow', () => {
       step: ClusterLogsStepEnum.CREATED,
       message: { safe_message: 'hello world' },
     }
-    const { container } = renderWithProviders(<ClusterLogRow data={data} index={1} firstDate={firstDate} />)
-    expect(container).toMatchSnapshot()
+    renderWithProviders(<ClusterLogRow data={data} index={1} firstDate={firstDate} />)
+    expect(screen.getByTestId('cell-msg')).toHaveTextContent('hello world')
+    expect(screen.getByTitle('Fri, 13 Feb 2026 16:16:19 GMT')).toBeInTheDocument()
   })
 
   it('should display cell error message', () => {
@@ -86,8 +98,9 @@ describe('ClusterLogRow', () => {
       step: ClusterLogsStepEnum.DELETE_ERROR,
       error: { user_log_message: 'error message' },
     }
-    const { container } = renderWithProviders(<ClusterLogRow data={data} index={1} firstDate={firstDate} />)
-    expect(container).toMatchSnapshot()
+    renderWithProviders(<ClusterLogRow data={data} index={1} firstDate={firstDate} />)
+    expect(screen.getByTestId('cell-msg')).toHaveTextContent('error message')
+    expect(screen.getByTitle('Fri, 13 Feb 2026 16:16:19 GMT')).toBeInTheDocument()
   })
 
   it('should display message when type is not ERROR', () => {

@@ -71,7 +71,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
                     class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                   >
                     <span
-                      class="mr-1 text-sm text-neutral-400"
+                      class="mr-1 text-sm text-neutral"
                     >
                       Git repository
                     </span>
@@ -127,9 +127,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
               <div
                 class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
               >
-                <span
-                  class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-angle-down text-sm text-neutral-subtle"
                 />
               </div>
             </div>
@@ -233,7 +233,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
                     class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                   >
                     <span
-                      class="mr-1 text-sm text-neutral-400"
+                      class="mr-1 text-sm text-neutral"
                     >
                       Git repository
                     </span>
@@ -289,9 +289,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
               <div
                 class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
               >
-                <span
-                  class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-angle-down text-sm text-neutral-subtle"
                 />
               </div>
             </div>
@@ -374,7 +374,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
                     class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                   >
                     <span
-                      class="mr-1 text-sm text-neutral-400"
+                      class="mr-1 text-sm text-neutral"
                     >
                       Git repository
                     </span>
@@ -430,9 +430,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
               <div
                 class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
               >
-                <span
-                  class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-angle-down text-sm text-neutral-subtle"
                 />
               </div>
             </div>
@@ -455,14 +455,14 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
             class="flex flex-col gap-3"
           >
             <div
-              class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
+              class="mb-5 rounded border border-neutral bg-surface-neutral-subtle w-full"
               data-testid="block-content"
             >
               <div
-                class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
+                class="flex h-9 items-center justify-between border-b border-neutral px-4"
               >
                 <h2
-                  class="text-ssm font-medium text-neutral-400"
+                  class="text-ssm font-medium text-neutral"
                 >
                   Raw YAML
                 </h2>
@@ -483,7 +483,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
                     No override defined.
                   </p>
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                     type="button"
                   >
                     <i

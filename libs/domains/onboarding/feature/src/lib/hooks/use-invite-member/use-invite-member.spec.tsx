@@ -1,18 +1,16 @@
 import { Wrapper } from '__tests__/utils/providers'
-import { useLocation } from 'react-router-dom'
 import { ACCEPT_INVITATION_URL, LOGIN_URL } from '@qovery/shared/routes'
 import { act, renderHook } from '@qovery/shared/util-tests'
 import { useInviteMember } from './use-invite-member'
 
-// mock useNavigate
-const mockedUseNavigate = jest.fn()
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockedUseNavigate,
-  useLocation: jest.fn(),
-}))
+const mockUseNavigate = jest.fn()
+const mockUseLocation = jest.fn(() => ({ pathname: '/', search: '' }))
 
-const useLocationMock = useLocation as jest.Mock
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useNavigate: () => mockUseNavigate,
+  useLocation: () => mockUseLocation(),
+}))
 
 describe('useInviteMember Hook', () => {
   beforeEach(() => {
@@ -21,7 +19,7 @@ describe('useInviteMember Hook', () => {
 
   it('should store the tokens from the query inside localstorage and remove redirection from localStorage', async () => {
     localStorage.setItem('redirectLoginUri', '/organization/123')
-    useLocationMock.mockReturnValue({
+    mockUseLocation.mockReturnValue({
       search: '?inviteToken=123&organization=456',
       pathname: 'login',
     })
@@ -41,7 +39,7 @@ describe('useInviteMember Hook', () => {
   it('should redirect to the acceptation page if token found in localStorage', async () => {
     localStorage.setItem('inviteToken', '123')
     localStorage.setItem('inviteOrganizationId', '456')
-    useLocationMock.mockReturnValue({
+    mockUseLocation.mockReturnValue({
       search: '',
       pathname: '/organization',
     })
@@ -58,11 +56,11 @@ describe('useInviteMember Hook', () => {
       redirectToAcceptPageGuard()
     })
 
-    expect(mockedUseNavigate).toHaveBeenCalled()
+    expect(mockUseNavigate).toHaveBeenCalled()
   })
 
   it('should not redirect if we are already on login', async () => {
-    useLocationMock.mockReturnValue({
+    mockUseLocation.mockReturnValue({
       search: '?inviteToken=123&organization=456',
       pathname: LOGIN_URL,
     })
@@ -79,11 +77,11 @@ describe('useInviteMember Hook', () => {
       redirectToAcceptPageGuard()
     })
 
-    expect(mockedUseNavigate).not.toHaveBeenCalled()
+    expect(mockUseNavigate).not.toHaveBeenCalled()
   })
 
   it('should not redirect if we are already on accept page', async () => {
-    useLocationMock.mockReturnValue({
+    mockUseLocation.mockReturnValue({
       search: '?inviteToken=123&organization=456',
       pathname: ACCEPT_INVITATION_URL,
     })
@@ -101,13 +99,13 @@ describe('useInviteMember Hook', () => {
     })
 
     renderHook(() => useInviteMember(), { wrapper: Wrapper })
-    expect(mockedUseNavigate).not.toHaveBeenCalled()
+    expect(mockUseNavigate).not.toHaveBeenCalled()
   })
 
   it('should remove the inviteToken from localStorage', async () => {
     localStorage.setItem('inviteToken', '123')
     localStorage.setItem('inviteOrganizationId', '456')
-    useLocationMock.mockReturnValue({
+    mockUseLocation.mockReturnValue({
       search: '?inviteToken=123&organization=456',
       pathname: ACCEPT_INVITATION_URL,
     })

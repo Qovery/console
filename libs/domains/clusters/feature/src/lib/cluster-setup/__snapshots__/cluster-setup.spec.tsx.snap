@@ -4,11 +4,11 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-row gap-x-3 p-3 border rounded text-sm border-info-component bg-surface-info-subtle text-info"
+      class="flex flex-row gap-x-4 p-4 border rounded text-sm border-info-component bg-surface-info-subtle text-info"
       data-accent-color="sky"
     >
       <div
-        class="-order-2 text-lg leading-6"
+        class="-order-2 text-base leading-6"
       >
         <i
           aria-hidden="true"
@@ -16,7 +16,7 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
         />
       </div>
       <div
-        class="-order-1 mr-auto gap-x-3 text-neutral"
+        class="-order-1 mr-auto gap-x-4 text-neutral"
       >
         <p>
           This guide walks you through the process of installing Qovery on your existing Kubernetes cluster, where you will have full control over the infrastructure. You will be responsible for managing updates and upgrades. Please note that advanced Kubernetes knowledge is required.
@@ -40,7 +40,7 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
           Download and install the Qovery CLI (or update its version to the latest version).
         </p>
         <a
-          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-info text-sm"
+          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-sm"
           href="https://www.qovery.com/docs/cli/overview#installation"
           rel="noopener noreferrer"
           target="_blank"
@@ -78,7 +78,7 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
             qovery cluster install
           </span>
           <button
-            class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral cursor-pointer gap-2 font-sans font-medium"
+            class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral cursor-pointer gap-2 font-sans font-medium"
             type="button"
           >
             Copy

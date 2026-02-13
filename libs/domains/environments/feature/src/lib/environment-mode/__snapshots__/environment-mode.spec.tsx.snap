@@ -20,7 +20,7 @@ exports[`EnvironmentMode should render as preview mode 1`] = `
       class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-accent1-subtle border rounded-md text-accent1"
       data-accent-color="purple"
     >
-      Preview
+      Ephemeral
     </span>
   </div>
 </body>

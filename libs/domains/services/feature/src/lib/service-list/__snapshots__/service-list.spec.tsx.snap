@@ -5,1489 +5,885 @@ exports[`ServiceList should match snapshot 1`] = `
   <div
     class="flex grow flex-col justify-between"
   >
-    <table
-      class="divide-y divide-neutral-200 text-neutral-400 w-full min-w-[1080px] overflow-x-scroll text-ssm"
+    <div
+      class="overflow-hidden rounded-md border border-neutral bg-surface-neutral"
     >
-      <thead>
-        <tr>
-          <th
-            class="h-11 text-left px-6 pl-4 font-medium"
-            style="width: 20px;"
-          >
-            <div
-              class="h-5"
-            >
-              <button
-                aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
-                data-state="unchecked"
-                role="checkbox"
-                type="button"
-                value="on"
-              />
-            </div>
-          </th>
-          <th
-            class="h-11 text-left px-6 border-r pl-0 font-medium"
-            style="width: 57%;"
-          >
-            <div
-              class="relative inline-block"
-            >
-              <button
-                aria-controls="radix-:r20:"
-                aria-expanded="false"
-                aria-haspopup="dialog"
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 gap-1 whitespace-nowrap text-xs"
-                data-state="closed"
-                type="button"
-              >
-                Service
-                <i
-                  aria-hidden="true"
-                  class="fa-regular fa-chevron-down "
-                />
-              </button>
-            </div>
-          </th>
-          <th
-            class="h-11 text-left px-6 font-medium"
-            style="width: 15%;"
-          >
-            <div
-              class="relative inline-block"
-            >
-              <button
-                aria-controls="radix-:r23:"
-                aria-expanded="false"
-                aria-haspopup="dialog"
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 gap-1 whitespace-nowrap text-xs"
-                data-state="closed"
-                type="button"
-              >
-                Service status
-                <i
-                  aria-hidden="true"
-                  class="fa-regular fa-chevron-down "
-                />
-              </button>
-            </div>
-          </th>
-          <th
-            class="h-11 text-left px-6 font-medium"
-            style="width: 30%;"
-          >
-            Target version
-          </th>
-          <th
-            class="h-11 text-left px-6 font-medium"
-            style="width: 3%;"
-          >
-            <button
-              class="flex items-center gap-1 truncate cursor-pointer select-none"
-              type="button"
-            >
-              Last deployment
-            </button>
-          </th>
-        </tr>
-      </thead>
-      <tbody
-        class="divide-y divide-neutral-200"
+      <table
+        class="divide-y divide-neutral text-neutral w-full min-w-[1080px] overflow-x-scroll text-ssm"
       >
-        <tr
-          class="h-[68px] cursor-pointer hover:bg-neutral-100"
-        >
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 20px;"
-          >
-            <label
-              class="absolute inset-y-0 left-0 flex items-center p-4"
+        <thead>
+          <tr>
+            <th
+              class="h-11 text-left font-code px-6 pl-4 font-medium"
+              style="width: 20px;"
+            >
+              <div
+                class="h-5"
+              >
+                <button
+                  aria-checked="false"
+                  class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                  data-state="unchecked"
+                  role="checkbox"
+                  type="button"
+                  value="on"
+                />
+              </div>
+            </th>
+            <th
+              class="h-11 text-left font-code px-6 border-r border-neutral pl-0 font-medium"
+              style="width: 57%;"
+            >
+              <div
+                class="relative inline-block"
+              >
+                <button
+                  aria-controls="radix-:r20:"
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral gap-1 whitespace-nowrap text-xs"
+                  data-state="closed"
+                  type="button"
+                >
+                  Service
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-chevron-down "
+                  />
+                </button>
+              </div>
+            </th>
+            <th
+              class="h-11 text-left font-code px-6 font-medium"
+              style="width: 15%;"
+            >
+              <div
+                class="relative inline-block"
+              >
+                <button
+                  aria-controls="radix-:r23:"
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral gap-1 whitespace-nowrap text-xs"
+                  data-state="closed"
+                  type="button"
+                >
+                  Service status
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-chevron-down "
+                  />
+                </button>
+              </div>
+            </th>
+            <th
+              class="h-11 text-left font-code px-6 font-medium"
+              style="width: 30%;"
+            >
+              Target version
+            </th>
+            <th
+              class="h-11 text-left font-code px-6 font-medium"
+              style="width: 3%;"
             >
               <button
-                aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
-                data-state="unchecked"
-                role="checkbox"
+                class="flex items-center gap-1 truncate cursor-pointer select-none"
                 type="button"
-                value="on"
-              />
-            </label>
-          </td>
-          <td
-            class="h-14 py-0 px-6 border-r pl-0 first:relative"
-            style="width: 57%;"
+              >
+                Last deployment
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-neutral"
+        >
+          <tr
+            class="h-[68px]"
           >
-            <div
-              class="flex items-center justify-between"
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 20px;"
             >
-              <span
-                class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
+              <label
+                class="absolute inset-y-0 left-0 flex items-center p-4"
+              >
+                <button
+                  aria-checked="false"
+                  class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                  data-state="unchecked"
+                  role="checkbox"
+                  type="button"
+                  value="on"
+                />
+              </label>
+            </td>
+            <td
+              class="h-14 py-0 px-6 border-r border-neutral pl-0 first:relative"
+              style="width: 57%;"
+            >
+              <div
+                class="flex items-center justify-between"
               >
                 <span
-                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral"
+                  class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral"
                 >
                   <span
-                    class="flex items-center justify-center rounded-full h-6 w-6"
+                    class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral"
                   >
-                    <svg
-                      class="shrink-0 "
-                      fill="none"
-                      height="100%"
-                      name="APPLICATION"
-                      viewBox="0 0 20 20"
-                      width="100%"
-                      xmlns="http://www.w3.org/2000/svg"
+                    <span
+                      class="flex items-center justify-center rounded-full h-6 w-6"
                     >
-                      <path
-                        d="M8.651 18.034h.001c.416.232.88.35 1.35.34a2.64 2.64 0 001.347-.34h.001l7.051-4.295a.9.9 0 00.43-.343.975.975 0 000-1.086.9.9 0 00-.43-.343l-7.05-4.294h0l-.003-.002a2.858 2.858 0 00-1.347-.339c-.469 0-.93.116-1.348.34h0-.002l-7.049 4.296c-.164.078-.305.2-.41.355a1.101 1.101 0 00-.182.525h0v.007c.016.189.08.37.184.525.104.155.244.279.408.358l7.05 4.296zm9.654-4.492v-.001l-.008.005-7.05 4.303a2.649 2.649 0 01-1.246.313c-.433 0-.86-.107-1.247-.313l-7.05-4.303v-.001l-.008-.003a.697.697 0 01-.343-.266.763.763 0 010-.86.697.697 0 01.343-.267v.001l.008-.004 7.05-4.296a2.648 2.648 0 011.247-.314c.433 0 .86.108 1.246.314l7.05 4.296h0l.008.003a.697.697 0 01.343.267.763.763 0 010 .86.697.697 0 01-.343.266z"
-                        fill="#42E8E0"
-                        stroke="#42E8E0"
-                        stroke-width="0.083"
-                      />
-                      <path
-                        d="M19.166 11.203V8.656l-.442-.26c-.124.794-1.008 1.321-1.753 1.43l-5.052 3.115-2.206.843L2.676 9.95l.164-.097c-.602-.298-.927-.979-1.25-1.596l-.475.298-.282.082v2.593c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 16.44c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.167-.08.312-.206.42-.363.108-.156.176-.34.197-.533v-.045h.003z"
-                        fill="#42E8E0"
-                        opacity="0.4"
-                      />
-                      <path
-                        d="M19.166 8.938V7.253l-.442-.26c-.124.794-1.008 1.32-1.753 1.43l-5.052 3.119-2.206.839-7.037-3.834.164-.098c-.602-.297-.927-.974-1.25-1.595l-.475.297-.282.087v1.727c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 14.175c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.168-.081.313-.207.42-.364.109-.158.176-.342.197-.535v-.042h.003z"
-                        fill="url(#paint0_linear_10141_398872)"
-                      />
-                      <path
-                        d="M16.971 8.423l-5.05 3.119-1.919.73v2.28a2.929 2.929 0 001.498-.377l7.05-4.296c.168-.081.313-.207.42-.364.109-.158.177-.342.197-.535V7.253l-.403-.237h-.042c-.136.782-1.013 1.298-1.75 1.407z"
-                        fill="#0F054C"
-                        opacity="0.3"
-                      />
-                      <path
-                        d="M8.502 12.452L1.454 8.163c-.827-.5-.827-1.32 0-1.824l7.048-4.297a3.188 3.188 0 011.497-.375c.52 0 1.033.128 1.497.375l7.05 4.297c.824.504.824 1.324 0 1.824l-7.046 4.29a3.168 3.168 0 01-2.998 0z"
-                        fill="url(#paint1_linear_10141_398872)"
-                      />
-                      <path
-                        d="M18.55 8.163l-7.05 4.29a3.168 3.168 0 01-1.498.378c-.52 0-1.033-.13-1.497-.378l-7.051-4.29a1.116 1.116 0 01-.396-.327 1.195 1.195 0 01-.217-.478c-.05.377.153.753.613 1.016L8.5 12.671c.464.248.977.378 1.497.378.52 0 1.034-.13 1.498-.378l7.05-4.297c.189-.082.348-.224.457-.406a1.09 1.09 0 00.153-.61c-.036.174-.11.337-.215.477-.105.14-.239.252-.391.328z"
-                        fill="#fff"
-                      />
-                      <defs>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint0_linear_10141_398872"
-                          x1="4723.62"
-                          x2="5068.67"
-                          y1="801.697"
-                          y2="1276.19"
-                        >
-                          <stop
-                            stop-color="#BCBEFF"
-                          />
-                          <stop
-                            offset="0.23"
-                            stop-color="#AAADF8"
-                          />
-                          <stop
-                            offset="0.68"
-                            stop-color="#7C83E5"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#5761D7"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint1_linear_10141_398872"
-                          x1="4629.08"
-                          x2="5571.81"
-                          y1="1254.11"
-                          y2="1254.11"
-                        >
-                          <stop
-                            stop-color="#E9E9FD"
-                          />
-                          <stop
-                            offset="0.36"
-                            stop-color="#D3D2F9"
-                          />
-                          <stop
-                            offset="0.71"
-                            stop-color="#C5C4F7"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#C0BFF6"
-                          />
-                        </lineargradient>
-                      </defs>
-                    </svg>
-                  </span>
-                </span>
-                <span
-                  class="flex min-w-0 shrink flex-col truncate pr-2"
-                >
-                  <a
-                    class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-current hover:brightness-75 text-sm hover:underline inline max-w-max truncate"
-                    data-state="closed"
-                    href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general"
-                  >
-                    FRONT-END
-                  </a>
-                </span>
-              </span>
-              <div
-                class="flex shrink-0 items-center gap-5"
-              >
-                <div
-                  class="flex items-center"
-                >
-                  <div>
-                    <button
-                      aria-controls="radix-:r25:"
-                      aria-expanded="false"
-                      aria-haspopup="dialog"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 ml-3"
-                      data-state="closed"
-                      type="button"
-                    >
-                      <div
-                        class="flex items-center gap-1"
-                        data-state="closed"
-                      >
-                        <i
-                          aria-hidden="true"
-                          class="fa-regular fa-link "
-                        />
-                        <i
-                          aria-hidden="true"
-                          class="fa-regular fa-angle-down "
-                        />
-                      </div>
-                    </button>
-                  </div>
-                </div>
-                <div>
-                  <div
-                    aria-busy="true"
-                    class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] dark:from-[#2A3041] dark:via-[#1F2637] dark:to-[#1F2637] rounded"
-                    style="width: 184px; height: 36px;"
-                  />
-                </div>
-              </div>
-            </div>
-          </td>
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 15%;"
-          >
-            <div
-              aria-busy="false"
-              class="flex rounded"
-            >
-              <a
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
-                data-state="closed"
-                href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general"
-              >
-                <div
-                  class=""
-                  data-state="closed"
-                >
-                  <svg
-                    class="text-neutral-300"
-                    fill="none"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g
-                      clip-path="url(#clip0_5424_5935)"
-                    >
-                      <path
-                        d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                        fill="currentColor"
-                      />
-                    </g>
-                    <defs>
-                      <clippath
-                        id="clip0_5424_5935"
+                      <svg
+                        class="shrink-0 "
+                        fill="none"
+                        height="100%"
+                        name="APPLICATION"
+                        viewBox="0 0 20 20"
+                        width="100%"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          d="M0 0H24V24H0z"
+                          d="M8.651 18.034h.001c.416.232.88.35 1.35.34a2.64 2.64 0 001.347-.34h.001l7.051-4.295a.9.9 0 00.43-.343.975.975 0 000-1.086.9.9 0 00-.43-.343l-7.05-4.294h0l-.003-.002a2.858 2.858 0 00-1.347-.339c-.469 0-.93.116-1.348.34h0-.002l-7.049 4.296c-.164.078-.305.2-.41.355a1.101 1.101 0 00-.182.525h0v.007c.016.189.08.37.184.525.104.155.244.279.408.358l7.05 4.296zm9.654-4.492v-.001l-.008.005-7.05 4.303a2.649 2.649 0 01-1.246.313c-.433 0-.86-.107-1.247-.313l-7.05-4.303v-.001l-.008-.003a.697.697 0 01-.343-.266.763.763 0 010-.86.697.697 0 01.343-.267v.001l.008-.004 7.05-4.296a2.648 2.648 0 011.247-.314c.433 0 .86.108 1.246.314l7.05 4.296h0l.008.003a.697.697 0 01.343.267.763.763 0 010 .86.697.697 0 01-.343.266z"
+                          fill="#42E8E0"
+                          stroke="#42E8E0"
+                          stroke-width="0.083"
+                        />
+                        <path
+                          d="M19.166 11.203V8.656l-.442-.26c-.124.794-1.008 1.321-1.753 1.43l-5.052 3.115-2.206.843L2.676 9.95l.164-.097c-.602-.298-.927-.979-1.25-1.596l-.475.298-.282.082v2.593c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 16.44c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.167-.08.312-.206.42-.363.108-.156.176-.34.197-.533v-.045h.003z"
+                          fill="#42E8E0"
+                          opacity="0.4"
+                        />
+                        <path
+                          d="M19.166 8.938V7.253l-.442-.26c-.124.794-1.008 1.32-1.753 1.43l-5.052 3.119-2.206.839-7.037-3.834.164-.098c-.602-.297-.927-.974-1.25-1.595l-.475.297-.282.087v1.727c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 14.175c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.168-.081.313-.207.42-.364.109-.158.176-.342.197-.535v-.042h.003z"
+                          fill="url(#paint0_linear_10141_398872)"
+                        />
+                        <path
+                          d="M16.971 8.423l-5.05 3.119-1.919.73v2.28a2.929 2.929 0 001.498-.377l7.05-4.296c.168-.081.313-.207.42-.364.109-.158.177-.342.197-.535V7.253l-.403-.237h-.042c-.136.782-1.013 1.298-1.75 1.407z"
+                          fill="#0F054C"
+                          opacity="0.3"
+                        />
+                        <path
+                          d="M8.502 12.452L1.454 8.163c-.827-.5-.827-1.32 0-1.824l7.048-4.297a3.188 3.188 0 011.497-.375c.52 0 1.033.128 1.497.375l7.05 4.297c.824.504.824 1.324 0 1.824l-7.046 4.29a3.168 3.168 0 01-2.998 0z"
+                          fill="url(#paint1_linear_10141_398872)"
+                        />
+                        <path
+                          d="M18.55 8.163l-7.05 4.29a3.168 3.168 0 01-1.498.378c-.52 0-1.033-.13-1.497-.378l-7.051-4.29a1.116 1.116 0 01-.396-.327 1.195 1.195 0 01-.217-.478c-.05.377.153.753.613 1.016L8.5 12.671c.464.248.977.378 1.497.378.52 0 1.034-.13 1.498-.378l7.05-4.297c.189-.082.348-.224.457-.406a1.09 1.09 0 00.153-.61c-.036.174-.11.337-.215.477-.105.14-.239.252-.391.328z"
                           fill="#fff"
                         />
-                      </clippath>
-                    </defs>
-                  </svg>
+                        <defs>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint0_linear_10141_398872"
+                            x1="4723.62"
+                            x2="5068.67"
+                            y1="801.697"
+                            y2="1276.19"
+                          >
+                            <stop
+                              stop-color="#BCBEFF"
+                            />
+                            <stop
+                              offset="0.23"
+                              stop-color="#AAADF8"
+                            />
+                            <stop
+                              offset="0.68"
+                              stop-color="#7C83E5"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#5761D7"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint1_linear_10141_398872"
+                            x1="4629.08"
+                            x2="5571.81"
+                            y1="1254.11"
+                            y2="1254.11"
+                          >
+                            <stop
+                              stop-color="#E9E9FD"
+                            />
+                            <stop
+                              offset="0.36"
+                              stop-color="#D3D2F9"
+                            />
+                            <stop
+                              offset="0.71"
+                              stop-color="#C5C4F7"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#C0BFF6"
+                            />
+                          </lineargradient>
+                        </defs>
+                      </svg>
+                    </span>
+                  </span>
+                  <span
+                    class="flex min-w-0 shrink flex-col truncate pr-2"
+                  >
+                    <a
+                      class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm hover:underline inline max-w-max truncate"
+                      data-state="closed"
+                      to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general"
+                    >
+                      FRONT-END
+                    </a>
+                  </span>
+                </span>
+                <div
+                  class="flex shrink-0 items-center gap-5"
+                >
+                  <div
+                    class="flex items-center"
+                  >
+                    <div>
+                      <button
+                        aria-controls="radix-:r25:"
+                        aria-expanded="false"
+                        aria-haspopup="dialog"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral ml-3"
+                        data-state="closed"
+                        type="button"
+                      >
+                        <div
+                          class="flex items-center gap-1"
+                          data-state="closed"
+                        >
+                          <i
+                            aria-hidden="true"
+                            class="fa-regular fa-link "
+                          />
+                          <i
+                            aria-hidden="true"
+                            class="fa-regular fa-angle-down "
+                          />
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      aria-busy="true"
+                      class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded"
+                      style="width: 184px; height: 36px;"
+                    />
+                  </div>
                 </div>
-                Stopped
-              </a>
-            </div>
-          </td>
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 30%;"
-          >
-            <div
-              class="flex items-center gap-1"
+              </div>
+            </td>
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 15%;"
             >
               <div
-                class="flex w-44 flex-col gap-1.5"
+                aria-busy="false"
+                class="flex rounded"
+              >
+                <a
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-8 px-2.5 rounded-full bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral gap-2 whitespace-nowrap text-sm"
+                  data-state="closed"
+                  to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general"
+                >
+                  <div
+                    class="h-[14px] w-[14px]"
+                    data-state="closed"
+                  >
+                    <svg
+                      class="text-neutral h-full w-full"
+                      fill="none"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g
+                        clip-path="url(#clip0_5424_5935)"
+                      >
+                        <path
+                          d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                          fill="currentColor"
+                        />
+                      </g>
+                      <defs>
+                        <clippath
+                          id="clip0_5424_5935"
+                        >
+                          <path
+                            d="M0 0H24V24H0z"
+                            fill="#fff"
+                          />
+                        </clippath>
+                      </defs>
+                    </svg>
+                  </div>
+                  Stopped
+                </a>
+              </div>
+            </td>
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 30%;"
+            >
+              <div
+                class="flex items-center gap-1"
+              >
+                <div
+                  class="flex w-44 flex-col gap-1.5"
+                >
+                  <span
+                    class="flex items-center gap-2 text-neutral-subtle"
+                  >
+                    <svg
+                      class="svg-icon shrink-0 h-3 w-3 text-inherit"
+                      name="GITHUB"
+                      viewBox="0 0 24 24"
+                      width="1.5rem"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                    >
+                      <path
+                        d="M12.0013 1.03134e-06C5.37057 -0.00275316 0 5.51113 0 12.3167C0 17.6984 3.35962 22.2731 8.03843 23.9532C8.66853 24.1157 8.572 23.6557 8.572 23.3417V21.2073C4.93353 21.6452 4.78606 19.1719 4.54206 18.7588C4.04871 17.894 2.88236 17.6736 3.23092 17.2605C4.05943 16.8226 4.90403 17.3707 5.88269 18.8552C6.59055 19.9321 7.9714 19.7503 8.67121 19.5713C8.82404 18.924 9.15116 18.3456 9.60161 17.8967C5.83175 17.2027 4.26053 14.8396 4.26053 12.0303C4.26053 10.667 4.69758 9.41382 5.55558 8.40303C5.0086 6.73675 5.60652 5.31008 5.68696 5.098C7.24478 4.95479 8.86426 6.24375 8.99028 6.34565C9.8751 6.10053 10.8859 5.97108 12.0174 5.97108C13.1543 5.97108 14.1678 6.10604 15.0607 6.35391C15.3636 6.11705 16.8652 5.00987 18.313 5.14482C18.3908 5.3569 18.9753 6.75052 18.4605 8.39477C19.3292 9.40831 19.7716 10.6725 19.7716 12.0386C19.7716 14.8533 18.1897 17.2192 14.4091 17.9022C14.7329 18.2293 14.99 18.6195 15.1654 19.0498C15.3408 19.4801 15.431 19.942 15.4307 20.4085V23.507C15.4521 23.7549 15.4307 24 15.8329 24C20.5814 22.3557 24 17.748 24 12.3195C24 5.51113 18.6267 1.03134e-06 12.0013 1.03134e-06Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    <a
+                      class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-info hover:text-info-hover text-ssm hover:underline font-normal"
+                      href="https://github.com/acarranoqovery/javascript-tetris.git"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <span
+                        class=""
+                        data-state="closed"
+                        data-testid="truncate-text"
+                      >
+                        acarranoqovery/javas
+                        ...
+                      </span>
+                    </a>
+                  </span>
+                  <span
+                    class="flex items-center gap-2 text-neutral-subtle"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-regular fa-code-branch "
+                    />
+                    <a
+                      class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-info hover:text-info-hover text-ssm hover:underline font-normal"
+                      href="https://github.com/acarranoqovery/javascript-tetris/tree/master/"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      master
+                    </a>
+                  </span>
+                </div>
+                <span
+                  class="flex"
+                >
+                  <span
+                    class=""
+                    data-state="closed"
+                  >
+                    <button
+                      class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
+                      type="button"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-code-commit w-4"
+                      />
+                      2f74448
+                    </button>
+                  </span>
+                  <button
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
+                    data-state="closed"
+                    type="button"
+                  >
+                    <span
+                      class="flex h-full items-center justify-center"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-clock-rotate-left "
+                      />
+                    </span>
+                  </button>
+                </span>
+              </div>
+            </td>
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 3%;"
+            >
+              <a
+                class="cursor-pointer transition duration-100 font-medium items-center text-sm group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-subtle hover:translate-x-0 hover:text-neutral"
+                to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/deployment-logs/exec-1"
               >
                 <span
-                  class="flex items-center gap-2 text-neutral-400"
+                  class="whitespace-nowrap text-ssm font-normal"
+                  data-state="closed"
                 >
-                  <svg
-                    class="svg-icon shrink-0 h-3 w-3"
-                    name="GITHUB"
-                    viewBox="0 0 24 24"
-                    width="1.5rem"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                  19 days
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-arrow-up-right text-ssm opacity-0 group-hover:opacity-100"
+                />
+              </a>
+            </td>
+          </tr>
+          <tr
+            class="h-[68px]"
+          >
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 20px;"
+            >
+              <label
+                class="absolute inset-y-0 left-0 flex items-center p-4"
+              >
+                <button
+                  aria-checked="false"
+                  class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                  data-state="unchecked"
+                  role="checkbox"
+                  type="button"
+                  value="on"
+                />
+              </label>
+            </td>
+            <td
+              class="h-14 py-0 px-6 border-r border-neutral pl-0 first:relative"
+              style="width: 57%;"
+            >
+              <div
+                class="flex items-center justify-between"
+              >
+                <span
+                  class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral"
+                >
+                  <span
+                    class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral"
                   >
-                    <path
-                      d="M12.0013 1.03134e-06C5.37057 -0.00275316 0 5.51113 0 12.3167C0 17.6984 3.35962 22.2731 8.03843 23.9532C8.66853 24.1157 8.572 23.6557 8.572 23.3417V21.2073C4.93353 21.6452 4.78606 19.1719 4.54206 18.7588C4.04871 17.894 2.88236 17.6736 3.23092 17.2605C4.05943 16.8226 4.90403 17.3707 5.88269 18.8552C6.59055 19.9321 7.9714 19.7503 8.67121 19.5713C8.82404 18.924 9.15116 18.3456 9.60161 17.8967C5.83175 17.2027 4.26053 14.8396 4.26053 12.0303C4.26053 10.667 4.69758 9.41382 5.55558 8.40303C5.0086 6.73675 5.60652 5.31008 5.68696 5.098C7.24478 4.95479 8.86426 6.24375 8.99028 6.34565C9.8751 6.10053 10.8859 5.97108 12.0174 5.97108C13.1543 5.97108 14.1678 6.10604 15.0607 6.35391C15.3636 6.11705 16.8652 5.00987 18.313 5.14482C18.3908 5.3569 18.9753 6.75052 18.4605 8.39477C19.3292 9.40831 19.7716 10.6725 19.7716 12.0386C19.7716 14.8533 18.1897 17.2192 14.4091 17.9022C14.7329 18.2293 14.99 18.6195 15.1654 19.0498C15.3408 19.4801 15.431 19.942 15.4307 20.4085V23.507C15.4521 23.7549 15.4307 24 15.8329 24C20.5814 22.3557 24 17.748 24 12.3195C24 5.51113 18.6267 1.03134e-06 12.0013 1.03134e-06Z"
-                      fill="#212346"
-                    />
-                  </svg>
-                  <a
-                    class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-current hover:brightness-75 text-ssm hover:underline font-normal"
-                    href="https://github.com/acarranoqovery/javascript-tetris.git"
-                    rel="noopener noreferrer"
-                    target="_blank"
+                    <span
+                      class="flex items-center justify-center rounded-full h-6 w-6"
+                    >
+                      <svg
+                        class="shrink-0 "
+                        fill="none"
+                        height="100%"
+                        name="APPLICATION"
+                        viewBox="0 0 20 20"
+                        width="100%"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M8.651 18.034h.001c.416.232.88.35 1.35.34a2.64 2.64 0 001.347-.34h.001l7.051-4.295a.9.9 0 00.43-.343.975.975 0 000-1.086.9.9 0 00-.43-.343l-7.05-4.294h0l-.003-.002a2.858 2.858 0 00-1.347-.339c-.469 0-.93.116-1.348.34h0-.002l-7.049 4.296c-.164.078-.305.2-.41.355a1.101 1.101 0 00-.182.525h0v.007c.016.189.08.37.184.525.104.155.244.279.408.358l7.05 4.296zm9.654-4.492v-.001l-.008.005-7.05 4.303a2.649 2.649 0 01-1.246.313c-.433 0-.86-.107-1.247-.313l-7.05-4.303v-.001l-.008-.003a.697.697 0 01-.343-.266.763.763 0 010-.86.697.697 0 01.343-.267v.001l.008-.004 7.05-4.296a2.648 2.648 0 011.247-.314c.433 0 .86.108 1.246.314l7.05 4.296h0l.008.003a.697.697 0 01.343.267.763.763 0 010 .86.697.697 0 01-.343.266z"
+                          fill="#42E8E0"
+                          stroke="#42E8E0"
+                          stroke-width="0.083"
+                        />
+                        <path
+                          d="M19.166 11.203V8.656l-.442-.26c-.124.794-1.008 1.321-1.753 1.43l-5.052 3.115-2.206.843L2.676 9.95l.164-.097c-.602-.298-.927-.979-1.25-1.596l-.475.298-.282.082v2.593c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 16.44c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.167-.08.312-.206.42-.363.108-.156.176-.34.197-.533v-.045h.003z"
+                          fill="#42E8E0"
+                          opacity="0.4"
+                        />
+                        <path
+                          d="M19.166 8.938V7.253l-.442-.26c-.124.794-1.008 1.32-1.753 1.43l-5.052 3.119-2.206.839-7.037-3.834.164-.098c-.602-.297-.927-.974-1.25-1.595l-.475.297-.282.087v1.727c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 14.175c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.168-.081.313-.207.42-.364.109-.158.176-.342.197-.535v-.042h.003z"
+                          fill="url(#paint0_linear_10141_398872)"
+                        />
+                        <path
+                          d="M16.971 8.423l-5.05 3.119-1.919.73v2.28a2.929 2.929 0 001.498-.377l7.05-4.296c.168-.081.313-.207.42-.364.109-.158.177-.342.197-.535V7.253l-.403-.237h-.042c-.136.782-1.013 1.298-1.75 1.407z"
+                          fill="#0F054C"
+                          opacity="0.3"
+                        />
+                        <path
+                          d="M8.502 12.452L1.454 8.163c-.827-.5-.827-1.32 0-1.824l7.048-4.297a3.188 3.188 0 011.497-.375c.52 0 1.033.128 1.497.375l7.05 4.297c.824.504.824 1.324 0 1.824l-7.046 4.29a3.168 3.168 0 01-2.998 0z"
+                          fill="url(#paint1_linear_10141_398872)"
+                        />
+                        <path
+                          d="M18.55 8.163l-7.05 4.29a3.168 3.168 0 01-1.498.378c-.52 0-1.033-.13-1.497-.378l-7.051-4.29a1.116 1.116 0 01-.396-.327 1.195 1.195 0 01-.217-.478c-.05.377.153.753.613 1.016L8.5 12.671c.464.248.977.378 1.497.378.52 0 1.034-.13 1.498-.378l7.05-4.297c.189-.082.348-.224.457-.406a1.09 1.09 0 00.153-.61c-.036.174-.11.337-.215.477-.105.14-.239.252-.391.328z"
+                          fill="#fff"
+                        />
+                        <defs>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint0_linear_10141_398872"
+                            x1="4723.62"
+                            x2="5068.67"
+                            y1="801.697"
+                            y2="1276.19"
+                          >
+                            <stop
+                              stop-color="#BCBEFF"
+                            />
+                            <stop
+                              offset="0.23"
+                              stop-color="#AAADF8"
+                            />
+                            <stop
+                              offset="0.68"
+                              stop-color="#7C83E5"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#5761D7"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint1_linear_10141_398872"
+                            x1="4629.08"
+                            x2="5571.81"
+                            y1="1254.11"
+                            y2="1254.11"
+                          >
+                            <stop
+                              stop-color="#E9E9FD"
+                            />
+                            <stop
+                              offset="0.36"
+                              stop-color="#D3D2F9"
+                            />
+                            <stop
+                              offset="0.71"
+                              stop-color="#C5C4F7"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#C0BFF6"
+                            />
+                          </lineargradient>
+                        </defs>
+                      </svg>
+                    </span>
+                  </span>
+                  <span
+                    class="flex min-w-0 shrink flex-col truncate pr-2"
+                  >
+                    <a
+                      class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm hover:underline inline max-w-max truncate"
+                      data-state="closed"
+                      to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/04308de2-af27-405f-9e95-570fa94ed577/services/general"
+                    >
+                      back-end-A
+                    </a>
+                  </span>
+                </span>
+                <div
+                  class="flex shrink-0 items-center gap-5"
+                >
+                  <div
+                    class="flex items-center"
                   >
                     <span
                       class=""
-                      data-state="closed"
-                      data-testid="truncate-text"
-                    >
-                      acarranoqovery/javas
-                      ...
-                    </span>
-                  </a>
-                </span>
-                <span
-                  class="flex items-center gap-2 text-neutral-400"
-                >
-                  <i
-                    aria-hidden="true"
-                    class="fa-regular fa-code-branch "
-                  />
-                  <a
-                    class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-current hover:brightness-75 text-ssm hover:underline font-normal"
-                    href="https://github.com/acarranoqovery/javascript-tetris/tree/master/"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    master
-                  </a>
-                </span>
-              </div>
-              <span
-                class="flex"
-              >
-                <span
-                  class=""
-                  data-state="closed"
-                >
-                  <button
-                    class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
-                    type="button"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-code-commit w-4"
-                    />
-                    2f74448
-                  </button>
-                </span>
-                <button
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 w-7 justify-center gap-1 rounded-l-none px-1.5"
-                  data-state="closed"
-                  type="button"
-                >
-                  <span
-                    class="flex h-full items-center justify-center"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-clock-rotate-left "
-                    />
-                  </span>
-                </button>
-              </span>
-            </div>
-          </td>
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 3%;"
-          >
-            <a
-              class="cursor-pointer transition duration-100 font-medium items-center text-sm group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-350 hover:translate-x-0 hover:text-brand-500"
-              href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/deployment-logs/exec-1"
-            >
-              <span
-                class="whitespace-nowrap text-ssm font-normal"
-                data-state="closed"
-              >
-                19 days
-              </span>
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-arrow-up-right text-ssm opacity-0 group-hover:opacity-100"
-              />
-            </a>
-          </td>
-        </tr>
-        <tr
-          class="h-[68px] cursor-pointer hover:bg-neutral-100"
-        >
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 20px;"
-          >
-            <label
-              class="absolute inset-y-0 left-0 flex items-center p-4"
-            >
-              <button
-                aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
-                data-state="unchecked"
-                role="checkbox"
-                type="button"
-                value="on"
-              />
-            </label>
-          </td>
-          <td
-            class="h-14 py-0 px-6 border-r pl-0 first:relative"
-            style="width: 57%;"
-          >
-            <div
-              class="flex items-center justify-between"
-            >
-              <span
-                class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
-              >
-                <span
-                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral"
-                >
-                  <span
-                    class="flex items-center justify-center rounded-full h-6 w-6"
-                  >
-                    <svg
-                      class="shrink-0 "
-                      fill="none"
-                      height="100%"
-                      name="APPLICATION"
-                      viewBox="0 0 20 20"
-                      width="100%"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8.651 18.034h.001c.416.232.88.35 1.35.34a2.64 2.64 0 001.347-.34h.001l7.051-4.295a.9.9 0 00.43-.343.975.975 0 000-1.086.9.9 0 00-.43-.343l-7.05-4.294h0l-.003-.002a2.858 2.858 0 00-1.347-.339c-.469 0-.93.116-1.348.34h0-.002l-7.049 4.296c-.164.078-.305.2-.41.355a1.101 1.101 0 00-.182.525h0v.007c.016.189.08.37.184.525.104.155.244.279.408.358l7.05 4.296zm9.654-4.492v-.001l-.008.005-7.05 4.303a2.649 2.649 0 01-1.246.313c-.433 0-.86-.107-1.247-.313l-7.05-4.303v-.001l-.008-.003a.697.697 0 01-.343-.266.763.763 0 010-.86.697.697 0 01.343-.267v.001l.008-.004 7.05-4.296a2.648 2.648 0 011.247-.314c.433 0 .86.108 1.246.314l7.05 4.296h0l.008.003a.697.697 0 01.343.267.763.763 0 010 .86.697.697 0 01-.343.266z"
-                        fill="#42E8E0"
-                        stroke="#42E8E0"
-                        stroke-width="0.083"
-                      />
-                      <path
-                        d="M19.166 11.203V8.656l-.442-.26c-.124.794-1.008 1.321-1.753 1.43l-5.052 3.115-2.206.843L2.676 9.95l.164-.097c-.602-.298-.927-.979-1.25-1.596l-.475.298-.282.082v2.593c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 16.44c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.167-.08.312-.206.42-.363.108-.156.176-.34.197-.533v-.045h.003z"
-                        fill="#42E8E0"
-                        opacity="0.4"
-                      />
-                      <path
-                        d="M19.166 8.938V7.253l-.442-.26c-.124.794-1.008 1.32-1.753 1.43l-5.052 3.119-2.206.839-7.037-3.834.164-.098c-.602-.297-.927-.974-1.25-1.595l-.475.297-.282.087v1.727c.019.196.086.384.195.544.109.16.256.288.426.37L8.5 14.175c.464.247.977.376 1.497.376.52 0 1.033-.129 1.497-.376l7.051-4.296c.168-.081.313-.207.42-.364.109-.158.176-.342.197-.535v-.042h.003z"
-                        fill="url(#paint0_linear_10141_398872)"
-                      />
-                      <path
-                        d="M16.971 8.423l-5.05 3.119-1.919.73v2.28a2.929 2.929 0 001.498-.377l7.05-4.296c.168-.081.313-.207.42-.364.109-.158.177-.342.197-.535V7.253l-.403-.237h-.042c-.136.782-1.013 1.298-1.75 1.407z"
-                        fill="#0F054C"
-                        opacity="0.3"
-                      />
-                      <path
-                        d="M8.502 12.452L1.454 8.163c-.827-.5-.827-1.32 0-1.824l7.048-4.297a3.188 3.188 0 011.497-.375c.52 0 1.033.128 1.497.375l7.05 4.297c.824.504.824 1.324 0 1.824l-7.046 4.29a3.168 3.168 0 01-2.998 0z"
-                        fill="url(#paint1_linear_10141_398872)"
-                      />
-                      <path
-                        d="M18.55 8.163l-7.05 4.29a3.168 3.168 0 01-1.498.378c-.52 0-1.033-.13-1.497-.378l-7.051-4.29a1.116 1.116 0 01-.396-.327 1.195 1.195 0 01-.217-.478c-.05.377.153.753.613 1.016L8.5 12.671c.464.248.977.378 1.497.378.52 0 1.034-.13 1.498-.378l7.05-4.297c.189-.082.348-.224.457-.406a1.09 1.09 0 00.153-.61c-.036.174-.11.337-.215.477-.105.14-.239.252-.391.328z"
-                        fill="#fff"
-                      />
-                      <defs>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint0_linear_10141_398872"
-                          x1="4723.62"
-                          x2="5068.67"
-                          y1="801.697"
-                          y2="1276.19"
-                        >
-                          <stop
-                            stop-color="#BCBEFF"
-                          />
-                          <stop
-                            offset="0.23"
-                            stop-color="#AAADF8"
-                          />
-                          <stop
-                            offset="0.68"
-                            stop-color="#7C83E5"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#5761D7"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint1_linear_10141_398872"
-                          x1="4629.08"
-                          x2="5571.81"
-                          y1="1254.11"
-                          y2="1254.11"
-                        >
-                          <stop
-                            stop-color="#E9E9FD"
-                          />
-                          <stop
-                            offset="0.36"
-                            stop-color="#D3D2F9"
-                          />
-                          <stop
-                            offset="0.71"
-                            stop-color="#C5C4F7"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#C0BFF6"
-                          />
-                        </lineargradient>
-                      </defs>
-                    </svg>
-                  </span>
-                </span>
-                <span
-                  class="flex min-w-0 shrink flex-col truncate pr-2"
-                >
-                  <a
-                    class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-current hover:brightness-75 text-sm hover:underline inline max-w-max truncate"
-                    data-state="closed"
-                    href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/04308de2-af27-405f-9e95-570fa94ed577/services/general"
-                  >
-                    back-end-A
-                  </a>
-                </span>
-              </span>
-              <div
-                class="flex shrink-0 items-center gap-5"
-              >
-                <div
-                  class="flex items-center"
-                >
-                  <span
-                    class=""
-                    data-state="closed"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-arrows-rotate text-neutral-300"
-                    />
-                  </span>
-                  <div>
-                    <button
-                      aria-controls="radix-:r2f:"
-                      aria-expanded="false"
-                      aria-haspopup="dialog"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 ml-3"
-                      data-state="closed"
-                      type="button"
-                    >
-                      <div
-                        class="flex items-center gap-1"
-                        data-state="closed"
-                      >
-                        <i
-                          aria-hidden="true"
-                          class="fa-regular fa-link "
-                        />
-                        <i
-                          aria-hidden="true"
-                          class="fa-regular fa-angle-down "
-                        />
-                      </div>
-                    </button>
-                  </div>
-                </div>
-                <div>
-                  <div
-                    aria-busy="true"
-                    class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] dark:from-[#2A3041] dark:via-[#1F2637] dark:to-[#1F2637] rounded"
-                    style="width: 184px; height: 36px;"
-                  />
-                </div>
-              </div>
-            </div>
-          </td>
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 15%;"
-          >
-            <div
-              aria-busy="false"
-              class="flex rounded"
-            >
-              <a
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
-                data-state="closed"
-                href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/04308de2-af27-405f-9e95-570fa94ed577/services/general"
-              >
-                <div
-                  class=""
-                  data-state="closed"
-                >
-                  <svg
-                    class="text-neutral-300"
-                    fill="none"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g
-                      clip-path="url(#clip0_5424_5935)"
-                    >
-                      <path
-                        d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                        fill="currentColor"
-                      />
-                    </g>
-                    <defs>
-                      <clippath
-                        id="clip0_5424_5935"
-                      >
-                        <path
-                          d="M0 0H24V24H0z"
-                          fill="#fff"
-                        />
-                      </clippath>
-                    </defs>
-                  </svg>
-                </div>
-                Stopped
-              </a>
-            </div>
-          </td>
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 30%;"
-          >
-            <div
-              class="flex items-center gap-1"
-            >
-              <div
-                class="flex w-44 flex-col gap-1.5"
-              >
-                <span
-                  class="flex items-center gap-2 text-neutral-350"
-                >
-                  <svg
-                    class="shrink-0 "
-                    fill="none"
-                    height="16"
-                    name="DOCKER"
-                    viewBox="0 0 24 16"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M23.505 6.425c-.54-.329-1.78-.452-2.748-.288-.112-.822-.63-1.54-1.53-2.177l-.519-.33-.36.473c-.45.617-.676 1.48-.608 2.301.022.288.135.801.473 1.253-.315.165-.968.37-1.824.37H.109l-.046.165c-.157.821-.157 3.39 1.69 5.361 1.395 1.5 3.467 2.26 6.192 2.26 5.9 0 10.268-2.486 12.317-6.985.81.02 2.545 0 3.423-1.54.022-.042.067-.124.225-.432l.09-.164-.495-.267zM13.124.632h-2.477v2.054h2.477V.632zm0 2.465h-2.477V5.15h2.477V3.097zm-2.928 0H7.72V5.15h2.477V3.097zm-2.927 0H4.792V5.15h2.477V3.097zM4.342 5.562H1.865v2.054h2.477V5.562zm2.927 0H4.792v2.054h2.477V5.562zm2.927 0H7.72v2.054h2.477V5.562zm2.928 0h-2.477v2.054h2.477V5.562zm2.927 0h-2.477v2.054h2.477V5.562z"
-                      fill="#2396ED"
-                    />
-                  </svg>
-                  <span
-                    class="text-neutral-350"
-                    data-state="closed"
-                  >
-                    dockerhub public
-                  </span>
-                </span>
-                <span
-                  class="flex items-center gap-2 text-neutral-350"
-                >
-                  <svg
-                    class="shrink-0 "
-                    fill="none"
-                    name="CONTAINER"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                  >
-                    <path
-                      d="M12.025 3l8.946 3.992-8.946 3.962-9.062-3.962L12.026 3zM12.22 11.503L21 7.653v9.154l-8.78 4.157v-9.46zM11.588 11.434L2.963 7.652v9.155l8.625 4.202v-9.575z"
-                      fill="#2196F3"
-                    />
-                  </svg>
-                  <span
-                    class=""
-                    data-state="closed"
-                    data-testid="truncate-text"
-                  >
-                    stefanprodan/podinfo
-                    ...
-                  </span>
-                </span>
-              </div>
-              <span
-                class="flex"
-              >
-                <span
-                  class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-surface-neutral-subtle min-w-7 max-w-[81px] rounded-r-none border-r-0 border-neutral-250"
-                >
-                  <span
-                    class="flex h-full w-full items-center justify-center truncate"
-                  >
-                    6.5.2
-                  </span>
-                </span>
-                <button
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 w-7 justify-center gap-1 rounded-l-none px-1.5"
-                  data-state="closed"
-                  type="button"
-                >
-                  <span
-                    class="flex h-full items-center justify-center"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-clock-rotate-left "
-                    />
-                  </span>
-                </button>
-              </span>
-            </div>
-          </td>
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 3%;"
-          >
-            <a
-              class="cursor-pointer transition duration-100 font-medium items-center text-sm group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-350 hover:translate-x-0 hover:text-brand-500"
-              href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/04308de2-af27-405f-9e95-570fa94ed577/deployment-logs/:versionId"
-            >
-              <span
-                class="whitespace-nowrap text-ssm font-normal"
-                data-state="closed"
-              >
-                19 days
-              </span>
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-arrow-up-right text-ssm opacity-0 group-hover:opacity-100"
-              />
-            </a>
-          </td>
-        </tr>
-        <tr
-          class="h-[68px] cursor-pointer hover:bg-neutral-100"
-        >
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 20px;"
-          >
-            <label
-              class="absolute inset-y-0 left-0 flex items-center p-4"
-            >
-              <button
-                aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
-                data-state="unchecked"
-                role="checkbox"
-                type="button"
-                value="on"
-              />
-            </label>
-          </td>
-          <td
-            class="h-14 py-0 px-6 border-r pl-0 first:relative"
-            style="width: 57%;"
-          >
-            <div
-              class="flex items-center justify-between"
-            >
-              <span
-                class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
-              >
-                <span
-                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral"
-                >
-                  <span
-                    class="flex items-center justify-center rounded-full h-6 w-6"
-                  >
-                    <svg
-                      class="shrink-0 "
-                      fill="none"
-                      height="100%"
-                      name="CRON_JOB"
-                      viewBox="0 0 22 22"
-                      width="100%"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M11.59 13.586a1.211 1.211 0 00-.542-.126c-.19 0-.377.043-.542.126L4.05 16.82a.144.144 0 00-.056.048.12.12 0 000 .133c.013.02.033.037.056.048l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.145.145 0 00.056-.049.12.12 0 00.02-.066.12.12 0 00-.02-.066.144.144 0 00-.056-.049l-6.447-3.236z"
-                        fill="url(#paint0_linear_10141_161369)"
-                        opacity="0.16"
-                      />
-                      <path
-                        d="M11.59 12.64a1.213 1.213 0 00-.542-.126c-.19 0-.377.043-.542.126L4.05 15.873a.144.144 0 00-.056.049.12.12 0 000 .132c.013.02.033.037.056.049l6.511 3.267a1.067 1.067 0 00.956 0l6.52-3.265a.145.145 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.144.144 0 00-.056-.048L11.59 12.64z"
-                        fill="url(#paint1_linear_10141_161369)"
-                        opacity="0.16"
-                      />
-                      <path
-                        d="M11.59 11.694a1.213 1.213 0 00-.542-.126c-.19 0-.377.044-.542.126L4.05 14.926a.145.145 0 00-.056.049.12.12 0 00-.02.066.12.12 0 00.02.066c.013.02.033.037.056.049l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.11l6.52-3.266a.143.143 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.143.143 0 00-.056-.048l-6.447-3.236z"
-                        fill="url(#paint2_linear_10141_161369)"
-                        opacity="0.16"
-                      />
-                      <path
-                        d="M11.59 10.746a1.21 1.21 0 00-.542-.126c-.19 0-.377.044-.542.126L4.05 13.98a.145.145 0 00-.056.048.12.12 0 00-.02.066.12.12 0 00.02.067c.013.02.033.037.056.048l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.143.143 0 00.056-.048.12.12 0 00.02-.067.12.12 0 00-.02-.066.143.143 0 00-.056-.048l-6.447-3.237z"
-                        fill="url(#paint3_linear_10141_161369)"
-                        opacity="0.16"
-                      />
-                      <path
-                        d="M18.039 11.586L11.59 8.35a1.213 1.213 0 00-.542-.126c-.19 0-.376.043-.541.126L4.05 11.582a.143.143 0 00-.055.049.12.12 0 00-.02.066v2.834a.12.12 0 00.02.066c.013.02.032.037.055.049l6.512 3.268c.145.073.31.111.478.111.167 0 .332-.038.478-.111l6.52-3.265a.141.141 0 00.056-.048.117.117 0 00.02-.067v-2.833a.118.118 0 00-.02-.067.141.141 0 00-.055-.048z"
-                        fill="url(#paint4_linear_10141_161369)"
-                        opacity="0.71"
-                      />
-                      <path
-                        d="M11.59 11.187a1.213 1.213 0 00-.542-.127c-.19 0-.377.044-.542.127L4.05 14.419a.145.145 0 00-.056.049.12.12 0 00-.02.066.12.12 0 00.02.066c.013.02.033.037.056.049l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.143.143 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.143.143 0 00-.056-.048l-6.447-3.236z"
-                        fill="url(#paint5_linear_10141_161369)"
-                        opacity="0.11"
-                      />
-                      <path
-                        d="M11.59 10.241a1.21 1.21 0 00-.542-.126c-.19 0-.377.044-.542.126L4.05 13.475a.144.144 0 00-.056.048.12.12 0 000 .133c.013.02.033.037.056.048l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.143.143 0 00.056-.048.12.12 0 00.02-.067.12.12 0 00-.02-.066.143.143 0 00-.056-.048L11.59 10.24z"
-                        fill="url(#paint6_linear_10141_161369)"
-                        opacity="0.11"
-                      />
-                      <path
-                        d="M11.59 8.35a1.213 1.213 0 00-.542-.126c-.19 0-.377.043-.542.126L4.05 11.582a.145.145 0 00-.056.049.12.12 0 00-.02.066.12.12 0 00.02.066c.013.02.033.037.056.049l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.11l6.52-3.266a.143.143 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.143.143 0 00-.056-.048L11.59 8.35z"
-                        fill="url(#paint7_linear_10141_161369)"
-                        opacity="0.11"
-                      />
-                      <path
-                        d="M11.59 8.35a1.213 1.213 0 00-.542-.126c-.19 0-.377.043-.542.126L4.05 11.582a.145.145 0 00-.056.049.12.12 0 00-.02.066.12.12 0 00.02.066c.013.02.033.037.056.049l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.11l6.52-3.266a.143.143 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.143.143 0 00-.056-.048L11.59 8.35z"
-                        fill="url(#paint8_linear_10141_161369)"
-                        opacity="0.11"
-                      />
-                      <path
-                        d="M18.036 11.684l-6.52 3.265c-.145.073-.31.111-.478.111-.168 0-.332-.038-.478-.111L4.05 11.68a.137.137 0 01-.056-.05.115.115 0 00-.015.1.125.125 0 00.026.047.148.148 0 00.045.034l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.137.137 0 00.071-.08.118.118 0 00-.014-.1.144.144 0 01-.057.05z"
-                        fill="url(#paint9_linear_10141_161369)"
-                        opacity="0.71"
-                      />
-                      <circle
-                        cx="10.875"
-                        cy="11"
-                        r="10.15"
-                        stroke="#42E8E0"
-                        stroke-width="0.3"
-                      />
-                      <circle
-                        cx="10.875"
-                        cy="11"
-                        fill="#EAEAFE"
-                        r="9.427"
-                      />
-                      <circle
-                        cx="10.875"
-                        cy="11"
-                        r="8.427"
-                        stroke="url(#paint10_linear_10141_161369)"
-                        stroke-opacity="0.3"
-                        stroke-width="2"
-                      />
-                      <circle
-                        cx="10.874"
-                        cy="11"
-                        fill="#EAEAFE"
-                        r="7.702"
-                        stroke="url(#paint11_linear_10141_161369)"
-                        stroke-width="2"
-                      />
-                      <path
-                        d="M9.666 7.357a.725.725 0 011.45 0v4.351h-1.45V7.357z"
-                        fill="#fff"
-                      />
-                      <path
-                        d="M13.919 13.91a.725.725 0 01-1.026 1.026l-3.227-3.228 1.026-1.026 3.227 3.227z"
-                        fill="#fff"
-                      />
-                      <path
-                        clip-rule="evenodd"
-                        d="M10.534 6.592c-.4 0-.725.324-.725.725v4.351l3.227 3.227a.725.725 0 101.025-1.025l-2.802-2.803v-3.75c0-.4-.325-.725-.725-.725z"
-                        fill="#8987C9"
-                        fill-rule="evenodd"
-                      />
-                      <defs>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint0_linear_10141_161369"
-                          x1="17.881"
-                          x2="4.052"
-                          y1="16.878"
-                          y2="16.878"
-                        >
-                          <stop
-                            stop-color="#42E8E0"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#5761D7"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint1_linear_10141_161369"
-                          x1="17.881"
-                          x2="4.052"
-                          y1="15.931"
-                          y2="15.931"
-                        >
-                          <stop
-                            stop-color="#42E8E0"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#5761D7"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint2_linear_10141_161369"
-                          x1="17.881"
-                          x2="4.052"
-                          y1="14.985"
-                          y2="14.985"
-                        >
-                          <stop
-                            stop-color="#42E8E0"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#5761D7"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint3_linear_10141_161369"
-                          x1="17.881"
-                          x2="4.052"
-                          y1="14.038"
-                          y2="14.038"
-                        >
-                          <stop
-                            stop-color="#42E8E0"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#5761D7"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint4_linear_10141_161369"
-                          x1="17.523"
-                          x2="4.175"
-                          y1="13.222"
-                          y2="13.222"
-                        >
-                          <stop
-                            stop-color="#42E8E0"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#5761D7"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint5_linear_10141_161369"
-                          x1="1488.82"
-                          x2="3942.11"
-                          y1="1610.23"
-                          y2="1610.23"
-                        >
-                          <stop
-                            stop-color="#5761D7"
-                          />
-                          <stop
-                            offset="0.07"
-                            stop-color="#5472D8"
-                          />
-                          <stop
-                            offset="0.28"
-                            stop-color="#4E9CDB"
-                          />
-                          <stop
-                            offset="0.48"
-                            stop-color="#49BDDD"
-                          />
-                          <stop
-                            offset="0.67"
-                            stop-color="#45D5DF"
-                          />
-                          <stop
-                            offset="0.85"
-                            stop-color="#43E3E0"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#42E8E0"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint6_linear_10141_161369"
-                          x1="1488.82"
-                          x2="3942.11"
-                          y1="1516.43"
-                          y2="1516.43"
-                        >
-                          <stop
-                            stop-color="#5761D7"
-                          />
-                          <stop
-                            offset="0.07"
-                            stop-color="#5472D8"
-                          />
-                          <stop
-                            offset="0.28"
-                            stop-color="#4E9CDB"
-                          />
-                          <stop
-                            offset="0.48"
-                            stop-color="#49BDDD"
-                          />
-                          <stop
-                            offset="0.67"
-                            stop-color="#45D5DF"
-                          />
-                          <stop
-                            offset="0.85"
-                            stop-color="#43E3E0"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#42E8E0"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint7_linear_10141_161369"
-                          x1="1488.82"
-                          x2="3942.11"
-                          y1="1328.35"
-                          y2="1328.35"
-                        >
-                          <stop
-                            stop-color="#5761D7"
-                          />
-                          <stop
-                            offset="0.07"
-                            stop-color="#5472D8"
-                          />
-                          <stop
-                            offset="0.28"
-                            stop-color="#4E9CDB"
-                          />
-                          <stop
-                            offset="0.48"
-                            stop-color="#49BDDD"
-                          />
-                          <stop
-                            offset="0.67"
-                            stop-color="#45D5DF"
-                          />
-                          <stop
-                            offset="0.85"
-                            stop-color="#43E3E0"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#42E8E0"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint8_linear_10141_161369"
-                          x1="1488.82"
-                          x2="3942.11"
-                          y1="1328.35"
-                          y2="1328.35"
-                        >
-                          <stop
-                            stop-color="#5761D7"
-                          />
-                          <stop
-                            offset="0.07"
-                            stop-color="#5472D8"
-                          />
-                          <stop
-                            offset="0.28"
-                            stop-color="#4E9CDB"
-                          />
-                          <stop
-                            offset="0.48"
-                            stop-color="#49BDDD"
-                          />
-                          <stop
-                            offset="0.67"
-                            stop-color="#45D5DF"
-                          />
-                          <stop
-                            offset="0.85"
-                            stop-color="#43E3E0"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#42E8E0"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint9_linear_10141_161369"
-                          x1="17.521"
-                          x2="4.173"
-                          y1="13.447"
-                          y2="13.447"
-                        >
-                          <stop
-                            stop-color="#42E8E0"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#5761D7"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint10_linear_10141_161369"
-                          x1="18.731"
-                          x2="3.804"
-                          y1="18.07"
-                          y2="3.143"
-                        >
-                          <stop
-                            stop-color="#8987C9"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#BDBFFF"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint11_linear_10141_161369"
-                          x1="18.126"
-                          x2="4.347"
-                          y1="17.527"
-                          y2="3.748"
-                        >
-                          <stop
-                            stop-color="#8987C9"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#BDBFFF"
-                          />
-                        </lineargradient>
-                      </defs>
-                    </svg>
-                  </span>
-                </span>
-                <span
-                  class="flex min-w-0 shrink flex-col truncate pr-2"
-                >
-                  <span
-                    class="flex items-center gap-1.5"
-                  >
-                    <a
-                      class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-current hover:brightness-75 text-sm hover:underline inline max-w-max truncate"
-                      data-state="closed"
-                      href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/ebd8be35-d7a2-4d4f-ad82-de4378a83ef4/services/general"
-                    >
-                      CRONJOB
-                    </a>
-                    <span
-                      class="truncate text-sm font-normal"
                       data-state="closed"
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-regular fa-info-circle "
+                        class="fa-regular fa-arrows-rotate text-neutral-300"
                       />
                     </span>
-                  </span>
-                </span>
-              </span>
-              <div
-                class="flex shrink-0 items-center gap-5"
-              >
-                <div
-                  class="flex items-center"
-                >
-                  <span
-                    class=""
-                    data-state="closed"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-arrows-rotate text-neutral-300"
-                    />
-                  </span>
-                  <div>
-                    <button
-                      aria-controls="radix-:r2q:"
-                      aria-expanded="false"
-                      aria-haspopup="dialog"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 ml-3"
-                      data-state="closed"
-                      type="button"
-                    >
-                      <div
-                        class="flex items-center gap-1"
+                    <div>
+                      <button
+                        aria-controls="radix-:r2f:"
+                        aria-expanded="false"
+                        aria-haspopup="dialog"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral ml-3"
                         data-state="closed"
+                        type="button"
                       >
-                        <i
-                          aria-hidden="true"
-                          class="fa-regular fa-link "
-                        />
-                        <i
-                          aria-hidden="true"
-                          class="fa-regular fa-angle-down "
-                        />
-                      </div>
-                    </button>
+                        <div
+                          class="flex items-center gap-1"
+                          data-state="closed"
+                        >
+                          <i
+                            aria-hidden="true"
+                            class="fa-regular fa-link "
+                          />
+                          <i
+                            aria-hidden="true"
+                            class="fa-regular fa-angle-down "
+                          />
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      aria-busy="true"
+                      class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded"
+                      style="width: 184px; height: 36px;"
+                    />
                   </div>
                 </div>
-                <div>
-                  <div
-                    aria-busy="true"
-                    class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] dark:from-[#2A3041] dark:via-[#1F2637] dark:to-[#1F2637] rounded"
-                    style="width: 184px; height: 36px;"
-                  />
-                </div>
               </div>
-            </div>
-          </td>
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 15%;"
-          >
-            <div
-              aria-busy="false"
-              class="flex rounded"
-            >
-              <a
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
-                data-state="closed"
-                href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/ebd8be35-d7a2-4d4f-ad82-de4378a83ef4/services/general"
-              >
-                <div
-                  class=""
-                  data-state="closed"
-                >
-                  <svg
-                    class="text-neutral-300"
-                    fill="none"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g
-                      clip-path="url(#clip0_5424_5935)"
-                    >
-                      <path
-                        d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                        fill="currentColor"
-                      />
-                    </g>
-                    <defs>
-                      <clippath
-                        id="clip0_5424_5935"
-                      >
-                        <path
-                          d="M0 0H24V24H0z"
-                          fill="#fff"
-                        />
-                      </clippath>
-                    </defs>
-                  </svg>
-                </div>
-                Stopped
-              </a>
-            </div>
-          </td>
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 30%;"
-          >
-            <div
-              class="flex items-center gap-1"
+            </td>
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 15%;"
             >
               <div
-                class="flex w-44 flex-col gap-1.5"
+                aria-busy="false"
+                class="flex rounded"
               >
-                <span
-                  class="flex items-center gap-2 text-neutral-400"
+                <a
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-8 px-2.5 rounded-full bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral gap-2 whitespace-nowrap text-sm"
+                  data-state="closed"
+                  to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/04308de2-af27-405f-9e95-570fa94ed577/services/general"
                 >
-                  <svg
-                    class="svg-icon shrink-0 h-3 w-3"
-                    name="GITHUB"
-                    viewBox="0 0 24 24"
-                    width="1.5rem"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                  <div
+                    class="h-[14px] w-[14px]"
+                    data-state="closed"
                   >
-                    <path
-                      d="M12.0013 1.03134e-06C5.37057 -0.00275316 0 5.51113 0 12.3167C0 17.6984 3.35962 22.2731 8.03843 23.9532C8.66853 24.1157 8.572 23.6557 8.572 23.3417V21.2073C4.93353 21.6452 4.78606 19.1719 4.54206 18.7588C4.04871 17.894 2.88236 17.6736 3.23092 17.2605C4.05943 16.8226 4.90403 17.3707 5.88269 18.8552C6.59055 19.9321 7.9714 19.7503 8.67121 19.5713C8.82404 18.924 9.15116 18.3456 9.60161 17.8967C5.83175 17.2027 4.26053 14.8396 4.26053 12.0303C4.26053 10.667 4.69758 9.41382 5.55558 8.40303C5.0086 6.73675 5.60652 5.31008 5.68696 5.098C7.24478 4.95479 8.86426 6.24375 8.99028 6.34565C9.8751 6.10053 10.8859 5.97108 12.0174 5.97108C13.1543 5.97108 14.1678 6.10604 15.0607 6.35391C15.3636 6.11705 16.8652 5.00987 18.313 5.14482C18.3908 5.3569 18.9753 6.75052 18.4605 8.39477C19.3292 9.40831 19.7716 10.6725 19.7716 12.0386C19.7716 14.8533 18.1897 17.2192 14.4091 17.9022C14.7329 18.2293 14.99 18.6195 15.1654 19.0498C15.3408 19.4801 15.431 19.942 15.4307 20.4085V23.507C15.4521 23.7549 15.4307 24 15.8329 24C20.5814 22.3557 24 17.748 24 12.3195C24 5.51113 18.6267 1.03134e-06 12.0013 1.03134e-06Z"
-                      fill="#212346"
-                    />
-                  </svg>
-                  <a
-                    class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-current hover:brightness-75 text-ssm hover:underline font-normal"
-                    href="https://github.com/acarranoqovery/test_script.git"
-                    rel="noopener noreferrer"
-                    target="_blank"
+                    <svg
+                      class="text-neutral h-full w-full"
+                      fill="none"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g
+                        clip-path="url(#clip0_5424_5935)"
+                      >
+                        <path
+                          d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                          fill="currentColor"
+                        />
+                      </g>
+                      <defs>
+                        <clippath
+                          id="clip0_5424_5935"
+                        >
+                          <path
+                            d="M0 0H24V24H0z"
+                            fill="#fff"
+                          />
+                        </clippath>
+                      </defs>
+                    </svg>
+                  </div>
+                  Stopped
+                </a>
+              </div>
+            </td>
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 30%;"
+            >
+              <div
+                class="flex items-center gap-1"
+              >
+                <div
+                  class="flex w-44 flex-col gap-1.5"
+                >
+                  <span
+                    class="flex items-center gap-2 text-neutral-350"
                   >
+                    <svg
+                      class="shrink-0 "
+                      fill="none"
+                      height="16"
+                      name="DOCKER"
+                      viewBox="0 0 24 16"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M23.505 6.425c-.54-.329-1.78-.452-2.748-.288-.112-.822-.63-1.54-1.53-2.177l-.519-.33-.36.473c-.45.617-.676 1.48-.608 2.301.022.288.135.801.473 1.253-.315.165-.968.37-1.824.37H.109l-.046.165c-.157.821-.157 3.39 1.69 5.361 1.395 1.5 3.467 2.26 6.192 2.26 5.9 0 10.268-2.486 12.317-6.985.81.02 2.545 0 3.423-1.54.022-.042.067-.124.225-.432l.09-.164-.495-.267zM13.124.632h-2.477v2.054h2.477V.632zm0 2.465h-2.477V5.15h2.477V3.097zm-2.928 0H7.72V5.15h2.477V3.097zm-2.927 0H4.792V5.15h2.477V3.097zM4.342 5.562H1.865v2.054h2.477V5.562zm2.927 0H4.792v2.054h2.477V5.562zm2.927 0H7.72v2.054h2.477V5.562zm2.928 0h-2.477v2.054h2.477V5.562zm2.927 0h-2.477v2.054h2.477V5.562z"
+                        fill="#2396ED"
+                      />
+                    </svg>
+                    <span
+                      class="text-neutral-350"
+                      data-state="closed"
+                    >
+                      dockerhub public
+                    </span>
+                  </span>
+                  <span
+                    class="flex items-center gap-2 text-neutral-350"
+                  >
+                    <svg
+                      class="shrink-0 "
+                      fill="none"
+                      name="CONTAINER"
+                      viewBox="0 0 24 24"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                    >
+                      <path
+                        d="M12.025 3l8.946 3.992-8.946 3.962-9.062-3.962L12.026 3zM12.22 11.503L21 7.653v9.154l-8.78 4.157v-9.46zM11.588 11.434L2.963 7.652v9.155l8.625 4.202v-9.575z"
+                        fill="#2196F3"
+                      />
+                    </svg>
                     <span
                       class=""
                       data-state="closed"
                       data-testid="truncate-text"
                     >
-                      acarranoqovery/test_
+                      stefanprodan/podinfo
                       ...
                     </span>
-                  </a>
-                </span>
+                  </span>
+                </div>
                 <span
-                  class="flex items-center gap-2 text-neutral-400"
+                  class="flex"
                 >
-                  <i
-                    aria-hidden="true"
-                    class="fa-regular fa-code-branch "
-                  />
-                  <a
-                    class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-current hover:brightness-75 text-ssm hover:underline font-normal"
-                    href="https://github.com/acarranoqovery/test_script/tree/main/"
-                    rel="noopener noreferrer"
-                    target="_blank"
+                  <span
+                    class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-surface-neutral-subtle min-w-7 max-w-[81px] rounded-r-none border-r-0 border-neutral-250"
                   >
-                    main
-                  </a>
-                </span>
-              </div>
-              <span
-                class="flex"
-              >
-                <span
-                  class=""
-                  data-state="closed"
-                >
+                    <span
+                      class="flex h-full w-full items-center justify-center truncate"
+                    >
+                      6.5.2
+                    </span>
+                  </span>
                   <button
-                    class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
+                    data-state="closed"
                     type="button"
                   >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-code-commit w-4"
-                    />
-                    10ad354
+                    <span
+                      class="flex h-full items-center justify-center"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-clock-rotate-left "
+                      />
+                    </span>
                   </button>
                 </span>
-                <button
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 w-7 justify-center gap-1 rounded-l-none px-1.5"
-                  data-state="closed"
-                  type="button"
-                >
-                  <span
-                    class="flex h-full items-center justify-center"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-clock-rotate-left "
-                    />
-                  </span>
-                </button>
-              </span>
-            </div>
-          </td>
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 3%;"
-          >
-            <a
-              class="cursor-pointer transition duration-100 font-medium items-center text-sm group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-350 hover:translate-x-0 hover:text-brand-500"
-              href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/ebd8be35-d7a2-4d4f-ad82-de4378a83ef4/deployment-logs/:versionId"
+              </div>
+            </td>
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 3%;"
             >
-              <span
-                class="whitespace-nowrap text-ssm font-normal"
-                data-state="closed"
-              >
-                19 days
-              </span>
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-arrow-up-right text-ssm opacity-0 group-hover:opacity-100"
-              />
-            </a>
-          </td>
-        </tr>
-        <tr
-          class="h-[68px] cursor-pointer hover:bg-neutral-100"
-        >
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 20px;"
-          >
-            <label
-              class="absolute inset-y-0 left-0 flex items-center p-4"
-            >
-              <button
-                aria-checked="false"
-                class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
-                data-state="unchecked"
-                role="checkbox"
-                type="button"
-                value="on"
-              />
-            </label>
-          </td>
-          <td
-            class="h-14 py-0 px-6 border-r pl-0 first:relative"
-            style="width: 57%;"
-          >
-            <div
-              class="flex items-center justify-between"
-            >
-              <span
-                class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
+              <a
+                class="cursor-pointer transition duration-100 font-medium items-center text-sm group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-subtle hover:translate-x-0 hover:text-neutral"
+                to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/04308de2-af27-405f-9e95-570fa94ed577/deployment-logs/:versionId"
               >
                 <span
-                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral"
+                  class="whitespace-nowrap text-ssm font-normal"
+                  data-state="closed"
+                >
+                  19 days
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-arrow-up-right text-ssm opacity-0 group-hover:opacity-100"
+                />
+              </a>
+            </td>
+          </tr>
+          <tr
+            class="h-[68px]"
+          >
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 20px;"
+            >
+              <label
+                class="absolute inset-y-0 left-0 flex items-center p-4"
+              >
+                <button
+                  aria-checked="false"
+                  class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                  data-state="unchecked"
+                  role="checkbox"
+                  type="button"
+                  value="on"
+                />
+              </label>
+            </td>
+            <td
+              class="h-14 py-0 px-6 border-r border-neutral pl-0 first:relative"
+              style="width: 57%;"
+            >
+              <div
+                class="flex items-center justify-between"
+              >
+                <span
+                  class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral"
                 >
                   <span
-                    class="flex items-center justify-center rounded-full h-6 w-6"
+                    class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral"
                   >
-                    <svg
-                      class="shrink-0 "
-                      fill="none"
-                      height="100%"
-                      name="LIFECYCLE_JOB"
-                      viewBox="0 0 22 22"
-                      width="100%"
-                      xmlns="http://www.w3.org/2000/svg"
+                    <span
+                      class="flex items-center justify-center rounded-full h-6 w-6"
                     >
-                      <g
-                        opacity="0.7"
+                      <svg
+                        class="shrink-0 "
+                        fill="none"
+                        height="100%"
+                        name="CRON_JOB"
+                        viewBox="0 0 22 22"
+                        width="100%"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
+                        <path
+                          d="M11.59 13.586a1.211 1.211 0 00-.542-.126c-.19 0-.377.043-.542.126L4.05 16.82a.144.144 0 00-.056.048.12.12 0 000 .133c.013.02.033.037.056.048l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.145.145 0 00.056-.049.12.12 0 00.02-.066.12.12 0 00-.02-.066.144.144 0 00-.056-.049l-6.447-3.236z"
+                          fill="url(#paint0_linear_10141_161369)"
+                          opacity="0.16"
+                        />
+                        <path
+                          d="M11.59 12.64a1.213 1.213 0 00-.542-.126c-.19 0-.377.043-.542.126L4.05 15.873a.144.144 0 00-.056.049.12.12 0 000 .132c.013.02.033.037.056.049l6.511 3.267a1.067 1.067 0 00.956 0l6.52-3.265a.145.145 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.144.144 0 00-.056-.048L11.59 12.64z"
+                          fill="url(#paint1_linear_10141_161369)"
+                          opacity="0.16"
+                        />
+                        <path
+                          d="M11.59 11.694a1.213 1.213 0 00-.542-.126c-.19 0-.377.044-.542.126L4.05 14.926a.145.145 0 00-.056.049.12.12 0 00-.02.066.12.12 0 00.02.066c.013.02.033.037.056.049l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.11l6.52-3.266a.143.143 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.143.143 0 00-.056-.048l-6.447-3.236z"
+                          fill="url(#paint2_linear_10141_161369)"
+                          opacity="0.16"
+                        />
+                        <path
+                          d="M11.59 10.746a1.21 1.21 0 00-.542-.126c-.19 0-.377.044-.542.126L4.05 13.98a.145.145 0 00-.056.048.12.12 0 00-.02.066.12.12 0 00.02.067c.013.02.033.037.056.048l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.143.143 0 00.056-.048.12.12 0 00.02-.067.12.12 0 00-.02-.066.143.143 0 00-.056-.048l-6.447-3.237z"
+                          fill="url(#paint3_linear_10141_161369)"
+                          opacity="0.16"
+                        />
+                        <path
+                          d="M18.039 11.586L11.59 8.35a1.213 1.213 0 00-.542-.126c-.19 0-.376.043-.541.126L4.05 11.582a.143.143 0 00-.055.049.12.12 0 00-.02.066v2.834a.12.12 0 00.02.066c.013.02.032.037.055.049l6.512 3.268c.145.073.31.111.478.111.167 0 .332-.038.478-.111l6.52-3.265a.141.141 0 00.056-.048.117.117 0 00.02-.067v-2.833a.118.118 0 00-.02-.067.141.141 0 00-.055-.048z"
+                          fill="url(#paint4_linear_10141_161369)"
+                          opacity="0.71"
+                        />
+                        <path
+                          d="M11.59 11.187a1.213 1.213 0 00-.542-.127c-.19 0-.377.044-.542.127L4.05 14.419a.145.145 0 00-.056.049.12.12 0 00-.02.066.12.12 0 00.02.066c.013.02.033.037.056.049l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.143.143 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.143.143 0 00-.056-.048l-6.447-3.236z"
+                          fill="url(#paint5_linear_10141_161369)"
+                          opacity="0.11"
+                        />
+                        <path
+                          d="M11.59 10.241a1.21 1.21 0 00-.542-.126c-.19 0-.377.044-.542.126L4.05 13.475a.144.144 0 00-.056.048.12.12 0 000 .133c.013.02.033.037.056.048l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.143.143 0 00.056-.048.12.12 0 00.02-.067.12.12 0 00-.02-.066.143.143 0 00-.056-.048L11.59 10.24z"
+                          fill="url(#paint6_linear_10141_161369)"
+                          opacity="0.11"
+                        />
+                        <path
+                          d="M11.59 8.35a1.213 1.213 0 00-.542-.126c-.19 0-.377.043-.542.126L4.05 11.582a.145.145 0 00-.056.049.12.12 0 00-.02.066.12.12 0 00.02.066c.013.02.033.037.056.049l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.11l6.52-3.266a.143.143 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.143.143 0 00-.056-.048L11.59 8.35z"
+                          fill="url(#paint7_linear_10141_161369)"
+                          opacity="0.11"
+                        />
+                        <path
+                          d="M11.59 8.35a1.213 1.213 0 00-.542-.126c-.19 0-.377.043-.542.126L4.05 11.582a.145.145 0 00-.056.049.12.12 0 00-.02.066.12.12 0 00.02.066c.013.02.033.037.056.049l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.11l6.52-3.266a.143.143 0 00.056-.048.12.12 0 00.02-.066.12.12 0 00-.02-.067.143.143 0 00-.056-.048L11.59 8.35z"
+                          fill="url(#paint8_linear_10141_161369)"
+                          opacity="0.11"
+                        />
+                        <path
+                          d="M18.036 11.684l-6.52 3.265c-.145.073-.31.111-.478.111-.168 0-.332-.038-.478-.111L4.05 11.68a.137.137 0 01-.056-.05.115.115 0 00-.015.1.125.125 0 00.026.047.148.148 0 00.045.034l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.137.137 0 00.071-.08.118.118 0 00-.014-.1.144.144 0 01-.057.05z"
+                          fill="url(#paint9_linear_10141_161369)"
+                          opacity="0.71"
+                        />
                         <circle
                           cx="10.875"
                           cy="11"
@@ -1495,400 +891,1008 @@ exports[`ServiceList should match snapshot 1`] = `
                           stroke="#42E8E0"
                           stroke-width="0.3"
                         />
-                        <ellipse
-                          cx="10.876"
-                          cy="11.077"
+                        <circle
+                          cx="10.875"
+                          cy="11"
                           fill="#EAEAFE"
-                          rx="7.669"
-                          ry="7.669"
+                          r="9.427"
+                        />
+                        <circle
+                          cx="10.875"
+                          cy="11"
+                          r="8.427"
+                          stroke="url(#paint10_linear_10141_161369)"
+                          stroke-opacity="0.3"
+                          stroke-width="2"
+                        />
+                        <circle
+                          cx="10.874"
+                          cy="11"
+                          fill="#EAEAFE"
+                          r="7.702"
+                          stroke="url(#paint11_linear_10141_161369)"
+                          stroke-width="2"
+                        />
+                        <path
+                          d="M9.666 7.357a.725.725 0 011.45 0v4.351h-1.45V7.357z"
+                          fill="#fff"
+                        />
+                        <path
+                          d="M13.919 13.91a.725.725 0 01-1.026 1.026l-3.227-3.228 1.026-1.026 3.227 3.227z"
+                          fill="#fff"
                         />
                         <path
                           clip-rule="evenodd"
-                          d="M1.762 11.076a9.114 9.114 0 019.036-9.113v2.72a6.394 6.394 0 00-6.316 6.393h-2.72z"
-                          fill="url(#paint0_linear_10128_95071)"
-                          fill-rule="evenodd"
-                        />
-                        <path
-                          clip-rule="evenodd"
-                          d="M10.688 1.963a9.218 9.218 0 019.218 9.14h-2.751a6.467 6.467 0 00-6.467-6.389V1.963z"
-                          fill="url(#paint1_linear_10128_95071)"
-                          fill-rule="evenodd"
-                        />
-                        <path
-                          clip-rule="evenodd"
-                          d="M19.906 11a9.231 9.231 0 01-9.036 9.112v-2.756A6.476 6.476 0 0017.15 11h2.756z"
-                          fill="url(#paint2_linear_10128_95071)"
-                          fill-rule="evenodd"
-                        />
-                        <path
-                          clip-rule="evenodd"
-                          d="M10.875 20.113a9.114 9.114 0 01-9.113-9.037h2.72a6.394 6.394 0 006.393 6.317v2.72z"
-                          fill="url(#paint3_linear_10128_95071)"
-                          fill-rule="evenodd"
-                        />
-                        <path
-                          d="M11.514 3.326L10.15 1.963v2.726l1.364-1.363zM18.543 11.72l1.363-1.364H17.18l1.363 1.364zM10.15 18.75l1.364 1.363v-2.726L10.15 18.75zM3.152 10.357L1.79 11.72h2.726l-1.363-1.363z"
-                          fill="#fff"
-                        />
-                        <rect
-                          fill="#fff"
-                          height="1.252"
-                          rx="0.626"
-                          width="5.803"
-                          x="7.975"
-                          y="8.274"
-                        />
-                        <rect
-                          fill="#fff"
-                          height="1.252"
-                          rx="0.626"
-                          width="5.803"
-                          x="7.975"
-                          y="10.45"
-                        />
-                        <rect
-                          fill="#fff"
-                          height="1.252"
-                          rx="0.626"
-                          width="5.803"
-                          x="7.975"
-                          y="12.627"
-                        />
-                        <rect
+                          d="M10.534 6.592c-.4 0-.725.324-.725.725v4.351l3.227 3.227a.725.725 0 101.025-1.025l-2.802-2.803v-3.75c0-.4-.325-.725-.725-.725z"
                           fill="#8987C9"
-                          height="1.252"
-                          rx="0.626"
-                          width="5.803"
-                          x="7.975"
-                          y="8.198"
+                          fill-rule="evenodd"
                         />
-                        <rect
-                          fill="#8987C9"
-                          height="1.252"
-                          rx="0.626"
-                          width="5.803"
-                          x="7.975"
-                          y="10.374"
+                        <defs>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint0_linear_10141_161369"
+                            x1="17.881"
+                            x2="4.052"
+                            y1="16.878"
+                            y2="16.878"
+                          >
+                            <stop
+                              stop-color="#42E8E0"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#5761D7"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint1_linear_10141_161369"
+                            x1="17.881"
+                            x2="4.052"
+                            y1="15.931"
+                            y2="15.931"
+                          >
+                            <stop
+                              stop-color="#42E8E0"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#5761D7"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint2_linear_10141_161369"
+                            x1="17.881"
+                            x2="4.052"
+                            y1="14.985"
+                            y2="14.985"
+                          >
+                            <stop
+                              stop-color="#42E8E0"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#5761D7"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint3_linear_10141_161369"
+                            x1="17.881"
+                            x2="4.052"
+                            y1="14.038"
+                            y2="14.038"
+                          >
+                            <stop
+                              stop-color="#42E8E0"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#5761D7"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint4_linear_10141_161369"
+                            x1="17.523"
+                            x2="4.175"
+                            y1="13.222"
+                            y2="13.222"
+                          >
+                            <stop
+                              stop-color="#42E8E0"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#5761D7"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint5_linear_10141_161369"
+                            x1="1488.82"
+                            x2="3942.11"
+                            y1="1610.23"
+                            y2="1610.23"
+                          >
+                            <stop
+                              stop-color="#5761D7"
+                            />
+                            <stop
+                              offset="0.07"
+                              stop-color="#5472D8"
+                            />
+                            <stop
+                              offset="0.28"
+                              stop-color="#4E9CDB"
+                            />
+                            <stop
+                              offset="0.48"
+                              stop-color="#49BDDD"
+                            />
+                            <stop
+                              offset="0.67"
+                              stop-color="#45D5DF"
+                            />
+                            <stop
+                              offset="0.85"
+                              stop-color="#43E3E0"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#42E8E0"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint6_linear_10141_161369"
+                            x1="1488.82"
+                            x2="3942.11"
+                            y1="1516.43"
+                            y2="1516.43"
+                          >
+                            <stop
+                              stop-color="#5761D7"
+                            />
+                            <stop
+                              offset="0.07"
+                              stop-color="#5472D8"
+                            />
+                            <stop
+                              offset="0.28"
+                              stop-color="#4E9CDB"
+                            />
+                            <stop
+                              offset="0.48"
+                              stop-color="#49BDDD"
+                            />
+                            <stop
+                              offset="0.67"
+                              stop-color="#45D5DF"
+                            />
+                            <stop
+                              offset="0.85"
+                              stop-color="#43E3E0"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#42E8E0"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint7_linear_10141_161369"
+                            x1="1488.82"
+                            x2="3942.11"
+                            y1="1328.35"
+                            y2="1328.35"
+                          >
+                            <stop
+                              stop-color="#5761D7"
+                            />
+                            <stop
+                              offset="0.07"
+                              stop-color="#5472D8"
+                            />
+                            <stop
+                              offset="0.28"
+                              stop-color="#4E9CDB"
+                            />
+                            <stop
+                              offset="0.48"
+                              stop-color="#49BDDD"
+                            />
+                            <stop
+                              offset="0.67"
+                              stop-color="#45D5DF"
+                            />
+                            <stop
+                              offset="0.85"
+                              stop-color="#43E3E0"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#42E8E0"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint8_linear_10141_161369"
+                            x1="1488.82"
+                            x2="3942.11"
+                            y1="1328.35"
+                            y2="1328.35"
+                          >
+                            <stop
+                              stop-color="#5761D7"
+                            />
+                            <stop
+                              offset="0.07"
+                              stop-color="#5472D8"
+                            />
+                            <stop
+                              offset="0.28"
+                              stop-color="#4E9CDB"
+                            />
+                            <stop
+                              offset="0.48"
+                              stop-color="#49BDDD"
+                            />
+                            <stop
+                              offset="0.67"
+                              stop-color="#45D5DF"
+                            />
+                            <stop
+                              offset="0.85"
+                              stop-color="#43E3E0"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#42E8E0"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint9_linear_10141_161369"
+                            x1="17.521"
+                            x2="4.173"
+                            y1="13.447"
+                            y2="13.447"
+                          >
+                            <stop
+                              stop-color="#42E8E0"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#5761D7"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint10_linear_10141_161369"
+                            x1="18.731"
+                            x2="3.804"
+                            y1="18.07"
+                            y2="3.143"
+                          >
+                            <stop
+                              stop-color="#8987C9"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#BDBFFF"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint11_linear_10141_161369"
+                            x1="18.126"
+                            x2="4.347"
+                            y1="17.527"
+                            y2="3.748"
+                          >
+                            <stop
+                              stop-color="#8987C9"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#BDBFFF"
+                            />
+                          </lineargradient>
+                        </defs>
+                      </svg>
+                    </span>
+                  </span>
+                  <span
+                    class="flex min-w-0 shrink flex-col truncate pr-2"
+                  >
+                    <span
+                      class="flex items-center gap-1.5"
+                    >
+                      <a
+                        class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm hover:underline inline max-w-max truncate"
+                        data-state="closed"
+                        to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/ebd8be35-d7a2-4d4f-ad82-de4378a83ef4/services/general"
+                      >
+                        CRONJOB
+                      </a>
+                      <span
+                        class="truncate text-sm font-normal"
+                        data-state="closed"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-info-circle "
                         />
-                        <rect
-                          fill="#8987C9"
-                          height="1.252"
-                          rx="0.626"
-                          width="5.803"
-                          x="7.975"
-                          y="12.55"
-                        />
-                      </g>
-                      <defs>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint0_linear_10128_95071"
-                          x1="11.349"
-                          x2="7.509"
-                          y1="17.65"
-                          y2="6.193"
-                        >
-                          <stop
-                            stop-color="#8987C9"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#BDBFFF"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint1_linear_10128_95071"
-                          x1="16.627"
-                          x2="13.808"
-                          y1="11.103"
-                          y2="4.453"
-                        >
-                          <stop
-                            stop-color="#8987C9"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#BDBFFF"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint2_linear_10128_95071"
-                          x1="16.527"
-                          x2="17.628"
-                          y1="17.334"
-                          y2="18.595"
-                        >
-                          <stop
-                            stop-color="#8987C9"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#BDBFFF"
-                          />
-                        </lineargradient>
-                        <lineargradient
-                          gradientUnits="userSpaceOnUse"
-                          id="paint3_linear_10128_95071"
-                          x1="6.85"
-                          x2="1.762"
-                          y1="18.01"
-                          y2="18.19"
-                        >
-                          <stop
-                            stop-color="#8987C9"
-                          />
-                          <stop
-                            offset="1"
-                            stop-color="#BDBFFF"
-                          />
-                        </lineargradient>
-                      </defs>
-                    </svg>
+                      </span>
+                    </span>
                   </span>
                 </span>
-                <span
-                  class="flex min-w-0 shrink flex-col truncate pr-2"
+                <div
+                  class="flex shrink-0 items-center gap-5"
                 >
-                  <span
-                    class="flex items-center gap-1.5"
+                  <div
+                    class="flex items-center"
                   >
-                    <a
-                      class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-current hover:brightness-75 text-sm hover:underline inline max-w-max truncate"
-                      data-state="closed"
-                      href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/33962e52-7883-42fd-8613-85e04229a9b6/services/general"
-                    >
-                      seed_script
-                    </a>
                     <span
-                      class="truncate text-sm font-normal"
+                      class=""
                       data-state="closed"
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-regular fa-info-circle "
+                        class="fa-regular fa-arrows-rotate text-neutral-300"
                       />
                     </span>
-                  </span>
-                </span>
-              </span>
+                    <div>
+                      <button
+                        aria-controls="radix-:r2q:"
+                        aria-expanded="false"
+                        aria-haspopup="dialog"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral ml-3"
+                        data-state="closed"
+                        type="button"
+                      >
+                        <div
+                          class="flex items-center gap-1"
+                          data-state="closed"
+                        >
+                          <i
+                            aria-hidden="true"
+                            class="fa-regular fa-link "
+                          />
+                          <i
+                            aria-hidden="true"
+                            class="fa-regular fa-angle-down "
+                          />
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      aria-busy="true"
+                      class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded"
+                      style="width: 184px; height: 36px;"
+                    />
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 15%;"
+            >
               <div
-                class="flex shrink-0 items-center gap-5"
+                aria-busy="false"
+                class="flex rounded"
+              >
+                <a
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-8 px-2.5 rounded-full bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral gap-2 whitespace-nowrap text-sm"
+                  data-state="closed"
+                  to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/ebd8be35-d7a2-4d4f-ad82-de4378a83ef4/services/general"
+                >
+                  <div
+                    class="h-[14px] w-[14px]"
+                    data-state="closed"
+                  >
+                    <svg
+                      class="text-neutral h-full w-full"
+                      fill="none"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g
+                        clip-path="url(#clip0_5424_5935)"
+                      >
+                        <path
+                          d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                          fill="currentColor"
+                        />
+                      </g>
+                      <defs>
+                        <clippath
+                          id="clip0_5424_5935"
+                        >
+                          <path
+                            d="M0 0H24V24H0z"
+                            fill="#fff"
+                          />
+                        </clippath>
+                      </defs>
+                    </svg>
+                  </div>
+                  Stopped
+                </a>
+              </div>
+            </td>
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 30%;"
+            >
+              <div
+                class="flex items-center gap-1"
               >
                 <div
-                  class="flex items-center"
+                  class="flex w-44 flex-col gap-1.5"
+                >
+                  <span
+                    class="flex items-center gap-2 text-neutral-subtle"
+                  >
+                    <svg
+                      class="svg-icon shrink-0 h-3 w-3 text-inherit"
+                      name="GITHUB"
+                      viewBox="0 0 24 24"
+                      width="1.5rem"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                    >
+                      <path
+                        d="M12.0013 1.03134e-06C5.37057 -0.00275316 0 5.51113 0 12.3167C0 17.6984 3.35962 22.2731 8.03843 23.9532C8.66853 24.1157 8.572 23.6557 8.572 23.3417V21.2073C4.93353 21.6452 4.78606 19.1719 4.54206 18.7588C4.04871 17.894 2.88236 17.6736 3.23092 17.2605C4.05943 16.8226 4.90403 17.3707 5.88269 18.8552C6.59055 19.9321 7.9714 19.7503 8.67121 19.5713C8.82404 18.924 9.15116 18.3456 9.60161 17.8967C5.83175 17.2027 4.26053 14.8396 4.26053 12.0303C4.26053 10.667 4.69758 9.41382 5.55558 8.40303C5.0086 6.73675 5.60652 5.31008 5.68696 5.098C7.24478 4.95479 8.86426 6.24375 8.99028 6.34565C9.8751 6.10053 10.8859 5.97108 12.0174 5.97108C13.1543 5.97108 14.1678 6.10604 15.0607 6.35391C15.3636 6.11705 16.8652 5.00987 18.313 5.14482C18.3908 5.3569 18.9753 6.75052 18.4605 8.39477C19.3292 9.40831 19.7716 10.6725 19.7716 12.0386C19.7716 14.8533 18.1897 17.2192 14.4091 17.9022C14.7329 18.2293 14.99 18.6195 15.1654 19.0498C15.3408 19.4801 15.431 19.942 15.4307 20.4085V23.507C15.4521 23.7549 15.4307 24 15.8329 24C20.5814 22.3557 24 17.748 24 12.3195C24 5.51113 18.6267 1.03134e-06 12.0013 1.03134e-06Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    <a
+                      class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-info hover:text-info-hover text-ssm hover:underline font-normal"
+                      href="https://github.com/acarranoqovery/test_script.git"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <span
+                        class=""
+                        data-state="closed"
+                        data-testid="truncate-text"
+                      >
+                        acarranoqovery/test_
+                        ...
+                      </span>
+                    </a>
+                  </span>
+                  <span
+                    class="flex items-center gap-2 text-neutral-subtle"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-regular fa-code-branch "
+                    />
+                    <a
+                      class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-info hover:text-info-hover text-ssm hover:underline font-normal"
+                      href="https://github.com/acarranoqovery/test_script/tree/main/"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      main
+                    </a>
+                  </span>
+                </div>
+                <span
+                  class="flex"
                 >
                   <span
                     class=""
                     data-state="closed"
                   >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-arrows-rotate text-neutral-300"
-                    />
-                  </span>
-                  <div>
                     <button
-                      aria-controls="radix-:r35:"
-                      aria-expanded="false"
-                      aria-haspopup="dialog"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 ml-3"
-                      data-state="closed"
+                      class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
                       type="button"
                     >
-                      <div
-                        class="flex items-center gap-1"
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-code-commit w-4"
+                      />
+                      10ad354
+                    </button>
+                  </span>
+                  <button
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
+                    data-state="closed"
+                    type="button"
+                  >
+                    <span
+                      class="flex h-full items-center justify-center"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-clock-rotate-left "
+                      />
+                    </span>
+                  </button>
+                </span>
+              </div>
+            </td>
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 3%;"
+            >
+              <a
+                class="cursor-pointer transition duration-100 font-medium items-center text-sm group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-subtle hover:translate-x-0 hover:text-neutral"
+                to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/ebd8be35-d7a2-4d4f-ad82-de4378a83ef4/deployment-logs/:versionId"
+              >
+                <span
+                  class="whitespace-nowrap text-ssm font-normal"
+                  data-state="closed"
+                >
+                  19 days
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-arrow-up-right text-ssm opacity-0 group-hover:opacity-100"
+                />
+              </a>
+            </td>
+          </tr>
+          <tr
+            class="h-[68px]"
+          >
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 20px;"
+            >
+              <label
+                class="absolute inset-y-0 left-0 flex items-center p-4"
+              >
+                <button
+                  aria-checked="false"
+                  class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                  data-state="unchecked"
+                  role="checkbox"
+                  type="button"
+                  value="on"
+                />
+              </label>
+            </td>
+            <td
+              class="h-14 py-0 px-6 border-r border-neutral pl-0 first:relative"
+              style="width: 57%;"
+            >
+              <div
+                class="flex items-center justify-between"
+              >
+                <span
+                  class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral"
+                >
+                  <span
+                    class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral"
+                  >
+                    <span
+                      class="flex items-center justify-center rounded-full h-6 w-6"
+                    >
+                      <svg
+                        class="shrink-0 "
+                        fill="none"
+                        height="100%"
+                        name="LIFECYCLE_JOB"
+                        viewBox="0 0 22 22"
+                        width="100%"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g
+                          opacity="0.7"
+                        >
+                          <circle
+                            cx="10.875"
+                            cy="11"
+                            r="10.15"
+                            stroke="#42E8E0"
+                            stroke-width="0.3"
+                          />
+                          <ellipse
+                            cx="10.876"
+                            cy="11.077"
+                            fill="#EAEAFE"
+                            rx="7.669"
+                            ry="7.669"
+                          />
+                          <path
+                            clip-rule="evenodd"
+                            d="M1.762 11.076a9.114 9.114 0 019.036-9.113v2.72a6.394 6.394 0 00-6.316 6.393h-2.72z"
+                            fill="url(#paint0_linear_10128_95071)"
+                            fill-rule="evenodd"
+                          />
+                          <path
+                            clip-rule="evenodd"
+                            d="M10.688 1.963a9.218 9.218 0 019.218 9.14h-2.751a6.467 6.467 0 00-6.467-6.389V1.963z"
+                            fill="url(#paint1_linear_10128_95071)"
+                            fill-rule="evenodd"
+                          />
+                          <path
+                            clip-rule="evenodd"
+                            d="M19.906 11a9.231 9.231 0 01-9.036 9.112v-2.756A6.476 6.476 0 0017.15 11h2.756z"
+                            fill="url(#paint2_linear_10128_95071)"
+                            fill-rule="evenodd"
+                          />
+                          <path
+                            clip-rule="evenodd"
+                            d="M10.875 20.113a9.114 9.114 0 01-9.113-9.037h2.72a6.394 6.394 0 006.393 6.317v2.72z"
+                            fill="url(#paint3_linear_10128_95071)"
+                            fill-rule="evenodd"
+                          />
+                          <path
+                            d="M11.514 3.326L10.15 1.963v2.726l1.364-1.363zM18.543 11.72l1.363-1.364H17.18l1.363 1.364zM10.15 18.75l1.364 1.363v-2.726L10.15 18.75zM3.152 10.357L1.79 11.72h2.726l-1.363-1.363z"
+                            fill="#fff"
+                          />
+                          <rect
+                            fill="#fff"
+                            height="1.252"
+                            rx="0.626"
+                            width="5.803"
+                            x="7.975"
+                            y="8.274"
+                          />
+                          <rect
+                            fill="#fff"
+                            height="1.252"
+                            rx="0.626"
+                            width="5.803"
+                            x="7.975"
+                            y="10.45"
+                          />
+                          <rect
+                            fill="#fff"
+                            height="1.252"
+                            rx="0.626"
+                            width="5.803"
+                            x="7.975"
+                            y="12.627"
+                          />
+                          <rect
+                            fill="#8987C9"
+                            height="1.252"
+                            rx="0.626"
+                            width="5.803"
+                            x="7.975"
+                            y="8.198"
+                          />
+                          <rect
+                            fill="#8987C9"
+                            height="1.252"
+                            rx="0.626"
+                            width="5.803"
+                            x="7.975"
+                            y="10.374"
+                          />
+                          <rect
+                            fill="#8987C9"
+                            height="1.252"
+                            rx="0.626"
+                            width="5.803"
+                            x="7.975"
+                            y="12.55"
+                          />
+                        </g>
+                        <defs>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint0_linear_10128_95071"
+                            x1="11.349"
+                            x2="7.509"
+                            y1="17.65"
+                            y2="6.193"
+                          >
+                            <stop
+                              stop-color="#8987C9"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#BDBFFF"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint1_linear_10128_95071"
+                            x1="16.627"
+                            x2="13.808"
+                            y1="11.103"
+                            y2="4.453"
+                          >
+                            <stop
+                              stop-color="#8987C9"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#BDBFFF"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint2_linear_10128_95071"
+                            x1="16.527"
+                            x2="17.628"
+                            y1="17.334"
+                            y2="18.595"
+                          >
+                            <stop
+                              stop-color="#8987C9"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#BDBFFF"
+                            />
+                          </lineargradient>
+                          <lineargradient
+                            gradientUnits="userSpaceOnUse"
+                            id="paint3_linear_10128_95071"
+                            x1="6.85"
+                            x2="1.762"
+                            y1="18.01"
+                            y2="18.19"
+                          >
+                            <stop
+                              stop-color="#8987C9"
+                            />
+                            <stop
+                              offset="1"
+                              stop-color="#BDBFFF"
+                            />
+                          </lineargradient>
+                        </defs>
+                      </svg>
+                    </span>
+                  </span>
+                  <span
+                    class="flex min-w-0 shrink flex-col truncate pr-2"
+                  >
+                    <span
+                      class="flex items-center gap-1.5"
+                    >
+                      <a
+                        class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm hover:underline inline max-w-max truncate"
+                        data-state="closed"
+                        to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/33962e52-7883-42fd-8613-85e04229a9b6/services/general"
+                      >
+                        seed_script
+                      </a>
+                      <span
+                        class="truncate text-sm font-normal"
                         data-state="closed"
                       >
                         <i
                           aria-hidden="true"
-                          class="fa-regular fa-link "
+                          class="fa-regular fa-info-circle "
                         />
-                        <i
-                          aria-hidden="true"
-                          class="fa-regular fa-angle-down "
-                        />
-                      </div>
-                    </button>
-                  </div>
-                </div>
-                <div>
-                  <div
-                    aria-busy="true"
-                    class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] dark:from-[#2A3041] dark:via-[#1F2637] dark:to-[#1F2637] rounded"
-                    style="width: 184px; height: 36px;"
-                  />
-                </div>
-              </div>
-            </div>
-          </td>
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 15%;"
-          >
-            <div
-              aria-busy="false"
-              class="flex rounded"
-            >
-              <a
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
-                data-state="closed"
-                href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/33962e52-7883-42fd-8613-85e04229a9b6/services/general"
-              >
+                      </span>
+                    </span>
+                  </span>
+                </span>
                 <div
-                  class=""
-                  data-state="closed"
+                  class="flex shrink-0 items-center gap-5"
                 >
-                  <svg
-                    class="text-neutral-300"
-                    fill="none"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g
-                      clip-path="url(#clip0_5424_5935)"
-                    >
-                      <path
-                        d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                        fill="currentColor"
-                      />
-                    </g>
-                    <defs>
-                      <clippath
-                        id="clip0_5424_5935"
-                      >
-                        <path
-                          d="M0 0H24V24H0z"
-                          fill="#fff"
-                        />
-                      </clippath>
-                    </defs>
-                  </svg>
-                </div>
-                Stopped
-              </a>
-            </div>
-          </td>
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 30%;"
-          >
-            <div
-              class="flex items-center gap-1"
-            >
-              <div
-                class="flex w-44 flex-col gap-1.5"
-              >
-                <span
-                  class="flex items-center gap-2 text-neutral-400"
-                >
-                  <svg
-                    class="svg-icon shrink-0 h-3 w-3"
-                    name="GITHUB"
-                    viewBox="0 0 24 24"
-                    width="1.5rem"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                  >
-                    <path
-                      d="M12.0013 1.03134e-06C5.37057 -0.00275316 0 5.51113 0 12.3167C0 17.6984 3.35962 22.2731 8.03843 23.9532C8.66853 24.1157 8.572 23.6557 8.572 23.3417V21.2073C4.93353 21.6452 4.78606 19.1719 4.54206 18.7588C4.04871 17.894 2.88236 17.6736 3.23092 17.2605C4.05943 16.8226 4.90403 17.3707 5.88269 18.8552C6.59055 19.9321 7.9714 19.7503 8.67121 19.5713C8.82404 18.924 9.15116 18.3456 9.60161 17.8967C5.83175 17.2027 4.26053 14.8396 4.26053 12.0303C4.26053 10.667 4.69758 9.41382 5.55558 8.40303C5.0086 6.73675 5.60652 5.31008 5.68696 5.098C7.24478 4.95479 8.86426 6.24375 8.99028 6.34565C9.8751 6.10053 10.8859 5.97108 12.0174 5.97108C13.1543 5.97108 14.1678 6.10604 15.0607 6.35391C15.3636 6.11705 16.8652 5.00987 18.313 5.14482C18.3908 5.3569 18.9753 6.75052 18.4605 8.39477C19.3292 9.40831 19.7716 10.6725 19.7716 12.0386C19.7716 14.8533 18.1897 17.2192 14.4091 17.9022C14.7329 18.2293 14.99 18.6195 15.1654 19.0498C15.3408 19.4801 15.431 19.942 15.4307 20.4085V23.507C15.4521 23.7549 15.4307 24 15.8329 24C20.5814 22.3557 24 17.748 24 12.3195C24 5.51113 18.6267 1.03134e-06 12.0013 1.03134e-06Z"
-                      fill="#212346"
-                    />
-                  </svg>
-                  <a
-                    class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-current hover:brightness-75 text-ssm hover:underline font-normal"
-                    href="https://github.com/acarranoqovery/test_script.git"
-                    rel="noopener noreferrer"
-                    target="_blank"
+                  <div
+                    class="flex items-center"
                   >
                     <span
                       class=""
                       data-state="closed"
-                      data-testid="truncate-text"
                     >
-                      acarranoqovery/test_
-                      ...
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-arrows-rotate text-neutral-300"
+                      />
                     </span>
-                  </a>
-                </span>
-                <span
-                  class="flex items-center gap-2 text-neutral-400"
-                >
-                  <i
-                    aria-hidden="true"
-                    class="fa-regular fa-code-branch "
-                  />
-                  <a
-                    class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-current hover:brightness-75 text-ssm hover:underline font-normal"
-                    href="https://github.com/acarranoqovery/test_script/tree/main/"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    main
-                  </a>
-                </span>
-              </div>
-              <span
-                class="flex"
-              >
-                <span
-                  class=""
-                  data-state="closed"
-                >
-                  <button
-                    class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
-                    type="button"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-code-commit w-4"
+                    <div>
+                      <button
+                        aria-controls="radix-:r35:"
+                        aria-expanded="false"
+                        aria-haspopup="dialog"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral ml-3"
+                        data-state="closed"
+                        type="button"
+                      >
+                        <div
+                          class="flex items-center gap-1"
+                          data-state="closed"
+                        >
+                          <i
+                            aria-hidden="true"
+                            class="fa-regular fa-link "
+                          />
+                          <i
+                            aria-hidden="true"
+                            class="fa-regular fa-angle-down "
+                          />
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      aria-busy="true"
+                      class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded"
+                      style="width: 184px; height: 36px;"
                     />
-                    10ad354
-                  </button>
-                </span>
-                <button
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 w-7 justify-center gap-1 rounded-l-none px-1.5"
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 15%;"
+            >
+              <div
+                aria-busy="false"
+                class="flex rounded"
+              >
+                <a
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-8 px-2.5 rounded-full bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral gap-2 whitespace-nowrap text-sm"
                   data-state="closed"
-                  type="button"
+                  to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/33962e52-7883-42fd-8613-85e04229a9b6/services/general"
+                >
+                  <div
+                    class="h-[14px] w-[14px]"
+                    data-state="closed"
+                  >
+                    <svg
+                      class="text-neutral h-full w-full"
+                      fill="none"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g
+                        clip-path="url(#clip0_5424_5935)"
+                      >
+                        <path
+                          d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                          fill="currentColor"
+                        />
+                      </g>
+                      <defs>
+                        <clippath
+                          id="clip0_5424_5935"
+                        >
+                          <path
+                            d="M0 0H24V24H0z"
+                            fill="#fff"
+                          />
+                        </clippath>
+                      </defs>
+                    </svg>
+                  </div>
+                  Stopped
+                </a>
+              </div>
+            </td>
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 30%;"
+            >
+              <div
+                class="flex items-center gap-1"
+              >
+                <div
+                  class="flex w-44 flex-col gap-1.5"
                 >
                   <span
-                    class="flex h-full items-center justify-center"
+                    class="flex items-center gap-2 text-neutral-subtle"
+                  >
+                    <svg
+                      class="svg-icon shrink-0 h-3 w-3 text-inherit"
+                      name="GITHUB"
+                      viewBox="0 0 24 24"
+                      width="1.5rem"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                    >
+                      <path
+                        d="M12.0013 1.03134e-06C5.37057 -0.00275316 0 5.51113 0 12.3167C0 17.6984 3.35962 22.2731 8.03843 23.9532C8.66853 24.1157 8.572 23.6557 8.572 23.3417V21.2073C4.93353 21.6452 4.78606 19.1719 4.54206 18.7588C4.04871 17.894 2.88236 17.6736 3.23092 17.2605C4.05943 16.8226 4.90403 17.3707 5.88269 18.8552C6.59055 19.9321 7.9714 19.7503 8.67121 19.5713C8.82404 18.924 9.15116 18.3456 9.60161 17.8967C5.83175 17.2027 4.26053 14.8396 4.26053 12.0303C4.26053 10.667 4.69758 9.41382 5.55558 8.40303C5.0086 6.73675 5.60652 5.31008 5.68696 5.098C7.24478 4.95479 8.86426 6.24375 8.99028 6.34565C9.8751 6.10053 10.8859 5.97108 12.0174 5.97108C13.1543 5.97108 14.1678 6.10604 15.0607 6.35391C15.3636 6.11705 16.8652 5.00987 18.313 5.14482C18.3908 5.3569 18.9753 6.75052 18.4605 8.39477C19.3292 9.40831 19.7716 10.6725 19.7716 12.0386C19.7716 14.8533 18.1897 17.2192 14.4091 17.9022C14.7329 18.2293 14.99 18.6195 15.1654 19.0498C15.3408 19.4801 15.431 19.942 15.4307 20.4085V23.507C15.4521 23.7549 15.4307 24 15.8329 24C20.5814 22.3557 24 17.748 24 12.3195C24 5.51113 18.6267 1.03134e-06 12.0013 1.03134e-06Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    <a
+                      class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-info hover:text-info-hover text-ssm hover:underline font-normal"
+                      href="https://github.com/acarranoqovery/test_script.git"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <span
+                        class=""
+                        data-state="closed"
+                        data-testid="truncate-text"
+                      >
+                        acarranoqovery/test_
+                        ...
+                      </span>
+                    </a>
+                  </span>
+                  <span
+                    class="flex items-center gap-2 text-neutral-subtle"
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-regular fa-clock-rotate-left "
+                      class="fa-regular fa-code-branch "
                     />
+                    <a
+                      class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-info hover:text-info-hover text-ssm hover:underline font-normal"
+                      href="https://github.com/acarranoqovery/test_script/tree/main/"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      main
+                    </a>
                   </span>
-                </button>
-              </span>
-            </div>
-          </td>
-          <td
-            class="h-14 py-0 px-6 first:relative"
-            style="width: 3%;"
-          >
-            <a
-              class="cursor-pointer transition duration-100 font-medium items-center text-sm group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-350 hover:translate-x-0 hover:text-brand-500"
-              href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/33962e52-7883-42fd-8613-85e04229a9b6/deployment-logs/:versionId"
+                </div>
+                <span
+                  class="flex"
+                >
+                  <span
+                    class=""
+                    data-state="closed"
+                  >
+                    <button
+                      class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
+                      type="button"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-code-commit w-4"
+                      />
+                      10ad354
+                    </button>
+                  </span>
+                  <button
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
+                    data-state="closed"
+                    type="button"
+                  >
+                    <span
+                      class="flex h-full items-center justify-center"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-clock-rotate-left "
+                      />
+                    </span>
+                  </button>
+                </span>
+              </div>
+            </td>
+            <td
+              class="h-14 py-0 px-6 first:relative"
+              style="width: 3%;"
             >
-              <span
-                class="whitespace-nowrap text-ssm font-normal"
-                data-state="closed"
+              <a
+                class="cursor-pointer transition duration-100 font-medium items-center text-sm group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-subtle hover:translate-x-0 hover:text-neutral"
+                to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/33962e52-7883-42fd-8613-85e04229a9b6/deployment-logs/:versionId"
               >
-                19 days
-              </span>
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-arrow-up-right text-ssm opacity-0 group-hover:opacity-100"
-              />
-            </a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+                <span
+                  class="whitespace-nowrap text-ssm font-normal"
+                  data-state="closed"
+                >
+                  19 days
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-arrow-up-right text-ssm opacity-0 group-hover:opacity-100"
+                />
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div
       class="sticky bottom-4"
     >
@@ -1904,7 +1908,7 @@ exports[`ServiceList should match snapshot 1`] = `
             <span>
               0
                selected 
-              services
+              service
             </span>
             <button
               class="h-8 px-3 underline"
@@ -1916,7 +1920,7 @@ exports[`ServiceList should match snapshot 1`] = `
               class="flex gap-3"
             >
               <button
-                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-9 px-3 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100 items-center gap-2"
+                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-8 px-2.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert items-center gap-2"
                 data-state="closed"
                 disabled=""
               >
@@ -1929,7 +1933,7 @@ exports[`ServiceList should match snapshot 1`] = `
               <button
                 aria-expanded="false"
                 aria-haspopup="menu"
-                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 items-center gap-2"
+                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral items-center gap-2"
                 data-state="closed"
                 id="radix-:r3e:"
                 type="button"

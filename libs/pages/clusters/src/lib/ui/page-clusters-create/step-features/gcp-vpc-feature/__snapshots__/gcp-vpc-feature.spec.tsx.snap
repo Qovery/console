@@ -16,7 +16,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
             Deploy on an existing VPC
           </h4>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-info text-sm mb-4"
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-sm mb-4"
             href="https://www.qovery.com/docs/configuration/integrations/kubernetes/gke/managed#use-existing-vpc"
             rel="noopener noreferrer"
             target="_blank"

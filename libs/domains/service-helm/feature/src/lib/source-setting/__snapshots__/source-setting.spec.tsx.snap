@@ -109,7 +109,7 @@ exports[`SourceSetting should match snapshot 1`] = `
           class="flex justify-center"
         >
           <div
-            class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+            class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
             data-testid="spinner"
           />
         </div>

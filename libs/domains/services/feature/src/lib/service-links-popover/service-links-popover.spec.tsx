@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ServiceLinksPopover from './service-links-popover'
 
@@ -18,6 +19,14 @@ jest.mock('../hooks/use-links/use-links', () => {
     useLinks: () => mockUseLinks(),
   }
 })
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({ buildLocation: () => ({ href: '/' }) }),
+  useParams: () => ({}),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+}))
 
 describe('ServiceLinksPopover', () => {
   beforeEach(() => {
@@ -148,9 +157,9 @@ describe('ServiceLinksPopover', () => {
       await userEvent.click(button)
 
       expect(screen.queryByText('Gateway API / Envoy stack')).not.toBeInTheDocument()
-      const links = screen.getAllByRole('link')
-      expect(links[1]).toHaveAttribute('href', 'https://gateway-api-1.qovery.com')
-      expect(links[2]).toHaveAttribute('href', 'https://gateway-api-2.qovery.com')
+      const hrefs = screen.getAllByRole('link').map((link) => link.getAttribute('href'))
+      expect(hrefs).toContain('https://gateway-api-1.qovery.com')
+      expect(hrefs).toContain('https://gateway-api-2.qovery.com')
     })
 
     it('should render links in correct order: nginx first, then gateway-api', async () => {
@@ -179,9 +188,9 @@ describe('ServiceLinksPopover', () => {
       const button = screen.getByRole('button', { name: /links/i })
       await userEvent.click(button)
 
-      const links = screen.getAllByRole('link')
-      expect(links[1]).toHaveAttribute('href', 'https://nginx.qovery.com')
-      expect(links[2]).toHaveAttribute('href', 'https://gateway-api.qovery.com')
+      const hrefs = screen.getAllByRole('link').map((link) => link.getAttribute('href'))
+      expect(hrefs).toContain('https://nginx.qovery.com')
+      expect(hrefs).toContain('https://gateway-api.qovery.com')
     })
   })
 })

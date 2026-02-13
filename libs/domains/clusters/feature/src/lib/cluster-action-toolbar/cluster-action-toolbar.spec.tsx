@@ -1,4 +1,5 @@
 import { ClusterDeploymentStatusEnum, ClusterStateEnum, type ClusterStatus } from 'qovery-typescript-axios'
+import type { ReactNode } from 'react'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterActionToolbar } from './cluster-action-toolbar'
@@ -13,6 +14,15 @@ const mockClusterStatus: ClusterStatus = {
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => jest.fn(),
+}))
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
+  }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
 
 describe('ClusterActionToolbar', () => {

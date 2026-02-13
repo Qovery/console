@@ -50,7 +50,7 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
            attached
         </p>
         <a
-          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-surface-brand-solid text-ssm"
+          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-brand hover:text-brand-hover text-ssm"
           to="/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/domain"
           type="button"
         >

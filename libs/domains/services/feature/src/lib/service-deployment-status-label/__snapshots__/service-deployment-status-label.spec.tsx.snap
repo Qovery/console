@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ServiceDeploymentStatusLabel should match snapshot 1`] = `
 <div>
@@ -10,11 +10,11 @@ exports[`ServiceDeploymentStatusLabel should match snapshot 1`] = `
       data-testid="status-label"
     >
       <div
-        class="mr-2"
+        class="h-[14px] w-[14px] mr-2"
         data-state="closed"
       >
         <div
-          class="relative flex h-4 w-4 items-center justify-center text-brand-500 dark:text-brand-300"
+          class="relative flex items-center justify-center text-brand-500 dark:text-brand-300 h-full w-full"
         >
           <div
             class="absolute left-0 top-0 h-full w-full animate-spin rounded-full border-[1.5px] border-current border-r-transparent"

@@ -6,30 +6,30 @@ exports[`ModalMultiConfirmation should match delete mode without description 1`]
     class="flex flex-col p-5"
   >
     <h1
-      class="font-bold mb-2 max-w-sm text-2xl text-neutral-400"
+      class="font-bold mb-2 max-w-sm text-2xl text-neutral"
       id="radix-:r1b:"
     >
       my title
     </h1>
     <p
-      class="mb-6 text-sm text-neutral-350"
+      class="mb-6 text-sm text-neutral-subtle"
       id="radix-:r1c:"
     />
     <form>
       <div
-        class="flex-row gap-x-3 p-3 border rounded text-sm border-negative-component bg-surface-negative-subtle text-negative mb-5 grid grid-cols-[1fr_auto] gap-y-3"
+        class="flex-row gap-x-4 p-4 border rounded text-sm border-negative-component bg-surface-negative-subtle text-negative mb-5 grid grid-cols-[1fr_auto] gap-y-3"
         data-accent-color="red"
       >
         <div
-          class="-order-2 text-lg leading-6"
+          class="-order-2 text-base leading-6"
         >
           <i
             aria-hidden="true"
-            class="fa-regular fa-triangle-exclamation text-red-600"
+            class="fa-regular fa-triangle-exclamation text-negative"
           />
         </div>
         <div
-          class="-order-1 mr-auto gap-x-3 text-neutral"
+          class="-order-1 mr-auto gap-x-4 text-neutral"
         >
           <div
             class="flex flex-col gap-3"
@@ -112,13 +112,13 @@ exports[`ModalMultiConfirmation should match delete mode without description 1`]
         class="flex justify-end gap-3"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
           type="button"
         >
           Cancel
         </button>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-red-500 text-sm h-10 px-3 rounded-lg bg-surface-negative-solid hover:bg-surface-negative-solidHover border border-negative-component text-neutral-contrasted"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-negative-strong text-sm h-10 px-3 rounded-lg bg-surface-negative-solid hover:bg-surface-negative-solidHover border border-negative-component text-neutral-contrasted"
           disabled=""
           type="submit"
         >

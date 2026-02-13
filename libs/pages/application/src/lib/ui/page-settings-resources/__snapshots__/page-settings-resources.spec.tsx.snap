@@ -9,30 +9,36 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
       class="flex flex-col max-w-content-with-navigation-left p-8"
     >
       <div
-        class="mb-8 flex w-full justify-between gap-2"
+        class="mb-8 flex w-full justify-between gap-2 border-b border-neutral"
       >
-        <div>
-          <h1
-            class="text-neutral-400 text-xl font-bold mb-2"
+        <div
+          class="flex w-full items-start justify-between gap-4 pb-6"
+        >
+          <div
+            class="flex flex-col gap-2"
           >
-            Resources
-          </h1>
-          <p
-            class="mb-3 max-w-lg text-sm text-neutral-400"
-          >
-            Manage the resources assigned to the service.
-          </p>
-          <button
-            class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-6 px-2 rounded bg-brand-50 border border-brand-500 text-brand-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:border-brand-400 dark:text-brand-400 dark:disabled:bg-transparent w-fit items-center gap-1"
-          >
-            <i
-              aria-hidden="true"
-              class="fa-regular fa-circle-question p-0.5 text-xs"
-            />
-            <span>
-              Need help here?
-            </span>
-          </button>
+            <h1
+              class="text-neutral text-2xl font-bold"
+            >
+              Resources
+            </h1>
+            <p
+              class="max-w-lg text-sm text-neutral-subtle"
+            >
+              Manage the resources assigned to the service.
+            </p>
+            <button
+              class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-xs h-6 px-1.5 rounded bg-surface-brand-subtle border border-brand-subtle text-brand hover:bg-surface-brand-component w-fit items-center gap-1 mt-2"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-circle-question p-0.5 text-xs"
+              />
+              <span>
+                Need help here?
+              </span>
+            </button>
+          </div>
         </div>
       </div>
       <form
@@ -42,7 +48,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
           class="flex flex-col gap-4"
         >
           <h2
-            class="text-neutral-400 text-base font-bold"
+            class="text-neutral text-base font-bold"
           >
             Resources configuration
           </h2>
@@ -55,7 +61,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
             >
               <div
                 aria-label="input-container"
-                class="input    input--label-up "
+                class="input group    input--label-up "
               >
                 <div
                   class=""
@@ -78,7 +84,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               </div>
             </div>
             <p
-              class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+              class="mt-0.5 px-3 text-xs text-neutral-subtle"
             >
               Minimum value is 
               10
@@ -88,12 +94,12 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
             </p>
           </div>
           <div
-            class="flex flex-row gap-x-3 p-3 border rounded text-sm border-red-500 bg-red-50 text-red-500 mt-3"
+            class="flex flex-row gap-x-4 p-4 border rounded text-sm border-negative-component bg-surface-negative-subtle text-negative mt-3"
             data-accent-color="red"
             data-testid="banner-box"
           >
             <div
-              class="-order-2 text-lg leading-6"
+              class="-order-2 text-base leading-6"
             >
               <i
                 aria-hidden="true"
@@ -101,7 +107,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               />
             </div>
             <div
-              class="-order-1 mr-auto gap-x-3 text-neutral-400"
+              class="-order-1 mr-auto gap-x-4 text-neutral"
             >
               <span
                 class="block font-medium leading-6"
@@ -109,7 +115,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
                 Not enough resources
               </span>
               <span
-                class="text-neutral-400"
+                class="text-neutral-subtle"
               >
                 Increase the capacity of your cluster nodes or reduce the service consumption.
               </span>
@@ -124,7 +130,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
             >
               <div
                 aria-label="input-container"
-                class="input    input--label-up "
+                class="input group    input--label-up "
               >
                 <div
                   class=""
@@ -147,7 +153,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               </div>
             </div>
             <p
-              class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+              class="mt-0.5 px-3 text-xs text-neutral-subtle"
             >
               Minimum value is 
               1
@@ -161,7 +167,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
           class="flex flex-col gap-4"
         >
           <h2
-            class="text-neutral-400 text-base font-bold"
+            class="text-neutral text-base font-bold"
           >
             Instances & Autoscaling
           </h2>
@@ -198,7 +204,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
                     class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                   >
                     <span
-                      class="mr-1 text-sm text-neutral-400"
+                      class="mr-1 text-sm text-neutral"
                     >
                       No autoscaling (fixed instances)
                     </span>
@@ -254,14 +260,14 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               <div
                 class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
               >
-                <span
-                  class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-angle-down text-sm text-neutral-subtle"
                 />
               </div>
             </div>
             <p
-              class="mt-0.5 px-3 text-xs font-normal text-neutral-350"
+              class="mt-0.5 px-3 text-xs font-normal text-neutral-subtle"
             >
               Choose how instances should scale
             </p>
@@ -278,7 +284,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               >
                 <div
                   aria-label="input-container"
-                  class="input    input--label-up "
+                  class="input group    input--label-up "
                 >
                   <div
                     class=""
@@ -310,7 +316,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               >
                 <div
                   aria-label="input-container"
-                  class="input    input--label-up "
+                  class="input group    input--label-up "
                 >
                   <div
                     class=""
@@ -355,7 +361,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               >
                 <button
                   aria-checked="false"
-                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
+                  class="group transition bg-surface-neutral border border-neutral w-[20px] h-[20px] rounded-full hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid data-[state=checked]:border-0 hover:data-[state=checked]:bg-surface-brand-solidHover disabled:cursor-not-allowed disabled:hover:border disabled:bg-surface-neutral-component disabled:border-neutral-component disabled:data-[state=checked]:border-0 disabled:data-[state=checked]:bg-surface-brand-component"
                   data-radix-collection-item=""
                   data-state="unchecked"
                   role="radio"
@@ -390,7 +396,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               >
                 <button
                   aria-checked="false"
-                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
+                  class="group transition bg-surface-neutral border border-neutral w-[20px] h-[20px] rounded-full hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid data-[state=checked]:border-0 hover:data-[state=checked]:bg-surface-brand-solidHover disabled:cursor-not-allowed disabled:hover:border disabled:bg-surface-neutral-component disabled:border-neutral-component disabled:data-[state=checked]:border-0 disabled:data-[state=checked]:bg-surface-brand-component"
                   data-radix-collection-item=""
                   data-state="unchecked"
                   role="radio"
@@ -431,7 +437,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
             >
               <div
                 aria-label="input-container"
-                class="input     "
+                class="input group     "
               >
                 <div
                   class=""
@@ -459,7 +465,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
           class="flex justify-end"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
             type="submit"
           >
             Save
