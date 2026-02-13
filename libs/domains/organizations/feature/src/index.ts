@@ -89,3 +89,4 @@ export * from './lib/hooks/use-list-tfvars-files-from-git-repo/use-list-tfvars-f
 export * from './lib/invoice-banner/invoice-banner'
 export * from './lib/free-trial-banner/free-trial-banner'
 export * from './lib/settings-general/settings-general'
+export * from './lib/settings-labels-annotations/settings-labels-annotations'

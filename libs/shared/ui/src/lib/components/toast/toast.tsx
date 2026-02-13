@@ -44,10 +44,12 @@ export const ToastContent = (
       onClick={() => options && toastAction.dismiss(options.id)}
     >
       <div className="flex">
-        <div className="mt-[1px] flex h-full justify-center pl-4 pt-2">
-          {status === ToastEnum.SUCCESS && <Icon name="icon-solid-check" className="text-positiveInvert" />}
-          {status === ToastEnum.ERROR && <Icon name="icon-solid-circle-exclamation" className="text-negativeInvert" />}
-          {status === ToastEnum.WARNING && <Icon name="icon-solid-circle-exclamation" className="text-warningInvert" />}
+        <div className="mt-[2px] flex h-full justify-center pl-4 pt-2">
+          {status === ToastEnum.SUCCESS && <Icon iconName="check-circle" className="text-positiveInvert" />}
+          {status === ToastEnum.ERROR && (
+            <Icon iconName="circle-exclamation" iconStyle="solid" className="text-negativeInvert" />
+          )}
+          {status === ToastEnum.WARNING && <Icon iconName="circle-exclamation" className="text-warningInvert" />}
         </div>
         <div className="max-w-[256px] break-words py-2 pl-3 pr-4">
           {title && (

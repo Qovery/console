@@ -112,7 +112,7 @@ exports[`GitRepositorySetting should match snapshot 1`] = `
         </div>
       </div>
       <a
-        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-info text-xs ml-3"
+        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-xs ml-3"
         href="https://github.com/qovery/console"
         rel="noopener noreferrer"
         target="_blank"

@@ -23,10 +23,9 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="max-w-content-with-navigation-left p-8">
+      <Section className="p-8">
         <SettingsHeading title="General" />
-
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
           <BlockContent title="Organization profile">
             <div className="flex items-center">
               <Controller
@@ -136,7 +135,7 @@ export const handleSubmit = (data: FieldValues, organization: Organization) => {
   }
 }
 
-export function PageOrganizationGeneralFeature() {
+export function SettingsGeneral() {
   const { organizationId = '' } = useParams({ strict: false })
   useDocumentTitle('General - Organization settings')
 
