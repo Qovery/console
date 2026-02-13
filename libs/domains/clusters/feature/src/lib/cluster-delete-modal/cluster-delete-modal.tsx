@@ -1,10 +1,9 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
+import { useNavigate } from '@tanstack/react-router'
 import { type Cluster, ClusterDeleteMode } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, Callout, Checkbox, Icon, InputSelect, InputTextSmall, useModal } from '@qovery/shared/ui'
 import useDeleteCluster from '../hooks/use-delete-cluster/use-delete-cluster'
 
@@ -36,7 +35,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
           clusterId,
           clusterDeleteMode: cluster.kubernetes === 'SELF_MANAGED' ? 'DELETE_QOVERY_CONFIG' : clusterDeleteMode,
         })
-        navigate(CLUSTERS_URL(organizationId))
+        navigate({ to: '/organization/$organizationId/clusters', params: { organizationId } })
       } catch (error) {
         console.error(error)
       }
@@ -97,8 +96,8 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
 
   return (
     <div className="p-6">
-      <h2 className="h4 mb-2 max-w-sm text-neutral-400">Confirm deletion cluster</h2>
-      <div className="mb-6 text-sm text-neutral-350">
+      <h2 className="h4 mb-2 max-w-sm text-neutral">Confirm deletion cluster</h2>
+      <div className="mb-6 text-sm text-neutral-subtle">
         To confirm the deletion of <strong>{name}</strong>, please type "delete"
       </div>
       <form onSubmit={onSubmit}>
@@ -121,7 +120,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
             />
           )}
         />
-        <div className="mb-6 rounded border border-red-500 bg-red-50 p-4 text-sm text-neutral-400">
+        <div className="mb-6 rounded border border-negative-subtle bg-surface-negative-subtle p-4 text-sm text-neutral">
           {cluster.kubernetes !== 'SELF_MANAGED' && (
             <InputSelect
               className="mb-3"

@@ -69,6 +69,7 @@ function StepFeaturesForm({
     setValue: setValue as unknown as UseFormSetValue<FieldValues>,
   }
   const watchVpcMode = watch('vpc_mode')
+  const canSubmit = cloudProvider === 'SCW' ? formState.isValid : formState.isValid && !!watchVpcMode
 
   const backTo = match(cloudProvider)
     .with('GCP', () => '/organization/$organizationId/cluster/create/$slug/general' as const)
@@ -132,7 +133,11 @@ function StepFeaturesForm({
                     )}
                     onClick={(e) => {
                       e.preventDefault()
-                      setValue('vpc_mode', vpcMode.value)
+                      setValue('vpc_mode', vpcMode.value, {
+                        shouldDirty: true,
+                        shouldTouch: true,
+                        shouldValidate: true,
+                      })
                     }}
                   >
                     {cloneElement(vpcMode.icon, { className: 'w-[20px] h-[20px] mt-1' })}
@@ -257,7 +262,7 @@ function StepFeaturesForm({
           >
             Back
           </Link>
-          <Button data-testid="button-submit" type="submit" disabled={!formState.isValid} size="lg">
+          <Button data-testid="button-submit" type="submit" disabled={!canSubmit} size="lg">
             Continue
           </Button>
         </div>
