@@ -3,8 +3,8 @@
 exports[`ClusterCard should match snapshot 1`] = `
 <div>
   <a
-    class="duration-50 flex flex-col gap-5 rounded border border-neutral-250 p-5 outline outline-2 outline-transparent transition-all [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:border-brand-500 hover:-outline-offset-2 hover:outline-brand-500"
-    href="/organization/org-id/cluster/cluster-id/overview"
+    class="duration-50 flex flex-col gap-5 rounded-lg border border-neutral bg-surface-neutral p-5 shadow-sm transition-all hover:border-brand-strong"
+    to="/"
   >
     <div
       class="flex items-start justify-between gap-2"
@@ -22,7 +22,7 @@ exports[`ClusterCard should match snapshot 1`] = `
               class="flex items-center justify-center rounded-full h-16 w-16"
             >
               <svg
-                class="text-[#252F3E] dark:text-neutral-50 shrink-0"
+                class="text-neutral shrink-0"
                 fill="none"
                 height="65%"
                 name="AWS"
@@ -45,20 +45,19 @@ exports[`ClusterCard should match snapshot 1`] = `
             class="absolute bottom-0 translate-x-1/2 translate-y-1/2 right-4 top-0 flex-shrink-0"
           >
             <div
-              class="flex h-6 w-6 items-center justify-center rounded-full bg-white p-0.5"
+              class="flex h-6 w-6 items-center justify-center rounded-full bg-surface-neutral p-0.5"
             >
               <svg
-                class="shrink-0 h-5 w-5"
+                class="text-brand"
                 fill="none"
-                height="24"
-                name="QOVERY"
-                viewBox="0 0 24 24"
-                width="1.5rem"
+                height="20"
+                viewBox="0 0 28 28"
+                width="20"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  d="m20.25 6.41-7.5-4.214a1.54 1.54 0 0 0-1.5 0l-7.5 4.213c-.464.26-.75.743-.75 1.264v8.428c0 .521.286 1.003.75 1.264L12 22v-4.635c0-.261.143-.502.375-.632l4.125-2.318v5.056l3.75-2.106c.464-.261.75-.743.75-1.264V7.673c0-.521-.286-1.003-.75-1.264m-8.625 5.688L7.5 14.415V9.78c0-.261.143-.502.375-.632l3.75-2.107a.77.77 0 0 1 .75 0l3.75 2.107c.232.13.375.371.375.632v4.635l-4.125-2.317a.77.77 0 0 0-.75 0"
-                  fill="#642DFF"
+                  d="m24.01 7.043-9.082-5.244a1.82 1.82 0 0 0-1.817 0L4.03 7.043a1.82 1.82 0 0 0-.908 1.573v10.487c0 .65.346 1.249.908 1.573l9.99 5.769v-5.769c0-.324.174-.624.455-.787l4.995-2.883v6.292l4.541-2.622c.562-.324.908-.924.908-1.573V8.616c0-.649-.346-1.248-.908-1.573m-10.444 7.079L8.57 17.006v-5.769c0-.324.173-.624.454-.787l4.542-2.62a.91.91 0 0 1 .908 0l4.54 2.62a.91.91 0 0 1 .455.787v5.769l-4.995-2.884a.91.91 0 0 0-.908 0"
+                  fill="currentColor"
                 />
               </svg>
             </div>
@@ -68,13 +67,13 @@ exports[`ClusterCard should match snapshot 1`] = `
           class="flex min-w-0 flex-1 flex-col gap-1"
         >
           <span
-            class="block truncate text-base font-semibold leading-snug text-neutral-400"
+            class="block max-w-max truncate text-base font-semibold leading-snug text-neutral"
             data-state="closed"
           >
             Test Cluster
           </span>
           <span
-            class="max-w-max text-sm text-neutral-350"
+            class="max-w-max text-sm text-neutral-subtle"
             data-state="closed"
           >
             2 months ago
@@ -124,7 +123,9 @@ exports[`ClusterCard should match snapshot 1`] = `
         1.21
       </span>
     </div>
-    <hr />
+    <hr
+      class="border-neutral"
+    />
     <div
       class="flex items-center justify-between"
     >
@@ -145,7 +146,7 @@ exports[`ClusterCard should match snapshot 1`] = `
               aria-expanded="false"
               aria-haspopup="menu"
               aria-label="Manage Deployment"
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-yellow-600 h-9 px-3 active:scale-100 first:rounded-l last:rounded-r first:border-x border border-yellow-600 text-yellow-600 data-[state=open]:text-yellow-600 text-sm outline-0 min-w-[36px]"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-warning-strong h-8 px-2.5 hover:bg-surface-warning-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border border-warning-component hover:border-warning-strong data-[state=open]:bg-surface-warning-subtle data-[state=open]:border-warning-strong text-warning text-sm outline-0 min-w-[36px]"
               data-orientation="horizontal"
               data-radix-collection-item=""
               data-state="closed"
@@ -168,7 +169,7 @@ exports[`ClusterCard should match snapshot 1`] = `
               </div>
             </button>
             <button
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
               data-orientation="horizontal"
               data-radix-collection-item=""
               data-state="closed"
@@ -181,7 +182,7 @@ exports[`ClusterCard should match snapshot 1`] = `
               />
             </button>
             <button
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
               data-orientation="horizontal"
               data-radix-collection-item=""
               data-state="closed"
@@ -197,7 +198,7 @@ exports[`ClusterCard should match snapshot 1`] = `
               aria-expanded="false"
               aria-haspopup="menu"
               aria-label="Other actions"
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
               data-orientation="horizontal"
               data-radix-collection-item=""
               data-state="closed"
@@ -220,7 +221,7 @@ exports[`ClusterCard should match snapshot 1`] = `
         </div>
       </div>
       <span
-        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-negative-subtle border rounded-md bg-surface-negative-subtle"
+        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-negative-subtle border rounded-md bg-surface-negative-subtle text-negative"
         data-accent-color="red"
       >
         Production

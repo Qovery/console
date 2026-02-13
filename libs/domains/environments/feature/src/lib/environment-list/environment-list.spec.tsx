@@ -1,6 +1,11 @@
+import type { ReactNode } from 'react'
 import { projectsFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { EnvironmentList, type EnvironmentListProps } from './environment-list'
+
+jest.mock('../environment-action-toolbar/environment-action-toolbar', () => ({
+  EnvironmentActionToolbar: () => <div data-testid="environment-action-toolbar" />,
+}))
 
 jest.mock('../hooks/use-environments/use-environments', () => ({
   useEnvironments: () => ({
@@ -201,6 +206,14 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
 }))
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useNavigate: () => mockNavigate,
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({ buildLocation: () => ({ href: '/' }) }),
+  useParams: () => ({}),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+}))
 
 const mockProject = projectsFactoryMock(1)[0]
 
@@ -245,16 +258,18 @@ describe('EnvironmentList', () => {
   })
   it('should navigate to environment live logs on environment status click', () => {
     renderWithProviders(<EnvironmentList {...environmentListProps} />)
-    expect(screen.getAllByRole('link', { name: /stopped/i })[0]).toHaveAttribute(
-      'href',
-      '/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/services/general'
-    )
+    expect(
+      document.querySelector(
+        'a[to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/services/general"]'
+      )
+    ).toBeInTheDocument()
   })
   it('should navigate to environment deployment logs on environment deployment status click', () => {
     renderWithProviders(<EnvironmentList {...environmentListProps} />)
-    expect(screen.getAllByRole('link', { name: /deployed/i })[1]).toHaveAttribute(
-      'href',
-      '/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/logs'
-    )
+    expect(
+      document.querySelector(
+        'a[to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/logs"]'
+      )
+    ).toBeInTheDocument()
   })
 })

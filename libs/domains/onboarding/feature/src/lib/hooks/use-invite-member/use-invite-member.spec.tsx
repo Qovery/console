@@ -1,14 +1,14 @@
+import { useLocation } from '@tanstack/react-router'
 import { Wrapper } from '__tests__/utils/providers'
-import { useLocation } from 'react-router-dom'
 import { ACCEPT_INVITATION_URL, LOGIN_URL } from '@qovery/shared/routes'
 import { act, renderHook } from '@qovery/shared/util-tests'
 import { useInviteMember } from './use-invite-member'
 
 // mock useNavigate
 const mockedUseNavigate = jest.fn()
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockedUseNavigate,
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useNavigate: jest.fn(() => mockedUseNavigate),
   useLocation: jest.fn(),
 }))
 

@@ -2,13 +2,9 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { useDeployEnvironment } from '@qovery/domains/environments/feature'
-import {
-  ImportEnvironmentVariableModalFeature,
-  VariableList,
-  VariablesActionToolbar,
-} from '@qovery/domains/variables/feature'
+import { VariableList, VariablesActionToolbar } from '@qovery/domains/variables/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
-import { Heading, LoaderSpinner, Section, toast, useModal } from '@qovery/shared/ui'
+import { Heading, LoaderSpinner, Section, toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(

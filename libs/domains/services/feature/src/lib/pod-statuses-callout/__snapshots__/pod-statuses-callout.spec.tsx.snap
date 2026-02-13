@@ -4,11 +4,11 @@ exports[`PodStatusesCallout should render successfully 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-row gap-x-3 p-3 border rounded text-sm border-negative-component bg-surface-negative-subtle text-negative"
+      class="flex flex-row gap-x-4 p-4 border rounded text-sm border-negative-component bg-surface-negative-subtle text-negative"
       data-accent-color="red"
     >
       <div
-        class="-order-2 text-lg leading-6"
+        class="-order-2 text-base leading-6"
       >
         <i
           aria-hidden="true"
@@ -16,7 +16,7 @@ exports[`PodStatusesCallout should render successfully 1`] = `
         />
       </div>
       <div
-        class="-order-1 mr-auto gap-x-3 text-neutral"
+        class="-order-1 mr-auto gap-x-4 text-neutral"
       >
         <span
           class="block font-medium leading-6"
@@ -34,7 +34,7 @@ exports[`PodStatusesCallout should render successfully 1`] = `
         class="flex flex-row items-center gap-1.5"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
           disabled=""
           type="button"
         >
@@ -44,7 +44,7 @@ exports[`PodStatusesCallout should render successfully 1`] = `
           />
         </button>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component text-neutral"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
           type="button"
         >
           <i

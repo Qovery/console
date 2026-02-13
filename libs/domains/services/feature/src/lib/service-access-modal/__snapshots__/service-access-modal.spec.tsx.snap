@@ -30,7 +30,7 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
         <button
           aria-controls="radix-:r6:-content-another-service"
           aria-selected="true"
-          class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
+          class="relative flex items-center select-none box-border hover:text-brandHover hover:border-brand-strong border-neutral data-[state=active]:border-brand-strong data-[state=active]:text-brand disabled:border-neutral disabled:text-neutral-disabled transition text-neutral-subtle text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
           data-orientation="horizontal"
           data-radix-collection-item=""
           data-state="active"
@@ -44,7 +44,7 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
         <button
           aria-controls="radix-:r6:-content-local-machine"
           aria-selected="false"
-          class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
+          class="relative flex items-center select-none box-border hover:text-brandHover hover:border-brand-strong border-neutral data-[state=active]:border-brand-strong data-[state=active]:text-brand disabled:border-neutral disabled:text-neutral-disabled transition text-neutral-subtle text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
           data-orientation="horizontal"
           data-radix-collection-item=""
           data-state="inactive"
@@ -104,7 +104,7 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-regular fa-chevron-down text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
+                  class="fa-regular fa-chevron-down text-neutral-subtle transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
                 />
                 <div
                   class="flex flex-col gap-1.5 text-left"
@@ -149,7 +149,7 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-regular fa-chevron-down text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
+                  class="fa-regular fa-chevron-down text-neutral-subtle transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
                 />
                 <div
                   class="flex flex-col gap-1.5 text-left"
@@ -225,7 +225,7 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
         <button
           aria-controls="radix-:rj:-content-another-service"
           aria-selected="true"
-          class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
+          class="relative flex items-center select-none box-border hover:text-brandHover hover:border-brand-strong border-neutral data-[state=active]:border-brand-strong data-[state=active]:text-brand disabled:border-neutral disabled:text-neutral-disabled transition text-neutral-subtle text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
           data-orientation="horizontal"
           data-radix-collection-item=""
           data-state="active"
@@ -239,7 +239,7 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
         <button
           aria-controls="radix-:rj:-content-local-machine"
           aria-selected="false"
-          class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
+          class="relative flex items-center select-none box-border hover:text-brandHover hover:border-brand-strong border-neutral data-[state=active]:border-brand-strong data-[state=active]:text-brand disabled:border-neutral disabled:text-neutral-disabled transition text-neutral-subtle text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
           data-orientation="horizontal"
           data-radix-collection-item=""
           data-state="inactive"
@@ -285,7 +285,7 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-regular fa-chevron-down text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
+                  class="fa-regular fa-chevron-down text-neutral-subtle transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
                 />
                 <div
                   class="flex flex-col gap-1.5 text-left"

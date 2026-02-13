@@ -29,7 +29,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
           </strong>
         </p>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
           data-testid="deselect-all"
         >
           Deselect All
@@ -77,16 +77,16 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 data-testid="current-commit-block"
               >
                 <div
-                  class="relative block rounded-full border border-neutral-200  mr-2"
+                  class="relative block rounded-full border border-neutral  mr-2"
                   data-state="closed"
                   data-testid="avatar"
                   style="width: 28px; height: 28px;"
                 >
                   <div
-                    class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-center"
+                    class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
                   >
                     <span
-                      class="relative text-xs font-medium text-neutral-400"
+                      class="relative text-xs font-medium text-neutral"
                     >
                       U
                     </span>
@@ -98,7 +98,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   data-testid="tag-commit"
                 >
                   <span
-                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white dark:bg-transparent w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
+                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-background w-[90px] border-neutral text-neutral-subtle hover:bg-surface-neutral-subtle"
                     data-testid="tag"
                   >
                     <div
@@ -122,16 +122,16 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 data-testid="last-commit-block"
               >
                 <div
-                  class="relative block rounded-full border border-neutral-200  mr-2"
+                  class="relative block rounded-full border border-neutral  mr-2"
                   data-state="closed"
                   data-testid="avatar"
                   style="width: 28px; height: 28px;"
                 >
                   <div
-                    class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-center"
+                    class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
                   >
                     <span
-                      class="relative text-xs font-medium text-neutral-400"
+                      class="relative text-xs font-medium text-neutral"
                     />
                   </div>
                 </div>
@@ -141,7 +141,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   data-testid="tag-commit"
                 >
                   <span
-                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white dark:bg-transparent w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
+                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-background w-[90px] border-neutral text-neutral-subtle hover:bg-surface-neutral-subtle"
                     data-testid="tag"
                   >
                     <div
@@ -187,16 +187,16 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 data-testid="current-commit-block"
               >
                 <div
-                  class="relative block rounded-full border border-neutral-200  mr-2"
+                  class="relative block rounded-full border border-neutral  mr-2"
                   data-state="closed"
                   data-testid="avatar"
                   style="width: 28px; height: 28px;"
                 >
                   <div
-                    class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-center"
+                    class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
                   >
                     <span
-                      class="relative text-xs font-medium text-neutral-400"
+                      class="relative text-xs font-medium text-neutral"
                     >
                       U
                     </span>
@@ -208,7 +208,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   data-testid="tag-commit"
                 >
                   <span
-                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white dark:bg-transparent w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
+                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-background w-[90px] border-neutral text-neutral-subtle hover:bg-surface-neutral-subtle"
                     data-testid="tag"
                   >
                     <div
@@ -232,16 +232,16 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 data-testid="last-commit-block"
               >
                 <div
-                  class="relative block rounded-full border border-neutral-200  mr-2"
+                  class="relative block rounded-full border border-neutral  mr-2"
                   data-state="closed"
                   data-testid="avatar"
                   style="width: 28px; height: 28px;"
                 >
                   <div
-                    class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-center"
+                    class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
                   >
                     <span
-                      class="relative text-xs font-medium text-neutral-400"
+                      class="relative text-xs font-medium text-neutral"
                     />
                   </div>
                 </div>
@@ -251,7 +251,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   data-testid="tag-commit"
                 >
                   <span
-                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white dark:bg-transparent w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
+                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-background w-[90px] border-neutral text-neutral-subtle hover:bg-surface-neutral-subtle"
                     data-testid="tag"
                   >
                     <div
@@ -297,16 +297,16 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 data-testid="current-commit-block"
               >
                 <div
-                  class="relative block rounded-full border border-neutral-200  mr-2"
+                  class="relative block rounded-full border border-neutral  mr-2"
                   data-state="closed"
                   data-testid="avatar"
                   style="width: 28px; height: 28px;"
                 >
                   <div
-                    class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-center"
+                    class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
                   >
                     <span
-                      class="relative text-xs font-medium text-neutral-400"
+                      class="relative text-xs font-medium text-neutral"
                     >
                       U
                     </span>
@@ -318,7 +318,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   data-testid="tag-commit"
                 >
                   <span
-                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white dark:bg-transparent w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
+                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-background w-[90px] border-neutral text-neutral-subtle hover:bg-surface-neutral-subtle"
                     data-testid="tag"
                   >
                     <div
@@ -342,16 +342,16 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 data-testid="last-commit-block"
               >
                 <div
-                  class="relative block rounded-full border border-neutral-200  mr-2"
+                  class="relative block rounded-full border border-neutral  mr-2"
                   data-state="closed"
                   data-testid="avatar"
                   style="width: 28px; height: 28px;"
                 >
                   <div
-                    class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-center"
+                    class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
                   >
                     <span
-                      class="relative text-xs font-medium text-neutral-400"
+                      class="relative text-xs font-medium text-neutral"
                     />
                   </div>
                 </div>
@@ -361,7 +361,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   data-testid="tag-commit"
                 >
                   <span
-                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white dark:bg-transparent w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
+                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-background w-[90px] border-neutral text-neutral-subtle hover:bg-surface-neutral-subtle"
                     data-testid="tag"
                   >
                     <div
@@ -388,13 +388,13 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
         class="sticky bottom-0 -mb-6 flex justify-end gap-3 bg-white py-6 dark:bg-neutral-550"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
           data-testid="cancel-button"
         >
           Cancel
         </button>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
           data-testid="submit-button"
           type="submit"
         >

@@ -75,7 +75,7 @@ describe('InputSelect', () => {
     props.disabled = true
     renderWithProviders(<InputSelect {...props} />)
     const select = screen.getByTestId('select')
-    expect(select).toHaveClass('!bg-neutral-100')
+    expect(select).toHaveClass('!bg-surface-neutral-subtle')
   })
 
   it('should have a edit button when option is selected', async () => {

@@ -51,7 +51,7 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
                     style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
                   >
                     <div
-                      class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                      class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
                       data-testid="spinner"
                     />
                   </div>
@@ -63,7 +63,7 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
                   aria-controls="radix-:ri:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral absolute right-4 top-4 px-2.5"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral absolute right-4 top-4 px-2.5"
                   data-state="closed"
                   type="button"
                 >
@@ -105,7 +105,7 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
                 class="flex justify-center px-5 py-14"
               >
                 <div
-                  class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                  class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
                   data-testid="spinner"
                 />
               </div>
@@ -116,14 +116,14 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
           class="mt-6 flex justify-end gap-3"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
             data-testid="cancel-button"
             type="button"
           >
             Cancel
           </button>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
             data-testid="submit-button"
             disabled=""
             type="submit"

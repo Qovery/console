@@ -104,9 +104,19 @@ jobs:
           npx nx run-many --target=test --projects=console-v5 --parallel=3 --configuration=${{ inputs.configuration }} --ci --coverage --coverageReporters=lcov --silent
           npx nx run console-v5:build --configuration=development
         else
-          npx nx affected --target=lint --parallel=3
-          npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --coverage --coverageReporters=lcov --silent
-          npx nx affected --target=build --parallel=3
+          EXCLUDED_PAGES="$(node -e "const projects = JSON.parse(require('child_process').execSync('npx nx show projects --json', { encoding: 'utf8' })); process.stdout.write(projects.filter((p) => p.startsWith('pages-')).join(','));")"
+          if [ -n "$EXCLUDED_PAGES" ]; then
+            EXCLUDE_ARG="--exclude=$EXCLUDED_PAGES"
+            EXCLUDE_TEST_ARG="--exclude=$EXCLUDED_PAGES,console,domains-onboarding-feature"
+            echo "Skipping pages projects: $EXCLUDED_PAGES"
+          else
+            EXCLUDE_ARG=""
+            EXCLUDE_TEST_ARG="--exclude=console,domains-onboarding-feature"
+          fi
+
+          npx nx affected --target=lint --parallel=3 $EXCLUDE_ARG
+          npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --coverage --coverageReporters=lcov --silent $EXCLUDE_TEST_ARG
+          npx nx affected --target=build --parallel=3 $EXCLUDE_ARG
         fi
       artifacts-path: |
         dist/

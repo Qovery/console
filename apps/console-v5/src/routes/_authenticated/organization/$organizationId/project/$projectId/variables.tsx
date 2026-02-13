@@ -1,11 +1,7 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
-import {
-  ImportEnvironmentVariableModalFeature,
-  VariableList,
-  VariablesActionToolbar,
-} from '@qovery/domains/variables/feature'
-import { Heading, LoaderSpinner, Section, toast, useModal } from '@qovery/shared/ui'
+import { VariableList, VariablesActionToolbar } from '@qovery/domains/variables/feature'
+import { Heading, LoaderSpinner, Section, toast } from '@qovery/shared/ui'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/project/$projectId/variables')({
   component: RouteComponent,
@@ -13,7 +9,6 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 
 function RouteComponent() {
   const { projectId } = useParams({ strict: false })
-  const { openModal, closeModal } = useModal()
 
   return (
     <Suspense
