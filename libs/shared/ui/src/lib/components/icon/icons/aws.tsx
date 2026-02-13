@@ -5,7 +5,7 @@ export function AWSIcon({ pathColor, className, ...props }: IconProps) {
   return (
     <svg
       {...props}
-      className={twMerge('text-[#252F3E] dark:text-neutral-50', className)}
+      className={twMerge('text-neutral', className)}
       viewBox="0 0 16 10"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
