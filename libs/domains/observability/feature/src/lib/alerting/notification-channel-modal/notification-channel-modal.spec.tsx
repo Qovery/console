@@ -1,3 +1,4 @@
+import { act } from '@testing-library/react'
 import { type AlertReceiverResponse, type EmailAlertReceiverResponse } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useCreateAlertReceiver from '../../hooks/use-create-alert-receiver/use-create-alert-receiver'
@@ -10,6 +11,19 @@ const mockUseEditAlertReceiver = jest.spyOn(useEditAlertReceiver, 'useEditAlertR
 const mockUseValidateAlertReceiver = jest.spyOn(useValidateAlertReceiver, 'useValidateAlertReceiver') as jest.Mock
 
 const mockOnClose = jest.fn()
+const renderNotificationChannelModal = async (ui: Parameters<typeof renderWithProviders>[0]) => {
+  let renderResult: ReturnType<typeof renderWithProviders> | undefined
+
+  await act(async () => {
+    renderResult = renderWithProviders(ui)
+  })
+
+  if (!renderResult) {
+    throw new Error('Failed to render notification channel modal in tests.')
+  }
+
+  return renderResult
+}
 
 describe('NotificationChannelModal', () => {
   const defaultAlertReceiver: AlertReceiverResponse = {
@@ -36,14 +50,16 @@ describe('NotificationChannelModal', () => {
   })
 
   it('should render create mode with correct title and submit label', async () => {
-    renderWithProviders(<NotificationChannelModal onClose={mockOnClose} organizationId="org-123" type="SLACK" />)
+    await renderNotificationChannelModal(
+      <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" type="SLACK" />
+    )
 
     expect(await screen.findByText('New channel')).toBeInTheDocument()
     expect(await screen.findByText('Confirm creation')).toBeInTheDocument()
   })
 
   it('should render edit mode with correct title and submit label', async () => {
-    renderWithProviders(
+    await renderNotificationChannelModal(
       <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" alertReceiver={defaultAlertReceiver} />
     )
 
@@ -52,18 +68,41 @@ describe('NotificationChannelModal', () => {
   })
 
   it('should render form fields', async () => {
-    renderWithProviders(<NotificationChannelModal onClose={mockOnClose} organizationId="org-123" type="SLACK" />)
+    await renderNotificationChannelModal(
+      <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" type="SLACK" />
+    )
 
     expect(await screen.findByLabelText('Display name')).toBeInTheDocument()
     expect(await screen.findByLabelText('Webhook URL')).toBeInTheDocument()
   })
 
   it('should pre-fill values when editing', async () => {
-    renderWithProviders(
+    await renderNotificationChannelModal(
       <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" alertReceiver={defaultAlertReceiver} />
     )
 
     expect(await screen.findByDisplayValue('My Channel')).toBeInTheDocument()
+  })
+
+  it('should render channel type selector in create mode when type is not provided', async () => {
+    await renderNotificationChannelModal(<NotificationChannelModal onClose={mockOnClose} organizationId="org-123" />)
+
+    expect(await screen.findByText('Channel type')).toBeInTheDocument()
+  })
+
+  it('should not render channel type selector in edit mode', async () => {
+    await renderNotificationChannelModal(
+      <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" alertReceiver={defaultAlertReceiver} />
+    )
+
+    expect(screen.queryByText('Channel type')).not.toBeInTheDocument()
+  })
+
+  it('should not expose webhook as a channel type option label', async () => {
+    await renderNotificationChannelModal(<NotificationChannelModal onClose={mockOnClose} organizationId="org-123" />)
+
+    expect(await screen.findByText('Slack')).toBeInTheDocument()
+    expect(screen.queryByText(/^Webhook$/)).not.toBeInTheDocument()
   })
 
   it('should send test notification request when button is clicked in create mode', async () => {
@@ -73,7 +112,7 @@ describe('NotificationChannelModal', () => {
       isLoading: false,
     })
 
-    const { userEvent } = renderWithProviders(
+    const { userEvent } = await renderNotificationChannelModal(
       <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" type="SLACK" />
     )
 
@@ -103,7 +142,7 @@ describe('NotificationChannelModal', () => {
       isLoading: false,
     })
 
-    const { userEvent } = renderWithProviders(
+    const { userEvent } = await renderNotificationChannelModal(
       <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" alertReceiver={defaultAlertReceiver} />
     )
 
@@ -132,7 +171,9 @@ describe('NotificationChannelModal', () => {
     } as EmailAlertReceiverResponse
 
     it('should render create mode with email fields', async () => {
-      renderWithProviders(<NotificationChannelModal onClose={mockOnClose} organizationId="org-123" type="EMAIL" />)
+      await renderNotificationChannelModal(
+        <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" type="EMAIL" />
+      )
 
       expect(await screen.findByText('New email')).toBeInTheDocument()
       expect(await screen.findByLabelText('Display name')).toBeInTheDocument()
@@ -145,7 +186,7 @@ describe('NotificationChannelModal', () => {
     })
 
     it('should render edit mode with email fields pre-filled', async () => {
-      renderWithProviders(
+      await renderNotificationChannelModal(
         <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" alertReceiver={emailAlertReceiver} />
       )
 
@@ -165,7 +206,7 @@ describe('NotificationChannelModal', () => {
         isLoading: false,
       })
 
-      const { userEvent } = renderWithProviders(
+      const { userEvent } = await renderNotificationChannelModal(
         <NotificationChannelModal onClose={mockOnClose} organizationId="org-123" type="EMAIL" />
       )
 
