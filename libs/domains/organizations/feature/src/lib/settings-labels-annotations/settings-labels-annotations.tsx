@@ -1,11 +1,9 @@
 import { useParams } from '@tanstack/react-router'
-import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   BlockContent,
   Button,
   DropdownMenu,
-  Heading,
   Icon,
   LoaderSpinner,
   Section,
