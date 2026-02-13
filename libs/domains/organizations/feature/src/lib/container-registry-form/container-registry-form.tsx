@@ -494,7 +494,7 @@ export function ContainerRegistryForm({
           />
           {isEditDirty && (
             <>
-              <hr />
+              <hr className="border-neutral" />
               <span className="text-sm text-neutral-subtle">Confirm your secret key</span>
             </>
           )}
@@ -555,7 +555,7 @@ export function ContainerRegistryForm({
           />
           {isEditDirty && (
             <>
-              <hr />
+              <hr className="border-neutral" />
               <span className="text-sm text-neutral-subtle">Confirm your secret key</span>
             </>
           )}

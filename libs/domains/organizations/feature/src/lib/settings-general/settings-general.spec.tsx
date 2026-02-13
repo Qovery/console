@@ -7,8 +7,8 @@ import { useEditOrganization } from '../hooks/use-edit-organization/use-edit-org
 import { useOrganization } from '../hooks/use-organization/use-organization'
 import {
   PageOrganizationGeneral,
-  PageOrganizationGeneralFeature,
   type PageOrganizationGeneralProps,
+  SettingsGeneral,
   handleSubmit,
 } from './settings-general'
 
@@ -22,7 +22,7 @@ jest.mock('@tanstack/react-router', () => ({
   useParams: () => ({ organizationId: '0' }),
 }))
 
-describe('PageOrganizationGeneralFeature', () => {
+describe('SettingsGeneral', () => {
   const useOrganizationMock = useOrganization as jest.MockedFunction<typeof useOrganization>
   const useEditOrganizationMock = useEditOrganization as jest.MockedFunction<typeof useEditOrganization>
 
@@ -37,13 +37,13 @@ describe('PageOrganizationGeneralFeature', () => {
   })
 
   it('should render successfully', async () => {
-    const { baseElement } = renderWithProviders(<PageOrganizationGeneralFeature />)
+    const { baseElement } = renderWithProviders(<SettingsGeneral />)
     await screen.findByTestId('input-name')
     expect(baseElement).toBeTruthy()
   })
 
   it('should dispatch editOrganization if form is submitted', async () => {
-    const { userEvent } = renderWithProviders(<PageOrganizationGeneralFeature />)
+    const { userEvent } = renderWithProviders(<SettingsGeneral />)
 
     const input = await screen.findByTestId('input-name')
     await userEvent.clear(input)
