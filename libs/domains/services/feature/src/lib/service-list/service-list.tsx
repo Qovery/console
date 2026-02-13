@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import {
   type RowSelectionState,
   type SortingState,
@@ -74,6 +75,7 @@ import {
   twMerge,
   upperCaseFirstLetter,
 } from '@qovery/shared/util-js'
+import { queries } from '@qovery/state/util-queries'
 import { useCheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommit } from '../last-commit/last-commit'
@@ -332,6 +334,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
     organization: { id: organizationId },
   } = environment
   const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
+  // useQuery is used directly instead of useListDeploymentStages to avoid a circular dependency
+  // between domains-services-feature and domains-environments-feature
+  const { data: deploymentStages } = useQuery({
+    ...queries.environments.listDeploymentStages({ environmentId }),
+  })
   const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
     clusterId,
     environmentId,
@@ -339,6 +346,35 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const navigate = useNavigate()
+
+  // Build map of service_id -> is_skipped for quick lookup
+  const skippedServicesMap = useMemo(() => {
+    const map = new Map<string, boolean>()
+    deploymentStages?.forEach((stage) => {
+      stage.services?.forEach((service) => {
+        if (service.service_id && service.is_skipped) {
+          map.set(service.service_id, true)
+        }
+      })
+    })
+    return map
+  }, [deploymentStages])
+
+  // Sort services: non-skipped first, skipped at the end
+  const sortedServices = useMemo(() => {
+    return [...services].sort((a, b) => {
+      const aIsSkipped = skippedServicesMap.get(a.id) || false
+      const bIsSkipped = skippedServicesMap.get(b.id) || false
+
+      // Sort by skipped status (false before true)
+      if (aIsSkipped !== bIsSkipped) {
+        return aIsSkipped ? 1 : -1
+      }
+
+      // Keep original order for same status
+      return 0
+    })
+  }, [services, skippedServicesMap])
 
   const columnHelper = createColumnHelper<(typeof services)[number]>()
   const columns = useMemo(
@@ -367,11 +403,12 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             />
           </div>
         ),
-        cell: ({ row }) => (
-          <label className="absolute inset-y-0 left-0 flex items-center p-4" onClick={(e) => e.stopPropagation()}>
+        cell: ({ row }) => {
+          const isDisabled = !row.getCanSelect()
+          const checkbox = (
             <Checkbox
               checked={row.getIsSelected()}
-              disabled={!row.getCanSelect()}
+              disabled={isDisabled}
               onCheckedChange={(checked) => {
                 if (checked === 'indeterminate') {
                   return
@@ -379,8 +416,20 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 row.toggleSelected(checked)
               }}
             />
-          </label>
-        ),
+          )
+
+          return (
+            <label className="absolute inset-y-0 left-0 flex items-center p-4" onClick={(e) => e.stopPropagation()}>
+              {isDisabled ? (
+                <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
+                  <span>{checkbox}</span>
+                </Tooltip>
+              ) : (
+                checkbox
+              )}
+            </label>
+          )
+        },
       }),
       columnHelper.accessor('name', {
         header: 'Service',
@@ -739,13 +788,16 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
   )
 
   const table = useReactTable({
-    data: services,
+    data: sortedServices,
     columns,
     state: {
       sorting,
       rowSelection,
     },
-    enableRowSelection: true,
+    enableRowSelection: (row) => {
+      // Disable selection for skipped services
+      return !skippedServicesMap.get(row.original.id)
+    },
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
