@@ -7,6 +7,7 @@ import { useEditOrganization } from '../hooks/use-edit-organization/use-edit-org
 import { useOrganization } from '../hooks/use-organization/use-organization'
 import {
   PageOrganizationGeneral,
+  SettingsGeneral,
   type PageOrganizationGeneralProps,
   SettingsGeneral,
   handleSubmit,
