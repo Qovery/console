@@ -2,12 +2,14 @@ import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import { match } from 'ts-pattern'
 import { StepGeneral } from '@qovery/domains/clusters/feature'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/create/$slug/general')({
   component: General,
 })
 
 function General() {
+  useDocumentTitle('General - Create Cluster')
   const { organizationId = '', slug } = useParams({ strict: false })
   const navigate = useNavigate()
 
