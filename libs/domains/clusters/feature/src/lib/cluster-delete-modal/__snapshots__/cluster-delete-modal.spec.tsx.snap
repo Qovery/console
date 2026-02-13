@@ -7,12 +7,12 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
       class="p-6"
     >
       <h2
-        class="h4 mb-2 max-w-sm text-neutral-400"
+        class="h4 mb-2 max-w-sm text-neutral"
       >
         Confirm deletion cluster
       </h2>
       <div
-        class="mb-6 text-sm text-neutral-350"
+        class="mb-6 text-sm text-neutral-subtle"
       >
         To confirm the deletion of 
         <strong>
@@ -44,7 +44,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
           </div>
         </div>
         <div
-          class="mb-6 rounded border border-red-500 bg-red-50 p-4 text-sm text-neutral-400"
+          class="mb-6 rounded border border-negative-subtle bg-surface-negative-subtle p-4 text-sm text-neutral"
         >
           <div
             class="mb-3"
@@ -215,11 +215,11 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
             </div>
           </div>
           <div
-            class="flex flex-row gap-x-3 p-3 border rounded text-sm border-warning-component bg-surface-warning-subtle text-warning mt-3"
+            class="flex flex-row gap-x-4 p-4 border rounded text-sm border-warning-component bg-surface-warning-subtle text-warning mt-3"
             data-accent-color="yellow"
           >
             <div
-              class="-order-2 text-lg leading-6"
+              class="-order-2 text-base leading-6"
             >
               <i
                 aria-hidden="true"
@@ -227,7 +227,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
               />
             </div>
             <div
-              class="-order-1 mr-auto gap-x-3 text-neutral"
+              class="-order-1 mr-auto gap-x-4 text-neutral"
             >
               <p>
                 Please note that you will have to manually delete on your cloud account:
@@ -252,13 +252,13 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
           class="flex justify-end gap-3"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
             type="button"
           >
             Cancel
           </button>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-red-500 text-sm h-10 px-3 rounded-lg bg-surface-negative-solid hover:bg-surface-negative-solidHover border border-negative-component text-neutral-contrasted"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-negative-strong text-sm h-10 px-3 rounded-lg bg-surface-negative-solid hover:bg-surface-negative-solidHover border border-negative-component text-neutral-contrasted"
             disabled=""
             type="submit"
           >
