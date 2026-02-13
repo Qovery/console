@@ -25,9 +25,12 @@ interface NotificationChannelModalProps {
 
 const CHANNEL_TYPE_OPTIONS = [
   { value: 'SLACK', label: 'Slack' },
-  { value: 'WEBHOOK', label: 'Webhook' },
   { value: 'EMAIL', label: 'Email' },
 ]
+const DEFAULT_CHANNEL_NAME_BY_TYPE = {
+  SLACK: 'Input slack channel',
+  EMAIL: 'Email notifications',
+} as const
 
 const FAKE_PLACEHOLDER = 'fakewebhookurl'
 
@@ -147,7 +150,7 @@ export function NotificationChannelModal({
   const defaultValues = match(receiverType)
     .with('SLACK', () => ({
       type: 'SLACK' as const,
-      name: alertReceiver?.name ?? 'Input slack channel',
+      name: alertReceiver?.name ?? DEFAULT_CHANNEL_NAME_BY_TYPE.SLACK,
       send_resolved: alertReceiver?.send_resolved ?? true,
       webhook_url: isEdit ? FAKE_PLACEHOLDER : undefined,
     }))
@@ -155,7 +158,7 @@ export function NotificationChannelModal({
       const emailReceiver = alertReceiver as EmailAlertReceiverResponse | undefined
       return {
         type: 'EMAIL' as const,
-        name: emailReceiver?.name ?? 'Email notifications',
+        name: emailReceiver?.name ?? DEFAULT_CHANNEL_NAME_BY_TYPE.EMAIL,
         send_resolved: emailReceiver?.send_resolved ?? true,
         to: emailReceiver?.to ?? '',
         from: emailReceiver?.from ?? '',
@@ -171,11 +174,12 @@ export function NotificationChannelModal({
     mode: 'onChange',
     defaultValues,
   })
+  const selectedReceiverType = type ?? methods.watch('type') ?? receiverType
 
   const handleSubmit = methods.handleSubmit(async (data) => {
     try {
       if (isEdit && alertReceiver) {
-        const secretValue = match(receiverType)
+        const secretValue = match(selectedReceiverType)
           .with('SLACK', () => {
             const slackData = data as SlackFormData
             return slackData.webhook_url === FAKE_PLACEHOLDER ? undefined : slackData.webhook_url
@@ -187,7 +191,7 @@ export function NotificationChannelModal({
           .exhaustive()
 
         const payload = buildEditPayload(
-          receiverType,
+          selectedReceiverType,
           data,
           alertReceiver.description ?? 'Notifications for Qovery alerts',
           secretValue
@@ -195,7 +199,7 @@ export function NotificationChannelModal({
 
         await editAlertReceiver({ alertReceiverId: alertReceiver.id, payload })
       } else {
-        const payload = buildCreationPayload(receiverType, data, organizationId)
+        const payload = buildCreationPayload(selectedReceiverType, data, organizationId)
         await createAlertReceiver({ payload })
       }
 
@@ -213,7 +217,7 @@ export function NotificationChannelModal({
       })
     } else {
       const formData = methods.getValues()
-      const payload = buildCreationPayload(receiverType, formData, organizationId)
+      const payload = buildCreationPayload(selectedReceiverType, formData, organizationId)
       validateAlertReceiver({
         payload: {
           alert_receiver: payload,
@@ -222,7 +226,7 @@ export function NotificationChannelModal({
     }
   }
 
-  const modalContent = match(receiverType)
+  const modalContent = match(selectedReceiverType)
     .with('SLACK', () => ({
       title: isEdit ? 'Edit channel' : 'New channel',
       description: isEdit ? undefined : (
@@ -236,9 +240,14 @@ export function NotificationChannelModal({
     }))
     .with('EMAIL', () => ({
       title: isEdit ? 'Edit email' : 'New email',
-      description: isEdit
-        ? undefined
-        : 'Enter the email address you want to add as a selectable notification channel for your alerts',
+      description: isEdit ? undefined : (
+        <>
+          Enter the email address you want to add as a selectable notification channel for your alerts.{' '}
+          <ExternalLink href="https://www.qovery.com/docs/configuration/integrations/email" size="sm">
+            How to configure it
+          </ExternalLink>
+        </>
+      ),
     }))
     .exhaustive()
 
@@ -267,7 +276,7 @@ export function NotificationChannelModal({
         }
       >
         <div className="flex flex-col gap-5">
-          {!type && (
+          {!type && !isEdit && (
             <Controller
               name="type"
               control={methods.control}
@@ -276,9 +285,25 @@ export function NotificationChannelModal({
                   label="Channel type"
                   value={field.value}
                   options={CHANNEL_TYPE_OPTIONS}
-                  onChange={field.onChange}
+                  onChange={(nextValue) => {
+                    if (Array.isArray(nextValue)) {
+                      return
+                    }
+
+                    const previousType = field.value as AlertReceiverType
+                    const nextType = nextValue as AlertReceiverType
+                    const currentName = methods.getValues('name')
+                    const previousDefaultName = DEFAULT_CHANNEL_NAME_BY_TYPE[previousType]
+
+                    field.onChange(nextType)
+
+                    if (!currentName || currentName === previousDefaultName) {
+                      methods.setValue('name', DEFAULT_CHANNEL_NAME_BY_TYPE[nextType], {
+                        shouldValidate: true,
+                      })
+                    }
+                  }}
                   error={error?.message}
-                  disabled
                 />
               )}
             />
@@ -301,7 +326,7 @@ export function NotificationChannelModal({
               />
             )}
           />
-          {match(receiverType)
+          {match(selectedReceiverType)
             .with('SLACK', () => (
               <Controller
                 key="webhook_url"
@@ -447,6 +472,8 @@ export function NotificationChannelModal({
                       onChange={field.onChange}
                       title="Require TLS"
                       description="Force TLS encryption for SMTP connection"
+                      forceAlignTop
+                      small
                     />
                   )}
                 />
