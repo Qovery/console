@@ -145,7 +145,7 @@ export const Modal = (props: ModalProps) => {
                   type="button"
                   className="flex h-7 w-7 items-center justify-center rounded-full bg-background text-neutral-disabled transition-colors hover:bg-surface-neutral-componentHover hover:text-neutral"
                 >
-                  <Icon name="icon-solid-xmark" />
+                  <Icon name="fa-solid fa-xmark" />
                 </button>
               </Dialog.Close>
             )}

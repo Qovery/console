@@ -52,24 +52,24 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           </div>
         </div>
         <span
-          class="mb-2 block text-sm text-neutral-400"
+          class="mb-2 block text-sm text-neutral"
         >
           Add annotation key value
         </span>
         <div
-          class="rounded border border-neutral-250 bg-neutral-100 px-4 py-3"
+          class="rounded border border-neutral bg-surface-neutral-subtle px-4 py-3"
         >
           <ul>
             <li
               class="mb-3 grid grid-cols-[6fr_6fr_1fr] gap-x-2"
             >
               <span
-                class="text-sm font-medium text-neutral-350"
+                class="text-sm font-medium text-neutral-subtle"
               >
                 Annotation keys
               </span>
               <span
-                class="text-sm font-medium text-neutral-350"
+                class="text-sm font-medium text-neutral-subtle"
               >
                 Value
               </span>
@@ -124,19 +124,19 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
                   </div>
                 </div>
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle"
                   type="button"
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-regular fa-trash text-neutral-400"
+                    class="fa-regular fa-trash text-neutral"
                   />
                 </button>
               </div>
             </li>
           </ul>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-xs h-7 px-2 rounded bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert mt-3"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-xs h-7 px-2 rounded bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert mt-3"
             type="button"
           >
             Add annotation
@@ -147,12 +147,12 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           </button>
         </div>
         <span
-          class="mb-2 mt-4 block text-sm text-neutral-400"
+          class="mb-2 mt-4 block text-sm text-neutral"
         >
           Select scope (Kubernetes objects)
         </span>
         <div
-          class="h-[194px] overflow-y-auto rounded border border-neutral-250 bg-neutral-100 px-4 py-3"
+          class="h-[194px] overflow-y-auto rounded border border-neutral bg-surface-neutral-subtle px-4 py-3"
         >
           <div
             class="mb-2 flex items-center last:mb-0"
@@ -175,7 +175,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
               value="on"
             />
             <label
-              class="text-sm font-medium text-neutral-400"
+              class="text-sm font-medium text-neutral"
               for="CRON_JOBS"
             >
               CRON_JOBS
@@ -202,7 +202,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
               value="on"
             />
             <label
-              class="text-sm font-medium text-neutral-400"
+              class="text-sm font-medium text-neutral"
               for="DEPLOYMENTS"
             >
               DEPLOYMENTS
@@ -229,7 +229,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
               value="on"
             />
             <label
-              class="text-sm font-medium text-neutral-400"
+              class="text-sm font-medium text-neutral"
               for="HPA"
             >
               HPA
@@ -256,7 +256,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
               value="on"
             />
             <label
-              class="text-sm font-medium text-neutral-400"
+              class="text-sm font-medium text-neutral"
               for="INGRESS"
             >
               INGRESS
@@ -283,7 +283,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
               value="on"
             />
             <label
-              class="text-sm font-medium text-neutral-400"
+              class="text-sm font-medium text-neutral"
               for="JOBS"
             >
               JOBS
@@ -310,7 +310,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
               value="on"
             />
             <label
-              class="text-sm font-medium text-neutral-400"
+              class="text-sm font-medium text-neutral"
               for="PODS"
             >
               PODS
@@ -337,7 +337,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
               value="on"
             />
             <label
-              class="text-sm font-medium text-neutral-400"
+              class="text-sm font-medium text-neutral"
               for="SECRETS"
             >
               SECRETS
@@ -364,7 +364,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
               value="on"
             />
             <label
-              class="text-sm font-medium text-neutral-400"
+              class="text-sm font-medium text-neutral"
               for="SERVICES"
             >
               SERVICES
@@ -391,7 +391,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
               value="on"
             />
             <label
-              class="text-sm font-medium text-neutral-400"
+              class="text-sm font-medium text-neutral"
               for="STATEFUL_SETS"
             >
               STATEFUL_SETS
@@ -402,14 +402,14 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
           class="mt-6 flex justify-end gap-3"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
             data-testid="cancel-button"
             type="button"
           >
             Cancel
           </button>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
             data-testid="submit-button"
             disabled=""
             type="submit"

@@ -47,6 +47,9 @@ const _buttonVariants = cva(
         rounded: [],
         full: ['rounded-full'],
       },
+      iconOnly: {
+        true: ['justify-center', 'px-0'],
+      },
     },
     compoundVariants: [
       //sizes
@@ -69,6 +72,27 @@ const _buttonVariants = cva(
         size: 'lg',
         radius: 'rounded',
         className: ['rounded-lg'],
+      },
+      // icon-only sizing (square)
+      {
+        size: 'xs',
+        iconOnly: true,
+        className: ['w-6'],
+      },
+      {
+        size: 'sm',
+        iconOnly: true,
+        className: ['w-7'],
+      },
+      {
+        size: 'md',
+        iconOnly: true,
+        className: ['w-8'],
+      },
+      {
+        size: 'lg',
+        iconOnly: true,
+        className: ['w-10'],
       },
       //solid variants
       {
@@ -236,14 +260,14 @@ export interface ButtonPrimitiveProps
     VariantProps<typeof buttonVariants> {}
 
 export const ButtonPrimitive = forwardRef<ElementRef<'button'>, ButtonPrimitiveProps>(function ButtonPrimitive(
-  { className, color, radius, size, variant, ...buttonProps },
+  { className, color, radius, size, variant, iconOnly, ...buttonProps },
   forwardedRef
 ) {
   return (
     <button
       {...buttonProps}
       ref={forwardedRef}
-      className={twMerge(buttonVariants({ color, radius, size, variant }), className)}
+      className={twMerge(buttonVariants({ color, radius, size, variant, iconOnly }), className)}
     />
   )
 })

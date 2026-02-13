@@ -15,7 +15,7 @@ export enum IconAwesomeEnum {
   CIRCLE_QUESTION = 'icon-regular-circle-question',
   CIRCLE_CHECK = 'icon-regular-circle-check',
   MAGNIFYING_GLASS = 'icon-solid-magnifying-glass',
-  XMARK = 'icon-solid-xmark',
+  XMARK = 'fa-xmark',
   ENVELOPE = 'icon-solid-envelope',
   KEYBOARD = 'icon-solid-keyboard',
   WAVE_PULSE = 'icon-solid-wave-pulse',

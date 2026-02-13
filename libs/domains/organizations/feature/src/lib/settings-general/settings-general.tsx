@@ -23,103 +23,110 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="max-w-content-with-navigation-left p-8">
+      <Section className="p-8">
         <SettingsHeading title="General" />
-
-        <form onSubmit={onSubmit}>
-          <BlockContent title="Organization profile">
-            <div className="flex items-center">
+        <div className="max-w-content-with-navigation-left">
+          <form onSubmit={onSubmit}>
+            <BlockContent title="Organization profile">
+              <div className="flex items-center">
+                <Controller
+                  name="logo_url"
+                  control={control}
+                  render={({ field }) => (
+                    <InputFile dataTestId="input-file" onChange={field.onChange} value={field.value} />
+                  )}
+                />
+                <div className="ml-3">
+                  <p className="mb-1 font-medium text-neutral">{watch('name')}</p>
+                  <span className="block text-xs text-neutral-subtle">
+                    Created since {dateMediumLocalFormat(created_at)}
+                  </span>
+                </div>
+              </div>
+              <hr className="relative -left-5 my-5 w-[calc(100%+41px)] border-0 border-b border-neutral" />
               <Controller
-                name="logo_url"
+                name="name"
                 control={control}
-                render={({ field }) => (
-                  <InputFile dataTestId="input-file" onChange={field.onChange} value={field.value} />
+                rules={{ required: 'Please enter a name.' }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    className="mb-3"
+                    dataTestId="input-name"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Organization name"
+                    error={error?.message}
+                  />
                 )}
               />
-              <div className="ml-3">
-                <p className="mb-1 font-medium text-neutral">{watch('name')}</p>
-                <span className="block text-xs text-neutral-subtle">
-                  Created since {dateMediumLocalFormat(created_at)}
-                </span>
-              </div>
+              <Controller
+                name="description"
+                control={control}
+                render={({ field }) => (
+                  <InputTextArea
+                    dataTestId="input-area"
+                    className="mb-3"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Description"
+                  />
+                )}
+              />
+              <Controller
+                name="website_url"
+                control={control}
+                rules={{
+                  pattern: {
+                    // eslint-disable-next-line no-useless-escape
+                    value: /^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
+                    message: 'The url is not valid',
+                  },
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    className="mb-3"
+                    dataTestId="input-website"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={error?.message}
+                    label="Website"
+                  />
+                )}
+              />
+              <Controller
+                name="admin_emails"
+                control={control}
+                render={({ field }) => (
+                  <InputTags
+                    dataTestId="input-emails"
+                    label="Contact emails"
+                    placeholder="Add new email"
+                    onChange={field.onChange}
+                    tags={field.value}
+                  />
+                )}
+              />
+              <p className="ml-3 mt-1 text-xs text-neutral-subtle">
+                Indicate emails where you want to receive important communications from Qovery. (E.g. cluster upgrade,
+                downtime...)
+              </p>
+            </BlockContent>
+            <div className="flex justify-end">
+              <Button
+                data-testid="submit-button"
+                size="lg"
+                type="submit"
+                disabled={!formState.isValid}
+                loading={loading}
+              >
+                Save
+              </Button>
             </div>
-            <hr className="relative -left-5 my-5 w-[calc(100%+41px)] border-0 border-b border-neutral" />
-            <Controller
-              name="name"
-              control={control}
-              rules={{ required: 'Please enter a name.' }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  className="mb-3"
-                  dataTestId="input-name"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Organization name"
-                  error={error?.message}
-                />
-              )}
-            />
-            <Controller
-              name="description"
-              control={control}
-              render={({ field }) => (
-                <InputTextArea
-                  dataTestId="input-area"
-                  className="mb-3"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Description"
-                />
-              )}
-            />
-            <Controller
-              name="website_url"
-              control={control}
-              rules={{
-                pattern: {
-                  // eslint-disable-next-line no-useless-escape
-                  value: /^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
-                  message: 'The url is not valid',
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  className="mb-3"
-                  dataTestId="input-website"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  label="Website"
-                />
-              )}
-            />
-            <Controller
-              name="admin_emails"
-              control={control}
-              render={({ field }) => (
-                <InputTags
-                  dataTestId="input-emails"
-                  label="Contact emails"
-                  placeholder="Add new email"
-                  onChange={field.onChange}
-                  tags={field.value}
-                />
-              )}
-            />
-            <p className="ml-3 mt-1 text-xs text-neutral-subtle">
-              Indicate emails where you want to receive important communications from Qovery. (E.g. cluster upgrade,
-              downtime...)
-            </p>
-          </BlockContent>
-          <div className="flex justify-end">
-            <Button data-testid="submit-button" size="lg" type="submit" disabled={!formState.isValid} loading={loading}>
-              Save
-            </Button>
-          </div>
-        </form>
+          </form>
+        </div>
       </Section>
     </div>
   )
