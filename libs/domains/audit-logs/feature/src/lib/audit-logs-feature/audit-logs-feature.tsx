@@ -153,30 +153,28 @@ export function AuditLogsFeature() {
 
   // Sync table filters -> queryParams
   useEffect(() => {
+    let nextUrlParams = { ...urlParams }
     for (let i = 0; i < filter.length; i++) {
       const currentFilter: TableFilterProps = filter[i]
       const key = currentFilter.key as keyof EventQueryParams
-
       const currentKey = key
         .toLowerCase()
         .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''))
-      console.log('currentKey', currentKey)
 
       if (currentFilter.value === ALL) {
-        navigate({
-          search: {
-            ...urlParams,
-            [currentKey]: undefined,
-          },
-        })
+        nextUrlParams = {
+          ...nextUrlParams,
+          [currentKey]: undefined,
+        }
       } else {
-        navigate({
-          search: {
-            ...urlParams,
-            [currentKey]: currentFilter.value,
-          },
-        })
+        nextUrlParams = {
+          ...nextUrlParams,
+          [currentKey]: currentFilter.value,
+        }
       }
+      navigate({
+        search: nextUrlParams,
+      })
     }
   }, [filter, urlParams, navigate])
 

@@ -32,9 +32,5 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 })
 
 function RouteComponent() {
-  // Test
-  const params = Route.useSearch()
-  console.log('params', params)
-
   return <AuditLogsFeature />
 }
