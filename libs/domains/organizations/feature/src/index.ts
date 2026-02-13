@@ -88,3 +88,4 @@ export * from './lib/hooks/use-parse-terraform-variables-from-git-repo/use-parse
 export * from './lib/hooks/use-list-tfvars-files-from-git-repo/use-list-tfvars-files-from-git-repo'
 export * from './lib/invoice-banner/invoice-banner'
 export * from './lib/free-trial-banner/free-trial-banner'
+export * from './lib/settings-general/settings-general'

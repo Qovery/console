@@ -22,7 +22,7 @@
   "private": true,
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
-    "@awesome.me/kit-c4457d1be4": "latest",
+    "@awesome.me/kit-22f4eef36a": "latest",
     "@chargebee/chargebee-js-types": "^1.0.8",
     "@docsearch/react": "^3.6.0",
     "@elgorditosalsero/react-gtm-hook": "^2.6.0",

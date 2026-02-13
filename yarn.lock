@@ -269,12 +269,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@awesome.me/kit-c4457d1be4@npm:latest":
-  version: 1.0.24
-  resolution: "@awesome.me/kit-c4457d1be4@npm:1.0.24::__archiveUrl=https%3A%2F%2Fnpm-registry.qovery.com%2F%40awesome.me%2Fkit-c4457d1be4%2F-%2Fkit-c4457d1be4.tgz"
+"@awesome.me/kit-22f4eef36a@npm:latest":
+  version: 1.0.3
+  resolution: "@awesome.me/kit-22f4eef36a@npm:1.0.3"
   dependencies:
-    "@fortawesome/fontawesome-common-types": ^6.5.1
-  checksum: f706088b81960acc65335557e7da9e11201ee2ff58c5d977386b59ca56718bc549854b72a255715446610de28ec9acb8a9e852191a3a2df111985f64c8b478c9
+    "@fortawesome/fontawesome-common-types": ^7.2.0
+  checksum: a929b1a8bf4eb11956ecd24f52ac667114403cf4b5cd8d721101a143203359c18846ccc98d5b726750fd15343b414dd60e7a50b0631c1c8d3260175373f29496
   languageName: node
   linkType: hard
 
@@ -3195,10 +3195,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-common-types@npm:6.5.2, @fortawesome/fontawesome-common-types@npm:^6.5.1":
+"@fortawesome/fontawesome-common-types@npm:6.5.2":
   version: 6.5.2
   resolution: "@fortawesome/fontawesome-common-types@npm:6.5.2"
   checksum: 8164f3e16683db5125634a4fbf3db83a5a7366bb830111ffe8538e1b8f98f8fe6dc35609cf2c595a7d6840e27d3fb45b57faf7340e40e98f0d76207fe8f94e79
+  languageName: node
+  linkType: hard
+
+"@fortawesome/fontawesome-common-types@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "@fortawesome/fontawesome-common-types@npm:7.2.0"
+  checksum: d8886411efb978c5a22374a1076b504b1815641bc4a6dc69b9e630c1e04be2297d8700369f839a95566aad234dd6a5068f9fb84add24122a9314db87073e5a90
   languageName: node
   linkType: hard
 
@@ -6079,7 +6086,7 @@ __metadata:
   resolution: "@qovery/console@workspace:."
   dependencies:
     "@auth0/auth0-react": ^2.2.4
-    "@awesome.me/kit-c4457d1be4": latest
+    "@awesome.me/kit-22f4eef36a": latest
     "@babel/core": ^7.18.13
     "@babel/preset-react": ^7.14.5
     "@chargebee/chargebee-js-react-wrapper": ^0.6.9
