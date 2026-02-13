@@ -53,14 +53,14 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSetting
 import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/route'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/index'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugFeaturesRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/features'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/general'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/general'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/danger-zone'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/summary'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/resources'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/general'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugFeaturesRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/features'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/resources'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsNetworkRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/network'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry'
@@ -69,12 +69,6 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSetting
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/route'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/summary'
-import { Route as AuthenticatedOrganizationOrganizationIdClusterNewRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/new'
-import { Route as AuthenticatedOrganizationOrganizationIdClustersRouteImport } from './routes/_authenticated/organization/$organizationId/clusters'
-import { Route as AuthenticatedOrganizationOrganizationIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/index'
-import { Route as AuthenticatedOrganizationOrganizationIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/overview'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview'
@@ -84,37 +78,6 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/general'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsDeploymentRulesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/deployment-rules'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/danger-zone'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/route'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/index'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/overview'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/danger-zone'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/general'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/index'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/route'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/variables'
-import { Route as AuthenticatedOrganizationOrganizationIdRouteRouteImport } from './routes/_authenticated/organization/$organizationId/route'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRouteImport } from './routes/_authenticated/organization/$organizationId/settings/ai-copilot'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsApiTokenRouteImport } from './routes/_authenticated/organization/$organizationId/settings/api-token'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing-details'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing-summary'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/cloud-credentials'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/container-registries'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/settings/danger-zone'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/settings/general'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRouteImport } from './routes/_authenticated/organization/$organizationId/settings/git-repository-access'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/helm-repositories'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/settings/index'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/labels-annotations'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsMembersRouteImport } from './routes/_authenticated/organization/$organizationId/settings/members'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsRolesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/roles'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/settings/route'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport } from './routes/_authenticated/organization/$organizationId/settings/webhook'
-import { Route as AuthenticatedOrganizationIndexRouteImport } from './routes/_authenticated/organization/index'
-import { Route as AuthenticatedOrganizationRouteRouteImport } from './routes/_authenticated/organization/route'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as LoginAuth0CallbackRouteImport } from './routes/login/auth0-callback'
-import { Route as LoginIndexRouteImport } from './routes/login/index'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -453,17 +416,23 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRout
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute =
-  AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRouteImport.update({
-    id: '/danger-zone',
-    path: '/danger-zone',
-    getParentRoute: () => AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRoute,
-  } as any)
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRouteImport.update(
+    {
+      id: '/danger-zone',
+      path: '/danger-zone',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdClusterCreateSlugSummaryRoute =
-  AuthenticatedOrganizationOrganizationIdClusterCreateSlugSummaryRouteImport.update({
-    id: '/summary',
-    path: '/summary',
-    getParentRoute: () => AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRoute,
-  } as any)
+  AuthenticatedOrganizationOrganizationIdClusterCreateSlugSummaryRouteImport.update(
+    {
+      id: '/summary',
+      path: '/summary',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRoute =
   AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRouteImport.update(
     {
@@ -474,17 +443,23 @@ const AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRoute =
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRoute =
-  AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRouteImport.update({
-    id: '/general',
-    path: '/general',
-    getParentRoute: () => AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRoute,
-  } as any)
+  AuthenticatedOrganizationOrganizationIdClusterCreateSlugGeneralRouteImport.update(
+    {
+      id: '/general',
+      path: '/general',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdClusterCreateSlugFeaturesRoute =
-  AuthenticatedOrganizationOrganizationIdClusterCreateSlugFeaturesRouteImport.update({
-    id: '/features',
-    path: '/features',
-    getParentRoute: () => AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRoute,
-  } as any)
+  AuthenticatedOrganizationOrganizationIdClusterCreateSlugFeaturesRouteImport.update(
+    {
+      id: '/features',
+      path: '/features',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRoute =
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsResourcesRouteImport.update(
     {
@@ -1741,12 +1716,18 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
   {
     AuthenticatedOrganizationOrganizationIdSettingsRouteRoute:
       AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren,
-    AuthenticatedOrganizationOrganizationIdAlertsRoute: AuthenticatedOrganizationOrganizationIdAlertsRoute,
-    AuthenticatedOrganizationOrganizationIdAuditLogsRoute: AuthenticatedOrganizationOrganizationIdAuditLogsRoute,
-    AuthenticatedOrganizationOrganizationIdClustersRoute: AuthenticatedOrganizationOrganizationIdClustersRoute,
-    AuthenticatedOrganizationOrganizationIdOverviewRoute: AuthenticatedOrganizationOrganizationIdOverviewRoute,
-    AuthenticatedOrganizationOrganizationIdIndexRoute: AuthenticatedOrganizationOrganizationIdIndexRoute,
-    AuthenticatedOrganizationOrganizationIdClusterNewRoute: AuthenticatedOrganizationOrganizationIdClusterNewRoute,
+    AuthenticatedOrganizationOrganizationIdAlertsRoute:
+      AuthenticatedOrganizationOrganizationIdAlertsRoute,
+    AuthenticatedOrganizationOrganizationIdAuditLogsRoute:
+      AuthenticatedOrganizationOrganizationIdAuditLogsRoute,
+    AuthenticatedOrganizationOrganizationIdClustersRoute:
+      AuthenticatedOrganizationOrganizationIdClustersRoute,
+    AuthenticatedOrganizationOrganizationIdOverviewRoute:
+      AuthenticatedOrganizationOrganizationIdOverviewRoute,
+    AuthenticatedOrganizationOrganizationIdIndexRoute:
+      AuthenticatedOrganizationOrganizationIdIndexRoute,
+    AuthenticatedOrganizationOrganizationIdClusterNewRoute:
+      AuthenticatedOrganizationOrganizationIdClusterNewRoute,
     AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute:
       AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute,
     AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute:
