@@ -15,7 +15,7 @@ import { StrictMode } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
 import { IntercomProvider } from 'react-use-intercom'
-import { LoaderSpinner, ModalProvider, ToastEnum, toast, toastError } from '@qovery/shared/ui'
+import { LoaderSpinner, ModalProvider, ToastBehavior, ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { INTERCOM, POSTHOG, POSTHOG_APIHOST, QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
 // TODO: Improve this import to use the shared/ui package
@@ -167,6 +167,7 @@ root.render(
     >
       <ModalProvider>
         <App />
+        <ToastBehavior />
       </ModalProvider>
     </FlatProviders>
   </StrictMode>

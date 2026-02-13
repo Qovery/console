@@ -330,9 +330,9 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               <Icon
                 iconName="arrow-turn-down-right"
                 iconStyle="regular"
-                className="ml-1 mr-2 text-2xs text-neutral-300"
+                className="ml-1 mr-2 text-2xs text-neutral-disabled"
               />
-              <span className="mr-3 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
+              <span className="mr-3 inline-flex h-4 items-center rounded-sm bg-surface-info-component px-1 text-2xs font-bold text-info">
                 ALIAS
               </span>
             </div>
@@ -362,9 +362,9 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             <Icon
               iconName="arrow-turn-down-right"
               iconStyle="regular"
-              className="ml-1 mr-2 text-2xs text-neutral-300"
+              className="ml-1 mr-2 text-2xs text-neutral-subtle"
             />
-            <span className="mr-3 inline-flex h-4 items-center rounded-sm bg-brand-500 px-1 text-2xs font-bold text-neutral-50">
+            <span className="mr-3 inline-flex h-4 items-center rounded-sm bg-surface-brand-component px-1 text-2xs font-bold text-brand">
               OVERRIDE
             </span>
           </div>
@@ -395,7 +395,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                       type="button"
                       color="neutral"
                       variant="surface"
-                      className="absolute bottom-1.5 right-1.5 w-9 justify-center"
+                      className="absolute bottom-1.5 right-1.5 w-8 justify-center"
                     >
                       <Icon className="text-sm" iconName="wand-magic-sparkles" />
                     </Button>
@@ -440,7 +440,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                 rightElement={
                   <Tooltip content="Scope can't be changed. Re-create the var with the right scope." side="left">
                     <div>
-                      <Icon iconName="circle-info" className="text-sm text-neutral-350" />
+                      <Icon iconName="circle-info" className="text-sm text-neutral-subtle" />
                     </div>
                   </Tooltip>
                 }

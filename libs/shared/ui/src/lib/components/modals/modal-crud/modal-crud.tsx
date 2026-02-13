@@ -67,7 +67,7 @@ export function ModalCrud(props: ModalCrudProps) {
           <Popover.Trigger>
             <button
               type="button"
-              className="mt-2 cursor-pointer text-sm font-medium text-info transition hover:text-info-hover"
+              className="hover:text-brandHover mt-2 cursor-pointer text-sm font-medium text-brand transition"
             >
               Show how it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
             </button>

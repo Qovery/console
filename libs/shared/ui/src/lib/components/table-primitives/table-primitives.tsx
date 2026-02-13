@@ -22,7 +22,7 @@ const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function Table
   )
 })
 
-interface TableHeaderProps extends ComponentPropsWiwoutRef<'thead'> {}
+interface TableHeaderProps extends ComponentPropsWithoutRef<'thead'> {}
 
 const TableHeader = forwardRef<ElementRef<'thead'>, TableHeaderProps>(function TableHeader({ children, ...rest }, ref) {
   return (

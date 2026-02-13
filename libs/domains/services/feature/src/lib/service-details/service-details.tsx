@@ -296,7 +296,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
         <div className="flex flex-row justify-between">
           {/* XXX: Should be Heading, typography & design wanted */}
           <span className="font-medium text-neutral-400">About</span>
-          <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`}>
+          <Link as="button" color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`}>
             <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-350" />
           </Link>
         </div>
@@ -335,7 +335,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
         <div className="flex flex-row justify-between">
           {/* XXX: Should be Heading, typography & design wanted */}
           <span className="font-medium text-neutral-400">Source</span>
-          <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`}>
+          <Link as="button" color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`}>
             <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-350" />
           </Link>
         </div>
@@ -476,7 +476,11 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                   </span>
                 </Tooltip>
               </span>
-              <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_RESOURCES_URL}`}>
+              <Link
+                as="button"
+                color="current"
+                to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_RESOURCES_URL}`}
+              >
                 <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-350" />
               </Link>
             </div>
@@ -492,6 +496,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
               {/* XXX: Should be Heading, typography & design wanted */}
               <span className="flex items-center gap-1 font-medium text-neutral-400">Values override</span>
               <Link
+                as="button"
                 color="current"
                 to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL}`}
               >

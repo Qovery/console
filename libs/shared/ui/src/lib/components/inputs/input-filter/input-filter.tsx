@@ -58,7 +58,7 @@ export function InputFilter({ name, nameKey, options, onChange, defaultValue, is
             <Button type="button" variant="surface" color="neutral">
               {isLoading ? (
                 <div className="flex w-12 justify-center">
-                  <LoaderSpinner theme="dark" />
+                  <LoaderSpinner />
                 </div>
               ) : (
                 <>

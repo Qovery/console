@@ -18,6 +18,7 @@ const toolbarButtonVariants = cva(['active:scale-100'], {
       green: [],
       red: [],
       yellow: [],
+      current: [],
     },
   },
   compoundVariants: [
