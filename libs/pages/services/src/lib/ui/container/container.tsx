@@ -13,7 +13,7 @@ import {
   useEnvironment,
   useServiceCount,
 } from '@qovery/domains/environments/feature'
-import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
+import { VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   CLUSTER_URL,
@@ -196,7 +196,6 @@ export function Container({ children }: PropsWithChildren) {
     <div className="flex h-14 items-center justify-center px-5">
       {matchEnvVariableRoute ? (
         <>
-          <ShowAllVariablesToggle className="mr-2" />
           <VariablesActionToolbar
             scope="ENVIRONMENT"
             projectId={projectId}

@@ -115,6 +115,12 @@ const ENVIRONMENT_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
   },
   {
+    id: 'variables',
+    label: 'Variables',
+    iconName: 'key',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables',
+  },
+  {
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
