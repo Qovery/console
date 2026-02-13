@@ -4,7 +4,6 @@ import {
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { match } from 'ts-pattern'
-import { APPLICATION_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Heading, Icon, InputSearch, Link, LoaderSpinner, Section, TreeView } from '@qovery/shared/ui'
 import { useAnnotationsGroupAssociatedItems } from '../hooks/use-annotations-group-associated-items/use-annotations-group-associated-items'
 import { useLabelsGroupAssociatedItems } from '../hooks/use-labels-group-associated-items/use-labels-group-associated-items'
@@ -145,10 +144,12 @@ export function LabelAnnotationItemsListModal({
                             <Link
                               color="brand"
                               onClick={() => onClose()}
-                              to={
-                                SERVICES_URL(organizationId, project.project_id, environment.environment_id) +
-                                SERVICES_GENERAL_URL
-                              }
+                              to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+                              params={{
+                                organizationId,
+                                environmentId: environment.environment_id,
+                                projectId: project.project_id,
+                              }}
                               className="text-sm"
                             >
                               {environment.environment_name}
@@ -161,12 +162,13 @@ export function LabelAnnotationItemsListModal({
                                   <Link
                                     color="brand"
                                     onClick={() => onClose()}
-                                    to={APPLICATION_URL(
+                                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/application/$serviceId"
+                                    params={{
                                       organizationId,
-                                      project.project_id,
-                                      environment.environment_id,
-                                      service.service_id
-                                    )}
+                                      environmentId: environment.environment_id,
+                                      serviceId: service.service_id,
+                                      projectId: project.project_id,
+                                    }}
                                     className="flex items-center py-1.5 pl-5 text-sm"
                                   >
                                     <Icon

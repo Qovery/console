@@ -22,7 +22,7 @@ import { useLabelsGroups } from '../hooks/use-labels-groups/use-labels-groups'
 import { LabelAnnotationItemsListModal } from '../label-annotation-items-list-modal/label-annotation-items-list-modal'
 import { LabelCreateEditModal } from '../label-create-edit-modal/label-create-edit-modal'
 
-export function PageOrganizationLabelsAnnotationsFeature() {
+export function SettingsLabelsAnnotations() {
   useDocumentTitle('Annotations - Organization settings')
   const { organizationId = '' } = useParams({ strict: false })
   const { data: annotationsGroups = [], isFetched: isFetchedAnnotations } = useAnnotationsGroups({ organizationId })

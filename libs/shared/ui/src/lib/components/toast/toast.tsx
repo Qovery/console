@@ -45,11 +45,11 @@ export const ToastContent = (
     >
       <div className="flex">
         <div className="mt-[2px] flex h-full justify-center pl-4 pt-2">
-          {status === ToastEnum.SUCCESS && <Icon name="fa-regular fa-check-circle" className="text-positiveInvert" />}
-          {status === ToastEnum.ERROR && <Icon name="fa-solid fa-circle-exclamation" className="text-negativeInvert" />}
-          {status === ToastEnum.WARNING && (
-            <Icon name="fa-regular fa-circle-exclamation" className="text-warningInvert" />
+          {status === ToastEnum.SUCCESS && <Icon iconName="check-circle" className="text-positiveInvert" />}
+          {status === ToastEnum.ERROR && (
+            <Icon iconName="circle-exclamation" iconStyle="solid" className="text-negativeInvert" />
           )}
+          {status === ToastEnum.WARNING && <Icon iconName="circle-exclamation" className="text-warningInvert" />}
         </div>
         <div className="max-w-[256px] break-words py-2 pl-3 pr-4">
           {title && (
