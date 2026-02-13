@@ -99,9 +99,15 @@ jobs:
       parallel-commands: |
         npx nx-cloud record -- npx nx format:check
       parallel-commands-on-agents: |
-        npx nx affected --target=lint --parallel=3
-        npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --coverage --coverageReporters=lcov --silent
-        npx nx affected --target=build --parallel=3
+        if [ "${{ inputs.flow }}" = "pull-request" ]; then
+          npx nx run console-v5:lint
+          npx nx run-many --target=test --projects=console-v5 --parallel=3 --configuration=${{ inputs.configuration }} --ci --coverage --coverageReporters=lcov --silent
+          npx nx run console-v5:build --configuration=development
+        else
+          npx nx affected --target=lint --parallel=3
+          npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --coverage --coverageReporters=lcov --silent
+          npx nx affected --target=build --parallel=3
+        fi
       artifacts-path: |
         dist/
         coverage/
