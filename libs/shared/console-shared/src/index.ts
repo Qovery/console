@@ -29,3 +29,4 @@ export * from './lib/application-settings/ui/application-settings-resources/appl
 export * from './lib/application-settings/ui/application-settings-healthchecks/application-settings-healthchecks'
 export * from './lib/application-settings/utils/probe-formatted'
 export * from './lib/settings-heading/settings-heading'
+export * from './lib/apply-immediately-checkbox/apply-immediately-checkbox'

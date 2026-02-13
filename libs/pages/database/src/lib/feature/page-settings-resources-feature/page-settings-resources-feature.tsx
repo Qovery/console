@@ -1,20 +1,20 @@
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { type DatabaseEditRequest } from 'qovery-typescript-axios'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type Database } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
-export const handleSubmit = (data: FieldValues, database: Database) => {
-  const cloneDatabase = Object.assign({}, database)
-
-  cloneDatabase.cpu = data['cpu']
-  cloneDatabase.memory = Number(data['memory'])
-  cloneDatabase.storage = Number(data['storage'])
-  cloneDatabase.instance_type = data['instance_type']
-
-  return cloneDatabase
+export const handleSubmit = (data: FieldValues, database: Database): Partial<DatabaseEditRequest> => {
+  return {
+    cpu: data['cpu'],
+    memory: Number(data['memory']),
+    storage: Number(data['storage']),
+    instance_type: data['instance_type'],
+    apply_immediately: data['apply_immediately'],
+  }
 }
 
 export function PageSettingsResourcesFeature() {
@@ -36,6 +36,7 @@ export function PageSettingsResourcesFeature() {
       storage: database?.storage,
       cpu: database?.cpu || 10,
       instance_type: database?.instance_type,
+      apply_immediately: false,
     },
   })
 
