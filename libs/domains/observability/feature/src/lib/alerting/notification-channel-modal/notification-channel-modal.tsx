@@ -236,9 +236,14 @@ export function NotificationChannelModal({
     }))
     .with('EMAIL', () => ({
       title: isEdit ? 'Edit email' : 'New email',
-      description: isEdit
-        ? undefined
-        : 'Enter the email address you want to add as a selectable notification channel for your alerts',
+      description: isEdit ? undefined : (
+        <>
+          Enter the email address you want to add as a selectable notification channel for your alerts.{' '}
+          <ExternalLink href="https://www.qovery.com/docs/configuration/integrations/email" size="sm">
+            How to configure it
+          </ExternalLink>
+        </>
+      ),
     }))
     .exhaustive()
 
