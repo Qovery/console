@@ -4,6 +4,9 @@ import { FieldVariableSuggestion, type FieldVariableSuggestionProps } from './fi
 const props: FieldVariableSuggestionProps = {
   environmentId: '000',
   onChange: jest.fn(),
+  inputProps: {
+    name: 'test-input',
+  },
 }
 
 jest.mock('../hooks/use-variables/use-variables', () => ({
@@ -43,8 +46,13 @@ describe('FieldVariableSuggestion', () => {
     const button = screen.getByRole('button')
     await userEvent.click(button)
 
-    const dropdownContent = await screen.findByRole('menu')
-
-    expect(dropdownContent).toMatchSnapshot()
+    const menu = await screen.findByRole('menu')
+    expect(screen.getByPlaceholderText('Search...')).toBeInTheDocument()
+    const truncatedTexts = menu.querySelectorAll('[data-testid="truncate-text"]')
+    const hasVariable = Array.from(truncatedTexts).some((node) =>
+      (node.textContent ?? '').includes('QOVERY_CONTAINER_Z04308DE2_HOST_INT')
+    )
+    expect(hasVariable).toBe(true)
+    expect(screen.getByText(/back-end-A/)).toBeInTheDocument()
   })
 })

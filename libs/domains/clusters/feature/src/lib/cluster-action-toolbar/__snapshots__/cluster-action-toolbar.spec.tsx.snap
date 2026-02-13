@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
 <body
@@ -41,11 +41,11 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-play mr-4"
+          class="fa-regular fa-play mr-4"
         />
         <i
           aria-hidden="true"
-          class="fa-solid fa-chevron-down "
+          class="fa-regular fa-chevron-down "
         />
       </div>
     </button>
@@ -59,7 +59,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-scroll "
+        class="fa-regular fa-scroll "
       />
     </button>
     <button
@@ -72,7 +72,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-terminal "
+        class="fa-regular fa-terminal "
       />
     </button>
     <button
@@ -93,7 +93,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-ellipsis-v "
+          class="fa-regular fa-ellipsis-v "
           width="20"
         />
       </div>
@@ -107,7 +107,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
     <div
       aria-labelledby="radix-:r6:"
       aria-orientation="vertical"
-      class="flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:border dark:border-neutral-500 dark:bg-neutral-550"
+      class="flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded"
       data-align="start"
       data-orientation="vertical"
       data-radix-menu-content=""
@@ -120,7 +120,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
       tabindex="-1"
     >
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 relative"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral relative"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -128,12 +128,12 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-rotate-right text-sm mr-3 text-brand-500"
+          class="fa-regular fa-rotate-right text-sm mr-3 text-brand-9"
         />
         Update
       </div>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -141,7 +141,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-circle-stop text-sm mr-3 text-brand-500"
+          class="fa-regular fa-circle-stop text-sm mr-3 text-brand-9"
         />
         Stop
       </div>
@@ -197,11 +197,11 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-play mr-4"
+          class="fa-regular fa-play mr-4"
         />
         <i
           aria-hidden="true"
-          class="fa-solid fa-chevron-down "
+          class="fa-regular fa-chevron-down "
         />
       </div>
     </button>
@@ -215,7 +215,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-scroll "
+        class="fa-regular fa-scroll "
       />
     </button>
     <button
@@ -228,7 +228,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-terminal "
+        class="fa-regular fa-terminal "
       />
     </button>
     <button
@@ -250,7 +250,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-ellipsis-v "
+          class="fa-regular fa-ellipsis-v "
           width="20"
         />
       </div>
@@ -264,7 +264,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
     <div
       aria-labelledby="radix-:r12:"
       aria-orientation="vertical"
-      class="flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:border dark:border-neutral-500 dark:bg-neutral-550"
+      class="flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded"
       data-align="start"
       data-orientation="vertical"
       data-radix-menu-content=""
@@ -277,7 +277,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       tabindex="-1"
     >
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -285,12 +285,12 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-circle-info text-sm mr-3 text-brand-500"
+          class="fa-regular fa-circle-info text-sm mr-3 text-brand-9"
         />
         Access info
       </div>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -298,12 +298,12 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-clock-rotate-left text-sm mr-3 text-brand-500"
+          class="fa-regular fa-clock-rotate-left text-sm mr-3 text-brand-9"
         />
         See audit logs
       </div>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -311,12 +311,12 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy text-sm mr-3 text-brand-500"
+          class="fa-regular fa-copy text-sm mr-3 text-brand-9"
         />
         Copy identifier
       </div>
       <a
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 gap-0"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
         href="/organization/123/cluster/0/settings"
@@ -325,12 +325,12 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-gear text-sm mr-3 text-brand-500"
+          class="fa-regular fa-gear text-sm mr-3 text-brand-9"
         />
         Open settings
       </a>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -338,17 +338,17 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-download text-sm mr-3 text-brand-500"
+          class="fa-regular fa-download text-sm mr-3 text-brand-9"
         />
         Get Kubeconfig
       </div>
       <div
         aria-orientation="horizontal"
-        class="my-1 h-[1px] w-full bg-neutral-200 dark:bg-neutral-600"
+        class="my-1 h-[1px] w-full bg-surface-neutral-component"
         role="separator"
       />
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-red-50 data-[highlighted]:text-red-600 cursor-pointer hover:bg-red-50 text-red-600"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-surface-negative-component data-[highlighted]:text-negative hover:text-negative cursor-pointer hover:bg-surface-negative-component text-negative"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -356,7 +356,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-trash text-sm mr-3 text-red-600"
+          class="fa-regular fa-trash text-sm mr-3 text-negative"
         />
         Delete cluster
       </div>
@@ -412,11 +412,11 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-play mr-4"
+          class="fa-regular fa-play mr-4"
         />
         <i
           aria-hidden="true"
-          class="fa-solid fa-chevron-down "
+          class="fa-regular fa-chevron-down "
         />
       </div>
     </button>
@@ -430,7 +430,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-scroll "
+        class="fa-regular fa-scroll "
       />
     </button>
     <button
@@ -443,7 +443,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-terminal "
+        class="fa-regular fa-terminal "
       />
     </button>
     <button
@@ -465,7 +465,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-ellipsis-v "
+          class="fa-regular fa-ellipsis-v "
           width="20"
         />
       </div>
@@ -479,7 +479,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
     <div
       aria-labelledby="radix-:r1q:"
       aria-orientation="vertical"
-      class="flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:border dark:border-neutral-500 dark:bg-neutral-550"
+      class="flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded"
       data-align="start"
       data-orientation="vertical"
       data-radix-menu-content=""
@@ -492,7 +492,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       tabindex="-1"
     >
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -500,12 +500,12 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-circle-info text-sm mr-3 text-brand-500"
+          class="fa-regular fa-circle-info text-sm mr-3 text-brand-9"
         />
         Access info
       </div>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -513,12 +513,12 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-clock-rotate-left text-sm mr-3 text-brand-500"
+          class="fa-regular fa-clock-rotate-left text-sm mr-3 text-brand-9"
         />
         See audit logs
       </div>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -526,12 +526,12 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy text-sm mr-3 text-brand-500"
+          class="fa-regular fa-copy text-sm mr-3 text-brand-9"
         />
         Copy identifier
       </div>
       <a
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 gap-0"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
         href="/organization/123/cluster/0/settings"
@@ -540,12 +540,12 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-gear text-sm mr-3 text-brand-500"
+          class="fa-regular fa-gear text-sm mr-3 text-brand-9"
         />
         Open settings
       </a>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -553,17 +553,17 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-download text-sm mr-3 text-brand-500"
+          class="fa-regular fa-download text-sm mr-3 text-brand-9"
         />
         Get Kubeconfig
       </div>
       <div
         aria-orientation="horizontal"
-        class="my-1 h-[1px] w-full bg-neutral-200 dark:bg-neutral-600"
+        class="my-1 h-[1px] w-full bg-surface-neutral-component"
         role="separator"
       />
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-red-50 data-[highlighted]:text-red-600 cursor-pointer hover:bg-red-50 text-red-600"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-surface-negative-component data-[highlighted]:text-negative hover:text-negative cursor-pointer hover:bg-surface-negative-component text-negative"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -571,7 +571,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-trash text-sm mr-3 text-red-600"
+          class="fa-regular fa-trash text-sm mr-3 text-negative"
         />
         Delete cluster
       </div>

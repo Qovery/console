@@ -58,13 +58,13 @@ export function DropdownVariable({
       <Popover.Root open={open} onOpenChange={_onOpenChange}>
         <Popover.Trigger>{children}</Popover.Trigger>
         <DropdownMenu.Content asChild>
-          <Popover.Content className="flex max-h-60 w-[400px] min-w-[400px] flex-col p-2">
+          <Popover.Content className="z-50 flex max-h-60 w-[400px] min-w-[400px] flex-col p-2">
             {/*
                 `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
                 fix issue with item focus if we use input search
                 https://github.com/radix-ui/primitives/issues/2193#issuecomment-1790564604
               */}
-            <div className="bg-white dark:bg-neutral-700" onKeyDown={(e) => e.stopPropagation()}>
+            <div className="bg-surface-neutral" onKeyDown={(e) => e.stopPropagation()}>
               <InputSearch
                 placeholder="Search..."
                 className="mb-1"
@@ -97,7 +97,7 @@ export function DropdownVariable({
                             <Truncate text={variable.service_name} truncateLimit={44} />
                           </span>
                         ) : (
-                          <span className="text-xs font-normal text-neutral-300">
+                          <span className="text-xs font-normal text-neutral-subtle">
                             Defined at the project or environment level
                           </span>
                         )}
@@ -109,14 +109,14 @@ export function DropdownVariable({
                             side="left"
                           >
                             <span>
-                              <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-400" />
+                              <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
                             </span>
                           </Tooltip>
                         ) : (
                           variable.description && (
                             <Tooltip content={variable.description} side="bottom">
                               <span>
-                                <Icon iconName="info-circle" iconStyle="regular" className="text-neutral-400" />
+                                <Icon iconName="info-circle" iconStyle="regular" className="text-neutral" />
                               </span>
                             </Tooltip>
                           )
@@ -135,8 +135,8 @@ export function DropdownVariable({
                 })
               ) : (
                 <div className="px-3 py-6 text-center">
-                  <Icon iconName="wave-pulse" className="text-neutral-350" />
-                  <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
+                  <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+                  <p className="mt-1 text-xs font-medium text-neutral-subtle">No result for this search</p>
                 </div>
               )}
             </div>

@@ -7,6 +7,9 @@ export interface ButtonIconActionProps {
   className?: string
 }
 
+/**
+ * @deprecated Use the standard <Button> component instead.
+ */
 export function ButtonIconAction(props: ButtonIconActionProps) {
   const { actions, className = '' } = props
 

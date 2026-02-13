@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { type ChangeEventHandler, type ReactNode, forwardRef, useEffect, useRef, useState } from 'react'
 import Icon from '../../icon/icon'
 
@@ -51,7 +52,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
 
   const inputActions = hasFocus ? 'input--focused' : disabled ? 'input--disabled' : ''
 
-  const isDisabled = disabled ? 'input--disabled !border-neutral-250' : ''
+  const isDisabled = disabled ? 'input--disabled !border-neutral' : ''
 
   const displayPicker = () => {
     const input = inputRef.current?.querySelector('input')
@@ -76,7 +77,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
       <div className="relative">
         <div
           aria-label="input-container"
-          className={`input ${inputActions} ${isDisabled} ${hasError} ${hasLabelUp} `}
+          className={`input group ${inputActions} ${isDisabled} ${hasError} ${hasLabelUp} `}
           ref={inputRef}
         >
           <div className={`${disabled ? 'pointer-events-none' : ''}`}>
@@ -102,12 +103,12 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
             />
             {isInputDate && (
               <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                <Icon iconName="angle-down" className="text-sm text-neutral-400" />
+                <Icon iconName="angle-down" className="text-sm text-neutral-subtle group-hover:text-neutral" />
               </div>
             )}
             {(currentValue as string)?.length > 0 && type === 'password' && (
               <div
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 transition-colors hover:text-neutral-400"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral transition-colors hover:text-neutral"
                 onClick={() => (currentType === 'password' ? setCurrentType('text') : setCurrentType('password'))}
               >
                 {currentType === 'password' && <Icon iconName="eye" className="text-sm" />}
@@ -117,13 +118,18 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
           </div>
         </div>
         {!isInputDate && rightElement && (
-          <div data-testid="right-floating-component" className="absolute right-4 top-1/2 -translate-y-1/2">
+          <div
+            data-testid="right-floating-component"
+            className={clsx('absolute right-4 top-1/2 -translate-y-1/2 text-neutral-subtle hover:text-neutral', {
+              'pointer-events-none text-neutral-disabled': disabled,
+            })}
+          >
             {rightElement}
           </div>
         )}
       </div>
-      {hint && <p className="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50">{hint}</p>}
-      {error && <p className="mt-0.5 px-3 text-xs font-medium text-red-500">{error}</p>}
+      {hint && !error && <p className="mt-0.5 px-3 text-xs text-neutral-subtle">{hint}</p>}
+      {error && <p className="mt-0.5 px-3 text-xs text-negative">{error}</p>}
     </div>
   )
 })

@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
-import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Icon, Link, ProgressBar, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { calculatePercentage, pluralize } from '@qovery/shared/util-js'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
@@ -65,21 +64,21 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
     <div className="flex flex-col gap-1">
       <div className="flex items-center">
         <div className="flex w-full items-center gap-1.5">
-          <Icon iconName="check-circle" iconStyle="regular" className="text-green-400" />
+          <Icon iconName="check-circle" iconStyle="regular" className="text-positive" />
           <span>Healthy {pluralize(healthyNodes - warningNodes, 'node', 'nodes')}</span>
           <span className="ml-auto block font-semibold">{healthyNodes - warningNodes}</span>
         </div>
       </div>
       {warningNodes > 0 && (
         <div className="flex w-full items-center gap-1.5">
-          <Icon iconName="exclamation-circle" iconStyle="regular" className="text-yellow-500" />
+          <Icon iconName="exclamation-circle" iconStyle="regular" className="text-warning" />
           <span>Warning {pluralize(warningNodes, 'node', 'nodes')}</span>
           <span className="ml-auto block font-semibold">{warningNodes}</span>
         </div>
       )}
       {deployingNodes > 0 && (
         <div className="flex w-full items-center gap-1.5">
-          <Icon iconName="exclamation-circle" iconStyle="regular" className="text-brand-300" />
+          <Icon iconName="exclamation-circle" iconStyle="regular" className="text-brand" />
           <span>Deploying {pluralize(deployingNodes, 'node', 'nodes')}</span>
           <span className="ml-auto block font-semibold">{deployingNodes}</span>
         </div>
@@ -88,10 +87,10 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
   )
 
   return (
-    <div className="flex flex-col justify-between rounded border border-neutral-250 p-5">
+    <div className="flex flex-col justify-between rounded border border-neutral bg-surface-neutral p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm text-neutral-350">Nodes usage</p>
+          <p className="text-sm text-neutral-subtle">Nodes usage</p>
           <Skeleton
             width={32}
             height={32}
@@ -99,7 +98,7 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
             className={!cluster || metricsNotAvailable ? 'mt-1' : ''}
             rounded
           >
-            <span className="text-[28px] font-bold text-neutral-400">{metrics?.nodes?.length}</span>
+            <span className="text-[28px] font-bold text-neutral">{metrics?.nodes?.length}</span>
           </Skeleton>
         </div>
         {match(cluster?.cloud_provider)
@@ -111,7 +110,7 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
               classNameContent={isMaxNodesSizeReached ? 'py-2' : ''}
               content={
                 isMaxNodesSizeReached ? (
-                  <span className="block max-w-[194px] border-l-[3px] border-yellow-500 pl-2.5 text-sm">
+                  <span className="block max-w-[194px] border-l-[3px] border-warning-strong pl-2.5 text-sm">
                     Maximum node usage detected. Review affected services below
                   </span>
                 ) : (
@@ -120,10 +119,12 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
               }
             >
               <Link
+                as="button"
                 color="current"
-                to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+                params={{ organizationId, clusterId }}
               >
-                <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-300" />
+                <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-subtle" />
               </Link>
             </Tooltip>
           ))}
@@ -131,18 +132,16 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
       <Skeleton width="100%" height={20} show={!cluster || metricsNotAvailable}>
         <div className="flex w-full flex-col gap-2.5">
           {shouldDisplayMinMaxNodes && (
-            <div className="flex items-center justify-between text-sm text-neutral-350">
+            <div className="flex items-center justify-between text-sm text-neutral-subtle">
               <span>min: {cluster?.min_running_nodes}</span>
               <span>max: {cluster?.max_running_nodes}</span>
             </div>
           )}
           <Tooltip content={tooltipContent} classNameContent="w-[157px] px-2.5 py-1.5">
             <ProgressBar.Root>
-              {deployingPercentage > 0 && (
-                <ProgressBar.Cell value={deployingPercentage} color="var(--color-brand-500" />
-              )}
-              {healthyPercentage > 0 && <ProgressBar.Cell value={healthyPercentage} color="var(--color-green-500)" />}
-              {warningPercentage > 0 && <ProgressBar.Cell value={warningPercentage} color="var(--color-yellow-500)" />}
+              {deployingPercentage > 0 && <ProgressBar.Cell value={deployingPercentage} color="var(--brand-9)" />}
+              {healthyPercentage > 0 && <ProgressBar.Cell value={healthyPercentage} color="var(--positive-9)" />}
+              {warningPercentage > 0 && <ProgressBar.Cell value={warningPercentage} color="var(--warning-9)" />}
             </ProgressBar.Root>
           </Tooltip>
         </div>

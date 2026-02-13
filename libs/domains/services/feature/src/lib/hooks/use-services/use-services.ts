@@ -6,9 +6,10 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseServicesProps {
   environmentId?: string
+  suspense?: boolean
 }
 
-export function useServices({ environmentId }: UseServicesProps) {
+export function useServices({ environmentId, suspense = false }: UseServicesProps) {
   const { data: services, isLoading: isServicesLoading } = useQuery({
     ...queries.services.list(environmentId!),
     select(services) {
@@ -16,6 +17,7 @@ export function useServices({ environmentId }: UseServicesProps) {
       return services
     },
     enabled: Boolean(environmentId),
+    suspense,
   })
 
   const runningStatusResults = useQueries({

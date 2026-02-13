@@ -3,7 +3,6 @@ import PasswordShowHide, { type PasswordShowHideProps } from './password-show-hi
 
 const defaultProps: PasswordShowHideProps = {
   value: 'test value',
-  defaultVisible: false,
 }
 
 describe('PasswordShowHide', () => {
@@ -45,7 +44,6 @@ describe('PasswordShowHide', () => {
   it('should show the tooltip showing the whole value if visible mode', () => {
     const props: PasswordShowHideProps = {
       ...defaultProps,
-      defaultVisible: true,
     }
     const { baseElement } = render(<PasswordShowHide {...props} />)
 

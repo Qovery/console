@@ -1,14 +1,27 @@
 @use 'sass:meta';
 @use 'base/variable';
-@import '@awesome.me/kit-c4457d1be4/icons/css/fontawesome.css';
-@import '@awesome.me/kit-c4457d1be4/icons/css/solid.css';
-@import '@awesome.me/kit-c4457d1be4/icons/css/regular.css';
-@import '@awesome.me/kit-c4457d1be4/icons/css/brands.css';
+@use 'base/themes';
+
+@import '@awesome.me/kit-22f4eef36a/icons/css/fontawesome.css';
+@import '@awesome.me/kit-22f4eef36a/icons/css/solid.css';
+@import '@awesome.me/kit-22f4eef36a/icons/css/regular.css';
+@import '@awesome.me/kit-22f4eef36a/icons/css/brands.css';
 
 @tailwind components;
 @tailwind base;
 @tailwind utilities;
 
+// Z-index variables
+:root {
+  --header-zindex: 10;
+  --dropdown-zindex: 20;
+  --overlay-zindex: 40;
+  --modal-zindex: 50;
+  --tooltip-zindex: 50;
+  --toast-zindex: 60;
+}
+
+// Old colors variables
 :root {
   --color-neutral-50: theme('colors.neutral.50');
   --color-neutral-100: theme('colors.neutral.100');
@@ -124,15 +137,31 @@
 @include meta.load-css('components/date-picker');
 
 body {
-  overflow-x: hidden;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizelegibility;
-  background: theme('colors.neutral.200');
   min-height: 100vh;
 
   main:not(.h-screen, .layout-onboarding) {
     height: calc(100vh - theme('spacing.16'));
+  }
+
+  button,
+  a {
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid theme('colors.brand.11');
+      outline-offset: 2px;
+    }
+  }
+
+  ::selection {
+    background: theme('colors.surface.neutral.componentHover');
+    color: theme('colors.surface.neutralInvert.DEFAULT');
   }
 }
 
@@ -164,8 +193,8 @@ svg:focus,
   min-height: 52px;
   cursor: pointer;
   border-radius: 0.25rem;
-  border: 1px solid var(--color-neutral-250);
-  background-color: white;
+  border: 1px solid var(--neutral-7);
+  background-color: var(--bg-background);
   padding: 0.5rem 0.75rem;
   transition:
     all 120ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -192,7 +221,7 @@ svg:focus,
   font-size: 0.75rem;
   line-height: 1rem;
   letter-spacing: 0.002em;
-  color: var(--color-neutral-350);
+  color: var(--color-neutral-subtle);
   font-family: Roboto, Helvetica, sans-serif;
   font-weight: 400;
   margin-bottom: 0.25rem;
@@ -225,4 +254,8 @@ svg:focus,
   display: block !important;
   width: 100% !important;
   min-height: 20px !important;
+}
+
+.chargebee-field-wrapper input {
+  color: green;
 }

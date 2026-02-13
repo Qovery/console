@@ -3,13 +3,13 @@ name: Pull request
 on:
   pull_request:
     branches:
-      - staging
+      - '**'
 jobs:
   test-build-and-deploy:
     uses: ./.github/workflows/test-build-and-deploy.yml
     with:
       flow: pull-request
-      branch: staging
+      branch: ${{ github.base_ref }}
       configuration: staging
       project-name: Console V3
       environment-name: staging

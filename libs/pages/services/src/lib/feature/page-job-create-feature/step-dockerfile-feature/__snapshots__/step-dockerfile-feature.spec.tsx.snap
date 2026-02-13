@@ -18,7 +18,7 @@ exports[`DockerfileSettings should match snapshot 1`] = `
             class="flex flex-col items-start"
           >
             <h1
-              class="text-neutral-400 text-xl font-bold mb-2"
+              class="text-neutral text-2xl font-bold mb-2"
             >
               Dockerfile
             </h1>
@@ -131,7 +131,7 @@ exports[`DockerfileSettings should match snapshot 1`] = `
               >
                 <div>
                   <h2
-                    class="text-neutral-400 text-base font-bold mb-2"
+                    class="text-neutral text-base font-bold mb-2"
                   >
                     Dockerfile as raw file
                   </h2>
@@ -160,7 +160,7 @@ exports[`DockerfileSettings should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-pen "
+                        class="fa-regular fa-pen "
                       />
                     </button>
                   </div>

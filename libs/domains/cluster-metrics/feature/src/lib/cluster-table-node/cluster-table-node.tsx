@@ -33,8 +33,8 @@ function MetricProgressBar({
     <div className="flex w-full items-center gap-1 text-ssm">
       <span
         className={clsx('flex min-w-8 items-center gap-1 whitespace-nowrap', {
-          'text-red-500': isPressure,
-          'text-neutral-400': !isPressure,
+          'text-negative': isPressure,
+          'text-neutral-subtle': !isPressure,
         })}
       >
         {totalPercentage}%
@@ -49,13 +49,13 @@ function MetricProgressBar({
       <Tooltip
         content={
           <div className="flex flex-col gap-1 font-normal">
-            <div className="flex items-center justify-between border-b border-neutral-400">
+            <div className="flex items-center justify-between border-b border-neutralInvert">
               <span className="px-2.5 py-1.5">{type === 'cpu' ? 'CPU' : 'Memory'}</span>
             </div>
             <div className="flex flex-col gap-1 px-2.5 py-1.5">
               <div className="flex w-full items-center gap-1.5">
                 <span className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-brand-500" />
+                  <span className="h-2 w-2 rounded-full bg-brand-9" />
                   Reserved
                 </span>
                 <span className="ml-auto block">
@@ -63,7 +63,7 @@ function MetricProgressBar({
                 </span>
               </div>
             </div>
-            <div className="flex items-center justify-between border-t border-neutral-400 px-2.5 py-1.5">
+            <div className="flex items-center justify-between border-t border-neutralInvert px-2.5 py-1.5">
               <span>Total Available</span>
               <span className="ml-auto block">
                 {total} {unit}
@@ -75,7 +75,7 @@ function MetricProgressBar({
       >
         <div className="relative w-full">
           <ProgressBar.Root>
-            <ProgressBar.Cell value={reservedPercentage} color="var(--color-brand-400)" />
+            <ProgressBar.Cell value={reservedPercentage} color="var(--brand-9)" />
           </ProgressBar.Root>
         </div>
       </Tooltip>
@@ -130,16 +130,14 @@ export function ClusterTableNode({
   // Using div with flex instead of Table.Root for better alignment with cluster-table-nodepool
   // Ensures consistent column widths and spacing between both tables
   return (
-    <div
-      className={twMerge('divide-y divide-neutral-200 overflow-hidden border-t border-neutral-200 text-ssm', className)}
-    >
-      <div className="flex divide-x divide-neutral-200 bg-neutral-100 font-medium text-neutral-350">
-        <div className="flex h-8 w-1/4 items-center px-3">Nodes</div>
-        <div className="flex h-8 w-1/4 items-center px-3">CPU</div>
-        <div className="flex h-8 w-1/4 items-center px-3">Memory</div>
-        <div className="flex h-8 w-[calc(35%/3)] items-center px-3">Instance</div>
-        <div className="flex h-8 w-[calc(20%/3)] items-center px-3">Disk</div>
-        <div className="flex h-8 w-[calc(20%/3)] items-center px-3">Age</div>
+    <div className={twMerge('divide-y divide-neutral overflow-hidden border-t border-neutral text-ssm', className)}>
+      <div className="flex divide-x divide-neutral bg-surface-neutral-subtle font-medium text-neutral-subtle">
+        <div className="flex h-8 w-1/4 items-center px-3 text-neutral-subtle">Nodes</div>
+        <div className="flex h-8 w-1/4 items-center px-3 text-neutral-subtle">CPU</div>
+        <div className="flex h-8 w-1/4 items-center px-3 text-neutral-subtle">Memory</div>
+        <div className="flex h-8 w-[calc(35%/3)] items-center px-3 text-neutral-subtle">Instance</div>
+        <div className="flex h-8 w-[calc(20%/3)] items-center px-3 text-neutral-subtle">Disk</div>
+        <div className="flex h-8 w-[calc(20%/3)] items-center px-3 text-neutral-subtle">Age</div>
       </div>
 
       {nodes?.map((node) => {
@@ -185,12 +183,12 @@ export function ClusterTableNode({
             key={node.name}
             className={twMerge(
               clsx(
-                'flex divide-x divide-neutral-200 transition-colors hover:bg-neutral-100',
-                isWarning && 'bg-yellow-50 hover:bg-yellow-50'
+                'flex divide-x divide-neutral bg-surface-neutral-subtle transition-colors hover:bg-surface-neutral-componentHover',
+                isWarning && 'bg-surface-warning-subtle hover:bg-surface-warning-subtle'
               )
             )}
           >
-            <div className="flex h-12 w-1/4 min-w-0 items-center gap-2.5 px-5 font-medium text-neutral-400">
+            <div className="flex h-12 w-1/4 min-w-0 items-center gap-2.5 px-5 font-medium text-neutral">
               <Tooltip content={status()}>
                 <span className="flex items-center gap-1">
                   {isWarning ? (
@@ -225,7 +223,7 @@ export function ClusterTableNode({
                 isPressure={isMemoryPressure}
               />
             </div>
-            <div className="flex h-12 w-[calc(35%/3)] items-center gap-2 overflow-hidden px-3">
+            <div className="flex h-12 w-[calc(35%/3)] items-center gap-2 overflow-hidden px-3 text-neutral-subtle">
               <div className="flex items-center gap-1.5">
                 <Badge variant="surface" radius="full" className="lowercase">
                   {node.instance_type?.replace('_', ' ')}
@@ -239,8 +237,15 @@ export function ClusterTableNode({
               {node.labels[KEY_KARPENTER_CAPACITY_TYPE] === 'spot' && (
                 <Tooltip content="Spot instance">
                   <Badge variant="surface" radius="full" className="w-6 justify-center p-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 12 12">
-                      <g fill="#383E50" fillRule="evenodd" clipPath="url(#clip0_29751_96020)" clipRule="evenodd">
+                    <svg
+                      className="text-neutral-subtle"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="12"
+                      height="12"
+                      fill="none"
+                      viewBox="0 0 12 12"
+                    >
+                      <g fill="currentColor" fillRule="evenodd" clipPath="url(#clip0_29751_96020)" clipRule="evenodd">
                         <path d="M1.5 11.625c0-.31.252-.562.563-.562h7.874a.562.562 0 1 1 0 1.124H2.064a.56.56 0 0 1-.563-.562M1.5.375c0-.31.252-.562.563-.562h7.874a.562.562 0 1 1 0 1.125H2.064A.563.563 0 0 1 1.5.375"></path>
                         <path d="M5.602 5.602c.22-.22.576-.22.796 0L8.88 8.085c.316.316.494.746.494 1.193v2.347a.562.562 0 1 1-1.125 0V9.278c0-.149-.06-.292-.165-.397L6 6.795 3.915 8.881a.56.56 0 0 0-.165.397v2.347a.562.562 0 1 1-1.125 0V9.278c0-.447.178-.876.494-1.193z"></path>
                         <path d="M3.188-.187c.31 0 .562.251.562.562v2.347c0 .149.06.292.165.397L6 5.205l2.085-2.086a.56.56 0 0 0 .165-.397V.375a.563.563 0 0 1 1.125 0v2.347c0 .447-.178.876-.494 1.193L6.398 6.398a.563.563 0 0 1-.796 0L3.12 3.915a1.7 1.7 0 0 1-.494-1.193V.375c0-.31.252-.562.563-.562"></path>
@@ -257,21 +262,21 @@ export function ClusterTableNode({
             </div>
             <div
               className={twMerge(
-                clsx('flex h-12 w-[calc(20%/3)] items-center px-3 text-neutral-400', {
-                  'text-red-500': isDiskPressure,
+                clsx('flex h-12 w-[calc(20%/3)] items-center px-3 text-neutral-subtle', {
+                  'text-negative': isDiskPressure,
                 })
               )}
             >
               {formatNumber(mibToGib(node.resources_capacity.ephemeral_storage_mib || 0))} GB
               {isDiskPressure && (
                 <Tooltip content="Node has disk pressure condition. Update the size or your instance type.">
-                  <span className="ml-1 inline-block text-red-500">
+                  <span className="ml-1 inline-block text-negative">
                     <Icon iconName="circle-exclamation" iconStyle="regular" />
                   </span>
                 </Tooltip>
               )}
             </div>
-            <div className="flex h-12 w-[calc(20%/3)] items-center px-3 text-neutral-400">
+            <div className="flex h-12 w-[calc(20%/3)] items-center px-3 text-neutral-subtle">
               {timeAgo(new Date(node.created_at), true)}
             </div>
           </div>

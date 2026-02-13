@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
 <body
@@ -41,11 +41,11 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-play mr-4"
+          class="fa-regular fa-play mr-4"
         />
         <i
           aria-hidden="true"
-          class="fa-solid fa-chevron-down "
+          class="fa-regular fa-chevron-down "
         />
       </div>
     </button>
@@ -60,7 +60,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-scroll "
+        class="fa-regular fa-scroll "
       />
     </a>
     <button
@@ -81,7 +81,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-ellipsis-v "
+          class="fa-regular fa-ellipsis-v "
         />
       </div>
     </button>
@@ -94,7 +94,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
     <div
       aria-labelledby="radix-:r6:"
       aria-orientation="vertical"
-      class="flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:border dark:border-neutral-500 dark:bg-neutral-550"
+      class="flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded"
       data-align="start"
       data-orientation="vertical"
       data-radix-menu-content=""
@@ -107,7 +107,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       tabindex="-1"
     >
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-neutral-150 cursor-pointer hover:bg-neutral-150 text-neutral-400 relative"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-surface-warning-component data-[highlighted]:text-warning hover:text-warning cursor-pointer hover:bg-surface-warning-component text-warning relative"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -115,7 +115,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-play text-sm mr-3 text-yellow-600"
+          class="fa-regular fa-play text-sm mr-3 text-warning"
         />
         Deploy
         <div
@@ -130,11 +130,11 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       </div>
       <div
         aria-orientation="horizontal"
-        class="my-1 h-[1px] w-full bg-neutral-200 dark:bg-neutral-600"
+        class="my-1 h-[1px] w-full bg-surface-neutral-component"
         role="separator"
       />
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -142,7 +142,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-clock-rotate-left text-sm mr-3 text-brand-500"
+          class="fa-regular fa-clock-rotate-left text-sm mr-3 text-brand-9"
         />
         Deploy another chart version
       </div>
@@ -198,11 +198,11 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-play mr-4"
+          class="fa-regular fa-play mr-4"
         />
         <i
           aria-hidden="true"
-          class="fa-solid fa-chevron-down "
+          class="fa-regular fa-chevron-down "
         />
       </div>
     </button>
@@ -217,7 +217,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-scroll "
+        class="fa-regular fa-scroll "
       />
     </a>
     <button
@@ -239,7 +239,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-ellipsis-v "
+          class="fa-regular fa-ellipsis-v "
         />
       </div>
     </button>
@@ -252,7 +252,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
     <div
       aria-labelledby="radix-:rv:"
       aria-orientation="vertical"
-      class="flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:border dark:border-neutral-500 dark:bg-neutral-550"
+      class="flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded"
       data-align="start"
       data-orientation="vertical"
       data-radix-menu-content=""
@@ -270,7 +270,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         target="_blank"
       >
         <div
-          class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+          class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
           data-orientation="vertical"
           data-radix-collection-item=""
           role="menuitem"
@@ -278,13 +278,13 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         >
           <i
             aria-hidden="true"
-            class="fa-solid fa-code text-sm mr-3 text-brand-500"
+            class="fa-regular fa-code text-sm mr-3 text-brand-9"
           />
           Edit code
         </div>
       </a>
       <a
-        class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 gap-0"
+        class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
         href="/organization/123/audit-logs/general?targetId=0&targetType=HELM&projectId=123&environmentId=3840068565336064"
@@ -293,12 +293,12 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-clock-rotate-left text-sm mr-3 text-brand-500"
+          class="fa-regular fa-clock-rotate-left text-sm mr-3 text-brand-9"
         />
         See audit logs
       </a>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -306,12 +306,12 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy text-sm mr-3 text-brand-500"
+          class="fa-regular fa-copy text-sm mr-3 text-brand-9"
         />
         Copy identifiers
       </div>
       <a
-        class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 gap-0"
+        class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
         href="/organization/123/project/123/environment/3840068565336064/application/0/settings/general"
@@ -320,12 +320,12 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-gear text-sm mr-3 text-brand-500"
+          class="fa-regular fa-gear text-sm mr-3 text-brand-9"
         />
         Open settings
       </a>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -333,17 +333,17 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy text-sm mr-3 text-brand-500"
+          class="fa-regular fa-copy text-sm mr-3 text-brand-9"
         />
         Clone
       </div>
       <div
         aria-orientation="horizontal"
-        class="my-1 h-[1px] w-full bg-neutral-200 dark:bg-neutral-600"
+        class="my-1 h-[1px] w-full bg-surface-neutral-component"
         role="separator"
       />
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-red-50 data-[highlighted]:text-red-600 cursor-pointer hover:bg-red-50 text-red-600"
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-surface-negative-component data-[highlighted]:text-negative hover:text-negative cursor-pointer hover:bg-surface-negative-component text-negative"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -351,7 +351,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-trash text-sm mr-3 text-red-600"
+          class="fa-regular fa-trash text-sm mr-3 text-negative"
         />
         Remove service
       </div>

@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import {
   type ApplicationGitRepository,
   type ContainerSource,
@@ -9,7 +10,6 @@ import {
   type Status,
   TerraformDeployRequestActionEnum,
 } from 'qovery-typescript-axios'
-import { useLocation, useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import {
   type AnyService,
@@ -802,7 +802,7 @@ function MenuOtherActions({
                 serviceType: service.serviceType,
                 skipDestroy,
               })
-              navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
+              navigate({ to: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL })
             } catch (error) {
               console.error(error)
             }
@@ -940,7 +940,6 @@ export function ServiceActionToolbar({
   variant?: ActionToolbarVariant
   shellAction?: () => void
 }) {
-  const { pathname } = useLocation()
   const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
 
@@ -961,7 +960,10 @@ export function ServiceActionToolbar({
         <>
           <Tooltip content="Logs">
             <ActionToolbar.Button asChild>
-              <Link to={environmentLogsLink + SERVICE_LOGS_URL(service.id)} state={{ prevUrl: pathname }}>
+              <Link
+                to={environmentLogsLink + SERVICE_LOGS_URL(service.id)}
+                // state={{ prevUrl: pathname }}
+              >
                 <Icon iconName="scroll" />
               </Link>
             </ActionToolbar.Button>

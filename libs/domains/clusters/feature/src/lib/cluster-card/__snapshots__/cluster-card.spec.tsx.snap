@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ClusterCard should match snapshot 1`] = `
 <div>
@@ -86,7 +86,7 @@ exports[`ClusterCard should match snapshot 1`] = `
       class="flex flex-wrap gap-2"
     >
       <span
-        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md border-neutral-250 text-neutral-400 dark:border-neutral-350 dark:text-neutral-300"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md"
         data-accent-color="neutral"
       >
         <svg
@@ -106,19 +106,19 @@ exports[`ClusterCard should match snapshot 1`] = `
         Qovery managed
       </span>
       <span
-        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md bg-surface-neutral-subtle"
         data-accent-color="neutral"
       >
         EKS
       </span>
       <span
-        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md bg-surface-neutral-subtle"
         data-accent-color="neutral"
       >
         us-east-1
       </span>
       <span
-        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md bg-surface-neutral-subtle"
         data-accent-color="neutral"
       >
         1.21
@@ -159,11 +159,11 @@ exports[`ClusterCard should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-play mr-4"
+                  class="fa-regular fa-play mr-4"
                 />
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-chevron-down "
+                  class="fa-regular fa-chevron-down "
                 />
               </div>
             </button>
@@ -177,7 +177,7 @@ exports[`ClusterCard should match snapshot 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-scroll "
+                class="fa-regular fa-scroll "
               />
             </button>
             <button
@@ -190,7 +190,7 @@ exports[`ClusterCard should match snapshot 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-terminal "
+                class="fa-regular fa-terminal "
               />
             </button>
             <button
@@ -211,7 +211,7 @@ exports[`ClusterCard should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-ellipsis-v "
+                  class="fa-regular fa-ellipsis-v "
                   width="20"
                 />
               </div>
@@ -220,7 +220,7 @@ exports[`ClusterCard should match snapshot 1`] = `
         </div>
       </div>
       <span
-        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 text-red-500 border rounded-md bg-red-50 border-red-500/30"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-negative-subtle border rounded-md bg-surface-negative-subtle"
         data-accent-color="red"
       >
         Production

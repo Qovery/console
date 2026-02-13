@@ -104,7 +104,7 @@ export function TableHeadDatePickerFilter({
         maxDate={new Date()}
         minDate={subDays(new Date(), datePickerData.retentionDays)}
         defaultDates={getDefaultDates(datePickerData.timestamps)}
-        showTimeInput
+        showDateTimeInputs
         useLocalTime
         onClickOutside={() => setIsOpenTimestamp(!isOpenTimestamp)}
         maxRangeInDays={datePickerData.maxRangeInDays}

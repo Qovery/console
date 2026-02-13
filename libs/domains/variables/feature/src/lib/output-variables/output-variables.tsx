@@ -62,11 +62,11 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
           const { key, description } = info.row.original
           return (
             <div className="flex items-center gap-1">
-              <span className="text-sm text-neutral-350">{key}</span>{' '}
+              <span className="text-sm text-neutral-subtle">{key}</span>{' '}
               {description && (
                 <Tooltip content={description}>
                   <span>
-                    <Icon iconName="circle-info" className="text-neutral-350" />
+                    <Icon iconName="circle-info" className="text-neutral-subtle" />
                   </span>
                 </Tooltip>
               )}
@@ -103,9 +103,9 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
   if (variables.length === 0) {
     return (
       <div className="px-3 py-8 text-center">
-        <Icon iconName="wave-pulse" className="text-neutral-350" />
-        <p className="mt-1 text-xs font-medium text-neutral-350">No output variables found</p>
-        <p className="mt-1 text-xs text-neutral-350">
+        <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+        <p className="mt-1 text-xs font-medium text-neutral-subtle">No output variables found</p>
+        <p className="mt-1 text-xs text-neutral-subtle">
           {scopeName} output variables will appear here after your first successful deployment.
         </p>
       </div>

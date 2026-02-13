@@ -73,6 +73,9 @@ export function LinkContent({ link }: { link: NavigationLeftLinkProps }) {
   )
 }
 
+/*
+ * @deprecated Use Sidebar instead
+ */
 export function NavigationLeft(props: NavigationLeftProps) {
   const { title, links, link, className = '' } = props
 
