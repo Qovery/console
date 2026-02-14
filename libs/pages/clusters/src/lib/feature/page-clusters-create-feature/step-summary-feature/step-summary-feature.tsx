@@ -1,5 +1,6 @@
 import {
   type ClusterCloudProviderInfoRequest,
+  type ClusterLabelsGroupList,
   type ClusterRequest,
   type ClusterRequestFeaturesInner,
   type KubernetesEnum,
@@ -9,6 +10,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import { useCreateCluster, useDeployCluster, useEditCloudProviderInfo } from '@qovery/domains/clusters/feature'
+import { useLabelsGroups } from '@qovery/domains/organizations/feature'
 import {
   CLUSTERS_CREATION_EKS_URL,
   CLUSTERS_CREATION_FEATURES_URL,
@@ -40,6 +42,7 @@ export function StepSummaryFeature() {
   const { mutateAsync: createCluster, isLoading: isCreateClusterLoading } = useCreateCluster()
   const { mutateAsync: editCloudProviderInfo } = useEditCloudProviderInfo({ silently: true })
   const { mutateAsync: deployCluster, isLoading: isDeployClusterLoading } = useDeployCluster()
+  const { data: labelsGroup = [] } = useLabelsGroups({ organizationId })
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
     match(generalData)
       .with({ cloud_provider: 'AWS', installation_type: 'MANAGED' }, ({ cloud_provider, region }) => ({
@@ -127,6 +130,14 @@ export function StepSummaryFeature() {
             production: generalData.production,
             features: [],
             cloud_provider_credentials,
+            ...(generalData.cloud_provider === 'AWS' &&
+              !generalData.production &&
+              generalData.labels_groups &&
+              generalData.labels_groups.length > 0 && {
+                labels_groups: generalData.labels_groups.map((groupId) => ({
+                  id: groupId,
+                })) as unknown as ClusterLabelsGroupList,
+              }),
           },
         })
         await editCloudProviderInfo({
@@ -159,6 +170,14 @@ export function StepSummaryFeature() {
             features: [],
             cloud_provider_credentials,
             infrastructure_charts_parameters: resourcesData?.infrastructure_charts_parameters,
+            ...(generalData.cloud_provider === 'AWS' &&
+              !generalData.production &&
+              generalData.labels_groups &&
+              generalData.labels_groups.length > 0 && {
+                labels_groups: generalData.labels_groups.map((groupId) => ({
+                  id: groupId,
+                })) as unknown as ClusterLabelsGroupList,
+              }),
           },
         })
 
@@ -322,6 +341,18 @@ export function StepSummaryFeature() {
           }
         })
         .otherwise(() => {
+          const baseLabels =
+            generalData.cloud_provider === 'AWS' &&
+            !generalData.production &&
+            generalData.labels_groups &&
+            generalData.labels_groups.length > 0
+              ? {
+                  labels_groups: generalData.labels_groups.map((groupId) => ({
+                    id: groupId,
+                  })) as unknown as ClusterLabelsGroupList,
+                }
+              : {}
+
           if (resourcesData.karpenter?.enabled) {
             return {
               name: generalData.name,
@@ -332,6 +363,7 @@ export function StepSummaryFeature() {
               kubernetes: resourcesData.cluster_type as KubernetesEnum,
               features: formatFeatures as ClusterRequestFeaturesInner[],
               cloud_provider_credentials,
+              ...baseLabels,
             }
           } else {
             return {
@@ -349,6 +381,7 @@ export function StepSummaryFeature() {
               kubernetes: resourcesData.cluster_type as KubernetesEnum,
               features: formatFeatures as ClusterRequestFeaturesInner[],
               cloud_provider_credentials,
+              ...baseLabels,
             }
           }
         })
@@ -396,6 +429,7 @@ export function StepSummaryFeature() {
           goToFeatures={goToFeatures}
           goToKubeconfig={goToKubeconfig}
           goToEksConfig={goToEksConfig}
+          labelsGroup={labelsGroup}
         />
       )}
     </FunnelFlowBody>

@@ -1,5 +1,5 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
-import { type Cluster } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterLabelsGroupList } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
@@ -7,12 +7,26 @@ import { useUserRole } from '@qovery/shared/iam/feature'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleSubmit = (data: FieldValues, cluster: Cluster) => {
-  return {
+  const baseCluster = {
     ...cluster,
     name: data['name'],
     description: data['description'] || '',
     production: data['production'],
   }
+
+  // Add labels_groups for AWS non-production clusters (non-production is temporary)
+  if (cluster.cloud_provider === 'AWS' && !data['production']) {
+    return {
+      ...baseCluster,
+      labels_groups:
+        data['labels_groups'] && data['labels_groups'].length > 0
+          ? (data['labels_groups'].map((groupId: string) => ({ id: groupId })) as unknown as ClusterLabelsGroupList)
+          : ([] as unknown as ClusterLabelsGroupList),
+    }
+  }
+
+  const { labels_groups, ...baseClusterWithoutLabels } = baseCluster
+  return baseClusterWithoutLabels
 }
 
 export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: Cluster; organizationId: string }) {
@@ -24,6 +38,9 @@ export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: C
     mode: 'onChange',
     defaultValues: {
       ...cluster,
+      labels_groups: ((cluster.labels_groups as unknown as Array<{ id: string }> | undefined) || []).map(
+        (group) => group.id
+      ),
     },
   })
 

@@ -1,6 +1,7 @@
 import { type Cluster } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { LabelSetting } from '@qovery/domains/organizations/feature'
 import { ClusterGeneralSettings, SettingsHeading } from '@qovery/shared/console-shared'
 import { BlockContent, Button, Callout, ExternalLink, Icon, Section } from '@qovery/shared/ui'
 
@@ -11,7 +12,8 @@ export interface PageSettingsGeneralProps {
 }
 
 export function PageSettingsGeneral({ onSubmit, loading, cluster }: PageSettingsGeneralProps) {
-  const { formState } = useFormContext()
+  const { formState, watch } = useFormContext()
+  const watchProduction = watch('production')
 
   return (
     <div className="flex w-full flex-col justify-between">
@@ -40,6 +42,12 @@ export function PageSettingsGeneral({ onSubmit, loading, cluster }: PageSettings
           <BlockContent title="General information">
             <ClusterGeneralSettings fromDetail />
           </BlockContent>
+          {cluster.cloud_provider === 'AWS' && !watchProduction && (
+            <div className="mb-10">
+              <h3 className="mb-3 text-base font-medium text-neutral-400">Extra tags</h3>
+              <LabelSetting filterPropagateToCloudProvider={true} />
+            </div>
+          )}
           <div className="flex justify-end">
             <Button data-testid="submit-button" type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
               Save
