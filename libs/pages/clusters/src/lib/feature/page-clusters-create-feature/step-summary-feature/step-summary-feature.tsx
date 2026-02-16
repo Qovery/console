@@ -1,6 +1,5 @@
 import {
   type ClusterCloudProviderInfoRequest,
-  type ClusterLabelsGroupList,
   type ClusterRequest,
   type ClusterRequestFeaturesInner,
   type KubernetesEnum,
@@ -136,7 +135,7 @@ export function StepSummaryFeature() {
               generalData.labels_groups.length > 0 && {
                 labels_groups: generalData.labels_groups.map((groupId) => ({
                   id: groupId,
-                })) as unknown as ClusterLabelsGroupList,
+                })),
               }),
           },
         })
@@ -176,7 +175,7 @@ export function StepSummaryFeature() {
               generalData.labels_groups.length > 0 && {
                 labels_groups: generalData.labels_groups.map((groupId) => ({
                   id: groupId,
-                })) as unknown as ClusterLabelsGroupList,
+                })),
               }),
           },
         })
@@ -349,7 +348,7 @@ export function StepSummaryFeature() {
               ? {
                   labels_groups: generalData.labels_groups.map((groupId) => ({
                     id: groupId,
-                  })) as unknown as ClusterLabelsGroupList,
+                  })),
                 }
               : {}
 

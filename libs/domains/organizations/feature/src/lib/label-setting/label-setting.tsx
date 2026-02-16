@@ -15,14 +15,12 @@ export function LabelSetting({ filterPropagateToCloudProvider = false }: LabelSe
   const { openModal, closeModal } = useModal()
 
   // Filter labels groups based on propagate_to_cloud_provider if needed
-  const filteredLabelsGroups = filterPropagateToCloudProvider
-    ? labelsGroups
-        .map((group) => ({
-          ...group,
-          labels: group.labels.filter((label) => label.propagate_to_cloud_provider),
-        }))
-        .filter((group) => group.labels.length > 0)
-    : labelsGroups
+  const filteredLabelsGroups = labelsGroups
+    .map((group) => ({
+      ...group,
+      labels: group.labels.filter((label) => !filterPropagateToCloudProvider || label.propagate_to_cloud_provider),
+    }))
+    .filter((group) => !filterPropagateToCloudProvider || group.labels.length > 0)
 
   return (
     <Controller

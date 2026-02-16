@@ -12,8 +12,7 @@ export interface PageSettingsGeneralProps {
 }
 
 export function PageSettingsGeneral({ onSubmit, loading, cluster }: PageSettingsGeneralProps) {
-  const { formState, watch } = useFormContext()
-  const watchProduction = watch('production')
+  const { formState } = useFormContext()
 
   return (
     <div className="flex w-full flex-col justify-between">
@@ -42,7 +41,7 @@ export function PageSettingsGeneral({ onSubmit, loading, cluster }: PageSettings
           <BlockContent title="General information">
             <ClusterGeneralSettings fromDetail />
           </BlockContent>
-          {cluster.cloud_provider === 'AWS' && !watchProduction && (
+          {cluster.cloud_provider === 'AWS' && (
             <div className="mb-10">
               <h3 className="mb-3 text-base font-medium text-neutral-400">Extra tags</h3>
               <LabelSetting filterPropagateToCloudProvider={true} />

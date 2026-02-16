@@ -1,5 +1,5 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
-import { type Cluster, type ClusterLabelsGroupList } from 'qovery-typescript-axios'
+import { type Cluster } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
@@ -14,14 +14,14 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster) => {
     production: data['production'],
   }
 
-  // Add labels_groups for AWS non-production clusters (non-production is temporary)
-  if (cluster.cloud_provider === 'AWS' && !data['production']) {
+  // Add labels_groups for AWS clusters
+  if (cluster.cloud_provider === 'AWS') {
     return {
       ...baseCluster,
       labels_groups:
         data['labels_groups'] && data['labels_groups'].length > 0
-          ? (data['labels_groups'].map((groupId: string) => ({ id: groupId })) as unknown as ClusterLabelsGroupList)
-          : ([] as unknown as ClusterLabelsGroupList),
+          ? data['labels_groups'].map((groupId: string) => ({ id: groupId }))
+          : [],
     }
   }
 
@@ -38,9 +38,7 @@ export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: C
     mode: 'onChange',
     defaultValues: {
       ...cluster,
-      labels_groups: ((cluster.labels_groups as unknown as Array<{ id: string }> | undefined) || []).map(
-        (group) => group.id
-      ),
+      labels_groups: cluster.labels_groups?.map((group) => group.id) ?? [],
     },
   })
 

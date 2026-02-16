@@ -50,7 +50,6 @@ export function StepGeneral(props: StepGeneralProps) {
 
   const watchCloudProvider = watch('cloud_provider')
   const watchInstallationType = watch('installation_type')
-  const watchProduction = watch('production')
 
   useEffect(() => {
     const currentProvider = cloudProviders?.filter(
@@ -177,7 +176,7 @@ export function StepGeneral(props: StepGeneralProps) {
           )}
         </div>
 
-        {watchCloudProvider === 'AWS' && !watchProduction && (
+        {watchCloudProvider === 'AWS' && (
           <div className="mb-10">
             <h4 className="mb-4 text-sm text-neutral-400">Extra tags</h4>
             <LabelSetting filterPropagateToCloudProvider={true} />
