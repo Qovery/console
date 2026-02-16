@@ -3,13 +3,18 @@ import {
   type OrganizationWebhookCreateRequest,
   OrganizationWebhookEventEnum,
   OrganizationWebhookKindEnum,
+  type OrganizationWebhookResponse,
 } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
+import { useModal } from '@qovery/shared/ui'
 import { Icon, InputSelect, InputTags, InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
+import { useCreateWebhook } from '../../hooks/use-create-webhook/use-create-webhook'
+import { useEditWebhook } from '../../hooks/use-edit-webhook/use-edit-webhook'
 
-export interface WebhookCrudModalProps {
+interface WebhookCrudModalProps {
   closeModal: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
   isEdition?: boolean
@@ -18,7 +23,7 @@ export interface WebhookCrudModalProps {
   isEditDirty?: boolean
 }
 
-export function WebhookCrudModal(props: WebhookCrudModalProps) {
+function WebhookCrudModal(props: WebhookCrudModalProps) {
   const { closeModal, onSubmit, isEdition, isLoading, hasExistingSecret, isEditDirty } = props
   const { control } = useFormContext<OrganizationWebhookCreateRequest>()
 
@@ -30,7 +35,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
       submitLabel={isEdition ? 'Update' : 'Create'}
       loading={isLoading}
     >
-      <div className="mb-3 font-bold text-neutral-400">General</div>
+      <div className="mb-3 text-base font-medium text-neutral">General</div>
 
       <Controller
         name="target_url"
@@ -112,7 +117,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
         />
       )}
 
-      <div className="mb-3 font-bold text-neutral-400">Event & filters</div>
+      <div className="mb-3 mt-6 text-base font-medium text-neutral">Event & filters</div>
 
       <div className="mb-3">
         <Controller
@@ -167,7 +172,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
             />
           )}
         />
-        <p className="ml-3 mt-0.5 text-xs text-neutral-350">
+        <p className="ml-3 mt-0.5 text-xs text-neutral-subtle">
           Webhook will be triggered only for projects whose names match or, if you're using a wildcard, start with one
           of the values from your list.
           <br />
@@ -213,8 +218,8 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
 
       {isEditDirty && hasExistingSecret && (
         <>
-          <hr className="my-3" />
-          <span className="text-sm text-neutral-350">Confirm your secret</span>
+          <hr className="my-3 border-neutral" />
+          <span className="text-sm text-neutral-subtle">Confirm your secret</span>
           <Controller
             name="target_secret"
             control={control}
@@ -239,4 +244,75 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
   )
 }
 
-export default WebhookCrudModal
+export interface WebhookCrudModalFeatureProps {
+  organizationId: string
+  closeModal: () => void
+  webhook?: OrganizationWebhookResponse
+}
+
+export function WebhookCrudModalFeature({ organizationId, closeModal, webhook }: WebhookCrudModalFeatureProps) {
+  const { enableAlertClickOutside } = useModal()
+  const { mutateAsync: createWebhook, isLoading: isLoadingCreateWebhook } = useCreateWebhook()
+  const { mutateAsync: editWebhook, isLoading: isLoadingEditWebhook } = useEditWebhook()
+
+  const isEdit = Boolean(webhook)
+  const hasExistingSecret = Boolean(webhook?.target_secret_set)
+
+  const methods = useForm<OrganizationWebhookCreateRequest>({
+    mode: 'all',
+    defaultValues: {
+      kind: webhook?.kind ?? undefined,
+      environment_types_filter: webhook?.environment_types_filter ?? [],
+      project_names_filter: webhook?.project_names_filter ?? [],
+      events: webhook?.events ?? [],
+      description: webhook?.description ?? '',
+      target_url: webhook?.target_url ?? '',
+      target_secret: '',
+    },
+  })
+
+  methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
+
+  const isEditDirty = isEdit && methods.formState.isDirty
+
+  const onSubmit = methods.handleSubmit(async (data) => {
+    const trimmedData = {
+      ...data,
+      target_url: data.target_url.trim(),
+      target_secret: data.target_secret || undefined,
+    }
+    try {
+      if (webhook) {
+        await editWebhook({
+          organizationId,
+          webhookId: webhook.id,
+          webhookRequest: { ...webhook, ...trimmedData },
+        })
+        closeModal()
+      } else {
+        await createWebhook({
+          organizationId,
+          webhookRequest: trimmedData,
+        })
+        closeModal()
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+  return (
+    <FormProvider {...methods}>
+      <WebhookCrudModal
+        closeModal={closeModal}
+        onSubmit={onSubmit}
+        isEdition={isEdit}
+        isLoading={isLoadingCreateWebhook || isLoadingEditWebhook}
+        hasExistingSecret={hasExistingSecret}
+        isEditDirty={isEditDirty}
+      />
+    </FormProvider>
+  )
+}
+
+export default WebhookCrudModalFeature

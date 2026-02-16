@@ -1,7 +1,8 @@
 import selectEvent from 'react-select-event'
-import * as organizationDomain from '@qovery/domains/organizations/feature'
 import { webhookFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import * as useCreateWebhookHook from '../../hooks/use-create-webhook/use-create-webhook'
+import * as useEditWebhookHook from '../../hooks/use-edit-webhook/use-edit-webhook'
 import WebhookCrudModalFeature, { type WebhookCrudModalFeatureProps } from './webhook-crud-modal-feature'
 
 const mockWebhook = webhookFactoryMock(1)[0]
@@ -12,16 +13,23 @@ const props: WebhookCrudModalFeatureProps = {
   webhook: undefined,
 }
 
-const useEditWebhooksMockSpy = jest.spyOn(organizationDomain, 'useEditWebhook') as jest.Mock
-const useCreateWebhookMockSpy = jest.spyOn(organizationDomain, 'useCreateWebhook') as jest.Mock
+const useEditWebhookMockSpy = jest.spyOn(useEditWebhookHook, 'useEditWebhook') as jest.Mock
+const useCreateWebhookMockSpy = jest.spyOn(useCreateWebhookHook, 'useCreateWebhook') as jest.Mock
 
 describe('WebhookCrudModalFeature', () => {
+  let createWebhookMock: jest.Mock
+  let editWebhookMock: jest.Mock
+
   beforeEach(() => {
-    useEditWebhooksMockSpy.mockReturnValue({
-      mutateAsync: jest.fn(),
+    createWebhookMock = jest.fn().mockResolvedValue(undefined)
+    editWebhookMock = jest.fn().mockResolvedValue(undefined)
+    useEditWebhookMockSpy.mockReturnValue({
+      mutateAsync: editWebhookMock,
+      isLoading: false,
     })
     useCreateWebhookMockSpy.mockReturnValue({
-      mutateAsync: jest.fn(),
+      mutateAsync: createWebhookMock,
+      isLoading: false,
     })
   })
 
@@ -88,7 +96,7 @@ describe('WebhookCrudModalFeature', () => {
 
     await userEvent.click(button)
 
-    expect(useCreateWebhookMockSpy().mutateAsync).toHaveBeenCalledWith({
+    expect(createWebhookMock).toHaveBeenCalledWith({
       organizationId: '000-000-000',
       webhookRequest: {
         target_url: 'https://test.com',
@@ -132,7 +140,7 @@ describe('WebhookCrudModalFeature', () => {
 
     await userEvent.click(button)
 
-    expect(useEditWebhooksMockSpy().mutateAsync).toHaveBeenCalledWith({
+    expect(editWebhookMock).toHaveBeenCalledWith({
       organizationId: '000-000-000',
       webhookId: mockWebhook.id,
       webhookRequest: {
@@ -169,7 +177,7 @@ describe('WebhookCrudModalFeature', () => {
     const button = screen.getByTestId('submit-button')
     await userEvent.click(button)
 
-    expect(useCreateWebhookMockSpy().mutateAsync).toHaveBeenCalledWith({
+    expect(createWebhookMock).toHaveBeenCalledWith({
       organizationId: '000-000-000',
       webhookRequest: expect.objectContaining({
         target_url: 'https://test.com',
@@ -198,7 +206,7 @@ describe('WebhookCrudModalFeature', () => {
     const button = screen.getByTestId('submit-button')
     await userEvent.click(button)
 
-    expect(useCreateWebhookMockSpy().mutateAsync).toHaveBeenCalledWith({
+    expect(createWebhookMock).toHaveBeenCalledWith({
       organizationId: '000-000-000',
       webhookRequest: expect.objectContaining({
         target_url: 'https://test.com',
@@ -218,7 +226,7 @@ describe('WebhookCrudModalFeature', () => {
     const button = screen.getByTestId('submit-button')
     await userEvent.click(button)
 
-    expect(useEditWebhooksMockSpy().mutateAsync).toHaveBeenCalledWith({
+    expect(editWebhookMock).toHaveBeenCalledWith({
       organizationId: '000-000-000',
       webhookId: mockWebhook.id,
       webhookRequest: expect.objectContaining({
@@ -278,7 +286,7 @@ describe('WebhookCrudModalFeature', () => {
       const button = screen.getByTestId('submit-button')
       await userEvent.click(button)
 
-      expect(useEditWebhooksMockSpy().mutateAsync).not.toHaveBeenCalled()
+    expect(editWebhookMock).not.toHaveBeenCalled()
     })
 
     it('should allow submit when editing webhook with existing secret and secret provided', async () => {
@@ -294,11 +302,11 @@ describe('WebhookCrudModalFeature', () => {
       const button = screen.getByTestId('submit-button')
       await userEvent.click(button)
 
-      expect(useEditWebhooksMockSpy().mutateAsync).toHaveBeenCalledWith({
-        organizationId: '000-000-000',
-        webhookId: mockWebhookWithSecret.id,
-        webhookRequest: expect.objectContaining({
-          target_secret: 'new-secret-value',
+    expect(editWebhookMock).toHaveBeenCalledWith({
+      organizationId: '000-000-000',
+      webhookId: mockWebhookWithSecret.id,
+      webhookRequest: expect.objectContaining({
+        target_secret: 'new-secret-value',
         }),
       })
     })
@@ -323,11 +331,11 @@ describe('WebhookCrudModalFeature', () => {
       const button = screen.getByTestId('submit-button')
       await userEvent.click(button)
 
-      expect(useEditWebhooksMockSpy().mutateAsync).toHaveBeenCalledWith({
-        organizationId: '000-000-000',
-        webhookId: mockWebhook.id,
-        webhookRequest: expect.objectContaining({
-          target_secret: undefined,
+    expect(editWebhookMock).toHaveBeenCalledWith({
+      organizationId: '000-000-000',
+      webhookId: mockWebhook.id,
+      webhookRequest: expect.objectContaining({
+        target_secret: undefined,
         }),
       })
     })
