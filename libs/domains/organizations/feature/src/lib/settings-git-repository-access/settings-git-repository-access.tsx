@@ -11,7 +11,6 @@ import { GitTokenList } from '../git-token-list/git-token-list'
 import { useAuthProviders } from '../hooks/use-auth-providers/use-auth-providers'
 import { useDisconnectGithubApp } from '../hooks/use-disconnect-github-app/use-disconnect-github-app'
 import { useRepositories } from '../hooks/use-repositories/use-repositories'
-import DisconnectionConfirmModal from './disconnection-confirm-modal/disconnection-confirm-modal'
 import SectionGithubApp from './section-github-app/section-github-app'
 
 interface PageOrganizationGithubRepositoryAccessProps {
@@ -122,12 +121,6 @@ export function SettingsGitRepositoryAccess() {
 
   const onConfigure = () => {
     window.open(githubConnectUrl, '_blank')
-  }
-
-  const onDisconnectWithModal = () => {
-    openModal({
-      content: <DisconnectionConfirmModal onClose={closeModal} onSubmit={() => onDisconnect(true)} />,
-    })
   }
 
   // onDisconnect can be called with force parameter. If it's false, the api call will eventually fail with a 400 error
