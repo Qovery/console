@@ -14,7 +14,7 @@ export function SettingsHeading({ title, description, children }: SettingsHeadin
       <div className="flex w-full items-start justify-between gap-4 pb-6">
         <div className="flex flex-col gap-2">
           <Heading>{title}</Heading>
-          {description && <p className="max-w-lg text-sm text-neutral-subtle">{description}</p>}
+          {description && <p className="max-w-2xl text-sm text-neutral-subtle">{description}</p>}
           <NeedHelp className="mt-2" />
         </div>
       </div>
