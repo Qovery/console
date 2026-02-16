@@ -9,8 +9,8 @@ import {
   MetricConfigurationStep,
   QUERY_CPU,
   QUERY_HPA_ISSUE,
-  QUERY_HTTP_ERROR,
-  QUERY_HTTP_LATENCY,
+  QUERY_HTTP_ERROR_COMBINED,
+  QUERY_HTTP_LATENCY_COMBINED,
   QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
   QUERY_MISSING_INSTANCE,
@@ -19,6 +19,7 @@ import {
   useEditAlertRule,
   useEnvironment,
   useHpaName,
+  useHttpRouteName,
   useIngressName,
 } from '@qovery/domains/observability/feature'
 import { generateConditionDescription } from '@qovery/domains/observability/feature'
@@ -53,6 +54,13 @@ export function PageAlertingEditFeature() {
   })
 
   const { data: ingressName } = useIngressName({
+    clusterId: environment?.cluster_id ?? '',
+    serviceId: service?.id ?? '',
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+  })
+
+  const { data: httpRouteName } = useHttpRouteName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: service?.id ?? '',
     startDate: oneHourAgo.toISOString(),
@@ -153,8 +161,8 @@ export function PageAlertingEditFeature() {
                 .with('memory', () => QUERY_MEMORY(containerName))
                 .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
                 .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
-                .with('http_error', () => QUERY_HTTP_ERROR(ingressName))
-                .with('http_latency', () => QUERY_HTTP_LATENCY(ingressName))
+                .with('http_error', () => QUERY_HTTP_ERROR_COMBINED(ingressName || '', httpRouteName || ''))
+                .with('http_latency', () => QUERY_HTTP_LATENCY_COMBINED(ingressName || '', httpRouteName || ''))
                 .with('hpa_limit', () => (hpaName ? QUERY_HPA_ISSUE(hpaName) : updatedAlert.condition.promql || ''))
                 .otherwise(() => ''),
             },
