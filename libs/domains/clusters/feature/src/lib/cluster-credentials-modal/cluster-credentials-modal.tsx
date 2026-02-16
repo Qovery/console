@@ -5,7 +5,6 @@ import { Controller, type FieldValues, FormProvider, useForm } from 'react-hook-
 import { P, match } from 'ts-pattern'
 import {
   useCreateCloudProviderCredential,
-  useDeleteCloudProviderCredential,
   useEditCloudProviderCredential,
 } from '@qovery/domains/cloud-providers/feature'
 import { CLUSTER_SETTINGS_IMAGE_REGISTRY_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
@@ -162,7 +161,6 @@ export function ClusterCredentialsModal({
 
   const { mutateAsync: createCloudProviderCredential, isLoading: isLoadingCreate } = useCreateCloudProviderCredential()
   const { mutateAsync: editCloudProviderCredential, isLoading: isLoadingEdit } = useEditCloudProviderCredential()
-  const { mutateAsync: deleteCloudProviderCredential } = useDeleteCloudProviderCredential()
 
   const [fileDetails, setFileDetails] = useState<{ name: string; size: number }>()
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
