@@ -32,6 +32,7 @@ describe('CardHTTPErrors', () => {
     clusterId: 'test-cluster-id',
     containerName: 'test-container-name',
     ingressName: 'test-ingress-name',
+    httpRouteName: 'test-httproute-name',
   }
 
   beforeEach(() => {
@@ -39,6 +40,7 @@ describe('CardHTTPErrors', () => {
   })
 
   it('should render successfully with loading state', () => {
+    // Mock all 4 calls (nginx error, nginx total, envoy error, envoy total) as loading
     useInstantMetrics.mockReturnValue(createMockUseInstantMetricsReturn(undefined, true))
 
     const { baseElement } = renderWithProviders(
@@ -52,6 +54,7 @@ describe('CardHTTPErrors', () => {
 
   it('should render with no errors (GREEN status)', () => {
     useInstantMetrics
+      // NGINX error requests
       .mockReturnValueOnce(
         createMockUseInstantMetricsReturn({
           data: {
@@ -63,6 +66,31 @@ describe('CardHTTPErrors', () => {
           },
         })
       )
+      // NGINX total requests
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '100'],
+              },
+            ],
+          },
+        })
+      )
+      // ENVOY error requests
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '0'],
+              },
+            ],
+          },
+        })
+      )
+      // ENVOY total requests
       .mockReturnValueOnce(
         createMockUseInstantMetricsReturn({
           data: {
@@ -87,6 +115,7 @@ describe('CardHTTPErrors', () => {
 
   it('should render with errors (RED status) and show modal link', () => {
     useInstantMetrics
+      // NGINX error requests
       .mockReturnValueOnce(
         createMockUseInstantMetricsReturn({
           data: {
@@ -98,12 +127,37 @@ describe('CardHTTPErrors', () => {
           },
         })
       )
+      // NGINX total requests
       .mockReturnValueOnce(
         createMockUseInstantMetricsReturn({
           data: {
             result: [
               {
                 value: [1234567890, '100'],
+              },
+            ],
+          },
+        })
+      )
+      // ENVOY error requests
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '0'],
+              },
+            ],
+          },
+        })
+      )
+      // ENVOY total requests
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '0'],
               },
             ],
           },
@@ -125,6 +179,7 @@ describe('CardHTTPErrors', () => {
 
   it('should handle empty metrics data', () => {
     useInstantMetrics
+      // NGINX error requests
       .mockReturnValueOnce(
         createMockUseInstantMetricsReturn({
           data: {
@@ -132,6 +187,23 @@ describe('CardHTTPErrors', () => {
           },
         })
       )
+      // NGINX total requests
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [],
+          },
+        })
+      )
+      // ENVOY error requests
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [],
+          },
+        })
+      )
+      // ENVOY total requests
       .mockReturnValueOnce(
         createMockUseInstantMetricsReturn({
           data: {
@@ -151,7 +223,13 @@ describe('CardHTTPErrors', () => {
 
   it('should handle undefined metrics data', () => {
     useInstantMetrics
+      // NGINX error requests
       .mockReturnValueOnce(createMockUseInstantMetricsReturn())
+      // NGINX total requests
+      .mockReturnValueOnce(createMockUseInstantMetricsReturn())
+      // ENVOY error requests
+      .mockReturnValueOnce(createMockUseInstantMetricsReturn())
+      // ENVOY total requests
       .mockReturnValueOnce(createMockUseInstantMetricsReturn())
 
     renderWithProviders(
@@ -167,7 +245,9 @@ describe('CardHTTPErrors', () => {
     let callCount = 0
     useInstantMetrics.mockImplementation(() => {
       callCount++
+      // Calls: 1=nginx errors, 2=nginx total, 3=envoy errors, 4=envoy total
       if (callCount === 1) {
+        // NGINX error requests
         return createMockUseInstantMetricsReturn({
           data: {
             result: [
@@ -177,12 +257,35 @@ describe('CardHTTPErrors', () => {
             ],
           },
         })
-      } else {
+      } else if (callCount === 2) {
+        // NGINX total requests
         return createMockUseInstantMetricsReturn({
           data: {
             result: [
               {
                 value: [1234567890, '100'],
+              },
+            ],
+          },
+        })
+      } else if (callCount === 3) {
+        // ENVOY error requests
+        return createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '0'],
+              },
+            ],
+          },
+        })
+      } else {
+        // ENVOY total requests
+        return createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '0'],
               },
             ],
           },
@@ -209,7 +312,13 @@ describe('CardHTTPErrors', () => {
 
   it('should call useInstantMetrics with correct parameters', () => {
     useInstantMetrics
+      // NGINX error requests
       .mockReturnValueOnce(createMockUseInstantMetricsReturn())
+      // NGINX total requests
+      .mockReturnValueOnce(createMockUseInstantMetricsReturn())
+      // ENVOY error requests
+      .mockReturnValueOnce(createMockUseInstantMetricsReturn())
+      // ENVOY total requests
       .mockReturnValueOnce(createMockUseInstantMetricsReturn())
 
     renderWithProviders(
@@ -218,7 +327,10 @@ describe('CardHTTPErrors', () => {
       </DashboardProvider>
     )
 
-    expect(useInstantMetrics).toHaveBeenCalledTimes(2)
+    // Now called 4 times: nginx errors, nginx total, envoy errors, envoy total
+    expect(useInstantMetrics).toHaveBeenCalledTimes(4)
+
+    // Check nginx calls
     expect(useInstantMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('nginx:req_inc:5m'),
@@ -230,10 +342,15 @@ describe('CardHTTPErrors', () => {
 
     const calledQuery = useInstantMetrics.mock.calls[0][0].query
     expect(calledQuery).toContain('test-ingress-name')
+
+    // Check envoy calls
+    const envoyQuery = useInstantMetrics.mock.calls[2][0].query
+    expect(envoyQuery).toContain('test-httproute-name')
   })
 
   it('should not show modal link when there are no errors', () => {
     useInstantMetrics
+      // NGINX error requests
       .mockReturnValueOnce(
         createMockUseInstantMetricsReturn({
           data: {
@@ -245,12 +362,37 @@ describe('CardHTTPErrors', () => {
           },
         })
       )
+      // NGINX total requests
       .mockReturnValueOnce(
         createMockUseInstantMetricsReturn({
           data: {
             result: [
               {
                 value: [1234567890, '100'],
+              },
+            ],
+          },
+        })
+      )
+      // ENVOY error requests
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '0'],
+              },
+            ],
+          },
+        })
+      )
+      // ENVOY total requests
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '0'],
               },
             ],
           },

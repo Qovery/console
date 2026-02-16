@@ -53,8 +53,8 @@ describe('Tooltip', () => {
   it('should display CPU Request and CPU Limit separately when values differ', () => {
     const { getByText } = render(<Tooltip active={true} unit="mCPU" payload={mockPayload} customLabel="CPU Usage" />)
 
-    expect(getByText('Cpu Request')).toBeInTheDocument()
-    expect(getByText('Cpu Limit')).toBeInTheDocument()
+    expect(getByText('Request')).toBeInTheDocument()
+    expect(getByText('Limit')).toBeInTheDocument()
     expect(getByText('100.00 mCPU')).toBeInTheDocument()
     expect(getByText('200.00 mCPU')).toBeInTheDocument()
   })
@@ -79,10 +79,10 @@ describe('Tooltip', () => {
       <Tooltip active={true} unit="mCPU" payload={equalPayload} customLabel="CPU Usage" />
     )
 
-    expect(getByText('CPU Request/Limit')).toBeInTheDocument()
+    expect(getByText('Request/Limit')).toBeInTheDocument()
     expect(getByText('150.00 mCPU')).toBeInTheDocument()
-    expect(queryByText('Cpu Request')).not.toBeInTheDocument()
-    expect(queryByText('Cpu Limit')).not.toBeInTheDocument()
+    expect(queryByText('Request')).not.toBeInTheDocument()
+    expect(queryByText('Limit')).not.toBeInTheDocument()
   })
 })
 

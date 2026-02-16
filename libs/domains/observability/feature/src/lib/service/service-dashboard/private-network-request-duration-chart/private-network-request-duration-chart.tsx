@@ -89,20 +89,20 @@ export function PrivateNetworkRequestDurationChart({
       { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
     >()
 
-    // Process network duration 95th percentile metrics
+    // Process network duration p95 metrics
     processMetricsData(
       metrics95,
       timeSeriesMap,
-      () => '95th percentile',
+      () => 'p95',
       (value) => parseFloat(value) * 1000, // Convert to ms
       useLocalTime
     )
 
-    // Process network duration 99th percentile metrics
+    // Process network duration p99 metrics
     processMetricsData(
       metrics99,
       timeSeriesMap,
-      () => '99th percentile',
+      () => 'p99',
       (value) => parseFloat(value) * 1000, // Convert to ms
       useLocalTime
     )
@@ -111,7 +111,7 @@ export function PrivateNetworkRequestDurationChart({
     processMetricsData(
       metrics50,
       timeSeriesMap,
-      () => '50th percentile',
+      () => 'p50',
       (value) => parseFloat(value) * 1000, // Convert to ms
       useLocalTime
     )
@@ -134,36 +134,36 @@ export function PrivateNetworkRequestDurationChart({
     >
       <Line
         key="50th-percentile"
-        dataKey="50th percentile"
+        dataKey="p50"
         type="linear"
         stroke="var(--color-purple-400)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('50th percentile') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p50') ? true : false}
       />
       <Line
         key="95th-percentile"
-        dataKey="95th percentile"
+        dataKey="p95"
         type="linear"
         stroke="var(--color-brand-400)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('95th percentile') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p95') ? true : false}
       />
       <Line
         key="99th-percentile"
-        dataKey="99th percentile"
+        dataKey="p99"
         type="linear"
         stroke="var(--color-purple-600)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('99th percentile') ? true : false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('p99') ? true : false}
       />
       {!isLoadingMetrics && chartData.length > 0 && (
         <Chart.Legend

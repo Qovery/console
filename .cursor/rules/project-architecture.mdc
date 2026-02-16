@@ -4,35 +4,4 @@ globs: ['**/*']
 alwaysApply: true
 ---
 
-# Qovery Console Architecture
-
-## Project Structure
-
-This project uses:
-
-- **Nx monorepo** with apps/ and libs/
-- **React 18** with TypeScript
-- **TailwindCSS** for styling
-- **React Query** for state management
-- **Jest** for testing
-- **ESLint** with strict rules
-
-## Directory Organization
-
-```
-libs/
-├── domains/         # Business logic by domain
-├── pages/           # Application pages/routes
-├── shared/          # Shared code
-│   ├── ui/          # Reusable UI components
-│   ├── util-*/      # Specialized utilities
-│   └── interfaces/  # Shared types
-```
-
-## Important Notes
-
-- Respect Nx architecture (no circular imports)
-- Use Nx generators to create new components/libs
-- `data-access` libs contain API logic
-- `feature` libs contain business components
-- `ui` libs contain reusable components
+@file .agents/skills/qovery-console-standards/rules/project-architecture.md
