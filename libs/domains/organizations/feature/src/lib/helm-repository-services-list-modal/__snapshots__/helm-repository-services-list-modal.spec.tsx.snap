@@ -7,7 +7,7 @@ exports[`HelmRepositoryServicesListModal should match snapshots 1`] = `
       class="flex flex-col p-6"
     >
       <h1
-        class="font-bold mb-6 text-2xl text-neutral-400"
+        class="font-bold mb-6 text-2xl text-neutral"
       >
         Associated services (
         3
@@ -29,7 +29,7 @@ exports[`HelmRepositoryServicesListModal should match snapshots 1`] = `
         />
       </div>
       <div
-        class="rounded border border-neutral-250 bg-neutral-100 px-4 py-2"
+        class="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2"
         data-orientation="vertical"
       >
         <div
@@ -94,7 +94,8 @@ exports[`HelmRepositoryServicesListModal should match snapshots 1`] = `
                   </button>
                   <a
                     class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-brand hover:text-brand-hover text-sm"
-                    to="/organization/0000-0000-0000/project/1/environment/1/services/general"
+                    params="[object Object]"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId"
                   >
                     Development
                   </a>
