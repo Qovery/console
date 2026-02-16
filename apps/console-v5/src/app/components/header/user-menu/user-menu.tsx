@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import { useState } from 'react'
-import { useUserAccount } from '@qovery/shared/iam/feature'
+import { UserSettingsModal, useUserAccount } from '@qovery/shared/iam/feature'
 import { Avatar, DropdownMenu, Icon } from '@qovery/shared/ui'
 import { useModal } from '@qovery/shared/ui'
 import { type Theme, useTheme } from '../../theme-provider/theme-provider'
