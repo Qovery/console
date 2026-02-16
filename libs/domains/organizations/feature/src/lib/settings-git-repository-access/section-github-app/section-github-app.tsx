@@ -1,8 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { useParams } from '@tanstack/react-router'
 import { jwtDecode } from 'jwt-decode'
 import { type GitAuthProvider, type GitRepository } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   BlockContent,
@@ -31,7 +31,7 @@ export function SectionGithubApp(props: SectionGithubAppProps) {
     <>
       <Section>
         <Heading className="mb-2">Qovery GitHub App</Heading>
-        <p className="mb-8 text-xs text-neutral-400">
+        <p className="mb-8 text-xs text-neutral">
           By default Qovery has access to all your repositories. If you are using Github, you can restrict the Qovery
           accesses by installing the Qovery Github App on your GitHub organization.
         </p>
@@ -50,11 +50,11 @@ export function SectionGithubApp(props: SectionGithubAppProps) {
           ) : (
             <div className="flex items-center justify-between">
               <div className="flex gap-5">
-                <Icon name={IconEnum.GITHUB} className="text-neutral-400" />
+                <Icon name={IconEnum.GITHUB} className="text-neutral" />
                 {props.githubAuthProvider?.use_bot ? (
-                  <span className="text-sm font-medium text-neutral-400">Github App Installed</span>
+                  <span className="text-sm font-medium text-neutral">Github App Installed</span>
                 ) : (
-                  <span className="text-sm font-medium text-neutral-400">Not installed</span>
+                  <span className="text-sm font-medium text-neutral">Not installed</span>
                 )}
               </div>
               {!props.githubAuthProvider?.use_bot ? (
@@ -102,7 +102,7 @@ export function SectionGithubApp(props: SectionGithubAppProps) {
                   {props.repositories.map((repository) => (
                     <li key={repository.id} className="flex items-center justify-between">
                       <div className="flex gap-3">
-                        <Icon name={IconEnum.GITHUB} className="w-4 text-neutral-400" />
+                        <Icon name={IconEnum.GITHUB} className="w-4 text-neutral" />
                         <ExternalLink href={repository.url}>{repository.name}</ExternalLink>
                       </div>
                     </li>

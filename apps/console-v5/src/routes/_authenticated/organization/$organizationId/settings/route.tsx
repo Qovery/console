@@ -61,7 +61,7 @@ function RouteComponent() {
   }
 
   const gitRepositoriesAccessLink = {
-    title: 'Git repositories',
+    title: 'Git repositories access',
     to: `${pathSettings}/git-repository-access`,
     icon: 'git-alt' as const,
     iconStyle: 'brands' as const,

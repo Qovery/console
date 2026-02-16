@@ -21,10 +21,10 @@ exports[`GitTokenList should match snapshot 1`] = `
       >
         <ul>
           <li
-            class="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
+            class="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
           >
             <div
-              class="flex"
+              class="flex items-center"
             >
               <svg
                 class="svg-icon text-neutral-subtle shrink-0"
@@ -44,12 +44,12 @@ exports[`GitTokenList should match snapshot 1`] = `
                 class="ml-4"
               >
                 <p
-                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral-400"
+                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral"
                 >
                   token1
                 </p>
                 <p
-                  class="text-xs text-neutral-350"
+                  class="text-xs text-neutral-subtle"
                 >
                   <span
                     class="inline-block"
@@ -70,11 +70,11 @@ exports[`GitTokenList should match snapshot 1`] = `
             </div>
             <div>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative mr-2"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 justify-center px-0 rounded-md w-8 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral relative mr-2"
                 disabled=""
               >
                 <span
-                  class="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white"
+                  class="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert"
                 >
                   0
                 </span>
@@ -84,7 +84,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 />
               </button>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral mr-2"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 justify-center px-0 rounded-md w-8 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral mr-2"
               >
                 <i
                   aria-hidden="true"
@@ -92,7 +92,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 />
               </button>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 justify-center px-0 rounded-md w-8 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
               >
                 <i
                   aria-hidden="true"
@@ -102,10 +102,10 @@ exports[`GitTokenList should match snapshot 1`] = `
             </div>
           </li>
           <li
-            class="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
+            class="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
           >
             <div
-              class="flex"
+              class="flex items-center"
             >
               <svg
                 class="shrink-0 "
@@ -136,12 +136,12 @@ exports[`GitTokenList should match snapshot 1`] = `
                 class="ml-4"
               >
                 <p
-                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral-400"
+                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral"
                 >
                   token2
                 </p>
                 <p
-                  class="text-xs text-neutral-350"
+                  class="text-xs text-neutral-subtle"
                 >
                   <span
                     class="inline-block"
@@ -162,11 +162,11 @@ exports[`GitTokenList should match snapshot 1`] = `
             </div>
             <div>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative mr-2"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 justify-center px-0 rounded-md w-8 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral relative mr-2"
                 disabled=""
               >
                 <span
-                  class="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white"
+                  class="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert"
                 >
                   0
                 </span>
@@ -176,7 +176,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 />
               </button>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral mr-2"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 justify-center px-0 rounded-md w-8 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral mr-2"
               >
                 <i
                   aria-hidden="true"
@@ -184,7 +184,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 />
               </button>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 justify-center px-0 rounded-md w-8 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
               >
                 <i
                   aria-hidden="true"

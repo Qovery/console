@@ -5,7 +5,6 @@ import {
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { match } from 'ts-pattern'
-import { APPLICATION_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Heading, Icon, InputSearch, Link, LoaderSpinner, Section, TreeView } from '@qovery/shared/ui'
 import { useGitTokenAssociatedServices } from '../hooks/use-git-token-associated-services/use-git-token-associated-services'
 
@@ -90,7 +89,7 @@ export function GitTokenServicesListModal({
 
   return (
     <Section className="p-6">
-      <Heading className="mb-6 text-2xl text-neutral-400">Associated services ({associatedServicesCount})</Heading>
+      <Heading className="mb-6 text-2xl text-neutral">Associated services ({associatedServicesCount})</Heading>
       {isLoading ? (
         <div className="flex h-40 items-start justify-center p-5">
           <LoaderSpinner className="w-5" />
@@ -106,7 +105,7 @@ export function GitTokenServicesListModal({
             <TreeView.Root
               type="single"
               collapsible
-              className="rounded border border-neutral-250 bg-neutral-100 px-4 py-2"
+              className="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2"
             >
               {data.map((project) => (
                 <TreeView.Item key={project.project_id} value={project.project_name}>
@@ -119,10 +118,12 @@ export function GitTokenServicesListModal({
                             <Link
                               color="brand"
                               onClick={() => onClose()}
-                              to={
-                                SERVICES_URL(organizationId, project.project_id, environment.environment_id) +
-                                SERVICES_GENERAL_URL
-                              }
+                              to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+                              params={{
+                                organizationId,
+                                environmentId: environment.environment_id,
+                                projectId: project.project_id,
+                              }}
                               className="text-sm"
                             >
                               {environment.environment_name}
@@ -131,16 +132,17 @@ export function GitTokenServicesListModal({
                           <TreeView.Content>
                             <ul>
                               {environment.services.map((service) => (
-                                <li key={service.service_id} className=" border-neutral border-l">
+                                <li key={service.service_id} className=" border-l border-neutral">
                                   <Link
                                     color="brand"
                                     onClick={() => onClose()}
-                                    to={APPLICATION_URL(
+                                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/application/$serviceId"
+                                    params={{
                                       organizationId,
-                                      project.project_id,
-                                      environment.environment_id,
-                                      service.service_id
-                                    )}
+                                      environmentId: environment.environment_id,
+                                      serviceId: service.service_id,
+                                      projectId: project.project_id,
+                                    }}
                                     className="flex items-center py-1.5 pl-5 text-sm"
                                   >
                                     <Icon
@@ -165,8 +167,8 @@ export function GitTokenServicesListModal({
             </TreeView.Root>
           ) : (
             <div className="px-5 py-4 text-center">
-              <Icon iconName="wave-pulse" className="text-neutral-350" />
-              <p className="mt-1 text-xs font-medium text-neutral-350">No value found</p>
+              <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+              <p className="mt-1 text-xs font-medium text-neutral-subtle">No value found</p>
             </div>
           )}
         </>
