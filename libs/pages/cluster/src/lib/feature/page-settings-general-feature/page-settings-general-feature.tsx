@@ -7,12 +7,26 @@ import { useUserRole } from '@qovery/shared/iam/feature'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleSubmit = (data: FieldValues, cluster: Cluster) => {
-  return {
+  const baseCluster = {
     ...cluster,
     name: data['name'],
     description: data['description'] || '',
     production: data['production'],
   }
+
+  // Add labels_groups for AWS clusters
+  if (cluster.cloud_provider === 'AWS') {
+    return {
+      ...baseCluster,
+      labels_groups:
+        data['labels_groups'] && data['labels_groups'].length > 0
+          ? data['labels_groups'].map((groupId: string) => ({ id: groupId }))
+          : [],
+    }
+  }
+
+  const { labels_groups, ...baseClusterWithoutLabels } = baseCluster
+  return baseClusterWithoutLabels
 }
 
 export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: Cluster; organizationId: string }) {
@@ -24,6 +38,7 @@ export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: C
     mode: 'onChange',
     defaultValues: {
       ...cluster,
+      labels_groups: cluster.labels_groups?.map((group) => group.id) ?? [],
     },
   })
 

@@ -1,9 +1,9 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type CloudProvider, CloudProviderEnum, type ClusterRegion } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { LabelSetting } from '@qovery/domains/organizations/feature'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
 import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_NEW_URL, CLUSTERS_URL } from '@qovery/shared/routes'
@@ -175,6 +175,13 @@ export function StepGeneral(props: StepGeneralProps) {
             </div>
           )}
         </div>
+
+        {watchCloudProvider === 'AWS' && (
+          <div className="mb-10">
+            <h4 className="mb-4 text-sm text-neutral-400">Extra tags</h4>
+            <LabelSetting filterPropagateToCloudProvider={true} />
+          </div>
+        )}
 
         <div className="flex justify-between">
           <Button

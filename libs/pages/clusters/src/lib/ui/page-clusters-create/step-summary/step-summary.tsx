@@ -1,4 +1,7 @@
-import { type ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios'
+import {
+  type ClusterInstanceTypeResponseListResultsInner,
+  type OrganizationLabelsGroupEnrichedResponse,
+} from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import {
   CONTROL_PLANE_LABELS,
@@ -30,6 +33,7 @@ export interface StepSummaryProps {
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
   detailInstanceType?: ClusterInstanceTypeResponseListResultsInner
+  labelsGroup?: OrganizationLabelsGroupEnrichedResponse[]
 }
 
 function SubnetsList({ title, index, subnets }: { title: string; index: string; subnets?: Subnets[] }) {
@@ -157,6 +161,19 @@ export function StepSummary(props: StepSummaryProps) {
                   </li>
                 </>
               )}
+              {props.generalData.cloud_provider === 'AWS' &&
+                !props.generalData.production &&
+                props.labelsGroup &&
+                props.generalData.labels_groups &&
+                props.generalData.labels_groups.length > 0 && (
+                  <li>
+                    <strong className="font-medium">Labels group: </strong>
+                    {props.labelsGroup
+                      .filter(({ id }) => props.generalData.labels_groups?.includes(id))
+                      .map(({ name }) => name)
+                      .join(', ')}
+                  </li>
+                )}
             </ul>
           </div>
 
