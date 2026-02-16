@@ -7,6 +7,7 @@ import {
   BlockContent,
   Button,
   Icon,
+  Indicator,
   Section,
   Skeleton,
   Tooltip,
@@ -116,20 +117,25 @@ const RegistryRow = ({ registry }: { registry: ContainerRegistryResponse }) => {
       </div>
       <div className="flex gap-2">
         {(registry?.associated_services_count || 0) > 0 && (
-          <Button
-            variant="outline"
-            color="neutral"
-            size="md"
-            iconOnly
-            className="relative"
-            disabled={registry.associated_services_count === 0}
-            onClick={() => onOpenServicesAssociatedModal(registry)}
+          <Indicator
+            content={
+              <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
+                {registry.associated_services_count}
+              </span>
+            }
           >
-            <Icon iconName="layer-group" iconStyle="regular" />
-            <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
-              {registry.associated_services_count}
-            </span>
-          </Button>
+            <Button
+              variant="outline"
+              color="neutral"
+              size="md"
+              iconOnly
+              className="relative"
+              disabled={registry.associated_services_count === 0}
+              onClick={() => onOpenServicesAssociatedModal(registry)}
+            >
+              <Icon iconName="layer-group" iconStyle="regular" />
+            </Button>
+          </Indicator>
         )}
         <Button size="md" variant="outline" color="neutral" iconOnly onClick={() => onEdit(registry)}>
           <Icon iconName="gear" iconStyle="regular" />
@@ -184,31 +190,33 @@ export const PageOrganizationContainerRegistries = () => {
 
   return (
     <div className="max-w-content-with-navigation-left space-y-8">
-      {registriesCount > 0 ? (
-        <>
-          {usedRegistries && usedRegistries.length > 0 && (
-            <BlockContent title="Container registries" classNameContent="p-0">
-              {usedRegistries.map((registry) => (
-                <RegistryRow key={registry.id} registry={registry} />
-              ))}
-            </BlockContent>
-          )}
-          {unusedRegistries && unusedRegistries.length > 0 && (
-            <BlockContent title="Unused container registries" classNameContent="p-0">
-              {unusedRegistries.map((registry) => (
-                <RegistryRow key={registry.id} registry={registry} />
-              ))}
-            </BlockContent>
-          )}
-        </>
-      ) : (
-        <div className="my-4 px-5 text-center">
-          <Icon iconName="wave-pulse" className="text-neutral-subtle" />
-          <p className="mt-1 text-xs font-medium text-neutral-subtle">
-            No container registry found. <br /> Please add one.
-          </p>
-        </div>
-      )}
+      <Suspense fallback={<Loader />}>
+        {registriesCount > 0 ? (
+          <>
+            {usedRegistries && usedRegistries.length > 0 && (
+              <BlockContent title="Container registries" classNameContent="p-0">
+                {usedRegistries.map((registry) => (
+                  <RegistryRow key={registry.id} registry={registry} />
+                ))}
+              </BlockContent>
+            )}
+            {unusedRegistries && unusedRegistries.length > 0 && (
+              <BlockContent title="Unused container registries" classNameContent="p-0">
+                {unusedRegistries.map((registry) => (
+                  <RegistryRow key={registry.id} registry={registry} />
+                ))}
+              </BlockContent>
+            )}
+          </>
+        ) : (
+          <div className="my-4 px-5 text-center">
+            <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+            <p className="mt-1 text-xs font-medium text-neutral-subtle">
+              No container registry found. <br /> Please add one.
+            </p>
+          </div>
+        )}
+      </Suspense>
     </div>
   )
 }
@@ -238,14 +246,12 @@ export function SettingsContainerRegistries() {
           />
 
           <Button className="absolute right-0 top-0 gap-2" size="md" onClick={() => onAddRegistry()}>
-            Add registry
             <Icon iconName="circle-plus" iconStyle="regular" />
+            Add registry
           </Button>
         </div>
 
-        <Suspense fallback={<Loader />}>
-          <PageOrganizationContainerRegistries />
-        </Suspense>
+        <PageOrganizationContainerRegistries />
       </Section>
     </div>
   )
