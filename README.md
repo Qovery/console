@@ -4,7 +4,7 @@
 
 <a  href="https://qovery.com"  target="_blank">
 
-<img  style="display: block; margin: auto; width: 200px;"  src="https://user-images.githubusercontent.com/533928/152318674-3d036713-8f05-4972-b6e1-1c84e27ea794.svg">
+<img  style="display: block; margin: auto; width: 350px;"  src="https://console.qovery.com/assets/logos/logo-white-on-brand.svg">
 </a>
 </p>
 
