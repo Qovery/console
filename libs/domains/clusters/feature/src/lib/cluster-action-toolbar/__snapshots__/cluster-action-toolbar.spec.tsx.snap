@@ -375,188 +375,6 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
 
 exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
 <body
-  style=""
->
-  <div
-    aria-orientation="horizontal"
-    data-orientation="horizontal"
-    dir="ltr"
-    role="toolbar"
-    style="outline: none;"
-    tabindex="0"
-  >
-    <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      aria-label="Manage Deployment"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-warning-strong h-8 px-2.5 hover:bg-surface-warning-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border border-warning-component hover:border-warning-strong data-[state=open]:bg-surface-warning-subtle data-[state=open]:border-warning-strong text-warning text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
-      data-state="closed"
-      id="radix-:r1g:"
-      tabindex="-1"
-      type="button"
-    >
-      <div
-        class="flex h-full w-full items-center justify-center"
-        data-state="closed"
-      >
-        <i
-          aria-hidden="true"
-          class="fa-regular fa-play mr-4"
-        />
-        <i
-          aria-hidden="true"
-          class="fa-regular fa-chevron-down "
-        />
-      </div>
-    </button>
-    <button
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
-      data-state="closed"
-      tabindex="-1"
-      type="button"
-    >
-      <i
-        aria-hidden="true"
-        class="fa-regular fa-scroll "
-      />
-    </button>
-    <button
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
-      data-state="closed"
-      tabindex="-1"
-      type="button"
-    >
-      <i
-        aria-hidden="true"
-        class="fa-regular fa-terminal "
-      />
-    </button>
-    <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      aria-label="Other actions"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
-      data-state="closed"
-      id="radix-:r1o:"
-      tabindex="-1"
-      type="button"
-    >
-      <div
-        class="flex h-full w-full items-center justify-center"
-        data-state="closed"
-      >
-        <i
-          aria-hidden="true"
-          class="fa-regular fa-ellipsis-v "
-          width="20"
-        />
-      </div>
-    </button>
-  </div>
-</body>
-`;
-
-exports[`ClusterActionToolbar should match outdated snapshot 2`] = `
-<body
-  style=""
->
-  <div
-    aria-orientation="horizontal"
-    data-orientation="horizontal"
-    dir="ltr"
-    role="toolbar"
-    style="outline: none;"
-    tabindex="0"
-  >
-    <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      aria-label="Manage Deployment"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-warning-strong h-8 px-2.5 hover:bg-surface-warning-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border border-warning-component hover:border-warning-strong data-[state=open]:bg-surface-warning-subtle data-[state=open]:border-warning-strong text-warning text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
-      data-state="closed"
-      id="radix-:r1g:"
-      tabindex="-1"
-      type="button"
-    >
-      <div
-        class="flex h-full w-full items-center justify-center"
-        data-state="closed"
-      >
-        <i
-          aria-hidden="true"
-          class="fa-regular fa-play mr-4"
-        />
-        <i
-          aria-hidden="true"
-          class="fa-regular fa-chevron-down "
-        />
-      </div>
-    </button>
-    <button
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
-      data-state="closed"
-      tabindex="-1"
-      type="button"
-    >
-      <i
-        aria-hidden="true"
-        class="fa-regular fa-scroll "
-      />
-    </button>
-    <button
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
-      data-state="closed"
-      tabindex="-1"
-      type="button"
-    >
-      <i
-        aria-hidden="true"
-        class="fa-regular fa-terminal "
-      />
-    </button>
-    <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      aria-label="Other actions"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
-      data-state="closed"
-      id="radix-:r1o:"
-      tabindex="-1"
-      type="button"
-    >
-      <div
-        class="flex h-full w-full items-center justify-center"
-        data-state="closed"
-      >
-        <i
-          aria-hidden="true"
-          class="fa-regular fa-ellipsis-v "
-          width="20"
-        />
-      </div>
-    </button>
-  </div>
-</body>
-`;
-
-exports[`ClusterActionToolbar should match outdated snapshot 3`] = `
-<body
   data-scroll-locked="1"
   style="pointer-events: none;"
 >
@@ -585,7 +403,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 3`] = `
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
-      id="radix-:r1g:"
+      id="radix-:r1i:"
       tabindex="-1"
       type="button"
     >
@@ -630,7 +448,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 3`] = `
       />
     </button>
     <button
-      aria-controls="radix-:r1p:"
+      aria-controls="radix-:r1r:"
       aria-expanded="true"
       aria-haspopup="menu"
       aria-label="Other actions"
@@ -638,7 +456,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 3`] = `
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="open"
-      id="radix-:r1o:"
+      id="radix-:r1q:"
       tabindex="-1"
       type="button"
     >
@@ -660,7 +478,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 3`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -8px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      aria-labelledby="radix-:r1o:"
+      aria-labelledby="radix-:r1q:"
       aria-orientation="vertical"
       class="flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-down-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-up-md-faded"
       data-align="start"
@@ -669,7 +487,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 3`] = `
       data-side="bottom"
       data-state="open"
       dir="ltr"
-      id="radix-:r1p:"
+      id="radix-:r1r:"
       role="menu"
       style="outline: none; --radix-dropdown-menu-content-transform-origin: var(--radix-popper-transform-origin); --radix-dropdown-menu-content-available-width: var(--radix-popper-available-width); --radix-dropdown-menu-content-available-height: var(--radix-popper-available-height); --radix-dropdown-menu-trigger-width: var(--radix-popper-anchor-width); --radix-dropdown-menu-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
       tabindex="-1"
