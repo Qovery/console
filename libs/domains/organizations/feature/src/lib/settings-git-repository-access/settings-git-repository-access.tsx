@@ -20,7 +20,6 @@ interface PageOrganizationGithubRepositoryAccessProps {
   repositories?: GitRepository[]
   repositoriesLoading?: boolean
   onConfigure?: () => void
-  onDisconnect?: (force: boolean) => void
   forceLoading?: boolean
 }
 
@@ -123,22 +122,6 @@ export function SettingsGitRepositoryAccess() {
     window.open(githubConnectUrl, '_blank')
   }
 
-  // onDisconnect can be called with force parameter. If it's false, the api call will eventually fail with a 400 error
-  // if the user has some apps that used some repositories of github app. If it fails, we open a modal to confirm the disconnection
-  // and we force the disconnection with force parameter set to true. To put simply: if the user does not use any app
-  // he can disconnect without modal, if he uses some apps, he has to confirm the disconnection
-  const onDisconnect = async (force?: boolean) => {
-    try {
-      await mutateAsyncDisconnectGithubApp({
-        organizationId,
-        force: force,
-      })
-    } catch (error) {
-      console.error(error)
-      onDisconnectWithModal()
-    }
-  }
-
   return (
     <PageOrganizationGithubRepositoryAccess
       githubConnectURL={githubConnectUrl}
@@ -147,7 +130,6 @@ export function SettingsGitRepositoryAccess() {
       repositories={repositories}
       repositoriesLoading={isLoadingRepositories}
       onConfigure={onConfigure}
-      onDisconnect={onDisconnect}
       forceLoading={isLoadingDisconnectGithubApp}
     />
   )
