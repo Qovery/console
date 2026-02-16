@@ -37,7 +37,7 @@ export function CopyToClipboard({ text, children, className = '' }: CopyToClipbo
               ...child.props,
               color: 'green',
               variant: 'solid',
-              className: twMerge(child.props.className, 'hover:bg-green-500'),
+              className: twMerge(child.props.className, 'hover:bg-surface-positive-solidHover'),
             },
             <Icon iconName="check" className="mr-1" />,
             'Copied'

@@ -4,14 +4,14 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
+      class="mb-5 rounded border border-neutral bg-surface-neutral-subtle w-full"
       data-testid="block-content"
     >
       <div
-        class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
+        class="flex h-9 items-center justify-between border-b border-neutral px-4"
       >
         <h2
-          class="text-ssm font-medium text-neutral-400"
+          class="text-ssm font-medium text-neutral"
         >
           Raw YAML
         </h2>
@@ -24,7 +24,7 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
         >
           <i
             aria-hidden="true"
-            class="fa-solid fa-wave-pulse text-neutral-350"
+            class="fa-regular fa-wave-pulse text-neutral-350"
           />
           <p
             class="mb-3 mt-1 text-xs font-medium text-neutral-350"
@@ -32,12 +32,12 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
             No override defined.
           </p>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
             type="button"
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-plus mr-2"
+              class="fa-regular fa-plus mr-2"
             />
             Create override
           </button>

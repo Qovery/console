@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { type ReactNode, useEffect, useState } from 'react'
 
 export interface InputToggleProps {
@@ -74,15 +75,15 @@ export function InputToggle(props: InputToggleProps) {
         />
         <div
           aria-label="bg"
-          className={`${toggleSizeBg} flex items-center rounded-full p-0.5 ${
-            animateEnabled ? 'duration-300 ease-in-out' : ''
-          } ${
-            toggleActive ? `${small ? 'bg-brand-500' : 'bg-brand-500'}` : `${small ? 'bg-neutral-300' : 'bg-gray-300'}`
-          }`}
+          className={clsx(toggleSizeBg, 'flex items-center rounded-full p-0.5', {
+            'duration-300 ease-in-out': animateEnabled,
+            'bg-surface-brand-solid': toggleActive,
+            'bg-surface-neutral-componentActive': !toggleActive,
+          })}
         >
           <div
             aria-label="circle"
-            className={`${toggleSizeCircle} transform rounded-full bg-white shadow-lg ${
+            className={`${toggleSizeCircle} transform rounded-full bg-surface-neutral shadow-lg ${
               animateEnabled ? 'duration-300 ease-in-out' : ''
             } ${toggleActive ? `${small ? 'translate-x-3.5' : 'translate-x-6'}` : ''}`}
           />
@@ -93,8 +94,8 @@ export function InputToggle(props: InputToggleProps) {
           onClick={changeToggle}
           className={`${description && forceAlignTop ? 'relative -top-0.5' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''} flex flex-col gap-1`}
         >
-          {title && <p className="font-medium text-neutral-400">{title}</p>}
-          {description && <div className="text-neutral-350">{description}</div>}
+          {title && <p className="font-medium text-neutral">{title}</p>}
+          {description && <div className="text-neutral-subtle">{description}</div>}
         </div>
       )}
     </div>

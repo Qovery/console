@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import Button from '../button/button'
+import Button, { type ButtonProps } from '../button/button'
 
 export interface StickyActionFormToasterProps {
   visible?: boolean
@@ -8,6 +8,7 @@ export interface StickyActionFormToasterProps {
   resetLabel?: string
   onSubmit?: () => void
   submitLabel?: string
+  submitButtonColor?: ButtonProps['color']
   className?: string
   disabledValidation?: boolean
   loading?: boolean
@@ -22,6 +23,7 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
     onSubmit,
     className = '',
     visible = false,
+    submitButtonColor,
   } = props
 
   const [visibleState, setVisibleState] = useState(visible)
@@ -37,15 +39,17 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
     }
   }, [visible])
 
+  const submitButtonColorValue = submitButtonColor ?? 'green'
+
   return (
     <div className={`sticky bottom-4 flex justify-center ${className} ${!visibleState ? 'mb-[52px]' : ''}`}>
       <div
         data-testid="sticky-action-form-toaster"
-        className={`inline-flex items-center gap-10 rounded bg-neutral-500 p-2 pl-4 text-white shadow-xl ${
+        className={`inline-flex items-center gap-10 rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-neutralInvert shadow-xl ${
           visible ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
         } ${visibleState ? 'visible' : 'hidden'}`}
       >
-        {description && <span className="text-sm font-medium text-white">{description}</span>}
+        {description && <span className="text-sm font-medium text-neutralInvert">{description}</span>}
         <div className="flex gap-5">
           {resetLabel && onReset && (
             <button type="button" className="text-ssm font-medium underline" onClick={() => onReset()}>
@@ -54,7 +58,7 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
           )}
           {submitLabel && onSubmit && (
             <Button
-              color="green"
+              color={submitButtonColorValue}
               size="md"
               data-testid="submit-button"
               onClick={() => onSubmit()}

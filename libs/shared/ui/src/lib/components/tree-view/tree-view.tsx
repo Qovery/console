@@ -30,9 +30,9 @@ const TreeViewTrigger = forwardRef<ElementRef<typeof TreeViewPrimitive.Trigger>,
     const iconName = isOpen ? 'minus' : 'plus'
 
     return (
-      <div className={twMerge('flex w-full items-center py-2 pr-5 text-sm text-neutral-400 outline-none', className)}>
+      <div className={twMerge('flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none', className)}>
         <TreeViewPrimitive.Trigger
-          className="mr-5 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral-250 text-3xs"
+          className="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
           onClick={() => setIsOpen(!isOpen)}
           {...props}
           ref={forwardedRef}
@@ -53,7 +53,7 @@ const TreeViewContent = forwardRef<ElementRef<typeof TreeViewPrimitive.Content>,
   ({ children, className, ...props }, forwardedRef) => (
     <TreeViewPrimitive.Content
       className={twMerge(
-        'data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral-200 pl-[26px] data-[state=open]:animate-slidein-down-sm-faded',
+        'data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]',
         className
       )}
       {...props}

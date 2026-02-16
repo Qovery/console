@@ -1,3 +1,6 @@
+export * from './lib/project-avatar/project-avatar'
+export * from './lib/create-project-modal/create-project-modal'
+export * from './lib/project-list/project-list'
 export * from './lib/hooks/use-projects/use-projects'
 export * from './lib/hooks/use-project/use-project'
 export * from './lib/hooks/use-create-project/use-create-project'
@@ -9,5 +12,4 @@ export * from './lib/hooks/use-create-deployment-rule/use-create-deployment-rule
 export * from './lib/hooks/use-edit-deployment-rule/use-edit-deployment-rule'
 export * from './lib/hooks/use-delete-deployment-rule/use-delete-deployment-rule'
 export * from './lib/hooks/use-edit-deployment-rules-priority-order/use-edit-deployment-rules-priority-order'
-export * from './lib/project-avatar/project-avatar'
-export * from './lib/create-project-modal/create-project-modal'
+export * from './lib/hooks/use-environments-overview/use-environments-overview'

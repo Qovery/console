@@ -3,7 +3,7 @@ import { type FormEventHandler, cloneElement } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { ScalewayStaticIp } from '@qovery/domains/clusters/feature'
-import { CardClusterFeature } from '@qovery/shared/console-shared'
+import { ClusterCardFeature } from '@qovery/domains/clusters/feature'
 import { type ClusterFeaturesData } from '@qovery/shared/interfaces'
 import { Button, Callout, ExternalLink, Heading, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -119,7 +119,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                   <div>
                     {features && features.length > 0 ? (
                       features.map((feature) => (
-                        <CardClusterFeature
+                        <ClusterCardFeature
                           key={feature.id}
                           feature={feature}
                           cloudProvider={cloudProvider}
@@ -149,7 +149,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                               </Callout.Text>
                             </Callout.Root>
                           )}
-                        </CardClusterFeature>
+                        </ClusterCardFeature>
                       ))
                     ) : (
                       <div className="mt-2 flex justify-center">
@@ -168,7 +168,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                 .with('DEFAULT', () =>
                   features && features.length > 0 ? (
                     features.map((feature) => (
-                      <CardClusterFeature
+                      <ClusterCardFeature
                         key={feature.id}
                         feature={feature}
                         cloudProvider={cloudProvider}

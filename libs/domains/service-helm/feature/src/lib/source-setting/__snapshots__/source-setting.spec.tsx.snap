@@ -39,7 +39,7 @@ exports[`SourceSetting should match snapshot 1`] = `
                 class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
               >
                 <span
-                  class="mr-1 text-sm text-neutral-400"
+                  class="mr-1 text-sm text-neutral"
                 >
                   Helm repository
                 </span>
@@ -95,9 +95,9 @@ exports[`SourceSetting should match snapshot 1`] = `
           <div
             class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
           >
-            <span
-              class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-angle-down text-sm text-neutral-subtle"
             />
           </div>
         </div>
@@ -109,7 +109,7 @@ exports[`SourceSetting should match snapshot 1`] = `
           class="flex justify-center"
         >
           <div
-            class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+            class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
             data-testid="spinner"
           />
         </div>
@@ -155,7 +155,7 @@ exports[`SourceSetting should match snapshot helm chart settings with HTTPS kind
               class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
             >
               <span
-                class="mr-1 text-sm text-neutral-400"
+                class="mr-1 text-sm text-neutral"
               >
                 datadog
               </span>
@@ -220,9 +220,9 @@ exports[`SourceSetting should match snapshot helm chart settings with HTTPS kind
         <div
           class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
         >
-          <span
-            class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-angle-down text-sm text-neutral-subtle"
           />
         </div>
       </div>
@@ -260,7 +260,7 @@ exports[`SourceSetting should match snapshot helm chart settings with HTTPS kind
               class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
             >
               <span
-                class="mr-1 text-sm text-neutral-400"
+                class="mr-1 text-sm text-neutral"
               >
                 3.66.0
               </span>
@@ -325,9 +325,9 @@ exports[`SourceSetting should match snapshot helm chart settings with HTTPS kind
         <div
           class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
         >
-          <span
-            class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-angle-down text-sm text-neutral-subtle"
           />
         </div>
       </div>
@@ -348,7 +348,7 @@ exports[`SourceSetting should match snapshot helm chart settings with OCI kind 1
       >
         <div
           aria-label="input-container"
-          class="input    input--label-up "
+          class="input group    input--label-up "
         >
           <div
             class=""
@@ -380,7 +380,7 @@ exports[`SourceSetting should match snapshot helm chart settings with OCI kind 1
       >
         <div
           aria-label="input-container"
-          class="input    input--label-up "
+          class="input group    input--label-up "
         >
           <div
             class=""

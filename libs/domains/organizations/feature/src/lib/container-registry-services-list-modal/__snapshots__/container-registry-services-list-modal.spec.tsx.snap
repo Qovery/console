@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
 <body>
@@ -7,7 +7,7 @@ exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
       class="flex flex-col p-6"
     >
       <h1
-        class="font-bold mb-6 text-2xl text-neutral-400"
+        class="font-bold mb-6 text-2xl text-neutral"
       >
         Associated services (
         3
@@ -16,12 +16,12 @@ exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
       <div
         class="relative w-full mb-3"
       >
-        <span
-          class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-400 dark:text-white"
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-magnifying-glass absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-subtle"
         />
         <input
-          class="w-full rounded border border-neutral-250 pl-10 pr-6 text-neutral-400 placeholder:text-neutral-350 focus:border-brand-400 focus:outline-none focus:transition-[border-color] dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250 h-9 text-xs"
+          class="w-full rounded border border-neutral bg-surface-neutral-component pl-10 pr-6 text-neutral placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color] h-9 text-sm"
           data-testid="input-search"
           name="search"
           placeholder="Search by project, environment, service name"
@@ -29,7 +29,7 @@ exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
         />
       </div>
       <div
-        class="rounded border border-neutral-250 bg-neutral-100 px-4 py-2"
+        class="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2"
         data-orientation="vertical"
       >
         <div
@@ -38,12 +38,12 @@ exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
           data-state="open"
         >
           <div
-            class="flex w-full items-center py-2 pr-5 text-sm text-neutral-400 outline-none"
+            class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
           >
             <button
               aria-controls="radix-:rh:"
               aria-expanded="true"
-              class="mr-5 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral-250 text-3xs"
+              class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
               data-orientation="vertical"
               data-radix-collection-item=""
               data-state="open"
@@ -52,14 +52,14 @@ exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-minus "
+                class="fa-regular fa-minus "
               />
             </button>
             Project 1
           </div>
           <div
             aria-labelledby="radix-:rg:"
-            class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral-200 pl-[26px] data-[state=open]:animate-slidein-down-sm-faded"
+            class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
             data-orientation="vertical"
             data-state="open"
             id="radix-:rh:"
@@ -75,12 +75,12 @@ exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
                 data-state="closed"
               >
                 <div
-                  class="flex w-full items-center py-2 pr-5 text-sm text-neutral-400 outline-none"
+                  class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
                 >
                   <button
                     aria-controls="radix-:rl:"
                     aria-expanded="false"
-                    class="mr-5 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral-250 text-3xs"
+                    class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
                     data-orientation="vertical"
                     data-radix-collection-item=""
                     data-state="closed"
@@ -89,19 +89,20 @@ exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-plus "
+                      class="fa-regular fa-plus "
                     />
                   </button>
                   <a
-                    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-brand-500 hover:text-brand-600 dark:hover:text-brand-400 text-sm"
-                    href="/organization/0000-0000-0000/project/1/environment/1/services/general"
+                    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-brand hover:text-brand-hover text-sm"
+                    params="[object Object]"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId"
                   >
                     Development
                   </a>
                 </div>
                 <div
                   aria-labelledby="radix-:rk:"
-                  class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral-200 pl-[26px] data-[state=open]:animate-slidein-down-sm-faded"
+                  class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
                   data-orientation="vertical"
                   data-state="closed"
                   hidden=""
@@ -119,12 +120,12 @@ exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
           data-state="closed"
         >
           <div
-            class="flex w-full items-center py-2 pr-5 text-sm text-neutral-400 outline-none"
+            class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
           >
             <button
               aria-controls="radix-:rj:"
               aria-expanded="false"
-              class="mr-5 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral-250 text-3xs"
+              class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
               data-orientation="vertical"
               data-radix-collection-item=""
               data-state="closed"
@@ -133,14 +134,14 @@ exports[`ContainerRegistryServicesListModal should match snapshots 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-plus "
+                class="fa-regular fa-plus "
               />
             </button>
             Project 2
           </div>
           <div
             aria-labelledby="radix-:ri:"
-            class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral-200 pl-[26px] data-[state=open]:animate-slidein-down-sm-faded"
+            class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
             data-orientation="vertical"
             data-state="closed"
             hidden=""

@@ -1,5 +1,14 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import DatePicker from './date-picker'
+import {
+  clampEndDateForMaxRange,
+  formatDateInput,
+  formatLocalDate,
+  getDateTimeInputErrors,
+  getPeriodDates,
+  validateDate,
+  validateTime,
+} from './date-picker.utils'
 
 describe('DatePicker', () => {
   const mockOnChange = jest.fn()
@@ -23,7 +32,9 @@ describe('DatePicker', () => {
     const startDate = new Date('2023-12-01T10:30:00.000Z')
     const endDate = new Date('2023-12-02T15:45:00.000Z')
 
-    renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showTimeInput defaultDates={[startDate, endDate]} />)
+    renderWithProviders(
+      <DatePicker onChange={mockOnChange} isOpen showDateTimeInputs defaultDates={[startDate, endDate]} />
+    )
 
     const inputs = screen.getAllByTestId('input-value')
     expect(inputs[0]).toHaveValue('2023-12-01')
@@ -45,7 +56,7 @@ describe('DatePicker', () => {
   })
 
   it('calls onChange when Apply is clicked with time inputs', async () => {
-    const { userEvent } = renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showTimeInput />)
+    const { userEvent } = renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showDateTimeInputs />)
 
     const inputs = screen.getAllByTestId('input-value')
 
@@ -66,7 +77,7 @@ describe('DatePicker', () => {
 
   it('calls error when date and time inputs are wrong', async () => {
     const { userEvent } = renderWithProviders(
-      <DatePicker onChange={mockOnChange} isOpen showTimeInput maxRangeInDays={3} />
+      <DatePicker onChange={mockOnChange} isOpen showDateTimeInputs maxRangeInDays={3} />
     )
 
     const inputs = screen.getAllByTestId('input-value')
@@ -88,7 +99,7 @@ describe('DatePicker', () => {
 
   it('calls onChange when Apply is clicked with time inputs and max range in days is set and date is outside max', async () => {
     const { userEvent } = renderWithProviders(
-      <DatePicker onChange={mockOnChange} isOpen showTimeInput maxRangeInDays={3} />
+      <DatePicker onChange={mockOnChange} isOpen showDateTimeInputs maxRangeInDays={3} />
     )
 
     const inputs = screen.getAllByTestId('input-value')
@@ -108,8 +119,8 @@ describe('DatePicker', () => {
     expect(mockOnChange).toHaveBeenCalledWith(expect.any(Date), expect.any(Date))
   })
 
-  it('shows time inputs when showTimeInput prop is true', () => {
-    renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showTimeInput />)
+  it('shows time inputs when showDateTimeInputs prop is true', () => {
+    renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showDateTimeInputs />)
 
     // Check that we have 4 inputs (2 dates + 2 times)
     const inputs = screen.getAllByTestId('input-value')
@@ -128,7 +139,7 @@ describe('DatePicker', () => {
       <DatePicker
         onChange={mockOnChange}
         isOpen
-        showTimeInput
+        showDateTimeInputs
         defaultDates={[startDate, endDate]}
         useLocalTime={false}
       />
@@ -156,18 +167,29 @@ describe('DatePicker', () => {
     await userEvent.click(screen.getByText('Apply'))
     expect(mockOnChange).toHaveBeenCalledWith(expect.any(Date), expect.any(Date))
   })
+
+  it('clears the period selection when selecting a range on the calendar', async () => {
+    const mockOnPeriodChange = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <DatePicker
+        onChange={mockOnChange}
+        isOpen
+        showPeriodSelect
+        periodOptions={[{ label: 'Last 15 minutes', value: '15m' }]}
+        periodValue="15m"
+        onPeriodChange={mockOnPeriodChange}
+      />
+    )
+
+    const days = screen.getAllByRole('option')
+    const availableDays = days.filter((day) => !day.classList.contains('react-datepicker__day--outside-month'))
+    await userEvent.click(availableDays[0])
+
+    expect(mockOnPeriodChange).toHaveBeenCalledWith('')
+  })
 })
 
 describe('validateDate', () => {
-  // Internal function for testing - matches the implementation in date-picker.tsx:44-50
-  const validateDate = (dateStr: string): boolean => {
-    if (!dateStr) return false
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/
-    if (!dateRegex.test(dateStr)) return false
-    const date = new Date(dateStr)
-    return date instanceof Date && !isNaN(date.getTime()) && dateStr === date.toISOString().split('T')[0]
-  }
-
   it('should return true for valid date formats', () => {
     expect(validateDate('2023-01-01')).toBe(true)
     expect(validateDate('2023-12-31')).toBe(true)
@@ -239,12 +261,6 @@ describe('validateDate', () => {
 })
 
 describe('validateTime', () => {
-  // Internal function for testing - matches the implementation in date-picker.tsx:52-56
-  const validateTime = (timeStr: string): boolean => {
-    if (!timeStr) return false
-    const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/
-    return timeRegex.test(timeStr)
-  }
   it('should return true for valid time formats', () => {
     expect(validateTime('00:00')).toBe(true)
     expect(validateTime('12:30')).toBe(true)
@@ -295,16 +311,6 @@ describe('validateTime', () => {
 })
 
 describe('formatLocalDate', () => {
-  // Internal function for testing - matches the implementation in date-picker.tsx:59-67
-  const formatLocalDate = (date: Date): string => {
-    return (
-      date.getFullYear() +
-      '-' +
-      String(date.getMonth() + 1).padStart(2, '0') +
-      '-' +
-      String(date.getDate()).padStart(2, '0')
-    )
-  }
   it('should format dates correctly', () => {
     const date1 = new Date(2023, 0, 1) // January 1, 2023
     expect(formatLocalDate(date1)).toBe('2023-01-01')
@@ -354,5 +360,80 @@ describe('formatLocalDate', () => {
     // Should format based on local date components, not UTC
     expect(formatted).toMatch(/^\d{4}-\d{2}-\d{2}$/)
     expect(formatted.split('-')[0]).toBe('2023')
+  })
+})
+
+describe('formatDateInput', () => {
+  it('should format using local or UTC date based on flag', () => {
+    const date = new Date('2023-06-15T23:30:00.000Z')
+    expect(formatDateInput(date, true)).toBe(formatLocalDate(date))
+    expect(formatDateInput(date, false)).toBe('2023-06-15')
+  })
+})
+
+describe('getDateTimeInputErrors', () => {
+  it('should flag start date when it exceeds end date', () => {
+    const errors = getDateTimeInputErrors({
+      startDateText: '2024-01-02',
+      startTimeText: '10:00',
+      endDateText: '2024-01-01',
+      endTimeText: '09:00',
+      useLocalTime: true,
+      activeField: 'start',
+    })
+
+    expect(errors.startDateError).toBe('Cannot exceed end date')
+  })
+
+  it('should flag end date when it precedes start date', () => {
+    const errors = getDateTimeInputErrors({
+      startDateText: '2024-01-02',
+      startTimeText: '10:00',
+      endDateText: '2024-01-01',
+      endTimeText: '09:00',
+      useLocalTime: true,
+      activeField: 'end',
+    })
+
+    expect(errors.endDateError).toBe('Cannot precede start date')
+  })
+})
+
+describe('getPeriodDates', () => {
+  it('should derive period dates from a valid value', () => {
+    const endDate = new Date('2024-01-01T00:00:00.000Z')
+    const range = getPeriodDates('15m', endDate)
+
+    expect(range).not.toBeNull()
+    if (!range) return
+
+    const [startDate, endDateResult] = range
+    expect(endDateResult).toEqual(endDate)
+    expect(endDateResult.getTime() - startDate.getTime()).toBe(15 * 60 * 1000)
+  })
+
+  it('should return null for invalid period values', () => {
+    const endDate = new Date('2024-01-01T00:00:00.000Z')
+    expect(getPeriodDates('custom', endDate)).toBeNull()
+  })
+})
+
+describe('clampEndDateForMaxRange', () => {
+  it('should return the same end date when within max range', () => {
+    const startDate = new Date('2024-01-01T00:00:00.000Z')
+    const endDate = new Date('2024-01-03T00:00:00.000Z')
+    const result = clampEndDateForMaxRange({ startDate, endDate, maxRangeInDays: 3 })
+
+    expect(result).toEqual(endDate)
+  })
+
+  it('should clamp end date when exceeding max range', () => {
+    const startDate = new Date('2024-01-01T00:00:00.000Z')
+    const endDate = new Date('2024-01-05T00:00:00.000Z')
+    const result = clampEndDateForMaxRange({ startDate, endDate, maxRangeInDays: 3 })
+
+    expect(result?.getFullYear()).toBe(2024)
+    expect(result?.getMonth()).toBe(0)
+    expect(result?.getDate()).toBe(3)
   })
 })

@@ -24,12 +24,12 @@ export function Slider(props: SliderProps) {
       {label && (
         <div className="mb-2 flex items-center justify-between">
           {label && (
-            <p data-testid="label" className="text-sm text-neutral-400">
+            <p data-testid="label" className="text-sm text-neutral">
               {label}
             </p>
           )}
           {valueLabel && value && (
-            <p className="font-medium text-brand-500">
+            <p className="font-medium text-brand">
               {value.map((currentValue, index) => `${currentValue}${index < value.length - 1 ? ', ' : ''}`)}
               {valueLabel}
             </p>
@@ -38,19 +38,19 @@ export function Slider(props: SliderProps) {
       )}
       <Root
         onValueChange={(value) => handleChange(value)}
-        className="relative flex h-1 w-full cursor-pointer rounded bg-neutral-300"
+        className="relative flex h-1 w-full cursor-pointer rounded bg-surface-neutral-solid"
         value={value}
         min={min}
         max={max}
         step={step}
       >
-        <Track className="relative flex h-1 flex-grow rounded-full bg-neutral-300">
-          <Range className="absolute h-full rounded-full bg-brand-500" />
+        <Track className="relative flex h-1 flex-grow rounded-full bg-surface-neutral-solid">
+          <Range className="absolute h-full rounded-full bg-surface-brand-solid" />
         </Track>
         {value?.map((v, index) => (
           <Thumb
             key={index}
-            className="duration-600 -mt-1.5 block h-4 w-4 cursor-grab rounded-full bg-brand-500 transition-all ease-in-out hover:bg-brand-600 focus:shadow-2xl focus-visible:cursor-grabbing focus-visible:outline-none"
+            className="duration-600 -mt-1.5 block h-4 w-4 cursor-grab rounded-full bg-surface-brand-solid transition-all ease-in-out hover:bg-surface-brand-solidHover focus:shadow-2xl focus-visible:cursor-grabbing focus-visible:outline-none"
           />
         ))}
       </Root>

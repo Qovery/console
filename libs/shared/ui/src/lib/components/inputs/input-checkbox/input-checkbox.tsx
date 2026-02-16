@@ -62,11 +62,9 @@ export function InputCheckbox(props: InputCheckboxProps) {
         checked={check}
         disabled={disabled}
         onChange={(e) => inputChange(e.currentTarget.checked, e)}
-        className={`input-checkbox relative h-0 w-0 appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:-translate-y-1/2 before:items-center before:justify-center before:rounded-sm before:bg-white before:text-white dark:before:bg-neutral-500 ${bigClasses} ${
-          disabled
-            ? 'before:border-neutral-250 dark:before:border-neutral-350'
-            : 'cursor-pointer before:border-neutral-350'
-        } before:border-2 before:text-xs before:font-black before:leading-none before:transition-all before:content-[''] checked:before:border-brand-500 checked:before:bg-brand-500`}
+        className={`input-checkbox relative h-0 w-0 appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:-translate-y-1/2 before:items-center before:justify-center before:rounded before:border before:border-neutral before:bg-surface-neutral before:text-neutralInvert ${bigClasses} ${
+          disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+        } before:text-xs before:font-black before:leading-none before:transition-colors before:content-[''] checked:before:border-brand-strong checked:before:bg-surface-brand-solid hover:before:border-brand-strong checked:hover:before:bg-surface-brand-solidHover disabled:before:border-neutral disabled:before:bg-surface-neutral-subtle disabled:checked:before:border-neutral disabled:checked:before:bg-surface-neutral-subtle disabled:hover:before:border-neutral`}
       />
       {label && (
         <label
@@ -78,7 +76,12 @@ export function InputCheckbox(props: InputCheckboxProps) {
           {label}
         </label>
       )}
-      {check && <Icon iconName="check" className={`absolute text-2xs text-white ${big ? 'left-1.5' : 'left-1'}`} />}
+      {check && (
+        <Icon
+          iconName="check"
+          className={`pointer-events-none absolute leading-[16px] ${disabled ? 'text-neutral-disabled' : 'text-neutralInvert'} ${big ? 'left-1 text-sm' : 'left-[2.75px] text-xs'}`}
+        />
+      )}
     </div>
   )
 }

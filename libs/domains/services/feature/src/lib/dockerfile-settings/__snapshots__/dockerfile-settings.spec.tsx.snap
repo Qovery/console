@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`DockerfileSettings should match snapshot with children 1`] = `
 <body>
@@ -39,7 +39,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
                 class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
               >
                 <span
-                  class="mr-1 text-sm text-neutral-400"
+                  class="mr-1 text-sm text-neutral"
                 >
                   Git repository
                 </span>
@@ -95,9 +95,9 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
           <div
             class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
           >
-            <span
-              class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-angle-down text-sm text-neutral-subtle"
             />
           </div>
         </div>
@@ -107,7 +107,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
       >
         <div>
           <h1
-            class="text-neutral-400 text-xl font-bold mb-2"
+            class="text-neutral text-2xl font-bold mb-2"
           >
             Dockerfile from git repository
           </h1>
@@ -126,7 +126,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input    input--label-up "
+              class="input group    input--label-up "
             >
               <div
                 class=""
@@ -149,21 +149,21 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
             </div>
           </div>
           <p
-            class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+            class="mt-0.5 px-3 text-xs text-neutral-subtle"
           >
             <span>
               Specify the location of your dockerfile. Expected format: myapp/Dockerfile
             </span>
             <br />
             <a
-              class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs"
+              class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-xs"
               rel="noopener noreferrer"
               target="_blank"
             >
               Create one with Docker init
               <i
                 aria-hidden="true"
-                class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+                class="fa-regular fa-arrow-up-right-from-square text-2xs leading-4"
               />
             </a>
           </p>
@@ -177,7 +177,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input     "
+              class="input group     "
             >
               <div
                 class=""
@@ -200,7 +200,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
             </div>
           </div>
           <p
-            class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+            class="mt-0.5 px-3 text-xs text-neutral-subtle"
           >
             Specify the target stage to build in a multi-stage Dockerfile
           </p>
@@ -255,7 +255,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
                 class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
               >
                 <span
-                  class="mr-1 text-sm text-neutral-400"
+                  class="mr-1 text-sm text-neutral"
                 >
                   Git repository
                 </span>
@@ -311,9 +311,9 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
           <div
             class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
           >
-            <span
-              class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-angle-down text-sm text-neutral-subtle"
             />
           </div>
         </div>
@@ -323,7 +323,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
       >
         <div>
           <h1
-            class="text-neutral-400 text-xl font-bold mb-2"
+            class="text-neutral text-2xl font-bold mb-2"
           >
             Dockerfile from git repository
           </h1>
@@ -342,7 +342,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input    input--label-up "
+              class="input group    input--label-up "
             >
               <div
                 class=""
@@ -365,21 +365,21 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
             </div>
           </div>
           <p
-            class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+            class="mt-0.5 px-3 text-xs text-neutral-subtle"
           >
             <span>
               Specify the location of your dockerfile. Expected format: myapp/Dockerfile
             </span>
             <br />
             <a
-              class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs"
+              class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-xs"
               rel="noopener noreferrer"
               target="_blank"
             >
               Create one with Docker init
               <i
                 aria-hidden="true"
-                class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+                class="fa-regular fa-arrow-up-right-from-square text-2xs leading-4"
               />
             </a>
           </p>
@@ -393,7 +393,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input     "
+              class="input group     "
             >
               <div
                 class=""
@@ -416,7 +416,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
             </div>
           </div>
           <p
-            class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+            class="mt-0.5 px-3 text-xs text-neutral-subtle"
           >
             Specify the target stage to build in a multi-stage Dockerfile
           </p>

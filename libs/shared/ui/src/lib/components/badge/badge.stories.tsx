@@ -6,7 +6,7 @@ const Story: Meta<typeof Badge> = {
   title: 'Badge',
   decorators: [
     (Story) => (
-      <div style={{ background: 'white', padding: '3em' }}>
+      <div style={{ background: 'bg-surface-neutral', padding: '3em' }}>
         <Story />
       </div>
     ),

@@ -57,14 +57,11 @@ export function InputRadio(props: InputRadioProps) {
         checked={check}
         disabled={disable}
         onChange={(e) => inputChange(e.currentTarget.checked, e.currentTarget.value, e)}
-        className="relative mr-5 appearance-none font-icons  before:absolute before:left-[1px] before:top-[1px] before:flex before:h-[1.125rem] before:w-[1.125rem] before:items-center before:justify-center before:rounded-full before:border-2 before:border-neutral-350 before:bg-white before:text-xs before:font-black before:leading-none before:text-white  before:transition-all before:content-[''] after:absolute after:left-[5px] after:top-[5px] after:h-2.5 after:w-2.5 after:rounded-full after:bg-brand-500 after:opacity-0 after:transition-all after:content-[''] checked:before:border-brand-500 checked:after:opacity-100 hover:before:border-brand-500"
+        className="relative mr-5 appearance-none font-icons before:absolute before:left-[1px] before:top-[1px] before:flex before:h-[1.125rem] before:w-[1.125rem] before:items-center before:justify-center before:rounded-full before:border before:border-neutral before:bg-surface-neutral before:text-xs before:font-black before:leading-none before:transition-all before:content-[''] after:absolute after:left-[5px] after:top-[5px] after:h-2.5 after:w-2.5 after:rounded-full after:bg-surface-brand-solid after:opacity-0 after:transition-all after:content-[''] checked:before:border-brand-strong checked:after:opacity-100 hover:before:border-brand-strong"
       />
-      <label
-        htmlFor={value}
-        className={`font-medium leading-5 text-neutral-400 dark:text-neutral-50 ${big ? 'text-sm' : 'text-ssm'}`}
-      >
+      <label htmlFor={value} className={`font-medium leading-5 text-neutral ${big ? 'text-sm' : 'text-ssm'}`}>
         {label}
-        {description && <p className="mt-1 text-xs font-normal text-neutral-350 dark:text-neutral-50">{description}</p>}
+        {description && <p className="mt-1 text-xs font-normal text-neutral-subtle">{description}</p>}
       </label>
     </div>
   )

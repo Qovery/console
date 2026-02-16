@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ServiceDetails should match application snapshot 1`] = `
 <body>
@@ -18,8 +18,8 @@ exports[`ServiceDetails should match application snapshot 1`] = `
             About
           </span>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
-            href="/settings/general"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none text-xs h-7 px-2 rounded"
+            to="../settings/general"
           >
             <i
               aria-hidden="true"
@@ -34,12 +34,12 @@ exports[`ServiceDetails should match application snapshot 1`] = `
           class="grid grid-cols-2 gap-2"
         >
           <dt
-            class="text-neutral-350 dark:text-neutral-300"
+            class="text-neutral-subtle"
           >
             Last edit:
           </dt>
           <dd
-            class="font-medium text-neutral-400 dark:font-normal dark:text-white"
+            class="font-medium text-neutral"
           >
             <span
               class=""
@@ -49,12 +49,12 @@ exports[`ServiceDetails should match application snapshot 1`] = `
             </span>
           </dd>
           <dt
-            class="text-neutral-350 dark:text-neutral-300"
+            class="text-neutral-subtle"
           >
             Created:
           </dt>
           <dd
-            class="font-medium text-neutral-400 dark:font-normal dark:text-white"
+            class="font-medium text-neutral"
           >
             <span
               class=""
@@ -80,8 +80,8 @@ exports[`ServiceDetails should match application snapshot 1`] = `
             Source
           </span>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
-            href="/settings/general"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none text-xs h-7 px-2 rounded"
+            to="../settings/general"
           >
             <i
               aria-hidden="true"
@@ -113,8 +113,8 @@ exports[`ServiceDetails should match database snapshot 1`] = `
             About
           </span>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
-            href="/settings/general"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none text-xs h-7 px-2 rounded"
+            to="../settings/general"
           >
             <i
               aria-hidden="true"
@@ -129,12 +129,12 @@ exports[`ServiceDetails should match database snapshot 1`] = `
           class="grid grid-cols-2 gap-2"
         >
           <dt
-            class="text-neutral-350 dark:text-neutral-300"
+            class="text-neutral-subtle"
           >
             Last edit:
           </dt>
           <dd
-            class="font-medium text-neutral-400 dark:font-normal dark:text-white"
+            class="font-medium text-neutral"
           >
             <span
               class=""
@@ -144,12 +144,12 @@ exports[`ServiceDetails should match database snapshot 1`] = `
             </span>
           </dd>
           <dt
-            class="text-neutral-350 dark:text-neutral-300"
+            class="text-neutral-subtle"
           >
             Created:
           </dt>
           <dd
-            class="font-medium text-neutral-400 dark:font-normal dark:text-white"
+            class="font-medium text-neutral"
           >
             <span
               class=""
@@ -175,8 +175,8 @@ exports[`ServiceDetails should match database snapshot 1`] = `
             Source
           </span>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
-            href="/settings/general"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none text-xs h-7 px-2 rounded"
+            to="../settings/general"
           >
             <i
               aria-hidden="true"
@@ -208,8 +208,8 @@ exports[`ServiceDetails should match job snapshot 1`] = `
             About
           </span>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
-            href="/settings/general"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none text-xs h-7 px-2 rounded"
+            to="../settings/general"
           >
             <i
               aria-hidden="true"
@@ -224,12 +224,12 @@ exports[`ServiceDetails should match job snapshot 1`] = `
           class="grid grid-cols-2 gap-2"
         >
           <dt
-            class="text-neutral-350 dark:text-neutral-300"
+            class="text-neutral-subtle"
           >
             Last edit:
           </dt>
           <dd
-            class="font-medium text-neutral-400 dark:font-normal dark:text-white"
+            class="font-medium text-neutral"
           >
             <span
               class=""
@@ -239,12 +239,12 @@ exports[`ServiceDetails should match job snapshot 1`] = `
             </span>
           </dd>
           <dt
-            class="text-neutral-350 dark:text-neutral-300"
+            class="text-neutral-subtle"
           >
             Created:
           </dt>
           <dd
-            class="font-medium text-neutral-400 dark:font-normal dark:text-white"
+            class="font-medium text-neutral"
           >
             <span
               class=""
@@ -270,8 +270,8 @@ exports[`ServiceDetails should match job snapshot 1`] = `
             Source
           </span>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm"
-            href="/settings/general"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none text-xs h-7 px-2 rounded"
+            to="../settings/general"
           >
             <i
               aria-hidden="true"

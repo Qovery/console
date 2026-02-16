@@ -75,7 +75,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
       {(error || warning) && errorMessagePosition === 'left' && (
         <Tooltip content={error || warning || ''} align="center" side="top">
           <div data-testid="warning-icon-left" className="flex items-center">
-            <Icon iconName="triangle-exclamation" className="block text-sm text-yellow-500" />
+            <Icon iconName="triangle-exclamation" className="block text-sm text-warning" />
           </div>
         </Tooltip>
       )}
@@ -93,7 +93,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
         <input
           className={twMerge(
             clsx(
-              'absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350',
+              'absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle',
               {
                 'pr-8': hasShowPasswordButton,
               }
@@ -121,14 +121,14 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
           <div
             data-testid="show-password-button"
             onClick={() => setCurrentType(currentType === 'password' ? 'text' : 'password')}
-            className="absolute right-2 -translate-y-0.5 transform text-sm text-neutral-400 dark:text-neutral-50"
+            className="absolute right-2 -translate-y-[0.5px] transform text-sm text-neutral-subtle hover:text-neutral"
           >
             <Icon name={currentType === 'password' ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH} />
           </div>
         )}
       </div>
       {error && errorMessagePosition === 'bottom' && (
-        <p className="mt-1 px-4 text-xs font-medium text-red-500">{error}</p>
+        <p className="mt-1 px-4 text-xs font-medium text-negative">{error}</p>
       )}
     </div>
   )

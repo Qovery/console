@@ -10,11 +10,13 @@ export interface SettingsHeadingProps {
 
 export function SettingsHeading({ title, description, children }: SettingsHeadingProps) {
   return (
-    <div className="mb-8 flex w-full justify-between gap-2">
-      <div>
-        <Heading className={description ? 'mb-2' : 'mb-3'}>{title}</Heading>
-        {description && <p className="mb-3 max-w-lg text-sm text-neutral-400">{description}</p>}
-        <NeedHelp />
+    <div className="mb-8 flex w-full justify-between gap-2 border-b border-neutral">
+      <div className="flex w-full items-start justify-between gap-4 pb-6">
+        <div className="flex flex-col gap-2">
+          <Heading>{title}</Heading>
+          {description && <p className="max-w-2xl text-sm text-neutral-subtle">{description}</p>}
+          <NeedHelp className="mt-2" />
+        </div>
       </div>
       {children}
     </div>

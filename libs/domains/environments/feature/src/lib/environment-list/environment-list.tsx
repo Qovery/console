@@ -57,7 +57,6 @@ function EnvironmentNameCell({ environment }: { environment: Environment }) {
           <Tooltip content={environment.name}>
             <Link
               className="inline max-w-max truncate"
-              color="current"
               to={
                 SERVICES_URL(environment.organization.id, environment.project.id, environment.id) + SERVICES_GENERAL_URL
               }

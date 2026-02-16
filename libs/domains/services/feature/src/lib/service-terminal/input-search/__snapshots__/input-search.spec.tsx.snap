@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`InputSearch should match snapshot 1`] = `
 <body>
@@ -7,13 +7,13 @@ exports[`InputSearch should match snapshot 1`] = `
       class="relative z-10"
     >
       <button
-        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded bg-neutral-500 active:bg-neutral-600 hover:bg-neutral-400 text-white disabled:text-neutral-300 disabled:bg-neutral-100 hidden"
+        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutralInvert hover:bg-surface-neutralInvert-component text-neutralInvert hidden"
       >
         my-value
         <span>
           <i
             aria-hidden="true"
-            class="fa-solid fa-xmark ml-2 text-sm"
+            class="fa-regular fa-xmark ml-2 text-sm"
           />
         </span>
       </button>
@@ -22,7 +22,7 @@ exports[`InputSearch should match snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-magnifying-glass absolute left-2.5 top-1.5 text-xs text-neutral-50"
+          class="fa-regular fa-magnifying-glass absolute left-2.5 top-1.5 text-xs text-neutral-50"
         />
         <input
           aria-activedescendant=""
@@ -51,7 +51,7 @@ exports[`InputSearch should match snapshot 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-wave-pulse mb-1 block"
+              class="fa-regular fa-wave-pulse mb-1 block"
             />
             No results found
           </p>
@@ -69,13 +69,13 @@ exports[`InputSearch should match with snapshot 1`] = `
       class="relative z-10"
     >
       <button
-        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded bg-neutral-500 active:bg-neutral-600 hover:bg-neutral-400 text-white disabled:text-neutral-300 disabled:bg-neutral-100 hidden"
+        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutralInvert hover:bg-surface-neutralInvert-component text-neutralInvert hidden"
       >
         my-value
         <span>
           <i
             aria-hidden="true"
-            class="fa-solid fa-xmark ml-2 text-sm"
+            class="fa-regular fa-xmark ml-2 text-sm"
           />
         </span>
       </button>
@@ -84,7 +84,7 @@ exports[`InputSearch should match with snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-magnifying-glass absolute left-2.5 top-1.5 text-xs text-neutral-50"
+          class="fa-regular fa-magnifying-glass absolute left-2.5 top-1.5 text-xs text-neutral-50"
         />
         <input
           aria-activedescendant=""
@@ -113,7 +113,7 @@ exports[`InputSearch should match with snapshot 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-wave-pulse mb-1 block"
+              class="fa-regular fa-wave-pulse mb-1 block"
             />
             No results found
           </p>

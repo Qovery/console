@@ -30,7 +30,7 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
   const hasError = error && error.length > 0 ? 'input--error' : ''
   const inputActions = hasFocus ? 'input--focused' : ''
 
-  const isDisabled = props.disabled ? 'input--disabled !border-neutral-250' : ''
+  const isDisabled = props.disabled ? 'input--disabled !border-neutral' : ''
 
   return (
     <div
@@ -50,7 +50,7 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
           ref={ref}
           name={name}
           id={label}
-          className="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral-400 outline-0"
+          className="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral outline-0"
           value={!currentValue ? undefined : currentValue}
           onChange={(e) => {
             if (onChange) onChange(e)
@@ -61,8 +61,8 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
           disabled={props.disabled}
         />
       </div>
-      {hint && <p className="mt-0.5 px-3 text-xs font-normal text-neutral-350">{hint}</p>}
-      {error && <p className="mt-1 px-3 text-xs font-medium text-red-500">{error}</p>}
+      {hint && !error && <p className="mt-0.5 px-3 text-xs font-normal text-neutral-subtle">{hint}</p>}
+      {error && <p className="mt-1 px-3 text-xs font-medium text-negative">{error}</p>}
     </div>
   )
 })

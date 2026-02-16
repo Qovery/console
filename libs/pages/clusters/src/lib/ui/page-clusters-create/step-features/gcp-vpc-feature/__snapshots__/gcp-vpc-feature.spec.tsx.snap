@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ButtonPopoverSubnets should match snapshots 1`] = `
 <body>
@@ -16,7 +16,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
             Deploy on an existing VPC
           </h4>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm mb-4"
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-sm mb-4"
             href="https://www.qovery.com/docs/configuration/integrations/kubernetes/gke/managed#use-existing-vpc"
             rel="noopener noreferrer"
             target="_blank"
@@ -24,7 +24,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
             How to configure existing VPC
             <i
               aria-hidden="true"
-              class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
+              class="fa-regular fa-arrow-up-right-from-square text-xs leading-5"
             />
           </a>
         </div>
@@ -38,7 +38,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""
@@ -70,7 +70,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""
@@ -115,7 +115,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""
@@ -147,7 +147,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""
@@ -179,7 +179,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""
@@ -211,7 +211,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""

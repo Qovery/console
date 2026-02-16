@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '@tanstack/react-router'
 import { mutations } from '@qovery/domains/environments/data-access'
 import { queries } from '@qovery/state/util-queries'
 
@@ -15,6 +15,9 @@ export function useDeleteEnvironment({ projectId, logsLink }: { projectId: strin
       queryClient.invalidateQueries({
         queryKey: queries.environments.list({ projectId }).queryKey,
       })
+      queryClient.invalidateQueries({
+        queryKey: queries.projects.environmentsOverview({ projectId }).queryKey,
+      })
     },
     meta: {
       notifyOnSuccess: {
@@ -22,7 +25,7 @@ export function useDeleteEnvironment({ projectId, logsLink }: { projectId: strin
         ...(logsLink
           ? {
               labelAction: 'See deployment logs',
-              callback: () => navigate(logsLink),
+              callback: () => navigate({ to: logsLink }),
             }
           : {}),
       },

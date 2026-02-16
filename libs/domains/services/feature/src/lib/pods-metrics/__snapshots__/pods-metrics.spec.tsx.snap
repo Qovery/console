@@ -1,204 +1,208 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`PodsMetrics should match snapshot with data 1`] = `
 <div>
   <div
     class="overflow-x-scroll rounded border border-neutral-200 xl:overflow-hidden"
   >
-    <table
-      class="min-w-full divide-y divide-neutral-200 text-neutral-400 w-full overflow-y-scroll text-xs xl:overflow-auto"
+    <div
+      class="overflow-hidden rounded-md border border-neutral bg-surface-neutral"
     >
-      <thead>
-        <tr>
-          <th
-            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
-          >
-            <button
-              class="flex items-center gap-1 cursor-pointer select-none"
-              type="button"
-            >
-              Instance (1)
-              <i
-                aria-hidden="true"
-                class="fa-solid fa-arrow-down text-xs"
-              />
-            </button>
-          </th>
-          <th
-            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
-          >
-            <button
-              class="flex items-center gap-1 cursor-pointer select-none"
-              type="button"
-            >
-              Status
-            </button>
-          </th>
-          <th
-            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
-          >
-            <button
-              class="flex items-center gap-1 cursor-pointer select-none"
-              type="button"
-            >
-              Version
-            </button>
-          </th>
-          <th
-            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
-          >
-            <button
-              class="flex items-center gap-1 cursor-pointer select-none"
-              type="button"
-            >
-              Memory
-            </button>
-          </th>
-          <th
-            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
-          >
-            <button
-              class="flex items-center gap-1 cursor-pointer select-none"
-              type="button"
-            >
-              vCPU
-            </button>
-          </th>
-          <th
-            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
-          >
-            <button
-              class="flex items-center gap-1 cursor-pointer select-none"
-              type="button"
-            >
-              Storage
-            </button>
-          </th>
-          <th
-            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
-          >
-            <button
-              class="flex items-center gap-1 cursor-pointer select-none"
-              type="button"
-            >
-              Restart
-            </button>
-          </th>
-          <th
-            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
-          >
-            <button
-              class="flex items-center gap-1 cursor-pointer select-none"
-              type="button"
-            >
-              Age
-            </button>
-          </th>
-        </tr>
-      </thead>
-      <tbody
-        class="divide-y divide-neutral-200"
+      <table
+        class="min-w-full divide-y divide-neutral text-neutral w-full overflow-y-scroll text-xs xl:overflow-auto"
       >
-        <tr
-          class="hover:bg-neutral-100"
+        <thead>
+          <tr>
+            <th
+              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+            >
+              <button
+                class="flex items-center gap-1 cursor-pointer select-none"
+                type="button"
+              >
+                Instance (1)
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-arrow-down text-xs"
+                />
+              </button>
+            </th>
+            <th
+              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+            >
+              <button
+                class="flex items-center gap-1 cursor-pointer select-none"
+                type="button"
+              >
+                Status
+              </button>
+            </th>
+            <th
+              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+            >
+              <button
+                class="flex items-center gap-1 cursor-pointer select-none"
+                type="button"
+              >
+                Version
+              </button>
+            </th>
+            <th
+              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+            >
+              <button
+                class="flex items-center gap-1 cursor-pointer select-none"
+                type="button"
+              >
+                Memory
+              </button>
+            </th>
+            <th
+              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+            >
+              <button
+                class="flex items-center gap-1 cursor-pointer select-none"
+                type="button"
+              >
+                vCPU
+              </button>
+            </th>
+            <th
+              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+            >
+              <button
+                class="flex items-center gap-1 cursor-pointer select-none"
+                type="button"
+              >
+                Storage
+              </button>
+            </th>
+            <th
+              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+            >
+              <button
+                class="flex items-center gap-1 cursor-pointer select-none"
+                type="button"
+              >
+                Restart
+              </button>
+            </th>
+            <th
+              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+            >
+              <button
+                class="flex items-center gap-1 cursor-pointer select-none"
+                type="button"
+              >
+                Age
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-neutral"
         >
-          <td
-            class="h-14 px-4 py-0 text-nowrap"
+          <tr
+            class="hover:bg-neutral-100"
           >
-            <button
-              class="text-md pointer inline-flex h-14 w-9 items-center justify-start text-neutral-350"
-              type="button"
+            <td
+              class="h-14 px-4 py-0 text-nowrap"
+            >
+              <button
+                class="text-md pointer inline-flex h-14 w-9 items-center justify-start text-neutral-350"
+                type="button"
+              >
+                <span
+                  class="icon-solid-chevron-down shrink-0 pl-1"
+                  role="img"
+                />
+              </button>
+              <button
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral truncate"
+              >
+                foobar
+              </button>
+            </td>
+            <td
+              class="h-14 px-4 py-0"
             >
               <span
-                class="icon-solid-chevron-down shrink-0 pl-1"
-                role="img"
-              />
-            </button>
-            <button
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 truncate"
-            >
-              foobar
-            </button>
-          </td>
-          <td
-            class="h-14 px-4 py-0"
-          >
-            <span
-              class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-full border-neutral-250 text-neutral-400 dark:border-neutral-350 dark:text-neutral-300 gap-2 capitalize"
-            >
-              <div
-                class=""
-                data-state="closed"
+                class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-full gap-2 capitalize"
               >
-                <svg
-                  class="text-neutral-300"
-                  fill="none"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
+                <div
+                  class="h-[14px] w-[14px]"
+                  data-state="closed"
                 >
-                  <g
-                    clip-path="url(#clip0_5911_150)"
+                  <svg
+                    class="text-neutral-300 h-full w-full"
+                    fill="none"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    <path
-                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm7.875-3.375A2.627 2.627 0 0110.5 6h2.667a2.958 2.958 0 012.958 2.958c0 1.06-.567 2.039-1.486 2.569l-1.514.867V13.875h-2.25v-2.784l.567-.324 2.077-1.19a.709.709 0 00-.352-1.322H10.5a.376.376 0 00-.375.375v.304h-2.25v-.309zm3 7.125h2.25V18h-2.25v-2.25z"
-                      fill="currentColor"
-                    />
-                  </g>
-                  <defs>
-                    <clippath
-                      id="clip0_5911_150"
+                    <g
+                      clip-path="url(#clip0_5911_150)"
                     >
                       <path
-                        d="M0 0H24V24H0z"
-                        fill="#fff"
+                        d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm7.875-3.375A2.627 2.627 0 0110.5 6h2.667a2.958 2.958 0 012.958 2.958c0 1.06-.567 2.039-1.486 2.569l-1.514.867V13.875h-2.25v-2.784l.567-.324 2.077-1.19a.709.709 0 00-.352-1.322H10.5a.376.376 0 00-.375.375v.304h-2.25v-.309zm3 7.125h2.25V18h-2.25v-2.25z"
+                        fill="currentColor"
                       />
-                    </clippath>
-                  </defs>
-                </svg>
-              </div>
-              <span
-                class="text-neutral-400"
-              >
-                Unknown
+                    </g>
+                    <defs>
+                      <clippath
+                        id="clip0_5911_150"
+                      >
+                        <path
+                          d="M0 0H24V24H0z"
+                          fill="#fff"
+                        />
+                      </clippath>
+                    </defs>
+                  </svg>
+                </div>
+                <span
+                  class="text-neutral-400"
+                >
+                  Unknown
+                </span>
               </span>
-            </span>
-          </td>
-          <td
-            class="h-14 px-4 py-0"
-          />
-          <td
-            class="h-14 px-4 py-0"
-          >
-            30 MiB (20%)
-          </td>
-          <td
-            class="h-14 px-4 py-0"
-          >
-            12 mCPU (5%)
-          </td>
-          <td
-            class="h-14 px-4 py-0"
-          >
-            -
-          </td>
-          <td
-            class="h-14 px-4 py-0"
-          >
-            -
-          </td>
-          <td
-            class="h-14 px-4 py-0"
-          >
-            <i
-              aria-hidden="true"
-              class="fa-regular fa-circle-question text-sm text-neutral-300"
+            </td>
+            <td
+              class="h-14 px-4 py-0"
             />
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <td
+              class="h-14 px-4 py-0"
+            >
+              30 MiB (20%)
+            </td>
+            <td
+              class="h-14 px-4 py-0"
+            >
+              12 mCPU (5%)
+            </td>
+            <td
+              class="h-14 px-4 py-0"
+            >
+              -
+            </td>
+            <td
+              class="h-14 px-4 py-0"
+            >
+              -
+            </td>
+            <td
+              class="h-14 px-4 py-0"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-circle-question text-sm text-neutral-300"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 `;

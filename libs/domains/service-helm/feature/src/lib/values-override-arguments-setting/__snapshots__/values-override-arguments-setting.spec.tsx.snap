@@ -11,7 +11,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
       >
         <div>
           <h1
-            class="text-neutral-400 text-xl font-bold mb-2"
+            class="text-neutral text-2xl font-bold mb-2"
           >
             Value override as arguments
           </h1>
@@ -22,12 +22,12 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
           </p>
         </div>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100 gap-2"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert gap-2"
         >
           Add Variable
           <i
             aria-hidden="true"
-            class="fa-solid fa-plus-circle "
+            class="fa-regular fa-plus-circle "
           />
         </button>
       </div>
@@ -46,12 +46,12 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
         />
       </span>
       <button
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 mb-10"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral mb-10"
       >
         See default values.yaml 
         <i
           aria-hidden="true"
-          class="fa-solid fa-arrow-up-right-from-square ml-2 text-xs"
+          class="fa-regular fa-arrow-up-right-from-square ml-2 text-xs"
         />
       </button>
       <form
@@ -85,10 +85,10 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
               class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
             >
               <div
-                class=" relative flex items-center gap-4"
+                class=" group relative flex items-center gap-4"
               >
                 <select
-                  class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral-250 px-3 pr-6 text-sm font-medium text-neutral-400 shadow-sm transition-colors hover:bg-neutral-50 hover:outline-brand-500 active:shadow-none disabled:shadow-none hover:[&:not(:active)]:border-neutral-300 bg-neutral-50"
+                  class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral px-3 pr-6 text-sm text-neutral transition-colors hover:bg-surface-neutral-component focus:outline-none bg-neutral-50"
                   data-testid="input-select-small"
                   name="arguments.0.type"
                 >
@@ -109,7 +109,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   </option>
                 </select>
                 <span
-                  class="icon-solid-chevron-down shrink-0 pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-400"
+                  class="icon-solid-chevron-down shrink-0 pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
                   role="img"
                 />
               </div>
@@ -125,7 +125,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     class="hidden"
                   />
                   <input
-                    class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+                    class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                     data-testid="input-value"
                     name="arguments.0.key"
                     spellcheck="false"
@@ -149,7 +149,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350 pr-11"
+                      class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle pr-11"
                       data-testid="input-value"
                       name="arguments.0.value"
                       spellcheck="false"
@@ -162,23 +162,23 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   aria-controls="radix-:r9:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral-250"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral-250"
                   data-state="closed"
                   type="button"
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-wand-magic-sparkles text-sm"
+                    class="fa-regular fa-wand-magic-sparkles text-sm"
                   />
                 </button>
               </div>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none h-[36px] w-full"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral h-[36px] w-full"
                 type="button"
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-trash text-neutral-400"
+                  class="fa-regular fa-trash text-neutral-400"
                 />
               </button>
             </div>
@@ -190,10 +190,10 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
               class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
             >
               <div
-                class=" relative flex items-center gap-4"
+                class=" group relative flex items-center gap-4"
               >
                 <select
-                  class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral-250 px-3 pr-6 text-sm font-medium text-neutral-400 shadow-sm transition-colors hover:bg-neutral-50 hover:outline-brand-500 active:shadow-none disabled:shadow-none hover:[&:not(:active)]:border-neutral-300 bg-neutral-50"
+                  class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral px-3 pr-6 text-sm text-neutral transition-colors hover:bg-surface-neutral-component focus:outline-none bg-neutral-50"
                   data-testid="input-select-small"
                   name="arguments.1.type"
                 >
@@ -214,7 +214,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   </option>
                 </select>
                 <span
-                  class="icon-solid-chevron-down shrink-0 pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-400"
+                  class="icon-solid-chevron-down shrink-0 pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
                   role="img"
                 />
               </div>
@@ -230,7 +230,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     class="hidden"
                   />
                   <input
-                    class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+                    class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                     data-testid="input-value"
                     name="arguments.1.key"
                     spellcheck="false"
@@ -240,22 +240,22 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 </div>
               </div>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 h-[36px] justify-between"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral h-[36px] justify-between"
                 type="button"
               >
                 Close json
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-angle-down text-neutral-400"
+                  class="fa-regular fa-angle-down text-neutral-400"
                 />
               </button>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none h-[36px] w-full"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral h-[36px] w-full"
                 type="button"
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-trash text-neutral-400"
+                  class="fa-regular fa-trash text-neutral-400"
                 />
               </button>
             </div>
@@ -269,7 +269,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
                 >
                   <div
-                    class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                    class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
                     data-testid="spinner"
                   />
                 </div>
@@ -281,13 +281,13 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 aria-controls="radix-:rc:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-9 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-4 top-4 px-2.5"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral absolute right-4 top-4 px-2.5"
                 data-state="closed"
                 type="button"
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-wand-magic-sparkles text-sm"
+                  class="fa-regular fa-wand-magic-sparkles text-sm"
                 />
               </button>
             </div>
@@ -299,10 +299,10 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
               class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
             >
               <div
-                class=" relative flex items-center gap-4"
+                class=" group relative flex items-center gap-4"
               >
                 <select
-                  class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral-250 px-3 pr-6 text-sm font-medium text-neutral-400 shadow-sm transition-colors hover:bg-neutral-50 hover:outline-brand-500 active:shadow-none disabled:shadow-none hover:[&:not(:active)]:border-neutral-300 bg-neutral-50"
+                  class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral px-3 pr-6 text-sm text-neutral transition-colors hover:bg-surface-neutral-component focus:outline-none bg-neutral-50"
                   data-testid="input-select-small"
                   name="arguments.2.type"
                 >
@@ -323,7 +323,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   </option>
                 </select>
                 <span
-                  class="icon-solid-chevron-down shrink-0 pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-400"
+                  class="icon-solid-chevron-down shrink-0 pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
                   role="img"
                 />
               </div>
@@ -339,7 +339,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     class="hidden"
                   />
                   <input
-                    class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+                    class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                     data-testid="input-value"
                     name="arguments.2.key"
                     spellcheck="false"
@@ -363,7 +363,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350 pr-11"
+                      class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle pr-11"
                       data-testid="input-value"
                       name="arguments.2.value"
                       spellcheck="false"
@@ -376,23 +376,23 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   aria-controls="radix-:rf:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral-250"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral-250"
                   data-state="closed"
                   type="button"
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-wand-magic-sparkles text-sm"
+                    class="fa-regular fa-wand-magic-sparkles text-sm"
                   />
                 </button>
               </div>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none h-[36px] w-full"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral h-[36px] w-full"
                 type="button"
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-trash text-neutral-400"
+                  class="fa-regular fa-trash text-neutral-400"
                 />
               </button>
             </div>

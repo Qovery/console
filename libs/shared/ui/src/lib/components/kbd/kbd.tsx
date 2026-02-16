@@ -8,7 +8,7 @@ export const Kbd = forwardRef<ElementRef<'kbd'>, KbdProps>(function Kbd({ childr
     <kbd
       ref={ref}
       className={twMerge(
-        'flex h-4 items-center rounded bg-neutral-150 px-1 text-xs text-neutral-350 dark:bg-neutral-400 dark:text-white',
+        'flex h-4 w-4 items-center justify-center rounded-sm bg-surface-neutral-component text-xs text-neutral-subtle',
         className
       )}
     >

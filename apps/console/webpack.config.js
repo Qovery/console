@@ -18,7 +18,7 @@ const configValues = {
         './src/assets',
         {
           glob: '*',
-          input: '../../node_modules/@awesome.me/kit-c4457d1be4/icons/webfonts',
+          input: '../../node_modules/@awesome.me/kit-22f4eef36a/icons/webfonts',
           output: 'assets/fonts/font-awesome',
         },
         { glob: '**/*', input: '../../libs/shared/ui/src/lib/assets', output: '/assets' },

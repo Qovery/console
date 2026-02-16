@@ -1,35 +1,53 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`EmptyState should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-grow items-center justify-center"
+      class="flex h-56 flex-col items-center justify-center gap-4 rounded-lg border border-neutral bg-surface-neutral-subtle p-10 text-center text-sm text-neutral-subtle"
     >
-      <div
-        class="m-auto mt-12 flex w-[420px] flex-col items-center justify-center text-center"
+      <span
+        class="relative inline-flex h-10 min-h-10 w-10 min-w-10 items-center justify-center"
       >
-        <img
-          alt="Event placeholder"
-          class="user-none pointer-events-none h-[196px] w-[253px] dark:hidden"
-          src="/assets/images/event-placeholder-light.svg"
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-folder-open absolute top-2 text-base text-neutral-disabled"
         />
-        <img
-          alt="Event placeholder"
-          class="user-none pointer-events-none hidden h-[196px] w-[253px] dark:block"
-          src="/assets/images/event-placeholder-dark.svg"
-        />
+        <svg
+          class="h-10 w-10"
+          fill="none"
+          height="40"
+          viewBox="0 0 40 40"
+          width="40"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            class="fill-surface-neutral-component"
+            d="M0 6a6 6 0 0 1 6-6h28a6 6 0 0 1 6 6v28a6 6 0 0 1-6 6H6a6 6 0 0 1-6-6z"
+            fill="currentColor"
+          />
+          <path
+            class="text-neutral-disabled"
+            d="M.5 7V4.5a4 4 0 0 1 4-4H7M39.5 33v2.5a4 4 0 0 1-4 4H33M.5 33v2.5a4 4 0 0 0 4 4H7M39.5 7V4.5a4 4 0 0 0-4-4H33"
+            stroke="currentColor"
+          />
+        </svg>
+      </span>
+      <div
+        class="flex flex-col gap-1"
+      >
         <p
-          class="text-neutral-350 dark:text-neutral-300"
+          class="font-medium"
         >
           No Storage are set
         </p>
-        <p
-          class="mt-1 text-sm text-neutral-350"
-        >
+        <p>
           Need help? You may find these links useful
         </p>
       </div>
+      <button>
+        Create project
+      </button>
     </div>
   </div>
 </body>

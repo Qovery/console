@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`GitPublicRepositorySettings should match snapshot 1`] = `
 <body>
@@ -13,7 +13,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group     "
           >
             <div
               class=""
@@ -37,7 +37,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         </div>
       </div>
       <a
-        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs ml-3"
+        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-xs ml-3"
         href="https://github.com/qovery/console"
         rel="noopener noreferrer"
         target="_blank"
@@ -45,7 +45,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         Go to repository
         <i
           aria-hidden="true"
-          class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+          class="fa-regular fa-arrow-up-right-from-square text-2xs leading-4"
         />
       </a>
     </div>
@@ -58,7 +58,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
       >
         <div
           aria-label="input-container"
-          class="input     "
+          class="input group     "
         >
           <div
             class=""
@@ -91,7 +91,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input    input--label-up "
+            class="input group    input--label-up "
           >
             <div
               class=""

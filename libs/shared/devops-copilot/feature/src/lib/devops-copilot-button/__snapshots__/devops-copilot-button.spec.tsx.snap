@@ -4,7 +4,7 @@ exports[`DevopsCopilotButton should match snapshot 1`] = `
 <body>
   <div>
     <button
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 ml-4 mr-4 h-[38px] gap-3 px-3 dark:ml-3 dark:h-9"
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral ml-4 mr-4 h-[38px] gap-3 px-3 dark:ml-3 dark:h-9"
       type="button"
     >
       <span
@@ -16,7 +16,7 @@ exports[`DevopsCopilotButton should match snapshot 1`] = `
         />
         AI Copilot
         <span
-          class="inline-flex items-center shrink-0 text-xs px-1.5 h-5 text-purple-500 border rounded-md bg-purple-50 border-purple-500 ml-0.5"
+          class="inline-flex items-center shrink-0 text-xs px-1.5 h-5 border-accent1-subtle border rounded-md bg-surface-accent1-component text-accent1 ml-0.5"
           data-accent-color="purple"
           data-state="closed"
         >
@@ -27,12 +27,12 @@ exports[`DevopsCopilotButton should match snapshot 1`] = `
         class="ml-auto flex gap-1 text-neutral-400"
       >
         <kbd
-          class="flex h-4 items-center rounded bg-neutral-150 px-1 text-xs text-neutral-350 dark:bg-neutral-400 dark:text-white"
+          class="flex h-4 w-4 items-center justify-center rounded-sm bg-surface-neutral-component text-xs text-neutral-subtle"
         >
           ⌘
         </kbd>
         <kbd
-          class="flex h-4 items-center rounded bg-neutral-150 px-1 text-neutral-350 dark:bg-neutral-400 dark:text-white text-2xs"
+          class="flex h-4 w-4 items-center justify-center rounded-sm bg-surface-neutral-component text-neutral-subtle text-2xs"
         >
           i
         </kbd>

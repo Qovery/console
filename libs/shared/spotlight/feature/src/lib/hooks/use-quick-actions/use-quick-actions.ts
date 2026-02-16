@@ -1,5 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { useMatch } from 'react-router-dom'
+import { useMatchRoute } from '@tanstack/react-router'
 import {
   APPLICATION_URL,
   AUDIT_LOGS_PARAMS_URL,
@@ -16,22 +16,27 @@ import useServiceType from '../use-service-type/use-service-type'
 
 export type QuickAction = { label: string; iconName: IconName; link: string }
 
-export function useQuickActions(): QuickAction[] {
-  const applicationMatch = useMatch({ path: APPLICATION_URL(), end: false })
-  const databaseMatch = useMatch({ path: DATABASE_URL(), end: false })
-  const projectMatch = useMatch({ path: ENVIRONMENTS_URL(), end: false })
-  const environmentMatch = useMatch({ path: SERVICES_URL(), end: false })
-  const clusterMatch = useMatch({ path: CLUSTER_URL(), end: false })
+const toTanstackPath = (path: string): string => path.replace(/:([A-Za-z0-9_]+)/g, '$$1')
 
-  const serviceId = applicationMatch?.params['applicationId'] ?? databaseMatch?.params['databaseId']
+export function useQuickActions(): QuickAction[] {
+  // TODO: testing-only - migrate to TanStack Router hooks for console-v5.
+  const matchRoute = useMatchRoute()
+
+  const applicationMatch = matchRoute({ to: toTanstackPath(APPLICATION_URL()), fuzzy: true })
+  const databaseMatch = matchRoute({ to: toTanstackPath(DATABASE_URL()), fuzzy: true })
+  const projectMatch = matchRoute({ to: toTanstackPath(ENVIRONMENTS_URL()), fuzzy: true })
+  const environmentMatch = matchRoute({ to: toTanstackPath(SERVICES_URL()), fuzzy: true })
+  const clusterMatch = matchRoute({ to: toTanstackPath(CLUSTER_URL()), fuzzy: true })
+
+  const serviceId = applicationMatch?.applicationId ?? databaseMatch?.databaseId
 
   const { data: serviceType } = useServiceType({
     serviceId,
-    environmentId: applicationMatch?.params['environmentId'] ?? databaseMatch?.params['environmentId'],
+    environmentId: applicationMatch?.environmentId ?? databaseMatch?.environmentId,
   })
 
   if (applicationMatch && serviceId) {
-    const { organizationId, projectId, environmentId } = applicationMatch.params
+    const { organizationId, projectId, environmentId } = applicationMatch
     return [
       {
         label: 'See deployment logs',
@@ -57,7 +62,7 @@ export function useQuickActions(): QuickAction[] {
   }
 
   if (databaseMatch && serviceId) {
-    const { organizationId, projectId, environmentId } = databaseMatch.params
+    const { organizationId, projectId, environmentId } = databaseMatch
     return [
       {
         label: 'See deployment logs',
@@ -83,7 +88,7 @@ export function useQuickActions(): QuickAction[] {
   }
 
   if (environmentMatch) {
-    const { organizationId, projectId, environmentId } = environmentMatch.params
+    const { organizationId, projectId, environmentId } = environmentMatch
     return [
       {
         label: 'See logs',
@@ -103,7 +108,7 @@ export function useQuickActions(): QuickAction[] {
   }
 
   if (projectMatch) {
-    const { organizationId, projectId } = projectMatch.params
+    const { organizationId, projectId } = projectMatch
     return [
       {
         label: 'See audit logs',
@@ -118,7 +123,7 @@ export function useQuickActions(): QuickAction[] {
   }
 
   if (clusterMatch) {
-    const { organizationId, clusterId } = clusterMatch.params
+    const { organizationId, clusterId } = clusterMatch
     return [
       { label: 'See logs', iconName: 'scroll', link: INFRA_LOGS_URL(organizationId, clusterId) },
       {

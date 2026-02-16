@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import {
   type RowSelectionState,
   type SortingState,
@@ -20,7 +21,6 @@ import {
 } from 'qovery-typescript-axios'
 import { ServiceSubActionDto } from 'qovery-ws-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import {
   type AnyService,
@@ -158,7 +158,7 @@ function ServiceNameCell({
 
   return (
     <div className="flex items-center justify-between">
-      <span className="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400">
+      <span className="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral">
         <ServiceTemplateIndicator service={service} size="sm">
           <ServiceAvatar service={service} size="sm" border="solid" />
         </ServiceTemplateIndicator>
@@ -170,7 +170,6 @@ function ServiceNameCell({
                   <Tooltip content={db.name}>
                     <Link
                       className="inline max-w-max truncate"
-                      color="current"
                       to={serviceLink}
                       underline
                       onClick={(e) => e.stopPropagation()}
@@ -208,7 +207,6 @@ function ServiceNameCell({
                   <Tooltip content={service.name}>
                     <Link
                       className="inline max-w-max truncate"
-                      color="current"
                       to={serviceLink}
                       underline
                       onClick={(e) => e.stopPropagation()}
@@ -231,7 +229,6 @@ function ServiceNameCell({
               <Tooltip content={service.name}>
                 <Link
                   className="inline max-w-max truncate"
-                  color="current"
                   to={serviceLink}
                   underline
                   onClick={(e) => e.stopPropagation()}
@@ -291,27 +288,25 @@ function ServiceNameCell({
               .with(
                 { serviceType: 'DATABASE', mode: 'CONTAINER' },
                 () => () =>
-                  navigate(
-                    DATABASE_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
+                  navigate({
+                    to:
+                      DATABASE_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
                       DATABASE_GENERAL_URL,
-                    {
-                      state: {
-                        hasShell: true,
-                      },
-                    }
-                  )
+                    state: {
+                      hasShell: true,
+                    } as any,
+                  })
               )
               .otherwise(
                 () => () =>
-                  navigate(
-                    APPLICATION_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
+                  navigate({
+                    to:
+                      APPLICATION_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
                       APPLICATION_GENERAL_URL,
-                    {
-                      state: {
-                        hasShell: true,
-                      },
-                    }
-                  )
+                    state: {
+                      hasShell: true,
+                    } as any,
+                  })
               )}
           />
         </div>
@@ -324,13 +319,12 @@ export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
   environment: Environment
 }
 
-export function ServiceList({ environment, className, ...props }: ServiceListProps) {
-  const {
-    id: environmentId,
-    cluster_id: clusterId,
-    project: { id: projectId },
-    organization: { id: organizationId },
-  } = environment
+export function ServiceList({ className, environment, ...props }: ServiceListProps) {
+  const clusterId = environment.cluster_id || ''
+  const environmentId = environment.id || ''
+  const organizationId = environment.organization.id || ''
+  const projectId = environment.project.id || ''
+
   const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
   const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
     clusterId,
@@ -511,12 +505,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             gitRepository && (
               <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                 <div className="flex w-44 flex-col gap-1.5">
-                  <span className="flex items-center gap-2 text-neutral-400">
-                    <Icon className="h-3 w-3" name={gitRepository.provider} />
+                  <span className="flex items-center gap-2 text-neutral-subtle">
+                    <Icon className="h-3 w-3 text-inherit" name={gitRepository.provider} />
                     <ExternalLink
                       href={gitRepository.url}
                       underline
-                      color="current"
                       size="ssm"
                       withIcon={false}
                       className="font-normal"
@@ -525,12 +518,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                     </ExternalLink>
                   </span>
                   {gitRepository.branch && gitRepository.url && (
-                    <span className="flex items-center gap-2 text-neutral-400">
+                    <span className="flex items-center gap-2 text-neutral-subtle">
                       <Icon iconName="code-branch" iconStyle="regular" />
                       <ExternalLink
                         href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
                         underline
-                        color="current"
                         size="ssm"
                         withIcon={false}
                         className="font-normal"
@@ -624,7 +616,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                         </span>
                       }
                     >
-                      <span className="text-neutral-350">
+                      <span className="text-neutral">
                         {helmRepository.repository?.name.length > 20 ? (
                           <Truncate text={helmRepository.repository?.name.toLowerCase()} truncateLimit={20} />
                         ) : (
@@ -635,7 +627,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                   </span>
                   <div className="flex gap-2">
                     <Icon width={12} name={IconEnum.HELM_OFFICIAL} />
-                    <span className="text-neutral-350">
+                    <span className="text-neutral">
                       <Truncate text={helmRepository.chart_name} truncateLimit={20} />
                     </span>
                   </div>
@@ -717,7 +709,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           return value ? (
             <Link
               to={linkLog}
-              className="group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-350 hover:translate-x-0 hover:text-brand-500"
+              className="group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-subtle hover:translate-x-0 hover:text-neutral"
               onClick={(event) => event.stopPropagation()}
             >
               <Tooltip content={dateUTCString(value)} delayDuration={200}>
@@ -795,7 +787,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             <Table.Row key={headerGroup.id}>
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r pl-0' : ''} font-medium`}
+                  className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r border-neutral pl-0' : ''} font-medium`}
                   key={header.id}
                   style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                 >
@@ -829,10 +821,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
               <Table.Row
-                className={twMerge(
-                  'h-[68px] cursor-pointer hover:bg-neutral-100',
-                  row.getIsSelected() ? 'bg-neutral-100' : ''
-                )}
+                className={twMerge('h-[68px] ')}
                 onClick={() => {
                   const link = match(row.original)
                     .with(
@@ -843,13 +832,13 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                       ({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL
                     )
 
-                  navigate(link)
+                  navigate({ to: link })
                 }}
               >
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}
-                    className={`px-6 ${i === 1 ? 'border-r pl-0' : ''} first:relative`}
+                    className={`px-6 ${i === 1 ? 'border-r border-neutral pl-0' : ''} first:relative`}
                     style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SelectCommitModal should match snapshot 1`] = `
 <div>
@@ -23,12 +23,12 @@ exports[`SelectCommitModal should match snapshot 1`] = `
     <div
       class="relative w-full"
     >
-      <span
-        class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-400 dark:text-white"
-        role="img"
+      <i
+        aria-hidden="true"
+        class="fa-regular fa-magnifying-glass absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-subtle"
       />
       <input
-        class="w-full rounded border border-neutral-250 pl-10 pr-6 text-neutral-400 placeholder:text-neutral-350 focus:border-brand-400 focus:outline-none focus:transition-[border-color] dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250 h-9 text-xs"
+        class="w-full rounded border border-neutral bg-surface-neutral-component pl-10 pr-6 text-neutral placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color] h-9 text-sm"
         data-testid="input-search"
         name="search"
         placeholder="Search by commit message or commit id"
@@ -58,7 +58,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-code-commit absolute left-0 top-1 -translate-x-1/2 text-neutral-300 dark:text-neutral-350"
+              class="fa-regular fa-code-commit absolute left-0 top-1 -translate-x-1/2 text-neutral-300 dark:text-neutral-350"
             />
             Commit
              on 
@@ -73,7 +73,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
               <div>
                 <button
                   aria-checked="false"
-                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
+                  class="group transition bg-surface-neutral border border-neutral w-[20px] h-[20px] rounded-full hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid data-[state=checked]:border-0 hover:data-[state=checked]:bg-surface-brand-solidHover disabled:cursor-not-allowed disabled:hover:border disabled:bg-surface-neutral-component disabled:border-neutral-component disabled:data-[state=checked]:border-0 disabled:data-[state=checked]:bg-surface-brand-component"
                   data-radix-collection-item=""
                   data-state="unchecked"
                   role="radio"
@@ -107,16 +107,16 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   class="flex items-center gap-1.5"
                 >
                   <div
-                    class="relative block rounded-full border border-neutral-200  "
+                    class="relative block rounded-full border border-neutral  "
                     data-state="closed"
                     data-testid="avatar"
                     style="width: 28px; height: 28px;"
                   >
                     <div
-                      class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-center"
+                      class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
                     >
                       <span
-                        class="relative text-xs font-medium text-neutral-400"
+                        class="relative text-xs font-medium text-neutral"
                       >
                         F
                       </span>
@@ -128,7 +128,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                     data-testid="tag-commit"
                   >
                     <span
-                      class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium  w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
+                      class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium  w-[90px] border-neutral text-neutral-subtle hover:bg-surface-neutral-subtle"
                       data-testid="tag"
                     >
                       <div
@@ -160,7 +160,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-code-commit absolute left-0 top-1 -translate-x-1/2 text-neutral-300 dark:text-neutral-350"
+              class="fa-regular fa-code-commit absolute left-0 top-1 -translate-x-1/2 text-neutral-300 dark:text-neutral-350"
             />
             Commit
              on 
@@ -175,7 +175,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
               <div>
                 <button
                   aria-checked="true"
-                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
+                  class="group transition bg-surface-neutral border border-neutral w-[20px] h-[20px] rounded-full hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid data-[state=checked]:border-0 hover:data-[state=checked]:bg-surface-brand-solidHover disabled:cursor-not-allowed disabled:hover:border disabled:bg-surface-neutral-component disabled:border-neutral-component disabled:data-[state=checked]:border-0 disabled:data-[state=checked]:bg-surface-brand-component"
                   data-disabled=""
                   data-radix-collection-item=""
                   data-state="checked"
@@ -192,7 +192,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-check text-xs text-white"
+                      class="fa-regular fa-check text-xs text-neutralInvert"
                     />
                   </span>
                 </button>
@@ -222,16 +222,16 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   class="flex items-center gap-1.5"
                 >
                   <div
-                    class="relative block rounded-full border border-neutral-200  "
+                    class="relative block rounded-full border border-neutral  "
                     data-state="closed"
                     data-testid="avatar"
                     style="width: 28px; height: 28px;"
                   >
                     <div
-                      class="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-center"
+                      class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
                     >
                       <span
-                        class="relative text-xs font-medium text-neutral-400"
+                        class="relative text-xs font-medium text-neutral"
                       >
                         F
                       </span>
@@ -243,7 +243,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                     data-testid="tag-commit"
                   >
                     <span
-                      class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium  w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
+                      class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium  w-[90px] border-neutral text-neutral-subtle hover:bg-surface-neutral-subtle"
                       data-testid="tag"
                     >
                       <div
@@ -277,12 +277,12 @@ exports[`SelectCommitModal should match snapshot 1`] = `
       class="absolute bottom-0 left-0 flex w-full justify-end gap-3 rounded-b-md bg-white p-5"
     >
       <button
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
       >
         Cancel
       </button>
       <button
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
         disabled=""
       >
         Deploy

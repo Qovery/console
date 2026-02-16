@@ -1,14 +1,14 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ClusterSetup should match manage deployment snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500"
+      class="flex flex-row gap-x-4 p-4 border rounded text-sm border-info-component bg-surface-info-subtle text-info"
       data-accent-color="sky"
     >
       <div
-        class="-order-2 text-lg leading-6"
+        class="-order-2 text-base leading-6"
       >
         <i
           aria-hidden="true"
@@ -16,7 +16,7 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
         />
       </div>
       <div
-        class="-order-1 mr-auto gap-x-3 text-neutral-400"
+        class="-order-1 mr-auto gap-x-4 text-neutral"
       >
         <p>
           This guide walks you through the process of installing Qovery on your existing Kubernetes cluster, where you will have full control over the infrastructure. You will be responsible for managing updates and upgrades. Please note that advanced Kubernetes knowledge is required.
@@ -24,10 +24,10 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
       </div>
     </div>
     <ul
-      class="flex flex-col gap-4 text-sm font-medium text-neutral-400"
+      class="flex flex-col gap-4 text-sm font-medium text-neutral"
     >
       <li
-        class="rounded border border-neutral-200 p-3"
+        class="rounded border border-neutral p-3"
       >
         <h5
           class="mb-1 text-sm font-medium"
@@ -35,12 +35,12 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
           1. Download/Update Qovery CLI
         </h5>
         <p
-          class="mb-2 font-normal text-neutral-350"
+          class="mb-2 font-normal text-neutral-subtle"
         >
           Download and install the Qovery CLI (or update its version to the latest version).
         </p>
         <a
-          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
+          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-sm"
           href="https://www.qovery.com/docs/cli/overview#installation"
           rel="noopener noreferrer"
           target="_blank"
@@ -48,12 +48,12 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
           https://www.qovery.com/docs/cli/overview#installation
           <i
             aria-hidden="true"
-            class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
+            class="fa-regular fa-arrow-up-right-from-square text-xs leading-5"
           />
         </a>
       </li>
       <li
-        class="rounded border border-neutral-200 p-3"
+        class="rounded border border-neutral p-3"
       >
         <h5
           class="mb-1 text-sm font-medium"
@@ -62,12 +62,12 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
           Install Qovery on your cluster
         </h5>
         <p
-          class="mb-2  font-normal text-neutral-350"
+          class="mb-2 font-normal text-neutral-subtle"
         >
           Run the following command from your terminal and follow the instructions.
         </p>
         <pre
-          class="flex items-center justify-between rounded-sm bg-neutral-150 p-3 font-mono text-neutral-400"
+          class="flex items-center justify-between rounded-sm bg-surface-neutral-subtle p-3 font-mono text-neutral"
         >
           <span>
             <span
@@ -78,19 +78,19 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
             qovery cluster install
           </span>
           <button
-            class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 cursor-pointer gap-2 font-sans font-medium"
+            class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral cursor-pointer gap-2 font-sans font-medium"
             type="button"
           >
             Copy
             <i
               aria-hidden="true"
-              class="fa-solid fa-copy text-xs"
+              class="fa-regular fa-copy text-xs"
             />
           </button>
         </pre>
       </li>
       <li
-        class="rounded border border-neutral-200 p-3"
+        class="rounded border border-neutral p-3"
       >
         <h5
           class="mb-1 text-sm font-medium"
@@ -98,7 +98,7 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
           3. Deploy your first environment!
         </h5>
         <p
-          class="font-normal text-neutral-350"
+          class="font-normal text-neutral-subtle"
         >
           Once the installation is completed, get back to the Qovery console and deploy your first environment on your brand new cluster.
         </p>

@@ -1,6 +1,6 @@
+import { Link as RouterLink } from '@tanstack/react-router'
 import { type VariantProps, cva } from 'class-variance-authority'
-import { type ComponentPropsWithoutRef, forwardRef } from 'react'
-import { Link as ReactLink, type LinkProps as ReactLinkProps } from 'react-router-dom'
+import { type ComponentProps, type ComponentPropsWithoutRef, forwardRef } from 'react'
 import { match } from 'ts-pattern'
 import { twMerge } from '@qovery/shared/util-js'
 import { buttonVariants } from '../button-primitive/button-primitive'
@@ -11,10 +11,10 @@ export const linkVariants = cva(
   {
     variants: {
       color: {
-        brand: ['text-brand-500', 'hover:text-brand-600 dark:hover:text-brand-400'],
-        red: ['text-red-500', 'hover:text-red-600'],
-        sky: ['text-sky-500', 'hover:text-sky-600'],
-        current: ['text-current', 'hover:brightness-75'],
+        brand: ['text-brand', 'hover:text-brand-hover'],
+        red: ['text-negative', 'hover:text-negative-hover'],
+        sky: ['text-info', 'hover:text-info-hover'],
+        neutral: ['text-neutral', 'hover:text-neutral-subtle'],
       },
       size: {
         xs: ['text-xs'],
@@ -80,24 +80,38 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(
   }
 )
 
+type RouterLinkComponentProps = ComponentProps<typeof RouterLink>
+
 export type LinkProps =
-  | (Omit<ReactLinkProps, 'color'> & VariantProps<typeof linkVariants>)
-  | (Omit<ReactLinkProps, 'color'> & VariantProps<typeof buttonVariants> & { as: 'button' })
+  | (Omit<RouterLinkComponentProps, 'color' | 'ref' | 'params'> &
+      VariantProps<typeof linkVariants> & {
+        params?: Record<string, string>
+      })
+  | (Omit<RouterLinkComponentProps, 'color' | 'ref' | 'params'> &
+      VariantProps<typeof buttonVariants> & { as: 'button' } & {
+        params?: Record<string, string>
+      })
 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(props, forwardedRef) {
   return match(props)
-    .with({ as: 'button' }, ({ className, children, color, radius, size, variant, as, ...rest }) => (
-      <ReactLink
+    .with({ as: 'button' }, ({ className, children, color, radius, size, variant, as, params, ...rest }) => (
+      <RouterLink
         ref={forwardedRef}
         className={twMerge(buttonVariants({ color, radius, size, variant }), className)}
         {...rest}
+        {...(params ? { params: params as unknown as ComponentProps<typeof RouterLink>['params'] } : {})}
       >
         {children}
-      </ReactLink>
+      </RouterLink>
     ))
-    .otherwise(({ className, children, color, size, underline, ...rest }) => (
-      <ReactLink ref={forwardedRef} className={twMerge(linkVariants({ color, size, underline }), className)} {...rest}>
+    .otherwise(({ className, children, color, size, underline, params, ...rest }) => (
+      <RouterLink
+        ref={forwardedRef}
+        className={twMerge(linkVariants({ color, size, underline }), className)}
+        {...rest}
+        {...(params ? { params: params as unknown as ComponentProps<typeof RouterLink>['params'] } : {})}
+      >
         {children}
-      </ReactLink>
+      </RouterLink>
     ))
 })

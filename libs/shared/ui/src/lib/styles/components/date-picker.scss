@@ -2,8 +2,7 @@
 
 .date-picker {
   &.date-picker--open {
-    transform: translateY(0);
-    animation-name: menuOpenBottom;
+    animation-name: menuOpenTop;
   }
 
   .react-datepicker__header--custom,
@@ -17,6 +16,12 @@
   .react-datepicker {
     border: none;
     box-shadow: none;
+    background-color: inherit;
+    padding: 12px 16px 4px;
+  }
+
+  .react-datepicker__week {
+    display: flex;
   }
 
   .react-datepicker__month,
@@ -32,7 +37,7 @@
     width: theme('spacing.7');
     margin-right: theme('spacing.1');
     font-size: theme('fontSize.xs');
-    color: theme('colors.neutral.400');
+    color: theme('textColor.neutral.DEFAULT');
 
     &:last-child {
       margin-right: 0;
@@ -44,19 +49,32 @@
   }
 
   .react-datepicker__day {
+    border: 1px solid rgba(0, 0, 0, 0);
     border-radius: 0;
     margin: 0;
     padding: theme('spacing.1');
     width: theme('spacing.8');
     font-size: theme('fontSize.xs');
     margin-bottom: theme('spacing.1');
+    color: theme('textColor.neutral.DEFAULT');
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .react-datepicker__day:hover,
+  .react-datepicker__day--today {
+    color: theme('textColor.brand.DEFAULT');
+  }
+
+  .react-datepicker__day:hover {
+    border: 1px solid var(--neutral-6);
+    background-color: transparent;
+  }
+
   .react-datepicker__day--range-start,
   .react-datepicker__day--range-end {
-    background-color: theme('colors.brand.500') !important;
-    color: theme('colors.neutral.100') !important;
+    background-color: theme('colors.surface.neutralInvert.DEFAULT') !important;
+    color: theme('textColor.neutralInvert.DEFAULT') !important;
   }
 
   .react-datepicker__day--range-start,
@@ -69,6 +87,10 @@
     border-radius: 0 theme('spacing.1') theme('spacing.1') 0;
   }
 
+  .react-datepicker__day--range-start.react-datepicker__day--range-end {
+    border-radius: 0.25rem !important;
+  }
+
   .react-datepicker__day--selected:not(.react-datepicker__day--range-start):not(.react-datepicker__day--range-end),
   .react-datepicker__day--in-range:not(.react-datepicker__day--range-start),
   .react-datepicker__day--in-selecting-range:not(
@@ -77,15 +99,15 @@
       .react-datepicker__quarter-text--in-range,
       .react-datepicker__year-text--in-range
     ) {
-    background-color: theme('colors.brand.50');
-    color: theme('colors.brand.500');
+    background-color: theme('colors.surface.neutral.component');
+    color: theme('textColor.neutral.DEFAULT');
   }
 
   // Ensure range start is always highlighted like hover
   .react-datepicker__day--selected.react-datepicker__day--range-start,
   .react-datepicker__day--selected:not(.react-datepicker__day--in-range) {
-    background-color: theme('colors.brand.500') !important;
-    color: theme('colors.neutral.100') !important;
+    background-color: theme('colors.surface.neutralInvert.DEFAULT') !important;
+    color: theme('textColor.neutralInvert.DEFAULT') !important;
     border-radius: theme('spacing.1');
   }
 
@@ -99,10 +121,11 @@
   }
 
   // Apply same style than disabled days for those that are above the max-range
+  .react-datepicker__day--disabled,
   .react-datepicker__day--max-range-exceeded.react-datepicker__day--in-selecting-range,
   .react-datepicker__day--max-range-exceeded.react-datepicker__day--in-selecting-range.react-datepicker__day--keyboard-selected {
-    color: theme('colors.neutral.250');
-    background-color: theme('colors.neutral.50');
+    color: theme('textColor.neutral.disabled');
+    border: 1px solid rgba(0, 0, 0, 0) !important;
   }
 
   // Tooltip for days that exceed max range limit
@@ -153,20 +176,4 @@
   animation-duration: 0.6s;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   animation-fill-mode: forwards;
-}
-
-.dark {
-  .react-datepicker {
-    background-color: theme('colors.neutral.550');
-    color: theme('colors.neutral.50');
-  }
-  .react-datepicker__day-name {
-    color: theme('colors.neutral.50');
-  }
-  .react-datepicker__day {
-    color: theme('colors.neutral.50');
-  }
-  .react-datepicker__day--disabled {
-    color: theme('colors.neutral.250');
-  }
 }

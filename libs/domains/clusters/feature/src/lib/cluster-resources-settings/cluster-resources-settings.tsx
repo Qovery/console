@@ -1,0 +1,762 @@
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  CloudVendorEnum,
+  type Cluster,
+  type CpuArchitectureEnum,
+  KubernetesEnum,
+  ListAWSEKSInstanceTypeGpuEnum,
+} from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+import { match } from 'ts-pattern'
+import {
+  ClusterSCWControlPlaneFeature,
+  KarpenterInstanceFilterModal,
+  KarpenterInstanceTypePreview,
+  convertToKarpenterRequirements,
+  useCloudProviderInstanceTypes,
+  useCloudProviderInstanceTypesKarpenter,
+} from '@qovery/domains/cloud-providers/feature'
+import { IconEnum } from '@qovery/shared/enums'
+import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
+import {
+  BlockContent,
+  Button,
+  Callout,
+  ExternalLink,
+  Heading,
+  Icon,
+  InputSelect,
+  InputText,
+  InputToggle,
+  Section,
+  Slider,
+  Tooltip,
+  useModal,
+} from '@qovery/shared/ui'
+import { GpuResourcesSettings } from '../gpu-resources-settings/gpu-resources-settings'
+import { NodepoolsResourcesSettings } from '../nodepools-resources-settings/nodepools-resources-settings'
+import { ButtonPopoverSubnets } from './button-popover-subnets/button-popover-subnets'
+import KarpenterImage from './karpenter-image.svg'
+import { listInstanceTypeFormatter } from './utils/list-instance-type-formatter'
+
+export interface ClusterResourcesSettingsProps {
+  cluster?: Cluster
+  fromDetail?: boolean
+  cloudProvider?: CloudVendorEnum
+  clusterRegion?: string
+  isProduction?: boolean
+  hasAlreadyKarpenter?: boolean
+}
+
+export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
+  const { openModal, closeModal } = useModal()
+  const { control, watch, setValue } = useFormContext<ClusterResourcesData>()
+  const watchNodes = watch('nodes')
+  const [warningInstance, setWarningInstance] = useState(false)
+  const [warningClusterNodes, setWarningClusterNodes] = useState(false)
+  const watchClusterType = watch('cluster_type')
+  const watchInstanceType = watch('instance_type')
+  const watchKarpenterEnabled = watch('karpenter.enabled')
+  const watchKarpenter = watch('karpenter')
+  const watchDiskSize = watch('disk_size')
+  const watchKarpenterQoveryNodePools = watch('karpenter.qovery_node_pools.requirements')
+  const watchSpotEnabled = watch('karpenter.spot_enabled')
+
+  const isKarpenter = Boolean(props.cluster?.features?.find((f) => f.id === 'KARPENTER'))
+
+  const [isGpuEnabled, setIsGpuEnabled] = useState(!!watchKarpenter?.qovery_node_pools?.gpu_override)
+
+  // Set default cluster type based on cloud provider
+  useEffect(() => {
+    if (!props.fromDetail && !watchClusterType) {
+      setValue('cluster_type', KubernetesEnum.MANAGED)
+    }
+  }, [props.cloudProvider, setValue, watchClusterType, props.fromDetail])
+
+  const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
+    match(props.cloudProvider || CloudVendorEnum.AWS)
+      .with('AWS', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: (watchClusterType || 'MANAGED') as (typeof KubernetesEnum)[keyof typeof KubernetesEnum],
+        region: props.clusterRegion || '',
+      }))
+      .with('SCW', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+        region: props.clusterRegion || '',
+      }))
+      .with('GCP', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+      }))
+      .with('AZURE', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+        region: props.clusterRegion || '',
+      }))
+      .with('ON_PREMISE', 'DO', 'OVH', 'CIVO', 'HETZNER', 'ORACLE', 'IBM', () => ({
+        cloudProvider: CloudVendorEnum.ON_PREMISE,
+        clusterType: 'MANAGED' as const,
+      }))
+      .exhaustive()
+  )
+
+  const { data: cloudProviderInstanceTypesKarpenter } = useCloudProviderInstanceTypesKarpenter({
+    region: props.clusterRegion || '',
+    enabled: !props.fromDetail,
+  })
+  const { data: cloudProviderInstanceTypesGpu } = useCloudProviderInstanceTypesKarpenter({
+    region: props.clusterRegion || '',
+    enabled: true,
+    gpuFilter: ListAWSEKSInstanceTypeGpuEnum.ONLY,
+  })
+
+  const instanceTypeOptions = listInstanceTypeFormatter(cloudProviderInstanceTypes ?? [])
+
+  useEffect(() => {
+    const instanceType: Value | undefined = instanceTypeOptions?.find((option) => option.value === watchInstanceType)
+    if (instanceType) {
+      setWarningInstance(instanceType.label?.toString().indexOf('ARM') !== -1)
+    }
+  }, [watchInstanceType, instanceTypeOptions])
+
+  // XXX: Hotfix waiting deprecated managed cluster to be removed
+  useEffect(() => {
+    if (!watchKarpenterEnabled || watchKarpenterQoveryNodePools.length > 0) return
+
+    if (!props.fromDetail) {
+      if (cloudProviderInstanceTypesKarpenter && props.cloudProvider === 'AWS') {
+        setValue(
+          'karpenter.qovery_node_pools.requirements',
+          convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+        )
+      }
+    }
+  }, [
+    watchKarpenterEnabled,
+    watchKarpenterQoveryNodePools,
+    props.fromDetail,
+    cloudProviderInstanceTypesKarpenter,
+    setValue,
+    props.cloudProvider,
+  ])
+
+  const hasExistingVPC = Boolean(props.cluster?.features?.find((f) => f.id === 'EXISTING_VPC')?.value_object?.value)
+
+  useEffect(() => {
+    if (!props.fromDetail && props.isProduction && props.cloudProvider === 'AWS') {
+      setValue('karpenter', {
+        enabled: true,
+        spot_enabled: false,
+        disk_size_in_gib: 50,
+        default_service_architecture: 'AMD64',
+        qovery_node_pools: {
+          requirements: cloudProviderInstanceTypesKarpenter
+            ? convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+            : [],
+        },
+      })
+    }
+  }, [props.fromDetail, props.isProduction, props.cloudProvider, cloudProviderInstanceTypesKarpenter, setValue])
+
+  const handleGpuEnabledChange = (value: boolean) => {
+    // If GPU is disabled, remove the gpu override value
+    if (!value) {
+      setValue('karpenter.qovery_node_pools.gpu_override', undefined)
+    }
+    // If GPU is enabled, set the default disk size to 100GB and the requirements of the GPU instance types
+    else {
+      setValue('karpenter.qovery_node_pools.gpu_override', {
+        ...watchKarpenter?.qovery_node_pools?.gpu_override,
+        disk_size_in_gib: 100,
+      })
+      setValue(
+        'karpenter.qovery_node_pools.gpu_override.requirements',
+        convertToKarpenterRequirements(cloudProviderInstanceTypesGpu ?? [])
+      )
+    }
+    setIsGpuEnabled(value)
+  }
+
+  return (
+    <div className="flex flex-col gap-10">
+      {props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
+        <>
+          <BlockContent
+            title={props.fromDetail ? 'Karpenter configuration' : 'Reduce your costs with Karpenter'}
+            className="mb-0"
+            classNameContent="p-0"
+            headRight={
+              <Tooltip
+                content={
+                  <span>
+                    Karpenter streamlines Kubernetes infrastructure by provisioning the right nodes at the right time.{' '}
+                    <br /> These settings will be applied to both the stable and default nodepools
+                  </span>
+                }
+                classNameContent="max-w-96"
+              >
+                <span className="text-sm text-neutral-subtle">
+                  <Icon iconName="info-circle" iconStyle="regular" />
+                </span>
+              </Tooltip>
+            }
+          >
+            <Controller
+              name="karpenter.enabled"
+              defaultValue={false}
+              control={control}
+              render={({ field }) => (
+                <div className="flex flex-col">
+                  <div className="relative overflow-hidden">
+                    <div className="p-4">
+                      {props.fromDetail ? (
+                        <ButtonPopoverSubnets disabled={!props.fromDetail || isKarpenter || !hasExistingVPC}>
+                          <InputToggle
+                            className="max-w-[70%]"
+                            name={field.name}
+                            value={field.value}
+                            onChange={(e) => {
+                              if (!props.fromDetail) {
+                                if (cloudProviderInstanceTypesKarpenter) {
+                                  setValue(
+                                    'karpenter.qovery_node_pools.requirements',
+                                    convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+                                  )
+                                }
+                              } else {
+                                const instanceType = cloudProviderInstanceTypes?.filter(
+                                  (option) => option.name === watchInstanceType
+                                )
+                                if (instanceType) {
+                                  setValue(
+                                    'karpenter.qovery_node_pools.requirements',
+                                    convertToKarpenterRequirements(instanceType)
+                                  )
+                                  setValue('karpenter.disk_size_in_gib', watchDiskSize)
+                                  setValue(
+                                    'karpenter.default_service_architecture',
+                                    (instanceType[0]?.architecture ?? 'AMD64') as CpuArchitectureEnum
+                                  )
+                                }
+                              }
+                              field.onChange(e)
+                            }}
+                            title="Enable Karpenter"
+                            description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
+                            forceAlignTop
+                            disabled={props.fromDetail ? props.hasAlreadyKarpenter : false}
+                            small
+                          />
+                        </ButtonPopoverSubnets>
+                      ) : (
+                        <p className="mb-2 max-w-[70%] text-sm text-neutral-subtle">
+                          Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time.
+                        </p>
+                      )}
+                      <ExternalLink
+                        className={props.fromDetail ? 'ml-11' : ''}
+                        href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed"
+                      >
+                        Documentation link
+                      </ExternalLink>
+                    </div>
+                    <img
+                      src={KarpenterImage}
+                      alt="Karpenter"
+                      className="pointer-events-none absolute right-0 top-0 h-[140px] select-none"
+                    />
+                  </div>
+                  <AnimatePresence>
+                    {watchKarpenterEnabled && (
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: 'auto' }}
+                        exit={{ height: 0 }}
+                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                        className="overflow-hidden"
+                      >
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.3, ease: 'easeInOut' }}
+                          className="overflow-hidden"
+                        >
+                          <div className="flex flex-col">
+                            {!watchKarpenterEnabled && (
+                              <div className="border-t border-neutral p-4">
+                                <Callout.Root color="yellow">
+                                  <Callout.Icon>
+                                    <Icon iconName="circle-info" iconStyle="regular" />
+                                  </Callout.Icon>
+                                  <Callout.Text>
+                                    <Callout.TextDescription>
+                                      Before deploying your cluster, update the IAM permissions of the Qovery user, make
+                                      sure to use the{' '}
+                                      <ExternalLink size="sm" href="https://qovery.com/docs/files/qovery-iam-aws.json">
+                                        latest version here
+                                      </ExternalLink>{' '}
+                                      (adding the permission on SQS)
+                                    </Callout.TextDescription>
+                                  </Callout.Text>
+                                </Callout.Root>
+                              </div>
+                            )}
+                            <div className="flex border-t border-neutral p-4 text-sm font-medium text-neutral">
+                              <div className="w-full">
+                                <p className="mb-2">
+                                  Instance types scope{' '}
+                                  <Tooltip
+                                    classNameContent="max-w-80"
+                                    content="Karpenter will create nodes based on the specified list of instance types. By selecting specific instance types, you can control the performance, cost, and architecture of the nodes in your cluster."
+                                  >
+                                    <span className="text-neutral-subtle">
+                                      <Icon iconName="info-circle" iconStyle="regular" />
+                                    </span>
+                                  </Tooltip>
+                                </p>
+                                <KarpenterInstanceTypePreview
+                                  defaultServiceArchitecture={watchKarpenter?.default_service_architecture ?? 'AMD64'}
+                                  requirements={watchKarpenter?.qovery_node_pools?.requirements}
+                                />
+                              </div>
+                              <Button
+                                type="button"
+                                color="neutral"
+                                variant="surface"
+                                size="md"
+                                className="gap-2"
+                                onClick={() => {
+                                  openModal({
+                                    options: {
+                                      width: 840,
+                                    },
+                                    content: (
+                                      <KarpenterInstanceFilterModal
+                                        cluster={props.cluster}
+                                        clusterRegion={props.clusterRegion ?? ''}
+                                        defaultValues={watchKarpenter}
+                                        onClose={closeModal}
+                                        onChange={(values) => {
+                                          setValue('karpenter', {
+                                            enabled: watchKarpenterEnabled,
+                                            spot_enabled: watchKarpenter?.spot_enabled ?? false,
+                                            disk_size_in_gib: watchKarpenter?.disk_size_in_gib ?? 50,
+                                            ...values,
+                                          })
+                                        }}
+                                      />
+                                    ),
+                                  })
+                                }}
+                              >
+                                Edit <Icon iconName="pen" iconStyle="solid" />
+                              </Button>
+                            </div>
+                            <div className="flex flex-col gap-4 border-t border-neutral p-4">
+                              <Controller
+                                name="karpenter.spot_enabled"
+                                control={control}
+                                render={({ field }) => (
+                                  <InputToggle
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    className="items-center"
+                                    title="Enable spot instances on your cluster"
+                                    small
+                                  />
+                                )}
+                              />
+                              {props.isProduction && watchSpotEnabled && (
+                                <Callout.Root color="yellow">
+                                  <Callout.Icon>
+                                    <Icon iconName="info-circle" iconStyle="regular" />
+                                  </Callout.Icon>
+                                  <Callout.Text>
+                                    <Callout.TextDescription>
+                                      Activating spot instances on a production cluster may lead to potential downtime
+                                      for applications deployed on the stable node pool. However, you can specify in the
+                                      advanced settings to force the use of on-demand instances for your service or
+                                      database to avoid this risk.{' '}
+                                      <ExternalLink
+                                        size="sm"
+                                        href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#define-if-your-service-can-run-on-an-on-demand-instance"
+                                      >
+                                        See documentation
+                                      </ExternalLink>
+                                    </Callout.TextDescription>
+                                  </Callout.Text>
+                                </Callout.Root>
+                              )}
+                            </div>
+                            {props.fromDetail && (
+                              <div className="flex flex-col gap-3 border-t border-neutral p-4">
+                                <Controller
+                                  name="karpenter.disk_size_in_gib"
+                                  control={control}
+                                  rules={{
+                                    required: 'Please select a disk size',
+                                  }}
+                                  render={({ field, fieldState: { error } }) => (
+                                    <InputText
+                                      label="Disk size (GB)"
+                                      type="number"
+                                      name={field.name}
+                                      error={error?.message}
+                                      onChange={field.onChange}
+                                      value={field.value}
+                                      className="w-full"
+                                      hint="Storage allocated to your Kubernetes nodes to store files, application images etc.."
+                                    />
+                                  )}
+                                />
+                                <div className="grid grid-cols-2 gap-3">
+                                  <Controller
+                                    name="karpenter.disk_iops"
+                                    control={control}
+                                    render={({ field }) => (
+                                      <InputText
+                                        label="Disk IOPS (optional)"
+                                        type="number"
+                                        name={field.name}
+                                        onChange={field.onChange}
+                                        value={field.value}
+                                        className="w-full"
+                                        hint="I/O operations per second for EBS gp3 volumes (3000-16000)."
+                                      />
+                                    )}
+                                  />
+                                  <Controller
+                                    name="karpenter.disk_throughput"
+                                    control={control}
+                                    render={({ field }) => (
+                                      <InputText
+                                        label="Disk throughput (optional)"
+                                        type="number"
+                                        name={field.name}
+                                        onChange={field.onChange}
+                                        value={field.value}
+                                        className="w-full"
+                                        hint="Throughput in MB/s for EBS gp3 volumes (125-1000)."
+                                      />
+                                    )}
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          {watchKarpenterEnabled && props.cluster && (
+                            <NodepoolsResourcesSettings cluster={props.cluster} filter="default" />
+                          )}
+                        </motion.div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+            />
+          </BlockContent>
+
+          <BlockContent title="GPU nodepools configuration" className="mb-0" classNameContent="p-0">
+            <div className="flex p-4">
+              <InputToggle
+                value={isGpuEnabled}
+                onChange={handleGpuEnabledChange}
+                name="gpu_enabled"
+                title="Enable GPU nodepools"
+                className="items-center"
+                small
+              />
+            </div>
+
+            <AnimatePresence>
+              {isGpuEnabled && (
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: 'auto' }}
+                  exit={{ height: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  className="overflow-hidden"
+                >
+                  <GpuResourcesSettings cluster={props.cluster} clusterRegion={props.clusterRegion} />
+                  <div className="flex flex-col gap-4 border-t border-neutral p-4">
+                    <Controller
+                      name="karpenter.qovery_node_pools.gpu_override.spot_enabled"
+                      control={control}
+                      render={({ field }) => (
+                        <>
+                          <InputToggle
+                            value={field.value}
+                            onChange={field.onChange}
+                            className="items-center"
+                            title="Enable spot instances on your GPU nodepools"
+                            small
+                          />
+                          {props.isProduction && field.value && (
+                            <Callout.Root color="yellow">
+                              <Callout.Icon>
+                                <Icon iconName="info-circle" iconStyle="regular" />
+                              </Callout.Icon>
+                              <Callout.Text>
+                                <Callout.TextDescription>
+                                  Activating spot instances on a production cluster may lead to potential downtime for
+                                  applications deployed to the GPU node pool. However, you can specify in the advanced
+                                  settings to force the use of on-demand instances for your service to avoid this.{' '}
+                                  <ExternalLink
+                                    size="sm"
+                                    href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#define-if-your-service-can-run-on-an-on-demand-instance"
+                                  >
+                                    See documentation
+                                  </ExternalLink>
+                                </Callout.TextDescription>
+                              </Callout.Text>
+                            </Callout.Root>
+                          )}
+                        </>
+                      )}
+                    />
+                  </div>
+                  {props.fromDetail && (
+                    <div className="flex flex-col gap-3 border-t border-neutral p-4">
+                      <Controller
+                        name="karpenter.qovery_node_pools.gpu_override.disk_size_in_gib"
+                        control={control}
+                        rules={{
+                          required: 'Please enter a disk size',
+                        }}
+                        render={({ field, fieldState: { error } }) => (
+                          <InputText
+                            label="GPU nodepool disk size (GB)"
+                            type="number"
+                            name={field.name}
+                            error={error?.message}
+                            onChange={field.onChange}
+                            value={field.value}
+                            className="w-full"
+                            hint="Storage allocated to your GPU nodepool to store files, application images etc.."
+                          />
+                        )}
+                      />
+                      <div className="grid grid-cols-2 gap-3">
+                        <Controller
+                          name="karpenter.qovery_node_pools.gpu_override.disk_iops"
+                          control={control}
+                          render={({ field }) => (
+                            <InputText
+                              label="GPU disk IOPS (optional)"
+                              type="number"
+                              name={field.name}
+                              onChange={field.onChange}
+                              value={field.value}
+                              className="w-full"
+                              hint="I/O operations per second for EBS gp3 volumes (3000-16000)."
+                            />
+                          )}
+                        />
+                        <Controller
+                          name="karpenter.qovery_node_pools.gpu_override.disk_throughput"
+                          control={control}
+                          render={({ field }) => (
+                            <InputText
+                              label="GPU disk throughput (optional)"
+                              type="number"
+                              name={field.name}
+                              onChange={field.onChange}
+                              value={field.value}
+                              className="w-full"
+                              hint="Throughput in MB/s for EBS gp3 volumes (125-1000)."
+                            />
+                          )}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  {watchKarpenterEnabled && props.cluster && (
+                    <NodepoolsResourcesSettings cluster={props.cluster} filter="gpu" />
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </BlockContent>
+        </>
+      )}
+
+      {(!watchKarpenterEnabled || props.cloudProvider !== 'AWS') && (
+        <Section className="gap-4">
+          <Heading>Resources configuration</Heading>
+          <Controller
+            name="instance_type"
+            control={control}
+            rules={{
+              required: 'Please select an instance type',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <div className="flex flex-col gap-1">
+                <InputSelect
+                  isSearchable
+                  onChange={(event) => {
+                    field.onChange(event)
+                    if (props.fromDetail) {
+                      setWarningClusterNodes(true)
+                    }
+                  }}
+                  value={field.value}
+                  label="Instance type"
+                  error={error?.message}
+                  options={instanceTypeOptions}
+                />
+                <p className="ml-3 text-xs text-neutral-subtle">
+                  Instance type to be used to run your Kubernetes nodes.
+                </p>
+                {warningInstance && (
+                  <Callout.Root className="mb-3 mt-1" color="yellow" data-testid="warning-instance">
+                    <Callout.Icon>
+                      <Icon iconName="triangle-exclamation" iconStyle="regular" />
+                    </Callout.Icon>
+                    <Callout.Text>
+                      <Callout.TextHeading>Be careful</Callout.TextHeading>
+                      <Callout.TextDescription>
+                        You selected an instance with ARM64/AARCH64 Cpu architecture. To deploy your services, be sure
+                        all containers and dockerfile you are using are compatible with this CPU architecture
+                      </Callout.TextDescription>
+                    </Callout.Text>
+                  </Callout.Root>
+                )}
+              </div>
+            )}
+          />
+          {props.fromDetail && (
+            <>
+              <Controller
+                name="disk_size"
+                control={control}
+                rules={{
+                  required: 'Please select a disk size',
+                }}
+                render={({ field }) => (
+                  <InputText
+                    type="number"
+                    name={field.name}
+                    onChange={(event) => {
+                      field.onChange(event)
+                      if (props.fromDetail) {
+                        setWarningClusterNodes(true)
+                      }
+                    }}
+                    value={field.value}
+                    label="Disk size (GB)"
+                    hint="Storage allocated to your Kubernetes nodes to store files, application images etc.."
+                  />
+                )}
+              />
+              {props.cloudProvider === 'AWS' && (
+                <div className="grid grid-cols-2 gap-3">
+                  <Controller
+                    name="disk_iops"
+                    control={control}
+                    render={({ field }) => (
+                      <InputText
+                        type="number"
+                        name={field.name}
+                        onChange={(event) => {
+                          field.onChange(event)
+                          if (props.fromDetail) {
+                            setWarningClusterNodes(true)
+                          }
+                        }}
+                        value={field.value}
+                        label="Disk IOPS (optional)"
+                        hint="I/O operations per second for EBS gp3 volumes (3000-16000)."
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="disk_throughput"
+                    control={control}
+                    render={({ field }) => (
+                      <InputText
+                        type="number"
+                        name={field.name}
+                        onChange={(event) => {
+                          field.onChange(event)
+                          if (props.fromDetail) {
+                            setWarningClusterNodes(true)
+                          }
+                        }}
+                        value={field.value}
+                        label="Disk throughput (optional)"
+                        hint="Throughput in MB/s for EBS gp3 volumes (125-1000)."
+                      />
+                    )}
+                  />
+                </div>
+              )}
+            </>
+          )}
+          {warningClusterNodes && (
+            <Callout.Root color="yellow">
+              <Callout.Icon>
+                <Icon iconName="circle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>
+                  Changing these parameters might cause a downtime on your service.
+                </Callout.TextHeading>
+              </Callout.Text>
+            </Callout.Root>
+          )}
+        </Section>
+      )}
+
+      {props.cloudProvider === 'SCW' && (
+        <Section>
+          <ClusterSCWControlPlaneFeature production={props.isProduction || false} />
+        </Section>
+      )}
+
+      {watchClusterType === KubernetesEnum.MANAGED && (!watchKarpenterEnabled || props.cloudProvider !== 'AWS') && (
+        <Section>
+          <Heading>Nodes auto-scaling</Heading>
+          <Controller
+            name="nodes"
+            control={control}
+            rules={{
+              required: 'Please number of nodes',
+            }}
+            render={({ field }) => (
+              <div>
+                {watchNodes && (
+                  <p className="mb-3 font-medium text-neutral-subtle">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
+                )}
+                <Slider onChange={field.onChange} value={field.value} max={200} min={3} step={1} />
+                <p className="mt-3 text-xs text-neutral-subtle">
+                  Cluster can scale up to "max" nodes depending on its usage
+                </p>
+              </div>
+            )}
+          />
+        </Section>
+      )}
+
+      {!props.fromDetail && props.cloudProvider === CloudVendorEnum.AWS && (
+        <Callout.Root className="items-center" color="sky" data-testid="aws-cost-banner">
+          <Callout.Icon className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-neutral">
+            <Icon name={IconEnum.AWS} />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextHeading>
+              {watchClusterType === KubernetesEnum.MANAGED ? 'Starting at $220 /month' : 'Starting at $20 /month'}
+            </Callout.TextHeading>
+            <Callout.TextDescription>
+              Approximate cost charged by the cloud provider based on your consumption
+            </Callout.TextDescription>
+          </Callout.Text>
+        </Callout.Root>
+      )}
+    </div>
+  )
+}
+
+export default ClusterResourcesSettings

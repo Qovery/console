@@ -8,25 +8,12 @@ import Icon from '../icon/icon'
 const bannerVariants = cva('flex h-10 items-center justify-center text-sm font-medium', {
   variants: {
     color: {
-      brand: ['bg-brand-500', 'text-white'],
-      yellow: ['bg-yellow-500', 'text-yellow-900'],
-      purple: ['bg-purple-500', 'text-white'],
-      red: ['bg-red-500', 'text-white'],
+      brand: ['bg-surface-brand-component', 'text-brand'],
+      yellow: ['bg-surface-warning-component', 'text-warning'],
+      red: ['bg-surface-negative-component', 'text-negative'],
     },
   },
 })
-
-const buttonVariants = cva('ml-4', {
-  variants: {
-    color: {
-      brand: ['!bg-brand-400/50', 'hover:!bg-brand-400/75', '!text-white'],
-      yellow: ['!bg-yellow-600/50', 'hover:!bg-yellow-600/75', '!text-yellow-900'],
-      purple: ['!bg-purple-400', 'hover:!bg-purple-600', '!text-white'],
-      red: ['!bg-red-400', 'hover:!bg-red-600', '!text-white'],
-    },
-  },
-})
-
 export interface BannerProps extends VariantProps<typeof bannerVariants> {
   buttonLabel?: string
   buttonIconRight?: IconName
@@ -43,7 +30,7 @@ export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>
     <div className={twMerge(bannerVariants({ color }), 'relative')} ref={forwardedRef}>
       {children}
       {buttonLabel && (
-        <Button type="button" className={twMerge('gap-1', buttonVariants({ color }))} onClick={onClickButton}>
+        <Button type="button" className="ml-4 gap-1" variant="solid" color={color} onClick={onClickButton}>
           {buttonLabel}
           {buttonIconRight && <Icon iconName={buttonIconRight} />}
         </Button>
@@ -51,10 +38,9 @@ export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>
       {dismissible && (
         <Button
           type="button"
-          className={twMerge(
-            'absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 justify-center',
-            buttonVariants({ color })
-          )}
+          variant="plain"
+          color={color}
+          className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 justify-center"
           onClick={onDismiss}
           aria-label="Dismiss"
         >

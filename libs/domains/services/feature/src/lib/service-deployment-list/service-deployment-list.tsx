@@ -18,7 +18,6 @@ import {
   type ServiceSubActionEnum,
 } from 'qovery-typescript-axios'
 import { useCallback, useMemo, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
@@ -91,7 +90,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
   const { mutate: cancelDeploymentQueueService } = useCancelDeploymentQueueService({
     serviceId,
   })
-  const { pathname } = useLocation()
   const { openModalConfirmation } = useModalConfirmation()
 
   const [sorting, setSorting] = useState<SortingState>([])
@@ -215,7 +213,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                               : undefined
                           )
                         }
-                        state={{ prevUrl: pathname }}
+                        // state={{ prevUrl: pathname }}
                       >
                         <Icon iconName="scroll" />
                       </Link>
@@ -235,7 +233,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                             ) +
                             ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id : undefined)
                       }
-                      state={{ prevUrl: pathname }}
+                      // state={{ prevUrl: pathname }}
                     >
                       <Icon iconName="timeline" />
                     </Link>
@@ -486,7 +484,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         },
       }),
     ],
-    [columnHelper, environment, mutationCancelDeployment, pathname]
+    [columnHelper, environment, mutationCancelDeployment]
   )
 
   const data = useMemo(

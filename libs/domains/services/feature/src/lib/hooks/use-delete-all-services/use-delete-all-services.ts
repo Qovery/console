@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '@tanstack/react-router'
 import { mutations } from '@qovery/domains/services/data-access'
 import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { queries } from '@qovery/state/util-queries'
@@ -66,7 +66,9 @@ export function useDeleteAllServices() {
           title: 'Your services are being deleted',
           labelAction: 'See deployment logs',
           callback() {
-            navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId))
+            navigate({
+              to: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId),
+            })
           },
         }
       },

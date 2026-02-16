@@ -145,7 +145,7 @@ describe('ClusterTableNode', () => {
       <ClusterTableNode organizationId={mockOrganizationId} clusterId={mockClusterId} nodePool={mockNodePool} />
     )
 
-    const nodeRow = screen.getByText('node-1').closest('div[class*="bg-yellow-50"]')
+    const nodeRow = screen.getByText('node-1').closest('div[class*="bg-surface-warning-subtle"]')
     expect(nodeRow).toBeInTheDocument()
   })
 

@@ -6,16 +6,16 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
     class="p-6"
   >
     <h2
-      class="h4 mb-2 max-w-sm text-neutral-400 dark:text-neutral-50"
+      class="h4 mb-2 max-w-sm text-neutral"
     >
       my title
     </h2>
     <div
-      class="mb-6 text-sm text-neutral-350 dark:text-neutral-50"
+      class="mb-6 text-sm text-neutral-subtle"
     >
       my description
       <span
-        class="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
+        class="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-info"
         data-state="closed"
         data-testid="copy-cta"
       >
@@ -23,7 +23,7 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
          
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy "
+          class="fa-regular fa-copy "
         />
       </span>
     </div>
@@ -40,7 +40,7 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
             class="hidden"
           />
           <input
-            class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+            class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
             data-testid="input-value"
             name="name"
             placeholder="Enter the current name"
@@ -54,13 +54,13 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
         class="flex justify-end gap-3"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
           type="button"
         >
           Cancel
         </button>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
           type="submit"
         >
           Confirm
@@ -77,16 +77,16 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
     class="p-6"
   >
     <h2
-      class="h4 mb-2 max-w-sm text-neutral-400 dark:text-neutral-50"
+      class="h4 mb-2 max-w-sm text-neutral"
     >
       my title
     </h2>
     <div
-      class="mb-6 text-sm text-neutral-350 dark:text-neutral-50"
+      class="mb-6 text-sm text-neutral-subtle"
     >
       my description
       <span
-        class="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
+        class="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-info"
         data-state="closed"
         data-testid="copy-cta"
       >
@@ -94,7 +94,7 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
          
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy "
+          class="fa-regular fa-copy "
         />
       </span>
     </div>
@@ -111,7 +111,7 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
             class="hidden"
           />
           <input
-            class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+            class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
             data-testid="input-value"
             name="name"
             placeholder="Enter the current name"
@@ -125,13 +125,13 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
         class="flex justify-end gap-3"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
           type="button"
         >
           Cancel
         </button>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
           type="submit"
         >
           Confirm
@@ -148,15 +148,15 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
     class="p-6"
   >
     <h2
-      class="h4 mb-2 max-w-sm text-neutral-400 dark:text-neutral-50"
+      class="h4 mb-2 max-w-sm text-neutral"
     >
       my title
     </h2>
     <div
-      class="mb-6 text-sm text-neutral-350 dark:text-neutral-50"
+      class="mb-6 text-sm text-neutral-subtle"
     >
       <span
-        class="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
+        class="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-info"
         data-state="closed"
         data-testid="copy-cta"
       >
@@ -164,7 +164,7 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
          
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy "
+          class="fa-regular fa-copy "
         />
       </span>
     </div>
@@ -181,7 +181,7 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
             class="hidden"
           />
           <input
-            class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
+            class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
             data-testid="input-value"
             name="name"
             placeholder="Enter the current name"
@@ -195,13 +195,13 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
         class="flex justify-end gap-3"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
           type="button"
         >
           Cancel
         </button>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
           type="submit"
         >
           Confirm

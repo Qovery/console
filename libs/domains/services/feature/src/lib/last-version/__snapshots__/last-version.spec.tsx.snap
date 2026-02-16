@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`LastVersion should match snapshot 1`] = `
 <body>
@@ -7,7 +7,7 @@ exports[`LastVersion should match snapshot 1`] = `
       class="flex"
     >
       <span
-        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 text-neutral-400 min-w-7 max-w-[81px] rounded-r-none border-r-0 border-neutral-250"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-surface-neutral-subtle min-w-7 max-w-[81px] rounded-r-none border-r-0 border-neutral-250"
       >
         <span
           class="flex h-full w-full items-center justify-center truncate"
@@ -16,7 +16,7 @@ exports[`LastVersion should match snapshot 1`] = `
         </span>
       </span>
       <button
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 w-7 justify-center gap-1 rounded-l-none px-1.5"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
         data-state="closed"
         type="button"
       >

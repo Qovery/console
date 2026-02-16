@@ -14,6 +14,7 @@ import { usersSignUp } from '@qovery/domains/users-sign-up/data-access'
 import { variables } from '@qovery/domains/variables/data-access'
 import { devopsCopilot } from '@qovery/shared/devops-copilot/data-access'
 import { user } from '@qovery/shared/iam/data-access'
+import { webflow } from '@qovery/shared/webflow/data-access'
 
 export const queries = mergeQueryKeys(
   cloudProviders,
@@ -30,7 +31,8 @@ export const queries = mergeQueryKeys(
   devopsCopilot,
   observability,
   serviceLogs,
-  serviceTerraform
+  serviceTerraform,
+  webflow
 )
 
 export type QueryKeys = inferQueryKeyStore<typeof queries>

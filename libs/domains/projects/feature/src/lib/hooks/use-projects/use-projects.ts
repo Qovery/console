@@ -4,9 +4,10 @@ import { queries } from '@qovery/state/util-queries'
 export interface UseProjectsProps {
   organizationId: string
   enabled?: boolean
+  suspense?: boolean
 }
 
-export function useProjects({ organizationId, enabled = true }: UseProjectsProps) {
+export function useProjects({ organizationId, enabled = true, suspense = false }: UseProjectsProps) {
   return useQuery({
     ...queries.projects.list({ organizationId }),
     select(data) {
@@ -16,6 +17,7 @@ export function useProjects({ organizationId, enabled = true }: UseProjectsProps
       return data.sort((a, b) => a.name.localeCompare(b.name))
     },
     enabled,
+    suspense,
   })
 }
 

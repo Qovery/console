@@ -1,7 +1,7 @@
 .input-select__control .input-select__input-container {
   @apply text-sm;
   margin: 0;
-  color: theme('colors.neutral.400');
+  color: theme('textColor.neutral.DEFAULT');
 }
 
 .input-select__control {
@@ -26,12 +26,16 @@
   transition-property: transform;
 }
 
+.input--filter .input-select__control {
+  height: 28px;
+}
+
 // state
 .input-select--error {
-  @apply border-red-500;
+  @apply border-negative-strong;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
   &:hover {
-    @apply border-red-500;
+    @apply border-negative-strong;
   }
 }
 
@@ -42,10 +46,10 @@
 }
 
 .input-select--disabled {
-  @apply pointer-events-none border-neutral-250 bg-neutral-100;
+  @apply pointer-events-none border-neutral bg-surface-neutral-subtle;
 
   & > label {
-    @apply text-neutral-350;
+    @apply text-neutral-subtle;
   }
 }
 
@@ -59,7 +63,9 @@
   width: calc(100% + 2rem) !important;
   left: -1rem;
   margin-top: 1rem !important;
-  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.12) !important;
+  box-shadow:
+    0 0 0 1px var(--neutral-6),
+    0 4px 11px hsla(0, 0%, 0%, 0.1) !important;
   @apply p-2;
 }
 
@@ -71,39 +77,35 @@
 .input-select__option,
 .input-select__button {
   display: flex !important;
-  background: #fff !important;
+  background: var(--neutral-1) !important;
   padding: 8px !important;
   cursor: pointer !important;
-  @apply items-center gap-2 rounded-sm;
+  @apply items-center gap-2 rounded-md;
 
   label {
-    @apply static translate-y-0 text-ssm font-medium text-neutral-400;
+    @apply static translate-y-0 text-ssm font-medium text-neutral;
   }
 
   .input-select__checkbox {
-    @apply flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border-2 border-neutral-350 bg-white;
-  }
-
-  &:hover {
-    background: #fff !important;
+    @apply flex h-4 w-4 shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral text-neutralInvert;
   }
 }
 
 .input-select__option--is-disabled {
   label {
-    @apply text-neutral-300;
+    @apply text-neutral-disabled;
   }
 }
 
 .input-select__option--is-selected {
-  background: theme('colors.white');
+  background: theme('colors.background.DEFAULT');
 
   label {
-    @apply text-neutral-400;
+    @apply text-neutral;
   }
 
   .input-select__checkbox {
-    @apply border-0 bg-brand-500;
+    @apply border-0 bg-surface-brand-solid;
   }
 }
 
@@ -115,8 +117,8 @@
 .input-select__option--is-focused.input-select__option--is-selected,
 .input-select__button:hover,
 .input-select__option--is-focused:hover {
-  background: theme('colors.brand.50') !important;
+  background: var(--brand-3) !important;
   label {
-    color: theme('colors.brand.500') !important;
+    color: var(--brand-10) !important;
   }
 }
