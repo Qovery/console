@@ -1,6 +1,6 @@
 import { type OrganizationCrendentialsResponseListResultsInner } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { PageOrganizationCredentialsFeature } from './page-organization-credentials-feature'
+import { PageOrganizationCredentialsFeature } from '../../../../../../pages/settings/src/lib/feature/page-organization-credentials-feature/page-organization-credentials-feature'
 
 let mockCredentials: OrganizationCrendentialsResponseListResultsInner[] = []
 jest.mock('@qovery/domains/organizations/feature', () => {

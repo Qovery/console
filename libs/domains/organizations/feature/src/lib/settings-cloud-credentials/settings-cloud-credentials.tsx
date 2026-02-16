@@ -1,16 +1,16 @@
 import { useQueryClient } from '@tanstack/react-query'
+import { useParams } from '@tanstack/react-router'
 import { CloudProviderEnum, type ClusterCredentials, type CredentialCluster } from 'qovery-typescript-axios'
 import { Suspense, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeleteCloudProviderCredential } from '@qovery/domains/cloud-providers/feature'
 import { ClusterAvatar, ClusterCredentialsModal, CredentialsListClustersModal } from '@qovery/domains/clusters/feature'
-import { useOrganizationCredentials } from '@qovery/domains/organizations/feature'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { BlockContent, Heading, Section, Skeleton } from '@qovery/shared/ui'
 import { Button, DropdownMenu, Icon, Indicator, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
+import { useOrganizationCredentials } from '../hooks/use-organization-credentials/use-organization-credentials'
 
 const convertToCloudProviderEnum = (cloudProvider: ClusterCredentials['object_type']): CloudProviderEnum => {
   return match(cloudProvider)
@@ -140,7 +140,7 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
 
 const PageOrganizationCredentials = () => {
   const { openModal, closeModal } = useModal()
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteCloudProviderCredential } = useDeleteCloudProviderCredential()
 
@@ -284,9 +284,9 @@ const Loader = () => (
   </BlockContent>
 )
 
-export function PageOrganizationCredentialsFeature() {
+export function SettingsCloudCredentials() {
   useDocumentTitle('Cloud Crendentials - Organization settings')
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const queryClient = useQueryClient()
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false)
@@ -376,5 +376,3 @@ export function PageOrganizationCredentialsFeature() {
     </div>
   )
 }
-
-export default PageOrganizationCredentialsFeature
