@@ -1,5 +1,5 @@
+import { useParams } from '@tanstack/react-router'
 import { type AlertReceiverResponse, type EmailAlertReceiverResponse } from 'qovery-typescript-axios'
-import { useParams } from 'react-router-dom'
 import {
   Button,
   Chart,
@@ -19,7 +19,7 @@ import { NotificationChannelModal } from '../notification-channel-modal/notifica
 const { Table } = TablePrimitives
 
 export function NotificationChannelOverview() {
-  const { organizationId = '' } = useParams()
+  const { organizationId } = useParams({ from: '/_authenticated/organization/$organizationId/alerts' })
   useDocumentTitle('Notification channel - Alerting')
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
