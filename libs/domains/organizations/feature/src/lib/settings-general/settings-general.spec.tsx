@@ -30,10 +30,10 @@ describe('SettingsGeneral', () => {
     useEditOrganizationMock.mockReturnValue({
       mutateAsync: jest.fn(),
       isLoading: false,
-    })
+    } as unknown as ReturnType<typeof useEditOrganization>)
     useOrganizationMock.mockReturnValue({
       data: mockOrganization,
-    })
+    } as unknown as ReturnType<typeof useOrganization>)
   })
 
   it('should render successfully', async () => {

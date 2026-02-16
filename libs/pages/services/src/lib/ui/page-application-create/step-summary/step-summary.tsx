@@ -12,7 +12,7 @@ import {
   type VariableData,
 } from '@qovery/shared/interfaces'
 import { Button, Heading, Icon, Section, Truncate } from '@qovery/shared/ui'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { generateScopeLabel, upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface StepSummaryProps {
   onSubmit: (withDeploy: boolean) => void
@@ -330,7 +330,8 @@ export function StepSummary({
                       {variable.variable} = {variable.isSecret ? '********' : variable.value}
                     </strong>
                     <span>
-                      <strong className="font-medium">Scope:</strong> {upperCaseFirstLetter(variable.scope)}
+                      <strong className="font-medium">Scope:</strong>{' '}
+                      {variable.scope ? generateScopeLabel(variable.scope) : '-'}
                     </span>
                     <span>{variable.isSecret ? 'Secret' : 'Public'}</span>
                   </li>

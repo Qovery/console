@@ -57,6 +57,12 @@ interface DashboardContextType {
   isAnyChartRefreshing: boolean
   setIsAnyChartRefreshing: (isRefreshing: boolean) => void
 
+  // View mode (aggregated vs pod-level)
+  useAggregatedView: boolean
+  setUseAggregatedView: (value: boolean) => void
+  isPodCountLoading: boolean
+  setIsPodCountLoading: (value: boolean) => void
+
   // Trace ID
   traceId: string
 }
@@ -71,13 +77,21 @@ export function DashboardProvider({ children }: PropsWithChildren) {
     'timeRange',
     StringParam as QueryParamConfig<TimeRangeOption, TimeRangeOption>
   )
-  const now = new Date()
-  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
-  const [startDate = oneHourAgo.toISOString(), setStartDate] = useQueryParam('startDate', StringParam)
-  const [endDate = now.toISOString(), setEndDate] = useQueryParam('endDate', StringParam)
+  const [defaultDateRange] = useState(() => {
+    const now = new Date()
+    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
+    return {
+      startDate: oneHourAgo.toISOString(),
+      endDate: now.toISOString(),
+    }
+  })
+  const [startDateParam, setStartDate] = useQueryParam('startDate', StringParam)
+  const [endDateParam, setEndDate] = useQueryParam('endDate', StringParam)
+  const startDate = startDateParam ?? defaultDateRange.startDate
+  const endDate = endDateParam ?? defaultDateRange.endDate
 
-  // Trace ID for tracing requests
-  const traceId = uuidv4()
+  // Trace ID for tracing requests (stable across re-renders)
+  const [traceId] = useState(() => uuidv4())
 
   // Actions
   const [hideEvents = false, setHideEvents] = useQueryParam('hideEvents', BooleanParam)
@@ -116,6 +130,10 @@ export function DashboardProvider({ children }: PropsWithChildren) {
   const setIsAnyChartRefreshing = useCallback((isRefreshing: boolean) => {
     setRefreshingCount((prev) => (isRefreshing ? prev + 1 : Math.max(0, prev - 1)))
   }, [])
+
+  // View mode state (aggregated vs pod-level)
+  const [useAggregatedView, setUseAggregatedView] = useState(false)
+  const [isPodCountLoading, setIsPodCountLoading] = useState(true)
 
   const handleTimeRangeChange = useCallback(
     (range: TimeRangeOption) => {
@@ -163,11 +181,14 @@ export function DashboardProvider({ children }: PropsWithChildren) {
   const startTimestamp = startDate && convertDatetoTimestamp(startDate).toString()
   const endTimestamp = endDate && convertDatetoTimestamp(endDate).toString()
 
-  // Calculate the effective duration for Prometheus queries (accounts for zoom)
-  const queryTimeRange =
-    isAnyChartZoomed && startTimestamp && endTimestamp
-      ? `${Math.floor((parseInt(endTimestamp) - parseInt(startTimestamp)) / 60)}m`
-      : timeRange
+  // Calculate the effective duration for Prometheus queries (accounts for zoom and custom ranges)
+  const queryTimeRange = useMemo(() => {
+    // For custom time range or zoomed charts, calculate duration from timestamps
+    if ((timeRange === 'custom' || isAnyChartZoomed) && startTimestamp && endTimestamp) {
+      return `${Math.floor((parseInt(endTimestamp) - parseInt(startTimestamp)) / 60)}m`
+    }
+    return timeRange
+  }, [timeRange, isAnyChartZoomed, startTimestamp, endTimestamp])
 
   // Calculate the average over queryTimeRange with a sub-sampling every 5m or 1m
   const THREE_DAYS_IN_SECONDS = 3 * 24 * 60 * 60
@@ -299,6 +320,10 @@ export function DashboardProvider({ children }: PropsWithChildren) {
       lastDropdownTimeRange,
       isAnyChartRefreshing,
       setIsAnyChartRefreshing,
+      useAggregatedView,
+      setUseAggregatedView,
+      isPodCountLoading,
+      setIsPodCountLoading,
       traceId,
     }),
     [
@@ -330,6 +355,10 @@ export function DashboardProvider({ children }: PropsWithChildren) {
       lastDropdownTimeRange,
       isAnyChartRefreshing,
       setIsAnyChartRefreshing,
+      useAggregatedView,
+      setUseAggregatedView,
+      isPodCountLoading,
+      setIsPodCountLoading,
       subQueryTimeRange,
       traceId,
     ]

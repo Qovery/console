@@ -1,14 +1,17 @@
 import clsx from 'clsx'
 import { subHours } from 'date-fns'
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { type Database } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
-import { Button, Callout, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
+import { Badge, Button, Callout, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useContainerName } from '../../hooks/use-container-name/use-container-name'
 import { useEnvironment } from '../../hooks/use-environment/use-environment'
+import useHttpRouteName from '../../hooks/use-http-route-name/use-http-route-name'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
 import { useNamespace } from '../../hooks/use-namespace/use-namespace'
+import { usePodCount } from '../../hooks/use-pod-count/use-pod-count'
 import { usePodNames } from '../../hooks/use-pod-names/use-pod-names'
 import { DashboardProvider, useDashboardContext } from '../../util-filter/dashboard-context'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
@@ -47,6 +50,9 @@ function ServiceDashboardContent() {
     handleTimeRangeChange,
     timeRange,
   } = useDashboardContext()
+
+  const [resourcesMode, setResourcesMode] = useState<'pod' | 'aggregate' | null>(null)
+  const [resourcesModeLoading, setResourcesModeLoading] = useState(true)
 
   const hasPublicPort =
     (service?.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => port.publicly_accessible)) ||
@@ -104,6 +110,32 @@ function ServiceDashboardContent() {
     startDate: oneHourAgo.toISOString(),
     endDate: now.toISOString(),
   })
+
+  const { data: httpRouteName = '' } = useHttpRouteName({
+    clusterId: environment?.cluster_id ?? '',
+    serviceId: serviceId,
+    enabled: hasPublicPort,
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+  })
+
+  const { podCount, isFetched: isFetchedPodCount } = usePodCount({
+    clusterId: environment?.cluster_id ?? '',
+    containerName: containerName ?? '',
+    podNames: podNames.length > 0 ? podNames : undefined,
+    enabled: !!containerName,
+  })
+
+  useEffect(() => {
+    const resolved = isFetchedPodCount
+    if (!resolved) {
+      setResourcesModeLoading(true)
+      return
+    }
+    const mode = podCount > 10 ? 'aggregate' : 'pod'
+    setResourcesMode(mode)
+    setResourcesModeLoading(false)
+  }, [isFetchedPodCount, podCount])
 
   if ((!containerName && isFetchedContainerName) || (!namespace && isFetchedNamespace)) {
     return (
@@ -231,6 +263,7 @@ function ServiceDashboardContent() {
                   serviceId={serviceId}
                   containerName={containerName}
                   ingressName={ingressName}
+                  httpRouteName={httpRouteName}
                 />
               )}
               {hasOnlyPrivatePorts && (
@@ -242,7 +275,12 @@ function ServiceDashboardContent() {
               )}
               {hasStorage && <CardStorage clusterId={environment.cluster_id} serviceId={serviceId} />}
               {hasPublicPort && (
-                <CardPercentile99 clusterId={environment.cluster_id} serviceId={serviceId} ingressName={ingressName} />
+                <CardPercentile99
+                  clusterId={environment.cluster_id}
+                  serviceId={serviceId}
+                  ingressName={ingressName}
+                  httpRouteName={httpRouteName}
+                />
               )}
               {hasOnlyPrivatePorts && (
                 <CardPrivatePercentile99
@@ -255,7 +293,31 @@ function ServiceDashboardContent() {
           </div>
         </Section>
         <Section className="gap-4">
-          <Heading weight="medium">Resources</Heading>
+          <div className="flex items-center justify-between gap-2">
+            <Heading weight="medium">Resources</Heading>
+            {!resourcesModeLoading && resourcesMode && (
+              <Tooltip
+                content={
+                  resourcesMode === 'aggregate'
+                    ? 'Used when more than 10 pods are displayed. Zoom in to see pod-level metrics'
+                    : 'Showing metrics for individual pods. Aggregated view is available when more than 10 pods are displayed'
+                }
+              >
+                <Badge
+                  variant="surface"
+                  color={resourcesMode === 'aggregate' ? 'sky' : 'purple'}
+                  radius="full"
+                  size="sm"
+                  className="h-6 gap-1 text-ssm"
+                >
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-ssm" />
+                  <span className="font-medium">
+                    {resourcesMode === 'aggregate' ? 'Aggregated view' : 'Pod-level view'}
+                  </span>
+                </Badge>
+              </Tooltip>
+            )}
+          </div>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded border border-neutral-250">
               <CpuChart
@@ -263,6 +325,7 @@ function ServiceDashboardContent() {
                 serviceId={serviceId}
                 containerName={containerName}
                 podNames={podNames}
+                podCountData={{ podCount, isResolved: isFetchedPodCount }}
               />
             </div>
             <div className="overflow-hidden rounded border border-neutral-250">
@@ -271,6 +334,7 @@ function ServiceDashboardContent() {
                 serviceId={serviceId}
                 containerName={containerName}
                 podNames={podNames}
+                podCountData={{ podCount, isResolved: isFetchedPodCount }}
               />
             </div>
             {hasStorage && (
@@ -294,6 +358,7 @@ function ServiceDashboardContent() {
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
                   ingressName={ingressName}
+                  httpRouteName={httpRouteName}
                 />
               </div>
               <div className="overflow-hidden rounded border border-neutral-250">
@@ -301,6 +366,7 @@ function ServiceDashboardContent() {
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
                   ingressName={ingressName}
+                  httpRouteName={httpRouteName}
                 />
               </div>
               <div className="overflow-hidden rounded border border-neutral-250">
@@ -308,6 +374,7 @@ function ServiceDashboardContent() {
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
                   ingressName={ingressName}
+                  httpRouteName={httpRouteName}
                 />
               </div>
             </div>

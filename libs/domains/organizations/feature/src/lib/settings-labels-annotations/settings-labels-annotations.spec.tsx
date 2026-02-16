@@ -1,3 +1,4 @@
+import { OrganizationAnnotationsGroupScopeEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useAnnotationsGroups } from '../hooks/use-annotations-groups/use-annotations-groups'
 import { useLabelsGroups } from '../hooks/use-labels-groups/use-labels-groups'
@@ -21,7 +22,11 @@ const mockAnnotationsGroup = [
         value: 'value',
       },
     ],
-    scopes: ['PERSISTENT_VOLUME_CLAIMS', 'REPLICA_SETS', 'INGRESS'],
+    scopes: [
+      OrganizationAnnotationsGroupScopeEnum.DEPLOYMENTS,
+      OrganizationAnnotationsGroupScopeEnum.STATEFUL_SETS,
+      OrganizationAnnotationsGroupScopeEnum.INGRESS,
+    ],
   },
 ]
 
@@ -51,11 +56,11 @@ describe('SettingsLabelsAnnotations', () => {
     useAnnotationsGroupsMock.mockReturnValue({
       data: mockAnnotationsGroup,
       isFetched: true,
-    })
+    } as ReturnType<typeof useAnnotationsGroups>)
     useLabelsGroupsMock.mockReturnValue({
       data: mockLabelsGroup,
       isFetched: true,
-    })
+    } as ReturnType<typeof useLabelsGroups>)
   })
 
   it('should render labels and annotations groups', () => {

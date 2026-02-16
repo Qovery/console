@@ -45,7 +45,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
           Specify the helm arguments to be used during the helm install/upgrade. Expected format: -h 0.0.0.0
           <br />
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-info text-xs mt-0.5"
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-xs mt-0.5"
             href="https://helm.sh/docs/helm/helm_install/"
             rel="noopener noreferrer"
             target="_blank"

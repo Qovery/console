@@ -1,18 +1,11 @@
+import { useParams } from '@tanstack/react-router'
 import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { Suspense, useMemo } from 'react'
-import { useParams } from 'react-router-dom'
-import {
-  ContainerRegistryCreateEditModal,
-  ContainerRegistryServicesListModal,
-  useContainerRegistries,
-  useDeleteContainerRegistry,
-} from '@qovery/domains/organizations/feature'
-import { NeedHelp } from '@qovery/shared/assistant/feature'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   BlockContent,
   Button,
-  Heading,
   Icon,
   Indicator,
   Section,
@@ -25,10 +18,14 @@ import {
 import { dateMediumLocalFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
+import { ContainerRegistryCreateEditModal } from '../container-registry-create-edit-modal/container-registry-create-edit-modal'
+import { ContainerRegistryServicesListModal } from '../container-registry-services-list-modal/container-registry-services-list-modal'
+import { useContainerRegistries } from '../hooks/use-container-registries/use-container-registries'
+import { useDeleteContainerRegistry } from '../hooks/use-delete-container-registry/use-delete-container-registry'
 
 const RegistryRow = ({ registry }: { registry: ContainerRegistryResponse }) => {
   const { openModal, closeModal } = useModal()
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { openModalConfirmation } = useModalConfirmation()
 
   const { mutateAsync: deleteContainerRegistry } = useDeleteContainerRegistry()
@@ -85,12 +82,12 @@ const RegistryRow = ({ registry }: { registry: ContainerRegistryResponse }) => {
     <li
       data-testid={`registries-list-${registry.id}`}
       key={registry.id}
-      className="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
+      className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
     >
       <div className="flex">
         <Icon name={registry.kind ? containerRegistryKindToIcon(registry.kind) : IconEnum.AWS} width="20" height="20" />
         <div className="ml-4">
-          <h2 className="mb-1 flex text-xs font-medium text-neutral-400">
+          <h2 className="mb-1 flex text-xs font-medium text-neutral">
             <Truncate
               truncateLimit={60}
               text={`${registry.name}${registry.config?.access_key_id ? ` (${registry.config?.access_key_id})` : registry.config?.scaleway_access_key ? ` (${registry.config?.scaleway_access_key})` : registry.config?.username ? ` (${registry.config?.username})` : ''}`}
@@ -103,7 +100,7 @@ const RegistryRow = ({ registry }: { registry: ContainerRegistryResponse }) => {
               </Tooltip>
             )}
           </h2>
-          <p className="text-xs text-neutral-350">
+          <p className="text-xs text-neutral-subtle">
             {registry.kind}{' '}
             {registry.updated_at && (
               <span className="ml-3 inline-block" title={dateUTCString(registry.updated_at)}>
@@ -122,15 +119,17 @@ const RegistryRow = ({ registry }: { registry: ContainerRegistryResponse }) => {
         {(registry?.associated_services_count || 0) > 0 && (
           <Indicator
             content={
-              <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
+              <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
                 {registry.associated_services_count}
               </span>
             }
           >
             <Button
-              variant="surface"
+              variant="outline"
               color="neutral"
               size="md"
+              iconOnly
+              className="relative"
               disabled={registry.associated_services_count === 0}
               onClick={() => onOpenServicesAssociatedModal(registry)}
             >
@@ -138,10 +137,10 @@ const RegistryRow = ({ registry }: { registry: ContainerRegistryResponse }) => {
             </Button>
           </Indicator>
         )}
-        <Button size="md" variant="surface" color="neutral" onClick={() => onEdit(registry)}>
+        <Button size="md" variant="outline" color="neutral" iconOnly onClick={() => onEdit(registry)}>
           <Icon iconName="gear" iconStyle="regular" />
         </Button>
-        <Button size="md" variant="surface" color="neutral" onClick={() => onDelete(registry)}>
+        <Button size="md" variant="outline" color="neutral" iconOnly onClick={() => onDelete(registry)}>
           <Icon iconName="trash-can" iconStyle="regular" />
         </Button>
       </div>
@@ -154,7 +153,7 @@ const Loader = () => (
     {[0, 1, 2, 3].map((_, i) => (
       <div
         key={i}
-        className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
+        className="flex w-full items-center justify-between gap-3 border-b border-neutral px-5 py-4 last:border-0"
       >
         <Skeleton width={200} height={36} show={true} />
         <div className="flex gap-2">
@@ -167,7 +166,7 @@ const Loader = () => (
 )
 
 export const PageOrganizationContainerRegistries = () => {
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { data: containerRegistries = [] } = useContainerRegistries({
     organizationId,
     suspense: true,
@@ -190,39 +189,41 @@ export const PageOrganizationContainerRegistries = () => {
   }, [containerRegistries])
 
   return (
-    <div className="space-y-8">
-      {registriesCount > 0 ? (
-        <>
-          {usedRegistries && usedRegistries.length > 0 && (
-            <BlockContent title="Container registries" classNameContent="p-0">
-              {usedRegistries.map((registry) => (
-                <RegistryRow key={registry.id} registry={registry} />
-              ))}
-            </BlockContent>
-          )}
-          {unusedRegistries && unusedRegistries.length > 0 && (
-            <BlockContent title="Unused container registries" classNameContent="p-0">
-              {unusedRegistries.map((registry) => (
-                <RegistryRow key={registry.id} registry={registry} />
-              ))}
-            </BlockContent>
-          )}
-        </>
-      ) : (
-        <div className="my-4 px-5 text-center">
-          <Icon iconName="wave-pulse" className="text-neutral-350" />
-          <p className="mt-1 text-xs font-medium text-neutral-350">
-            No container registry found. <br /> Please add one.
-          </p>
-        </div>
-      )}
+    <div className="max-w-content-with-navigation-left space-y-8">
+      <Suspense fallback={<Loader />}>
+        {registriesCount > 0 ? (
+          <>
+            {usedRegistries && usedRegistries.length > 0 && (
+              <BlockContent title="Container registries" classNameContent="p-0">
+                {usedRegistries.map((registry) => (
+                  <RegistryRow key={registry.id} registry={registry} />
+                ))}
+              </BlockContent>
+            )}
+            {unusedRegistries && unusedRegistries.length > 0 && (
+              <BlockContent title="Unused container registries" classNameContent="p-0">
+                {unusedRegistries.map((registry) => (
+                  <RegistryRow key={registry.id} registry={registry} />
+                ))}
+              </BlockContent>
+            )}
+          </>
+        ) : (
+          <div className="my-4 px-5 text-center">
+            <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+            <p className="mt-1 text-xs font-medium text-neutral-subtle">
+              No container registry found. <br /> Please add one.
+            </p>
+          </div>
+        )}
+      </Suspense>
     </div>
   )
 }
 
-export function PageOrganizationContainerRegistriesFeature() {
+export function SettingsContainerRegistries() {
   useDocumentTitle('Container registries - Organization settings')
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
 
   const onAddRegistry = () => {
@@ -237,29 +238,21 @@ export function PageOrganizationContainerRegistriesFeature() {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="max-w-content-with-navigation-left p-8">
-        <div className="space-y-8">
-          <div className="flex justify-between gap-2">
-            <div className="space-y-3">
-              <Heading className="text-neutral-400">Container registries</Heading>
-              <p className="text-xs text-neutral-400">
-                Define and manage the container registry to be used within your organization to deploy applications.
-              </p>
-              <NeedHelp />
-            </div>
-            <Button className="gap-2" size="md" onClick={() => onAddRegistry()}>
-              Add registry
-              <Icon iconName="circle-plus" iconStyle="regular" />
-            </Button>
-          </div>
+      <Section className="p-8">
+        <div className="relative">
+          <SettingsHeading
+            title="Container registries"
+            description="Define and manage the container registry to be used within your organization to deploy applications."
+          />
 
-          <Suspense fallback={<Loader />}>
-            <PageOrganizationContainerRegistries />
-          </Suspense>
+          <Button className="absolute right-0 top-0 gap-2" size="md" onClick={() => onAddRegistry()}>
+            <Icon iconName="circle-plus" iconStyle="regular" />
+            Add registry
+          </Button>
         </div>
+
+        <PageOrganizationContainerRegistries />
       </Section>
     </div>
   )
 }
-
-export default PageOrganizationContainerRegistriesFeature

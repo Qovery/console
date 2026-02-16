@@ -7,9 +7,10 @@ export interface UtmParams {
   utm_campaign?: string
   utm_term?: string
   utm_content?: string
+  gclid?: string
 }
 
-const UTM_KEYS: (keyof UtmParams)[] = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content']
+const UTM_KEYS: (keyof UtmParams)[] = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid']
 
 export function getUtmParams(searchParams: URLSearchParams): UtmParams {
   const utmParams: UtmParams = {}

@@ -1,6 +1,5 @@
 import posthog from 'posthog-js'
 import {
-  APIVariableScopeEnum,
   type JobLifecycleTypeEnum,
   type JobRequest,
   type LifecycleTemplateResponseVariablesInnerFile,
@@ -10,7 +9,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { useAnnotationsGroups, useContainerRegistry, useLabelsGroups } from '@qovery/domains/organizations/feature'
 import { type DockerfileSettingsData, useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import { useCreateVariable, useImportVariables } from '@qovery/domains/variables/feature'
@@ -148,12 +147,13 @@ function prepareVariableImportRequest(variables: VariableData[]): VariableImport
 
   return {
     overwrite: true,
-    vars: variables.map(({ variable, scope, value, isSecret }) => ({
-      name: variable || '',
-      scope: scope || APIVariableScopeEnum.PROJECT,
-      value: value || '',
-      is_secret: isSecret,
-    })),
+    vars: variables
+      .map(({ variable: name = '', scope, value = '', isSecret: is_secret }) =>
+        match(scope)
+          .with(P.nullish, () => undefined)
+          .otherwise((scope) => ({ name, scope, value, is_secret }))
+      )
+      .filter((i) => !!i),
   }
 }
 
@@ -271,24 +271,26 @@ export function StepSummaryFeature() {
         }
 
         for (const fileVariable of fileVariables) {
-          createVariable({
-            variableRequest: {
-              key: fileVariable.variable ?? '',
-              value: fileVariable.value ?? '',
-              variable_scope: fileVariable.scope ?? APIVariableScopeEnum.PROJECT,
-              variable_parent_id: match(fileVariable.scope)
-                .with('JOB', () => service.id)
-                .with('ENVIRONMENT', () => service.environment.id)
-                .with('PROJECT', () => projectId)
-                .with('BUILT_IN', 'APPLICATION', 'CONTAINER', 'HELM', 'TERRAFORM', undefined, () => {
-                  throw new Error('Should not be possible')
-                })
-                .exhaustive(),
-              is_secret: fileVariable.isSecret,
-              mount_path: fileVariable.file.path,
-              enable_interpolation_in_file: fileVariable.file.enable_interpolation ?? false,
-            },
-          })
+          if (fileVariable.scope) {
+            createVariable({
+              variableRequest: {
+                key: fileVariable.variable ?? '',
+                value: fileVariable.value ?? '',
+                variable_scope: fileVariable.scope,
+                variable_parent_id: match(fileVariable.scope)
+                  .with('JOB', () => service.id)
+                  .with('ENVIRONMENT', () => service.environment.id)
+                  .with('PROJECT', () => projectId)
+                  .with('BUILT_IN', 'APPLICATION', 'CONTAINER', 'HELM', 'TERRAFORM', () => {
+                    throw new Error('Should not be possible')
+                  })
+                  .exhaustive(),
+                is_secret: fileVariable.isSecret,
+                mount_path: fileVariable.file.path,
+                enable_interpolation_in_file: fileVariable.file.enable_interpolation ?? false,
+              },
+            })
+          }
         }
 
         if (withDeploy) {

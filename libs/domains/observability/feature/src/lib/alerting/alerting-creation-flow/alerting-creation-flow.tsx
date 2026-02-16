@@ -8,6 +8,7 @@ import { ErrorBoundary, FunnelFlow } from '@qovery/shared/ui'
 import { useContainerName } from '../../hooks/use-container-name/use-container-name'
 import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create-alert-rule'
 import { useHpaName } from '../../hooks/use-hpa-name/use-hpa-name'
+import { useHttpRouteName } from '../../hooks/use-http-route-name/use-http-route-name'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
 import { generateConditionDescription } from '../../util-alerting/generate-condition-description'
 import { type AlertConfiguration, type MetricCategory } from './alerting-creation-flow.types'
@@ -15,8 +16,8 @@ import { MetricConfigurationStep } from './metric-configuration-step/metric-conf
 import {
   QUERY_CPU,
   QUERY_HPA_ISSUE,
-  QUERY_HTTP_ERROR,
-  QUERY_HTTP_LATENCY,
+  QUERY_HTTP_ERROR_COMBINED,
+  QUERY_HTTP_LATENCY_COMBINED,
   QUERY_INSTANCE_RESTART,
   QUERY_MEMORY,
   QUERY_MISSING_INSTANCE,
@@ -43,6 +44,7 @@ interface AlertingCreationFlowContextInterface {
   totalSteps: number
   containerName?: string
   ingressName?: string
+  httpRouteName?: string
   onNavigateToMetric: (index: number) => void
   onComplete: (alerts: AlertConfiguration[]) => Promise<void>
   isLoading: boolean
@@ -104,6 +106,13 @@ export function AlertingCreationFlow({
   })
 
   const { data: ingressName } = useIngressName({
+    clusterId: environment.cluster_id,
+    serviceId: service.id,
+    startDate: oneHourAgo.toISOString(),
+    endDate: now.toISOString(),
+  })
+
+  const { data: httpRouteName } = useHttpRouteName({
     clusterId: environment.cluster_id,
     serviceId: service.id,
     startDate: oneHourAgo.toISOString(),
@@ -201,8 +210,8 @@ export function AlertingCreationFlow({
                 .with('memory', () => QUERY_MEMORY(containerName))
                 .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
                 .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
-                .with('http_error', () => (ingressName ? QUERY_HTTP_ERROR(ingressName) : ''))
-                .with('http_latency', () => (ingressName ? QUERY_HTTP_LATENCY(ingressName) : ''))
+                .with('http_error', () => QUERY_HTTP_ERROR_COMBINED(ingressName || '', httpRouteName || ''))
+                .with('http_latency', () => QUERY_HTTP_LATENCY_COMBINED(ingressName || '', httpRouteName || ''))
                 .with('hpa_limit', () => (hpaName ? QUERY_HPA_ISSUE(hpaName) : ''))
                 .otherwise(() => ''),
             },
@@ -237,6 +246,7 @@ export function AlertingCreationFlow({
         totalSteps,
         containerName,
         ingressName,
+        httpRouteName,
         onNavigateToMetric: handleNavigateToMetric,
         onComplete: handleComplete,
         isLoading,
