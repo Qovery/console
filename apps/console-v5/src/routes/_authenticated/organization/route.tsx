@@ -292,6 +292,7 @@ function NavigationBar({ context }: { context: NavigationContext }) {
 }
 
 const fullWidthRouteIds: FileRouteTypes['id'][] = [
+  '/_authenticated/organization/$organizationId/alerts',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/settings',
