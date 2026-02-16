@@ -1,7 +1,8 @@
+import { OrganizationAnnotationsGroupScopeEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useAnnotationsGroups } from '../hooks/use-annotations-groups/use-annotations-groups'
 import { useLabelsGroups } from '../hooks/use-labels-groups/use-labels-groups'
-import { PageOrganizationLabelsAnnotationsFeature } from './settings-labels-annotations'
+import { SettingsLabelsAnnotations } from './settings-labels-annotations'
 
 jest.mock('../hooks/use-annotations-groups/use-annotations-groups')
 jest.mock('../hooks/use-labels-groups/use-labels-groups')
@@ -21,7 +22,11 @@ const mockAnnotationsGroup = [
         value: 'value',
       },
     ],
-    scopes: ['PERSISTENT_VOLUME_CLAIMS', 'REPLICA_SETS', 'INGRESS'],
+    scopes: [
+      OrganizationAnnotationsGroupScopeEnum.DEPLOYMENTS,
+      OrganizationAnnotationsGroupScopeEnum.STATEFUL_SETS,
+      OrganizationAnnotationsGroupScopeEnum.INGRESS,
+    ],
   },
 ]
 
@@ -46,20 +51,20 @@ jest.mock('@tanstack/react-router', () => ({
   useParams: () => ({ organizationId: '1' }),
 }))
 
-describe('PageOrganizationLabelsAnnotationsFeature', () => {
+describe('SettingsLabelsAnnotations', () => {
   beforeEach(() => {
     useAnnotationsGroupsMock.mockReturnValue({
       data: mockAnnotationsGroup,
       isFetched: true,
-    })
+    } as ReturnType<typeof useAnnotationsGroups>)
     useLabelsGroupsMock.mockReturnValue({
       data: mockLabelsGroup,
       isFetched: true,
-    })
+    } as ReturnType<typeof useLabelsGroups>)
   })
 
   it('should render labels and annotations groups', () => {
-    renderWithProviders(<PageOrganizationLabelsAnnotationsFeature />)
+    renderWithProviders(<SettingsLabelsAnnotations />)
 
     expect(screen.getByText('Labels & annotations')).toBeInTheDocument()
     expect(screen.getByText('Add new')).toBeInTheDocument()

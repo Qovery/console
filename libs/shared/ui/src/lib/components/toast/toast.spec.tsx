@@ -23,8 +23,9 @@ describe('Toast', () => {
     renderWithProviders(ToastContent(props.status))
 
     const toast = screen.queryByTestId('toast') as HTMLDivElement
+    const icon = toast.querySelector('i.fa-solid.fa-circle-exclamation')
 
-    expect(toast.querySelector('span')?.classList).toContain('icon-solid-circle-exclamation')
+    expect(icon).toBeInTheDocument()
   })
 
   it('should have a title', () => {

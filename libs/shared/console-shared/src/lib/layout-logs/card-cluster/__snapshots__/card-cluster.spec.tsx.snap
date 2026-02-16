@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`CardCluster should match snapshot 1`] = `
 <div>
@@ -10,11 +10,11 @@ exports[`CardCluster should match snapshot 1`] = `
       data-testid="status"
     >
       <div
-        class="mr-4"
+        class="h-[14px] w-[14px] mr-4"
         data-state="closed"
       >
         <svg
-          class="text-neutral-300"
+          class="text-neutral h-full w-full"
           fill="none"
           height="16"
           viewBox="0 0 24 24"

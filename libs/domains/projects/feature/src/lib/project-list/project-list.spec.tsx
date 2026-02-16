@@ -1,24 +1,29 @@
+import type { ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useProjectsHook from '../hooks/use-projects/use-projects'
 import ProjectList from './project-list'
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: 'test-org-id' }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+}))
+
 const useProjectsMockSpy = jest.spyOn(useProjectsHook, 'useProjects') as jest.Mock
 
 describe('ProjectList', () => {
-  const organizationId = 'test-org-id'
-
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it('should return null when data is not fetched', () => {
+  it('should render empty state when no project is returned', () => {
     useProjectsMockSpy.mockReturnValue({
       data: [],
-      isFetched: false,
+      isFetched: true,
     })
 
-    const { container } = renderWithProviders(<ProjectList organizationId={organizationId} />)
-    expect(container).toBeEmptyDOMElement()
+    renderWithProviders(<ProjectList />)
+    expect(screen.getByText('No projects created yet')).toBeInTheDocument()
   })
 
   it('should render empty state with buttons when no projects', () => {
@@ -27,7 +32,7 @@ describe('ProjectList', () => {
       isFetched: true,
     })
 
-    renderWithProviders(<ProjectList organizationId={organizationId} />)
+    renderWithProviders(<ProjectList />)
 
     expect(screen.getByText('No projects created yet')).toBeInTheDocument()
     expect(screen.getByText('Create your first project and environments to start deploying apps')).toBeInTheDocument()
@@ -54,7 +59,7 @@ describe('ProjectList', () => {
       isFetched: true,
     })
 
-    renderWithProviders(<ProjectList organizationId={organizationId} />)
+    renderWithProviders(<ProjectList />)
 
     expect(screen.getByText('Your projects')).toBeInTheDocument()
     expect(screen.getByText('Project 1')).toBeInTheDocument()

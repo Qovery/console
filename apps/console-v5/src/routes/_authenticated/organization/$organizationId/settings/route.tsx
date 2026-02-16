@@ -64,7 +64,7 @@ function RouteComponent() {
     title: 'Git repositories',
     to: `${pathSettings}/git-repository-access`,
     icon: 'git-alt' as const,
-    iconStyle: 'brands',
+    iconStyle: 'brands' as const,
   }
 
   const webhookLink = {
@@ -121,7 +121,12 @@ function RouteComponent() {
                   ))}
                 </Sidebar.Group>
               ) : (
-                <Sidebar.Item key={link.to} to={link.to} icon={link.icon} iconStyle={link.iconStyle}>
+                <Sidebar.Item
+                  key={link.to}
+                  to={link.to}
+                  icon={link.icon}
+                  iconStyle={'iconStyle' in link ? link.iconStyle : undefined}
+                >
                   {link.title}
                 </Sidebar.Item>
               )

@@ -76,12 +76,9 @@ describe('SectionAICopilotConfiguration', () => {
     const { userEvent } = renderWithProviders(
       <SectionAICopilotConfiguration {...defaultProps} currentMode="read-only" />
     )
-
-    const select = screen.getByLabelText('Right access')
+    const select = screen.getByRole('combobox', { name: 'Right access' })
     await userEvent.click(select)
-
-    const readWriteOption = screen.getByText('Read-Write')
-    await userEvent.click(readWriteOption)
+    await userEvent.keyboard('{ArrowDown}{Enter}')
 
     await waitFor(() => {
       expect(screen.getByText('Save changes')).toBeInTheDocument()
@@ -94,12 +91,9 @@ describe('SectionAICopilotConfiguration', () => {
     const { userEvent } = renderWithProviders(
       <SectionAICopilotConfiguration {...defaultProps} currentMode="read-only" />
     )
-
-    const select = screen.getByLabelText('Right access')
+    const select = screen.getByRole('combobox', { name: 'Right access' })
     await userEvent.click(select)
-
-    const readWriteOption = screen.getByText('Read-Write')
-    await userEvent.click(readWriteOption)
+    await userEvent.keyboard('{ArrowDown}{Enter}')
 
     const saveButton = await screen.findByText('Save changes')
     await userEvent.click(saveButton)
@@ -112,12 +106,9 @@ describe('SectionAICopilotConfiguration', () => {
     const { userEvent } = renderWithProviders(
       <SectionAICopilotConfiguration {...defaultProps} currentMode="read-only" />
     )
-
-    const select = screen.getByLabelText('Right access')
+    const select = screen.getByRole('combobox', { name: 'Right access' })
     await userEvent.click(select)
-
-    const readWriteOption = screen.getByText('Read-Write')
-    await userEvent.click(readWriteOption)
+    await userEvent.keyboard('{ArrowDown}{Enter}')
 
     const cancelButton = await screen.findByRole('button', { name: /cancel/i })
     await userEvent.click(cancelButton)

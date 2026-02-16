@@ -27,7 +27,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       aria-expanded="true"
       aria-haspopup="menu"
       aria-label="Manage Deployment"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-yellow-600 h-9 px-3 active:scale-100 first:rounded-l last:rounded-r first:border-x border border-yellow-600 text-yellow-600 data-[state=open]:text-yellow-600 text-sm outline-0 min-w-[36px]"
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-warning-strong h-8 px-2.5 hover:bg-surface-warning-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border border-warning-component hover:border-warning-strong data-[state=open]:bg-surface-warning-subtle data-[state=open]:border-warning-strong text-warning text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="open"
@@ -50,12 +50,12 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       </div>
     </button>
     <a
-      class="cursor-pointer duration-100 gap-1 inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+      class="cursor-pointer duration-100 gap-1 hover:text-info-hover inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
-      href="/organization/123/project/123/environment/3840068565336064/logs/0/service-logs"
       tabindex="-1"
+      to="/organization/123/project/123/environment/3840068565336064/logs/0/service-logs"
       type="button"
     >
       <i
@@ -67,7 +67,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       aria-expanded="false"
       aria-haspopup="menu"
       aria-label="Other actions"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
@@ -94,7 +94,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
     <div
       aria-labelledby="radix-:r6:"
       aria-orientation="vertical"
-      class="flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded"
+      class="flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-down-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-up-md-faded"
       data-align="start"
       data-orientation="vertical"
       data-radix-menu-content=""
@@ -107,7 +107,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       tabindex="-1"
     >
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-surface-warning-component data-[highlighted]:text-warning hover:text-warning cursor-pointer hover:bg-surface-warning-component text-warning relative"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-warning-component data-[highlighted]:text-warning hover:text-warning cursor-pointer hover:bg-surface-warning-component text-warning relative"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -115,7 +115,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-play text-sm mr-3 text-warning"
+          class="fa-regular fa-play text-sm mr-2 text-warning"
         />
         Deploy
         <div
@@ -134,7 +134,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
         role="separator"
       />
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -142,7 +142,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-clock-rotate-left text-sm mr-3 text-brand-9"
+          class="fa-regular fa-clock-rotate-left text-sm mr-2 text-brand-9"
         />
         Deploy another chart version
       </div>
@@ -184,7 +184,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       aria-expanded="false"
       aria-haspopup="menu"
       aria-label="Manage Deployment"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-yellow-600 h-9 px-3 active:scale-100 first:rounded-l last:rounded-r first:border-x border border-yellow-600 text-yellow-600 data-[state=open]:text-yellow-600 text-sm outline-0 min-w-[36px]"
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-warning-strong h-8 px-2.5 hover:bg-surface-warning-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border border-warning-component hover:border-warning-strong data-[state=open]:bg-surface-warning-subtle data-[state=open]:border-warning-strong text-warning text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
@@ -207,12 +207,12 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       </div>
     </button>
     <a
-      class="cursor-pointer duration-100 gap-1 inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+      class="cursor-pointer duration-100 gap-1 hover:text-info-hover inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
-      href="/organization/123/project/123/environment/3840068565336064/logs/0/service-logs"
       tabindex="-1"
+      to="/organization/123/project/123/environment/3840068565336064/logs/0/service-logs"
       type="button"
     >
       <i
@@ -225,7 +225,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       aria-expanded="true"
       aria-haspopup="menu"
       aria-label="Other actions"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="open"
@@ -252,7 +252,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
     <div
       aria-labelledby="radix-:rv:"
       aria-orientation="vertical"
-      class="flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded"
+      class="flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-down-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-up-md-faded"
       data-align="start"
       data-orientation="vertical"
       data-radix-menu-content=""
@@ -270,7 +270,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         target="_blank"
       >
         <div
-          class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
+          class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"
           data-orientation="vertical"
           data-radix-collection-item=""
           role="menuitem"
@@ -278,27 +278,27 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         >
           <i
             aria-hidden="true"
-            class="fa-regular fa-code text-sm mr-3 text-brand-9"
+            class="fa-regular fa-code text-sm mr-2 text-brand-9"
           />
           Edit code
         </div>
       </a>
       <a
-        class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral gap-0"
+        class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
-        href="/organization/123/audit-logs/general?targetId=0&targetType=HELM&projectId=123&environmentId=3840068565336064"
         role="menuitem"
         tabindex="-1"
+        to="/organization/123/audit-logs/general?targetId=0&targetType=HELM&projectId=123&environmentId=3840068565336064"
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-clock-rotate-left text-sm mr-3 text-brand-9"
+          class="fa-regular fa-clock-rotate-left text-sm mr-2 text-brand-9"
         />
         See audit logs
       </a>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -306,26 +306,26 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-copy text-sm mr-3 text-brand-9"
+          class="fa-regular fa-copy text-sm mr-2 text-brand-9"
         />
         Copy identifiers
       </div>
       <a
-        class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral gap-0"
+        class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
-        href="/organization/123/project/123/environment/3840068565336064/application/0/settings/general"
         role="menuitem"
         tabindex="-1"
+        to="/organization/123/project/123/environment/3840068565336064/application/0/settings/general"
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-gear text-sm mr-3 text-brand-9"
+          class="fa-regular fa-gear text-sm mr-2 text-brand-9"
         />
         Open settings
       </a>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-2 data-[highlighted]:text-brand-11 hover:bg-brand-2 hover:text-brand-11 cursor-pointer text-neutral"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -333,7 +333,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-copy text-sm mr-3 text-brand-9"
+          class="fa-regular fa-copy text-sm mr-2 text-brand-9"
         />
         Clone
       </div>
@@ -343,7 +343,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         role="separator"
       />
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-surface-negative-component data-[highlighted]:text-negative hover:text-negative cursor-pointer hover:bg-surface-negative-component text-negative"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-negative-component data-[highlighted]:text-negative hover:text-negative cursor-pointer hover:bg-surface-negative-component text-negative"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -351,7 +351,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-trash text-sm mr-3 text-negative"
+          class="fa-regular fa-trash text-sm mr-2 text-negative"
         />
         Remove service
       </div>

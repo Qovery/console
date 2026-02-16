@@ -11,60 +11,44 @@ describe('PasswordShowHide', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should show the value in password stars format', () => {
+  it('should render the visible value by default', () => {
     const { baseElement } = render(<PasswordShowHide {...defaultProps} />)
 
-    screen.getByTestId('hide_value')
+    screen.getByTestId('visible_value')
     expect(baseElement).toBeTruthy()
   })
 
-  it('should display password on click on eye', () => {
+  it('should render a copy button when copy is enabled', () => {
     const { baseElement } = render(<PasswordShowHide {...defaultProps} />)
 
-    const toggleButton = screen.getByTestId('toggle-button')
-
-    act(() => {
-      toggleButton.click()
-    })
-
-    const value = screen.getByTestId('visible_value')
-    expect(value).toBeVisible()
+    screen.getByTestId('copy-container')
 
     expect(baseElement).toBeTruthy()
   })
 
-  it('should disabled the tooltip showing the whole value if we are in password mode', () => {
-    const { baseElement } = render(<PasswordShowHide {...defaultProps} />)
-
-    screen.getByTestId('hide_value')
-
-    expect(baseElement).toBeTruthy()
-  })
-
-  it('should show the tooltip showing the whole value if visible mode', () => {
+  it('should render secret mode when isSecret is true', () => {
     const props: PasswordShowHideProps = {
       ...defaultProps,
+      isSecret: true,
     }
     const { baseElement } = render(<PasswordShowHide {...props} />)
 
-    const value = screen.getByTestId('visible_value')
-    expect(value).toBeVisible()
+    screen.getByTestId('hide_value_secret')
 
     expect(baseElement).toBeTruthy()
   })
 
-  it('click on copy should not hide the password', () => {
+  it('click on copy keeps visible value rendered', () => {
     const props = {
       ...defaultProps,
       canCopy: true,
-      visible: true,
     }
     const { baseElement } = render(<PasswordShowHide {...props} />)
 
-    const toggleButton = screen.getByTestId('toggle-button')
+    const copyButton = screen.getByTestId('copy-container')
 
     act(() => {
-      toggleButton.click()
+      copyButton.click()
     })
 
     const value = screen.getByTestId('visible_value')

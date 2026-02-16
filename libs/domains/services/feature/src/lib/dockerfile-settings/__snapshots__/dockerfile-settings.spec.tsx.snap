@@ -156,7 +156,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
             </span>
             <br />
             <a
-              class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-info text-xs"
+              class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-xs"
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -372,7 +372,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
             </span>
             <br />
             <a
-              class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 hover:brightness-75 text-info text-xs"
+              class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-xs"
               rel="noopener noreferrer"
               target="_blank"
             >

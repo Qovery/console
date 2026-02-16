@@ -1,4 +1,3 @@
-import { Suspense } from 'react'
 import { SpotlightTrigger } from '@qovery/pages/layout'
 import { LogoIcon } from '@qovery/shared/ui'
 import { Breadcrumbs } from './breadcrumbs/breadcrumbs'

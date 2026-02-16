@@ -1,13 +1,13 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`StatusChip should match snapshot for DEPLOYED status 1`] = `
 <div>
   <div
-    class=""
+    class="h-[14px] w-[14px]"
     data-state="closed"
   >
     <svg
-      class="text-green-500"
+      class="text-green-500 h-full w-full"
       fill="none"
       height="16"
       viewBox="0 0 24 24"
@@ -40,29 +40,22 @@ exports[`StatusChip should match snapshot for DEPLOYED status 1`] = `
 exports[`StatusChip should match snapshot for ERROR status 1`] = `
 <div>
   <div
-    class=""
+    class="h-[14px] w-[14px]"
     data-state="closed"
   >
-    <span
-      class="relative flex"
+    <svg
+      class="text-red-500 h-full w-full"
+      fill="none"
+      height="16"
+      viewBox="0 0 24 24"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <span
-        class="absolute inline-flex h-full w-full animate-ping-small rounded-full bg-red-500 opacity-75"
+      <path
+        d="M12 24a12 12 0 100-24 12 12 0 000 24zm1.125-18v7.5h-2.25V6h2.25zm-2.25 11.25V15h2.25v2.25h-2.25z"
+        fill="currentColor"
       />
-      <svg
-        class="text-red-500 relative rounded-full bg-white"
-        fill="none"
-        height="16"
-        viewBox="0 0 24 24"
-        width="16"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M12 24a12 12 0 100-24 12 12 0 000 24zm1.125-18v7.5h-2.25V6h2.25zm-2.25 11.25V15h2.25v2.25h-2.25z"
-          fill="currentColor"
-        />
-      </svg>
-    </span>
+    </svg>
   </div>
 </div>
 `;
@@ -70,11 +63,11 @@ exports[`StatusChip should match snapshot for ERROR status 1`] = `
 exports[`StatusChip should match snapshot for QUEUED status 1`] = `
 <div>
   <div
-    class=""
+    class="h-[14px] w-[14px]"
     data-state="closed"
   >
     <svg
-      class="text-neutral-300"
+      class="text-neutral-300 h-full w-full"
       fill="none"
       height="16"
       viewBox="0 0 16 16"
@@ -93,11 +86,11 @@ exports[`StatusChip should match snapshot for QUEUED status 1`] = `
 exports[`StatusChip should match snapshot for READY status 1`] = `
 <div>
   <div
-    class=""
+    class="h-[14px] w-[14px]"
     data-state="closed"
   >
     <svg
-      class="text-neutral-300"
+      class="text-neutral h-full w-full"
       fill="none"
       height="16"
       viewBox="0 0 24 24"
@@ -130,11 +123,11 @@ exports[`StatusChip should match snapshot for READY status 1`] = `
 exports[`StatusChip should match snapshot for UNKNOW status 1`] = `
 <div>
   <div
-    class=""
+    class="h-[14px] w-[14px]"
     data-state="closed"
   >
     <svg
-      class="text-neutral-300"
+      class="text-neutral h-full w-full"
       fill="none"
       height="16"
       viewBox="0 0 24 24"
@@ -167,11 +160,11 @@ exports[`StatusChip should match snapshot for UNKNOW status 1`] = `
 exports[`StatusChip should match snapshot for WARNING status 1`] = `
 <div>
   <div
-    class=""
+    class="h-[14px] w-[14px]"
     data-state="closed"
   >
     <svg
-      class="text-yellow-600"
+      class="text-yellow-600 h-full w-full"
       fill="none"
       height="16"
       viewBox="0 0 24 24"
