@@ -286,7 +286,7 @@ describe('WebhookCrudModalFeature', () => {
       const button = screen.getByTestId('submit-button')
       await userEvent.click(button)
 
-    expect(editWebhookMock).not.toHaveBeenCalled()
+      expect(editWebhookMock).not.toHaveBeenCalled()
     })
 
     it('should allow submit when editing webhook with existing secret and secret provided', async () => {
@@ -302,11 +302,11 @@ describe('WebhookCrudModalFeature', () => {
       const button = screen.getByTestId('submit-button')
       await userEvent.click(button)
 
-    expect(editWebhookMock).toHaveBeenCalledWith({
-      organizationId: '000-000-000',
-      webhookId: mockWebhookWithSecret.id,
-      webhookRequest: expect.objectContaining({
-        target_secret: 'new-secret-value',
+      expect(editWebhookMock).toHaveBeenCalledWith({
+        organizationId: '000-000-000',
+        webhookId: mockWebhookWithSecret.id,
+        webhookRequest: expect.objectContaining({
+          target_secret: 'new-secret-value',
         }),
       })
     })
@@ -331,11 +331,11 @@ describe('WebhookCrudModalFeature', () => {
       const button = screen.getByTestId('submit-button')
       await userEvent.click(button)
 
-    expect(editWebhookMock).toHaveBeenCalledWith({
-      organizationId: '000-000-000',
-      webhookId: mockWebhook.id,
-      webhookRequest: expect.objectContaining({
-        target_secret: undefined,
+      expect(editWebhookMock).toHaveBeenCalledWith({
+        organizationId: '000-000-000',
+        webhookId: mockWebhook.id,
+        webhookRequest: expect.objectContaining({
+          target_secret: undefined,
         }),
       })
     })
