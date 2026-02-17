@@ -1,6 +1,8 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import CrudModal, { type CrudModalProps } from './crud-modal'
+import CrudModal, {
+  type CrudModalProps,
+} from '../../../../../../../pages/settings/src/lib/ui/page-organization-api/crud-modal/crud-modal'
 
 const props: CrudModalProps = {
   loading: false,

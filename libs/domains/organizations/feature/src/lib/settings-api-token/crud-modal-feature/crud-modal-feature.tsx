@@ -1,7 +1,45 @@
+import { type OrganizationApiTokenCreateRequest } from 'qovery-typescript-axios'
+import { useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { useAvailableRoles, useCreateApiToken } from '@qovery/domains/organizations/feature'
+import { useModal } from '@qovery/shared/ui'
 import { type OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputSelect, InputText, InputTextArea, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { Button, CopyToClipboardButtonIcon, InputText } from '@qovery/shared/ui'
+
+export interface ValueModalProps {
+  onClose: () => void
+  token: string
+}
+
+export function ValueModal(props: ValueModalProps) {
+  return (
+    <div className="p-6">
+      <h2 className="h4 mb-6 max-w-sm truncate text-neutral-400">Your API Token!</h2>
+
+      <InputText
+        name="token"
+        label="Token"
+        value={props.token}
+        disabled
+        className="mb-1"
+        rightElement={<CopyToClipboardButtonIcon className="text-sm text-neutral-400" content={props.token} />}
+      />
+      <p className="ml-3 text-xs text-neutral-350">
+        <strong className="text-neutral-400">Please keep this key safe</strong>, you will not be able to retrieve it
+        after...
+      </p>
+
+      <div className="mt-6 flex justify-end gap-3">
+        <Button data-testid="submit-button" type="submit" onClick={props.onClose} size="lg">
+          Close
+        </Button>
+      </div>
+    </div>
+  )
+}
 
 export interface CrudModalProps {
   onSubmit: () => void
@@ -95,4 +133,50 @@ export function CrudModal({ onClose, onSubmit, availableRoles, loading }: CrudMo
   )
 }
 
-export default CrudModal
+export interface CrudModalFeatureProps {
+  onClose: () => void
+  organizationId?: string
+}
+
+export function CrudModalFeature(props: CrudModalFeatureProps) {
+  const { organizationId = '', onClose } = props
+  const { mutateAsync: createApiToken } = useCreateApiToken()
+  const { data: availableRoles = [], isFetched: isFetchedAvailableRoles } = useAvailableRoles({ organizationId })
+
+  const { openModal, closeModal, enableAlertClickOutside } = useModal()
+  const [loading, setLoading] = useState(false)
+
+  const methods = useForm<OrganizationApiTokenCreateRequest>({
+    mode: 'onChange',
+  })
+
+  methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
+
+  const onSubmit = methods.handleSubmit(async (data) => {
+    setLoading(true)
+
+    try {
+      const token = await createApiToken({ organizationId, apiTokenCreateRequest: data })
+      onClose()
+      if (token) {
+        openModal({
+          content: <ValueModal token={token.token ?? ''} onClose={closeModal} />,
+        })
+      }
+    } catch (error) {
+      console.error(error)
+    }
+
+    setLoading(false)
+  })
+
+  if (!isFetchedAvailableRoles) return null
+
+  return (
+    <FormProvider {...methods}>
+      <CrudModal onSubmit={onSubmit} onClose={onClose} loading={loading} availableRoles={availableRoles} />
+    </FormProvider>
+  )
+}
+
+export default CrudModalFeature

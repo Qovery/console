@@ -1,6 +1,9 @@
 import { OrganizationApiTokenScope } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { PageOrganizationApi, type PageOrganizationApiProps } from './page-organization-api'
+import {
+  PageOrganizationApi,
+  type PageOrganizationApiProps,
+} from '../../../../../../pages/settings/src/lib/ui/page-organization-api/page-organization-api'
 
 describe('PageOrganizationApi', () => {
   const props: PageOrganizationApiProps = {
