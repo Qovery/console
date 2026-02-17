@@ -1,5 +1,11 @@
 import { add, format, parse } from 'date-fns'
-import { type Cluster, WeekdayEnum } from 'qovery-typescript-axios'
+import {
+  type Cluster,
+  type KarpenterDefaultNodePoolOverride,
+  type KarpenterGpuNodePoolOverride,
+  type KarpenterStableNodePoolOverride,
+  WeekdayEnum,
+} from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
@@ -154,6 +160,9 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                           <span>
                             {startStable} to {endStable}
                           </span>
+                          {watchStable?.consolidate_after && (
+                            <span className="text-neutral-350">Consolidate after: {watchStable.consolidate_after}</span>
+                          )}
                         </span>
                       ) : (
                         <span>Disabled</span>
@@ -224,6 +233,9 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                           </Tooltip>
                         </span>
                         <span>24 hours a day</span>
+                        {watchDefault?.consolidate_after && (
+                          <span className="text-neutral-350">Consolidate after: {watchDefault.consolidate_after}</span>
+                        )}
                       </span>
                     </div>
                   </div>
@@ -301,6 +313,9 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                         <span>
                           {startGpu} to {endGpu}
                         </span>
+                        {watchGpu?.consolidate_after && (
+                          <span className="text-neutral-350">Consolidate after: {watchGpu.consolidate_after}</span>
+                        )}
                       </span>
                     ) : (
                       <span>Disabled</span>
