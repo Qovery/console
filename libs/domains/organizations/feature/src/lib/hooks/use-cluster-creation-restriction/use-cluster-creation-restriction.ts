@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import useCreditCards from '../use-credit-cards/use-credit-cards'
 import useCurrentCost from '../use-current-cost/use-current-cost'
 
@@ -29,14 +30,23 @@ export function useClusterCreationRestriction({ organizationId, dxAuth }: UseClu
   //   remainingTrialDays === undefined || remainingTrialDays <= 0 || remainingTrialDays > 90 || !isFetchedCurrentCost
   // Inverse (user is in active trial):
   //   remainingTrialDays is defined AND > 0 AND <= 90 AND data is fetched
-  const isInActiveFreeTrial =
-    isFetchedCurrentCost && remainingTrialDays !== undefined && remainingTrialDays > 0 && remainingTrialDays <= 90
+  const isInActiveFreeTrial = useMemo(
+    () =>
+      isFetchedCurrentCost && remainingTrialDays !== undefined && remainingTrialDays > 0 && remainingTrialDays <= 90,
+    [isFetchedCurrentCost, remainingTrialDays]
+  )
 
   // Check if user has no credit card
-  const hasNoCreditCard = isFetchedCreditCards && (!creditCards || creditCards.length === 0)
+  const hasNoCreditCard = useMemo(
+    () => isFetchedCreditCards && (!creditCards || creditCards.length === 0),
+    [isFetchedCreditCards, creditCards]
+  )
 
   // Do not restrict when dxAuth is true (e.g. DX auth users bypass trial/credit-card rules)
-  const isClusterCreationRestricted = !dxAuth && isInActiveFreeTrial && hasNoCreditCard
+  const isClusterCreationRestricted = useMemo(
+    () => !dxAuth && isInActiveFreeTrial && hasNoCreditCard,
+    [dxAuth, isInActiveFreeTrial, hasNoCreditCard]
+  )
 
   const isLoading = !isFetchedCurrentCost || !isFetchedCreditCards
 

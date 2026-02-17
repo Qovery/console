@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { SETTINGS_BILLING_SUMMARY_URL, SETTINGS_URL } from '@qovery/shared/routes'
@@ -21,7 +22,12 @@ export function FreeTrialBanner() {
     SETTINGS_URL(organizationId) + SETTINGS_BILLING_SUMMARY_URL
   )
 
-  if (!isInActiveFreeTrial || isOnOrganizationBillingSummaryPage || hasDxAuth) {
+  const shouldHideBanner = useMemo(
+    () => !isInActiveFreeTrial || isOnOrganizationBillingSummaryPage || hasDxAuth,
+    [isInActiveFreeTrial, isOnOrganizationBillingSummaryPage, hasDxAuth]
+  )
+
+  if (shouldHideBanner) {
     return null
   }
 
