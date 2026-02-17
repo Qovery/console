@@ -3,7 +3,7 @@ import { creditCardsFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageOrganizationBillingSummary, {
   type PageOrganizationBillingSummaryProps,
-} from './page-organization-billing-summary'
+} from '../../../../../../pages/settings/src/lib/ui/page-organization-billing-summary/page-organization-billing-summary'
 
 const props: PageOrganizationBillingSummaryProps = {
   creditCard: creditCardsFactoryMock(1)[0],

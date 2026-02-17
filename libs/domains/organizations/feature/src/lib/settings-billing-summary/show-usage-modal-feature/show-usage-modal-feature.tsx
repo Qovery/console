@@ -1,9 +1,14 @@
 import { eachMonthOfInterval, isAfter, isBefore, isEqual } from 'date-fns'
+import { type OrganizationCurrentCost } from 'qovery-typescript-axios'
 import { type Organization } from 'qovery-typescript-axios'
+import { FormProvider, useForm } from 'react-hook-form'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useOrganization } from '@qovery/domains/organizations/feature'
+import { useModal } from '@qovery/shared/ui'
 import { Callout, Icon, InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
 import { setDayOfTheMonth } from '@qovery/shared/util-dates'
+import { useGenerateBillingUsageReport } from '../../hooks/use-generate-billing-usage-report/use-generate-billing-usage-report'
+import { useOrganization } from '../../hooks/use-organization/use-organization'
+import ShowUsageValueModal from './show-usage-value-modal/show-usage-value-modal'
 
 export interface ShowUsageModalProps {
   organizationId: string
@@ -161,4 +166,60 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
   )
 }
 
-export default ShowUsageModal
+export interface ShowUsageModalFeatureProps {
+  organizationId: string
+  currentCost: OrganizationCurrentCost
+}
+
+export function ShowUsageModalFeature({ organizationId, currentCost }: ShowUsageModalFeatureProps) {
+  const methods = useForm<{ expires: number; report_period: string }>({
+    defaultValues: {
+      expires: 24,
+    },
+    mode: 'all',
+  })
+
+  const { data: organization } = useOrganization({ organizationId })
+  const { mutateAsync: usageBillingReport, isLoading: isLoadingUsageBillingReport } = useGenerateBillingUsageReport()
+  const { openModal, closeModal } = useModal()
+
+  const onSubmit = methods.handleSubmit(async (data) => {
+    if (!organization) return
+
+    try {
+      const selectedReportPeriod = JSON.parse(data.report_period)
+
+      const res = await usageBillingReport({
+        organizationId,
+        usageReportRequest: {
+          from: new Date(new Date(selectedReportPeriod.from).getTime() + 24 * 60 * 60 * 1000).toISOString(),
+          to: selectedReportPeriod.to
+            ? new Date(new Date(selectedReportPeriod.to).getTime() + 24 * 60 * 60 * 1000).toISOString()
+            : new Date().toISOString(),
+          report_expiration_in_seconds: methods.getValues('expires') * 60 * 60, // hours to seconds
+        },
+      })
+      openModal({
+        content: (
+          <ShowUsageValueModal onClose={closeModal} url={res.report_url ?? ''} url_expires_in_hours={data.expires} />
+        ),
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+  return (
+    <FormProvider {...methods}>
+      <ShowUsageModal
+        organizationId={organizationId}
+        renewalAt={currentCost.renewal_at}
+        onSubmit={onSubmit}
+        onClose={closeModal}
+        loading={isLoadingUsageBillingReport}
+      />
+    </FormProvider>
+  )
+}
+
+export default ShowUsageModalFeature

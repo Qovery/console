@@ -9,7 +9,7 @@ export interface ShowUsageValueModalProps {
 export function ShowUsageValueModal(props: ShowUsageValueModalProps) {
   return (
     <div className="p-6">
-      <h2 className="h4 mb-6 max-w-sm truncate text-neutral-400">
+      <h2 className="h4 mb-6 max-w-sm truncate text-neutral">
         Your report is ready{' '}
         <span role="img" aria-label="congrats">
           🎊
@@ -31,7 +31,7 @@ export function ShowUsageValueModal(props: ShowUsageValueModalProps) {
         value={props.url}
         disabled
         className="mb-1"
-        rightElement={<CopyToClipboardButtonIcon className="text-sm text-neutral-400" content={props.url} />}
+        rightElement={<CopyToClipboardButtonIcon className="text-sm text-neutral" content={props.url} />}
       />
       <div className="mt-6 flex justify-end gap-3">
         <Button variant="surface" color="neutral" size="lg" onClick={props.onClose}>

@@ -1,0 +1,270 @@
+import { useNavigate, useParams } from '@tanstack/react-router'
+import { format } from 'date-fns'
+import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
+import { useMemo } from 'react'
+import { type CardImages } from 'react-payment-inputs/images'
+import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
+import { AddCreditCardModalFeature } from '@qovery/shared/console-shared'
+import { useUserRole } from '@qovery/shared/iam/feature'
+import { SETTINGS_BILLING_URL, SETTINGS_DANGER_ZONE_URL, SETTINGS_URL } from '@qovery/shared/routes'
+import { useModal } from '@qovery/shared/ui'
+import {
+  Button,
+  Callout,
+  ExternalLink,
+  Heading,
+  Icon,
+  Link,
+  Section,
+  Skeleton,
+  imagesCreditCart,
+} from '@qovery/shared/ui'
+import { dateToFormat } from '@qovery/shared/util-dates'
+import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
+import { costToHuman, formatPlanDisplay, pluralize } from '@qovery/shared/util-js'
+import { useCreditCards } from '../hooks/use-credit-cards/use-credit-cards'
+import { useCurrentCost } from '../hooks/use-current-cost/use-current-cost'
+import InvoicesListFeature from './invoices-list-feature/invoices-list-feature'
+import PlanSelectionModalFeature from './plan-selection-modal-feature/plan-selection-modal-feature'
+import PromoCodeModalFeature from './promo-code-modal-feature/promo-code-modal-feature'
+import ShowUsageModalFeature from './show-usage-modal-feature/show-usage-modal-feature'
+
+interface PageOrganizationBillingSummaryProps {
+  currentCost?: OrganizationCurrentCost
+  creditCard?: CreditCard
+  creditCardLoading?: boolean
+  hasCreditCard?: boolean
+  onPromoCodeClick?: () => void
+  onShowUsageClick?: () => void
+  onChangePlanClick?: () => void
+  onCancelTrialClick?: () => void
+  onAddCreditCardClick?: () => void
+}
+
+// This function is used to get the billing recurrence word to display based on the renewal date.
+// it's not so accurate, but it's a good enough approximation for now
+function getBillingRecurrenceStr(renewalAt: string | null | undefined): string {
+  if (renewalAt === null || renewalAt === undefined) return 'month'
+
+  const now = new Date()
+  const renewalDate = new Date(renewalAt)
+  // if the renewal date is in less than 1 month, we display "month"
+
+  if (renewalDate.getTime() - now.getTime() > 30 * 24 * 60 * 60 * 1000) return 'year'
+
+  return 'month'
+}
+
+function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryProps) {
+  const { organizationId = '' } = useParams({ strict: false })
+  const { data: userSignUp } = useUserSignUp()
+
+  // Get the billing recurrence word to display based on the renewal date.
+  // It's not so accurate, but it's a good enough approximation for now
+  const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
+  const remainingTrialDay = props.currentCost?.remaining_trial_day ?? 0
+  const showTrialCallout = remainingTrialDay !== undefined && remainingTrialDay > 0 && !props.creditCardLoading
+  const showErrorCallout = (props.hasCreditCard ?? Boolean(props.creditCard)) || userSignUp?.dx_auth
+
+  // This function is used to get the trial start date based on the remaining trial days from the API
+  const trialStartDate = useMemo(() => {
+    const remainingTrialDayFromApi = props.currentCost?.remaining_trial_day
+    if (remainingTrialDayFromApi === undefined || remainingTrialDayFromApi === null) return null
+
+    const trialDurationDays = 14
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const daysUntilExpiration = remainingTrialDayFromApi + 1
+    const expirationDate = new Date(today)
+    expirationDate.setDate(expirationDate.getDate() + daysUntilExpiration)
+
+    const startDate = new Date(expirationDate)
+    startDate.setDate(startDate.getDate() - trialDurationDays)
+    startDate.setHours(0, 0, 0, 0)
+
+    return startDate
+  }, [props.currentCost?.remaining_trial_day])
+
+  return (
+    <div className="flex w-full max-w-[832px] flex-col justify-between">
+      <Section className="p-8">
+        {showTrialCallout && (
+          <Callout.Root color={showErrorCallout ? 'yellow' : 'red'} className="mb-8 items-center">
+            <Callout.Text>
+              <Callout.TextHeading>
+                {/* Add + 1 because Chargebee return 0 when the trial is ending today */}
+                {showErrorCallout
+                  ? `Your free trial plan expires ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')} from now`
+                  : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')}`}
+              </Callout.TextHeading>
+              {showErrorCallout ? (
+                <>
+                  You have contracted a free 14-days trial on{' '}
+                  {trialStartDate ? format(trialStartDate, 'MMMM d, yyyy') : '...'}. At the end of this plan your user
+                  subscription will start. You cancel your trial by deleting your organization.
+                </>
+              ) : (
+                <>Add a payment method to avoid service interruption at the end of your trial.</>
+              )}
+            </Callout.Text>
+            <Button
+              size="sm"
+              variant="solid"
+              color={showErrorCallout ? 'yellow' : 'red'}
+              onClick={() => (showErrorCallout ? props.onCancelTrialClick?.() : props.onAddCreditCardClick?.())}
+            >
+              {showErrorCallout ? 'Cancel free trial' : 'Add credit card'}
+            </Button>
+          </Callout.Root>
+        )}
+        <div className="mb-8 flex justify-between">
+          <Heading className="mb-2">Plan details</Heading>
+          <div className="flex gap-3">
+            <Button className="gap-1" variant="surface" color="neutral" size="md" onClick={props.onShowUsageClick}>
+              Show usage
+              <Icon iconName="gauge-high" iconStyle="regular" />
+            </Button>
+            <Button variant="surface" color="neutral" size="md" onClick={props.onPromoCodeClick}>
+              Promo code
+            </Button>
+            <Button size="md" onClick={props.onChangePlanClick}>
+              Change plan
+            </Button>
+          </div>
+        </div>
+
+        <div className="mb-3 flex w-full gap-2">
+          <div className="h-[114px]  flex-1  rounded  border border-neutral-200 p-5">
+            <div className="mb-1 text-xs font-medium text-neutral-350">Current plan</div>
+            <div className="mb-1 text-sm font-bold text-neutral-400">
+              <Skeleton height={20} width={100} show={!props.currentCost?.plan}>
+                <div className="h-5">{formatPlanDisplay(props.currentCost?.plan)}</div>
+              </Skeleton>
+            </div>
+            <ExternalLink href="https://www.qovery.com/pricing" size="xs">
+              See details
+            </ExternalLink>
+          </div>
+          <div className="h-[114px]  flex-1  rounded  border border-neutral-200 p-5">
+            <div className="mb-1 text-xs font-medium text-neutral-350">Current bill</div>
+            <div className="mb-2">
+              <Skeleton height={20} width={100} show={!props.currentCost?.plan}>
+                <div className="h-5">
+                  <strong className="text-sm font-bold text-neutral-400">
+                    {costToHuman(props.currentCost?.cost?.total || 0, props.currentCost?.cost?.currency_code || 'USD')}
+                  </strong>{' '}
+                  <span className="text-xs text-neutral-350">/ {billingRecurrence}</span>
+                </div>
+              </Skeleton>
+            </div>
+            {props.currentCost?.plan !== PlanEnum.FREE && (
+              <p className="text-xs font-medium text-neutral-350">
+                Next invoice:{' '}
+                <strong className="text-neutral-400">
+                  {props.currentCost?.renewal_at && dateToFormat(props.currentCost?.renewal_at, 'MMM dd, Y')}
+                </strong>
+              </p>
+            )}
+          </div>
+
+          {props.currentCost?.plan !== PlanEnum.FREE && (
+            <div className="h-[114px]  flex-1  rounded  border border-neutral-200 p-5">
+              <div className="mb-3 text-xs font-medium text-neutral-350">Payment method</div>
+              <div className="mb-2">
+                <Skeleton height={20} width={100} show={props.creditCardLoading}>
+                  <div className="flex gap-3">
+                    {props.creditCard ? (
+                      <>
+                        <svg className="w-6" children={imagesCreditCart[props.creditCard.brand as keyof CardImages]} />
+                        <span className="neutral-400 flex-1 text-xs font-bold">
+                          **** {props.creditCard?.last_digit}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-xs font-bold text-neutral-400">No credit card provided</span>
+                    )}
+                  </div>
+                </Skeleton>
+              </div>
+              <Link to={SETTINGS_URL(organizationId) + SETTINGS_BILLING_URL} size="xs">
+                Edit payment
+              </Link>
+            </div>
+          )}
+        </div>
+        <InvoicesListFeature />
+      </Section>
+    </div>
+  )
+}
+
+export function SettingsBillingSummary() {
+  useDocumentTitle('Billing summary - Organization settings')
+
+  const { openModal, closeModal } = useModal()
+
+  const { organizationId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
+
+  const { data: creditCards = [], isLoading: isLoadingCreditCards } = useCreditCards({ organizationId })
+  const { data: currentCost } = useCurrentCost({ organizationId })
+  const { showChat } = useSupportChat()
+  const { isQoveryAdminUser } = useUserRole()
+
+  const openPromoCodeModal = () => {
+    openModal({
+      content: <PromoCodeModalFeature closeModal={closeModal} organizationId={organizationId} />,
+    })
+  }
+
+  const openShowUsageModal = () => {
+    openModal({
+      content: currentCost && <ShowUsageModalFeature organizationId={organizationId} currentCost={currentCost} />,
+    })
+  }
+
+  const openPlanSelectionModal = () => {
+    openModal({
+      content: (
+        <PlanSelectionModalFeature
+          closeModal={closeModal}
+          organizationId={organizationId}
+          currentPlan={currentCost?.plan}
+        />
+      ),
+    })
+  }
+
+  const handleChangePlanClick = () => {
+    if (isQoveryAdminUser) {
+      openPlanSelectionModal()
+    } else {
+      showChat()
+    }
+  }
+
+  const handleCancelTrialClick = () => {
+    navigate(SETTINGS_URL(organizationId) + SETTINGS_DANGER_ZONE_URL)
+  }
+
+  const handleAddCreditCardClick = () => {
+    openModal({
+      content: <AddCreditCardModalFeature organizationId={organizationId} />,
+    })
+  }
+
+  return (
+    <PageOrganizationBillingSummary
+      currentCost={currentCost}
+      creditCard={creditCards[0]}
+      creditCardLoading={isLoadingCreditCards}
+      hasCreditCard={creditCards.length > 0}
+      onPromoCodeClick={openPromoCodeModal}
+      onShowUsageClick={openShowUsageModal}
+      onChangePlanClick={handleChangePlanClick}
+      onCancelTrialClick={handleCancelTrialClick}
+      onAddCreditCardClick={handleAddCreditCardClick}
+    />
+  )
+}
