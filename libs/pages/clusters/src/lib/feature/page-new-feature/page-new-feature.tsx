@@ -13,6 +13,7 @@ import { NavLink, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ClusterInstallationGuideModal } from '@qovery/domains/clusters/feature'
 import { useClusterCreationRestriction } from '@qovery/domains/organizations/feature'
+import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { AddCreditCardModalFeature } from '@qovery/shared/console-shared'
 import { CLUSTERS_TEMPLATE_CREATION_URL, CLUSTERS_URL, SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { Button, Callout, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
@@ -390,8 +391,13 @@ export function PageNewFeature() {
   const { organizationId = '' } = useParams()
   useDocumentTitle('Create new cluster - Qovery')
   const { openModal, closeModal } = useModal()
+  const { data: userSignUp } = useUserSignUp()
+  const hasDxAuth = Boolean(userSignUp?.dx_auth)
 
-  const { isClusterCreationRestricted } = useClusterCreationRestriction({ organizationId })
+  const { isClusterCreationRestricted } = useClusterCreationRestriction({
+    organizationId,
+    dxAuth: hasDxAuth,
+  })
 
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
     openModal({
