@@ -1,5 +1,5 @@
 import { EnvironmentModeEnum, type Project } from 'qovery-typescript-axios'
-import { BlockContentDelete, IconAwesomeEnum } from '@qovery/shared/ui'
+import { BlockContentDelete } from '@qovery/shared/ui'
 
 export interface PageProjectDangerZoneProps {
   deleteProject: () => void
@@ -18,15 +18,18 @@ export function PageProjectDangerZone(props: PageProjectDangerZoneProps) {
           ctaLoading={loading}
           list={[
             {
-              icon: IconAwesomeEnum.TRASH,
+              iconName: 'trash',
+              iconStyle: 'solid',
               text: 'Databases',
             },
             {
-              icon: IconAwesomeEnum.TRASH,
+              iconName: 'trash',
+              iconStyle: 'solid',
               text: 'Applications',
             },
             {
-              icon: IconAwesomeEnum.TRASH,
+              iconName: 'trash',
+              iconStyle: 'solid',
               text: 'Environments',
             },
           ]}
