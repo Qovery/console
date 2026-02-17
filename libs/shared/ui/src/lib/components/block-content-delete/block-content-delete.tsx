@@ -1,3 +1,4 @@
+import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
 import { Button } from '../button/button'
 import Icon from '../icon/icon'
 import useModalConfirmation from '../modals/modal-confirmation/use-modal-confirmation/use-modal-confirmation'
@@ -14,8 +15,8 @@ export interface BlockContentDeleteProps {
   list?: {
     text: string
     icon?: string
-    iconName?: string
-    iconStyle?: string
+    iconName?: IconName
+    iconStyle?: IconStyle
   }[]
   ctaLabel?: string
   ctaLoading?: boolean

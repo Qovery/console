@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { EnvironmentModeEnum, type Organization } from 'qovery-typescript-axios'
-import { LOGOUT_URL } from '@qovery/shared/routes'
 import { BlockContentDelete } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useDeleteOrganization } from '../hooks/use-delete-organization/use-delete-organization'
@@ -71,10 +70,16 @@ export function SettingsDangerZone() {
       await deleteOrganization({
         organizationId,
       })
-      if (organizations.length === 1) {
-        await navigate(LOGOUT_URL)
+      const remainingOrganizations = organizations.filter((organization) => organization.id !== organizationId)
+      localStorage.removeItem('currentOrganizationId')
+      localStorage.removeItem('currentProjectId')
+      if (remainingOrganizations.length === 0) {
+        await navigate({ to: '/login' })
       } else {
-        navigate('/')
+        await navigate({
+          to: '/organization/$organizationId/overview',
+          params: { organizationId: remainingOrganizations[0].id },
+        })
       }
     } catch (error) {
       console.error(error)
