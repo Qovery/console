@@ -234,9 +234,9 @@ export const RowEvent = (props: RowEventProps) => {
       >
         <div className="flex items-center justify-between gap-3 pl-2">
           <Skeleton height={10} width={130} show={isPlaceholder}>
-            <div className="flex gap-3">
+            <div className="flex items-center gap-3">
               <Icon
-                name={IconAwesomeEnum.ANGLE_DOWN}
+                iconName="chevron-down"
                 className={`block cursor-pointer text-neutral-subtle ${expanded ? 'rotate-180' : ''}`}
               />
               {event.timestamp && (

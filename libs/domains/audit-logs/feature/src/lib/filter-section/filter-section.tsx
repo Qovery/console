@@ -196,7 +196,7 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
               {badge.isDeletable && (
                 <Icon
                   iconName="xmark"
-                  className="text-sm leading-4 text-neutral-300 hover:text-neutral-400"
+                  className="text-xs leading-4 text-neutral-subtle hover:text-neutral"
                   onClick={() => deleteFilter(badge.key, setFilter)}
                 />
               )}
@@ -248,20 +248,20 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                       aria-label="Delete filter"
                     >
                       {badge.isDeletable && (
-                        <Icon iconName="xmark" className="text-sm leading-4 text-neutral-300 hover:text-neutral-400" />
+                        <Icon iconName="xmark" className="text-xs leading-4 text-neutral-subtle hover:text-neutral" />
                       )}
                     </button>
                   </Button>
                   {!isLast && (
                     <svg
-                      className="pointer-events-none absolute right-0 top-0 h-6 w-[11px]"
+                      className="pointer-events-none absolute right-0 top-0 h-6 w-[11px] text-neutral-subtle"
                       viewBox="0 0 11 25"
                       fill="none"
                     >
                       <path
-                        className="stroke-neutral-250 group-hover:stroke-neutral-300"
                         d="M0.390869 0.311768L9.96074 12.3118L0.390869 24.3118"
                         strokeLinejoin="round"
+                        stroke="var(--neutral-6)"
                       />
                     </svg>
                   )}

@@ -267,13 +267,13 @@ export function TableHeadHierarchicalFilter({
     if (!isRootLevel) {
       items.push({
         name: 'Back',
-        contentLeft: <Icon iconName="arrow-left" className="delete-hover text-ssm text-neutral-350" />,
+        contentLeft: <Icon iconName="arrow-left" className="delete-hover text-ssm text-neutral-subtle" />,
         onClick: (e) => {
           // Prevent menu from auto-closing
           e.keepOpen = true
           handleBack()
         },
-        textClassName: 'text-neutral-350 delete-hover font-light',
+        textClassName: 'text-neutral-subtle delete-hover font-light',
       })
     }
 
@@ -379,33 +379,25 @@ export function TableHeadHierarchicalFilter({
         trigger={
           <div className="flex">
             {hasFilter ? (
-              <Button type="button" size="xs" className="whitespace-nowrap pr-6">
+              <Button type="button" color="neutral" size="xs" className="gap-1.5 whitespace-nowrap">
                 {title}
+                <span
+                  role="button"
+                  className="relative flex h-6 cursor-pointer items-center text-xs"
+                  onClick={(event) => cleanFilter(event)}
+                >
+                  <Icon iconName="xmark" />
+                </span>
               </Button>
             ) : (
-              <Button
-                type="button"
-                variant={isDark ? 'solid' : 'surface'}
-                color="neutral"
-                size="xs"
-                className="items-center gap-1.5"
-              >
+              <Button type="button" variant="surface" color="neutral" size="xs" className="items-center gap-1.5">
                 {title}
-                <Icon iconName="angle-down" className="relative top-[1px]" />
+                <Icon iconName="angle-down" />
               </Button>
             )}
           </div>
         }
       />
-      {hasFilter && (
-        <span
-          role="button"
-          className="relative -left-6 flex h-6 cursor-pointer items-center px-2 text-xs text-neutral-50"
-          onClick={(event) => cleanFilter(event)}
-        >
-          <Icon iconName="xmark" />
-        </span>
-      )}
     </div>
   )
 }
