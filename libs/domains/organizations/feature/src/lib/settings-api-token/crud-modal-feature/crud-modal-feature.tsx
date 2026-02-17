@@ -1,23 +1,31 @@
 import { type OrganizationApiTokenCreateRequest } from 'qovery-typescript-axios'
+import { type OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useAvailableRoles, useCreateApiToken } from '@qovery/domains/organizations/feature'
-import { useModal } from '@qovery/shared/ui'
-import { type OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { InputSelect, InputText, InputTextArea, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
+import { useModal } from '@qovery/shared/ui'
+import {
+  Button,
+  CopyToClipboardButtonIcon,
+  InputSelect,
+  InputText,
+  InputTextArea,
+  LoaderSpinner,
+  ModalCrud,
+} from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { Button, CopyToClipboardButtonIcon, InputText } from '@qovery/shared/ui'
+import { useAvailableRoles } from '../../hooks/use-available-roles/use-available-roles'
+import { useCreateApiToken } from '../../hooks/use-create-api-token/use-create-api-token'
 
-export interface ValueModalProps {
+interface ValueModalProps {
   onClose: () => void
   token: string
 }
 
-export function ValueModal(props: ValueModalProps) {
+function ValueModal(props: ValueModalProps) {
   return (
     <div className="p-6">
-      <h2 className="h4 mb-6 max-w-sm truncate text-neutral-400">Your API Token!</h2>
+      <h2 className="h4 mb-6 max-w-sm truncate text-neutral">Your API Token!</h2>
 
       <InputText
         name="token"
@@ -25,10 +33,10 @@ export function ValueModal(props: ValueModalProps) {
         value={props.token}
         disabled
         className="mb-1"
-        rightElement={<CopyToClipboardButtonIcon className="text-sm text-neutral-400" content={props.token} />}
+        rightElement={<CopyToClipboardButtonIcon className="text-sm text-neutral" content={props.token} />}
       />
-      <p className="ml-3 text-xs text-neutral-350">
-        <strong className="text-neutral-400">Please keep this key safe</strong>, you will not be able to retrieve it
+      <p className="ml-3 text-xs text-neutral-subtle">
+        <strong className="text-neutral">Please keep this key safe</strong>, you will not be able to retrieve it
         after...
       </p>
 
@@ -41,14 +49,14 @@ export function ValueModal(props: ValueModalProps) {
   )
 }
 
-export interface CrudModalProps {
+interface CrudModalProps {
   onSubmit: () => void
   onClose: () => void
   availableRoles: OrganizationAvailableRole[]
   loading?: boolean
 }
 
-export function CrudModal({ onClose, onSubmit, availableRoles, loading }: CrudModalProps) {
+function CrudModal({ onClose, onSubmit, availableRoles, loading }: CrudModalProps) {
   const { control } = useFormContext()
 
   return (
@@ -133,7 +141,7 @@ export function CrudModal({ onClose, onSubmit, availableRoles, loading }: CrudMo
   )
 }
 
-export interface CrudModalFeatureProps {
+interface CrudModalFeatureProps {
   onClose: () => void
   organizationId?: string
 }
