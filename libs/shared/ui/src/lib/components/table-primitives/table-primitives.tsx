@@ -62,7 +62,7 @@ const TableCell = forwardRef<ElementRef<'td'>, TableCellProps>(function TableCel
   ref
 ) {
   return (
-    <td ref={ref} className={twMerge('h-14 px-4 py-0', className)} {...rest}>
+    <td ref={ref} className={twMerge('h-14 border-neutral px-4 py-0', className)} {...rest}>
       {children}
     </td>
   )
@@ -88,7 +88,7 @@ const TableColumnHeaderCell = forwardRef<ElementRef<'th'>, TableColumnHeaderCell
   ref
 ) {
   return (
-    <th ref={ref} className={twMerge('h-11 px-4 text-left font-code font-normal', className)} {...rest}>
+    <th ref={ref} className={twMerge('h-11 border-neutral px-4 text-left font-code font-normal', className)} {...rest}>
       {children}
     </th>
   )
