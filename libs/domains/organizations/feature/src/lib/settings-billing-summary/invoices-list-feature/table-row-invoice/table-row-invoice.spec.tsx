@@ -1,70 +1,60 @@
-import { getByTestId, getByText, render } from '__tests__/utils/setup-jest'
-import { InvoiceStatusEnum } from 'qovery-typescript-axios'
-import { dateToFormat } from '@qovery/shared/util-dates'
+import { type Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
+import { TablePrimitives } from '@qovery/shared/ui'
+import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
+import { costToHuman } from '@qovery/shared/util-js'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { TableRowInvoice, type TableRowInvoiceProps } from './table-row-invoice'
 
 let props: TableRowInvoiceProps
 
+const { Table } = TablePrimitives
+
+const renderRow = (rowProps: TableRowInvoiceProps) =>
+  renderWithProviders(
+    <Table.Root>
+      <Table.Body>
+        <TableRowInvoice {...rowProps} />
+      </Table.Body>
+    </Table.Root>
+  )
+
+const invoice: Invoice = {
+  status: InvoiceStatusEnum.UNKNOWN,
+  currency_code: 'EUR',
+  created_at: '2021-01-01T00:00:00.000Z',
+  id: '22',
+  total: 100,
+  total_in_cents: 10000,
+}
+
 beforeEach(() => {
   props = {
     downloadInvoice: jest.fn(),
-    data: {
-      status: InvoiceStatusEnum.UNKNOWN,
-      currency_code: 'EUR',
-      created_at: '2021-01-01T00:00:00.000Z',
-      id: '22',
-      total: 100,
-      total_in_cents: 10000,
-    },
-    filter: [],
-    dataHead: [
-      {
-        title: 'Date',
-        filter: [
-          {
-            title: 'Filter by date',
-            key: 'created_at',
-            itemContentCustom: (item) => (
-              <span className="text-sm font-medium text-neutral-400">{dateToFormat(item.created_at, 'MMM dd, Y')}</span>
-            ),
-          },
-        ],
-      },
-      {
-        title: 'Status',
-        filter: [
-          {
-            title: 'Filter by status',
-            key: 'status',
-          },
-        ],
-      },
-      {
-        title: 'Charge',
-      },
-    ],
+    data: invoice,
   }
 })
 
-describe('TableRowDeployment', () => {
+describe('TableRowInvoice', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<TableRowInvoice {...props} />)
+    const { baseElement } = renderRow(props)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render the different cells correctly', () => {
-    const { baseElement } = render(<TableRowInvoice {...props} />)
+    renderRow(props)
 
-    getByText(baseElement, 'Jan 1, 2021')
-    getByText(baseElement, 'UNKNOWN')
-    getByText(baseElement, '€100')
-    getByTestId(baseElement, 'download-invoice-btn')
+    screen.getByText(dateMediumLocalFormat(invoice.created_at))
+    screen.getByText(String(invoice.status).replace('_', ' '))
+    screen.getByText(costToHuman(invoice.total_in_cents / 100, invoice.currency_code))
+    screen.getByTestId('download-invoice-btn')
   })
 
-  it('should call the downloadInvoice function when clicking on the download button', () => {
-    const { baseElement } = render(<TableRowInvoice {...props} />)
-    const button = getByTestId(baseElement, 'download-invoice-btn')
-    button.click()
-    expect(props.downloadInvoice).toHaveBeenCalled()
+  it('should call the downloadInvoice function when clicking on the download button', async () => {
+    const { userEvent } = renderRow(props)
+    const button = screen.getByTestId('download-invoice-btn')
+
+    await userEvent.click(button)
+
+    expect(props.downloadInvoice).toHaveBeenCalledWith(invoice.id)
   })
 })

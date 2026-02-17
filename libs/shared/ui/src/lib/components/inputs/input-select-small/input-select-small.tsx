@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { type Value } from '@qovery/shared/interfaces'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
-import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
 export interface InputSelectSmallProps {
   name: string
@@ -67,7 +66,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
         ))}
       </select>
       <Icon
-        name={IconAwesomeEnum.CHEVRON_DOWN}
+        iconName="chevron-down"
         className="pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
       />
     </div>

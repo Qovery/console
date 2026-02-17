@@ -1,24 +1,13 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { format } from 'date-fns'
 import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
-import { useMemo } from 'react'
+import { Suspense, useMemo } from 'react'
 import { type CardImages } from 'react-payment-inputs/images'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
-import { AddCreditCardModalFeature } from '@qovery/shared/console-shared'
+import { AddCreditCardModalFeature, SettingsHeading } from '@qovery/shared/console-shared'
 import { useUserRole } from '@qovery/shared/iam/feature'
-import { SETTINGS_BILLING_URL, SETTINGS_DANGER_ZONE_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
-import {
-  Button,
-  Callout,
-  ExternalLink,
-  Heading,
-  Icon,
-  Link,
-  Section,
-  Skeleton,
-  imagesCreditCart,
-} from '@qovery/shared/ui'
+import { Button, Callout, ExternalLink, Icon, Link, Section, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { costToHuman, formatPlanDisplay, pluralize } from '@qovery/shared/util-js'
@@ -29,10 +18,9 @@ import PlanSelectionModalFeature from './plan-selection-modal-feature/plan-selec
 import PromoCodeModalFeature from './promo-code-modal-feature/promo-code-modal-feature'
 import ShowUsageModalFeature from './show-usage-modal-feature/show-usage-modal-feature'
 
-interface PageOrganizationBillingSummaryProps {
+export interface PageOrganizationBillingSummaryProps {
   currentCost?: OrganizationCurrentCost
   creditCard?: CreditCard
-  creditCardLoading?: boolean
   hasCreditCard?: boolean
   onPromoCodeClick?: () => void
   onShowUsageClick?: () => void
@@ -55,7 +43,53 @@ function getBillingRecurrenceStr(renewalAt: string | null | undefined): string {
   return 'month'
 }
 
-function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryProps) {
+const BillingSummarySkeleton = () => (
+  <div className="w-full">
+    <Section className="p-8">
+      <div className="relative mb-8 border-b border-neutral pb-6">
+        <Skeleton height={32} width={132} show />
+        <div className="absolute right-0 top-0 flex shrink-0 gap-3">
+          <Skeleton height={32} width={120} show />
+          <Skeleton height={32} width={110} show />
+          <Skeleton height={32} width={110} show />
+        </div>
+      </div>
+      <div className="max-w-content-with-navigation-left">
+        <div className="mb-3 flex gap-2">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="h-[114px] flex-1 rounded border border-neutral bg-surface-neutral p-5">
+              <Skeleton height={12} width={80} show />
+              <div className="mt-3">
+                <Skeleton height={20} width={120} show />
+              </div>
+              <div className="mt-3">
+                <Skeleton height={12} width={90} show />
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mb-3">
+          <div className="mb-4 mt-7 flex items-center justify-between">
+            <Skeleton height={24} width={60} show />
+            <Skeleton height={36} width={200} show />
+          </div>
+          <div className="rounded border border-neutral bg-surface-neutral">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="flex items-center gap-3 border-b border-neutral px-4 py-3">
+                <Skeleton height={12} width={80} show />
+                <Skeleton height={12} width={70} show />
+                <Skeleton height={12} width={70} show />
+                <Skeleton height={12} width={40} show />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Section>
+  </div>
+)
+
+export function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const { data: userSignUp } = useUserSignUp()
 
@@ -63,7 +97,7 @@ function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryPro
   // It's not so accurate, but it's a good enough approximation for now
   const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
   const remainingTrialDay = props.currentCost?.remaining_trial_day ?? 0
-  const showTrialCallout = remainingTrialDay !== undefined && remainingTrialDay > 0 && !props.creditCardLoading
+  const showTrialCallout = remainingTrialDay !== undefined && remainingTrialDay > 0
   const showErrorCallout = (props.hasCreditCard ?? Boolean(props.creditCard)) || userSignUp?.dx_auth
 
   // This function is used to get the trial start date based on the remaining trial days from the API
@@ -87,40 +121,11 @@ function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryPro
   }, [props.currentCost?.remaining_trial_day])
 
   return (
-    <div className="flex w-full max-w-[832px] flex-col justify-between">
+    <div className="w-full">
       <Section className="p-8">
-        {showTrialCallout && (
-          <Callout.Root color={showErrorCallout ? 'yellow' : 'red'} className="mb-8 items-center">
-            <Callout.Text>
-              <Callout.TextHeading>
-                {/* Add + 1 because Chargebee return 0 when the trial is ending today */}
-                {showErrorCallout
-                  ? `Your free trial plan expires ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')} from now`
-                  : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')}`}
-              </Callout.TextHeading>
-              {showErrorCallout ? (
-                <>
-                  You have contracted a free 14-days trial on{' '}
-                  {trialStartDate ? format(trialStartDate, 'MMMM d, yyyy') : '...'}. At the end of this plan your user
-                  subscription will start. You cancel your trial by deleting your organization.
-                </>
-              ) : (
-                <>Add a payment method to avoid service interruption at the end of your trial.</>
-              )}
-            </Callout.Text>
-            <Button
-              size="sm"
-              variant="solid"
-              color={showErrorCallout ? 'yellow' : 'red'}
-              onClick={() => (showErrorCallout ? props.onCancelTrialClick?.() : props.onAddCreditCardClick?.())}
-            >
-              {showErrorCallout ? 'Cancel free trial' : 'Add credit card'}
-            </Button>
-          </Callout.Root>
-        )}
-        <div className="mb-8 flex justify-between">
-          <Heading className="mb-2">Plan details</Heading>
-          <div className="flex gap-3">
+        <div className="relative">
+          <SettingsHeading title="Plan details" showNeedHelp={false} />
+          <div className="absolute right-0 top-0 flex shrink-0 gap-3">
             <Button className="gap-1" variant="surface" color="neutral" size="md" onClick={props.onShowUsageClick}>
               Show usage
               <Icon iconName="gauge-high" iconStyle="regular" />
@@ -133,82 +138,104 @@ function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryPro
             </Button>
           </div>
         </div>
-
-        <div className="mb-3 flex w-full gap-2">
-          <div className="h-[114px]  flex-1  rounded  border border-neutral-200 p-5">
-            <div className="mb-1 text-xs font-medium text-neutral-350">Current plan</div>
-            <div className="mb-1 text-sm font-bold text-neutral-400">
-              <Skeleton height={20} width={100} show={!props.currentCost?.plan}>
+        <div className="max-w-content-with-navigation-left">
+          {showTrialCallout && (
+            <Callout.Root color={showErrorCallout ? 'yellow' : 'red'} className="mb-8 items-center">
+              <Callout.Text>
+                <Callout.TextHeading>
+                  {/* Add + 1 because Chargebee return 0 when the trial is ending today */}
+                  {showErrorCallout
+                    ? `Your free trial plan expires ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')} from now`
+                    : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')}`}
+                </Callout.TextHeading>
+                {showErrorCallout ? (
+                  <>
+                    You have contracted a free 14-days trial on{' '}
+                    {trialStartDate ? format(trialStartDate, 'MMMM d, yyyy') : '...'}. At the end of this plan your user
+                    subscription will start. You cancel your trial by deleting your organization.
+                  </>
+                ) : (
+                  <>Add a payment method to avoid service interruption at the end of your trial.</>
+                )}
+              </Callout.Text>
+              <Button
+                size="sm"
+                variant="solid"
+                color={showErrorCallout ? 'yellow' : 'red'}
+                onClick={() => (showErrorCallout ? props.onCancelTrialClick?.() : props.onAddCreditCardClick?.())}
+              >
+                {showErrorCallout ? 'Cancel free trial' : 'Add credit card'}
+              </Button>
+            </Callout.Root>
+          )}
+          <div className="mb-3 flex gap-2">
+            <div className="h-[114px]  flex-1  rounded  border border-neutral bg-surface-neutral p-5">
+              <div className="mb-1 text-xs font-medium text-neutral-subtle">Current plan</div>
+              <div className="mb-1 text-sm font-bold text-neutral">
                 <div className="h-5">{formatPlanDisplay(props.currentCost?.plan)}</div>
-              </Skeleton>
+              </div>
+              <ExternalLink href="https://www.qovery.com/pricing" size="xs">
+                See details
+              </ExternalLink>
             </div>
-            <ExternalLink href="https://www.qovery.com/pricing" size="xs">
-              See details
-            </ExternalLink>
-          </div>
-          <div className="h-[114px]  flex-1  rounded  border border-neutral-200 p-5">
-            <div className="mb-1 text-xs font-medium text-neutral-350">Current bill</div>
-            <div className="mb-2">
-              <Skeleton height={20} width={100} show={!props.currentCost?.plan}>
+            <div className="h-[114px]  flex-1  rounded  border border-neutral bg-surface-neutral p-5">
+              <div className="mb-1 text-xs font-medium text-neutral-subtle">Current bill</div>
+              <div className="mb-2">
                 <div className="h-5">
-                  <strong className="text-sm font-bold text-neutral-400">
+                  <strong className="text-sm font-bold text-neutral">
                     {costToHuman(props.currentCost?.cost?.total || 0, props.currentCost?.cost?.currency_code || 'USD')}
                   </strong>{' '}
-                  <span className="text-xs text-neutral-350">/ {billingRecurrence}</span>
+                  <span className="text-xs text-neutral-subtle">/ {billingRecurrence}</span>
                 </div>
-              </Skeleton>
+              </div>
+              {props.currentCost?.plan !== PlanEnum.FREE && (
+                <p className="text-xs font-medium text-neutral-subtle">
+                  Next invoice:{' '}
+                  <strong className="text-neutral">
+                    {props.currentCost?.renewal_at && dateToFormat(props.currentCost?.renewal_at, 'MMM dd, Y')}
+                  </strong>
+                </p>
+              )}
             </div>
-            {props.currentCost?.plan !== PlanEnum.FREE && (
-              <p className="text-xs font-medium text-neutral-350">
-                Next invoice:{' '}
-                <strong className="text-neutral-400">
-                  {props.currentCost?.renewal_at && dateToFormat(props.currentCost?.renewal_at, 'MMM dd, Y')}
-                </strong>
-              </p>
-            )}
-          </div>
 
-          {props.currentCost?.plan !== PlanEnum.FREE && (
-            <div className="h-[114px]  flex-1  rounded  border border-neutral-200 p-5">
-              <div className="mb-3 text-xs font-medium text-neutral-350">Payment method</div>
-              <div className="mb-2">
-                <Skeleton height={20} width={100} show={props.creditCardLoading}>
+            {props.currentCost?.plan !== PlanEnum.FREE && (
+              <div className="h-[114px]  flex-1  rounded  border border-neutral bg-surface-neutral p-5">
+                <div className="mb-3 text-xs font-medium text-neutral-subtle">Payment method</div>
+                <div className="mb-2">
                   <div className="flex gap-3">
                     {props.creditCard ? (
                       <>
                         <svg className="w-6" children={imagesCreditCart[props.creditCard.brand as keyof CardImages]} />
-                        <span className="neutral-400 flex-1 text-xs font-bold">
+                        <span className="flex-1 text-xs font-bold text-neutral">
                           **** {props.creditCard?.last_digit}
                         </span>
                       </>
                     ) : (
-                      <span className="text-xs font-bold text-neutral-400">No credit card provided</span>
+                      <span className="text-xs font-bold text-neutral">No credit card provided</span>
                     )}
                   </div>
-                </Skeleton>
+                </div>
+                <Link to="/organization/$organizationId/settings/billing-details" params={{ organizationId }} size="xs">
+                  Edit payment
+                </Link>
               </div>
-              <Link to={SETTINGS_URL(organizationId) + SETTINGS_BILLING_URL} size="xs">
-                Edit payment
-              </Link>
-            </div>
-          )}
+            )}
+          </div>
+          <InvoicesListFeature />
         </div>
-        <InvoicesListFeature />
       </Section>
     </div>
   )
 }
 
-export function SettingsBillingSummary() {
-  useDocumentTitle('Billing summary - Organization settings')
-
+function SettingsBillingSummaryContent() {
   const { openModal, closeModal } = useModal()
 
   const { organizationId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
 
-  const { data: creditCards = [], isLoading: isLoadingCreditCards } = useCreditCards({ organizationId })
-  const { data: currentCost } = useCurrentCost({ organizationId })
+  const { data: creditCards = [] } = useCreditCards({ organizationId, suspense: true })
+  const { data: currentCost } = useCurrentCost({ organizationId, suspense: true })
   const { showChat } = useSupportChat()
   const { isQoveryAdminUser } = useUserRole()
 
@@ -245,7 +272,7 @@ export function SettingsBillingSummary() {
   }
 
   const handleCancelTrialClick = () => {
-    navigate(SETTINGS_URL(organizationId) + SETTINGS_DANGER_ZONE_URL)
+    navigate({ to: '/organization/$organizationId/settings/danger-zone', params: { organizationId } })
   }
 
   const handleAddCreditCardClick = () => {
@@ -258,7 +285,6 @@ export function SettingsBillingSummary() {
     <PageOrganizationBillingSummary
       currentCost={currentCost}
       creditCard={creditCards[0]}
-      creditCardLoading={isLoadingCreditCards}
       hasCreditCard={creditCards.length > 0}
       onPromoCodeClick={openPromoCodeModal}
       onShowUsageClick={openShowUsageModal}
@@ -266,5 +292,15 @@ export function SettingsBillingSummary() {
       onCancelTrialClick={handleCancelTrialClick}
       onAddCreditCardClick={handleAddCreditCardClick}
     />
+  )
+}
+
+export function SettingsBillingSummary() {
+  useDocumentTitle('Billing summary - Organization settings')
+
+  return (
+    <Suspense fallback={<BillingSummarySkeleton />}>
+      <SettingsBillingSummaryContent />
+    </Suspense>
   )
 }

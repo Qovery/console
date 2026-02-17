@@ -1,15 +1,37 @@
 import { useParams } from '@tanstack/react-router'
+import {
+  type FilterFn,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
 import { type Invoice } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { type Value } from '@qovery/shared/interfaces'
-import { InputSelectSmall, LoaderSpinner, Table, type TableFilterProps, type TableHeadProps } from '@qovery/shared/ui'
+import { Icon, InputSelectSmall, TableFilter, TablePrimitives } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useInvoiceUrl } from '../../hooks/use-invoice-url/use-invoice-url'
 import { useInvoices } from '../../hooks/use-invoices/use-invoices'
 import TableRowInvoice from './table-row-invoice/table-row-invoice'
 
+const { Table } = TablePrimitives
+const COLUMN_SIZES = [30, 30, 30, 10]
+const columnHelper = createColumnHelper<Invoice>()
+const formatStatusLabel = (status: string) => upperCaseFirstLetter(status.toLowerCase()).replace(/_/g, ' ')
+
+const statusFilter: FilterFn<Invoice> = (row, columnId, filterValue) => {
+  if (!Array.isArray(filterValue) || filterValue.length === 0) return true
+  return filterValue.includes(row.getValue<string>(columnId))
+}
+
+statusFilter.autoRemove = (value) => !value?.length
+
 export interface InvoicesListProps {
   invoices?: Invoice[]
-  invoicesLoading?: boolean
   downloadOne?: (invoiceId: string) => void
   yearsForSorting?: Value[]
   onFilterByYear?: (year?: string) => void
@@ -17,72 +39,122 @@ export interface InvoicesListProps {
 }
 
 export function InvoicesList(props: InvoicesListProps) {
-  const dataHead: TableHeadProps<Invoice>[] = [
-    {
-      title: 'Date',
-    },
-    {
-      title: 'Status',
-      filter: [
-        {
-          title: 'Filter by status',
-          key: 'status',
+  const hasInvoices = (props.invoices?.length ?? 0) > 0
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('created_at', {
+        header: 'Date',
+        enableColumnFilter: false,
+        size: COLUMN_SIZES[0],
+      }),
+      columnHelper.accessor('status', {
+        header: 'Status',
+        enableColumnFilter: true,
+        filterFn: statusFilter,
+        size: COLUMN_SIZES[1],
+        meta: {
+          customFacetEntry({ value, count }) {
+            return (
+              <>
+                <span className="text-sm font-medium">{formatStatusLabel(String(value))}</span>
+                <span className="text-xs text-neutral-subtle">{count}</span>
+              </>
+            )
+          },
+          customFilterValue({ filterValue }) {
+            const values = Array.isArray(filterValue) ? filterValue : []
+            return values.length ? values.map((value) => formatStatusLabel(String(value))).join(', ') : 'Status'
+          },
         },
-      ],
+      }),
+      columnHelper.accessor('total_in_cents', {
+        header: 'Charge',
+        enableColumnFilter: false,
+        size: COLUMN_SIZES[2],
+      }),
+      columnHelper.display({
+        id: 'download',
+        header: '',
+        enableColumnFilter: false,
+        size: COLUMN_SIZES[3],
+      }),
+    ],
+    []
+  )
+
+  const table = useReactTable({
+    data: props.invoices ?? [],
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    // https://github.com/TanStack/table/discussions/3192#discussioncomment-6458134
+    defaultColumn: {
+      minSize: 0,
+      size: Number.MAX_SAFE_INTEGER,
+      maxSize: Number.MAX_SAFE_INTEGER,
     },
-    {
-      title: 'Charge',
-    },
-  ]
-  const [filter, setFilter] = useState<TableFilterProps[]>([])
-  const columnWidth = '30% 30% 30% 10%'
+  })
 
   return (
     <div className="mb-3">
-      <div className="mb-3 flex items-center justify-between py-5 ">
-        <h1 className="h5 mb-2 text-neutral">Invoices</h1>
-        <div className="flex gap-3">
-          <InputSelectSmall
-            dataTestId="year-select"
-            items={props.yearsForSorting || []}
-            name="year"
-            inputClassName="h-9 !py-[0.4rem]"
-            className="w-[200px]"
-            onChange={(value) => {
-              props.onFilterByYear && props.onFilterByYear(value)
-            }}
-          />
-        </div>
-      </div>
-      <Table
-        dataHead={dataHead}
-        data={props.invoices}
-        columnsWidth={columnWidth}
-        setFilter={setFilter}
-        filter={filter}
-        className="overflow-hidden rounded border border-neutral"
-      >
-        <div>
-          {props.invoicesLoading && (
-            <div className="flex w-full justify-center py-5">
-              <LoaderSpinner />
-            </div>
-          )}
-
-          {props.invoices?.map((invoice, index) => (
-            <TableRowInvoice
-              key={index}
-              filter={filter}
-              data={invoice}
-              index={index}
-              dataHead={dataHead}
-              isLoading={props.idOfInvoiceToDownload === invoice.id}
-              columnsWidth={columnWidth}
-              downloadInvoice={props.downloadOne}
+      <div className="mb-4 mt-7 flex items-center justify-between">
+        <h1 className="text-base font-medium text-neutral">Invoices</h1>
+        {hasInvoices ? (
+          <div className="flex gap-3">
+            <InputSelectSmall
+              dataTestId="year-select"
+              items={props.yearsForSorting || []}
+              name="year"
+              inputClassName="h-9 !py-[0.4rem]"
+              className="w-[200px]"
+              onChange={(value) => {
+                props.onFilterByYear && props.onFilterByYear(value)
+              }}
             />
-          ))}
+          </div>
+        ) : null}
+      </div>
+      {hasInvoices ? (
+        <Table.Root className="w-full text-xs">
+          <Table.Header>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Table.Row key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <Table.ColumnHeaderCell
+                    key={header.id}
+                    className="font-medium text-neutral-subtle"
+                    style={{ width: `${header.getSize()}%` }}
+                  >
+                    {header.isPlaceholder ? null : header.column.getCanFilter() ? (
+                      <TableFilter column={header.column} />
+                    ) : (
+                      flexRender(header.column.columnDef.header, header.getContext())
+                    )}
+                  </Table.ColumnHeaderCell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table.Header>
+          <Table.Body>
+            {table.getRowModel().rows.map((row) => (
+              <TableRowInvoice
+                key={row.id}
+                data={row.original}
+                isLoading={props.idOfInvoiceToDownload === row.original.id}
+                downloadInvoice={props.downloadOne}
+                columnSizes={COLUMN_SIZES}
+              />
+            ))}
+          </Table.Body>
+        </Table.Root>
+      ) : (
+        <div className="my-4 rounded border border-neutral bg-surface-neutral-subtle p-5 text-center">
+          <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+          <p className="mt-1 text-xs font-medium text-neutral-subtle">You don't have any invoices yet.</p>
         </div>
-      </Table>
+      )}
     </div>
   )
 }
@@ -96,8 +168,8 @@ export function InvoicesListFeature() {
   const { organizationId = '' } = useParams({ strict: false })
   const [yearsFilterOptions, setYearsFilterOptions] = useState<Value[]>([])
   const [idOfInvoiceToDownload, setIdOfInvoiceToDownload] = useState<string | undefined>(undefined)
-  const [invoices, setInvoices] = useState<Invoice[]>([])
-  const { data: dataInvoices = [], isLoading: isLoadingDataInvoices } = useInvoices({ organizationId })
+  const { data: dataInvoices = [] } = useInvoices({ organizationId, suspense: true })
+  const [invoices, setInvoices] = useState<Invoice[]>(dataInvoices)
   const { mutateAsync: mutateAsyncInvoice } = useInvoiceUrl()
 
   const downloadOne = async (invoiceId: string) => {
@@ -120,32 +192,30 @@ export function InvoicesListFeature() {
   }
 
   useEffect(() => {
-    if (dataInvoices.length > 0) {
-      setInvoices(dataInvoices)
-      const years = getListOfYears(dataInvoices)
-      setYearsFilterOptions([
-        { label: 'All', value: '' },
-        ...years.map((year) => ({ label: `${year}`, value: `${year}` })),
-      ])
-    }
+    setInvoices(dataInvoices)
+    const years = getListOfYears(dataInvoices)
+    setYearsFilterOptions([
+      { label: 'All', value: '' },
+      ...years.map((year) => ({ label: `${year}`, value: `${year}` })),
+    ])
   }, [dataInvoices])
 
   const filterByYear = (year?: string) => {
-    if (invoices.length > 0) {
-      if (!year) return setInvoices(dataInvoices)
-
-      const filteredInvoices = dataInvoices.filter((invoice) => {
-        const invoiceYear = new Date(invoice.created_at).getFullYear()
-        return invoiceYear === parseInt(year, 10)
-      })
-      setInvoices(filteredInvoices)
+    if (!year) {
+      setInvoices(dataInvoices)
+      return
     }
+
+    const filteredInvoices = dataInvoices.filter((invoice) => {
+      const invoiceYear = new Date(invoice.created_at).getFullYear()
+      return invoiceYear === parseInt(year, 10)
+    })
+    setInvoices(filteredInvoices)
   }
 
   return (
     <InvoicesList
       invoices={invoices}
-      invoicesLoading={isLoadingDataInvoices}
       downloadOne={downloadOne}
       yearsForSorting={yearsFilterOptions}
       onFilterByYear={filterByYear}
