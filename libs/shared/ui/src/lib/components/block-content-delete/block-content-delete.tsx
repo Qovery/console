@@ -14,7 +14,6 @@ export interface BlockContentDeleteProps {
   className?: string
   list?: {
     text: string
-    icon?: string
     iconName?: IconName
     iconStyle?: IconStyle
   }[]
@@ -50,11 +49,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
         <p className="mb-5 text-sm text-neutral">{description}</p>
         {list?.map((element, index) => (
           <p key={index} data-testid={element.text} className="mb-2 text-sm font-medium text-neutral">
-            {element.iconName ? (
-              <Icon iconName={element.iconName} iconStyle={element.iconStyle} className="mr-3 text-negative" />
-            ) : (
-              <Icon name={element.icon || 'icon-solid-trash'} className="mr-3 text-negative" />
-            )}
+            <Icon iconName={element.iconName} iconStyle={element.iconStyle} className="mr-3 text-negative" />
             {element.text}
           </p>
         ))}
