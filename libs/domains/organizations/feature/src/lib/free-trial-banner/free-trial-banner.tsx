@@ -21,7 +21,7 @@ export function FreeTrialBanner() {
     SETTINGS_URL(organizationId) + SETTINGS_BILLING_SUMMARY_URL
   )
 
-  if (!isInActiveFreeTrial || isOnOrganizationBillingSummaryPage) {
+  if (!isInActiveFreeTrial || isOnOrganizationBillingSummaryPage || hasDxAuth) {
     return null
   }
 
