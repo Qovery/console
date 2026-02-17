@@ -6,7 +6,6 @@ import {
   DeploymentQueueActionsApi,
   DeploymentStageMainCallsApi,
   type DeploymentStageRequest,
-  type DeploymentStageResponse,
   type DeploymentStageWithServicesStatuses,
   type DockerfileCheckRequest,
   EnvironmentActionsApi,
@@ -35,18 +34,6 @@ const databasesApi = new DatabasesApi()
 const deploymentStageMainCallApi = new DeploymentStageMainCallsApi()
 const lifecycleTemplateMainCallsApi = new LifecycleTemplateMainCallsApi()
 const deploymentQueueActionsApi = new DeploymentQueueActionsApi()
-
-// Virtual "Skipped" stage for UI display
-export const SKIPPED_STAGE_ID = '__VIRTUAL_SKIPPED__'
-export const VIRTUAL_SKIPPED_STAGE: DeploymentStageResponse = {
-  id: SKIPPED_STAGE_ID,
-  created_at: '',
-  environment: { id: '' },
-  name: 'Skipped',
-  description: 'Services excluded from environment-level deployments',
-  deployment_order: -1,
-  services: [],
-}
 
 export const environments = createQueryKeys('environments', {
   // NOTE: Value is set by WebSocket

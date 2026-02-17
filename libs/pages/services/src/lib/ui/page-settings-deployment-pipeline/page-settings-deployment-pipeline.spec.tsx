@@ -1,8 +1,8 @@
 import { type DeploymentStageResponse } from 'qovery-typescript-axios'
-import { SKIPPED_STAGE_ID } from '@qovery/domains/environments/data-access'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsDeploymentPipeline, {
   type PageSettingsDeploymentPipelineProps,
+  SKIPPED_STAGE_ID,
 } from './page-settings-deployment-pipeline'
 
 const onSubmit = jest.fn()

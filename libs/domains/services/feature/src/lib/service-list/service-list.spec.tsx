@@ -2,40 +2,8 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceList, type ServiceListProps } from './service-list'
 
 let mockDeploymentStagesData: unknown = undefined
-jest.mock('@tanstack/react-query', () => {
-  const actual = jest.requireActual('@tanstack/react-query')
-  return {
-    ...actual,
-    useQuery: (opts: { queryKey: string[] }) => {
-      if (opts?.queryKey?.[0] === 'deployment-stages') {
-        return { data: mockDeploymentStagesData }
-      }
-      return { data: undefined }
-    },
-  }
-})
-
-// Auto-generate mock query functions for any namespace
-const createQueryProxy = (): unknown =>
-  new Proxy(
-    {},
-    {
-      get: (_target, prop) => {
-        if (prop === 'listDeploymentStages') {
-          return jest.fn().mockReturnValue({ queryKey: ['deployment-stages'] })
-        }
-        return jest.fn().mockReturnValue({ queryKey: [String(prop)] })
-      },
-    }
-  )
-
-jest.mock('@qovery/state/util-queries', () => ({
-  queries: new Proxy(
-    {},
-    {
-      get: (_target, prop) => createQueryProxy(),
-    }
-  ),
+jest.mock('../hooks/use-list-deployment-stages/use-list-deployment-stages', () => ({
+  useListDeploymentStages: () => ({ data: mockDeploymentStagesData }),
 }))
 
 jest.mock('../hooks/use-services/use-services', () => ({

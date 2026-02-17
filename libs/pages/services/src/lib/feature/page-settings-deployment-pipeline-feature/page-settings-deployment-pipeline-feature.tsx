@@ -2,12 +2,23 @@ import { type DeploymentStageResponse } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { toast as toastAction } from 'react-hot-toast'
 import { useParams } from 'react-router-dom'
-import { SKIPPED_STAGE_ID, VIRTUAL_SKIPPED_STAGE } from '@qovery/domains/environments/data-access'
 import { useAttachServiceToDeploymentStage, useListDeploymentStages } from '@qovery/domains/environments/feature'
 import { useServices } from '@qovery/domains/services/feature'
 import { useModal } from '@qovery/shared/ui'
-import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
+import PageSettingsDeploymentPipeline, {
+  SKIPPED_STAGE_ID,
+} from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
 import StageModalFeature from './stage-modal-feature/stage-modal-feature'
+
+const VIRTUAL_SKIPPED_STAGE: DeploymentStageResponse = {
+  id: SKIPPED_STAGE_ID,
+  created_at: '',
+  environment: { id: '' },
+  name: 'Skipped',
+  description: 'Services excluded from environment-level deployments',
+  deployment_order: -1,
+  services: [],
+}
 
 export interface StageRequest {
   stageId: string

@@ -37,6 +37,7 @@ export * from './lib/hooks/use-default-advanced-settings/use-default-advanced-se
 export * from './lib/hooks/use-advanced-settings/use-advanced-settings'
 export * from './lib/hooks/use-edit-advanced-settings/use-edit-advanced-settings'
 export * from './lib/hooks/use-check-custom-domains/use-check-custom-domains'
+export * from './lib/hooks/use-list-deployment-stages/use-list-deployment-stages'
 export * from './lib/hooks/use-metrics/use-metrics'
 export * from './lib/hooks/use-recent-services/use-recent-services'
 export * from './lib/hooks/use-favorite-services/use-favorite-services'

@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query'
 import {
   type RowSelectionState,
   type SortingState,
@@ -75,8 +74,8 @@ import {
   twMerge,
   upperCaseFirstLetter,
 } from '@qovery/shared/util-js'
-import { queries } from '@qovery/state/util-queries'
 import { useCheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
+import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommit } from '../last-commit/last-commit'
 import LastVersion from '../last-version/last-version'
@@ -334,11 +333,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
     organization: { id: organizationId },
   } = environment
   const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
-  // useQuery is used directly instead of useListDeploymentStages to avoid a circular dependency
-  // between domains-services-feature and domains-environments-feature
-  const { data: deploymentStages } = useQuery({
-    ...queries.environments.listDeploymentStages({ environmentId }),
-  })
+  const { data: deploymentStages } = useListDeploymentStages({ environmentId })
   const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
     clusterId,
     environmentId,
@@ -360,18 +355,15 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
     return map
   }, [deploymentStages])
 
-  // Sort services: non-skipped first, skipped at the end
   const sortedServices = useMemo(() => {
     return [...services].sort((a, b) => {
       const aIsSkipped = skippedServicesMap.get(a.id) || false
       const bIsSkipped = skippedServicesMap.get(b.id) || false
 
-      // Sort by skipped status (false before true)
       if (aIsSkipped !== bIsSkipped) {
         return aIsSkipped ? 1 : -1
       }
 
-      // Keep original order for same status
       return 0
     })
   }, [services, skippedServicesMap])
@@ -795,7 +787,6 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
       rowSelection,
     },
     enableRowSelection: (row) => {
-      // Disable selection for skipped services
       return !skippedServicesMap.get(row.original.id)
     },
     onSortingChange: setSorting,

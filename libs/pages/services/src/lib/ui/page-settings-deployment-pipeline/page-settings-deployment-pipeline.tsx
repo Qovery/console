@@ -1,7 +1,6 @@
 import { type DeploymentStageResponse } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { SKIPPED_STAGE_ID } from '@qovery/domains/environments/data-access'
 import { useDeleteDeploymentStage } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
@@ -24,6 +23,8 @@ import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
 import { StageModalFeature } from '../../feature/page-settings-deployment-pipeline-feature/stage-modal-feature/stage-modal-feature'
 import { StageOrderModalFeature } from '../../feature/page-settings-deployment-pipeline-feature/stage-order-modal-feature/stage-order-modal-feature'
+
+export const SKIPPED_STAGE_ID = '__VIRTUAL_SKIPPED__'
 
 export interface PageSettingsDeploymentPipelineProps {
   onSubmit: (newStage: StageRequest, prevStage: StageRequest) => void
@@ -141,9 +142,9 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                         columnId={stageId}
                         shouldHighlightIndicator={false}
                         heading={
-                          <div className="flex grow items-center">
+                          <div className="flex grow items-center gap-1.5">
                             {isVirtualSkippedStage ? (
-                              <Icon iconName="ban" className="mr-1.5 text-neutral-350" />
+                              <Icon iconName="ban" className="text-neutral-350" />
                             ) : (
                               <BadgeDeploymentOrder order={deployment_order} />
                             )}
