@@ -286,7 +286,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                       name={field.name}
                       value={field.value}
                       onChange={field.onChange}
-                      hint="Time to wait before consolidating empty/underutilized nodes (e.g., 1m, 10m, 1h)"
+                      hint="Time to wait before consolidating empty/underutilized nodes (e.g., 1m, 10m, 1h). Maximum: 24h"
                       error={error?.message}
                     />
                   )}
@@ -340,7 +340,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                         name={field.name}
                         value={field.value}
                         onChange={field.onChange}
-                        hint="Time to wait before consolidating empty/underutilized nodes (e.g., 1m, 10m, 1h)"
+                        hint="Time to wait before consolidating empty/underutilized nodes (e.g., 1m, 10m, 1h). Maximum: 24h"
                         error={error?.message}
                       />
                     )}
