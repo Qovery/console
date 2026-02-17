@@ -27,7 +27,7 @@ exports[`VariableList should match snapshot 1`] = `
                 class="items-center text-xs grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <th
-                  class="h-11 px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
                 >
                   <div
                     class="flex h-5 items-center"
@@ -43,7 +43,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </th>
                 <th
-                  class="h-11 px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
                 >
                   <button
                     class="flex items-center gap-1 cursor-pointer select-none"
@@ -77,7 +77,7 @@ exports[`VariableList should match snapshot 1`] = `
                   class="h-11 px-4 text-left font-code border-r border-neutral pl-0 group relative flex items-center font-medium"
                 />
                 <th
-                  class="h-11 px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
                 >
                   <div
                     class="relative inline-block"
@@ -99,7 +99,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </th>
                 <th
-                  class="h-11 px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
                 >
                   <div
                     class="relative inline-block"
@@ -121,7 +121,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </th>
                 <th
-                  class="h-11 px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
                 >
                   <div
                     class="relative inline-block"
@@ -143,7 +143,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </th>
                 <th
-                  class="h-11 px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
                 >
                   <button
                     class="flex items-center gap-1 cursor-pointer select-none"
@@ -165,7 +165,7 @@ exports[`VariableList should match snapshot 1`] = `
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -181,7 +181,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -237,13 +237,13 @@ exports[`VariableList should match snapshot 1`] = `
                   </button>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 />
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 />
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -252,7 +252,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -267,7 +267,7 @@ exports[`VariableList should match snapshot 1`] = `
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -283,7 +283,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -339,13 +339,13 @@ exports[`VariableList should match snapshot 1`] = `
                   </button>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 />
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 />
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -354,7 +354,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -369,7 +369,7 @@ exports[`VariableList should match snapshot 1`] = `
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -385,7 +385,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -430,7 +430,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </button>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <div
                     class="flex w-full items-center gap-2 text-sm"
@@ -447,7 +447,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <a
                     class="flex items-center gap-2 text-sm font-medium"
@@ -544,7 +544,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </a>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -553,7 +553,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -568,7 +568,7 @@ exports[`VariableList should match snapshot 1`] = `
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -584,7 +584,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -624,7 +624,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </button>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="group flex h-5 w-full items-center gap-2 text-sm"
@@ -648,10 +648,10 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 />
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -660,7 +660,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -675,7 +675,7 @@ exports[`VariableList should match snapshot 1`] = `
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -691,7 +691,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -731,7 +731,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </button>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="flex h-5 items-center gap-2 text-sm text-neutral-disabled"
@@ -754,7 +754,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <a
                     class="flex items-center gap-2 text-sm font-medium"
@@ -851,7 +851,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </a>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -860,7 +860,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -875,7 +875,7 @@ exports[`VariableList should match snapshot 1`] = `
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -891,7 +891,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -981,7 +981,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </button>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="flex h-5 items-center gap-2 text-sm text-neutral-disabled"
@@ -1004,7 +1004,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <a
                     class="flex items-center gap-2 text-sm font-medium"
@@ -1101,7 +1101,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </a>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -1110,7 +1110,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -1125,7 +1125,7 @@ exports[`VariableList should match snapshot 1`] = `
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -1141,7 +1141,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -1190,7 +1190,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </button>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="group flex h-5 w-full items-center gap-2 text-sm"
@@ -1214,10 +1214,10 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 />
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -1226,7 +1226,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -1241,7 +1241,7 @@ exports[`VariableList should match snapshot 1`] = `
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -1257,7 +1257,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -1313,13 +1313,13 @@ exports[`VariableList should match snapshot 1`] = `
                   </button>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 />
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 />
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -1328,7 +1328,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -1366,7 +1366,7 @@ exports[`VariableList should match snapshot 1`] = `
                 class="items-center text-xs grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_50px_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)]"
               >
                 <th
-                  class="h-11 px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
                 >
                   <button
                     class="flex items-center gap-1 cursor-pointer select-none"
@@ -1400,7 +1400,7 @@ exports[`VariableList should match snapshot 1`] = `
                   class="h-11 px-4 text-left font-code border-r border-neutral pl-0 group relative flex items-center font-medium"
                 />
                 <th
-                  class="h-11 px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
                 >
                   <div
                     class="relative inline-block"
@@ -1422,7 +1422,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </th>
                 <th
-                  class="h-11 px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
                 >
                   <div
                     class="relative inline-block"
@@ -1444,7 +1444,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </th>
                 <th
-                  class="h-11 px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
                 >
                   <button
                     class="flex items-center gap-1 cursor-pointer select-none"
@@ -1466,7 +1466,7 @@ exports[`VariableList should match snapshot 1`] = `
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_50px_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)]"
               >
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -1506,7 +1506,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </button>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="group flex h-5 w-full items-center gap-2 text-sm"
@@ -1530,7 +1530,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <a
                     class="flex items-center gap-2 text-sm font-medium"
@@ -1540,7 +1540,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </a>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
