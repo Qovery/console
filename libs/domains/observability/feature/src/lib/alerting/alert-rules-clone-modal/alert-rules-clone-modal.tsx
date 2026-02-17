@@ -233,7 +233,7 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
                   onOpenAutoFocus={(e) => e.preventDefault()}
                   container={document.body}
                 >
-                  <Command.List className="max-h-60 overflow-y-auto rounded border border-neutral p-2">
+                  <Command.List className="max-h-60 overflow-y-auto rounded p-2">
                     {isLoadingServices ? (
                       <div className="flex h-20 items-center justify-center">
                         <LoaderSpinner className="w-4" />
