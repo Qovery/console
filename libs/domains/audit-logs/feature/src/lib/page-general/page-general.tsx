@@ -6,8 +6,7 @@ import {
   OrganizationEventTargetType,
   OrganizationEventType,
 } from 'qovery-typescript-axios'
-import { type Dispatch, type SetStateAction, useEffect, useMemo, useRef, useState } from 'react'
-import { type DecodedValueMap } from 'use-query-params'
+import { type Dispatch, type RefObject, type SetStateAction, useEffect, useMemo, useRef, useState } from 'react'
 import { type ValidTargetIds } from '@qovery/domains/audit-logs/data-access'
 import {
   Button,
@@ -25,6 +24,7 @@ import {
 import { type SelectedTimestamps } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import FilterSection from '../filter-section/filter-section'
+import { type AuditLogsParams } from '../router'
 import RowEventFeature from '../row-event-feature/row-event-feature'
 import {
   computeDisplayByLabel,
@@ -49,7 +49,7 @@ export interface PageGeneralProps {
   filter?: TableFilterProps[]
   organization?: Organization
   organizationId: string
-  queryParams: DecodedValueMap<typeof queryParamsValues>
+  queryParams: AuditLogsParams
   targetTypeSelectedItems: SelectedItem[]
   setTargetTypeSelectedItems: Dispatch<SetStateAction<SelectedItem[]>>
   targetTypeNavigationStack?: NavigationLevel[]
@@ -58,10 +58,7 @@ export interface PageGeneralProps {
 }
 
 // Calculate default timestamps for display (not stored in URL)
-function getDefaultTimestamps(
-  queryParams: DecodedValueMap<typeof queryParamsValues>,
-  organization?: Organization
-): SelectedTimestamps {
+function getDefaultTimestamps(queryParams: AuditLogsParams, organization?: Organization): SelectedTimestamps {
   const fromTimestamp = queryParams.fromTimestamp && new Date(parseInt(queryParams.fromTimestamp, 10) * 1000)
   const toTimestamp = queryParams.toTimestamp && new Date(parseInt(queryParams.toTimestamp, 10) * 1000)
 
@@ -99,7 +96,7 @@ function getDefaultTimestamps(
 
 function createTableDataHead(
   timestamps: SelectedTimestamps,
-  queryParams: React.RefObject<DecodedValueMap<typeof queryParamsValues>>,
+  queryParams: RefObject<AuditLogsParams>,
   setTargetTypeSelectedItems: Dispatch<SetStateAction<SelectedItem[]>>,
   targetTypeSelectedItems: SelectedItem[],
   organizationRef: React.RefObject<Organization | undefined>,
@@ -269,8 +266,6 @@ export function PageGeneral({
       organizationRef,
     ]
   )
-
-  const columnSizes = ['40%', '15%', '13%', '12%', '20%']
 
   return (
     <Section className="grow p-8">
