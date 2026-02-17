@@ -24,16 +24,7 @@ import {
   SETTINGS_URL,
   SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
-import {
-  CodeDiffEditor,
-  CodeEditor,
-  type DiffStats,
-  Icon,
-  IconAwesomeEnum,
-  Skeleton,
-  Tooltip,
-  Truncate,
-} from '@qovery/shared/ui'
+import { CodeDiffEditor, CodeEditor, type DiffStats, Icon, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 
@@ -69,7 +60,7 @@ export const getSourceIcon = (origin?: OrganizationEventOrigin) => {
   }
 }
 
-export const RowEvent = (props: RowEventProps) => {
+export function RowEvent(props: RowEventProps) {
   const { event, expanded, setExpanded, isPlaceholder, columnsWidth, validTargetIds } = props
   const { organizationId = '' } = useParams({ strict: false })
   const [diffStats, setDiffStats] = useState<DiffStats>({ additions: 0, deletions: 0 })
@@ -386,3 +377,5 @@ export const RowEvent = (props: RowEventProps) => {
     </>
   )
 }
+
+export default RowEvent

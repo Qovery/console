@@ -32,8 +32,6 @@ import {
   computeSelectedItemsFromFilter,
 } from '../utils/target-type-selection-utils'
 
-// const { Table } = TablePrimitives
-
 export interface PageGeneralProps {
   isLoading: boolean
   showIntercom: () => void

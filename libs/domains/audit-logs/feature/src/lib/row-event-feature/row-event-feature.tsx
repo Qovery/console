@@ -1,6 +1,6 @@
 import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { type ValidTargetIds } from '@qovery/domains/event'
-import { RowEvent } from '../row-event/row-event'
+import RowEvent from '../row-event/row-event'
 
 export interface RowEventFeatureProps {
   event: OrganizationEventResponse
