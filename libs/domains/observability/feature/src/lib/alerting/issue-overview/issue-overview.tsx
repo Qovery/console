@@ -22,8 +22,8 @@ export function IssueOverview() {
     )
 
   return (
-    <Section className="w-full px-8 py-6">
-      <div className="border-b border-neutral-250">
+    <Section className="h-full w-full px-8 py-6">
+      <div className="border-b border-neutral">
         <div className="flex w-full items-center justify-between pb-5">
           <Heading level={1}>Issues</Heading>
         </div>
@@ -31,33 +31,42 @@ export function IssueOverview() {
       {alerts.length === 0 ? (
         <div className="mt-8 flex h-full flex-col items-center justify-center gap-6">
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" viewBox="0 0 40 40">
-            <path stroke="#DBD8E0" d="M.5.5h39v39H.5z"></path>
+            <path stroke="var(--neutral-8)" d="M.5.5h39v39H.5z"></path>
             <path
-              fill="#218358"
+              fill="var(--positive-11)"
               d="M28.717 14.015a.96.96 0 0 1 0 1.361l-10.605 10.61a.96.96 0 0 1-1.362 0l-5.467-5.464a.964.964 0 0 1 1.362-1.362l4.78 4.78 9.926-9.925a.96.96 0 0 1 1.362 0z"
             ></path>
-            <path fill="#8E8C99" d="M4 0v1H1v3H0V0zM36 0v1h3v3h1V0zM4 40v-1H1v-3H0v4zM36 40v-1h3v-3h1v4z"></path>
+            <path
+              fill="var(--neutral-8)"
+              d="M4 0v1H1v3H0V0zM36 0v1h3v3h1V0zM4 40v-1H1v-3H0v4zM36 40v-1h3v-3h1v4z"
+            ></path>
           </svg>
           <div className="flex flex-col justify-center text-center">
             <p className="font-medium">All clear, no issues detected!</p>
-            <p className="text-sm text-neutral-350">All monitored services are operating within normal thresholds.</p>
+            <p className="text-sm text-neutral-subtle">
+              All monitored services are operating within normal thresholds.
+            </p>
           </div>
         </div>
       ) : (
-        <div className="mt-8 overflow-hidden rounded-md border border-neutral-250">
-          <Table.Root className="divide-y divide-neutral-250">
+        <div className="mt-8 overflow-hidden rounded-md border border-neutral">
+          <Table.Root className="divide-y divide-neutral">
             <Table.Header>
               <Table.Row className="font-code text-xs">
-                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Alert name</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="h-9 border-l border-neutral-250 font-normal text-neutral-350">
+                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-subtle">
+                  Alert name
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="h-9 border-l border-neutral font-normal text-neutral-subtle">
                   Target
                 </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Severity</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Age</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-subtle">
+                  Severity
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-subtle">Age</Table.ColumnHeaderCell>
               </Table.Row>
             </Table.Header>
 
-            <Table.Body className="divide-y divide-neutral-250">
+            <Table.Body className="divide-y divide-neutral">
               {alerts?.map((alert) => {
                 const isMuted = !alert.enabled
 
@@ -66,21 +75,21 @@ export function IssueOverview() {
                     <Table.RowHeaderCell>
                       <div className="flex min-w-0 items-start justify-between gap-4">
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-neutral-400">{alert.name}</p>
+                          <p className="text-sm font-medium text-neutral">{alert.name}</p>
                           {alert.description && (
-                            <p className="truncate text-ssm font-normal text-neutral-350" title={alert.description}>
+                            <p className="truncate text-ssm font-normal text-neutral-subtle" title={alert.description}>
                               {alert.description}
                             </p>
                           )}
                         </div>
                         {isMuted && (
                           <Tooltip content="Alert is muted">
-                            <Icon iconName="bell-slash" iconStyle="regular" className="text-xs text-neutral-350" />
+                            <Icon iconName="bell-slash" iconStyle="regular" className="text-xs text-neutral-subtle" />
                           </Tooltip>
                         )}
                       </div>
                     </Table.RowHeaderCell>
-                    <Table.Cell className="h-16 border-l border-neutral-250">
+                    <Table.Cell className="h-16 border-l border-neutral">
                       <Link
                         as="button"
                         radius="full"
