@@ -225,19 +225,6 @@ svg:focus,
   margin-bottom: 0.25rem;
 }
 
-/* Text styling */
-.chargebee-field-wrapper .CbHosted--focus {
-  color: var(--neutral-12);
-}
-
-.chargebee-field-wrapper .CbHosted.CbHosted--invalid {
-  color: var(--negative-12) !important;
-}
-
-.CardInput.mastercard.identified.is-invalid {
-  color: var(--negative-12);
-}
-
 /* Expiry and CVV row */
 .chargebee-fields-row {
   display: flex;
