@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import useCreditCards from '../use-credit-cards/use-credit-cards'
 import useCurrentCost from '../use-current-cost/use-current-cost'
+import useOrganization from '../use-organization/use-organization'
 
 export interface UseClusterCreationRestrictionProps {
   organizationId: string
@@ -11,50 +11,44 @@ export interface UseClusterCreationRestrictionProps {
 /**
  * Hook to determine if cluster creation should be restricted.
  *
- * Clusters (except demo) are restricted when:
- * - User is not dxAuth (dxAuth users are never restricted)
- * - AND user is in an active free trial (inverse of the free-trial-banner hide condition)
- * - AND user has no credit card registered
+ * Uses the backend-provided `billing_deployment_restriction` field on the organization:
+ * - null → no restriction
+ * - 'NO_CREDIT_CARD' → free trial restriction (blocks managed cluster creation, allows demo)
+ * - any other string → blocks all deployments
  *
- * @see https://qovery.slack.com/archives/C02P3MA2NKT/p1768564947277349
+ * DX auth users bypass all restrictions.
  */
 export function useClusterCreationRestriction({ organizationId, dxAuth }: UseClusterCreationRestrictionProps) {
+  const { data: organization, isFetched: isFetchedOrganization } = useOrganization({ organizationId })
   const { data: currentCost, isFetched: isFetchedCurrentCost } = useCurrentCost({ organizationId })
-  const { data: creditCards, isFetched: isFetchedCreditCards } = useCreditCards({ organizationId })
 
   const remainingTrialDays = currentCost?.remaining_trial_day
 
-  // Check if user is in active free trial
-  // This is the inverse of the condition in free-trial-banner.tsx that hides the banner
-  // Original condition (to hide banner):
-  //   remainingTrialDays === undefined || remainingTrialDays <= 0 || remainingTrialDays > 90 || !isFetchedCurrentCost
-  // Inverse (user is in active trial):
-  //   remainingTrialDays is defined AND > 0 AND <= 90 AND data is fetched
+  // TODO: Remove cast once qovery-typescript-axios SDK is regenerated with billing_deployment_restriction field
+  const billingDeploymentRestriction = (organization as { billing_deployment_restriction?: string | null } | undefined)
+    ?.billing_deployment_restriction
+
+  // Check if user is in active free trial (used by free-trial-banner)
   const isInActiveFreeTrial = useMemo(
     () =>
       isFetchedCurrentCost && remainingTrialDays !== undefined && remainingTrialDays > 0 && remainingTrialDays <= 90,
     [isFetchedCurrentCost, remainingTrialDays]
   )
 
-  // Check if user has no credit card
-  const hasNoCreditCard = useMemo(
-    () => isFetchedCreditCards && (!creditCards || creditCards.length === 0),
-    [isFetchedCreditCards, creditCards]
-  )
-
-  // Do not restrict when dxAuth is true (e.g. DX auth users bypass trial/credit-card rules)
+  // Cluster creation is restricted when the backend sets a billing deployment restriction
+  // DX auth users bypass all restrictions
   const isClusterCreationRestricted = useMemo(
-    () => !dxAuth && isInActiveFreeTrial && hasNoCreditCard,
-    [dxAuth, isInActiveFreeTrial, hasNoCreditCard]
+    () => !dxAuth && isFetchedOrganization && billingDeploymentRestriction != null,
+    [dxAuth, isFetchedOrganization, billingDeploymentRestriction]
   )
 
-  const isLoading = !isFetchedCurrentCost || !isFetchedCreditCards
+  const isLoading = !isFetchedOrganization || !isFetchedCurrentCost
 
   return {
     isClusterCreationRestricted,
     isLoading,
     isInActiveFreeTrial,
-    hasNoCreditCard,
+    billingDeploymentRestriction,
     remainingTrialDays,
   }
 }

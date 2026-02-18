@@ -394,10 +394,12 @@ export function PageNewFeature() {
   const { data: userSignUp } = useUserSignUp()
   const hasDxAuth = Boolean(userSignUp?.dx_auth)
 
-  const { isClusterCreationRestricted } = useClusterCreationRestriction({
+  const { isClusterCreationRestricted, billingDeploymentRestriction } = useClusterCreationRestriction({
     organizationId,
     dxAuth: hasDxAuth,
   })
+
+  const isNoCreditCardRestriction = billingDeploymentRestriction === 'NO_CREDIT_CARD'
 
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
     openModal({
@@ -608,38 +610,52 @@ export function PageNewFeature() {
             <Heading>Or choose your hosting mode</Heading>
             <p className="text-sm text-neutral-350">Manage your infrastructure across different hosting mode.</p>
           </div>
-          {isClusterCreationRestricted && (
-            <Callout.Root color="sky" className="mb-5">
-              <Callout.Icon>
-                <Icon iconName="circle-info" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>Add a credit card to create a cluster</Callout.TextHeading>
-                <Callout.TextDescription>
-                  You need to add a credit card to your account before creating a cluster on a cloud provider. You won’t
-                  be charged until your trial ends.
-                  <br />
-                  <Link
-                    as="button"
-                    color="neutral"
-                    variant="outline"
-                    className="mt-2"
-                    to={SETTINGS_URL(organizationId) + SETTINGS_BILLING_URL}
-                  >
-                    Add credit card
-                    <Icon iconName="arrow-right" className="ml-1" iconStyle="regular" />
-                  </Link>
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
-          )}
+          {isClusterCreationRestricted &&
+            (isNoCreditCardRestriction ? (
+              <Callout.Root color="sky" className="mb-5">
+                <Callout.Icon>
+                  <Icon iconName="circle-info" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>Add a credit card to create a cluster</Callout.TextHeading>
+                  <Callout.TextDescription>
+                    You need to add a credit card to your account before creating a cluster on a cloud provider. You
+                    won't be charged until your trial ends.
+                    <br />
+                    <Link
+                      as="button"
+                      color="neutral"
+                      variant="outline"
+                      className="mt-2"
+                      to={SETTINGS_URL(organizationId) + SETTINGS_BILLING_URL}
+                    >
+                      Add credit card
+                      <Icon iconName="arrow-right" className="ml-1" iconStyle="regular" />
+                    </Link>
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
+            ) : (
+              <Callout.Root color="red" className="mb-5">
+                <Callout.Icon>
+                  <Icon iconName="circle-exclamation" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>Cluster creation is restricted</Callout.TextHeading>
+                  <Callout.TextDescription>
+                    Your organization has a billing restriction that prevents cluster creation. Please contact support
+                    to resolve this issue.
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
+            ))}
           <div className="flex w-[calc(100%+20px)] flex-wrap gap-5">
             {cloudProviders.slice(1).map((props, index) => (
               <CardCluster
                 key={props.title}
                 index={index}
                 disabled={isClusterCreationRestricted}
-                onDisabledClick={openCreditCardModal}
+                onDisabledClick={isNoCreditCardRestriction ? openCreditCardModal : undefined}
                 {...props}
               />
             ))}
