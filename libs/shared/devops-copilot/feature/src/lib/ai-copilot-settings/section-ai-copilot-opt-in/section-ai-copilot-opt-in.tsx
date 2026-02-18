@@ -35,7 +35,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
       <Section>
         <div className="mb-8">
           <Heading className="mb-2">AI Copilot Configuration</Heading>
-          <p className="text-xs text-neutral-400">Configure your Copilot</p>
+          <p className="text-xs text-neutral">Configure your Copilot</p>
         </div>
         <Callout.Root color="purple" className="mb-6">
           <Callout.Icon>
@@ -60,21 +60,21 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                 <div className="flex-1 space-y-4">
                   <div>
                     <div className="mb-2 flex items-center">
-                      <Icon iconName="robot" className="mr-2 text-brand-500" />
-                      <p className="text-sm font-medium text-neutral-400">Opt-in to AI Copilot</p>
+                      <Icon iconName="robot" className="mr-2 text-brand" />
+                      <p className="text-sm font-medium text-neutral">Opt-in to AI Copilot</p>
                     </div>
-                    <p className="text-xs text-neutral-350">
+                    <p className="text-xs text-neutral-subtle">
                       Please review and accept the following terms to enable AI Copilot for your organization.
                     </p>
                   </div>
 
-                  <div className="max-h-80 overflow-y-auto rounded border border-neutral-250 bg-white p-4">
-                    <h3 className="mb-3 text-sm font-semibold text-neutral-400">
+                  <div className="max-h-80 overflow-y-auto rounded border border-neutral bg-surface-neutral p-4">
+                    <h3 className="mb-3 text-sm font-semibold text-neutral">
                       Qovery AI DevOps Copilot - AI service terms and conditions
                     </h3>
-                    <div className="space-y-4 text-xs text-neutral-350">
+                    <div className="space-y-4 text-xs text-neutral-subtle">
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">1. Company information</p>
+                        <p className="mb-2 font-semibold text-neutral">1. Company information</p>
                         <p>
                           BIRDSIGHT is a French simplified joint stock company, registered under number 852 571 108 with
                           the Registry of Trade and Companies of Paris, whose head office is located at 128 rue de la
@@ -86,7 +86,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">2. Company's AI Service</p>
+                        <p className="mb-2 font-semibold text-neutral">2. Company's AI Service</p>
                         <p className="mb-2">
                           The Company offers to its customers (the "Customer(s)") services enabling them to deploy their
                           applications on their cloud provider (hereinafter referred to as the "Applications") (the
@@ -101,7 +101,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">
+                        <p className="mb-2 font-semibold text-neutral">
                           3. Contractual documents and information regarding the AI Service Terms and Conditions
                         </p>
                         <p className="mb-2">
@@ -124,7 +124,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                           The Customer undertakes to have read the Anthropic's Terms of Service available here:{' '}
                           <a
                             href="https://www.anthropic.com/legal/commercial-terms"
-                            className="text-brand-500 hover:underline"
+                            className="text-brand hover:underline"
                           >
                             https://www.anthropic.com/legal/commercial-terms
                           </a>
@@ -143,7 +143,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">4. Access to the AI Service</p>
+                        <p className="mb-2 font-semibold text-neutral">4. Access to the AI Service</p>
                         <p className="mb-2">
                           The Customer can access the AI Service by going directly to the Platform, in the settings of
                           their account, and activate the AI Service. The AI Service can only be activated by
@@ -161,7 +161,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">5. Duration of the AI Service</p>
+                        <p className="mb-2 font-semibold text-neutral">5. Duration of the AI Service</p>
                         <p>
                           The AI service may only be provided to the Customer during the active subscription period in
                           effect according to the General Terms and Conditions.
@@ -169,7 +169,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">6. Financial terms</p>
+                        <p className="mb-2 font-semibold text-neutral">6. Financial terms</p>
                         <p className="mb-2">
                           The price of the AI Service is indicated on the Platform or in the specific quotation accepted
                           by the Customer, if any.
@@ -200,7 +200,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">7. Intellectual property rights</p>
+                        <p className="mb-2 font-semibold text-neutral">7. Intellectual property rights</p>
                         <p className="mb-2">
                           <span className="font-medium">7.1 Intellectual property rights of the Company:</span> The
                           systems, software, structures, infrastructures, databases and content (text, images, graphics,
@@ -233,7 +233,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">8. Company's obligations</p>
+                        <p className="mb-2 font-semibold text-neutral">8. Company's obligations</p>
                         <p className="mb-1">
                           The Company undertakes to ensure that the results of its use of the AI Service comply with the
                           Company's obligations under the General Terms and Conditions, and in particular:
@@ -258,7 +258,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">9. Customer's obligations</p>
+                        <p className="mb-2 font-semibold text-neutral">9. Customer's obligations</p>
                         <p className="mb-2">
                           <span className="font-medium">8.1 Concerning the provision of information:</span> The Customer
                           undertakes to provide the Company with all the information required to activate and use the AI
@@ -317,7 +317,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                           Terms of Service (
                           <a
                             href="https://www.anthropic.com/legal/commercial-terms"
-                            className="text-brand-500 hover:underline"
+                            className="text-brand hover:underline"
                           >
                             https://www.anthropic.com/legal/commercial-terms
                           </a>
@@ -393,7 +393,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">9 End of AI Service</p>
+                        <p className="mb-2 font-semibold text-neutral">9 End of AI Service</p>
                         <p className="mb-2">
                           The Customer may terminate the AI Service by going directly to the Platform, in the settings
                           of their account, and deactivate the AI Service. The AI Service can only be deactivated by
@@ -407,7 +407,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">10 Sanctions in the event of breach</p>
+                        <p className="mb-2 font-semibold text-neutral">10 Sanctions in the event of breach</p>
                         <p className="mb-1">
                           In the event of a breach of any of the Customer's obligations under the AI Service Terms and
                           Conditions, the Company may:
@@ -434,7 +434,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">
+                        <p className="mb-2 font-semibold text-neutral">
                           11 Modification of AI Service Terms and Conditions
                         </p>
                         <p className="mb-2">
@@ -456,7 +456,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">12 Consumer Mediation</p>
+                        <p className="mb-2 font-semibold text-neutral">12 Consumer Mediation</p>
                         <p className="mb-2">
                           In the event of any dispute with the Company, in relation to these AI Service Terms and
                           Conditions, individual Customers have the right to seek recourse, free of charge, to a
@@ -473,14 +473,14 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                           <br />
                           Phone : 06 09 20 48 86
                           <br />
-                          <a href="https://www.cm2c.net" className="text-brand-500 hover:underline">
+                          <a href="https://www.cm2c.net" className="text-brand hover:underline">
                             https://www.cm2c.net
                           </a>
                         </p>
                       </div>
 
                       <div>
-                        <p className="mb-2 font-semibold text-neutral-400">13 Applicable law</p>
+                        <p className="mb-2 font-semibold text-neutral">13 Applicable law</p>
                         <p>The AI Service Terms and Conditions are governed by French law.</p>
                       </div>
                     </div>
@@ -497,7 +497,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                           onCheckedChange={(checked) => field.onChange(checked === true)}
                           className="mt-0.5 flex-shrink-0"
                         />
-                        <span className="text-sm text-neutral-400">
+                        <span className="text-sm text-neutral">
                           I have read and accept the AI Copilot Terms of Service
                         </span>
                       </label>
