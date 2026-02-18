@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/users-sign-up/data-access'
 import { queries } from '@qovery/state/util-queries'
-import { type CargoSignupPayload, useSignUpCargo } from '../use-signup-cargo/use-signup-cargo'
+import { type HubspotSignupPayload, useSignUpHubspot } from '../use-signup-hubspot/use-signup-hubspot'
 
 function getUtmParams() {
   return {
@@ -16,7 +16,7 @@ function getUtmParams() {
 
 export function useCreateUserSignUp() {
   const queryClient = useQueryClient()
-  const { mutate: signUpCargo } = useSignUpCargo()
+  const { mutate: signUpHubspot } = useSignUpHubspot()
 
   return useMutation(mutations.createUserSignup, {
     onSuccess(_, variables) {
@@ -26,7 +26,7 @@ export function useCreateUserSignUp() {
 
       const utmParams = getUtmParams()
 
-      const cargoPayload: CargoSignupPayload = {
+      const signupPayload: HubspotSignupPayload = {
         email: variables.user_email,
         first_name: variables.first_name,
         last_name: variables.last_name,
@@ -34,9 +34,11 @@ export function useCreateUserSignUp() {
         job_title: variables.user_role || '',
         phone: variables.phone ?? '',
         signup_source: 'Console',
+        qovery_interest: variables.qovery_usage ?? 'Not specified',
+        which_cloud_service_provider_do_you_use_: variables.infrastructure_hosting ?? 'Not specified',
         ...utmParams,
       }
-      signUpCargo(cargoPayload)
+      signUpHubspot(signupPayload)
     },
     meta: {
       notifyOnError: true,
