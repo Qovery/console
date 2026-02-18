@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { useNavigate } from '@tanstack/react-router'
 import type { AlertRuleResponse, AlertRuleSource, AlertRuleState } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import {
@@ -100,7 +100,7 @@ export function AlertRulesOverview({
 }: PropsWithChildren<AlertRulesOverviewProps>) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const navigate = useNavigate()
+  const navigate = useNavigate({ from: '/_authenticated/organization/$organizationId/alerts/alert-rules' })
 
   const { mutate: deleteAlertRule } = useDeleteAlertRule({ organizationId })
 
@@ -189,11 +189,12 @@ export function AlertRulesOverview({
     )
 
   const editAlertRule = (projectId: string, environmentId: string, serviceId: string, alertRule: AlertRuleResponse) => {
-    navigate(
-      APPLICATION_URL(organizationId, projectId, environmentId, serviceId) +
+    navigate({
+      to:
+        APPLICATION_URL(organizationId, projectId, environmentId, serviceId) +
         APPLICATION_MONITORING_URL +
-        APPLICATION_MONITORING_ALERT_EDIT_URL(alertRule.id)
-    )
+        APPLICATION_MONITORING_ALERT_EDIT_URL(alertRule.id),
+    })
   }
 
   const deleteAlertRuleModal = (alertRule: AlertRuleResponse) => {
@@ -224,12 +225,12 @@ export function AlertRulesOverview({
   )
 
   return filteredAlertRules.length === 0 ? (
-    <div className="flex flex-col items-center justify-center overflow-hidden rounded-md border border-neutral-250 bg-neutral-100 p-10 text-center">
-      <Icon iconName="light-emergency" iconStyle="regular" className="mb-2.5 text-xl text-neutral-350" />
-      <p className="font-medium text-neutral-400">
+    <div className="flex flex-col items-center justify-center overflow-hidden rounded-md border border-neutral bg-surface-neutral p-10 text-center">
+      <Icon iconName="light-emergency" iconStyle="regular" className="mb-2.5 text-xl text-neutral-subtle" />
+      <p className="font-medium text-neutral">
         {service ? 'No alerts created for this service' : 'No alerts created for this organization'}
       </p>
-      <p className="mb-3 text-sm text-neutral-350">
+      <p className="mb-3 text-sm text-neutral-subtle">
         {service ? (
           <>
             Define baseline alerts for key metrics like CPU, memory, latency, <br /> and error rate that will help you
@@ -250,221 +251,221 @@ export function AlertRulesOverview({
     <div className="flex flex-col gap-6">
       {findAlertRuleNotDeployed && children}
 
-      <div className="overflow-hidden rounded-md border border-neutral-250">
-        <Table.Root className="divide-y divide-neutral-250">
-          <Table.Header>
-            <Table.Row className="font-code text-xs">
-              <Table.ColumnHeaderCell className="h-9 w-12">
-                <div className="flex h-5 items-center">
-                  <Checkbox
-                    checked={isAllSelected ? true : isSomeSelected ? 'indeterminate' : false}
-                    onCheckedChange={(checked) => {
-                      if (checked === 'indeterminate') return
-                      toggleSelectAll(checked)
-                    }}
-                  />
-                </div>
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="h-9 pl-0 font-normal text-neutral-350">
-                Alert name
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="h-9 border-l border-neutral-250 font-normal text-neutral-350">
-                Status
-              </Table.ColumnHeaderCell>
-              {!service && (
-                <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Target</Table.ColumnHeaderCell>
-              )}
-              <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Severity</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="h-9 text-right font-normal text-neutral-350">
-                Actions
-              </Table.ColumnHeaderCell>
-            </Table.Row>
-          </Table.Header>
+      <Table.Root className="divide-y divide-neutral">
+        <Table.Header>
+          <Table.Row className="font-code text-xs">
+            <Table.ColumnHeaderCell className="h-9 w-12">
+              <div className="flex h-5 items-center">
+                <Checkbox
+                  checked={isAllSelected ? true : isSomeSelected ? 'indeterminate' : false}
+                  onCheckedChange={(checked) => {
+                    if (checked === 'indeterminate') return
+                    toggleSelectAll(checked)
+                  }}
+                />
+              </div>
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="h-9 pl-0 font-normal text-neutral-subtle">
+              Alert name
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="h-9 border-l border-neutral font-normal text-neutral-subtle">
+              Status
+            </Table.ColumnHeaderCell>
+            {!service && (
+              <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-subtle">Target</Table.ColumnHeaderCell>
+            )}
+            <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-subtle">Severity</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="h-9 text-right font-normal text-neutral-subtle">
+              Actions
+            </Table.ColumnHeaderCell>
+          </Table.Row>
+        </Table.Header>
 
-          <Table.Body className="divide-y divide-neutral-250">
-            {filteredAlertRules.map((alertRule, index) => {
-              const statusConfig = getStatusConfig(alertRule.state, alertRule.source)
-              const isMuted = match(alertRule)
-                .with({ source: 'MANAGED' }, (alertRule) => !alertRule.enabled)
-                .with({ source: 'GHOST' }, () => false)
-                .otherwise(() => false)
+        <Table.Body className="divide-y divide-neutral">
+          {filteredAlertRules.map((alertRule, index) => {
+            const statusConfig = getStatusConfig(alertRule.state, alertRule.source)
+            const isMuted = match(alertRule)
+              .with({ source: 'MANAGED' }, (alertRule) => !alertRule.enabled)
+              .with({ source: 'GHOST' }, () => false)
+              .otherwise(() => false)
 
-              const alertRuleId = match(alertRule)
-                .with({ source: 'MANAGED' }, (alertRule) => alertRule.id)
-                .otherwise(() => '')
-              const isSelectable = alertRule.source === 'MANAGED'
-              const isSelected = selectedAlertRuleIds.has(alertRuleId)
+            const alertRuleId = match(alertRule)
+              .with({ source: 'MANAGED' }, (alertRule) => alertRule.id)
+              .otherwise(() => '')
+            const isSelectable = alertRule.source === 'MANAGED'
+            const isSelected = selectedAlertRuleIds.has(alertRuleId)
 
-              return (
-                <Table.Row
-                  key={match(alertRule)
-                    .with({ source: 'MANAGED' }, (alertRule) => alertRule.id)
-                    .with({ source: 'GHOST' }, () => index)
-                    .exhaustive()}
-                >
-                  <Table.Cell className="h-16 w-12">
-                    {isSelectable && (
-                      <div className="flex h-full items-center">
-                        <Checkbox
-                          checked={isSelected}
-                          onCheckedChange={(checked) => {
-                            if (checked === 'indeterminate') return
-                            toggleSelectAlertRule(alertRuleId)
-                          }}
-                        />
-                      </div>
-                    )}
-                  </Table.Cell>
-                  <Table.RowHeaderCell className="pl-0">
-                    <div className="flex min-w-0 items-center justify-between gap-4">
-                      <div className="min-w-0 flex-1">
-                        <p className="flex items-center gap-1.5 text-sm font-medium text-neutral-400">
-                          {alertRule.name}
-                        </p>
-                        <p className="truncate text-ssm font-normal text-neutral-350">
-                          {match(alertRule)
-                            .with({ source: 'MANAGED' }, (alertRule) => alertRule.description)
-                            .with(
-                              { source: 'GHOST' },
-                              () => 'You need to redeploy your cluster to apply this deleted alert rule'
-                            )
-                            .exhaustive()}
-                        </p>
-                      </div>
-                      <div className="flex shrink-0 items-center">
-                        {match(alertRule)
-                          .with(
-                            { source: 'MANAGED' },
-                            (alertRule) => !alertRule.is_up_to_date && alertRule.state !== 'UNDEPLOYED'
-                          )
-                          .with({ source: 'GHOST' }, () => false)
-                          .otherwise(() => false) && (
-                          <Tooltip content="To apply this change redeploy your cluster">
-                            <span>
-                              <Icon iconName="circle-exclamation" className="text-yellow-700" />
-                            </span>
-                          </Tooltip>
-                        )}
-                        {isMuted && (
-                          <Tooltip content="Alert is muted">
-                            <Icon iconName="bell-slash" iconStyle="regular" className="ml-2 text-xs text-neutral-350" />
-                          </Tooltip>
-                        )}
-                      </div>
+            return (
+              <Table.Row
+                key={match(alertRule)
+                  .with({ source: 'MANAGED' }, (alertRule) => alertRule.id)
+                  .with({ source: 'GHOST' }, () => index)
+                  .exhaustive()}
+              >
+                <Table.Cell className="h-16 w-12">
+                  {isSelectable && (
+                    <div className="flex h-full items-center">
+                      <Checkbox
+                        checked={isSelected}
+                        onCheckedChange={(checked) => {
+                          if (checked === 'indeterminate') return
+                          toggleSelectAlertRule(alertRuleId)
+                        }}
+                      />
                     </div>
-                  </Table.RowHeaderCell>
-                  <Table.Cell className="h-16 border-l border-neutral-250">
-                    <Tooltip content={statusConfig.tooltip} disabled={!statusConfig.tooltip}>
-                      <Badge
-                        color={statusConfig.color}
-                        variant="surface"
-                        radius="full"
-                        className="gap-1 truncate font-medium"
-                        size="sm"
-                      >
-                        <Icon iconName={statusConfig.icon} iconStyle="regular" className="text-xs" />
-                        {statusConfig.label}
-                      </Badge>
-                    </Tooltip>
-                  </Table.Cell>
-                  {!service && (
-                    <Table.Cell className="h-16">
-                      <Link
-                        as="button"
-                        radius="full"
-                        variant="surface"
-                        color="neutral"
-                        size="xs"
-                        className="justify-center gap-1.5 pl-0.5"
-                        to={
-                          APPLICATION_URL(
-                            organizationId,
-                            alertRule.target?.service?.project_id,
-                            alertRule.target?.service?.environment_id,
-                            alertRule.target?.service?.id
-                          ) +
-                          APPLICATION_MONITORING_URL +
-                          APPLICATION_MONITORING_ALERTS_URL
-                        }
-                      >
-                        <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-white">
-                          <Icon
-                            name={match(alertRule.target?.target_type)
-                              .with('CONTAINER', () => 'APPLICATION')
-                              .otherwise((s) => s)}
-                            iconStyle="regular"
-                            width={13}
-                          />
-                        </span>
-                        {alertRule.target?.service?.name}
-                      </Link>
-                    </Table.Cell>
                   )}
-                  <Table.Cell className="h-16">
-                    <>
+                </Table.Cell>
+                <Table.RowHeaderCell className="pl-0">
+                  <div className="flex min-w-0 items-center justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                      <p className="flex items-center gap-1.5 text-sm font-medium text-neutral">{alertRule.name}</p>
+                      <p className="truncate text-ssm font-normal text-neutral-subtle">
+                        {match(alertRule)
+                          .with({ source: 'MANAGED' }, (alertRule) => alertRule.description)
+                          .with(
+                            { source: 'GHOST' },
+                            () => 'You need to redeploy your cluster to apply this deleted alert rule'
+                          )
+                          .exhaustive()}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-center">
                       {match(alertRule)
-                        .with({ source: 'MANAGED' }, (alertRule) => <SeverityIndicator severity={alertRule.severity} />)
-                        .with({ source: 'GHOST' }, () => '')
-                        .exhaustive()}
-                    </>
-                  </Table.Cell>
+                        .with(
+                          { source: 'MANAGED' },
+                          (alertRule) => !alertRule.is_up_to_date && alertRule.state !== 'UNDEPLOYED'
+                        )
+                        .with({ source: 'GHOST' }, () => false)
+                        .otherwise(() => false) && (
+                        <Tooltip content="To apply this change redeploy your cluster">
+                          <span>
+                            <Icon iconName="circle-exclamation" className="text-yellow-700" />
+                          </span>
+                        </Tooltip>
+                      )}
+                      {isMuted && (
+                        <Tooltip content="Alert is muted">
+                          <Icon
+                            iconName="bell-slash"
+                            iconStyle="regular"
+                            className="ml-2 text-xs text-neutral-subtle"
+                          />
+                        </Tooltip>
+                      )}
+                    </div>
+                  </div>
+                </Table.RowHeaderCell>
+                <Table.Cell className="h-16 border-l border-neutral">
+                  <Tooltip content={statusConfig.tooltip} disabled={!statusConfig.tooltip}>
+                    <Badge
+                      color={statusConfig.color}
+                      variant="surface"
+                      radius="full"
+                      className="gap-1 truncate font-medium"
+                      size="sm"
+                    >
+                      <Icon iconName={statusConfig.icon} iconStyle="regular" className="text-xs" />
+                      {statusConfig.label}
+                    </Badge>
+                  </Tooltip>
+                </Table.Cell>
+                {!service && (
                   <Table.Cell className="h-16">
+                    <Link
+                      as="button"
+                      radius="full"
+                      variant="surface"
+                      color="neutral"
+                      size="xs"
+                      className="justify-center gap-1.5 pl-0.5"
+                      to={
+                        APPLICATION_URL(
+                          organizationId,
+                          alertRule.target?.service?.project_id,
+                          alertRule.target?.service?.environment_id,
+                          alertRule.target?.service?.id
+                        ) +
+                        APPLICATION_MONITORING_URL +
+                        APPLICATION_MONITORING_ALERTS_URL
+                      }
+                    >
+                      <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-surface-neutral-subtle">
+                        <Icon
+                          name={match(alertRule.target?.target_type)
+                            .with('CONTAINER', () => 'APPLICATION')
+                            .otherwise((s) => s)}
+                          iconStyle="regular"
+                          width={13}
+                        />
+                      </span>
+                      {alertRule.target?.service?.name}
+                    </Link>
+                  </Table.Cell>
+                )}
+                <Table.Cell className="h-16">
+                  <>
                     {match(alertRule)
-                      .with({ source: 'MANAGED' }, (alertRule) => (
-                        <div className="flex items-center justify-end gap-2">
-                          <Tooltip content="Edit">
-                            <Button
-                              variant="outline"
-                              color="neutral"
-                              size="xs"
-                              className="w-6 justify-center"
-                              onClick={() =>
-                                editAlertRule(
-                                  alertRule.target.service?.project_id ?? '',
-                                  alertRule.target.service?.environment_id ?? '',
-                                  alertRule.target.service?.id ?? '',
-                                  alertRule
-                                )
-                              }
-                            >
-                              <Icon iconName="pen" iconStyle="regular" className="text-xs" />
-                            </Button>
-                          </Tooltip>
-                          <Tooltip content="Delete alert rule">
-                            <DropdownMenu.Root>
-                              <DropdownMenu.Trigger asChild>
-                                <Button variant="outline" color="neutral" size="xs" className="w-6 justify-center">
-                                  <Icon iconName="ellipsis" iconStyle="regular" className="text-xs" />
-                                </Button>
-                              </DropdownMenu.Trigger>
-                              <DropdownMenu.Content className="mr-14 w-40">
-                                <DropdownMenu.Item
-                                  icon={<Icon iconName="clone" />}
-                                  onSelect={() => cloneAlertRule(alertRule)}
-                                >
-                                  Clone
-                                </DropdownMenu.Item>
-                                <DropdownMenu.Item
-                                  color="red"
-                                  icon={<Icon iconName="trash-can" iconStyle="regular" />}
-                                  onSelect={() => deleteAlertRuleModal(alertRule)}
-                                >
-                                  Delete
-                                </DropdownMenu.Item>
-                              </DropdownMenu.Content>
-                            </DropdownMenu.Root>
-                          </Tooltip>
-                        </div>
-                      ))
+                      .with({ source: 'MANAGED' }, (alertRule) => <SeverityIndicator severity={alertRule.severity} />)
                       .with({ source: 'GHOST' }, () => '')
                       .exhaustive()}
-                  </Table.Cell>
-                </Table.Row>
-              )
-            })}
-          </Table.Body>
-        </Table.Root>
-      </div>
+                  </>
+                </Table.Cell>
+                <Table.Cell className="h-16">
+                  {match(alertRule)
+                    .with({ source: 'MANAGED' }, (alertRule) => (
+                      <div className="flex items-center justify-end gap-2">
+                        <Tooltip content="Edit">
+                          <Button
+                            variant="outline"
+                            color="neutral"
+                            size="xs"
+                            className="w-6 justify-center"
+                            onClick={() =>
+                              editAlertRule(
+                                alertRule.target.service?.project_id ?? '',
+                                alertRule.target.service?.environment_id ?? '',
+                                alertRule.target.service?.id ?? '',
+                                alertRule
+                              )
+                            }
+                          >
+                            <Icon iconName="pen" iconStyle="regular" className="text-xs" />
+                          </Button>
+                        </Tooltip>
+                        <Tooltip content="Delete alert rule">
+                          <DropdownMenu.Root>
+                            <DropdownMenu.Trigger asChild>
+                              <Button variant="outline" color="neutral" size="xs" className="w-6 justify-center">
+                                <Icon iconName="ellipsis" iconStyle="regular" className="text-xs" />
+                              </Button>
+                            </DropdownMenu.Trigger>
+                            <DropdownMenu.Content className="mr-14 w-40">
+                              <DropdownMenu.Item
+                                icon={<Icon iconName="clone" />}
+                                onSelect={() => cloneAlertRule(alertRule)}
+                              >
+                                Clone
+                              </DropdownMenu.Item>
+                              <DropdownMenu.Item
+                                color="red"
+                                icon={<Icon iconName="trash-can" iconStyle="regular" />}
+                                onSelect={() => deleteAlertRuleModal(alertRule)}
+                              >
+                                Delete
+                              </DropdownMenu.Item>
+                            </DropdownMenu.Content>
+                          </DropdownMenu.Root>
+                        </Tooltip>
+                      </div>
+                    ))
+                    .with({ source: 'GHOST' }, () => '')
+                    .exhaustive()}
+                </Table.Cell>
+              </Table.Row>
+            )
+          })}
+        </Table.Body>
+      </Table.Root>
       <AlertRulesActionBar
         selectedAlertRules={selectedAlertRules.filter((rule) => rule.source === 'MANAGED')}
         resetRowSelection={resetRowSelection}

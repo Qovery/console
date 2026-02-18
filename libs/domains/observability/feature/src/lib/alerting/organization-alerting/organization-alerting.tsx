@@ -1,15 +1,15 @@
+import { useParams } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { Heading, InputSearch, Section } from '@qovery/shared/ui'
 import { AlertRulesOverview } from '../alert-rules-overview/alert-rules-overview'
 
 export function OrganizationAlerting() {
-  const { organizationId = '' } = useParams()
+  const { organizationId } = useParams({ from: '/_authenticated/organization/$organizationId/alerts' })
   const [filter, setFilter] = useState('')
 
   return (
     <Section className="w-full px-8 py-6 pb-20">
-      <div className="mb-8 border-b border-neutral-250">
+      <div className="mb-8 border-b border-neutral">
         <div className="flex w-full items-center justify-between pb-5">
           <Heading level={1}>Alert rules</Heading>
         </div>
