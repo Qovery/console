@@ -1,12 +1,11 @@
 import { OrganizationEventApi, OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type DecodedValueMap } from 'use-query-params'
 import {
   type HierarchicalFilterResult,
   type HierarchicalMenuItem,
   type NavigationLevel,
   type SelectedItem,
 } from '@qovery/shared/ui'
-import { type queryParamsValues } from '../feature/page-general-feature/page-general-feature'
+import { type AuditLogsParams } from '../router'
 
 const SERVICE_TARGET_TYPES: ReadonlySet<string> = new Set([
   'APPLICATION',
@@ -47,7 +46,7 @@ function getTargetIdSelected(selectedItems: SelectedItem[]): string | undefined 
 async function fetchTargetProjects(
   organizationId: string,
   targetTypeToSearch: OrganizationEventTargetType,
-  queryParams: DecodedValueMap<typeof queryParamsValues>
+  queryParams: AuditLogsParams
 ): Promise<HierarchicalMenuItem[]> {
   return fetchTargetsAsync(organizationId, targetTypeToSearch, queryParams, 'projectId')
 }
@@ -56,7 +55,7 @@ async function fetchTargetEnvironments(
   organizationId: string,
   projectId: string,
   targetTypeToSearch: OrganizationEventTargetType,
-  queryParams: DecodedValueMap<typeof queryParamsValues>
+  queryParams: AuditLogsParams
 ): Promise<HierarchicalMenuItem[]> {
   return fetchTargetsAsync(organizationId, targetTypeToSearch, queryParams, 'environmentId', projectId)
 }
@@ -64,7 +63,7 @@ async function fetchTargetEnvironments(
 async function fetchTargetsAsync(
   organizationId: string,
   targetTypeToSearch: OrganizationEventTargetType,
-  queryParams: DecodedValueMap<typeof queryParamsValues>,
+  queryParams: AuditLogsParams,
   optionIdKey: string,
   projectId?: string,
   environmentId?: string
@@ -117,7 +116,7 @@ async function fetchTargetsAsync(
 export async function computeMenusToDisplay(
   organizationId: string,
   selectedItems: SelectedItem[],
-  queryParams?: DecodedValueMap<typeof queryParamsValues>
+  queryParams?: AuditLogsParams
 ): Promise<HierarchicalFilterResult | null> {
   // Early return if queryParams not set
   if (queryParams === undefined) {
@@ -266,7 +265,7 @@ export async function initializeSelectedItemsFromQueryParams(
   organizationId: string,
   initialData: HierarchicalMenuItem[],
   rootFilterKey: string,
-  queryParams: DecodedValueMap<typeof queryParamsValues>
+  queryParams: AuditLogsParams
 ): Promise<InitializationData> {
   const selectedItems: SelectedItem[] = []
   const navigationStack: NavigationLevel[] = [

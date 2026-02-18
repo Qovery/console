@@ -8,7 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { match } from 'ts-pattern'
-import { type ValidTargetIds } from '@qovery/domains/event'
+import { type ValidTargetIds } from '@qovery/domains/audit-logs/data-access'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   APPLICATION_URL,

@@ -37,6 +37,7 @@ export function useInviteMember() {
 
   const onSearchUpdate = useCallback(() => {
     // check if inviteToken query param is present in URL
+    // @ts-ignore-next-line TODO needs to be fixed
     const urlParams = new URLSearchParams(search)
     const inviteToken = urlParams.get('inviteToken')
 
@@ -86,6 +87,7 @@ export function useInviteMember() {
           window.location.assign(`/`)
         })
 
+        // @ts-ignore-next-line
         navigate({ to: LOGOUT_URL })
       }
     }

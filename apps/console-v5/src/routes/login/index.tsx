@@ -1,15 +1,17 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { z } from 'zod'
 import { useAuth0Error } from '@qovery/pages/login'
 import { AuthEnum, useAuth } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
 import { Button, DropdownMenu, Icon, InputTextSmall, LogoBrandedIcon } from '@qovery/shared/ui'
 
+const loginSearchParamsSchema = z.object({
+  redirect: z.string().optional(),
+})
 export const Route = createFileRoute('/login/')({
-  validateSearch: (search) => ({
-    redirect: (search.redirect as string) || '/',
-  }),
+  validateSearch: loginSearchParamsSchema,
   beforeLoad: ({ context, search }) => {
     // Redirect if already authenticated
     if (context.auth.isAuthenticated) {

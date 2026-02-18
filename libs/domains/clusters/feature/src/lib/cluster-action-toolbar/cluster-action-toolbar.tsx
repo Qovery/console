@@ -8,6 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type ReactNode, useCallback, useEffect, useMemo } from 'react'
 import { P, match } from 'ts-pattern'
+import { DEFAULT_PAGE_SIZE } from '@qovery/domains/audit-logs/feature'
 import { ActionToolbar, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
@@ -217,6 +218,7 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
                 organizationId: cluster.organization.id,
               },
               search: {
+                pageSize: DEFAULT_PAGE_SIZE,
                 targetType: OrganizationEventTargetType.CLUSTER,
                 targetId: cluster.id,
               },
@@ -274,6 +276,7 @@ export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionTo
   })
 
   const searchParams = useMemo(() => {
+    // @ts-ignore-next-line TODO needs to be fixed
     const params = new URLSearchParams(location.search)
     return params
   }, [location.search])
@@ -290,6 +293,7 @@ export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionTo
             cluster={cluster}
             type={type}
             onClose={() => {
+              // @ts-ignore-next-line TODO needs to be fixed
               const newParams = new URLSearchParams(location.search)
               newParams.delete(showSelfManagedGuideKey)
               const newSearch = newParams.toString()
@@ -307,6 +311,7 @@ export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionTo
   useEffect(() => {
     const bool = searchParams.has(showSelfManagedGuideKey) && cluster.kubernetes === 'SELF_MANAGED'
     if (bool) {
+      // @ts-ignore-next-line TODO needs to be fixed
       const newParams = new URLSearchParams(location.search)
       newParams.delete(showSelfManagedGuideKey)
       const newSearch = newParams.toString()

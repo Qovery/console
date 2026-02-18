@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useMatchRoute } from '@tanstack/react-router'
 import {

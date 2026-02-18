@@ -9,7 +9,7 @@ import { BreadcrumbItem, type BreadcrumbItemData } from './breadcrumb-item'
 
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
-  const { organizationId, clusterId, projectId } = useParams({ strict: false })
+  const { organizationId = '', clusterId = '', projectId = '' } = useParams({ strict: false })
 
   const { data: organizations = [] } = useOrganizations({
     enabled: true,

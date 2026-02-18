@@ -22,7 +22,7 @@ const handleSubmit = (data: FieldValues, cluster: Cluster) => {
 }
 
 function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
-  const { organizationId } = useParams({ strict: false })
+  const { organizationId = '' } = useParams({ strict: false })
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
   const { isQoveryAdminUser } = useUserRole()
 
@@ -122,7 +122,7 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
 }
 
 function RouteComponent() {
-  const { organizationId, clusterId } = useParams({ strict: false })
+  const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const { data: cluster } = useCluster({ organizationId, clusterId })
 
   if (!cluster) {

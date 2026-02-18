@@ -13,7 +13,7 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  const { organizationId, clusterId } = useParams({ strict: false })
+  const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 

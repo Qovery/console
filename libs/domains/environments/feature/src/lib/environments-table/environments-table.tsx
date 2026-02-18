@@ -15,7 +15,7 @@ const SECTIONS: EnvironmentModeEnum[] = [
 
 export function EnvironmentsTable() {
   const { openModal, closeModal } = useModal()
-  const { organizationId, projectId } = useParams({ strict: false })
+  const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: project } = useProject({ organizationId, projectId, suspense: true })
   const { data: environmentsOverview } = useEnvironmentsOverview({ projectId, suspense: true })
 

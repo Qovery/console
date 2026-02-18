@@ -1,14 +1,13 @@
 import clsx from 'clsx'
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
-import { type DecodedValueMap } from 'use-query-params'
 import { Button, Icon, type SelectedItem, type TableFilterProps, Truncate } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { type queryParamsValues } from '../../../../../../pages/events/src/lib/feature/page-general-feature/page-general-feature'
+import { type AuditLogsParams } from '../router'
 
 export interface CustomFilterProps {
   clearFilter: () => void
-  queryParams: DecodedValueMap<typeof queryParamsValues>
+  queryParams: AuditLogsParams
   targetTypeSelectedItems: SelectedItem[]
   setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
 }
@@ -20,10 +19,7 @@ interface Badge {
   isDeletable: boolean
 }
 
-function buildBadges(
-  queryParams: DecodedValueMap<typeof queryParamsValues>,
-  selectedItemsTargetType: SelectedItem[]
-): Badge[] {
+function buildBadges(queryParams: AuditLogsParams, selectedItemsTargetType: SelectedItem[]): Badge[] {
   const badges: Badge[] = []
   if (queryParams.fromTimestamp && queryParams.toTimestamp) {
     const fromDate = new Date(parseInt(queryParams.fromTimestamp, 10) * 1000)
