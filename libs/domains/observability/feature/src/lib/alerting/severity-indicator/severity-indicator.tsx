@@ -20,30 +20,30 @@ function getSeverityConfig(severity: AlertSeverity): SeverityConfig {
     .with('LOW', () => ({
       label: 'Low',
       bars: 2,
-      textColor: 'text-neutral-350',
-      barColor: 'bg-neutral-300',
-      emptyBarColor: 'bg-neutral-200',
+      textColor: 'text-neutral-subtle',
+      barColor: 'bg-surface-neutral-solid',
+      emptyBarColor: 'bg-surface-neutral-componentActive',
     }))
     .with('MEDIUM', () => ({
       label: 'Medium',
       bars: 3,
-      textColor: 'text-neutral-400',
-      barColor: 'bg-neutral-300',
-      emptyBarColor: 'bg-neutral-200',
+      textColor: 'text-neutral-subtle',
+      barColor: 'bg-surface-neutral-solid',
+      emptyBarColor: 'bg-surface-neutral-componentActive',
     }))
     .with('HIGH', () => ({
       label: 'High',
       bars: 4,
-      textColor: 'text-neutral-400',
-      barColor: 'bg-neutral-300',
-      emptyBarColor: 'bg-neutral-200',
+      textColor: 'text-neutral-subtle',
+      barColor: 'bg-surface-neutral-solid',
+      emptyBarColor: 'bg-surface-neutral-componentActive',
     }))
     .with('CRITICAL', () => ({
       label: 'Critical',
       bars: 5,
-      textColor: 'text-neutral-400',
-      barColor: 'bg-neutral-300',
-      emptyBarColor: 'bg-neutral-200',
+      textColor: 'text-neutral-subtle',
+      barColor: 'bg-surface-neutral-solid',
+      emptyBarColor: 'bg-surface-neutral-componentActive',
     }))
     .exhaustive()
 }
