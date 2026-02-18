@@ -20,9 +20,13 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           title="Delete Environment"
           list={[
             {
+              iconName: 'trash',
+              iconStyle: 'solid',
               text: 'Databases',
             },
             {
+              iconName: 'trash',
+              iconStyle: 'solid',
               text: 'Applications',
             },
           ]}
