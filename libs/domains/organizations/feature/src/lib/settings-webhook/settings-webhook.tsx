@@ -11,7 +11,7 @@ import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useDeleteWebhook } from '../hooks/use-delete-webhook/use-delete-webhook'
 import { useEditWebhook } from '../hooks/use-edit-webhook/use-edit-webhook'
 import { useWebhooks } from '../hooks/use-webhooks/use-webhooks'
-import WebhookCrudModalFeature from './webhook-crud-modal-feature/webhook-crud-modal-feature'
+import WebhookCrudModal from './webhook-crud-modal/webhook-crud-modal'
 
 const WebhookSkeleton = () => (
   <BlockContent title="Webhook" classNameContent="p-0">
@@ -41,7 +41,7 @@ const WebhookList = ({ organizationId }: { organizationId: string }) => {
 
   const openEdit = (webhook: OrganizationWebhookResponse) => {
     openModal({
-      content: <WebhookCrudModalFeature organizationId={organizationId} webhook={webhook} closeModal={closeModal} />,
+      content: <WebhookCrudModal organizationId={organizationId} webhook={webhook} closeModal={closeModal} />,
     })
   }
 
@@ -171,7 +171,7 @@ export function SettingsWebhook() {
 
   const openAddNew = () => {
     openModal({
-      content: <WebhookCrudModalFeature organizationId={organizationId} closeModal={closeModal} />,
+      content: <WebhookCrudModal organizationId={organizationId} closeModal={closeModal} />,
     })
   }
 

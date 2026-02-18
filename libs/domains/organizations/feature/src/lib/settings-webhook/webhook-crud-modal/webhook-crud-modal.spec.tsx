@@ -3,7 +3,7 @@ import { webhookFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useCreateWebhookHook from '../../hooks/use-create-webhook/use-create-webhook'
 import * as useEditWebhookHook from '../../hooks/use-edit-webhook/use-edit-webhook'
-import WebhookCrudModalFeature, { type WebhookCrudModalFeatureProps } from './webhook-crud-modal-feature'
+import WebhookCrudModal, { type WebhookCrudModalFeatureProps } from './webhook-crud-modal'
 
 const mockWebhook = webhookFactoryMock(1)[0]
 const mockWebhookWithSecret = { ...mockWebhook, target_secret_set: true }
@@ -16,7 +16,7 @@ const props: WebhookCrudModalFeatureProps = {
 const useEditWebhookMockSpy = jest.spyOn(useEditWebhookHook, 'useEditWebhook') as jest.Mock
 const useCreateWebhookMockSpy = jest.spyOn(useCreateWebhookHook, 'useCreateWebhook') as jest.Mock
 
-describe('WebhookCrudModalFeature', () => {
+describe('WebhookCrudModal', () => {
   let createWebhookMock: jest.Mock
   let editWebhookMock: jest.Mock
 
@@ -34,12 +34,12 @@ describe('WebhookCrudModalFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhook} />)
+    const { baseElement } = renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhook} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render all the inputs when creating', () => {
-    renderWithProviders(<WebhookCrudModalFeature {...props} />)
+    renderWithProviders(<WebhookCrudModal {...props} />)
 
     screen.getByLabelText('URL')
     screen.getByLabelText('Kind')
@@ -51,7 +51,7 @@ describe('WebhookCrudModalFeature', () => {
   })
 
   it('should not show secret field when editing (before form is dirty)', () => {
-    renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhook} />)
+    renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhook} />)
 
     screen.getByLabelText('URL')
     screen.getByLabelText('Kind')
@@ -61,7 +61,7 @@ describe('WebhookCrudModalFeature', () => {
   })
 
   it('should mutate useCreateWebhook', async () => {
-    const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} />)
+    const { userEvent } = renderWithProviders(<WebhookCrudModal {...props} />)
 
     const url = screen.getByLabelText('URL')
     const kind = screen.getByLabelText('Kind')
@@ -111,7 +111,7 @@ describe('WebhookCrudModalFeature', () => {
   })
 
   it('should mutate useEditWebhook (webhook without existing secret)', async () => {
-    const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhook} />)
+    const { userEvent } = renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhook} />)
     const url = screen.getByLabelText('URL')
     const kind = screen.getByLabelText('Kind')
     const description = screen.getByLabelText('Description')
@@ -157,7 +157,7 @@ describe('WebhookCrudModalFeature', () => {
   })
 
   it('should trim URL with trailing whitespace on create', async () => {
-    const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} />)
+    const { userEvent } = renderWithProviders(<WebhookCrudModal {...props} />)
 
     const url = screen.getByLabelText('URL')
     const kind = screen.getByLabelText('Kind')
@@ -186,7 +186,7 @@ describe('WebhookCrudModalFeature', () => {
   })
 
   it('should trim URL with leading whitespace on create', async () => {
-    const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} />)
+    const { userEvent } = renderWithProviders(<WebhookCrudModal {...props} />)
 
     const url = screen.getByLabelText('URL')
     const kind = screen.getByLabelText('Kind')
@@ -215,7 +215,7 @@ describe('WebhookCrudModalFeature', () => {
   })
 
   it('should trim URL with whitespace on edit', async () => {
-    const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhook} />)
+    const { userEvent } = renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhook} />)
 
     const url = screen.getByLabelText('URL')
 
@@ -237,20 +237,20 @@ describe('WebhookCrudModalFeature', () => {
 
   describe('secret field handling', () => {
     it('should show secret field as optional when creating new webhook', () => {
-      renderWithProviders(<WebhookCrudModalFeature {...props} />)
+      renderWithProviders(<WebhookCrudModal {...props} />)
 
       expect(screen.getByLabelText('Secret')).toBeInTheDocument()
     })
 
     it('should not show secret field when editing webhook (before form is dirty)', () => {
-      renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhookWithSecret} />)
+      renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhookWithSecret} />)
 
       expect(screen.queryByLabelText('Secret')).not.toBeInTheDocument()
       expect(screen.queryByText('Confirm your secret')).not.toBeInTheDocument()
     })
 
     it('should show "Confirm your secret" section when editing webhook with existing secret and form is dirty', async () => {
-      const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhookWithSecret} />)
+      const { userEvent } = renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhookWithSecret} />)
 
       expect(screen.queryByText('Confirm your secret')).not.toBeInTheDocument()
 
@@ -263,7 +263,7 @@ describe('WebhookCrudModalFeature', () => {
     })
 
     it('should not show secret field when editing webhook without existing secret (even when dirty)', async () => {
-      const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhook} />)
+      const { userEvent } = renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhook} />)
 
       const description = screen.getByLabelText('Description')
       await userEvent.clear(description)
@@ -274,7 +274,7 @@ describe('WebhookCrudModalFeature', () => {
     })
 
     it('should require secret when editing webhook with existing secret', async () => {
-      const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhookWithSecret} />)
+      const { userEvent } = renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhookWithSecret} />)
 
       const description = screen.getByLabelText('Description')
       await userEvent.clear(description)
@@ -290,7 +290,7 @@ describe('WebhookCrudModalFeature', () => {
     })
 
     it('should allow submit when editing webhook with existing secret and secret provided', async () => {
-      const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhookWithSecret} />)
+      const { userEvent } = renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhookWithSecret} />)
 
       const description = screen.getByLabelText('Description')
       await userEvent.clear(description)
@@ -312,7 +312,7 @@ describe('WebhookCrudModalFeature', () => {
     })
 
     it('should display password type input for secret field when shown', async () => {
-      const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhookWithSecret} />)
+      const { userEvent } = renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhookWithSecret} />)
 
       const description = screen.getByLabelText('Description')
       await userEvent.type(description, 'x')
@@ -322,7 +322,7 @@ describe('WebhookCrudModalFeature', () => {
     })
 
     it('should allow editing webhook without secret and not providing a secret', async () => {
-      const { userEvent } = renderWithProviders(<WebhookCrudModalFeature {...props} webhook={mockWebhook} />)
+      const { userEvent } = renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhook} />)
 
       const description = screen.getByLabelText('Description')
       await userEvent.clear(description)

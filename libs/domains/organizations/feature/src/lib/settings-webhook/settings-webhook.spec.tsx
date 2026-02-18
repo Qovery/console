@@ -5,7 +5,7 @@ import * as useDeleteWebhookHook from '../hooks/use-delete-webhook/use-delete-we
 import * as useEditWebhookHook from '../hooks/use-edit-webhook/use-edit-webhook'
 import * as useWebhooksHook from '../hooks/use-webhooks/use-webhooks'
 import { SettingsWebhook } from './settings-webhook'
-import WebhookCrudModalFeature from './webhook-crud-modal-feature/webhook-crud-modal-feature'
+import WebhookCrudModal from './webhook-crud-modal/webhook-crud-modal'
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -81,7 +81,7 @@ describe('SettingsWebhook', () => {
     expect(openModalMock).toHaveBeenCalled()
 
     const modalProps = openModalMock.mock.calls[0][0]
-    expect(modalProps.content.type).toBe(WebhookCrudModalFeature)
+    expect(modalProps.content.type).toBe(WebhookCrudModal)
     expect(modalProps.content.props.organizationId).toBe('1')
     expect(modalProps.content.props.webhook).toBeUndefined()
   })
@@ -94,7 +94,7 @@ describe('SettingsWebhook', () => {
     expect(openModalMock).toHaveBeenCalled()
 
     const modalProps = openModalMock.mock.calls[0][0]
-    expect(modalProps.content.type).toBe(WebhookCrudModalFeature)
+    expect(modalProps.content.type).toBe(WebhookCrudModal)
     expect(modalProps.content.props.webhook).toEqual(mockWebhooks[0])
   })
 
