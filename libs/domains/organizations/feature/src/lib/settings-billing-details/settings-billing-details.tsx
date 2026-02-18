@@ -258,11 +258,7 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
 
               <div className="my-6 border-t border-neutral" />
 
-              <BillingDetails
-                countryValues={countryValues}
-                editInProcess={editInProcess}
-                onSubmit={onSubmit}
-              />
+              <BillingDetails countryValues={countryValues} editInProcess={editInProcess} onSubmit={onSubmit} />
             </BlockContent>
           </div>
         </Section>

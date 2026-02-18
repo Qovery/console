@@ -1,6 +1,6 @@
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type BillingInfoRequest } from 'qovery-typescript-axios'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import BillingDetails, { type BillingDetailsProps } from './billing-details'
 
 const props: BillingDetailsProps = {
