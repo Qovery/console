@@ -16,12 +16,8 @@ export interface HubspotSignupPayload {
   qovery_interest: string
   /** Maps to HubSpot required field which_cloud_service_provider_do_you_use_ */
   which_cloud_service_provider_do_you_use_: string
-  utm_source?: string | null
-  utm_medium?: string | null
-  utm_campaign?: string | null
-  utm_term?: string | null
-  utm_content?: string | null
-  gclid?: string | null
+  /** All URL/tracking params captured at landing (utm_*, gclid, etc.) — sent as HubSpot fields */
+  tracking_params?: Record<string, string>
 }
 
 function toHubspotFields(payload: HubspotSignupPayload): { name: string; value: string }[] {
@@ -39,16 +35,12 @@ function toHubspotFields(payload: HubspotSignupPayload): { name: string; value: 
       value: payload.which_cloud_service_provider_do_you_use_ || 'Not specified',
     },
   ]
-  if (payload.utm_source != null && payload.utm_source !== '')
-    fields.push({ name: 'utm_source', value: payload.utm_source })
-  if (payload.utm_medium != null && payload.utm_medium !== '')
-    fields.push({ name: 'utm_medium', value: payload.utm_medium })
-  if (payload.utm_campaign != null && payload.utm_campaign !== '')
-    fields.push({ name: 'utm_campaign', value: payload.utm_campaign })
-  if (payload.utm_term != null && payload.utm_term !== '') fields.push({ name: 'utm_term', value: payload.utm_term })
-  if (payload.utm_content != null && payload.utm_content !== '')
-    fields.push({ name: 'utm_content', value: payload.utm_content })
-  if (payload.gclid != null && payload.gclid !== '') fields.push({ name: 'gclid', value: payload.gclid })
+  const tracking = payload.tracking_params ?? {}
+  for (const [name, value] of Object.entries(tracking)) {
+    if (name && value != null && value !== '') {
+      fields.push({ name, value })
+    }
+  }
   return fields
 }
 
