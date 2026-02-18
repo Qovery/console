@@ -12,6 +12,7 @@ const mockOpenModalConfirmation = jest.fn()
 const mockHelmRepositories = helmRepositoriesMock(2)
 
 jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: 'org-1' }),
 }))
 
