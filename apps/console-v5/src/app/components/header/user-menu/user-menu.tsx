@@ -1,8 +1,9 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import { useState } from 'react'
-import { useUserAccount } from '@qovery/shared/iam/feature'
+import { UserSettingsModal, useUserAccount } from '@qovery/shared/iam/feature'
 import { Avatar, DropdownMenu, Icon } from '@qovery/shared/ui'
+import { useModal } from '@qovery/shared/ui'
 import { type Theme, useTheme } from '../../theme-provider/theme-provider'
 
 const THEMES = [
@@ -16,6 +17,7 @@ export function UserMenu() {
   const { logout, user: userToken } = useAuth0()
   const { data: user } = useUserAccount()
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const { openModal } = useModal()
 
   const onLogout = async () => {
     await logout()
@@ -51,7 +53,9 @@ export function UserMenu() {
 
         <DropdownMenu.Separator />
 
-        <DropdownMenu.Item>Profile settings</DropdownMenu.Item>
+        <DropdownMenu.Item onClick={() => openModal({ content: <UserSettingsModal /> })}>
+          Profile settings
+        </DropdownMenu.Item>
 
         <div className="flex items-center justify-between px-3 py-2">
           <span className="text-sm font-medium text-neutral">Theme</span>

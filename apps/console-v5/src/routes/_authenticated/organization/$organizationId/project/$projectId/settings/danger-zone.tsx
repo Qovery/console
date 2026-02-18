@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { Suspense, useState } from 'react'
 import { useDeleteProject, useProject } from '@qovery/domains/projects/feature'
-import { BlockContentDelete, IconAwesomeEnum, Section } from '@qovery/shared/ui'
+import { BlockContentDelete, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -62,15 +62,18 @@ function ProjectDangerZone() {
         ctaLoading={loading}
         list={[
           {
-            icon: IconAwesomeEnum.TRASH,
+            iconName: 'trash',
+            iconStyle: 'solid',
             text: 'Databases',
           },
           {
-            icon: IconAwesomeEnum.TRASH,
+            iconName: 'trash',
+            iconStyle: 'solid',
             text: 'Applications',
           },
           {
-            icon: IconAwesomeEnum.TRASH,
+            iconName: 'trash',
+            iconStyle: 'solid',
             text: 'Environments',
           },
         ]}

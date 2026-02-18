@@ -53,7 +53,7 @@ export function InputSearch(props: InputSearchProps) {
           ref={ref}
           autoFocus={autofocus}
           className={twMerge(
-            'w-full rounded border border-neutral bg-surface-neutral-component pl-10 pr-6 leading-none text-neutral placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color]',
+            'w-full rounded border border-neutral bg-surface-neutral pl-10 pr-6 leading-none text-neutral placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color]',
             customSize
           )}
           type="text"
