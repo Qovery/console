@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 
-const HUBSPOT_PORTAL_ID = '' // TODO Add HubSpot portal ID
-const HUBSPOT_FORM_ID = '' // TODO Add HubSpot form ID
+const HUBSPOT_PORTAL_ID = '25346960'
+const HUBSPOT_FORM_ID = '159ac368-09f9-4596-8d1e-9634bc0a4a8b'
 const HUBSPOT_SUBMIT_URL = `https://api.hsforms.com/submissions/v3/integration/submit/${HUBSPOT_PORTAL_ID}/${HUBSPOT_FORM_ID}`
 
 export interface HubspotSignupPayload {
