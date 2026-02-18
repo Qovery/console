@@ -1,11 +1,11 @@
 import { OrganizationEventApi, OrganizationEventTargetType } from 'qovery-typescript-axios'
+import { type AuditLogsParams } from '@qovery/shared/router'
 import {
   type HierarchicalFilterResult,
   type HierarchicalMenuItem,
   type NavigationLevel,
   type SelectedItem,
 } from '@qovery/shared/ui'
-import { type AuditLogsParams } from '../router'
 
 const SERVICE_TARGET_TYPES: ReadonlySet<string> = new Set([
   'APPLICATION',

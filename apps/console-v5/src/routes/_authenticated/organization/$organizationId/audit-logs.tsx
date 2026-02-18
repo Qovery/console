@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { AuditLogsFeature, auditLogsParamsSchema } from '@qovery/domains/audit-logs/feature'
+import { AuditLogsFeature } from '@qovery/domains/audit-logs/feature'
+import { auditLogsParamsSchema } from '@qovery/shared/router'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/audit-logs')({
   component: RouteComponent,

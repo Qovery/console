@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react'
 import { type EventQueryParams, useFetchEvents, useFetchValidTargetIds } from '@qovery/domains/audit-logs/data-access'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { eventsFactoryMock } from '@qovery/shared/factories'
+import { DEFAULT_PAGE_SIZE } from '@qovery/shared/router'
 import { ALL, type NavigationLevel, type SelectedItem, type TableFilterProps } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import PageGeneral from '../page-general/page-general'
-import { DEFAULT_PAGE_SIZE } from '../router'
 import { initializeSelectedItemsFromQueryParams } from '../utils/target-type-selection-utils'
 
 const route = getRouteApi('/_authenticated/organization/$organizationId/audit-logs')
@@ -228,7 +228,7 @@ export function AuditLogsFeature() {
       previousDisabled={!eventsData?.links?.previous}
       nextDisabled={!eventsData?.links?.next}
       onPageSizeChange={onPageSizeChange}
-      pageSize={urlParams.pageSize.toString()}
+      pageSize={urlParams.pageSize?.toString()}
       placeholderEvents={eventsFactoryMock(30)}
       handleClearFilter={handleClearFilter}
       filter={filter}

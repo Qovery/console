@@ -2,9 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../../dist/out-tsc",
-    "types": ["node", "@nx/react/typings/cssmodule.d.ts", "@nx/react/typings/image.d.ts"]
+    "types": ["node"]
   },
-  "files": ["../../../../apps/console-v5/src/router-types.d.ts"],
   "exclude": [
     "jest.config.ts",
     "src/**/*.spec.ts",

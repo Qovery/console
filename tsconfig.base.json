@@ -97,5 +97,6 @@
       "@qovery/state/util-queries": ["libs/state/util-queries/src/index.ts"]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp"],
+  "files": ["apps/console-v5/src/router-types.d.ts"]
 }

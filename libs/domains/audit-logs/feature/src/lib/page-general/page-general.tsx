@@ -8,6 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type Dispatch, type RefObject, type SetStateAction, useEffect, useMemo, useRef, useState } from 'react'
 import { type ValidTargetIds } from '@qovery/domains/audit-logs/data-access'
+import { type AuditLogsParams } from '@qovery/shared/router'
 import {
   Button,
   Heading,
@@ -24,7 +25,6 @@ import {
 import { type SelectedTimestamps } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import FilterSection from '../filter-section/filter-section'
-import { type AuditLogsParams } from '../router'
 import RowEventFeature from '../row-event-feature/row-event-feature'
 import {
   computeDisplayByLabel,

@@ -9,7 +9,7 @@ import { z } from 'zod'
 export const DEFAULT_PAGE_SIZE = 30
 
 export const auditLogsParamsSchema = z.object({
-  pageSize: z.number().catch(DEFAULT_PAGE_SIZE),
+  pageSize: z.number().optional().catch(DEFAULT_PAGE_SIZE),
   origin: z.enum(Object.values(OrganizationEventOrigin)).optional(),
   subTargetType: z.enum(Object.values(OrganizationEventSubTargetType)).optional(),
   triggeredBy: z.string().optional(),

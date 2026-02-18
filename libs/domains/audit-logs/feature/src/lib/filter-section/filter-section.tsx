@@ -1,9 +1,9 @@
 import clsx from 'clsx'
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
+import { type AuditLogsParams } from '@qovery/shared/router'
 import { Button, Icon, type SelectedItem, type TableFilterProps, Truncate } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { type AuditLogsParams } from '../router'
 
 export interface CustomFilterProps {
   clearFilter: () => void

@@ -8,7 +8,6 @@ import {
 } from 'qovery-typescript-axios'
 import { type ReactNode, useCallback, useEffect, useMemo } from 'react'
 import { P, match } from 'ts-pattern'
-import { DEFAULT_PAGE_SIZE } from '@qovery/domains/audit-logs/feature'
 import { ActionToolbar, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
@@ -218,7 +217,6 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
                 organizationId: cluster.organization.id,
               },
               search: {
-                pageSize: DEFAULT_PAGE_SIZE,
                 targetType: OrganizationEventTargetType.CLUSTER,
                 targetId: cluster.id,
               },
