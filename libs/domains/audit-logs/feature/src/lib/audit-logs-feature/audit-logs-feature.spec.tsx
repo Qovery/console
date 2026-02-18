@@ -1,22 +1,8 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
 import { type OrganizationEventResponseList } from 'qovery-typescript-axios'
 import { IntercomProvider } from 'react-use-intercom'
-import { type EventQueryParams } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import PageGeneralFeature from './page-general-feature'
-
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useParams: () => ({ organizationId: '0' }),
-}))
-
-const mockUseFetchEvents: jest.Mock = jest.fn()
-jest.mock('@qovery/domains/event', () => ({
-  ...jest.requireActual('@qovery/domains/event'),
-  useFetchEvents: (organizationId: string, queryParams: EventQueryParams) =>
-    mockUseFetchEvents(organizationId, queryParams),
-}))
 
 describe.skip('PageGeneralFeature', () => {
   beforeEach(() => {
