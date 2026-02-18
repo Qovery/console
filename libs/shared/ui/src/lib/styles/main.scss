@@ -14,11 +14,11 @@
 // Z-index variables
 :root {
   --header-zindex: 10;
-  --dropdown-zindex: 20;
   --overlay-zindex: 40;
   --modal-zindex: 50;
-  --tooltip-zindex: 50;
-  --toast-zindex: 60;
+  --dropdown-zindex: 60;
+  --tooltip-zindex: 70;
+  --toast-zindex: 80;
 }
 
 // Old colors variables
