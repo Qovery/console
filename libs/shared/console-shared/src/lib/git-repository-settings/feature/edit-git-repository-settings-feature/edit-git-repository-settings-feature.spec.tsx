@@ -1,6 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { renderWithProviders } from '@qovery/shared/util-tests'
 import { Suspense } from 'react'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import EditGitRepositorySettingsFeature from './edit-git-repository-settings-feature'
 
 describe('EditGitRepositorySettingsFeature', () => {

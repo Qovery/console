@@ -1,14 +1,6 @@
 import { type GitAuthProvider, type GitRepository } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
-import {
-  BlockContent,
-  Button,
-  Callout,
-  ExternalLink,
-  Heading,
-  Icon,
-  Section,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, Callout, ExternalLink, Heading, Icon, Section } from '@qovery/shared/ui'
 
 export interface SectionGithubAppProps {
   githubAuthProvider?: GitAuthProvider
@@ -44,13 +36,7 @@ export function SectionGithubApp(props: SectionGithubAppProps) {
               )}
             </div>
             {!props.githubAuthProvider?.use_bot ? (
-              <Button
-                data-testid="install-button"
-                type="button"
-                size="md"
-                onClick={props.onConfigure}
-                className="ml-2"
-              >
+              <Button data-testid="install-button" type="button" size="md" onClick={props.onConfigure} className="ml-2">
                 Install
               </Button>
             ) : (
