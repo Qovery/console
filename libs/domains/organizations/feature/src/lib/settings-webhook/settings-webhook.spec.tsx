@@ -62,6 +62,8 @@ describe('SettingsWebhook', () => {
   it('should render webhooks with actions', () => {
     renderWithProviders(<SettingsWebhook />)
 
+    expect(useWebhooksMockSpy).toHaveBeenCalledWith({ organizationId: '1', suspense: true })
+
     const rows = screen.getAllByTestId('webhook-row')
     expect(rows).toHaveLength(3)
 
@@ -118,10 +120,11 @@ describe('SettingsWebhook', () => {
   it('should display empty placeholder', () => {
     useWebhooksMockSpy.mockReturnValue({
       data: [],
-      isLoading: false,
     })
 
     renderWithProviders(<SettingsWebhook />)
+
+    expect(useWebhooksMockSpy).toHaveBeenCalledWith({ organizationId: '1', suspense: true })
 
     screen.getByTestId('empty-webhook')
   })
