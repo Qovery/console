@@ -189,7 +189,7 @@ function useNavigationContext(): NavigationContext | null {
       let hasAllParams = true
 
       for (const paramName of context.paramNames) {
-        // @ts-ignore-next-line paramName should be typed to be used as a key.
+        // @ts-expect-error-next-line paramName should be typed to be used as a key.
         const value = params[paramName]
         if (typeof value === 'string' && value.length > 0) {
           extractedParams[paramName] = value
