@@ -1,34 +1,18 @@
-import { type Auth0ProviderOptions } from '@auth0/auth0-react'
 import { GitProviderEnum } from 'qovery-typescript-axios'
-import { act, getByTestId, getByText, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { act, getByTestId, getByText, renderWithProviders } from '@qovery/shared/util-tests'
 import SectionGithubApp, { type SectionGithubAppProps } from './section-github-app'
 
 const props: SectionGithubAppProps = {
   onDisconnect: jest.fn(),
   onConfigure: jest.fn(),
-  authProviderLoading: false,
   githubAuthProvider: {
     name: 'GITHUB',
     owner: 'owner',
     id: 'id',
     use_bot: true,
   },
-  githubConnectURL: 'githubConnectURL',
   repositories: [],
-  repositoriesLoading: false,
 }
-
-const mockGetTokenSilently = jest.fn()
-jest.mock('@auth0/auth0-react', () => ({
-  Auth0Provider: ({ children }: Auth0ProviderOptions) => children,
-  useAuth0: () => {
-    return {
-      getAccessTokenSilently: mockGetTokenSilently,
-    }
-  },
-}))
-
-const mockRefetchAuthProviders = jest.fn()
 
 describe('SectionGithubApp', () => {
   it('should render successfully', () => {

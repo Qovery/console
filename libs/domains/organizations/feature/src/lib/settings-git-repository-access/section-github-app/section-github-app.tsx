@@ -1,8 +1,4 @@
-import { useAuth0 } from '@auth0/auth0-react'
-import { useParams } from '@tanstack/react-router'
-import { jwtDecode } from 'jwt-decode'
 import { type GitAuthProvider, type GitRepository } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   BlockContent,
@@ -11,19 +7,14 @@ import {
   ExternalLink,
   Heading,
   Icon,
-  LoaderSpinner,
   Section,
-  useModal,
 } from '@qovery/shared/ui'
 
 export interface SectionGithubAppProps {
   githubAuthProvider?: GitAuthProvider
-  authProviderLoading?: boolean
   repositories?: GitRepository[]
-  repositoriesLoading?: boolean
   onConfigure?: () => void
   onDisconnect?: (force: boolean) => void
-  forceLoading?: boolean
 }
 
 export function SectionGithubApp(props: SectionGithubAppProps) {
@@ -43,73 +34,60 @@ export function SectionGithubApp(props: SectionGithubAppProps) {
         </Callout.Root>
 
         <BlockContent title="Qovery Github application installation status">
-          {props.authProviderLoading || props.forceLoading ? (
-            <div className="flex justify-center">
-              <LoaderSpinner className="w-5" />
-            </div>
-          ) : (
-            <div className="flex items-center justify-between">
-              <div className="flex gap-5">
-                <Icon name={IconEnum.GITHUB} className="text-neutral" />
-                {props.githubAuthProvider?.use_bot ? (
-                  <span className="text-sm font-medium text-neutral">Github App Installed</span>
-                ) : (
-                  <span className="text-sm font-medium text-neutral">Not installed</span>
-                )}
-              </div>
-              {!props.githubAuthProvider?.use_bot ? (
-                <Button
-                  data-testid="install-button"
-                  type="button"
-                  size="md"
-                  onClick={props.onConfigure}
-                  className="ml-2"
-                >
-                  Install
-                </Button>
+          <div className="flex items-center justify-between">
+            <div className="flex gap-5">
+              <Icon name={IconEnum.GITHUB} className="text-neutral" />
+              {props.githubAuthProvider?.use_bot ? (
+                <span className="text-sm font-medium text-neutral">Github App Installed</span>
               ) : (
-                <div className="flex gap-2">
-                  <Button
-                    data-testid="disconnect-button"
-                    className="gap-1"
-                    type="button"
-                    size="md"
-                    onClick={() => props.onDisconnect && props.onDisconnect(false)}
-                  >
-                    Disconnect
-                    <Icon iconName="circle-xmark" />
-                  </Button>
-                  <Button data-testid="permission-button" type="button" size="md" onClick={props.onConfigure}>
-                    Manage Permissions
-                  </Button>
-                </div>
+                <span className="text-sm font-medium text-neutral">Not installed</span>
               )}
             </div>
-          )}
+            {!props.githubAuthProvider?.use_bot ? (
+              <Button
+                data-testid="install-button"
+                type="button"
+                size="md"
+                onClick={props.onConfigure}
+                className="ml-2"
+              >
+                Install
+              </Button>
+            ) : (
+              <div className="flex gap-2">
+                <Button
+                  data-testid="disconnect-button"
+                  className="gap-1"
+                  type="button"
+                  size="md"
+                  onClick={() => props.onDisconnect && props.onDisconnect(false)}
+                >
+                  Disconnect
+                  <Icon iconName="circle-xmark" />
+                </Button>
+                <Button data-testid="permission-button" type="button" size="md" onClick={props.onConfigure}>
+                  Manage Permissions
+                </Button>
+              </div>
+            )}
+          </div>
         </BlockContent>
       </Section>
       {props.githubAuthProvider?.use_bot && (
         <div>
-          {props.repositoriesLoading ? (
-            <div className="flex justify-center">
-              <LoaderSpinner className="w-5" />
-            </div>
-          ) : (
-            props.repositories &&
-            props.repositories?.length > 0 && (
-              <BlockContent title="Authorized Repositories">
-                <ul className="flex flex-col gap-2">
-                  {props.repositories.map((repository) => (
-                    <li key={repository.id} className="flex items-center justify-between">
-                      <div className="flex gap-3">
-                        <Icon name={IconEnum.GITHUB} className="w-4 text-neutral" />
-                        <ExternalLink href={repository.url}>{repository.name}</ExternalLink>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </BlockContent>
-            )
+          {props.repositories && props.repositories?.length > 0 && (
+            <BlockContent title="Authorized Repositories">
+              <ul className="flex flex-col gap-2">
+                {props.repositories.map((repository) => (
+                  <li key={repository.id} className="flex items-center justify-between">
+                    <div className="flex gap-3">
+                      <Icon name={IconEnum.GITHUB} className="w-4 text-neutral" />
+                      <ExternalLink href={repository.url}>{repository.name}</ExternalLink>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </BlockContent>
           )}
         </div>
       )}
