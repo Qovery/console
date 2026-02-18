@@ -143,14 +143,11 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                         shouldHighlightIndicator={false}
                         heading={
                           <div className="flex grow items-center gap-1.5">
-                            {isVirtualSkippedStage ? (
-                              <Icon iconName="ban" className="text-neutral-350" />
-                            ) : (
-                              <BadgeDeploymentOrder order={deployment_order} />
-                            )}
-                            <span
-                              className={`flex items-center gap-1.5 text-sm font-bold ${isVirtualSkippedStage ? 'text-neutral-350' : 'text-neutral-400'}`}
-                            >
+                            {!isVirtualSkippedStage && <BadgeDeploymentOrder order={deployment_order} />}
+                            <span className="flex items-center gap-1.5 text-sm font-bold text-neutral-400">
+                              {isVirtualSkippedStage && (
+                                <Icon iconName="ban" iconStyle="regular" className="text-neutral-400" />
+                              )}
                               <Truncate truncateLimit={28} text={upperCaseFirstLetter(name) || ''} />
                               {description && (
                                 <Tooltip content={description}>
