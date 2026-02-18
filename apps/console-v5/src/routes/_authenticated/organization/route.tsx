@@ -134,6 +134,51 @@ const ENVIRONMENT_TABS: NavigationTab[] = [
   },
 ]
 
+const SERVICE_TABS: NavigationTab[] = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    iconName: 'table-layout',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+  },
+  {
+    id: 'deployment',
+    label: 'Deployment',
+    iconName: 'rocket',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployment',
+  },
+  {
+    id: 'monitoring',
+    label: 'Monitoring',
+    iconName: 'chart-column',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
+  },
+  {
+    id: 'service-logs',
+    label: 'Service Logs',
+    iconName: 'scroll',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+  },
+  {
+    id: 'variables',
+    label: 'Variables',
+    iconName: 'key',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables',
+  },
+  {
+    id: 'settings',
+    label: 'Settings',
+    iconName: 'gear-complex',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings',
+  },
+]
+
 function createRoutePatternRegex(routeIdPattern: string): RegExp {
   const patternPath = routeIdPattern.replace('/_authenticated/organization', '/organization')
   return new RegExp('^' + patternPath.replace(/\$(\w+)/g, '[^/]+') + '(/.*)?$')
@@ -156,6 +201,13 @@ const NAVIGATION_CONTEXTS: Array<{
   tabs: NavigationTab[]
   paramNames: string[]
 }> = [
+  {
+    type: 'service',
+    routeIdPattern:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId',
+    tabs: SERVICE_TABS,
+    paramNames: ['organizationId', 'projectId', 'environmentId', 'serviceId'],
+  },
   {
     type: 'environment',
     routeIdPattern: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId',
