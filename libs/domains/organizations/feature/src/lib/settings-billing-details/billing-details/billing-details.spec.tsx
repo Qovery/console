@@ -1,11 +1,10 @@
-import { getByDisplayValue, getByTestId, render } from '__tests__/utils/setup-jest'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { type BillingInfo } from 'qovery-typescript-axios'
+import { type BillingInfoRequest } from 'qovery-typescript-axios'
 import BillingDetails, { type BillingDetailsProps } from './billing-details'
 
 const props: BillingDetailsProps = {
   onSubmit: jest.fn(),
-  loadingBillingInfos: false,
   editInProcess: false,
   countryValues: [
     { label: 'France', value: 'FR' },
@@ -13,7 +12,7 @@ const props: BillingDetailsProps = {
   ],
 }
 
-const defaultValues = {
+const defaultValues: BillingInfoRequest = {
   first_name: 'John',
   last_name: 'Doe',
   company: 'Qovery',
@@ -28,8 +27,8 @@ const defaultValues = {
 
 describe('BillingDetails', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
-      wrapWithReactHookForm<BillingInfo>(<BillingDetails {...props} />, {
+    const { baseElement } = renderWithProviders(
+      wrapWithReactHookForm<BillingInfoRequest>(<BillingDetails {...props} />, {
         defaultValues,
       })
     )
@@ -37,31 +36,24 @@ describe('BillingDetails', () => {
   })
 
   it('should init the form well', () => {
-    const { baseElement } = render(
-      wrapWithReactHookForm<BillingInfo>(<BillingDetails {...props} />, {
+    const { baseElement } = renderWithProviders(
+      wrapWithReactHookForm<BillingInfoRequest>(<BillingDetails {...props} />, {
         defaultValues,
       })
     )
-    getByDisplayValue(baseElement, 'John')
-  })
-
-  it('should show form spinner', () => {
-    const { baseElement } = render(
-      wrapWithReactHookForm<BillingInfo>(<BillingDetails {...props} loadingBillingInfos={true} />, {
-        defaultValues,
-      })
-    )
-
-    getByTestId(baseElement, 'spinner')
+    expect(baseElement).toBeTruthy()
+    expect(screen.getByDisplayValue('John')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('Doe')).toBeInTheDocument()
   })
 
   it('should show button spinner', () => {
-    const { baseElement } = render(
-      wrapWithReactHookForm<BillingInfo>(<BillingDetails {...props} editInProcess={true} />, {
+    const { baseElement } = renderWithProviders(
+      wrapWithReactHookForm<BillingInfoRequest>(<BillingDetails {...props} editInProcess={true} />, {
         defaultValues,
       })
     )
 
-    getByTestId(baseElement, 'spinner')
+    expect(baseElement).toBeTruthy()
+    expect(screen.getByTestId('spinner')).toBeInTheDocument()
   })
 })
