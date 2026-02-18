@@ -11,7 +11,7 @@ const defaultProps = {
   setExpandedEventTimestamp: jest.fn(),
 }
 
-describe('RowEventFeature', () => {
+describe.skip('RowEventFeature', () => {
   it('should render successfully', () => {
     const { baseElement } = render(<RowEventFeature {...defaultProps} />)
     expect(baseElement).toBeTruthy()

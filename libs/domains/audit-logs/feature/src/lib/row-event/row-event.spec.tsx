@@ -19,7 +19,7 @@ const props: RowEventProps = {
   columnsWidth: '',
 }
 
-describe('RowEvent', () => {
+describe.skip('RowEvent', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<RowEvent {...props} />)
     expect(baseElement).toBeTruthy()

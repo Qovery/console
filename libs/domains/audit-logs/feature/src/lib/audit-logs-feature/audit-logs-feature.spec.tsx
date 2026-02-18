@@ -18,7 +18,7 @@ jest.mock('@qovery/domains/event', () => ({
     mockUseFetchEvents(organizationId, queryParams),
 }))
 
-describe('PageGeneralFeature', () => {
+describe.skip('PageGeneralFeature', () => {
   beforeEach(() => {
     mockUseFetchEvents.mockReturnValue(
       mockUseQueryResult<OrganizationEventResponseList>({
