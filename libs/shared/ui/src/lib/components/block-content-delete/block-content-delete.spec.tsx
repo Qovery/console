@@ -23,11 +23,14 @@ describe('BlockContentDelete', () => {
   it('should have custom icon', () => {
     props.list = [
       {
+        iconName: 'trash',
+        iconStyle: 'solid',
         text: 'Databases',
       },
       {
         text: 'Applications',
-        icon: 'icon-solid-chart-area',
+        iconName: 'chart-area',
+        iconStyle: 'solid',
       },
     ]
 
@@ -36,9 +39,7 @@ describe('BlockContentDelete', () => {
     const firstElement = screen.getByTestId(props.list[0].text)
     const secondElement = screen.getByTestId(props.list[1].text)
 
-    expect(firstElement.querySelector('.icon-solid-trash')?.classList.contains('icon-solid-trash')).toBe(true)
-    expect(secondElement.querySelector('.icon-solid-chart-area')?.classList.contains('icon-solid-chart-area')).toBe(
-      true
-    )
+    expect(firstElement.querySelector('.fa-solid.fa-trash')).toBeTruthy()
+    expect(secondElement.querySelector('.fa-solid.fa-chart-area')).toBeTruthy()
   })
 })

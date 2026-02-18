@@ -47,10 +47,10 @@ function ServiceItem({ service, onRemove }: { service: ServiceLightResponse; onR
           }
         />
         <span className="flex w-full items-center justify-between gap-2">
-          <span className="text-sm font-medium text-neutral-400">
+          <span className="text-sm font-medium text-neutral">
             <Truncate text={service.name} truncateLimit={30} />
           </span>
-          <span className="text-ssm font-normal text-neutral-400">
+          <span className="text-ssm font-normal text-neutral">
             <Truncate text={service.project_name} truncateLimit={15} /> /{' '}
             <Truncate text={service.environment_name} truncateLimit={15} />
           </span>
@@ -181,16 +181,20 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
       >
         <div className="flex flex-col gap-4">
           {/* This is a workaround to prevent the input from being focused when the user opens the modal */}
-          <button type="button" className="pointer-events-none absolute h-0 w-0 select-none"></button>
+          <button
+            type="button"
+            className="pointer-events-none absolute h-0 w-0 select-none opacity-0 outline-none"
+          ></button>
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-neutral-400">Add service</label>
+            <label className="text-sm text-neutral">Add service</label>
             <Popover.Root open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
               <Command className="relative overflow-visible bg-transparent" shouldFilter={false}>
                 <Popover.Trigger onClick={(e) => e.preventDefault()}>
                   <div className="relative">
                     <Icon
-                      name="icon-solid-magnifying-glass"
-                      className="pointer-events-none absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-400"
+                      iconStyle="regular"
+                      iconName="magnifying-glass"
+                      className="pointer-events-none absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral"
                     />
                     <Command.Input
                       ref={inputRef}
@@ -205,7 +209,7 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
                       onFocus={() => {
                         setIsDropdownOpen(true)
                       }}
-                      className="h-10 w-full rounded border border-neutral-250 pl-10 pr-6 text-sm leading-none text-neutral-400 placeholder:text-neutral-350 focus:border-brand-400 focus:outline-none focus:transition-[border-color]"
+                      className="h-10 w-full rounded border border-neutral bg-transparent pl-10 pr-6 text-sm leading-none text-neutral placeholder:text-neutral-subtle focus:border-brand-11 focus:outline-none focus:transition-[border-color]"
                     />
                     {searchValue && (
                       <button
@@ -217,7 +221,7 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
                           inputRef.current?.focus()
                         }}
                       >
-                        <Icon className="text-sm text-neutral-400" iconName="circle-xmark" />
+                        <Icon className="text-sm text-neutral" iconName="circle-xmark" />
                       </button>
                     )}
                   </div>
@@ -227,8 +231,9 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
                   align="start"
                   sideOffset={4}
                   onOpenAutoFocus={(e) => e.preventDefault()}
+                  container={document.body}
                 >
-                  <Command.List className="max-h-60 overflow-y-auto rounded border border-neutral-250 p-2">
+                  <Command.List className="max-h-60 overflow-y-auto rounded p-2">
                     {isLoadingServices ? (
                       <div className="flex h-20 items-center justify-center">
                         <LoaderSpinner className="w-4" />
@@ -236,8 +241,8 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
                     ) : filteredServices.length === 0 ? (
                       <Command.Empty>
                         <div className="px-3 py-4 text-center">
-                          <Icon iconName="wave-pulse" className="text-neutral-350" />
-                          <p className="mt-1 text-xs text-neutral-350">No services found</p>
+                          <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+                          <p className="mt-1 text-xs text-neutral-subtle">No services found</p>
                         </div>
                       </Command.Empty>
                     ) : (
@@ -255,15 +260,15 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
                               dropdownMenuItemVariants({
                                 color: 'brand',
                                 className: clsx(
-                                  'gap-2 data-[selected=true]:bg-brand-50',
+                                  'gap-2 data-[selected=true]:bg-surface-brand-subtle',
                                   isSelected &&
-                                    'bg-green-50 text-green-600 hover:bg-green-50 hover:text-green-600 focus:bg-green-50 focus:text-green-600 data-[selected=true]:bg-green-50'
+                                    'bg-surface-positive-subtle text-positive hover:bg-surface-positive-subtle hover:text-positive focus:bg-surface-positive-subtle focus:text-positive data-[selected=true]:bg-surface-positive-subtle'
                                 ),
                               })
                             )}
                           >
                             {isSelected ? (
-                              <Icon iconName="circle-check" iconStyle="regular" className="text-base text-green-600" />
+                              <Icon iconName="circle-check" iconStyle="regular" className="text-base text-positive" />
                             ) : (
                               <ServiceAvatar
                                 size="xs"
@@ -286,7 +291,7 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
                                 <Truncate text={service.name ?? ''} truncateLimit={30} />
                               </span>
                               <span
-                                className={clsx('ml-auto text-xs font-normal', { 'text-neutral-350': !isSelected })}
+                                className={clsx('ml-auto text-xs font-normal', { 'text-neutral-subtle': !isSelected })}
                               >
                                 <Truncate text={service.project_name} truncateLimit={15} /> /{' '}
                                 <Truncate text={service.environment_name} truncateLimit={15} />
@@ -304,8 +309,8 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
 
           {selectedServices.length > 0 && (
             <div>
-              <p className="mb-2 text-2xs font-medium uppercase text-neutral-400">Selected services</p>
-              <div className="divide-y divide-neutral-200">
+              <p className="mb-2 text-2xs font-medium uppercase text-neutral">Selected services</p>
+              <div className="divide-y divide-neutral">
                 {selectedServices.map((service) => (
                   <ServiceItem key={service.id} service={service} onRemove={() => removeService(service.id)} />
                 ))}

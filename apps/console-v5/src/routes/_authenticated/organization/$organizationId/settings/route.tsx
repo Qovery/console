@@ -55,7 +55,7 @@ function RouteComponent() {
   }
 
   const cloudCredentialsLink = {
-    title: 'Cloud credientials',
+    title: 'Cloud credentials',
     to: `${pathSettings}/cloud-credentials`,
     icon: 'key' as const,
   }
