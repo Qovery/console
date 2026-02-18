@@ -101,7 +101,6 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
               type="button"
               data-testid="view-credential"
               iconOnly
-              className="h-9 w-9 justify-center p-0"
             >
               <Icon iconName="link" iconStyle="regular" />
             </Button>
@@ -116,7 +115,6 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
           type="button"
           iconOnly
           data-testid="edit-credential"
-          className="h-9 w-9 justify-center p-0"
         >
           <Icon iconName="gear" iconStyle="regular" />
         </Button>
@@ -239,48 +237,53 @@ const PageOrganizationCredentials = () => {
   }, [credentialRows])
 
   return (
-    <Suspense fallback={<Loader />}>
-      <div className="max-w-content-with-navigation-left space-y-8">
-        {credentialRows.length === 0 && (
-          <BlockContent title="Configured credentials" classNameContent="p-0">
-            <div className="my-4 px-10 py-5 text-center">
-              <Icon iconName="wave-pulse" className="text-neutral-disabled" />
-              <p className="mb-3 mt-1 text-xs font-medium text-neutral-subtle">
-                All credentials related to your clusters will appear here after creation.
-              </p>
-            </div>
-          </BlockContent>
-        )}
+    <>
+      {credentialRows.length === 0 && (
+        <BlockContent title="Configured credentials" classNameContent="p-0">
+          <div className="my-4 px-10 py-5 text-center">
+            <Icon iconName="wave-pulse" className="text-neutral-disabled" />
+            <p className="mb-3 mt-1 text-xs font-medium text-neutral-subtle">
+              All credentials related to your clusters will appear here after creation.
+            </p>
+          </div>
+        </BlockContent>
+      )}
 
-        {usedCredentials.length > 0 && (
-          <BlockContent title="Configured credentials" classNameContent="p-0">
-            {usedCredentials.map((cred) => (
-              <CredentialRow key={cred.credential.id} {...cred} />
-            ))}
-          </BlockContent>
-        )}
+      {usedCredentials.length > 0 && (
+        <BlockContent title="Configured credentials" classNameContent="p-0">
+          {usedCredentials.map((cred) => (
+            <CredentialRow key={cred.credential.id} {...cred} />
+          ))}
+        </BlockContent>
+      )}
 
-        {unusedCredentials.length > 0 && (
-          <BlockContent title="Unused credentials" classNameContent="p-0">
-            {unusedCredentials.map((cred) => (
-              <CredentialRow key={cred.credential.id} {...cred} />
-            ))}
-          </BlockContent>
-        )}
-      </div>
-    </Suspense>
+      {unusedCredentials.length > 0 && (
+        <BlockContent title="Unused credentials" classNameContent="p-0">
+          {unusedCredentials.map((cred) => (
+            <CredentialRow key={cred.credential.id} {...cred} />
+          ))}
+        </BlockContent>
+      )}
+    </>
   )
 }
 
 const Loader = () => (
-  <BlockContent title="Configured credentials" classNameContent="p-0" className="mt-8">
+  <BlockContent title="Configured credentials" classNameContent="p-0">
     {[0, 1, 2, 3].map((_, i) => (
       <div
         key={i}
-        className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
+        className="grid w-full grid-cols-[1fr_auto] items-center justify-between gap-3 border-b border-neutral px-5 py-4 last:border-0"
       >
-        <Skeleton width={200} height={36} show={true} />
+        <div className="grid grid-cols-[32px_1fr] gap-2">
+          <Skeleton width={32} height={32} show={true} rounded className="-ml-1.5 shrink-0" />
+          <div className="flex flex-col justify-center">
+            <Skeleton width={140} height={12} show={true} className="mb-2" />
+            <Skeleton width={220} height={12} show={true} />
+          </div>
+        </div>
         <div className="flex gap-2">
+          <Skeleton width={36} height={36} show={true} />
           <Skeleton width={36} height={36} show={true} />
           <Skeleton width={36} height={36} show={true} />
         </div>
@@ -369,7 +372,11 @@ export function SettingsCloudCredentials() {
             </DropdownMenu.Content>
           </DropdownMenu.Root>
         </div>
-        <PageOrganizationCredentials />
+        <div className="max-w-content-with-navigation-left space-y-8">
+          <Suspense fallback={<Loader />}>
+            <PageOrganizationCredentials />
+          </Suspense>
+        </div>
       </Section>
     </div>
   )

@@ -39,6 +39,12 @@ describe('SettingsCloudCredentials', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should render the content wrapper within the max-width container', () => {
+    const { container } = renderWithProviders(<SettingsCloudCredentials />)
+
+    expect(container.querySelector('.max-w-content-with-navigation-left')).toBeInTheDocument()
+  })
+
   it('should render an empty state when there are no credentials', () => {
     renderWithProviders(<SettingsCloudCredentials />)
 
