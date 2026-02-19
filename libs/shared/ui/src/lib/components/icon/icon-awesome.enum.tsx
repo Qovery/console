@@ -28,7 +28,7 @@ export enum IconAwesomeEnum {
   CARET_DOWN = 'icon-solid-caret-down',
   TERMINAL = 'icon-solid-terminal',
   SCROLL = 'icon-solid-scroll',
-  COPY = 'icon-solid-copy',
+  COPY = 'fa-copy',
   PLAY = 'icon-solid-play',
   CIRCLE_STOP = 'icon-solid-circle-stop',
   CIRCLE_EXCLAMATION = 'icon-solid-circle-exclamation',

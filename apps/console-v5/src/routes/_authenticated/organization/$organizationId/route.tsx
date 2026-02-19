@@ -38,6 +38,7 @@ const isDeployingStatus = (status?: ClusterStateEnum): boolean =>
   status === ClusterState.DEPLOYMENT_QUEUED || status === ClusterState.DEPLOYING
 
 function RouteComponent() {
+  // @ts-expect-error-next-line Because we do not have versionId param for now
   const { organizationId = '', projectId = '', environmentId = '', versionId = '' } = useParams({ strict: false })
   const { data: clusters } = useClusters({ organizationId })
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })

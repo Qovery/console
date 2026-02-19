@@ -199,7 +199,7 @@ function ClusterResourcesSettingsForm({ cluster }: { cluster: Cluster }) {
 }
 
 function RouteComponent() {
-  const { organizationId, clusterId } = useParams({ strict: false })
+  const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const { data: cluster } = useCluster({ organizationId, clusterId })
 
   if (!cluster) {

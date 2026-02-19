@@ -109,9 +109,9 @@ exports[`CardCluster should match snapshot 1`] = `
                   data-state="closed"
                   data-testid="copy-container"
                 >
-                  <span
-                    class="icon-solid-copy shrink-0 "
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-copy "
                   />
                 </span>
               </div>
@@ -149,9 +149,9 @@ exports[`CardCluster should match snapshot 1`] = `
                   data-state="closed"
                   data-testid="copy-container"
                 >
-                  <span
-                    class="icon-solid-copy shrink-0 "
-                    role="img"
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-copy "
                   />
                 </span>
               </div>

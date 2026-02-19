@@ -84,10 +84,7 @@ export function groupBy<T>(
     const result: MenuItemProps[] = [defaultValue, ...(dataHeadFilter?.itemsCustom ?? {})].map((item: string) => ({
       name: upperCaseFirstLetter(item.toLowerCase())?.replace(/_/g, ' '),
       contentLeft: (
-        <Icon
-          name={IconAwesomeEnum.CHECK}
-          className={`text-sm ${currentFilter === item ? 'text-green-400' : 'text-transparent'}`}
-        />
+        <Icon iconName="check" className={`text-sm ${currentFilter === item ? 'text-positive' : 'text-transparent'}`} />
       ),
       onClick: () => {
         if (currentFilter !== item) {
@@ -167,10 +164,7 @@ export function groupBy<T>(
       name: upperCaseFirstLetter(key.toLowerCase())?.replace('_', ' '),
       truncateLimit: 20,
       contentLeft: (
-        <Icon
-          name={IconAwesomeEnum.CHECK}
-          className={`text-sm ${currentFilter === key ? 'text-green-400' : 'text-transparent'}`}
-        />
+        <Icon iconName="check" className={`text-sm ${currentFilter === key ? 'text-positive' : 'text-transparent'}`} />
       ),
       contentRight: !hideFilterNumber && (
         <span className="rounded-sm bg-neutral-200 px-1 text-xs font-bold text-neutral-350">
@@ -264,8 +258,6 @@ export function TableHeadFilter<T>({
     hideFilterNumber
   )
 
-  const isDark = document.documentElement.classList.contains('dark')
-
   return (
     <div className={`flex items-center ${classNameTitle ?? ''}`}>
       <Menu
@@ -275,24 +267,18 @@ export function TableHeadFilter<T>({
         width={dataHead.menuWidth || 280}
         isFilter
         trigger={
-          <div className="relative flex">
+          <div className="flex">
             {hasFilter ? (
-              <Button type="button" size="xs" className="whitespace-nowrap">
+              <Button type="button" color="neutral" size="xs" className="gap-1.5 whitespace-nowrap">
                 {title} {!hideFilterNumber ? `(${dataFilterNumber})` : ''}
-                <span role="button" className="left-6 flex" onClick={(event) => cleanFilter(event)}>
-                  <Icon iconName="xmark" className="pl-2" />
+                <span role="button" className="flex" onClick={(event) => cleanFilter(event)}>
+                  <Icon iconName="xmark" />
                 </span>
               </Button>
             ) : (
-              <Button
-                type="button"
-                variant={isDark ? 'solid' : 'surface'}
-                color="neutral"
-                size="xs"
-                className="items-center gap-1.5"
-              >
+              <Button type="button" variant="surface" color="neutral" size="xs" className="items-center gap-1.5">
                 {title}
-                <Icon iconName="angle-down" className="relative top-[1px]" />
+                <Icon iconName="angle-down" />
               </Button>
             )}
           </div>

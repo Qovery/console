@@ -1,9 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { AuditLogsView } from '@qovery/domains/audit-logs/feature'
+import { auditLogsParamsSchema } from '@qovery/shared/router'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/audit-logs')({
   component: RouteComponent,
+  validateSearch: auditLogsParamsSchema,
 })
 
 function RouteComponent() {
-  return <p className="text-neutral">Audit Logs</p>
+  return <AuditLogsView />
 }

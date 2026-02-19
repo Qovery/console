@@ -5,13 +5,17 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 })
 
 function RouteComponent() {
-  const { projectId } = useParams({ strict: false })
+  const { projectId = '', organizationId = '' } = useParams({ strict: false })
 
   if (!projectId) {
     return null
   }
 
   return (
-    <Navigate to="/organization/$organizationId/project/$projectId/settings/general" params={{ projectId }} replace />
+    <Navigate
+      to="/organization/$organizationId/project/$projectId/settings/general"
+      params={{ organizationId, projectId }}
+      replace
+    />
   )
 }

@@ -15,6 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@qovery/domains/audit-logs/data-access": ["libs/domains/audit-logs/data-access/src/index.ts"],
+      "@qovery/domains/audit-logs/feature": ["libs/domains/audit-logs/feature/src/index.ts"],
       "@qovery/domains/cloud-providers/data-access": ["libs/domains/cloud-providers/data-access/src/index.ts"],
       "@qovery/domains/cloud-providers/feature": ["libs/domains/cloud-providers/feature/src/index.ts"],
       "@qovery/domains/cluster-metrics/feature": ["libs/domains/cluster-metrics/feature/src/index.ts"],
@@ -95,5 +97,6 @@
       "@qovery/state/util-queries": ["libs/state/util-queries/src/index.ts"]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp"],
+  "files": ["apps/console-v5/src/router-types.d.ts"]
 }
