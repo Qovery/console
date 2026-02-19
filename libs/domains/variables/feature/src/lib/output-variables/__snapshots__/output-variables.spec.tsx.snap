@@ -179,9 +179,9 @@ exports[`OutputVariables when serviceType is TERRAFORM should match snapshot 1`]
                     data-state="closed"
                     data-testid="copy-container"
                   >
-                    <span
-                      class="icon-solid-copy shrink-0 text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
-                      role="img"
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
                     />
                   </span>
                 </span>
