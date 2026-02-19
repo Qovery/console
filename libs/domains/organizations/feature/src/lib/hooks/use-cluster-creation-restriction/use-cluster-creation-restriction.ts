@@ -21,9 +21,7 @@ export function useClusterCreationRestriction({ organizationId }: UseClusterCrea
 
   const remainingTrialDays = currentCost?.remaining_trial_day
 
-  // TODO: Remove cast once qovery-typescript-axios SDK is regenerated with billing_deployment_restriction field
-  const billingDeploymentRestriction = (organization as { billing_deployment_restriction?: string | null } | undefined)
-    ?.billing_deployment_restriction
+  const billingDeploymentRestriction = organization?.billing_deployment_restriction
 
   // Check if user is in active free trial (used by free-trial-banner)
   const isInActiveFreeTrial = useMemo(
