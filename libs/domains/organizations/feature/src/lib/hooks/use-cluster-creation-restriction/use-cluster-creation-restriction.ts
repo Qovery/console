@@ -4,8 +4,6 @@ import useOrganization from '../use-organization/use-organization'
 
 export interface UseClusterCreationRestrictionProps {
   organizationId: string
-  /** When true, cluster creation is never restricted (e.g. DX auth users). */
-  dxAuth?: boolean
 }
 
 /**
@@ -16,9 +14,8 @@ export interface UseClusterCreationRestrictionProps {
  * - 'NO_CREDIT_CARD' → free trial restriction (blocks managed cluster creation, allows demo)
  * - any other string → blocks all deployments
  *
- * DX auth users bypass all restrictions.
  */
-export function useClusterCreationRestriction({ organizationId, dxAuth }: UseClusterCreationRestrictionProps) {
+export function useClusterCreationRestriction({ organizationId }: UseClusterCreationRestrictionProps) {
   const { data: organization, isFetched: isFetchedOrganization } = useOrganization({ organizationId })
   const { data: currentCost, isFetched: isFetchedCurrentCost } = useCurrentCost({ organizationId })
 
@@ -36,10 +33,9 @@ export function useClusterCreationRestriction({ organizationId, dxAuth }: UseClu
   )
 
   // Cluster creation is restricted when the backend sets a billing deployment restriction
-  // DX auth users bypass all restrictions
   const isClusterCreationRestricted = useMemo(
-    () => !dxAuth && isFetchedOrganization && billingDeploymentRestriction != null,
-    [dxAuth, isFetchedOrganization, billingDeploymentRestriction]
+    () => isFetchedOrganization && billingDeploymentRestriction != null,
+    [isFetchedOrganization, billingDeploymentRestriction]
   )
 
   const isLoading = !isFetchedOrganization || !isFetchedCurrentCost

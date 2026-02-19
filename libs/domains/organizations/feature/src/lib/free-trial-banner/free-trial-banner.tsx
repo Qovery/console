@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { SETTINGS_BILLING_SUMMARY_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { Banner } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
@@ -12,11 +11,8 @@ const NO_CREDIT_CARD = 'NO_CREDIT_CARD'
 export function FreeTrialBanner() {
   const { organizationId = '' } = useParams()
   const { pathname } = useLocation()
-  const { data: userSignUp } = useUserSignUp()
-  const hasDxAuth = Boolean(userSignUp?.dx_auth)
   const { billingDeploymentRestriction, isInActiveFreeTrial, remainingTrialDays } = useClusterCreationRestriction({
     organizationId,
-    dxAuth: hasDxAuth,
   })
   const { showChat } = useSupportChat()
 
@@ -31,8 +27,8 @@ export function FreeTrialBanner() {
   const shouldShowBanner = hasRestriction || isInActiveFreeTrial
 
   const shouldHideBanner = useMemo(
-    () => !shouldShowBanner || isOnOrganizationBillingSummaryPage || hasDxAuth,
-    [shouldShowBanner, isOnOrganizationBillingSummaryPage, hasDxAuth]
+    () => !shouldShowBanner || isOnOrganizationBillingSummaryPage,
+    [shouldShowBanner, isOnOrganizationBillingSummaryPage]
   )
 
   if (shouldHideBanner) {
