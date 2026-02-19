@@ -239,7 +239,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                             return (
                               <DropdownMenu.Item
                                 key={index}
-                                className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral focus:outline-none"
+                                className="flex h-[50px] w-full items-center gap-2 border-t border-neutral pl-2 pr-3 text-xs text-neutral focus:outline-none"
                                 asChild
                               >
                                 <Link
@@ -286,7 +286,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                           s.services.map((service, index) => (
                             <DropdownMenu.Item
                               key={index}
-                              className="flex h-[50px] w-full items-center gap-2 border-t border-neutral bg-surface-neutral pl-2 pr-3 text-xs text-neutral hover:bg-surface-neutral-component focus:outline-none"
+                              className="flex h-[50px] w-full items-center gap-2 border-t border-neutral bg-surface-neutral pl-2 pr-3 text-xs text-neutral hover:bg-surface-neutral-subtle focus:outline-none"
                               asChild
                             >
                               <Link
