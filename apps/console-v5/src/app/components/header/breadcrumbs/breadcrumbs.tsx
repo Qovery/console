@@ -1,7 +1,7 @@
 import { useParams, useRouter } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { ClusterAvatar, useClusters } from '@qovery/domains/clusters/feature'
-import { useEnvironments } from '@qovery/domains/environments/feature'
+import { EnvironmentMode, useEnvironments } from '@qovery/domains/environments/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { Avatar } from '@qovery/shared/ui'
@@ -66,6 +66,7 @@ export function Breadcrumbs() {
     .map((environment) => ({
       id: environment.id,
       label: environment.name,
+      prefix: <EnvironmentMode mode={environment.mode} variant="shrink" />,
       path: buildLocation({
         to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
         params: { organizationId, projectId: environment.project.id, environmentId: environment.id },

@@ -224,7 +224,6 @@ export function EnvironmentDeploymentList() {
                             ) +
                             ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id ?? '' : '')
                       }
-                      // state={{ prevUrl: pathname }}
                     >
                       <Icon iconName="timeline" />
                     </Link>

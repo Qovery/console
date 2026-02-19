@@ -208,7 +208,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                 <span>
                                   <TriggerActionIcon
                                     triggerAction={deploymentHistory.trigger_action}
-                                    className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface-neutral-subtle text-xs text-neutral-350"
+                                    className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface-neutral-subtle text-xs text-neutral-subtle"
                                   />
                                 </span>
                               </Tooltip>
@@ -286,7 +286,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                           s.services.map((service, index) => (
                             <DropdownMenu.Item
                               key={index}
-                              className="flex h-[50px] w-full items-center gap-2 border-t border-neutral bg-surface-neutral pl-2 pr-3 text-xs text-neutral focus:outline-none"
+                              className="flex h-[50px] w-full items-center gap-2 border-t border-neutral bg-surface-neutral pl-2 pr-3 text-xs text-neutral hover:bg-surface-neutral-component focus:outline-none"
                               asChild
                             >
                               <Link
