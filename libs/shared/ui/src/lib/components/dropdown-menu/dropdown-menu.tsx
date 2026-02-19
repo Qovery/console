@@ -26,6 +26,12 @@ const dropdownMenuItemVariants = cva(
           'hover:bg-surface-brand-component',
           'hover:text-brand',
         ],
+        neutral: [
+          'data-[highlighted]:bg-surface-neutral-component',
+          'data-[highlighted]:text-neutral',
+          'hover:bg-surface-neutral-component',
+          'hover:text-neutral',
+        ],
         red: [
           'data-[highlighted]:bg-surface-negative-component',
           'data-[highlighted]:text-negative',
@@ -56,6 +62,16 @@ const dropdownMenuItemVariants = cva(
         className: ['text-neutral'],
       },
       {
+        color: 'neutral',
+        disabled: true,
+        className: ['text-neutral-disabled'],
+      },
+      {
+        color: 'neutral',
+        disabled: false,
+        className: ['text-neutral'],
+      },
+      {
         color: 'red',
         disabled: true,
         className: ['text-neutral-disabled'],
@@ -82,6 +98,7 @@ const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-2'], {
   variants: {
     color: {
       brand: [],
+      neutral: [],
       red: [],
       yellow: [],
     },
@@ -100,6 +117,16 @@ const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-2'], {
       color: 'brand',
       disabled: false,
       className: ['text-brand-9'],
+    },
+    {
+      color: 'neutral',
+      disabled: true,
+      className: ['text-neutral-disabled'],
+    },
+    {
+      color: 'neutral',
+      disabled: false,
+      className: ['text-neutral'],
     },
     {
       color: 'red',

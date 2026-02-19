@@ -34,7 +34,7 @@ export function SettingsLabelsAnnotations() {
   const { openModalConfirmation } = useModalConfirmation()
 
   return (
-    <div className="flex w-full flex-col justify-between">
+    <div className="w-full">
       <Section className="p-8">
         <div className="relative">
           <SettingsHeading
@@ -45,8 +45,8 @@ export function SettingsLabelsAnnotations() {
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <Button size="md" className="absolute right-0 top-0 shrink-0 gap-2">
-                Add new
                 <Icon iconName="circle-plus" iconStyle="regular" />
+                Add new
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="end">

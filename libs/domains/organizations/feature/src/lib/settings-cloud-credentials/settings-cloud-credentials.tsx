@@ -1,16 +1,16 @@
 import { useQueryClient } from '@tanstack/react-query'
+import { useParams } from '@tanstack/react-router'
 import { CloudProviderEnum, type ClusterCredentials, type CredentialCluster } from 'qovery-typescript-axios'
 import { Suspense, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeleteCloudProviderCredential } from '@qovery/domains/cloud-providers/feature'
 import { ClusterAvatar, ClusterCredentialsModal, CredentialsListClustersModal } from '@qovery/domains/clusters/feature'
-import { useOrganizationCredentials } from '@qovery/domains/organizations/feature'
-import { NeedHelp } from '@qovery/shared/assistant/feature'
-import { BlockContent, Heading, Section, Skeleton } from '@qovery/shared/ui'
+import { SettingsHeading } from '@qovery/shared/console-shared'
+import { BlockContent, Section, Skeleton } from '@qovery/shared/ui'
 import { Button, DropdownMenu, Icon, Indicator, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
+import { useOrganizationCredentials } from '../hooks/use-organization-credentials/use-organization-credentials'
 
 const convertToCloudProviderEnum = (cloudProvider: ClusterCredentials['object_type']): CloudProviderEnum => {
   return match(cloudProvider)
@@ -34,7 +34,7 @@ type CredentialRowProps = {
 const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: CredentialRowProps) => {
   return (
     <div
-      className="grid w-full grid-cols-[1fr_auto] items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
+      className="grid w-full grid-cols-[1fr_auto] items-center justify-between gap-3 border-b border-neutral px-5 py-4 last:border-0"
       key={credential.id}
     >
       <div className="grid grid-cols-[32px_1fr] gap-2">
@@ -44,42 +44,42 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
           className="-ml-1.5"
         />
         <div className="flex flex-col justify-center">
-          <span className="text-xs font-medium text-neutral-400">{credential.name}</span>
+          <span className="text-xs font-medium text-neutral">{credential.name}</span>
 
           {'role_arn' in credential && (
             <span className="mt-1 text-xs">
-              <span className="text-neutral-350">Role ARN: </span>
-              <span className="text-neutral-400">{credential.role_arn}</span>
+              <span className="text-neutral-subtle">Role ARN: </span>
+              <span className="text-neutral">{credential.role_arn}</span>
             </span>
           )}
           {'access_key_id' in credential && (
             <span className="mt-1 text-xs">
-              <span className="text-neutral-350">Public Access Key: </span>
-              <span className="text-neutral-400">{credential.access_key_id}</span>
+              <span className="text-neutral-subtle">Public Access Key: </span>
+              <span className="text-neutral">{credential.access_key_id}</span>
             </span>
           )}
           {'scaleway_access_key' in credential && (
             <span className="mt-1 text-xs">
-              <span className="text-neutral-350">Access Key: </span>
-              <span className="text-neutral-400">{credential.scaleway_access_key}</span>
+              <span className="text-neutral-subtle">Access Key: </span>
+              <span className="text-neutral">{credential.scaleway_access_key}</span>
             </span>
           )}
           {'scaleway_project_id' in credential && (
             <span className="mt-1 text-xs">
-              <span className="text-neutral-350">Project ID: </span>
-              <span className="text-neutral-400">{credential.scaleway_project_id}</span>
+              <span className="text-neutral-subtle">Project ID: </span>
+              <span className="text-neutral">{credential.scaleway_project_id}</span>
             </span>
           )}
           {'azure_tenant_id' in credential && (
             <span className="mt-1 text-xs">
-              <span className="text-neutral-350">Tenant ID: </span>
-              <span className="text-neutral-400">{credential.azure_tenant_id}</span>
+              <span className="text-neutral-subtle">Tenant ID: </span>
+              <span className="text-neutral">{credential.azure_tenant_id}</span>
             </span>
           )}
           {'azure_subscription_id' in credential && (
             <span className="mt-1 text-xs">
-              <span className="text-neutral-350">Subscription ID: </span>
-              <span className="text-neutral-400">{credential.azure_subscription_id}</span>
+              <span className="text-neutral-subtle">Subscription ID: </span>
+              <span className="text-neutral">{credential.azure_subscription_id}</span>
             </span>
           )}
         </div>
@@ -88,19 +88,19 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
         {clusters.length > 0 && (
           <Indicator
             content={
-              <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
+              <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
                 {clusters.length}
               </span>
             }
           >
             <Button
               size="md"
-              variant="surface"
+              variant="outline"
               color="neutral"
               onClick={onOpen}
               type="button"
               data-testid="view-credential"
-              className="h-9 w-9 justify-center p-0"
+              iconOnly
             >
               <Icon iconName="link" iconStyle="regular" />
             </Button>
@@ -109,12 +109,12 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
 
         <Button
           size="md"
-          variant="surface"
+          variant="outline"
           color="neutral"
           onClick={onEdit}
           type="button"
+          iconOnly
           data-testid="edit-credential"
-          className="h-9 w-9 justify-center p-0"
         >
           <Icon iconName="gear" iconStyle="regular" />
         </Button>
@@ -122,8 +122,9 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
         {onDelete && (
           <Button
             size="md"
-            variant="surface"
+            variant="outline"
             color="neutral"
+            iconOnly
             onClick={onDelete}
             disabled={clusters.length !== 0}
             type="button"
@@ -140,7 +141,7 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
 
 const PageOrganizationCredentials = () => {
   const { openModal, closeModal } = useModal()
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteCloudProviderCredential } = useDeleteCloudProviderCredential()
 
@@ -236,12 +237,12 @@ const PageOrganizationCredentials = () => {
   }, [credentialRows])
 
   return (
-    <div className="space-y-8">
+    <>
       {credentialRows.length === 0 && (
-        <BlockContent title="Configured credentials" classNameContent="p-0" className="mt-8">
+        <BlockContent title="Configured credentials" classNameContent="p-0">
           <div className="my-4 px-10 py-5 text-center">
-            <Icon iconName="wave-pulse" className="text-neutral-300" />
-            <p className="mb-3 mt-1 text-xs font-medium text-neutral-350">
+            <Icon iconName="wave-pulse" className="text-neutral-disabled" />
+            <p className="mb-3 mt-1 text-xs font-medium text-neutral-subtle">
               All credentials related to your clusters will appear here after creation.
             </p>
           </div>
@@ -249,7 +250,7 @@ const PageOrganizationCredentials = () => {
       )}
 
       {usedCredentials.length > 0 && (
-        <BlockContent title="Configured credentials" classNameContent="p-0" className="mt-8">
+        <BlockContent title="Configured credentials" classNameContent="p-0">
           {usedCredentials.map((cred) => (
             <CredentialRow key={cred.credential.id} {...cred} />
           ))}
@@ -257,25 +258,32 @@ const PageOrganizationCredentials = () => {
       )}
 
       {unusedCredentials.length > 0 && (
-        <BlockContent title="Unused credentials" classNameContent="p-0" className="mt-8">
+        <BlockContent title="Unused credentials" classNameContent="p-0">
           {unusedCredentials.map((cred) => (
             <CredentialRow key={cred.credential.id} {...cred} />
           ))}
         </BlockContent>
       )}
-    </div>
+    </>
   )
 }
 
 const Loader = () => (
-  <BlockContent title="Configured credentials" classNameContent="p-0" className="mt-8">
+  <BlockContent title="Configured credentials" classNameContent="p-0">
     {[0, 1, 2, 3].map((_, i) => (
       <div
         key={i}
-        className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
+        className="grid w-full grid-cols-[1fr_auto] items-center justify-between gap-3 border-b border-neutral px-5 py-4 last:border-0"
       >
-        <Skeleton width={200} height={36} show={true} />
+        <div className="grid grid-cols-[32px_1fr] gap-2">
+          <Skeleton width={32} height={32} show={true} rounded className="-ml-1.5 shrink-0" />
+          <div className="flex flex-col justify-center">
+            <Skeleton width={140} height={12} show={true} className="mb-2" />
+            <Skeleton width={220} height={12} show={true} />
+          </div>
+        </div>
         <div className="flex gap-2">
+          <Skeleton width={36} height={36} show={true} />
           <Skeleton width={36} height={36} show={true} />
           <Skeleton width={36} height={36} show={true} />
         </div>
@@ -284,9 +292,9 @@ const Loader = () => (
   </BlockContent>
 )
 
-export function PageOrganizationCredentialsFeature() {
+export function SettingsCloudCredentials() {
   useDocumentTitle('Cloud Crendentials - Organization settings')
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const queryClient = useQueryClient()
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false)
@@ -339,35 +347,32 @@ export function PageOrganizationCredentialsFeature() {
 
   return (
     <div className="w-full">
-      <Section className="flex max-w-content-with-navigation-left flex-col p-8">
-        <div className="space-y-8">
-          <div className="flex items-start justify-between gap-2">
-            <div className="space-y-3">
-              <Heading>Cloud Credentials</Heading>
-              <p className="text-xs text-neutral-400">Manage your Cloud providers credentials</p>
-              <NeedHelp />
-            </div>
-            <DropdownMenu.Root open={isCreateMenuOpen} onOpenChange={setIsCreateMenuOpen}>
-              <DropdownMenu.Trigger asChild>
-                <Button className="gap-2" size="md">
-                  New credential
-                  <Icon iconName="circle-plus" iconStyle="regular" />
-                </Button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content align="end">
-                {cloudProviderOptions.map((option) => (
-                  <DropdownMenu.Item
-                    key={option.value}
-                    icon={<Icon name={option.value} width={16} height={16} />}
-                    onClick={() => onSelectProvider(option.value)}
-                  >
-                    {option.label}
-                  </DropdownMenu.Item>
-                ))}
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          </div>
+      <Section className="p-8">
+        <div className="relative">
+          <SettingsHeading title="Cloud Credentials" description="Manage your Cloud providers credentials." />
 
+          <DropdownMenu.Root open={isCreateMenuOpen} onOpenChange={setIsCreateMenuOpen}>
+            <DropdownMenu.Trigger asChild>
+              <Button size="md" className="absolute right-0 top-0 shrink-0 gap-2">
+                <Icon iconName="circle-plus" iconStyle="regular" />
+                New credential
+              </Button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content align="end">
+              {cloudProviderOptions.map((option) => (
+                <DropdownMenu.Item
+                  key={option.value}
+                  color="neutral"
+                  icon={<Icon name={option.value} width={16} height={16} />}
+                  onClick={() => onSelectProvider(option.value)}
+                >
+                  {option.label}
+                </DropdownMenu.Item>
+              ))}
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        </div>
+        <div className="max-w-content-with-navigation-left space-y-8">
           <Suspense fallback={<Loader />}>
             <PageOrganizationCredentials />
           </Suspense>
@@ -376,5 +381,3 @@ export function PageOrganizationCredentialsFeature() {
     </div>
   )
 }
-
-export default PageOrganizationCredentialsFeature
