@@ -6,12 +6,19 @@ import { useSupportChat } from '@qovery/shared/util-hooks'
 import { pluralize } from '@qovery/shared/util-js'
 import useClusterCreationRestriction from '../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction'
 
-const NO_CREDIT_CARD = 'NO_CREDIT_CARD'
+const FREE_TRIAL_ADD_CREDIT_CARD_MESSAGE =
+  'You are on a free trial. Add a credit card to unlock managed cluster creation. If you need help, please contact us.'
 
 export function FreeTrialBanner() {
   const { organizationId = '' } = useParams()
   const { pathname } = useLocation()
-  const { billingDeploymentRestriction, isInActiveFreeTrial, remainingTrialDays } = useClusterCreationRestriction({
+  const {
+    isClusterCreationRestricted: hasRestriction,
+    isNoCreditCardRestriction,
+    isInActiveFreeTrial,
+    remainingTrialDays,
+    hasNoCreditCard,
+  } = useClusterCreationRestriction({
     organizationId,
   })
   const { showChat } = useSupportChat()
@@ -19,9 +26,6 @@ export function FreeTrialBanner() {
   const isOnOrganizationBillingSummaryPage = pathname.includes(
     SETTINGS_URL(organizationId) + SETTINGS_BILLING_SUMMARY_URL
   )
-
-  const hasRestriction = billingDeploymentRestriction != null
-  const isNoCreditCardRestriction = billingDeploymentRestriction === NO_CREDIT_CARD
 
   // Show the banner when there is any billing restriction or an active free trial
   const shouldShowBanner = hasRestriction || isInActiveFreeTrial
@@ -44,13 +48,10 @@ export function FreeTrialBanner() {
     )
   }
 
-  // Free trial (NO_CREDIT_CARD or client-side detection)
-  // Add + 1 because Chargebee return 0 when the trial is ending today
+  // Free trial: ask to add card only when billing restricts cluster creation (NO_CREDIT_CARD), otherwise show expiry countdown
   const days = (remainingTrialDays ?? 0) + 1
-  const hasTrialDaysInfo = remainingTrialDays !== undefined && remainingTrialDays > 0
-  const message = hasTrialDaysInfo
-    ? `Your free trial plan expires ${days} ${pluralize(days, 'day')} from now. If you need help, please contact us.`
-    : 'You are on a free trial. Add a credit card to unlock managed cluster creation. If you need help, please contact us.'
+  const expiryMessage = `Your free trial plan expires ${days} ${pluralize(days, 'day')} from now. If you need help, please contact us.`
+  const message = hasNoCreditCard && isNoCreditCardRestriction ? FREE_TRIAL_ADD_CREDIT_CARD_MESSAGE : expiryMessage
 
   return (
     <Banner color="brand" buttonIconRight="arrow-right" buttonLabel="Need help" onClickButton={() => showChat()}>

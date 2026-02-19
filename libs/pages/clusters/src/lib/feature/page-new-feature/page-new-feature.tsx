@@ -390,11 +390,9 @@ export function PageNewFeature() {
   const { organizationId = '' } = useParams()
   useDocumentTitle('Create new cluster - Qovery')
   const { openModal, closeModal } = useModal()
-  const { isClusterCreationRestricted, billingDeploymentRestriction } = useClusterCreationRestriction({
+  const { isClusterCreationRestricted, isNoCreditCardRestriction } = useClusterCreationRestriction({
     organizationId,
   })
-
-  const isNoCreditCardRestriction = billingDeploymentRestriction === 'NO_CREDIT_CARD'
 
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
     openModal({

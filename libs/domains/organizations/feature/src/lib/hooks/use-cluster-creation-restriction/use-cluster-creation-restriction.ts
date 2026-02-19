@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import useCreditCards from '../use-credit-cards/use-credit-cards'
 import useCurrentCost from '../use-current-cost/use-current-cost'
 import useOrganization from '../use-organization/use-organization'
 
@@ -13,11 +14,11 @@ export interface UseClusterCreationRestrictionProps {
  * - null → no restriction
  * - 'NO_CREDIT_CARD' → free trial restriction (blocks managed cluster creation, allows demo)
  * - any other string → blocks all deployments
- *
  */
 export function useClusterCreationRestriction({ organizationId }: UseClusterCreationRestrictionProps) {
   const { data: organization, isFetched: isFetchedOrganization } = useOrganization({ organizationId })
   const { data: currentCost, isFetched: isFetchedCurrentCost } = useCurrentCost({ organizationId })
+  const { data: creditCards = [], isFetched: isFetchedCreditCards } = useCreditCards({ organizationId })
 
   const remainingTrialDays = currentCost?.remaining_trial_day
 
@@ -36,10 +37,16 @@ export function useClusterCreationRestriction({ organizationId }: UseClusterCrea
     [isFetchedOrganization, billingDeploymentRestriction]
   )
 
+  const isNoCreditCardRestriction = billingDeploymentRestriction === 'NO_CREDIT_CARD'
+
+  const hasNoCreditCard = isFetchedCreditCards && creditCards.length === 0
+
   const isLoading = !isFetchedOrganization || !isFetchedCurrentCost
 
   return {
     isClusterCreationRestricted,
+    isNoCreditCardRestriction,
+    hasNoCreditCard,
     isLoading,
     isInActiveFreeTrial,
     billingDeploymentRestriction,
