@@ -1,5 +1,5 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { Link, useLocation } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
@@ -35,7 +35,6 @@ const MAX_VISIBLE_STAGES = 4
 // for the DropdownMenu when using Radix, inspired by the discussion in this issue:
 // https://github.com/radix-ui/primitives/issues/1294
 export function DropdownServices({ environment, deploymentHistory, stages }: DropdownServicesProps) {
-  const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState<number | undefined>()
   const [direction, setDirection] = useState(0)
@@ -209,7 +208,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                 <span>
                                   <TriggerActionIcon
                                     triggerAction={deploymentHistory.trigger_action}
-                                    className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface-neutral-componentActive text-xs text-neutral-350"
+                                    className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface-neutral-subtle text-xs text-neutral-350"
                                   />
                                 </span>
                               </Tooltip>
@@ -251,7 +250,6 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                       environment.id
                                     ) + ENVIRONMENT_STAGES_URL()
                                   }
-                                  // state={{ prevUrl: pathname }}
                                 >
                                   {service.details && (
                                     <ServiceAvatar
@@ -303,7 +301,6 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                     service.identifier.execution_id
                                   )
                                 }
-                                // state={{ prevUrl: pathname }}
                               >
                                 {service.details && (
                                   <ServiceAvatar
