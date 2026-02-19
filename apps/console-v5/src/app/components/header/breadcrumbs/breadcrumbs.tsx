@@ -1,6 +1,7 @@
 import { useParams, useRouter } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { ClusterAvatar, useClusters } from '@qovery/domains/clusters/feature'
+import { useEnvironments } from '@qovery/domains/environments/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { Avatar } from '@qovery/shared/ui'
@@ -9,7 +10,7 @@ import { BreadcrumbItem, type BreadcrumbItemData } from './breadcrumb-item'
 
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
-  const { organizationId = '', clusterId = '', projectId = '' } = useParams({ strict: false })
+  const { organizationId = '', clusterId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
 
   const { data: organizations = [] } = useOrganizations({
     enabled: true,
@@ -18,6 +19,7 @@ export function Breadcrumbs() {
   const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId, suspense: true })
   const { data: clusters = [] } = useClusters({ organizationId, suspense: true })
   const { data: projects = [] } = useProjects({ organizationId, suspense: true })
+  const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
 
   // Necessary to keep the organization from client by Qovery team
   const allOrganizations =
@@ -59,6 +61,17 @@ export function Breadcrumbs() {
       }).href,
     }))
 
+  const environmentItems: BreadcrumbItemData[] = environments
+    .sort((a, b) => a.name.trim().localeCompare(b.name.trim()))
+    .map((environment) => ({
+      id: environment.id,
+      label: environment.name,
+      path: buildLocation({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        params: { organizationId, projectId: environment.project.id, environmentId: environment.id },
+      }).href,
+    }))
+
   const currentCluster = useMemo(
     () => clusterItems.find((cluster) => cluster.id === clusterId),
     [clusterId, clusterItems]
@@ -67,6 +80,11 @@ export function Breadcrumbs() {
   const currentProject = useMemo(
     () => projectItems.find((project) => project.id === projectId),
     [projectId, projectItems]
+  )
+
+  const currentEnvironment = useMemo(
+    () => environmentItems.find((environment) => environment.id === environmentId),
+    [environmentId, environmentItems]
   )
 
   const breadcrumbData: Array<{ item: BreadcrumbItemData; items: BreadcrumbItemData[] }> = []
@@ -103,6 +121,13 @@ export function Breadcrumbs() {
     breadcrumbData.push({
       item: currentProject,
       items: projectItems,
+    })
+  }
+
+  if (currentEnvironment) {
+    breadcrumbData.push({
+      item: currentEnvironment,
+      items: environmentItems,
     })
   }
 

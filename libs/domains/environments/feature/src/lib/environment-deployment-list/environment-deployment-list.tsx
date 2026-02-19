@@ -37,7 +37,6 @@ import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deploy
 import { useDeploymentQueue } from '../hooks/use-deployment-queue/use-deployment-queue'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { DropdownServices } from './dropdown-services/dropdown-services'
-import { EnvironmentDeploymentListSkeleton } from './environment-deployment-list-skeleton'
 import { TableFilterTriggerBy } from './table-filter-trigger-by/table-filter-trigger-by'
 
 const { Table } = TablePrimitives
@@ -56,16 +55,14 @@ export function EnvironmentDeploymentList() {
   const { environmentId = '' } = useParams({
     from: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments',
   })
-  const { data: environment, isFetched: isFetchedEnvironment } = useEnvironment({ environmentId, suspense: true })
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
 
   const logsLink =
     ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
     ENVIRONMENT_STAGES_URL()
 
-  const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({ environmentId })
-  const { data: deploymentHistoryQueue = [], isFetched: isFetchedDeloymentQueue } = useDeploymentQueue({
-    environmentId,
-  })
+  const { data: deploymentHistory = [] } = useDeploymentHistory({ environmentId, suspense: true })
+  const { data: deploymentHistoryQueue = [] } = useDeploymentQueue({ environmentId, suspense: true })
 
   const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({
     projectId: environment?.project.id ?? '',
@@ -424,21 +421,12 @@ export function EnvironmentDeploymentList() {
     },
   })
 
-  if (!isFetchedEnvironment || !isFetchedDeloymentHistory || !isFetchedDeloymentQueue)
-    return <EnvironmentDeploymentListSkeleton />
-
-  if (
-    isFetchedEnvironment &&
-    isFetchedDeloymentHistory &&
-    isFetchedDeloymentQueue &&
-    !deploymentHistory.length &&
-    !deploymentHistoryQueue.length
-  ) {
+  if (!deploymentHistory.length && !deploymentHistoryQueue.length) {
     return (
       <EmptyState
         title="No deployment started"
-        description="Manage the deployments by using the “Play” button in the header above"
-        className="mt-2 rounded-t-sm bg-white pt-10"
+        description="Manage the deployments from the overview tab"
+        className="mt-2 rounded-t-sm pt-10"
       />
     )
   }

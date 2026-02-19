@@ -1,4 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Suspense } from 'react'
+import { EnvironmentDeploymentListSkeleton } from '@qovery/domains/environments/feature'
 import { EnvironmentDeploymentList } from '@qovery/domains/environments/feature'
 import { Heading, Section } from '@qovery/shared/ui'
 
@@ -19,7 +21,9 @@ function RouteComponent() {
           <hr className="w-full border-neutral" />
         </div>
         <div className="flex min-h-0 flex-1 flex-col gap-8 pb-20">
-          <EnvironmentDeploymentList />
+          <Suspense fallback={<EnvironmentDeploymentListSkeleton />}>
+            <EnvironmentDeploymentList />
+          </Suspense>
         </div>
       </Section>
     </div>
