@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import { type ChangeEventHandler, type ReactNode, forwardRef, useEffect, useRef, useState } from 'react'
 import Icon from '../../icon/icon'
 
@@ -120,9 +119,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
         {!isInputDate && rightElement && (
           <div
             data-testid="right-floating-component"
-            className={clsx('absolute right-4 top-1/2 -translate-y-1/2 text-neutral-subtle hover:text-neutral', {
-              'pointer-events-none text-neutral-disabled': disabled,
-            })}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-subtle hover:text-neutral"
           >
             {rightElement}
           </div>

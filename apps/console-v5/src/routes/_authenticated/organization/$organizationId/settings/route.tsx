@@ -1,4 +1,5 @@
 import { Outlet, createFileRoute, useParams } from '@tanstack/react-router'
+import { useUserRole } from '@qovery/shared/iam/feature'
 import { Sidebar } from '@qovery/shared/ui'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/settings')({
@@ -6,7 +7,10 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 })
 
 function RouteComponent() {
-  const { organizationId } = useParams({ strict: false })
+  const { organizationId = '' } = useParams({ strict: false })
+  const { roles } = useUserRole()
+
+  const isOrganizationAdmin = roles.some((role) => role.includes(`organization:${organizationId}:admin`))
 
   const pathSettings = `/organization/${organizationId}/settings`
 
@@ -61,7 +65,7 @@ function RouteComponent() {
   }
 
   const gitRepositoriesAccessLink = {
-    title: 'Git repositories',
+    title: 'Git repositories access',
     to: `${pathSettings}/git-repository-access`,
     icon: 'git-alt' as const,
     iconStyle: 'brands' as const,
@@ -103,7 +107,7 @@ function RouteComponent() {
     webhookLink,
     apiTokenLink,
     aiCopilotLink,
-    dangerZoneLink,
+    ...(isOrganizationAdmin ? [dangerZoneLink] : []),
   ]
 
   return (

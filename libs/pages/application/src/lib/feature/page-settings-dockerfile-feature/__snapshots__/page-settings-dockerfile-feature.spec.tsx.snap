@@ -27,7 +27,7 @@ exports[`PageSettingsDockerfileFeature should match snapshot 1`] = `
                   Dockerfile
                 </h1>
                 <p
-                  class="max-w-lg text-sm text-neutral-subtle"
+                  class="max-w-2xl text-sm text-neutral-subtle"
                 >
                   The Dockerfile allows to package your application with the right CLIs/Libraries and as well define the command to run during its execution. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw).
                 </p>

@@ -23,7 +23,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               Resources
             </h1>
             <p
-              class="max-w-lg text-sm text-neutral-subtle"
+              class="max-w-2xl text-sm text-neutral-subtle"
             >
               Manage the resources assigned to the service.
             </p>
