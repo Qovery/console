@@ -252,7 +252,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
 
 function RouteComponent() {
   useDocumentTitle('Cluster - Overview')
-  const { organizationId, clusterId } = useParams({ strict: false })
+  const { organizationId = '', clusterId = '' } = useParams({ strict: false })
 
   useClusterRunningStatusSocket({ organizationId, clusterId })
   useClusterMetricsSocket({ organizationId, clusterId })

@@ -67,7 +67,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
         ))}
       </select>
       <Icon
-        name={IconAwesomeEnum.CHEVRON_DOWN}
+        iconName="chevron-down"
         className="pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
       />
     </div>

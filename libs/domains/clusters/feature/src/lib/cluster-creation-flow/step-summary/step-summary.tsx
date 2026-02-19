@@ -118,6 +118,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
         navigate({
           to: '/organization/$organizationId/cluster/$clusterId/overview',
           params: { organizationId, clusterId: cluster.id },
+          // @ts-ignore-next-line TODO needs to be fixed
           search: { 'show-self-managed-guide': true },
         })
       } catch (error) {

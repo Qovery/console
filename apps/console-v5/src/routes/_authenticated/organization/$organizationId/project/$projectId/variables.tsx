@@ -8,7 +8,7 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 })
 
 function RouteComponent() {
-  const { projectId } = useParams({ strict: false })
+  const { projectId = '' } = useParams({ strict: false })
 
   return (
     <Suspense

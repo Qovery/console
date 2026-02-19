@@ -10,7 +10,7 @@ export interface Auth0ContextType {
   isLoading: boolean
 }
 
-const Auth0Context = createContext<Auth0ContextType | undefined>(undefined)
+export const Auth0Context = createContext<Auth0ContextType | undefined>(undefined)
 
 export function Auth0Wrapper({ children }: { children: React.ReactNode }) {
   return (

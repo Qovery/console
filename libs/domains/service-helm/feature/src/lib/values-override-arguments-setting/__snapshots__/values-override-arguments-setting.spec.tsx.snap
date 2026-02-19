@@ -108,9 +108,9 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     --set-json
                   </option>
                 </select>
-                <span
-                  class="icon-solid-chevron-down shrink-0 pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-chevron-down pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
                 />
               </div>
               <div
@@ -213,9 +213,9 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     --set-json
                   </option>
                 </select>
-                <span
-                  class="icon-solid-chevron-down shrink-0 pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-chevron-down pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
                 />
               </div>
               <div
@@ -322,9 +322,9 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     --set-json
                   </option>
                 </select>
-                <span
-                  class="icon-solid-chevron-down shrink-0 pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-chevron-down pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
                 />
               </div>
               <div

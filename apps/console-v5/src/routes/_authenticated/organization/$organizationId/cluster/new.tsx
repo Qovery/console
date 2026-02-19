@@ -8,7 +8,7 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 })
 
 function RouteComponent() {
-  const { organizationId } = useParams({ strict: false })
+  const { organizationId = '' } = useParams({ strict: false })
   useDocumentTitle('Create new cluster')
 
   return (

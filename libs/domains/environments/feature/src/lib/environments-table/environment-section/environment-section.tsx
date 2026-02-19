@@ -25,7 +25,7 @@ const gridLayoutClassName =
   'grid w-full grid-cols-[1fr_20%_min(20%,160px)_min(15%,120px)_max(10%,106px)] xl:grid-cols-[1fr_25%_min(20%,240px)_160px_96px]'
 
 function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
-  const { organizationId, projectId } = useParams({ strict: false })
+  const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const environment = environments.find((env) => env.id === overview.id)
   const runningStatus = environment?.runningStatus
@@ -42,7 +42,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
       <Table.Cell className={twMerge(cellClassName, 'border-none')}>
         <div className="flex h-full flex-col justify-center gap-1 xl:flex-row xl:items-center xl:justify-between xl:gap-2">
           <Link
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId/"
+            to="/organization/$organizationId/project/$projectId/environment/$environmentId"
             params={{ organizationId, projectId, environmentId: overview.id }}
             className="text-wrap break-all text-sm font-medium"
           >
@@ -71,7 +71,8 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
         <div className="flex h-full items-center justify-between">
           {overview.cluster && (
             <Link
-              to={`/organization/${organizationId}/cluster/${overview.cluster.id}/overview`}
+              to="/organization/$organizationId/cluster/$clusterId/overview"
+              params={{ organizationId, clusterId: overview.cluster.id }}
               className="group lg:inline-flex lg:items-center lg:gap-2"
             >
               <ClusterAvatar cluster={overview.cluster} size="sm" className="hidden lg:inline-block" />

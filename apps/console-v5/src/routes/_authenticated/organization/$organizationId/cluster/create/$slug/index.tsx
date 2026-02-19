@@ -5,7 +5,7 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 })
 
 function RouteComponent() {
-  const { organizationId, slug = 'new' } = useParams({ strict: false })
+  const { organizationId = '', slug = 'new' } = useParams({ strict: false })
 
   return (
     <Navigate

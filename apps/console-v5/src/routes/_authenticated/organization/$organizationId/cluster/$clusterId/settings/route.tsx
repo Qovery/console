@@ -9,7 +9,7 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 })
 
 function RouteComponent() {
-  const { organizationId, clusterId } = useParams({ strict: false })
+  const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
 

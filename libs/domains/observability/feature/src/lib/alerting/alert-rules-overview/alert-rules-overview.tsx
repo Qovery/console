@@ -100,7 +100,7 @@ export function AlertRulesOverview({
 }: PropsWithChildren<AlertRulesOverviewProps>) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const navigate = useNavigate({ from: '/_authenticated/organization/$organizationId/alerts/alert-rules' })
+  const navigate = useNavigate({ from: '/organization/$organizationId/alerts/alert-rules' })
 
   const { mutate: deleteAlertRule } = useDeleteAlertRule({ organizationId })
 

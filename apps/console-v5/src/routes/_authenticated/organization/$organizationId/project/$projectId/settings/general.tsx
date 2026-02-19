@@ -69,7 +69,7 @@ function PageProjectGeneral(props: PageProjectGeneralProps) {
 
 function ProjectGeneralSettingsForm() {
   useDocumentTitle('General - Project settings')
-  const { organizationId, projectId } = useParams({ strict: false })
+  const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: project } = useProject({ organizationId, projectId, suspense: true })
   const { mutateAsync: editProject } = useEditProject()
   const [loading, setLoading] = useState(false)

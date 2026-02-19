@@ -111,36 +111,34 @@ export function TableHeadDatePickerFilter({
       >
         <div className="flex">
           {hasFilter ? (
-            <>
-              <Button
-                type="button"
-                size="xs"
-                className="whitespace-nowrap pr-6"
-                onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
-              >
-                {title}
-              </Button>
+            <Button
+              type="button"
+              color="neutral"
+              size="xs"
+              className="gap-1.5 whitespace-nowrap"
+              onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
+            >
+              {title}
               <span
                 role="button"
-                className="relative -left-6 flex h-6 cursor-pointer items-center px-2 text-xs text-neutral-50"
+                className="relative flex h-6 cursor-pointer items-center text-xs"
                 onClick={(event) => cleanFilter(event)}
               >
                 <Icon iconName="xmark" />
               </span>
-            </>
+            </Button>
           ) : (
             <Button
               type="button"
-              variant={isDark ? 'solid' : 'surface'}
               color="neutral"
               size="xs"
-              className="items-center gap-1.5 bg-brand-500 text-white active:bg-brand-600 hover:[&:not(:active):not(:disabled)]:bg-brand-400"
+              className="items-center gap-1.5"
               onClick={() => {
                 setIsOpenTimestamp(!isOpenTimestamp)
               }}
             >
               {title}
-              <Icon iconName="angle-down" className="relative top-[1px]" />
+              <Icon iconName="angle-down" />
             </Button>
           )}
         </div>
