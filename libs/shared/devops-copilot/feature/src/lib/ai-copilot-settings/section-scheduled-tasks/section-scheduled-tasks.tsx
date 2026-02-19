@@ -18,8 +18,8 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
     (taskId: string) => {
       return (
         <div className="p-6">
-          <h2 className="h4 mb-2 text-neutral-400">Delete Task</h2>
-          <p className="mb-6 text-sm text-neutral-350">
+          <h2 className="h4 mb-2 text-neutral">Delete Task</h2>
+          <p className="mb-6 text-sm text-neutral-subtle">
             Are you sure you want to delete this task? This action cannot be undone.
           </p>
           <div className="flex justify-end gap-3">
@@ -48,7 +48,7 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
     <Section>
       <div className="mb-8">
         <Heading className="mb-2">Scheduled Tasks</Heading>
-        <p className="text-xs text-neutral-400">Recurring tasks configured for your organization</p>
+        <p className="text-xs text-neutral">Recurring tasks configured for your organization</p>
       </div>
       <BlockContent title="Tasks List" classNameContent="p-0">
         {isLoading ? (
@@ -58,19 +58,19 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
         ) : tasks.length > 0 ? (
           <ul>
             {tasks.map((task) => (
-              <li key={task.id} className="flex items-center border-b border-neutral-250 px-5 py-4 last:border-0">
+              <li key={task.id} className="flex items-center border-b border-neutral px-5 py-4 last:border-0">
                 <div className="flex-1">
-                  <p className="mb-1 text-xs font-medium text-neutral-400">{task.user_intent}</p>
+                  <p className="mb-1 text-xs font-medium text-neutral">{task.user_intent}</p>
                   <p className="text-xs text-neutral-350">
                     <span className="inline-block">Schedule: {task.cron_expression}</span>
                     {task.last_run_at && (
                       <span className="ml-3 inline-block">Last run: {new Date(task.last_run_at).toLocaleString()}</span>
                     )}
                     {task.error_count > 0 && (
-                      <span className="ml-3 inline-block text-red-500">Errors: {task.error_count}</span>
+                      <span className="ml-3 inline-block text-negative">Errors: {task.error_count}</span>
                     )}
                   </p>
-                  {task.last_error && <p className="mt-1 text-xs text-red-500">{task.last_error}</p>}
+                  {task.last_error && <p className="mt-1 text-xs text-negative">{task.last_error}</p>}
                 </div>
                 <div className="flex flex-1 items-center justify-center">
                   <Badge variant="surface" color={task.enabled ? 'green' : 'neutral'} size="sm">
@@ -106,7 +106,7 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
           </ul>
         ) : (
           <div className="flex justify-center p-5">
-            <p className="text-sm text-neutral-350">No scheduled tasks configured yet.</p>
+            <p className="text-sm text-neutral-subtle">No scheduled tasks configured yet.</p>
           </div>
         )}
       </BlockContent>
