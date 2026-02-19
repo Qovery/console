@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import {
   type SortingState,
   createColumnHelper,
@@ -12,7 +13,6 @@ import {
 import clsx from 'clsx'
 import { type DeploymentHistoryEnvironmentV2, OrganizationEventOrigin, StateEnum } from 'qovery-typescript-axios'
 import { Fragment, useCallback, useMemo, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
@@ -52,8 +52,11 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistoryEnv
   )
 }
 
-export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeploymentListProps) {
-  const { data: environment, isFetched: isFetchedEnvironment } = useEnvironment({ environmentId })
+export function EnvironmentDeploymentList() {
+  const { environmentId = '' } = useParams({
+    from: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments',
+  })
+  const { data: environment, isFetched: isFetchedEnvironment } = useEnvironment({ environmentId, suspense: true })
 
   const logsLink =
     ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
@@ -72,7 +75,6 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
     environmentId,
   })
 
-  const { pathname } = useLocation()
   const { openModalConfirmation } = useModalConfirmation()
 
   const [sorting, setSorting] = useState<SortingState>([])
@@ -137,14 +139,14 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                 </div>
               ) : (
                 <div className="flex flex-col gap-1">
-                  <span className="text-sm font-medium text-neutral-400">
+                  <span className="text-sm font-medium text-neutral">
                     {dateFullFormat(
                       isDeploymentHistory(data) ? data.auditing_data.created_at : '',
                       undefined,
                       'dd MMM, HH:mm a'
                     )}
                   </span>
-                  <span className="truncate text-ssm text-neutral-350">
+                  <span className="truncate text-ssm text-neutral-subtle">
                     {isDeploymentHistory(data) ? data.identifier.execution_id : '--'}
                   </span>
                 </div>
@@ -277,8 +279,8 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                       .otherwise(() => undefined)}
                   />
                   <div className="flex flex-col gap-1">
-                    <span className="font-medium text-neutral-400">{upperCaseFirstLetter(trigger_action)}</span>
-                    <span className="text-ssm text-neutral-350">{upperCaseFirstLetter(action_status)}</span>
+                    <span className="font-medium text-neutral">{upperCaseFirstLetter(trigger_action)}</span>
+                    <span className="text-ssm text-neutral-subtle">{upperCaseFirstLetter(action_status)}</span>
                   </div>
                 </div>
               )
@@ -287,8 +289,8 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
               <div className="flex items-center gap-4">
                 <ActionTriggerStatusChip size="md" status="QUEUED" triggerAction={trigger_action} />
                 <div className="flex flex-col gap-1">
-                  <span className="font-medium text-neutral-400">{upperCaseFirstLetter(trigger_action)}</span>
-                  <span className="text-ssm text-neutral-350">In queue...</span>
+                  <span className="font-medium text-neutral">{upperCaseFirstLetter(trigger_action)}</span>
+                  <span className="text-ssm text-neutral-subtle">In queue...</span>
                 </div>
               </div>
             ))
@@ -341,7 +343,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                 () => <span className="text-neutral-350">--</span>
               )
               .otherwise(() => (
-                <span className="flex items-center gap-1 text-neutral-350">
+                <span className="flex items-center gap-1 text-neutral-subtle">
                   <Icon iconName="clock-eight" iconStyle="regular" />
                   {formatDuration(data.total_duration)}
                 </span>
@@ -371,7 +373,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
 
           return (
             <div className="flex items-center gap-3">
-              <div className="flex h-7 w-7 min-w-7 items-center justify-center rounded-full bg-neutral-150 text-neutral-350">
+              <div className="flex h-7 w-7 min-w-7 items-center justify-center rounded-full bg-surface-neutral-component text-neutral-subtle">
                 {match(origin)
                   .with(OrganizationEventOrigin.GIT, () => <Icon iconName="code-branch" />)
                   .with(OrganizationEventOrigin.CONSOLE, () => <Icon iconName="browser" />)
@@ -381,11 +383,11 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                   .with(OrganizationEventOrigin.TERRAFORM_PROVIDER, () => <Icon name={IconEnum.TERRAFORM} width="12" />)
                   .otherwise(() => null)}
               </div>
-              <div className="flex flex-col gap-1.5 text-ssm">
-                <span className="whitespace-nowrap text-neutral-400">
+              <div className="flex flex-col gap-0.5 text-ssm">
+                <span className="whitespace-nowrap text-neutral">
                   <Truncate text={triggeredBy} truncateLimit={25} />
                 </span>
-                <span className="text-neutral-350">
+                <span className="text-neutral-subtle">
                   {origin !== 'CLI' && origin !== 'API' ? upperCaseFirstLetter(origin?.replace('_', ' ')) : origin}
                 </span>
               </div>
@@ -394,7 +396,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
         },
       }),
     ],
-    [columnHelper, environment, mutationCancelDeployment, pathname]
+    [columnHelper, environment, mutationCancelDeployment]
   )
 
   const data = useMemo(
@@ -486,7 +488,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
-              <Table.Row className="h-[68px] border-neutral-200 last:!border-b">
+              <Table.Row className="h-[68px] border-neutral last:!border-b">
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}
