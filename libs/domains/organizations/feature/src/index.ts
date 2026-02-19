@@ -97,3 +97,4 @@ export * from './lib/settings-container-registries/settings-container-registries
 export * from './lib/settings-webhook/settings-webhook'
 export * from './lib/settings-api-token/settings-api-token'
 export * from './lib/settings-danger-zone/settings-danger-zone'
+export * from './lib/settings-billing-details/settings-billing-details'
