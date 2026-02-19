@@ -14,7 +14,7 @@ exports[`ServiceList should match snapshot 1`] = `
         <thead>
           <tr>
             <th
-              class="h-11 text-left font-code px-6 pl-4 font-medium"
+              class="h-11 border-neutral text-left font-code px-6 pl-4 font-medium"
               style="width: 20px;"
             >
               <div
@@ -54,7 +54,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </th>
             <th
-              class="h-11 text-left font-code px-6 font-medium"
+              class="h-11 border-neutral text-left font-code px-6 font-medium"
               style="width: 15%;"
             >
               <div
@@ -77,13 +77,13 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </th>
             <th
-              class="h-11 text-left font-code px-6 font-medium"
+              class="h-11 border-neutral text-left font-code px-6 font-medium"
               style="width: 30%;"
             >
               Target version
             </th>
             <th
-              class="h-11 text-left font-code px-6 font-medium"
+              class="h-11 border-neutral text-left font-code px-6 font-medium"
               style="width: 3%;"
             >
               <button
@@ -102,7 +102,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="h-[68px]"
           >
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 20px;"
             >
               <label
@@ -278,7 +278,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </td>
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 15%;"
             >
               <div
@@ -327,7 +327,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </td>
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 30%;"
             >
               <div
@@ -421,7 +421,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </td>
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 3%;"
             >
               <a
@@ -445,7 +445,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="h-[68px]"
           >
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 20px;"
             >
               <label
@@ -630,7 +630,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </td>
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 15%;"
             >
               <div
@@ -679,7 +679,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </td>
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 30%;"
             >
               <div
@@ -769,7 +769,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </td>
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 3%;"
             >
               <a
@@ -793,7 +793,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="h-[68px]"
           >
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 20px;"
             >
               <label
@@ -1280,7 +1280,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </td>
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 15%;"
             >
               <div
@@ -1329,7 +1329,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </td>
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 30%;"
             >
               <div
@@ -1423,7 +1423,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </td>
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 3%;"
             >
               <a
@@ -1447,7 +1447,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="h-[68px]"
           >
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 20px;"
             >
               <label
@@ -1727,7 +1727,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </td>
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 15%;"
             >
               <div
@@ -1776,7 +1776,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </td>
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 30%;"
             >
               <div
@@ -1870,7 +1870,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </div>
             </td>
             <td
-              class="h-14 py-0 px-6 first:relative"
+              class="h-14 border-neutral py-0 px-6 first:relative"
               style="width: 3%;"
             >
               <a

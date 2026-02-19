@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
-import { Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
+import { ErrorBoundary, Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
 import { type FileRouteTypes } from '../../../routeTree.gen'
@@ -341,21 +341,23 @@ function OrganizationRoute() {
     <div className="flex h-dvh w-full flex-col bg-background">
       {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
       <div className="min-h-0 flex-1 overflow-auto">
-        <Suspense fallback={<MainLoader />}>
-          <>
-            <Header />
+        <ErrorBoundary>
+          <Suspense fallback={<MainLoader />}>
+            <>
+              <Header />
 
-            <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
-              <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
-                {navigationContext && <NavigationBar context={navigationContext} />}
-              </Navbar.Root>
-            </div>
+              <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
+                <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
+                  {navigationContext && <NavigationBar context={navigationContext} />}
+                </Navbar.Root>
+              </div>
 
-            <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>
-              <Outlet />
-            </div>
-          </>
-        </Suspense>
+              <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>
+                <Outlet />
+              </div>
+            </>
+          </Suspense>
+        </ErrorBoundary>
       </div>
     </div>
   )
