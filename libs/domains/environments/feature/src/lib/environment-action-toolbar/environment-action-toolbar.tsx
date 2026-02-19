@@ -146,6 +146,7 @@ function MenuManageDeployment({
       content: <UpdateAllModal environment={environment} />,
       options: {
         width: 676,
+        fakeModal: true,
       },
     })
   }
@@ -234,8 +235,8 @@ function MenuManageDeployment({
           .otherwise(() => (
             <>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item icon={<Icon iconName="rotate" />} onSelect={openUpdateAllModal}>
-                Deploy latest version for..
+              <DropdownMenu.Item icon={<Icon iconName="code-branch" />} onSelect={openUpdateAllModal}>
+                Deploy by version
               </DropdownMenu.Item>
             </>
           ))}
@@ -245,7 +246,6 @@ function MenuManageDeployment({
 }
 
 function MenuOtherActions({ state, environment }: { state: StateEnum; environment: Environment }) {
-  const { pathname } = useLocation()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteEnvironment } = useDeleteEnvironment({ projectId: environment.project.id })
