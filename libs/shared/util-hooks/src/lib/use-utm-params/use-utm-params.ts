@@ -1,33 +1,18 @@
 import { useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-export interface UtmParams {
-  utm_source?: string
-  utm_medium?: string
-  utm_campaign?: string
-  utm_term?: string
-  utm_content?: string
-  gclid?: string
-}
-
-const UTM_KEYS: (keyof UtmParams)[] = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid']
-
 export const TRACKING_PARAMS_STORAGE_KEY = 'tracking_params'
 
-export function getUtmParams(searchParams: URLSearchParams): UtmParams {
-  const utmParams: UtmParams = {}
-
-  for (const key of UTM_KEYS) {
-    const value = searchParams.get(key)
-    if (value) {
-      utmParams[key] = value
-    }
-  }
-
-  return utmParams
+/** Returns all URL search params as a record (dynamic keys only). */
+export function getTrackingParams(searchParams: URLSearchParams): Record<string, string> {
+  const result: Record<string, string> = {}
+  searchParams.forEach((value, key) => {
+    if (value) result[key] = value
+  })
+  return result
 }
 
-/** Returns all URL params stored at landing. Fallback: legacy UTM/gclid keys from localStorage. */
+/** Returns all URL params stored at landing. */
 export function getStoredTrackingParams(): Record<string, string> {
   try {
     const raw = localStorage.getItem(TRACKING_PARAMS_STORAGE_KEY)
@@ -43,36 +28,29 @@ export function getStoredTrackingParams(): Record<string, string> {
   } catch {
     // ignore invalid JSON
   }
-  const fallback: Record<string, string> = {}
-  UTM_KEYS.forEach((key) => {
-    const value = localStorage.getItem(key)
-    if (value) fallback[key] = value
-  })
-  return fallback
+  return {}
 }
 
-export function useUtmParams(): UtmParams {
+export function useTrackingParams(): Record<string, string> {
   const [searchParams] = useSearchParams()
-
-  const utmParams = useMemo(() => getUtmParams(searchParams), [searchParams])
-
-  return utmParams
+  return useMemo(() => getTrackingParams(searchParams), [searchParams])
 }
 
-/** Persists all current URL search params to localStorage for later use (e.g. HubSpot signup). */
+// Auth0 OAuth callback params — excluded from tracking storage and from payloads sent to HubSpot
+const OAUTH_PARAMS = ['code', 'state']
+
+/** Persists URL tracking params to localStorage. Merges with existing so Auth0 redirect (?code=&state=) does not overwrite UTMs. Excludes Auth0 code/state from storage. */
 export function useCaptureUtmParams() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const all: Record<string, string> = {}
+    const fromUrl: Record<string, string> = {}
     params.forEach((value, key) => {
-      if (value) all[key] = value
+      if (value && !OAUTH_PARAMS.includes(key)) fromUrl[key] = value
     })
-    if (Object.keys(all).length > 0) {
-      localStorage.setItem(TRACKING_PARAMS_STORAGE_KEY, JSON.stringify(all))
+    const existing = getStoredTrackingParams()
+    const merged = { ...existing, ...fromUrl }
+    if (Object.keys(merged).length > 0) {
+      localStorage.setItem(TRACKING_PARAMS_STORAGE_KEY, JSON.stringify(merged))
     }
-    UTM_KEYS.forEach((key) => {
-      const value = params.get(key)
-      if (value) localStorage.setItem(key, value)
-    })
   }, [])
 }
