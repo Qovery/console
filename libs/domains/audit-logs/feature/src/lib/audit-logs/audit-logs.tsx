@@ -32,7 +32,7 @@ import {
   computeSelectedItemsFromFilter,
 } from '../utils/target-type-selection-utils'
 
-export interface PageGeneralProps {
+export interface AuditLogsProps {
   isLoading: boolean
   showIntercom: () => void
   handleClearFilter: () => void
@@ -203,7 +203,7 @@ function createTableDataHead(
 
 const columnsWidth = '18% 15% 25% 15% 15% 12%'
 
-export function PageGeneral({
+export function AuditLogs({
   isLoading,
   events,
   onNext,
@@ -226,7 +226,7 @@ export function PageGeneral({
   targetTypeNavigationStack,
   targetTypeLevel,
   validTargetIds,
-}: PageGeneralProps) {
+}: AuditLogsProps) {
   const auditLogsRetentionInDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 30
   const [expandedEventTimestamp, setExpandedEventTimestamp] = useState<string | null>(null)
 
@@ -376,5 +376,3 @@ export function PageGeneral({
     </Section>
   )
 }
-
-export default PageGeneral

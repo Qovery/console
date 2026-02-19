@@ -1,9 +1,9 @@
 import { OrganizationEventOrigin, OrganizationEventType, PlanEnum } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import PageGeneral, { type PageGeneralProps } from './page-general'
+import { AuditLogs, type AuditLogsProps } from './audit-logs'
 
-const props: PageGeneralProps = {
+const props: AuditLogsProps = {
   placeholderEvents: eventsFactoryMock(5),
   queryParams: {
     pageSize: 10,
@@ -40,45 +40,45 @@ const props: PageGeneralProps = {
 
 describe.skip('PageGeneral', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<PageGeneral {...props} />)
+    const { baseElement } = renderWithProviders(<AuditLogs {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render 5 placeholders if it is loading', () => {
-    renderWithProviders(<PageGeneral {...props} isLoading={true} />)
+    renderWithProviders(<AuditLogs {...props} isLoading={true} />)
     expect(screen.getAllByTestId('row-event')).toHaveLength(5)
   })
 
   it('should render empty result if not loading and no result', () => {
-    renderWithProviders(<PageGeneral {...props} isLoading={false} events={[]} />)
+    renderWithProviders(<AuditLogs {...props} isLoading={false} events={[]} />)
     screen.getByTestId('empty-result')
   })
 
   it('should render 10 events if not loading and 10 events', () => {
-    renderWithProviders(<PageGeneral {...props} isLoading={false} />)
+    renderWithProviders(<AuditLogs {...props} isLoading={false} />)
     expect(screen.getAllByTestId('row-event')).toHaveLength(10)
   })
 
   it('should call onNext when clicking on next button', () => {
-    renderWithProviders(<PageGeneral {...props} />)
+    renderWithProviders(<AuditLogs {...props} />)
     screen.getByTestId('button-next-page').click()
     expect(props.onNext).toHaveBeenCalled()
   })
 
   it('should call onPrevious when clicking on previous button', () => {
-    renderWithProviders(<PageGeneral {...props} />)
+    renderWithProviders(<AuditLogs {...props} />)
     screen.getByTestId('button-previous-page').click()
     expect(props.onPrevious).toHaveBeenCalled()
   })
 
   it('should call onPageSizeChange when changing page size', async () => {
-    const { userEvent } = renderWithProviders(<PageGeneral {...props} />)
+    const { userEvent } = renderWithProviders(<AuditLogs {...props} />)
     await userEvent.selectOptions(screen.getByTestId('select-page-size'), '100')
     expect(props.onPageSizeChange).toHaveBeenCalledWith('100')
   })
 
   it('should render a Tool filter on the table', async () => {
-    const { userEvent } = renderWithProviders(<PageGeneral {...props} />)
+    const { userEvent } = renderWithProviders(<AuditLogs {...props} />)
 
     await userEvent.click(screen.getByText('Source'))
 
@@ -91,7 +91,7 @@ describe.skip('PageGeneral', () => {
   })
 
   it('should render a Event filter on the table', async () => {
-    const { userEvent } = renderWithProviders(<PageGeneral {...props} />)
+    const { userEvent } = renderWithProviders(<AuditLogs {...props} />)
 
     await userEvent.click(screen.getByText('Event'))
 
@@ -104,7 +104,7 @@ describe.skip('PageGeneral', () => {
   })
 
   it('should render organizationMaxLimitReached state with upgrade button', () => {
-    renderWithProviders(<PageGeneral {...props} organizationMaxLimitReached={true} />)
+    renderWithProviders(<AuditLogs {...props} organizationMaxLimitReached={true} />)
 
     screen.getByText(/days limit reached/)
     const upgradeButton = screen.getByRole('button', { name: /Upgrade plan/i })
@@ -112,7 +112,7 @@ describe.skip('PageGeneral', () => {
   })
 
   it('should call showIntercom when clicking upgrade plan button', async () => {
-    const { userEvent } = renderWithProviders(<PageGeneral {...props} organizationMaxLimitReached={true} />)
+    const { userEvent } = renderWithProviders(<AuditLogs {...props} organizationMaxLimitReached={true} />)
 
     const upgradeButton = screen.getByRole('button', { name: /Upgrade plan/i })
     await userEvent.click(upgradeButton)
@@ -121,7 +121,7 @@ describe.skip('PageGeneral', () => {
   })
 
   it('should render locked placeholder rows when organizationMaxLimitReached', () => {
-    renderWithProviders(<PageGeneral {...props} organizationMaxLimitReached={true} />)
+    renderWithProviders(<AuditLogs {...props} organizationMaxLimitReached={true} />)
 
     // Should render the upgrade button and limit reached message
     screen.getByText(/days limit reached/)
@@ -138,7 +138,7 @@ describe.skip('PageGeneral', () => {
       },
       created_at: '2022-07-28T15:04:33.511216Z',
     }
-    renderWithProviders(<PageGeneral {...props} isLoading={false} events={[]} organization={customOrganization} />)
+    renderWithProviders(<AuditLogs {...props} isLoading={false} events={[]} organization={customOrganization} />)
 
     screen.getByText(/we retain logs for a maximum of 90 days/i)
   })
@@ -154,7 +154,7 @@ describe.skip('PageGeneral', () => {
       created_at: '2022-07-28T15:04:33.511216Z',
     }
     renderWithProviders(
-      <PageGeneral
+      <AuditLogs
         {...props}
         organizationMaxLimitReached={true}
         organization={customOrganization}
@@ -166,7 +166,7 @@ describe.skip('PageGeneral', () => {
   })
 
   it('should handle custom page size in pagination', () => {
-    renderWithProviders(<PageGeneral {...props} pageSize="50" />)
+    renderWithProviders(<AuditLogs {...props} pageSize="50" />)
 
     const select = screen.getByTestId('select-page-size') as HTMLSelectElement
     expect(select.value).toBe('50')
@@ -177,7 +177,7 @@ describe.skip('PageGeneral', () => {
       ...props.queryParams,
       eventType: OrganizationEventType.DEPLOYED,
     }
-    const { container } = renderWithProviders(<PageGeneral {...props} queryParams={queryParamsWithFilters} />)
+    const { container } = renderWithProviders(<AuditLogs {...props} queryParams={queryParamsWithFilters} />)
 
     // Verify the component renders with the filter
     expect(container).toBeTruthy()

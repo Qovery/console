@@ -8,12 +8,12 @@ import { DEFAULT_PAGE_SIZE } from '@qovery/shared/router'
 import { ALL, type NavigationLevel, type SelectedItem, type TableFilterProps } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import PageGeneral from '../page-general/page-general'
+import { AuditLogs } from '../audit-logs/audit-logs'
 import { initializeSelectedItemsFromQueryParams } from '../utils/target-type-selection-utils'
 
 const route = getRouteApi('/_authenticated/organization/$organizationId/audit-logs')
 
-export function AuditLogsFeature() {
+export function AuditLogsView() {
   useDocumentTitle('Audit Logs - Qovery')
   const { organizationId = '' } = useParams({ strict: false })
 
@@ -219,7 +219,7 @@ export function AuditLogsFeature() {
   }
 
   return (
-    <PageGeneral
+    <AuditLogs
       events={eventsData?.events ?? []}
       organizationMaxLimitReached={eventsData?.organization_max_limit_reached ?? false}
       isLoading={isLoading}
@@ -246,4 +246,4 @@ export function AuditLogsFeature() {
   )
 }
 
-export default AuditLogsFeature
+export default AuditLogsView
