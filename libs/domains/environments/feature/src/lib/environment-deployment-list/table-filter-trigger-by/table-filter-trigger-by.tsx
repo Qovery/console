@@ -100,7 +100,7 @@ export function TableFilterTriggerBy({
           {column.getIsFiltered() ? (
             <button
               type="button"
-              className="absolute right-0 h-7 cursor-pointer px-2 text-center leading-7 text-white"
+              className="absolute right-0 h-7 cursor-pointer px-2 text-center leading-7 text-neutralInvert"
               onClick={clearFilter}
             >
               <Icon iconName="xmark" />

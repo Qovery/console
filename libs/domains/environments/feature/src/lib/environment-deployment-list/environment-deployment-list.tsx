@@ -110,7 +110,7 @@ export function EnvironmentDeploymentList() {
                 clsx(
                   'flex items-center justify-between before:absolute before:-top-[1px] before:left-0 before:block before:h-[calc(100%+2px)] before:w-1',
                   {
-                    'before:bg-brand-500': [
+                    'before:bg-surface-brand-solid': [
                       'DEPLOYING',
                       'RESTARTING',
                       'BUILDING',
@@ -118,7 +118,7 @@ export function EnvironmentDeploymentList() {
                       'STOPPING',
                       'CANCELING',
                     ].includes(state),
-                    'before:bg-neutral-300': [
+                    'before:bg-neutral-subtle': [
                       'QUEUED',
                       'DEPLOYMENT_QUEUED',
                       'DELETE_QUEUED',
@@ -130,7 +130,7 @@ export function EnvironmentDeploymentList() {
               )}
             >
               {state === 'QUEUED' ? (
-                <div className="flex flex-col gap-1 text-sm text-neutral-350">
+                <div className="flex flex-col gap-1 text-sm text-neutral-subtle">
                   <span className="font-medium">In queue...</span>
                   <span>--</span>
                 </div>
@@ -247,7 +247,7 @@ export function EnvironmentDeploymentList() {
             return (
               <>
                 <span className="text-sm font-medium">{upperCaseFirstLetter(value)}</span>
-                <span className="text-xs text-neutral-350">{count}</span>
+                <span className="text-xs text-neutral-subtle">{count}</span>
               </>
             )
           },
@@ -337,7 +337,7 @@ export function EnvironmentDeploymentList() {
                 'DELETE_QUEUED',
                 'STOP_QUEUED',
                 'RESTART_QUEUED',
-                () => <span className="text-neutral-350">--</span>
+                () => <span className="text-neutral-subtle">--</span>
               )
               .otherwise(() => (
                 <span className="flex items-center gap-1 text-neutral-subtle">
@@ -346,7 +346,7 @@ export function EnvironmentDeploymentList() {
                 </span>
               ))
           } else {
-            return <span className="text-neutral-350">---</span>
+            return <span className="text-neutral-subtle">---</span>
           }
         },
       }),
@@ -476,7 +476,7 @@ export function EnvironmentDeploymentList() {
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
-              <Table.Row className="h-[68px] border-neutral last:!border-b">
+              <Table.Row className="h-[68px] border-neutral last:!border-b hover:bg-surface-neutral-subtle">
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}
