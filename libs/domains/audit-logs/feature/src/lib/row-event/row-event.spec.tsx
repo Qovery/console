@@ -1,13 +1,24 @@
 import { type OrganizationEventResponse } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import RowEvent, { type RowEventProps } from './row-event'
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: '1' }),
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
+  }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+    <a {...props} href={`${props.to}`}>
+      {children}
+    </a>
+  ),
 }))
 
 const mockEvent: OrganizationEventResponse = eventsFactoryMock(1)[0]
@@ -19,7 +30,7 @@ const props: RowEventProps = {
   columnsWidth: '',
 }
 
-describe.skip('RowEvent', () => {
+describe('RowEvent', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<RowEvent {...props} />)
     expect(baseElement).toBeTruthy()
