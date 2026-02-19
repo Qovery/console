@@ -54,10 +54,8 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
   // It's not so accurate, but it's a good enough approximation for now
   const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
   const remainingTrialDay = props.currentCost?.remaining_trial_day ?? 0
-  const hasDxAuth = Boolean(userSignUp?.dx_auth)
-  const showTrialCallout =
-    remainingTrialDay !== undefined && remainingTrialDay > 0 && !props.creditCardLoading && !hasDxAuth
-  const showErrorCallout = (props.hasCreditCard ?? Boolean(props.creditCard)) || hasDxAuth
+  const showTrialCallout = remainingTrialDay !== undefined && remainingTrialDay > 0 && !props.creditCardLoading
+  const hasNoCreditCard = !(props.hasCreditCard ?? Boolean(props.creditCard)) && !userSignUp?.dx_auth
 
   // This function is used to get the trial start date based on the remaining trial days from the API
   const trialStartDate = useMemo(() => {
@@ -83,31 +81,31 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
     <div className="flex w-full max-w-[832px] flex-col justify-between">
       <Section className="p-8">
         {showTrialCallout && (
-          <Callout.Root color={showErrorCallout ? 'yellow' : 'red'} className="mb-8 items-center">
+          <Callout.Root color={hasNoCreditCard ? 'red' : 'yellow'} className="mb-8 items-center">
             <Callout.Text>
               <Callout.TextHeading>
                 {/* Add + 1 because Chargebee return 0 when the trial is ending today */}
-                {showErrorCallout
-                  ? `Your free trial plan expires ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')} from now`
-                  : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')}`}
+                {hasNoCreditCard
+                  ? `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')}`
+                  : `Your free trial plan expires ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')} from now`}
               </Callout.TextHeading>
-              {showErrorCallout ? (
+              {hasNoCreditCard ? (
+                <>Add a payment method to avoid service interruption at the end of your trial.</>
+              ) : (
                 <>
                   You have contracted a free 14-days trial on{' '}
                   {trialStartDate ? format(trialStartDate, 'MMMM d, yyyy') : '...'}. At the end of this plan your user
                   subscription will start. You cancel your trial by deleting your organization.
                 </>
-              ) : (
-                <>Add a payment method to avoid service interruption at the end of your trial.</>
               )}
             </Callout.Text>
             <Button
               size="sm"
               variant="solid"
-              color={showErrorCallout ? 'yellow' : 'red'}
-              onClick={() => (showErrorCallout ? props.onCancelTrialClick?.() : props.onAddCreditCardClick?.())}
+              color={hasNoCreditCard ? 'red' : 'yellow'}
+              onClick={() => (hasNoCreditCard ? props.onAddCreditCardClick?.() : props.onCancelTrialClick?.())}
             >
-              {showErrorCallout ? 'Cancel free trial' : 'Add credit card'}
+              {hasNoCreditCard ? 'Add credit card' : 'Cancel free trial'}
             </Button>
           </Callout.Root>
         )}
