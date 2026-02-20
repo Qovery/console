@@ -17,8 +17,8 @@ import { P, match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
-  ActionToolbar,
   ActionTriggerStatusChip,
+  Button,
   DropdownMenu,
   EmptyState,
   Icon,
@@ -108,7 +108,7 @@ export function EnvironmentDeploymentList() {
             <div
               className={twMerge(
                 clsx(
-                  'flex items-center justify-between before:absolute before:-top-[1px] before:left-0 before:block before:h-[calc(100%+2px)] before:w-1',
+                  'flex w-full items-center justify-between before:absolute before:-top-[1px] before:left-0 before:block before:h-[calc(100%+2px)] before:w-1',
                   {
                     'before:bg-surface-brand-solid': [
                       'DEPLOYING',
@@ -148,7 +148,7 @@ export function EnvironmentDeploymentList() {
                   </span>
                 </div>
               )}
-              <ActionToolbar.Root className="min-w-28 text-right">
+              <div className="flex items-center gap-2">
                 {match(state)
                   .with(
                     'DEPLOYING',
@@ -164,12 +164,7 @@ export function EnvironmentDeploymentList() {
                     () => (
                       <DropdownMenu.Root>
                         <DropdownMenu.Trigger asChild>
-                          <ActionToolbar.Button
-                            aria-label="Manage Deployment"
-                            color="neutral"
-                            size="md"
-                            variant="outline"
-                          >
+                          <Button aria-label="Manage Deployment" color="neutral" size="md" variant="outline">
                             <Tooltip content="Manage Deployment">
                               <div className="flex h-full w-full items-center justify-center">
                                 {match(state)
@@ -179,15 +174,15 @@ export function EnvironmentDeploymentList() {
                                     'STOP_QUEUED',
                                     'RESTART_QUEUED',
                                     'QUEUED',
-                                    () => <Icon iconName="clock" iconStyle="regular" className="mr-3" />
+                                    () => <Icon iconName="clock" iconStyle="regular" className="mr-2 text-current" />
                                   )
                                   .otherwise(() => (
-                                    <Icon iconName="loader" className="mr-3 animate-spin" />
+                                    <Icon iconName="loader" className="mr-2 animate-spin text-current" />
                                   ))}
-                                <Icon iconName="chevron-down" />
+                                <Icon iconName="chevron-down" className="text-current" />
                               </div>
                             </Tooltip>
-                          </ActionToolbar.Button>
+                          </Button>
                         </DropdownMenu.Trigger>
                         <DropdownMenu.Content>
                           {(isCancelBuildAvailable(state) || state === 'QUEUED') && (
@@ -211,21 +206,23 @@ export function EnvironmentDeploymentList() {
                     )
                   )
                   .otherwise(() => null)}
-              </ActionToolbar.Root>
-              <Tooltip content="Pipeline">
-                <Link
-                  as="button"
-                  variant="outline"
-                  to={
-                    state === 'QUEUED'
-                      ? ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id)
-                      : ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-                        ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id ?? '' : '')
-                  }
-                >
-                  <Icon iconName="timeline" className="text-neutral-subtle" />
-                </Link>
-              </Tooltip>
+                <Tooltip content="Pipeline">
+                  <Link
+                    as="button"
+                    variant="outline"
+                    iconOnly
+                    size="md"
+                    to={
+                      state === 'QUEUED'
+                        ? ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id)
+                        : ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
+                          ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id ?? '' : '')
+                    }
+                  >
+                    <Icon iconName="timeline" className="text-neutral-subtle" />
+                  </Link>
+                </Tooltip>
+              </div>
             </div>
           )
         },
@@ -417,13 +414,7 @@ export function EnvironmentDeploymentList() {
   })
 
   if (!deploymentHistory.length && !deploymentHistoryQueue.length) {
-    return (
-      <EmptyState
-        title="No deployment started"
-        description="Manage the deployments from the overview tab"
-        className="mt-2 rounded-t-sm pt-10"
-      />
-    )
+    return <EmptyState title="No deployment started" description="Manage the deployments from the overview tab" />
   }
 
   return (
@@ -471,7 +462,7 @@ export function EnvironmentDeploymentList() {
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
-              <Table.Row className="h-[68px] border-neutral hover:bg-surface-neutral-subtle">
+              <Table.Row className="h-[68px] border-neutral">
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}
