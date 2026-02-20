@@ -85,9 +85,14 @@ export function TableFilterTriggerBy({
             >
               {column.getIsFiltered() ? (
                 <span className="block max-w-52 truncate capitalize">
-                  {displayValue !== 'API' && displayValue !== 'CLI'
-                    ? displayValue?.toLowerCase().replace('_', ' ') ?? ''
-                    : displayValue}
+                  <Truncate
+                    text={
+                      displayValue !== 'API' && displayValue !== 'CLI'
+                        ? displayValue?.toLowerCase().replace('_', ' ') ?? ''
+                        : displayValue
+                    }
+                    truncateLimit={20}
+                  />
                 </span>
               ) : (
                 <>

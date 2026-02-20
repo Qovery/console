@@ -428,7 +428,7 @@ export function EnvironmentDeploymentList() {
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full min-w-[1080px] overflow-x-scroll text-ssm">
+      <Table.Root className="w-full text-ssm">
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id}>
