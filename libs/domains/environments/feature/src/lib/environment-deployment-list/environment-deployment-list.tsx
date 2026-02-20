@@ -425,7 +425,7 @@ export function EnvironmentDeploymentList() {
             <Table.Row key={headerGroup.id}>
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} font-medium`}
+                  className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} group font-medium`}
                   key={header.id}
                   style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                 >
@@ -446,9 +446,14 @@ export function EnvironmentDeploymentList() {
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {match(header.column.getIsSorted())
-                        .with('asc', () => <Icon className="text-ssm" iconName="arrow-down" />)
-                        .with('desc', () => <Icon className="text-ssm" iconName="arrow-up" />)
-                        .with(false, () => null)
+                        .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
+                        .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
+                        .with(false, () => (
+                          <Icon
+                            className="text-xs opacity-0 transition-opacity group-hover:opacity-100"
+                            iconName="arrow-down-arrow-up"
+                          />
+                        ))
                         .exhaustive()}
                     </button>
                   ) : (

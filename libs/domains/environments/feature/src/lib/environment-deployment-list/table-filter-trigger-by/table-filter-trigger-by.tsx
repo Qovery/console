@@ -113,7 +113,7 @@ export function TableFilterTriggerBy({
           ) : null}
         </div>
         <DropdownMenu.Content asChild>
-          <Popover.Content className="max-h-80 w-60 overflow-y-auto p-2">
+          <Popover.Content className="max-h-80 w-60 overflow-y-auto overflow-x-hidden p-2">
             <span className="px-2 pb-2 pt-1 text-sm text-neutral-subtle">Trigger by</span>
             {sortedUniqueValues.map(
               ([value]) =>
