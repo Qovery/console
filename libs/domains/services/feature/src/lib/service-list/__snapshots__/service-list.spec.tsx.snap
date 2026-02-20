@@ -6,7 +6,7 @@ exports[`ServiceList should match snapshot 1`] = `
     class="flex grow flex-col justify-between"
   >
     <div
-      class="overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral"
+      class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral"
     >
       <table
         class="divide-y divide-neutral text-neutral w-full min-w-[1080px] overflow-x-scroll text-ssm"
