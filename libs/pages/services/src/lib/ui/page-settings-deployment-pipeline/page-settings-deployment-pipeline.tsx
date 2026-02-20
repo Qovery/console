@@ -24,6 +24,8 @@ import { type StageRequest } from '../../feature/page-settings-deployment-pipeli
 import { StageModalFeature } from '../../feature/page-settings-deployment-pipeline-feature/stage-modal-feature/stage-modal-feature'
 import { StageOrderModalFeature } from '../../feature/page-settings-deployment-pipeline-feature/stage-order-modal-feature/stage-order-modal-feature'
 
+export const SKIPPED_STAGE_ID = '__VIRTUAL_SKIPPED__'
+
 export interface PageSettingsDeploymentPipelineProps {
   onSubmit: (newStage: StageRequest, prevStage: StageRequest) => void
   setStages: Dispatch<SetStateAction<DeploymentStageResponse[] | undefined>>
@@ -92,9 +94,10 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                 {stages?.map((stage, index) => {
                   const { id: stageId, deployment_order, name, description, services: stageServices } = stage
                   const isLast = index !== stages.length - 1
+                  const isVirtualSkippedStage = stageId === SKIPPED_STAGE_ID
                   return (
                     <div className="relative mr-4" key={stageId}>
-                      {isLast && (
+                      {isLast && !isVirtualSkippedStage && (
                         <svg
                           data-testid={`arrow-${stageId}`}
                           className="absolute left-full shrink-0"
@@ -139,9 +142,12 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                         columnId={stageId}
                         shouldHighlightIndicator={false}
                         heading={
-                          <div className="flex grow items-center">
-                            <BadgeDeploymentOrder order={deployment_order} />
+                          <div className="flex grow items-center gap-1.5">
+                            {!isVirtualSkippedStage && <BadgeDeploymentOrder order={deployment_order} />}
                             <span className="flex items-center gap-1.5 text-sm font-bold text-neutral-400">
+                              {isVirtualSkippedStage && (
+                                <Icon iconName="ban" iconStyle="regular" className="text-neutral-400" />
+                              )}
                               <Truncate truncateLimit={28} text={upperCaseFirstLetter(name) || ''} />
                               {description && (
                                 <Tooltip content={description}>
@@ -155,67 +161,86 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                                 </Tooltip>
                               )}
                             </span>
-                            <DropdownMenu.Root>
-                              <DropdownMenu.Trigger asChild>
-                                <Button data-testid="btn-more-menu" color="neutral" variant="plain" className="ml-auto">
-                                  <Icon iconName="ellipsis" />
-                                </Button>
-                              </DropdownMenu.Trigger>
-                              <DropdownMenu.Content>
-                                <DropdownMenu.Item
-                                  data-testid="menuItem"
-                                  icon={<Icon iconName="pen" />}
-                                  onSelect={() =>
-                                    openModal({
-                                      content: (
-                                        <StageModalFeature
-                                          onClose={closeModal}
-                                          environmentId={environmentId}
-                                          stage={stage}
-                                        />
-                                      ),
-                                    })
-                                  }
-                                >
-                                  Edit stage
-                                </DropdownMenu.Item>
-                                <DropdownMenu.Item
-                                  data-testid="menuItem"
-                                  icon={<Icon iconName="arrow-down-1-9" />}
-                                  onSelect={() =>
-                                    openModal({
-                                      content: <StageOrderModalFeature onClose={closeModal} stages={stages} />,
-                                    })
-                                  }
-                                >
-                                  Edit order
-                                </DropdownMenu.Item>
-                                <DropdownMenu.Separator />
-                                <DropdownMenu.Item
-                                  data-testid="menuItem"
-                                  color="red"
-                                  icon={<Icon iconName="trash" />}
-                                  onSelect={() =>
-                                    openModalConfirmation({
-                                      title: 'Delete this stage',
-                                      confirmationMethod: 'action',
-                                      name,
-                                      action: () => deleteEnvironmentDeploymentStage({ stageId: stageId }),
-                                    })
-                                  }
-                                >
-                                  Delete stage
-                                </DropdownMenu.Item>
-                              </DropdownMenu.Content>
-                            </DropdownMenu.Root>
+                            {!isVirtualSkippedStage && (
+                              <DropdownMenu.Root>
+                                <DropdownMenu.Trigger asChild>
+                                  <Button
+                                    data-testid="btn-more-menu"
+                                    color="neutral"
+                                    variant="plain"
+                                    className="ml-auto"
+                                  >
+                                    <Icon iconName="ellipsis" />
+                                  </Button>
+                                </DropdownMenu.Trigger>
+                                <DropdownMenu.Content>
+                                  <DropdownMenu.Item
+                                    data-testid="menuItem"
+                                    icon={<Icon iconName="pen" />}
+                                    onSelect={() =>
+                                      openModal({
+                                        content: (
+                                          <StageModalFeature
+                                            onClose={closeModal}
+                                            environmentId={environmentId}
+                                            stage={stage}
+                                          />
+                                        ),
+                                      })
+                                    }
+                                  >
+                                    Edit stage
+                                  </DropdownMenu.Item>
+                                  <DropdownMenu.Item
+                                    data-testid="menuItem"
+                                    icon={<Icon iconName="arrow-down-1-9" />}
+                                    onSelect={() =>
+                                      openModal({
+                                        content: <StageOrderModalFeature onClose={closeModal} stages={stages} />,
+                                      })
+                                    }
+                                  >
+                                    Edit order
+                                  </DropdownMenu.Item>
+                                  <DropdownMenu.Separator />
+                                  <DropdownMenu.Item
+                                    data-testid="menuItem"
+                                    color="red"
+                                    icon={<Icon iconName="trash" />}
+                                    onSelect={() =>
+                                      openModalConfirmation({
+                                        title: 'Delete this stage',
+                                        confirmationMethod: 'action',
+                                        name,
+                                        action: () => deleteEnvironmentDeploymentStage({ stageId: stageId }),
+                                      })
+                                    }
+                                  >
+                                    Delete stage
+                                  </DropdownMenu.Item>
+                                </DropdownMenu.Content>
+                              </DropdownMenu.Root>
+                            )}
                           </div>
                         }
                       >
                         {!stageServices || stageServices.length === 0 ? (
                           <div className="px-3 py-6 text-center" data-testid="placeholder-stage">
-                            <Icon iconName="wave-pulse" className="text-neutral-350" />
+                            <Icon
+                              iconName={isVirtualSkippedStage ? 'ban' : 'wave-pulse'}
+                              className="text-neutral-350"
+                            />
                             <p className="mt-1 text-xs font-medium text-neutral-350">
-                              No service for this stage. <br /> Please drag and drop a service.
+                              {isVirtualSkippedStage ? (
+                                <>
+                                  Skipped services are excluded from environment-level deployments. <br /> Drag services
+                                  here to skip them.
+                                </>
+                              ) : (
+                                <>
+                                  No service for this stage. <br /> Please drag and drop a service.
+                                </>
+                              )}
                             </p>
                           </div>
                         ) : (
@@ -226,12 +251,14 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                               const contentWithParams = service?.serviceType === 'DATABASE'
                               return (
                                 <Board.Card key={id} cardId={id} columnId={stage.id}>
-                                  <div className="flex flex-row items-center">
+                                  <div
+                                    className={`flex flex-row items-center ${isVirtualSkippedStage ? 'opacity-60' : ''}`}
+                                  >
                                     {service && (
                                       <ServiceAvatar className="mr-2" service={service} size="sm" border="solid" />
                                     )}
                                     <div
-                                      className={`font-medium text-neutral-400 ${contentWithParams ? 'text-xs' : 'text-ssm'}`}
+                                      className={`font-medium ${isVirtualSkippedStage ? 'text-neutral-350' : 'text-neutral-400'} ${contentWithParams ? 'text-xs' : 'text-ssm'}`}
                                     >
                                       <Truncate
                                         truncateLimit={contentWithParams ? 32 : 27}
