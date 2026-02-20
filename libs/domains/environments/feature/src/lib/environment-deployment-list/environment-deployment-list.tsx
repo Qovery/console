@@ -130,12 +130,12 @@ export function EnvironmentDeploymentList() {
               )}
             >
               {state === 'QUEUED' ? (
-                <div className="flex flex-col gap-1 text-sm text-neutral-subtle">
+                <div className="flex flex-col gap-0.5 text-sm text-neutral-subtle">
                   <span className="font-medium">In queue...</span>
                   <span>--</span>
                 </div>
               ) : (
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-0.5">
                   <span className="text-sm font-medium text-neutral">
                     {dateFullFormat(
                       isDeploymentHistory(data) ? data.auditing_data.created_at : '',
@@ -211,25 +211,21 @@ export function EnvironmentDeploymentList() {
                     )
                   )
                   .otherwise(() => null)}
-                <Tooltip content="Pipeline">
-                  <ActionToolbar.Button asChild className="justify-center px-2">
-                    <Link
-                      to={
-                        state === 'QUEUED'
-                          ? ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id)
-                          : ENVIRONMENT_LOGS_URL(
-                              environment?.organization.id,
-                              environment?.project.id,
-                              environment?.id
-                            ) +
-                            ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id ?? '' : '')
-                      }
-                    >
-                      <Icon iconName="timeline" />
-                    </Link>
-                  </ActionToolbar.Button>
-                </Tooltip>
               </ActionToolbar.Root>
+              <Tooltip content="Pipeline">
+                <Link
+                  as="button"
+                  variant="outline"
+                  to={
+                    state === 'QUEUED'
+                      ? ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id)
+                      : ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
+                        ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id ?? '' : '')
+                  }
+                >
+                  <Icon iconName="timeline" className="text-neutral-subtle" />
+                </Link>
+              </Tooltip>
             </div>
           )
         },
@@ -274,7 +270,7 @@ export function EnvironmentDeploymentList() {
                       )
                       .otherwise(() => undefined)}
                   />
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-0.5">
                     <span className="font-medium text-neutral">{upperCaseFirstLetter(trigger_action)}</span>
                     <span className="text-ssm text-neutral-subtle">{upperCaseFirstLetter(action_status)}</span>
                   </div>
@@ -284,7 +280,7 @@ export function EnvironmentDeploymentList() {
             .otherwise(() => (
               <div className="flex items-center gap-4">
                 <ActionTriggerStatusChip size="md" status="QUEUED" triggerAction={trigger_action} />
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-0.5">
                   <span className="font-medium text-neutral">{upperCaseFirstLetter(trigger_action)}</span>
                   <span className="text-ssm text-neutral-subtle">In queue...</span>
                 </div>
