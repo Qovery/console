@@ -471,7 +471,7 @@ export function EnvironmentDeploymentList() {
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
-              <Table.Row className="h-[68px] border-neutral last:!border-b hover:bg-surface-neutral-subtle">
+              <Table.Row className="h-[68px] border-neutral hover:bg-surface-neutral-subtle">
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}
