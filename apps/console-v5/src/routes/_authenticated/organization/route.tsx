@@ -117,7 +117,7 @@ const ENVIRONMENT_TABS: NavigationTab[] = [
   {
     id: 'deployments',
     label: 'Deployments',
-    iconName: 'rocket-launch',
+    iconName: 'rocket',
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments',
   },
   {
