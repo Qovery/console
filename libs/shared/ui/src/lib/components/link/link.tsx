@@ -94,10 +94,10 @@ export type LinkProps =
 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(props, forwardedRef) {
   return match(props)
-    .with({ as: 'button' }, ({ className, children, color, radius, size, variant, as, params, ...rest }) => (
+    .with({ as: 'button' }, ({ className, children, color, radius, size, variant, as, params, iconOnly, ...rest }) => (
       <RouterLink
         ref={forwardedRef}
-        className={twMerge(buttonVariants({ color, radius, size, variant }), className)}
+        className={twMerge(buttonVariants({ color, radius, size, variant, iconOnly }), className)}
         {...rest}
         {...(params ? { params: params as unknown as ComponentProps<typeof RouterLink>['params'] } : {})}
       >

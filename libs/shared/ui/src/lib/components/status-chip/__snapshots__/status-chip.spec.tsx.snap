@@ -67,7 +67,7 @@ exports[`StatusChip should match snapshot for QUEUED status 1`] = `
     data-state="closed"
   >
     <svg
-      class="text-neutral-300 h-full w-full"
+      class="text-neutral-disabled h-full w-full"
       fill="none"
       height="16"
       viewBox="0 0 16 16"

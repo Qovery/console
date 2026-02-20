@@ -1,4 +1,5 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { Link } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
@@ -9,7 +10,6 @@ import {
   type QueuedDeploymentRequestWithStagesStagesInner,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
@@ -35,7 +35,6 @@ const MAX_VISIBLE_STAGES = 4
 // for the DropdownMenu when using Radix, inspired by the discussion in this issue:
 // https://github.com/radix-ui/primitives/issues/1294
 export function DropdownServices({ environment, deploymentHistory, stages }: DropdownServicesProps) {
-  const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState<number | undefined>()
   const [direction, setDirection] = useState(0)
@@ -113,7 +112,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
             }}
             onPointerLeave={() => setOpen(false)}
             style={{ pointerEvents: 'auto' }}
-            className="flex items-center outline-none after:block after:h-[1px] after:w-0.5 after:bg-neutral-250 after:content-[''] last:after:hidden focus:outline-none"
+            className="flex items-center py-2 outline-none after:block after:h-[1px] after:w-0.5 after:border-b after:border-neutral after:content-[''] last:after:hidden focus:outline-none"
           >
             <StageStatusChip status={stage.status} />
           </DropdownMenu.Trigger>
@@ -154,7 +153,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
           onPointerEnter={() => setOpen(true)}
           onPointerLeave={() => setOpen(false)}
           className={clsx(
-            'relative flex max-h-96 w-56 animate-[scalein_0.18s_ease_both] flex-col overflow-y-scroll rounded-md bg-neutral-50 p-2 shadow-lg shadow-gray-900/10',
+            'relative flex max-h-96 w-56 animate-[scalein_0.18s_ease_both] flex-col overflow-y-scroll rounded-md border border-neutral bg-surface-neutral-subtle shadow-lg shadow-surface-neutral-subtle',
             {
               'hidden opacity-0': currentIndex === undefined,
               '-left-[26px]': stages.length === 3,
@@ -194,12 +193,12 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                     <div
                       key={index}
                       className={twMerge(
-                        clsx('hidden w-56 rounded border border-neutral-200', {
+                        clsx('hidden w-56 rounded', {
                           'flex flex-col': currentIndex === index,
                         })
                       )}
                     >
-                      <div className="flex h-[54px] items-center gap-4 rounded-t bg-neutral-100 px-2 py-2.5">
+                      <div className="flex h-[54px] items-center gap-4 rounded-t bg-surface-neutral-subtle px-2 py-2.5">
                         <Indicator
                           align="end"
                           side="right"
@@ -209,7 +208,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                 <span>
                                   <TriggerActionIcon
                                     triggerAction={deploymentHistory.trigger_action}
-                                    className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-100 text-xs text-neutral-350"
+                                    className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface-neutral-subtle text-xs text-neutral-subtle"
                                   />
                                 </span>
                               </Tooltip>
@@ -222,7 +221,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                             </span>
                           </Tooltip>
                         </Indicator>
-                        <div className="flex flex-col text-neutral-400">
+                        <div className="flex flex-col text-neutral">
                           <span className="text-ssm font-medium">{upperCaseFirstLetter(stage.name)}</span>
                           {match(stage)
                             .with(P.when(isDeploymentStageQueue), () => null)
@@ -240,7 +239,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                             return (
                               <DropdownMenu.Item
                                 key={index}
-                                className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
+                                className="flex h-[50px] w-full items-center gap-2 border-t border-neutral pl-2 pr-3 text-xs text-neutral focus:outline-none"
                                 asChild
                               >
                                 <Link
@@ -251,7 +250,6 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                       environment.id
                                     ) + ENVIRONMENT_STAGES_URL()
                                   }
-                                  state={{ prevUrl: pathname }}
                                 >
                                   {service.details && (
                                     <ServiceAvatar
@@ -288,7 +286,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                           s.services.map((service, index) => (
                             <DropdownMenu.Item
                               key={index}
-                              className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
+                              className="flex h-[50px] w-full items-center gap-2 border-t border-neutral bg-surface-neutral pl-2 pr-3 text-xs text-neutral hover:bg-surface-neutral-subtle focus:outline-none"
                               asChild
                             >
                               <Link
@@ -303,7 +301,6 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                     service.identifier.execution_id
                                   )
                                 }
-                                state={{ prevUrl: pathname }}
                               >
                                 {service.details && (
                                   <ServiceAvatar

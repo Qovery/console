@@ -8,7 +8,7 @@ export const CanceledIcon = forwardRef<SVGSVGElement, IconSVGProps>(function Can
 ) {
   return (
     <svg
-      className={twMerge('text-neutral-300', className)}
+      className={twMerge('text-neutral-disabled', className)}
       xmlns="http://www.w3.org/2000/svg"
       width="16"
       height="16"
