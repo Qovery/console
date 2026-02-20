@@ -38,6 +38,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
                 Need help here?
               </span>
             </button>
+             
           </div>
         </div>
       </div>

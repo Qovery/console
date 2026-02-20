@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { type Value } from '@qovery/shared/interfaces'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
-import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
 export interface InputSelectSmallProps {
   name: string
