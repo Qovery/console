@@ -83,7 +83,6 @@ import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceLinksPopover } from '../service-links-popover/service-links-popover'
 import { ServiceTemplateIndicator } from '../service-template-indicator/service-template-indicator'
 import { ServiceListActionBar } from './service-list-action-bar'
-import { ServiceListSkeleton } from './service-list-skeleton'
 
 const { Table } = TablePrimitives
 
@@ -325,7 +324,7 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
   const organizationId = environment.organization.id || ''
   const projectId = environment.project.id || ''
 
-  const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
+  const { data: services = [] } = useServices({ environmentId, suspense: true })
   const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
     clusterId,
     environmentId,
@@ -752,10 +751,6 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
       maxSize: Number.MAX_SAFE_INTEGER,
     },
   })
-
-  if (services.length === 0 && isServicesLoading) {
-    return <ServiceListSkeleton />
-  }
 
   if (services.length === 0) {
     return (

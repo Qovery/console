@@ -14,7 +14,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
         <thead>
           <tr>
             <th
-              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+              class="h-11 border-neutral px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
             >
               <button
                 class="flex items-center gap-1 cursor-pointer select-none"
@@ -28,7 +28,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               </button>
             </th>
             <th
-              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+              class="h-11 border-neutral px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
             >
               <button
                 class="flex items-center gap-1 cursor-pointer select-none"
@@ -38,7 +38,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               </button>
             </th>
             <th
-              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+              class="h-11 border-neutral px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
             >
               <button
                 class="flex items-center gap-1 cursor-pointer select-none"
@@ -48,7 +48,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               </button>
             </th>
             <th
-              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+              class="h-11 border-neutral px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
             >
               <button
                 class="flex items-center gap-1 cursor-pointer select-none"
@@ -58,7 +58,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               </button>
             </th>
             <th
-              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+              class="h-11 border-neutral px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
             >
               <button
                 class="flex items-center gap-1 cursor-pointer select-none"
@@ -68,7 +68,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               </button>
             </th>
             <th
-              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+              class="h-11 border-neutral px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
             >
               <button
                 class="flex items-center gap-1 cursor-pointer select-none"
@@ -78,7 +78,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               </button>
             </th>
             <th
-              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+              class="h-11 border-neutral px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
             >
               <button
                 class="flex items-center gap-1 cursor-pointer select-none"
@@ -88,7 +88,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               </button>
             </th>
             <th
-              class="h-11 px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
+              class="h-11 border-neutral px-4 text-left font-code font-medium first:w-1/4 first:pl-[52px]"
             >
               <button
                 class="flex items-center gap-1 cursor-pointer select-none"
@@ -106,7 +106,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
             class="hover:bg-neutral-100"
           >
             <td
-              class="h-14 px-4 py-0 text-nowrap"
+              class="h-14 border-neutral px-4 py-0 text-nowrap"
             >
               <button
                 class="text-md pointer inline-flex h-14 w-9 items-center justify-start text-neutral-350"
@@ -124,7 +124,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               </button>
             </td>
             <td
-              class="h-14 px-4 py-0"
+              class="h-14 border-neutral px-4 py-0"
             >
               <span
                 class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-full gap-2 capitalize"
@@ -169,30 +169,30 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               </span>
             </td>
             <td
-              class="h-14 px-4 py-0"
+              class="h-14 border-neutral px-4 py-0"
             />
             <td
-              class="h-14 px-4 py-0"
+              class="h-14 border-neutral px-4 py-0"
             >
               30 MiB (20%)
             </td>
             <td
-              class="h-14 px-4 py-0"
+              class="h-14 border-neutral px-4 py-0"
             >
               12 mCPU (5%)
             </td>
             <td
-              class="h-14 px-4 py-0"
+              class="h-14 border-neutral px-4 py-0"
             >
               -
             </td>
             <td
-              class="h-14 px-4 py-0"
+              class="h-14 border-neutral px-4 py-0"
             >
               -
             </td>
             <td
-              class="h-14 px-4 py-0"
+              class="h-14 border-neutral px-4 py-0"
             >
               <i
                 aria-hidden="true"
