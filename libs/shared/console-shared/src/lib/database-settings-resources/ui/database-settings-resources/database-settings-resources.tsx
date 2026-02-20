@@ -152,29 +152,39 @@ export function DatabaseSettingsResources({
           isSetting={isSetting}
         />
       )}
+      {/* Storage is not configurable for Redis managed databases (ElastiCache) - capacity is determined by node type */}
       <Controller
         name="storage"
         control={control}
-        rules={{
-          pattern: {
-            value: /^[0-9]+$/,
-            message: 'Please enter a number.',
-          },
-          min: {
-            value: minStorageValue,
-            message: `Storage must be at least ${minStorageValue} GiB.`,
-          },
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            dataTestId="input-memory-storage"
-            name={field.name}
-            label="Storage (GiB)"
-            value={field.value}
-            onChange={field.onChange}
-            error={error?.message}
-          />
-        )}
+        rules={
+          isManaged && databaseType === 'REDIS'
+            ? undefined
+            : {
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Please enter a number.',
+                },
+                min: {
+                  value: minStorageValue,
+                  message: `Storage must be at least ${minStorageValue} GiB.`,
+                },
+              }
+        }
+        render={({ field, fieldState: { error } }) =>
+          isManaged && databaseType === 'REDIS' ? (
+            // Hidden field to preserve storage value for Redis managed, but it's not used by ElastiCache
+            <input type="hidden" {...field} />
+          ) : (
+            <InputText
+              dataTestId="input-memory-storage"
+              name={field.name}
+              label="Storage (GiB)"
+              value={field.value}
+              onChange={field.onChange}
+              error={error?.message}
+            />
+          )
+        }
       />
       {displayStorageWarning && (
         <Callout.Root className="mt-3" color="yellow">
