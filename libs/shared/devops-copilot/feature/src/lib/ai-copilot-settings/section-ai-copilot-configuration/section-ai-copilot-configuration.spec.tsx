@@ -36,13 +36,6 @@ describe('SectionAICopilotConfiguration', () => {
     mockUseFeatureFlagVariantKey.mockReturnValue('control')
   })
 
-  it('should render section heading', () => {
-    render(<SectionAICopilotConfiguration {...defaultProps} />)
-
-    expect(screen.getByText('AI Copilot Configuration')).toBeInTheDocument()
-    expect(screen.getByText('Configure your Copilot')).toBeInTheDocument()
-  })
-
   it('should show loader when loading', () => {
     const { container } = render(<SectionAICopilotConfiguration {...defaultProps} isLoading={true} />)
 

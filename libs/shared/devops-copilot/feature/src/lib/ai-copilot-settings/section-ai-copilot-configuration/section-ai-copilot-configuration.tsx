@@ -26,8 +26,8 @@ export interface SectionAICopilotConfigurationProps {
 function getDisableConfirmationModal(closeModal: () => void, onDisable: () => void) {
   return (
     <div className="p-6">
-      <h2 className="h4 mb-2 text-neutral-400">Disable AI Copilot</h2>
-      <p className="mb-6 text-sm text-neutral-350">
+      <h2 className="h4 mb-2 text-neutral">Disable AI Copilot</h2>
+      <p className="mb-6 text-sm text-neutral-subtle">
         Are you sure you want to disable AI Copilot? This will stop all AI-powered assistance for your organization.
       </p>
       <div className="flex justify-end gap-3">
@@ -85,37 +85,21 @@ export function SectionAICopilotConfiguration({
 
   return (
     <Section>
-      <div className="mb-8">
-        <Heading className="mb-2">AI Copilot Configuration</Heading>
-        <p className="text-xs text-neutral-400">Configure your Copilot</p>
-      </div>
-      <Callout.Root color="purple" className="mb-6">
-        <Callout.Icon>
-          <Icon iconName="flask" />
-        </Callout.Icon>
-        <Callout.Text>
-          <Callout.TextHeading>Beta Feature</Callout.TextHeading>
-          <Callout.TextDescription>
-            The AI Copilot is currently in beta. This is an experimental feature and functionality may change. Billing
-            terms are not final and will be communicated before any charges apply.
-          </Callout.TextDescription>
-        </Callout.Text>
-      </Callout.Root>
-      <BlockContent title="Configuration" classNameContent="p-0">
+      <BlockContent title="Configuration" classNameContent="p-0" className="m-0">
         {isLoading ? (
           <div className="flex justify-center p-5">
             <LoaderSpinner className="w-5" />
           </div>
         ) : (
           <div className="space-y-6 p-6">
-            <div className={`-mx-6 px-6 ${hasReadWriteAccess ? 'border-b border-neutral-250 pb-6' : ''}`}>
+            <div className={`-mx-6 px-6 ${hasReadWriteAccess ? 'border-b border-neutral pb-6' : ''}`}>
               <div className="flex items-center gap-4">
                 <div className="flex-1">
                   <div className="mb-2 flex items-center">
-                    <Icon iconName="robot" className="mr-2 text-brand-500" />
-                    <p className="text-sm font-medium text-neutral-400">AI Copilot for {organization?.name}</p>
+                    <Icon iconName="robot" className="mr-2 text-brand" />
+                    <p className="text-sm font-medium text-neutral">AI Copilot for {organization?.name}</p>
                   </div>
-                  <p className="text-xs text-neutral-350">AI-powered assistance is currently active</p>
+                  <p className="text-xs text-neutral-subtle">AI-powered assistance is currently active</p>
                 </div>
                 <Button
                   size="md"
@@ -136,8 +120,8 @@ export function SectionAICopilotConfiguration({
               {hasReadWriteAccess && (
                 <>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-neutral-400">Access Mode</label>
-                    <p className="text-xs text-neutral-350">
+                    <label className="text-sm font-medium text-neutral">Access Mode</label>
+                    <p className="text-xs text-neutral-subtle">
                       Choose the level of access the AI Copilot will have on your organization
                     </p>
                   </div>
@@ -166,7 +150,7 @@ export function SectionAICopilotConfiguration({
 
               <Callout.Root color="sky" className="mt-4">
                 <Callout.Icon>
-                  <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                  <Icon iconName="circle-info" iconStyle="regular" />
                 </Callout.Icon>
                 <Callout.Text>
                   <Callout.TextHeading>
