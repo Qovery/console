@@ -12,7 +12,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
-import { useEnvLinks } from '../hooks/use-env-links/use-env-links'
+import { useEnvironmentLinks } from '../hooks/use-env-links/use-env-links'
 import { useServiceType } from '../hooks/use-service-type/use-service-type'
 
 export interface ServiceLinksPopoverProps extends Pick<PopoverContentProps, 'align' | 'side'> {
@@ -33,7 +33,7 @@ export function ServiceLinksPopover({
   side = 'bottom',
 }: ServiceLinksPopoverProps) {
   const { data: serviceType } = useServiceType({ environmentId, serviceId })
-  const { data: links = [] } = useEnvLinks({ environmentId })
+  const { data: links = [] } = useEnvironmentLinks({ environmentId })
 
   // Remove default Qovery links
   const filteredLinks = useMemo(

@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UseEnvLinksProps {
+export interface useEnvironmentLinksProps {
   environmentId: string
   enabled?: boolean
 }
 
-export function useEnvLinks({ environmentId, enabled = true }: UseEnvLinksProps) {
+export function useEnvironmentLinks({ environmentId, enabled = true }: useEnvironmentLinksProps) {
   return useQuery({
     ...queries.environments.listLinks({
       environmentId,

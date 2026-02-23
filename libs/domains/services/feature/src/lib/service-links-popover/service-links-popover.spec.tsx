@@ -15,7 +15,7 @@ const mockUseLinks = jest.fn()
 jest.mock('../hooks/use-env-links/use-env-links', () => {
   return {
     ...jest.requireActual('../hooks/use-env-links/use-env-links'),
-    useEnvLinks: () => mockUseLinks(),
+    useEnvironmentLinks: () => mockUseLinks(),
   }
 })
 
