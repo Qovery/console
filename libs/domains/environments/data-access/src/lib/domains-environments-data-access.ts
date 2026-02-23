@@ -84,6 +84,13 @@ export const environments = createQueryKeys('environments', {
       return result.data.results ?? []
     },
   }),
+  listLinks: ({ environmentId }: { environmentId: string }) => ({
+    queryKey: [environmentId],
+    async queryFn() {
+      const result = await environmentApi.listEnvironmentServicesLinks(environmentId)
+      return result.data.results ?? []
+    },
+  }),
   list: ({ projectId }: { projectId: string }) => ({
     queryKey: [projectId],
     async queryFn() {
