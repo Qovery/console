@@ -1,28 +1,49 @@
-import { type OrganizationAvailableRole } from 'qovery-typescript-axios'
-import { Controller, useFormContext } from 'react-hook-form'
+import { type InviteMemberRequest, type OrganizationAvailableRole } from 'qovery-typescript-axios'
+import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { useCreateInviteMember } from '../../hooks/use-create-invite-member/use-create-invite-member'
 
 export interface CreateModalProps {
-  availableRoles: OrganizationAvailableRole[]
-  onSubmit: () => void
   onClose: () => void
-  loading?: boolean
+  availableRoles: OrganizationAvailableRole[]
+  organizationId?: string
 }
 
 export function CreateModal(props: CreateModalProps) {
-  const { availableRoles } = props
-  const { control } = useFormContext()
+  const { organizationId = '', availableRoles, onClose } = props
+  const { mutateAsync: createInviteMember, isLoading: isLoadingInviteMember } = useCreateInviteMember()
+
+  const methods = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      // default value with admin id
+      role_id: availableRoles[0]?.id,
+    },
+  })
+  const { control } = methods
+
+  const onSubmit = methods.handleSubmit(async (data) => {
+    try {
+      await createInviteMember({
+        organizationId,
+        inviteMemberRequest: data as InviteMemberRequest,
+      })
+      onClose()
+    } catch (error) {
+      console.error(error)
+    }
+  })
 
   return (
-    <ModalCrud
-      title="Invite team member"
-      submitLabel="Send invitation"
-      onSubmit={props.onSubmit}
-      onClose={props.onClose}
-      loading={props.loading}
-    >
-      <div className="flex w-full">
+    <FormProvider {...methods}>
+      <ModalCrud
+        title="Invite team member"
+        submitLabel="Send invitation"
+        onSubmit={onSubmit}
+        onClose={onClose}
+        loading={isLoadingInviteMember}
+      >
         <Controller
           name="email"
           control={control}
@@ -55,7 +76,7 @@ export function CreateModal(props: CreateModalProps) {
           render={({ field, fieldState: { error } }) => (
             <InputSelect
               dataTestId="input-role"
-              className="ml-3 w-full"
+              className="mt-4 w-full"
               label="Role"
               options={availableRoles.map((availableRole: OrganizationAvailableRole) => ({
                 label: upperCaseFirstLetter(availableRole.name),
@@ -69,8 +90,8 @@ export function CreateModal(props: CreateModalProps) {
             />
           )}
         />
-      </div>
-    </ModalCrud>
+      </ModalCrud>
+    </FormProvider>
   )
 }
 
