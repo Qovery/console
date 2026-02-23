@@ -12,9 +12,9 @@ jest.mock('../hooks/use-service-type/use-service-type', () => {
 
 const mockUseLinks = jest.fn()
 
-jest.mock('../hooks/use-env-links/use-env-links', () => {
+jest.mock('../hooks/use-environment-links/use-environment-links', () => {
   return {
-    ...jest.requireActual('../hooks/use-env-links/use-env-links'),
+    ...jest.requireActual('../hooks/use-environment-links/use-environment-links'),
     useEnvironmentLinks: () => mockUseLinks(),
   }
 })
