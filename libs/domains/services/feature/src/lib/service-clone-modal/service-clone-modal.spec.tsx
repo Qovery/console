@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '@tanstack/react-router'
 import selectEvent from 'react-select-event'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -34,13 +34,11 @@ jest.mock('../hooks/use-environments/use-environments', () => ({
   useEnvironments: () => ({ data: mockEnvironments, isLoading: false }),
 }))
 
-jest.mock('react-router-dom', () => {
-  const navigate = jest.fn()
-  return {
-    ...jest.requireActual('react-router-dom'),
-    useNavigate: () => navigate,
-  }
-})
+const mockNavigate = jest.fn()
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useNavigate: () => mockNavigate,
+}))
 
 const props: ServiceCloneModalProps = {
   onClose: jest.fn(),
@@ -80,8 +78,8 @@ describe('ServiceCloneModal', () => {
         name: 'test',
       },
     })
-    expect(useNavigate()).toHaveBeenCalledWith(
-      '/organization/0/project/1/environment/2951580907208704/application/1/general'
-    )
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/0/project/1/environment/2951580907208704/application/1/general',
+    })
   })
 })

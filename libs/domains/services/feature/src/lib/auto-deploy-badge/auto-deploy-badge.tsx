@@ -1,6 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { useParams } from '@tanstack/react-router'
 import { type GitWebhookStatusResponse } from 'qovery-typescript-axios'
-import { useParams } from 'react-router-dom'
 import { APPLICATION_SETTINGS_GENERAL_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { Icon, Link, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { useGitWebhookStatus } from '../hooks/use-git-webhook-status/use-git-webhook-status'
@@ -41,7 +41,7 @@ const webhookStatusConfig: Record<
 }
 
 export function AutoDeployBadge({ serviceId }: AutoDeployBadgeProps) {
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams({ strict: false })
   const { data: webhookStatus, isLoading } = useGitWebhookStatus({ serviceId })
 
   const config = webhookStatus ? webhookStatusConfig[webhookStatus.status] : undefined

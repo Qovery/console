@@ -5,6 +5,11 @@ import * as useRunningStatusImport from '../hooks/use-running-status/use-running
 import * as useServiceTypeImport from '../hooks/use-service-type/use-service-type'
 import { PodStatusesCallout } from './pod-statuses-callout'
 
+jest.mock('@tanstack/react-router', () => ({
+  useNavigate: () => jest.fn(),
+  useParams: () => ({ organizationId: '', projectId: '' }),
+}))
+
 describe('PodStatusesCallout', () => {
   it('should render successfully', () => {
     jest.spyOn(useServiceTypeImport, 'useServiceType').mockReturnValue({

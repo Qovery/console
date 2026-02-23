@@ -8,6 +8,7 @@ export interface LastCommitAuthorProps extends Omit<LegacyAvatarProps, 'firstNam
   gitRepository: ApplicationGitRepository
   serviceId: string
   serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'HELM' | 'TERRAFORM'>
+  withFullName?: boolean
 }
 
 export function LastCommitAuthor({
@@ -16,28 +17,36 @@ export function LastCommitAuthor({
   gitRepository,
   serviceId,
   serviceType,
+  withFullName = false,
   ...props
 }: LastCommitAuthorProps) {
   const {
     data: { deployedCommit },
   } = useLastDeployedCommit({ gitRepository, serviceId, serviceType })
 
-  return deployedCommit.author_name && deployedCommit.author_avatar_url ? (
-    <LegacyAvatar
-      size={size ?? 20}
-      className={twMerge('border-2 border-neutral-200', className)}
-      firstName={deployedCommit.author_name.split(' ')[0] || ''}
-      lastName={deployedCommit.author_name.split(' ')[1] || ''}
-      url={deployedCommit.author_avatar_url}
-      {...props}
-    />
-  ) : (
-    <LegacyAvatar
-      size={size ?? 20}
-      className={twMerge('border-2 border-neutral-200', className)}
-      firstName={gitRepository.owner || ''}
-      {...props}
-    />
+  return (
+    <span className="flex gap-2">
+      {deployedCommit.author_name && deployedCommit.author_avatar_url ? (
+        <LegacyAvatar
+          size={size ?? 20}
+          className={twMerge('border border-neutral', className)}
+          firstName={deployedCommit.author_name.split(' ')[0] || ''}
+          lastName={deployedCommit.author_name.split(' ')[1] || ''}
+          url={deployedCommit.author_avatar_url}
+          {...props}
+        />
+      ) : (
+        <LegacyAvatar
+          size={size ?? 20}
+          className={twMerge('border border-neutral', className)}
+          firstName={gitRepository.owner || ''}
+          {...props}
+        />
+      )}
+      {withFullName && deployedCommit.author_name && (
+        <span className="text-neutral-subtle">{deployedCommit.author_name}</span>
+      )}
+    </span>
   )
 }
 

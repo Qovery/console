@@ -2,9 +2,9 @@ import { type ComponentPropsWithoutRef } from 'react'
 import { DescriptionDetails as Dd, DescriptionListRoot as Dl, DescriptionTerm as Dt, Skeleton } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
-interface ServiceDetailsSkeletonProps extends ComponentPropsWithoutRef<'div'> {}
+interface ServiceHeaderSkeletonProps extends ComponentPropsWithoutRef<'div'> {}
 
-export function ServiceDetailsSkeleton({ className, ...props }: ServiceDetailsSkeletonProps) {
+export function ServiceHeaderSkeleton({ className, ...props }: ServiceHeaderSkeletonProps) {
   return (
     <div className={twMerge('flex shrink-0 flex-col content-start justify-start gap-5 py-8', className)} {...props}>
       <div className="flex flex-col gap-4 pl-8 pr-5">
@@ -48,4 +48,4 @@ export function ServiceDetailsSkeleton({ className, ...props }: ServiceDetailsSk
   )
 }
 
-export default ServiceDetailsSkeleton
+export default ServiceHeaderSkeleton

@@ -371,10 +371,6 @@ jest.mock('../hooks/use-links/use-links', () => ({
 }))
 
 const mockNavigate = jest.fn()
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate,
-}))
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useNavigate: () => mockNavigate,

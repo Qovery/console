@@ -5,6 +5,17 @@ import * as useDeploymentStatusImport from '../hooks/use-deployment-status/use-d
 import * as useServiceImport from '../hooks/use-service/use-service'
 import NeedRedeployFlag from './need-redeploy-flag'
 
+jest.mock('@tanstack/react-router', () => ({
+  useParams: () => ({
+    organizationId: '',
+    projectId: '',
+    environmentId: '',
+    applicationId: '',
+    databaseId: '',
+  }),
+  useNavigate: () => jest.fn(),
+}))
+
 const useDeployServiceSpy = jest.spyOn(useDeployServiceImport, 'useDeployService') as jest.Mock
 
 describe('NeedRedeployFlag', () => {

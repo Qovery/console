@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { environmentFactoryMock, helmFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceActionToolbar } from './service-action-toolbar'
@@ -5,10 +6,13 @@ import { ServiceActionToolbar } from './service-action-toolbar'
 const mockHelm = helmFactoryMock(1)[0]
 const mockEnvironment = environmentFactoryMock(1)[0]
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: '123', projectId: '456', environmentId: '789' }),
   useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({ buildLocation: () => ({ href: '/' }) }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
 
 jest.mock('../hooks/use-service/use-service', () => ({

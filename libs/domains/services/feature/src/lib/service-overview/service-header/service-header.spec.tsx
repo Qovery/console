@@ -1,5 +1,12 @@
+import type { ReactNode } from 'react'
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import { ServiceDetails } from './service-details'
+import { ServiceDetails } from './service-header'
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: '', projectId: '' }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+}))
 
 jest.mock('../hooks/use-service/use-service', () => ({
   useService: ({

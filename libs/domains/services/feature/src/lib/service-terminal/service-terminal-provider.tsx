@@ -1,5 +1,5 @@
+import { useLocation } from '@tanstack/react-router'
 import { type PropsWithChildren, createContext, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 
 export const ServiceTerminalContext = createContext<{
   open: boolean

@@ -18,7 +18,7 @@ export function LastCommit({ organizationId, projectId, service, gitRepository }
 
   const {
     data: { deployedCommit, delta },
-  } = useLastDeployedCommit({ gitRepository, serviceId: service.id, serviceType: service.serviceType })
+  } = useLastDeployedCommit({ serviceId: service.id, serviceType: service.serviceType, gitRepository })
   const { mutate: deployService } = useDeployService({
     organizationId,
     projectId,
@@ -56,7 +56,7 @@ export function LastCommit({ organizationId, projectId, service, gitRepository }
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
+            For <strong className="font-medium text-neutral">{service.name}</strong>
           </p>
         </SelectCommitModal>
       ),
@@ -80,18 +80,14 @@ export function LastCommit({ organizationId, projectId, service, gitRepository }
           <CopyToClipboard text={deployedCommit.git_commit_id} className="flex min-w-[81px] justify-center">
             <Button
               type="button"
-              variant="surface"
+              variant="outline"
               color="neutral"
               size="xs"
               className="gap-1 rounded-r-none border-r-0 pl-1"
               onMouseEnter={() => setHover(true)}
               onMouseLeave={() => setHover(false)}
             >
-              {hover ? (
-                <Icon iconName="copy" iconStyle="solid" className="w-4" />
-              ) : (
-                <Icon iconName="code-commit" iconStyle="regular" className="w-4" />
-              )}
+              {hover ? <Icon iconName="copy" className="w-4" /> : <Icon iconName="code-commit" className="w-4" />}
               {deployedCommit.git_commit_id.substring(0, 7)}
             </Button>
           </CopyToClipboard>
@@ -100,14 +96,14 @@ export function LastCommit({ organizationId, projectId, service, gitRepository }
       <Tooltip content={delta > 0 ? `You have ${delta} commits ahead` : 'Deploy from another version'}>
         <Button
           type="button"
-          variant={delta > 0 ? 'solid' : 'surface'}
+          variant={delta > 0 ? 'solid' : 'outline'}
           color={delta > 0 ? 'brand' : 'neutral'}
           size="xs"
           className="w-7 justify-center gap-1 rounded-l-none px-1.5"
           onClick={deployCommitVersion}
         >
           <span className="flex h-full items-center justify-center">
-            <Icon iconName="clock-rotate-left" iconStyle="regular" />
+            <Icon iconName="clock-rotate-left" />
           </span>
         </Button>
       </Tooltip>

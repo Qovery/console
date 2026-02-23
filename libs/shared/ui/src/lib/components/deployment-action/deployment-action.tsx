@@ -1,4 +1,4 @@
-import { StateEnum } from 'qovery-typescript-axios'
+import { ServiceActionStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { forwardRef } from 'react'
 import { match } from 'ts-pattern'
 import { twMerge } from '@qovery/shared/util-js'
@@ -117,7 +117,7 @@ export const StopIcon = forwardRef<SVGSVGElement, IconSVGProps>(function ({ clas
   )
 })
 
-export const getDeploymentAction = (status: StateEnum | undefined) => {
+export const getDeploymentAction = (status: StateEnum | ServiceActionStatusEnum | undefined) => {
   return match(status)
     .with(
       StateEnum.QUEUED,
@@ -173,15 +173,25 @@ export const getDeploymentAction = (status: StateEnum | undefined) => {
         icon: <StopIcon />,
       })
     )
+    .with(
+      ServiceActionStatusEnum.ONGOING,
+      ServiceActionStatusEnum.SUCCESS,
+      ServiceActionStatusEnum.ERROR,
+      ServiceActionStatusEnum.NEVER,
+      () => ({
+        status: 'Deploy',
+        icon: <DeployIcon />,
+      })
+    )
     .exhaustive()
 }
 
-export const DeploymentAction = ({ status }: { status: StateEnum | undefined }) => {
+export const DeploymentAction = ({ status }: { status: StateEnum | ServiceActionStatusEnum | undefined }) => {
   const action = getDeploymentAction(status)
   if (!status || !action) return null
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       {action.icon}
       <span className="text-neutral">{action.status}</span>
     </div>
