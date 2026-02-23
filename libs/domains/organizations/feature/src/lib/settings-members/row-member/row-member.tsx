@@ -248,9 +248,7 @@ export function RowMember(props: RowMemberProps) {
       <Table.Cell className="px-4 text-xs text-neutral" style={{ width: `${columnSizes[2]}%` }}>
         {(member as Member).last_activity_at ? (
           <Tooltip content={dateUTCString((member as Member).last_activity_at!)}>
-            <span data-testid="last-activity">
-              {timeAgo(new Date((member as Member).last_activity_at || ''))} ago
-            </span>
+            <span data-testid="last-activity">{timeAgo(new Date((member as Member).last_activity_at || ''))} ago</span>
           </Tooltip>
         ) : (
           <span>{upperCaseFirstLetter((member as InviteMember).invitation_status)}</span>

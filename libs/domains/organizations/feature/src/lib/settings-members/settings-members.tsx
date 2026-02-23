@@ -112,10 +112,7 @@ interface MembersTableProps {
   userId?: string
 }
 
-interface MembersTableWithDataProps extends Omit<
-  MembersTableProps,
-  'members' | 'inviteMembers' | 'availableRoles'
-> {
+interface MembersTableWithDataProps extends Omit<MembersTableProps, 'members' | 'inviteMembers' | 'availableRoles'> {
   organizationId: string
 }
 
