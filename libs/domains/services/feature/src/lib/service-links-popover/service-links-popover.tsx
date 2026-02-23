@@ -12,7 +12,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
-import { useEnvironmentLinks } from '../hooks/use-env-links/use-env-links'
+import { useEnvironmentLinks } from '../hooks/use-environment-links/use-environment-links'
 import { useServiceType } from '../hooks/use-service-type/use-service-type'
 
 export interface ServiceLinksPopoverProps extends Pick<PopoverContentProps, 'align' | 'side'> {
