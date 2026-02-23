@@ -45,10 +45,10 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
   )
 
   return (
-    <Section>
-      <div className="mb-8">
-        <Heading className="mb-2">Scheduled Tasks</Heading>
-        <p className="text-xs text-neutral">Recurring tasks configured for your organization</p>
+    <Section className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1">
+        <Heading>Scheduled Tasks</Heading>
+        <p className="text-xs text-neutral-subtle">Recurring tasks configured for your organization</p>
       </div>
       <BlockContent title="Tasks List" classNameContent="p-0">
         {isLoading ? (
@@ -61,7 +61,7 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
               <li key={task.id} className="flex items-center border-b border-neutral px-5 py-4 last:border-0">
                 <div className="flex-1">
                   <p className="mb-1 text-xs font-medium text-neutral">{task.user_intent}</p>
-                  <p className="text-xs text-neutral-350">
+                  <p className="text-xs text-neutral-disabled">
                     <span className="inline-block">Schedule: {task.cron_expression}</span>
                     {task.last_run_at && (
                       <span className="ml-3 inline-block">Last run: {new Date(task.last_run_at).toLocaleString()}</span>
@@ -79,8 +79,9 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
                 </div>
                 <div className="flex flex-1 items-center justify-end gap-2">
                   <Button
-                    variant="surface"
+                    variant="outline"
                     color="neutral"
+                    iconOnly
                     size="md"
                     onClick={() => onToggleTask(task.id)}
                     title={task.enabled ? 'Pause task' : 'Resume task'}
@@ -88,8 +89,9 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
                     <Icon iconName={task.enabled ? 'pause' : 'play'} iconStyle="regular" />
                   </Button>
                   <Button
-                    variant="surface"
+                    variant="outline"
                     color="neutral"
+                    iconOnly
                     size="md"
                     title="Delete task"
                     onClick={() => {
