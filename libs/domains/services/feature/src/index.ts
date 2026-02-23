@@ -17,6 +17,7 @@ export * from './lib/hooks/use-deployment-restrictions/use-deployment-restrictio
 export * from './lib/hooks/use-deployment-status/use-deployment-status'
 export * from './lib/hooks/use-edit-deployment-restriction/use-edit-deployment-restriction'
 export * from './lib/hooks/use-links/use-links'
+export * from './lib/hooks/use-env-links/use-env-links'
 export * from './lib/hooks/use-list-statuses/use-list-statuses'
 export * from './lib/hooks/use-running-status/use-running-status'
 export * from './lib/hooks/use-service-statuses/use-service-statuses'
