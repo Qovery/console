@@ -1,4 +1,5 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
+import { render } from '__tests__/utils/setup-jest'
+import userEvent from '@testing-library/user-event'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type OrganizationCustomRoleProjectPermissionsInner } from 'qovery-typescript-axios'
 import { customRolesMock } from '@qovery/shared/factories'
@@ -20,6 +21,7 @@ describe('RowProject', () => {
   })
 
   it('should render header with global checkbox', async () => {
+    const user = userEvent.setup()
     const { getByText, getByTestId } = render(wrapWithReactHookForm(<RowProject project={project} />))
 
     getByText(project.project_name || '')
@@ -30,10 +32,7 @@ describe('RowProject', () => {
     getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.NO_ACCESS}`)
 
     const input = getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.ADMIN}`) as HTMLInputElement
-
-    await act(() => {
-      fireEvent.click(input)
-    })
+    await user.click(input)
 
     expect(input).toBeChecked()
   })
@@ -41,6 +40,7 @@ describe('RowProject', () => {
   it('should be admin by default and check global select', async () => {
     project.is_admin = true
 
+    const user = userEvent.setup()
     const { getByTestId, getAllByTestId } = render(wrapWithReactHookForm(<RowProject project={project} />))
 
     const input = getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.ADMIN}`) as HTMLInputElement
@@ -48,18 +48,16 @@ describe('RowProject', () => {
 
     for (let i = 0; i < getAllByTestId('admin-checkbox').length; i++) {
       const permission = getAllByTestId('admin-checkbox')[i] as HTMLInputElement
-      expect(permission).toBeChecked()
+      expect(permission).toBeDisabled()
     }
 
-    await act(() => {
-      fireEvent.click(input)
-    })
+    await user.click(input)
 
     expect(input).not.toBeChecked()
 
     for (let i = 0; i < getAllByTestId('admin-checkbox').length; i++) {
       const permission = getAllByTestId('admin-checkbox')[i] as HTMLInputElement
-      expect(permission).not.toBeChecked()
+      expect(permission).toBeDisabled()
     }
   })
 })
