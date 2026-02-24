@@ -11,7 +11,7 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useCustomRole } from '../hooks/use-custom-role/use-custom-role'
 import { useDeleteCustomRole } from '../hooks/use-delete-custom-role/use-delete-custom-role'
 import { useEditCustomRole } from '../hooks/use-edit-custom-role/use-edit-custom-role'
-import { SettingsRolesEdit, getValue, handleSubmit, resetForm } from './settings-roles-edit'
+import { SettingsRolesEdit, getValue, handleSubmitRolesEdit, resetForm } from './settings-roles-edit'
 
 jest.mock('../hooks/use-custom-role/use-custom-role')
 jest.mock('../hooks/use-delete-custom-role/use-delete-custom-role')
@@ -143,7 +143,7 @@ describe('SettingsRolesEdit helpers', () => {
     formData.project_permissions[projectId][EnvironmentModeEnum.DEVELOPMENT] =
       OrganizationCustomRoleProjectPermission.MANAGER
 
-    const result = handleSubmit(formData, customRole)
+    const result = handleSubmitRolesEdit(formData, customRole)
 
     expect(result.name).toBe('new-role')
     expect(result.description).toBe('new-description')

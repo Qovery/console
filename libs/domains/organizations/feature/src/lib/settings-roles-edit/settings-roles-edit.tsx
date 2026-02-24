@@ -225,7 +225,7 @@ const SettingsRolesEditSkeleton = () => (
   </div>
 )
 
-export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomRole) => {
+export const handleSubmitRolesEdit = (data: FieldValues, currentRole: OrganizationCustomRole) => {
   const cloneCurrentRole = Object.assign({}, currentRole)
 
   cloneCurrentRole.name = data['name']
@@ -351,7 +351,7 @@ function SettingsRolesEditContent({
 
   const onSubmit = handleFormSubmit(async (data) => {
     if (data && customRole) {
-      const cloneCustomRole = handleSubmit(data, customRole)
+      const cloneCustomRole = handleSubmitRolesEdit(data, customRole)
 
       try {
         await onEditRole(customRole, cloneCustomRole as OrganizationCustomRoleUpdateRequest)
