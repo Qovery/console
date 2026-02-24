@@ -136,7 +136,7 @@ export function ServiceInstance({ service }: { service: AnyService }) {
       <div className="relative -top-1.5 rounded-lg bg-surface-neutral">
         <InstanceMetrics environmentId={service.environment.id} serviceId={service.id}>
           {isCronJob && (
-            <div className="grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 rounded-lg border border-neutral bg-surface-neutral-component p-3 text-xs text-neutral">
+            <div className="mt-3 grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 rounded-lg border border-neutral bg-surface-neutral-component p-3 text-xs text-neutral">
               <Icon className="row-span-2" iconName="circle-info" iconStyle="regular" />
               <p>
                 The number of past Completed or Failed job execution retained in the history and their TTL can be
