@@ -228,6 +228,7 @@ function ServiceNameCell({
               <Tooltip content={service.name}>
                 <Link
                   className="inline max-w-max truncate"
+                  color="neutral"
                   to={serviceLink}
                   underline
                   onClick={(e) => e.stopPropagation()}
@@ -509,6 +510,7 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
                     <ExternalLink
                       href={gitRepository.url}
                       underline
+                      color="neutral"
                       size="ssm"
                       withIcon={false}
                       className="font-normal"
@@ -518,10 +520,11 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
                   </span>
                   {gitRepository.branch && gitRepository.url && (
                     <span className="flex items-center gap-2 text-neutral-subtle">
-                      <Icon iconName="code-branch" iconStyle="regular" />
+                      <Icon className="h-3 w-3 text-inherit" iconName="code-branch" iconStyle="regular" />
                       <ExternalLink
                         href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
                         underline
+                        color="neutral"
                         size="ssm"
                         withIcon={false}
                         className="font-normal"
