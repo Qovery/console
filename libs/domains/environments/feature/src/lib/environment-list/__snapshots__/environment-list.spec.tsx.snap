@@ -6,11 +6,9 @@ exports[`EnvironmentList should match snapshot 1`] = `
     class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral"
   >
     <table
-      class="border-separate border-spacing-0 text-neutral w-full min-w-[800px] text-xs"
+      class="divide-y divide-neutral text-neutral w-full min-w-[800px] text-xs"
     >
-      <thead
-        class="[&_th]:border-b [&_th]:border-neutral"
-      >
+      <thead>
         <tr>
           <th
             class="h-11 border-neutral px-4 text-left font-code font-medium first:border-r"
