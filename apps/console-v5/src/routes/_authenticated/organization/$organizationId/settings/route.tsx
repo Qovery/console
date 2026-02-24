@@ -32,7 +32,7 @@ function RouteComponent() {
     icon: 'users' as const,
     children: [
       { title: 'Members', to: `${pathSettings}/members` },
-      { title: 'Roles & permissions', to: `${pathSettings}/roles-permissions` },
+      { title: 'Roles & permissions', to: `${pathSettings}/roles` },
     ],
   }
 

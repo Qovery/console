@@ -4,7 +4,7 @@ import PageOrganizationRoles, {
   type PageOrganizationRolesProps,
   isDefaultRole,
   rolesSort,
-} from './page-organization-roles'
+} from '../../../../../../pages/settings/src/lib/ui/page-organization-roles/page-organization-roles'
 
 const mockedUsedNavigate = jest.fn()
 jest.mock('react-router-dom', () => ({
