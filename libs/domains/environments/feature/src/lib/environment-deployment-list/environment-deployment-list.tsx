@@ -108,7 +108,7 @@ export function EnvironmentDeploymentList() {
             <div
               className={twMerge(
                 clsx(
-                  'flex w-full items-center justify-between before:absolute before:-top-[1px] before:left-0 before:block before:h-[calc(100%+2px)] before:w-1',
+                  'flex w-full items-center justify-between gap-2 before:absolute before:-top-[1px] before:left-0 before:block before:h-[calc(100%+2px)] before:w-1',
                   {
                     'before:bg-surface-brand-solid': [
                       'DEPLOYING',
@@ -253,7 +253,7 @@ export function EnvironmentDeploymentList() {
               const { action_status } = data
 
               return (
-                <div className="flex items-center gap-4">
+                <div className="flex min-w-40 items-center gap-4">
                   <ActionTriggerStatusChip
                     size="md"
                     status={action_status}
