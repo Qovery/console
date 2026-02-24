@@ -1,5 +1,5 @@
-import { useParams } from '@tanstack/react-router'
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { useParams } from '@tanstack/react-router'
 import { type OrganizationAvailableRole, type OrganizationCustomRole } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
