@@ -78,7 +78,7 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
         <div className="flex w-1/4 flex-shrink-0 flex-col overflow-y-scroll border-r border-neutral">
           {/* Search bar */}
           <div className="flex-shrink-0 p-4 pb-0">
-            <InputSearch placeholder="Recherche de ressources..." className="w-full" onChange={setSearchQuery} />
+            <InputSearch placeholder="Search resources…" className="w-full" onChange={setSearchQuery} />
           </div>
 
           {/* Tree list */}

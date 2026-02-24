@@ -12,7 +12,12 @@ const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function Table
   ref
 ) {
   return (
-    <div className={twMerge('overflow-x-auto rounded-md border border-neutral bg-surface-neutral', containerClassName)}>
+    <div
+      className={twMerge(
+        'no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral',
+        containerClassName
+      )}
+    >
       <table
         ref={ref}
         className={twMerge('min-w-full border-separate border-spacing-0 text-sm text-neutral', className)}

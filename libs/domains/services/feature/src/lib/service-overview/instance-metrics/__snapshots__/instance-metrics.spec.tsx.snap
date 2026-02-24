@@ -6,7 +6,7 @@ exports[`InstanceMetrics should match snapshot with data 1`] = `
     class="no-scrollbar overflow-x-scroll rounded-lg border border-neutral xl:overflow-hidden"
   >
     <div
-      class="overflow-x-auto rounded-md border border-neutral bg-surface-neutral border-none"
+      class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral border-none"
     >
       <table
         class="min-w-full border-separate border-spacing-0 text-neutral w-full overflow-y-scroll rounded-lg text-xs xl:overflow-auto"

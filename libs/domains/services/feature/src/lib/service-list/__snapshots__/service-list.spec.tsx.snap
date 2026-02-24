@@ -9,9 +9,11 @@ exports[`ServiceList should match snapshot 1`] = `
       class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral"
     >
       <table
-        class="divide-y divide-neutral text-neutral w-full min-w-[1080px] overflow-x-scroll text-ssm"
+        class="border-separate border-spacing-0 text-neutral w-full min-w-[1080px] overflow-x-scroll text-ssm"
       >
-        <thead>
+        <thead
+          class="[&_th]:border-b [&_th]:border-neutral"
+        >
           <tr>
             <th
               class="h-11 border-neutral text-left font-code px-6 pl-4 font-medium"
@@ -394,7 +396,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     data-state="closed"
                   >
                     <button
-                      class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
+                      class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
                       type="button"
                     >
                       <i
@@ -405,7 +407,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     </button>
                   </span>
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
                     data-state="closed"
                     type="button"
                   >
@@ -1398,7 +1400,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     data-state="closed"
                   >
                     <button
-                      class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
+                      class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
                       type="button"
                     >
                       <i
@@ -1409,7 +1411,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     </button>
                   </span>
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
                     data-state="closed"
                     type="button"
                   >
@@ -1846,7 +1848,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     data-state="closed"
                   >
                     <button
-                      class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
+                      class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
                       type="button"
                     >
                       <i
@@ -1857,7 +1859,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     </button>
                   </span>
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
                     data-state="closed"
                     type="button"
                   >
