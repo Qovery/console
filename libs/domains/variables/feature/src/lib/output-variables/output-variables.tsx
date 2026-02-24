@@ -114,6 +114,7 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
   return (
     <div className="overflow-hidden">
       <Table.Root
+        containerClassName="border-none"
         className={twMerge('w-full rounded-t-none border-x-0 border-b-0 border-t text-ssm', className)}
         {...props}
       >

@@ -81,10 +81,6 @@ export function ServiceOverview({
           </div>
         ) : (
           <Section className="gap-3">
-            {/* 
-              TODO: Remove this once if we see isn't useful anymore.
-              <PodStatusesCallout environmentId={environment.id} serviceId={service.id} /> 
-            */}
             <Heading>Instances</Heading>
             <InstanceMetrics environmentId={environment.id} serviceId={service.id} />
           </Section>
@@ -126,10 +122,6 @@ export function ServiceOverview({
               <ServiceInstance service={service} />
             </Section>
           )}
-          {/* 
-          TODO: Remove this once if we see isn't useful anymore.
-          <PodStatusesCallout environmentId={environment.id} serviceId={service.id} /> 
-        */}
           {isKedaAutoscaling && scaledObject && (
             <Section className="gap-3">
               <Heading>Scaled Object (KEDA)</Heading>

@@ -3,23 +3,24 @@ import { twMerge } from '@qovery/shared/util-js'
 
 // Inspired by https://github.com/radix-ui/themes/blob/a63bd6920370d824be1db26f717147dc4a2501f1/packages/radix-ui-themes/src/components/table.tsx
 
-interface TableRootProps extends ComponentPropsWithoutRef<'table'> {}
+interface TableRootProps extends ComponentPropsWithoutRef<'table'> {
+  containerClassName?: string
+}
 
 const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function TableRoot(
-  { children, className, ...rest },
+  { children, className, containerClassName, ...rest },
   ref
 ) {
   return (
-    <table
-      ref={ref}
-      className={twMerge(
-        'min-w-full border-separate border-spacing-0 overflow-hidden rounded-md border border-neutral bg-surface-neutral text-sm text-neutral',
-        className
-      )}
-      {...rest}
-    >
-      {children}
-    </table>
+    <div className={twMerge('overflow-x-auto rounded-md border border-neutral bg-surface-neutral', containerClassName)}>
+      <table
+        ref={ref}
+        className={twMerge('min-w-full border-separate border-spacing-0 text-sm text-neutral', className)}
+        {...rest}
+      >
+        {children}
+      </table>
+    </div>
   )
 })
 

@@ -36,7 +36,7 @@ import { InstanceMetricsSkeleton } from './instance-metrics-skeleton'
 const { Table } = TablePrimitives
 
 const columnHelper = createColumnHelper<Pod>()
-const placeholder = <Icon iconStyle="regular" iconName="circle-question" className="text-sm text-neutral-300" />
+const placeholder = <Icon iconStyle="regular" iconName="circle-question" className="text-sm text-neutral-subtle" />
 
 export interface InstanceMetricsMemoizedProps extends PropsWithChildren {
   environmentId: string
@@ -299,7 +299,10 @@ function InstanceMetricsTable({
   return (
     <>
       <div className="no-scrollbar overflow-x-scroll rounded-lg border border-neutral xl:overflow-hidden">
-        <Table.Root className="w-full overflow-y-scroll rounded-lg border-none text-xs xl:overflow-auto">
+        <Table.Root
+          containerClassName="border-none"
+          className="w-full overflow-y-scroll rounded-lg text-xs xl:overflow-auto"
+        >
           <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id}>
