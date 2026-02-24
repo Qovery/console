@@ -3,7 +3,6 @@ import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type OrganizationCustomRoleProjectPermissionsInner } from 'qovery-typescript-axios'
 import { customRolesMock } from '@qovery/shared/factories'
-import { resetForm } from '../settings-roles-edit'
 import RowProject, { OrganizationCustomRoleProjectPermissionAdmin } from './row-project'
 
 const customRole = customRolesMock(1)[0]
@@ -12,11 +11,7 @@ const project = (customRole.project_permissions &&
 
 describe('RowProject', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
-      wrapWithReactHookForm(<RowProject project={project} />, {
-        defaultValues: resetForm(customRole),
-      })
-    )
+    const { baseElement } = render(wrapWithReactHookForm(<RowProject project={project} />))
     expect(baseElement).toBeTruthy()
   })
 
