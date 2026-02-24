@@ -2,7 +2,7 @@ import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type OrganizationCustomRoleProjectPermissionsInner } from 'qovery-typescript-axios'
 import { customRolesMock } from '@qovery/shared/factories'
-import { resetForm } from '../../../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
+import { resetForm } from '../settings-roles-edit'
 import RowProject, { OrganizationCustomRoleProjectPermissionAdmin } from './row-project'
 
 const customRole = customRolesMock(1)[0]
