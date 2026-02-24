@@ -1,0 +1,38 @@
+import { type AnyService } from '@qovery/domains/services/data-access'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { Icon, Link, Tooltip } from '@qovery/shared/ui'
+import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
+
+type ServiceLastDeploymentCellProps = {
+  service: AnyService
+  organizationId: string
+  projectId: string
+  environmentId: string
+}
+
+export function ServiceLastDeploymentCell({
+  service,
+  organizationId,
+  projectId,
+  environmentId,
+}: ServiceLastDeploymentCellProps) {
+  const value = 'deploymentStatus' in service ? service.deploymentStatus.last_deployment_date : undefined
+  const linkLog =
+    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+    DEPLOYMENT_LOGS_VERSION_URL(service?.id, service?.deploymentStatus?.execution_id)
+
+  return value ? (
+    <Link
+      to={linkLog}
+      className="group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-subtle hover:translate-x-0 hover:text-neutral"
+      onClick={(event) => event.stopPropagation()}
+    >
+      <Tooltip content={dateUTCString(value)} delayDuration={200}>
+        <span className="whitespace-nowrap text-ssm font-normal">{timeAgo(new Date(value))}</span>
+      </Tooltip>
+      <Icon iconName="arrow-up-right" iconStyle="regular" className="text-ssm opacity-0 group-hover:opacity-100" />
+    </Link>
+  ) : (
+    <span className="block w-full text-right">-</span>
+  )
+}
