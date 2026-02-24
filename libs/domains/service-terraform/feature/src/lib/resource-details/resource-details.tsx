@@ -45,7 +45,10 @@ export function ResourceDetails({ resource }: ResourceDetailsProps): ReactElemen
   return (
     <div className="flex flex-col overflow-y-auto">
       <div className="overflow-hidden">
-        <Table.Root className="rounded-t-none border-x-0 border-b-0 border-t text-ssm">
+        <Table.Root
+          containerClassName="border-none rounded-none"
+          className="rounded-t-none border-x-0 border-b-0 border-t text-ssm"
+        >
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeaderCell className="w-2/4 border-r border-neutral font-medium">Key</Table.ColumnHeaderCell>

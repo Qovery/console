@@ -41,7 +41,6 @@ function RouteComponent() {
     <>
       <ServiceOverview
         environment={environment}
-        cluster={cluster}
         terraformResourcesSection={serviceId ? <TerraformResourcesSection terraformId={serviceId} /> : undefined}
         hasNoMetrics={hasNoMetrics}
         observabilityCallout={
