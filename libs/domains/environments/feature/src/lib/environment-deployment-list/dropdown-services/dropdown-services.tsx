@@ -8,11 +8,12 @@ import {
   type QueuedDeploymentRequestWithStages,
   type QueuedDeploymentRequestWithStagesStagesInner,
 } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
+import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Indicator, StageStatusChip, StatusChip, Tooltip, TriggerActionIcon, Truncate } from '@qovery/shared/ui'
 import { Icon } from '@qovery/shared/ui'
@@ -36,6 +37,7 @@ const MAX_VISIBLE_STAGES = 4
 // https://github.com/radix-ui/primitives/issues/1294
 export function DropdownServices({ environment, deploymentHistory, stages }: DropdownServicesProps) {
   const { pathname } = useLocation()
+  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
   const [open, setOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState<number | undefined>()
   const [direction, setDirection] = useState(0)
@@ -235,9 +237,60 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                         </div>
                       </div>
                       {match(stage)
-                        .with(P.when(isDeploymentStageQueue), (s) =>
-                          s.services.map((service, index) => {
-                            return (
+                        .with(P.when(isDeploymentStageQueue), (s) => (
+                          <>
+                            {s.services.map((service, index) => {
+                              return (
+                                <DropdownMenu.Item
+                                  key={index}
+                                  className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
+                                  asChild
+                                >
+                                  <Link
+                                    to={
+                                      ENVIRONMENT_LOGS_URL(
+                                        environment.organization.id,
+                                        environment.project.id,
+                                        environment.id
+                                      ) + ENVIRONMENT_STAGES_URL()
+                                    }
+                                    state={{ prevUrl: pathname }}
+                                  >
+                                    {service.details && (
+                                      <ServiceAvatar
+                                        border="solid"
+                                        size="sm"
+                                        service={
+                                          'job_type' in service.details
+                                            ? {
+                                                icon_uri: service.icon_uri ?? '',
+                                                serviceType: 'JOB' as const,
+                                                job_type: service.details.job_type as 'CRON' | 'LIFECYCLE',
+                                              }
+                                            : {
+                                                icon_uri: service.icon_uri ?? '',
+                                                serviceType: service.identifier.service_type as Exclude<
+                                                  AnyService['service_type'],
+                                                  'JOB'
+                                                >,
+                                              }
+                                        }
+                                      />
+                                    )}
+                                    <span className="flex flex-col">
+                                      <span className="truncate text-ssm">
+                                        <Truncate text={service.identifier.name} truncateLimit={16} />
+                                      </span>
+                                    </span>
+                                  </Link>
+                                </DropdownMenu.Item>
+                              )
+                            })}
+                          </>
+                        ))
+                        .otherwise((s) => (
+                          <>
+                            {s.services.map((service, index) => (
                               <DropdownMenu.Item
                                 key={index}
                                 className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
@@ -249,7 +302,11 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                       environment.organization.id,
                                       environment.project.id,
                                       environment.id
-                                    ) + ENVIRONMENT_STAGES_URL()
+                                    ) +
+                                    DEPLOYMENT_LOGS_VERSION_URL(
+                                      service.identifier.service_id,
+                                      service.identifier.execution_id
+                                    )
                                   }
                                   state={{ prevUrl: pathname }}
                                 >
@@ -278,76 +335,42 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                     <span className="truncate text-ssm">
                                       <Truncate text={service.identifier.name} truncateLimit={16} />
                                     </span>
+                                    {service.total_duration && (
+                                      <span
+                                        title={dateUTCString(service.auditing_data.updated_at)}
+                                        className="text-[11px]"
+                                      >
+                                        {formatDurationMinutesSeconds(service.total_duration ?? '')}
+                                      </span>
+                                    )}
                                   </span>
-                                </Link>
-                              </DropdownMenu.Item>
-                            )
-                          })
-                        )
-                        .otherwise((s) =>
-                          s.services.map((service, index) => (
-                            <DropdownMenu.Item
-                              key={index}
-                              className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
-                              asChild
-                            >
-                              <Link
-                                to={
-                                  ENVIRONMENT_LOGS_URL(
-                                    environment.organization.id,
-                                    environment.project.id,
-                                    environment.id
-                                  ) +
-                                  DEPLOYMENT_LOGS_VERSION_URL(
-                                    service.identifier.service_id,
-                                    service.identifier.execution_id
-                                  )
-                                }
-                                state={{ prevUrl: pathname }}
-                              >
-                                {service.details && (
-                                  <ServiceAvatar
-                                    border="solid"
-                                    size="sm"
-                                    service={
-                                      'job_type' in service.details
-                                        ? {
-                                            icon_uri: service.icon_uri ?? '',
-                                            serviceType: 'JOB' as const,
-                                            job_type: service.details.job_type as 'CRON' | 'LIFECYCLE',
-                                          }
-                                        : {
-                                            icon_uri: service.icon_uri ?? '',
-                                            serviceType: service.identifier.service_type as Exclude<
-                                              AnyService['service_type'],
-                                              'JOB'
-                                            >,
-                                          }
-                                    }
-                                  />
-                                )}
-                                <span className="flex flex-col">
-                                  <span className="truncate text-ssm">
-                                    <Truncate text={service.identifier.name} truncateLimit={16} />
-                                  </span>
-                                  {service.total_duration && (
-                                    <span
-                                      title={dateUTCString(service.auditing_data.updated_at)}
-                                      className="text-[11px]"
-                                    >
-                                      {formatDurationMinutesSeconds(service.total_duration ?? '')}
+                                  {service.status_details && (
+                                    <span className="ml-auto">
+                                      <StatusChip status={service.status_details.status} />
                                     </span>
                                   )}
-                                </span>
-                                {service.status_details && (
-                                  <span className="ml-auto">
-                                    <StatusChip status={service.status_details.status} />
-                                  </span>
-                                )}
-                              </Link>
-                            </DropdownMenu.Item>
-                          ))
-                        )}
+                                </Link>
+                              </DropdownMenu.Item>
+                            ))}
+                            {(stage.status === 'ERROR' ||
+                              s.services.some((service) => service.status_details?.status === 'ERROR')) && (
+                              <DropdownMenu.Item
+                                className="flex w-full cursor-pointer items-center justify-between gap-2 border-t border-neutral-200 bg-brand-50 px-2 py-2 text-xs text-brand-500 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
+                                onSelect={() => {
+                                  const message = 'Why did my deployment fail?'
+                                  setDevopsCopilotOpen(true)
+                                  sendMessageRef?.current?.(message)
+                                }}
+                              >
+                                <div className="flex items-center justify-center gap-2">
+                                  <Icon iconName="sparkles" iconStyle="solid" className="text-brand-500" />
+                                  <span className="font-thin">Ask AI Copilot for diagnostic</span>
+                                </div>
+                                <Icon iconName="arrow-right" />
+                              </DropdownMenu.Item>
+                            )}
+                          </>
+                        ))}
                     </div>
                   ))}
                 </motion.div>

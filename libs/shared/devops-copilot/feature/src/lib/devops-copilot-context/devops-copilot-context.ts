@@ -1,9 +1,3 @@
-import { createContext } from 'react'
-
-export const DevopsCopilotContext = createContext({
-  devopsCopilotOpen: false,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setDevopsCopilotOpen: (_devopsCopilotOpen: boolean) => {},
-})
-
-export default DevopsCopilotContext
+// Re-export from shared/contexts to avoid circular dependencies
+export { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
+export { DevopsCopilotContext as default } from '@qovery/shared/devops-copilot/context'

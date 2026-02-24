@@ -4,7 +4,7 @@ import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import mermaid from 'mermaid'
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
-import { type CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
+import { type CSSProperties, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { SETTINGS_AI_COPILOT_URL, SETTINGS_URL } from '@qovery/shared/routes'
@@ -12,6 +12,7 @@ import { AnimatedGradientText, Button, Callout, Icon, Link, Tooltip } from '@qov
 import { QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
+import { DevopsCopilotContext } from '../devops-copilot-context/devops-copilot-context'
 import { DotStatus } from '../dot-status/dot-status'
 import { useAICopilotConfig } from '../hooks/use-ai-copilot-config/use-ai-copilot-config'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
@@ -73,6 +74,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const docLinks = useContextualDocLinks()
   const { context, current } = useQoveryContext()
   const { user, getAccessTokenSilently } = useAuth0()
+  const { sendMessageRef } = useContext(DevopsCopilotContext)
 
   const organizationId = context?.organization?.id ?? ''
 
@@ -211,6 +213,34 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     document.addEventListener('keydown', down)
     return () => document.removeEventListener('keydown', down)
   }, [handleOnClose])
+
+  useEffect(() => {
+    if (!sendMessageRef) return
+
+    sendMessageRef.current = (message: string) => {
+      controllerRef.current?.abort()
+
+      setThread([])
+      setThreadId(undefined)
+      setPlan([])
+      setIsReadOnly(true)
+      setStreamingMessage('')
+      setDisplayedStreamingMessage('')
+      setIsFinish(false)
+      setIsStopped(false)
+      setIsLoading(false)
+
+      setTimeout(() => {
+        handleSendMessage(message, true)
+      }, 0)
+    }
+
+    return () => {
+      if (sendMessageRef) {
+        sendMessageRef.current = null
+      }
+    }
+  }, [sendMessageRef, handleSendMessage])
 
   const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
 
@@ -455,7 +485,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
           ref={panelRef}
           className={twMerge(
             clsx(
-              'fixed bottom-2 right-2 z-[1] flex overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
+              'fixed bottom-2 right-2 z-10 flex overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
               {
                 'left-4 top-4 animate-[scalein_0.22s_ease_both] opacity-0': expand,
                 'animate-slidein-up-sm-faded': !expand,
