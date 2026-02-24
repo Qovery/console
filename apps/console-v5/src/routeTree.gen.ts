@@ -40,6 +40,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterNewRouteImport }
 import { Route as AuthenticatedOrganizationOrganizationIdClustersRouteImport } from './routes/_authenticated/organization/$organizationId/clusters'
 import { Route as AuthenticatedOrganizationOrganizationIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/overview'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/danger-zone'
@@ -470,6 +471,12 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
     path: '/project/$projectId/environment/$environmentId/overview',
     getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
   } as any)
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRouteImport.update({
+    id: '/project/$projectId/environment/$environmentId/deployments',
+    path: '/project/$projectId/environment/$environmentId/deployments',
+    getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+  } as any)
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteImport.update({
     id: '/project/$projectId/environment/$environmentId/settings',
@@ -581,6 +588,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/cluster/create/$slug/': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute
   '/organization/$organizationId/project/$projectId/settings/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteWithChildren
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
@@ -647,6 +655,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/cluster/$clusterId/settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
   '/organization/$organizationId/cluster/create/$slug': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute
   '/organization/$organizationId/project/$projectId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsIndexRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
@@ -723,6 +732,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/cluster/create/$slug/': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/settings/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteWithChildren
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
@@ -799,6 +809,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/create/$slug/'
     | '/organization/$organizationId/project/$projectId/settings/'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/settings'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/overview'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/variables'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId'
@@ -865,6 +876,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/$clusterId/settings'
     | '/organization/$organizationId/cluster/create/$slug'
     | '/organization/$organizationId/project/$projectId/settings'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/overview'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/variables'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId'
@@ -940,6 +952,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/cluster/create/$slug/'
     | '/_authenticated/organization/$organizationId/project/$projectId/settings/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/'
@@ -1428,6 +1441,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
     }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
+      path: '/project/$projectId/environment/$environmentId/deployments'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings'
       path: '/project/$projectId/environment/$environmentId/settings'
@@ -1685,6 +1705,7 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteWithChildren
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
@@ -1723,6 +1744,8 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteWithChildren,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRoute:

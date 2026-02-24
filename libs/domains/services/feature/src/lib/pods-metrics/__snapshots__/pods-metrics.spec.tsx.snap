@@ -6,7 +6,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
     class="overflow-x-scroll rounded border border-neutral-200 xl:overflow-hidden"
   >
     <div
-      class="overflow-hidden rounded-md border border-neutral bg-surface-neutral"
+      class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral"
     >
       <table
         class="min-w-full divide-y divide-neutral text-neutral w-full overflow-y-scroll text-xs xl:overflow-auto"

@@ -37,5 +37,3 @@ export function EnvironmentDeploymentListSkeleton() {
     </Table.Root>
   )
 }
-
-export default EnvironmentDeploymentListSkeleton

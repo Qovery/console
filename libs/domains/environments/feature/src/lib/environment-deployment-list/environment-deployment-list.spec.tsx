@@ -100,9 +100,22 @@ jest.mock('../hooks/use-deployment-queue/use-deployment-queue', () => ({
   }),
 }))
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: '1' }),
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
+  }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+    <a {...props}>{typeof children === 'function' ? children({ isActive: false }) : children}</a>
+  ),
+}))
+
 describe('EnvironmentDeploymentList', () => {
   it('should render the deployment list', async () => {
-    renderWithProviders(<EnvironmentDeploymentList environmentId="env-123" />)
+    renderWithProviders(<EnvironmentDeploymentList />)
 
     expect(screen.getByText('Date')).toBeInTheDocument()
     expect(screen.getByText('Status deployment')).toBeInTheDocument()
@@ -116,7 +129,7 @@ describe('EnvironmentDeploymentList', () => {
   })
 
   it('should render the queue item', async () => {
-    renderWithProviders(<EnvironmentDeploymentList environmentId="env-123" />)
+    renderWithProviders(<EnvironmentDeploymentList />)
 
     expect(screen.getAllByText('In queue...')[0]).toBeInTheDocument()
   })
