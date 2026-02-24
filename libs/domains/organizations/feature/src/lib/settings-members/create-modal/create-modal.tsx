@@ -14,11 +14,16 @@ export function CreateModal(props: CreateModalProps) {
   const { organizationId = '', availableRoles, onClose } = props
   const { mutateAsync: createInviteMember, isLoading: isLoadingInviteMember } = useCreateInviteMember()
 
-  const methods = useForm({
+  type CreateInviteMemberForm = {
+    email: string
+    role_id: string
+  }
+
+  const methods = useForm<CreateInviteMemberForm>({
     mode: 'onChange',
     defaultValues: {
-      // default value with admin id
-      role_id: availableRoles[0]?.id,
+      email: '',
+      role_id: availableRoles[0]?.id ?? '',
     },
   })
   const { control } = methods
