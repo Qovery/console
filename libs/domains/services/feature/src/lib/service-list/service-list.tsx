@@ -17,6 +17,7 @@ import {
   type Database,
   type Environment,
   type HelmSourceRepositoryResponse,
+  type ListServicesByEnvironmentId200ResponseResultsInner,
   type Status,
 } from 'qovery-typescript-axios'
 import { ServiceSubActionDto } from 'qovery-ws-typescript-axios'
@@ -399,11 +400,13 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
         },
         cell: (info) => {
           return (
-            <ServiceNameCell
-              service={info.row.original}
-              deploymentStatus={info.row.original.deploymentStatus}
-              environment={environment}
-            />
+            <div className="min-w-[400px] flex-1">
+              <ServiceNameCell
+                service={info.row.original}
+                deploymentStatus={info.row.original.deploymentStatus}
+                environment={environment}
+              />
+            </div>
           )
         },
       }),
@@ -415,6 +418,8 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
         filterFn: 'arrIncludesSome',
         size: 15,
         cell: (info) => {
+          const Wrapper = ({ children }: { children: React.ReactNode }) => <div className="min-w-40">{children}</div>
+
           const service = info.row.original
           const link = match(service)
             .with(
@@ -450,46 +455,50 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
 
           if (checkRunningStatusClosed) {
             return (
-              <Tooltip content="See cluster">
-                <Link
-                  as="button"
-                  to={CLUSTER_URL(organizationId, environment.cluster_id)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="gap-2 whitespace-nowrap text-sm"
-                  size="md"
-                  color="neutral"
-                  variant="outline"
-                  radius="full"
-                >
-                  <StatusChip status="STOPPED" />
-                  Status unavailable
-                </Link>
-              </Tooltip>
+              <Wrapper>
+                <Tooltip content="See cluster">
+                  <Link
+                    as="button"
+                    to={CLUSTER_URL(organizationId, environment.cluster_id)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="gap-2 whitespace-nowrap text-sm"
+                    size="md"
+                    color="neutral"
+                    variant="outline"
+                    radius="full"
+                  >
+                    <StatusChip status="STOPPED" />
+                    Status unavailable
+                  </Link>
+                </Tooltip>
+              </Wrapper>
             )
           }
 
           return (
-            <Skeleton width={102} height={34} show={!value}>
-              <Tooltip content="See overview">
-                <Link
-                  as="button"
-                  to={link}
-                  onClick={(e) => e.stopPropagation()}
-                  className="gap-2 whitespace-nowrap text-sm"
-                  size="md"
-                  color="neutral"
-                  variant="outline"
-                  radius="full"
-                >
-                  <StatusChip
-                    status={match(service)
-                      .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, (s) => s.deploymentStatus?.state)
-                      .otherwise((s) => s.runningStatus?.state)}
-                  />
-                  {value}
-                </Link>
-              </Tooltip>
-            </Skeleton>
+            <Wrapper>
+              <Skeleton width={102} height={34} show={!value}>
+                <Tooltip content="See overview">
+                  <Link
+                    as="button"
+                    to={link}
+                    onClick={(e) => e.stopPropagation()}
+                    className="gap-2 whitespace-nowrap text-sm"
+                    size="md"
+                    color="neutral"
+                    variant="outline"
+                    radius="full"
+                  >
+                    <StatusChip
+                      status={match(service)
+                        .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, (s) => s.deploymentStatus?.state)
+                        .otherwise((s) => s.runningStatus?.state)}
+                    />
+                    {value}
+                  </Link>
+                </Tooltip>
+              </Skeleton>
+            </Wrapper>
           )
         },
       }),
