@@ -1,48 +1,121 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import { PlanEnum } from 'qovery-typescript-axios'
 import { organizationFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import ShowUsageModal, { type ShowUsageModalProps, getReportPeriods } from './show-usage-modal'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { useGenerateBillingUsageReport } from '../../hooks/use-generate-billing-usage-report/use-generate-billing-usage-report'
+import { useOrganization } from '../../hooks/use-organization/use-organization'
+import ShowUsageModalFeature, {
+  ShowUsageModal,
+  type ShowUsageModalFeatureProps,
+  type ShowUsageModalProps,
+  getReportPeriods,
+} from './show-usage-modal-feature'
 
-const useOrganizationsSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useOrganizations')
+jest.mock('../../hooks/use-generate-billing-usage-report/use-generate-billing-usage-report')
+jest.mock('../../hooks/use-organization/use-organization')
 
-const props: ShowUsageModalProps = {
-  organizationId: '0',
-  renewalAt: '2022-01-01T00:00:00Z',
-  onClose: jest.fn(),
-  onSubmit: jest.fn(),
-  loading: true,
+const mockOrganization = {
+  ...organizationFactoryMock(1)[0],
+  created_at: '2023-06-16T14:34:04Z',
+}
+
+const props: ShowUsageModalFeatureProps = {
+  organizationId: '1',
+  currentCost: {
+    plan: PlanEnum.ENTERPRISE,
+    renewal_at: '2023-03-03',
+    remaining_trial_day: 1,
+    cost: {
+      total_in_cents: 10,
+      total: 2,
+      currency_code: 'USD',
+    },
+  },
 }
 
 describe('ShowUsageModal', () => {
+  const useOrganizationMock = useOrganization as jest.MockedFunction<typeof useOrganization>
+
+  const modalProps: ShowUsageModalProps = {
+    organizationId: '0',
+    renewalAt: '2022-01-01T00:00:00Z',
+    onClose: jest.fn(),
+    onSubmit: jest.fn((event) => event.preventDefault()),
+    loading: false,
+  }
+
   beforeEach(() => {
-    useOrganizationsSpy.mockReturnValue({
-      data: organizationFactoryMock(1)[0],
-    })
+    useOrganizationMock.mockReturnValue({
+      data: mockOrganization,
+    } as unknown as ReturnType<typeof useOrganization>)
   })
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm<{ code: string }>(<ShowUsageModal {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<ShowUsageModal {...modalProps} />))
     expect(baseElement).toBeTruthy()
   })
 
-  it('should call on submit', async () => {
-    const spy = jest.fn()
-    props.loading = false
-    props.onSubmit = spy
+  it('should call onSubmit', async () => {
+    const onSubmit = jest.fn((event) => event.preventDefault())
+    const reportPeriods = getReportPeriods({ organization: mockOrganization, orgRenewalAt: modalProps.renewalAt })
 
     const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(<ShowUsageModal {...props} onSubmit={spy} />, {
+      wrapWithReactHookForm(<ShowUsageModal {...modalProps} onSubmit={onSubmit} />, {
         defaultValues: {
           expires: 24,
+          report_period: reportPeriods[0]?.value,
         },
       })
     )
 
-    const button = screen.getByTestId('submit-button')
-    await userEvent.click(button)
+    await userEvent.click(screen.getByTestId('submit-button'))
 
-    expect(spy).toHaveBeenCalled()
+    expect(onSubmit).toHaveBeenCalled()
+  })
+})
+
+describe('ShowUsageModalFeature', () => {
+  const useGenerateBillingUsageReportMock = useGenerateBillingUsageReport as jest.MockedFunction<
+    typeof useGenerateBillingUsageReport
+  >
+  const useOrganizationMock = useOrganization as jest.MockedFunction<typeof useOrganization>
+
+  const mutateAsyncMock = jest.fn()
+
+  beforeEach(() => {
+    mutateAsyncMock.mockReset()
+    mutateAsyncMock.mockResolvedValue({
+      report_url: 'http://example.com',
+    })
+    useGenerateBillingUsageReportMock.mockReturnValue({
+      mutateAsync: mutateAsyncMock,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useGenerateBillingUsageReport>)
+    useOrganizationMock.mockReturnValue({
+      data: mockOrganization,
+    } as unknown as ReturnType<typeof useOrganization>)
+  })
+
+  it('should render successfully', () => {
+    const { baseElement } = renderWithProviders(<ShowUsageModalFeature {...props} />)
+    expect(baseElement).toBeTruthy()
+  })
+
+  it('should call useGenerateBillingUsageReport when onSubmit is called', async () => {
+    const { userEvent } = renderWithProviders(<ShowUsageModalFeature {...props} />)
+
+    await userEvent.click(screen.getByRole('button', { name: /generate report/i }))
+
+    await waitFor(() => {
+      expect(mutateAsyncMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          organizationId: '1',
+          usageReportRequest: expect.objectContaining({
+            report_expiration_in_seconds: 24 * 60 * 60,
+          }),
+        })
+      )
+    })
   })
 })
 
