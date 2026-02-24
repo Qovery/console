@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
 import posthog from 'posthog-js'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
+import { type Environment } from 'qovery-typescript-axios'
 import { useEffect, useRef } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
@@ -20,7 +20,6 @@ import {
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
 import { loadHpaSettingsFromAdvancedSettings } from '@qovery/shared/util-services'
-import { queries } from '@qovery/state/util-queries'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { KedaSettings } from '../keda/components/keda-settings'
 import { FixedInstancesMode } from './fixed-instances-mode'
@@ -29,24 +28,15 @@ import { HpaAutoscalingMode } from './hpa-autoscaling-mode'
 export interface ApplicationSettingsResourcesProps {
   displayWarningCpu: boolean
   displayInstanceLimits?: boolean
+  environment?: Environment
   service?: Exclude<AnyService, Helm | Database>
   minInstances?: number
   maxInstances?: number
   advancedSettings?: unknown
 }
 
-interface UseEnvironmentProps {
-  environmentId?: string
-}
-
-function useEnvironment({ environmentId }: UseEnvironmentProps) {
-  return useQuery({
-    ...queries.environments.details({ environmentId: environmentId as string }),
-    enabled: Boolean(environmentId),
-  })
-}
-
 export function ApplicationSettingsResources({
+  environment,
   displayWarningCpu,
   displayInstanceLimits = true,
   service,
@@ -57,7 +47,6 @@ export function ApplicationSettingsResources({
   const { control, watch, setValue } = useFormContext()
   const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId: applicationId })
-  const { data: environment } = useEnvironment({ environmentId })
   const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId })
   const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
   const clusterFeatureKarpenter = cluster?.features?.find((f) => f.id === 'KARPENTER')
