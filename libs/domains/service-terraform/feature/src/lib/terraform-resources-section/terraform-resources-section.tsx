@@ -1,5 +1,5 @@
 import { type ReactElement, useEffect, useMemo, useState } from 'react'
-import { Icon, InputTextSmall, LoaderSpinner } from '@qovery/shared/ui'
+import { EmptyState, InputSearch, LoaderSpinner } from '@qovery/shared/ui'
 import { useTerraformResources } from '../hooks/use-terraform-resources/use-terraform-resources'
 import { ResourceDetails } from '../resource-details/resource-details'
 import { ResourceTreeList } from '../resource-tree-list/resource-tree-list'
@@ -51,26 +51,22 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 p-8">
-        <Icon name="icon-solid-circle-exclamation" className="text-4xl text-red-500" />
-        <div className="text-center">
-          <p className="text-sm font-medium text-neutral-400">Failed to load terraform resources</p>
-          <p className="text-xs text-neutral-350">{error instanceof Error ? error.message : 'An error occurred'}</p>
-        </div>
-      </div>
+      <EmptyState
+        icon="circle-exclamation"
+        title="Failed to load terraform resources"
+        description={error instanceof Error ? error.message : 'An error occurred'}
+      />
     )
   }
 
   // Empty state (no resources at all)
   if (!data || data.length === 0) {
     return (
-      <div className="px-3 py-8 text-center">
-        <Icon iconName="wave-pulse" className="text-neutral-350" />
-        <p className="mt-1 text-xs font-medium text-neutral-350">No infrastructure resources found</p>
-        <p className="mt-1 text-xs text-neutral-350">
-          Terraform resources will appear here after your first successful deployment.
-        </p>
-      </div>
+      <EmptyState
+        icon="wave-pulse"
+        title="No infrastructure resources found"
+        description="Terraform resources will appear here after your first successful deployment."
+      />
     )
   }
 
@@ -79,31 +75,10 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
       {/* Split panel: Tree list (with search) and Details */}
       <div className="flex h-full">
         {/* Left panel: Search + Resource tree list */}
-        <div className="flex w-1/4 flex-shrink-0 flex-col overflow-y-scroll border-r border-neutral-200">
+        <div className="flex w-1/4 flex-shrink-0 flex-col overflow-y-scroll border-r border-neutral">
           {/* Search bar */}
           <div className="flex-shrink-0 p-4 pb-0">
-            <div className="relative">
-              <InputTextSmall
-                label="Search"
-                name="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search resources..."
-                className="w-full"
-                inputClassName="pr-8"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2 top-1/2 z-10 -translate-y-1/2 text-neutral-350 transition-colors hover:text-neutral-400"
-                  title="Clear search"
-                  data-testid="clear-search-button"
-                >
-                  <Icon iconName="times" iconStyle="solid" className="text-sm" />
-                </button>
-              )}
-            </div>
+            <InputSearch placeholder="Recherche de ressources..." className="w-full" onChange={setSearchQuery} />
           </div>
 
           {/* Tree list */}

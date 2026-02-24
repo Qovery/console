@@ -10,23 +10,27 @@ const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function Table
   ref
 ) {
   return (
-    <div className="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral">
-      <table
-        ref={ref}
-        className={twMerge('min-w-full divide-y divide-neutral text-sm text-neutral', className)}
-        {...rest}
-      >
-        {children}
-      </table>
-    </div>
+    <table
+      ref={ref}
+      className={twMerge(
+        'min-w-full border-separate border-spacing-0 overflow-hidden rounded-md border border-neutral bg-surface-neutral text-sm text-neutral',
+        className
+      )}
+      {...rest}
+    >
+      {children}
+    </table>
   )
 })
 
 interface TableHeaderProps extends ComponentPropsWithoutRef<'thead'> {}
 
-const TableHeader = forwardRef<ElementRef<'thead'>, TableHeaderProps>(function TableHeader({ children, ...rest }, ref) {
+const TableHeader = forwardRef<ElementRef<'thead'>, TableHeaderProps>(function TableHeader(
+  { children, className, ...rest },
+  ref
+) {
   return (
-    <thead ref={ref} {...rest}>
+    <thead className={twMerge('[&_th]:border-b [&_th]:border-neutral', className)} ref={ref} {...rest}>
       {children}
     </thead>
   )

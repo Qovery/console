@@ -7,6 +7,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import clsx from 'clsx'
 import { type ServiceStateDto } from 'qovery-ws-typescript-axios'
 import { Fragment, type PropsWithChildren, memo, useEffect, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
@@ -16,8 +17,8 @@ import {
   Badge,
   Button,
   CopyToClipboard,
+  EmptyState,
   Icon,
-  IconAwesomeEnum,
   StatusChip,
   TablePrimitives,
   Tooltip,
@@ -25,19 +26,19 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { formatMetric, pluralize, twMerge } from '@qovery/shared/util-js'
-import { useMetrics } from '../hooks/use-metrics/use-metrics'
-import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
-import { useService } from '../hooks/use-service/use-service'
-import { type Pod, PodDetails } from '../pod-details/pod-details'
-import EmptyState from './empty-state'
-import { PodsMetricsSkeleton } from './pods-metrics-skeleton'
+import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useRunningStatus } from '../../hooks/use-running-status/use-running-status'
+import { useService } from '../../hooks/use-service/use-service'
+import { type Pod, PodDetails } from '../../pod-details/pod-details'
+import { EmptyState as EmptyStatePodsMetrics } from './empty-state'
+import { InstanceMetricsSkeleton } from './instance-metrics-skeleton'
 
 const { Table } = TablePrimitives
 
 const columnHelper = createColumnHelper<Pod>()
 const placeholder = <Icon iconStyle="regular" iconName="circle-question" className="text-sm text-neutral-300" />
 
-export interface PodsMetricsMemoizedProps extends PropsWithChildren {
+export interface InstanceMetricsMemoizedProps extends PropsWithChildren {
   environmentId: string
   serviceId: string
   pods: Pod[]
@@ -52,9 +53,9 @@ export interface PodsMetricsMemoizedProps extends PropsWithChildren {
 
 // NOTE: Memoized component to avoid loop with re-rendering, because of the useReactTable hook and the WS subscription
 // https://qovery.atlassian.net/browse/FRT-1391
-const PodsMetricsMemoized = memo(PodsMetricsTable)
+const InstanceMetricsMemoized = memo(InstanceMetricsTable)
 
-function PodsMetricsTable({
+function InstanceMetricsTable({
   environmentId,
   serviceId,
   children,
@@ -66,7 +67,7 @@ function PodsMetricsTable({
   isRunningStatusesLoading,
   isServiceError,
   isServiceLoading,
-}: PodsMetricsMemoizedProps) {
+}: InstanceMetricsMemoizedProps) {
   const [sorting, setSorting] = useState<SortingState>([])
 
   const containerImage = match(service)
@@ -83,7 +84,7 @@ function PodsMetricsTable({
           <Tooltip content={podName}>
             <div className="inline-block">
               <CopyToClipboard text={podName}>
-                <Button variant="surface" color="neutral" onClick={(e) => e.stopPropagation()}>
+                <Button variant="outline" color="neutral" onClick={(e) => e.stopPropagation()}>
                   {podName.substring(0, 10)}...{podName.slice(-10)}
                 </Button>
               </CopyToClipboard>
@@ -91,7 +92,7 @@ function PodsMetricsTable({
           </Tooltip>
         ) : (
           <CopyToClipboard text={podName}>
-            <Button className="truncate" variant="surface" color="neutral" onClick={(e) => e.stopPropagation()}>
+            <Button className="truncate" variant="outline" color="neutral" onClick={(e) => e.stopPropagation()}>
               {podName}
             </Button>
           </CopyToClipboard>
@@ -103,7 +104,7 @@ function PodsMetricsTable({
       cell: (info) => (
         <Badge variant="outline" radius="full" className="gap-2 capitalize">
           <StatusChip status={info.getValue() ?? 'UNKNOWN'} />
-          <span className="text-neutral-400">{info.getValue()?.toLowerCase() ?? 'Unknown'}</span>
+          <span className="text-neutral">{info.getValue()?.toLowerCase() ?? 'Unknown'}</span>
         </Badge>
       ),
       sortingFn: (rowA, rowB, columnId) => {
@@ -150,6 +151,7 @@ function PodsMetricsTable({
 
     const memoryColumn = columnHelper.accessor('memory.current', {
       header: 'Memory',
+      minSize: 120,
       cell: (info) =>
         match(info.row.original)
           .with({ serviceType: ServiceTypeEnum.JOB, state: 'COMPLETED' }, () => null)
@@ -159,6 +161,7 @@ function PodsMetricsTable({
 
     const cpuColumn = columnHelper.accessor('cpu.current', {
       header: 'vCPU',
+      minSize: 120,
       cell: (info) =>
         match(info.row.original)
           .with({ serviceType: ServiceTypeEnum.JOB, state: 'COMPLETED' }, () => null)
@@ -192,7 +195,7 @@ function PodsMetricsTable({
           const value = info.getValue()
           return value ? (
             <Tooltip content={dateUTCString(value)}>
-              <span className="truncate text-xs text-neutral-350">
+              <span className="truncate text-xs text-neutral">
                 {dateFormat === 'relative' ? timeAgo(new Date(value)) : dateFullFormat(value)}
               </span>
             </Tooltip>
@@ -274,7 +277,7 @@ function PodsMetricsTable({
 
   if (pods.length === 0 && !isMetricsLoading && isRunningStatusesLoading) {
     // NOTE: runningStatuses may never resolve if service not started
-    return <EmptyState serviceId={serviceId} environmentId={environmentId} />
+    return <EmptyStatePodsMetrics serviceId={serviceId} environmentId={environmentId} />
   } else if (
     (pods.length === 0 && !isMetricsLoading && !isRunningStatusesLoading) ||
     isMetricsError ||
@@ -282,25 +285,30 @@ function PodsMetricsTable({
     isServiceError
   ) {
     return (
-      <div className="flex flex-col items-center gap-1 rounded border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
-        <Icon className="text-md text-neutral-300" iconStyle="regular" iconName="circle-question" />
-        <span className="font-medium">Metrics for instances are not available, try again</span>
-        <span>There is a technical issue on retrieving the instance metrics.</span>
-      </div>
+      <EmptyState
+        icon="circle-question"
+        className="bg-surface-neutral"
+        title="Metrics for instances are not available, try again"
+        description="There is a technical issue on retrieving the instance metrics."
+      />
     )
   } else if (isServiceLoading || pods.length === 0) {
-    return <PodsMetricsSkeleton />
+    return <InstanceMetricsSkeleton />
   }
 
   return (
     <>
-      <div className="overflow-x-scroll rounded border border-neutral-200 xl:overflow-hidden">
-        <Table.Root className="w-full overflow-y-scroll text-xs xl:overflow-auto">
+      <div className="no-scrollbar overflow-x-scroll rounded-lg border border-neutral xl:overflow-hidden">
+        <Table.Root className="w-full overflow-y-scroll rounded-lg border-none text-xs xl:overflow-auto">
           <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <Table.ColumnHeaderCell className="font-medium first:w-1/4 first:pl-[52px]" key={header.id}>
+                  <Table.ColumnHeaderCell
+                    className="font-medium first:w-1/4 first:pl-[52px]"
+                    key={header.id}
+                    style={{ minWidth: header.column.columnDef.minSize }}
+                  >
                     <button
                       type="button"
                       className={twMerge(
@@ -321,15 +329,25 @@ function PodsMetricsTable({
               </Table.Row>
             ))}
           </Table.Header>
-          <Table.Body>
+          <Table.Body className="[&>tr:last-child>td:first-child]:rounded-bl-lg [&>tr:last-child>td:last-child]:rounded-br-lg">
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
-                <Table.Row className="hover:bg-neutral-100" onClick={row.getToggleExpandedHandler()}>
+                <Table.Row
+                  className={clsx(
+                    'hover:bg-surface-neutral-subtle',
+                    row.getIsExpanded() && 'bg-surface-neutral-subtle'
+                  )}
+                  onClick={row.getToggleExpandedHandler()}
+                >
                   {row.getVisibleCells().map((cell, index) => (
-                    <Table.Cell key={cell.id} className={index === 0 ? 'text-nowrap' : ''}>
+                    <Table.Cell
+                      key={cell.id}
+                      className={index === 0 ? 'text-nowrap' : ''}
+                      style={{ minWidth: cell.column.columnDef.minSize }}
+                    >
                       {index === 0 && (
                         <button
-                          className="text-md pointer inline-flex h-14 w-9 items-center justify-start text-neutral-350"
+                          className="text-md pointer inline-flex h-14 w-9 items-center justify-start text-neutral-subtle"
                           type="button"
                           onClick={(e) => {
                             row.getToggleExpandedHandler()()
@@ -338,7 +356,7 @@ function PodsMetricsTable({
                         >
                           <Icon
                             className="pl-1"
-                            name={row.getIsExpanded() ? IconAwesomeEnum.CHEVRON_UP : IconAwesomeEnum.CHEVRON_DOWN}
+                            iconName={row.getIsExpanded() ? 'chevron-up' : 'chevron-down'}
                             aria-hidden
                           />
                         </button>
@@ -348,7 +366,7 @@ function PodsMetricsTable({
                   ))}
                 </Table.Row>
                 {row.getIsExpanded() && row.original.containers && service?.serviceType && (
-                  <Table.Row className="dark bg-neutral-700 text-xs">
+                  <Table.Row className="bg-surface-neutral-subtle text-xs">
                     {/* 2nd row is a custom 1 cell row */}
                     <Table.Cell colSpan={row.getVisibleCells().length} className="p-0">
                       <PodDetails pod={row.original} serviceId={serviceId} serviceType={service.serviceType} />
@@ -365,12 +383,12 @@ function PodsMetricsTable({
   )
 }
 
-export interface PodsMetricsProps extends PropsWithChildren {
+export interface InstanceMetricsProps extends PropsWithChildren {
   environmentId: string
   serviceId: string
 }
 
-export function PodsMetrics(props: PodsMetricsProps) {
+export function InstanceMetrics(props: InstanceMetricsProps) {
   const { environmentId, serviceId } = props
 
   const {
@@ -405,7 +423,7 @@ export function PodsMetrics(props: PodsMetricsProps) {
   }, [metrics, runningStatuses])
 
   return (
-    <PodsMetricsMemoized
+    <InstanceMetricsMemoized
       pods={pods}
       service={service}
       isServiceLoading={isServiceLoading}
@@ -419,4 +437,4 @@ export function PodsMetrics(props: PodsMetricsProps) {
   )
 }
 
-export default PodsMetrics
+export default InstanceMetrics

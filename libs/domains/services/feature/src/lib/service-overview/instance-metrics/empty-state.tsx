@@ -1,9 +1,9 @@
 import { P, match } from 'ts-pattern'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
-import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
-import { useService } from '../hooks/use-service/use-service'
+import { useDeploymentStatus } from '../../hooks/use-deployment-status/use-deployment-status'
+import { useRunningStatus } from '../../hooks/use-running-status/use-running-status'
+import { useService } from '../../hooks/use-service/use-service'
 
 function Box({
   title,
@@ -15,10 +15,10 @@ function Box({
   icon?: IconAwesomeEnum
 }) {
   return (
-    <div className="flex flex-col items-center gap-1 border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
-      <Icon className="text-md text-neutral-300" name={icon} />
+    <div className="flex flex-col items-center gap-1 border border-neutral bg-surface-neutral py-10 text-sm text-neutral">
+      <Icon className="text-md text-neutral-subtle" name={icon} />
       <span className="font-medium">{title}</span>
-      <span>{description}</span>
+      <span className="text-neutral-subtle">{description}</span>
     </div>
   )
 }

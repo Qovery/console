@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import posthog from 'posthog-js'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { useEffect, useRef } from 'react'
@@ -5,9 +6,7 @@ import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { hasGpuInstance, useCluster } from '@qovery/domains/clusters/feature'
-import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
-import { KedaSettings, useRunningStatus } from '@qovery/domains/services/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import {
   Callout,
@@ -21,6 +20,9 @@ import {
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
 import { loadHpaSettingsFromAdvancedSettings } from '@qovery/shared/util-services'
+import { queries } from '@qovery/state/util-queries'
+import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
+import { KedaSettings } from '../keda/components/keda-settings'
 import { FixedInstancesMode } from './fixed-instances-mode'
 import { HpaAutoscalingMode } from './hpa-autoscaling-mode'
 
@@ -31,6 +33,17 @@ export interface ApplicationSettingsResourcesProps {
   minInstances?: number
   maxInstances?: number
   advancedSettings?: unknown
+}
+
+interface UseEnvironmentProps {
+  environmentId?: string
+}
+
+function useEnvironment({ environmentId }: UseEnvironmentProps) {
+  return useQuery({
+    ...queries.environments.details({ environmentId: environmentId as string }),
+    enabled: Boolean(environmentId),
+  })
 }
 
 export function ApplicationSettingsResources({
@@ -73,11 +86,9 @@ export function ApplicationSettingsResources({
   const hpaMemoryAverageUtilizationPercent = watch('hpa_memory_average_utilization_percent') ?? 60
   const previousAutoscalingModeRef = useRef(autoscalingMode)
 
-  // Adjust min/max values when switching between autoscaling modes
   useEffect(() => {
     const previousMode = previousAutoscalingModeRef.current
 
-    // When switching from no autoscaling to HPA/KEDA, set min=1 and max=2
     if (previousMode === 'NONE' && (autoscalingMode === 'HPA' || autoscalingMode === 'KEDA')) {
       if (minRunningInstances === maxRunningInstances) {
         setValue('min_running_instances', 1)
@@ -85,14 +96,12 @@ export function ApplicationSettingsResources({
       }
     }
 
-    // When switching to no autoscaling (NONE), ensure max equals min
     if ((previousMode === 'HPA' || previousMode === 'KEDA') && autoscalingMode === 'NONE') {
       if (minRunningInstances !== maxRunningInstances) {
         setValue('max_running_instances', minRunningInstances)
       }
     }
 
-    // Set default HPA settings when switching to HPA mode
     if (autoscalingMode === 'HPA' && !hpaMetricTypeRaw) {
       const hpaSettings = loadHpaSettingsFromAdvancedSettings(advancedSettings)
       setValue('hpa_metric_type', hpaSettings.hpa_metric_type)
@@ -103,16 +112,11 @@ export function ApplicationSettingsResources({
     previousAutoscalingModeRef.current = autoscalingMode
   }, [autoscalingMode, minRunningInstances, maxRunningInstances, hpaMetricTypeRaw, advancedSettings, setValue])
 
-  // Determine the current saved autoscaling mode (not the form value)
   const currentAutoscalingMode = match(service)
     .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (s) => {
-      // If KEDA autoscaling policy exists, it's KEDA
       if (s.autoscaling?.mode === 'KEDA') return 'KEDA'
-      // If min === max, it's fixed instances (NONE mode)
       if (s.min_running_instances === s.max_running_instances) return 'NONE'
-      // If min !== max and no KEDA, backend considers it as HPA
       if (s.min_running_instances !== s.max_running_instances) return 'HPA'
-      // Default to NONE
       return 'NONE'
     })
     .otherwise(() => 'NONE')
@@ -205,7 +209,6 @@ export function ApplicationSettingsResources({
     </>
   )
 
-  // KEDA allows 0 instances (scale to zero), other modes require at least 1
   const effectiveMinInstances = autoscalingMode === 'KEDA' ? 0 : minInstances
 
   return (
@@ -370,7 +373,6 @@ export function ApplicationSettingsResources({
             )}
           </>
 
-          {/* Mode NONE: Fixed instances */}
           {autoscalingMode === 'NONE' && (
             <FixedInstancesMode
               control={control}
@@ -381,7 +383,6 @@ export function ApplicationSettingsResources({
             />
           )}
 
-          {/* Mode HPA: Horizontal Pod Autoscaler */}
           {autoscalingMode === 'HPA' && (
             <HpaAutoscalingMode
               control={control}
@@ -397,7 +398,6 @@ export function ApplicationSettingsResources({
             />
           )}
 
-          {/* Mode KEDA: Event-driven autoscaling */}
           {autoscalingMode === 'KEDA' && (
             <KedaSettings
               control={control}

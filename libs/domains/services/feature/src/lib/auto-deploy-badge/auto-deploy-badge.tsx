@@ -19,22 +19,22 @@ const webhookStatusConfig: Record<
 > = {
   ACTIVE: {
     icon: 'circle-check',
-    iconClassName: 'text-green-500',
+    iconClassName: 'text-positive',
     tooltip: 'Webhook is correctly configured. Auto-deploy will trigger on git events.',
   },
   NOT_CONFIGURED: {
     icon: 'circle-question',
-    iconClassName: 'text-red-500',
+    iconClassName: 'text-negative',
     tooltip: 'No webhook found for auto-deployment. Click to configure it in settings.',
   },
   MISCONFIGURED: {
     icon: 'triangle-exclamation',
-    iconClassName: 'text-yellow-500',
+    iconClassName: 'text-warning',
     tooltip: 'Webhook is missing required events. Click to fix it in settings.',
   },
   UNABLE_TO_VERIFY: {
     icon: 'circle-exclamation',
-    iconClassName: 'text-neutral-350',
+    iconClassName: 'text-neutral-subtle',
     tooltip:
       "Couldn't verify webhook status. This could be due to expired credentials, insufficient permissions, or git provider API unavailability.",
   },
@@ -54,11 +54,11 @@ export function AutoDeployBadge({ serviceId }: AutoDeployBadgeProps) {
 
   return (
     <Tooltip content={tooltipContent}>
-      <Link as="button" color="neutral" variant="surface" size="xs" to={settingsUrl}>
-        <Icon className="text-neutral-350" iconName="arrows-rotate" />
+      <Link as="button" color="neutral" variant="outline" size="xs" to={settingsUrl}>
+        <Icon className="text-neutral" iconName="arrows-rotate" />
         <span className="ml-1.5">Auto-deploy</span>
         {isLoading ? (
-          <LoaderSpinner classWidth="w-3" />
+          <LoaderSpinner classWidth="w-3 ml-0.5" />
         ) : (
           config && <Icon iconName={config.icon} className={`ml-1 text-xs ${config.iconClassName}`} />
         )}

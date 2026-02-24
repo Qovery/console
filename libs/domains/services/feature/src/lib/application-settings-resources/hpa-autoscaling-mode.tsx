@@ -1,7 +1,8 @@
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { type Control, type FieldValues, type UseFormSetValue } from 'react-hook-form'
-import { HpaMetricFields, InstancesRangeInputs } from '@qovery/domains/services/feature'
 import { Callout, Icon } from '@qovery/shared/ui'
+import { HpaMetricFields } from '../keda/components/hpa-metric-fields'
+import { InstancesRangeInputs } from '../keda/components/instances-range-inputs'
 
 export interface HpaAutoscalingModeProps {
   control: Control

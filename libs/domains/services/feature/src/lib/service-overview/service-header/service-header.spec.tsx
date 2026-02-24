@@ -1,6 +1,11 @@
+import { type Environment } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
-import { renderWithProviders } from '@qovery/shared/util-tests'
-import { ServiceDetails } from './service-header'
+import { ToastEnum, toast } from '@qovery/shared/ui'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { ServiceHeader } from './service-header'
+
+const mockCopyToClipboard = jest.fn()
+const mockGetDatabaseConnectionUri = jest.fn(() => 'postgres://copied-uri')
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -8,7 +13,18 @@ jest.mock('@tanstack/react-router', () => ({
   Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
 
-jest.mock('../hooks/use-service/use-service', () => ({
+jest.mock('@qovery/shared/ui', () => ({
+  ...jest.requireActual('@qovery/shared/ui'),
+  toast: jest.fn(),
+  Heading: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+}))
+
+jest.mock('@qovery/shared/util-hooks', () => ({
+  ...jest.requireActual('@qovery/shared/util-hooks'),
+  useCopyToClipboard: () => [undefined, mockCopyToClipboard],
+}))
+
+jest.mock('../../hooks/use-service/use-service', () => ({
   useService: ({
     serviceId,
   }: {
@@ -18,6 +34,7 @@ jest.mock('../hooks/use-service/use-service', () => ({
     const mocks = {
       'application-mock': {
         id: 'ebb84aa8-91c2-40fb-916d-3a158db354b7',
+        serviceType: 'APPLICATION',
         created_at: '2023-04-12T08:48:51.801049Z',
         updated_at: '2023-09-28T06:48:09.079032Z',
         environment: {
@@ -69,6 +86,7 @@ jest.mock('../hooks/use-service/use-service', () => ({
       },
       'database-mock': {
         id: 'ee3523e9-c81d-42ac-9d0c-f7bc09d5d28c',
+        serviceType: 'DATABASE',
         created_at: '2023-07-28T14:50:09.325974Z',
         updated_at: '2023-07-28T14:50:09.325976Z',
         environment: {
@@ -92,6 +110,7 @@ jest.mock('../hooks/use-service/use-service', () => ({
       },
       'job-mock': {
         id: 'c070ebf8-5b82-4d94-8c4d-0c6b86d7c003',
+        serviceType: 'JOB',
         created_at: '2023-09-12T10:08:39.122972Z',
         updated_at: '2023-09-27T12:17:25.956823Z',
         environment: {
@@ -145,51 +164,82 @@ jest.mock('../hooks/use-service/use-service', () => ({
   },
 }))
 
-jest.mock('../hooks/use-commits/use-commits', () => ({
-  useCommits: () => ({
-    data: [
-      {
-        created_at: '2023-09-28T06:42:32Z',
-        git_commit_id: 'ddd1cee35762e9b4bb95633c22193393ca3bb384',
-        message: 'refactor(ui): rename legacy button props (#863)',
-        tag: 'staging',
-        author_name: 'GitHub',
-        author_avatar_url: 'https://avatars.githubusercontent.com/u/19864447?v=4',
-        commit_page_url: 'https://github.com/Qovery/console/commit/ddd1cee35762e9b4bb95633c22193393ca3bb384',
-      },
-      {
-        created_at: '2023-09-27T14:58:59Z',
-        git_commit_id: '136b77f8a57026d1f4760edc84dc8999a5334f97',
-        message: 'refactor(ui): rename legacy button types (#862)',
-        tag: 'staging',
-        author_name: 'GitHub',
-        author_avatar_url: 'https://avatars.githubusercontent.com/u/19864447?v=4',
-        commit_page_url: 'https://github.com/Qovery/console/commit/136b77f8a57026d1f4760edc84dc8999a5334f97',
-      },
-    ],
-    isLoading: false,
-    error: null,
+jest.mock('../../hooks/use-master-credentials/use-master-credentials', () => ({
+  useMasterCredentials: () => ({
+    data: { login: 'admin', password: 'password' },
   }),
 }))
 
-describe('ServiceDetails', () => {
-  const now = new Date('2023-09-29:00:00Z')
+jest.mock('../../service-access-modal/service-access-modal', () => ({
+  getDatabaseConnectionUri: () => mockGetDatabaseConnectionUri(),
+}))
 
-  beforeAll(() => {
-    jest.useFakeTimers()
-    jest.setSystemTime(now)
+jest.mock('../../service-action-toolbar/service-action-toolbar', () => ({
+  ServiceActionToolbar: () => <div>service-action-toolbar</div>,
+}))
+
+jest.mock('../../service-avatar/service-avatar', () => ({
+  ServiceAvatar: () => <div>service-avatar</div>,
+}))
+
+jest.mock('../../service-state-chip/service-state-chip', () => ({
+  ServiceStateChip: () => <div>service-state-chip</div>,
+}))
+
+jest.mock('../../auto-deploy-badge/auto-deploy-badge', () => ({
+  __esModule: true,
+  default: () => <div>auto-deploy-badge</div>,
+}))
+
+jest.mock('../../service-links-popover/service-links-popover', () => ({
+  ServiceLinksPopover: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+}))
+
+describe('ServiceHeader', () => {
+  const environment = {
+    id: 'environment-id',
+    cluster_name: 'my-cluster',
+    cloud_provider: { provider: 'AWS' },
+  } as Environment
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockGetDatabaseConnectionUri.mockReturnValue('postgres://copied-uri')
   })
 
-  it('should match database snapshot', () => {
-    const { baseElement } = renderWithProviders(<ServiceDetails environmentId="1" serviceId="database-mock" />)
-    expect(baseElement).toMatchSnapshot()
+  const renderServiceHeader = (serviceId: 'application-mock' | 'database-mock' | 'job-mock') =>
+    renderWithProviders(<ServiceHeader environment={environment} serviceId={serviceId} />)
+
+  it('renders application details and git metadata', () => {
+    renderServiceHeader('application-mock')
+
+    expect(screen.getByRole('heading', { name: 'console' })).toBeInTheDocument()
+    expect(screen.getByText('my-cluster')).toBeInTheDocument()
+    expect(screen.getByText('React Application the Qovery Console')).toBeInTheDocument()
+    expect(screen.getByText('GitHub')).toBeInTheDocument()
+    expect(screen.getByText('Qovery/console')).toBeInTheDocument()
+    expect(screen.getByText('staging')).toBeInTheDocument()
+    expect(screen.getByText('auto-deploy-badge')).toBeInTheDocument()
   })
-  it('should match application snapshot', () => {
-    const { baseElement } = renderWithProviders(<ServiceDetails environmentId="1" serviceId="application-mock" />)
-    expect(baseElement).toMatchSnapshot()
+
+  it('renders database badges and copies the connection URI', async () => {
+    const { userEvent } = renderServiceHeader('database-mock')
+
+    expect(screen.getByText('15')).toBeInTheDocument()
+    expect(screen.getByText('container')).toBeInTheDocument()
+    expect(screen.getByText('private')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: /connection uri/i }))
+
+    expect(mockGetDatabaseConnectionUri).toHaveBeenCalled()
+    expect(mockCopyToClipboard).toHaveBeenCalledWith('postgres://copied-uri')
+    expect(toast).toHaveBeenCalledWith(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
   })
-  it('should match job snapshot', () => {
-    const { baseElement } = renderWithProviders(<ServiceDetails environmentId="1" serviceId="job-mock" />)
-    expect(baseElement).toMatchSnapshot()
+
+  it('does not show auto deploy badge for non auto-deploy job', () => {
+    renderServiceHeader('job-mock')
+
+    expect(screen.getByRole('heading', { name: 'test_lifecycle' })).toBeInTheDocument()
+    expect(screen.queryByText('auto-deploy-badge')).not.toBeInTheDocument()
   })
 })

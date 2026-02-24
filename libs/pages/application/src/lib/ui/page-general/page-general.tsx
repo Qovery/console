@@ -5,6 +5,8 @@ import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
 import { TerraformResourcesSection } from '@qovery/domains/service-terraform/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { PodStatusesCallout, PodsMetrics, ScaledObjectStatus, ServiceDetails } from '@qovery/domains/services/feature'
+import { useRunningStatus } from '@qovery/domains/services/feature'
+import { type ScaledObjectStatusDto } from '@qovery/domains/services/feature'
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { Button, ExternalLink, Icon, TabsPrimitives, useModal } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
@@ -175,6 +177,7 @@ function ObservabilityCallout() {
 export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }: PageGeneralProps) {
   const [activeTab, setActiveTab] = useState('variables')
   const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
+  const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
 
   const isLifecycleJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE', [service])
   const isTerraformService = useMemo(() => service?.serviceType === 'TERRAFORM', [service])
@@ -186,6 +189,23 @@ export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }:
       service.autoscaling?.mode === 'KEDA',
     [service, isKedaFeatureEnabled]
   )
+  const scaledObject = useMemo<ScaledObjectStatusDto | null>(() => {
+    if (
+      !isKedaAutoscaling ||
+      typeof runningStatus !== 'object' ||
+      runningStatus === null ||
+      !('scaled_object' in runningStatus)
+    ) {
+      return null
+    }
+
+    const candidate = runningStatus.scaled_object
+    if (!candidate || typeof candidate !== 'object' || !('name' in candidate) || typeof candidate.name !== 'string') {
+      return null
+    }
+
+    return candidate as ScaledObjectStatusDto
+  }, [isKedaAutoscaling, runningStatus])
 
   return (
     <div className="flex grow flex-row">
@@ -211,7 +231,7 @@ export function PageGeneral({ serviceId, environmentId, service, hasNoMetrics }:
             )}
           </PodsMetrics>
         )}
-        {isKedaAutoscaling && <ScaledObjectStatus environmentId={environmentId} serviceId={serviceId} />}
+        {isKedaAutoscaling && scaledObject && <ScaledObjectStatus scaledObject={scaledObject} />}
         {isLifecycleJob && <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} />}
         {isTerraformService && (
           <Tabs.Root

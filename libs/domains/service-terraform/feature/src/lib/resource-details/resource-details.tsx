@@ -20,9 +20,9 @@ export function ResourceDetails({ resource }: ResourceDetailsProps): ReactElemen
   if (!resource) {
     return (
       <div className="px-3 py-8 text-center">
-        <Icon iconName="wave-pulse" className="text-neutral-350" />
-        <p className="mt-1 text-xs font-medium text-neutral-350">No resource selected</p>
-        <p className="mt-1 text-xs text-neutral-350">Select a resource from the list to view details.</p>
+        <Icon iconName="wave-pulse" className="text-neutral" />
+        <p className="mt-1 text-xs font-medium text-neutral">No resource selected</p>
+        <p className="mt-1 text-xs text-neutral-subtle">Select a resource from the list to view details.</p>
       </div>
     )
   }
@@ -45,12 +45,10 @@ export function ResourceDetails({ resource }: ResourceDetailsProps): ReactElemen
   return (
     <div className="flex flex-col overflow-y-auto">
       <div className="overflow-hidden">
-        <Table.Root className="text-ssm">
+        <Table.Root className="rounded-t-none border-x-0 border-b-0 border-t text-ssm">
           <Table.Header>
             <Table.Row>
-              <Table.ColumnHeaderCell className="w-2/4 border-r border-neutral-200 font-medium">
-                Key
-              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="w-2/4 border-r border-neutral font-medium">Key</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="w-2/4 font-medium">Value</Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
@@ -61,16 +59,27 @@ export function ResourceDetails({ resource }: ResourceDetailsProps): ReactElemen
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
-                <Table.Cell className="h-10 w-1/2 border-r border-neutral-200 py-3 text-neutral-350">
+                <Table.Cell
+                  className={twMerge(
+                    'h-10 w-1/2 border-r border-neutral py-3 text-neutral-subtle',
+                    index > 0 && 'border-t border-neutral'
+                  )}
+                >
                   {row.key}
                 </Table.Cell>
-                <Table.Cell className={twMerge('h-10 w-1/2 py-3 text-neutral-400', hoveredIndex === index && 'group')}>
+                <Table.Cell
+                  className={twMerge(
+                    'h-10 w-1/2 py-3 text-neutral',
+                    index > 0 && 'border-t border-neutral',
+                    hoveredIndex === index && 'group'
+                  )}
+                >
                   <span className="whitespace-normal break-all text-ssm">{row.value}</span>
                   {hoveredIndex === index && (
                     <CopyToClipboardButtonIcon
                       content={row.value}
                       tooltipContent="Copy to clipboard"
-                      className="ml-1.5 text-xs text-neutral-350 hover:text-brand-500"
+                      className="ml-1.5"
                     />
                   )}
                 </Table.Cell>

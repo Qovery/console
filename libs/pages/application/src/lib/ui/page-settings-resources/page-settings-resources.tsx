@@ -2,7 +2,8 @@ import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
-import { ApplicationSettingsResources, SettingsHeading } from '@qovery/shared/console-shared'
+import { ApplicationSettingsResources } from '@qovery/domains/services/feature'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {

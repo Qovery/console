@@ -1,9 +1,18 @@
-import { Link, useParams } from '@tanstack/react-router'
+import { useParams } from '@tanstack/react-router'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
-import { Button, CopyToClipboard, DeploymentAction, EmptyState, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
+import {
+  Button,
+  CopyToClipboard,
+  DeploymentAction,
+  EmptyState,
+  Icon,
+  Skeleton,
+  StatusChip,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { useDeploymentHistory } from '../../hooks/use-deployment-history/use-deployment-history'
 import { LastCommitAuthor, type LastCommitAuthorProps } from '../../last-commit-author/last-commit-author'
@@ -39,15 +48,27 @@ export interface ServiceLastDeploymentProps {
 }
 
 export function ServiceLastDeployment({ serviceId, serviceType, service }: ServiceLastDeploymentProps) {
-  const { organizationId = '', projectId = '', environmentId: routeEnvironmentId = '' } = useParams({ strict: false })
-  const environmentId = service?.environment?.id ?? routeEnvironmentId
-  const { data: deploymentHistory = [] } = useDeploymentHistory({ serviceId, serviceType })
+  const { organizationId = '', projectId = '' } = useParams({ strict: false })
+  const { data: deploymentHistory = [], isFetched: isFetchedDeploymentHistory } = useDeploymentHistory({
+    serviceId,
+    serviceType,
+  })
 
   const lastDeployment = deploymentHistory[0]
   const gitRepository = service ? getGitRepository(service) : undefined
   const showGitCommit =
     Boolean(gitRepository) &&
     Boolean(service?.id && service?.name && service?.serviceType && 'environment' in service && service.environment)
+
+  if (!isFetchedDeploymentHistory) {
+    return (
+      <div className="flex gap-2.5 rounded-lg border border-neutral bg-surface-neutral px-5 py-4">
+        <Skeleton width={100} height={16} />
+        <Skeleton width={100} height={16} />
+        <Skeleton width={150} height={16} />
+      </div>
+    )
+  }
 
   if (!lastDeployment) {
     return (
@@ -82,7 +103,6 @@ export function ServiceLastDeployment({ serviceId, serviceType, service }: Servi
                 <Icon iconName="code-commit" className="w-4" />
                 {tag.length >= 8 ? `${tag.slice(0, 8)}…` : tag}
               </Button>
-              x
             </CopyToClipboard>
           </Tooltip>
         ))
@@ -91,47 +111,40 @@ export function ServiceLastDeployment({ serviceId, serviceType, service }: Servi
 
   const gitBlock =
     showGitCommit && gitRepository && service ? (
-      <span onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-2.5">
+      <span className="pointer-events-auto inline-flex items-center gap-2.5">
         <DotSeparator />
-        <LastCommit
-          organizationId={organizationId}
-          projectId={projectId}
-          gitRepository={gitRepository}
-          service={service as LastCommitProps['service']}
-        />
-        {'created_at' in (lastDeployment.auditing_data ?? {}) && lastDeployment.auditing_data.created_at && (
-          <>
-            <DotSeparator />
-            <span className="text-neutral-subtle">
-              Lasted{' '}
-              <Tooltip content={dateUTCString(lastDeployment.auditing_data.created_at)}>
-                <span>{timeAgo(new Date(lastDeployment.auditing_data.created_at))}</span>
-              </Tooltip>
-            </span>
-          </>
-        )}
-        <DotSeparator />
-        <LastCommitAuthor
-          gitRepository={gitRepository}
-          serviceId={service.id}
-          serviceType={service.serviceType as LastCommitAuthorProps['serviceType']}
-          size={20}
-          withFullName
-        />
+        <span className="flex items-center gap-2.5">
+          <LastCommit
+            organizationId={organizationId}
+            projectId={projectId}
+            gitRepository={gitRepository}
+            service={service as LastCommitProps['service']}
+          />
+          {'created_at' in (lastDeployment.auditing_data ?? {}) && lastDeployment.auditing_data.created_at && (
+            <>
+              <DotSeparator />
+              <span className="text-neutral-subtle">
+                Lasted{' '}
+                <Tooltip content={dateUTCString(lastDeployment.auditing_data.created_at)}>
+                  <span>{timeAgo(new Date(lastDeployment.auditing_data.created_at))}</span>
+                </Tooltip>
+              </span>
+            </>
+          )}
+          <DotSeparator />
+          <LastCommitAuthor
+            gitRepository={gitRepository}
+            serviceId={service.id}
+            serviceType={service.serviceType as LastCommitAuthorProps['serviceType']}
+            size={20}
+            withFullName
+          />
+        </span>
       </span>
     ) : null
 
   return (
-    <Link
-      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployment-logs"
-      params={{
-        organizationId,
-        projectId,
-        environmentId,
-        serviceId,
-      }}
-      className="flex rounded-lg border border-neutral px-5 py-4 transition-colors hover:bg-surface-neutral-componentHover"
-    >
+    <div className="flex rounded-lg border border-neutral bg-surface-neutral px-5 py-4">
       <div className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
         <span className="font-medium">
           <DeploymentAction status={lastDeployment.status_details.status} />
@@ -146,6 +159,6 @@ export function ServiceLastDeployment({ serviceId, serviceType, service }: Servi
           </>
         ) : null}
       </div>
-    </Link>
+    </div>
   )
 }

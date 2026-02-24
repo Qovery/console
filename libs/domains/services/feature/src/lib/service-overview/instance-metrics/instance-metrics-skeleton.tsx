@@ -2,9 +2,9 @@ import { Skeleton, TablePrimitives } from '@qovery/shared/ui'
 
 const { Table } = TablePrimitives
 
-export function PodsMetricsSkeleton() {
+export function InstanceMetricsSkeleton() {
   return (
-    <Table.Root className="w-full">
+    <Table.Root className="w-full rounded-lg">
       <Table.Header>
         <Table.Row>
           {[...Array(3)].map((_, index) => (
@@ -29,4 +29,4 @@ export function PodsMetricsSkeleton() {
   )
 }
 
-export default PodsMetricsSkeleton
+export default InstanceMetricsSkeleton

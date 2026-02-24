@@ -1,11 +1,13 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
 import { TerraformResourcesSection } from '@qovery/domains/service-terraform/feature'
-import { ServiceOverviewFeature, useService } from '@qovery/domains/services/feature'
+import { ObservabilityCallout, ServiceOverview } from '@qovery/domains/services/feature'
+import { useService } from '@qovery/domains/services/feature'
+import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
@@ -13,11 +15,13 @@ export const Route = createFileRoute(
   component: RouteComponent,
 })
 
-function RouteComponent() {
-  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+const WebSocketListenerMemo = memo(MetricsWebSocketListener)
 
-  const { data: environment } = useEnvironment({ environmentId })
+function RouteComponent() {
+  const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+
   const { data: service } = useService({ environmentId, serviceId })
+  const { data: environment } = useEnvironment({ environmentId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
   const hasNoMetrics = useMemo(
@@ -34,16 +38,28 @@ function RouteComponent() {
   )
 
   return (
-    <ServiceOverviewFeature
-      organizationId={organizationId}
-      projectId={projectId}
-      environmentId={environmentId}
-      serviceId={serviceId}
-      service={service}
-      environment={environment}
-      hasNoMetrics={hasNoMetrics}
-      terraformResourcesSection={serviceId ? <TerraformResourcesSection terraformId={serviceId} /> : undefined}
-      observabilityCalloutModalContent={<EnableObservabilityModal />}
-    />
+    <>
+      <ServiceOverview
+        environment={environment}
+        cluster={cluster}
+        terraformResourcesSection={serviceId ? <TerraformResourcesSection terraformId={serviceId} /> : undefined}
+        hasNoMetrics={hasNoMetrics}
+        observabilityCallout={
+          <ObservabilityCallout>
+            <EnableObservabilityModal />
+          </ObservabilityCallout>
+        }
+      />
+      {environment && service?.serviceType && (
+        <WebSocketListenerMemo
+          organizationId={environment.organization.id}
+          clusterId={environment.cluster_id}
+          projectId={environment.project.id}
+          environmentId={environment.id}
+          serviceId={serviceId}
+          serviceType={service?.serviceType}
+        />
+      )}
+    </>
   )
 }

@@ -11,7 +11,7 @@ import { type VariableResponse as Variable } from 'qovery-typescript-axios'
 import { type ServiceType } from 'qovery-ws-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { Icon, PasswordShowHide, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { EmptyState, Icon, PasswordShowHide, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
 
@@ -51,7 +51,7 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
               }
             >
               <span>
-                <Icon iconName="circle-info" className="text-neutral-350" />
+                <Icon iconName="circle-info" className="text-neutral-subtle" />
               </span>
             </Tooltip>
           </>
@@ -102,19 +102,21 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
 
   if (variables.length === 0) {
     return (
-      <div className="px-3 py-8 text-center">
-        <Icon iconName="wave-pulse" className="text-neutral-subtle" />
-        <p className="mt-1 text-xs font-medium text-neutral-subtle">No output variables found</p>
-        <p className="mt-1 text-xs text-neutral-subtle">
-          {scopeName} output variables will appear here after your first successful deployment.
-        </p>
-      </div>
+      <EmptyState
+        title="No output variables found"
+        icon="wave-pulse"
+        className="border-none"
+        description={`${scopeName} output variables will appear here after your first successful deployment.`}
+      />
     )
   }
 
   return (
     <div className="overflow-hidden">
-      <Table.Root className={twMerge('w-full text-ssm', className)} {...props}>
+      <Table.Root
+        className={twMerge('w-full rounded-t-none border-x-0 border-b-0 border-t text-ssm', className)}
+        {...props}
+      >
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id}>
@@ -153,7 +155,11 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
             <Fragment key={row.id}>
               <Table.Row className="h-12">
                 {row.getVisibleCells().map((cell) => (
-                  <Table.Cell key={cell.id} style={{ width: `${cell.column.getSize()}%` }}>
+                  <Table.Cell
+                    key={cell.id}
+                    className={twMerge(row.index > 0 && 'border-t border-neutral')}
+                    style={{ width: `${cell.column.getSize()}%` }}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </Table.Cell>
                 ))}

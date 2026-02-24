@@ -1,21 +1,16 @@
 import { motion } from 'framer-motion'
-import { type ReactNode } from 'react'
+import { type PropsWithChildren } from 'react'
 import { Button, Icon, useModal } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 
-export interface ObservabilityCalloutProps {
-  /** Modal content when user clicks "Discover feature" (e.g. EnableObservabilityModal). Injected by route to avoid circular dep. */
-  discoverModalContent?: ReactNode
-}
-
-export function ObservabilityCallout({ discoverModalContent }: ObservabilityCalloutProps = {}) {
+export function ObservabilityCallout({ children }: PropsWithChildren) {
   const [isOpen, setIsOpen] = useLocalStorage('observability-callout-open', true)
   const { openModal } = useModal()
 
   if (!isOpen) return null
 
   return (
-    <div className="relative flex gap-2 overflow-hidden rounded-md p-6 text-neutral-50 [background:linear-gradient(91deg,_#7062F5_0%,_#8F4FD8_99.96%)]">
+    <div className="relative flex gap-2 overflow-hidden rounded-md p-6 text-neutral [background:linear-gradient(91deg,_#7062F5_0%,_#8F4FD8_99.96%)]">
       <motion.div
         className="absolute inset-0 opacity-80"
         animate={{
@@ -138,11 +133,11 @@ export function ObservabilityCallout({ discoverModalContent }: ObservabilityCall
         <Button
           radius="full"
           size="sm"
-          className="bg-neutral-50 text-neutral-700 hover:bg-neutral-150 focus:bg-neutral-150 active:scale-[0.97] active:bg-neutral-150"
+          className="bg-surface-neutralInvert text-neutralInvert hover:bg-surface-neutralInvert-component focus:bg-surface-neutralInvert-component active:scale-[0.97] active:bg-surface-neutralInvert-component"
           onClick={() =>
-            discoverModalContent &&
+            children &&
             openModal({
-              content: discoverModalContent,
+              content: children,
               options: {
                 width: 680,
               },
@@ -155,7 +150,7 @@ export function ObservabilityCallout({ discoverModalContent }: ObservabilityCall
       <button
         type="button"
         onClick={() => setIsOpen(false)}
-        className="absolute right-2 top-2 flex h-3.5 w-3.5 items-center justify-center p-0.5 text-neutral-50 transition-colors hover:text-neutral-200"
+        className="absolute right-2 top-2 flex h-3.5 w-3.5 items-center justify-center p-0.5 text-neutral transition-colors hover:text-neutral-subtle"
       >
         <Icon iconName="xmark" iconStyle="regular" />
       </button>

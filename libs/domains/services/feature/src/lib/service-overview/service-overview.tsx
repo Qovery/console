@@ -1,39 +1,37 @@
+import { useParams } from '@tanstack/react-router'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
-import { DatabaseModeEnum } from 'qovery-typescript-axios'
+import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, useMemo, useState } from 'react'
-import { type AnyService } from '@qovery/domains/services/data-access'
 import { OutputVariables } from '@qovery/domains/variables/feature'
-import { ExternalLink, Heading, Icon, Section, TabsPrimitives } from '@qovery/shared/ui'
-import { ScaledObjectStatus } from '../keda/scaled-object-status/scaled-object-status'
-import { PodStatusesCallout } from '../pod-statuses-callout/pod-statuses-callout'
-import { PodsMetrics } from '../pods-metrics/pods-metrics'
-import { ObservabilityCallout } from './observability-callout'
+import { Heading, Icon, Link, Section, TabsPrimitives } from '@qovery/shared/ui'
+import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
+import { useService } from '../hooks/use-service/use-service'
+import { ScaledObjectStatus, type ScaledObjectStatusDto } from '../keda/scaled-object-status/scaled-object-status'
+import { InstanceMetrics } from './instance-metrics/instance-metrics'
 import { ServiceHeader } from './service-header/service-header'
+import { ServiceInstance } from './service-instance/service-instance'
 import { ServiceLastDeployment } from './service-last-deployment/service-last-deployment'
 
 const { Tabs } = TabsPrimitives
 
 export interface ServiceOverviewProps {
-  serviceId: string
-  environmentId: string
-  service: AnyService
+  environment?: Environment
   hasNoMetrics?: boolean
-  /** Optional slot for Terraform "Infrastructure Resources" tab content (avoids circular dep with service-terraform). */
   terraformResourcesSection?: ReactNode
-  /** Optional modal content for Observability callout "Discover feature" (avoids circular dep with observability). */
-  observabilityCalloutModalContent?: ReactNode
+  observabilityCallout?: ReactNode
 }
 
 export function ServiceOverview({
-  serviceId,
-  environmentId,
-  service,
+  environment,
   hasNoMetrics = false,
   terraformResourcesSection,
-  observabilityCalloutModalContent,
+  observabilityCallout,
 }: ServiceOverviewProps) {
+  const { environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { data: service } = useService({ environmentId, serviceId })
   const [activeTab, setActiveTab] = useState('variables')
   const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
+  const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
 
   const isDatabaseManaged = useMemo(
     () =>
@@ -43,7 +41,6 @@ export function ServiceOverview({
   )
   const isLifecycleJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE', [service])
   const isTerraformService = useMemo(() => service?.serviceType === 'TERRAFORM', [service])
-  const isCronJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'CRON', [service])
   const isKedaAutoscaling = useMemo(
     () =>
       isKedaFeatureEnabled &&
@@ -51,88 +48,121 @@ export function ServiceOverview({
       service.autoscaling?.mode === 'KEDA',
     [service, isKedaFeatureEnabled]
   )
-  const showApplicationOverview = useMemo(
-    () =>
-      service?.serviceType === 'APPLICATION' ||
-      service?.serviceType === 'CONTAINER' ||
-      service?.serviceType === 'JOB' ||
-      service?.serviceType === 'TERRAFORM',
-    [service?.serviceType]
-  )
+  const scaledObject = useMemo<ScaledObjectStatusDto | null>(() => {
+    if (
+      !isKedaAutoscaling ||
+      typeof runningStatus !== 'object' ||
+      runningStatus === null ||
+      !('scaled_object' in runningStatus)
+    ) {
+      return null
+    }
+
+    const candidate = runningStatus.scaled_object
+    if (!candidate || typeof candidate !== 'object' || !('name' in candidate) || typeof candidate.name !== 'string') {
+      return null
+    }
+
+    return candidate as ScaledObjectStatusDto
+  }, [isKedaAutoscaling, runningStatus])
+
+  if (!service || !environment) {
+    return null
+  }
 
   if (service?.serviceType === 'DATABASE') {
     return (
-      <div className="flex flex-1 grow flex-col gap-6 overflow-auto px-10 py-7">
-        <ServiceHeader environmentId={environmentId} serviceId={serviceId} />
+      <Section className="flex flex-1 grow flex-col gap-6 overflow-auto px-10 py-7">
+        <ServiceHeader environment={environment} serviceId={service.id} />
         {isDatabaseManaged ? (
-          <div className="flex flex-col items-center gap-1 border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
+          <div className="flex flex-col items-center gap-1 border border-neutral bg-surface-neutral-subtle py-10 text-sm text-neutral">
             <span className="font-medium">Metrics for managed databases are not available</span>
-            <span>Check your cloud provider console to get more information</span>
+            <span className="text-neutral-subtle">Check your cloud provider console to get more information</span>
           </div>
         ) : (
-          <>
-            <PodStatusesCallout environmentId={environmentId} serviceId={serviceId} />
-            <PodsMetrics environmentId={environmentId} serviceId={serviceId} />
-          </>
+          <Section className="gap-3">
+            {/* 
+              TODO: Remove this once if we see isn't useful anymore.
+              <PodStatusesCallout environmentId={environment.id} serviceId={service.id} /> 
+            */}
+            <Heading>Instances</Heading>
+            <InstanceMetrics environmentId={environment.id} serviceId={service.id} />
+          </Section>
         )}
-      </div>
+      </Section>
     )
-  }
-
-  if (!showApplicationOverview) {
-    return null
   }
 
   return (
     <div className="flex min-h-0 flex-1 grow flex-col gap-6 pb-24">
       <div className="flex shrink-0 flex-col gap-5 py-8 text-sm">
         <Section className="gap-8">
-          <ServiceHeader environmentId={environmentId} serviceId={serviceId} />
+          <ServiceHeader environment={environment} serviceId={service.id} />
+          {hasNoMetrics && observabilityCallout}
           <Section className="gap-3">
-            <Heading>Last deployment</Heading>
-            <ServiceLastDeployment serviceId={serviceId} serviceType={service?.serviceType} service={service} />
+            <div className="flex items-center justify-between gap-2">
+              <Heading>Last deployment</Heading>
+              <Link
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
+                params={{
+                  organizationId: environment.organization.id,
+                  projectId: environment.project.id,
+                  environmentId: environment.id,
+                  serviceId: service.id,
+                }}
+                color="neutral"
+                size="ssm"
+                className="gap-0.5 text-neutral-subtle hover:text-neutral"
+              >
+                See all deploys
+                <Icon iconName="angle-right" className="text-ssm" />
+              </Link>
+            </div>
+            <ServiceLastDeployment serviceId={service.id} serviceType={service?.serviceType} service={service} />
           </Section>
-        </Section>
-
-        {hasNoMetrics && <ObservabilityCallout discoverModalContent={observabilityCalloutModalContent} />}
-        <PodStatusesCallout environmentId={environmentId} serviceId={serviceId} />
-        {!isTerraformService && (
-          <PodsMetrics environmentId={environmentId} serviceId={serviceId}>
-            {isCronJob && (
-              <div className="grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 rounded border border-neutral-250 bg-neutral-100 p-3 text-xs text-neutral-350">
-                <Icon className="row-span-2" iconName="circle-info" iconStyle="regular" />
-                <p>
-                  The number of past Completed or Failed job execution retained in the history and their TTL can be
-                  customized in the advanced settings.
-                </p>
-                <ExternalLink
-                  className="text-xs"
-                  href="https://www.qovery.com/docs/configuration/service-advanced-settings#cronjob-failed-jobs-history-limit"
-                >
-                  See documentation
-                </ExternalLink>
+          {!isTerraformService && (
+            <Section className="gap-3">
+              <Heading>Instances</Heading>
+              <ServiceInstance service={service} />
+            </Section>
+          )}
+          {/* 
+          TODO: Remove this once if we see isn't useful anymore.
+          <PodStatusesCallout environmentId={environment.id} serviceId={service.id} /> 
+        */}
+          {isKedaAutoscaling && scaledObject && (
+            <Section className="gap-3">
+              <Heading>Scaled Object (KEDA)</Heading>
+              <ScaledObjectStatus scaledObject={scaledObject} />
+            </Section>
+          )}
+          {isLifecycleJob && (
+            <Section className="gap-3">
+              <Heading>Output Variables</Heading>
+              <div className="overflow-hidden rounded-lg border border-neutral">
+                <OutputVariables className="border-none" serviceId={service.id} serviceType={service?.serviceType} />
               </div>
-            )}
-          </PodsMetrics>
-        )}
-        {isKedaAutoscaling && <ScaledObjectStatus environmentId={environmentId} serviceId={serviceId} />}
-        {isLifecycleJob && <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} />}
-        {isTerraformService && (
-          <Tabs.Root
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="border-neutral-200x w-full rounded-lg border"
-          >
-            <Tabs.List className="rounded-t-lg border-b border-neutral-200 bg-neutral-100">
-              <Tabs.Trigger value="variables">Output Variables</Tabs.Trigger>
-              <Tabs.Trigger value="resources">Infrastructure Resources</Tabs.Trigger>
-            </Tabs.List>
-            <Tabs.Content value="variables">
-              <OutputVariables serviceId={serviceId} serviceType={service?.serviceType} className="table-fixed" />
-            </Tabs.Content>
-            <Tabs.Content value="resources">{terraformResourcesSection ?? null}</Tabs.Content>
-          </Tabs.Root>
-        )}
+            </Section>
+          )}
+          {isTerraformService && (
+            <Section className="gap-3">
+              <Tabs.Root
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full overflow-hidden rounded-lg border border-neutral"
+              >
+                <Tabs.List className="bg-surface-neutral-subtle">
+                  <Tabs.Trigger value="variables">Output Variables</Tabs.Trigger>
+                  <Tabs.Trigger value="resources">Infrastructure Resources</Tabs.Trigger>
+                </Tabs.List>
+                <Tabs.Content value="variables">
+                  <OutputVariables serviceId={service.id} serviceType={service?.serviceType} className="table-fixed" />
+                </Tabs.Content>
+                <Tabs.Content value="resources">{terraformResourcesSection ?? null}</Tabs.Content>
+              </Tabs.Root>
+            </Section>
+          )}
+        </Section>
       </div>
     </div>
   )

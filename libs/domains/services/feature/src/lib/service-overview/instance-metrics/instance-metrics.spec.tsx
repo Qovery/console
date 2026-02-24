@@ -1,12 +1,12 @@
 import { ResourceStatusDto, UnitDto } from 'qovery-ws-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import * as useDeploymentStatusImport from '../hooks/use-deployment-status/use-deployment-status'
-import * as useMetricsImport from '../hooks/use-metrics/use-metrics'
-import * as useServiceImport from '../hooks/use-service/use-service'
-import PodsMetrics from './pods-metrics'
+import * as useDeploymentStatusImport from '../../hooks/use-deployment-status/use-deployment-status'
+import * as useMetricsImport from '../../hooks/use-metrics/use-metrics'
+import * as useServiceImport from '../../hooks/use-service/use-service'
+import { InstanceMetrics } from './instance-metrics'
 
-describe('PodsMetrics', () => {
+describe('InstanceMetrics', () => {
   it('should match snapshot with data', () => {
     jest.spyOn(useMetricsImport, 'useMetrics').mockReturnValue({
       data: [
@@ -44,7 +44,7 @@ describe('PodsMetrics', () => {
       error: {},
       isError: false,
     })
-    const { container } = renderWithProviders(<PodsMetrics environmentId="1" serviceId="1" />)
+    const { container } = renderWithProviders(<InstanceMetrics environmentId="1" serviceId="1" />)
     expect(container).toMatchSnapshot()
   })
   it('should match snapshot with empty data', () => {
@@ -75,7 +75,7 @@ describe('PodsMetrics', () => {
       error: {},
       isError: false,
     })
-    const { container } = renderWithProviders(<PodsMetrics environmentId="1" serviceId="1" />)
+    const { container } = renderWithProviders(<InstanceMetrics environmentId="1" serviceId="1" />)
     expect(container).toMatchSnapshot()
   })
   it('should match snapshot with null data', () => {
@@ -106,7 +106,7 @@ describe('PodsMetrics', () => {
       error: {},
       isError: false,
     })
-    const { container } = renderWithProviders(<PodsMetrics environmentId="1" serviceId="1" />)
+    const { container } = renderWithProviders(<InstanceMetrics environmentId="1" serviceId="1" />)
     expect(container).toMatchSnapshot()
   })
 })

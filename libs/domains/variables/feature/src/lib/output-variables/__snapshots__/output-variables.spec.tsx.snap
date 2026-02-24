@@ -6,12 +6,18 @@ exports[`OutputVariables when serviceType is JOB should match snapshot 1`] = `
     <div
       class="overflow-hidden"
     >
+<<<<<<< HEAD
       <div
         class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral"
+=======
+      <table
+        class="min-w-full border-separate border-spacing-0 overflow-hidden rounded-md border border-neutral bg-surface-neutral text-neutral w-full rounded-t-none border-x-0 border-b-0 border-t text-ssm"
+>>>>>>> 59ed10361 (refactor(service-overview): update service overview component with observability features and improve UI consistency)
       >
-        <table
-          class="min-w-full divide-y divide-neutral text-neutral w-full text-ssm"
+        <thead
+          class="[&_th]:border-b [&_th]:border-neutral"
         >
+<<<<<<< HEAD
           <thead>
             <tr>
               <th
@@ -52,10 +58,24 @@ exports[`OutputVariables when serviceType is JOB should match snapshot 1`] = `
               <td
                 class="h-14 border-neutral px-4 py-0"
                 style="width: 50%;"
+=======
+          <tr>
+            <th
+              class="h-11 px-4 text-left font-code font-medium"
+              style="width: 50%;"
+            >
+              <button
+                class="flex items-center gap-1 cursor-pointer select-none"
+                type="button"
+>>>>>>> 59ed10361 (refactor(service-overview): update service overview component with observability features and improve UI consistency)
               >
-                <div
-                  class="flex items-center gap-1"
+                Job
+                 output variables
+                <span
+                  class=""
+                  data-state="closed"
                 >
+<<<<<<< HEAD
                   <span
                     class="text-sm text-neutral-subtle"
                   >
@@ -67,31 +87,71 @@ exports[`OutputVariables when serviceType is JOB should match snapshot 1`] = `
               <td
                 class="h-14 border-neutral px-4 py-0"
                 style="width: 50%;"
+=======
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-circle-info text-neutral-subtle"
+                  />
+                </span>
+              </button>
+            </th>
+            <th
+              class="h-11 px-4 text-left font-code font-medium"
+              style="width: 50%;"
+            >
+              Value
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-neutral"
+        >
+          <tr
+            class="h-12"
+          >
+            <td
+              class="h-14 px-4 py-0"
+              style="width: 50%;"
+            >
+              <div
+                class="flex items-center gap-1"
+>>>>>>> 59ed10361 (refactor(service-overview): update service overview component with observability features and improve UI consistency)
               >
                 <span
-                  class="flex h-5 items-center gap-2 text-sm text-neutral-disabled"
+                  class="text-sm text-neutral-subtle"
                 >
-                  <span
-                    class=""
-                    data-state="closed"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-lock-keyhole block w-4"
-                    />
-                  </span>
-                  <span
-                    class="pt-1.5 font-medium tracking-widest"
-                    data-testid="hide_value_secret"
-                  >
-                    ********
-                  </span>
+                  DB_PASSWORD
                 </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                 
+              </div>
+            </td>
+            <td
+              class="h-14 px-4 py-0"
+              style="width: 50%;"
+            >
+              <span
+                class="flex h-5 items-center gap-2 text-sm text-neutral-disabled"
+              >
+                <span
+                  class=""
+                  data-state="closed"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-lock-keyhole block w-4"
+                  />
+                </span>
+                <span
+                  class="pt-1.5 font-medium tracking-widest"
+                  data-testid="hide_value_secret"
+                >
+                  ********
+                </span>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </body>
@@ -103,12 +163,18 @@ exports[`OutputVariables when serviceType is TERRAFORM should match snapshot 1`]
     <div
       class="overflow-hidden"
     >
+<<<<<<< HEAD
       <div
         class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral"
+=======
+      <table
+        class="min-w-full border-separate border-spacing-0 overflow-hidden rounded-md border border-neutral bg-surface-neutral text-neutral w-full rounded-t-none border-x-0 border-b-0 border-t text-ssm"
+>>>>>>> 59ed10361 (refactor(service-overview): update service overview component with observability features and improve UI consistency)
       >
-        <table
-          class="min-w-full divide-y divide-neutral text-neutral w-full text-ssm"
+        <thead
+          class="[&_th]:border-b [&_th]:border-neutral"
         >
+<<<<<<< HEAD
           <thead>
             <tr>
               <th
@@ -149,10 +215,24 @@ exports[`OutputVariables when serviceType is TERRAFORM should match snapshot 1`]
               <td
                 class="h-14 border-neutral px-4 py-0"
                 style="width: 50%;"
+=======
+          <tr>
+            <th
+              class="h-11 px-4 text-left font-code font-medium"
+              style="width: 50%;"
+            >
+              <button
+                class="flex items-center gap-1 cursor-pointer select-none"
+                type="button"
+>>>>>>> 59ed10361 (refactor(service-overview): update service overview component with observability features and improve UI consistency)
               >
-                <div
-                  class="flex items-center gap-1"
+                Terraform
+                 output variables
+                <span
+                  class=""
+                  data-state="closed"
                 >
+<<<<<<< HEAD
                   <span
                     class="text-sm text-neutral-subtle"
                   >
@@ -164,11 +244,64 @@ exports[`OutputVariables when serviceType is TERRAFORM should match snapshot 1`]
               <td
                 class="h-14 border-neutral px-4 py-0"
                 style="width: 50%;"
+=======
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-circle-info text-neutral-subtle"
+                  />
+                </span>
+              </button>
+            </th>
+            <th
+              class="h-11 px-4 text-left font-code font-medium"
+              style="width: 50%;"
+            >
+              Value
+            </th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-neutral"
+        >
+          <tr
+            class="h-12"
+          >
+            <td
+              class="h-14 px-4 py-0"
+              style="width: 50%;"
+            >
+              <div
+                class="flex items-center gap-1"
+>>>>>>> 59ed10361 (refactor(service-overview): update service overview component with observability features and improve UI consistency)
               >
                 <span
-                  class="group flex h-5 w-full items-center gap-2 text-sm"
+                  class="text-sm text-neutral-subtle"
+                >
+                  DB_USERNAME
+                </span>
+                 
+              </div>
+            </td>
+            <td
+              class="h-14 px-4 py-0"
+              style="width: 50%;"
+            >
+              <span
+                class="group flex h-5 w-full items-center gap-2 text-sm"
+              >
+                <span
+                  class="truncate text-neutral"
+                  data-testid="visible_value"
+                >
+                  admin2
+                </span>
+                <span
+                  class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-['']"
+                  data-state="closed"
+                  data-testid="copy-container"
                 >
                   <span
+<<<<<<< HEAD
                     class="truncate text-neutral"
                     data-testid="visible_value"
                   >
@@ -184,12 +317,17 @@ exports[`OutputVariables when serviceType is TERRAFORM should match snapshot 1`]
                       class="fa-solid fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
                     />
                   </span>
+=======
+                    class="icon-solid-copy shrink-0 text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                    role="img"
+                  />
+>>>>>>> 59ed10361 (refactor(service-overview): update service overview component with observability features and improve UI consistency)
                 </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </body>

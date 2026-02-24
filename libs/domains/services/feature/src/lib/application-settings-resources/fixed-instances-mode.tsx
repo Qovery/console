@@ -41,7 +41,6 @@ export function FixedInstancesMode({
               const output = parseInt(e.target.value, 10)
               const value = isNaN(output) ? 0 : output
               field.onChange(value)
-              // Set max = min for fixed instances
               setValue('max_running_instances', value)
             }}
             error={
