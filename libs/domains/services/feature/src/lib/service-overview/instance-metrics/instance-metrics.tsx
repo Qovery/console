@@ -332,7 +332,7 @@ function InstanceMetricsTable({
               </Table.Row>
             ))}
           </Table.Header>
-          <Table.Body className="[&>tr:last-child>td:first-child]:rounded-bl-lg [&>tr:last-child>td:last-child]:rounded-br-lg">
+          <Table.Body className="[&>tr:last-child>td:first-child]:rounded-bl-lg [&>tr:last-child>td:last-child]:rounded-br-lg [&>tr:not(:last-child)>td]:border-b [&>tr:not(:last-child)>td]:border-neutral">
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
                 <Table.Row

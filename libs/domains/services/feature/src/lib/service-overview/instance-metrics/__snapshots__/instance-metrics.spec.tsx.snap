@@ -110,7 +110,7 @@ exports[`InstanceMetrics should match snapshot with data 1`] = `
           </tr>
         </thead>
         <tbody
-          class="divide-y divide-neutral [&>tr:last-child>td:first-child]:rounded-bl-lg [&>tr:last-child>td:last-child]:rounded-br-lg"
+          class="divide-y divide-neutral [&>tr:not(:last-child)>td]:border-b [&>tr:not(:last-child)>td]:border-neutral [&>tr:last-child>td:first-child]:rounded-bl-lg [&>tr:last-child>td:last-child]:rounded-br-lg"
         >
           <tr
             class="hover:bg-surface-neutral-subtle"

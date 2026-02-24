@@ -4,7 +4,7 @@ exports[`PodDetails should match snapshot with container based pod and with mult
 <body>
   <div>
     <div
-      class="relative flex flex-col gap-y-3 overflow-hidden border-t border-neutral pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
       <div
         class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-subtle"
@@ -138,7 +138,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
 <body>
   <div>
     <div
-      class="relative flex flex-col gap-y-3 overflow-hidden border-t border-neutral pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
       <div
         class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-subtle"
@@ -266,7 +266,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
 <body>
   <div>
     <div
-      class="relative flex flex-col gap-y-3 overflow-hidden border-t border-neutral pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
       <div
         class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-subtle"
@@ -363,7 +363,7 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
 <body>
   <div>
     <div
-      class="relative flex flex-col gap-y-3 overflow-hidden border-t border-neutral pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
       <div
         class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-subtle"

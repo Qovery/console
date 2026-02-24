@@ -51,7 +51,7 @@ exports[`Row should have cell error message 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy "
+          class="fa-regular fa-copy "
         />
       </span>
     </div>
@@ -110,7 +110,7 @@ exports[`Row should have cell message 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy "
+          class="fa-regular fa-copy "
         />
       </span>
     </div>

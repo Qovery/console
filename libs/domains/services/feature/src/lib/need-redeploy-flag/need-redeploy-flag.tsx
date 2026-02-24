@@ -7,16 +7,10 @@ import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployme
 import { useService } from '../hooks/use-service/use-service'
 
 export function NeedRedeployFlag() {
-  const {
-    organizationId = '',
-    projectId = '',
-    environmentId = '',
-    applicationId = '',
-    databaseId = '',
-  } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
 
-  const { data: service } = useService({ environmentId, serviceId: applicationId || databaseId })
+  const { data: service } = useService({ environmentId, serviceId })
   const { data: serviceDeploymentStatus } = useDeploymentStatus({
     environmentId,
     serviceId: service?.id,

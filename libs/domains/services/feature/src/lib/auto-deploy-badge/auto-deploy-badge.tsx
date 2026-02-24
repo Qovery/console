@@ -41,14 +41,21 @@ const webhookStatusConfig: Record<
 }
 
 export function AutoDeployBadge({ serviceId }: AutoDeployBadgeProps) {
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams({ strict: false })
+  const {
+    organizationId = '',
+    projectId = '',
+    environmentId = '',
+    serviceId: routeServiceId = '',
+  } = useParams({
+    strict: false,
+  })
   const { data: webhookStatus, isLoading } = useGitWebhookStatus({ serviceId })
 
   const config = webhookStatus ? webhookStatusConfig[webhookStatus.status] : undefined
   const tooltipContent = config?.tooltip ?? 'Auto-deploy enabled. Click to view settings.'
 
   const settingsUrl =
-    APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
+    APPLICATION_URL(organizationId, projectId, environmentId, routeServiceId) +
     APPLICATION_SETTINGS_URL +
     APPLICATION_SETTINGS_GENERAL_URL
 

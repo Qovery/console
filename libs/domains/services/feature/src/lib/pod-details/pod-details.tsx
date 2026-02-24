@@ -42,7 +42,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
   const defaultContainer = filteredContainers[0]?.name
 
   return (
-    <div className="relative flex flex-col gap-y-3 overflow-hidden border-t border-neutral pb-4 pl-4 pr-20 pt-3">
+    <div className="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3">
       <div className="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-subtle" />
       <Link
         to={
