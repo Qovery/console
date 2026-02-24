@@ -1,4 +1,4 @@
-import { Outlet, createFileRoute, useParams } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useParams, useRouterState } from '@tanstack/react-router'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { Sidebar } from '@qovery/shared/ui'
 
@@ -8,6 +8,9 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 
 function RouteComponent() {
   const { organizationId = '' } = useParams({ strict: false })
+  const {
+    location: { pathname },
+  } = useRouterState()
   const { roles } = useUserRole()
 
   const isOrganizationAdmin = roles.some((role) => role.includes(`organization:${organizationId}:admin`))
@@ -115,16 +118,32 @@ function RouteComponent() {
       <aside className="relative min-h-[calc(100vh-2.75rem-4rem)] w-52 shrink-0 self-stretch border-r border-neutral">
         <div className="sticky top-16">
           <Sidebar.Root className="mt-6">
-            {LINKS_SETTINGS.map((link) =>
-              'children' in link ? (
-                <Sidebar.Group key={link.title} title={link.title} icon={link.icon}>
-                  {link.children.map((child) => (
-                    <Sidebar.SubItem key={child.to} to={child.to}>
-                      {child.title}
-                    </Sidebar.SubItem>
-                  ))}
-                </Sidebar.Group>
-              ) : (
+            {LINKS_SETTINGS.map((link) => {
+              if ('children' in link) {
+                const rolesBasePath = `${pathSettings}/roles`
+                const rolesActive = pathname === rolesBasePath || pathname.startsWith(`${rolesBasePath}/`)
+
+                return (
+                  <Sidebar.Group
+                    key={link.title}
+                    title={link.title}
+                    icon={link.icon}
+                    defaultOpen={link.title === 'Team' ? rolesActive : undefined}
+                  >
+                    {link.children.map((child) => (
+                      <Sidebar.SubItem
+                        key={child.to}
+                        to={child.to}
+                        active={child.title === 'Roles & permissions' ? rolesActive : undefined}
+                      >
+                        {child.title}
+                      </Sidebar.SubItem>
+                    ))}
+                  </Sidebar.Group>
+                )
+              }
+
+              return (
                 <Sidebar.Item
                   key={link.to}
                   to={link.to}
@@ -134,7 +153,7 @@ function RouteComponent() {
                   {link.title}
                 </Sidebar.Item>
               )
-            )}
+            })}
           </Sidebar.Root>
         </div>
       </aside>

@@ -3,11 +3,13 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseAvailableRolesProps {
   organizationId: string
+  suspense?: boolean
 }
 
-export function useAvailableRoles({ organizationId }: UseAvailableRolesProps) {
+export function useAvailableRoles({ organizationId, suspense = false }: UseAvailableRolesProps) {
   return useQuery({
     ...queries.organizations.availableRoles({ organizationId }),
+    suspense,
     select(data) {
       if (!data) {
         return data
