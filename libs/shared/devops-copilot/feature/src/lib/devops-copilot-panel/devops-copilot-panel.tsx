@@ -1,34 +1,32 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import * as Dialog from '@radix-ui/react-dialog'
-import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import mermaid from 'mermaid'
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { type CSSProperties, useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { SETTINGS_AI_COPILOT_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { AnimatedGradientText, Button, Callout, Icon, Link, Tooltip } from '@qovery/shared/ui'
-import { QOVERY_STATUS_URL } from '@qovery/shared/util-const'
-import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { Button, Callout, Icon } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { DevopsCopilotContext } from '../devops-copilot-context/devops-copilot-context'
-import { DotStatus } from '../dot-status/dot-status'
 import { useAICopilotConfig } from '../hooks/use-ai-copilot-config/use-ai-copilot-config'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
 import { useQoveryContext } from '../hooks/use-qovery-context/use-qovery-context'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
 import { useThreadState } from '../hooks/use-thread-state/use-thread-state'
 import { useThreads } from '../hooks/use-threads/use-threads'
-import { getIconClass, getIconName } from '../utils/icon-utils/icon-utils'
-import { AssistantMessage } from './assistant-message/assistant-message'
+import { ContextBanner } from './context-banner/context-banner'
 import DevopsCopilotHistory from './devops-copilot-history'
+import { EnableCopilotScreen } from './enable-copilot-screen/enable-copilot-screen'
 import { Header } from './header/header'
 import { useMessageSubmission } from './hooks/use-message-submission/use-message-submission'
+import { usePanelResize } from './hooks/use-panel-resize/use-panel-resize'
+import { useStreamingAnimation } from './hooks/use-streaming-animation/use-streaming-animation'
 import { useVoteHandler } from './hooks/use-vote-handler/use-vote-handler'
 import { Input } from './input/input'
+import { MessageList } from './message-list/message-list'
+import { StatusFooter } from './status-footer/status-footer'
 import { renderStreamingMessageWithMermaid } from './streaming-mermaid-renderer/streaming-mermaid-renderer'
-import { StreamingMessage } from './streaming-message/streaming-message'
 
 export type Message = {
   id: string
@@ -240,7 +238,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
         sendMessageRef.current = null
       }
     }
-  }, [sendMessageRef, handleSendMessage])
+  }, [sendMessageRef, handleSendMessage, setThread])
 
   const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
 
@@ -286,85 +284,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     if (!streamingMessage || displayedStreamingMessage === streamingMessage) return
   }, [streamingMessage, displayedStreamingMessage, isStopped, isFinish, isLoading, lastSubmitResult, setThread, thread])
 
-  useEffect(() => {
-    if (streamingMessage.length === 0 || streamingMessage.length <= displayedStreamingMessage.length) {
-      return
-    }
-
-    let animationFrameId: number
-    let lastTimestamp = performance.now()
-    let isPaused = false
-
-    const animate = (timestamp: number) => {
-      if (isPaused) {
-        animationFrameId = requestAnimationFrame(animate)
-        return
-      }
-
-      const elapsed = timestamp - lastTimestamp
-
-      setDisplayedStreamingMessage((prev) => {
-        const remaining = streamingMessage.length - prev.length
-
-        if (remaining <= 0) {
-          return streamingMessage
-        }
-
-        let chunkSize = 1
-        const currentLength = prev.length
-
-        let baseChunkSize = 2
-        if (currentLength > 6000) {
-          baseChunkSize = 5
-        } else if (currentLength > 4000) {
-          baseChunkSize = 4
-        } else if (currentLength > 2000) {
-          baseChunkSize = 3
-        }
-
-        if (elapsed > 100) {
-          chunkSize = Math.min(100, remaining)
-        } else if (elapsed > 16) {
-          chunkSize = Math.min(baseChunkSize * 2, remaining)
-        } else {
-          chunkSize = Math.min(baseChunkSize, remaining)
-        }
-
-        const nextContent = streamingMessage.slice(0, prev.length + chunkSize)
-
-        if (!streamingMessage.startsWith(nextContent)) {
-          return streamingMessage
-        }
-
-        return nextContent
-      })
-
-      lastTimestamp = timestamp
-
-      if (displayedStreamingMessage.length < streamingMessage.length) {
-        animationFrameId = requestAnimationFrame(animate)
-      }
-    }
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        isPaused = true
-      } else {
-        isPaused = false
-        setDisplayedStreamingMessage(streamingMessage)
-      }
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    animationFrameId = requestAnimationFrame(animate)
-
-    return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId)
-      }
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-    }
-  }, [streamingMessage, displayedStreamingMessage])
+  useStreamingAnimation({
+    streamingMessage,
+    displayedStreamingMessage,
+    setDisplayedStreamingMessage,
+  })
 
   useEffect(() => {
     const node = scrollAreaRef.current
@@ -385,85 +309,12 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     }
   }, [threadId, displayedStreamingMessage])
 
-  useEffect(() => {
-    const applyPanelSize = () => {
-      const panel = panelRef.current
-      if (!panel) return
-
-      if (expand) {
-        panel.style.width = 'calc(100vw - 32px)'
-        panel.style.height = 'calc(100vh - 32px)'
-        panel.style.top = '1rem'
-        panel.style.left = '1rem'
-        panel.style.bottom = ''
-        panel.style.right = ''
-      } else {
-        const size = localStorage.getItem(STORAGE_KEY)
-        if (size) {
-          try {
-            const { width, height } = JSON.parse(size)
-            panel.style.width = `${Math.min(width, window.innerWidth * 0.9)}px`
-            panel.style.height = `${Math.min(height, window.innerHeight * 0.9)}px`
-          } catch (e) {
-            console.error('Failed to apply panel size from localStorage', e)
-            panel.style.width = `${Math.min(480, window.innerWidth * 0.9)}px`
-            panel.style.height = `${Math.min(600, window.innerHeight * 0.9)}px`
-          }
-        } else {
-          panel.style.width = `${Math.min(480, window.innerWidth * 0.9)}px`
-          panel.style.height = `${Math.min(600, window.innerHeight * 0.9)}px`
-        }
-        panel.style.top = ''
-        panel.style.left = ''
-        panel.style.bottom = '8px'
-        panel.style.right = '8px'
-      }
-    }
-
-    applyPanelSize()
-    window.addEventListener('resize', applyPanelSize)
-    return () => window.removeEventListener('resize', applyPanelSize)
-  }, [expand, style])
-
-  const startResize = (e: React.MouseEvent) => {
-    e.preventDefault()
-    const panel = panelRef.current
-    if (!panel) return
-
-    setIsResizing(true)
-
-    const startX = e.clientX
-    const startY = e.clientY
-    const startWidth = panel.offsetWidth
-    const startHeight = panel.offsetHeight
-    const startLeft = panel.getBoundingClientRect().left
-    const startTop = panel.getBoundingClientRect().top
-
-    const onMouseMove = (e: MouseEvent) => {
-      const dx = startX - e.clientX
-      const dy = startY - e.clientY
-      const maxWidth = window.innerWidth * 0.9
-      const maxHeight = window.innerHeight * 0.9
-      const newWidth = Math.min(Math.max(startWidth + dx, 450), maxWidth)
-      const newHeight = Math.min(Math.max(startHeight + dy, 600), maxHeight)
-      panel.style.width = `${newWidth}px`
-      panel.style.height = `${newHeight}px`
-      panel.style.left = `${startLeft - (newWidth - startWidth)}px`
-      panel.style.top = `${startTop - (newHeight - startHeight)}px`
-    }
-
-    const onMouseUp = () => {
-      document.removeEventListener('mousemove', onMouseMove)
-      document.removeEventListener('mouseup', onMouseUp)
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ width: panel.offsetWidth, height: panel.offsetHeight }))
-      setIsResizing(false)
-    }
-
-    document.addEventListener('mousemove', onMouseMove)
-    document.addEventListener('mouseup', onMouseUp)
-  }
-
-  const [isResizing, setIsResizing] = useState(false)
+  const { isResizing, startResize } = usePanelResize({
+    panelRef,
+    expand,
+    storageKey: STORAGE_KEY,
+    style,
+  })
 
   return (
     <Dialog.Root
@@ -551,131 +402,29 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     would expect from a complete DevOps Engineering team.
                   </span>
                 )}
-                <ScrollArea
-                  ref={scrollAreaRef}
-                  className={twMerge(
-                    clsx('relative flex grow flex-col gap-4 overflow-y-scroll p-4', {
-                      'h-[220px]': !expand && thread.length > 0,
-                      'h-[calc(100vh-316px)]': expand && thread.length > 0,
-                    })
-                  )}
-                >
-                  {thread.length === 0 && docLinks.length > 0 && expand && isCopilotEnabled && (
-                    <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col gap-2 text-center">
-                      <Icon
-                        iconName="sparkles"
-                        iconStyle="light"
-                        className="mb-4 animate-[fadein_0.4s_ease-in-out_forwards_0.05s] text-[48px] text-brand-500 opacity-0"
-                      />
-                      <span className="animate-[fadein_0.4s_ease-in-out_forwards_0.22s] text-[11px] font-semibold text-neutral-400 opacity-0 dark:text-white">
-                        Ask for a contextual suggestion:
-                      </span>
-                      <div className="flex max-w-[850px] animate-[fadein_0.4s_ease-in-out_forwards_0.15s] flex-wrap justify-center gap-3 opacity-0">
-                        {docLinks.map(({ label, link }) => (
-                          <Button
-                            key={`${label}${link}`}
-                            type="button"
-                            variant="surface"
-                            className="inline-flex max-w-max gap-2"
-                            radius="full"
-                            onClick={() => {
-                              setInputMessage(label)
-                              handleSendMessage(label)
-                            }}
-                          >
-                            <Icon iconName="arrow-right" />
-                            {label}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {thread.map((message: Message) => {
-                    return match(message.owner)
-                      .with('user', () => (
-                        <div
-                          key={message.id}
-                          className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-brand-50 px-5 py-2.5 text-sm dark:text-neutral-500"
-                        >
-                          <div className="whitespace-pre-wrap">{message.text}</div>
-                        </div>
-                      ))
-                      .with('assistant', () => (
-                        <AssistantMessage
-                          key={message.id}
-                          message={message}
-                          plan={plan}
-                          showPlans={showPlans}
-                          setShowPlans={setShowPlans}
-                          handleVote={handleVote}
-                        />
-                      ))
-                      .exhaustive()
-                  })}
-                  {isLoading && streamingMessage.length === 0 && (
-                    <div className="relative top-2 mt-auto">
-                      <div
-                        className="group flex cursor-pointer items-center gap-2"
-                        onClick={() => setShowPlans((prev) => ({ ...prev, temp: !prev['temp'] }))}
-                      >
-                        <AnimatedGradientText className="w-fit text-ssm font-medium">
-                          {loadingText}
-                        </AnimatedGradientText>
-                        {plan.filter((p) => p.messageId === 'temp').length > 0 && (
-                          <Icon
-                            iconName={showPlans['temp'] ? 'chevron-circle-up' : 'chevron-circle-down'}
-                            iconStyle="regular"
-                            className="transform transition-transform group-hover:scale-110"
-                          />
-                        )}
-                      </div>
-                      {showPlans['temp'] && plan.filter((p) => p.messageId === 'temp').length > 0 && (
-                        <div className="mt-2 flex flex-col gap-2">
-                          {plan
-                            .filter((p) => p.messageId === 'temp')
-                            .map((step, index) => (
-                              <div key={index} className="flex items-start gap-2 text-sm">
-                                <Icon iconName={getIconName(step.status)} className={getIconClass(step.status)} />
-                                <div className="flex flex-col">
-                                  <span className={clsx({ 'text-neutral-400': step.status === 'completed' })}>
-                                    {step.description}
-                                  </span>
-                                  <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
-                                </div>
-                              </div>
-                            ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  {isLoading && streamingMessage.length > 0 && pendingThreadId.current === threadId && (
-                    <StreamingMessage
-                      displayedStreamingMessage={displayedStreamingMessage}
-                      plan={plan}
-                      showPlans={showPlans}
-                      setShowPlans={setShowPlans}
-                      renderStreamingMessageWithMermaid={renderStreamingMessageWithMermaid}
-                    />
-                  )}
-                  <div className="sticky bottom-0 left-full z-10 ml-[-40px] w-fit">
-                    {!isAtBottom && (
-                      <Button
-                        onClick={() => {
-                          const node = scrollAreaRef.current
-                          if (node) {
-                            node.scrollTo({
-                              top: node.scrollHeight,
-                              behavior: 'smooth',
-                            })
-                          }
-                        }}
-                        className="m-2 flex aspect-square items-center justify-center rounded-full"
-                      >
-                        <Icon iconName="arrow-down" iconStyle="light" />
-                      </Button>
-                    )}
-                  </div>
-                </ScrollArea>
+                <MessageList
+                  scrollAreaRef={scrollAreaRef}
+                  expand={expand}
+                  thread={thread}
+                  docLinks={docLinks}
+                  isCopilotEnabled={isCopilotEnabled}
+                  onSuggestionClick={(label) => {
+                    setInputMessage(label)
+                    handleSendMessage(label)
+                  }}
+                  isLoading={isLoading}
+                  streamingMessage={streamingMessage}
+                  displayedStreamingMessage={displayedStreamingMessage}
+                  loadingText={loadingText}
+                  plan={plan}
+                  showPlans={showPlans}
+                  setShowPlans={setShowPlans}
+                  threadId={threadId}
+                  pendingThreadId={pendingThreadId.current}
+                  renderStreamingMessageWithMermaid={renderStreamingMessageWithMermaid}
+                  handleVote={handleVote}
+                  isAtBottom={isAtBottom}
+                />
                 <div
                   className={clsx('relative mt-auto flex flex-col gap-2 px-4 pb-4', {
                     'shadow-[0_-8px_16px_-6px_rgba(0,0,0,0.05)]': thread.length > 0,
@@ -713,25 +462,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     )}
                   >
                     {withContext && (
-                      <div className="absolute top-2.5 flex w-full rounded-t-xl border border-neutral-250 bg-neutral-100 pb-4 pl-2 pr-4 pt-2 text-xs text-neutral-400 dark:border-neutral-500 dark:bg-neutral-700 dark:text-neutral-250">
-                        <Tooltip content="Your message uses this current context" classNameContent="z-[1]">
-                          <span className="flex items-center gap-2">
-                            <Icon iconName="plug" iconStyle="regular" />
-                            <span>
-                              {upperCaseFirstLetter(String(current?.type))}:{' '}
-                              <span className="font-medium">{String(current?.name ?? 'No context')}</span>
-                            </span>
-                          </span>
-                        </Tooltip>
-                        <Button
-                          type="button"
-                          variant="plain"
-                          className="absolute right-2 top-0.5 text-neutral-500 dark:text-white"
-                          onClick={() => setWithContext(false)}
-                        >
-                          <Icon iconName="xmark" />
-                        </Button>
-                      </div>
+                      <ContextBanner
+                        currentType={String(current?.type)}
+                        currentName={String(current?.name ?? 'No context')}
+                        onClose={() => setWithContext(false)}
+                      />
                     )}
                     <Input
                       disabled={!isCopilotEnabled}
@@ -756,85 +491,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                       }}
                     />
                   </div>
-                  <div className="flex w-full items-center justify-between">
-                    <div className="inline-flex items-center gap-2 text-xs text-neutral-350 dark:text-neutral-250">
-                      <span>{isReadOnly ? 'Read-only mode' : 'Read-write mode'}</span>
-                      <Tooltip
-                        content={isReadOnly ? 'Your Copilot can’t make any changes' : 'It can perform actions'}
-                        classNameContent="z-10"
-                      >
-                        <button type="button">
-                          <Icon iconName="circle-info" className="text-neutral-350 dark:text-neutral-250" />
-                        </button>
-                      </Tooltip>
-                    </div>
-                    {appStatus && appStatus.status ? (
-                      <a
-                        className="inline-flex max-w-max animate-[fadein_0.22s_ease-in-out_forwards_0.20s] items-center gap-2 text-xs text-neutral-350 opacity-0 transition hover:text-neutral-600 dark:text-neutral-250"
-                        href={QOVERY_STATUS_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <span>
-                          {match(appStatus)
-                            .with({ status: 'OPERATIONAL' }, () => 'All systems operational')
-                            .with({ status: 'MAJOROUTAGE' }, () => 'Major outage ongoing')
-                            .with({ status: 'MINOROUTAGE' }, () => 'Minor outage ongoing')
-                            .with({ status: 'PARTIALOUTAGE' }, () => 'Partial outage ongoing')
-                            .exhaustive()}
-                        </span>
-                        <DotStatus
-                          color={match(appStatus)
-                            .with({ status: 'OPERATIONAL' }, () => 'green' as const)
-                            .with({ status: 'MAJOROUTAGE' }, () => 'red' as const)
-                            .with({ status: 'MINOROUTAGE' }, () => 'yellow' as const)
-                            .with({ status: 'PARTIALOUTAGE' }, () => 'yellow' as const)
-                            .exhaustive()}
-                        />
-                      </a>
-                    ) : (
-                      <div className="h-4" />
-                    )}
-                  </div>
+                  <StatusFooter isReadOnly={isReadOnly} appStatus={appStatus} />
                 </div>
               </div>
             ) : (
-              <div className="flex grow flex-col items-center justify-center gap-4 bg-neutral-100 p-8">
-                <div className="relative flex h-10 w-10 items-center justify-center bg-neutral-150">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="40"
-                    height="40"
-                    fill="none"
-                    viewBox="0 0 40 40"
-                    className="absolute inset-0"
-                  >
-                    <path
-                      fill="#67778e"
-                      d="M4 0v1H1v3H0V0zM36 0v1h3v3h1V0zM4 40v-1H1v-3H0v4zM36 40v-1h3v-3h1v4z"
-                    ></path>
-                  </svg>
-                  <Icon iconName="robot" iconStyle="light" className="relative z-10 text-neutral-350" />
-                </div>
-                <div className="flex max-w-md flex-col gap-1 text-center">
-                  <span className="text-sm font-medium text-neutral-400">AI Copilot not activated yet</span>
-                  <span className="text-sm text-neutral-400">
-                    Our DevOps AI Copilot can help you fix your deployments, optimize your infrastructure costs, audit
-                    your security and do everything you would expect from a complete DevOps Engineering team. Enable it
-                    in your organization settings to get started.
-                  </span>
-                </div>
-
-                <Link
-                  to={`${SETTINGS_URL(context?.organization?.id)}${SETTINGS_AI_COPILOT_URL}`}
-                  onClick={handleOnClose}
-                >
-                  <Button className="flex gap-2" size="md">
-                    <Icon iconName="sparkles" />
-                    Enable AI Copilot
-                  </Button>
-                </Link>
-              </div>
+              <EnableCopilotScreen organizationId={context?.organization?.id} onClose={handleOnClose} />
             )}
           </div>
         </Dialog.Content>
