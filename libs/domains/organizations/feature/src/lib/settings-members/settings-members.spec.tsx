@@ -128,14 +128,15 @@ describe('SettingsMembers', () => {
   it('should update member role when selecting a new role', async () => {
     const { userEvent } = renderWithProviders(<SettingsMembers />)
 
-    const roleSelects = screen.getAllByTestId('input')
-    const editableSelect = roleSelects.find((select) => !(select as HTMLSelectElement).disabled)
+    const roleButtons = screen.getAllByRole('button', { name: /member role/i })
+    const editableButton = roleButtons.find((button) => !button.hasAttribute('disabled'))
 
-    if (!editableSelect) {
-      throw new Error('No editable role select found')
+    if (!editableButton) {
+      throw new Error('No editable role button found')
     }
 
-    await userEvent.selectOptions(editableSelect, 'role-owner')
+    await userEvent.click(editableButton)
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Owner' }))
 
     await waitFor(() => {
       expect(editMemberRoleMock).toHaveBeenCalledWith({
