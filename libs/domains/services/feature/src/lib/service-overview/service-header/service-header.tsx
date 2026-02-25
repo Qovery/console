@@ -1,5 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import { type ApplicationGitRepository, type Credentials, type Environment } from 'qovery-typescript-axios'
+import { Suspense } from 'react'
 import { P, match } from 'ts-pattern'
 import {
   IconEnum,
@@ -63,13 +64,48 @@ export interface ServiceHeaderProps {
   serviceId: string
 }
 
-export function ServiceHeader({ environment, serviceId }: ServiceHeaderProps) {
+function ServiceHeaderSkeleton({ environment, serviceId }: ServiceHeaderProps) {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Skeleton width={32} height={32} show rounded />
+            <Skeleton width={160} height={24} show />
+            <Skeleton width={86} height={24} show />
+            <span className="mx-2 h-4 w-px bg-surface-neutral-component" />
+            <div className="flex items-center gap-2 text-ssm">
+              <Icon className="w-5" name={environment.cloud_provider.provider} />
+              {environment.cluster_name}
+            </div>
+          </div>
+          <ServiceActionToolbar environment={environment} serviceId={serviceId} />
+        </div>
+        <Skeleton width={480} height={20} show />
+        <div className="mt-3 flex items-center gap-1">
+          <Skeleton width={90} height={24} show />
+          <Skeleton width={120} height={24} show />
+          <Skeleton width={100} height={24} show />
+          <Skeleton width={70} height={24} show />
+          <Skeleton width={80} height={24} show />
+        </div>
+      </div>
+      <hr className="border-neutral" />
+    </div>
+  )
+}
+
+function ServiceHeaderContent({ environment, serviceId }: ServiceHeaderProps) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
 
-  const { data: service } = useService({ environmentId: environment.id, serviceId })
+  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
   const { data: masterCredentials } = useMasterCredentials({ serviceId, serviceType: service?.serviceType })
 
   const [, copyToClipboard] = useCopyToClipboard()
+
+  if (!service) {
+    return null
+  }
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
@@ -108,45 +144,33 @@ export function ServiceHeader({ environment, serviceId }: ServiceHeaderProps) {
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <Skeleton width={32} height={32} show={!service} rounded>
-              {service && (
-                <ServiceAvatar
-                  border="solid"
-                  size="sm"
-                  service={
-                    service.serviceType === 'JOB'
-                      ? {
-                          icon_uri: service.icon_uri ?? '',
-                          serviceType: 'JOB' as const,
-                          job_type: service.job_type,
-                        }
-                      : {
-                          icon_uri: service.icon_uri ?? '',
-                          serviceType: service.serviceType,
-                        }
-                  }
-                />
-              )}
-            </Skeleton>
-            <Skeleton width={120} height={24} show={!service}>
-              {service && <Heading>{service.name}</Heading>}
-            </Skeleton>
+            <ServiceAvatar
+              border="solid"
+              size="sm"
+              service={
+                service.serviceType === 'JOB'
+                  ? {
+                      icon_uri: service.icon_uri ?? '',
+                      serviceType: 'JOB' as const,
+                      job_type: service.job_type,
+                    }
+                  : {
+                      icon_uri: service.icon_uri ?? '',
+                      serviceType: service.serviceType,
+                    }
+              }
+            />
+            <Heading>{service.name}</Heading>
             <ServiceStateChip className="ml-0.5" mode="running" environmentId={environment.id} serviceId={serviceId} />
             <span className="mx-2 h-4 w-px bg-surface-neutral-component" />
-            <Skeleton width={120} height={24} show={!environment}>
-              <div className="flex items-center gap-2 text-ssm">
-                <Icon className="w-5" name={environment.cloud_provider.provider} />
-                {environment.cluster_name}
-              </div>
-            </Skeleton>
+            <div className="flex items-center gap-2 text-ssm">
+              <Icon className="w-5" name={environment.cloud_provider.provider} />
+              {environment.cluster_name}
+            </div>
           </div>
           <ServiceActionToolbar environment={environment} serviceId={serviceId} />
         </div>
-        {service?.description && (
-          <Skeleton width={500} height={24} show={!service}>
-            {service && <p className="text-neutral-subtle">{service.description}</p>}
-          </Skeleton>
-        )}
+        {service.description && <p className="text-neutral-subtle">{service.description}</p>}
         <div className="mt-3 flex items-center gap-1">
           {match(service)
             .with(
@@ -247,10 +271,12 @@ export function ServiceHeader({ environment, serviceId }: ServiceHeaderProps) {
                   variant="surface"
                   size="xs"
                   className="gap-1"
-                  onClick={() =>
-                    /* XXX: TS is not able to infer that masterCredentials cannot be undef */
-                    handleCopyCredentials(databaseSource.masterCredentials!)
-                  }
+                  onClick={() => {
+                    if (!databaseSource.masterCredentials) {
+                      return
+                    }
+                    handleCopyCredentials(databaseSource.masterCredentials)
+                  }}
                 >
                   <Icon iconName="key" iconStyle="regular" />
                   Connection URI
@@ -258,42 +284,43 @@ export function ServiceHeader({ environment, serviceId }: ServiceHeaderProps) {
               )}
             </>
           )}
-          <Skeleton width={70} height={24} show={!service}>
-            {service &&
-              'auto_deploy' in service &&
-              service.auto_deploy &&
-              match(service)
-                .with({ serviceType: 'APPLICATION' }, { serviceType: 'TERRAFORM' }, () => (
-                  <AutoDeployBadge serviceId={service.id} />
-                ))
-                .with({ serviceType: 'JOB' }, (job) =>
-                  isJobGitSource(job.source) ? <AutoDeployBadge serviceId={service.id} /> : null
-                )
-                .with({ serviceType: 'HELM' }, (helm) =>
-                  isHelmGitSource(helm.source) ? <AutoDeployBadge serviceId={service.id} /> : null
-                )
-                .otherwise(() => null)}
-          </Skeleton>
-          <Skeleton width={80} height={24} show={!service}>
-            {service && (
-              <ServiceLinksPopover
-                organizationId={organizationId}
-                projectId={projectId}
-                environmentId={service.environment.id}
-                serviceId={service.id}
-              >
-                <Button className="gap-1" size="xs" color="neutral" variant="outline">
-                  <Icon iconName="link" iconStyle="regular" />
-                  Links
-                  <Icon iconName="angle-down" iconStyle="regular" />
-                </Button>
-              </ServiceLinksPopover>
-            )}
-          </Skeleton>
+          {'auto_deploy' in service &&
+            service.auto_deploy &&
+            match(service)
+              .with({ serviceType: 'APPLICATION' }, { serviceType: 'TERRAFORM' }, () => (
+                <AutoDeployBadge serviceId={service.id} />
+              ))
+              .with({ serviceType: 'JOB' }, (job) =>
+                isJobGitSource(job.source) ? <AutoDeployBadge serviceId={service.id} /> : null
+              )
+              .with({ serviceType: 'HELM' }, (helm) =>
+                isHelmGitSource(helm.source) ? <AutoDeployBadge serviceId={service.id} /> : null
+              )
+              .otherwise(() => null)}
+          <ServiceLinksPopover
+            organizationId={organizationId}
+            projectId={projectId}
+            environmentId={service.environment.id}
+            serviceId={service.id}
+          >
+            <Button className="gap-1" size="xs" color="neutral" variant="outline">
+              <Icon iconName="link" iconStyle="regular" />
+              Links
+              <Icon iconName="angle-down" iconStyle="regular" />
+            </Button>
+          </ServiceLinksPopover>
         </div>
       </div>
       <hr className="border-neutral" />
     </div>
+  )
+}
+
+export function ServiceHeader(props: ServiceHeaderProps) {
+  return (
+    <Suspense fallback={<ServiceHeaderSkeleton {...props} />}>
+      <ServiceHeaderContent {...props} />
+    </Suspense>
   )
 }
 

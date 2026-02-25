@@ -1,5 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
+import { Suspense } from 'react'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
@@ -47,11 +48,22 @@ export interface ServiceLastDeploymentProps {
   service?: AnyService
 }
 
-export function ServiceLastDeployment({ serviceId, serviceType, service }: ServiceLastDeploymentProps) {
+function ServiceLastDeploymentSkeleton() {
+  return (
+    <div className="flex gap-2.5 rounded-lg border border-neutral bg-surface-neutral px-5 py-4">
+      <Skeleton width={100} height={16} />
+      <Skeleton width={100} height={16} />
+      <Skeleton width={150} height={16} />
+    </div>
+  )
+}
+
+function ServiceLastDeploymentContent({ serviceId, serviceType, service }: ServiceLastDeploymentProps) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
-  const { data: deploymentHistory = [], isFetched: isFetchedDeploymentHistory } = useDeploymentHistory({
+  const { data: deploymentHistory = [] } = useDeploymentHistory({
     serviceId,
     serviceType,
+    suspense: true,
   })
 
   const lastDeployment = deploymentHistory[0]
@@ -59,16 +71,6 @@ export function ServiceLastDeployment({ serviceId, serviceType, service }: Servi
   const showGitCommit =
     Boolean(gitRepository) &&
     Boolean(service?.id && service?.name && service?.serviceType && 'environment' in service && service.environment)
-
-  if (!isFetchedDeploymentHistory) {
-    return (
-      <div className="flex gap-2.5 rounded-lg border border-neutral bg-surface-neutral px-5 py-4">
-        <Skeleton width={100} height={16} />
-        <Skeleton width={100} height={16} />
-        <Skeleton width={150} height={16} />
-      </div>
-    )
-  }
 
   if (!lastDeployment) {
     return (
@@ -160,5 +162,13 @@ export function ServiceLastDeployment({ serviceId, serviceType, service }: Servi
         ) : null}
       </div>
     </div>
+  )
+}
+
+export function ServiceLastDeployment(props: ServiceLastDeploymentProps) {
+  return (
+    <Suspense fallback={<ServiceLastDeploymentSkeleton />}>
+      <ServiceLastDeploymentContent {...props} />
+    </Suspense>
   )
 }
