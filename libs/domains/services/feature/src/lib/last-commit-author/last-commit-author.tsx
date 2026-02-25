@@ -44,7 +44,11 @@ export function LastCommitAuthor({
         />
       )}
       {withFullName && deployedCommit.author_name && (
-        <span className="text-neutral-subtle">{deployedCommit.author_name}</span>
+        <span className="text-neutral-subtle">
+          {deployedCommit.author_avatar_url && deployedCommit.author_name
+            ? deployedCommit.author_name
+            : gitRepository.owner ?? 'Unknown'}
+        </span>
       )}
     </span>
   )
