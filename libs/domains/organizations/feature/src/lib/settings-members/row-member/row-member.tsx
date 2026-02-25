@@ -1,10 +1,10 @@
-import { useState } from 'react'
 import {
   type InviteMember,
   type InviteMemberRequest,
   type Member,
   type OrganizationAvailableRole,
 } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import { IconEnum, MemberRoleEnum } from '@qovery/shared/enums'
 import {
   Avatar,
@@ -86,8 +86,7 @@ export function RowMember(props: RowMemberProps) {
     member.role_id ??
     ''
   const [roleOverrideId, setRoleOverrideId] = useState<string | null>(null)
-  const displayedRoleValue =
-    roleOverrideId && roleOverrideId !== selectedRoleValue ? roleOverrideId : selectedRoleValue
+  const displayedRoleValue = roleOverrideId && roleOverrideId !== selectedRoleValue ? roleOverrideId : selectedRoleValue
   const selectedRoleLabel = roleOptions.find((role) => role.value === displayedRoleValue)?.label ?? 'Select role'
 
   const handleRoleChange = (roleId: string | undefined) => {
