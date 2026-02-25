@@ -1,3 +1,4 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useState } from 'react'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
@@ -14,7 +15,7 @@ export interface CopyToClipboardButtonIconProps {
 export function CopyToClipboardButtonIcon(props: CopyToClipboardButtonIconProps) {
   const { content, className = '', iconClassName = '', tooltipContent = 'Copy' } = props
 
-  const [icon, setIcon] = useState<'copy' | 'check'>('copy')
+  const [icon, setIcon] = useState<IconName>('copy')
   const [, copyToClipboard] = useCopyToClipboard()
 
   const onClickCopyToClipboard = () => {
@@ -33,7 +34,7 @@ export function CopyToClipboardButtonIcon(props: CopyToClipboardButtonIconProps)
         )}
         data-testid="copy-container"
       >
-        <Icon iconName={icon} iconStyle="solid" className={iconClassName} />
+        <Icon iconName={icon} className={iconClassName} />
       </span>
     </Tooltip>
   )

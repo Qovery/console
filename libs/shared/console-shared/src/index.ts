@@ -17,7 +17,6 @@ export * from './lib/add-credit-card-modal/feature/add-credit-card-modal-feature
 export * from './lib/layout-logs/layout-logs'
 export * from './lib/layout-logs/card-cluster/card-cluster'
 export * from './lib/database-settings-resources/ui/database-settings-resources/database-settings-resources'
-export * from './lib/application-settings/ui/application-settings-resources/application-settings-resources'
 export * from './lib/application-settings/ui/application-settings-healthchecks/application-settings-healthchecks'
 export * from './lib/application-settings/utils/probe-formatted'
 export * from './lib/settings-heading/settings-heading'

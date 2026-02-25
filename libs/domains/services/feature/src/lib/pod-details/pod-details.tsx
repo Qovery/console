@@ -1,5 +1,5 @@
+import { useParams } from '@tanstack/react-router'
 import { type PodStatusDto, type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
-import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
@@ -23,7 +23,7 @@ export interface Pod extends Partial<ServiceMetricsDto>, Partial<PodStatusDto> {
 
 function TimelineCircle() {
   return (
-    <span className="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300" />
+    <span className="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-surface-neutral-subtle before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-surface-neutralInvert" />
   )
 }
 
@@ -34,7 +34,7 @@ export interface PodDetailsProps {
 }
 
 export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const QOVERY_SIDECAR_NAME = 'qovery-wait-container-output' as const
   const { containers = [] } = pod
 
@@ -42,8 +42,8 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
   const defaultContainer = filteredContainers[0]?.name
 
   return (
-    <div className="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3">
-      <div className="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300" />
+    <div className="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3">
+      <div className="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-subtle" />
       <Link
         to={
           ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +

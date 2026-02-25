@@ -1,6 +1,6 @@
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
+import { ApplicationSettingsResources } from '@qovery/domains/services/feature'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
 import { Button, Heading, Section } from '@qovery/shared/ui'
 

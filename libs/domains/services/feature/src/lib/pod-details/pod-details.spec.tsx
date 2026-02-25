@@ -1,5 +1,12 @@
+import type { ReactNode } from 'react'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import { type Pod, PodDetails } from './pod-details'
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: '', projectId: '', environmentId: '' }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+}))
 
 describe('PodDetails', () => {
   it('should match snapshot with git based pod and without last_terminated_state', () => {

@@ -99,19 +99,6 @@ function ServiceNameCell({
 
   const deploymentRequestsCount = Number(deploymentStatus?.deployment_requests_count)
 
-  const serviceLink = match(service)
-    .with(
-      { serviceType: ServiceTypeEnum.DATABASE },
-      ({ id }) =>
-        DATABASE_URL(environment.organization.id, environment.project.id, service.environment.id, id) +
-        DATABASE_GENERAL_URL
-    )
-    .otherwise(
-      ({ id }) =>
-        APPLICATION_URL(environment.organization.id, environment.project.id, service.environment.id, id) +
-        SERVICES_GENERAL_URL
-    )
-
   const LinkDeploymentStatus = () => {
     const environmentLog = ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)
     const deploymentLog = DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id)
@@ -169,7 +156,13 @@ function ServiceNameCell({
                   <Tooltip content={db.name}>
                     <Link
                       className="inline max-w-max truncate"
-                      to={serviceLink}
+                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                      params={{
+                        organizationId: environment.organization.id,
+                        projectId: environment.project.id,
+                        environmentId: environment.id,
+                        serviceId: service.id,
+                      }}
                       underline
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -206,7 +199,13 @@ function ServiceNameCell({
                   <Tooltip content={service.name}>
                     <Link
                       className="inline max-w-max truncate"
-                      to={serviceLink}
+                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                      params={{
+                        organizationId: environment.organization.id,
+                        projectId: environment.project.id,
+                        environmentId: environment.id,
+                        serviceId: service.id,
+                      }}
                       underline
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -228,7 +227,13 @@ function ServiceNameCell({
               <Tooltip content={service.name}>
                 <Link
                   className="inline max-w-max truncate"
-                  to={serviceLink}
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                  params={{
+                    organizationId: environment.organization.id,
+                    projectId: environment.project.id,
+                    environmentId: environment.id,
+                    serviceId: service.id,
+                  }}
                   underline
                   onClick={(e) => e.stopPropagation()}
                 >

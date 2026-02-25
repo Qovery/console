@@ -111,7 +111,7 @@ exports[`CardCluster should match snapshot 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-copy "
+                    class="fa-regular fa-copy "
                   />
                 </span>
               </div>
@@ -151,7 +151,7 @@ exports[`CardCluster should match snapshot 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-copy "
+                    class="fa-regular fa-copy "
                   />
                 </span>
               </div>

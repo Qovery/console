@@ -1,4 +1,4 @@
-import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
@@ -6,11 +6,12 @@ import { Icon } from '../icon/icon'
 export interface EmptyStateProps extends PropsWithChildren {
   title: string
   icon?: IconName | ReactNode
+  iconStyle?: IconStyle
   description?: string
   className?: string
 }
 
-export function EmptyState({ title, description, className, icon, children }: EmptyStateProps) {
+export function EmptyState({ title, description, className, icon, iconStyle, children }: EmptyStateProps) {
   return (
     <div
       className={twMerge(
@@ -21,7 +22,11 @@ export function EmptyState({ title, description, className, icon, children }: Em
       {icon &&
         (typeof icon === 'string' ? (
           <span className="relative inline-flex h-10 min-h-10 w-10 min-w-10 items-center justify-center">
-            <Icon iconName={icon as IconName} className="absolute top-2 text-base text-neutral-disabled" />
+            <Icon
+              iconName={icon as IconName}
+              iconStyle={iconStyle}
+              className="absolute top-2 text-base text-neutral-disabled"
+            />
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="40"

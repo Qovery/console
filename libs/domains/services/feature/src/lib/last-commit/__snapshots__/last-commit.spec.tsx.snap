@@ -11,7 +11,7 @@ exports[`LastCommit should match snapshot 1`] = `
         data-state="closed"
       >
         <button
-          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
+          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
           type="button"
         >
           <i
@@ -22,7 +22,7 @@ exports[`LastCommit should match snapshot 1`] = `
         </button>
       </span>
       <button
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
         data-state="closed"
         type="button"
       >

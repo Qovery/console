@@ -642,7 +642,7 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>
@@ -1208,7 +1208,7 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>
@@ -1524,7 +1524,7 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>
