@@ -22,7 +22,7 @@ export function EnvironmentDeploymentListSkeleton() {
             {[...Array(5)].map((_, index) => (
               <Table.Cell key={index} className="h-14 first:border-r" style={{ width: columnSizes[index] }}>
                 {index === 0 ? (
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-1">
                     <Skeleton height={16} width={300} />
                     <Skeleton height={16} width={200} />
                   </div>

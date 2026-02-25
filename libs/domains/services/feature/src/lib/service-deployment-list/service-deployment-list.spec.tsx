@@ -1,3 +1,4 @@
+import { type Environment } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceDeploymentList } from './service-deployment-list'
 
@@ -7,9 +8,9 @@ const mockEnvironment = {
   organization: { id: 'org-123' },
   project: { id: 'proj-123' },
   mode: 'DEVELOPMENT',
-}
+} as Environment
 
-const mockDeploymentHistory = [
+const defaultDeploymentHistory = [
   {
     identifier: {
       execution_id: 'exec-123',
@@ -54,7 +55,7 @@ const mockDeploymentHistory = [
   },
 ]
 
-const mockDeploymentQueue = [
+const defaultDeploymentQueue = [
   {
     identifier: {
       service_id: '2f9b67bb-092e-4612-84c3-a426bb401279',
@@ -76,6 +77,9 @@ const mockDeploymentQueue = [
   },
 ]
 
+let mockDeploymentHistory = defaultDeploymentHistory
+let mockDeploymentQueue = defaultDeploymentQueue
+
 jest.mock('../hooks/use-deployment-history/use-deployment-history', () => ({
   useDeploymentHistory: () => ({
     data: mockDeploymentHistory,
@@ -90,19 +94,34 @@ jest.mock('../hooks/use-deployment-queue/use-deployment-queue', () => ({
   }),
 }))
 
+jest.mock('../hooks/use-service/use-service', () => ({
+  useService: () => ({
+    data: {
+      serviceType: 'APPLICATION',
+      service_type: 'APPLICATION',
+      job_type: 'CRON',
+    },
+    isFetched: true,
+  }),
+}))
+
 describe('ServiceDeploymentList', () => {
-  it('should render the deployment list', async () => {
+  beforeEach(() => {
+    mockDeploymentHistory = defaultDeploymentHistory
+    mockDeploymentQueue = defaultDeploymentQueue
+  })
+
+  it('should render columns and deployment data', async () => {
     renderWithProviders(<ServiceDeploymentList environment={mockEnvironment} serviceId="service-123" />)
 
     expect(screen.getByText('Date')).toBeInTheDocument()
-    expect(screen.getByText('Status deployment')).toBeInTheDocument()
+    expect(screen.getByText('Status')).toBeInTheDocument()
     expect(screen.getByText('Duration')).toBeInTheDocument()
     expect(screen.getByText('Version')).toBeInTheDocument()
     expect(screen.getByText('Trigger by')).toBeInTheDocument()
 
     expect(screen.getByText('exec-123')).toBeInTheDocument()
     expect(screen.getAllByText('Deploy')[0]).toBeInTheDocument()
-    expect(screen.getByText('Error')).toBeInTheDocument()
     expect(screen.getByText('version')).toBeInTheDocument()
     expect(screen.getByText('John Doe')).toBeInTheDocument()
     expect(screen.getByText('Console')).toBeInTheDocument()
@@ -112,5 +131,17 @@ describe('ServiceDeploymentList', () => {
     renderWithProviders(<ServiceDeploymentList environment={mockEnvironment} serviceId="service-123" />)
 
     expect(screen.getAllByText('In queue...')[0]).toBeInTheDocument()
+  })
+
+  it('should render empty state when no deployment data is available', async () => {
+    mockDeploymentHistory = []
+    mockDeploymentQueue = []
+
+    renderWithProviders(<ServiceDeploymentList environment={mockEnvironment} serviceId="service-123" />)
+
+    expect(screen.getByText('No deployment started')).toBeInTheDocument()
+    expect(
+      screen.getByText('Manage the deployments by using the “Play” button in the header above')
+    ).toBeInTheDocument()
   })
 })
