@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
-import { type ReactNode, useMemo, useState } from 'react'
+import { type ReactNode, Suspense, useMemo, useState } from 'react'
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { Heading, Icon, Link, Section, TabsPrimitives } from '@qovery/shared/ui'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
@@ -12,6 +12,7 @@ import { InstanceMetrics } from './instance-metrics/instance-metrics'
 import { ServiceHeader } from './service-header/service-header'
 import { ServiceInstance } from './service-instance/service-instance'
 import { ServiceLastDeployment } from './service-last-deployment/service-last-deployment'
+import { ServiceOverviewSkeleton } from './service-overview-skeleton'
 
 const { Tabs } = TabsPrimitives
 
@@ -22,14 +23,14 @@ export interface ServiceOverviewProps {
   observabilityCallout?: ReactNode
 }
 
-export function ServiceOverview({
+function ServiceOverviewContent({
   environment,
   hasNoMetrics = false,
   terraformResourcesSection,
   observabilityCallout,
 }: ServiceOverviewProps) {
   const { environmentId = '', serviceId = '' } = useParams({ strict: false })
-  const { data: service } = useService({ environmentId, serviceId })
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const [activeTab, setActiveTab] = useState('variables')
   const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
   const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
@@ -76,7 +77,7 @@ export function ServiceOverview({
       <>
         <NeedRedeployFlag />
         <Section className="flex flex-1 grow flex-col gap-6 overflow-auto px-10 py-7">
-          <ServiceHeader environment={environment} serviceId={service.id} />
+          <ServiceHeader environment={environment} serviceId={service.id} service={service} />
           {isDatabaseManaged ? (
             <div className="flex flex-col items-center gap-1 border border-neutral bg-surface-neutral-subtle py-10 text-sm text-neutral">
               <span className="font-medium">Metrics for managed databases are not available</span>
@@ -85,7 +86,7 @@ export function ServiceOverview({
           ) : (
             <Section className="gap-3">
               <Heading>Instances</Heading>
-              <InstanceMetrics environmentId={environment.id} serviceId={service.id} />
+              <InstanceMetrics environmentId={environment.id} serviceId={service.id} service={service} />
             </Section>
           )}
         </Section>
@@ -99,7 +100,7 @@ export function ServiceOverview({
       <div className="flex min-h-0 flex-1 grow flex-col gap-6 pb-24">
         <div className="flex shrink-0 flex-col gap-5 py-8 text-sm">
           <Section className="gap-8">
-            <ServiceHeader environment={environment} serviceId={service.id} />
+            <ServiceHeader environment={environment} serviceId={service.id} service={service} />
             {hasNoMetrics && observabilityCallout}
             <Section className="gap-3">
               <div className="flex items-center justify-between gap-2">
@@ -168,5 +169,13 @@ export function ServiceOverview({
         </div>
       </div>
     </>
+  )
+}
+
+export function ServiceOverview(props: ServiceOverviewProps) {
+  return (
+    <Suspense fallback={<ServiceOverviewSkeleton {...props} />}>
+      <ServiceOverviewContent {...props} />
+    </Suspense>
   )
 }

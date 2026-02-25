@@ -1,11 +1,58 @@
 import { type Environment } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceHeader } from './service-header'
 
 const mockCopyToClipboard = jest.fn()
 const mockGetDatabaseConnectionUri = jest.fn(() => 'postgres://copied-uri')
+const services = {
+  'application-mock': {
+    id: 'ebb84aa8-91c2-40fb-916d-3a158db354b7',
+    serviceType: 'APPLICATION',
+    name: 'console',
+    description: 'React Application the Qovery Console',
+    icon_uri: null,
+    environment: {
+      id: '28c47145-c8e7-4b9d-8d9e-c65c95b48425',
+    },
+    git_repository: {
+      provider: 'GITHUB',
+      url: 'https://github.com/Qovery/console.git',
+      name: 'Qovery/console',
+      branch: 'staging',
+    },
+    auto_deploy: true,
+  },
+  'database-mock': {
+    id: 'ee3523e9-c81d-42ac-9d0c-f7bc09d5d28c',
+    serviceType: 'DATABASE',
+    name: 'containered-posgresSQL-clone',
+    description: '',
+    icon_uri: null,
+    environment: {
+      id: '0cd5d05e-0839-48ff-be67-ca3f4fcf8250',
+    },
+    type: 'POSTGRESQL',
+    version: '15',
+    mode: 'CONTAINER',
+    accessibility: 'PRIVATE',
+  },
+  'job-mock': {
+    id: 'c070ebf8-5b82-4d94-8c4d-0c6b86d7c003',
+    serviceType: 'JOB',
+    job_type: 'LIFECYCLE',
+    name: 'test_lifecycle',
+    description: '',
+    icon_uri: null,
+    environment: {
+      id: '7aaa3a79-0afa-4d5e-b898-c2bf6f33a01a',
+    },
+    source: {},
+    auto_deploy: false,
+  },
+}
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -208,7 +255,9 @@ describe('ServiceHeader', () => {
   })
 
   const renderServiceHeader = (serviceId: 'application-mock' | 'database-mock' | 'job-mock') =>
-    renderWithProviders(<ServiceHeader environment={environment} serviceId={serviceId} />)
+    renderWithProviders(
+      <ServiceHeader environment={environment} serviceId={serviceId} service={services[serviceId] as AnyService} />
+    )
 
   it('renders application details and git metadata', () => {
     renderServiceHeader('application-mock')

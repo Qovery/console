@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { type ApplicationGitRepository, type Credentials, type Environment } from 'qovery-typescript-axios'
-import { Suspense } from 'react'
 import { P, match } from 'ts-pattern'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -10,13 +10,12 @@ import {
   isJobContainerSource,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import { Badge, Button, ExternalLink, Heading, Icon, Skeleton, ToastEnum, Truncate, toast } from '@qovery/shared/ui'
+import { Badge, Button, ExternalLink, Heading, Icon, ToastEnum, Truncate, toast } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { containerRegistryKindToIcon, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import AutoDeployBadge from '../../auto-deploy-badge/auto-deploy-badge'
 import { useMasterCredentials } from '../../hooks/use-master-credentials/use-master-credentials'
-import { useService } from '../../hooks/use-service/use-service'
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
 import { ServiceActionToolbar } from '../../service-action-toolbar/service-action-toolbar'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
@@ -62,50 +61,14 @@ export function GitRepository({ gitRepository }: { gitRepository: ApplicationGit
 export interface ServiceHeaderProps {
   environment: Environment
   serviceId: string
+  service: AnyService
 }
 
-function ServiceHeaderSkeleton({ environment, serviceId }: ServiceHeaderProps) {
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Skeleton width={32} height={32} show rounded />
-            <Skeleton width={160} height={24} show />
-            <Skeleton width={86} height={24} show />
-            <span className="mx-2 h-4 w-px bg-surface-neutral-component" />
-            <div className="flex items-center gap-2 text-ssm">
-              <Icon className="w-5" name={environment.cloud_provider.provider} />
-              {environment.cluster_name}
-            </div>
-          </div>
-          <ServiceActionToolbar environment={environment} serviceId={serviceId} />
-        </div>
-        <Skeleton width={480} height={20} show />
-        <div className="mt-3 flex items-center gap-1">
-          <Skeleton width={90} height={24} show />
-          <Skeleton width={120} height={24} show />
-          <Skeleton width={100} height={24} show />
-          <Skeleton width={70} height={24} show />
-          <Skeleton width={80} height={24} show />
-        </div>
-      </div>
-      <hr className="border-neutral" />
-    </div>
-  )
-}
-
-function ServiceHeaderContent({ environment, serviceId }: ServiceHeaderProps) {
+function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeaderProps) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
-
-  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
   const { data: masterCredentials } = useMasterCredentials({ serviceId, serviceType: service?.serviceType })
 
   const [, copyToClipboard] = useCopyToClipboard()
-
-  if (!service) {
-    return null
-  }
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
@@ -317,11 +280,7 @@ function ServiceHeaderContent({ environment, serviceId }: ServiceHeaderProps) {
 }
 
 export function ServiceHeader(props: ServiceHeaderProps) {
-  return (
-    <Suspense fallback={<ServiceHeaderSkeleton {...props} />}>
-      <ServiceHeaderContent {...props} />
-    </Suspense>
-  )
+  return <ServiceHeaderContent {...props} />
 }
 
 export default ServiceHeader

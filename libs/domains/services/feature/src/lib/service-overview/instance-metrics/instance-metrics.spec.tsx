@@ -1,12 +1,20 @@
 import { ResourceStatusDto, UnitDto } from 'qovery-ws-typescript-axios'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import * as useDeploymentStatusImport from '../../hooks/use-deployment-status/use-deployment-status'
 import * as useMetricsImport from '../../hooks/use-metrics/use-metrics'
-import * as useServiceImport from '../../hooks/use-service/use-service'
 import { InstanceMetrics } from './instance-metrics'
 
 describe('InstanceMetrics', () => {
+  const service = {
+    id: '1',
+    serviceType: ServiceTypeEnum.APPLICATION,
+    created_at: '1696923386000',
+    healthchecks: {},
+    environment: { id: '1' },
+  } as AnyService
+
   it('should match snapshot with data', () => {
     jest.spyOn(useMetricsImport, 'useMetrics').mockReturnValue({
       data: [
@@ -33,18 +41,7 @@ describe('InstanceMetrics', () => {
       error: {},
       isError: false,
     })
-    jest.spyOn(useServiceImport, 'useService').mockReturnValue({
-      data: {
-        id: '1',
-        serviceType: ServiceTypeEnum.APPLICATION,
-        created_at: '1696923386000',
-        healthchecks: {},
-      },
-      isLoading: false,
-      error: {},
-      isError: false,
-    })
-    const { container } = renderWithProviders(<InstanceMetrics environmentId="1" serviceId="1" />)
+    const { container } = renderWithProviders(<InstanceMetrics environmentId="1" serviceId="1" service={service} />)
     expect(container).toMatchSnapshot()
   })
   it('should match snapshot with empty data', () => {
@@ -54,17 +51,6 @@ describe('InstanceMetrics', () => {
       error: {},
       isError: false,
     })
-    jest.spyOn(useServiceImport, 'useService').mockReturnValue({
-      data: {
-        id: '1',
-        serviceType: ServiceTypeEnum.APPLICATION,
-        created_at: '1696923386000',
-        healthchecks: {},
-      },
-      isLoading: false,
-      error: {},
-      isError: false,
-    })
     jest.spyOn(useDeploymentStatusImport, 'useDeploymentStatus').mockReturnValue({
       data: {
         id: '1',
@@ -75,7 +61,7 @@ describe('InstanceMetrics', () => {
       error: {},
       isError: false,
     })
-    const { container } = renderWithProviders(<InstanceMetrics environmentId="1" serviceId="1" />)
+    const { container } = renderWithProviders(<InstanceMetrics environmentId="1" serviceId="1" service={service} />)
     expect(container).toMatchSnapshot()
   })
   it('should match snapshot with null data', () => {
@@ -85,17 +71,6 @@ describe('InstanceMetrics', () => {
       error: {},
       isError: false,
     })
-    jest.spyOn(useServiceImport, 'useService').mockReturnValue({
-      data: {
-        id: '1',
-        serviceType: ServiceTypeEnum.APPLICATION,
-        created_at: '1696923386000',
-        healthchecks: {},
-      },
-      isLoading: false,
-      error: {},
-      isError: false,
-    })
     jest.spyOn(useDeploymentStatusImport, 'useDeploymentStatus').mockReturnValue({
       data: {
         id: '1',
@@ -106,7 +81,7 @@ describe('InstanceMetrics', () => {
       error: {},
       isError: false,
     })
-    const { container } = renderWithProviders(<InstanceMetrics environmentId="1" serviceId="1" />)
+    const { container } = renderWithProviders(<InstanceMetrics environmentId="1" serviceId="1" service={service} />)
     expect(container).toMatchSnapshot()
   })
 })

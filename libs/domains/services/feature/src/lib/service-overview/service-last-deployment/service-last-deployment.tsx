@@ -47,8 +47,7 @@ export interface ServiceLastDeploymentProps {
   serviceType: Parameters<typeof useDeploymentHistory>[0]['serviceType']
   service?: AnyService
 }
-
-function ServiceLastDeploymentSkeleton() {
+export function ServiceLastDeploymentSkeleton() {
   return (
     <div className="flex gap-2.5 rounded-lg border border-neutral bg-surface-neutral px-5 py-4">
       <Skeleton width={100} height={16} />

@@ -28,7 +28,6 @@ import { dateFullFormat, dateUTCString, timeAgo } from '@qovery/shared/util-date
 import { formatMetric, pluralize, twMerge } from '@qovery/shared/util-js'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { useRunningStatus } from '../../hooks/use-running-status/use-running-status'
-import { useService } from '../../hooks/use-service/use-service'
 import { type Pod, PodDetails } from '../../pod-details/pod-details'
 import { EmptyState as EmptyStatePodsMetrics } from './empty-state'
 import { InstanceMetricsSkeleton } from './instance-metrics-skeleton'
@@ -42,7 +41,7 @@ export interface InstanceMetricsMemoizedProps extends PropsWithChildren {
   environmentId: string
   serviceId: string
   pods: Pod[]
-  service?: AnyService
+  service: AnyService
   isServiceLoading: boolean
   isServiceError: boolean
   isMetricsLoading: boolean
@@ -264,7 +263,7 @@ function InstanceMetricsTable({
   // Need useEffect because sort column is based on async data
   useEffect(() => {
     table.setSorting(
-      service?.serviceType === 'JOB'
+      service.serviceType === 'JOB'
         ? [{ id: 'started_at', desc: true }]
         : [
             {
@@ -273,7 +272,7 @@ function InstanceMetricsTable({
             },
           ]
     )
-  }, [service?.serviceType, table.setSorting])
+  }, [service.serviceType, table.setSorting])
 
   if (pods.length === 0 && !isMetricsLoading && isRunningStatusesLoading) {
     // NOTE: runningStatuses may never resolve if service not started
@@ -368,7 +367,7 @@ function InstanceMetricsTable({
                     </Table.Cell>
                   ))}
                 </Table.Row>
-                {row.getIsExpanded() && row.original.containers && service?.serviceType && (
+                {row.getIsExpanded() && row.original.containers && service.serviceType && (
                   <Table.Row className="bg-surface-neutral-subtle text-xs">
                     {/* 2nd row is a custom 1 cell row */}
                     <Table.Cell colSpan={row.getVisibleCells().length} className="p-0">
@@ -389,10 +388,48 @@ function InstanceMetricsTable({
 export interface InstanceMetricsProps extends PropsWithChildren {
   environmentId: string
   serviceId: string
+  service: AnyService
+}
+
+interface InstanceMetricsContentProps extends InstanceMetricsProps {
+  pods: Pod[]
+  isMetricsLoading: boolean
+  isMetricsError: boolean
+  isRunningStatusesLoading: boolean
+  isRunningStatusesError: boolean
+}
+
+function InstanceMetricsContent({
+  environmentId,
+  serviceId,
+  pods,
+  service,
+  isMetricsLoading,
+  isMetricsError,
+  isRunningStatusesLoading,
+  isRunningStatusesError,
+  children,
+}: InstanceMetricsContentProps) {
+  return (
+    <InstanceMetricsMemoized
+      environmentId={environmentId}
+      serviceId={serviceId}
+      pods={pods}
+      service={service}
+      isServiceLoading={false}
+      isServiceError={false}
+      isMetricsLoading={isMetricsLoading}
+      isMetricsError={isMetricsError}
+      isRunningStatusesLoading={isRunningStatusesLoading}
+      isRunningStatusesError={isRunningStatusesError}
+    >
+      {children}
+    </InstanceMetricsMemoized>
+  )
 }
 
 export function InstanceMetrics(props: InstanceMetricsProps) {
-  const { environmentId, serviceId } = props
+  const { environmentId, serviceId, service } = props
 
   const {
     data: metrics = [],
@@ -404,11 +441,6 @@ export function InstanceMetrics(props: InstanceMetricsProps) {
     isLoading: isRunningStatusesLoading,
     isError: isRunningStatusesError,
   } = useRunningStatus({ environmentId, serviceId })
-  const {
-    data: service,
-    isLoading: isServiceLoading,
-    isError: isServiceError,
-  } = useService({ environmentId, serviceId })
 
   const pods: Pod[] = useMemo(() => {
     // NOTE: metrics or runningStatuses could be undefined because backend doesn't have the info.
@@ -426,17 +458,18 @@ export function InstanceMetrics(props: InstanceMetricsProps) {
   }, [metrics, runningStatuses])
 
   return (
-    <InstanceMetricsMemoized
+    <InstanceMetricsContent
+      environmentId={environmentId}
+      serviceId={serviceId}
       pods={pods}
       service={service}
-      isServiceLoading={isServiceLoading}
-      isServiceError={isServiceError}
       isMetricsLoading={isMetricsLoading}
       isMetricsError={isMetricsError}
       isRunningStatusesLoading={isRunningStatusesLoading}
       isRunningStatusesError={isRunningStatusesError}
-      {...props}
-    />
+    >
+      {props.children}
+    </InstanceMetricsContent>
   )
 }
 
