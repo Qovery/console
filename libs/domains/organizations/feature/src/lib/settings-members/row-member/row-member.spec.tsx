@@ -103,7 +103,8 @@ describe('RowMember', () => {
   it('should call editMemberRole when selecting a new role', async () => {
     const { props, userEvent } = renderRowMember()
 
-    await userEvent.selectOptions(screen.getByTestId('input'), 'role-owner')
+    await userEvent.click(screen.getByRole('button', { name: /member role/i }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Owner' }))
 
     expect(props.editMemberRole).toHaveBeenCalledWith(baseMember.id, 'role-owner')
   })
