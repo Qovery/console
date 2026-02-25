@@ -1,10 +1,6 @@
 import { helmRepositoriesMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import {
-  PageOrganizationHelmRepositories,
-  type PageOrganizationHelmRepositoriesProps,
-  SettingsHelmRepositories,
-} from './settings-helm-repositories'
+import { PageOrganizationHelmRepositories, SettingsHelmRepositories } from './settings-helm-repositories'
 
 const mockOpenModal = jest.fn()
 const mockCloseModal = jest.fn()
@@ -23,7 +19,6 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 jest.mock('../hooks/use-helm-repositories/use-helm-repositories', () => ({
   useHelmRepositories: () => ({
     data: mockHelmRepositories,
-    isFetched: true,
   }),
 }))
 
@@ -52,13 +47,11 @@ describe('SettingsHelmRepositories', () => {
 })
 
 describe('PageOrganizationHelmRepositories', () => {
-  const baseProps: PageOrganizationHelmRepositoriesProps = {
+  const baseProps = {
     onOpenServicesAssociatedModal: jest.fn(),
     onAddRepository: jest.fn(),
     onEdit: jest.fn(),
     onDelete: jest.fn(),
-    helmRepositories: helmRepositoriesMock(5),
-    isFetched: true,
   }
 
   it('should render successfully', () => {
@@ -66,39 +59,17 @@ describe('PageOrganizationHelmRepositories', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should have a loader spinner', () => {
-    const props: PageOrganizationHelmRepositoriesProps = {
-      ...baseProps,
-      isFetched: false,
-      helmRepositories: [],
-    }
-
-    renderWithProviders(<PageOrganizationHelmRepositories {...props} />)
-
-    screen.getByTestId('repositories-loader')
-  })
-
   it('should have an empty screen', () => {
-    const props: PageOrganizationHelmRepositoriesProps = {
-      ...baseProps,
-      isFetched: true,
-      helmRepositories: [],
-    }
-
-    renderWithProviders(<PageOrganizationHelmRepositories {...props} />)
+    mockHelmRepositories.splice(0, mockHelmRepositories.length)
+    renderWithProviders(<PageOrganizationHelmRepositories {...baseProps} />)
 
     screen.getByText(/No helm repository found/i)
   })
 
   it('should have a list of repositories', () => {
     const repositories = helmRepositoriesMock(1)
-    const props: PageOrganizationHelmRepositoriesProps = {
-      ...baseProps,
-      isFetched: true,
-      helmRepositories: repositories,
-    }
-
-    renderWithProviders(<PageOrganizationHelmRepositories {...props} />)
+    mockHelmRepositories.splice(0, mockHelmRepositories.length, ...repositories)
+    renderWithProviders(<PageOrganizationHelmRepositories {...baseProps} />)
 
     screen.getByTestId(`repositories-list-${repositories[0].id}`)
   })

@@ -1,9 +1,10 @@
 import { useParams } from '@tanstack/react-router'
 import { type HelmRepositoryResponse } from 'qovery-typescript-axios'
+import { Suspense } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { BlockContent, Button, Icon, Indicator, LoaderSpinner, Section, Tooltip, Truncate } from '@qovery/shared/ui'
+import { BlockContent, Button, Icon, Indicator, Section, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { HelmRepositoryCreateEditModal } from '../helm-repository-create-edit-modal/helm-repository-create-edit-modal'
 import { HelmRepositoryServicesListModal } from '../helm-repository-services-list-modal/helm-repository-services-list-modal'
@@ -15,18 +16,125 @@ export interface PageOrganizationHelmRepositoriesProps {
   onAddRepository: () => void
   onEdit: (repository: HelmRepositoryResponse) => void
   onDelete: (repository: HelmRepositoryResponse) => void
-  helmRepositories?: HelmRepositoryResponse[]
-  isFetched?: boolean
+}
+
+const HelmRepositoriesRowsSkeleton = () => (
+  <ul>
+    {[0, 1, 2, 3].map((index) => (
+      <li key={index} className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0">
+        <div className="flex items-center gap-4">
+          <Skeleton width={20} height={20} show={true} />
+          <div className="space-y-2">
+            <Skeleton width={220} height={12} show={true} />
+            <Skeleton width={200} height={12} show={true} />
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Skeleton width={32} height={32} show={true} />
+          <Skeleton width={32} height={32} show={true} />
+          <Skeleton width={32} height={32} show={true} />
+        </div>
+      </li>
+    ))}
+  </ul>
+)
+
+interface HelmRepositoriesListProps {
+  organizationId: string
+  onOpenServicesAssociatedModal: (repository: HelmRepositoryResponse) => void
+  onEdit: (repository: HelmRepositoryResponse) => void
+  onDelete: (repository: HelmRepositoryResponse) => void
+}
+
+function HelmRepositoriesList({
+  organizationId,
+  onOpenServicesAssociatedModal,
+  onEdit,
+  onDelete,
+}: HelmRepositoriesListProps) {
+  const { data: helmRepositories = [] } = useHelmRepositories({
+    organizationId,
+    suspense: true,
+  })
+
+  if (!helmRepositories || helmRepositories.length === 0) {
+    return (
+      <div className="my-4 px-5 text-center">
+        <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+        <p className="mt-1 text-xs font-medium text-neutral-subtle">
+          No helm repository found. <br /> Please add one.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <ul>
+      {helmRepositories?.map((repository: HelmRepositoryResponse) => (
+        <li
+          data-testid={`repositories-list-${repository.id}`}
+          key={repository.id}
+          className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
+        >
+          <div className="flex">
+            <Icon name={IconEnum.HELM_OFFICIAL} width="20" height="20" />
+            <div className="ml-4">
+              <h2 className="mb-1 flex text-xs font-medium text-neutral">
+                <Truncate
+                  truncateLimit={60}
+                  text={`${repository.name}${repository.config?.access_key_id ? ` (${repository.config?.access_key_id})` : repository.config?.scaleway_access_key ? ` (${repository.config?.scaleway_access_key})` : repository.config?.username ? ` (${repository.config?.username})` : ''}`}
+                />
+                {repository.description && (
+                  <Tooltip content={repository.description}>
+                    <div className="ml-1 cursor-pointer">
+                      <Icon iconName="circle-info" iconStyle="regular" />
+                    </div>
+                  </Tooltip>
+                )}
+              </h2>
+              <p className="text-xs text-neutral-subtle">{repository.url}</p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Indicator
+              content={
+                <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
+                  {repository.associated_services_count}
+                </span>
+              }
+            >
+              <Button
+                variant="outline"
+                color="neutral"
+                iconOnly
+                size="md"
+                disabled={repository.associated_services_count === 0}
+                onClick={() => onOpenServicesAssociatedModal(repository)}
+              >
+                <Icon iconName="layer-group" iconStyle="regular" />
+              </Button>
+            </Indicator>
+            <Button size="md" variant="outline" color="neutral" iconOnly onClick={() => onEdit(repository)}>
+              <Icon iconName="gear" iconStyle="regular" />
+            </Button>
+            <Button size="md" variant="outline" color="neutral" iconOnly onClick={() => onDelete(repository)}>
+              <Icon iconName="trash-can" iconStyle="regular" />
+            </Button>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )
 }
 
 export function PageOrganizationHelmRepositories({
-  helmRepositories,
-  isFetched,
   onAddRepository,
   onEdit,
   onDelete,
   onOpenServicesAssociatedModal,
 }: PageOrganizationHelmRepositoriesProps) {
+  const { organizationId = '' } = useParams({ strict: false })
+
   return (
     <div className="flex w-full flex-col justify-between">
       <Section className="p-8">
@@ -42,74 +150,14 @@ export function PageOrganizationHelmRepositories({
         </div>
         <div className="max-w-content-with-navigation-left">
           <BlockContent title="Helm repositories" classNameContent="p-0">
-            {!isFetched ? (
-              <div data-testid="repositories-loader" className="flex justify-center p-5">
-                <LoaderSpinner className="w-6" />
-              </div>
-            ) : helmRepositories && helmRepositories.length > 0 ? (
-              <ul>
-                {helmRepositories?.map((repository: HelmRepositoryResponse) => (
-                  <li
-                    data-testid={`repositories-list-${repository.id}`}
-                    key={repository.id}
-                    className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
-                  >
-                    <div className="flex">
-                      <Icon name={IconEnum.HELM_OFFICIAL} width="20" height="20" />
-                      <div className="ml-4">
-                        <h2 className="mb-1 flex text-xs font-medium text-neutral">
-                          <Truncate
-                            truncateLimit={60}
-                            text={`${repository.name}${repository.config?.access_key_id ? ` (${repository.config?.access_key_id})` : repository.config?.scaleway_access_key ? ` (${repository.config?.scaleway_access_key})` : repository.config?.username ? ` (${repository.config?.username})` : ''}`}
-                          />
-                          {repository.description && (
-                            <Tooltip content={repository.description}>
-                              <div className="ml-1 cursor-pointer">
-                                <Icon iconName="circle-info" iconStyle="regular" />
-                              </div>
-                            </Tooltip>
-                          )}
-                        </h2>
-                        <p className="text-xs text-neutral-subtle">{repository.url}</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Indicator
-                        content={
-                          <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
-                            {repository.associated_services_count}
-                          </span>
-                        }
-                      >
-                        <Button
-                          variant="outline"
-                          color="neutral"
-                          iconOnly
-                          size="md"
-                          disabled={repository.associated_services_count === 0}
-                          onClick={() => onOpenServicesAssociatedModal(repository)}
-                        >
-                          <Icon iconName="layer-group" iconStyle="regular" />
-                        </Button>
-                      </Indicator>
-                      <Button size="md" variant="outline" color="neutral" iconOnly onClick={() => onEdit(repository)}>
-                        <Icon iconName="gear" iconStyle="regular" />
-                      </Button>
-                      <Button size="md" variant="outline" color="neutral" iconOnly onClick={() => onDelete(repository)}>
-                        <Icon iconName="trash-can" iconStyle="regular" />
-                      </Button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="my-4 px-5 text-center">
-                <Icon iconName="wave-pulse" className="text-neutral-subtle" />
-                <p className="mt-1 text-xs font-medium text-neutral-subtle">
-                  No helm repository found. <br /> Please add one.
-                </p>
-              </div>
-            )}
+            <Suspense fallback={<HelmRepositoriesRowsSkeleton />}>
+              <HelmRepositoriesList
+                organizationId={organizationId}
+                onOpenServicesAssociatedModal={onOpenServicesAssociatedModal}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            </Suspense>
           </BlockContent>
         </div>
       </Section>
@@ -122,9 +170,6 @@ export function SettingsHelmRepositories() {
 
   useDocumentTitle('Helm repositories - Organization settings')
 
-  const { data: helmRepositories = [], isFetched: isFetchedHelmRepositories } = useHelmRepositories({
-    organizationId,
-  })
   const { mutateAsync: deleteHelmRepository } = useDeleteHelmRepository()
 
   const { openModal, closeModal } = useModal()
@@ -132,8 +177,6 @@ export function SettingsHelmRepositories() {
 
   return (
     <PageOrganizationHelmRepositories
-      helmRepositories={helmRepositories}
-      isFetched={isFetchedHelmRepositories}
       onAddRepository={() => {
         openModal({
           content: <HelmRepositoryCreateEditModal organizationId={organizationId} onClose={closeModal} />,
