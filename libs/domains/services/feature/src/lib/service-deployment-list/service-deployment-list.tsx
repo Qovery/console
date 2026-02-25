@@ -10,13 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
-import {
-  type DeploymentHistoryService,
-  type DeploymentHistoryTriggerAction,
-  type Environment,
-  OrganizationEventOrigin,
-  type ServiceSubActionEnum,
-} from 'qovery-typescript-axios'
+import { type DeploymentHistoryService, type Environment, OrganizationEventOrigin } from 'qovery-typescript-axios'
 import { useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
@@ -58,28 +52,18 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistorySer
   return typeof data === 'object' && data !== null && 'status' in data && 'details' in data
 }
 
-const formatTriggerAction = (
-  actionTrigger: DeploymentHistoryTriggerAction | Exclude<ServiceSubActionEnum, 'NONE'> | undefined
-) => {
-  return match(actionTrigger)
-    .with('TERRAFORM_PLAN_ONLY', () => 'Plan')
-    .with('TERRAFORM_PLAN_AND_APPLY', () => 'Plan and apply')
-    .with('TERRAFORM_MIGRATE_STATE', () => 'Migrate state')
-    .with('TERRAFORM_FORCE_UNLOCK_STATE', () => 'Force unlock')
-    .with('TERRAFORM_DESTROY', () => 'Destroy')
-    .otherwise(() => upperCaseFirstLetter(actionTrigger ?? ''))
-}
-
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
-  const { data: service } = useService({ environmentId: environment?.id, serviceId })
+  const { data: service } = useService({ environmentId: environment?.id, serviceId, suspense: true })
 
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
     serviceId,
     serviceType: service?.service_type,
+    suspense: true,
   })
 
   const { data: deploymentHistoryQueue = [], isFetched: isFetchedDeloymentQueue } = useDeploymentQueue({
     serviceId,
+    suspense: true,
   })
 
   const { mutate: cancelDeploymentService } = useCancelDeploymentService({
