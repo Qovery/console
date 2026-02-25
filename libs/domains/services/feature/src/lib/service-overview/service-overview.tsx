@@ -7,6 +7,7 @@ import { Heading, Icon, Link, Section, TabsPrimitives } from '@qovery/shared/ui'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { ScaledObjectStatus, type ScaledObjectStatusDto } from '../keda/scaled-object-status/scaled-object-status'
+import { NeedRedeployFlag } from '../need-redeploy-flag/need-redeploy-flag'
 import { InstanceMetrics } from './instance-metrics/instance-metrics'
 import { ServiceHeader } from './service-header/service-header'
 import { ServiceInstance } from './service-instance/service-instance'
@@ -74,6 +75,7 @@ export function ServiceOverview({
     return (
       <Section className="flex flex-1 grow flex-col gap-6 overflow-auto px-10 py-7">
         <ServiceHeader environment={environment} serviceId={service.id} />
+        <NeedRedeployFlag />
         {isDatabaseManaged ? (
           <div className="flex flex-col items-center gap-1 border border-neutral bg-surface-neutral-subtle py-10 text-sm text-neutral">
             <span className="font-medium">Metrics for managed databases are not available</span>
@@ -94,6 +96,7 @@ export function ServiceOverview({
       <div className="flex shrink-0 flex-col gap-5 py-8 text-sm">
         <Section className="gap-8">
           <ServiceHeader environment={environment} serviceId={service.id} />
+          <NeedRedeployFlag />
           {hasNoMetrics && observabilityCallout}
           <Section className="gap-3">
             <div className="flex items-center justify-between gap-2">

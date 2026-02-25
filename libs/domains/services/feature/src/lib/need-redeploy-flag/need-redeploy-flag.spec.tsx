@@ -7,9 +7,10 @@ import NeedRedeployFlag from './need-redeploy-flag'
 
 jest.mock('@tanstack/react-router', () => ({
   useParams: () => ({
-    organizationId: '',
-    projectId: '',
-    environmentId: '',
+    organizationId: 'organization-id',
+    projectId: 'project-id',
+    environmentId: 'environment-id',
+    serviceId: 'service-id',
     applicationId: '',
     databaseId: '',
   }),
@@ -64,6 +65,19 @@ describe('NeedRedeployFlag', () => {
     renderWithProviders(<NeedRedeployFlag />)
 
     screen.getByRole('button', { name: 'Redeploy now' })
+  })
+
+  it('should pass serviceId from route params to useService', () => {
+    const useServiceSpy = jest.spyOn(useServiceImport, 'useService').mockReturnValue({ data: undefined } as never)
+
+    jest.spyOn(useDeploymentStatusImport, 'useDeploymentStatus').mockReturnValue({ data: undefined } as never)
+
+    renderWithProviders(<NeedRedeployFlag />)
+
+    expect(useServiceSpy).toHaveBeenCalledWith({
+      environmentId: 'environment-id',
+      serviceId: 'service-id',
+    })
   })
 
   it('should call the onSubmit function on button click', async () => {

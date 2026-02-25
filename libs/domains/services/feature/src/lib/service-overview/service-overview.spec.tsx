@@ -60,6 +60,10 @@ jest.mock('../keda/scaled-object-status/scaled-object-status', () => ({
   ScaledObjectStatus: () => <div>scaled-object-status</div>,
 }))
 
+jest.mock('../need-redeploy-flag/need-redeploy-flag', () => ({
+  NeedRedeployFlag: () => <div>need-redeploy-flag</div>,
+}))
+
 jest.mock('@qovery/domains/variables/feature', () => ({
   OutputVariables: () => <div>output-variables</div>,
 }))
@@ -159,6 +163,7 @@ describe('ServiceOverview', () => {
     renderWithProviders(<ServiceOverview environment={environment} />)
 
     expect(screen.getByText('service-header')).toBeInTheDocument()
+    expect(screen.getByText('need-redeploy-flag')).toBeInTheDocument()
     expect(screen.getByText('service-last-deployment')).toBeInTheDocument()
     expect(screen.getByText('service-instance')).toBeInTheDocument()
   })
