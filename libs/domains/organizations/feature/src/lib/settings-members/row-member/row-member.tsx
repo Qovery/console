@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   type InviteMember,
   type InviteMemberRequest,
@@ -7,11 +8,10 @@ import {
 import { IconEnum, MemberRoleEnum } from '@qovery/shared/enums'
 import {
   Avatar,
-  ButtonPrimitive,
+  Button,
   DropdownMenu,
   Icon,
   Indicator,
-  InputSelectSmall,
   TablePrimitives,
   ToastEnum,
   Tooltip,
@@ -85,9 +85,14 @@ export function RowMember(props: RowMemberProps) {
     availableRoles?.find((role) => role.name?.toUpperCase() === member.role_name?.toUpperCase())?.id ??
     member.role_id ??
     ''
+  const [roleOverrideId, setRoleOverrideId] = useState<string | null>(null)
+  const displayedRoleValue =
+    roleOverrideId && roleOverrideId !== selectedRoleValue ? roleOverrideId : selectedRoleValue
+  const selectedRoleLabel = roleOptions.find((role) => role.value === displayedRoleValue)?.label ?? 'Select role'
 
   const handleRoleChange = (roleId: string | undefined) => {
     if (!roleId) return
+    setRoleOverrideId(roleId)
     editMemberRole?.(member.id, roleId)
   }
 
@@ -131,7 +136,7 @@ export function RowMember(props: RowMemberProps) {
               {(member as Member).last_activity_at ? (
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
-                    <ButtonPrimitive
+                    <Button
                       type="button"
                       data-testid="element"
                       aria-label="Member actions"
@@ -141,7 +146,7 @@ export function RowMember(props: RowMemberProps) {
                       iconOnly
                     >
                       <Icon iconName="ellipsis-v" />
-                    </ButtonPrimitive>
+                    </Button>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content align="end">
                     {userIsOwner ? (
@@ -176,7 +181,7 @@ export function RowMember(props: RowMemberProps) {
               ) : (
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
-                    <ButtonPrimitive
+                    <Button
                       type="button"
                       data-testid="element"
                       aria-label="Invite actions"
@@ -186,7 +191,7 @@ export function RowMember(props: RowMemberProps) {
                       iconOnly
                     >
                       <Icon iconName="ellipsis-v" />
-                    </ButtonPrimitive>
+                    </Button>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content align="end">
                     <DropdownMenu.Item
@@ -233,16 +238,35 @@ export function RowMember(props: RowMemberProps) {
       </Table.Cell>
       <Table.Cell className="px-4" style={{ width: `${columnSizes[1]}%` }}>
         <div data-testid="row-member-menu" className="flex items-center">
-          <InputSelectSmall
-            dataTestId="input"
-            name={`member-role-${member.id}`}
-            className="w-44"
-            inputClassName="w-44"
-            items={roleOptions}
-            defaultValue={selectedRoleValue}
-            onChange={canEditRole ? handleRoleChange : undefined}
-            disabled={!canEditRole || loadingUpdateRole}
-          />
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <Button
+                type="button"
+                data-testid="input"
+                aria-label="Member role"
+                variant="outline"
+                color="neutral"
+                size="md"
+                className="h-9 w-44 justify-between"
+                disabled={!canEditRole || loadingUpdateRole}
+              >
+                <span className="truncate">{selectedRoleLabel}</span>
+                <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />
+              </Button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content align="start">
+              {roleOptions.map((role) => (
+                <DropdownMenu.Item
+                  key={role.value}
+                  data-testid="menuItem"
+                  disabled={!canEditRole || loadingUpdateRole}
+                  onSelect={() => handleRoleChange(role.value)}
+                >
+                  {role.label}
+                </DropdownMenu.Item>
+              ))}
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
         </div>
       </Table.Cell>
       <Table.Cell className="px-4 text-xs text-neutral" style={{ width: `${columnSizes[2]}%` }}>
