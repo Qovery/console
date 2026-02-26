@@ -29,7 +29,7 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 100% 0px;"
   >
     <div
-      class="z-dropdown rounded border bg-surface-neutral shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded max-w-[280px] border-transparent p-2 text-sm text-neutral-350"
+      class="z-dropdown rounded border bg-surface-neutral shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded max-w-[280px] border-transparent p-2 text-sm text-neutral"
       data-align="end"
       data-side="bottom"
       data-state="open"
@@ -42,7 +42,7 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
         class="flex items-center justify-between p-2"
       >
         <p
-          class="font-medium text-neutral-350 dark:text-neutral-250"
+          class="font-medium text-neutral"
         >
           1
            
@@ -68,28 +68,28 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
           class="flex p-2"
         >
           <span
-            class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-[''] mr-2 text-brand-500 hover:text-brand-600 dark:hover:text-brand-400"
+            class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-[''] mr-2 text-brand hover:text-brand-hover"
             data-state="closed"
             data-testid="copy-container"
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-copy "
+              class="fa-regular fa-copy "
             />
           </span>
           <a
-            class="flex w-full items-center justify-between text-neutral-400 transition hover:text-brand-500 dark:text-neutral-50 dark:hover:text-brand-400"
+            class="flex w-full items-center justify-between text-neutral-subtle transition-colors hover:text-brand-hover"
             href="https://qovery.com"
             rel="noreferrer"
             target="_blank"
           >
             <div
-              class="mr-2 text-ssm font-medium"
+              class="mr-2 text-ssm font-medium text-neutral"
             >
               https://qovery.com
             </div>
             <div
-              class="text-xs text-neutral-350 dark:text-neutral-250"
+              class="text-xs text-neutral-subtle"
             >
               8080
             </div>

@@ -2,7 +2,7 @@ import { type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
+import { ApplicationSettingsResources } from '@qovery/domains/services/feature'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
 import { Button, Callout, Heading, Icon, Section } from '@qovery/shared/ui'
 

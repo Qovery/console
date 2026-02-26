@@ -1,2 +1,5 @@
 node_modules
 !.storybook
+
+# Auto-generated TanStack Router file
+apps/console-v5/src/routeTree.gen.ts

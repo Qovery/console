@@ -4,10 +4,10 @@ exports[`PodDetails should match snapshot with container based pod and with mult
 <body>
   <div>
     <div
-      class="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
       <div
-        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300"
+        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-subtle"
       />
       <a
         class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral absolute right-2 top-2 gap-2"
@@ -45,7 +45,7 @@ exports[`PodDetails should match snapshot with container based pod and with mult
             type="button"
           >
             <div
-              class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
+              class="mr-1 h-1.5 w-1.5 rounded-full bg-surface-positive-solid"
             />
             pod-container-1
           </button>
@@ -62,7 +62,7 @@ exports[`PodDetails should match snapshot with container based pod and with mult
             type="button"
           >
             <div
-              class="mr-1 h-1.5 w-1.5 rounded-full bg-red-500"
+              class="mr-1 h-1.5 w-1.5 rounded-full bg-surface-negative-solid"
             />
             pod-container-2
           </button>
@@ -94,7 +94,7 @@ exports[`PodDetails should match snapshot with container based pod and with mult
                 foobar-img
               </dd>
               <span
-                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-surface-neutral-subtle before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-surface-neutralInvert"
               />
               <dt
                 class="text-neutral-subtle"
@@ -138,10 +138,10 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
 <body>
   <div>
     <div
-      class="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
       <div
-        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300"
+        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-subtle"
       />
       <a
         class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral absolute right-2 top-2 gap-2"
@@ -179,7 +179,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
             type="button"
           >
             <div
-              class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
+              class="mr-1 h-1.5 w-1.5 rounded-full bg-surface-positive-solid"
             />
             pod-container-1
           </button>
@@ -201,7 +201,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
               class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0"
             >
               <span
-                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-surface-neutral-subtle before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-surface-neutralInvert"
               />
               <dt
                 class="text-neutral-subtle mb-2"
@@ -223,7 +223,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
                 </span>
               </dd>
               <span
-                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-surface-neutral-subtle before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-surface-neutralInvert"
               />
               <dt
                 class="text-neutral-subtle mb-2"
@@ -236,7 +236,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
                 Baz reason
               </dd>
               <span
-                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-surface-neutral-subtle before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-surface-neutralInvert"
               />
               <dt
                 class="text-neutral-subtle mb-2"
@@ -266,10 +266,10 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
 <body>
   <div>
     <div
-      class="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
       <div
-        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300"
+        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-subtle"
       />
       <a
         class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral absolute right-2 top-2 gap-2"
@@ -307,7 +307,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
             type="button"
           >
             <div
-              class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
+              class="mr-1 h-1.5 w-1.5 rounded-full bg-surface-positive-solid"
             />
             pod-container-1
           </button>
@@ -329,7 +329,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
               class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0"
             >
               <span
-                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-surface-neutral-subtle before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-surface-neutralInvert"
               />
               <dt
                 class="text-neutral-subtle"
@@ -363,10 +363,10 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
 <body>
   <div>
     <div
-      class="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
       <div
-        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300"
+        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-subtle"
       />
       <a
         class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral absolute right-2 top-2 gap-2"
@@ -383,7 +383,7 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
         class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0"
       >
         <span
-          class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+          class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-surface-neutral-subtle before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-surface-neutralInvert"
         />
         <dt
           class="text-neutral-subtle"

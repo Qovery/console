@@ -8,7 +8,7 @@ export type UseLastDeployedCommitProps = {
 export function useLastDeployedCommit({ gitRepository, ...useCommitsProps }: UseLastDeployedCommitProps) {
   const { data: commits, ...props } = useCommits(useCommitsProps)
 
-  const delta = commits?.findIndex(({ git_commit_id }) => git_commit_id === gitRepository.deployed_commit_id) ?? 0
+  const delta = commits?.findIndex(({ git_commit_id }) => git_commit_id === gitRepository?.deployed_commit_id) ?? 0
   const defaultCommitInfo: Commit = {
     created_at: gitRepository.deployed_commit_date ?? 'unknown',
     git_commit_id: gitRepository.deployed_commit_id ?? 'unknown',
@@ -16,6 +16,7 @@ export function useLastDeployedCommit({ gitRepository, ...useCommitsProps }: Use
     message: 'unknown',
     author_name: gitRepository.deployed_commit_contributor ?? 'unknown',
   }
+
   return {
     data: {
       deployedCommit: commits?.[delta] ?? defaultCommitInfo,

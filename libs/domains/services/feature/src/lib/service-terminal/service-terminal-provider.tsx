@@ -1,5 +1,5 @@
+import { useLocation } from '@tanstack/react-router'
 import { type PropsWithChildren, createContext, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 
 export const ServiceTerminalContext = createContext<{
   open: boolean
@@ -12,7 +12,7 @@ export const ServiceTerminalContext = createContext<{
 
 export const ServiceTerminalProvider = ({ children }: PropsWithChildren) => {
   const { state } = useLocation()
-  const [open, setOpen] = useState(state?.hasShell || false)
+  const [open, setOpen] = useState(Boolean((state as { hasShell?: boolean } | undefined)?.hasShell))
 
   return (
     <ServiceTerminalContext.Provider

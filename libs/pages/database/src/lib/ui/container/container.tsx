@@ -16,7 +16,6 @@ import {
 import { IconEnum } from '@qovery/shared/enums'
 import {
   CLUSTER_URL,
-  DATABASE_DEPLOYMENTS_URL,
   DATABASE_GENERAL_URL,
   DATABASE_MONITORING_URL,
   DATABASE_SETTINGS_URL,
@@ -130,14 +129,6 @@ export function Container({ service, environment, children }: PropsWithChildren<
       active:
         location.pathname === DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL,
       link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL,
-    },
-    {
-      icon: <ServiceStateChip mode="deployment" environmentId={environmentId} serviceId={databaseId} />,
-      name: 'Deployments history',
-      active:
-        location.pathname ===
-        DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
-      link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
     },
     ...(hasMetrics
       ? [

@@ -63,11 +63,7 @@ export function ServiceLinksPopover({
   return (
     <Popover.Root modal={true}>
       <Popover.Trigger className={filteredLinks.length === 0 ? 'hidden' : ''}>{children}</Popover.Trigger>
-      <Popover.Content
-        side={side}
-        className="max-w-[280px] border-transparent p-2 text-sm text-neutral-subtle"
-        align={align}
-      >
+      <Popover.Content side={side} className="max-w-[280px] border-transparent p-2 text-sm text-neutral" align={align}>
         <div className="flex items-center justify-between p-2">
           <p className="font-medium text-neutral">
             {filteredLinks?.length ?? 0} {pluralize(filteredLinks?.length ?? 0, 'link')} attached
@@ -86,12 +82,12 @@ export function ServiceLinksPopover({
             <li key={link.url} className="flex p-2">
               <CopyToClipboardButtonIcon className="mr-2 text-brand hover:text-brand-hover" content={link.url ?? ''} />
               <a
-                className="flex w-full items-center justify-between text-brand transition hover:text-brand-hover"
+                className="flex w-full items-center justify-between text-neutral-subtle transition-colors hover:text-brand-hover"
                 href={link.url}
                 target="_blank"
                 rel="noreferrer"
               >
-                <div className="mr-2 text-ssm font-medium">
+                <div className="mr-2 text-ssm font-medium text-neutral">
                   <Truncate text={link.url ?? ''} truncateLimit={26} />
                 </div>
                 <div className="text-xs text-neutral-subtle">{link.internal_port}</div>
@@ -100,8 +96,8 @@ export function ServiceLinksPopover({
           ))}
           {nginxLinks.length > 0 && gatewayApiLinks.length > 0 && (
             <>
-              <li className="my-2 border-t border-neutral" />
-              <li className="flex items-center gap-1 px-2 pb-1 text-xs font-medium text-neutral">
+              <hr className="my-2 border-neutral" />
+              <li className="flex items-center gap-1 px-2 pb-1 text-xs font-medium text-neutral-subtle">
                 <span>Gateway API / Envoy stack</span>
                 <Tooltip
                   content={
@@ -112,7 +108,7 @@ export function ServiceLinksPopover({
                         href="https://www.qovery.com/blog/nginx-ingress-controller-end-of-maintenance-by-march-2026"
                         target="_blank"
                         rel="noreferrer"
-                        className="underline"
+                        className="hover:text-neutral-inverted underline"
                       >
                         more info
                       </a>
@@ -121,9 +117,7 @@ export function ServiceLinksPopover({
                   side="right"
                   classNameContent="max-w-xs"
                 >
-                  <span className="inline-flex cursor-help">
-                    <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
-                  </span>
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
                 </Tooltip>
               </li>
             </>
@@ -132,12 +126,12 @@ export function ServiceLinksPopover({
             <li key={link.url} className="flex p-2">
               <CopyToClipboardButtonIcon className="mr-2 text-brand hover:text-brand-hover" content={link.url ?? ''} />
               <a
-                className="flex w-full items-center justify-between text-brand transition hover:text-brand-hover"
+                className="flex w-full items-center justify-between text-neutral-subtle transition-colors hover:text-brand-hover"
                 href={link.url}
                 target="_blank"
                 rel="noreferrer"
               >
-                <div className="mr-2 text-ssm font-medium">
+                <div className="mr-2 text-ssm font-medium text-neutral">
                   <Truncate text={link.url ?? ''} truncateLimit={26} />
                 </div>
                 <div className="text-xs text-neutral-subtle">{link.internal_port}</div>

@@ -17,12 +17,13 @@ import { P, match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
-  ActionTriggerStatusChip,
   Button,
+  DeploymentAction,
   DropdownMenu,
   EmptyState,
   Icon,
   Link,
+  StatusChip,
   TableFilter,
   TablePrimitives,
   Tooltip,
@@ -100,7 +101,7 @@ export function EnvironmentDeploymentList() {
         header: 'Date',
         enableColumnFilter: false,
         enableSorting: true,
-        size: 40,
+        size: 420,
         cell: (info) => {
           const data = info.row.original
           const state = isDeploymentHistory(data) ? data.status : 'QUEUED'
@@ -209,6 +210,7 @@ export function EnvironmentDeploymentList() {
                 <Tooltip content="Pipeline">
                   <Link
                     as="button"
+                    color="neutral"
                     variant="outline"
                     iconOnly
                     size="md"
@@ -219,7 +221,7 @@ export function EnvironmentDeploymentList() {
                           ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id ?? '' : '')
                     }
                   >
-                    <Icon iconName="timeline" className="text-neutral-subtle" />
+                    <Icon iconName="timeline" />
                   </Link>
                 </Tooltip>
               </div>
@@ -229,11 +231,11 @@ export function EnvironmentDeploymentList() {
       }),
       columnHelper.accessor('action_status', {
         id: 'action_status',
-        header: 'Status deployment',
+        header: 'Status',
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        size: 15,
+        size: 196,
         meta: {
           customFacetEntry({ value, count }) {
             return (
@@ -253,34 +255,16 @@ export function EnvironmentDeploymentList() {
               const { action_status } = data
 
               return (
-                <div className="flex min-w-40 items-center gap-4">
-                  <ActionTriggerStatusChip
-                    size="md"
-                    status={action_status}
-                    triggerAction={trigger_action}
-                    statusLink={match(action_status)
-                      .with(
-                        'ERROR',
-                        () =>
-                          ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-                          ENVIRONMENT_STAGES_URL(data.identifier.execution_id)
-                      )
-                      .otherwise(() => undefined)}
-                  />
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-medium text-neutral">{upperCaseFirstLetter(trigger_action)}</span>
-                    <span className="text-ssm text-neutral-subtle">{upperCaseFirstLetter(action_status)}</span>
-                  </div>
+                <div className="flex items-center justify-between gap-4">
+                  <DeploymentAction status={trigger_action} />
+                  <StatusChip status={action_status} />
                 </div>
               )
             })
             .otherwise(() => (
-              <div className="flex items-center gap-4">
-                <ActionTriggerStatusChip size="md" status="QUEUED" triggerAction={trigger_action} />
-                <div className="flex flex-col gap-0.5">
-                  <span className="font-medium text-neutral">{upperCaseFirstLetter(trigger_action)}</span>
-                  <span className="text-ssm text-neutral-subtle">In queue...</span>
-                </div>
+              <div className="flex items-center justify-between gap-4">
+                <DeploymentAction status={trigger_action} />
+                <StatusChip status="QUEUED" />
               </div>
             ))
         },
@@ -289,7 +273,7 @@ export function EnvironmentDeploymentList() {
         header: 'Pipeline',
         enableColumnFilter: false,
         enableSorting: false,
-        size: 13,
+        size: 180,
         cell: (info) => {
           const data = info.row.original
 
@@ -310,7 +294,7 @@ export function EnvironmentDeploymentList() {
         header: 'Duration',
         enableColumnFilter: false,
         enableSorting: true,
-        size: 12,
+        size: 140,
         cell: (info) => {
           const data = info.row.original
 
@@ -346,7 +330,7 @@ export function EnvironmentDeploymentList() {
         header: 'Trigger by',
         enableColumnFilter: true,
         enableSorting: false,
-        size: 20,
+        size: 280,
         filterFn: (row, _, filterValue) => {
           if (!filterValue) return true
           const { origin, triggeredBy } = filterValue
@@ -407,58 +391,67 @@ export function EnvironmentDeploymentList() {
     onSortingChange: setSorting,
     // https://github.com/TanStack/table/discussions/3192#discussioncomment-6458134
     defaultColumn: {
-      minSize: 0,
       size: Number.MAX_SAFE_INTEGER,
       maxSize: Number.MAX_SAFE_INTEGER,
     },
   })
 
   if (!deploymentHistory.length && !deploymentHistoryQueue.length) {
-    return <EmptyState title="No deployment started" description="Manage the deployments from the overview tab" />
+    return (
+      <EmptyState
+        icon="rocket"
+        title="No deployment started"
+        description="Manage the deployments from the overview tab"
+      />
+    )
   }
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full text-ssm">
+      <Table.Root className="w-full min-w-[1080px] table-fixed overflow-x-scroll text-ssm">
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
-            <Table.Row key={headerGroup.id}>
+            <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} group font-medium`}
+                  className="group font-medium"
                   key={header.id}
-                  style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
+                  style={{
+                    width: `${header.getSize()}px`,
+                  }}
                 >
-                  {header.column.getCanFilter() ? (
-                    header.id === 'auditing_data_origin' ? (
-                      <TableFilterTriggerBy column={header.column} />
+                  <span className="block">
+                    {header.column.getCanFilter() ? (
+                      header.id === 'auditing_data_origin' ? (
+                        <TableFilterTriggerBy column={header.column} />
+                      ) : (
+                        <TableFilter column={header.column} />
+                      )
+                    ) : header.column.getCanSort() ? (
+                      <button
+                        type="button"
+                        className={twMerge(
+                          'flex items-center gap-1 truncate',
+                          header.column.getCanSort() ? 'cursor-pointer select-none' : ''
+                        )}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {match(header.column.getIsSorted())
+                          .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
+                          .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
+                          .with(false, () => (
+                            <Icon
+                              className="text-xs opacity-0 transition-opacity group-hover:opacity-100"
+                              iconName="arrow-down-arrow-up"
+                            />
+                          ))
+                          .exhaustive()}
+                      </button>
                     ) : (
-                      <TableFilter column={header.column} />
-                    )
-                  ) : header.column.getCanSort() ? (
-                    <button
-                      type="button"
-                      className={twMerge(
-                        'flex items-center gap-1 truncate',
-                        header.column.getCanSort() ? 'cursor-pointer select-none' : ''
-                      )}
-                      onClick={header.column.getToggleSortingHandler()}
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                      {match(header.column.getIsSorted())
-                        .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
-                        .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
-                        .with(false, () => (
-                          <Icon
-                            className="text-xs opacity-0 transition-opacity group-hover:opacity-100"
-                            iconName="arrow-down-arrow-up"
-                          />
-                        ))
-                        .exhaustive()}
-                    </button>
-                  ) : (
-                    flexRender(header.column.columnDef.header, header.getContext())
-                  )}
+                      flexRender(header.column.columnDef.header, header.getContext())
+                    )}
+                  </span>
                 </Table.ColumnHeaderCell>
               ))}
             </Table.Row>
@@ -467,12 +460,13 @@ export function EnvironmentDeploymentList() {
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
-              <Table.Row className="h-[68px] border-neutral">
-                {row.getVisibleCells().map((cell, i) => (
+              <Table.Row className="h-[68px] divide-x divide-neutral">
+                {row.getVisibleCells().map((cell) => (
                   <Table.Cell
                     key={cell.id}
-                    className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} first:relative`}
-                    style={{ width: `${cell.column.getSize()}%` }}
+                    style={{
+                      width: `${cell.column.getSize()}px`,
+                    }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </Table.Cell>

@@ -307,7 +307,7 @@ export function TableHeadHierarchicalFilter({
         contentLeft: (
           <Icon
             iconName="check"
-            className={`text-sm ${('ALL' === item.value && !menuItemSelected) || menuItemSelected?.value === item.value ? 'text-green-400' : 'text-transparent'}`}
+            className={`text-sm ${('ALL' === item.value && !menuItemSelected) || menuItemSelected?.value === item.value ? 'text-positive' : 'text-transparent'}`}
           />
         ),
         // Show ">" icon for all items to indicate they are clickable
@@ -315,7 +315,7 @@ export function TableHeadHierarchicalFilter({
           <Icon
             iconName="arrow-right"
             // Adding menu-item__name class to have same hover css added on menu items
-            className={`text-sm text-neutral-400 ${!item.isLeaf ? 'menu-item__name text-neutral-400' : 'text-transparent'}`}
+            className={`text-sm text-neutral-subtle ${!item.isLeaf ? 'menu-item__name text-neutral' : 'text-transparent'}`}
           />
         ),
         onClick: (e) => {

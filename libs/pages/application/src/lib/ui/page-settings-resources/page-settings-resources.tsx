@@ -1,8 +1,10 @@
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
-import { ApplicationSettingsResources, SettingsHeading } from '@qovery/shared/console-shared'
+import { ApplicationSettingsResources } from '@qovery/domains/services/feature'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
@@ -16,6 +18,7 @@ export interface PageSettingsResourcesProps {
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
   const { onSubmit, loading, service, displayWarningCpu, advancedSettings } = props
   const { formState, watch } = useFormContext()
+  const { data: environment } = useEnvironment({ environmentId: service.environment.id })
 
   const autoscalingMode = watch('autoscaling_mode') || 'NONE'
 
@@ -38,6 +41,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
         <SettingsHeading title="Resources" description="Manage the resources assigned to the service." />
         <form className="space-y-10" onSubmit={onSubmit}>
           <ApplicationSettingsResources
+            environment={environment}
             displayWarningCpu={displayWarningCpu}
             service={service}
             advancedSettings={advancedSettings}

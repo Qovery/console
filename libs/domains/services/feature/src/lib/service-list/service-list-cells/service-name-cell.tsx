@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
-import { type Environment, ServiceTypeEnum, type Status } from 'qovery-typescript-axios'
+import { type Environment, type Status } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import {
@@ -9,7 +9,6 @@ import {
   DATABASE_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
-  SERVICES_GENERAL_URL,
 } from '@qovery/shared/routes'
 import { AnimatedGradientText, Badge, Button, Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { formatCronExpression, pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -30,19 +29,6 @@ export function ServiceNameCell({
   const navigate = useNavigate()
 
   const deploymentRequestsCount = Number(deploymentStatus?.deployment_requests_count)
-
-  const serviceLink = match(service)
-    .with(
-      { serviceType: ServiceTypeEnum.DATABASE },
-      ({ id }) =>
-        DATABASE_URL(environment.organization.id, environment.project.id, service.environment.id, id) +
-        DATABASE_GENERAL_URL
-    )
-    .otherwise(
-      ({ id }) =>
-        APPLICATION_URL(environment.organization.id, environment.project.id, service.environment.id, id) +
-        SERVICES_GENERAL_URL
-    )
 
   const LinkDeploymentStatus = () => {
     const environmentLog = ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)
@@ -101,7 +87,13 @@ export function ServiceNameCell({
                   <Tooltip content={db.name}>
                     <Link
                       className="inline max-w-max truncate"
-                      to={serviceLink}
+                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                      params={{
+                        organizationId: environment.organization.id,
+                        projectId: environment.project.id,
+                        environmentId: environment.id,
+                        serviceId: service.id,
+                      }}
                       underline
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -138,7 +130,13 @@ export function ServiceNameCell({
                   <Tooltip content={service.name}>
                     <Link
                       className="inline max-w-max truncate"
-                      to={serviceLink}
+                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                      params={{
+                        organizationId: environment.organization.id,
+                        projectId: environment.project.id,
+                        environmentId: environment.id,
+                        serviceId: service.id,
+                      }}
                       underline
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -160,8 +158,13 @@ export function ServiceNameCell({
               <Tooltip content={service.name}>
                 <Link
                   className="inline max-w-max truncate"
-                  color="neutral"
-                  to={serviceLink}
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                  params={{
+                    organizationId: environment.organization.id,
+                    projectId: environment.project.id,
+                    environmentId: environment.id,
+                    serviceId: service.id,
+                  }}
                   underline
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -188,7 +191,7 @@ export function ServiceNameCell({
           {'auto_deploy' in service && service.auto_deploy && (
             <Tooltip content="Auto-deploy">
               <span>
-                <Icon className="text-neutral-subtle" iconName="arrows-rotate" />
+                <Icon className="text-neutral-300" iconName="arrows-rotate" />
               </span>
             </Tooltip>
           )}

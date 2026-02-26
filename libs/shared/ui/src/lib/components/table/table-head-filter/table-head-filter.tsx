@@ -167,7 +167,7 @@ export function groupBy<T>(
         <Icon iconName="check" className={`text-sm ${currentFilter === key ? 'text-positive' : 'text-transparent'}`} />
       ),
       contentRight: !hideFilterNumber && (
-        <span className="rounded-sm bg-neutral-200 px-1 text-xs font-bold text-neutral-350">
+        <span className="rounded-sm bg-surface-neutral-component px-1 text-xs font-bold text-neutral-subtle">
           {dataByKeys[key].length}
         </span>
       ),

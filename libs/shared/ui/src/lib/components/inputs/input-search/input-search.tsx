@@ -63,7 +63,13 @@ export function InputSearch(props: InputSearchProps) {
           name="search"
         />
         {toggleDelete && (
-          <button className="absolute right-3 top-1/2 -translate-y-1/2" onClick={deleteValue}>
+          <button
+            type="button"
+            title="Clear search"
+            aria-label="Clear search"
+            className="absolute right-3 top-1/2 -translate-y-1/2"
+            onClick={deleteValue}
+          >
             <Icon className="text-sm text-neutral" iconName="circle-xmark" />
           </button>
         )}

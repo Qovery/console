@@ -3,9 +3,10 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseAvailableRolesProps {
   organizationId: string
+  suspense?: boolean
 }
 
-export function useAvailableRoles({ organizationId }: UseAvailableRolesProps) {
+export function useAvailableRoles({ organizationId, suspense = false }: UseAvailableRolesProps) {
   return useQuery({
     ...queries.organizations.availableRoles({ organizationId }),
     select(data) {
@@ -14,6 +15,7 @@ export function useAvailableRoles({ organizationId }: UseAvailableRolesProps) {
       }
       return data.sort((a, b) => (a.name && b.name ? a.name.localeCompare(b.name) : 0))
     },
+    suspense,
   })
 }
 
