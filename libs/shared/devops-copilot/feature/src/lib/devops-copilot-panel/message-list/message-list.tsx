@@ -72,7 +72,12 @@ export function MessageList({
         })
       )}
     >
-      <EmptyState docLinks={docLinks} expand={expand} onSuggestionClick={onSuggestionClick} />
+      <EmptyState
+        docLinks={docLinks}
+        expand={expand}
+        onSuggestionClick={onSuggestionClick}
+        threadLength={thread.length}
+      />
       {thread.map((message: Message) => {
         return match(message.owner)
           .with('user', () => (

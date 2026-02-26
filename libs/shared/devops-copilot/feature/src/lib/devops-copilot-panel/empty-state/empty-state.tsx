@@ -4,10 +4,11 @@ export interface EmptyStateProps {
   docLinks: Array<{ label: string; link: string }>
   expand: boolean
   onSuggestionClick: (label: string) => void
+  threadLength: number
 }
 
-export function EmptyState({ docLinks, expand, onSuggestionClick }: EmptyStateProps) {
-  if (docLinks.length === 0 || !expand) return null
+export function EmptyState({ docLinks, expand, onSuggestionClick, threadLength }: EmptyStateProps) {
+  if (threadLength > 0 || docLinks.length === 0 || !expand) return null
 
   return (
     <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col gap-2 text-center">
