@@ -1,3 +1,4 @@
+/* eslint-disable jest-dom/prefer-to-have-style */
 import { createRef } from 'react'
 import { act, renderHook } from '@qovery/shared/util-tests'
 import { usePanelResize } from './use-panel-resize'
@@ -65,13 +66,9 @@ describe('usePanelResize', () => {
         })
       )
 
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
       expect(mockPanelElement.style.width).toBe('calc(100vw - 32px)')
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
       expect(mockPanelElement.style.height).toBe('calc(100vh - 32px)')
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
       expect(mockPanelElement.style.top).toBe('1rem')
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
       expect(mockPanelElement.style.left).toBe('1rem')
     })
 
@@ -88,13 +85,9 @@ describe('usePanelResize', () => {
         })
       )
 
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
       expect(mockPanelElement.style.width).toBe('480px')
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
       expect(mockPanelElement.style.height).toBe('600px')
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
       expect(mockPanelElement.style.bottom).toBe('8px')
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
       expect(mockPanelElement.style.right).toBe('8px')
     })
 
@@ -112,9 +105,7 @@ describe('usePanelResize', () => {
         })
       )
 
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
       expect(mockPanelElement.style.width).toBe('600px')
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
       expect(mockPanelElement.style.height).toBe('700px')
     })
 
@@ -132,10 +123,8 @@ describe('usePanelResize', () => {
         })
       )
 
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
-      expect(mockPanelElement.style.width).toBe('900px') // 1000 * 0.9
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
-      expect(mockPanelElement.style.height).toBe('720px') // 800 * 0.9
+      expect(mockPanelElement.style.width).toBe('900px')
+      expect(mockPanelElement.style.height).toBe('720px')
     })
 
     it('should handle invalid JSON in localStorage gracefully', () => {
@@ -151,9 +140,7 @@ describe('usePanelResize', () => {
         })
       )
 
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
       expect(mockPanelElement.style.width).toBe('480px')
-      // eslint-disable-next-line jest-dom/prefer-to-have-style
       expect(mockPanelElement.style.height).toBe('600px')
       expect(consoleErrorSpy).toHaveBeenCalled()
 
@@ -264,9 +251,8 @@ describe('usePanelResize', () => {
         result.current.startResize(mockMouseDownEvent)
       })
 
-      // Simulate mouse move that would result in width < 450
       const mouseMoveEvent = new MouseEvent('mousemove', {
-        clientX: 600, // This should result in width < 450
+        clientX: 600, 
         clientY: 400,
       })
 
@@ -274,7 +260,6 @@ describe('usePanelResize', () => {
         document.dispatchEvent(mouseMoveEvent)
       })
 
-      // Width should be clamped to 450
       expect(parseInt(mockPanelElement.style.width)).toBeGreaterThanOrEqual(450)
     })
 
@@ -309,17 +294,15 @@ describe('usePanelResize', () => {
         result.current.startResize(mockMouseDownEvent)
       })
 
-      // Simulate mouse move
       const mouseMoveEvent = new MouseEvent('mousemove', {
         clientX: 900,
-        clientY: 300, // This should result in height < 600
+        clientY: 300,
       })
 
       act(() => {
         document.dispatchEvent(mouseMoveEvent)
       })
 
-      // Height should be clamped to 600
       expect(parseInt(mockPanelElement.style.height)).toBeGreaterThanOrEqual(600)
     })
   })

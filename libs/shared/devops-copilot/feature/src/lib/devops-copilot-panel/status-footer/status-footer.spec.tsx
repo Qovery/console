@@ -88,7 +88,6 @@ describe('StatusFooter', () => {
     it('should render dot status for operational status', () => {
       render(<StatusFooter {...defaultProps} appStatus={{ id: 'qovery', status: 'OPERATIONAL' }} />)
 
-      // Should render the operational status text with a status indicator
       expect(screen.getByText('All systems operational')).toBeInTheDocument()
     })
 

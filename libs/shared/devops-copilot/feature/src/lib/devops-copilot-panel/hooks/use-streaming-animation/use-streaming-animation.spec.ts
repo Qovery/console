@@ -229,7 +229,6 @@ describe('useStreamingAnimation', () => {
         })
       )
 
-      // Simulate document becoming visible
       Object.defineProperty(document, 'hidden', { value: false })
 
       act(() => {
@@ -238,7 +237,6 @@ describe('useStreamingAnimation', () => {
 
       expect(mockSetDisplayedStreamingMessage).toHaveBeenCalledWith('Hello World')
 
-      // Clean up
       Object.defineProperty(document, 'hidden', { value: false })
     })
   })
@@ -296,7 +294,6 @@ describe('useStreamingAnimation', () => {
         })
       )
 
-      // Should not call setDisplayedStreamingMessage when already complete
       expect(mockSetDisplayedStreamingMessage).not.toHaveBeenCalled()
     })
   })
