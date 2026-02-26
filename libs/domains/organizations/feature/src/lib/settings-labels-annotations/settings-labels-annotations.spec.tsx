@@ -55,11 +55,9 @@ describe('SettingsLabelsAnnotations', () => {
   beforeEach(() => {
     useAnnotationsGroupsMock.mockReturnValue({
       data: mockAnnotationsGroup,
-      isFetched: true,
     } as ReturnType<typeof useAnnotationsGroups>)
     useLabelsGroupsMock.mockReturnValue({
       data: mockLabelsGroup,
-      isFetched: true,
     } as ReturnType<typeof useLabelsGroups>)
   })
 

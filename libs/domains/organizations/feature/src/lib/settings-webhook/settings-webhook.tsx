@@ -23,8 +23,8 @@ const WebhookSkeleton = () => (
         </div>
         <div className="flex items-center gap-2">
           <Skeleton width={32} height={18} show={true} />
-          <Skeleton width={36} height={36} show={true} />
-          <Skeleton width={36} height={36} show={true} />
+          <Skeleton width={32} height={32} show={true} />
+          <Skeleton width={32} height={32} show={true} />
         </div>
       </div>
     ))}

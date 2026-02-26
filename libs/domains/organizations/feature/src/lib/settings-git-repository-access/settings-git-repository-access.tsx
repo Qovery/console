@@ -13,9 +13,7 @@ import { useDisconnectGithubApp } from '../hooks/use-disconnect-github-app/use-d
 import { useRepositories } from '../hooks/use-repositories/use-repositories'
 import SectionGithubApp from './section-github-app/section-github-app'
 
-function SettingsGitRepositoryAccessContent() {
-  useDocumentTitle('Git Repository Access - Organization settings')
-  const { organizationId = '' } = useParams({ strict: false })
+function SettingsGitRepositoryAccessBody({ organizationId }: { organizationId: string }) {
   const [displayGitAppSection, setDisplayGitAppSection] = useState(false)
   const githubConnectUrl = `https://github.com/apps/qovery-github-app/installations/new?state=${organizationId}`
 
@@ -33,8 +31,6 @@ function SettingsGitRepositoryAccessContent() {
   })
 
   const { mutateAsync: disconnectGithubApp } = useDisconnectGithubApp()
-
-  const { openModal, closeModal } = useModal()
 
   // Display section only if the user has at least one github app installation
   // Soon deprecated: https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1225
@@ -79,6 +75,26 @@ function SettingsGitRepositoryAccessContent() {
   }
 
   return (
+    <div className="max-w-content-with-navigation-left">
+      <GitTokenList />
+      {displayGitAppSection && (
+        <SectionGithubApp
+          githubAuthProvider={githubAuthProvider}
+          repositories={repositories}
+          onConfigure={onConfigure}
+          onDisconnect={onDisconnect}
+        />
+      )}
+    </div>
+  )
+}
+
+export function SettingsGitRepositoryAccess() {
+  useDocumentTitle('Git Repository Access - Organization settings')
+  const { organizationId = '' } = useParams({ strict: false })
+  const { openModal, closeModal } = useModal()
+
+  return (
     <div className="w-full justify-between">
       <Section className="p-8">
         <div className="relative">
@@ -102,59 +118,36 @@ function SettingsGitRepositoryAccessContent() {
             Add new token
           </Button>
         </div>
-        <div className="max-w-content-with-navigation-left">
-          <GitTokenList />
-          {displayGitAppSection && (
-            <SectionGithubApp
-              githubAuthProvider={githubAuthProvider}
-              repositories={repositories}
-              onConfigure={onConfigure}
-              onDisconnect={onDisconnect}
-            />
-          )}
-        </div>
+        <Suspense fallback={<GitRepositoryAccessSkeleton />}>
+          <SettingsGitRepositoryAccessBody organizationId={organizationId} />
+        </Suspense>
       </Section>
     </div>
   )
 }
 
-export function SettingsGitRepositoryAccess() {
-  return (
-    <Suspense fallback={<GitRepositoryAccessSkeleton />}>
-      <SettingsGitRepositoryAccessContent />
-    </Suspense>
-  )
-}
-
 const GitRepositoryAccessSkeleton = () => (
-  <div className="space-y-8 p-8">
-    <div className="relative border-b border-neutral pb-8">
-      <Skeleton width={220} height={32} show={true} />
-      <div className="mt-2 space-y-2">
-        <Skeleton width={480} height={12} show={true} />
-        <Skeleton width={400} height={12} show={true} />
-        <Skeleton width={120} height={24} show={true} />
-      </div>
-      <div className="absolute right-0 top-0">
-        <Skeleton width={150} height={36} show={true} />
-      </div>
-    </div>
-    <div className="max-w-content-with-navigation-left space-y-8">
-      <BlockContent title="Git tokens" classNameContent="p-0">
-        {[0, 1, 2].map((index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between gap-3 border-b border-neutral px-5 py-4 last:border-0"
-          >
-            <Skeleton width={260} height={20} show={true} />
-            <div className="flex gap-2">
-              <Skeleton width={36} height={36} show={true} />
-              <Skeleton width={36} height={36} show={true} />
-              <Skeleton width={36} height={36} show={true} />
+  <div className="max-w-content-with-navigation-left space-y-8">
+    <BlockContent title="Git tokens" classNameContent="p-0">
+      {[0, 1, 2, 3].map((index) => (
+        <div
+          key={index}
+          className="flex items-center justify-between gap-3 border-b border-neutral px-5 py-4 last:border-0"
+        >
+          <div className="flex items-center gap-4">
+            <Skeleton width={20} height={20} show={true} />
+            <div className="space-y-2">
+              <Skeleton width={220} height={12} show={true} />
+              <Skeleton width={200} height={12} show={true} />
             </div>
           </div>
-        ))}
-      </BlockContent>
-    </div>
+          <div className="flex gap-2">
+            <Skeleton width={32} height={32} show={true} />
+            <Skeleton width={32} height={32} show={true} />
+            <Skeleton width={32} height={32} show={true} />
+          </div>
+        </div>
+      ))}
+    </BlockContent>
   </div>
 )
