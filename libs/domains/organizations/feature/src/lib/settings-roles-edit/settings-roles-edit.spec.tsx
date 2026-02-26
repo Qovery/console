@@ -168,6 +168,39 @@ describe('SettingsRolesEdit helpers', () => {
     ])
   })
 
+  it('should normalize admin selection to manager permissions', () => {
+    const formData = resetForm(customRole)
+    const projectId = customRole.project_permissions?.[0].project_id ?? ''
+
+    formData.project_permissions[projectId].ADMIN = 'ADMIN'
+    formData.project_permissions[projectId][EnvironmentModeEnum.DEVELOPMENT] = 'ADMIN'
+    formData.project_permissions[projectId][EnvironmentModeEnum.PREVIEW] = 'ADMIN'
+    formData.project_permissions[projectId][EnvironmentModeEnum.STAGING] = 'ADMIN'
+    formData.project_permissions[projectId][EnvironmentModeEnum.PRODUCTION] = 'ADMIN'
+
+    const result = handleSubmitRolesEdit(formData, customRole)
+
+    expect(result.project_permissions?.[0].is_admin).toBe(true)
+    expect(result.project_permissions?.[0].permissions).toEqual([
+      {
+        environment_type: EnvironmentModeEnum.DEVELOPMENT,
+        permission: OrganizationCustomRoleProjectPermission.MANAGER,
+      },
+      {
+        environment_type: EnvironmentModeEnum.PREVIEW,
+        permission: OrganizationCustomRoleProjectPermission.MANAGER,
+      },
+      {
+        environment_type: EnvironmentModeEnum.STAGING,
+        permission: OrganizationCustomRoleProjectPermission.MANAGER,
+      },
+      {
+        environment_type: EnvironmentModeEnum.PRODUCTION,
+        permission: OrganizationCustomRoleProjectPermission.MANAGER,
+      },
+    ])
+  })
+
   it('should resolve project permission values', () => {
     expect(getValue(OrganizationCustomRoleProjectPermission.VIEWER, false)).toBe(
       OrganizationCustomRoleProjectPermission.VIEWER

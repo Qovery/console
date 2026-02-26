@@ -1,8 +1,8 @@
 import userEvent from '@testing-library/user-event'
-import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type OrganizationCustomRoleProjectPermissionsInner } from 'qovery-typescript-axios'
 import { customRolesMock } from '@qovery/shared/factories'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import RowProject, { OrganizationCustomRoleProjectPermissionAdmin } from './row-project'
 
 const customRole = customRolesMock(1)[0]
@@ -11,13 +11,13 @@ const project = (customRole.project_permissions &&
 
 describe('RowProject', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<RowProject project={project} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<RowProject project={project} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should render header with global checkbox', async () => {
     const user = userEvent.setup()
-    const { getByText, getByTestId } = render(wrapWithReactHookForm(<RowProject project={project} />))
+    const { getByText, getByTestId } = renderWithProviders(wrapWithReactHookForm(<RowProject project={project} />))
 
     getByText(project.project_name || '')
     getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.ADMIN}`)
@@ -36,7 +36,7 @@ describe('RowProject', () => {
     project.is_admin = true
 
     const user = userEvent.setup()
-    const { getByTestId, getAllByTestId } = render(wrapWithReactHookForm(<RowProject project={project} />))
+    const { getByTestId, getAllByTestId } = renderWithProviders(wrapWithReactHookForm(<RowProject project={project} />))
 
     const input = getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.ADMIN}`) as HTMLInputElement
     expect(input).toBeChecked()
