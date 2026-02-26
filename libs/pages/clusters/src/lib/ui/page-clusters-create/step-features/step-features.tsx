@@ -5,7 +5,7 @@ import { match } from 'ts-pattern'
 import { ScalewayStaticIp } from '@qovery/domains/clusters/feature'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
 import { type ClusterFeaturesData } from '@qovery/shared/interfaces'
-import { Button, Callout, ExternalLink, Heading, Icon, InputText, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Button, Callout, ExternalLink, Heading, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import AWSVpcFeature from './aws-vpc-feature/aws-vpc-feature'
 import GCPVpcFeature from './gcp-vpc-feature/gcp-vpc-feature'
@@ -185,30 +185,6 @@ export function StepFeatures(props: StepFeaturesProps) {
                 )
                 .with('EXISTING_VPC', () => <GCPVpcFeature />)
                 .otherwise(() => null)}
-            </div>
-          )}
-          {cloudProvider === 'AZURE' && (
-            <div className="mt-4">
-              <Heading className="mb-2 text-sm">Advanced Azure settings</Heading>
-              <p className="mb-4 text-sm text-neutral-350">
-                Optionally specify a custom node resource group name. This is useful when scoping Service Principal
-                permissions to specific resource groups.
-              </p>
-              <Controller
-                name="node_resource_group"
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    dataTestId="input-node-resource-group"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    label="Custom node resource group name (optional)"
-                    hint="If left empty, Azure uses the default naming convention (MC_<rg>_<cluster>_<region>)."
-                    error={error?.message}
-                  />
-                )}
-              />
             </div>
           )}
           {cloudProvider === 'SCW' && (
