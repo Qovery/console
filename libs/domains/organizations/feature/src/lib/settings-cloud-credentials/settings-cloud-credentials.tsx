@@ -283,9 +283,9 @@ const Loader = () => (
           </div>
         </div>
         <div className="flex gap-2">
-          <Skeleton width={36} height={36} show={true} />
-          <Skeleton width={36} height={36} show={true} />
-          <Skeleton width={36} height={36} show={true} />
+          <Skeleton width={32} height={32} show={true} />
+          <Skeleton width={32} height={32} show={true} />
+          <Skeleton width={32} height={32} show={true} />
         </div>
       </div>
     ))}

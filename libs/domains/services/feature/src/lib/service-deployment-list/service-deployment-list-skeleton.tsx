@@ -3,7 +3,7 @@ import { Skeleton, TablePrimitives } from '@qovery/shared/ui'
 const { Table } = TablePrimitives
 
 export function ServiceDeploymentListSkeleton() {
-  const columnSizes = ['40%', '15%', '13%', '12%', '20%']
+  const columnSizes = ['420px', '196px', '120px', '170px', '250px']
 
   return (
     <Table.Root className="w-full border-b">
@@ -22,9 +22,9 @@ export function ServiceDeploymentListSkeleton() {
             {[...Array(5)].map((_, index) => (
               <Table.Cell key={index} className="h-14 first:border-r" style={{ width: columnSizes[index] }}>
                 {index === 0 ? (
-                  <div className="flex items-center justify-between">
-                    <Skeleton height={16} width={300} />
-                    <Skeleton height={16} width={200} />
+                  <div className="flex flex-col gap-1">
+                    <Skeleton height={16} width={120} />
+                    <Skeleton height={16} width={240} />
                   </div>
                 ) : (
                   <Skeleton height={16} width={60} />

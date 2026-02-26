@@ -22,9 +22,7 @@ export function Header() {
       <div className="flex items-center gap-4">
         <LogoIcon />
         <Separator />
-        {/* <Suspense fallback={<div>Loading...</div>}> */}
         <Breadcrumbs />
-        {/* </Suspense> */}
         <div className="ml-auto flex items-center gap-3">
           <SpotlightTrigger />
           <UserMenu />

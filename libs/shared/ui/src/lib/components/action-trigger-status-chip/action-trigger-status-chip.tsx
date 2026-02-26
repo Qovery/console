@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { cva } from 'class-variance-authority'
 import {
   type DeploymentHistoryActionStatus,
@@ -6,7 +7,6 @@ import {
   type ServiceSubActionEnum,
   type StateEnum,
 } from 'qovery-typescript-axios'
-import { Link } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import Icon from '../icon/icon'
 import Indicator from '../indicator/indicator'
@@ -69,6 +69,9 @@ export interface ActionTriggerStatusChipInterface {
   statusLink?: string
 }
 
+/**
+ * @deprecated Use DeploymentAction and StatusChip instead
+ */
 export function ActionTriggerStatusChip({ size, status, triggerAction, statusLink }: ActionTriggerStatusChipInterface) {
   const statusChip = status && <StatusChip className={statusChipVariants({ size })} status={status} disabledTooltip />
 

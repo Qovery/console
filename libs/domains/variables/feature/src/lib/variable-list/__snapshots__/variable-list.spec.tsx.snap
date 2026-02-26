@@ -17,7 +17,7 @@ exports[`VariableList should match snapshot 1`] = `
         class="flex grow flex-col justify-between"
       >
         <div
-          class="overflow-hidden rounded-md border border-neutral bg-surface-neutral"
+          class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral"
         >
           <table
             class="divide-y divide-neutral text-neutral w-full min-w-[800px] text-xs"
@@ -642,7 +642,7 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>
@@ -1208,7 +1208,7 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>
@@ -1356,7 +1356,7 @@ exports[`VariableList should match snapshot 1`] = `
         class="flex grow flex-col justify-between"
       >
         <div
-          class="overflow-hidden rounded-md border border-neutral bg-surface-neutral"
+          class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral"
         >
           <table
             class="divide-y divide-neutral text-neutral w-full min-w-[800px] text-xs"
@@ -1524,7 +1524,7 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>

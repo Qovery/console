@@ -8,19 +8,19 @@ import { match } from 'ts-pattern'
 export function getServiceStateColor(state?: ServiceStateDto, returnType: 'background' | 'color' = 'color') {
   if (returnType === 'color') {
     return match(state)
-      .with('COMPLETED', 'RUNNING', () => 'green-500')
-      .with('ERROR', () => 'red-500')
-      .with('STARTING', 'STOPPING', () => 'indigo-500')
-      .with('WARNING', () => 'yellow-600')
-      .with('STOPPED', undefined, () => 'neutral-300')
+      .with('COMPLETED', 'RUNNING', () => 'text-positive')
+      .with('ERROR', () => 'text-negative')
+      .with('STARTING', 'STOPPING', () => 'text-info')
+      .with('WARNING', () => 'text-warning')
+      .with('STOPPED', undefined, () => 'text-neutral')
       .exhaustive()
   } else {
     return match(state)
-      .with('COMPLETED', 'RUNNING', () => 'bg-green-500')
-      .with('ERROR', () => 'bg-red-500')
-      .with('STARTING', 'STOPPING', () => 'bg-indigo-500')
-      .with('WARNING', () => 'bg-yellow-600')
-      .with('STOPPED', undefined, () => 'bg-neutral-300')
+      .with('COMPLETED', 'RUNNING', () => 'bg-surface-positive-solid')
+      .with('ERROR', () => 'bg-surface-negative-solid')
+      .with('STARTING', 'STOPPING', () => 'bg-surface-info-solid')
+      .with('WARNING', () => 'bg-surface-warning-solid')
+      .with('STOPPED', undefined, () => 'bg-surface-neutral-solid')
       .exhaustive()
   }
 }

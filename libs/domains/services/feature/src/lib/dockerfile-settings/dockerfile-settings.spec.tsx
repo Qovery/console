@@ -3,6 +3,10 @@ import selectEvent from 'react-select-event'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DockerfileSettings, type DockerfileSettingsProps } from './dockerfile-settings'
 
+jest.mock('@tanstack/react-router', () => ({
+  useParams: () => ({ environmentId: '' }),
+}))
+
 // https://github.com/suren-atoyan/monaco-react/issues/88
 // https://github.com/suren-atoyan/monaco-react/issues/88#issuecomment-887055307
 jest.mock('@monaco-editor/react', () => {

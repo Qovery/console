@@ -3,15 +3,17 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseDeploymentQueueProps {
   serviceId: string
+  suspense?: boolean
 }
 
-export function useDeploymentQueue({ serviceId }: UseDeploymentQueueProps) {
+export function useDeploymentQueue({ serviceId, suspense = false }: UseDeploymentQueueProps) {
   return useQuery({
     ...queries.services.deploymentQueue({ serviceId }),
     refetchInterval: 5000,
     retryOnMount: true,
     staleTime: 4500,
     notifyOnChangeProps: ['data'],
+    suspense,
     select: (data) => {
       if (!data || !Array.isArray(data)) return data
       return [...data].sort((a, b) =>

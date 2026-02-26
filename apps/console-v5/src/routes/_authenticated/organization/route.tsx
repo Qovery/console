@@ -115,6 +115,12 @@ const ENVIRONMENT_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
   },
   {
+    id: 'deployments',
+    label: 'Deployments',
+    iconName: 'rocket',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments',
+  },
+  {
     id: 'variables',
     label: 'Variables',
     iconName: 'key',
@@ -125,6 +131,51 @@ const ENVIRONMENT_TABS: NavigationTab[] = [
     label: 'Settings',
     iconName: 'gear-complex',
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
+  },
+]
+
+const SERVICE_TABS: NavigationTab[] = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    iconName: 'table-layout',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+  },
+  {
+    id: 'deployments',
+    label: 'Deployments',
+    iconName: 'rocket',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
+  },
+  {
+    id: 'monitoring',
+    label: 'Monitoring',
+    iconName: 'chart-column',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
+  },
+  {
+    id: 'service-logs',
+    label: 'Service Logs',
+    iconName: 'scroll',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+  },
+  {
+    id: 'variables',
+    label: 'Variables',
+    iconName: 'key',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables',
+  },
+  {
+    id: 'settings',
+    label: 'Settings',
+    iconName: 'gear-complex',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings',
   },
 ]
 
@@ -150,6 +201,13 @@ const NAVIGATION_CONTEXTS: Array<{
   tabs: NavigationTab[]
   paramNames: string[]
 }> = [
+  {
+    type: 'service',
+    routeIdPattern:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId',
+    tabs: SERVICE_TABS,
+    paramNames: ['organizationId', 'projectId', 'environmentId', 'serviceId'],
+  },
   {
     type: 'environment',
     routeIdPattern: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId',
@@ -299,6 +357,7 @@ const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/project/$projectId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
   '/_authenticated/organization/$organizationId/settings',
+  '/_authenticated/organization/$organizationId/audit-logs',
 ]
 
 function useFullWidthLayout(): boolean {

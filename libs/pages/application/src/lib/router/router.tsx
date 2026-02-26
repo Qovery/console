@@ -1,6 +1,4 @@
 import {
-  APPLICATION_DEPLOYMENTS_URL,
-  APPLICATION_GENERAL_URL,
   APPLICATION_MONITORING_ALERTS_CREATION_URL,
   APPLICATION_MONITORING_ALERTS_URL,
   APPLICATION_MONITORING_ALERT_EDIT_URL,
@@ -29,8 +27,6 @@ import {
 } from '@qovery/shared/routes'
 import { PageAlertingCreateFeature } from '../feature/page-alerting-create-feature/page-alerting-create-feature'
 import { PageAlertingEditFeature } from '../feature/page-alerting-edit-feature/page-alerting-edit-feature'
-import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
-import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import { PageMonitoringAlertsFeature } from '../feature/page-monitoring-alerts-feature/page-monitoring-alerts-feature'
 import { PageMonitoringDashboardFeature } from '../feature/page-monitoring-dashboard-feature/page-monitoring-dashboard-feature'
 import { PageMonitoringFeature } from '../feature/page-monitoring-feature/page-monitoring-feature'
@@ -55,14 +51,6 @@ import PageSettingsValuesOverrideFileFeature from '../feature/page-settings-valu
 import PageVariablesFeature from '../feature/page-variables-feature/page-variables-feature'
 
 export const ROUTER_APPLICATION: Route[] = [
-  {
-    path: APPLICATION_GENERAL_URL,
-    component: <PageGeneralFeature />,
-  },
-  {
-    path: APPLICATION_DEPLOYMENTS_URL,
-    component: <PageDeploymentsFeature />,
-  },
   {
     path: APPLICATION_VARIABLES_URL,
     component: <PageVariablesFeature />,

@@ -16,6 +16,7 @@ export function useAvailableRoles({ organizationId, suspense = false }: UseAvail
       }
       return data.sort((a, b) => (a.name && b.name ? a.name.localeCompare(b.name) : 0))
     },
+    suspense,
   })
 }
 

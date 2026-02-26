@@ -3,20 +3,12 @@ import { EnvironmentModeEnum, type EnvironmentOverviewResponse } from 'qovery-ty
 import { useMediaQuery } from 'react-responsive'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
-import {
-  Button,
-  DeploymentAction,
-  Heading,
-  Icon,
-  Section,
-  StatusChip,
-  TablePrimitives,
-  Truncate,
-} from '@qovery/shared/ui'
+import { Button, DeploymentAction, Heading, Icon, Section, TablePrimitives, Truncate } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { MenuManageDeployment, MenuOtherActions } from '../../environment-action-toolbar/environment-action-toolbar'
 import EnvironmentMode from '../../environment-mode/environment-mode'
+import EnvironmentStateChip from '../../environment-state-chip/environment-state-chip'
 import useEnvironments from '../../hooks/use-environments/use-environments'
 
 const { Table } = TablePrimitives
@@ -28,7 +20,6 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const environment = environments.find((env) => env.id === overview.id)
-  const runningStatus = environment?.runningStatus
   const cellClassName = 'h-auto border-l border-neutral py-2'
   const isDesktopOrLaptop = useMediaQuery({
     query: '(min-width: 1280px)',
@@ -52,7 +43,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
             <span className="font-normal text-neutral-subtle">
               {overview.service_count} {pluralize(overview.service_count, 'service')}
             </span>
-            {runningStatus && <StatusChip status={runningStatus.state} />}
+            <EnvironmentStateChip mode="running" environmentId={overview.id} />
           </div>
         </div>
       </Table.Cell>
@@ -64,7 +55,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
               {timeAgo(new Date(overview.deployment_status?.last_deployment_date ?? Date.now()))} ago
             </span>
           </div>
-          <StatusChip status={overview.deployment_status?.last_deployment_state} variant="monochrome" />
+          <EnvironmentStateChip mode="last-deployment" environmentId={overview.id} variant="monochrome" />
         </div>
       </Table.Cell>
       <Table.Cell className={cellClassName}>

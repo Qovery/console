@@ -34,7 +34,8 @@ describe('CopyToClipboardButtonIcon', () => {
   it('should have the right className for icon', () => {
     props.iconClassName = 'class-name'
     renderWithProviders(<CopyToClipboardButtonIcon {...props} />)
-    const icon = screen.getByTestId('copy-container').querySelector('i') as HTMLElement
+    const icon = screen.getByTestId('copy-container').querySelector('i')
+    expect(icon).toBeTruthy()
     expect(icon).toHaveClass('class-name')
   })
 

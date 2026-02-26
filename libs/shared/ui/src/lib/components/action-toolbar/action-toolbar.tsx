@@ -87,14 +87,24 @@ interface ToolbarButtonProps
     VariantProps<typeof buttonVariants> {}
 
 const ToolbarButton = forwardRef<ElementRef<typeof Toolbar.Button>, ToolbarButtonProps>(function Item(
-  { children, className, color = 'neutral', radius = 'none', size = 'md', variant = 'outline', ...props },
+  {
+    children,
+    className,
+    color = 'neutral',
+    radius = 'none',
+    size = 'md',
+    variant = 'outline',
+    iconOnly = false,
+    ...props
+  },
   forwardedRef
 ) {
   return (
     <Toolbar.Button
       className={twMerge(
-        buttonVariants({ color, radius, size, variant }),
+        buttonVariants({ color, radius, size, variant, iconOnly }),
         toolbarButtonVariants({ color, variant }),
+        iconOnly && 'min-w-0',
         className
       )}
       {...props}

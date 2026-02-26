@@ -3,14 +3,21 @@ import { twMerge } from '@qovery/shared/util-js'
 
 // Inspired by https://github.com/radix-ui/themes/blob/a63bd6920370d824be1db26f717147dc4a2501f1/packages/radix-ui-themes/src/components/table.tsx
 
-interface TableRootProps extends ComponentPropsWithoutRef<'table'> {}
+interface TableRootProps extends ComponentPropsWithoutRef<'table'> {
+  containerClassName?: string
+}
 
 const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function TableRoot(
-  { children, className, ...rest },
+  { children, className, containerClassName, ...rest },
   ref
 ) {
   return (
-    <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral">
+    <div
+      className={twMerge(
+        'no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral',
+        containerClassName
+      )}
+    >
       <table
         ref={ref}
         className={twMerge('min-w-full divide-y divide-neutral text-sm text-neutral', className)}
@@ -24,9 +31,12 @@ const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function Table
 
 interface TableHeaderProps extends ComponentPropsWithoutRef<'thead'> {}
 
-const TableHeader = forwardRef<ElementRef<'thead'>, TableHeaderProps>(function TableHeader({ children, ...rest }, ref) {
+const TableHeader = forwardRef<ElementRef<'thead'>, TableHeaderProps>(function TableHeader(
+  { children, className, ...rest },
+  ref
+) {
   return (
-    <thead ref={ref} {...rest}>
+    <thead className={className} ref={ref} {...rest}>
       {children}
     </thead>
   )

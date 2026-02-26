@@ -19,7 +19,6 @@ describe('SettingsContainerRegistries', () => {
     mockContainerRegistries = []
     useContainerRegistriesMock.mockImplementation(() => ({
       data: mockContainerRegistries,
-      isFetched: true,
     }))
   })
 

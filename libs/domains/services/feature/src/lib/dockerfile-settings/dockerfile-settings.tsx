@@ -1,7 +1,7 @@
+import { useParams } from '@tanstack/react-router'
 import { type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { Controller, type ControllerRenderProps, type UseFormReturn } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import {
   BlockContent,
@@ -44,7 +44,7 @@ export function DockerfileSettings({
   defaultContent,
   templateType,
 }: DockerfileSettingsProps) {
-  const { environmentId = '' } = useParams()
+  const { environmentId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const { setValue, control, watch } = methods
 
