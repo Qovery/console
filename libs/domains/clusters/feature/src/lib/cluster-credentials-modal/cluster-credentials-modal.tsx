@@ -17,7 +17,6 @@ import {
   Icon,
   InputSelect,
   InputText,
-  InputToggle,
   ModalCrud,
   useModal,
   useModalConfirmation,
@@ -100,7 +99,6 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
         ...currentData,
         azure_subscription_id: data['azure_subscription_id'],
         azure_tenant_id: data['azure_tenant_id'],
-        resource_group_scoped_permissions: data['resource_group_scoped_permissions'] ?? false,
       },
     }))
     .with('ON_PREMISE', (cp) => ({
@@ -744,21 +742,6 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                         value={field.value}
                         label="Azure subscription ID"
                         error={error?.message}
-                      />
-                    )}
-                  />
-                  <Controller
-                    name="resource_group_scoped_permissions"
-                    control={methods.control}
-                    render={({ field }) => (
-                      <InputToggle
-                        dataTestId="input-resource-group-scoped-permissions"
-                        value={field.value ?? false}
-                        onChange={field.onChange}
-                        title="Resource-group scoped permissions"
-                        description="Enable if your Service Principal has permissions scoped to specific resource groups instead of the entire subscription."
-                        forceAlignTop
-                        small
                       />
                     )}
                   />
