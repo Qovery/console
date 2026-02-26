@@ -31,7 +31,7 @@ function PageOrganizationApi(props: PageOrganizationApiProps) {
                 className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
               >
                 <div className="flex">
-                  <div className="">
+                  <div>
                     <h2 className="mb-1 flex text-xs font-medium text-neutral">
                       <Truncate truncateLimit={60} text={token.name || ''} />
                       {token.description && (
