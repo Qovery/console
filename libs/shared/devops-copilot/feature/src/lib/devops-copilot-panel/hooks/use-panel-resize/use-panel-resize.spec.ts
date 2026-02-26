@@ -252,7 +252,7 @@ describe('usePanelResize', () => {
       })
 
       const mouseMoveEvent = new MouseEvent('mousemove', {
-        clientX: 600, 
+        clientX: 600,
         clientY: 400,
       })
 
