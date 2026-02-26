@@ -3,7 +3,7 @@ import { Skeleton, TablePrimitives } from '@qovery/shared/ui'
 const { Table } = TablePrimitives
 
 export function ServiceDeploymentListSkeleton() {
-  const columnSizes = ['40%', '15%', '13%', '12%', '20%']
+  const columnSizes = ['420px', '196px', '120px', '170px', '250px']
 
   return (
     <Table.Root className="w-full border-b">
