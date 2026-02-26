@@ -235,7 +235,7 @@ export function EnvironmentDeploymentList() {
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        size: 260,
+        size: 196,
         meta: {
           customFacetEntry({ value, count }) {
             return (
@@ -273,7 +273,7 @@ export function EnvironmentDeploymentList() {
         header: 'Pipeline',
         enableColumnFilter: false,
         enableSorting: false,
-        size: 140,
+        size: 180,
         cell: (info) => {
           const data = info.row.original
 
@@ -294,7 +294,7 @@ export function EnvironmentDeploymentList() {
         header: 'Duration',
         enableColumnFilter: false,
         enableSorting: true,
-        size: 130,
+        size: 140,
         cell: (info) => {
           const data = info.row.original
 

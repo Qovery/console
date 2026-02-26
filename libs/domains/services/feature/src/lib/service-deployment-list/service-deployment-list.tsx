@@ -101,7 +101,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         header: 'Date',
         enableColumnFilter: false,
         enableSorting: true,
-        size: 430,
+        size: 420,
         cell: (info) => {
           const data = info.row.original
           const state = data.status_details?.status ?? 'NEVER'
@@ -228,7 +228,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        size: 220,
+        size: 196,
         meta: {
           customFacetEntry({ value, count }) {
             return (

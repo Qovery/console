@@ -117,7 +117,7 @@ export const DeploymentAction = ({
   return (
     <div className="flex items-center gap-2">
       {action.icon}
-      <span className="text-neutral">{action.status}</span>
+      <span className="text-sm text-neutral">{action.status}</span>
     </div>
   )
 }
