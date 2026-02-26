@@ -1,11 +1,16 @@
-import { type CloudProvider, CloudProviderEnum, type ClusterRegion } from 'qovery-typescript-axios'
+import { type CloudProvider, CloudProviderEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { LabelSetting } from '@qovery/domains/organizations/feature'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
-import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
+import {
+  type ClusterGeneralData,
+  type ClusterRegionWithZones,
+  type ClusterResourcesData,
+  type Value,
+} from '@qovery/shared/interfaces'
 import { CLUSTERS_NEW_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, Callout, Heading, Icon, IconFlag, InputSelect, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -40,11 +45,15 @@ export function StepGeneral(props: StepGeneralProps) {
 
   const buildRegions: Value[] = useMemo(
     () =>
-      currentProvider?.regions?.map((region: ClusterRegion) => ({
-        label: `${region.city} (${region.name})`,
-        value: region.name,
-        icon: <IconFlag code={region.country_code} />,
-      })) || [],
+      currentProvider?.regions?.map((region) => {
+        const r = region as ClusterRegionWithZones
+        const zoneLabel = r.zones?.length ? ` — ${r.zones.length} AZs` : ''
+        return {
+          label: `${r.city} (${r.name})${zoneLabel}`,
+          value: r.name,
+          icon: <IconFlag code={r.country_code} />,
+        }
+      }) || [],
     [currentProvider?.regions]
   )
 
