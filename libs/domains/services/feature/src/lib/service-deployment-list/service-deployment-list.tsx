@@ -101,7 +101,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         header: 'Date',
         enableColumnFilter: false,
         enableSorting: true,
-        minSize: 430,
         size: 430,
         cell: (info) => {
           const data = info.row.original
@@ -229,7 +228,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        minSize: 220,
         size: 220,
         meta: {
           customFacetEntry({ value, count }) {
@@ -269,7 +267,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         header: 'Duration',
         enableColumnFilter: false,
         enableSorting: true,
-        minSize: 120,
         size: 120,
         cell: (info) => {
           const data = info.row.original
@@ -300,7 +297,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         header: 'Version',
         enableColumnFilter: false,
         enableSorting: false,
-        minSize: 170,
         size: 170,
         cell: (info) => {
           const data = info.row.original
@@ -409,7 +405,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         header: 'Trigger by',
         enableColumnFilter: true,
         enableSorting: false,
-        minSize: 250,
         size: 250,
         filterFn: (row, _, filterValue) => {
           if (!filterValue) return true
@@ -471,7 +466,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
     onSortingChange: setSorting,
     // https://github.com/TanStack/table/discussions/3192#discussioncomment-6458134
     defaultColumn: {
-      minSize: 0,
       size: Number.MAX_SAFE_INTEGER,
       maxSize: Number.MAX_SAFE_INTEGER,
     },

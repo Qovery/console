@@ -101,7 +101,6 @@ export function EnvironmentDeploymentList() {
         header: 'Date',
         enableColumnFilter: false,
         enableSorting: true,
-        minSize: 420,
         size: 420,
         cell: (info) => {
           const data = info.row.original
@@ -236,7 +235,6 @@ export function EnvironmentDeploymentList() {
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        minSize: 260,
         size: 260,
         meta: {
           customFacetEntry({ value, count }) {
@@ -275,7 +273,6 @@ export function EnvironmentDeploymentList() {
         header: 'Pipeline',
         enableColumnFilter: false,
         enableSorting: false,
-        minSize: 140,
         size: 140,
         cell: (info) => {
           const data = info.row.original
@@ -297,7 +294,6 @@ export function EnvironmentDeploymentList() {
         header: 'Duration',
         enableColumnFilter: false,
         enableSorting: true,
-        minSize: 130,
         size: 130,
         cell: (info) => {
           const data = info.row.original
@@ -334,7 +330,6 @@ export function EnvironmentDeploymentList() {
         header: 'Trigger by',
         enableColumnFilter: true,
         enableSorting: false,
-        minSize: 280,
         size: 280,
         filterFn: (row, _, filterValue) => {
           if (!filterValue) return true
@@ -396,7 +391,6 @@ export function EnvironmentDeploymentList() {
     onSortingChange: setSorting,
     // https://github.com/TanStack/table/discussions/3192#discussioncomment-6458134
     defaultColumn: {
-      minSize: 0,
       size: Number.MAX_SAFE_INTEGER,
       maxSize: Number.MAX_SAFE_INTEGER,
     },
