@@ -10,26 +10,20 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
-import {
-  type DeploymentHistoryService,
-  type DeploymentHistoryTriggerAction,
-  type Environment,
-  OrganizationEventOrigin,
-  type ServiceSubActionEnum,
-} from 'qovery-typescript-axios'
+import { type DeploymentHistoryService, type Environment, OrganizationEventOrigin } from 'qovery-typescript-axios'
 import { useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import {
-  ActionToolbar,
-  ActionTriggerStatusChip,
   Button,
   CopyToClipboard,
+  DeploymentAction,
   DropdownMenu,
   EmptyState,
   Icon,
   Link,
+  StatusChip,
   TableFilter,
   TablePrimitives,
   Tooltip,
@@ -58,29 +52,18 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistorySer
   return typeof data === 'object' && data !== null && 'status' in data && 'details' in data
 }
 
-const formatTriggerAction = (
-  actionTrigger: DeploymentHistoryTriggerAction | Exclude<ServiceSubActionEnum, 'NONE'> | undefined
-) => {
-  return match(actionTrigger)
-    .with('TERRAFORM_PLAN_ONLY', () => 'Plan')
-    .with('TERRAFORM_PLAN_AND_APPLY', () => 'Plan and apply')
-    .with('TERRAFORM_MIGRATE_STATE', () => 'Migrate state')
-    .with('TERRAFORM_FORCE_UNLOCK_STATE', () => 'Force unlock')
-    .with('TERRAFORM_DESTROY', () => 'Destroy')
-    .otherwise(() => upperCaseFirstLetter(actionTrigger ?? ''))
-}
-
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
-  const { data: service } = useService({ environmentId: environment?.id, serviceId })
-  console.log('🚀 ~ ServiceDeploymentList ~ service:', service)
+  const { data: service } = useService({ environmentId: environment?.id, serviceId, suspense: true })
 
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
     serviceId,
     serviceType: service?.service_type,
+    suspense: true,
   })
 
   const { data: deploymentHistoryQueue = [], isFetched: isFetchedDeloymentQueue } = useDeploymentQueue({
     serviceId,
+    suspense: true,
   })
 
   const { mutate: cancelDeploymentService } = useCancelDeploymentService({
@@ -118,7 +101,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         header: 'Date',
         enableColumnFilter: false,
         enableSorting: true,
-        size: 40,
+        size: 430,
         cell: (info) => {
           const data = info.row.original
           const state = data.status_details?.status ?? 'NEVER'
@@ -129,42 +112,37 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                 clsx(
                   'flex items-center justify-between before:absolute before:-top-[1px] before:left-0 before:block before:h-[calc(100%+2px)] before:w-1',
                   {
-                    'before:bg-brand-500': ['ONGOING', 'CANCELING'].includes(state),
-                    'before:bg-neutral-300': ['QUEUED'].includes(state),
+                    'before:bg-surface-brand-solid': ['ONGOING', 'CANCELING'].includes(state),
+                    'before:bg-neutral-subtle': ['QUEUED'].includes(state),
                   }
                 )
               )}
             >
               {state === 'QUEUED' ? (
-                <div className="flex flex-col gap-1 text-sm text-neutral-350">
+                <div className="flex flex-col gap-0.5 text-sm text-neutral-subtle">
                   <span className="font-medium">In queue...</span>
                   <span>--</span>
                 </div>
               ) : (
-                <div className="flex flex-col gap-1">
-                  <span className="text-sm font-medium text-neutral-400">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-sm font-medium text-neutral">
                     {dateFullFormat(
                       'created_at' in data.auditing_data ? data.auditing_data.created_at : '',
                       undefined,
                       'dd MMM, HH:mm a'
                     )}
                   </span>
-                  <span className="truncate text-ssm text-neutral-350">
+                  <span className="truncate text-ssm text-neutral-subtle">
                     {isDeploymentHistory(data) ? data.identifier.execution_id : '--'}
                   </span>
                 </div>
               )}
-              <ActionToolbar.Root className="min-w-28 text-right">
+              <div className="flex min-w-28 justify-end gap-1 text-right">
                 {match(state)
                   .with('ONGOING', 'CANCELING', 'QUEUED', () => (
                     <DropdownMenu.Root>
                       <DropdownMenu.Trigger asChild>
-                        <ActionToolbar.Button
-                          aria-label="Manage Deployment"
-                          color="neutral"
-                          size="md"
-                          variant="outline"
-                        >
+                        <Button aria-label="Manage Deployment" color="neutral" size="md" variant="outline" iconOnly>
                           <Tooltip content="Manage Deployment">
                             <div className="flex h-full w-full items-center justify-center">
                               {match(state)
@@ -175,7 +153,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                               <Icon iconName="chevron-down" />
                             </div>
                           </Tooltip>
-                        </ActionToolbar.Button>
+                        </Button>
                       </DropdownMenu.Trigger>
                       <DropdownMenu.Content>
                         {(state === 'ONGOING' || state === 'QUEUED') && (
@@ -199,64 +177,64 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                 {(service?.serviceType === 'TERRAFORM' ||
                   (service?.serviceType === 'JOB' && service?.job_type !== 'CRON')) && (
                   <Tooltip content="Service logs">
-                    <ActionToolbar.Button asChild className="justify-center px-2">
-                      <Link
-                        to={
-                          ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-                          SERVICE_LOGS_URL(
-                            serviceId,
-                            undefined,
-                            isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
-                            'history',
-                            isDeploymentHistory(data)
-                              ? formatInTimeZone(new Date(data.auditing_data.created_at), 'yyyy-MM-dd HH:mm:ss', 'UTC')
-                              : undefined
-                          )
-                        }
-                        // state={{ prevUrl: pathname }}
-                      >
-                        <Icon iconName="scroll" />
-                      </Link>
-                    </ActionToolbar.Button>
+                    <Link
+                      as="button"
+                      color="neutral"
+                      variant="outline"
+                      size="md"
+                      iconOnly
+                      to={
+                        ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
+                        SERVICE_LOGS_URL(
+                          serviceId,
+                          undefined,
+                          isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
+                          'history',
+                          isDeploymentHistory(data)
+                            ? formatInTimeZone(new Date(data.auditing_data.created_at), 'yyyy-MM-dd HH:mm:ss', 'UTC')
+                            : undefined
+                        )
+                      }
+                    >
+                      <Icon iconName="scroll" />
+                    </Link>
                   </Tooltip>
                 )}
                 <Tooltip content="Pipeline">
-                  <ActionToolbar.Button asChild className="justify-center px-2">
-                    <Link
-                      to={
-                        state === 'QUEUED'
-                          ? ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id)
-                          : ENVIRONMENT_LOGS_URL(
-                              environment?.organization.id,
-                              environment?.project.id,
-                              environment?.id
-                            ) +
-                            ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id : undefined)
-                      }
-                      // state={{ prevUrl: pathname }}
-                    >
-                      <Icon iconName="timeline" />
-                    </Link>
-                  </ActionToolbar.Button>
+                  <Link
+                    as="button"
+                    color="neutral"
+                    variant="outline"
+                    size="md"
+                    iconOnly
+                    to={
+                      state === 'QUEUED'
+                        ? ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id)
+                        : ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
+                          ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id : undefined)
+                    }
+                  >
+                    <Icon iconName="timeline" />
+                  </Link>
                 </Tooltip>
-              </ActionToolbar.Root>
+              </div>
             </div>
           )
         },
       }),
       columnHelper.accessor('status_details.status', {
         id: 'action_status',
-        header: 'Status deployment',
+        header: 'Status',
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        size: 15,
+        size: 220,
         meta: {
           customFacetEntry({ value, count }) {
             return (
               <>
                 <span className="text-sm font-medium">{upperCaseFirstLetter(value)}</span>
-                <span className="text-xs text-neutral-350">{count}</span>
+                <span className="text-xs text-neutral-subtle">{count}</span>
               </>
             )
           },
@@ -271,34 +249,16 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
               const actionStatus = d.status_details?.status
 
               return (
-                <div className="flex items-center gap-4">
-                  <ActionTriggerStatusChip
-                    size="md"
-                    status={actionStatus}
-                    triggerAction={triggerAction}
-                    statusLink={match(actionStatus)
-                      .with(
-                        'ERROR',
-                        () =>
-                          ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-                          ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id : undefined)
-                      )
-                      .otherwise(() => undefined)}
-                  />
-                  <div className="flex flex-col gap-1">
-                    <span className="font-medium text-neutral-400">{formatTriggerAction(triggerAction)}</span>
-                    <span className="text-ssm text-neutral-350">{upperCaseFirstLetter(actionStatus)}</span>
-                  </div>
+                <div className="flex items-center justify-between gap-4">
+                  <DeploymentAction status={triggerAction} />
+                  <StatusChip status={actionStatus} />
                 </div>
               )
             })
             .otherwise(() => (
-              <div className="flex items-center gap-4">
-                <ActionTriggerStatusChip size="md" status="QUEUED" triggerAction={triggerAction} />
-                <div className="flex flex-col gap-1">
-                  <span className="font-medium text-neutral-400">{formatTriggerAction(triggerAction)}</span>
-                  <span className="text-ssm text-neutral-350">In queue...</span>
-                </div>
+              <div className="flex items-center justify-between gap-4">
+                <DeploymentAction status={triggerAction} />
+                <StatusChip status="QUEUED" />
               </div>
             ))
         },
@@ -307,7 +267,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         header: 'Duration',
         enableColumnFilter: false,
         enableSorting: true,
-        size: 12,
+        size: 120,
         cell: (info) => {
           const data = info.row.original
 
@@ -315,9 +275,9 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
             const state = data.status_details?.status
 
             return match(state)
-              .with('QUEUED', 'NEVER', () => <span className="text-neutral-350">--</span>)
+              .with('QUEUED', 'NEVER', () => <span className="text-neutral-subtle">--</span>)
               .otherwise(() => (
-                <span className="flex items-center gap-1 text-neutral-350">
+                <span className="flex items-center gap-1 text-neutral-subtle">
                   {data.total_duration ? (
                     <>
                       <Icon iconName="clock-eight" iconStyle="regular" />
@@ -329,7 +289,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                 </span>
               ))
           } else {
-            return <span className="text-neutral-350">---</span>
+            return <span className="text-neutral-subtle">---</span>
           }
         },
       }),
@@ -337,7 +297,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         header: 'Version',
         enableColumnFilter: false,
         enableSorting: false,
-        size: 13,
+        size: 170,
         cell: (info) => {
           const data = info.row.original
 
@@ -435,9 +395,9 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                   </Tooltip>
                 )
               )
-              .otherwise(() => <span className="text-neutral-350">--</span>)
+              .otherwise(() => <span className="text-neutral-subtle">--</span>)
           ) : (
-            <span className="text-neutral-350">--</span>
+            <span className="text-neutral-subtle">--</span>
           )
         },
       }),
@@ -445,7 +405,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         header: 'Trigger by',
         enableColumnFilter: true,
         enableSorting: false,
-        size: 20,
+        size: 250,
         filterFn: (row, _, filterValue) => {
           if (!filterValue) return true
           const { origin, triggeredBy } = filterValue
@@ -461,7 +421,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
 
           return (
             <div className="flex items-center gap-3">
-              <div className="flex h-7 w-7 min-w-7 items-center justify-center rounded-full bg-neutral-150 text-neutral-350">
+              <div className="flex h-7 w-7 min-w-7 items-center justify-center rounded-full bg-surface-neutral-component text-neutral-subtle">
                 {match(origin)
                   .with(OrganizationEventOrigin.GIT, () => <Icon iconName="code-branch" />)
                   .with(OrganizationEventOrigin.CONSOLE, () => <Icon iconName="browser" />)
@@ -471,11 +431,11 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                   .with(OrganizationEventOrigin.TERRAFORM_PROVIDER, () => <Icon name={IconEnum.TERRAFORM} width="12" />)
                   .otherwise(() => null)}
               </div>
-              <div className="flex flex-col gap-1.5 text-ssm">
-                <span className="whitespace-nowrap text-neutral-400">
+              <div className="flex flex-col gap-0.5 text-ssm">
+                <span className="whitespace-nowrap text-neutral">
                   <Truncate text={triggeredBy} truncateLimit={25} />
                 </span>
-                <span className="text-neutral-350">
+                <span className="text-neutral-subtle">
                   {origin !== 'CLI' && origin !== 'API' ? upperCaseFirstLetter(origin?.replace('_', ' ')) : origin}
                 </span>
               </div>
@@ -484,7 +444,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         },
       }),
     ],
-    [columnHelper, environment, mutationCancelDeployment]
+    [columnHelper, environment, mutationCancelDeployment, service, serviceId]
   )
 
   const data = useMemo(
@@ -506,7 +466,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
     onSortingChange: setSorting,
     // https://github.com/TanStack/table/discussions/3192#discussioncomment-6458134
     defaultColumn: {
-      minSize: 0,
       size: Number.MAX_SAFE_INTEGER,
       maxSize: Number.MAX_SAFE_INTEGER,
     },
@@ -522,24 +481,27 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
   ) {
     return (
       <EmptyState
+        icon="rocket"
         title="No deployment started"
         description="Manage the deployments by using the “Play” button in the header above"
-        className="mt-2 rounded-t-sm bg-white pt-10"
+        className="mt-2 pt-10"
       />
     )
   }
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full min-w-[1080px] overflow-x-scroll text-ssm">
+      <Table.Root className="w-full min-w-[1080px] table-fixed overflow-x-scroll text-ssm">
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
-            <Table.Row key={headerGroup.id}>
-              {headerGroup.headers.map((header, i) => (
+            <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
+              {headerGroup.headers.map((header) => (
                 <Table.ColumnHeaderCell
-                  className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} font-medium`}
+                  className="font-medium"
                   key={header.id}
-                  style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
+                  style={{
+                    width: `${header.getSize()}px`,
+                  }}
                 >
                   {header.column.getCanFilter() ? (
                     header.id === 'auditing_data_origin' ? (
@@ -573,12 +535,13 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         </Table.Header>
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
-            <Table.Row key={row.id} className="h-[68px] border-neutral-200 last:!border-b">
+            <Table.Row key={row.id} className="h-[68px] divide-x divide-neutral border-neutral">
               {row.getVisibleCells().map((cell, i) => (
                 <Table.Cell
                   key={cell.id}
-                  className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} first:relative`}
-                  style={{ width: `${cell.column.getSize()}%` }}
+                  style={{
+                    width: `${cell.column.getSize()}px`,
+                  }}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </Table.Cell>

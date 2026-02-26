@@ -69,6 +69,9 @@ export interface ActionTriggerStatusChipInterface {
   statusLink?: string
 }
 
+/**
+ * @deprecated Use DeploymentAction and StatusChip instead
+ */
 export function ActionTriggerStatusChip({ size, status, triggerAction, statusLink }: ActionTriggerStatusChipInterface) {
   const statusChip = status && <StatusChip className={statusChipVariants({ size })} status={status} disabledTooltip />
 

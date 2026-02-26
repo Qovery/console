@@ -143,11 +143,11 @@ const SERVICE_TABS: NavigationTab[] = [
       '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
   },
   {
-    id: 'deployment',
-    label: 'Deployment',
+    id: 'deployments',
+    label: 'Deployments',
     iconName: 'rocket',
     routeId:
-      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployment',
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
   },
   {
     id: 'monitoring',

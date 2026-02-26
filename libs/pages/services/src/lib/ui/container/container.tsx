@@ -22,7 +22,6 @@ import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
-  SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
@@ -113,13 +112,6 @@ export function Container({ children }: PropsWithChildren) {
       name: 'Services',
       active: location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,
-    },
-    {
-      icon: <EnvironmentStateChip mode="last-deployment" environmentId={environmentId} />,
-      name: 'Deployments history',
-      active:
-        location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
-      link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
     },
     {
       icon: <Icon iconName="key" iconStyle="regular" />,
