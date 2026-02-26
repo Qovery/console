@@ -1,6 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
-import { Suspense } from 'react'
+import { Suspense, useLayoutEffect, useRef } from 'react'
 import { ErrorBoundary, Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
@@ -391,6 +391,18 @@ function OrganizationRoute() {
   const activeTabId = useActiveTabId(navigationContext)
   const needsFullWidth = useFullWidthLayout()
   const bypassLayout = useBypassLayout()
+  const location = useLocation()
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    if (location.pathname.includes('/settings/roles/edit/')) {
+      // Reset roles edit scroll: Suspense fallback keeps shared layout scroll position otherwise.
+      const scrollContainer = scrollContainerRef.current
+      if (scrollContainer) {
+        scrollContainer.scrollTop = 0
+      }
+    }
+  }, [location.pathname])
 
   if (bypassLayout) {
     return <Outlet />
@@ -399,7 +411,7 @@ function OrganizationRoute() {
   return (
     <div className="flex h-dvh w-full flex-col bg-background">
       {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
-      <div className="min-h-0 flex-1 overflow-auto">
+      <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-auto">
         <ErrorBoundary>
           <Suspense fallback={<MainLoader />}>
             <>

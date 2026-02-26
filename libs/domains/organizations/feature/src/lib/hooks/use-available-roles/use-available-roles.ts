@@ -9,6 +9,7 @@ export interface UseAvailableRolesProps {
 export function useAvailableRoles({ organizationId, suspense = false }: UseAvailableRolesProps) {
   return useQuery({
     ...queries.organizations.availableRoles({ organizationId }),
+    ...(suspense ? { suspense: true } : {}),
     select(data) {
       if (!data) {
         return data

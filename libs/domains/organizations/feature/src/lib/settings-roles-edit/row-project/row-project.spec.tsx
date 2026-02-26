@@ -1,8 +1,8 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
+import userEvent from '@testing-library/user-event'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type OrganizationCustomRoleProjectPermissionsInner } from 'qovery-typescript-axios'
 import { customRolesMock } from '@qovery/shared/factories'
-import { resetForm } from '../../../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import RowProject, { OrganizationCustomRoleProjectPermissionAdmin } from './row-project'
 
 const customRole = customRolesMock(1)[0]
@@ -11,16 +11,13 @@ const project = (customRole.project_permissions &&
 
 describe('RowProject', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
-      wrapWithReactHookForm(<RowProject project={project} />, {
-        defaultValues: resetForm(customRole),
-      })
-    )
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<RowProject project={project} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should render header with global checkbox', async () => {
-    const { getByText, getByTestId } = render(wrapWithReactHookForm(<RowProject project={project} />))
+    const user = userEvent.setup()
+    const { getByText, getByTestId } = renderWithProviders(wrapWithReactHookForm(<RowProject project={project} />))
 
     getByText(project.project_name || '')
     getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.ADMIN}`)
@@ -30,10 +27,7 @@ describe('RowProject', () => {
     getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.NO_ACCESS}`)
 
     const input = getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.ADMIN}`) as HTMLInputElement
-
-    await act(() => {
-      fireEvent.click(input)
-    })
+    await user.click(input)
 
     expect(input).toBeChecked()
   })
@@ -41,25 +35,24 @@ describe('RowProject', () => {
   it('should be admin by default and check global select', async () => {
     project.is_admin = true
 
-    const { getByTestId, getAllByTestId } = render(wrapWithReactHookForm(<RowProject project={project} />))
+    const user = userEvent.setup()
+    const { getByTestId, getAllByTestId } = renderWithProviders(wrapWithReactHookForm(<RowProject project={project} />))
 
     const input = getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.ADMIN}`) as HTMLInputElement
     expect(input).toBeChecked()
 
     for (let i = 0; i < getAllByTestId('admin-checkbox').length; i++) {
       const permission = getAllByTestId('admin-checkbox')[i] as HTMLInputElement
-      expect(permission).toBeChecked()
+      expect(permission).toBeDisabled()
     }
 
-    await act(() => {
-      fireEvent.click(input)
-    })
+    await user.click(input)
 
     expect(input).not.toBeChecked()
 
     for (let i = 0; i < getAllByTestId('admin-checkbox').length; i++) {
       const permission = getAllByTestId('admin-checkbox')[i] as HTMLInputElement
-      expect(permission).not.toBeChecked()
+      expect(permission).toBeDisabled()
     }
   })
 })

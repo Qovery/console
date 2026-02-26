@@ -54,10 +54,10 @@ export type ExternalLinkProps =
 export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(
   function ExternalLink(props, forwardedRef) {
     return match(props)
-      .with({ as: 'button' }, ({ className, children, color, radius, size, variant, as, ...rest }) => (
+      .with({ as: 'button' }, ({ className, children, color, radius, size, variant, as, iconOnly, ...rest }) => (
         <a
           ref={forwardedRef}
-          className={twMerge(buttonVariants({ color, radius, size, variant }), className)}
+          className={twMerge(buttonVariants({ color, radius, size, variant, iconOnly }), className)}
           target="_blank"
           rel="noopener noreferrer"
           {...rest}
