@@ -420,7 +420,7 @@ export function EnvironmentDeploymentList() {
             <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className="group px-6 font-medium"
+                  className="group font-medium"
                   key={header.id}
                   style={{
                     width: `${header.getSize()}px`,
@@ -468,10 +468,9 @@ export function EnvironmentDeploymentList() {
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
               <Table.Row className="h-[68px] divide-x divide-neutral">
-                {row.getVisibleCells().map((cell, i) => (
+                {row.getVisibleCells().map((cell) => (
                   <Table.Cell
                     key={cell.id}
-                    className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} first:relative`}
                     style={{
                       width: `${cell.column.getSize()}px`,
                       minWidth: cell.column.columnDef.minSize,

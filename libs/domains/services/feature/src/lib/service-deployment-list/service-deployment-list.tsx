@@ -501,9 +501,9 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
-              {headerGroup.headers.map((header, i) => (
+              {headerGroup.headers.map((header) => (
                 <Table.ColumnHeaderCell
-                  className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} font-medium`}
+                  className="font-medium"
                   key={header.id}
                   style={{
                     width: `${header.getSize()}px`,
@@ -546,7 +546,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
               {row.getVisibleCells().map((cell, i) => (
                 <Table.Cell
                   key={cell.id}
-                  className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} first:relative`}
                   style={{
                     width: `${cell.column.getSize()}px`,
                     minWidth: cell.column.columnDef.minSize,
