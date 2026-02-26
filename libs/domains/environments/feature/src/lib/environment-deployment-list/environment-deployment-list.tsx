@@ -424,7 +424,6 @@ export function EnvironmentDeploymentList() {
                   key={header.id}
                   style={{
                     width: `${header.getSize()}px`,
-                    minWidth: header.column.columnDef.minSize,
                   }}
                 >
                   <span className="block">
@@ -473,7 +472,6 @@ export function EnvironmentDeploymentList() {
                     key={cell.id}
                     style={{
                       width: `${cell.column.getSize()}px`,
-                      minWidth: cell.column.columnDef.minSize,
                     }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

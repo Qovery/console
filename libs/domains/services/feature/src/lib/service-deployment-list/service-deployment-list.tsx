@@ -507,7 +507,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                   key={header.id}
                   style={{
                     width: `${header.getSize()}px`,
-                    minWidth: header.column.columnDef.minSize,
                   }}
                 >
                   {header.column.getCanFilter() ? (
@@ -548,7 +547,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                   key={cell.id}
                   style={{
                     width: `${cell.column.getSize()}px`,
-                    minWidth: cell.column.columnDef.minSize,
                   }}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
