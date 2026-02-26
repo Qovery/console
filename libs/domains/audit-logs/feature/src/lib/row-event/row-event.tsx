@@ -330,11 +330,11 @@ export function RowEvent(props: RowEventProps) {
       event.change &&
       event.original_change !== event.change ? (
         <div className="relative flex flex-col border-b border-neutral bg-background" data-testid="expanded-panel">
-          <div className="flex h-7 items-center justify-between bg-[#faf9fb] px-4 text-xs">
+          <div className="flex h-7 items-center justify-between border-b border-b-neutral bg-surface-neutral-subtle px-4 text-xs">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-[#30a46c]">+{diffStats.additions}</span>
-              <span className="font-bold text-[#e54d2e]">-{diffStats.deletions}</span>
-              <span className="text-[#65636d]">lines changed</span>
+              <span className="font-bold text-positive">+{diffStats.additions}</span>
+              <span className="font-bold text-negative">-{diffStats.deletions}</span>
+              <span className="text-neutral-subtle">lines changed</span>
             </div>
           </div>
           <CodeDiffEditor
@@ -348,7 +348,7 @@ export function RowEvent(props: RowEventProps) {
         </div>
       ) : (
         expanded && (
-          <div className="relative flex flex-col border-b border-b-neutral-200" data-testid="expanded-panel">
+          <div className="relative flex flex-col border-b border-b-neutral" data-testid="expanded-panel">
             <CodeEditor
               key={event.timestamp}
               value={JSON.stringify(JSON.parse(event.change || ''), null, 2)}

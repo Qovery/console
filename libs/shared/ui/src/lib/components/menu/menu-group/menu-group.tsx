@@ -68,13 +68,13 @@ export function MenuGroup(props: MenuGroupProps) {
       {!isFilter && menu?.title && (
         <div className="flex items-center justify-between" style={headPaddingStyle}>
           {menu?.title && (
-            <p data-testid="title" className="text-sm font-medium text-neutral-350 dark:text-neutral-250">
+            <p data-testid="title" className="text-sm font-medium text-neutral-subtle">
               {menu?.title}
             </p>
           )}
           {menu?.button && (
             <span
-              className="link inline-block cursor-pointer text-sm font-medium text-brand-500 dark:hover:text-brand-500"
+              className="link inline-block cursor-pointer text-sm font-medium text-brand"
               onClick={menu?.button.onClick}
             >
               {menu?.button.label}
@@ -86,7 +86,6 @@ export function MenuGroup(props: MenuGroupProps) {
         <div className="menu__search" style={headPaddingStyle} data-testid="menu-search">
           <InputSearch
             autofocus
-            className="dark:bg-neutral-600"
             placeholder="Search"
             isEmpty={filteredItems.length === 0}
             onChange={(value: string) => {
@@ -96,7 +95,7 @@ export function MenuGroup(props: MenuGroupProps) {
         </div>
       )}
       {isFilter && menu?.title && filteredItems.length !== 0 && (
-        <p className="ml-2 text-sm text-neutral-350" style={headPaddingStyle}>
+        <p className="ml-2 text-sm text-neutral-subtle" style={headPaddingStyle}>
           {menu?.title}
         </p>
       )}
@@ -113,13 +112,13 @@ export function MenuGroup(props: MenuGroupProps) {
         </div>
       )}
       {!isFilter && !isLast && filteredItems.length > 0 && (
-        <MenuDivider className="m-0 mx-3 bg-neutral-200 dark:bg-neutral-600" />
+        <MenuDivider className="m-0 mx-3 bg-surface-negative-solid" />
       )}
       {props?.emptyResultText && (
         <div className="pb-2 pl-2 pr-2">
-          <div className="rounded-sm border border-neutral-250 bg-neutral-100 p-5 text-center text-neutral-350">
+          <div className="rounded-sm border border-neutral bg-surface-neutral-subtle p-5 text-center text-neutral-subtle">
             <div>
-              <Icon iconName="magnifying-glass" className="text-neutral-350" />
+              <Icon iconName="magnifying-glass" className="text-neutral-sutble" />
             </div>
             <div className="text-sm">{props?.emptyResultText}</div>
           </div>
