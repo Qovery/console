@@ -18,8 +18,9 @@ import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } f
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ServiceStateChip, useDeploymentStatus, useService } from '@qovery/domains/services/feature'
+import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
+import { Banner, Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
 import { formatInTimeZone } from '@qovery/shared/util-dates'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
 import HeaderLogs from '../header-logs/header-logs'
@@ -149,6 +150,7 @@ export function ListDeploymentLogs({
   const { organizationId, projectId, serviceId, versionId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
   const { updateStageId } = useContext(ServiceStageIdsContext)
+  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
 
   useEffect(() => {
     if (stage) updateStageId(stage.id)
@@ -301,6 +303,8 @@ export function ListDeploymentLogs({
 
   const lastLogTimestamp = logs.length > 0 ? logs[logs.length - 1]?.timestamp : undefined
 
+  const isError = serviceStatus?.state?.includes('ERROR')
+
   function HeaderLogsComponent() {
     return (
       <HeaderLogs
@@ -433,6 +437,25 @@ export function ListDeploymentLogs({
             }
           }}
         >
+          {isError && (
+            <div className="sticky top-0 z-10">
+              <Banner
+                color="brand"
+                buttonLabel="Launch diagnostic"
+                buttonIconRight="angle-right"
+                onClickButton={() => {
+                  const message = 'Why did my deployment fail?'
+                  setDevopsCopilotOpen(true)
+                  sendMessageRef?.current?.(message)
+                }}
+              >
+                <span className="flex items-center gap-1.5">
+                  <Icon iconName="sparkles" />
+                  AI Copilot identified likely causes and fixes for this deployment error
+                </span>
+              </Banner>
+            </div>
+          )}
           {logs.length >= 500 && (
             <ShowPreviousLogsButton
               showPreviousLogs={showPreviousLogs}

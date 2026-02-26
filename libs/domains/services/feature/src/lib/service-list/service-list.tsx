@@ -19,7 +19,7 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { ServiceSubActionDto } from 'qovery-ws-typescript-axios'
-import { type ComponentProps, Fragment, useMemo, useState } from 'react'
+import { type ComponentProps, Fragment, useContext, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import {
@@ -29,6 +29,7 @@ import {
   type Job,
   type Terraform,
 } from '@qovery/domains/services/data-access'
+import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -341,6 +342,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const navigate = useNavigate()
+  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
 
   // Build map of service_id -> is_skipped for quick lookup
   const skippedServicesMap = useMemo(() => {
@@ -515,27 +517,79 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             )
           }
 
+          const serviceStatus = match(service)
+            .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, (s) => s.deploymentStatus?.state)
+            .otherwise((s) => s.runningStatus?.state)
+
+          const isError = serviceStatus?.includes('ERROR')
+
           return (
             <Skeleton width={102} height={34} show={!value}>
-              <Tooltip content="See overview">
-                <Link
-                  as="button"
-                  to={link}
-                  onClick={(e) => e.stopPropagation()}
-                  className="gap-2 whitespace-nowrap text-sm"
-                  size="md"
-                  color="neutral"
-                  variant="outline"
-                  radius="full"
-                >
-                  <StatusChip
-                    status={match(service)
-                      .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, (s) => s.deploymentStatus?.state)
-                      .otherwise((s) => s.runningStatus?.state)}
-                  />
-                  {value}
-                </Link>
-              </Tooltip>
+              <div className="flex items-center gap-2">
+                <Tooltip content="See overview">
+                  <Link
+                    as="button"
+                    to={link}
+                    onClick={(e) => e.stopPropagation()}
+                    className="gap-2 whitespace-nowrap text-sm"
+                    size="md"
+                    color="neutral"
+                    variant="outline"
+                    radius="full"
+                  >
+                    <StatusChip status={serviceStatus} />
+                    {value}
+                    {isError && (
+                      <span
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                        }}
+                      >
+                        <Tooltip
+                          classNameContent="rounded-full"
+                          side="bottom"
+                          content={
+                            <div
+                              className="flex cursor-pointer items-center gap-1.5"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                const message = 'Why did my deployment fail?'
+                                setDevopsCopilotOpen(true)
+                                sendMessageRef?.current?.(message)
+                              }}
+                            >
+                              <Icon iconName="sparkles" iconStyle="solid" className="text-brand-300" />
+                              <span className="text-sm font-thin">Ask AI Copilot for diagnostic</span>
+                              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white">
+                                <Icon iconName="arrow-right" className="text-neutral-400" />
+                              </div>
+                            </div>
+                          }
+                        >
+                          <div
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              const message = 'Why did my deployment fail?'
+                              setDevopsCopilotOpen(true)
+                              sendMessageRef?.current?.(message)
+                            }}
+                            className="group cursor-pointer"
+                          >
+                            <Icon
+                              iconName="sparkles"
+                              iconStyle="solid"
+                              className="text-neutral-350 transition-colors group-hover:text-brand-500"
+                            />
+                          </div>
+                        </Tooltip>
+                      </span>
+                    )}
+                  </Link>
+                </Tooltip>
+              </div>
             </Skeleton>
           )
         },
@@ -776,7 +830,17 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         },
       }),
     ],
-    [columnHelper, organizationId, projectId, environmentId, navigate]
+    [
+      columnHelper,
+      organizationId,
+      projectId,
+      environmentId,
+      navigate,
+      checkRunningStatusClosed,
+      environment,
+      sendMessageRef,
+      setDevopsCopilotOpen,
+    ]
   )
 
   const table = useReactTable({
