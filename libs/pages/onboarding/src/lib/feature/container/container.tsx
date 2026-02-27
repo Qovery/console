@@ -66,14 +66,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const hasExistingOrganization = organizations.length > 0
   const totalSteps = hasExistingOrganization || hasDxAuth ? 2 : ROUTER_ONBOARDING.length
 
-  useEffect(() => {
-    if (hasDxAuth) {
-      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`, {
-        state: location.state,
-      })
-    }
-  }, [currentPath, hasDxAuth, navigate, location.state])
-
   const currentStep = hasExistingOrganization
     ? currentPath === ONBOARDING_PROJECT_URL
       ? 2
