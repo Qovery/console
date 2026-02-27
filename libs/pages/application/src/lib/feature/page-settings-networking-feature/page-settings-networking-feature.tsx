@@ -48,6 +48,7 @@ export function PageSettingsNetworkingFeature() {
       <FormProvider {...methods}>
         <NetworkingSetting
           helmId={applicationId}
+          environmentId={environmentId}
           ports={ports}
           onUpdatePorts={(updatedPorts) => {
             methods.setValue('ports', updatedPorts)
