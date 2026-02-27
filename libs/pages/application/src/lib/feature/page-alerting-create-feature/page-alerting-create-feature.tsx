@@ -26,6 +26,7 @@ export function PageAlertingCreateFeature() {
 
   return (
     <AlertingCreationFlow
+      organizationId={organizationId}
       environment={environment}
       service={service}
       selectedMetrics={selectedMetrics}

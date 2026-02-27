@@ -1,12 +1,12 @@
 import { subHours } from 'date-fns'
 import { type AlertTargetType, type Environment } from 'qovery-typescript-axios'
 import { createContext, useContext, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ErrorBoundary, FunnelFlow } from '@qovery/shared/ui'
 import { useContainerName } from '../../hooks/use-container-name/use-container-name'
 import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create-alert-rule'
+import { useEditAlertRule } from '../../hooks/use-edit-alert-rule/use-edit-alert-rule'
 import { useHpaName } from '../../hooks/use-hpa-name/use-hpa-name'
 import { useHttpRouteName } from '../../hooks/use-http-route-name/use-http-route-name'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
@@ -34,6 +34,7 @@ const METRIC_LABELS: Record<MetricCategory, string> = {
 }
 
 interface AlertingCreationFlowContextInterface {
+  organizationId: string
   selectedMetrics: string[]
   serviceId: string
   serviceName: string
@@ -61,26 +62,34 @@ export const useAlertingCreationFlowContext = () => {
 }
 
 interface AlertingCreationFlowProps {
+  organizationId: string
   environment: Environment
   service: AnyService
   selectedMetrics: MetricCategory[]
+  mode?: 'create' | 'edit'
+  initialAlerts?: AlertConfiguration[]
+  alertRuleId?: string
   onClose: () => void
   onComplete: (alerts: AlertConfiguration[]) => void
 }
 
 export function AlertingCreationFlow({
+  organizationId,
   selectedMetrics,
   environment,
   service,
+  mode = 'create',
+  initialAlerts,
+  alertRuleId,
   onClose,
   onComplete,
 }: AlertingCreationFlowProps) {
-  const { organizationId = '' } = useParams()
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
-  const [alerts, setAlerts] = useState<AlertConfiguration[]>([])
+  const [alerts, setAlerts] = useState<AlertConfiguration[]>(initialAlerts ?? [])
   const [isLoading, setIsLoading] = useState(false)
 
   const { mutateAsync: createAlertRule } = useCreateAlertRule({ organizationId })
+  const { mutateAsync: editAlertRule } = useEditAlertRule({ organizationId })
 
   const handleNavigateToMetric = (index: number) => {
     setCurrentStepIndex(index)
@@ -134,9 +143,13 @@ export function AlertingCreationFlow({
   const serviceId = service.id
   const serviceName = service.name
 
-  const totalSteps = selectedMetrics.length
+  const isEditMode = mode === 'edit'
+  const totalSteps = isEditMode ? 1 : selectedMetrics.length
 
   const getCurrentTitle = () => {
+    if (isEditMode) {
+      return 'Edit Alert'
+    }
     const metricCategory = selectedMetrics[currentStepIndex]
     if (!metricCategory) {
       return 'Alerts'
@@ -146,7 +159,10 @@ export function AlertingCreationFlow({
   }
 
   const handleExit = () => {
-    if (window.confirm('Do you really want to leave? Your progress will be lost.')) {
+    const message = isEditMode
+      ? 'Do you really want to leave? Your changes will be lost.'
+      : 'Do you really want to leave? Your progress will be lost.'
+    if (window.confirm(message)) {
       onClose()
     }
   }
@@ -170,6 +186,7 @@ export function AlertingCreationFlow({
     try {
       setIsLoading(true)
       for (const alert of activeAlerts) {
+        const isMissingInstance = alert.tag === 'missing_instance'
         const threshold = match(alert.tag)
           .with('http_latency', () => alert.condition.threshold ?? 0)
           .with('instance_restart', () => 1)
@@ -181,7 +198,7 @@ export function AlertingCreationFlow({
           .with('http_latency', () => 'secs')
           .otherwise(() => '%')
 
-        const operator = alert.condition.operator ?? 'ABOVE'
+        const operator = isMissingInstance && isEditMode ? 'BELOW' : alert.condition.operator ?? 'ABOVE'
         const func = alert.condition.function ?? 'NONE'
         const description = match(alert.tag)
           .with('instance_restart', () => 'One or more instances restarted unexpectedly')
@@ -189,41 +206,72 @@ export function AlertingCreationFlow({
           .with('hpa_limit', () => 'Auto-scaling reached the maximum number of instances')
           .otherwise(() => generateConditionDescription(func, operator, threshold, unit, alert.for_duration))
 
-        await createAlertRule({
-          payload: {
-            organization_id: organizationId,
-            cluster_id: environment.cluster_id,
-            target: {
-              target_id: service.id,
-              target_type: service.serviceType as AlertTargetType,
+        const promql = match(alert.tag)
+          .with('cpu', () => QUERY_CPU(containerName))
+          .with('memory', () => QUERY_MEMORY(containerName))
+          .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
+          .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
+          .with('http_error', () => QUERY_HTTP_ERROR_COMBINED(ingressName || '', httpRouteName || ''))
+          .with('http_latency', () => QUERY_HTTP_LATENCY_COMBINED(ingressName || '', httpRouteName || ''))
+          .with('hpa_limit', () => (hpaName ? QUERY_HPA_ISSUE(hpaName) : alert.condition.promql || ''))
+          .otherwise(() => '')
+
+        if (isEditMode) {
+          if (!alertRuleId) {
+            throw new Error('alertRuleId is required in edit mode')
+          }
+
+          await editAlertRule({
+            alertRuleId,
+            payload: {
+              name: alert.name,
+              tag: alert.tag,
+              description,
+              condition: {
+                kind: 'BUILT',
+                function: func,
+                operator,
+                threshold,
+                promql,
+              },
+              for_duration: alert.for_duration,
+              severity: alert.severity,
+              enabled: true,
+              alert_receiver_ids: alert.alert_receiver_ids,
+              presentation: {
+                summary: alert.presentation.summary,
+              },
             },
-            name: alert.name,
-            tag: alert.tag,
-            description,
-            condition: {
-              kind: 'BUILT',
-              function: func,
-              operator,
-              threshold,
-              promql: match(alert.tag)
-                .with('cpu', () => QUERY_CPU(containerName))
-                .with('memory', () => QUERY_MEMORY(containerName))
-                .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
-                .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
-                .with('http_error', () => QUERY_HTTP_ERROR_COMBINED(ingressName || '', httpRouteName || ''))
-                .with('http_latency', () => QUERY_HTTP_LATENCY_COMBINED(ingressName || '', httpRouteName || ''))
-                .with('hpa_limit', () => (hpaName ? QUERY_HPA_ISSUE(hpaName) : ''))
-                .otherwise(() => ''),
+          })
+        } else {
+          await createAlertRule({
+            payload: {
+              organization_id: organizationId,
+              cluster_id: environment.cluster_id,
+              target: {
+                target_id: service.id,
+                target_type: service.serviceType as AlertTargetType,
+              },
+              name: alert.name,
+              tag: alert.tag,
+              description,
+              condition: {
+                kind: 'BUILT',
+                function: func,
+                operator,
+                threshold,
+                promql,
+              },
+              for_duration: alert.for_duration,
+              severity: alert.severity,
+              enabled: true,
+              alert_receiver_ids: alert.alert_receiver_ids,
+              presentation: {
+                summary: alert.presentation.summary ?? undefined,
+              },
             },
-            for_duration: alert.for_duration,
-            severity: alert.severity,
-            enabled: true,
-            alert_receiver_ids: alert.alert_receiver_ids,
-            presentation: {
-              summary: alert.presentation.summary ?? undefined,
-            },
-          },
-        })
+          })
+        }
       }
       onComplete(activeAlerts)
     } catch (error) {
@@ -236,6 +284,7 @@ export function AlertingCreationFlow({
   return (
     <AlertingCreationFlowContext.Provider
       value={{
+        organizationId,
         selectedMetrics,
         serviceId,
         serviceName,
@@ -255,12 +304,12 @@ export function AlertingCreationFlow({
       <FunnelFlow
         portal
         totalSteps={totalSteps}
-        currentStep={currentStepIndex + 1}
+        currentStep={isEditMode ? 1 : currentStepIndex + 1}
         currentTitle={getCurrentTitle()}
         onExit={handleExit}
       >
         <ErrorBoundary>
-          <MetricConfigurationStep />
+          <MetricConfigurationStep isEdit={isEditMode} />
         </ErrorBoundary>
       </FunnelFlow>
     </AlertingCreationFlowContext.Provider>

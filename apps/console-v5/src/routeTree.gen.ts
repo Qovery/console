@@ -30,7 +30,6 @@ import { Route as AuthenticatedOrganizationOrganizationIdSettingsIndexRouteImpor
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/alerts/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/$clusterId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport } from './routes/_authenticated/organization/$organizationId/settings/webhook'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsRolesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/roles'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsMembersRouteImport } from './routes/_authenticated/organization/$organizationId/settings/members'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/labels-annotations'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/helm-repositories'
@@ -47,6 +46,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterNewRouteImport }
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsNotificationChannelRouteImport } from './routes/_authenticated/organization/$organizationId/alerts/notification-channel'
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsIssuesRouteImport } from './routes/_authenticated/organization/$organizationId/alerts/issues'
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRouteImport } from './routes/_authenticated/organization/$organizationId/alerts/alert-rules'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRouteImport } from './routes/_authenticated/organization/$organizationId/settings/roles/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/variables'
@@ -59,6 +59,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSetting
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/index'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRouteImport } from './routes/_authenticated/organization/$organizationId/settings/roles/edit/$roleId'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/general'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/danger-zone'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/summary'
@@ -78,16 +79,6 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/route'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/index'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/dashboard'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/index'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/route'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/danger-zone'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsDeploymentRulesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/deployment-rules'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/general'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsPreviewEnvironmentsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/preview-environments'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/general'
@@ -96,6 +87,12 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/route'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/index'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/dashboard'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts.$alertId.edit'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsCreateMetricMetricRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts.create.metric.$metric'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -218,13 +215,6 @@ const AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute =
   AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport.update({
     id: '/webhook',
     path: '/webhook',
-    getParentRoute: () =>
-      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
-  } as any)
-const AuthenticatedOrganizationOrganizationIdSettingsRolesRoute =
-  AuthenticatedOrganizationOrganizationIdSettingsRolesRouteImport.update({
-    id: '/roles',
-    path: '/roles',
     getParentRoute: () =>
       AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
   } as any)
@@ -355,6 +345,13 @@ const AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRoute =
     getParentRoute: () =>
       AuthenticatedOrganizationOrganizationIdAlertsRouteRoute,
   } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRouteImport.update({
+    id: '/roles/',
+    path: '/roles/',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRouteImport.update(
     {
@@ -452,6 +449,15 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute 
       path: '/',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRouteImport.update(
+    {
+      id: '/roles/edit/$roleId',
+      path: '/roles/edit/$roleId',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRoute =
@@ -695,7 +701,7 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
       id: '/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
       path: '/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
       getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
-    } as any
+    } as any,
   )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRouteImport.update(
@@ -704,7 +710,7 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
       path: '/',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRoute,
-    } as any
+    } as any,
   )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRouteImport.update(
@@ -713,7 +719,7 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
       path: '/dashboard',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRoute,
-    } as any
+    } as any,
   )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteImport.update(
@@ -722,7 +728,25 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
       path: '/alerts',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRoute,
-    } as any
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRouteImport.update(
+    {
+      id: '/$alertId/edit',
+      path: '/$alertId/edit',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsCreateMetricMetricRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsCreateMetricMetricRouteImport.update(
+    {
+      id: '/create/metric/$metric',
+      path: '/create/metric/$metric',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute,
+    } as any,
   )
 
 export interface FileRoutesByFullPath {
@@ -758,7 +782,6 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
   '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
-  '/organization/$organizationId/settings/roles': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesRoute
   '/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
   '/organization/$organizationId/alerts/': typeof AuthenticatedOrganizationOrganizationIdAlertsIndexRoute
@@ -772,6 +795,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   '/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   '/organization/$organizationId/project/$projectId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
+  '/organization/$organizationId/settings/roles': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute
   '/organization/$organizationId/cluster/$clusterId/settings/advanced-settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/credentials': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
@@ -786,6 +810,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/cluster/create/$slug/summary': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugSummaryRoute
   '/organization/$organizationId/project/$projectId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute
   '/organization/$organizationId/project/$projectId/settings/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRoute
+  '/organization/$organizationId/settings/roles/edit/$roleId': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute
   '/organization/$organizationId/cluster/$clusterId/settings/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
   '/organization/$organizationId/cluster/create/$slug/': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute
   '/organization/$organizationId/project/$projectId/settings/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsIndexRoute
@@ -803,9 +828,11 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdIndexRoute
-  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/dashboard': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsCreateMetricMetricRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -836,7 +863,6 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
   '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
-  '/organization/$organizationId/settings/roles': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesRoute
   '/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsIndexRoute
@@ -847,6 +873,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   '/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   '/organization/$organizationId/project/$projectId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
+  '/organization/$organizationId/settings/roles': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute
   '/organization/$organizationId/cluster/$clusterId/settings/advanced-settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/credentials': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
@@ -861,6 +888,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/cluster/create/$slug/summary': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugSummaryRoute
   '/organization/$organizationId/project/$projectId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute
   '/organization/$organizationId/project/$projectId/settings/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRoute
+  '/organization/$organizationId/settings/roles/edit/$roleId': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute
   '/organization/$organizationId/cluster/$clusterId/settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
   '/organization/$organizationId/cluster/create/$slug': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute
   '/organization/$organizationId/project/$projectId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsIndexRoute
@@ -876,9 +904,11 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdIndexRoute
-  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/dashboard': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsCreateMetricMetricRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -915,7 +945,6 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
   '/_authenticated/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/_authenticated/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
-  '/_authenticated/organization/$organizationId/settings/roles': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesRoute
   '/_authenticated/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/_authenticated/organization/$organizationId/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
   '/_authenticated/organization/$organizationId/alerts/': typeof AuthenticatedOrganizationOrganizationIdAlertsIndexRoute
@@ -929,6 +958,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
+  '/_authenticated/organization/$organizationId/settings/roles/': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/advanced-settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
@@ -943,6 +973,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/cluster/create/$slug/summary': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugSummaryRoute
   '/_authenticated/organization/$organizationId/project/$projectId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute
   '/_authenticated/organization/$organizationId/project/$projectId/settings/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRoute
+  '/_authenticated/organization/$organizationId/settings/roles/edit/$roleId': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
   '/_authenticated/organization/$organizationId/cluster/create/$slug/': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/settings/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsIndexRoute
@@ -960,9 +991,11 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdIndexRoute
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/dashboard': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsCreateMetricMetricRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -999,7 +1032,6 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/helm-repositories'
     | '/organization/$organizationId/settings/labels-annotations'
     | '/organization/$organizationId/settings/members'
-    | '/organization/$organizationId/settings/roles'
     | '/organization/$organizationId/settings/webhook'
     | '/organization/$organizationId/$clusterId'
     | '/organization/$organizationId/alerts/'
@@ -1013,6 +1045,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/variables'
     | '/organization/$organizationId/cluster/$clusterId'
     | '/organization/$organizationId/project/$projectId'
+    | '/organization/$organizationId/settings/roles'
     | '/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
     | '/organization/$organizationId/cluster/$clusterId/settings/credentials'
     | '/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
@@ -1027,6 +1060,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/create/$slug/summary'
     | '/organization/$organizationId/project/$projectId/settings/danger-zone'
     | '/organization/$organizationId/project/$projectId/settings/general'
+    | '/organization/$organizationId/settings/roles/edit/$roleId'
     | '/organization/$organizationId/cluster/$clusterId/settings/'
     | '/organization/$organizationId/cluster/create/$slug/'
     | '/organization/$organizationId/project/$projectId/settings/'
@@ -1047,6 +1081,8 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/dashboard'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1077,7 +1113,6 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/helm-repositories'
     | '/organization/$organizationId/settings/labels-annotations'
     | '/organization/$organizationId/settings/members'
-    | '/organization/$organizationId/settings/roles'
     | '/organization/$organizationId/settings/webhook'
     | '/organization/$organizationId/$clusterId'
     | '/organization/$organizationId/alerts'
@@ -1088,6 +1123,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/variables'
     | '/organization/$organizationId/cluster/$clusterId'
     | '/organization/$organizationId/project/$projectId'
+    | '/organization/$organizationId/settings/roles'
     | '/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
     | '/organization/$organizationId/cluster/$clusterId/settings/credentials'
     | '/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
@@ -1102,6 +1138,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/create/$slug/summary'
     | '/organization/$organizationId/project/$projectId/settings/danger-zone'
     | '/organization/$organizationId/project/$projectId/settings/general'
+    | '/organization/$organizationId/settings/roles/edit/$roleId'
     | '/organization/$organizationId/cluster/$clusterId/settings'
     | '/organization/$organizationId/cluster/create/$slug'
     | '/organization/$organizationId/project/$projectId/settings'
@@ -1120,6 +1157,8 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/dashboard'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric'
   id:
     | '__root__'
     | '/'
@@ -1155,7 +1194,6 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/settings/helm-repositories'
     | '/_authenticated/organization/$organizationId/settings/labels-annotations'
     | '/_authenticated/organization/$organizationId/settings/members'
-    | '/_authenticated/organization/$organizationId/settings/roles'
     | '/_authenticated/organization/$organizationId/settings/webhook'
     | '/_authenticated/organization/$organizationId/$clusterId/'
     | '/_authenticated/organization/$organizationId/alerts/'
@@ -1169,6 +1207,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/variables'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/'
     | '/_authenticated/organization/$organizationId/project/$projectId/'
+    | '/_authenticated/organization/$organizationId/settings/roles/'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
@@ -1183,6 +1222,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/cluster/create/$slug/summary'
     | '/_authenticated/organization/$organizationId/project/$projectId/settings/danger-zone'
     | '/_authenticated/organization/$organizationId/project/$projectId/settings/general'
+    | '/_authenticated/organization/$organizationId/settings/roles/edit/$roleId'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/'
     | '/_authenticated/organization/$organizationId/cluster/create/$slug/'
     | '/_authenticated/organization/$organizationId/project/$projectId/settings/'
@@ -1203,6 +1243,8 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/dashboard'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1361,13 +1403,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
-    '/_authenticated/organization/$organizationId/settings/roles': {
-      id: '/_authenticated/organization/$organizationId/settings/roles'
-      path: '/roles'
-      fullPath: '/organization/$organizationId/settings/roles'
-      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRolesRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
-    }
     '/_authenticated/organization/$organizationId/settings/members': {
       id: '/_authenticated/organization/$organizationId/settings/members'
       path: '/members'
@@ -1480,6 +1515,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdAlertsRouteRoute
     }
+    '/_authenticated/organization/$organizationId/settings/roles/': {
+      id: '/_authenticated/organization/$organizationId/settings/roles/'
+      path: '/roles'
+      fullPath: '/organization/$organizationId/settings/roles'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
     '/_authenticated/organization/$organizationId/project/$projectId/': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/'
       path: '/project/$projectId'
@@ -1563,6 +1605,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/organization/$organizationId/cluster/$clusterId/settings/'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/roles/edit/$roleId': {
+      id: '/_authenticated/organization/$organizationId/settings/roles/edit/$roleId'
+      path: '/roles/edit/$roleId'
+      fullPath: '/organization/$organizationId/settings/roles/edit/$roleId'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/settings/general': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/settings/general'
@@ -1781,6 +1830,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRoute
     }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit'
+      path: '/$alertId/edit'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric'
+      path: '/create/metric/$metric'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsCreateMetricMetricRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute
+    }
   }
 }
 
@@ -1821,9 +1884,10 @@ interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
   AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   AuthenticatedOrganizationOrganizationIdSettingsMembersRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
-  AuthenticatedOrganizationOrganizationIdSettingsRolesRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRolesRoute
   AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   AuthenticatedOrganizationOrganizationIdSettingsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsIndexRoute
+  AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute
+  AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute
 }
 
 const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren =
@@ -1852,12 +1916,14 @@ const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: Authent
       AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute,
     AuthenticatedOrganizationOrganizationIdSettingsMembersRoute:
       AuthenticatedOrganizationOrganizationIdSettingsMembersRoute,
-    AuthenticatedOrganizationOrganizationIdSettingsRolesRoute:
-      AuthenticatedOrganizationOrganizationIdSettingsRolesRoute,
     AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute:
       AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute,
     AuthenticatedOrganizationOrganizationIdSettingsIndexRoute:
       AuthenticatedOrganizationOrganizationIdSettingsIndexRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute,
   }
 
 const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren =
@@ -1979,8 +2045,26 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteChildren,
   )
 
+interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteChildren {
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsCreateMetricMetricRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsCreateMetricMetricRoute
+}
+
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteChildren: AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteChildren =
+  {
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsCreateMetricMetricRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsCreateMetricMetricRoute,
+  }
+
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteWithChildren =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute._addFileChildren(
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteChildren,
+  )
+
 interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteChildren {
-  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRoute
 }
@@ -1988,7 +2072,7 @@ interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvi
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteChildren: AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteChildren =
   {
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute:
-      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRoute,
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRoute:
@@ -1997,7 +2081,7 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
 
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteWithChildren =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRoute._addFileChildren(
-    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteChildren
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteChildren,
   )
 
 interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
