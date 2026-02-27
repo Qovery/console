@@ -5,18 +5,6 @@ import { AlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration } from '../alerting-creation-flow.types'
 import { MetricConfigurationStep } from './metric-configuration-step'
 
-const mockNavigate = jest.fn()
-const mockUseParams = jest.fn()
-const mockUseLocation = jest.fn()
-
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate,
-  useParams: () => mockUseParams(),
-  useLocation: () => mockUseLocation(),
-  useSearchParams: () => [{ toString: () => '' }],
-}))
-
 const createAlert = (overrides: Partial<AlertConfiguration> = {}): AlertConfiguration => ({
   id: 'alert-1',
   name: 'CPU Alert',
@@ -43,6 +31,7 @@ const renderWithContext = async (
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <AlertingCreationFlowContext.Provider
       value={{
+        organizationId: 'org-123',
         selectedMetrics,
         serviceId: 'service-123',
         serviceName: 'My Service',
@@ -79,15 +68,12 @@ const renderWithContext = async (
     ...renderResult,
     mockSetAlerts,
     mockOnComplete,
-    mockNavigate,
   }
 }
 
 describe('MetricConfigurationStep', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUseParams.mockReturnValue({ metricIndex: 'cpu' })
-    mockUseLocation.mockReturnValue({ pathname: '/metric/cpu' })
   })
 
   it('should render metric configuration form', async () => {
@@ -142,9 +128,6 @@ describe('MetricConfigurationStep', () => {
   })
 
   it('should render save button in edit mode', async () => {
-    mockUseParams.mockReturnValue({ alertId: 'alert-1' })
-    mockUseLocation.mockReturnValue({ pathname: '/edit/alert-1' })
-
     await renderWithContext([createAlert({ id: 'alert-1' })], ['cpu'], { isEdit: true })
 
     await waitFor(() => {
@@ -178,8 +161,6 @@ describe('MetricConfigurationStep', () => {
       condition: { kind: 'BUILT', function: 'AVG', operator: 'BELOW', threshold: 50, promql: '' },
     })
 
-    mockUseParams.mockReturnValue({ alertId: 'alert-1' })
-    mockUseLocation.mockReturnValue({ pathname: '/edit/alert-1' })
     await renderWithContext([existingAlert], ['cpu'], { isEdit: true })
 
     await waitFor(() => {

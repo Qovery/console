@@ -1,6 +1,6 @@
+import { useNavigate, useParams, useRouterState } from '@tanstack/react-router'
 import { type AlertTargetType } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useService } from '@qovery/domains/services/feature'
@@ -9,7 +9,6 @@ import { useCreateAlertRule } from '../../../hooks/use-create-alert-rule/use-cre
 import { SeverityIndicator } from '../../severity-indicator/severity-indicator'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration } from '../alerting-creation-flow.types'
-import { ALERTING_CREATION_EDIT, ALERTING_CREATION_METRIC } from '../router'
 import {
   QUERY_CPU,
   QUERY_HTTP_ERROR_COMBINED,
@@ -118,11 +117,11 @@ function AlertsSummaryTable({
 
 export function SummaryStep() {
   const navigate = useNavigate()
-  const location = useLocation()
-  const [searchParams] = useSearchParams()
-  const { organizationId = '', applicationId = '' } = useParams()
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const searchStr = useRouterState({ select: (state) => state.location.searchStr })
+  const { organizationId = '', serviceId = '' } = useParams({ strict: false })
 
-  const { data: service } = useService({ serviceId: applicationId })
+  const { data: service } = useService({ serviceId })
   const { data: environment } = useEnvironment({ environmentId: service?.environment.id })
   const { mutateAsync: createAlertRule } = useCreateAlertRule({ organizationId })
 
@@ -146,7 +145,7 @@ export function SummaryStep() {
   }, [selectedMetrics.length, setCurrentStepIndex])
 
   const handleEdit = (alertId: string) => {
-    navigate(`..${ALERTING_CREATION_EDIT(alertId)}`)
+    navigate({ to: `../edit/${alertId}` })
   }
 
   const handleToggleSkip = (index: number, isCurrentlySkipped: boolean) => {
@@ -214,9 +213,9 @@ export function SummaryStep() {
   }
 
   const handlePrevious = () => {
-    const basePath = location.pathname.replace(/\/summary$/, '')
-    const queryString = searchParams.toString() ? `?${searchParams.toString()}` : ''
-    navigate(`${basePath}${ALERTING_CREATION_METRIC(selectedMetrics[currentStepIndex - 1])}${queryString}`)
+    const basePath = pathname.replace(/\/summary$/, '')
+    const queryString = searchStr ?? ''
+    navigate({ to: `${basePath}/metric/${selectedMetrics[currentStepIndex - 1]}${queryString}` })
   }
 
   const activeAlertsWithIndex = alerts
