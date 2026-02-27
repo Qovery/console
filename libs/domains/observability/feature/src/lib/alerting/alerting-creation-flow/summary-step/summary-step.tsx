@@ -283,7 +283,7 @@ export function SummaryStep() {
                 <Icon iconName="circle-minus" iconStyle="regular" className="text-negative" />
                 Alerts excluded from creation ({skippedAlerts.length})
               </p>
-              <span className=" text-neutral-subtle">These alerts were skipped during setup and won't be created</span>
+              <span className="text-neutral-subtle">These alerts were skipped during setup and won't be created</span>
             </div>
             <AlertsSummaryTable
               alerts={skippedAlerts}
