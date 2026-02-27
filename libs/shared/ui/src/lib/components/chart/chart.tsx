@@ -177,8 +177,8 @@ export const ChartTooltipZoomRange = forwardRef<HTMLDivElement, ChartTooltipZoom
     if (!active) return null
 
     return (
-      <div ref={ref} className="rounded-md bg-surface-neutral-solid shadow-lg">
-        <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-strong p-3 pb-2">
+      <div ref={ref} className="rounded-md bg-surface-neutralInvert-component shadow-lg">
+        <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutralInvert p-3 pb-2">
           <span className="text-xs text-neutralInvert">Zoom In</span>
         </div>
         <div className="space-y-1 p-3 pt-0">
