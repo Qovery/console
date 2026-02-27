@@ -2,7 +2,6 @@ import clsx from 'clsx'
 import { subHours } from 'date-fns'
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { type Database } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { Badge, Button, Callout, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
@@ -13,7 +12,7 @@ import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
 import { useNamespace } from '../../hooks/use-namespace/use-namespace'
 import { usePodCount } from '../../hooks/use-pod-count/use-pod-count'
 import { usePodNames } from '../../hooks/use-pod-names/use-pod-names'
-import { DashboardProvider, useDashboardContext } from '../../util-filter/dashboard-context'
+import { DashboardProvider, type DashboardQueryParams, useDashboardContext } from '../../util-filter/dashboard-context'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
@@ -32,10 +31,7 @@ import { PrivateNetworkRequestSizeChart } from './private-network-request-size-c
 import { PrivateNetworkRequestStatusChart } from './private-network-request-status-chart/private-network-request-status-chart'
 import { SelectTimeRange } from './select-time-range/select-time-range'
 
-function ServiceDashboardContent() {
-  const { environmentId = '', applicationId = '', databaseId = '' } = useParams()
-
-  const serviceId = applicationId || databaseId
+function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: string; serviceId: string }) {
   const { data: service } = useService({ serviceId })
   const { data: environment } = useEnvironment({ environmentId })
   const {
@@ -168,73 +164,76 @@ function ServiceDashboardContent() {
   // For container databases, wait for podNames fetch to settle (even if empty)
   if (!environment || !service || !containerName || !namespace || (isContainerDatabase && !isFetchedPodNames))
     return (
-      <div className="flex h-full w-full items-center justify-center p-5">
+      <div className="flex min-h-page-container w-full items-center justify-center p-5">
         <Chart.Loader />
       </div>
     )
 
   return (
     <div className="isolate">
-      <div className="sticky top-16 z-10 flex h-[68px] w-full items-center justify-between gap-3 border-b border-neutral-250 bg-white px-8">
-        <div className="flex gap-3">
-          <Tooltip
-            content={
-              <span>
-                Live refresh (15s) <br />
-                Only for time ranges ≤ 1h
-              </span>
-            }
-          >
-            <Button
-              variant={isLiveUpdateEnabled ? 'solid' : 'surface'}
-              color={isLiveUpdateEnabled ? 'brand' : 'neutral'}
-              size="md"
-              className={clsx('gap-1.5 pl-2.5', isLiveUpdateEnabled && 'border border-transparent')}
-              onClick={() => {
-                // If timeRange is '30m' or greater, set to '15m' when enabling live update
-                if (!isLiveUpdateEnabled) {
-                  if (timeRange !== '5m' && timeRange !== '15m' && timeRange !== '30m' && timeRange !== '1h') {
-                    handleTimeRangeChange('15m')
-                  }
-                }
-                setIsLiveUpdateEnabled(!isLiveUpdateEnabled)
-              }}
+      <div className="bg-surface sticky top-[45px] z-header h-14 w-full bg-background">
+        <div className="mx-8 flex h-full items-center justify-between gap-3 border-b border-neutral">
+          <div className="flex gap-2">
+            <Tooltip
+              content={
+                <span>
+                  Live refresh (15s) <br />
+                  Only for time ranges ≤ 1h
+                </span>
+              }
             >
-              <Icon iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'} iconStyle="regular" />
-              Live
+              <Button
+                variant={isLiveUpdateEnabled ? 'solid' : 'surface'}
+                color={isLiveUpdateEnabled ? 'brand' : 'neutral'}
+                size="md"
+                className={clsx('gap-1.5 pl-2.5', isLiveUpdateEnabled && 'border border-transparent')}
+                onClick={() => {
+                  // If timeRange is '30m' or greater, set to '15m' when enabling live update
+                  if (!isLiveUpdateEnabled) {
+                    if (timeRange !== '5m' && timeRange !== '15m' && timeRange !== '30m' && timeRange !== '1h') {
+                      handleTimeRangeChange('15m')
+                    }
+                  }
+                  setIsLiveUpdateEnabled(!isLiveUpdateEnabled)
+                }}
+              >
+                <Icon iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'} iconStyle="regular" />
+                Live
+              </Button>
+            </Tooltip>
+            <SelectTimeRange />
+            <InputSelectSmall
+              name="timezone"
+              className="w-[120px] [&>i]:top-2"
+              inputClassName="h-8"
+              items={[
+                { label: 'Local Time', value: 'local' },
+                { label: 'UTC', value: 'utc' },
+              ]}
+              defaultValue={useLocalTime ? 'local' : 'utc'}
+              onChange={(e) => setUseLocalTime(e === 'local')}
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="plain"
+              size="xs"
+              className="flex items-center gap-1"
+              onClick={() => setHideEvents(!hideEvents)}
+            >
+              {hideEvents ? 'Show events' : 'Hide events'}
+              <Icon iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
             </Button>
-          </Tooltip>
-          <SelectTimeRange />
-          <InputSelectSmall
-            name="timezone"
-            className="w-[120px]"
-            items={[
-              { label: 'Local Time', value: 'local' },
-              { label: 'UTC', value: 'utc' },
-            ]}
-            defaultValue={useLocalTime ? 'local' : 'utc'}
-            onChange={(e) => setUseLocalTime(e === 'local')}
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="plain"
-            size="xs"
-            className="flex items-center gap-1"
-            onClick={() => setHideEvents(!hideEvents)}
-          >
-            {hideEvents ? 'Show events' : 'Hide events'}
-            <Icon iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
-          </Button>
-          <Button
-            variant="plain"
-            size="xs"
-            className="flex items-center gap-1"
-            onClick={() => setExpandCharts(!expandCharts)}
-          >
-            {expandCharts ? 'Collapse charts' : 'Expand charts'}
-            <Icon iconName={expandCharts ? 'arrows-minimize' : 'arrows-maximize'} iconStyle="light" />
-          </Button>
+            <Button
+              variant="plain"
+              size="xs"
+              className="flex items-center gap-1"
+              onClick={() => setExpandCharts(!expandCharts)}
+            >
+              {expandCharts ? 'Collapse charts' : 'Expand charts'}
+              <Icon iconName={expandCharts ? 'arrows-minimize' : 'arrows-maximize'} iconStyle="light" />
+            </Button>
+          </div>
         </div>
       </div>
       <div className="space-y-10 px-8 py-10">
@@ -319,7 +318,7 @@ function ServiceDashboardContent() {
             )}
           </div>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <CpuChart
                 clusterId={environment.cluster_id}
                 serviceId={serviceId}
@@ -328,7 +327,7 @@ function ServiceDashboardContent() {
                 podCountData={{ podCount, isResolved: isFetchedPodCount }}
               />
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <MemoryChart
                 clusterId={environment.cluster_id}
                 serviceId={serviceId}
@@ -338,7 +337,7 @@ function ServiceDashboardContent() {
               />
             </div>
             {hasStorage && (
-              <div className="overflow-hidden rounded border border-neutral-250">
+              <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
                 <DiskChart
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
@@ -353,7 +352,7 @@ function ServiceDashboardContent() {
           <Section className="gap-4">
             <Heading weight="medium">Network</Heading>
             <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-              <div className="overflow-hidden rounded border border-neutral-250">
+              <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
                 <NetworkRequestStatusChart
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
@@ -361,7 +360,7 @@ function ServiceDashboardContent() {
                   httpRouteName={httpRouteName}
                 />
               </div>
-              <div className="overflow-hidden rounded border border-neutral-250">
+              <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
                 <NetworkRequestDurationChart
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
@@ -369,7 +368,7 @@ function ServiceDashboardContent() {
                   httpRouteName={httpRouteName}
                 />
               </div>
-              <div className="overflow-hidden rounded border border-neutral-250">
+              <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
                 <NetworkRequestSizeChart
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
@@ -384,21 +383,21 @@ function ServiceDashboardContent() {
           <Section className="gap-4">
             <Heading weight="medium">Network</Heading>
             <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-              <div className="overflow-hidden rounded border border-neutral-250">
+              <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
                 <PrivateNetworkRequestStatusChart
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
                   containerName={containerName}
                 />
               </div>
-              <div className="overflow-hidden rounded border border-neutral-250">
+              <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
                 <PrivateNetworkRequestDurationChart
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
                   containerName={containerName}
                 />
               </div>
-              <div className="overflow-hidden rounded border border-neutral-250">
+              <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
                 <PrivateNetworkRequestSizeChart
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
@@ -413,10 +412,24 @@ function ServiceDashboardContent() {
   )
 }
 
-export function ServiceDashboard() {
+export interface ServiceDashboardProps {
+  organizationId?: string
+  environmentId: string
+  serviceId: string
+  queryParams?: DashboardQueryParams
+  setQueryParams?: (updates: Partial<DashboardQueryParams>) => void
+}
+
+export function ServiceDashboard({
+  organizationId,
+  environmentId,
+  serviceId,
+  queryParams,
+  setQueryParams,
+}: ServiceDashboardProps) {
   return (
-    <DashboardProvider>
-      <ServiceDashboardContent />
+    <DashboardProvider organizationId={organizationId} queryParams={queryParams} setQueryParams={setQueryParams}>
+      <ServiceDashboardContent environmentId={environmentId} serviceId={serviceId} />
     </DashboardProvider>
   )
 }

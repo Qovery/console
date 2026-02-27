@@ -5,15 +5,17 @@ interface UseClusterProps {
   organizationId: string
   clusterId?: string
   enabled?: boolean
+  suspense?: boolean
 }
 
-export function useCluster({ organizationId, clusterId, enabled }: UseClusterProps) {
+export function useCluster({ organizationId, clusterId, enabled = true, suspense = false }: UseClusterProps) {
   return useQuery({
     ...queries.clusters.list({ organizationId }),
     select(clusters) {
       return clusters?.find(({ id }) => clusterId === id)
     },
     enabled: Boolean(organizationId) && Boolean(clusterId) && enabled,
+    suspense,
   })
 }
 

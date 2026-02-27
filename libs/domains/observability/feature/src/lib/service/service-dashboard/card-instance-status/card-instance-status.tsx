@@ -106,26 +106,26 @@ export function CardInstanceStatus({
 
   return (
     <>
-      <Section className="w-full cursor-default rounded border border-neutral-250 bg-neutral-50">
+      <Section className="w-full cursor-default rounded-lg border border-neutral bg-surface-neutral">
         <div className="flex items-center justify-between px-5 pt-4">
           <div className="flex items-center gap-1.5">
             <Heading weight="medium">{title}</Heading>
             <Tooltip content={description}>
               <span>
-                <Icon iconName="circle-info" iconStyle="regular" className="text-sm text-neutral-350" />
+                <Icon iconName="circle-info" iconStyle="regular" className="text-sm text-neutral-subtle" />
               </span>
             </Tooltip>
           </div>
           <div className="flex items-center gap-5">
             {isAutoscalingEnabled && (
               <Skeleton show={isLoading} width={174} height={16}>
-                <span className="text-ssm text-neutral-400">
+                <span className="text-ssm text-neutral">
                   Auto-scaling limit hit rate <span className="font-medium">{autoscalingReached}% </span>
                 </span>
               </Skeleton>
             )}
             <Skeleton show={isLoading} width={106} height={16}>
-              <span className="text-ssm text-neutral-400">
+              <span className="text-ssm text-neutral">
                 Instance {pluralize(instanceErrors, 'error', 'errors')}{' '}
                 <span className="font-medium">{instanceErrors}</span>
               </span>

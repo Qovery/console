@@ -111,9 +111,9 @@ describe('createXAxisConfig', () => {
         scale: 'time',
         domain: [startTimestamp * 1000, endTimestamp * 1000],
         ticks: getLogicalTicks(startTimestamp, endTimestamp, 6),
-        tick: { fontSize: 12, fill: 'var(--color-neutral-350)' },
+        tick: { fontSize: 12, fill: 'var(--neutral-9)' },
         tickLine: { stroke: 'transparent' },
-        axisLine: { stroke: 'var(--color-neutral-200)' },
+        axisLine: { stroke: 'var(--neutral-9)' },
         allowDataOverflow: true,
         interval: 'preserveStartEnd',
       })

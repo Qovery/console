@@ -18,7 +18,7 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { PlaceholderMonitoring } from './placeholder-monitoring'
 
 export function PageMonitoringFeature() {
-  const { databaseId = '', environmentId = '' } = useParams()
+  const { organizationId = '', databaseId = '', environmentId = '' } = useParams()
 
   const { data: environment } = useEnvironment({ environmentId })
   const { data: serviceStatus } = useDeploymentStatus({ environmentId, serviceId: databaseId })
@@ -93,7 +93,11 @@ export function PageMonitoringFeature() {
     )
   }
 
-  return (service as Database)?.mode === DatabaseModeEnum.CONTAINER ? <ServiceDashboard /> : <DatabaseRdsDashboard />
+  return (service as Database)?.mode === DatabaseModeEnum.CONTAINER ? (
+    <ServiceDashboard organizationId={organizationId} environmentId={environmentId} serviceId={databaseId} />
+  ) : (
+    <DatabaseRdsDashboard />
+  )
 }
 
 export default PageMonitoringFeature

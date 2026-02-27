@@ -16,7 +16,13 @@ export const ChartSkeleton = ({ className }: ChartSkeletonProps) => {
     <div className={twMerge('h-full w-full', className)}>
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={skeletonData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" strokeDasharray="2 4" />
+          <CartesianGrid
+            horizontal={true}
+            vertical={false}
+            stroke="var(--neutral-9)"
+            strokeOpacity={0.35}
+            strokeDasharray="2 4"
+          />
           <XAxis type="number" dataKey="foo" domain={[0, 100]} hide={true} />
           <YAxis type="number" domain={[0, 100]} hide={true} tickCount={5} orientation="right" />
           {/* Invisible line to force Y-axis calculation */}

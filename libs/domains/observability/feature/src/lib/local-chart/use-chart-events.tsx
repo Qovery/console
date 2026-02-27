@@ -1,6 +1,5 @@
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
-import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
 import { useEvents } from '../hooks/use-events/use-events'
 import { useDashboardContext } from '../util-filter/dashboard-context'
@@ -12,8 +11,7 @@ export interface UseChartEventsProps {
 }
 
 export function useChartEvents({ serviceId, additionalEvents = [] }: UseChartEventsProps) {
-  const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp } = useDashboardContext()
+  const { organizationId, startTimestamp, endTimestamp } = useDashboardContext()
 
   const { data: service } = useService({ serviceId })
 
@@ -58,7 +56,7 @@ export function useChartEvents({ serviceId, additionalEvents = [] }: UseChartEve
             timestamp: eventTimestamp,
             reason: 'Deploy failed',
             icon: 'xmark' as const,
-            color: 'var(--color-red-500)',
+            color: 'var(--negative-11)',
             key,
             version,
             repository,
@@ -69,7 +67,7 @@ export function useChartEvents({ serviceId, additionalEvents = [] }: UseChartEve
             timestamp: eventTimestamp,
             reason: 'Deployed',
             icon: 'check' as const,
-            color: 'var(--color-green-500)',
+            color: 'var(--positive-11)',
             key,
             version,
             repository,

@@ -390,7 +390,7 @@ export function InstanceStatusChart({
                     : series.metric['reason'] || 'unknown',
                 description: getDescriptionFromReason(series.metric.reason),
                 icon: series.metric.reason === 'Completed' ? 'check' : 'newspaper',
-                color: series.metric.reason === 'Completed' ? 'var(--color-yellow-600)' : 'var(--color-red-500)',
+                color: series.metric.reason === 'Completed' ? 'var(--color-yellow-600)' : 'var(--negative-11)',
                 key,
               })
             }
@@ -415,7 +415,7 @@ export function InstanceStatusChart({
                 reason: series.metric.reason,
                 description: getDescriptionFromK8sEvent(series.metric.reason),
                 icon: 'xmark',
-                color: 'var(--color-red-500)',
+                color: 'var(--negative-11)',
                 pod: series.metric.pod,
                 key,
               })
@@ -439,7 +439,7 @@ export function InstanceStatusChart({
                 reason: 'ScalingLimited',
                 description:
                   'Auto scaling reached the maximum number of instances . You can increase it in the settings.',
-                color: 'var(--color-red-500)',
+                color: 'var(--negative-11)',
                 icon: 'exclamation',
                 pod: series.metric.pod,
                 key,
@@ -489,8 +489,8 @@ export function InstanceStatusChart({
       <Area
         key="true"
         dataKey="Instance healthy"
-        stroke="var(--color-green-500)"
-        fill="var(--color-green-500)"
+        stroke="var(--positive-11)"
+        fill="var(--positive-11)"
         fillOpacity={0.3}
         strokeWidth={0}
         isAnimationActive={false}
@@ -500,8 +500,8 @@ export function InstanceStatusChart({
       <Area
         key="false"
         dataKey="Instance unhealthy"
-        stroke="var(--color-red-500)"
-        fill="var(--color-red-500)"
+        stroke="var(--negative-11)"
+        fill="var(--negative-11)"
         fillOpacity={0.3}
         strokeWidth={0}
         isAnimationActive={false}
@@ -512,7 +512,7 @@ export function InstanceStatusChart({
         key="min"
         dataKey="Autoscaling min replicas"
         type="linear"
-        stroke="var(--color-neutral-300)"
+        stroke="var(--neutral-8)"
         strokeWidth={2}
         connectNulls={true}
         dot={false}
@@ -522,7 +522,7 @@ export function InstanceStatusChart({
         key="max"
         dataKey="Autoscaling max replicas"
         type="linear"
-        stroke="var(--color-red-500)"
+        stroke="var(--negative-11)"
         strokeWidth={2}
         connectNulls={true}
         dot={false}

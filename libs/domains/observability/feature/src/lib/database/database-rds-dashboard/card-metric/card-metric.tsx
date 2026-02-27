@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import { type ComponentProps, type ReactNode } from 'react'
 import { Badge, Heading, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -28,10 +27,13 @@ export function CardMetric({
 }: CardMetricProps) {
   return (
     <Section
-      className={twMerge('h-full w-full justify-center rounded border border-neutral-250 p-4', className)}
+      className={twMerge(
+        'h-full w-full justify-center rounded-lg border border-neutral bg-surface-neutral p-4',
+        className
+      )}
       {...props}
     >
-      <div className="flex flex-col justify-between gap-2">
+      <div className="flex flex-col justify-between gap-0.5">
         <div className="flex items-center justify-between gap-2.5">
           <div className="flex w-full items-center justify-between gap-3.5">
             <Skeleton
@@ -40,22 +42,18 @@ export function CardMetric({
               width={170}
               height={16}
             >
-              <Heading className="flex items-center gap-1 font-normal text-neutral-350">
+              <Heading className="flex items-center gap-1 font-normal text-neutral-subtle">
                 {title}
                 <Tooltip content={description}>
                   <span>
-                    <Icon iconName="info-circle" iconStyle="regular" className="text-xs text-neutral-350" />
+                    <Icon iconName="info-circle" iconStyle="regular" className="text-xs text-neutral-subtle" />
                   </span>
                 </Tooltip>
               </Heading>
               {status && (
                 <Tooltip content={statusDescription}>
                   <Badge
-                    className={clsx('ml-1.5 gap-1 font-medium', {
-                      'bg-green-50': status === 'GREEN',
-                      'bg-yellow-50': status === 'YELLOW',
-                      'bg-red-50': status === 'RED',
-                    })}
+                    className="ml-1.5 gap-1 font-medium"
                     color={status === 'RED' ? 'red' : status === 'YELLOW' ? 'yellow' : 'green'}
                     size="base"
                   >
@@ -81,12 +79,12 @@ export function CardMetric({
           <div className="flex flex-col">
             {value !== undefined && (
               <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-semibold text-neutral-400">
+                <span className="text-2xl font-semibold text-neutral-subtle">
                   {value} {unit}
                 </span>
               </div>
             )}
-            {valueDescription && <p className="text-sm text-neutral-350">{valueDescription}</p>}
+            {valueDescription && <p className="text-sm text-neutral-subtle">{valueDescription}</p>}
           </div>
         </Skeleton>
       </div>

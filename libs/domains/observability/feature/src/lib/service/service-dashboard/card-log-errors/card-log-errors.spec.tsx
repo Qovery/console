@@ -5,10 +5,9 @@ import { DashboardProvider } from '../../../util-filter/dashboard-context'
 import { CardLogErrors } from './card-log-errors'
 
 const mockedNavigate = jest.fn()
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
   useNavigate: () => mockedNavigate,
-  useLocation: () => ({ pathname: '/test' }),
 }))
 
 jest.mock('../../../hooks/use-instant-metrics/use-instant-metrics')
@@ -165,16 +164,13 @@ describe('CardLogErrors', () => {
     const button = screen.getByRole('button')
     await userEvent.click(button)
 
-    expect(mockedNavigate).toHaveBeenCalledWith(
-      expect.stringContaining(
+    expect(mockedNavigate).toHaveBeenCalledWith({
+      to: expect.stringContaining(
         `/organization/${defaultProps.organizationId}/project/${defaultProps.projectId}/environment/${defaultProps.environmentId}/logs/${defaultProps.serviceId}/service-logs?mode=history&startDate=`
       ),
-      {
-        state: { prevUrl: '/test' },
-      }
-    )
+    })
 
-    const navigateUrl = mockedNavigate.mock.calls[0][0]
+    const navigateUrl = mockedNavigate.mock.calls[0][0].to
     expect(navigateUrl).toMatch(/startDate=[\d-]+T[\d:.%A-Z]+/)
     expect(navigateUrl).toMatch(/endDate=[\d-]+T[\d:.%A-Z]+/)
   })
