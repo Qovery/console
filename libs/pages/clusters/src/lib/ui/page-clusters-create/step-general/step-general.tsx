@@ -40,14 +40,11 @@ export function StepGeneral(props: StepGeneralProps) {
 
   const buildRegions: Value[] = useMemo(
     () =>
-      currentProvider?.regions?.map((region) => {
-        const zoneLabel = region.zones?.length ? ` — ${region.zones.length} AZs` : ''
-        return {
-          label: `${region.city} (${region.name})${zoneLabel}`,
-          value: region.name,
-          icon: <IconFlag code={region.country_code} />,
-        }
-      }) || [],
+      currentProvider?.regions?.map((region) => ({
+        label: `${region.city} (${region.name})`,
+        value: region.name,
+        icon: <IconFlag code={region.country_code} />,
+      })) || [],
     [currentProvider?.regions]
   )
 
