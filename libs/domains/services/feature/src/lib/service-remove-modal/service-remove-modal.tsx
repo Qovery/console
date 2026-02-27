@@ -51,9 +51,9 @@ export function ServiceRemoveModal({
 
   return (
     <div className="p-6">
-      <h2 className="h4 mb-1 max-w-sm text-neutral-400 dark:text-neutral-50">{title}</h2>
+      <h2 className="h4 mb-1 max-w-sm text-neutral">{title}</h2>
       <div className="mb-4">
-        <div className="text-sm text-neutral-350 dark:text-neutral-50">
+        <div className="text-sm text-neutral-subtle">
           {description ? (
             description
           ) : (
@@ -77,18 +77,18 @@ export function ServiceRemoveModal({
                     <label
                       key={action.id}
                       className={twMerge(
-                        'flex cursor-pointer flex-col gap-2 rounded border border-neutral-250 bg-neutral-100 p-5 text-left text-sm shadow transition-all',
-                        selectedActionId === action.id && 'border-brand-500 bg-brand-50'
+                        'flex cursor-pointer flex-col gap-2 rounded border border-surface-neutral-subtle bg-surface-neutral-subtle p-5 text-left text-sm shadow transition-all',
+                        selectedActionId === action.id && 'border-surface-brand-solid bg-surface-brand-component'
                       )}
                     >
                       <div className="flex items-center gap-3">
                         <RadioGroup.Item value={action.id} />
                         {action.icon && (
-                          <Icon iconName={action.icon} iconStyle="regular" className="text-base text-neutral-350" />
+                          <Icon iconName={action.icon} iconStyle="regular" className="text-base text-neutral" />
                         )}
-                        <span className="font-medium text-neutral-400">{action.title}</span>
+                        <span className="font-medium text-neutral">{action.title}</span>
                       </div>
-                      <span className="inline-block text-sm text-neutral-350">{action.description}</span>
+                      <span className="inline-block text-sm text-neutral-subtle">{action.description}</span>
                     </label>
                   ))}
                 </RadioGroup.Root>
@@ -135,16 +135,16 @@ export function ServiceRemoveModal({
 
           <div className="flex flex-col gap-1.5">
             <div>
-              <span className="text-sm text-neutral-350">This action cannot be undone, type "</span>
+              <span className="text-sm text-neutral-subtle">This action cannot be undone, type "</span>
               <span
                 className={twMerge(
-                  'text-sm font-semibold text-neutral-350',
+                  'text-sm font-semibold text-neutral-subtle',
                   selectedAction?.color && `text-${selectedAction?.color}-500`
                 )}
               >
                 {selectedAction?.id}
               </span>
-              <span className="text-sm text-neutral-350">" to confirm.</span>
+              <span className="text-sm text-neutral-subtle">" to confirm.</span>
             </div>
             <Controller
               name="name"

@@ -70,7 +70,7 @@ export function ServiceLinksPopover({
           </p>
           {serviceType !== 'HELM' && (
             <Popover.Close>
-              <Link to={pathDomainsSetting} color="brand" className="text-ssm">
+              <Link to={pathDomainsSetting} color="neutral" className="text-ssm">
                 Customize
                 <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
               </Link>

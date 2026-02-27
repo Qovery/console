@@ -9,12 +9,12 @@ exports[`SelectCommitModal should match snapshot 1`] = `
       class="flex flex-col gap-2 text-sm"
     >
       <h2
-        class="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
+        class="h4 max-w-sm truncate text-neutral"
       >
         Deploy other version
       </h2>
       <p
-        class="text-neutral-350 dark:text-neutral-50"
+        class="text-neutral-subtle"
       >
         Type a version to deploy
       </p>
@@ -54,21 +54,21 @@ exports[`SelectCommitModal should match snapshot 1`] = `
           class="pl-2"
         >
           <div
-            class="relative pl-5 text-sm font-medium text-neutral-350"
+            class="relative pl-5 text-sm font-medium text-neutral-subtle"
           >
             <i
               aria-hidden="true"
-              class="fa-regular fa-code-commit absolute left-0 top-1 -translate-x-1/2 text-neutral-300 dark:text-neutral-350"
+              class="fa-regular fa-code-commit absolute left-0 top-1 -translate-x-1/2 text-neutral-subtle"
             />
             Commit
              on 
-            Jan 01, 0123
+            Dec 31, 0122
           </div>
           <div
-            class="border-l border-neutral-250 pb-5 pl-5 pt-3 dark:border-neutral-350"
+            class="border-l border-neutral pb-5 pl-5 pt-3"
           >
             <label
-              class="-mt-px flex w-full flex-row gap-3 border border-neutral-250 p-3 first:rounded-t-md last:rounded-b-md dark:border-neutral-350 cursor-pointer"
+              class="-mt-px flex w-full flex-row gap-3 border border-neutral p-3 first:rounded-t-md last:rounded-b-md cursor-pointer"
             >
               <div>
                 <button
@@ -86,14 +86,14 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                 class="flex min-w-0 flex-1 flex-col items-start gap-1 text-sm"
               >
                 <a
-                  class="max-w-full truncate font-medium text-neutral-400 hover:text-brand-500 dark:text-neutral-50"
+                  class="max-w-full truncate font-medium text-neutral"
                   rel="noreferrer"
                   target="_blank"
                 >
                   lorem
                 </a>
                 <span
-                  class="text-neutral-350 dark:text-neutral-50"
+                  class="text-neutral-subtle"
                 >
                   committed 
                   1904 years
@@ -156,21 +156,21 @@ exports[`SelectCommitModal should match snapshot 1`] = `
           class="pl-2"
         >
           <div
-            class="relative pl-5 text-sm font-medium text-neutral-350"
+            class="relative pl-5 text-sm font-medium text-neutral-subtle"
           >
             <i
               aria-hidden="true"
-              class="fa-regular fa-code-commit absolute left-0 top-1 -translate-x-1/2 text-neutral-300 dark:text-neutral-350"
+              class="fa-regular fa-code-commit absolute left-0 top-1 -translate-x-1/2 text-neutral-subtle"
             />
             Commit
              on 
-            Jan 01, 0456
+            Dec 31, 0455
           </div>
           <div
-            class="border-l border-neutral-250 pb-5 pl-5 pt-3 dark:border-neutral-350"
+            class="border-l border-neutral pb-5 pl-5 pt-3"
           >
             <label
-              class="-mt-px flex w-full flex-row gap-3 border border-neutral-250 p-3 first:rounded-t-md last:rounded-b-md dark:border-neutral-350 bg-neutral-100 dark:bg-neutral-500"
+              class="-mt-px flex w-full flex-row gap-3 border border-neutral p-3 first:rounded-t-md last:rounded-b-md bg-surface-neutral-subtle"
             >
               <div>
                 <button
@@ -192,7 +192,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-regular fa-check text-xs text-neutralInvert"
+                      class="fa-regular fa-check text-xs text-neutral"
                     />
                   </span>
                 </button>
@@ -201,14 +201,14 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                 class="flex min-w-0 flex-1 flex-col items-start gap-1 text-sm"
               >
                 <a
-                  class="max-w-full truncate font-medium hover:text-brand-500 dark:text-neutral-50 text-neutral-350"
+                  class="max-w-full truncate font-medium text-brand"
                   rel="noreferrer"
                   target="_blank"
                 >
                   ipsum
                 </a>
                 <span
-                  class="text-neutral-350 dark:text-neutral-50"
+                  class="text-neutral-subtle"
                 >
                   committed 
                   1571 years
@@ -274,7 +274,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
       </div>
     </div>
     <div
-      class="absolute bottom-0 left-0 flex w-full justify-end gap-3 rounded-b-md bg-white p-5"
+      class="absolute bottom-0 left-0 flex w-full justify-end gap-3 rounded-b-md bg-background p-5"
     >
       <button
         class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
