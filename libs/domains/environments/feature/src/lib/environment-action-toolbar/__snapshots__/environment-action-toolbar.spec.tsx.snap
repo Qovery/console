@@ -185,65 +185,6 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
 
 exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
 <body
-  style=""
->
-  <div
-    class="flex items-center gap-2"
-  >
-    <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      aria-label="Manage Deployment"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-warning-strong text-xs h-7 px-2 rounded border border-warning-subtle text-warning hover:border-warning-component hover:bg-surface-warning-subtle data-[state=open]:bg-surface-warning-subtle w-7"
-      data-state="closed"
-      id="radix-:rq:"
-      type="button"
-    >
-      <div
-        class="flex h-full w-full items-center justify-center"
-        data-state="closed"
-      >
-        <i
-          aria-hidden="true"
-          class="fa-regular fa-rocket "
-        />
-      </div>
-    </button>
-    <a
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7"
-      data-state="closed"
-      to="/organization/123/project/123/environment/3840068565336064/logs"
-    >
-      <i
-        aria-hidden="true"
-        class="fa-regular fa-timeline "
-      />
-    </a>
-    <button
-      aria-expanded="false"
-      aria-haspopup="menu"
-      aria-label="Other actions"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7"
-      data-state="closed"
-      id="radix-:ru:"
-      type="button"
-    >
-      <div
-        class="flex h-full w-full items-center justify-center"
-        data-state="closed"
-      >
-        <i
-          aria-hidden="true"
-          class="fa-solid fa-ellipsis-v "
-        />
-      </div>
-    </button>
-  </div>
-</body>
-`;
-
-exports[`EnvironmentActionToolbar should match other actions snapshot 2`] = `
-<body
   data-scroll-locked="1"
   style="pointer-events: none;"
 >
