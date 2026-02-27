@@ -1,6 +1,4 @@
 import {
-  APPLICATION_MONITORING_GENERAL_URL,
-  APPLICATION_MONITORING_URL,
   APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
   APPLICATION_SETTINGS_CONFIGURE_URL,
   APPLICATION_SETTINGS_DANGER_ZONE_URL,
@@ -22,8 +20,6 @@ import {
   APPLICATION_VARIABLES_URL,
   type Route,
 } from '@qovery/shared/routes'
-import { PageMonitoringDashboardFeature } from '../feature/page-monitoring-dashboard-feature/page-monitoring-dashboard-feature'
-import { PageMonitoringFeature } from '../feature/page-monitoring-feature/page-monitoring-feature'
 import PageSettingsAdvancedFeature from '../feature/page-settings-advanced-feature/page-settings-advanced-feature'
 import PageSettingsConfigureJobFeature from '../feature/page-settings-configure-job-feature/page-settings-configure-job-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
@@ -52,17 +48,6 @@ export const ROUTER_APPLICATION: Route[] = [
   {
     path: `${APPLICATION_SETTINGS_URL}/*`,
     component: <PageSettingsFeature />,
-  },
-  {
-    path: `${APPLICATION_MONITORING_URL}/*`,
-    component: <PageMonitoringFeature />,
-  },
-]
-
-export const ROUTER_APPLICATION_MONITORING: Route[] = [
-  {
-    path: APPLICATION_MONITORING_GENERAL_URL,
-    component: <PageMonitoringDashboardFeature />,
   },
 ]
 

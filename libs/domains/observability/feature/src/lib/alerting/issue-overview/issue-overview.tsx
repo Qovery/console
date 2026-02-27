@@ -1,6 +1,5 @@
-import { useParams } from 'react-router-dom'
+import { useParams } from '@tanstack/react-router'
 import { match } from 'ts-pattern'
-import { APPLICATION_MONITORING_ALERTS_URL, APPLICATION_MONITORING_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { Chart, Heading, Icon, Link, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -10,7 +9,7 @@ import { SeverityIndicator } from '../severity-indicator/severity-indicator'
 const { Table } = TablePrimitives
 
 export function IssueOverview() {
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { data: alerts = [], isFetched: isAlertsFetched } = useAlerts({ organizationId, refetchInterval: 2_000 })
   useDocumentTitle('Issues - Alerting')
 
@@ -97,16 +96,13 @@ export function IssueOverview() {
                         color="neutral"
                         size="xs"
                         className="justify-center gap-1.5 pl-0.5"
-                        to={
-                          APPLICATION_URL(
-                            organizationId,
-                            alert.target.service?.project_id,
-                            alert.target.service?.environment_id,
-                            alert.target.service?.id
-                          ) +
-                          APPLICATION_MONITORING_URL +
-                          APPLICATION_MONITORING_ALERTS_URL
-                        }
+                        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts"
+                        params={{
+                          organizationId,
+                          projectId: alert.target.service?.project_id ?? '',
+                          environmentId: alert.target.service?.environment_id ?? '',
+                          serviceId: alert.target.service?.id ?? '',
+                        }}
                       >
                         <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-white">
                           <Icon
