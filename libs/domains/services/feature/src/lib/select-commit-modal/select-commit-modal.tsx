@@ -147,12 +147,7 @@ export function SelectCommitModal({
                               />
                               <TagCommit commitId={git_commit_id} />
                             </div>
-                            <span
-                              className={clsx(
-                                'text-xs',
-                                isCurrentDeployedCommit ? 'text-neutral-400 dark:text-neutral-50' : 'text-brand-500'
-                              )}
-                            >
+                            <span className={clsx('text-xs', isCurrentDeployedCommit ? 'text-brand' : '')}>
                               {
                                 isSelected ? (
                                   'Selected version'

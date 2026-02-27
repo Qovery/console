@@ -77,7 +77,7 @@ export function ServiceVersionCell({ service, organizationId, projectId }: Servi
     containerImage && (
       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
         <div className="flex w-44 flex-col gap-1.5">
-          <span className="flex items-center gap-2 text-neutral-350">
+          <span className="flex items-center gap-2 text-neutral">
             <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
             <Tooltip
               content={
@@ -91,7 +91,7 @@ export function ServiceVersionCell({ service, organizationId, projectId }: Servi
                 </span>
               }
             >
-              <span className="text-neutral-350">
+              <span className="text-neutral">
                 {containerImage.registry.name.length >= 20 ? (
                   <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={20} />
                 ) : (
@@ -100,7 +100,7 @@ export function ServiceVersionCell({ service, organizationId, projectId }: Servi
               </span>
             </Tooltip>
           </span>
-          <span className="flex items-center gap-2 text-neutral-350">
+          <span className="flex items-center gap-2 text-neutral">
             <Icon width={16} name={IconEnum.CONTAINER} />
             <Truncate text={`${containerImage.image_name}`} truncateLimit={20} />
           </span>
@@ -119,7 +119,7 @@ export function ServiceVersionCell({ service, organizationId, projectId }: Servi
 
   const datasourceInfo = (datasource?: Pick<Database, 'accessibility' | 'mode' | 'type' | 'version'>) =>
     datasource && (
-      <div className="flex flex-col gap-1.5 text-ssm text-neutral-350">
+      <div className="flex flex-col gap-1.5 text-ssm text-neutral">
         <span className="flex items-center gap-2">
           <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
           {datasource.type.toLowerCase().replace('sql', 'SQL').replace('db', 'DB')}

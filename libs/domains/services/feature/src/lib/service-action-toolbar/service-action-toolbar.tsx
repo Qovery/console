@@ -959,10 +959,7 @@ export function ServiceActionToolbar({
         <>
           <Tooltip content="Logs">
             <ActionToolbar.Button asChild>
-              <Link
-                to={environmentLogsLink + SERVICE_LOGS_URL(service.id)}
-                // state={{ prevUrl: pathname }}
-              >
+              <Link to={environmentLogsLink + SERVICE_LOGS_URL(service.id)} color="neutral">
                 <Icon iconName="scroll" />
               </Link>
             </ActionToolbar.Button>
