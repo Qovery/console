@@ -63,7 +63,10 @@ export const handleGitApplicationSubmit = (
 
     const git_repository = {
       provider: data.provider ?? 'GITHUB',
-      url: data.git_repository?.url || application.git_repository?.url || '',
+      url: match(data.is_public_repository)
+        .with(true, () => data.repository ?? '')
+        .with(false, undefined, () => data.git_repository?.url || application.git_repository?.url || '')
+        .exhaustive(),
       branch: data.branch,
       root_path: data.root_path,
       git_token_id: data.git_token_id,
@@ -129,7 +132,10 @@ export const handleJobSubmit = (
   if (isJobGitSource(job.source)) {
     const git_repository = {
       provider: data.provider ?? 'GITHUB',
-      url: data.git_repository?.url ?? '',
+      url: match(data.is_public_repository)
+        .with(true, () => data.repository ?? '')
+        .with(false, undefined, () => data.git_repository?.url ?? '')
+        .exhaustive(),
       branch: data.branch,
       root_path: data.root_path,
       git_token_id: data.git_token_id,
@@ -189,7 +195,10 @@ export const handleHelmSubmit = (data: HelmGeneralData, helm: Helm): HelmRequest
     .with('GIT', (): HelmRequestAllOfSourceOneOf => {
       return {
         git_repository: {
-          url: data.git_repository?.url ?? '',
+          url: match(data.is_public_repository)
+            .with(true, () => data.repository ?? '')
+            .with(false, undefined, () => data.git_repository?.url ?? '')
+            .exhaustive(),
           branch: data.branch,
           root_path: data.root_path,
           git_token_id: data.git_token_id,
