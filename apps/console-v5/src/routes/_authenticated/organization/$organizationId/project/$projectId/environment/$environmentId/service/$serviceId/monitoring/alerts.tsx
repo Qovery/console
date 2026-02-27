@@ -1,4 +1,4 @@
-import { Outlet, createFileRoute, useParams, useRouterState } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useMatchRoute, useParams } from '@tanstack/react-router'
 import { match } from 'ts-pattern'
 import { useClusterStatus, useDeployCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
@@ -16,9 +16,17 @@ export const Route = createFileRoute(
 function RouteComponent() {
   useDocumentTitle('Alerts - Qovery')
   const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
-  const pathname = useRouterState({ select: (state) => state.location.pathname })
-  const isCreateRoute = pathname.includes('/monitoring/alerts/create/')
-  const isEditRoute = /\/monitoring\/alerts\/[^/]+\/edit$/.test(pathname)
+  const matchRoute = useMatchRoute()
+  const isCreateRoute = Boolean(
+    matchRoute({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric',
+    })
+  )
+  const isEditRoute = Boolean(
+    matchRoute({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit',
+    })
+  )
   const isAlertSubRoute = isCreateRoute || isEditRoute
 
   const { data: environment } = useEnvironment({ environmentId, suspense: !isAlertSubRoute })
