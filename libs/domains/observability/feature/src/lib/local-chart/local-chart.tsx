@@ -139,7 +139,7 @@ export const ChartContent = memo(function ChartContent({
         onDoubleClick={handleChartDoubleClick}
         style={{ cursor: isLoading || isEmpty ? 'default' : 'crosshair' }}
       >
-        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
+        <CartesianGrid horizontal vertical={false} stroke="var(--neutral-4)" />
         <XAxis
           {...xAxisConfig}
           allowDataOverflow
@@ -201,7 +201,7 @@ export const ChartContent = memo(function ChartContent({
         {!hideEvents && referenceLineData?.map((event) => createAlignedReferenceLine(event))}
         {children}
         <YAxis
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+          tick={{ fontSize: 12, fill: 'var(--neutral-9)' }}
           tickLine={{ stroke: 'transparent' }}
           axisLine={{ stroke: 'transparent' }}
           orientation="right"
@@ -275,10 +275,10 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
           <div className="flex w-full justify-between gap-1 p-4 pb-0">
             <div>
               <Heading className="flex items-center">{label}</Heading>
-              <p className="max-w-2/3 text-ssm text-neutral-350">{description}</p>
+              <p className="max-w-2/3 text-ssm text-neutral-subtle">{description}</p>
             </div>
             <div className="flex gap-1">
-              {descriptionRight && <span className="mr-1 mt-0.5 text-ssm text-neutral-400">{descriptionRight}</span>}
+              {descriptionRight && <span className="mr-1 mt-0.5 text-ssm text-neutral-subtle">{descriptionRight}</span>}
               {handleResetLegend && (
                 <Tooltip content="Reset filter">
                   <Button
@@ -293,15 +293,9 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
                 </Tooltip>
               )}
               <Tooltip content="Show chart">
-                <Button
-                  variant="outline"
-                  color="neutral"
-                  size="xs"
-                  className="w-6 items-center justify-center p-0"
-                  onClick={() => setIsModalOpen(true)}
-                >
+                <Button variant="outline" color="neutral" size="xs" iconOnly onClick={() => setIsModalOpen(true)}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
-                    <g fill="#383E50" fillRule="evenodd" clipPath="url(#clip0_25356_47547)" clipRule="evenodd">
+                    <g fill="currentColor" fillRule="evenodd" clipPath="url(#clip0_25356_47547)" clipRule="evenodd">
                       <path d="M4.15 3.6a.55.55 0 0 0-.55.55v1.1a.55.55 0 1 1-1.1 0v-1.1A1.65 1.65 0 0 1 4.15 2.5h1.1a.55.55 0 1 1 0 1.1zM10.2 3.05a.55.55 0 0 1 .55-.55h1.1a1.65 1.65 0 0 1 1.65 1.65v1.1a.55.55 0 1 1-1.1 0v-1.1a.55.55 0 0 0-.55-.55h-1.1a.55.55 0 0 1-.55-.55M12.95 10.2a.55.55 0 0 1 .55.55v1.1a1.65 1.65 0 0 1-1.65 1.65h-1.1a.55.55 0 1 1 0-1.1h1.1a.55.55 0 0 0 .55-.55v-1.1a.55.55 0 0 1 .55-.55M3.05 10.2a.55.55 0 0 1 .55.55v1.1a.55.55 0 0 0 .55.55h1.1a.55.55 0 1 1 0 1.1h-1.1a1.65 1.65 0 0 1-1.65-1.65v-1.1a.55.55 0 0 1 .55-.55M4.7 6.35a1.1 1.1 0 0 1 1.1-1.1h4.4a1.1 1.1 0 0 1 1.1 1.1v3.3a1.1 1.1 0 0 1-1.1 1.1H5.8a1.1 1.1 0 0 1-1.1-1.1zm5.5 0H5.8v3.3h4.4z"></path>
                     </g>
                     <defs>

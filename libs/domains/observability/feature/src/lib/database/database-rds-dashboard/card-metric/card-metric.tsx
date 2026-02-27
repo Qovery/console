@@ -28,7 +28,7 @@ export function CardMetric({
 }: CardMetricProps) {
   return (
     <Section
-      className={twMerge('h-full w-full justify-center rounded border border-neutral-250 p-4', className)}
+      className={twMerge('h-full w-full justify-center rounded border border-neutral p-4', className)}
       {...props}
     >
       <div className="flex flex-col justify-between gap-2">
@@ -40,11 +40,11 @@ export function CardMetric({
               width={170}
               height={16}
             >
-              <Heading className="flex items-center gap-1 font-normal text-neutral-350">
+              <Heading className="flex items-center gap-1 font-normal text-neutral-subtle">
                 {title}
                 <Tooltip content={description}>
                   <span>
-                    <Icon iconName="info-circle" iconStyle="regular" className="text-xs text-neutral-350" />
+                    <Icon iconName="info-circle" iconStyle="regular" className="text-xs text-neutral-subtle" />
                   </span>
                 </Tooltip>
               </Heading>
@@ -81,12 +81,12 @@ export function CardMetric({
           <div className="flex flex-col">
             {value !== undefined && (
               <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-semibold text-neutral-400">
+                <span className="text-2xl font-semibold text-neutral-subtle">
                   {value} {unit}
                 </span>
               </div>
             )}
-            {valueDescription && <p className="text-sm text-neutral-350">{valueDescription}</p>}
+            {valueDescription && <p className="text-sm text-neutral-subtle">{valueDescription}</p>}
           </div>
         </Skeleton>
       </div>

@@ -305,7 +305,7 @@ The chart supports mixed visualization types including area charts, bar charts, 
             <Line
               type="linear"
               dataKey="disk"
-              stroke="var(--color-green-500)"
+              stroke="var(--positive-11)"
               strokeWidth={2}
               dot={false}
               connectNulls={false}
@@ -431,13 +431,13 @@ export const EventMarkers = {
           />
           <ReferenceLine
             x={1704081600000}
-            stroke="var(--color-red-500)"
+            stroke="var(--negative-11)"
             strokeDasharray="3 3"
             strokeWidth={2}
             label={{
               value: 'Alert Triggered',
               position: 'top',
-              fill: 'var(--color-red-500)',
+              fill: 'var(--negative-11)',
               fontSize: 12,
               fontWeight: 'bold',
             }}

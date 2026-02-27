@@ -359,6 +359,26 @@ module.exports = {
         warningInvert: { DEFAULT: 'var(--warning-invert-11)' },
         accent1: { DEFAULT: 'var(--accent-11)', hover: 'var(--accent1-10)' },
       },
+      fill: ({ theme }) => ({
+        ...theme('colors'),
+        neutral: {
+          ...theme('colors.neutral'),
+          DEFAULT: 'var(--neutral-12)',
+          subtle: 'var(--neutral-11)',
+          disabled: 'var(--neutral-10)',
+          strong: 'var(--neutral-9)',
+        },
+      }),
+      stroke: ({ theme }) => ({
+        ...theme('colors'),
+        neutral: {
+          ...theme('colors.neutral'),
+          DEFAULT: 'var(--neutral-12)',
+          subtle: 'var(--neutral-11)',
+          disabled: 'var(--neutral-10)',
+          strong: 'var(--neutral-9)',
+        },
+      }),
       borderColor: {
         neutral: {
           DEFAULT: 'var(--neutral-6)',

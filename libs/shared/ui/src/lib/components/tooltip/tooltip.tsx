@@ -44,7 +44,7 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, T
       <TooltipPrimitive.Portal container={container}>
         <TooltipPrimitive.Content
           className={twMerge(
-            'z-[10000] rounded bg-surface-neutralInvert px-2 py-1.5 text-xs font-medium text-neutralInvert',
+            'z-tooltip rounded bg-surface-neutralInvert-component px-2 py-1.5 text-xs font-medium text-neutralInvert',
             classNameContent
           )}
           side={side}
@@ -52,7 +52,7 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, T
           align={align}
         >
           {content}
-          <TooltipPrimitive.Arrow className="fill-surface-neutralInvert" offset={10} width={11} height={5} />
+          <TooltipPrimitive.Arrow className="fill-surface-neutralInvert-component" offset={10} width={11} height={5} />
         </TooltipPrimitive.Content>
       </TooltipPrimitive.Portal>
     </TooltipPrimitive.Root>

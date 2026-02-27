@@ -358,6 +358,7 @@ const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
   '/_authenticated/organization/$organizationId/settings',
   '/_authenticated/organization/$organizationId/audit-logs',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
 ]
 
 function useFullWidthLayout(): boolean {

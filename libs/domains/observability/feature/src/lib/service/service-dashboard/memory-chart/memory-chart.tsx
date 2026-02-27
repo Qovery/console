@@ -291,7 +291,7 @@ export function MemoryChart({
         dataKey="Request"
         name="Request"
         type="linear"
-        stroke="var(--color-neutral-300)"
+        stroke="var(--neutral-8)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -302,7 +302,7 @@ export function MemoryChart({
         dataKey="Limit"
         name="Limit"
         type="linear"
-        stroke="var(--color-red-500)"
+        stroke="var(--negative-11)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}

@@ -52,7 +52,7 @@ function DatabaseRdsDashboardContent() {
 
   return (
     <div className="isolate">
-      <div className="sticky top-16 z-10 flex h-[68px] w-full items-center justify-between gap-3 border-b border-neutral-250 bg-white px-8">
+      <div className="bg-surface sticky top-16 z-10 flex h-[68px] w-full items-center justify-between gap-3 border-b border-neutral px-8">
         <div className="flex gap-3">
           <Tooltip
             content={
@@ -128,20 +128,20 @@ function DatabaseRdsDashboardContent() {
         <Section className="gap-4">
           <Heading weight="medium">Resources</Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsCpuChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsRamChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsDiskQueueDepthChart
                 serviceId={databaseId}
                 clusterId={environment.cluster_id}
                 dbInstance={dbInstance}
               />
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsConnectionsChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
           </div>
@@ -150,10 +150,10 @@ function DatabaseRdsDashboardContent() {
         <Section className="gap-4">
           <Heading weight="medium">Query Performance</Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsWriteLatencyChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsReadLatencyChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
           </div>
@@ -162,13 +162,13 @@ function DatabaseRdsDashboardContent() {
         <Section className="gap-4">
           <Heading weight="medium">Storage & I/O</Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsWriteIopChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsReadIopChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsStorageAvailableChart
                 serviceId={databaseId}
                 clusterId={environment.cluster_id}
