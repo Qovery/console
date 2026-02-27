@@ -95,14 +95,10 @@ describe('ServiceAlerting', () => {
     })
   })
 
-  it('should render loader when environment is not loaded', () => {
-    mockUseEnvironment.mockReturnValue({
-      data: undefined,
-    })
+  it('should render alerting page header', () => {
+    renderWithProviders(<ServiceAlerting />)
 
-    const { container } = renderWithProviders(<ServiceAlerting />)
-
-    expect(container.querySelector('.animate-spin')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Alert rules' })).toBeInTheDocument()
   })
 
   it('should render empty state when no alerts exist', () => {
