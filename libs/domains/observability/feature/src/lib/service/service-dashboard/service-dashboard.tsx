@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { subHours } from 'date-fns'
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
@@ -413,20 +414,12 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
 }
 
 export interface ServiceDashboardProps {
-  organizationId?: string
-  environmentId: string
-  serviceId: string
   queryParams?: DashboardQueryParams
   setQueryParams?: (updates: Partial<DashboardQueryParams>) => void
 }
 
-export function ServiceDashboard({
-  organizationId,
-  environmentId,
-  serviceId,
-  queryParams,
-  setQueryParams,
-}: ServiceDashboardProps) {
+export function ServiceDashboard({ queryParams, setQueryParams }: ServiceDashboardProps) {
+  const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   return (
     <DashboardProvider organizationId={organizationId} queryParams={queryParams} setQueryParams={setQueryParams}>
       <ServiceDashboardContent environmentId={environmentId} serviceId={serviceId} />

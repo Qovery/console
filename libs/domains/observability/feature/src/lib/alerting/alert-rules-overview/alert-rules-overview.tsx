@@ -5,12 +5,6 @@ import { type PropsWithChildren, type ReactNode, useMemo, useState } from 'react
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import {
-  APPLICATION_MONITORING_ALERTS_URL,
-  APPLICATION_MONITORING_ALERT_EDIT_URL,
-  APPLICATION_MONITORING_URL,
-  APPLICATION_URL,
-} from '@qovery/shared/routes'
-import {
   Badge,
   Button,
   Chart,
@@ -100,7 +94,7 @@ export function AlertRulesOverview({
 }: PropsWithChildren<AlertRulesOverviewProps>) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const navigate = useNavigate({ from: '/organization/$organizationId/alerts/alert-rules' })
+  const navigate = useNavigate()
 
   const { mutate: deleteAlertRule } = useDeleteAlertRule({ organizationId })
 
@@ -189,11 +183,17 @@ export function AlertRulesOverview({
     )
 
   const editAlertRule = (projectId: string, environmentId: string, serviceId: string, alertRule: AlertRuleResponse) => {
+    const params = {
+      organizationId,
+      projectId,
+      environmentId,
+      serviceId,
+      alertId: alertRule.id,
+    }
+
     navigate({
-      to:
-        APPLICATION_URL(organizationId, projectId, environmentId, serviceId) +
-        APPLICATION_MONITORING_URL +
-        APPLICATION_MONITORING_ALERT_EDIT_URL(alertRule.id),
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit',
+      params,
     })
   }
 
@@ -251,7 +251,7 @@ export function AlertRulesOverview({
     <div className="flex flex-col gap-6">
       {findAlertRuleNotDeployed && children}
 
-      <Table.Root className="divide-y divide-neutral">
+      <Table.Root className="w-[1000px] divide-y divide-neutral">
         <Table.Header>
           <Table.Row className="font-code text-xs">
             <Table.ColumnHeaderCell className="h-9 w-12">
@@ -378,16 +378,13 @@ export function AlertRulesOverview({
                       color="neutral"
                       size="xs"
                       className="justify-center gap-1.5 pl-0.5"
-                      to={
-                        APPLICATION_URL(
-                          organizationId,
-                          alertRule.target?.service?.project_id,
-                          alertRule.target?.service?.environment_id,
-                          alertRule.target?.service?.id
-                        ) +
-                        APPLICATION_MONITORING_URL +
-                        APPLICATION_MONITORING_ALERTS_URL
-                      }
+                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts"
+                      params={{
+                        organizationId,
+                        projectId: alertRule.target?.service?.project_id ?? '',
+                        environmentId: alertRule.target?.service?.environment_id ?? '',
+                        serviceId: alertRule.target?.service?.id ?? '',
+                      }}
                     >
                       <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-surface-neutral-subtle">
                         <Icon

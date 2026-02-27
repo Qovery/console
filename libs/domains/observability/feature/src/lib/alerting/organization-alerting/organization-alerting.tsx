@@ -17,7 +17,7 @@ export function OrganizationAlerting() {
       <div className="flex flex-col gap-3">
         <InputSearch
           placeholder="Search alert by name, status, target…"
-          className="w-72"
+          className="w-80"
           onChange={(value) => setFilter(value)}
         />
         <AlertRulesOverview organizationId={organizationId} filter={filter} />

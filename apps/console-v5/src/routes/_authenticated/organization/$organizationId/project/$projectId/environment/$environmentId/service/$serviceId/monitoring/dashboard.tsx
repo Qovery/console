@@ -25,7 +25,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   useDocumentTitle('Monitoring - Qovery')
-  const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { environmentId = '', serviceId = '' } = useParams({ strict: false })
   const search = Route.useSearch()
   const navigate = Route.useNavigate()
 
@@ -116,13 +116,7 @@ function RouteComponent() {
       />
     </div>
   ) : (
-    <ServiceDashboard
-      organizationId={organizationId}
-      environmentId={environmentId}
-      serviceId={serviceId}
-      queryParams={search}
-      setQueryParams={setDashboardQueryParams}
-    />
+    <ServiceDashboard queryParams={search} setQueryParams={setDashboardQueryParams} />
   )
 }
 
