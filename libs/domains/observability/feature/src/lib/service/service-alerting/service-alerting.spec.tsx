@@ -9,8 +9,8 @@ const mockUseDeleteAlertRule = jest.fn()
 const mockUseEnvironment = jest.fn()
 const mockUseService = jest.fn()
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
   useParams: () => mockUseParams(),
 }))
 
@@ -74,7 +74,7 @@ describe('ServiceAlerting', () => {
       organizationId: 'org-123',
       projectId: 'project-123',
       environmentId: 'env-123',
-      applicationId: 'app-123',
+      serviceId: 'app-123',
     })
     mockUseEnvironment.mockReturnValue({
       data: defaultEnvironment,
@@ -95,14 +95,10 @@ describe('ServiceAlerting', () => {
     })
   })
 
-  it('should render loader when environment is not loaded', () => {
-    mockUseEnvironment.mockReturnValue({
-      data: undefined,
-    })
+  it('should render alerting page header', () => {
+    renderWithProviders(<ServiceAlerting />)
 
-    const { container } = renderWithProviders(<ServiceAlerting />)
-
-    expect(container.querySelector('.animate-spin')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Alert rules' })).toBeInTheDocument()
   })
 
   it('should render empty state when no alerts exist', () => {

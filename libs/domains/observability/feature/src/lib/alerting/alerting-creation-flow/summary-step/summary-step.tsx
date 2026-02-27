@@ -1,6 +1,6 @@
+import { useNavigate, useParams, useRouterState } from '@tanstack/react-router'
 import { type AlertTargetType } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useService } from '@qovery/domains/services/feature'
@@ -9,7 +9,6 @@ import { useCreateAlertRule } from '../../../hooks/use-create-alert-rule/use-cre
 import { SeverityIndicator } from '../../severity-indicator/severity-indicator'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration } from '../alerting-creation-flow.types'
-import { ALERTING_CREATION_EDIT, ALERTING_CREATION_METRIC } from '../router'
 import {
   QUERY_CPU,
   QUERY_HTTP_ERROR_COMBINED,
@@ -38,28 +37,28 @@ function AlertsSummaryTable({
   showIncludeButton = false,
 }: AlertsSummaryTableProps) {
   return (
-    <div className="-mt-2 overflow-hidden rounded-lg border border-neutral-250 bg-white">
-      <Table.Root className="divide-y divide-neutral-250">
+    <div className="-mt-2 overflow-hidden rounded-lg border border-neutral bg-background">
+      <Table.Root className="divide-y divide-neutral">
         <Table.Header>
           <Table.Row className="font-code text-xs">
-            <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Alert name</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Metric</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">Severity</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-350">
+            <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-subtle">Alert name</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-subtle">Metric</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-subtle">Severity</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="h-9 font-normal text-neutral-subtle">
               Notification channels
             </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="h-9 text-right font-normal text-neutral-350">
+            <Table.ColumnHeaderCell className="h-9 text-right font-normal text-neutral-subtle">
               Actions
             </Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
 
-        <Table.Body className="divide-y divide-neutral-250">
+        <Table.Body className="divide-y divide-neutral">
           {alerts?.map((alert, index) => (
             <Table.Row key={index} className="h-11">
               <Table.RowHeaderCell>
                 <div className="flex items-center justify-between gap-3">
-                  <span className="truncate text-sm text-neutral-400">{alert.name}</span>
+                  <span className="truncate text-sm text-neutral">{alert.name}</span>
                 </div>
               </Table.RowHeaderCell>
               <Table.Cell className="h-11">{alert.tag.replace(/_/g, ' ')}</Table.Cell>
@@ -118,11 +117,11 @@ function AlertsSummaryTable({
 
 export function SummaryStep() {
   const navigate = useNavigate()
-  const location = useLocation()
-  const [searchParams] = useSearchParams()
-  const { organizationId = '', applicationId = '' } = useParams()
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const searchStr = useRouterState({ select: (state) => state.location.searchStr })
+  const { organizationId = '', serviceId = '' } = useParams({ strict: false })
 
-  const { data: service } = useService({ serviceId: applicationId })
+  const { data: service } = useService({ serviceId })
   const { data: environment } = useEnvironment({ environmentId: service?.environment.id })
   const { mutateAsync: createAlertRule } = useCreateAlertRule({ organizationId })
 
@@ -146,7 +145,7 @@ export function SummaryStep() {
   }, [selectedMetrics.length, setCurrentStepIndex])
 
   const handleEdit = (alertId: string) => {
-    navigate(`..${ALERTING_CREATION_EDIT(alertId)}`)
+    navigate({ to: `../edit/${alertId}` })
   }
 
   const handleToggleSkip = (index: number, isCurrentlySkipped: boolean) => {
@@ -214,9 +213,9 @@ export function SummaryStep() {
   }
 
   const handlePrevious = () => {
-    const basePath = location.pathname.replace(/\/summary$/, '')
-    const queryString = searchParams.toString() ? `?${searchParams.toString()}` : ''
-    navigate(`${basePath}${ALERTING_CREATION_METRIC(selectedMetrics[currentStepIndex - 1])}${queryString}`)
+    const basePath = pathname.replace(/\/summary$/, '')
+    const queryString = searchStr ?? ''
+    navigate({ to: `${basePath}/metric/${selectedMetrics[currentStepIndex - 1]}${queryString}` })
   }
 
   const activeAlertsWithIndex = alerts
@@ -235,7 +234,7 @@ export function SummaryStep() {
       <Section className="flex flex-col gap-4">
         <Heading>Summary</Heading>
 
-        <div className="flex justify-between rounded-lg border border-neutral-250 p-4 text-sm">
+        <div className="flex justify-between rounded-lg border border-neutral p-4 text-sm">
           <p className="font-medium">Target service</p>
           <div>
             <span>{serviceName}</span>
@@ -243,12 +242,12 @@ export function SummaryStep() {
         </div>
 
         <div>
-          <div className="overflow-hidden rounded-t-lg border border-neutral-250 bg-neutral-100 p-4 pb-5 text-sm">
+          <div className="overflow-hidden rounded-t-lg border border-neutral bg-surface-neutral-subtle p-4 pb-5 text-sm">
             <p className="flex items-center gap-1.5 font-medium">
-              <Icon iconName="circle-plus" iconStyle="regular" className="text-green-600" />
+              <Icon iconName="circle-plus" iconStyle="regular" className="text-positive" />
               Alerts included in creation ({activeAlerts.length})
             </p>
-            <span className=" text-neutral-350">
+            <span className="text-neutral-subtle">
               Alert we will automatically create and activate as soon as you confirm the creation
             </span>
           </div>
@@ -260,12 +259,12 @@ export function SummaryStep() {
               showExcludeButton
             />
           ) : (
-            <div className="-mt-2 flex flex-col items-center justify-center gap-3 overflow-hidden rounded-lg border border-neutral-250 bg-white p-8 text-sm">
-              <div className="flex h-8 w-8 items-center justify-center rounded border border-neutral-250 p-2">
+            <div className="-mt-2 flex flex-col items-center justify-center gap-3 overflow-hidden rounded-lg border border-neutral bg-background p-8 text-sm">
+              <div className="flex h-8 w-8 items-center justify-center rounded border border-neutral p-2">
                 <Icon iconName="bell-slash" iconStyle="regular" className="text-base" />
               </div>
-              <p className="text-center text-neutral-350">
-                <span className="mb-1 block font-medium text-neutral-800">
+              <p className="text-center text-neutral-subtle">
+                <span className="mb-1 block font-medium text-neutral">
                   No alerts included in creation
                   <br />
                 </span>
@@ -278,12 +277,12 @@ export function SummaryStep() {
 
         {skippedAlerts.length > 0 && (
           <div>
-            <div className="overflow-hidden rounded-t-lg border border-neutral-250 bg-neutral-100 p-4 pb-5 text-sm">
+            <div className="overflow-hidden rounded-t-lg border border-neutral bg-surface-neutral-subtle p-4 pb-5 text-sm">
               <p className="flex items-center gap-1.5 font-medium">
-                <Icon iconName="circle-minus" iconStyle="regular" className="text-red-600" />
+                <Icon iconName="circle-minus" iconStyle="regular" className="text-negative" />
                 Alerts excluded from creation ({skippedAlerts.length})
               </p>
-              <span className=" text-neutral-350">These alerts were skipped during setup and won't be created</span>
+              <span className="text-neutral-subtle">These alerts were skipped during setup and won't be created</span>
             </div>
             <AlertsSummaryTable
               alerts={skippedAlerts}
