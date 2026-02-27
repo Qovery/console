@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { pluralize } from '@qovery/shared/util-js'
 import { useInstantMetrics } from '../../../hooks/use-instant-metrics/use-instant-metrics'
@@ -25,6 +26,7 @@ export function CardLogErrors({
   clusterId: string
   containerName: string
 }) {
+  const navigate = useNavigate()
   const { queryTimeRange, startTimestamp, endTimestamp } = useDashboardContext()
 
   const timeRangeInHours = (parseInt(endTimestamp, 10) - parseInt(startTimestamp, 10)) / 3600
@@ -71,7 +73,7 @@ export function CardLogErrors({
           ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
           SERVICE_LOGS_URL(serviceId, undefined, undefined, 'history', startDate, endDate, 'error')
 
-        window.location.href = targetUrl
+        navigate({ to: targetUrl })
       }}
     />
   )

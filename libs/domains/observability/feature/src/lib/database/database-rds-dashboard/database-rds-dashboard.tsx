@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import { useParams } from 'react-router-dom'
 import { type Database } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
-import { Button, Callout, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
+import { Button, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useEnvironment } from '../../hooks/use-environment/use-environment'
 import { DashboardProvider, useDashboardContext } from '../../util-filter/dashboard-context'
 import { CardAvailableRam } from './card-available-ram/card-available-ram'
@@ -42,7 +42,7 @@ function DatabaseRdsDashboardContent() {
 
   if (!environment || !service)
     return (
-      <div className="flex h-full w-full items-center justify-center p-5">
+      <div className="flex min-h-page-container w-full items-center justify-center p-5">
         <Chart.Loader />
       </div>
     )
@@ -52,65 +52,68 @@ function DatabaseRdsDashboardContent() {
 
   return (
     <div className="isolate">
-      <div className="bg-surface sticky top-16 z-10 flex h-[68px] w-full items-center justify-between gap-3 border-b border-neutral px-8">
-        <div className="flex gap-3">
-          <Tooltip
-            content={
-              <span>
-                Live refresh (15s) <br />
-                Only for time ranges ≤ 1h
-              </span>
-            }
-          >
-            <Button
-              variant={isLiveUpdateEnabled ? 'solid' : 'surface'}
-              color={isLiveUpdateEnabled ? 'brand' : 'neutral'}
-              size="md"
-              className={clsx('gap-1.5', isLiveUpdateEnabled && 'border border-transparent')}
-              onClick={() => {
-                if (!isLiveUpdateEnabled) {
-                  if (timeRange !== '5m' && timeRange !== '15m' && timeRange !== '30m' && timeRange !== '1h') {
-                    handleTimeRangeChange('15m')
-                  }
-                }
-                setIsLiveUpdateEnabled(!isLiveUpdateEnabled)
-              }}
+      <div className="bg-surface sticky top-[45px] z-header h-14 w-full bg-background">
+        <div className="mx-8 flex h-full items-center justify-between gap-3 border-b border-neutral">
+          <div className="flex gap-2">
+            <Tooltip
+              content={
+                <span>
+                  Live refresh (15s) <br />
+                  Only for time ranges ≤ 1h
+                </span>
+              }
             >
-              <Icon iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'} iconStyle="regular" />
-              Live
+              <Button
+                variant={isLiveUpdateEnabled ? 'solid' : 'surface'}
+                color={isLiveUpdateEnabled ? 'brand' : 'neutral'}
+                size="md"
+                className={clsx('gap-1.5 pl-2.5', isLiveUpdateEnabled && 'border border-transparent')}
+                onClick={() => {
+                  if (!isLiveUpdateEnabled) {
+                    if (timeRange !== '5m' && timeRange !== '15m' && timeRange !== '30m' && timeRange !== '1h') {
+                      handleTimeRangeChange('15m')
+                    }
+                  }
+                  setIsLiveUpdateEnabled(!isLiveUpdateEnabled)
+                }}
+              >
+                <Icon iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'} iconStyle="regular" />
+                Live
+              </Button>
+            </Tooltip>
+            <SelectTimeRange />
+            <InputSelectSmall
+              name="timezone"
+              className="w-[120px] [&>i]:top-2"
+              inputClassName="h-8"
+              items={[
+                { label: 'Local Time', value: 'local' },
+                { label: 'UTC', value: 'utc' },
+              ]}
+              defaultValue={useLocalTime ? 'local' : 'utc'}
+              onChange={(e) => setUseLocalTime(e === 'local')}
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="plain"
+              size="xs"
+              className="flex items-center gap-1"
+              onClick={() => setHideEvents(!hideEvents)}
+            >
+              {hideEvents ? 'Show events' : 'Hide events'}
+              <Icon iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
             </Button>
-          </Tooltip>
-          <SelectTimeRange />
-          <InputSelectSmall
-            name="timezone"
-            className="w-[120px]"
-            items={[
-              { label: 'Local Time', value: 'local' },
-              { label: 'UTC', value: 'utc' },
-            ]}
-            defaultValue={useLocalTime ? 'local' : 'utc'}
-            onChange={(e) => setUseLocalTime(e === 'local')}
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="plain"
-            size="xs"
-            className="flex items-center gap-1"
-            onClick={() => setHideEvents(!hideEvents)}
-          >
-            {hideEvents ? 'Show events' : 'Hide events'}
-            <Icon iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
-          </Button>
-          <Button
-            variant="plain"
-            size="xs"
-            className="flex items-center gap-1"
-            onClick={() => setExpandCharts(!expandCharts)}
-          >
-            {expandCharts ? 'Collapse charts' : 'Expand charts'}
-            <Icon iconName={expandCharts ? 'arrows-minimize' : 'arrows-maximize'} iconStyle="light" />
-          </Button>
+            <Button
+              variant="plain"
+              size="xs"
+              className="flex items-center gap-1"
+              onClick={() => setExpandCharts(!expandCharts)}
+            >
+              {expandCharts ? 'Collapse charts' : 'Expand charts'}
+              <Icon iconName={expandCharts ? 'arrows-minimize' : 'arrows-maximize'} iconStyle="light" />
+            </Button>
+          </div>
         </div>
       </div>
       <div className="space-y-10 px-8 py-10">

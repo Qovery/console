@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
@@ -29,12 +29,13 @@ function RouteComponent() {
   const search = Route.useSearch()
   const navigate = Route.useNavigate()
 
-  const { data: environment } = useEnvironment({ environmentId })
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: serviceStatus } = useDeploymentStatus({ environmentId, serviceId })
-  const { data: service, isFetched: isServiceFetched } = useService({ environmentId, serviceId })
-  const { data: cluster, isFetched: isClusterFetched } = useCluster({
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
+  const { data: cluster } = useCluster({
     organizationId: environment?.organization.id ?? '',
     clusterId: environment?.cluster_id ?? '',
+    suspense: true,
   })
 
   const hasMetrics = useMemo(
@@ -69,18 +70,19 @@ function RouteComponent() {
     [navigate]
   )
 
-  if (!isClusterFetched || !isServiceFetched) return null
-
-  posthog.capture('service-monitoring', {
-    metrics_enabled: hasMetrics,
-    service: {
-      organization_id: environment?.organization.id ?? '',
-      project_id: environment?.project.id ?? '',
-      environment_id: environmentId,
-      service_id: serviceId,
-      service_name: service?.name ?? '',
-    },
-  })
+  // Keep analytics in an effect to avoid firing on every render
+  useEffect(() => {
+    posthog.capture('service-monitoring', {
+      metrics_enabled: hasMetrics,
+      service: {
+        organization_id: environment?.organization.id ?? '',
+        project_id: environment?.project.id ?? '',
+        environment_id: environmentId,
+        service_id: serviceId,
+        service_name: service?.name ?? '',
+      },
+    })
+  }, [environment?.organization.id, environment?.project.id, environmentId, hasMetrics, service?.name, serviceId])
 
   if (!hasMetrics)
     return (

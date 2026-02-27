@@ -94,8 +94,8 @@ export function SelectTimeRange() {
       {timeRange !== 'custom' && (
         <InputSelectSmall
           name="time-range"
-          className="w-[180px]"
-          inputClassName="rounded-l-none"
+          className="w-[180px] [&>i]:top-2"
+          inputClassName="rounded-l-none h-8"
           items={timeRangeOptions}
           defaultValue={timeRange}
           onChange={(e) => {

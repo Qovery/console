@@ -1,6 +1,6 @@
 import { Outlet } from '@tanstack/react-router'
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { Suspense, useMemo } from 'react'
+import { Suspense } from 'react'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ErrorBoundary, LoaderSpinner, Sidebar } from '@qovery/shared/ui'
@@ -18,17 +18,26 @@ const OutletLoader = () => (
 )
 
 function RouteComponent() {
+  return (
+    <Suspense fallback={<OutletLoader />}>
+      <ErrorBoundary>
+        <RouteContent />
+      </ErrorBoundary>
+    </Suspense>
+  )
+}
+
+function RouteContent() {
   const { organizationId = '', projectId, environmentId, serviceId } = useParams({ strict: false })
   const pathMonitoring = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}/monitoring`
 
-  const { data: environment } = useEnvironment({ environmentId })
-  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
-
-  const hasAlerting =
-    useMemo(
-      () => cluster?.metrics_parameters?.configuration?.alerting?.enabled,
-      [cluster?.metrics_parameters?.configuration?.alerting?.enabled]
-    ) ?? false
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
+  const { data: cluster } = useCluster({
+    organizationId,
+    clusterId: environment?.cluster_id ?? '',
+    suspense: true,
+  })
+  const hasAlerting = cluster?.metrics_parameters?.configuration?.alerting?.enabled ?? false
 
   const dashboardLink = {
     title: 'Dashboard',
@@ -59,11 +68,7 @@ function RouteComponent() {
       </aside>
       <div className="min-w-0 flex-1">
         <div className="container mx-auto px-0">
-          <Suspense fallback={<OutletLoader />}>
-            <ErrorBoundary>
-              <Outlet />
-            </ErrorBoundary>
-          </Suspense>
+          <Outlet />
         </div>
       </div>
     </div>
