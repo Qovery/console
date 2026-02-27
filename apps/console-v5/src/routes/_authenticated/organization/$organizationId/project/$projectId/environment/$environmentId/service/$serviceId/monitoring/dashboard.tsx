@@ -13,7 +13,7 @@ import {
 } from '@qovery/domains/observability/feature'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { monitoringDashboardSearchParamsSchema } from '@qovery/shared/router'
-import { Badge, Button, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
+import { Badge, Button, EmptyState, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -107,11 +107,11 @@ function RouteComponent() {
 
   return noMetricsAvailable ? (
     <div className="px-10 py-7">
-      <div className="flex flex-col items-center gap-1 rounded border border-neutral bg-surface-neutral-subtle py-10 text-sm text-neutral-subtle">
-        <Icon className="text-md text-neutral-subtle" iconStyle="regular" iconName="circle-question" />
-        <span className="font-medium">Monitoring is not available</span>
-        <span>Deploy this service to view monitoring data</span>
-      </div>
+      <EmptyState
+        title="Monitoring is not available"
+        description="Deploy this service to view monitoring data"
+        icon="circle-question"
+      />
     </div>
   ) : (
     <ServiceDashboard
