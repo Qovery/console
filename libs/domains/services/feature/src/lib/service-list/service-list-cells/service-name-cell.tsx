@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
-import { type Environment, type Status } from 'qovery-typescript-axios'
+import { type Environment } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import {
@@ -12,22 +12,15 @@ import {
 } from '@qovery/shared/routes'
 import { AnimatedGradientText, Badge, Button, Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { formatCronExpression, pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import useDeploymentStatus from '../../hooks/use-deployment-status/use-deployment-status'
 import ServiceActionToolbar from '../../service-action-toolbar/service-action-toolbar'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
 import ServiceLinksPopover from '../../service-links-popover/service-links-popover'
 import ServiceTemplateIndicator from '../../service-template-indicator/service-template-indicator'
 
-export function ServiceNameCell({
-  service,
-  environment,
-  deploymentStatus,
-}: {
-  service: AnyService
-  environment: Environment
-  deploymentStatus?: Status
-}) {
+export function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
   const navigate = useNavigate()
-
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId: service.id })
   const deploymentRequestsCount = Number(deploymentStatus?.deployment_requests_count)
 
   const LinkDeploymentStatus = () => {
@@ -37,9 +30,9 @@ export function ServiceNameCell({
 
     return match(deploymentStatus?.state)
       .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
-        <span className="text-ssm font-normal text-neutral-350">{upperCaseFirstLetter(s).replace('_', ' ')}...</span>
+        <span className="text-ssm font-normal text-neutral-subtle">{upperCaseFirstLetter(s).replace('_', ' ')}...</span>
       ))
-      .with('CANCELED', () => <span className="text-ssm font-normal text-neutral-350">Last deployment aborted</span>)
+      .with('CANCELED', () => <span className="text-ssm font-normal text-neutral-subtle">Last deployment aborted</span>)
       .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', (s) => (
         <Link
           to={environmentLog + deploymentLog}
@@ -49,7 +42,7 @@ export function ServiceNameCell({
           className="group flex truncate"
           onClick={(e) => e.stopPropagation()}
         >
-          <AnimatedGradientText shimmerWidth={80} className="group-hover:text-brand-500">
+          <AnimatedGradientText shimmerWidth={80} className="group-hover:text-brand">
             <span className="flex items-center gap-0.5">
               {upperCaseFirstLetter(s)}... <Icon iconName="arrow-up-right" />
             </span>
@@ -191,7 +184,7 @@ export function ServiceNameCell({
           {'auto_deploy' in service && service.auto_deploy && (
             <Tooltip content="Auto-deploy">
               <span>
-                <Icon className="text-neutral-300" iconName="arrows-rotate" />
+                <Icon className="text-neutral-subtle" iconName="arrows-rotate" />
               </span>
             </Tooltip>
           )}

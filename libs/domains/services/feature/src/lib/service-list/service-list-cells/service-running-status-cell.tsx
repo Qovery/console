@@ -1,5 +1,6 @@
-import { ServiceTypeEnum } from 'qovery-typescript-axios'
+import { type Environment, ServiceTypeEnum } from 'qovery-typescript-axios'
 import { ServiceSubActionDto } from 'qovery-ws-typescript-axios'
+import { useEffect } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import {
@@ -10,7 +11,9 @@ import {
   SERVICES_GENERAL_URL,
 } from '@qovery/shared/routes'
 import { Link, Skeleton, StatusChip, Tooltip } from '@qovery/shared/ui'
-import useCheckRunningStatusClosed from '../../hooks/use-check-running-status-closed/use-check-running-status-closed'
+import { useCheckRunningStatusClosed } from '../../hooks/use-check-running-status-closed/use-check-running-status-closed'
+import { useServiceDeploymentAndRunningStatuses } from '../../hooks/use-service-deployment-and-running-statuses/use-service-deployment-and-running-statuses'
+import { useServicesListContext } from '../../hooks/use-services-list-context/use-services-list-context'
 
 type ServiceRunningStatusCellProps = {
   service: AnyService
@@ -27,7 +30,19 @@ export function ServiceRunningStatusCell({
   environment,
   clusterId,
 }: ServiceRunningStatusCellProps) {
-  const stateLabel = service.runningStatus.stateLabel
+  const { addStatusForService, statuses } = useServicesListContext()
+  const { data } = useServiceDeploymentAndRunningStatuses({ environmentId: environment.id, service })
+  const { runningStatus, deploymentStatus } = data
+
+  // Setting the status in the context to be used in other cells and filters without needing to fetch it again
+  useEffect(() => {
+    if (
+      data.runningStatus?.state !== statuses[service.id]?.runningStatus.state ||
+      data.deploymentStatus?.state !== statuses[service.id]?.deploymentStatus?.state
+    ) {
+      addStatusForService(service.id, data)
+    }
+  }, [data, addStatusForService, service.id, statuses])
 
   const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
     clusterId,
@@ -43,20 +58,29 @@ export function ServiceRunningStatusCell({
     )
     .otherwise(({ id }) => APPLICATION_URL(organizationId, projectId, environment.id, id) + SERVICES_GENERAL_URL)
 
-  const value = match(service.runningStatus.triggered_action)
-    .with({ sub_action: ServiceSubActionDto.TERRAFORM_PLAN_ONLY }, () => 'Plan ' + stateLabel.toLowerCase())
-    .with({ sub_action: ServiceSubActionDto.TERRAFORM_PLAN_AND_APPLY }, () => 'Apply ' + stateLabel.toLowerCase())
+  const value = match(runningStatus?.triggered_action)
+    .with(
+      { sub_action: ServiceSubActionDto.TERRAFORM_PLAN_ONLY },
+      () => 'Plan ' + runningStatus?.stateLabel?.toLowerCase()
+    )
+    .with(
+      { sub_action: ServiceSubActionDto.TERRAFORM_PLAN_AND_APPLY },
+      () => 'Apply ' + runningStatus?.stateLabel?.toLowerCase()
+    )
     .with(
       { sub_action: ServiceSubActionDto.TERRAFORM_MIGRATE_STATE },
-      () => 'Migrate state ' + stateLabel.toLowerCase()
+      () => 'Migrate state ' + runningStatus?.stateLabel?.toLowerCase()
     )
     .with(
       { sub_action: ServiceSubActionDto.TERRAFORM_FORCE_UNLOCK_STATE },
-      () => 'Force unlock ' + stateLabel.toLowerCase()
+      () => 'Force unlock ' + runningStatus?.stateLabel?.toLowerCase()
     )
-    .with({ sub_action: ServiceSubActionDto.TERRAFORM_DESTROY }, () => 'Destroy ' + stateLabel.toLocaleString())
-    .with({ sub_action: ServiceSubActionDto.NONE }, () => stateLabel)
-    .with(undefined, () => stateLabel)
+    .with(
+      { sub_action: ServiceSubActionDto.TERRAFORM_DESTROY },
+      () => 'Destroy ' + runningStatus?.stateLabel?.toLowerCase()
+    )
+    .with({ sub_action: ServiceSubActionDto.NONE }, () => runningStatus?.stateLabel)
+    .with(undefined, () => runningStatus?.stateLabel)
     .exhaustive()
 
   if (checkRunningStatusClosed) {
@@ -65,7 +89,7 @@ export function ServiceRunningStatusCell({
         <Tooltip content="See cluster">
           <Link
             as="button"
-            to={CLUSTER_URL(organizationId, environment)}
+            to={CLUSTER_URL(organizationId, environment.id)}
             onClick={(e) => e.stopPropagation()}
             className="gap-2 whitespace-nowrap text-sm"
             size="md"
@@ -97,8 +121,8 @@ export function ServiceRunningStatusCell({
           >
             <StatusChip
               status={match(service)
-                .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, (s) => s.deploymentStatus?.state)
-                .otherwise((s) => s.runningStatus?.state)}
+                .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, () => deploymentStatus?.state)
+                .otherwise(() => runningStatus?.state)}
             />
             {value}
           </Link>

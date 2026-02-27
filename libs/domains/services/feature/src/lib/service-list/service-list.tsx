@@ -25,7 +25,10 @@ import {
 } from '@qovery/shared/routes'
 import { Checkbox, EmptyState, Icon, Link, TableFilter, TablePrimitives, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import useServices from '../hooks/use-services/use-services'
+import {
+  ServicesListProvider,
+  useServicesListContext,
+} from '../hooks/use-services-list-context/use-services-list-context'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceListActionBar } from './service-list-action-bar'
 import {
@@ -41,13 +44,21 @@ export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
   environment: Environment
 }
 
-export function ServiceList({ className, environment, ...props }: ServiceListProps) {
+export function ServiceList({ ...props }: ServiceListProps) {
+  return (
+    <ServicesListProvider environmentId={props.environment.id || ''}>
+      <ServiceListTable {...props} />
+    </ServicesListProvider>
+  )
+}
+
+export function ServiceListTable({ className, environment, ...props }: ServiceListProps) {
   const clusterId = environment.cluster_id || ''
   const environmentId = environment.id || ''
   const organizationId = environment.organization.id || ''
   const projectId = environment.project.id || ''
 
-  const { data: services = [] } = useServices({ environmentId, suspense: true })
+  const { services } = useServicesListContext()
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -119,11 +130,7 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
         cell: (info) => {
           return (
             <div className="min-w-[400px] flex-1">
-              <ServiceNameCell
-                service={info.row.original}
-                deploymentStatus={info.row.original.deploymentStatus}
-                environment={environment}
-              />
+              <ServiceNameCell service={info.row.original} environment={environment} />
             </div>
           )
         },
