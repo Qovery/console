@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { subDays, subHours } from 'date-fns'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useQueryParams } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
@@ -35,8 +35,14 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
 
   const { data: service } = useService({ environmentId: environment.id, serviceId })
 
-  const startDate = queryParams.startDate ? new Date(queryParams.startDate) : undefined
-  const endDate = queryParams.endDate ? new Date(queryParams.endDate) : undefined
+  const startDate = useMemo(
+    () => (queryParams.startDate ? new Date(queryParams.startDate) : undefined),
+    [queryParams.startDate]
+  )
+  const endDate = useMemo(
+    () => (queryParams.endDate ? new Date(queryParams.endDate) : undefined),
+    [queryParams.endDate]
+  )
   const hasDeploymentId = Boolean(queryParams.deploymentId)
 
   const clearDate = useCallback(() => {
@@ -46,6 +52,11 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
       mode: 'live',
     })
   }, [setQueryParams])
+
+  const defaultDates = useMemo(
+    () => (startDate && endDate ? ([startDate, endDate] as [Date, Date]) : undefined),
+    [startDate, endDate]
+  )
 
   return (
     <>
@@ -117,7 +128,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
             isOpen={isOpenDatePicker}
             maxDate={new Date()}
             minDate={subDays(new Date(), 84)}
-            defaultDates={startDate && endDate ? [startDate, endDate] : undefined}
+            defaultDates={defaultDates}
             showTimeInput
             useLocalTime
             onClickOutside={() => setIsOpenDatePicker(false)}
