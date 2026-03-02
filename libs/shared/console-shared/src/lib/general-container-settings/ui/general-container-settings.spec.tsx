@@ -12,16 +12,18 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 
 jest.mock('@qovery/domains/organizations/feature', () => ({
   ...jest.requireActual('@qovery/domains/organizations/feature'),
-  useContainerImages: () => ({
-    data: [
-      {
-        image_name: 'my-image',
-        versions: [],
-      },
-    ],
-    isFetching: false,
-    refetch: () => Promise.resolve(),
-  }),
+  useContainerImages: ({ containerRegistryId }: { containerRegistryId: string }) => {
+    const dataByRegistry = {
+      '0': [{ image_name: 'my-image', versions: [] }],
+      '1': [{ image_name: 'my-ecr-image', versions: [] }],
+    }
+
+    return {
+      data: dataByRegistry[containerRegistryId as keyof typeof dataByRegistry] ?? [],
+      isFetching: false,
+      refetch: () => Promise.resolve(),
+    }
+  },
   useContainerVersions: () => ({
     data: [
       {
@@ -97,5 +99,21 @@ describe('CreateGeneralContainer', () => {
 
     expect(screen.queryByText('my-image')).not.toBeInTheDocument()
     expect(screen.queryByText('1.1.0')).not.toBeInTheDocument()
+  })
+
+  it('should show image list from the selected registry only', async () => {
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />)
+    )
+
+    await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
+    await userEvent.click(screen.getByLabelText('Image name'))
+    expect(screen.getByText('my-image')).toBeInTheDocument()
+    expect(screen.queryByText('my-ecr-image')).not.toBeInTheDocument()
+
+    await selectEvent.select(screen.getByLabelText('Registry'), ['my-ecr-registry'])
+    await userEvent.click(screen.getByLabelText('Image name'))
+    expect(screen.getByText('my-ecr-image')).toBeInTheDocument()
+    expect(screen.queryByText('my-image')).not.toBeInTheDocument()
   })
 })

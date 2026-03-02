@@ -90,6 +90,7 @@ export function GeneralContainerSettings({ organization, isSetting }: GeneralCon
       </div>
       {organization && watchRegistry && (
         <ImageName
+          key={watchRegistry}
           control={control}
           organizationId={organization.id}
           containerRegistryId={watchRegistry}
@@ -98,6 +99,7 @@ export function GeneralContainerSettings({ organization, isSetting }: GeneralCon
       )}
       {organization && watchRegistry && watchImageName && (
         <ImageTag
+          key={`${watchRegistry}-${watchImageName}`}
           control={control}
           organizationId={organization.id}
           containerRegistryId={watchRegistry}
