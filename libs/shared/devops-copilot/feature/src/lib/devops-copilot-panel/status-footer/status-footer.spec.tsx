@@ -12,7 +12,7 @@ jest.mock('@qovery/shared/ui', () => ({
 describe('StatusFooter', () => {
   const defaultProps = {
     isReadOnly: true,
-    appStatus: undefined,
+    status: undefined,
   }
 
   describe('rendering', () => {
@@ -44,39 +44,39 @@ describe('StatusFooter', () => {
   })
 
   describe('app status', () => {
-    it('should not render status link when appStatus is undefined', () => {
+    it('should not render status link when status is undefined', () => {
       render(<StatusFooter {...defaultProps} />)
 
       expect(screen.queryByRole('link')).not.toBeInTheDocument()
     })
 
     it('should render operational status', () => {
-      render(<StatusFooter {...defaultProps} appStatus={{ id: 'qovery', status: 'OPERATIONAL' }} />)
+      render(<StatusFooter {...defaultProps} status="OPERATIONAL" />)
 
       expect(screen.getByText('All systems operational')).toBeInTheDocument()
       expect(screen.getByRole('link')).toHaveAttribute('href', expect.stringContaining('status.qovery.com'))
     })
 
     it('should render major outage status', () => {
-      render(<StatusFooter {...defaultProps} appStatus={{ id: 'qovery', status: 'MAJOROUTAGE' }} />)
+      render(<StatusFooter {...defaultProps} status="MAJOROUTAGE" />)
 
       expect(screen.getByText('Major outage ongoing')).toBeInTheDocument()
     })
 
     it('should render minor outage status', () => {
-      render(<StatusFooter {...defaultProps} appStatus={{ id: 'qovery', status: 'MINOROUTAGE' }} />)
+      render(<StatusFooter {...defaultProps} status="MINOROUTAGE" />)
 
       expect(screen.getByText('Minor outage ongoing')).toBeInTheDocument()
     })
 
     it('should render partial outage status', () => {
-      render(<StatusFooter {...defaultProps} appStatus={{ id: 'qovery', status: 'PARTIALOUTAGE' }} />)
+      render(<StatusFooter {...defaultProps} status="PARTIALOUTAGE" />)
 
       expect(screen.getByText('Partial outage ongoing')).toBeInTheDocument()
     })
 
     it('should render status link with correct attributes', () => {
-      render(<StatusFooter {...defaultProps} appStatus={{ id: 'qovery', status: 'OPERATIONAL' }} />)
+      render(<StatusFooter {...defaultProps} status="OPERATIONAL" />)
 
       const link = screen.getByRole('link')
       expect(link).toHaveAttribute('target', '_blank')
@@ -86,25 +86,25 @@ describe('StatusFooter', () => {
 
   describe('DotStatus color', () => {
     it('should render dot status for operational status', () => {
-      render(<StatusFooter {...defaultProps} appStatus={{ id: 'qovery', status: 'OPERATIONAL' }} />)
+      render(<StatusFooter {...defaultProps} status="OPERATIONAL" />)
 
       expect(screen.getByText('All systems operational')).toBeInTheDocument()
     })
 
     it('should render red dot for major outage', () => {
-      render(<StatusFooter {...defaultProps} appStatus={{ id: 'qovery', status: 'MAJOROUTAGE' }} />)
+      render(<StatusFooter {...defaultProps} status="MAJOROUTAGE" />)
 
       expect(screen.getByText('Major outage ongoing')).toBeInTheDocument()
     })
 
     it('should render yellow dot for minor outage', () => {
-      render(<StatusFooter {...defaultProps} appStatus={{ id: 'qovery', status: 'MINOROUTAGE' }} />)
+      render(<StatusFooter {...defaultProps} status="MINOROUTAGE" />)
 
       expect(screen.getByText('Minor outage ongoing')).toBeInTheDocument()
     })
 
     it('should render yellow dot for partial outage', () => {
-      render(<StatusFooter {...defaultProps} appStatus={{ id: 'qovery', status: 'PARTIALOUTAGE' }} />)
+      render(<StatusFooter {...defaultProps} status="PARTIALOUTAGE" />)
 
       expect(screen.getByText('Partial outage ongoing')).toBeInTheDocument()
     })
@@ -112,14 +112,14 @@ describe('StatusFooter', () => {
 
   describe('combined states', () => {
     it('should render both read-only mode and operational status', () => {
-      render(<StatusFooter {...defaultProps} isReadOnly={true} appStatus={{ id: 'qovery', status: 'OPERATIONAL' }} />)
+      render(<StatusFooter {...defaultProps} isReadOnly={true} status="OPERATIONAL" />)
 
       expect(screen.getByText('Read-only mode')).toBeInTheDocument()
       expect(screen.getByText('All systems operational')).toBeInTheDocument()
     })
 
     it('should render both read-write mode and outage status', () => {
-      render(<StatusFooter {...defaultProps} isReadOnly={false} appStatus={{ id: 'qovery', status: 'MAJOROUTAGE' }} />)
+      render(<StatusFooter {...defaultProps} isReadOnly={false} status="MAJOROUTAGE" />)
 
       expect(screen.getByText('Read-write mode')).toBeInTheDocument()
       expect(screen.getByText('Major outage ongoing')).toBeInTheDocument()
@@ -143,7 +143,7 @@ describe('StatusFooter', () => {
     })
 
     it('should have fade-in animation on status link', () => {
-      render(<StatusFooter {...defaultProps} appStatus={{ id: 'qovery', status: 'OPERATIONAL' }} />)
+      render(<StatusFooter {...defaultProps} status="OPERATIONAL" />)
 
       const link = screen.getByRole('link')
       expect(link).toHaveClass('animate-[fadein_0.22s_ease-in-out_forwards_0.20s]')

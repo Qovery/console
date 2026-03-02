@@ -1,6 +1,6 @@
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
-import { type RefObject } from 'react'
+import { type RefObject, useCallback } from 'react'
 import { match } from 'ts-pattern'
 import { Button, Icon } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -52,7 +52,7 @@ export function MessageList({
   handleVote,
   isAtBottom,
 }: MessageListProps) {
-  const handleScrollToBottom = () => {
+  const handleScrollToBottom = useCallback(() => {
     const node = scrollAreaRef.current
     if (node) {
       node.scrollTo({
@@ -60,13 +60,13 @@ export function MessageList({
         behavior: 'smooth',
       })
     }
-  }
+  }, [scrollAreaRef])
 
   return (
     <ScrollArea
       ref={scrollAreaRef}
       className={twMerge(
-        clsx('relative flex grow flex-col gap-4 overflow-y-scroll p-4', {
+        clsx('relative flex grow flex-col gap-4 overflow-y-auto p-4', {
           'h-[220px]': !expand && thread.length > 0,
           'h-[calc(100vh-316px)]': expand && thread.length > 0,
         })

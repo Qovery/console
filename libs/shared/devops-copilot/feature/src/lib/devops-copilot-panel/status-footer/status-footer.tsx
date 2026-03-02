@@ -5,15 +5,10 @@ import { DotStatus } from '../../dot-status/dot-status'
 
 export interface StatusFooterProps {
   isReadOnly: boolean
-  appStatus?: {
-    id: string
-    status: 'OPERATIONAL' | 'MAJOROUTAGE' | 'MINOROUTAGE' | 'PARTIALOUTAGE'
-  }
+  status?: 'OPERATIONAL' | 'MAJOROUTAGE' | 'MINOROUTAGE' | 'PARTIALOUTAGE'
 }
 
-export function StatusFooter({ isReadOnly, appStatus }: StatusFooterProps) {
-  const status = appStatus?.status
-
+export function StatusFooter({ isReadOnly, status }: StatusFooterProps) {
   const statusText = status
     ? match(status)
         .with('OPERATIONAL', () => 'All systems operational')

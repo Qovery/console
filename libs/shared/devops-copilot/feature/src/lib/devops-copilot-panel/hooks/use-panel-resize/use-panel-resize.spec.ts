@@ -1,4 +1,3 @@
-/* eslint-disable jest-dom/prefer-to-have-style */
 import { createRef } from 'react'
 import { act, renderHook } from '@qovery/shared/util-tests'
 import { usePanelResize } from './use-panel-resize'
@@ -14,17 +13,11 @@ describe('usePanelResize', () => {
     mockPanelElement = document.createElement('div')
     Object.defineProperty(mockPanelElement, 'offsetWidth', { value: 480, writable: true })
     Object.defineProperty(mockPanelElement, 'offsetHeight', { value: 600, writable: true })
-    Object.defineProperty(mockPanelElement, 'style', {
-      value: {
-        width: '',
-        height: '',
-        top: '',
-        left: '',
-        bottom: '',
-        right: '',
-      },
-      writable: true,
-    })
+    document.body.appendChild(mockPanelElement)
+  })
+
+  afterEach(() => {
+    document.body.removeChild(mockPanelElement)
   })
 
   describe('initial state', () => {
@@ -66,10 +59,12 @@ describe('usePanelResize', () => {
         })
       )
 
-      expect(mockPanelElement.style.width).toBe('calc(100vw - 32px)')
-      expect(mockPanelElement.style.height).toBe('calc(100vh - 32px)')
-      expect(mockPanelElement.style.top).toBe('1rem')
-      expect(mockPanelElement.style.left).toBe('1rem')
+      const expectedWidth = window.innerWidth * 0.98
+      const expectedHeight = window.innerHeight * 0.98
+      expect(mockPanelElement).toHaveStyle({ width: `${expectedWidth}px` })
+      expect(mockPanelElement).toHaveStyle({ height: `${expectedHeight}px` })
+      expect(mockPanelElement).toHaveStyle({ top: `${(window.innerHeight - expectedHeight) / 2}px` })
+      expect(mockPanelElement).toHaveStyle({ left: `${(window.innerWidth - expectedWidth) / 2}px` })
     })
 
     it('should apply default size when no stored size and not expanded', () => {
@@ -85,10 +80,10 @@ describe('usePanelResize', () => {
         })
       )
 
-      expect(mockPanelElement.style.width).toBe('480px')
-      expect(mockPanelElement.style.height).toBe('600px')
-      expect(mockPanelElement.style.bottom).toBe('8px')
-      expect(mockPanelElement.style.right).toBe('8px')
+      expect(mockPanelElement).toHaveStyle({ width: '480px' })
+      expect(mockPanelElement).toHaveStyle({ height: '600px' })
+      expect(mockPanelElement).toHaveStyle({ bottom: '8px' })
+      expect(mockPanelElement).toHaveStyle({ right: '8px' })
     })
 
     it('should restore size from localStorage when available', () => {
@@ -105,8 +100,8 @@ describe('usePanelResize', () => {
         })
       )
 
-      expect(mockPanelElement.style.width).toBe('600px')
-      expect(mockPanelElement.style.height).toBe('700px')
+      expect(mockPanelElement).toHaveStyle({ width: '600px' })
+      expect(mockPanelElement).toHaveStyle({ height: '700px' })
     })
 
     it('should cap size at 90% of window dimensions', () => {
@@ -123,8 +118,8 @@ describe('usePanelResize', () => {
         })
       )
 
-      expect(mockPanelElement.style.width).toBe('900px')
-      expect(mockPanelElement.style.height).toBe('720px')
+      expect(mockPanelElement).toHaveStyle({ width: '900px' })
+      expect(mockPanelElement).toHaveStyle({ height: '720px' })
     })
 
     it('should handle invalid JSON in localStorage gracefully', () => {
@@ -140,8 +135,8 @@ describe('usePanelResize', () => {
         })
       )
 
-      expect(mockPanelElement.style.width).toBe('480px')
-      expect(mockPanelElement.style.height).toBe('600px')
+      expect(mockPanelElement).toHaveStyle({ width: '480px' })
+      expect(mockPanelElement).toHaveStyle({ height: '600px' })
       expect(consoleErrorSpy).toHaveBeenCalled()
 
       consoleErrorSpy.mockRestore()
@@ -324,7 +319,7 @@ describe('usePanelResize', () => {
         window.dispatchEvent(new Event('resize'))
       })
 
-      expect(mockPanelElement.style.width).toBe(initialWidth)
+      expect(mockPanelElement).toHaveStyle({ width: initialWidth })
     })
   })
 })

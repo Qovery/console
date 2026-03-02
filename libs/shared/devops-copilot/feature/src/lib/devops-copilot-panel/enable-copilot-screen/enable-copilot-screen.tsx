@@ -8,8 +8,8 @@ export interface EnableCopilotScreenProps {
 
 export function EnableCopilotScreen({ organizationId, onClose }: EnableCopilotScreenProps) {
   return (
-    <div className="flex grow flex-col items-center justify-center gap-4 bg-neutral-100 p-8">
-      <div className="relative flex h-10 w-10 items-center justify-center bg-neutral-150">
+    <div className="flex grow flex-col items-center justify-center gap-4 bg-neutral-100 p-8 dark:bg-neutral-600">
+      <div className="relative flex h-10 w-10 items-center justify-center bg-neutral-150 dark:bg-neutral-500">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="40"
@@ -20,11 +20,11 @@ export function EnableCopilotScreen({ organizationId, onClose }: EnableCopilotSc
         >
           <path fill="#67778e" d="M4 0v1H1v3H0V0zM36 0v1h3v3h1V0zM4 40v-1H1v-3H0v4zM36 40v-1h3v-3h1v4z"></path>
         </svg>
-        <Icon iconName="robot" iconStyle="light" className="relative z-10 text-neutral-350" />
+        <Icon iconName="robot" iconStyle="light" className="relative text-neutral-350 dark:text-neutral-250" />
       </div>
       <div className="flex max-w-md flex-col gap-1 text-center">
-        <span className="text-sm font-medium text-neutral-400">AI Copilot not activated yet</span>
-        <span className="text-sm text-neutral-400">
+        <span className="text-sm font-medium text-neutral-400 dark:text-neutral-250">AI Copilot not activated yet</span>
+        <span className="text-sm text-neutral-400 dark:text-neutral-300">
           Our DevOps AI Copilot can help you fix your deployments, optimize your infrastructure costs, audit your
           security and do everything you would expect from a complete DevOps Engineering team. Enable it in your
           organization settings to get started.

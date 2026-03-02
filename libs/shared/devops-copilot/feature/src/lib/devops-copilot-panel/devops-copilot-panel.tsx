@@ -212,6 +212,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     return () => document.removeEventListener('keydown', down)
   }, [handleOnClose])
 
+  // Exposes a `sendMessage` function via the ref so that external components can trigger a new conversation
   useEffect(() => {
     if (!sendMessageRef) return
 
@@ -491,7 +492,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                       }}
                     />
                   </div>
-                  <StatusFooter isReadOnly={isReadOnly} appStatus={appStatus} />
+                  <StatusFooter isReadOnly={isReadOnly} status={appStatus?.status} />
                 </div>
               </div>
             ) : (

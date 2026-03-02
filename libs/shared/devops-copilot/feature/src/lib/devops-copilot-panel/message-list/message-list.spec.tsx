@@ -218,10 +218,10 @@ describe('MessageList', () => {
       expect(scrollArea).toBeInTheDocument()
     })
 
-    it('should have overflow-y-scroll class', () => {
+    it('should have overflow-y-auto class', () => {
       const { container } = render(<MessageList {...defaultProps} />)
 
-      const scrollArea = container.querySelector('.overflow-y-scroll')
+      const scrollArea = container.querySelector('.overflow-y-auto')
       expect(scrollArea).toBeInTheDocument()
     })
   })

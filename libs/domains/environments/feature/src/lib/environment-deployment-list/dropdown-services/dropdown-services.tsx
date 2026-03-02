@@ -364,7 +364,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                               >
                                 <div className="flex items-center justify-center gap-2">
                                   <Icon iconName="sparkles" iconStyle="solid" className="text-brand-500" />
-                                  <span className="font-thin">Ask AI Copilot for diagnostic</span>
+                                  <span>Ask AI Copilot for diagnostic</span>
                                 </div>
                                 <Icon iconName="arrow-right" />
                               </DropdownMenu.Item>

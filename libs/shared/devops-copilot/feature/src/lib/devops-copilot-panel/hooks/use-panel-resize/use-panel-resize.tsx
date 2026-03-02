@@ -21,10 +21,12 @@ export function usePanelResize({ panelRef, expand, storageKey, style }: UsePanel
       if (!panel) return
 
       if (expand) {
-        panel.style.width = 'calc(100vw - 32px)'
-        panel.style.height = 'calc(100vh - 32px)'
-        panel.style.top = '1rem'
-        panel.style.left = '1rem'
+        const expandWidth = window.innerWidth * 0.98
+        const expandHeight = window.innerHeight * 0.98
+        panel.style.width = `${expandWidth}px`
+        panel.style.height = `${expandHeight}px`
+        panel.style.top = `${(window.innerHeight - expandHeight) / 2}px`
+        panel.style.left = `${(window.innerWidth - expandWidth) / 2}px`
         panel.style.bottom = ''
         panel.style.right = ''
       } else {
