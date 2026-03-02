@@ -144,7 +144,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   </div>
                 </div>
                 <span
-                  class="text-xs text-brand-500"
+                  class="text-xs"
                 >
                    
                 </span>
@@ -259,7 +259,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   </div>
                 </div>
                 <span
-                  class="text-xs text-neutral-400 dark:text-neutral-50"
+                  class="text-xs text-brand"
                 >
                   Current version
                 </span>

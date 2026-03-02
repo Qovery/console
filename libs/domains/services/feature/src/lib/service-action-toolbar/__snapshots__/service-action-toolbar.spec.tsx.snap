@@ -50,7 +50,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       </div>
     </button>
     <a
-      class="cursor-pointer duration-100 gap-1 hover:text-info-hover inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
+      class="cursor-pointer duration-100 gap-1 hover:text-neutral-subtle inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
@@ -207,7 +207,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       </div>
     </button>
     <a
-      class="cursor-pointer duration-100 gap-1 hover:text-info-hover inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
+      class="cursor-pointer duration-100 gap-1 hover:text-neutral-subtle inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
