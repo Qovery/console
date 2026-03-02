@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ContainerRegistryCreateEditModal, useContainerRegistries } from '@qovery/domains/organizations/feature'
@@ -17,13 +18,22 @@ export interface ContainerFormProps {
 }
 
 export function GeneralContainerSettings({ organization, isSetting }: GeneralContainerSettingsProps) {
-  const { control, watch } = useFormContext<ContainerFormProps>()
+  const { control, watch, setValue } = useFormContext<ContainerFormProps>()
   const { openModal, closeModal } = useModal()
   const watchRegistry = watch('registry')
   const watchImageName = watch('image_name')
   const watchImageTag = watch('image_tag')
+  const previousRegistryRef = useRef<string | undefined>(watchRegistry)
 
   const { data: containerRegistries = [] } = useContainerRegistries({ organizationId: organization?.id ?? '' })
+
+  useEffect(() => {
+    if (previousRegistryRef.current && previousRegistryRef.current !== watchRegistry) {
+      setValue('image_name', '')
+      setValue('image_tag', '')
+    }
+    previousRegistryRef.current = watchRegistry
+  }, [watchRegistry, setValue])
 
   return (
     <>

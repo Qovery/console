@@ -39,6 +39,13 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
         kind: 'DOCKER_HUB',
         name: 'my-registry',
       },
+      {
+        id: '1',
+        created_at: '2022-07-21T09:59:42.01426Z',
+        updated_at: '2022-07-21T09:59:42.01426Z',
+        kind: 'ECR',
+        name: 'my-ecr-registry',
+      },
     ],
   }),
 }))
@@ -57,7 +64,7 @@ describe('CreateGeneralContainer', () => {
   })
 
   it('should render inputs NOT available in the requests', async () => {
-    const { debug, baseElement, userEvent } = renderWithProviders(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />)
     )
     // Registry
@@ -68,5 +75,27 @@ describe('CreateGeneralContainer', () => {
     await selectEvent.select(screen.getByLabelText('Image name'), ['Select "my-custom-image" - not found in registry'])
     // Image tag
     await userEvent.type(screen.getByLabelText('Image tag'), '12.0.0')
+  })
+
+  it('should reset image name and tag when registry changes', async () => {
+    const defaultValues = {
+      registry: '0',
+      image_name: 'my-image',
+      image_tag: '1.1.0',
+    }
+
+    renderWithProviders(
+      wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />, {
+        defaultValues,
+      })
+    )
+
+    expect(screen.getByText('my-image')).toBeInTheDocument()
+    expect(screen.getByText('1.1.0')).toBeInTheDocument()
+
+    await selectEvent.select(screen.getByLabelText('Registry'), ['my-ecr-registry'])
+
+    expect(screen.queryByText('my-image')).not.toBeInTheDocument()
+    expect(screen.queryByText('1.1.0')).not.toBeInTheDocument()
   })
 })
