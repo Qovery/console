@@ -6,7 +6,8 @@ import { type IconURI, ServiceIcons } from '../service-icon/service-icon'
 
 // XXX: Todo remove `job_type`
 // https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1427
-export interface ServiceAvatarProps extends Omit<ComponentPropsWithoutRef<typeof Avatar>, 'fallback'> {
+export interface ServiceAvatarProps extends Omit<ComponentPropsWithoutRef<typeof Avatar>, 'fallback' | 'size'> {
+  size?: ComponentPropsWithoutRef<typeof Avatar>['size'] | 'custom'
   service:
     | {
         icon_uri: string
@@ -21,7 +22,7 @@ export interface ServiceAvatarProps extends Omit<ComponentPropsWithoutRef<typeof
 }
 
 export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatarProps>(function ServiceAvatar(
-  { service, ...props },
+  { service, size, className, ...props },
   ref
 ) {
   const iconName = match(service)
@@ -38,6 +39,8 @@ export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatar
   return (
     <Avatar
       ref={ref}
+      size={size}
+      className={className}
       fallback={
         serviceAvatar ? (
           <img

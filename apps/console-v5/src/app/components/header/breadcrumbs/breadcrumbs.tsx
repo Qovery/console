@@ -4,13 +4,20 @@ import { ClusterAvatar, useClusters } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode, useEnvironments } from '@qovery/domains/environments/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
+import { ServiceAvatar, ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { Avatar } from '@qovery/shared/ui'
 import { Separator } from '../header'
 import { BreadcrumbItem, type BreadcrumbItemData } from './breadcrumb-item'
 
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
-  const { organizationId = '', clusterId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const {
+    organizationId = '',
+    clusterId = '',
+    projectId = '',
+    environmentId = '',
+    serviceId = '',
+  } = useParams({ strict: false })
 
   const { data: organizations = [] } = useOrganizations({
     enabled: true,
@@ -20,6 +27,7 @@ export function Breadcrumbs() {
   const { data: clusters = [] } = useClusters({ organizationId, suspense: true })
   const { data: projects = [] } = useProjects({ organizationId, suspense: true })
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
+  const { data: services = [] } = useServices({ environmentId, suspense: true })
 
   // Necessary to keep the organization from client by Qovery team
   const allOrganizations =
@@ -73,6 +81,19 @@ export function Breadcrumbs() {
       }).href,
     }))
 
+  const serviceItems: BreadcrumbItemData[] = services
+    .sort((a, b) => a.name.trim().localeCompare(b.name.trim()))
+    .map((service) => ({
+      id: service.id,
+      label: service.name,
+      path: buildLocation({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId',
+        params: { organizationId, projectId, environmentId, serviceId: service.id },
+      }).href,
+      prefix: <ServiceAvatar service={service} size="custom" className="h-5 w-5" />,
+      suffix: <ServiceStateChip mode="running" environmentId={service.environment?.id} serviceId={service.id} />,
+    }))
+
   const currentCluster = useMemo(
     () => clusterItems.find((cluster) => cluster.id === clusterId),
     [clusterId, clusterItems]
@@ -86,6 +107,11 @@ export function Breadcrumbs() {
   const currentEnvironment = useMemo(
     () => environmentItems.find((environment) => environment.id === environmentId),
     [environmentId, environmentItems]
+  )
+
+  const currentService = useMemo(
+    () => serviceItems.find((service) => service.id === serviceId),
+    [serviceId, serviceItems]
   )
 
   const breadcrumbData: Array<{ item: BreadcrumbItemData; items: BreadcrumbItemData[] }> = []
@@ -129,6 +155,13 @@ export function Breadcrumbs() {
     breadcrumbData.push({
       item: currentEnvironment,
       items: environmentItems,
+    })
+  }
+
+  if (currentService) {
+    breadcrumbData.push({
+      item: currentService,
+      items: serviceItems,
     })
   }
 
