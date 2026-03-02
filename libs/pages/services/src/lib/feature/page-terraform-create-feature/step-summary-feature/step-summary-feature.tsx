@@ -1,5 +1,5 @@
 import posthog from 'posthog-js'
-import { type TerraformRequest } from 'qovery-typescript-axios'
+import { TerraformAutoDeployConfigAutoDeployActionEnum, type TerraformRequest } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -56,7 +56,10 @@ export function StepSummaryFeature() {
       description: generalData.description ?? '',
       icon_uri: generalData.icon_uri,
       timeout_sec: Number(generalData.timeout_sec),
-      auto_deploy: generalData.auto_deploy ?? false,
+      auto_deploy_config: {
+        auto_deploy: generalData.auto_deploy ?? false,
+        auto_deploy_action: generalData.auto_deploy_action ?? TerraformAutoDeployConfigAutoDeployActionEnum.DEFAULT,
+      },
       engine: generalData.engine,
       backend: generalData.backend,
       terraform_files_source: {

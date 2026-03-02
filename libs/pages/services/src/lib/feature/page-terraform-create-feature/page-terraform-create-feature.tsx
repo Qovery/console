@@ -1,3 +1,4 @@
+import { TerraformAutoDeployConfigAutoDeployActionEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
@@ -69,6 +70,7 @@ export function PageTerraformCreateFeature() {
         kubernetes: {},
       },
       dockerfile_fragment_source: 'none',
+      auto_deploy_action: TerraformAutoDeployConfigAutoDeployActionEnum.DEFAULT,
     },
   })
 

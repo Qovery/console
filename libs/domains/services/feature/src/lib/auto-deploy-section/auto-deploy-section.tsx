@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Button } from '@qovery/shared/ui'
 import { AutoDeploySetting, type AutoDeploySettingProps } from '../auto-deploy-setting/auto-deploy-setting'
@@ -7,9 +8,10 @@ import { useSyncGitWebhook } from '../hooks/use-sync-git-webhook/use-sync-git-we
 
 export interface AutoDeploySectionProps extends AutoDeploySettingProps {
   serviceId: string
+  children?: ReactNode
 }
 
-export function AutoDeploySection({ serviceId, source, className }: AutoDeploySectionProps) {
+export function AutoDeploySection({ serviceId, source, className, children }: AutoDeploySectionProps) {
   const { watch } = useFormContext()
   const autoDeployEnabled = watch('auto_deploy')
   const supportsWebhook = source !== 'CONTAINER_REGISTRY'
@@ -19,13 +21,18 @@ export function AutoDeploySection({ serviceId, source, className }: AutoDeploySe
 
   const shouldShowWebhook = supportsWebhook && autoDeployEnabled
   const showSyncButton = webhookStatus && webhookStatus.status !== 'ACTIVE'
+  const isTerraform = source === 'TERRAFORM'
 
   return (
-    <div className="overflow-hidden rounded-md border border-neutral-200">
+    <div className="rounded-md border border-neutral-200">
       <div className="p-4">
-        <AutoDeploySetting source={source} className={className} />
+        <AutoDeploySetting
+          source={source}
+          className={className}
+          titleSuffix={isTerraform && shouldShowWebhook ? <GitWebhookStatusBadge serviceId={serviceId} /> : undefined}
+        />
       </div>
-      {shouldShowWebhook && (
+      {!isTerraform && shouldShowWebhook && (
         <div className="flex items-center justify-between border-t border-neutral-200 bg-neutral-100 px-4 py-3">
           <GitWebhookStatusBadge serviceId={serviceId} />
           {showSyncButton && (
@@ -41,6 +48,9 @@ export function AutoDeploySection({ serviceId, source, className }: AutoDeploySe
             </Button>
           )}
         </div>
+      )}
+      {children && autoDeployEnabled && (
+        <div className="border-t border-neutral-200 bg-neutral-100 p-4">{children}</div>
       )}
     </div>
   )

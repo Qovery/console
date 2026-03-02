@@ -9,6 +9,7 @@ import {
   type JobRequest,
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
+  TerraformAutoDeployConfigAutoDeployActionEnum,
   type TerraformRequest,
 } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -225,7 +226,10 @@ export const handleTerraformSubmit = (data: TerraformGeneralData, terraform: Ter
   ...terraform,
   name: data.name,
   description: data.description,
-  auto_deploy: data.auto_deploy ?? false,
+  auto_deploy_config: {
+    auto_deploy: data.auto_deploy ?? false,
+    auto_deploy_action: data.auto_deploy_action ?? TerraformAutoDeployConfigAutoDeployActionEnum.DEFAULT,
+  },
   terraform_files_source: {
     git_repository: {
       url: match(data.is_public_repository)
@@ -332,7 +336,9 @@ export function PageSettingsGeneralFeature() {
       arguments: joinArgsWithQuotes(service.arguments),
     }))
     .with({ serviceType: 'TERRAFORM' }, (service) => ({
-      auto_deploy: service.auto_deploy,
+      auto_deploy: service.auto_deploy_config?.auto_deploy ?? service.auto_deploy,
+      auto_deploy_action:
+        service.auto_deploy_config?.auto_deploy_action ?? TerraformAutoDeployConfigAutoDeployActionEnum.DEFAULT,
     }))
     .otherwise(() => undefined)
 
@@ -385,7 +391,14 @@ export function PageSettingsGeneralFeature() {
     if (!payload) return null
 
     if (data.is_public_repository) {
-      payload.auto_deploy = false
+      if ('auto_deploy_config' in payload) {
+        payload.auto_deploy_config = {
+          ...payload.auto_deploy_config,
+          auto_deploy: false,
+        }
+      } else if ('auto_deploy' in payload) {
+        payload.auto_deploy = false
+      }
     }
 
     editService({
