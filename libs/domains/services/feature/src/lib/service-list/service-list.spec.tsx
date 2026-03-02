@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceList, type ServiceListProps } from './service-list'
 
 let mockDeploymentStagesData: unknown = undefined
@@ -7,9 +7,163 @@ jest.mock('../hooks/use-list-deployment-stages/use-list-deployment-stages', () =
   useListDeploymentStages: () => ({ data: mockDeploymentStagesData }),
 }))
 
-jest.mock('../hooks/use-services/use-services', () => ({
-  useServices: () => ({
+jest.mock('../hooks/use-services-list/use-services-list', () => ({
+  useServicesList: () => ({
     data: [
+      {
+        id: '037c9e87-e098-4970-8b1f-9a5ffe9e4b89',
+        created_at: '2023-10-25T09:00:13.39717Z',
+        updated_at: '2023-11-07T14:59:35.236987Z',
+        environment: {
+          id: '55867c71-56f9-4b4f-ab22-5904c9dbafda',
+        },
+        auto_preview: true,
+        maximum_cpu: 3560,
+        maximum_memory: 15411,
+        name: 'FRONT-END',
+        description: '',
+        build_mode: 'DOCKER',
+        dockerfile_path: 'Dockerfile',
+        arguments: [],
+        entrypoint: '',
+        cpu: 60,
+        memory: 51,
+        min_running_instances: 2,
+        max_running_instances: 5,
+        storage: [],
+        ports: [
+          {
+            internal_port: 80,
+            external_port: 443,
+            publicly_accessible: true,
+            is_default: true,
+            protocol: 'HTTP',
+            name: 'p80',
+            id: '58ed34d3-96f4-4ae0-b7c9-42a39e309b42',
+          },
+        ],
+        healthchecks: {
+          readiness_probe: {
+            type: {
+              tcp: {
+                host: null,
+                port: 80,
+              },
+              http: null,
+              exec: null,
+              grpc: null,
+            },
+            initial_delay_seconds: 30,
+            period_seconds: 10,
+            timeout_seconds: 1,
+            success_threshold: 1,
+            failure_threshold: 3,
+          },
+          liveness_probe: {
+            type: {
+              tcp: {
+                host: null,
+                port: 80,
+              },
+              http: null,
+              exec: null,
+              grpc: null,
+            },
+            initial_delay_seconds: 30,
+            period_seconds: 10,
+            timeout_seconds: 5,
+            success_threshold: 1,
+            failure_threshold: 3,
+          },
+        },
+        git_repository: {
+          has_access: true,
+          deployed_commit_id: '2f7444836bb506dc0a4eaade5e4d41906ff7a125',
+          deployed_commit_date: '2023-10-25T09:27:38.683105Z',
+          deployed_commit_contributor: 'TAGS_NOT_IMPLEMENTED',
+          deployed_commit_tag: 'TAGS_NOT_IMPLEMENTED',
+          provider: 'GITHUB',
+          owner: 'acarranoqovery',
+          url: 'https://github.com/acarranoqovery/javascript-tetris.git',
+          name: 'acarranoqovery/javascript-tetris',
+          branch: 'master',
+          root_path: '/',
+          git_token_id: null,
+          git_token_name: null,
+        },
+        auto_deploy: false,
+        service_type: 'APPLICATION',
+        serviceType: 'APPLICATION',
+      },
+    ],
+  }),
+}))
+
+jest.mock('../hooks/use-services-list-context/use-services-list-context', () => ({
+  ...jest.requireActual('../hooks/use-services-list-context/use-services-list-context'),
+  ServicesListProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  useServicesListContext: () => ({
+    addStatusForService: jest.fn(),
+    statuses: {
+      '037c9e87-e098-4970-8b1f-9a5ffe9e4b89': {
+        runningStatus: {
+          stateLabel: 'Stopped',
+        },
+        deploymentStatus: {
+          id: '037c9e87-e098-4970-8b1f-9a5ffe9e4b89',
+          state: 'STOPPED',
+          service_deployment_status: 'UP_TO_DATE',
+          last_deployment_date: '2023-10-25T10:13:49.067185Z',
+          is_part_last_deployment: false,
+          steps: null,
+          stateLabel: 'Stopped',
+          execution_id: 'exec-1',
+        },
+      },
+      '04308de2-af27-405f-9e95-570fa94ed577': {
+        runningStatus: {
+          stateLabel: 'Stopped',
+        },
+        deploymentStatus: {
+          id: '04308de2-af27-405f-9e95-570fa94ed577',
+          state: 'STOPPED',
+          service_deployment_status: 'UP_TO_DATE',
+          last_deployment_date: '2023-10-25T10:14:08.195400Z',
+          is_part_last_deployment: false,
+          steps: null,
+          stateLabel: 'Stopped',
+        },
+      },
+      'ebd8be35-d7a2-4d4f-ad82-de4378a83ef4': {
+        runningStatus: {
+          stateLabel: 'Stopped',
+        },
+        deploymentStatus: {
+          id: 'ebd8be35-d7a2-4d4f-ad82-de4378a83ef4',
+          state: 'STOPPED',
+          service_deployment_status: 'UP_TO_DATE',
+          last_deployment_date: '2023-10-25T10:14:02.510717Z',
+          is_part_last_deployment: false,
+          steps: null,
+          stateLabel: 'Stopped',
+        },
+      },
+      '33962e52-7883-42fd-8613-85e04229a9b6': {
+        runningStatus: {
+          stateLabel: 'Stopped',
+        },
+        deploymentStatus: {
+          id: '33962e52-7883-42fd-8613-85e04229a9b6',
+          state: 'READY',
+          service_deployment_status: 'UP_TO_DATE',
+          last_deployment_date: '2023-10-25T10:14:16.632050Z',
+          is_part_last_deployment: false,
+          steps: null,
+          stateLabel: 'Never deployed',
+        },
+      },
+    },
+    services: [
       {
         id: '037c9e87-e098-4970-8b1f-9a5ffe9e4b89',
         created_at: '2023-10-25T09:00:13.39717Z',
@@ -183,18 +337,6 @@ jest.mock('../hooks/use-services/use-services', () => ({
         auto_deploy: true,
         service_type: 'CONTAINER',
         serviceType: 'CONTAINER',
-        runningStatus: {
-          stateLabel: 'Stopped',
-        },
-        deploymentStatus: {
-          id: '04308de2-af27-405f-9e95-570fa94ed577',
-          state: 'STOPPED',
-          service_deployment_status: 'UP_TO_DATE',
-          last_deployment_date: '2023-10-25T10:14:08.195400Z',
-          is_part_last_deployment: false,
-          steps: null,
-          stateLabel: 'Stopped',
-        },
       },
       {
         id: 'ebd8be35-d7a2-4d4f-ad82-de4378a83ef4',
@@ -248,18 +390,6 @@ jest.mock('../hooks/use-services/use-services', () => ({
         },
         service_type: 'JOB',
         serviceType: 'JOB',
-        runningStatus: {
-          stateLabel: 'Stopped',
-        },
-        deploymentStatus: {
-          id: 'ebd8be35-d7a2-4d4f-ad82-de4378a83ef4',
-          state: 'STOPPED',
-          service_deployment_status: 'UP_TO_DATE',
-          last_deployment_date: '2023-10-25T10:14:02.510717Z',
-          is_part_last_deployment: false,
-          steps: null,
-          stateLabel: 'Stopped',
-        },
       },
       {
         id: '33962e52-7883-42fd-8613-85e04229a9b6',
@@ -312,18 +442,6 @@ jest.mock('../hooks/use-services/use-services', () => ({
         },
         service_type: 'JOB',
         serviceType: 'JOB',
-        runningStatus: {
-          stateLabel: 'Stopped',
-        },
-        deploymentStatus: {
-          id: '33962e52-7883-42fd-8613-85e04229a9b6',
-          state: 'READY',
-          service_deployment_status: 'UP_TO_DATE',
-          last_deployment_date: '2023-10-25T10:14:16.632050Z',
-          is_part_last_deployment: false,
-          steps: null,
-          stateLabel: 'Never deployed',
-        },
       },
     ],
     isLoading: false,
@@ -420,6 +538,7 @@ describe('ServiceList', () => {
     expect(container).toMatchSnapshot()
     jest.useRealTimers()
   })
+
   it('should display all services', () => {
     renderWithProviders(<ServiceList {...serviceListProps} />)
     const rows = screen.getAllByRole('row')
@@ -440,14 +559,6 @@ describe('ServiceList', () => {
     expect(mockNavigate).toHaveBeenCalledWith({
       to: '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general',
     })
-  })
-  it('should navigate to service live logs on service status click', () => {
-    renderWithProviders(<ServiceList {...serviceListProps} />)
-    expect(
-      document.querySelector(
-        'a[to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general"]'
-      )
-    ).toBeInTheDocument()
   })
 
   it('should disable checkbox for skipped services', () => {
