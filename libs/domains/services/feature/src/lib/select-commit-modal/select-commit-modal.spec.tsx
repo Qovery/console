@@ -7,11 +7,17 @@ jest.mock('../hooks/use-last-deployed-commit/use-last-deployed-commit', () => {
     useLastDeployedCommit: () => ({
       data: {
         commits: [
-          { created_at: '123', author_name: 'foo', git_commit_id: '123', message: 'lorem', tag: '' },
-          { created_at: '456', author_name: 'foo', git_commit_id: '456', message: 'ipsum', tag: '' },
+          { created_at: '2024-01-15T12:00:00Z', author_name: 'foo', git_commit_id: '123', message: 'lorem', tag: '' },
+          { created_at: '2024-01-14T12:00:00Z', author_name: 'foo', git_commit_id: '456', message: 'ipsum', tag: '' },
         ],
         delta: 1,
-        deployedCommit: { created_at: '456', author_name: 'foo', git_commit_id: '456', message: 'ipsum', tag: '' },
+        deployedCommit: {
+          created_at: '2024-01-14T12:00:00Z',
+          author_name: 'foo',
+          git_commit_id: '456',
+          message: 'ipsum',
+          tag: '',
+        },
       },
     }),
   }
