@@ -62,7 +62,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
             />
             Commit
              on 
-            Jan 14, 2024
+            Jan 15, 2024
           </div>
           <div
             class="border-l border-neutral pb-5 pl-5 pt-3"
@@ -96,7 +96,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   class="text-neutral-subtle"
                 >
                   committed 
-                  3 months
+                  2 years
                    ago
                 </span>
               </div>
@@ -164,7 +164,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
             />
             Commit
              on 
-            Jan 13, 2024
+            Jan 14, 2024
           </div>
           <div
             class="border-l border-neutral pb-5 pl-5 pt-3"
@@ -211,7 +211,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   class="text-neutral-subtle"
                 >
                   committed 
-                  3 months
+                  2 years
                    ago
                 </span>
               </div>

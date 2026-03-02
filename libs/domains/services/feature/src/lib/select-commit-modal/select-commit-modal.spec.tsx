@@ -66,9 +66,6 @@ describe('SelectCommitModal', () => {
     expect(onSubmit).toHaveBeenCalledWith('123')
   })
   it('should match snapshot', () => {
-    const now = new Date('2024-04-23T12:00:00Z')
-    jest.useFakeTimers()
-    jest.setSystemTime(now)
     const onCancel = jest.fn()
     const onSubmit = jest.fn()
     const { container } = renderWithProviders(

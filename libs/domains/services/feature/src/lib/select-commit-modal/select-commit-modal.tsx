@@ -44,7 +44,7 @@ export function SelectCommitModal({
   const commitsByDay = useMemo(
     () =>
       data.commits?.reduce<Record<string, Commit[]>>((acc, obj) => {
-        const key = new Date(obj['created_at']).toDateString()
+        const key = new Date(obj['created_at']).toISOString().slice(0, 10)
         if (!acc[key]) {
           acc[key] = []
         }
