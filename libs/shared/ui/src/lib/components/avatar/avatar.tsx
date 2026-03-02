@@ -32,6 +32,7 @@ const avatarVariants = cva(['flex', 'items-center', 'justify-center'], {
       md: ['h-16', 'w-16', 'min-h-16', 'min-w-16'],
       sm: ['h-8', 'w-8', 'min-h-8', 'min-w-8'],
       xs: ['h-4', 'w-4', 'min-h-4', 'min-w-4'],
+      custom: [],
     },
     radius: {
       none: [],
@@ -74,6 +75,7 @@ const avatarImplVariants = cva('flex items-center justify-center', {
       md: [],
       sm: [],
       xs: [],
+      custom: ['h-full', 'w-full'],
     },
     radius: {
       none: [],
@@ -88,9 +90,11 @@ const avatarImplVariants = cva('flex items-center justify-center', {
     { border: 'solid', size: 'md', className: ['h-10', 'w-10'] },
     { border: 'solid', size: 'sm', className: ['h-6', 'w-6'] },
     { border: 'solid', size: 'xs', className: ['h-4', 'w-4'] },
+    { border: 'solid', size: 'custom', className: ['h-full', 'w-full'] },
     { border: 'none', size: 'md', className: ['h-16', 'w-16'] },
     { border: 'none', size: 'sm', className: ['h-8', 'w-8'] },
     { border: 'none', size: 'xs', className: ['h-4', 'w-4'] },
+    { border: 'none', size: 'custom', className: ['h-full', 'w-full'] },
   ],
   defaultVariants: {
     size: 'md',

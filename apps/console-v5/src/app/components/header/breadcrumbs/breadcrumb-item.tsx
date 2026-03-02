@@ -10,6 +10,7 @@ export interface BreadcrumbItemData {
   label: string
   path: string
   prefix?: ReactNode
+  suffix?: ReactNode
   logo_url?: string
 }
 
@@ -139,6 +140,7 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
       >
         {item.prefix}
         {item.label}
+        {item.suffix}
       </Link>
       <DropdownMenu.Root open={open} onOpenChange={handleOpenChange}>
         <Popover.Root open={open} onOpenChange={handleOpenChange}>
