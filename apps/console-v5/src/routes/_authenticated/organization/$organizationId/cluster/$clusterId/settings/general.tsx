@@ -5,7 +5,7 @@ import { ClusterGeneralSettings, useCluster, useEditCluster } from '@qovery/doma
 import { LabelSetting } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useUserRole } from '@qovery/shared/iam/feature'
-import { BlockContent, Button, Callout, ExternalLink, Icon, Section } from '@qovery/shared/ui'
+import { BlockContent, Button, Callout, ExternalLink, Heading, Icon, Section } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/general'
@@ -104,10 +104,10 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
                 <ClusterGeneralSettings fromDetail />
               </BlockContent>
               {cluster.cloud_provider === 'AWS' && (
-                <div className="mb-10">
-                  <h3 className="mb-3 text-base font-medium text-neutral-400">Extra tags</h3>
+                <Section className="mb-10 gap-3">
+                  <Heading>Extra tags</Heading>
                   <LabelSetting filterPropagateToCloudProvider={true} />
-                </div>
+                </Section>
               )}
               <div className="flex justify-end">
                 <Button
