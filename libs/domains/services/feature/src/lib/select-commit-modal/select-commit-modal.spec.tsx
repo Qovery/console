@@ -18,25 +18,6 @@ jest.mock('../hooks/use-last-deployed-commit/use-last-deployed-commit', () => {
 })
 
 describe('SelectCommitModal', () => {
-  it('should match snapshot', () => {
-    const onCancel = jest.fn()
-    const onSubmit = jest.fn()
-    const { container } = renderWithProviders(
-      <SelectCommitModal
-        title="Deploy other version"
-        description="Type a version to deploy"
-        submitLabel="Deploy"
-        serviceId="1"
-        serviceType="APPLICATION"
-        gitRepository={{}}
-        onCancel={onCancel}
-        onSubmit={onSubmit}
-      >
-        For X service
-      </SelectCommitModal>
-    )
-    expect(container).toMatchSnapshot()
-  })
   it('should call cancel properly', async () => {
     const onCancel = jest.fn()
     const onSubmit = jest.fn()
@@ -77,5 +58,27 @@ describe('SelectCommitModal', () => {
     await userEvent.click(screen.getByRole('radio', { name: /123/i }))
     await userEvent.click(screen.getByRole('button', { name: /Deploy/i }))
     expect(onSubmit).toHaveBeenCalledWith('123')
+  })
+  it('should match snapshot', () => {
+    const now = new Date('2024-04-23T12:00:00Z')
+    jest.useFakeTimers()
+    jest.setSystemTime(now)
+    const onCancel = jest.fn()
+    const onSubmit = jest.fn()
+    const { container } = renderWithProviders(
+      <SelectCommitModal
+        title="Deploy other version"
+        description="Type a version to deploy"
+        submitLabel="Deploy"
+        serviceId="1"
+        serviceType="APPLICATION"
+        gitRepository={{}}
+        onCancel={onCancel}
+        onSubmit={onSubmit}
+      >
+        For X service
+      </SelectCommitModal>
+    )
+    expect(container).toMatchSnapshot()
   })
 })

@@ -96,7 +96,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   class="text-neutral-subtle"
                 >
                   committed 
-                  1904 years
+                  1903 years
                    ago
                 </span>
               </div>
@@ -211,7 +211,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   class="text-neutral-subtle"
                 >
                   committed 
-                  1571 years
+                  1569 years
                    ago
                 </span>
               </div>
