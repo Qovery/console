@@ -3,7 +3,7 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { type ServiceStatuses } from '@qovery/shared/interfaces'
 import { useServicesList } from '../use-services-list/use-services-list'
 
-type ServiceWithStatus = AnyService & ServiceStatuses
+export type ServiceWithStatus = AnyService & ServiceStatuses
 
 interface ServicesListContextType {
   statuses: Record<string, ServiceStatuses>

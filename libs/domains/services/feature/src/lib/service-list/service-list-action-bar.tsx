@@ -13,7 +13,7 @@ import {
 import { useDeleteAllServices } from '../hooks/use-delete-all-services/use-delete-all-services'
 import { useDeployAllServices } from '../hooks/use-deploy-all-services/use-deploy-all-services'
 import { useRestartAllServices } from '../hooks/use-restart-all-services/use-restart-all-services'
-import { type useServices } from '../hooks/use-services/use-services'
+import { type ServiceWithStatus } from '../hooks/use-services-list-context/use-services-list-context'
 import { useStopAllServices } from '../hooks/use-stop-all-services/use-stop-all-services'
 import useUninstallAllServices from '../hooks/use-uninstall-all-services/use-uninstall-all-services'
 import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
@@ -26,8 +26,8 @@ function ConfirmationModal({
   onSubmit,
 }: {
   verb: string
-  impactedRows: ReturnType<typeof useServices>['data']
-  selectedRows: ReturnType<typeof useServices>['data']
+  impactedRows: ServiceWithStatus[]
+  selectedRows: ServiceWithStatus[]
   onCancel: () => void
   onSubmit: () => void
 }) {
@@ -73,7 +73,7 @@ function ConfirmationModal({
 
 export interface ServiceListActionBarProps {
   environment: Environment
-  selectedRows: ReturnType<typeof useServices>['data']
+  selectedRows: ServiceWithStatus[]
   resetRowSelection: () => void
 }
 
