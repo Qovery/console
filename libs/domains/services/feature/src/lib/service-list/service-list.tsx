@@ -281,7 +281,7 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
             <Table.Row key={headerGroup.id}>
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-neutral border-r pl-0' : ''} font-medium`}
+                  className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r border-neutral pl-0' : ''} font-medium`}
                   key={header.id}
                   style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                 >
@@ -332,7 +332,7 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}
-                    className={`px-6 ${i === 1 ? 'border-neutral border-r pl-0' : ''} first:relative`}
+                    className={`px-6 ${i === 1 ? 'border-r border-neutral pl-0' : ''} first:relative`}
                     style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
