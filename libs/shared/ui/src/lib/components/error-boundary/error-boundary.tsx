@@ -9,7 +9,7 @@ import { Section } from '../section/section'
 export function ErrorFallback({ className, error, resetErrorBoundary }: FallbackProps & { className?: string }) {
   return (
     <Section className={twMerge('max-h-screen flex-grow items-center justify-center rounded-sm', className)}>
-      <div className="-mt-[100px] flex w-[500px] flex-col items-center justify-center gap-3 text-center">
+      <div className="mt-[100px] flex w-[500px] flex-col items-center justify-center gap-3 text-center">
         <Icon iconName="cloud-exclamation" className="text-8xl text-surface-neutral-component" />
         <div>
           <Heading className="font-medium text-neutral">Something went wrong</Heading>

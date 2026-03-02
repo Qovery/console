@@ -1,5 +1,5 @@
 import { type CloudProvider, CloudProviderEnum, type ClusterRegion } from 'qovery-typescript-axios'
-import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
+import { type FormEventHandler, type PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { useCloudProviderCredentials, useCloudProviders } from '@qovery/domains/cloud-providers/feature'
@@ -22,12 +22,13 @@ import { ClusterCredentialsSettings } from '../../cluster-credentials-settings/c
 import { ClusterGeneralSettings } from '../../cluster-general-settings/cluster-general-settings'
 import { defaultResourcesData, useClusterContainerCreateContext } from '../cluster-creation-flow'
 
-export interface StepGeneralProps {
+export interface StepGeneralProps extends PropsWithChildren {
   organizationId: string
   onSubmit: (data: ClusterGeneralData) => void
+  labelsSetting: React.ReactNode
 }
 
-export function StepGeneral({ organizationId, onSubmit }: StepGeneralProps) {
+export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGeneralProps) {
   useDocumentTitle('General - Create Cluster')
 
   const { generalData, setGeneralData, setResourcesData } = useClusterContainerCreateContext()
@@ -234,6 +235,13 @@ export function StepGeneral({ organizationId, onSubmit }: StepGeneralProps) {
                 </div>
               )}
             </Section>
+
+            {watchCloudProvider === 'AWS' && (
+              <Section className="mb-10 gap-3">
+                <Heading>Extra tags</Heading>
+                {labelsSetting}
+              </Section>
+            )}
 
             <div className="flex justify-between">
               <Link

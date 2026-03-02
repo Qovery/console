@@ -33,7 +33,10 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
       ref={ref}
       role="region"
       aria-label="Interactive chart"
-      className={twMerge('relative flex h-[300px] justify-center text-xs focus:outline-none', className)}
+      className={twMerge(
+        '[&_.recharts-cartesian-grid-horizontal_line]:stroke-opacity-35 [&_.recharts-cartesian-grid-vertical_line]:stroke-opacity-35 relative flex h-[300px] justify-center text-xs focus:outline-none [&_.recharts-cartesian-grid-horizontal_line]:stroke-neutral-strong [&_.recharts-cartesian-grid-vertical_line]:stroke-neutral-strong [&_.recharts-xAxis_.recharts-cartesian-axis-line]:stroke-neutral-strong [&_.recharts-xAxis_.recharts-cartesian-axis-tick-line]:stroke-neutral-strong [&_.recharts-xAxis_.recharts-cartesian-axis-tick-value]:fill-neutral-strong [&_.recharts-yAxis_.recharts-cartesian-axis-tick-value]:fill-neutral-subtle',
+        className
+      )}
       {...htmlProps}
     >
       {!isLoading && !isEmpty ? (
@@ -58,21 +61,23 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
             {isLoading ? (
               <>
                 <ChartLoader />
-                <div className="text-sm text-neutral-400">Fetching data...</div>
+                <div className="text-sm text-neutral-subtle">Fetching data...</div>
               </>
             ) : (
               <>
-                <div className="flex h-8 w-8 items-center justify-center rounded-md border border-neutral-200 bg-white p-2 text-base text-neutral-350">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md border border-neutral bg-surface-neutral p-2 text-base text-neutral">
                   <Icon iconName="chart-column" iconStyle="regular" />
                 </div>
-                <div className="text-sm text-neutral-400">No data available</div>
+                <div className="text-sm text-neutral-subtle">No data available</div>
               </>
             )}
           </div>
         </div>
       )}
 
-      {isRefreshing && !isLoading && !isEmpty && <div className="pointer-events-none absolute inset-0 bg-white/50" />}
+      {isRefreshing && !isLoading && !isEmpty && (
+        <div className="pointer-events-none absolute inset-0 bg-background opacity-50" />
+      )}
     </div>
   )
 })
@@ -128,10 +133,10 @@ const ChartTooltipContent = forwardRef<HTMLDivElement, ChartTooltipContentProps>
   const dataPoint = payload[0]?.payload
 
   return (
-    <div ref={ref} className="rounded-md bg-neutral-600 shadow-lg">
-      <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-400 p-3 pb-2">
-        <span className="text-xs text-neutral-50">{title}</span>
-        <span className="text-xs text-neutral-250">{dataPoint?.fullTime}</span>
+    <div ref={ref} className="rounded-md bg-surface-neutral-solid shadow-lg">
+      <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-strong p-3 pb-2">
+        <span className="text-xs text-neutralInvert">{title}</span>
+        <span className="text-xs text-neutralInvert-subtle">{dataPoint?.fullTime}</span>
       </div>
       <div className="space-y-1 p-3 pt-0">
         {(maxItems ? filteredPayload.slice(0, maxItems) : filteredPayload).map((entry: TooltipPayloadItem) => {
@@ -145,15 +150,15 @@ const ChartTooltipContent = forwardRef<HTMLDivElement, ChartTooltipContentProps>
             <div key={seriesKey} className="flex items-center justify-between gap-4 text-xs">
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                <span className="text-neutral-50">{displayName}</span>
+                <span className="text-neutralInvert">{displayName}</span>
               </div>
-              <span className="text-neutral-50">{formattedValue}</span>
+              <span className="text-neutralInvert">{formattedValue}</span>
             </div>
           )
         })}
         {maxItems && filteredPayload.length > maxItems && (
           <div className="flex items-center text-xs">
-            <span className="text-neutral-250">+{filteredPayload.length - maxItems} more</span>
+            <span className="text-neutralInvert-subtle">+{filteredPayload.length - maxItems} more</span>
           </div>
         )}
       </div>
@@ -172,18 +177,18 @@ export const ChartTooltipZoomRange = forwardRef<HTMLDivElement, ChartTooltipZoom
     if (!active) return null
 
     return (
-      <div ref={ref} className="rounded-md bg-neutral-600 shadow-lg">
-        <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-400 p-3 pb-2">
-          <span className="text-xs text-neutral-50">Zoom In</span>
+      <div ref={ref} className="rounded-md bg-surface-neutralInvert-component shadow-lg">
+        <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutralInvert p-3 pb-2">
+          <span className="text-xs text-neutralInvert">Zoom In</span>
         </div>
         <div className="space-y-1 p-3 pt-0">
           <div className="flex items-center justify-between gap-4 text-xs">
-            <span className="text-neutral-50">Start:</span>
-            <span className="text-neutral-250">{startTime}</span>
+            <span className="text-neutralInvert">Start:</span>
+            <span className="text-neutralInvert-subtle">{startTime}</span>
           </div>
           <div className="flex items-center justify-between gap-4 text-xs">
-            <span className="text-neutral-50">End:</span>
-            <span className="text-neutral-250">{endTime}</span>
+            <span className="text-neutralInvert">End:</span>
+            <span className="text-neutralInvert-subtle">{endTime}</span>
           </div>
         </div>
       </div>
@@ -292,7 +297,7 @@ export const ChartLegendContent = ({
       <span
         ref={scrollContainerRef}
         onScroll={handleScroll}
-        className="flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap pb-2"
+        className="no-scrollbar flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap pb-2"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         <span className="flex w-full flex-nowrap items-center gap-2">
@@ -308,9 +313,11 @@ export const ChartLegendContent = ({
                 variant={isActive ? 'surface' : 'outline'}
                 size="xs"
                 radius="full"
-                className={clsx(
-                  "relative z-0 cursor-pointer gap-2 transition-colors duration-100 before:absolute before:bottom-0 before:left-[-8px] before:right-[-8px] before:top-0 before:-z-[1] before:content-[''] active:scale-100",
-                  isActive && '!border-neutral-300 hover:!bg-neutral-150'
+                className={twMerge(
+                  clsx(
+                    "relative z-0 cursor-pointer gap-2 transition-colors duration-100 before:absolute before:bottom-0 before:left-[-8px] before:right-[-8px] before:top-0 before:-z-[1] before:content-[''] active:scale-100",
+                    isActive && 'border border-neutral hover:bg-surface-neutral-componentHover'
+                  )
                 )}
                 onClick={(e) => handleClick(item, index, e)}
                 onMouseEnter={(e) => handleMouseOver(item, index, e)}
@@ -330,10 +337,10 @@ export const ChartLegendContent = ({
         </span>
       </span>
       {canScrollLeft && (
-        <span className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-white to-white/0" />
+        <span className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-surface-neutral to-transparent" />
       )}
       {canScrollRight && (
-        <span className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-white to-white/0" />
+        <span className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-surface-neutral to-transparent" />
       )}
     </div>
   )

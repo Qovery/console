@@ -170,7 +170,7 @@ export function DiskChart({
         dataKey="read-ephemeral-storage"
         name="read-ephemeral-storage"
         type="linear"
-        stroke="var(--color-green-500)"
+        stroke="var(--positive-11)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}

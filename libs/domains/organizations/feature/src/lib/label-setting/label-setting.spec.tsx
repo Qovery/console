@@ -2,20 +2,27 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import { LabelSetting } from './label-setting'
 
+const mockLabelsGroups = [
+  {
+    id: '0000-1111-2222',
+    name: 'Label Group 1',
+    labels: [
+      { key: 'key1', value: 'value1', propagate_to_cloud_provider: false },
+      { key: 'key2', value: 'value2', propagate_to_cloud_provider: true },
+    ],
+  },
+  {
+    id: '0000-1111-3333',
+    name: 'Label Group 2',
+    labels: [{ key: 'key3', value: 'value3', propagate_to_cloud_provider: true }],
+  },
+]
+
 jest.mock('../hooks/use-labels-groups/use-labels-groups', () => {
   return {
     ...jest.requireActual('../hooks/use-labels-groups/use-labels-groups'),
-    useGitTokens: () => ({
-      data: [
-        {
-          id: '0000-1111-2222',
-          name: 'Label Group 1',
-          labels: [
-            { key: 'key1', value: 'value1', propagate_to_cloud_provider: false },
-            { key: 'key2', value: 'value2', propagate_to_cloud_provider: true },
-          ],
-        },
-      ],
+    useLabelsGroups: () => ({
+      data: mockLabelsGroups,
     }),
   }
 })

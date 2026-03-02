@@ -23,8 +23,9 @@ import {
   SERVICES_NEW_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { Checkbox, EmptyState, Icon, Link, TableFilter, TablePrimitives, Truncate } from '@qovery/shared/ui'
+import { Checkbox, EmptyState, Icon, Link, TableFilter, TablePrimitives, Tooltip, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
+import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
 import {
   ServicesListProvider,
   useServicesListContext,
@@ -59,10 +60,37 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
   const projectId = environment.project.id || ''
 
   const { services } = useServicesListContext()
+  const { data: deploymentStages } = useListDeploymentStages({ environmentId })
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const navigate = useNavigate()
+
+  // Build map of service_id -> is_skipped for quick lookup
+  const skippedServicesMap = useMemo(() => {
+    const map = new Map<string, boolean>()
+    deploymentStages?.forEach((stage) => {
+      stage.services?.forEach((service) => {
+        if (service.service_id && service.is_skipped) {
+          map.set(service.service_id, true)
+        }
+      })
+    })
+    return map
+  }, [deploymentStages])
+
+  const sortedServices = useMemo(() => {
+    return [...services].sort((a, b) => {
+      const aIsSkipped = skippedServicesMap.get(a.id) || false
+      const bIsSkipped = skippedServicesMap.get(b.id) || false
+
+      if (aIsSkipped !== bIsSkipped) {
+        return aIsSkipped ? 1 : -1
+      }
+
+      return 0
+    })
+  }, [services, skippedServicesMap])
 
   const columnHelper = createColumnHelper<(typeof services)[number]>()
   const columns = useMemo(
@@ -91,11 +119,12 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
             />
           </div>
         ),
-        cell: ({ row }) => (
-          <label className="absolute inset-y-0 left-0 flex items-center p-4" onClick={(e) => e.stopPropagation()}>
+        cell: ({ row }) => {
+          const isDisabled = !row.getCanSelect()
+          const checkbox = (
             <Checkbox
               checked={row.getIsSelected()}
-              disabled={!row.getCanSelect()}
+              disabled={isDisabled}
               onCheckedChange={(checked) => {
                 if (checked === 'indeterminate') {
                   return
@@ -103,8 +132,20 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
                 row.toggleSelected(checked)
               }}
             />
-          </label>
-        ),
+          )
+
+          return (
+            <label className="absolute inset-y-0 left-0 flex items-center p-4" onClick={(e) => e.stopPropagation()}>
+              {isDisabled ? (
+                <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
+                  <span>{checkbox}</span>
+                </Tooltip>
+              ) : (
+                checkbox
+              )}
+            </label>
+          )
+        },
       }),
       columnHelper.accessor('name', {
         header: 'Service',
@@ -186,13 +227,15 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
   )
 
   const table = useReactTable({
-    data: services,
+    data: sortedServices,
     columns,
     state: {
       sorting,
       rowSelection,
     },
-    enableRowSelection: true,
+    enableRowSelection: (row) => {
+      return !skippedServicesMap.get(row.original.id)
+    },
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
@@ -238,7 +281,7 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
             <Table.Row key={headerGroup.id}>
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r border-neutral pl-0' : ''} font-medium`}
+                  className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-neutral border-r pl-0' : ''} font-medium`}
                   key={header.id}
                   style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                 >
@@ -289,7 +332,7 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}
-                    className={`px-6 ${i === 1 ? 'border-r border-neutral pl-0' : ''} first:relative`}
+                    className={`px-6 ${i === 1 ? 'border-neutral border-r pl-0' : ''} first:relative`}
                     style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

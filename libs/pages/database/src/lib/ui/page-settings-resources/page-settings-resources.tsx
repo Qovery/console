@@ -22,7 +22,9 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
   const displayInstanceTypesWarning =
     watch('instance_type') !== database.instance_type && database.mode === DatabaseModeEnum.MANAGED
 
-  const displayStorageWarning = watch('storage') !== database.storage && database.mode === DatabaseModeEnum.MANAGED
+  // Storage warning should not be displayed for Redis managed databases (ElastiCache) as storage is determined by node type
+  const displayStorageWarning =
+    watch('storage') !== database.storage && database.mode === DatabaseModeEnum.MANAGED && database.type !== 'REDIS'
 
   return (
     <div className="flex w-full flex-col justify-between">

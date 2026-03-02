@@ -11,10 +11,12 @@ import {
   LoaderSpinner,
   ScrollShadowWrapper,
   TagCommit,
+  Tooltip,
   Truncate,
   useModal,
 } from '@qovery/shared/ui'
 import { useDeployAllServices } from '../hooks/use-deploy-all-services/use-deploy-all-services'
+import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
 import { type OutdatedService, useOutdatedServices } from '../hooks/use-outdated-services/use-outdated-services'
 
 export interface UpdateAllModalProps {
@@ -26,10 +28,15 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
   const { data: outdatedServices = [], isLoading: isOutdatedServicesLoading } = useOutdatedServices({
     environmentId: environment.id,
   })
+  const { data: deploymentStages } = useListDeploymentStages({ environmentId: environment.id })
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([])
   const { mutate: deployAllServices, isLoading: isDeployAllServicesLoading } = useDeployAllServices()
 
+  const isSkipped = (serviceId: string) =>
+    deploymentStages?.some((stage) => stage.services?.some((s) => s.service_id === serviceId && s.is_skipped)) ?? false
+
   const checkService = (serviceId: string) => {
+    if (isSkipped(serviceId)) return
     if (selectedServiceIds.includes(serviceId)) {
       setSelectedServiceIds(selectedServiceIds.filter((id) => id !== serviceId))
     } else {
@@ -82,7 +89,7 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
   }
 
   const selectAll = () => {
-    setSelectedServiceIds(outdatedServices.map(({ id }) => id))
+    setSelectedServiceIds(outdatedServices.filter(({ id }) => !isSkipped(id)).map(({ id }) => id))
   }
 
   useEffect(() => {
@@ -144,63 +151,73 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
                 )
                 .otherwise(() => undefined)
 
+              const skipped = isSkipped(application.id)
+
               return (
-                <li
-                  data-testid="outdated-service-row"
-                  onClick={() => checkService(application.id)}
+                <Tooltip
                   key={application.id}
-                  className={`${index === 0 ? 'rounded-t' : ''} ${
-                    outdatedServices.length - 1 === index ? 'rounded-b !border-b' : ''
-                  } flex justify-between border border-b-0 p-4 dark:border-neutral-400 ${
-                    isChecked(application.id)
-                      ? `border border-brand-500 bg-brand-50 dark:bg-neutral-500`
-                      : 'border-neutral-250'
-                  } ${outdatedServices && isChecked(outdatedServices[index - 1]?.id) && 'border-t-brand-500'}`}
+                  content="This service is skipped and cannot be deployed at environment level"
+                  disabled={!skipped}
                 >
-                  <div className="flex font-medium text-neutral-400 dark:text-neutral-50">
-                    <InputCheckbox
-                      name={application.id}
-                      value={application.id}
-                      isChecked={isChecked(application.id)}
-                      className="mr-4"
-                    />
-                    <Truncate truncateLimit={31} text={application.name} />
-                  </div>
-                  <div className="ml-auto flex items-center">
-                    <div
-                      data-testid="current-commit-block"
-                      className={`flex items-center ${isChecked(application.id) ? 'opacity-50' : ''}`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {}
-                      <LegacyAvatar
-                        size={28}
-                        className="mr-2"
-                        style={LegacyAvatarStyle.STROKED}
-                        firstName={getNameForCommit(application, gitRepository?.deployed_commit_id) || 'Unknown'}
-                        url={getAvatarForCommit(application, gitRepository?.deployed_commit_id)}
+                  <li
+                    data-testid="outdated-service-row"
+                    onClick={skipped ? undefined : () => checkService(application.id)}
+                    className={`${index === 0 ? 'rounded-t' : ''} ${
+                      outdatedServices.length - 1 === index ? 'rounded-b !border-b' : ''
+                    } flex justify-between border border-b-0 p-4 dark:border-neutral-400 ${
+                      skipped
+                        ? 'cursor-default border-neutral-250 opacity-50'
+                        : isChecked(application.id)
+                          ? `border border-brand-500 bg-brand-50 dark:bg-neutral-500`
+                          : 'border-neutral-250'
+                    } ${!skipped && outdatedServices && isChecked(outdatedServices[index - 1]?.id) && 'border-t-brand-500'}`}
+                  >
+                    <div className="flex font-medium text-neutral-400 dark:text-neutral-50">
+                      <InputCheckbox
+                        name={application.id}
+                        value={application.id}
+                        isChecked={isChecked(application.id)}
+                        disabled={skipped}
+                        className="mr-4"
                       />
-                      <TagCommit withBackground commitId={gitRepository?.deployed_commit_id} />
+                      <Truncate truncateLimit={31} text={application.name} />
                     </div>
-                    <Icon iconName="arrow-left" className="mx-2 -scale-100 text-neutral-400" />
-                    {application.commits && Boolean(application.commits.length) && (
+                    <div className="ml-auto flex items-center">
                       <div
-                        data-testid="last-commit-block"
-                        className={`flex items-center ${!isChecked(application.id) ? 'opacity-50' : ''}`}
+                        data-testid="current-commit-block"
+                        className={`flex items-center ${isChecked(application.id) ? 'opacity-50' : ''}`}
                         onClick={(e) => e.stopPropagation()}
                       >
+                        {}
                         <LegacyAvatar
                           size={28}
                           className="mr-2"
                           style={LegacyAvatarStyle.STROKED}
-                          firstName={application.commits[0].author_name || ''}
-                          url={application.commits[0].author_avatar_url || ''}
+                          firstName={getNameForCommit(application, gitRepository?.deployed_commit_id) || 'Unknown'}
+                          url={getAvatarForCommit(application, gitRepository?.deployed_commit_id)}
                         />
-                        <TagCommit withBackground commitId={application.commits[0].git_commit_id} />
+                        <TagCommit withBackground commitId={gitRepository?.deployed_commit_id} />
                       </div>
-                    )}
-                  </div>
-                </li>
+                      <Icon iconName="arrow-left" className="mx-2 -scale-100 text-neutral-400" />
+                      {application.commits && Boolean(application.commits.length) && (
+                        <div
+                          data-testid="last-commit-block"
+                          className={`flex items-center ${!isChecked(application.id) ? 'opacity-50' : ''}`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <LegacyAvatar
+                            size={28}
+                            className="mr-2"
+                            style={LegacyAvatarStyle.STROKED}
+                            firstName={application.commits[0].author_name || ''}
+                            url={application.commits[0].author_avatar_url || ''}
+                          />
+                          <TagCommit withBackground commitId={application.commits[0].git_commit_id} />
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                </Tooltip>
               )
             })}
           </ul>

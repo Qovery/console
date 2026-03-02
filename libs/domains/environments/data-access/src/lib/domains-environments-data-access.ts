@@ -84,6 +84,13 @@ export const environments = createQueryKeys('environments', {
       return result.data.results ?? []
     },
   }),
+  listLinks: ({ environmentId }: { environmentId: string }) => ({
+    queryKey: [environmentId],
+    async queryFn() {
+      const result = await environmentApi.listEnvironmentServicesLinks(environmentId)
+      return result.data.results ?? []
+    },
+  }),
   list: ({ projectId }: { projectId: string }) => ({
     queryKey: [projectId],
     async queryFn() {
@@ -199,12 +206,18 @@ export const mutations = {
   async attachServiceToDeploymentStage({
     stageId,
     serviceId,
+    isSkipped = false,
   }: {
-    prevStage?: { serviceId: string; stageId: string }
+    prevStage?: { serviceId: string; stageId: string; isSkipped?: boolean }
     stageId: string
     serviceId: string
+    isSkipped?: boolean
   }) {
-    const result = await deploymentStageMainCallApi.attachServiceToDeploymentStage(stageId, serviceId)
+    const result = await deploymentStageMainCallApi.attachServiceToDeploymentStage(
+      stageId,
+      serviceId,
+      isSkipped ? { is_skipped: true } : undefined
+    )
     return result.data.results
   },
   async moveDeploymentStage({

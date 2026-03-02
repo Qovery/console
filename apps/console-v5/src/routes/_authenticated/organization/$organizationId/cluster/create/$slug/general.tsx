@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import { match } from 'ts-pattern'
 import { StepGeneral } from '@qovery/domains/clusters/feature'
+import { LabelSetting } from '@qovery/domains/organizations/feature'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -25,5 +26,11 @@ function General() {
       .otherwise(() => navigate({ to: `${creationFlowUrl}/resources` }))
   }
 
-  return <StepGeneral organizationId={organizationId} onSubmit={handleSubmit} />
+  return (
+    <StepGeneral
+      organizationId={organizationId}
+      onSubmit={handleSubmit}
+      labelsSetting={<LabelSetting filterPropagateToCloudProvider={true} />}
+    />
+  )
 }

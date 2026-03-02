@@ -26,15 +26,15 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay
-          className="modal__overlay fixed left-0 top-0 z-overlay flex h-full w-full bg-neutral-700/20"
+          className="modal__overlay fixed left-0 top-0 z-overlay flex h-full w-full bg-background-overlay"
           onClick={() => handleOpenChange(false)}
         />
         <Dialog.Content
-          className="modal__content fixed left-1/2 top-6 z-modal h-[calc(100vh-48px)] w-[calc(100vw-48px)] rounded-md bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)]"
+          className="modal__content fixed left-1/2 top-6 z-modal h-[calc(100vh-48px)] w-[calc(100vw-48px)] rounded-lg bg-surface-neutral shadow-[0_0_32px_rgba(0,0,0,0.08)]"
           aria-describedby={description ? 'modal-description' : undefined}
         >
           <Section>
-            <div className="flex h-14 w-full items-center justify-between gap-5 border-b border-neutral-250 px-5">
+            <div className="flex h-14 w-full items-center justify-between gap-5 border-b border-neutral px-5">
               <div className="flex items-baseline gap-2">
                 {title && (
                   <Dialog.Title asChild>
@@ -42,13 +42,13 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
                   </Dialog.Title>
                 )}
                 {description && (
-                  <Dialog.Description id="modal-description" className="text-xs text-neutral-350">
+                  <Dialog.Description id="modal-description" className="text-xs text-neutral-subtle">
                     {description}
                   </Dialog.Description>
                 )}
               </div>
               <div className="flex items-center gap-10">
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-2">
                   <Button
                     variant="plain"
                     size="xs"
@@ -61,7 +61,8 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
                   <SelectTimeRange />
                   <InputSelectSmall
                     name="timezone"
-                    className="w-[120px]"
+                    className="w-[120px] [&>i]:top-2"
+                    inputClassName="h-8"
                     items={[
                       { label: 'Local Time', value: 'local' },
                       { label: 'UTC', value: 'utc' },
@@ -71,7 +72,7 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
                   />
                 </div>
                 <Dialog.Close asChild>
-                  <Button variant="outline" size="md">
+                  <Button variant="outline" size="md" iconOnly>
                     <Icon iconName="xmark" />
                   </Button>
                 </Dialog.Close>

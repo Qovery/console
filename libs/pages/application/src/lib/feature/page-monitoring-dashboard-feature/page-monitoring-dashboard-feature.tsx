@@ -16,7 +16,7 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { PlaceholderMonitoring } from './placeholder-monitoring'
 
 export function PageMonitoringDashboardFeature() {
-  const { applicationId = '', environmentId = '' } = useParams()
+  const { organizationId = '', applicationId = '', environmentId = '' } = useParams()
 
   const { data: environment } = useEnvironment({ environmentId })
   const { data: serviceStatus } = useDeploymentStatus({ environmentId, serviceId: applicationId })
@@ -92,7 +92,7 @@ export function PageMonitoringDashboardFeature() {
       </div>
     </div>
   ) : (
-    <ServiceDashboard />
+    <ServiceDashboard organizationId={organizationId} environmentId={environmentId} serviceId={applicationId} />
   )
 }
 

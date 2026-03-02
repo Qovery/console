@@ -2,9 +2,10 @@ import { createFileRoute, useParams } from '@tanstack/react-router'
 import { type Cluster } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClusterGeneralSettings, useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
+import { LabelSetting } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useUserRole } from '@qovery/shared/iam/feature'
-import { BlockContent, Button, Callout, ExternalLink, Icon, Section } from '@qovery/shared/ui'
+import { BlockContent, Button, Callout, ExternalLink, Heading, Icon, Section } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/general'
@@ -102,6 +103,12 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
               <BlockContent title="General information">
                 <ClusterGeneralSettings fromDetail />
               </BlockContent>
+              {cluster.cloud_provider === 'AWS' && (
+                <Section className="mb-10 gap-3">
+                  <Heading>Extra tags</Heading>
+                  <LabelSetting filterPropagateToCloudProvider={true} />
+                </Section>
+              )}
               <div className="flex justify-end">
                 <Button
                   data-testid="submit-button"
