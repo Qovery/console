@@ -72,8 +72,8 @@ describe('BillingDetails', () => {
         defaultValues: { ...defaultValues, country_code: 'FR' },
       })
     )
-    expect(getByText('VAT number')).toBeTruthy()
-    expect(queryByText('VAT number (optional)')).toBeNull()
+    expect(getByText('VAT number')).toBeInTheDocument()
+    expect(queryByText('VAT number (optional)')).not.toBeInTheDocument()
   })
 
   it('should show "EIN (optional)" label for US', () => {
@@ -82,7 +82,7 @@ describe('BillingDetails', () => {
         defaultValues: { ...defaultValues, country_code: 'US' },
       })
     )
-    expect(getByText('EIN (optional)')).toBeTruthy()
+    expect(getByText('EIN (optional)')).toBeInTheDocument()
   })
 
   it('should show "VAT number (optional)" label for non-EU, non-US country', () => {
@@ -91,6 +91,6 @@ describe('BillingDetails', () => {
         defaultValues: { ...defaultValues, country_code: 'JP' },
       })
     )
-    expect(getByText('VAT number (optional)')).toBeTruthy()
+    expect(getByText('VAT number (optional)')).toBeInTheDocument()
   })
 })
