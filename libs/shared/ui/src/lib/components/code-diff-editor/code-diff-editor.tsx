@@ -105,6 +105,8 @@ export function CodeDiffEditor({
         readOnly: true,
         originalEditable: false,
         minimap: { enabled: false },
+        fontSize: 10.4,
+        lineHeight: 19,
         lineNumbers: 'on',
         scrollBeyondLastLine: false,
         automaticLayout: true,

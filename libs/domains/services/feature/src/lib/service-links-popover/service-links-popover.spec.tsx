@@ -13,10 +13,10 @@ jest.mock('../hooks/use-service-type/use-service-type', () => {
 
 const mockUseLinks = jest.fn()
 
-jest.mock('../hooks/use-links/use-links', () => {
+jest.mock('../hooks/use-environment-links/use-environment-links', () => {
   return {
-    ...jest.requireActual('../hooks/use-links/use-links'),
-    useLinks: () => mockUseLinks(),
+    ...jest.requireActual('../hooks/use-environment-links/use-environment-links'),
+    useEnvironmentLinks: () => mockUseLinks(),
   }
 })
 jest.mock('@tanstack/react-router', () => ({

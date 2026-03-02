@@ -2,6 +2,7 @@ import { type DeploymentStageResponse } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsDeploymentPipeline, {
   type PageSettingsDeploymentPipelineProps,
+  SKIPPED_STAGE_ID,
 } from './page-settings-deployment-pipeline'
 
 const onSubmit = jest.fn()
@@ -131,5 +132,29 @@ describe('PageSettingsDeploymentPipeline', () => {
 
     renderWithProviders(<PageSettingsDeploymentPipeline {...defaultProps} />)
     screen.getByTestId('placeholder-stage')
+  })
+
+  it('should display skipped services in virtual skipped stage', () => {
+    const skippedService = { id: '4', created_at: '', name: 'Skipped Service', serviceType: 'APPLICATION' }
+    const props: PageSettingsDeploymentPipelineProps = {
+      ...defaultProps,
+      services: [...services, skippedService],
+      stages: [
+        {
+          id: SKIPPED_STAGE_ID,
+          name: 'Skipped',
+          deployment_order: -1,
+          created_at: '',
+          environment: { id: '1' },
+          services: [{ id: '4', created_at: '', service_id: '4', service_type: 'APPLICATION' }],
+        },
+        ...stages,
+      ],
+    }
+
+    renderWithProviders(<PageSettingsDeploymentPipeline {...props} />)
+
+    expect(screen.getByText('Skipped')).toBeInTheDocument()
+    expect(screen.getByText('Skipped Service')).toBeInTheDocument()
   })
 })

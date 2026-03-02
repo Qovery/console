@@ -65,4 +65,49 @@ describe('PageSettingsGeneralFeature', () => {
       clusterRequest: cloneCluster,
     })
   })
+
+  it('should include labels_groups for AWS clusters', () => {
+    const awsCluster = { ...mockCluster, cloud_provider: 'AWS' }
+    const result = handleSubmit(
+      {
+        name: 'test',
+        description: 'desc',
+        production: false,
+        labels_groups: ['label-group-1', 'label-group-2'],
+      },
+      awsCluster
+    )
+
+    expect(result.labels_groups).toEqual([{ id: 'label-group-1' }, { id: 'label-group-2' }])
+  })
+
+  it('should include empty labels_groups for AWS clusters when no labels provided', () => {
+    const awsCluster = { ...mockCluster, cloud_provider: 'AWS' }
+    const result = handleSubmit(
+      {
+        name: 'test',
+        description: 'desc',
+        production: false,
+        labels_groups: [],
+      },
+      awsCluster
+    )
+
+    expect(result.labels_groups).toEqual([])
+  })
+
+  it('should not include labels_groups for non-AWS clusters', () => {
+    const gcpCluster = { ...mockCluster, cloud_provider: 'GCP' }
+    const result = handleSubmit(
+      {
+        name: 'test',
+        description: 'desc',
+        production: false,
+        labels_groups: ['label-group-1'],
+      },
+      gcpCluster
+    )
+
+    expect(result.labels_groups).toBeUndefined()
+  })
 })

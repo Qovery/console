@@ -127,6 +127,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
     defaultValues: {
       default_override: {
         limits: defaultValues?.limits,
+        consolidate_after: defaultValues?.consolidate_after,
       },
       stable_override: {
         ...defaultValues,
@@ -145,6 +146,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
       },
       gpu_override: {
         limits: defaultValues?.limits,
+        consolidate_after: defaultValues?.consolidate_after,
       },
     },
   })
@@ -168,6 +170,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
             max_memory_in_gibibytes: data.default_override?.limits?.max_memory_in_gibibytes ?? MEMORY_MIN,
             max_gpu: data.default_override?.limits?.max_gpu ?? GPU_MIN,
           },
+          consolidate_after: data.default_override?.consolidate_after,
         },
       }))
       .with('stable', () => ({
@@ -188,6 +191,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
               ? `PT${data.stable_override.consolidation.duration.toUpperCase()}`
               : '',
           },
+          consolidate_after: data.stable_override?.consolidate_after,
         },
       }))
       .with('gpu', () => ({
@@ -208,6 +212,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
               ? `PT${data.gpu_override.consolidation.duration.toUpperCase()}`
               : '',
           },
+          consolidate_after: data.gpu_override?.consolidate_after,
         },
       }))
       .exhaustive()
@@ -265,6 +270,29 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                   </span>
                 </div>
               </div>
+              <div className="ml-11">
+                <Controller
+                  name={`${prefix}.consolidate_after`}
+                  control={methods.control}
+                  rules={{
+                    pattern: {
+                      value: /^\d+(s|m|h)$/,
+                      message: 'Please enter a valid duration (e.g., 1m, 10m, 1h)',
+                    },
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      label="Consolidate after"
+                      name={field.name}
+                      value={field.value}
+                      onChange={field.onChange}
+                      hint="Time to wait before consolidating empty/underutilized nodes (e.g., 1m, 10m, 1h). Maximum: 24h"
+                      placeholder="Default: 1m"
+                      error={error?.message}
+                    />
+                  )}
+                />
+              </div>
             </div>
           ))
           .with('stable_override', 'gpu_override', (prefix) => (
@@ -298,6 +326,27 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                   <Callout.Root className="items-center" color="yellow">
                     <Callout.Text>Some downtime may occur during this process.</Callout.Text>
                   </Callout.Root>
+                  <Controller
+                    name={`${prefix}.consolidate_after`}
+                    control={methods.control}
+                    rules={{
+                      pattern: {
+                        value: /^\d+(s|m|h)$/,
+                        message: 'Please enter a valid duration (e.g., 1m, 10m, 1h)',
+                      },
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        label="Consolidate after"
+                        name={field.name}
+                        value={field.value}
+                        onChange={field.onChange}
+                        hint="Time to wait before consolidating empty/underutilized nodes (e.g., 1m, 10m, 1h). Maximum: 24h"
+                        placeholder="Default: 30s"
+                        error={error?.message}
+                      />
+                    )}
+                  />
                   <Controller
                     name={`${prefix}.consolidation.start_time`}
                     control={methods.control}

@@ -75,6 +75,7 @@ import {
   upperCaseFirstLetter,
 } from '@qovery/shared/util-js'
 import { useCheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
+import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommit } from '../last-commit/last-commit'
 import LastVersion from '../last-version/last-version'
@@ -323,13 +324,15 @@ export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
   environment: Environment
 }
 
-export function ServiceList({ className, environment, ...props }: ServiceListProps) {
-  const clusterId = environment.cluster_id || ''
-  const environmentId = environment.id || ''
-  const organizationId = environment.organization.id || ''
-  const projectId = environment.project.id || ''
-
-  const { data: services = [] } = useServices({ environmentId, suspense: true })
+export function ServiceList({ environment, className, ...props }: ServiceListProps) {
+  const {
+    id: environmentId,
+    cluster_id: clusterId,
+    project: { id: projectId },
+    organization: { id: organizationId },
+  } = environment
+  const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
+  const { data: deploymentStages } = useListDeploymentStages({ environmentId })
   const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
     clusterId,
     environmentId,
@@ -337,6 +340,32 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const navigate = useNavigate()
+
+  // Build map of service_id -> is_skipped for quick lookup
+  const skippedServicesMap = useMemo(() => {
+    const map = new Map<string, boolean>()
+    deploymentStages?.forEach((stage) => {
+      stage.services?.forEach((service) => {
+        if (service.service_id && service.is_skipped) {
+          map.set(service.service_id, true)
+        }
+      })
+    })
+    return map
+  }, [deploymentStages])
+
+  const sortedServices = useMemo(() => {
+    return [...services].sort((a, b) => {
+      const aIsSkipped = skippedServicesMap.get(a.id) || false
+      const bIsSkipped = skippedServicesMap.get(b.id) || false
+
+      if (aIsSkipped !== bIsSkipped) {
+        return aIsSkipped ? 1 : -1
+      }
+
+      return 0
+    })
+  }, [services, skippedServicesMap])
 
   const columnHelper = createColumnHelper<(typeof services)[number]>()
   const columns = useMemo(
@@ -365,11 +394,12 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
             />
           </div>
         ),
-        cell: ({ row }) => (
-          <label className="absolute inset-y-0 left-0 flex items-center p-4" onClick={(e) => e.stopPropagation()}>
+        cell: ({ row }) => {
+          const isDisabled = !row.getCanSelect()
+          const checkbox = (
             <Checkbox
               checked={row.getIsSelected()}
-              disabled={!row.getCanSelect()}
+              disabled={isDisabled}
               onCheckedChange={(checked) => {
                 if (checked === 'indeterminate') {
                   return
@@ -377,8 +407,20 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
                 row.toggleSelected(checked)
               }}
             />
-          </label>
-        ),
+          )
+
+          return (
+            <label className="absolute inset-y-0 left-0 flex items-center p-4" onClick={(e) => e.stopPropagation()}>
+              {isDisabled ? (
+                <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
+                  <span>{checkbox}</span>
+                </Tooltip>
+              ) : (
+                checkbox
+              )}
+            </label>
+          )
+        },
       }),
       columnHelper.accessor('name', {
         header: 'Service',
@@ -735,13 +777,15 @@ export function ServiceList({ className, environment, ...props }: ServiceListPro
   )
 
   const table = useReactTable({
-    data: services,
+    data: sortedServices,
     columns,
     state: {
       sorting,
       rowSelection,
     },
-    enableRowSelection: true,
+    enableRowSelection: (row) => {
+      return !skippedServicesMap.get(row.original.id)
+    },
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
