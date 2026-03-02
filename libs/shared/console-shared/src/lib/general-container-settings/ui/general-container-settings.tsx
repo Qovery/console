@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react'
 import { type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ContainerRegistryCreateEditModal, useContainerRegistries } from '@qovery/domains/organizations/feature'
@@ -23,17 +22,15 @@ export function GeneralContainerSettings({ organization, isSetting }: GeneralCon
   const watchRegistry = watch('registry')
   const watchImageName = watch('image_name')
   const watchImageTag = watch('image_tag')
-  const previousRegistryRef = useRef<string | undefined>(watchRegistry)
 
   const { data: containerRegistries = [] } = useContainerRegistries({ organizationId: organization?.id ?? '' })
 
-  useEffect(() => {
-    if (previousRegistryRef.current && previousRegistryRef.current !== watchRegistry) {
+  const handleRegistryChange = (nextRegistry: string, currentRegistry?: string) => {
+    if (currentRegistry && currentRegistry !== nextRegistry) {
       setValue('image_name', '')
       setValue('image_tag', '')
     }
-    previousRegistryRef.current = watchRegistry
-  }, [watchRegistry, setValue])
+  }
 
   return (
     <>
@@ -48,7 +45,11 @@ export function GeneralContainerSettings({ organization, isSetting }: GeneralCon
             <InputSelect
               dataTestId="input-select-registry"
               className="mb-0.5"
-              onChange={field.onChange}
+              onChange={(value) => {
+                const nextRegistry = String(value)
+                handleRegistryChange(nextRegistry, field.value)
+                field.onChange(nextRegistry)
+              }}
               value={field.value}
               options={containerRegistries
                 ?.filter((c) => !c.cluster)
@@ -67,7 +68,10 @@ export function GeneralContainerSettings({ organization, isSetting }: GeneralCon
                       <ContainerRegistryCreateEditModal
                         organizationId={organization.id}
                         onClose={(response) => {
-                          response && field.onChange(response.id)
+                          if (response) {
+                            handleRegistryChange(response.id, field.value)
+                            field.onChange(response.id)
+                          }
                           closeModal()
                         }}
                       />
