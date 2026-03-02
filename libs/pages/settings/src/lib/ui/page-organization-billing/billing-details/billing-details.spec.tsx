@@ -10,6 +10,7 @@ const props: BillingDetailsProps = {
   countryValues: [
     { label: 'France', value: 'FR' },
     { label: 'United States', value: 'US' },
+    { label: 'Japan', value: 'JP' },
   ],
 }
 
@@ -63,5 +64,33 @@ describe('BillingDetails', () => {
     )
 
     getByTestId(baseElement, 'spinner')
+  })
+
+  it('should show "VAT number" label for EU country', () => {
+    const { getByText, queryByText } = render(
+      wrapWithReactHookForm<BillingInfo>(<BillingDetails {...props} />, {
+        defaultValues: { ...defaultValues, country_code: 'FR' },
+      })
+    )
+    expect(getByText('VAT number')).toBeTruthy()
+    expect(queryByText('VAT number (optional)')).toBeNull()
+  })
+
+  it('should show "EIN (optional)" label for US', () => {
+    const { getByText } = render(
+      wrapWithReactHookForm<BillingInfo>(<BillingDetails {...props} />, {
+        defaultValues: { ...defaultValues, country_code: 'US' },
+      })
+    )
+    expect(getByText('EIN (optional)')).toBeTruthy()
+  })
+
+  it('should show "VAT number (optional)" label for non-EU, non-US country', () => {
+    const { getByText } = render(
+      wrapWithReactHookForm<BillingInfo>(<BillingDetails {...props} />, {
+        defaultValues: { ...defaultValues, country_code: 'JP' },
+      })
+    )
+    expect(getByText('VAT number (optional)')).toBeTruthy()
   })
 })

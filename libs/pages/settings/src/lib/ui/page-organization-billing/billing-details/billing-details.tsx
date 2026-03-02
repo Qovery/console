@@ -1,6 +1,7 @@
 import { type BillingInfoRequest } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { EU_COUNTRY_CODES } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
 
@@ -12,7 +13,12 @@ export interface BillingDetailsProps {
 }
 
 export function BillingDetails(props: BillingDetailsProps) {
-  const { control, formState } = useFormContext<BillingInfoRequest>()
+  const { control, formState, watch } = useFormContext<BillingInfoRequest>()
+  const countryCode = watch('country_code')
+  const isEuCountry = EU_COUNTRY_CODES.has(countryCode ?? '')
+  const isUsCountry = countryCode === 'US'
+  const vatLabel = isUsCountry ? 'EIN (optional)' : isEuCountry ? 'VAT number' : 'VAT number (optional)'
+  const vatRequired = isEuCountry ? 'Please provide a VAT number' : false
 
   return (
     <>
@@ -72,12 +78,12 @@ export function BillingDetails(props: BillingDetailsProps) {
             <Controller
               control={control}
               name="vat_number"
-              rules={{ required: 'Please provide a VAT number' }}
+              rules={{ required: vatRequired }}
               render={({ field }) => (
                 <InputText
                   className="mb-3 min-w-0 flex-1"
                   name={field.name}
-                  label="VAT number"
+                  label={vatLabel}
                   value={field.value}
                   onChange={field.onChange}
                   error={formState.errors.vat_number?.message}
