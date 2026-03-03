@@ -21,34 +21,28 @@ export function AutoDeploySection({ serviceId, source, className, children }: Au
 
   const shouldShowWebhook = supportsWebhook && autoDeployEnabled
   const showSyncButton = webhookStatus && webhookStatus.status !== 'ACTIVE'
-  const isTerraform = source === 'TERRAFORM'
 
   return (
-    <div className="rounded-md border border-neutral-200">
-      <div className="p-4">
+    <div className="overflow-hidden rounded-md border border-neutral-200">
+      <div className="flex items-center justify-between p-4">
         <AutoDeploySetting
           source={source}
           className={className}
-          titleSuffix={isTerraform && shouldShowWebhook ? <GitWebhookStatusBadge serviceId={serviceId} /> : undefined}
+          titleSuffix={shouldShowWebhook ? <GitWebhookStatusBadge serviceId={serviceId} /> : undefined}
         />
+        {shouldShowWebhook && showSyncButton && (
+          <Button
+            type="button"
+            variant="surface"
+            color="neutral"
+            size="sm"
+            onClick={() => syncWebhook()}
+            loading={isSyncing}
+          >
+            Update webhook
+          </Button>
+        )}
       </div>
-      {!isTerraform && shouldShowWebhook && (
-        <div className="flex items-center justify-between border-t border-neutral-200 bg-neutral-100 px-4 py-3">
-          <GitWebhookStatusBadge serviceId={serviceId} />
-          {showSyncButton && (
-            <Button
-              type="button"
-              variant="surface"
-              color="neutral"
-              size="sm"
-              onClick={() => syncWebhook()}
-              loading={isSyncing}
-            >
-              Update Webhook
-            </Button>
-          )}
-        </div>
-      )}
       {children && autoDeployEnabled && (
         <div className="border-t border-neutral-200 bg-neutral-100 p-4">{children}</div>
       )}

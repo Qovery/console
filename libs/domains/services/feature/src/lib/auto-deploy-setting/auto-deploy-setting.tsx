@@ -13,8 +13,8 @@ export function AutoDeploySetting({ source, className = '', titleSuffix }: AutoD
   const { control } = useFormContext()
 
   const title = match(source)
-    .with('TERRAFORM', () => 'Auto-deploy on new commits')
-    .otherwise(() => 'Auto-deploy')
+    .with('CONTAINER_REGISTRY', () => 'Auto-deploy on new image tag')
+    .otherwise(() => 'Auto-deploy on new commits')
 
   return (
     <Controller
@@ -36,15 +36,6 @@ export function AutoDeploySetting({ source, className = '', titleSuffix }: AutoD
                 title
               )
             }
-            description={match(source)
-              .with('TERRAFORM', () => undefined)
-              .with('GIT', () => 'The service will be automatically updated on every new commit on the branch.')
-              .with(
-                'CONTAINER_REGISTRY',
-                () =>
-                  'The service will be automatically updated if Qovery is notified on the API that a new image tag is available.'
-              )
-              .exhaustive()}
             forceAlignTop
             small
           />

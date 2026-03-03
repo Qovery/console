@@ -1,4 +1,5 @@
 import { Chance } from 'chance'
+import { TerraformAutoDeployConfigTerraformActionEnum } from 'qovery-typescript-axios'
 import { type Terraform } from '@qovery/domains/services/data-access'
 
 const chance = new Chance('123')
@@ -16,6 +17,10 @@ export const terraformFactoryMock = (howMany: number): Terraform[] =>
     description: chance.sentence(),
     auto_approve: false,
     auto_deploy: false,
+    auto_deploy_config: {
+      auto_deploy: false,
+      terraform_action: TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
+    },
     backend: {
       kubernetes: {},
     },

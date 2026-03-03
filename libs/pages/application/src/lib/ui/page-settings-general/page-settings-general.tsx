@@ -1,8 +1,4 @@
-import {
-  BuildModeEnum,
-  type Organization,
-  TerraformAutoDeployConfigAutoDeployActionEnum,
-} from 'qovery-typescript-axios'
+import { BuildModeEnum, type Organization, TerraformAutoDeployConfigTerraformActionEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -34,9 +30,9 @@ const buildModeItems = Object.values(BuildModeEnum).map((value) => ({
 }))
 
 const triggeredActionItems = [
-  { label: 'Plan & apply', value: TerraformAutoDeployConfigAutoDeployActionEnum.DEFAULT },
-  { label: 'Plan', value: TerraformAutoDeployConfigAutoDeployActionEnum.PLAN },
-  { label: 'Skip ', value: TerraformAutoDeployConfigAutoDeployActionEnum.NOOP },
+  { label: 'Plan & apply', value: TerraformAutoDeployConfigTerraformActionEnum.DEFAULT },
+  { label: 'Plan', value: TerraformAutoDeployConfigTerraformActionEnum.PLAN },
+  { label: 'Skip', value: TerraformAutoDeployConfigTerraformActionEnum.NOOP },
 ]
 
 export function PageSettingsGeneral({
@@ -204,7 +200,7 @@ export function PageSettingsGeneral({
                   <Heading>Build and deploy</Heading>
                   <AutoDeploySection serviceId={terraform.id} source="TERRAFORM">
                     <Controller
-                      name="auto_deploy_action"
+                      name="terraform_action"
                       control={control}
                       render={({ field, fieldState: { error } }) => (
                         <InputSelect

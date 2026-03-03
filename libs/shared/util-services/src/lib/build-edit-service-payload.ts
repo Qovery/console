@@ -7,7 +7,7 @@ import {
   type HelmRequest,
   type JobRequest,
   type ServiceStorageStorageInner,
-  TerraformAutoDeployConfigAutoDeployActionEnum,
+  TerraformAutoDeployConfigTerraformActionEnum,
   type TerraformRequest,
 } from 'qovery-typescript-axios'
 import { P, match } from 'ts-pattern'
@@ -101,7 +101,7 @@ function refactoTerraform({ service, request = {} }: terraformProps): TerraformR
     auto_deploy_config: request.auto_deploy_config ??
       service.auto_deploy_config ?? {
         auto_deploy: service.auto_deploy ?? false,
-        auto_deploy_action: TerraformAutoDeployConfigAutoDeployActionEnum.DEFAULT,
+        terraform_action: TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
       },
     terraform_files_source: {
       git_repository: {

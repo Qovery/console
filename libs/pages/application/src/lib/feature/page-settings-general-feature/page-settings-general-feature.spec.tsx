@@ -2,7 +2,7 @@ import {
   BuildModeEnum,
   GitProviderEnum,
   ServiceTypeEnum,
-  TerraformAutoDeployConfigAutoDeployActionEnum,
+  TerraformAutoDeployConfigTerraformActionEnum,
 } from 'qovery-typescript-axios'
 import { type TerraformGeneralData } from '@qovery/domains/service-terraform/feature'
 import { type Application } from '@qovery/domains/services/data-access'
@@ -320,7 +320,7 @@ describe('PageSettingsGeneralFeature', () => {
       description: description,
       auto_deploy_config: {
         auto_deploy: false,
-        auto_deploy_action: TerraformAutoDeployConfigAutoDeployActionEnum.DEFAULT,
+        terraform_action: TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
       },
       terraform_files_source: {
         git_repository: {
@@ -330,6 +330,24 @@ describe('PageSettingsGeneralFeature', () => {
           git_token_id: terraform.terraform_files_source?.git?.git_repository?.git_token_id,
         },
       },
+    })
+  })
+
+  it('should include explicit terraform_action in auto_deploy_config', () => {
+    const terraform = terraformFactoryMock(1)[0]
+    const result = handleTerraformSubmit(
+      {
+        name: 'test',
+        description: '',
+        auto_deploy: true,
+        terraform_action: TerraformAutoDeployConfigTerraformActionEnum.PLAN,
+      } as TerraformGeneralData,
+      terraform
+    )
+
+    expect(result.auto_deploy_config).toStrictEqual({
+      auto_deploy: true,
+      terraform_action: TerraformAutoDeployConfigTerraformActionEnum.PLAN,
     })
   })
 })

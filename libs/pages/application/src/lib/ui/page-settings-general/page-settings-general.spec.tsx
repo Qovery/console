@@ -50,7 +50,6 @@ describe('PageSettingsGeneral', () => {
     screen.getByDisplayValue('hello-world')
     screen.getByText('Docker')
     screen.getByDisplayValue('Dockerfile')
-    screen.getByText(/The service will be automatically updated on every new commit on the branch./i)
   })
 
   it('should render application general settings fields', async () => {
@@ -71,7 +70,7 @@ describe('PageSettingsGeneral', () => {
     // Necessary to get sub-component
     waitFor(() => {
       expect(screen.getByText('Source')).toBeInTheDocument()
-      expect(screen.getByText('Auto-deploy')).toBeInTheDocument()
+      expect(screen.getByText('Auto-deploy on new commits')).toBeInTheDocument()
     })
   })
 
@@ -87,7 +86,7 @@ describe('PageSettingsGeneral', () => {
     expect(screen.getByText('Deploy')).toBeInTheDocument()
     // Necessary to get sub-component
     waitFor(() => {
-      expect(screen.getByText('Auto-deploy')).toBeInTheDocument()
+      expect(screen.getByText('Auto-deploy on new commits')).toBeInTheDocument()
     })
   })
 
@@ -102,7 +101,7 @@ describe('PageSettingsGeneral', () => {
     // Necessary to get sub-component
     waitFor(() => {
       expect(screen.getByText('Git repository')).toBeInTheDocument()
-      expect(screen.getByText('Auto-deploy')).toBeInTheDocument()
+      expect(screen.getByText('Auto-deploy on new commits')).toBeInTheDocument()
     })
   })
 
@@ -136,7 +135,7 @@ describe('PageSettingsGeneral', () => {
     // Necessary to get sub-component
     waitFor(() => {
       expect(screen.getByText('Source')).toBeInTheDocument()
-      expect(screen.getByText('Auto-deploy')).toBeInTheDocument()
+      expect(screen.getByText('Auto-deploy on new commits')).toBeInTheDocument()
     })
   })
 })

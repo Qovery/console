@@ -2,7 +2,7 @@ import {
   type ApplicationGitRepository,
   type GitProviderEnum,
   type GitTokenResponse,
-  type TerraformAutoDeployConfigAutoDeployActionEnum,
+  type TerraformAutoDeployConfigTerraformActionEnum,
   TerraformEngineEnum,
   type TerraformRequest,
   type TerraformRequestDockerfileFragment,
@@ -39,7 +39,7 @@ export interface TerraformGeneralData
     'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec' | 'dockerfile_fragment' | 'auto_deploy_config'
   > {
   auto_deploy: boolean
-  auto_deploy_action: TerraformAutoDeployConfigAutoDeployActionEnum
+  terraform_action: TerraformAutoDeployConfigTerraformActionEnum
   source_provider: 'GIT'
   repository: string
   git_repository?: ApplicationGitRepository

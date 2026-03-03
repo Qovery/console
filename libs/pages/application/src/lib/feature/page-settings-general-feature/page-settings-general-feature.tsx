@@ -9,7 +9,7 @@ import {
   type JobRequest,
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
-  TerraformAutoDeployConfigAutoDeployActionEnum,
+  TerraformAutoDeployConfigTerraformActionEnum,
   type TerraformRequest,
 } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -228,7 +228,7 @@ export const handleTerraformSubmit = (data: TerraformGeneralData, terraform: Ter
   description: data.description,
   auto_deploy_config: {
     auto_deploy: data.auto_deploy ?? false,
-    auto_deploy_action: data.auto_deploy_action ?? TerraformAutoDeployConfigAutoDeployActionEnum.DEFAULT,
+    terraform_action: data.terraform_action ?? TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
   },
   terraform_files_source: {
     git_repository: {
@@ -337,8 +337,8 @@ export function PageSettingsGeneralFeature() {
     }))
     .with({ serviceType: 'TERRAFORM' }, (service) => ({
       auto_deploy: service.auto_deploy_config?.auto_deploy ?? service.auto_deploy,
-      auto_deploy_action:
-        service.auto_deploy_config?.auto_deploy_action ?? TerraformAutoDeployConfigAutoDeployActionEnum.DEFAULT,
+      terraform_action:
+        service.auto_deploy_config?.terraform_action ?? TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
     }))
     .otherwise(() => undefined)
 
