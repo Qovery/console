@@ -14,8 +14,8 @@ function RouteComponent() {
   useDocumentTitle('Danger zone - Service settings')
   const { organizationId, projectId, environmentId, serviceId } = Route.useParams()
   const navigate = Route.useNavigate()
-  const { data: environment } = useEnvironment({ environmentId })
-  const { data: service } = useService({ environmentId, serviceId })
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { mutateAsync: deleteService } = useDeleteService({ organizationId, environmentId })
 
   const mutationDeleteService = async () => {
