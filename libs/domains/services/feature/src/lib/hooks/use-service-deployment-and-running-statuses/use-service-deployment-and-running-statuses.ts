@@ -10,12 +10,9 @@ export interface UseDeploymentFullStatusProps {
   service?: AnyService
 }
 
-export function useServiceDeploymentAndRunningStatuses({
-  environmentId: envId,
-  service,
-}: UseDeploymentFullStatusProps) {
+export function useServiceDeploymentAndRunningStatuses({ environmentId = '', service }: UseDeploymentFullStatusProps) {
   const serviceId = service?.id ?? ''
-  const environmentId = envId ?? ''
+
   const { data: runningStatus } = useQuery({
     ...queries.services.runningStatus(environmentId, serviceId),
   })

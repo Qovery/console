@@ -2,14 +2,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import {
-  APPLICATION_GENERAL_URL,
-  APPLICATION_URL,
-  DATABASE_GENERAL_URL,
-  DATABASE_URL,
-  DEPLOYMENT_LOGS_VERSION_URL,
-  ENVIRONMENT_LOGS_URL,
-} from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { AnimatedGradientText, Badge, Button, Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { formatCronExpression, pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import useDeploymentStatus from '../../hooks/use-deployment-status/use-deployment-status'
@@ -211,31 +204,17 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
           <ServiceActionToolbar
             serviceId={service.id}
             environment={environment}
-            shellAction={match(service)
-              .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, () => undefined)
-              .with(
-                { serviceType: 'DATABASE', mode: 'CONTAINER' },
-                () => () =>
-                  navigate({
-                    to:
-                      DATABASE_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
-                      DATABASE_GENERAL_URL,
-                    state: {
-                      hasShell: true,
-                    } as any,
-                  })
-              )
-              .otherwise(
-                () => () =>
-                  navigate({
-                    to:
-                      APPLICATION_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
-                      APPLICATION_GENERAL_URL,
-                    state: {
-                      hasShell: true,
-                    } as any,
-                  })
-              )}
+            shellAction={() => {
+              navigate({
+                to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+                params: {
+                  organizationId: environment.organization.id,
+                  projectId: environment.project.id,
+                  environmentId: environment.id,
+                  serviceId: service.id,
+                },
+              })
+            }}
           />
         </div>
       </div>

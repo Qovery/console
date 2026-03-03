@@ -1,14 +1,9 @@
-import { type Environment, ServiceTypeEnum } from 'qovery-typescript-axios'
+import { type Environment } from 'qovery-typescript-axios'
 import { ServiceSubActionDto } from 'qovery-ws-typescript-axios'
+import { type PropsWithChildren } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import {
-  APPLICATION_URL,
-  CLUSTER_URL,
-  DATABASE_GENERAL_URL,
-  DATABASE_URL,
-  SERVICES_GENERAL_URL,
-} from '@qovery/shared/routes'
+import { CLUSTER_URL } from '@qovery/shared/routes'
 import { Link, Skeleton, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { useCheckRunningStatusClosed } from '../../hooks/use-check-running-status-closed/use-check-running-status-closed'
 import { useServiceDeploymentAndRunningStatuses } from '../../hooks/use-service-deployment-and-running-statuses/use-service-deployment-and-running-statuses'
@@ -36,14 +31,7 @@ export function ServiceRunningStatusCell({
     environmentId: environment.id,
   })
 
-  const Wrapper = ({ children }: { children: React.ReactNode }) => <div className="min-w-40">{children}</div>
-
-  const link = match(service)
-    .with(
-      { serviceType: ServiceTypeEnum.DATABASE },
-      ({ id }) => DATABASE_URL(organizationId, projectId, environment.id, id) + DATABASE_GENERAL_URL
-    )
-    .otherwise(({ id }) => APPLICATION_URL(organizationId, projectId, environment.id, id) + SERVICES_GENERAL_URL)
+  const Wrapper = ({ children }: PropsWithChildren) => <div className="min-w-40">{children}</div>
 
   const value = match(runningStatus?.triggered_action)
     .with(
@@ -98,7 +86,13 @@ export function ServiceRunningStatusCell({
         <Tooltip content="See overview">
           <Link
             as="button"
-            to={link}
+            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+            params={{
+              organizationId: environment.organization.id,
+              projectId: environment.project.id,
+              environmentId: environment.id,
+              serviceId: service.id,
+            }}
             onClick={(e) => e.stopPropagation()}
             className="gap-2 whitespace-nowrap text-sm"
             size="md"
