@@ -58,7 +58,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
         <Link
           as="button"
           className="gap-1.5"
-          variant="surface"
+          variant="outline"
           to={
             ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
             DEPLOYMENT_LOGS_VERSION_URL(serviceId, serviceStatus.execution_id)

@@ -228,10 +228,10 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
     (!isLogsFetched && !isLogsLoading)
   ) {
     return (
-      <div className="w-full p-1">
-        <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
+      <div className="w-full">
+        <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral">
           <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
-          <div className="h-[calc(100vh-176px)] border-r border-neutral-500 bg-neutral-600">
+          <div className="h-[calc(100vh-176px)] border-r border-neutral">
             <div className="flex h-full flex-col items-center justify-center">
               <Placeholder
                 environment={environment}
@@ -250,8 +250,8 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
-      <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
+    <div className="h-[calc(100vh-64px)] w-full overflow-hidden">
+      <div className="relative h-full pb-7">
         <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
         {isLogsLoading && isLiveMode ? (
           <div className="flex h-full flex-col items-center justify-center pb-[68px]">
@@ -290,7 +290,10 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
                 setPauseLogs={setPauseLogs}
               />
             )}
-            <Table.Root className="w-full border-separate border-spacing-y-0.5 text-xs">
+            <Table.Root
+              className="w-full border-separate border-spacing-y-0.5 text-xs"
+              containerClassName="rounded-none border-none"
+            >
               <Table.Body className="divide-y-0">
                 {logs.map((log, index) => {
                   const timestamp = log.timestamp

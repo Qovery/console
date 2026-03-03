@@ -48,16 +48,14 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
   const renderHighlightedMessage = (message: string, searchTerm: string | null | undefined) => {
     if (!searchTerm || !message.includes(searchTerm)) {
       return (
-        <Ansi className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral-50">
-          {message}
-        </Ansi>
+        <Ansi className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral">{message}</Ansi>
       )
     }
 
     const parts = message.split(new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'))
 
     return (
-      <span className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral-50">
+      <span className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral">
         {parts.map((part, index) => {
           if (part.toLowerCase() === searchTerm.toLowerCase()) {
             return (
@@ -87,7 +85,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
         onClick={() => !isNginx && !isEnvoy && setIsExpanded(!isExpanded)}
         className={twMerge(
           clsx('sl-row sl-row-appear group relative mt-0.5 cursor-pointer text-xs', {
-            'bg-red-500/10': isErrorOrCritical,
+            'bg-surface-negative-component': isErrorOrCritical,
           })
         )}
       >
@@ -106,7 +104,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
           </Tooltip>
           {!isNginx && !isEnvoy && (
             <span className="flex h-3 w-3 items-center justify-center">
-              <Icon className="text-neutral-300" iconName={isExpanded ? 'chevron-down' : 'chevron-right'} />
+              <Icon className="text-neutral-subtle" iconName={isExpanded ? 'chevron-down' : 'chevron-right'} />
             </span>
           )}
           {isNginx ? (
@@ -139,7 +137,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
             </Tooltip>
           )}
         </Table.Cell>
-        <Table.Cell className="h-min min-h-7 select-none whitespace-nowrap px-1.5 align-baseline font-code font-bold text-neutral-300">
+        <Table.Cell className="h-min min-h-7 select-none whitespace-nowrap px-1.5 align-baseline font-code font-bold text-neutral-subtle">
           <span title={dateUTCString(timestamp)} className="inline-block whitespace-nowrap">
             {dateFullFormat(timestamp, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
           </span>
@@ -180,7 +178,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
           )}
         >
           <Table.Cell className="py-4 pl-1" colSpan={hasMultipleContainers ? 5 : 4}>
-            <div className="w-full rounded border border-neutral-400 bg-transparent px-4 py-2">
+            <div className="w-full rounded border border-neutral bg-transparent px-4 py-2">
               <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0 text-xs">
                 {log.level && levelLowercase !== 'warning' && (
                   <>

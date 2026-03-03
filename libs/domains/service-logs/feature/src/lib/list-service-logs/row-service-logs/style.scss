@@ -5,19 +5,5 @@
 .sl-row:not([class*='bg-red-500/10']):hover + .sl-expanded,
 .sl-expanded:not([class*='bg-red-500/10']):hover,
 .sl-row:not([class*='bg-red-500/10']):has(+ .sl-expanded:hover) {
-  background-color: theme('colors.neutral.550');
-}
-
-// Animation for new rows appearing
-.sl-row-appear {
-  animation: rowAppear 1s ease-out;
-}
-
-@keyframes rowAppear {
-  0% {
-    background-color: theme('colors.neutral.500');
-  }
-  100% {
-    background-color: transparent;
-  }
+  background-color: var(--neutral-2);
 }

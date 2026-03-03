@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDeploymentHistory, useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
-import { LoaderDots, StatusChip } from '@qovery/shared/ui'
+import { LoaderDots, LoaderSpinner, StatusChip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { trimId } from '@qovery/shared/util-js'
@@ -144,7 +144,7 @@ export function PageEnvironmentLogs() {
 
   if (isFetchedDeploymentHistory && !findDeploymentHistory) {
     return (
-      <div className="h-[calc(100vh-64px)] w-full p-1">
+      <div className="h-[calc(100vh-64px)] w-full">
         <div className="flex h-full w-full items-center justify-center border border-neutral-500 bg-neutral-600">
           {deploymentVersionId === 'latest' ? (
             <div className="flex flex-col items-center justify-center gap-10">
@@ -215,9 +215,9 @@ export function PageEnvironmentLogs() {
 
   if (!environment || !environmentStatus?.last_deployment_state)
     return (
-      <div className="h-[calc(100vh-64px)] w-full p-1">
-        <div className="flex h-full w-full items-center justify-center border border-neutral-500 bg-neutral-600">
-          <LoaderDots />
+      <div className="w-full py-24">
+        <div className="flex h-full w-full items-center justify-center">
+          <LoaderSpinner />
         </div>
       </div>
     )

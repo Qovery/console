@@ -37,7 +37,7 @@ export function PodLogsFeature({ environment, deploymentStages, environmentStatu
   if (!cluster) return null
 
   return (
-    <div className="h-full w-full bg-neutral-900">
+    <div className="h-full w-full">
       <ListServiceLogs
         cluster={cluster}
         environment={environment}
