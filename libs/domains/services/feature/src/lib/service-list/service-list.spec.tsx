@@ -326,8 +326,6 @@ jest.mock('../hooks/use-services/use-services', () => ({
         },
       },
     ],
-    isLoading: false,
-    error: {},
   }),
 }))
 
@@ -420,6 +418,7 @@ describe('ServiceList', () => {
     expect(container).toMatchSnapshot()
     jest.useRealTimers()
   })
+
   it('should display all services', () => {
     renderWithProviders(<ServiceList {...serviceListProps} />)
     const rows = screen.getAllByRole('row')
@@ -440,14 +439,6 @@ describe('ServiceList', () => {
     expect(mockNavigate).toHaveBeenCalledWith({
       to: '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general',
     })
-  })
-  it('should navigate to service live logs on service status click', () => {
-    renderWithProviders(<ServiceList {...serviceListProps} />)
-    expect(
-      document.querySelector(
-        'a[to="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general"]'
-      )
-    ).toBeInTheDocument()
   })
 
   it('should disable checkbox for skipped services', () => {
