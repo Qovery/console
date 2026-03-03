@@ -225,13 +225,13 @@ export function ServiceLogsPlaceholder({
             <div className="flex flex-col items-center justify-center gap-0.5">
               {hasFilters ? (
                 <div className="flex flex-col gap-0.5">
-                  <p className="text-neutral-50">No logs found for the selected filters for now</p>
-                  <p className="text-sm text-neutral-350">Live logs will show up here once they're available</p>
+                  <p className="text-neutral">No logs found for the selected filters for now</p>
+                  <p className="text-sm text-neutral-subtle">Live logs will show up here once they're available</p>
                 </div>
               ) : (
                 <div className="flex flex-col gap-0.5">
-                  <p className="text-neutral-50">No logs are available for your service {serviceName}</p>
-                  <p className="text-sm text-neutral-350">Please check the service configuration</p>
+                  <p className="text-neutral">No logs are available for your service {serviceName}</p>
+                  <p className="text-sm text-neutral-subtle">Please check the service configuration</p>
                 </div>
               )}
             </div>
