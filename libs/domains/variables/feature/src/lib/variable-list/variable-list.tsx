@@ -12,7 +12,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
-import { Fragment, useContext, useMemo, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { ExternalServiceEnum, IconEnum } from '@qovery/shared/enums'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
@@ -35,7 +35,6 @@ import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import {
   environmentVariableFile,
   getEnvironmentVariableFileMountPath,
-  getScopeHierarchy,
   pluralize,
   twMerge,
   upperCaseFirstLetter,
@@ -152,6 +151,16 @@ export function VariableList({
       },
     })
   }
+  const isServiceScope = match(props)
+    .with(
+      { scope: 'APPLICATION' },
+      { scope: 'CONTAINER' },
+      { scope: 'JOB' },
+      { scope: 'HELM' },
+      { scope: 'TERRAFORM' },
+      () => true
+    )
+    .otherwise(() => false)
   const isEnvironmentScope = props.scope === 'ENVIRONMENT'
   const showServiceLinkColumn = props.scope !== 'PROJECT'
   const gridLayoutClassName =
@@ -606,8 +615,12 @@ export function VariableList({
             {tableInstance.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className={twMerge('w-full items-center text-xs', rowGridClassName)}>
                 {headerGroup.headers.map((header) => (
+                  // Keep this column hidden (not removed) in Service scope to preserve visual column alignment
                   <Table.ColumnHeaderCell
-                    className={`${header.column.id === 'actions' ? 'border-r border-neutral pl-0' : ''} group relative flex items-center font-medium`}
+                    className={twMerge(
+                      `${header.column.id === 'actions' ? 'border-r border-neutral pl-0' : ''} group relative flex items-center font-medium`,
+                      isServiceScope && header.column.id === 'service_name' && 'opacity-0'
+                    )}
                     key={header.id}
                   >
                     {header.column.getCanFilter() ? (
@@ -654,9 +667,13 @@ export function VariableList({
               <Fragment key={row.id}>
                 <Table.Row className={twMerge('h-16 items-center hover:bg-surface-neutral-subtle', rowGridClassName)}>
                   {row.getVisibleCells().map((cell) => (
+                    // Keep this cell hidden (not removed) in service scope to preserve visual column alignment
                     <Table.Cell
                       key={cell.id}
-                      className={`${cell.column.id === 'actions' ? 'border-r border-neutral pl-0' : ''} flex h-full items-center first:relative`}
+                      className={twMerge(
+                        `${cell.column.id === 'actions' ? 'border-r border-neutral pl-0' : ''} flex h-full items-center first:relative`,
+                        isServiceScope && cell.column.id === 'service_name' && 'opacity-0'
+                      )}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </Table.Cell>

@@ -1,6 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import { Suspense, useLayoutEffect, useRef } from 'react'
+import { useServiceType } from '@qovery/domains/services/feature'
 import { ErrorBoundary, Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
@@ -238,6 +239,11 @@ function useNavigationContext(): NavigationContext | null {
   const location = useLocation()
   const params = useParams({ strict: false })
   const pathname = location.pathname
+  const { data: serviceType } = useServiceType({
+    environmentId: params.environmentId,
+    serviceId: params.serviceId,
+    enabled: Boolean(params.environmentId) && Boolean(params.serviceId),
+  })
 
   for (const context of NAVIGATION_CONTEXTS) {
     const patternRegex = createRoutePatternRegex(context.routeIdPattern)
@@ -258,10 +264,16 @@ function useNavigationContext(): NavigationContext | null {
       }
 
       if (hasAllParams) {
+        // If the service is a database, remove the variables tab
+        const tabs =
+          context.type === 'service' && serviceType === 'DATABASE'
+            ? context.tabs.filter((tab) => tab.id !== 'variables')
+            : context.tabs
+
         return {
           type: context.type,
           params: extractedParams,
-          tabs: context.tabs,
+          tabs,
         }
       }
     }
