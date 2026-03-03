@@ -38,7 +38,12 @@ import {
   truncateText,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { dateFullFormat, formatDuration, formatInTimeZone } from '@qovery/shared/util-dates'
+import {
+  dateFullFormat,
+  dateYearMonthDayHourMinuteSecond,
+  formatDuration,
+  formatInTimeZone,
+} from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCancelDeploymentQueueService } from '../hooks/use-cancel-deployment-queue-service/use-cancel-deployment-queue-service'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
@@ -221,11 +226,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                                 isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
                                 'history',
                                 isDeploymentHistory(data)
-                                  ? formatInTimeZone(
-                                      new Date(data.auditing_data.created_at),
-                                      'yyyy-MM-dd HH:mm:ss',
-                                      'UTC'
-                                    )
+                                  ? dateYearMonthDayHourMinuteSecond(new Date(data.auditing_data.created_at))
                                   : undefined
                               )
                             }
