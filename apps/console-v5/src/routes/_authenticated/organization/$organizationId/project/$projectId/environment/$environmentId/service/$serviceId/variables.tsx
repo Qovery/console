@@ -19,6 +19,7 @@ function RouteComponent() {
   const { data: service } = useService({
     environmentId,
     serviceId,
+    suspense: true,
   })
 
   const scope = match(service?.serviceType)
