@@ -2,6 +2,7 @@ import {
   type ApplicationGitRepository,
   type GitProviderEnum,
   type GitTokenResponse,
+  type TerraformAutoDeployConfigTerraformActionEnum,
   TerraformEngineEnum,
   type TerraformRequest,
   type TerraformRequestDockerfileFragment,
@@ -35,8 +36,10 @@ export type DockerfileFragmentSource = 'none' | 'file' | 'inline'
 export interface TerraformGeneralData
   extends Omit<
     TerraformRequest,
-    'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec' | 'dockerfile_fragment'
+    'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec' | 'dockerfile_fragment' | 'auto_deploy_config'
   > {
+  auto_deploy: boolean
+  terraform_action: TerraformAutoDeployConfigTerraformActionEnum
   source_provider: 'GIT'
   repository: string
   git_repository?: ApplicationGitRepository

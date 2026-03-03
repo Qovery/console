@@ -1,3 +1,4 @@
+import { type PropsWithChildren } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Button } from '@qovery/shared/ui'
 import { AutoDeploySetting, type AutoDeploySettingProps } from '../auto-deploy-setting/auto-deploy-setting'
@@ -5,11 +6,11 @@ import { GitWebhookStatusBadge } from '../git-webhook-status-badge/git-webhook-s
 import { useGitWebhookStatus } from '../hooks/use-git-webhook-status/use-git-webhook-status'
 import { useSyncGitWebhook } from '../hooks/use-sync-git-webhook/use-sync-git-webhook'
 
-export interface AutoDeploySectionProps extends AutoDeploySettingProps {
+export interface AutoDeploySectionProps extends PropsWithChildren<AutoDeploySettingProps> {
   serviceId: string
 }
 
-export function AutoDeploySection({ serviceId, source, className }: AutoDeploySectionProps) {
+export function AutoDeploySection({ serviceId, source, className, children }: AutoDeploySectionProps) {
   const { watch } = useFormContext()
   const autoDeployEnabled = watch('auto_deploy')
   const supportsWebhook = source !== 'CONTAINER_REGISTRY'
@@ -22,25 +23,27 @@ export function AutoDeploySection({ serviceId, source, className }: AutoDeploySe
 
   return (
     <div className="overflow-hidden rounded-md border border-neutral-200">
-      <div className="p-4">
-        <AutoDeploySetting source={source} className={className} />
+      <div className="flex items-center justify-between p-4">
+        <AutoDeploySetting
+          source={source}
+          className={className}
+          titleSuffix={shouldShowWebhook ? <GitWebhookStatusBadge serviceId={serviceId} /> : undefined}
+        />
+        {shouldShowWebhook && showSyncButton && (
+          <Button
+            type="button"
+            variant="surface"
+            color="neutral"
+            size="sm"
+            onClick={() => syncWebhook()}
+            loading={isSyncing}
+          >
+            Update webhook
+          </Button>
+        )}
       </div>
-      {shouldShowWebhook && (
-        <div className="flex items-center justify-between border-t border-neutral-200 bg-neutral-100 px-4 py-3">
-          <GitWebhookStatusBadge serviceId={serviceId} />
-          {showSyncButton && (
-            <Button
-              type="button"
-              variant="surface"
-              color="neutral"
-              size="sm"
-              onClick={() => syncWebhook()}
-              loading={isSyncing}
-            >
-              Update Webhook
-            </Button>
-          )}
-        </div>
+      {children && autoDeployEnabled && (
+        <div className="border-t border-neutral-200 bg-neutral-100 p-4">{children}</div>
       )}
     </div>
   )

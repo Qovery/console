@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { InputToggle } from '@qovery/shared/ui'
@@ -5,10 +6,15 @@ import { InputToggle } from '@qovery/shared/ui'
 export interface AutoDeploySettingProps {
   source: 'CONTAINER_REGISTRY' | 'GIT' | 'TERRAFORM'
   className?: string
+  titleSuffix?: ReactNode
 }
 
-export function AutoDeploySetting({ source, className = '' }: AutoDeploySettingProps) {
+export function AutoDeploySetting({ source, className = '', titleSuffix }: AutoDeploySettingProps) {
   const { control } = useFormContext()
+
+  const title = match(source)
+    .with('CONTAINER_REGISTRY', () => 'Auto-deploy on new image tag')
+    .otherwise(() => 'Auto-deploy on new commits')
 
   return (
     <Controller
@@ -20,19 +26,16 @@ export function AutoDeploySetting({ source, className = '' }: AutoDeploySettingP
             className={className}
             value={field.value}
             onChange={field.onChange}
-            title="Auto-deploy"
-            description={match(source)
-              .with(
-                'TERRAFORM',
-                () => 'A terraform plan will be automatically triggered on every new commit on the branch.'
+            title={
+              titleSuffix ? (
+                <span className="flex items-center gap-2">
+                  {title}
+                  {titleSuffix}
+                </span>
+              ) : (
+                title
               )
-              .with('GIT', () => 'The service will be automatically updated on every new commit on the branch.')
-              .with(
-                'CONTAINER_REGISTRY',
-                () =>
-                  'The service will be automatically updated if Qovery is notified on the API that a new image tag is available.'
-              )
-              .exhaustive()}
+            }
             forceAlignTop
             small
           />
