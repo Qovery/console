@@ -1,8 +1,8 @@
+import { useSearch } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { subDays, subHours } from 'date-fns'
+import { subDays } from 'date-fns'
 import { useCallback, useState } from 'react'
 import { match } from 'ts-pattern'
-import { useQueryParams } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 import { ServiceStateChip, useService } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
@@ -11,7 +11,6 @@ import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { HeaderLogs } from '../../header-logs/header-logs'
 import { SearchServiceLogs } from '../../search-service-logs/search-service-logs'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
-import { queryParamsServiceLogs } from '../service-logs-context/service-logs-context'
 
 export interface HeaderServiceLogsProps {
   logs: NormalizedServiceLog[]
@@ -31,7 +30,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
   } = useServiceLogsContext()
 
   const [isOpenDatePicker, setIsOpenDatePicker] = useState(false)
-  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  const queryParams = useSearch({ strict: false })
 
   const { data: service } = useService({ environmentId: environment.id, serviceId })
 
@@ -40,12 +39,12 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
   const hasDeploymentId = Boolean(queryParams.deploymentId)
 
   const clearDate = useCallback(() => {
-    setQueryParams({
-      startDate: undefined,
-      endDate: undefined,
-      mode: 'live',
-    })
-  }, [setQueryParams])
+    // setQueryParams({
+    //   startDate: undefined,
+    //   endDate: undefined,
+    //   mode: 'live',
+    // })
+  }, [])
 
   return (
     <>
@@ -85,14 +84,14 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
             })}
             onClick={() => {
               if (!isLiveMode) {
-                setQueryParams({ startDate: undefined, endDate: undefined, mode: 'live' })
+                // setQueryParams({ startDate: undefined, endDate: undefined, mode: 'live' })
               } else {
                 const now = new Date()
-                setQueryParams({
-                  startDate: subHours(now, 1),
-                  endDate: now,
-                  mode: 'history',
-                })
+                // setQueryParams({
+                //   startDate: subHours(now, 1),
+                //   endDate: now,
+                //   mode: 'history',
+                // })
               }
             }}
           >
@@ -107,11 +106,11 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
           </Button>
           <DatePicker
             onChange={(startDate, endDate) => {
-              setQueryParams({
-                startDate,
-                endDate,
-                mode: 'history',
-              })
+              // setQueryParams({
+              //   startDate,
+              //   endDate,
+              //   mode: 'history',
+              // })
               setIsOpenDatePicker(false)
             }}
             isOpen={isOpenDatePicker}

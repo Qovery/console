@@ -1,3 +1,4 @@
+import { useSearch } from '@tanstack/react-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { type DecodedValueMap } from 'serialize-query-params'
 import { useQueryParams } from 'use-query-params'
@@ -7,7 +8,7 @@ import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
 import { useServiceInstances } from '../hooks/use-service-instances/use-service-instances'
 import { useServiceLevels } from '../hooks/use-service-levels/use-service-levels'
-import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
+import { type queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 export const VALID_FILTER_KEYS = ['level', 'instance', 'message', 'nginx', 'envoy', 'search', 'deploymentId']
 
@@ -110,8 +111,11 @@ export function SearchServiceLogs({
   refetchHistoryLogs: () => void
   service?: AnyService
 }) {
-  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
-  const [options, setOptions] = useState<Option[]>(buildValueOptions(queryParams))
+  // const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  const queryParams = useSearch({ strict: false })
+  const [options, setOptions] = useState<Option[]>(
+    buildValueOptions(queryParams as DecodedValueMap<typeof queryParamsServiceLogs>)
+  )
   const searchRef = useRef<MultipleSelectorRef>(null)
   const metaKey = useFormatHotkeys('meta')
 
@@ -137,7 +141,7 @@ export function SearchServiceLogs({
 
   // Sync the input value with query params only when query params change
   useEffect(() => {
-    setOptions(buildValueOptions(queryParams))
+    setOptions(buildValueOptions(queryParams as DecodedValueMap<typeof queryParamsServiceLogs>))
   }, [queryParams])
 
   // Add keyboard shortcut for Cmd/Ctrl+F to focus the search
@@ -161,12 +165,12 @@ export function SearchServiceLogs({
     (options: Option[]) => {
       setOptions(options)
       const query = buildQueryParams(options.map((option) => option.value).join(' '))
-      setQueryParams(query)
+      // setQueryParams(query)
       if (queryParams.startDate || queryParams.endDate || queryParams.mode === 'history') {
         refetchHistoryLogs()
       }
     },
-    [setQueryParams, refetchHistoryLogs, queryParams.startDate, queryParams.endDate, queryParams.mode]
+    [refetchHistoryLogs, queryParams.startDate, queryParams.endDate, queryParams.mode]
   )
 
   const defaultFilters = [

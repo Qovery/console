@@ -1,14 +1,12 @@
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { subDays } from 'date-fns'
 import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
-import { useQueryParams } from 'use-query-params'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Button, Icon, Link, LoaderDots, Tooltip } from '@qovery/shared/ui'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
-import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 export function LoaderPlaceholder({
   title = 'Service logs are loading…',
@@ -45,12 +43,13 @@ export function ServiceLogsPlaceholder({
   databaseMode,
   itemsLength,
 }: ServiceLogsPlaceholderProps) {
-  const { organizationId, projectId, environmentId, serviceId } = useParams()
+  const { organizationId, projectId, environmentId, serviceId } = useParams({ strict: false })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
   const { state: deploymentState } = deploymentStatus ?? {}
   const [showPlaceholder, setShowPlaceholder] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  const queryParams = useSearch({ strict: false })
+  const navigate = useNavigate()
 
   const { data: deploymentIds = [] } = useServiceDeploymentId({
     clusterId: environment.cluster_id ?? '',
@@ -150,16 +149,25 @@ export function ServiceLogsPlaceholder({
               color="neutral"
               className="max-w-max"
               onClick={() => {
-                setQueryParams({
-                  level: undefined,
-                  instance: undefined,
-                  message: undefined,
-                  search: undefined,
-                  version: undefined,
-                  container: undefined,
-                  nginx: undefined,
-                  deploymentId: undefined,
-                })
+                // navigate({
+                //   to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+                //   params: {
+                //     organizationId,
+                //     projectId,
+                //     environmentId,
+                //     serviceId,
+                //   },
+                //   search: {
+                //     level: undefined,
+                //     instance: undefined,
+                //     message: undefined,
+                //     search: undefined,
+                //     version: undefined,
+                //     container: undefined,
+                //     nginx: undefined,
+                //     deploymentId: undefined,
+                //   },
+                // })
 
                 setShowPlaceholder(false)
               }}
@@ -225,18 +233,18 @@ export function ServiceLogsPlaceholder({
                 variant="surface"
                 color="neutral"
                 onClick={() => {
-                  setQueryParams({
-                    startDate: undefined,
-                    endDate: undefined,
-                    level: undefined,
-                    instance: undefined,
-                    message: undefined,
-                    search: undefined,
-                    version: undefined,
-                    container: undefined,
-                    nginx: undefined,
-                    deploymentId: undefined,
-                  })
+                  // setQueryParams({
+                  //   startDate: undefined,
+                  //   endDate: undefined,
+                  //   level: undefined,
+                  //   instance: undefined,
+                  //   message: undefined,
+                  //   search: undefined,
+                  //   version: undefined,
+                  //   container: undefined,
+                  //   nginx: undefined,
+                  //   deploymentId: undefined,
+                  // })
 
                   setShowPlaceholder(false)
                 }}

@@ -1,10 +1,9 @@
+import { getRouteApi } from '@tanstack/react-router'
 import { differenceInHours } from 'date-fns'
 import posthog from 'posthog-js'
 import { type Cluster, type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { memo, useEffect, useMemo, useRef } from 'react'
-import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useQueryParams } from 'use-query-params'
 import { EnableObservabilityButtonContactUs } from '@qovery/domains/observability/feature'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { TablePrimitives } from '@qovery/shared/ui'
@@ -16,9 +15,13 @@ import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
 import { HeaderServiceLogs } from './header-service-logs/header-service-logs'
 import { RowServiceLogs } from './row-service-logs/row-service-logs'
-import { ServiceLogsProvider, queryParamsServiceLogs } from './service-logs-context/service-logs-context'
+import { ServiceLogsProvider } from './service-logs-context/service-logs-context'
 
 const { Table } = TablePrimitives
+
+const route = getRouteApi(
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
+)
 
 const MemoizedRowServiceLogs = memo(RowServiceLogs)
 
@@ -66,10 +69,11 @@ function Placeholder({
 }
 
 function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; environment: Environment }) {
-  const { serviceId } = useParams()
+  const { serviceId } = route.useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
 
-  const [queryParams] = useQueryParams(queryParamsServiceLogs)
+  const queryParams = route.useSearch()
+  // const [queryParams] = useQueryParams(queryParamsServiceLogs)
 
   const isLiveMode = useMemo(() => {
     if (queryParams.mode === 'live') {
@@ -330,7 +334,7 @@ export interface ListServiceLogsProps {
 }
 
 export function ListServiceLogs({ cluster, environment, serviceStatus, environmentStatus }: ListServiceLogsProps) {
-  const { serviceId = '' } = useParams()
+  const { serviceId = '' } = route.useParams()
 
   return (
     <ServiceLogsProvider

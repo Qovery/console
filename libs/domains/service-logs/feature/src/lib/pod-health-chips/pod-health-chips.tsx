@@ -1,11 +1,9 @@
 import { useMemo, useState } from 'react'
-import { useQueryParams } from 'use-query-params'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type Pod, useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
 import { Button, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
-import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 export function PodHealthChips({ service }: { service: AnyService }) {
   const [openStatus, setOpenStatus] = useState<string | null>(null)
@@ -19,7 +17,7 @@ export function PodHealthChips({ service }: { service: AnyService }) {
     serviceId: service?.id,
   })
 
-  const [, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  // const [, setQueryParams] = useQueryParams(queryParamsServiceLogs)
 
   const pods: Pod[] = useMemo(() => {
     // NOTE: metrics or runningStatuses could be undefined because backend doesn't have the info.
@@ -156,7 +154,7 @@ export function PodHealthChips({ service }: { service: AnyService }) {
                             className="h-5 gap-1.5 px-1.5 font-code"
                             onClick={(e) => {
                               e.stopPropagation()
-                              setQueryParams({ instance: pod.podName })
+                              // setQueryParams({ instance: pod.podName })
                             }}
                           >
                             <span

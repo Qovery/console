@@ -1,6 +1,5 @@
 import clsx from 'clsx'
 import { useState } from 'react'
-import { useQueryParams } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import {
@@ -17,7 +16,7 @@ import {
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { usePodColor } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
-import { queryParamsServiceLogs, useServiceLogsContext } from '../service-logs-context/service-logs-context'
+import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
 import './style.scss'
 
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -32,7 +31,7 @@ export interface RowServiceLogsProps {
 }
 
 export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, service }: RowServiceLogsProps) {
-  const [, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  // const [, setQueryParams] = useQueryParams(queryParamsServiceLogs)
   const [isExpanded, setIsExpanded] = useState(false)
 
   const serviceType = service?.serviceType
@@ -128,7 +127,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
                 className="h-5 gap-1.5 px-1.5 font-code"
                 onClick={(e) => {
                   e.stopPropagation()
-                  setQueryParams({ instance: log.instance })
+                  // setQueryParams({ instance: log.instance })
                 }}
               >
                 <span
@@ -157,7 +156,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
                 className="gap-1.5 whitespace-nowrap font-code"
                 onClick={(e) => {
                   e.stopPropagation()
-                  setQueryParams({ container: log.container })
+                  // setQueryParams({ container: log.container })
                 }}
               >
                 {log.container}
@@ -195,7 +194,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
                         className="gap-1.5"
                         onClick={(e) => {
                           e.stopPropagation()
-                          setQueryParams({ level: levelLowercase })
+                          // setQueryParams({ level: levelLowercase })
                         }}
                       >
                         {levelLowercase}
@@ -222,7 +221,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
                     size="xs"
                     onClick={(e) => {
                       e.stopPropagation()
-                      setQueryParams({ instance: log.instance })
+                      // setQueryParams({ instance: log.instance })
                     }}
                   >
                     {log.instance}
@@ -238,7 +237,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
                       size="xs"
                       onClick={(e) => {
                         e.stopPropagation()
-                        setQueryParams({ container: log.container })
+                        // setQueryParams({ container: log.container })
                       }}
                     >
                       {log.container}

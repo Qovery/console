@@ -1,3 +1,4 @@
+import { useSearch } from '@tanstack/react-router'
 import {
   DatabaseModeEnum,
   type DeploymentHistoryEnvironmentV2,
@@ -6,7 +7,6 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useMemo } from 'react'
-import { useQueryParams } from 'use-query-params'
 import {
   ServiceActionToolbar,
   ServiceAvatar,
@@ -17,7 +17,6 @@ import {
 import { ActionTriggerStatusChip, Button, Icon, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
 import { pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 import { PodHealthChips } from '../pod-health-chips/pod-health-chips'
 
 export interface HeaderLogsProps extends PropsWithChildren {
@@ -54,7 +53,7 @@ export function HeaderLogs({
   deploymentHistory,
   children,
 }: HeaderLogsProps) {
-  const [queryParams] = useQueryParams(queryParamsServiceLogs)
+  const queryParams = useSearch({ strict: false })
   const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: links = [] } = useLinks({ serviceId: serviceId, serviceType: service?.serviceType })
   const filteredLinks = links.filter((link) => !(link.is_default && link.is_qovery_domain))
