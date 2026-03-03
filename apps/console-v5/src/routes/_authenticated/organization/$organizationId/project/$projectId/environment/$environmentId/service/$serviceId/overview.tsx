@@ -7,12 +7,14 @@ import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
 import { TerraformResourcesSection } from '@qovery/domains/service-terraform/feature'
 import { ObservabilityCallout, ServiceOverview } from '@qovery/domains/services/feature'
 import { useService } from '@qovery/domains/services/feature'
+import { serviceOverviewParamsSchema } from '@qovery/shared/router'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
 )({
   component: RouteComponent,
+  validateSearch: serviceOverviewParamsSchema,
 })
 
 const WebSocketListenerMemo = memo(MetricsWebSocketListener)

@@ -213,6 +213,9 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
                   environmentId: environment.id,
                   serviceId: service.id,
                 },
+                search: {
+                  hasShell: true,
+                },
               })
             }}
           />
