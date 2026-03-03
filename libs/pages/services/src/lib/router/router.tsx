@@ -21,7 +21,6 @@ import {
   SERVICES_JOB_CREATION_POST_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_JOB_CREATION_VARIABLE_URL,
-  SERVICES_NEW_URL,
   SERVICES_SETTINGS_DANGER_ZONE_URL,
   SERVICES_SETTINGS_GENERAL_URL,
   SERVICES_SETTINGS_PIPELINE_URL,
@@ -55,7 +54,6 @@ import StepIntroductionFeature from '../feature/page-job-create-feature/step-int
 import { StepResourcesFeature } from '../feature/page-job-create-feature/step-resources-feature/step-resources-feature'
 import { StepSummaryFeature } from '../feature/page-job-create-feature/step-summary-feature/step-summary-feature'
 import { StepVariableFeature } from '../feature/page-job-create-feature/step-variable-feature/step-variable-feature'
-import { PageNewFeature } from '../feature/page-new-feature/page-new-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import PageSettingsDeploymentPipelineFeature from '../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
 import PageSettingsDeploymentRulesFeature from '../feature/page-settings-deployment-rules-feature/page-settings-deployment-rules-feature'
@@ -93,10 +91,6 @@ export const ROUTER_SERVICES: Route[] = [
         <PageSettingsFeature />
       </Container>
     ),
-  },
-  {
-    path: SERVICES_NEW_URL,
-    component: <PageNewFeature />,
   },
 ]
 

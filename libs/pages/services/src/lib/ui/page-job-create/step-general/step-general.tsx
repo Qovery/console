@@ -7,13 +7,13 @@ import { match } from 'ts-pattern'
 import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
 import { type Job } from '@qovery/domains/services/data-access'
 import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
+import { serviceTemplates } from '@qovery/domains/services/feature'
 import { EntrypointCmdInputs, JobGeneralSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Heading, Icon, Section } from '@qovery/shared/ui'
 import { findTemplateData } from '../../../feature/page-job-create-feature/page-job-create-feature'
-import { serviceTemplates } from '../../../feature/page-new-feature/service-templates'
 
 export interface StepGeneralProps {
   jobType: JobType

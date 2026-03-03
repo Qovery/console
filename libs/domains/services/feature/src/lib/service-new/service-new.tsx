@@ -3,9 +3,7 @@ import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type CloudProviderEnum, type LifecycleTemplateListResponseResultsInner } from 'qovery-typescript-axios'
 import { type ReactElement, cloneElement, useMemo, useState } from 'react'
-import { NavLink, type To, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useEnvironment, useLifecycleTemplates } from '@qovery/domains/environments/feature'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -13,16 +11,14 @@ import {
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DATABASE_TEMPLATE_CREATION_URL,
-  SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_URL,
   SERVICES_HELM_TEMPLATE_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
   SERVICES_TERRAFORM_CREATION_URL,
-  SERVICES_URL,
 } from '@qovery/shared/routes'
 import { Badge, Button, ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
-import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
+import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import {
   type ServiceTemplateOptionType,
@@ -32,6 +28,12 @@ import {
 } from './service-templates'
 
 const CloudFormationIcon = '/assets/devicon/cloudformation.svg'
+
+const getEnvironmentBasePath = (organizationId: string, projectId: string, environmentId: string) =>
+  `/organization/${organizationId}/project/${projectId}/environment/${environmentId}`
+
+const getServicesPath = (organizationId: string, projectId: string, environmentId: string, subPath: string) =>
+  `${getEnvironmentBasePath(organizationId, projectId, environmentId)}${subPath}`
 
 function Card({
   title,
@@ -52,8 +54,8 @@ function Card({
 }) {
   const Wrapper = ({ children }: { children: ReactElement }) => {
     const className = twMerge(
-      'flex cursor-pointer items-center justify-between gap-5 rounded border border-neutral-250 px-5 py-4 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)]',
-      disabledCTA ? 'border-neutral-200 bg-neutral-100' : 'hover:bg-neutral-100'
+      'flex cursor-pointer items-center justify-between gap-5 rounded border border-neutral px-5 py-4 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)]',
+      disabledCTA ? 'border-neutral bg-surface-neutral-subtle' : 'hover:bg-surface-neutral-subtle'
     )
 
     if (onClick) {
@@ -65,9 +67,9 @@ function Card({
     }
 
     return (
-      <NavLink to={link as To} className={className}>
+      <Link to={link!} className={className}>
         {children}
-      </NavLink>
+      </Link>
     )
   }
 
@@ -77,20 +79,20 @@ function Card({
         <div className="space-y-2">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <h3 className="text-ssm font-medium">{title}</h3>
+              <h3 className="text-ssm font-medium text-neutral">{title}</h3>
               {badge && (
                 <Badge
                   radius="full"
                   variant="surface"
                   color="purple"
                   size="sm"
-                  className="h-4 border-transparent bg-purple-200 px-1 text-[8px] font-bold text-purple-600"
+                  className="h-4 border-transparent bg-surface-accent1-component px-1 text-[8px] font-bold text-accent1"
                 >
                   {badge}
                 </Badge>
               )}
             </div>
-            <p className="max-w-96 text-xs text-neutral-350">{description}</p>
+            <p className="max-w-96 text-xs text-neutral-subtle">{description}</p>
           </div>
           {disabledCTA}
         </div>
@@ -100,27 +102,44 @@ function Card({
   )
 }
 
-const servicePath = (type: ServiceType, parentSlug: string, slug: string) =>
+const servicePathSuffix = (type: ServiceType, parentSlug: string, slug: string) =>
   match(type)
     .with('APPLICATION', 'CONTAINER', () => SERVICES_APPLICATION_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('DATABASE', () => SERVICES_DATABASE_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('LIFECYCLE_JOB', () => SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('HELM', () => SERVICES_HELM_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('JOB', 'CRON_JOB', () => undefined)
-    .with('TERRAFORM', () => undefined) // TODO [QOV-821] double check that
+    .with('TERRAFORM', () => undefined)
     .otherwise(() => undefined)
 
 interface CardOptionProps extends ServiceTemplateOptionType {
   parentSlug: string
+  organizationId: string
+  projectId: string
+  environmentId: string
 }
 
-function CardOption({ parentSlug, slug, icon, title, description, type, recommended }: CardOptionProps) {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+function CardOption({
+  parentSlug,
+  slug,
+  icon,
+  title,
+  description,
+  type,
+  recommended,
+  organizationId,
+  projectId,
+  environmentId,
+}: CardOptionProps) {
+  const pathSuffix = servicePathSuffix(type, parentSlug, slug)
+  const to = pathSuffix ? getServicesPath(organizationId, projectId, environmentId, pathSuffix) : undefined
+
+  if (!to) return null
 
   return (
-    <NavLink
-      to={SERVICES_URL(organizationId, projectId, environmentId) + servicePath(type, parentSlug, slug)}
-      className="flex items-start gap-3 rounded-sm border border-neutral-200 p-3 transition hover:bg-white"
+    <Link
+      to={to}
+      className="flex items-start gap-3 rounded-sm border border-neutral bg-surface-neutral-component p-3 transition hover:bg-surface-neutral-componentHover"
       onClick={() =>
         posthog.capture('select-service', {
           qoveryServiceType: type,
@@ -131,20 +150,20 @@ function CardOption({ parentSlug, slug, icon, title, description, type, recommen
     >
       <img className="mt-1 select-none" width={24} height={24} src={icon} alt={title} />
       <span>
-        <span className="inline-block text-ssm font-medium text-neutral-400">
+        <span className="inline-block text-ssm font-medium text-neutral">
           {title}
           {recommended && (
-            <span className="relative -top-0.5 ml-1 inline-block rounded bg-brand-500 px-1 text-2xs text-neutral-50">
+            <span className="relative -top-0.5 ml-1 inline-block rounded bg-surface-brand-solid px-1 text-2xs text-neutralInvert">
               Fastest
             </span>
           )}
         </span>
-        <span className="inline-block text-xs text-neutral-350">{description}</span>
+        <span className="inline-block text-xs text-neutral-subtle">{description}</span>
       </span>
       <span className="flex h-full items-center pr-1">
-        <Icon iconName="chevron-right" className="text-xs text-neutral-400" />
+        <Icon iconName="chevron-right" className="text-xs text-neutral-subtle" />
       </span>
-    </NavLink>
+    </Link>
   )
 }
 
@@ -157,22 +176,28 @@ function CardService({
   type,
   link,
   availableTemplates,
-}: ServiceTemplateType & {
+  organizationId,
+  projectId,
+  environmentId,
+  cloudProvider,
+}: Omit<ServiceTemplateType, 'cloud_provider'> & {
+  cloud_provider?: CloudProviderEnum | string
   availableTemplates: LifecycleTemplateListResponseResultsInner[]
+  organizationId: string
+  projectId: string
+  environmentId: string
+  cloudProvider?: CloudProviderEnum | string
 }) {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [expanded, setExpanded] = useState(false)
-  const { data: environment } = useEnvironment({ environmentId })
-  const cloudProvider = environment?.cloud_provider.provider as CloudProviderEnum
 
   if (options) {
     return (
       <div
         onClick={() => setExpanded(true)}
         className={clsx({
-          'flex cursor-pointer items-center gap-6 rounded border border-neutral-250 p-5 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-neutral-100':
+          'flex cursor-pointer items-center gap-6 rounded border border-neutral p-5 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-surface-neutral-subtle':
             true,
-          'col-span-3 bg-neutral-100 p-6': expanded,
+          'col-span-3 bg-surface-neutral-subtle p-6': expanded,
         })}
       >
         {expanded ? (
@@ -180,13 +205,14 @@ function CardService({
             <div className="relative flex gap-6">
               <img className="select-none" width={52} height={52} src={icon as string} alt={title} />
               <div>
-                <h3 className="mb-1 text-base font-medium">{title}</h3>
-                <p className="max-w-96 text-ssm text-neutral-350">{description}</p>
+                <h3 className="mb-1 text-base font-medium text-neutral">{title}</h3>
+                <p className="max-w-96 text-ssm text-neutral-subtle">{description}</p>
               </div>
               <Button
                 className="absolute right-0 top-0"
                 color="neutral"
                 variant="surface"
+                iconOnly
                 onClick={(e) => {
                   e.stopPropagation()
                   setExpanded(false)
@@ -199,12 +225,9 @@ function CardService({
               {options
                 .filter((c) => {
                   if (c.template_id) {
-                    // Iterate on all available templates to find the matching one
-                    // If there isn't, it means that no template is available so entry must be exclude
                     return availableTemplates.reduce((acc, template) => c.template_id === template.id || acc, false)
-                  } else {
-                    return true
                   }
+                  return true
                 })
                 .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
                 .sort((a, b) => {
@@ -213,7 +236,14 @@ function CardService({
                   return a.title.localeCompare(b.title)
                 })
                 .map((props) => (
-                  <CardOption key={props.slug} parentSlug={slug!} {...props} />
+                  <CardOption
+                    key={props.slug}
+                    parentSlug={slug!}
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    environmentId={environmentId}
+                    {...props}
+                  />
                 ))}
             </div>
           </div>
@@ -221,10 +251,10 @@ function CardService({
           <>
             <div className="flex h-full w-60 flex-col justify-between gap-2">
               <div>
-                <h3 className="mb-1 text-ssm font-medium">{title}</h3>
-                <p className="text-xs text-neutral-350">{description}</p>
+                <h3 className="mb-1 text-ssm font-medium text-neutral">{title}</h3>
+                <p className="text-xs text-neutral-subtle">{description}</p>
               </div>
-              <p className="text-xs font-medium text-neutral-400">
+              <p className="text-xs font-medium text-neutral-subtle">
                 Click to select an option <Icon iconName="chevron-right" className="ml-1 text-2xs" />
               </p>
             </div>
@@ -241,10 +271,15 @@ function CardService({
     )
   }
 
+  const pathSuffix = link ?? servicePathSuffix(type!, slug!, 'current')
+  const to = pathSuffix ? getServicesPath(organizationId, projectId, environmentId, pathSuffix) : undefined
+
+  if (!to) return null
+
   return (
-    <NavLink
-      to={link ?? SERVICES_URL(organizationId, projectId, environmentId) + servicePath(type!, slug!, 'current')}
-      className="flex gap-6 rounded border border-neutral-250 p-5 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-neutral-100"
+    <Link
+      to={to}
+      className="flex gap-6 rounded border border-neutral p-5 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-surface-neutral-subtle"
       onClick={() =>
         posthog.capture('select-service', {
           qoveryServiceType: type,
@@ -253,8 +288,8 @@ function CardService({
       }
     >
       <div className="w-60">
-        <h3 className="mb-1 text-ssm font-medium">{title}</h3>
-        <p className="text-xs text-neutral-350">{description}</p>
+        <h3 className="mb-1 text-ssm font-medium text-neutral">{title}</h3>
+        <p className="text-xs text-neutral-subtle">{description}</p>
       </div>
       <div className="flex items-center">
         {typeof icon === 'string' ? (
@@ -263,7 +298,7 @@ function CardService({
           cloneElement(icon as ReactElement, { className: 'w-10' })
         )}
       </div>
-    </NavLink>
+    </Link>
   )
 }
 
@@ -273,24 +308,38 @@ function SectionByTag({
   tag,
   cloudProvider,
   availableTemplates,
+  organizationId,
+  projectId,
+  environmentId,
 }: {
   title: string
   tag: keyof typeof TagsEnum
-  cloudProvider?: CloudProviderEnum
+  cloudProvider?: CloudProviderEnum | string
   description?: string
   availableTemplates: LifecycleTemplateListResponseResultsInner[]
+  organizationId: string
+  projectId: string
+  environmentId: string
 }) {
   return (
     <Section>
       <Heading className="mb-1">{title}</Heading>
-      {description && <p className="text-xs text-neutral-350">{description}</p>}
+      {description && <p className="text-xs text-neutral-subtle">{description}</p>}
       <div className="mt-5 grid grid-cols-3 gap-4">
         {serviceTemplates
           .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
           .filter(({ tag: t }) => t === tag)
           .sort((a, b) => a.title.localeCompare(b.title))
           .map((service) => (
-            <CardService key={service.title} availableTemplates={availableTemplates} {...service} />
+            <CardService
+              key={service.title}
+              availableTemplates={availableTemplates}
+              organizationId={organizationId}
+              projectId={projectId}
+              environmentId={environmentId}
+              cloudProvider={cloudProvider}
+              {...service}
+            />
           ))}
       </div>
     </Section>
@@ -301,19 +350,29 @@ type ServiceBlock = {
   title: string
   description: string
   icon: ReactElement
-  cloud_provider: CloudProviderEnum
+  cloud_provider?: CloudProviderEnum | string
   link?: string
   onClick?: () => void
   disabledCTA?: ReactElement
   badge?: string
 }
 
-export function PageNewFeature() {
-  useDocumentTitle('Create new service - Qovery')
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { data: environment } = useEnvironment({ environmentId })
-  const { data: availableTemplates = [] } = useLifecycleTemplates({ environmentId })
-  const cloudProvider = environment?.cloud_provider.provider as CloudProviderEnum
+export interface ServiceNewProps {
+  organizationId: string
+  projectId: string
+  environmentId: string
+  /** From environment.cloud_provider.provider (may be string from API) */
+  cloudProvider?: CloudProviderEnum | string
+  availableTemplates?: LifecycleTemplateListResponseResultsInner[]
+}
+
+export function ServiceNew({
+  organizationId,
+  projectId,
+  environmentId,
+  cloudProvider,
+  availableTemplates = [],
+}: ServiceNewProps) {
   const isTerraformFeatureFlag = Boolean(useFeatureFlagEnabled('terraform'))
   const { showPylonForm } = useSupportChat()
 
@@ -323,35 +382,35 @@ export function PageNewFeature() {
         title: 'Application',
         description: 'Deploy a long running service running from Git or a Container Registry.',
         icon: <Icon name="APPLICATION" width={32} height={32} />,
-        link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_APPLICATION_CREATION_URL,
+        link: getServicesPath(organizationId, projectId, environmentId, SERVICES_APPLICATION_CREATION_URL),
         cloud_provider: cloudProvider,
       },
       {
         title: 'Database',
         description: 'Easy and fastest way to deploy the most popular databases.',
         icon: <Icon name="DATABASE" width={32} height={32} />,
-        link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DATABASE_CREATION_URL,
+        link: getServicesPath(organizationId, projectId, environmentId, SERVICES_DATABASE_CREATION_URL),
         cloud_provider: cloudProvider,
       },
       {
         title: 'Lifecycle Job',
         description: 'Execute any type of script coming from Git or a Container Registry.',
         icon: <Icon name="LIFECYCLE_JOB" width={32} height={32} />,
-        link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_LIFECYCLE_CREATION_URL,
+        link: getServicesPath(organizationId, projectId, environmentId, SERVICES_LIFECYCLE_CREATION_URL),
         cloud_provider: cloudProvider,
       },
       {
         title: 'Cron Job',
         description: 'Execute any type of script at a regular basis.',
         icon: <Icon name="CRON_JOB" width={32} height={32} />,
-        link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_CRONJOB_CREATION_URL,
+        link: getServicesPath(organizationId, projectId, environmentId, SERVICES_CRONJOB_CREATION_URL),
         cloud_provider: cloudProvider,
       },
       {
         title: 'Helm',
         description: 'Deploy a Helm Chart on your Kubernetes cluster.',
         icon: <Icon name="HELM" width={32} height={32} />,
-        link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_HELM_CREATION_URL,
+        link: getServicesPath(organizationId, projectId, environmentId, SERVICES_HELM_CREATION_URL),
         cloud_provider: cloudProvider,
       },
       ...(isTerraformFeatureFlag
@@ -360,7 +419,7 @@ export function PageNewFeature() {
               title: 'Terraform',
               description: 'Deploy external cloud resources directly from your Terraform configuration.',
               icon: <Icon name="TERRAFORM" width={32} height={32} />,
-              link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_TERRAFORM_CREATION_URL,
+              link: getServicesPath(organizationId, projectId, environmentId, SERVICES_TERRAFORM_CREATION_URL),
               cloud_provider: cloudProvider,
               badge: 'NEW',
             },
@@ -373,7 +432,7 @@ export function PageNewFeature() {
               onClick: () => showPylonForm('request-upgrade-plan'),
               cloud_provider: cloudProvider,
               disabledCTA: (
-                <p className="cursor-pointer text-xs font-medium text-neutral-400">
+                <p className="cursor-pointer text-xs font-medium text-neutral-subtle">
                   Upgrade your plan <Icon iconName="chevron-right" className="ml-1 text-2xs" />
                 </p>
               ),
@@ -402,7 +461,7 @@ export function PageNewFeature() {
   const emptyState = (
     <Section className="w-full">
       <Heading className="mb-1">You didn't find what you want?</Heading>
-      <p className="mb-5 text-xs text-neutral-350">Use one of those options below.</p>
+      <p className="mb-5 text-xs text-neutral-subtle">Use one of those options below.</p>
 
       <div className="grid grid-cols-3 gap-4">
         {[
@@ -415,9 +474,12 @@ export function PageNewFeature() {
               icon: (
                 <img className="select-none" width={32} height={32} src={CloudFormationIcon} alt="CloudFormation" />
               ),
-              link:
-                SERVICES_URL(organizationId, projectId, environmentId) +
-                SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL('cloudformation', 'current'),
+              link: getServicesPath(
+                organizationId,
+                projectId,
+                environmentId,
+                SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL('cloudformation', 'current')
+              ),
               cloud_provider: cloudProvider,
             },
           ],
@@ -429,23 +491,11 @@ export function PageNewFeature() {
   )
 
   return (
-    <Section className="flex w-full flex-1 flex-col gap-8 rounded-t bg-white p-8 pb-24">
-      <Link
-        color="brand"
-        to={SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL}
-        className="text-sm"
-      >
-        <Icon iconName="arrow-left" className="mr-1" />
-        Back to services list
-      </Link>
-      <div className="flex flex-col text-center">
-        <Heading className="mb-2 text-2xl">Create new service</Heading>
-        <p className="mb-4 text-sm text-neutral-350">
-          Step into the Qovery service and embrace the power of collaboration to kickstart your next project.
-        </p>
+    <>
+      <div className="mb-10 flex flex-col text-center">
         <InputSearch
           autofocus
-          placeholder="Search..."
+          placeholder="Search…"
           className="mx-auto mb-4 w-[360px]"
           customSize="h-9 text-xs rounded-full"
           onChange={handleSearchInputChange}
@@ -463,7 +513,7 @@ export function PageNewFeature() {
           <>
             <Section>
               <Heading className="mb-1">Default Qovery services</Heading>
-              <p className="mb-5 text-xs text-neutral-350">
+              <p className="mb-5 text-xs text-neutral-subtle">
                 Services without pre-configuration. These are the basic blocks to deploy any technical stack.
               </p>
               <div className="grid grid-cols-3 gap-4">
@@ -478,6 +528,9 @@ export function PageNewFeature() {
               tag="DATA_STORAGE"
               cloudProvider={cloudProvider}
               availableTemplates={availableTemplates}
+              organizationId={organizationId}
+              projectId={projectId}
+              environmentId={environmentId}
             />
             <SectionByTag
               title="Back-end"
@@ -485,6 +538,9 @@ export function PageNewFeature() {
               tag="BACK_END"
               cloudProvider={cloudProvider}
               availableTemplates={availableTemplates}
+              organizationId={organizationId}
+              projectId={projectId}
+              environmentId={environmentId}
             />
             <SectionByTag
               title="Front-end"
@@ -492,6 +548,9 @@ export function PageNewFeature() {
               tag="FRONT_END"
               cloudProvider={cloudProvider}
               availableTemplates={availableTemplates}
+              organizationId={organizationId}
+              projectId={projectId}
+              environmentId={environmentId}
             />
             <SectionByTag
               title="IAC"
@@ -499,6 +558,9 @@ export function PageNewFeature() {
               tag="IAC"
               cloudProvider={cloudProvider}
               availableTemplates={availableTemplates}
+              organizationId={organizationId}
+              projectId={projectId}
+              environmentId={environmentId}
             />
             <SectionByTag
               title="More template"
@@ -506,6 +568,9 @@ export function PageNewFeature() {
               tag="OTHER"
               cloudProvider={cloudProvider}
               availableTemplates={availableTemplates}
+              organizationId={organizationId}
+              projectId={projectId}
+              environmentId={environmentId}
             />
           </>
         ) : [...serviceEmpty, ...serviceTemplates]
@@ -514,14 +579,24 @@ export function PageNewFeature() {
             .filter(filterService).length > 0 ? (
           <Section>
             <Heading className="mb-1">Search results</Heading>
-            <p className="mb-5 text-xs text-neutral-350">Find the service you need to kickstart your next project.</p>
+            <p className="mb-5 text-xs text-neutral-subtle">
+              Find the service you need to kickstart your next project.
+            </p>
             <div className="grid grid-cols-3 gap-4">
               {[...serviceEmpty, ...serviceTemplates]
                 .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
                 .filter((c) => !('tag' in c && 'slug' in c && c.tag === 'IAC' && c.slug === 'terraform'))
                 .filter(filterService)
                 .map((service) => (
-                  <CardService key={service.title} availableTemplates={availableTemplates} {...service} />
+                  <CardService
+                    key={service.title}
+                    availableTemplates={availableTemplates}
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    environmentId={environmentId}
+                    cloudProvider={cloudProvider}
+                    {...service}
+                  />
                 ))}
             </div>
           </Section>
@@ -529,8 +604,6 @@ export function PageNewFeature() {
           emptyState
         )}
       </div>
-    </Section>
+    </>
   )
 }
-
-export default PageNewFeature

@@ -1,7 +1,7 @@
 import { APIVariableScopeEnum, type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useState } from 'react'
 import { useLifecycleTemplate } from '@qovery/domains/environments/feature'
-import { type ServiceTemplateOptionType } from '../page-new-feature/service-templates'
+import { type ServiceTemplateOptionType } from '@qovery/domains/services/feature'
 import { useJobContainerCreateContext } from './page-job-create-feature'
 
 function getLifecycleType(option?: string): JobLifecycleTypeEnum {

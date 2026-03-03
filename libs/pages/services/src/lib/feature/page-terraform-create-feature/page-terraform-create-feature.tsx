@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from 'react'
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { type TerraformGeneralData, TerraformVariablesProvider } from '@qovery/domains/service-terraform/feature'
+import { serviceTemplates } from '@qovery/domains/services/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   SERVICES_NEW_URL,
@@ -11,7 +12,6 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { ROUTER_SERVICE_TERRAFORM_CREATION } from '../../router/router'
-import { serviceTemplates } from '../page-new-feature/service-templates'
 
 export const steps: { title: string }[] = [
   { title: 'General information' },
