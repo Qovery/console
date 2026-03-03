@@ -228,7 +228,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   ) {
     return (
       <div className="w-full">
-        <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral">
+        <div className="h-[calc(100vh-164px)]">
           <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
           <div className="h-[calc(100vh-176px)] border-r border-neutral">
             <div className="flex h-full flex-col items-center justify-center">
@@ -291,7 +291,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
             )}
             <Table.Root
               className="w-full border-separate border-spacing-y-0.5 text-xs"
-              containerClassName="rounded-none border-none"
+              containerClassName="rounded-none border-none bg-background"
             >
               <Table.Body className="divide-y-0">
                 {logs.map((log, index) => {
