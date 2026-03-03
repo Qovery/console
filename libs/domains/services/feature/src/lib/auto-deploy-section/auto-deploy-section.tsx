@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { type PropsWithChildren } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Button } from '@qovery/shared/ui'
 import { AutoDeploySetting, type AutoDeploySettingProps } from '../auto-deploy-setting/auto-deploy-setting'
@@ -6,9 +6,8 @@ import { GitWebhookStatusBadge } from '../git-webhook-status-badge/git-webhook-s
 import { useGitWebhookStatus } from '../hooks/use-git-webhook-status/use-git-webhook-status'
 import { useSyncGitWebhook } from '../hooks/use-sync-git-webhook/use-sync-git-webhook'
 
-export interface AutoDeploySectionProps extends AutoDeploySettingProps {
+export interface AutoDeploySectionProps extends PropsWithChildren<AutoDeploySettingProps> {
   serviceId: string
-  children?: ReactNode
 }
 
 export function AutoDeploySection({ serviceId, source, className, children }: AutoDeploySectionProps) {
