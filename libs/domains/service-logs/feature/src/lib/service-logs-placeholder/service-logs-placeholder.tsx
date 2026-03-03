@@ -1,11 +1,12 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { subDays } from 'date-fns'
 import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useMemo, useState } from 'react'
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
+import { type ServiceLogsParams } from '@qovery/shared/router'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Button, Icon, Link, LoaderDots, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
+import { Button, Icon, Link, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
 
 export function LoaderPlaceholder({
@@ -43,13 +44,13 @@ export function ServiceLogsPlaceholder({
   databaseMode,
   itemsLength,
 }: ServiceLogsPlaceholderProps) {
-  const { organizationId, projectId, environmentId, serviceId } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
   const { state: deploymentState } = deploymentStatus ?? {}
   const [showPlaceholder, setShowPlaceholder] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const queryParams = useSearch({ strict: false })
-  const navigate = useNavigate()
 
   const { data: deploymentIds = [] } = useServiceDeploymentId({
     clusterId: environment.cluster_id ?? '',
@@ -94,6 +95,22 @@ export function ServiceLogsPlaceholder({
   const hasDeploymentIdFilter = useMemo(() => {
     return Boolean(queryParams.deploymentId)
   }, [queryParams.deploymentId])
+
+  const setQueryParams = useCallback(
+    (searchParams: ServiceLogsParams) => {
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+        params: {
+          organizationId,
+          projectId,
+          environmentId,
+          serviceId,
+        },
+        search: searchParams,
+      })
+    },
+    [navigate, organizationId, projectId, environmentId, serviceId]
+  )
 
   useEffect(() => {
     // Hide the placeholder after x seconds if no logs are found
@@ -149,25 +166,16 @@ export function ServiceLogsPlaceholder({
               color="neutral"
               className="max-w-max"
               onClick={() => {
-                // navigate({
-                //   to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
-                //   params: {
-                //     organizationId,
-                //     projectId,
-                //     environmentId,
-                //     serviceId,
-                //   },
-                //   search: {
-                //     level: undefined,
-                //     instance: undefined,
-                //     message: undefined,
-                //     search: undefined,
-                //     version: undefined,
-                //     container: undefined,
-                //     nginx: undefined,
-                //     deploymentId: undefined,
-                //   },
-                // })
+                setQueryParams({
+                  level: undefined,
+                  instance: undefined,
+                  message: undefined,
+                  search: undefined,
+                  version: undefined,
+                  container: undefined,
+                  nginx: undefined,
+                  deploymentId: undefined,
+                })
 
                 setShowPlaceholder(false)
               }}
@@ -233,18 +241,18 @@ export function ServiceLogsPlaceholder({
                 variant="surface"
                 color="neutral"
                 onClick={() => {
-                  // setQueryParams({
-                  //   startDate: undefined,
-                  //   endDate: undefined,
-                  //   level: undefined,
-                  //   instance: undefined,
-                  //   message: undefined,
-                  //   search: undefined,
-                  //   version: undefined,
-                  //   container: undefined,
-                  //   nginx: undefined,
-                  //   deploymentId: undefined,
-                  // })
+                  setQueryParams({
+                    startDate: undefined,
+                    endDate: undefined,
+                    level: undefined,
+                    instance: undefined,
+                    message: undefined,
+                    search: undefined,
+                    version: undefined,
+                    container: undefined,
+                    nginx: undefined,
+                    deploymentId: undefined,
+                  })
 
                   setShowPlaceholder(false)
                 }}

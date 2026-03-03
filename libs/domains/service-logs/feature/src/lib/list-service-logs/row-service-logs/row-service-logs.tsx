@@ -1,7 +1,9 @@
+import { useNavigate, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { type ServiceLogsParams } from '@qovery/shared/router'
 import {
   Ansi,
   Badge,
@@ -31,7 +33,9 @@ export interface RowServiceLogsProps {
 }
 
 export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, service }: RowServiceLogsProps) {
-  // const [, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
+
   const [isExpanded, setIsExpanded] = useState(false)
 
   const serviceType = service?.serviceType
@@ -44,6 +48,22 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
 
   const getColorByPod = usePodColor()
   const timestamp = Number(log.timestamp)
+
+  const setQueryParams = useCallback(
+    (searchParams: ServiceLogsParams) => {
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+        params: {
+          organizationId,
+          projectId,
+          environmentId,
+          serviceId,
+        },
+        search: searchParams,
+      })
+    },
+    [navigate, organizationId, projectId, environmentId, serviceId]
+  )
 
   const renderHighlightedMessage = (message: string, searchTerm: string | null | undefined) => {
     if (!searchTerm || !message.includes(searchTerm)) {
@@ -125,7 +145,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
                 className="h-5 gap-1.5 px-1.5 font-code"
                 onClick={(e) => {
                   e.stopPropagation()
-                  // setQueryParams({ instance: log.instance })
+                  setQueryParams({ instance: log.instance })
                 }}
               >
                 <span
@@ -154,7 +174,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
                 className="gap-1.5 whitespace-nowrap font-code"
                 onClick={(e) => {
                   e.stopPropagation()
-                  // setQueryParams({ container: log.container })
+                  setQueryParams({ container: log.container })
                 }}
               >
                 {log.container}
@@ -192,7 +212,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
                         className="gap-1.5"
                         onClick={(e) => {
                           e.stopPropagation()
-                          // setQueryParams({ level: levelLowercase })
+                          setQueryParams({ level: levelLowercase })
                         }}
                       >
                         {levelLowercase}
@@ -219,7 +239,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
                     size="xs"
                     onClick={(e) => {
                       e.stopPropagation()
-                      // setQueryParams({ instance: log.instance })
+                      setQueryParams({ instance: log.instance })
                     }}
                   >
                     {log.instance}
@@ -235,7 +255,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
                       size="xs"
                       onClick={(e) => {
                         e.stopPropagation()
-                        // setQueryParams({ container: log.container })
+                        setQueryParams({ container: log.container })
                       }}
                     >
                       {log.container}

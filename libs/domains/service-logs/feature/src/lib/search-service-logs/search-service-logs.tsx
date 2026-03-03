@@ -1,8 +1,9 @@
-import { useSearch } from '@tanstack/react-router'
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { type DecodedValueMap } from 'serialize-query-params'
 import { useQueryParams } from 'use-query-params'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { type ServiceLogsParams } from '@qovery/shared/router'
 import { Kbd, MultipleSelector, type MultipleSelectorRef, type Option } from '@qovery/shared/ui'
 import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
@@ -12,7 +13,7 @@ import { type queryParamsServiceLogs } from '../list-service-logs/service-logs-c
 
 export const VALID_FILTER_KEYS = ['level', 'instance', 'message', 'nginx', 'envoy', 'search', 'deploymentId']
 
-export function buildValueOptions(queryParams: DecodedValueMap<typeof queryParamsServiceLogs>): Option[] {
+export function buildValueOptions(queryParams: ServiceLogsParams): Option[] {
   const options: Option[] = []
 
   if (queryParams.level) {
@@ -58,7 +59,7 @@ export function buildValueOptions(queryParams: DecodedValueMap<typeof queryParam
 export function buildQueryParams(value: string) {
   const filterRegex = /(\w+)[:]([^\s]*)/g
   const matches = value.match(filterRegex)
-  const queryParams: Omit<DecodedValueMap<typeof queryParamsServiceLogs>, 'startDate' | 'endDate'> = {
+  const queryParams: Omit<ServiceLogsParams, 'startDate' | 'endDate'> = {
     level: undefined,
     instance: undefined,
     container: undefined,
@@ -111,11 +112,12 @@ export function SearchServiceLogs({
   refetchHistoryLogs: () => void
   service?: AnyService
 }) {
-  // const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
-  const queryParams = useSearch({ strict: false })
-  const [options, setOptions] = useState<Option[]>(
-    buildValueOptions(queryParams as DecodedValueMap<typeof queryParamsServiceLogs>)
-  )
+  const navigate = useNavigate()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const queryParams: ServiceLogsParams = useSearch({
+    from: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+  })
+  const [options, setOptions] = useState<Option[]>(buildValueOptions(queryParams))
   const searchRef = useRef<MultipleSelectorRef>(null)
   const metaKey = useFormatHotkeys('meta')
 
@@ -139,9 +141,25 @@ export function SearchServiceLogs({
     enabled: Boolean(clusterId) && Boolean(serviceId),
   })
 
+  const setQueryParams = useCallback(
+    (searchParams: ServiceLogsParams) => {
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+        params: {
+          organizationId,
+          projectId,
+          environmentId,
+          serviceId,
+        },
+        search: searchParams,
+      })
+    },
+    [navigate, organizationId, projectId, environmentId, serviceId]
+  )
+
   // Sync the input value with query params only when query params change
   useEffect(() => {
-    setOptions(buildValueOptions(queryParams as DecodedValueMap<typeof queryParamsServiceLogs>))
+    setOptions(buildValueOptions(queryParams))
   }, [queryParams])
 
   // Add keyboard shortcut for Cmd/Ctrl+F to focus the search
@@ -165,12 +183,12 @@ export function SearchServiceLogs({
     (options: Option[]) => {
       setOptions(options)
       const query = buildQueryParams(options.map((option) => option.value).join(' '))
-      // setQueryParams(query)
+      setQueryParams(query)
       if (queryParams.startDate || queryParams.endDate || queryParams.mode === 'history') {
         refetchHistoryLogs()
       }
     },
-    [refetchHistoryLogs, queryParams.startDate, queryParams.endDate, queryParams.mode]
+    [refetchHistoryLogs, setQueryParams, queryParams.startDate, queryParams.endDate, queryParams.mode]
   )
 
   const defaultFilters = [

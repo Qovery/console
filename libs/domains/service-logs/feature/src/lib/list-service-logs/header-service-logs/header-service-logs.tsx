@@ -1,10 +1,11 @@
-import { useSearch } from '@tanstack/react-router'
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { subDays } from 'date-fns'
+import { subDays, subHours } from 'date-fns'
 import { useCallback, useState } from 'react'
 import { match } from 'ts-pattern'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 import { ServiceStateChip, useService } from '@qovery/domains/services/feature'
+import { type ServiceLogsParams } from '@qovery/shared/router'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Button, DatePicker, DropdownMenu, Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
@@ -30,6 +31,8 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
   } = useServiceLogsContext()
 
   const [isOpenDatePicker, setIsOpenDatePicker] = useState(false)
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
   const queryParams = useSearch({ strict: false })
 
   const { data: service } = useService({ environmentId: environment.id, serviceId })
@@ -38,13 +41,29 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
   const endDate = queryParams.endDate ? new Date(queryParams.endDate) : undefined
   const hasDeploymentId = Boolean(queryParams.deploymentId)
 
+  const setQueryParams = useCallback(
+    (searchParams: ServiceLogsParams) => {
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+        params: {
+          organizationId,
+          projectId,
+          environmentId,
+          serviceId,
+        },
+        search: searchParams,
+      })
+    },
+    [navigate, organizationId, projectId, environmentId, serviceId]
+  )
+
   const clearDate = useCallback(() => {
-    // setQueryParams({
-    //   startDate: undefined,
-    //   endDate: undefined,
-    //   mode: 'live',
-    // })
-  }, [])
+    setQueryParams({
+      startDate: undefined,
+      endDate: undefined,
+      mode: 'live',
+    })
+  }, [setQueryParams])
 
   return (
     <>
@@ -84,14 +103,14 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
             })}
             onClick={() => {
               if (!isLiveMode) {
-                // setQueryParams({ startDate: undefined, endDate: undefined, mode: 'live' })
+                setQueryParams({ startDate: undefined, endDate: undefined, mode: 'live' })
               } else {
                 const now = new Date()
-                // setQueryParams({
-                //   startDate: subHours(now, 1),
-                //   endDate: now,
-                //   mode: 'history',
-                // })
+                setQueryParams({
+                  startDate: subHours(now, 1).toString(),
+                  endDate: now.toString(),
+                  mode: 'history',
+                })
               }
             }}
           >
@@ -106,11 +125,11 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
           </Button>
           <DatePicker
             onChange={(startDate, endDate) => {
-              // setQueryParams({
-              //   startDate,
-              //   endDate,
-              //   mode: 'history',
-              // })
+              setQueryParams({
+                startDate: startDate.toDateString(),
+                endDate: endDate.toDateString(),
+                mode: 'history',
+              })
               setIsOpenDatePicker(false)
             }}
             isOpen={isOpenDatePicker}
