@@ -29,6 +29,8 @@ import {
 
 const CloudFormationIcon = '/assets/devicon/cloudformation.svg'
 
+const SERVICE_TEMPLATE_ICON_INVERT_DARK_TITLES = new Set(['Apache Kafka', 'Replibyte', 'Rust', 'Flask', 'Temporal'])
+
 const getEnvironmentBasePath = (organizationId: string, projectId: string, environmentId: string) =>
   `/organization/${organizationId}/project/${projectId}/environment/${environmentId}`
 
@@ -203,7 +205,13 @@ function CardService({
         {expanded ? (
           <div className="flex w-full flex-col gap-8">
             <div className="relative flex gap-6">
-              <img className="select-none" width={52} height={52} src={icon as string} alt={title} />
+              <img
+                className={twMerge('select-none', SERVICE_TEMPLATE_ICON_INVERT_DARK_TITLES.has(title) && 'dark:invert')}
+                width={52}
+                height={52}
+                src={icon as string}
+                alt={title}
+              />
               <div>
                 <h3 className="mb-1 text-base font-medium text-neutral">{title}</h3>
                 <p className="max-w-96 text-ssm text-neutral-subtle">{description}</p>
@@ -260,9 +268,18 @@ function CardService({
             </div>
             <span className="relative">
               {typeof icon === 'string' ? (
-                <img className="max-h-10 w-14 select-none" src={icon} alt={title} />
+                <img
+                  className={twMerge(
+                    'max-h-10 w-14 select-none',
+                    SERVICE_TEMPLATE_ICON_INVERT_DARK_TITLES.has(title) && 'dark:invert'
+                  )}
+                  src={icon}
+                  alt={title}
+                />
               ) : (
-                cloneElement(icon as ReactElement, { className: 'w-10' })
+                cloneElement(icon as ReactElement, {
+                  className: twMerge('w-10', SERVICE_TEMPLATE_ICON_INVERT_DARK_TITLES.has(title) && 'dark:invert'),
+                })
               )}
             </span>
           </>
@@ -293,9 +310,18 @@ function CardService({
       </div>
       <div className="flex items-center">
         {typeof icon === 'string' ? (
-          <img className="max-h-10 w-14 select-none" src={icon} alt={title} />
+          <img
+            className={twMerge(
+              'max-h-10 w-14 select-none',
+              SERVICE_TEMPLATE_ICON_INVERT_DARK_TITLES.has(title) && 'dark:invert'
+            )}
+            src={icon}
+            alt={title}
+          />
         ) : (
-          cloneElement(icon as ReactElement, { className: 'w-10' })
+          cloneElement(icon as ReactElement, {
+            className: twMerge('w-10', SERVICE_TEMPLATE_ICON_INVERT_DARK_TITLES.has(title) && 'dark:invert'),
+          })
         )}
       </div>
     </Link>
@@ -552,16 +578,34 @@ export function ServiceNew({
               projectId={projectId}
               environmentId={environmentId}
             />
-            <SectionByTag
-              title="IAC"
-              description="Find your perfect IAC template with presets."
-              tag="IAC"
-              cloudProvider={cloudProvider}
-              availableTemplates={availableTemplates}
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-            />
+            <Section>
+              <Heading className="mb-1">IAC</Heading>
+              <p className="mb-5 text-xs text-neutral-subtle">
+                Deploy external cloud resources with Terraform or use IAC templates.
+              </p>
+              <div className="mt-5 grid grid-cols-3 gap-4">
+                {serviceEmpty
+                  .filter((s) => s.title === 'Terraform')
+                  .map((service) => (
+                    <Card key={service.title} {...service} />
+                  ))}
+                {serviceTemplates
+                  .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
+                  .filter(({ tag: t }) => t === 'IAC')
+                  .sort((a, b) => a.title.localeCompare(b.title))
+                  .map((service) => (
+                    <CardService
+                      key={service.title}
+                      availableTemplates={availableTemplates}
+                      organizationId={organizationId}
+                      projectId={projectId}
+                      environmentId={environmentId}
+                      cloudProvider={cloudProvider}
+                      {...service}
+                    />
+                  ))}
+              </div>
+            </Section>
             <SectionByTag
               title="More template"
               description="Look for other template presets."
@@ -575,7 +619,6 @@ export function ServiceNew({
           </>
         ) : [...serviceEmpty, ...serviceTemplates]
             .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
-            .filter((c) => !('tag' in c && 'slug' in c && c.tag === 'IAC' && c.slug === 'terraform'))
             .filter(filterService).length > 0 ? (
           <Section>
             <Heading className="mb-1">Search results</Heading>
@@ -585,7 +628,6 @@ export function ServiceNew({
             <div className="grid grid-cols-3 gap-4">
               {[...serviceEmpty, ...serviceTemplates]
                 .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
-                .filter((c) => !('tag' in c && 'slug' in c && c.tag === 'IAC' && c.slug === 'terraform'))
                 .filter(filterService)
                 .map((service) => (
                   <CardService
