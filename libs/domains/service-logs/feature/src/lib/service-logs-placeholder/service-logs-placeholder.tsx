@@ -5,7 +5,7 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Button, Icon, Link, LoaderDots, Tooltip } from '@qovery/shared/ui'
+import { Button, Icon, Link, LoaderDots, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
 
 export function LoaderPlaceholder({
@@ -16,11 +16,11 @@ export function LoaderPlaceholder({
   description?: ReactNode
 }) {
   return (
-    <div className="flex w-full flex-col items-center justify-center gap-5 text-center">
-      <LoaderDots />
+    <div className="flex w-full flex-col items-center justify-center gap-3 text-center">
+      <LoaderSpinner />
       <div className="flex flex-col gap-3">
-        <p className="text-neutral-300">{title}</p>
-        {description && <span className="text-sm text-neutral-350">{description}</span>}
+        <p className="text-neutral">{title}</p>
+        {description && <span className="text-sm text-neutral-subtle">{description}</span>}
       </div>
     </div>
   )

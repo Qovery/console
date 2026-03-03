@@ -84,7 +84,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
       <Table.Row
         onClick={() => !isNginx && !isEnvoy && setIsExpanded(!isExpanded)}
         className={twMerge(
-          clsx('sl-row sl-row-appear group relative mt-0.5 cursor-pointer text-xs', {
+          clsx('sl-row sl-row-appear group relative mt-0.5 cursor-pointer bg-surface-neutral text-xs', {
             'bg-surface-negative-component': isErrorOrCritical,
           })
         )}

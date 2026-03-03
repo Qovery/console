@@ -73,7 +73,6 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   const refScrollSection = useRef<HTMLDivElement>(null)
 
   const queryParams = route.useSearch()
-  // const [queryParams] = useQueryParams(queryParamsServiceLogs)
 
   const isLiveMode = useMemo(() => {
     if (queryParams.mode === 'live') {
