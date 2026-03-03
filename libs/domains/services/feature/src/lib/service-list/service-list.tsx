@@ -26,10 +26,7 @@ import {
 import { Checkbox, EmptyState, Icon, Link, TableFilter, TablePrimitives, Tooltip, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
-import {
-  ServicesListProvider,
-  useServicesListContext,
-} from '../hooks/use-services-list-context/use-services-list-context'
+import useServices from '../hooks/use-services/use-services'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceListActionBar } from './service-list-action-bar'
 import {
@@ -46,11 +43,7 @@ export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
 }
 
 export function ServiceList({ ...props }: ServiceListProps) {
-  return (
-    <ServicesListProvider environmentId={props.environment.id || ''}>
-      <ServiceListTable {...props} />
-    </ServicesListProvider>
-  )
+  return <ServiceListTable {...props} />
 }
 
 export function ServiceListTable({ className, environment, ...props }: ServiceListProps) {
@@ -59,7 +52,7 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
   const organizationId = environment.organization.id || ''
   const projectId = environment.project.id || ''
 
-  const { services } = useServicesListContext()
+  const { data: services } = useServices({ environmentId, suspense: true })
   const { data: deploymentStages } = useListDeploymentStages({ environmentId })
 
   const [sorting, setSorting] = useState<SortingState>([])

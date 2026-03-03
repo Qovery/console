@@ -1,6 +1,5 @@
 import { type Environment, ServiceTypeEnum } from 'qovery-typescript-axios'
 import { ServiceSubActionDto } from 'qovery-ws-typescript-axios'
-import { useEffect } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import {
@@ -13,7 +12,6 @@ import {
 import { Link, Skeleton, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { useCheckRunningStatusClosed } from '../../hooks/use-check-running-status-closed/use-check-running-status-closed'
 import { useServiceDeploymentAndRunningStatuses } from '../../hooks/use-service-deployment-and-running-statuses/use-service-deployment-and-running-statuses'
-import { useServicesListContext } from '../../hooks/use-services-list-context/use-services-list-context'
 
 type ServiceRunningStatusCellProps = {
   service: AnyService
@@ -30,19 +28,8 @@ export function ServiceRunningStatusCell({
   environment,
   clusterId,
 }: ServiceRunningStatusCellProps) {
-  const { addStatusForService, statuses } = useServicesListContext()
   const { data } = useServiceDeploymentAndRunningStatuses({ environmentId: environment.id, service })
   const { runningStatus, deploymentStatus } = data
-
-  // Setting the status in the context to be used in other cells and filters without needing to fetch it again
-  useEffect(() => {
-    if (
-      data.runningStatus?.state !== statuses[service.id]?.runningStatus.state ||
-      data.deploymentStatus?.state !== statuses[service.id]?.deploymentStatus?.state
-    ) {
-      addStatusForService(service.id, data)
-    }
-  }, [data, addStatusForService, service.id, statuses])
 
   const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
     clusterId,
