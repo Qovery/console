@@ -26,7 +26,7 @@ import {
 import { Checkbox, EmptyState, Icon, Link, TableFilter, TablePrimitives, Tooltip, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
-import useServices from '../hooks/use-services/use-services'
+import { useServices } from '../hooks/use-services/use-services'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceListActionBar } from './service-list-action-bar'
 import {
