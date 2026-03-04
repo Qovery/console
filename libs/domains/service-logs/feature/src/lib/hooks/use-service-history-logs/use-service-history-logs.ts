@@ -12,13 +12,34 @@ export interface UseServiceHistoryLogsProps {
 }
 
 const LOGS_PER_BATCH = 200
+// Use nanosecond timestamps for pagination to avoid skipping logs that share the same millisecond
+const NS_PER_MS = BigInt(1000000)
+const ZERO_NS = BigInt(0)
+const ONE_NS = BigInt(1)
+
+const toTimestampNs = (date?: Date) => (date ? (BigInt(date.getTime()) * NS_PER_MS).toString() : undefined)
+
+const getLogTimestampNs = (log: ServiceLog) => {
+  if (log.timestampNs) {
+    return BigInt(log.timestampNs)
+  }
+
+  return BigInt(log.timestamp) * NS_PER_MS
+}
+
+const getLogKey = (log: ServiceLog) => `${log.timestampNs ?? log.timestamp}|${log.message}`
+
+const compareTimestamps = (a: bigint, b: bigint) => {
+  if (a === b) return 0
+  return a < b ? -1 : 1
+}
 
 export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }: UseServiceHistoryLogsProps) {
   const queryClient = useQueryClient()
   const [queryParams] = useQueryParams(queryParamsServiceLogs)
 
   const [accumulatedLogs, setAccumulatedLogs] = useState<ServiceLog[]>([])
-  const [currentEndDate, setCurrentEndDate] = useState<Date | null>(null)
+  const [currentEndTimestampNs, setCurrentEndTimestampNs] = useState<string | null>(null)
   const [hasMoreLogs, setHasMoreLogs] = useState(true)
   const [isPaginationLoading, setIsPaginationLoading] = useState(false)
   const [resetCounter, setResetCounter] = useState(0)
@@ -39,12 +60,8 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     [queryParams.endDate]
   )
 
-  useEffect(() => {
-    if (endDate && !currentEndDate) {
-      setCurrentEndDate(endDate)
-      setAccumulatedLogs([])
-    }
-  }, [endDate, currentEndDate])
+  const startTimestampNs = useMemo(() => toTimestampNs(startDate), [startDate])
+  const endTimestampNsFromParams = useMemo(() => toTimestampNs(endDate), [endDate])
 
   const filters = useMemo(
     () => ({
@@ -75,7 +92,9 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       clusterId,
       serviceId,
       startDate,
-      endDate: currentEndDate ?? undefined,
+      endDate,
+      startTimestampNs,
+      endTimestampNs: currentEndTimestampNs ?? endTimestampNsFromParams,
       filters,
       direction: 'backward',
       limit: LOGS_PER_BATCH,
@@ -93,7 +112,9 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       clusterId,
       serviceId,
       startDate,
-      endDate: currentEndDate ?? undefined,
+      endDate,
+      startTimestampNs,
+      endTimestampNs: currentEndTimestampNs ?? endTimestampNsFromParams,
       filters,
       direction: 'backward',
       limit: LOGS_PER_BATCH,
@@ -112,7 +133,9 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       clusterId,
       serviceId,
       startDate,
-      endDate: currentEndDate ?? undefined,
+      endDate,
+      startTimestampNs,
+      endTimestampNs: currentEndTimestampNs ?? endTimestampNsFromParams,
       filters,
       direction: 'backward',
       limit: LOGS_PER_BATCH,
@@ -129,10 +152,10 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   useEffect(() => {
     if (isFetched && (logs.length > 0 || nginxLogs.length > 0 || envoyLogs.length > 0)) {
       setAccumulatedLogs((prev) => {
-        const existingKeys = new Set(prev.map((log) => `${log.timestamp}|${log.message}`))
-        const newLogs = logs.filter((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
-        const newNginxLogs = nginxLogs.filter((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
-        const newEnvoyLogs = envoyLogs.filter((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
+        const existingKeys = new Set(prev.map(getLogKey))
+        const newLogs = logs.filter((log) => !existingKeys.has(getLogKey(log)))
+        const newNginxLogs = nginxLogs.filter((log) => !existingKeys.has(getLogKey(log)))
+        const newEnvoyLogs = envoyLogs.filter((log) => !existingKeys.has(getLogKey(log)))
         return [...newLogs, ...newNginxLogs, ...newEnvoyLogs, ...prev]
       })
       setIsPaginationLoading(false)
@@ -148,10 +171,10 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       }
 
       if (logs.length > 0 || nginxLogs.length > 0 || envoyLogs.length > 0) {
-        const existingKeys = new Set(accumulatedLogs.map((log) => `${log.timestamp}|${log.message}`))
-        const hasNewAppLogs = logs.some((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
-        const hasNewNginxLogs = nginxLogs.some((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
-        const hasNewEnvoyLogs = envoyLogs.some((log) => !existingKeys.has(`${log.timestamp}|${log.message}`))
+        const existingKeys = new Set(accumulatedLogs.map(getLogKey))
+        const hasNewAppLogs = logs.some((log) => !existingKeys.has(getLogKey(log)))
+        const hasNewNginxLogs = nginxLogs.some((log) => !existingKeys.has(getLogKey(log)))
+        const hasNewEnvoyLogs = envoyLogs.some((log) => !existingKeys.has(getLogKey(log)))
 
         if (!hasNewAppLogs && !hasNewNginxLogs && !hasNewEnvoyLogs) {
           setHasMoreLogs(false)
@@ -177,13 +200,9 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     setIsPaginationLoading(true)
 
     try {
-      const uniqueTimestamps = Array.from(
-        new Set(
-          accumulatedLogs.map((log) =>
-            typeof log.timestamp === 'string' ? parseInt(log.timestamp, 10) : log.timestamp
-          )
-        )
-      ).sort((a, b) => a - b)
+      const uniqueTimestamps = Array.from(new Set(accumulatedLogs.map((log) => getLogTimestampNs(log)))).sort(
+        compareTimestamps
+      )
 
       if (uniqueTimestamps.length === 0) {
         setIsPaginationLoading(false)
@@ -191,10 +210,10 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       }
 
       const oldestTimestamp = uniqueTimestamps[0]
-      const timeOffset = uniqueTimestamps.length === 1 ? 1000 : 1
-      const newEndDate = new Date(oldestTimestamp - timeOffset)
+      // Step back one nanosecond so we fetch strictly older logs without missing same-ms entries.
+      const newEndTimestampNs = oldestTimestamp > ZERO_NS ? oldestTimestamp - ONE_NS : ZERO_NS
 
-      setCurrentEndDate(newEndDate)
+      setCurrentEndTimestampNs(newEndTimestampNs.toString())
 
       setTimeout(() => {
         refetch()
@@ -205,14 +224,14 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   }, [accumulatedLogs, hasMoreLogs, isPaginationLoading, refetch])
 
   const normalizedLogs = useMemo(() => {
-    const uniqLogsByTimestamp = Array.from(
-      new Map(accumulatedLogs.map((log) => [`${log.timestamp}|${log.message}`, log])).values()
-    )
-    return uniqLogsByTimestamp.map(normalizeServiceLog).sort((a, b) => Number(a.timestamp) - Number(b.timestamp))
+    const uniqLogsByTimestamp = Array.from(new Map(accumulatedLogs.map((log) => [getLogKey(log), log])).values())
+    return uniqLogsByTimestamp
+      .sort((a, b) => compareTimestamps(getLogTimestampNs(a), getLogTimestampNs(b)))
+      .map(normalizeServiceLog)
   }, [accumulatedLogs])
 
   useEffect(() => {
-    setCurrentEndDate(endDate || null)
+    setCurrentEndTimestampNs(endTimestampNsFromParams ?? null)
     setHasMoreLogs(true)
     setAccumulatedLogs([])
     setIsPaginationLoading(false)
@@ -221,7 +240,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     queryClient.invalidateQueries({
       queryKey: queries.serviceLogs.serviceLogs._def,
     })
-  }, [clusterId, serviceId, startDate, endDate, filters, queryClient])
+  }, [clusterId, serviceId, startDate, endDate, filters, queryClient, endTimestampNsFromParams])
 
   useEffect(() => {
     if (isFetched && logs.length > 0 && accumulatedLogs.length === logs.length) {
