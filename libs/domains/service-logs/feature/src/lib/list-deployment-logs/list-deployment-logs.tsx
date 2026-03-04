@@ -20,8 +20,8 @@ import { match } from 'ts-pattern'
 import { ServiceStateChip, useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Banner, Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
-import { formatInTimeZone } from '@qovery/shared/util-dates'
+import { Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
+import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
 import HeaderLogs from '../header-logs/header-logs'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
@@ -363,7 +363,7 @@ export function ListDeploymentLogs({
                 isDeploymentProgressing ? 'live' : 'history',
                 isDeploymentProgressing || !lastLogTimestamp
                   ? undefined
-                  : formatInTimeZone(new Date(lastLogTimestamp), 'yyyy-MM-dd HH:mm:ss', 'UTC')
+                  : dateYearMonthDayHourMinuteSecond(new Date(lastLogTimestamp))
               )
             }
           >

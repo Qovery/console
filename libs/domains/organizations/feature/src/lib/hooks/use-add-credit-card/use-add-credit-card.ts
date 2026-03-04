@@ -10,6 +10,9 @@ export function useAddCreditCard() {
       queryClient.invalidateQueries({
         queryKey: queries.organizations.creditCards({ organizationId }).queryKey,
       })
+      queryClient.invalidateQueries({
+        queryKey: queries.organizations.details({ organizationId }).queryKey,
+      })
     },
     meta: {
       notifyOnSuccess: {

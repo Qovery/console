@@ -12,7 +12,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
-import { useLinks } from '../hooks/use-links/use-links'
+import { useEnvironmentLinks } from '../hooks/use-environment-links/use-environment-links'
 import { useServiceType } from '../hooks/use-service-type/use-service-type'
 
 export interface ServiceLinksPopoverProps extends Pick<PopoverContentProps, 'align' | 'side'> {
@@ -33,12 +33,13 @@ export function ServiceLinksPopover({
   side = 'bottom',
 }: ServiceLinksPopoverProps) {
   const { data: serviceType } = useServiceType({ environmentId, serviceId })
-  const { data: links = [] } = useLinks({ serviceId, serviceType })
+  const { data: links = [] } = useEnvironmentLinks({ environmentId })
 
   // Remove default Qovery links
   const filteredLinks = useMemo(
-    () => links.filter((link: LinkProps) => !(link.is_default && link.is_qovery_domain)),
-    [links]
+    () =>
+      links.filter((link: LinkProps) => !(link.is_default && link.is_qovery_domain) && link.service_id === serviceId),
+    [links, serviceId]
   )
 
   // Separate links into nginx and gateway-api groups

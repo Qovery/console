@@ -6,5 +6,5 @@ export function formatCronExpression(expression?: string) {
     return undefined
   }
   const res = cronstrue.toString(expression, { throwExceptionOnParseError: false })
-  return res.indexOf('An error') === -1 ? res : undefined
+  return !res.startsWith('An error') ? res : undefined
 }

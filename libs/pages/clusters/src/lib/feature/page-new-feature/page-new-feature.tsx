@@ -13,7 +13,6 @@ import { NavLink, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ClusterInstallationGuideModal } from '@qovery/domains/clusters/feature'
 import { useClusterCreationRestriction } from '@qovery/domains/organizations/feature'
-import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { AddCreditCardModalFeature } from '@qovery/shared/console-shared'
 import { CLUSTERS_TEMPLATE_CREATION_URL, CLUSTERS_URL, SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { Button, Callout, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
@@ -391,12 +390,8 @@ export function PageNewFeature() {
   const { organizationId = '' } = useParams()
   useDocumentTitle('Create new cluster - Qovery')
   const { openModal, closeModal } = useModal()
-  const { data: userSignUp } = useUserSignUp()
-  const hasDxAuth = Boolean(userSignUp?.dx_auth)
-
-  const { isClusterCreationRestricted } = useClusterCreationRestriction({
+  const { isClusterCreationRestricted, isNoCreditCardRestriction } = useClusterCreationRestriction({
     organizationId,
-    dxAuth: hasDxAuth,
   })
 
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
@@ -608,38 +603,52 @@ export function PageNewFeature() {
             <Heading>Or choose your hosting mode</Heading>
             <p className="text-sm text-neutral-350">Manage your infrastructure across different hosting mode.</p>
           </div>
-          {isClusterCreationRestricted && (
-            <Callout.Root color="sky" className="mb-5">
-              <Callout.Icon>
-                <Icon iconName="circle-info" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>Add a credit card to create a cluster</Callout.TextHeading>
-                <Callout.TextDescription>
-                  You need to add a credit card to your account before creating a cluster on a cloud provider. You won’t
-                  be charged until your trial ends.
-                  <br />
-                  <Link
-                    as="button"
-                    color="neutral"
-                    variant="outline"
-                    className="mt-2"
-                    to={SETTINGS_URL(organizationId) + SETTINGS_BILLING_URL}
-                  >
-                    Add credit card
-                    <Icon iconName="arrow-right" className="ml-1" iconStyle="regular" />
-                  </Link>
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
-          )}
+          {isClusterCreationRestricted &&
+            (isNoCreditCardRestriction ? (
+              <Callout.Root color="sky" className="mb-5">
+                <Callout.Icon>
+                  <Icon iconName="circle-info" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>Add a credit card to create a cluster</Callout.TextHeading>
+                  <Callout.TextDescription>
+                    You need to add a credit card to your account before creating a cluster on a cloud provider. You
+                    won't be charged until your trial ends.
+                    <br />
+                    <Link
+                      as="button"
+                      color="neutral"
+                      variant="outline"
+                      className="mt-2"
+                      to={SETTINGS_URL(organizationId) + SETTINGS_BILLING_URL}
+                    >
+                      Add credit card
+                      <Icon iconName="arrow-right" className="ml-1" iconStyle="regular" />
+                    </Link>
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
+            ) : (
+              <Callout.Root color="red" className="mb-5">
+                <Callout.Icon>
+                  <Icon iconName="circle-exclamation" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>Cluster creation is restricted</Callout.TextHeading>
+                  <Callout.TextDescription>
+                    Your organization has a billing restriction that prevents cluster creation. Please contact support
+                    to resolve this issue.
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
+            ))}
           <div className="flex w-[calc(100%+20px)] flex-wrap gap-5">
             {cloudProviders.slice(1).map((props, index) => (
               <CardCluster
                 key={props.title}
                 index={index}
                 disabled={isClusterCreationRestricted}
-                onDisabledClick={openCreditCardModal}
+                onDisabledClick={isNoCreditCardRestriction ? openCreditCardModal : undefined}
                 {...props}
               />
             ))}

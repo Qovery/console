@@ -1,6 +1,11 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceList, type ServiceListProps } from './service-list'
 
+let mockDeploymentStagesData: unknown = undefined
+jest.mock('../hooks/use-list-deployment-stages/use-list-deployment-stages', () => ({
+  useListDeploymentStages: () => ({ data: mockDeploymentStagesData }),
+}))
+
 jest.mock('../hooks/use-services/use-services', () => ({
   useServices: () => ({
     data: [
@@ -437,5 +442,44 @@ describe('ServiceList', () => {
       'href',
       '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general'
     )
+  })
+
+  it('should disable checkbox for skipped services', () => {
+    mockDeploymentStagesData = [
+      {
+        id: 'stage-1',
+        name: 'Stage 1',
+        deployment_order: 0,
+        created_at: '',
+        environment: { id: '55867c71-56f9-4b4f-ab22-5904c9dbafda' },
+        services: [
+          {
+            id: 'ds-1',
+            created_at: '',
+            service_id: '037c9e87-e098-4970-8b1f-9a5ffe9e4b89',
+            service_type: 'APPLICATION',
+            is_skipped: true,
+          },
+          {
+            id: 'ds-2',
+            created_at: '',
+            service_id: '04308de2-af27-405f-9e95-570fa94ed577',
+            service_type: 'CONTAINER',
+            is_skipped: false,
+          },
+        ],
+      },
+    ]
+
+    renderWithProviders(<ServiceList {...serviceListProps} />)
+
+    const checkboxes = screen.getAllByRole('checkbox')
+    // First checkbox is the header "select all", then one per service row
+    // FRONT-END (skipped) should be disabled, back-end-A should be enabled
+    const skippedCheckbox = checkboxes.find((cb) => cb.hasAttribute('disabled'))
+    expect(skippedCheckbox).toBeTruthy()
+    expect(skippedCheckbox).toBeDisabled()
+
+    mockDeploymentStagesData = undefined
   })
 })

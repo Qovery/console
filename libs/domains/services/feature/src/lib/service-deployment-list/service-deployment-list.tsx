@@ -39,7 +39,12 @@ import {
   truncateText,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { dateFullFormat, formatDuration, formatInTimeZone } from '@qovery/shared/util-dates'
+import {
+  dateFullFormat,
+  dateYearMonthDayHourMinuteSecond,
+  formatDuration,
+  formatInTimeZone,
+} from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCancelDeploymentQueueService } from '../hooks/use-cancel-deployment-queue-service/use-cancel-deployment-queue-service'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
@@ -74,7 +79,6 @@ const formatTriggerAction = (
 
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
   const { data: service } = useService({ environmentId: environment?.id, serviceId })
-  console.log('🚀 ~ ServiceDeploymentList ~ service:', service)
 
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
     serviceId,
@@ -201,29 +205,40 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                   ))
                   .otherwise(() => null)}
                 {(service?.serviceType === 'TERRAFORM' ||
-                  (service?.serviceType === 'JOB' && service?.job_type !== 'CRON')) && (
-                  <Tooltip content="Service logs">
-                    <ActionToolbar.Button asChild className="justify-center px-2">
-                      <Link
-                        to={
-                          ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-                          SERVICE_LOGS_URL(
-                            serviceId,
-                            undefined,
-                            isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
-                            'history',
-                            isDeploymentHistory(data)
-                              ? formatInTimeZone(new Date(data.auditing_data.created_at), 'yyyy-MM-dd HH:mm:ss', 'UTC')
-                              : undefined
-                          )
-                        }
-                        state={{ prevUrl: pathname }}
-                      >
-                        <Icon iconName="scroll" />
-                      </Link>
-                    </ActionToolbar.Button>
-                  </Tooltip>
-                )}
+                  (service?.serviceType === 'JOB' && service?.job_type !== 'CRON')) &&
+                  // Show only when logs can be available (hide during build or active deployment)
+                  match(state)
+                    .with(
+                      P.when((s) => ['ONGOING', 'CANCELING', 'QUEUED', 'BUILDING'].includes(String(s))),
+                      () => null
+                    )
+                    .otherwise(() => (
+                      <Tooltip content="Service logs">
+                        <ActionToolbar.Button asChild className="justify-center px-2">
+                          <Link
+                            to={
+                              ENVIRONMENT_LOGS_URL(
+                                environment?.organization.id,
+                                environment?.project.id,
+                                environment?.id
+                              ) +
+                              SERVICE_LOGS_URL(
+                                serviceId,
+                                undefined,
+                                isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
+                                'history',
+                                isDeploymentHistory(data)
+                                  ? dateYearMonthDayHourMinuteSecond(new Date(data.auditing_data.created_at))
+                                  : undefined
+                              )
+                            }
+                            state={{ prevUrl: pathname }}
+                          >
+                            <Icon iconName="scroll" />
+                          </Link>
+                        </ActionToolbar.Button>
+                      </Tooltip>
+                    ))}
                 <Tooltip content="Pipeline">
                   <ActionToolbar.Button asChild className="justify-center px-2">
                     <Link

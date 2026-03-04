@@ -607,18 +607,13 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                     </div>
                   </div>
                   <div
-                    class="relative -top-0.5 ml-3 cursor-pointer flex flex-col gap-1"
+                    class=" ml-3 cursor-pointer flex flex-col gap-1"
                   >
                     <p
                       class="font-medium text-neutral-400"
                     >
-                      Auto-deploy
+                      Auto-deploy on new commits
                     </p>
-                    <div
-                      class="text-neutral-350"
-                    >
-                      The service will be automatically updated on every new commit on the branch.
-                    </div>
                   </div>
                 </div>
               </section>

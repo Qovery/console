@@ -7,7 +7,12 @@ import { AutoDeploySection } from './auto-deploy-section'
 jest.mock('../hooks/use-git-webhook-status/use-git-webhook-status')
 jest.mock('../hooks/use-sync-git-webhook/use-sync-git-webhook')
 jest.mock('../auto-deploy-setting/auto-deploy-setting', () => ({
-  AutoDeploySetting: () => <div data-testid="auto-deploy-setting">AutoDeploySetting</div>,
+  AutoDeploySetting: ({ titleSuffix }: { titleSuffix?: React.ReactNode }) => (
+    <div data-testid="auto-deploy-setting">
+      AutoDeploySetting
+      {titleSuffix && <span data-testid="title-suffix">{titleSuffix}</span>}
+    </div>
+  ),
 }))
 jest.mock('../git-webhook-status-badge/git-webhook-status-badge', () => ({
   GitWebhookStatusBadge: () => <div data-testid="webhook-status-badge">WebhookStatusBadge</div>,
@@ -43,27 +48,29 @@ describe('AutoDeploySection', () => {
     expect(screen.getByTestId('auto-deploy-setting')).toBeInTheDocument()
   })
 
-  it('shows webhook section when auto-deploy is enabled and source is GIT', () => {
+  it('shows webhook badge inline when auto-deploy is enabled', () => {
     renderWithProviders(
       wrapWithReactHookForm(<AutoDeploySection serviceId="service-123" source="GIT" />, {
         defaultValues: { auto_deploy: true },
       })
     )
 
+    expect(screen.getByTestId('title-suffix')).toBeInTheDocument()
     expect(screen.getByTestId('webhook-status-badge')).toBeInTheDocument()
   })
 
-  it('hides webhook section when auto-deploy is disabled', () => {
+  it('hides webhook badge when auto-deploy is disabled', () => {
     renderWithProviders(
       wrapWithReactHookForm(<AutoDeploySection serviceId="service-123" source="GIT" />, {
         defaultValues: { auto_deploy: false },
       })
     )
 
+    expect(screen.queryByTestId('title-suffix')).not.toBeInTheDocument()
     expect(screen.queryByTestId('webhook-status-badge')).not.toBeInTheDocument()
   })
 
-  it('hides webhook section for CONTAINER_REGISTRY source', () => {
+  it('hides webhook badge for CONTAINER_REGISTRY source', () => {
     renderWithProviders(
       wrapWithReactHookForm(<AutoDeploySection serviceId="service-123" source="CONTAINER_REGISTRY" />, {
         defaultValues: { auto_deploy: true },
@@ -73,7 +80,7 @@ describe('AutoDeploySection', () => {
     expect(screen.queryByTestId('webhook-status-badge')).not.toBeInTheDocument()
   })
 
-  it('shows "Update Webhook" button when webhook status is NOT_CONFIGURED', () => {
+  it('shows "Update webhook" button when webhook status is NOT_CONFIGURED', () => {
     mockUseGitWebhookStatus.mockReturnValue({
       data: { status: 'NOT_CONFIGURED' },
       isLoading: false,
@@ -90,7 +97,7 @@ describe('AutoDeploySection', () => {
     expect(screen.getByRole('button', { name: /update webhook/i })).toBeInTheDocument()
   })
 
-  it('shows "Update Webhook" button when webhook status is MISCONFIGURED', () => {
+  it('shows "Update webhook" button when webhook status is MISCONFIGURED', () => {
     mockUseGitWebhookStatus.mockReturnValue({
       data: { status: 'MISCONFIGURED' },
       isLoading: false,
@@ -107,7 +114,7 @@ describe('AutoDeploySection', () => {
     expect(screen.getByRole('button', { name: /update webhook/i })).toBeInTheDocument()
   })
 
-  it('hides "Update Webhook" button when webhook status is ACTIVE', () => {
+  it('hides "Update webhook" button when webhook status is ACTIVE', () => {
     mockUseGitWebhookStatus.mockReturnValue({
       data: { status: 'ACTIVE' },
       isLoading: false,
@@ -124,7 +131,7 @@ describe('AutoDeploySection', () => {
     expect(screen.queryByRole('button', { name: /update webhook/i })).not.toBeInTheDocument()
   })
 
-  it('calls syncWebhook when clicking "Update Webhook" button', async () => {
+  it('calls syncWebhook when clicking "Update webhook" button', async () => {
     mockUseGitWebhookStatus.mockReturnValue({
       data: { status: 'NOT_CONFIGURED' },
       isLoading: false,
@@ -141,5 +148,31 @@ describe('AutoDeploySection', () => {
     await userEvent.click(screen.getByRole('button', { name: /update webhook/i }))
 
     expect(mockMutate).toHaveBeenCalled()
+  })
+
+  it('renders children when auto-deploy is enabled', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(
+        <AutoDeploySection serviceId="service-123" source="TERRAFORM">
+          <div data-testid="children-content">Triggered action</div>
+        </AutoDeploySection>,
+        { defaultValues: { auto_deploy: true } }
+      )
+    )
+
+    expect(screen.getByTestId('children-content')).toBeInTheDocument()
+  })
+
+  it('hides children when auto-deploy is disabled', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(
+        <AutoDeploySection serviceId="service-123" source="TERRAFORM">
+          <div data-testid="children-content">Triggered action</div>
+        </AutoDeploySection>,
+        { defaultValues: { auto_deploy: false } }
+      )
+    )
+
+    expect(screen.queryByTestId('children-content')).not.toBeInTheDocument()
   })
 })

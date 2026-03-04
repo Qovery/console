@@ -27,18 +27,14 @@ export function PageSettingsFeature() {
       url: pathSettings + SERVICES_SETTINGS_GENERAL_URL,
     },
     {
-      title: 'Deployment',
-      icon: IconAwesomeEnum.CART_FLATBED,
-      subLinks: [
-        {
-          title: 'Rules',
-          url: pathSettings + SERVICES_SETTINGS_RULES_URL,
-        },
-        {
-          title: 'Pipeline',
-          url: pathSettings + SERVICES_SETTINGS_PIPELINE_URL,
-        },
-      ],
+      title: 'Deployment Rules',
+      icon: IconAwesomeEnum.GEARS,
+      url: pathSettings + SERVICES_SETTINGS_RULES_URL,
+    },
+    {
+      title: 'Deployment Pipeline',
+      icon: IconAwesomeEnum.ROAD,
+      url: pathSettings + SERVICES_SETTINGS_PIPELINE_URL,
     },
     {
       title: 'Preview Environments',
