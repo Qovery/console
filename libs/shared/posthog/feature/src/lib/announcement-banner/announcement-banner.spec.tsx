@@ -125,7 +125,6 @@ describe('AnnouncementBanner', () => {
     }
     mockUseAnnouncementBanner.mockReturnValue(bannerData)
 
-    // Simulate a previous dismiss by pre-populating localStorage
     const content = `${bannerData.variant}:${bannerData.message}`
     let hash = 0
     for (let i = 0; i < content.length; i++) {
