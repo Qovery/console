@@ -1,22 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/users-sign-up/data-access'
+import { getStoredTrackingParams } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
-import { type CargoSignupPayload, useSignUpCargo } from '../use-signup-cargo/use-signup-cargo'
-
-function getUtmParams() {
-  return {
-    utm_source: localStorage.getItem('utm_source'),
-    utm_medium: localStorage.getItem('utm_medium'),
-    utm_campaign: localStorage.getItem('utm_campaign'),
-    utm_term: localStorage.getItem('utm_term'),
-    utm_content: localStorage.getItem('utm_content'),
-    gclid: localStorage.getItem('gclid'),
-  }
-}
+import { type HubspotSignupPayload, useSignUpHubspot } from '../use-signup-hubspot/use-signup-hubspot'
 
 export function useCreateUserSignUp() {
   const queryClient = useQueryClient()
-  const { mutate: signUpCargo } = useSignUpCargo()
+  const { mutate: signUpHubspot } = useSignUpHubspot()
 
   return useMutation(mutations.createUserSignup, {
     onSuccess(_, variables) {
@@ -24,9 +14,9 @@ export function useCreateUserSignUp() {
         queryKey: queries.usersSignUp.get.queryKey,
       })
 
-      const utmParams = getUtmParams()
+      const trackingParams = getStoredTrackingParams()
 
-      const cargoPayload: CargoSignupPayload = {
+      const signupPayload: HubspotSignupPayload = {
         email: variables.user_email,
         first_name: variables.first_name,
         last_name: variables.last_name,
@@ -34,9 +24,11 @@ export function useCreateUserSignUp() {
         job_title: variables.user_role || '',
         phone: variables.phone ?? '',
         signup_source: 'Console',
-        ...utmParams,
+        qovery_interest: variables.qovery_usage ?? 'Not specified',
+        which_cloud_service_provider_do_you_use_: variables.infrastructure_hosting ?? 'Not specified',
+        tracking_params: trackingParams,
       }
-      signUpCargo(cargoPayload)
+      signUpHubspot(signupPayload)
     },
     meta: {
       notifyOnError: true,
