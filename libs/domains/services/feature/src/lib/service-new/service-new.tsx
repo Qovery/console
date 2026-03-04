@@ -20,6 +20,7 @@ import {
 import { Badge, Button, ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
+import { TemplateIds } from '@qovery/shared/util-services'
 import {
   type ServiceTemplateOptionType,
   type ServiceTemplateType,
@@ -119,6 +120,8 @@ interface CardOptionProps extends ServiceTemplateOptionType {
   organizationId: string
   projectId: string
   environmentId: string
+  isTerraformFeatureFlag?: boolean
+  onUpgradePlanClick?: () => void
 }
 
 function CardOption({
@@ -129,12 +132,52 @@ function CardOption({
   description,
   type,
   recommended,
+  badge,
+  template_id,
   organizationId,
   projectId,
   environmentId,
+  isTerraformFeatureFlag,
+  onUpgradePlanClick,
 }: CardOptionProps) {
   const pathSuffix = servicePathSuffix(type, parentSlug, slug)
   const to = pathSuffix ? getServicesPath(organizationId, projectId, environmentId, pathSuffix) : undefined
+
+  const isTerraformUpgrade = template_id === TemplateIds.TERRAFORM && !isTerraformFeatureFlag && onUpgradePlanClick
+
+  if (isTerraformUpgrade) {
+    return (
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={onUpgradePlanClick}
+        onKeyDown={(e) => e.key === 'Enter' && onUpgradePlanClick()}
+        className="flex cursor-pointer items-start gap-3 rounded-sm border border-neutral bg-surface-neutral-subtle p-3 transition hover:bg-surface-neutral-componentHover"
+      >
+        <img className="mt-1 select-none" width={24} height={24} src={icon} alt={title} />
+        <span className="flex flex-1 flex-col gap-1">
+          <span className="inline-flex items-center gap-2 text-ssm font-medium text-neutral">
+            {title}
+            {badge && (
+              <Badge
+                radius="full"
+                variant="surface"
+                color="purple"
+                size="sm"
+                className="h-4 border-transparent bg-surface-accent1-component px-1 text-[8px] font-bold text-accent1"
+              >
+                {badge}
+              </Badge>
+            )}
+          </span>
+          <span className="inline-block text-xs text-neutral-subtle">{description}</span>
+          <p className="cursor-pointer text-xs font-medium text-neutral-subtle">
+            Upgrade your plan <Icon iconName="chevron-right" className="ml-1 text-2xs" />
+          </p>
+        </span>
+      </div>
+    )
+  }
 
   if (!to) return null
 
@@ -152,10 +195,21 @@ function CardOption({
     >
       <img className="mt-1 select-none" width={24} height={24} src={icon} alt={title} />
       <span>
-        <span className="inline-block text-ssm font-medium text-neutral">
+        <span className="inline-flex items-center gap-2 text-ssm font-medium text-neutral">
           {title}
+          {badge && (
+            <Badge
+              radius="full"
+              variant="surface"
+              color="purple"
+              size="sm"
+              className="h-4 border-transparent bg-surface-accent1-component px-1 text-[8px] font-bold text-accent1"
+            >
+              {badge}
+            </Badge>
+          )}
           {recommended && (
-            <span className="relative -top-0.5 ml-1 inline-block rounded bg-surface-brand-solid px-1 text-2xs text-neutralInvert">
+            <span className="relative -top-0.5 inline-block rounded bg-surface-brand-solid px-1 text-2xs text-neutralInvert">
               Fastest
             </span>
           )}
@@ -182,6 +236,8 @@ function CardService({
   projectId,
   environmentId,
   cloudProvider,
+  isTerraformFeatureFlag,
+  onUpgradePlanClick,
 }: Omit<ServiceTemplateType, 'cloud_provider'> & {
   cloud_provider?: CloudProviderEnum | string
   availableTemplates: LifecycleTemplateListResponseResultsInner[]
@@ -189,6 +245,8 @@ function CardService({
   projectId: string
   environmentId: string
   cloudProvider?: CloudProviderEnum | string
+  isTerraformFeatureFlag: boolean
+  onUpgradePlanClick?: () => void
 }) {
   const [expanded, setExpanded] = useState(false)
 
@@ -232,6 +290,7 @@ function CardService({
             <div className="grid grid-cols-3 gap-2">
               {options
                 .filter((c) => {
+                  if (c.template_id === TemplateIds.TERRAFORM && !isTerraformFeatureFlag) return true
                   if (c.template_id) {
                     return availableTemplates.reduce((acc, template) => c.template_id === template.id || acc, false)
                   }
@@ -250,6 +309,8 @@ function CardService({
                     organizationId={organizationId}
                     projectId={projectId}
                     environmentId={environmentId}
+                    isTerraformFeatureFlag={isTerraformFeatureFlag}
+                    onUpgradePlanClick={onUpgradePlanClick}
                     {...props}
                   />
                 ))}
@@ -337,6 +398,8 @@ function SectionByTag({
   organizationId,
   projectId,
   environmentId,
+  isTerraformFeatureFlag,
+  onUpgradePlanClick,
 }: {
   title: string
   tag: keyof typeof TagsEnum
@@ -346,6 +409,8 @@ function SectionByTag({
   organizationId: string
   projectId: string
   environmentId: string
+  isTerraformFeatureFlag: boolean
+  onUpgradePlanClick?: () => void
 }) {
   return (
     <Section>
@@ -364,6 +429,8 @@ function SectionByTag({
               projectId={projectId}
               environmentId={environmentId}
               cloudProvider={cloudProvider}
+              isTerraformFeatureFlag={isTerraformFeatureFlag}
+              onUpgradePlanClick={onUpgradePlanClick}
               {...service}
             />
           ))}
@@ -557,6 +624,8 @@ export function ServiceNew({
               organizationId={organizationId}
               projectId={projectId}
               environmentId={environmentId}
+              isTerraformFeatureFlag={isTerraformFeatureFlag}
+              onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
             />
             <SectionByTag
               title="Back-end"
@@ -567,6 +636,8 @@ export function ServiceNew({
               organizationId={organizationId}
               projectId={projectId}
               environmentId={environmentId}
+              isTerraformFeatureFlag={isTerraformFeatureFlag}
+              onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
             />
             <SectionByTag
               title="Front-end"
@@ -577,6 +648,8 @@ export function ServiceNew({
               organizationId={organizationId}
               projectId={projectId}
               environmentId={environmentId}
+              isTerraformFeatureFlag={isTerraformFeatureFlag}
+              onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
             />
             <Section>
               <Heading className="mb-1">IAC</Heading>
@@ -601,6 +674,8 @@ export function ServiceNew({
                       projectId={projectId}
                       environmentId={environmentId}
                       cloudProvider={cloudProvider}
+                      isTerraformFeatureFlag={isTerraformFeatureFlag}
+                      onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
                       {...service}
                     />
                   ))}
@@ -615,6 +690,8 @@ export function ServiceNew({
               organizationId={organizationId}
               projectId={projectId}
               environmentId={environmentId}
+              isTerraformFeatureFlag={isTerraformFeatureFlag}
+              onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
             />
           </>
         ) : [...serviceEmpty, ...serviceTemplates]
@@ -637,6 +714,8 @@ export function ServiceNew({
                     projectId={projectId}
                     environmentId={environmentId}
                     cloudProvider={cloudProvider}
+                    isTerraformFeatureFlag={isTerraformFeatureFlag}
+                    onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
                     {...service}
                   />
                 ))}
