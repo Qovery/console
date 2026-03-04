@@ -124,7 +124,7 @@ export function HeaderLogs({
               {filteredLinks.length > 0 && (
                 <>
                   <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
-                    <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
+                    <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
                   </svg>
                   <ServiceLinksPopover
                     organizationId={environment.organization.id}
@@ -148,7 +148,7 @@ export function HeaderLogs({
               {type === 'SERVICE' && !isHistoricalServiceLogs && (
                 <>
                   <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
-                    <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
+                    <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
                   </svg>
                   <PodHealthChips service={service} />
                 </>
