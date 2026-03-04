@@ -109,7 +109,7 @@ export function ObservabilityCallout({ children }: PropsWithChildren) {
         </div>
       </div>
 
-      <div className="relative flex h-full w-full items-center justify-between gap-2">
+      <div className="relative flex h-full w-full items-center justify-between gap-2 text-neutral-contrasted">
         <div className="flex flex-col gap-0.5">
           <p className="flex items-center gap-2 font-semibold">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
@@ -133,7 +133,7 @@ export function ObservabilityCallout({ children }: PropsWithChildren) {
         <Button
           radius="full"
           size="sm"
-          className="bg-surface-neutralInvert text-neutralInvert hover:bg-surface-neutralInvert-component focus:bg-surface-neutralInvert-component active:scale-[0.97] active:bg-surface-neutralInvert-component"
+          className="hover:bg-surface-neutral-contrasted-component focus:bg-surface-neutral-contrasted-component active:bg-surface-neutral-contrasted-component bg-surface-neutral-contrasted text-neutralInvert-contrasted active:scale-[0.97]"
           onClick={() =>
             children &&
             openModal({
@@ -150,7 +150,7 @@ export function ObservabilityCallout({ children }: PropsWithChildren) {
       <button
         type="button"
         onClick={() => setIsOpen(false)}
-        className="absolute right-2 top-2 flex h-3.5 w-3.5 items-center justify-center p-0.5 text-neutral transition-colors hover:text-neutral-subtle"
+        className="absolute right-2 top-2 flex h-3.5 w-3.5 items-center justify-center p-0.5 text-neutral-contrasted transition-opacity hover:opacity-80"
       >
         <Icon iconName="xmark" iconStyle="regular" />
       </button>
