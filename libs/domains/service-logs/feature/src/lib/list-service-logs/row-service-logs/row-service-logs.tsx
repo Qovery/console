@@ -139,7 +139,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
             <Tooltip content={log.instance} delayDuration={300}>
               <Button
                 type="button"
-                variant="surface"
+                variant="outline"
                 color="neutral"
                 size="xs"
                 className="h-5 gap-1.5 px-1.5 font-code"

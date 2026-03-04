@@ -272,8 +272,8 @@ export function ServiceLogsPlaceholder({
       () =>
         showPlaceholder ? (
           <>
-            <p className="mb-1 text-neutral-300">No service logs available for {serviceName}</p>
-            <p className="mb-4 text-sm text-neutral-350">Please check if the service is up and running</p>
+            <p className="mb-1 text-neutral">No service logs available for {serviceName}</p>
+            <p className="mb-4 text-sm text-neutral-subtle">Please check if the service is up and running</p>
             <Link
               as="button"
               size="sm"

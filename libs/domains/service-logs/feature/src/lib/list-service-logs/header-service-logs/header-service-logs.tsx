@@ -104,7 +104,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
       <div className="sticky top-[93px] z-header flex h-[60px] w-full items-center justify-between gap-2 border-b border-neutral bg-background px-4 py-2.5">
         <div className="flex w-full items-center gap-2">
           <Button
-            variant="surface"
+            variant="outline"
             color={isLiveMode ? 'brand' : 'neutral'}
             size="md"
             className={clsx('gap-1.5 pl-2.5', {
@@ -135,8 +135,8 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
           <DatePicker
             onChange={(startDate, endDate) => {
               setQueryParams({
-                startDate: startDate.toDateString(),
-                endDate: endDate.toDateString(),
+                startDate: startDate.toISOString(),
+                endDate: endDate.toISOString(),
                 mode: 'history',
               })
               setIsOpenDatePicker(false)
@@ -162,22 +162,17 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
                 <Icon iconName="clock" iconStyle="regular" className="relative top-[1px]" />
               </Button>
             ) : (
-              <Button
-                type="button"
-                size="md"
-                onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}
-                className={clsx('min-w-[337px]', {
-                  'min-w-max': hasDeploymentId,
-                })}
-              >
-                {hasDeploymentId && startDate && !endDate ? (
-                  <>from: {dateYearMonthDayHourMinuteSecond(startDate, true, false)}</>
-                ) : (
-                  <>
-                    from: {dateYearMonthDayHourMinuteSecond(startDate ?? new Date(), true, false)} - to:{' '}
-                    {dateYearMonthDayHourMinuteSecond(endDate ?? new Date(), true, false)}
-                  </>
-                )}
+              <Button type="button" size="md" onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}>
+                <span className="inline-flex text-nowrap">
+                  {hasDeploymentId && startDate && !endDate ? (
+                    <>from: {dateYearMonthDayHourMinuteSecond(startDate, true, false)}</>
+                  ) : (
+                    <>
+                      from: {dateYearMonthDayHourMinuteSecond(startDate ?? new Date(), true, false)} - to:{' '}
+                      {dateYearMonthDayHourMinuteSecond(endDate ?? new Date(), true, false)}
+                    </>
+                  )}
+                </span>
                 <span
                   data-testid="clear-timestamp"
                   className="relative left-1 px-1 py-1"
