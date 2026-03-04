@@ -29,7 +29,7 @@ function Loader() {
   )
 }
 
-function EnvironmentLogs() {
+function ServiceLogs() {
   const { environmentId = '', organizationId = '', projectId = '' } = Route.useParams()
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
 
@@ -82,7 +82,7 @@ function RouteComponent() {
   return (
     <Suspense fallback={<Loader />}>
       <ServiceStageIdsProvider>
-        <EnvironmentLogs />
+        <ServiceLogs />
       </ServiceStageIdsProvider>
     </Suspense>
   )
