@@ -3,6 +3,8 @@ import { ClustersApi } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 
 const clusterApi = new ClustersApi()
+// Loki returns timestamps at nanosecond precision, keep a ns representation to avoid losing logs in pagination
+const NS_PER_MS = BigInt(1000000)
 
 /**
  * Data-access layer for service logs
@@ -111,6 +113,7 @@ export interface LokiResponse {
 
 export interface ServiceLog extends StreamLabels {
   timestamp: string
+  timestampNs?: string
   message: string
 }
 
@@ -134,14 +137,17 @@ function formatLogs(logs: LogStream[]): ServiceLog[] {
     const values = log.values
 
     return values.map((value) => {
-      const timestampStr = value[0] ?? ''
-      const timestampNum = Number(timestampStr)
-      // Convert nanoseconds to milliseconds if timestamp has more than 13 digits
-      const convertedTimestamp = timestampNum > 9999999999999 ? Math.floor(timestampNum / 1000000) : timestampNum
+      const timestampStr = value[0] ?? '0'
+      const timestampNs = BigInt(timestampStr)
+      const isNanoseconds = timestampStr.length > 13
+      // Always preserve a nanosecond timestamp for stable cursoring, even when input is milliseconds.
+      const timestampMs = isNanoseconds ? timestampNs / NS_PER_MS : timestampNs
+      const normalizedTimestampNs = isNanoseconds ? timestampNs : timestampNs * NS_PER_MS
 
       return {
         ...stream,
-        timestamp: convertedTimestamp.toString(),
+        timestamp: timestampMs.toString(),
+        timestampNs: normalizedTimestampNs.toString(),
         message: value[1],
       }
     })
@@ -192,6 +198,8 @@ export const serviceLogs = createQueryKeys('serviceLogs', {
     serviceId,
     startDate,
     endDate,
+    startTimestampNs,
+    endTimestampNs,
     timeRange,
     filters,
     limit,
@@ -202,18 +210,33 @@ export const serviceLogs = createQueryKeys('serviceLogs', {
     serviceId: string
     startDate?: Date
     endDate?: Date
+    startTimestampNs?: string
+    endTimestampNs?: string
     timeRange?: string
     filters?: Omit<LogFilters, 'serviceId'>
     limit?: number
     direction?: 'forward' | 'backward'
     logType?: LogType
   }) => ({
-    queryKey: [clusterId, timeRange, startDate, endDate, serviceId, filters, limit, direction, logType],
+    queryKey: [
+      clusterId,
+      timeRange,
+      startDate,
+      endDate,
+      startTimestampNs,
+      endTimestampNs,
+      serviceId,
+      filters,
+      limit,
+      direction,
+      logType,
+    ],
     async queryFn() {
       // Convert Date objects to nanosecond Unix epoch format for Loki API
       // https://grafana.com/docs/loki/latest/reference/loki-http-api/#timestamps
-      const startTimestamp = startDate ? (startDate.getTime() * 1000000).toString() : undefined
-      const endTimestamp = endDate ? (endDate.getTime() * 1000000).toString() : undefined
+      const startTimestamp =
+        startTimestampNs ?? (startDate ? (BigInt(startDate.getTime()) * NS_PER_MS).toString() : undefined)
+      const endTimestamp = endTimestampNs ?? (endDate ? (BigInt(endDate.getTime()) * NS_PER_MS).toString() : undefined)
 
       const query = buildLokiQuery({ serviceId, ...filters }, logType)
 
