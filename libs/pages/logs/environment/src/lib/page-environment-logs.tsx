@@ -1,24 +1,33 @@
 import { type QueryClient } from '@tanstack/react-query'
-import { Link, useLocation, useNavigate, useParams } from '@tanstack/react-router'
 import {
   type DeploymentStageWithServicesStatuses,
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Link, Navigate, Route, Routes, matchPath, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useDeploymentHistory, useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
-import { LoaderDots, LoaderSpinner, StatusChip } from '@qovery/shared/ui'
+import {
+  DEPLOYMENT_LOGS_VERSION_URL,
+  ENVIRONMENT_LOGS_URL,
+  ENVIRONMENT_PRE_CHECK_LOGS_URL,
+  ENVIRONMENT_STAGES_URL,
+  SERVICE_LOGS_URL,
+} from '@qovery/shared/routes'
+import { LoaderDots, StatusChip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { trimId } from '@qovery/shared/util-js'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
+import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
+import EnvironmentStagesFeature from './feature/environment-stages-feature/environment-stages-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
+import PreCheckLogsFeature from './feature/pre-check-logs-feature/pre-check-logs-feature'
 
 export function PageEnvironmentLogs() {
-  const { organizationId = '', projectId = '', environmentId = '', '*': rest } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '', '*': rest } = useParams()
   const stageId = rest?.split('/')[0]
   const location = useLocation()
   const navigate = useNavigate()
@@ -29,36 +38,34 @@ export function PageEnvironmentLogs() {
 
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
 
-  // const matchEnvironmentStageVersion = matchPath<'versionId', string>(
-  //   ENVIRONMENT_LOGS_URL() + ENVIRONMENT_STAGES_URL(':versionId'),
-  //   location.pathname
-  // )
-  // const matchDeploymentVersion = matchPath<'versionId' | 'serviceId', string>(
-  //   ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(),
-  //   location.pathname
-  // )
-  // const matchPreCheckVersion = matchPath<'versionId', string>(
-  //   ENVIRONMENT_LOGS_URL() + ENVIRONMENT_PRE_CHECK_LOGS_URL(':versionId'),
-  //   location.pathname
-  // )
-  // const deploymentVersionId =
-  //   matchDeploymentVersion?.params.versionId !== ':versionId' ? matchDeploymentVersion?.params.versionId : undefined
+  const matchEnvironmentStageVersion = matchPath<'versionId', string>(
+    ENVIRONMENT_LOGS_URL() + ENVIRONMENT_STAGES_URL(':versionId'),
+    location.pathname
+  )
+  const matchDeploymentVersion = matchPath<'versionId' | 'serviceId', string>(
+    ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(),
+    location.pathname
+  )
+  const matchPreCheckVersion = matchPath<'versionId', string>(
+    ENVIRONMENT_LOGS_URL() + ENVIRONMENT_PRE_CHECK_LOGS_URL(':versionId'),
+    location.pathname
+  )
+  const deploymentVersionId =
+    matchDeploymentVersion?.params.versionId !== ':versionId' ? matchDeploymentVersion?.params.versionId : undefined
 
-  // const preCheckVersionId =
-  //   matchPreCheckVersion?.params.versionId !== ':versionId' ? matchPreCheckVersion?.params.versionId : undefined
+  const preCheckVersionId =
+    matchPreCheckVersion?.params.versionId !== ':versionId' ? matchPreCheckVersion?.params.versionId : undefined
 
-  // const stageVersionId =
-  //   matchEnvironmentStageVersion?.params.versionId !== ':versionId'
-  //     ? matchEnvironmentStageVersion?.params.versionId
-  //     : undefined
+  const stageVersionId =
+    matchEnvironmentStageVersion?.params.versionId !== ':versionId'
+      ? matchEnvironmentStageVersion?.params.versionId
+      : undefined
 
   const [deploymentStages, setDeploymentStages] = useState<DeploymentStageWithServicesStatuses[]>()
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
   const [preCheckStage, setPreCheckStage] = useState<EnvironmentStatusesWithStagesPreCheckStage>()
 
-  // const versionIdUrl = deploymentVersionId || preCheckVersionId || stageVersionId
-  const deploymentVersionId = undefined
-  const versionIdUrl = undefined
+  const versionIdUrl = deploymentVersionId || preCheckVersionId || stageVersionId
   const isLatestVersion = environmentDeploymentHistory[0]?.identifier.execution_id === versionIdUrl
 
   const deploymentsCurrentlyDeploying = useMemo(
@@ -87,11 +94,11 @@ export function PageEnvironmentLogs() {
       latestDeployment.identifier.execution_id &&
       hasMatchingService
     ) {
-      // navigate(
-      //   ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-      //     DEPLOYMENT_LOGS_VERSION_URL(stageId, latestDeployment.identifier.execution_id),
-      //   { replace: true }
-      // )
+      navigate(
+        ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+          DEPLOYMENT_LOGS_VERSION_URL(stageId, latestDeployment.identifier.execution_id),
+        { replace: true }
+      )
     }
   }, [
     deploymentVersionId,
@@ -144,7 +151,7 @@ export function PageEnvironmentLogs() {
 
   if (isFetchedDeploymentHistory && !findDeploymentHistory) {
     return (
-      <div className="h-[calc(100vh-64px)] w-full">
+      <div className="h-[calc(100vh-64px)] w-full p-1">
         <div className="flex h-full w-full items-center justify-center border border-neutral-500 bg-neutral-600">
           {deploymentVersionId === 'latest' ? (
             <div className="flex flex-col items-center justify-center gap-10">
@@ -215,9 +222,9 @@ export function PageEnvironmentLogs() {
 
   if (!environment || !environmentStatus?.last_deployment_state)
     return (
-      <div className="w-full py-24">
-        <div className="flex h-full w-full items-center justify-center">
-          <LoaderSpinner />
+      <div className="h-[calc(100vh-64px)] w-full p-1">
+        <div className="flex h-full w-full items-center justify-center border border-neutral-500 bg-neutral-600">
+          <LoaderDots />
         </div>
       </div>
     )
@@ -225,12 +232,7 @@ export function PageEnvironmentLogs() {
   return (
     <div className="flex h-full flex-col">
       <ServiceStageIdsProvider>
-        <PodLogsFeature
-          environment={environment}
-          deploymentStages={deploymentStages}
-          environmentStatus={environmentStatus}
-        />
-        {/*<Routes>
+        <Routes>
           <Route
             path={ENVIRONMENT_STAGES_URL()}
             element={
@@ -287,7 +289,7 @@ export function PageEnvironmentLogs() {
               />
             }
           />
-        </Routes>*/}
+        </Routes>
       </ServiceStageIdsProvider>
     </div>
   )

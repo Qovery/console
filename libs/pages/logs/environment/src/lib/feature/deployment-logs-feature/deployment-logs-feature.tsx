@@ -159,7 +159,7 @@ export function DeploymentLogsFeature({
     <>
       {showBannerNew && (
         <Banner
-          color="purple"
+          color="brand"
           buttonLabel="See latest"
           buttonIconRight="arrow-right"
           onClickButton={() =>
