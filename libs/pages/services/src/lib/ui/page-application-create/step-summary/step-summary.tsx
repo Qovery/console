@@ -1,5 +1,4 @@
 import {
-  BuildModeEnum,
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
 } from 'qovery-typescript-axios'
@@ -12,7 +11,7 @@ import {
   type VariableData,
 } from '@qovery/shared/interfaces'
 import { Button, Heading, Icon, Section, Truncate } from '@qovery/shared/ui'
-import { generateScopeLabel, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { generateScopeLabel } from '@qovery/shared/util-js'
 
 export interface StepSummaryProps {
   onSubmit: (withDeploy: boolean) => void
@@ -87,7 +86,8 @@ export function StepSummary({
               {generalData.serviceType === 'APPLICATION' && (
                 <>
                   <li>
-                    <strong className="font-medium">Repository:</strong> {generalData.git_repository?.url}
+                    <strong className="font-medium">Repository:</strong>{' '}
+                    {generalData.repository || generalData.git_repository?.url}
                   </li>
                   <li>
                     <strong className="font-medium">Branch:</strong> {generalData.branch}
