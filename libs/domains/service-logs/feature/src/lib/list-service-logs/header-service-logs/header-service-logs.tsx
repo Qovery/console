@@ -116,8 +116,8 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
               } else {
                 const now = new Date()
                 setQueryParams({
-                  startDate: subHours(now, 1).toString(),
-                  endDate: now.toString(),
+                  startDate: subHours(now, 1).toISOString(),
+                  endDate: now.toISOString(),
                   mode: 'history',
                 })
               }
