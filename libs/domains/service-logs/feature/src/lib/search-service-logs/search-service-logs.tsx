@@ -57,7 +57,7 @@ export function buildValueOptions(queryParams: DecodedValueMap<typeof queryParam
 export function buildQueryParams(value: string) {
   const filterRegex = /(\w+)[:]([^\s]*)/g
   const matches = value.match(filterRegex)
-  const queryParams: Omit<DecodedValueMap<typeof queryParamsServiceLogs>, 'startDate' | 'endDate'> = {
+  const queryParams: Partial<DecodedValueMap<typeof queryParamsServiceLogs>> = {
     level: undefined,
     instance: undefined,
     container: undefined,
@@ -67,7 +67,6 @@ export function buildQueryParams(value: string) {
     envoy: undefined,
     search: undefined,
     deploymentId: undefined,
-    mode: undefined,
   }
 
   if (matches) {

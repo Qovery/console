@@ -80,12 +80,8 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
       return false
     }
 
-    if (queryParams.deploymentId) {
-      return true
-    }
-
     return !queryParams.startDate && !queryParams.endDate
-  }, [queryParams.mode, queryParams.deploymentId, queryParams.startDate, queryParams.endDate])
+  }, [queryParams.mode, queryParams.startDate, queryParams.endDate])
 
   const hasMetricsEnabled =
     useMemo(() => {
