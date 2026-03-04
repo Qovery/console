@@ -228,20 +228,18 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   ) {
     return (
       <div className="w-full">
-        <div className="h-[calc(100vh-164px)]">
+        <div>
           <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
-          <div className="h-[calc(100vh-176px)] border-r border-neutral">
-            <div className="flex h-full flex-col items-center justify-center">
-              <Placeholder
-                environment={environment}
-                hasMetricsEnabled={hasMetricsEnabled}
-                type={isLiveMode ? 'live' : 'history'}
-                isLogsFetched={isLogsFetched}
-                serviceName={service?.name}
-                itemsLength={logs.length}
-                databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
-              />
-            </div>
+          <div className="flex h-[calc(100vh-216px)] flex-col items-center justify-center">
+            <Placeholder
+              environment={environment}
+              hasMetricsEnabled={hasMetricsEnabled}
+              type={isLiveMode ? 'live' : 'history'}
+              isLogsFetched={isLogsFetched}
+              serviceName={service?.name}
+              itemsLength={logs.length}
+              databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
+            />
           </div>
         </div>
       </div>
@@ -253,7 +251,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
       <div>
         <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
         {isLogsLoading && isLiveMode ? (
-          <div className="flex h-full flex-col items-center justify-center pb-[68px]">
+          <div className="flex h-[calc(100vh-216px)] flex-col items-center justify-center pb-[68px]">
             <Placeholder
               environment={environment}
               hasMetricsEnabled={hasMetricsEnabled}
