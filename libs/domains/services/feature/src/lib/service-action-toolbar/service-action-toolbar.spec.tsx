@@ -12,7 +12,9 @@ jest.mock('@tanstack/react-router', () => ({
   useNavigate: () => jest.fn(),
   useLocation: () => ({ pathname: '/', search: '' }),
   useRouter: () => ({ buildLocation: () => ({ href: '/' }) }),
-  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+  Link: ({ children, params, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+    <a {...props}>{children}</a>
+  ),
 }))
 
 jest.mock('../hooks/use-service/use-service', () => ({
