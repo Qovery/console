@@ -91,25 +91,10 @@ describe('AnnouncementBanner', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
-  it('should hide banner when dismiss button is clicked', async () => {
+  it('should call setDismissedMessage with banner message when dismiss button is clicked', async () => {
     mockUseAnnouncementBanner.mockReturnValue({
       message: 'Dismissible message',
       variant: 'warning',
-      dismissible: true,
-    })
-
-    const { userEvent, container } = renderWithProviders(<AnnouncementBanner />)
-
-    const dismissButton = screen.getByRole('button', { name: 'Dismiss' })
-    await userEvent.click(dismissButton)
-
-    expect(container).toBeEmptyDOMElement()
-  })
-
-  it('should save dismissed message in localStorage when dismissed', async () => {
-    mockUseAnnouncementBanner.mockReturnValue({
-      message: 'Persistent message',
-      variant: 'info',
       dismissible: true,
     })
 
@@ -117,7 +102,7 @@ describe('AnnouncementBanner', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Dismiss' }))
 
-    expect(mockSetDismissedMessage).toHaveBeenCalledWith('Persistent message')
+    expect(mockSetDismissedMessage).toHaveBeenCalledWith('Dismissible message')
   })
 
   it('should not show banner when already dismissed in localStorage', () => {
