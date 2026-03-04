@@ -174,7 +174,6 @@ export function ListDeploymentLogs({
     environmentId: environment.id,
     serviceId,
     versionId,
-    suspense: true,
   })
 
   // `useEffect` used to scroll to the bottom of the logs when new logs are added or when the pauseLogs state changes

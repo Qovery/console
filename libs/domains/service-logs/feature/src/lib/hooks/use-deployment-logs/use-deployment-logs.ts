@@ -32,8 +32,8 @@ export function useDeploymentLogs({
   versionId,
 }: UseDeploymentLogsProps) {
   const { hash } = useLocation()
-  const { data: deploymentHistory = [] } = useDeploymentHistory({ environmentId: environmentId ?? '' })
-  const { data: environment } = useEnvironment({ environmentId })
+  const { data: deploymentHistory = [] } = useDeploymentHistory({ environmentId: environmentId ?? '', suspense: true })
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
 
   // States for controlling log actions, showing new, previous or paused logs
   const [newMessagesAvailable, setNewMessagesAvailable] = useState(false)
