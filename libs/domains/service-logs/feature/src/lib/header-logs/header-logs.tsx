@@ -38,8 +38,8 @@ export function HeaderLogs({
   children,
 }: HeaderLogsProps) {
   const queryParams = useSearch({ strict: false })
-  const { data: service } = useService({ environmentId: environment.id, serviceId })
-  const { data: links = [] } = useLinks({ serviceId: serviceId, serviceType: service?.serviceType })
+  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
+  const { data: links = [] } = useLinks({ serviceId: serviceId, serviceType: service?.serviceType, suspense: true })
   const filteredLinks = links.filter((link) => !(link.is_default && link.is_qovery_domain))
 
   const isHistoricalServiceLogs = useMemo(

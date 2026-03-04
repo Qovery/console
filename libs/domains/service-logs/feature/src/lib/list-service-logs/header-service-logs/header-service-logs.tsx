@@ -35,7 +35,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
   const navigate = useNavigate()
   const queryParams = useSearch({ strict: false })
 
-  const { data: service } = useService({ environmentId: environment.id, serviceId })
+  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
 
   const startDate = queryParams.startDate ? new Date(queryParams.startDate) : undefined
   const endDate = queryParams.endDate ? new Date(queryParams.endDate) : undefined

@@ -23,14 +23,17 @@ export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: Brea
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { data: service } = useService({
     serviceId: serviceId ?? '',
+    suspense: true,
   })
   const { data: serviceDeploymentHistory } = useServiceDeploymentHistory({
     serviceId: serviceId ?? '',
     serviceType: service?.service_type ?? 'APPLICATION',
+    suspense: true,
   })
 
   const { data: allDeploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
     environmentId,
+    suspense: true,
   })
   const filteredDeploymentHistory = serviceId
     ? allDeploymentHistory.filter((history) =>

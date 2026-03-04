@@ -24,10 +24,11 @@ export interface PodLogsFeatureProps {
 
 export function PodLogsFeature({ environment, deploymentStages, environmentStatus }: PodLogsFeatureProps) {
   const { serviceId = '' } = useParams({ strict: false })
-  const { data: service } = useService({ environmentId: environment.id, serviceId })
+  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
   const { data: cluster } = useCluster({
     organizationId: environment.organization.id,
     clusterId: environment.cluster_id,
+    suspense: true,
   })
 
   useDocumentTitle(`Service logs ${service ? `- ${service?.name}` : '- Loading...'}`)

@@ -6,7 +6,7 @@ import { P, match } from 'ts-pattern'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { type ServiceLogsParams } from '@qovery/shared/router'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Button, Icon, Link, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
+import { Button, Icon, Link, LoaderDots, Tooltip } from '@qovery/shared/ui'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
 
 export function LoaderPlaceholder({
@@ -18,7 +18,7 @@ export function LoaderPlaceholder({
 }) {
   return (
     <div className="flex w-full flex-col items-center justify-center gap-3 text-center">
-      <LoaderSpinner />
+      <LoaderDots />
       <div className="flex flex-col gap-3">
         <p className="text-neutral">{title}</p>
         {description && <span className="text-sm text-neutral-subtle">{description}</span>}

@@ -104,8 +104,8 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
       return hoursRange < 24
     }, [cluster?.metrics_parameters?.enabled, queryParams.startDate, queryParams.endDate, isLiveMode]) ?? true
 
-  const { data: service } = useService({ environmentId: environment.id, serviceId })
-  const { data: runningStatus } = useRunningStatus({ environmentId: environment.id, serviceId })
+  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
+  const { data: runningStatus } = useRunningStatus({ environmentId: environment.id, serviceId, suspense: true })
 
   const serviceEnabled = service?.serviceType === 'DATABASE' ? service?.mode === 'CONTAINER' : true
 
