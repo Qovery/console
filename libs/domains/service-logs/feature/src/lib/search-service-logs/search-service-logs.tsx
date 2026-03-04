@@ -59,7 +59,7 @@ export function buildValueOptions(queryParams: ServiceLogsParams): Option[] {
 export function buildQueryParams(value: string) {
   const filterRegex = /(\w+)[:]([^\s]*)/g
   const matches = value.match(filterRegex)
-  const queryParams: Omit<ServiceLogsParams, 'startDate' | 'endDate'> = {
+  const queryParams: ServiceLogsParams = {
     level: undefined,
     instance: undefined,
     container: undefined,
@@ -69,7 +69,6 @@ export function buildQueryParams(value: string) {
     envoy: undefined,
     search: undefined,
     deploymentId: undefined,
-    mode: undefined,
   }
 
   if (matches) {
