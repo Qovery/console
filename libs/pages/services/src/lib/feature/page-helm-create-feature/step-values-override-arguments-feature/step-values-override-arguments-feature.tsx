@@ -20,7 +20,7 @@ export function StepValuesOverrideArgumentsFeature() {
     .with('GIT', (): HelmRequestAllOfSourceOneOf => {
       return {
         git_repository: {
-          url: generalData.git_repository?.url ?? '',
+          url: generalData.git_repository?.url ?? generalData.repository ?? '',
           branch: generalData.branch,
           root_path: generalData.root_path,
           git_token_id: generalData.git_token_id,
