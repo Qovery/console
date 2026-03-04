@@ -1,17 +1,22 @@
+import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useAnnouncementBannerModule from '../hooks/use-announcement-banner/use-announcement-banner'
 import { AnnouncementBanner } from './announcement-banner'
 
 jest.mock('../hooks/use-announcement-banner/use-announcement-banner')
+jest.mock('@uidotdev/usehooks', () => ({
+  useLocalStorage: jest.fn(),
+}))
 
 describe('AnnouncementBanner', () => {
   const mockUseAnnouncementBanner = useAnnouncementBannerModule.useAnnouncementBanner as jest.MockedFunction<
     typeof useAnnouncementBannerModule.useAnnouncementBanner
   >
+  const mockSetDismissedMessage = jest.fn()
 
   beforeEach(() => {
     jest.clearAllMocks()
-    localStorage.clear()
+    ;(useLocalStorage as jest.Mock).mockReturnValue([null, mockSetDismissedMessage])
   })
 
   it('should render nothing when banner data is null', () => {
@@ -101,7 +106,7 @@ describe('AnnouncementBanner', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('should persist dismissed state in localStorage', async () => {
+  it('should save dismissed message in localStorage when dismissed', async () => {
     mockUseAnnouncementBanner.mockReturnValue({
       message: 'Persistent message',
       variant: 'info',
@@ -112,26 +117,17 @@ describe('AnnouncementBanner', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Dismiss' }))
 
-    const storedKeys = Object.keys(localStorage).filter((key) => key.startsWith('announcement_banner_dismissed_'))
-    expect(storedKeys).toHaveLength(1)
-    expect(localStorage.getItem(storedKeys[0])).toBe('true')
+    expect(mockSetDismissedMessage).toHaveBeenCalledWith('Persistent message')
   })
 
-  it('should not show banner on remount when already dismissed in localStorage', () => {
-    const bannerData = {
+  it('should not show banner when already dismissed in localStorage', () => {
+    const localStorageMock = useLocalStorage as jest.Mock
+    localStorageMock.mockReturnValue(['Already dismissed message', jest.fn()])
+    mockUseAnnouncementBanner.mockReturnValue({
       message: 'Already dismissed message',
-      variant: 'info' as const,
+      variant: 'info',
       dismissible: true,
-    }
-    mockUseAnnouncementBanner.mockReturnValue(bannerData)
-
-    const content = `${bannerData.variant}:${bannerData.message}`
-    let hash = 0
-    for (let i = 0; i < content.length; i++) {
-      hash = (hash << 5) - hash + content.charCodeAt(i)
-      hash |= 0
-    }
-    localStorage.setItem(`announcement_banner_dismissed_${Math.abs(hash)}`, 'true')
+    })
 
     const { container } = renderWithProviders(<AnnouncementBanner />)
 

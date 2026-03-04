@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Banner } from '@qovery/shared/ui'
+import { useLocalStorage } from '@qovery/shared/util-hooks'
 import {
   type AnnouncementBannerPayload,
   useAnnouncementBanner,
@@ -11,22 +12,12 @@ const VARIANT_TO_COLOR_MAP: Record<AnnouncementBannerPayload['variant'], 'brand'
   error: 'red',
 }
 
-function getBannerStorageKey(message: string, variant: string): string {
-  const content = `${variant}:${message}`
-  let hash = 0
-  for (let i = 0; i < content.length; i++) {
-    hash = (hash << 5) - hash + content.charCodeAt(i)
-    hash |= 0
-  }
-  return `announcement_banner_dismissed_${Math.abs(hash)}`
-}
-
 export function AnnouncementBanner() {
   const bannerData = useAnnouncementBanner()
+  const [dismissedMessage, setDismissedMessage] = useLocalStorage<string | null>('announcement_banner_dismissed', null)
   const [manuallyDismissed, setManuallyDismissed] = useState(false)
 
-  const dismissKey = bannerData ? getBannerStorageKey(bannerData.message, bannerData.variant) : null
-  const isDismissed = manuallyDismissed || Boolean(dismissKey && localStorage.getItem(dismissKey) === 'true')
+  const isDismissed = manuallyDismissed || Boolean(bannerData && dismissedMessage === bannerData.message)
 
   if (!bannerData || isDismissed) {
     return null
@@ -44,9 +35,7 @@ export function AnnouncementBanner() {
   }
 
   const handleDismiss = () => {
-    if (dismissKey) {
-      localStorage.setItem(dismissKey, 'true')
-    }
+    setDismissedMessage(bannerData.message)
     setManuallyDismissed(true)
   }
 
