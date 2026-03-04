@@ -68,7 +68,7 @@ export function HeaderLogs({
       }}
     >
       <div className="flex h-full">
-        <div className="flex h-full items-center gap-4 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral">
+        <div className="flex h-full items-center gap-3 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral">
           <span className="flex items-center gap-2">
             <span className="flex items-center gap-2.5">
               <ServiceAvatar size="xs" service={service} border="none" />
