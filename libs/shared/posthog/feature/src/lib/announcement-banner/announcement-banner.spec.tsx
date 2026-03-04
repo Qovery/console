@@ -4,7 +4,7 @@ import * as useAnnouncementBannerModule from '../hooks/use-announcement-banner/u
 import { AnnouncementBanner } from './announcement-banner'
 
 jest.mock('../hooks/use-announcement-banner/use-announcement-banner')
-jest.mock('@uidotdev/usehooks', () => ({
+jest.mock('@qovery/shared/util-hooks', () => ({
   useLocalStorage: jest.fn(),
 }))
 
