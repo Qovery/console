@@ -101,7 +101,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
           <Icon iconName="arrow-right" />
         </Link>*/}
       </HeaderLogs>
-      <div className="flex h-[60px] w-full items-center justify-between gap-2 border-b border-neutral px-4 py-2.5">
+      <div className="sticky top-[93px] z-header flex h-[60px] w-full items-center justify-between gap-2 border-b border-neutral bg-background px-4 py-2.5">
         <div className="flex w-full items-center gap-2">
           <Button
             variant="surface"

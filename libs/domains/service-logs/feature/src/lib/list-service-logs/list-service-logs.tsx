@@ -249,8 +249,8 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full overflow-hidden">
-      <div className="relative h-full pb-7">
+    <div className="w-full">
+      <div>
         <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
         {isLogsLoading && isLiveMode ? (
           <div className="flex h-full flex-col items-center justify-center pb-[68px]">
@@ -266,7 +266,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
           </div>
         ) : (
           <div
-            className="h-[calc(100vh-160px)] w-full overflow-x-scroll overflow-y-scroll pb-3"
+            className="w-full pb-3"
             ref={refScrollSection}
             onWheel={(event) => {
               if (!liveLogs) return

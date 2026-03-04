@@ -11,7 +11,7 @@ export function ProgressIndicator({ pauseLogs, message, className }: ProgressInd
     <div
       role="progressbar"
       className={twMerge(
-        'mb-10 flex h-8 items-center border-b border-neutral pl-4 text-sm font-bold text-neutral',
+        'mb-10 flex h-8 items-center border-b border-neutral bg-surface-neutral pl-4 text-sm font-bold text-neutral',
         className
       )}
     >
