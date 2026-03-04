@@ -529,7 +529,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
         <div
           className={twMerge(
             clsx(
-              'has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 relative h-9 rounded border border-neutral bg-surface-neutral text-sm outline-none transition-colors focus-within:border-brand-strong focus-within:outline focus-within:outline-[2px] focus-within:outline-offset-0 focus-within:outline-brand-4 hover:border-neutral-component hover:focus-within:border-brand-strong',
+              'has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 relative h-8 rounded-md border border-neutral bg-surface-neutral text-sm outline-none transition-colors focus-within:border-brand-strong focus-within:outline focus-within:outline-[2px] focus-within:outline-offset-0 focus-within:outline-brand-4 hover:border-neutral-component hover:focus-within:border-brand-strong',
               {
                 'cursor-text': !disabled && selected.length !== 0,
               },
@@ -542,7 +542,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
           }}
         >
           <div className="relative flex h-full w-full">
-            <div className="absolute top-0 z-10 flex h-[34px] w-7 items-center justify-end rounded-l bg-surface-neutral after:absolute after:-right-[12px] after:top-0 after:block after:h-full after:w-3 after:bg-gradient-to-l after:from-transparent after:to-surface-neutral after:to-80% after:content-['']">
+            <div className="absolute top-0 z-10 flex h-full w-7 items-center justify-end rounded-md bg-surface-neutral after:absolute after:-right-[12px] after:top-0 after:block after:h-full after:w-3 after:bg-gradient-to-l after:from-transparent after:to-surface-neutral after:to-80% after:content-['']">
               {isLoading ? (
                 <Icon iconName="loader" iconStyle="regular" className="animate-spin text-neutral-subtle" />
               ) : (
@@ -557,7 +557,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                     key={option.value}
                     className={twMerge(
                       clsx(
-                        'relative inline-flex h-7 cursor-default items-center whitespace-nowrap rounded bg-surface-neutral-component py-1 pe-6 pl-2 text-sm text-neutral transition-colors hover:bg-surface-neutral-componentHover disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+                        'relative inline-flex h-7 cursor-default items-center whitespace-nowrap rounded-md bg-surface-neutral-component py-1 pe-6 pl-2 text-sm text-neutral transition-colors hover:bg-surface-neutral-componentHover disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
                         badgeClassName
                       )
                     )}

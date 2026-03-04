@@ -152,7 +152,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
             {!startDate && !endDate ? (
               <Button
                 type="button"
-                variant="surface"
+                variant="outline"
                 color="neutral"
                 className="gap-2"
                 size="md"
@@ -194,12 +194,12 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
           </DatePicker>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button size="md" variant="surface" color="neutral" className="gap-1.5">
+              <Button size="md" variant="outline" color="neutral" className="gap-1.5">
                 {updateTimeContextValue.utc ? 'UTC' : 'Browser time'}
                 <Icon iconName="chevron-down" iconStyle="regular" />
               </Button>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
+            <DropdownMenu.Content className="z-header">
               <DropdownMenu.Item
                 className="gap-2"
                 onSelect={() =>
@@ -242,13 +242,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
         <Tooltip
           content={Object.values(queryParams).some((value) => value) ? 'Download filtered logs' : 'Download logs'}
         >
-          <Button
-            onClick={() => downloadLogs(logs)}
-            size="md"
-            variant="surface"
-            color="neutral"
-            className="w-9 justify-center"
-          >
+          <Button onClick={() => downloadLogs(logs)} size="md" variant="outline" iconOnly>
             <Icon iconName="file-arrow-down" iconStyle="regular" />
           </Button>
         </Tooltip>
