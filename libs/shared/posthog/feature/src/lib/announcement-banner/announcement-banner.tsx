@@ -11,9 +11,22 @@ const VARIANT_TO_COLOR_MAP: Record<AnnouncementBannerPayload['variant'], 'brand'
   error: 'red',
 }
 
+function getBannerStorageKey(message: string, variant: string): string {
+  const content = `${variant}:${message}`
+  let hash = 0
+  for (let i = 0; i < content.length; i++) {
+    hash = (hash << 5) - hash + content.charCodeAt(i)
+    hash |= 0
+  }
+  return `announcement_banner_dismissed_${Math.abs(hash)}`
+}
+
 export function AnnouncementBanner() {
   const bannerData = useAnnouncementBanner()
-  const [isDismissed, setIsDismissed] = useState(false)
+  const [manuallyDismissed, setManuallyDismissed] = useState(false)
+
+  const dismissKey = bannerData ? getBannerStorageKey(bannerData.message, bannerData.variant) : null
+  const isDismissed = manuallyDismissed || Boolean(dismissKey && localStorage.getItem(dismissKey) === 'true')
 
   if (!bannerData || isDismissed) {
     return null
@@ -31,7 +44,10 @@ export function AnnouncementBanner() {
   }
 
   const handleDismiss = () => {
-    setIsDismissed(true)
+    if (dismissKey) {
+      localStorage.setItem(dismissKey, 'true')
+    }
+    setManuallyDismissed(true)
   }
 
   return (

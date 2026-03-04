@@ -11,6 +11,7 @@ describe('AnnouncementBanner', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    localStorage.clear()
   })
 
   it('should render nothing when banner data is null', () => {
@@ -96,6 +97,44 @@ describe('AnnouncementBanner', () => {
 
     const dismissButton = screen.getByRole('button', { name: 'Dismiss' })
     await userEvent.click(dismissButton)
+
+    expect(container).toBeEmptyDOMElement()
+  })
+
+  it('should persist dismissed state in localStorage', async () => {
+    mockUseAnnouncementBanner.mockReturnValue({
+      message: 'Persistent message',
+      variant: 'info',
+      dismissible: true,
+    })
+
+    const { userEvent } = renderWithProviders(<AnnouncementBanner />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Dismiss' }))
+
+    const storedKeys = Object.keys(localStorage).filter((key) => key.startsWith('announcement_banner_dismissed_'))
+    expect(storedKeys).toHaveLength(1)
+    expect(localStorage.getItem(storedKeys[0])).toBe('true')
+  })
+
+  it('should not show banner on remount when already dismissed in localStorage', () => {
+    const bannerData = {
+      message: 'Already dismissed message',
+      variant: 'info' as const,
+      dismissible: true,
+    }
+    mockUseAnnouncementBanner.mockReturnValue(bannerData)
+
+    // Simulate a previous dismiss by pre-populating localStorage
+    const content = `${bannerData.variant}:${bannerData.message}`
+    let hash = 0
+    for (let i = 0; i < content.length; i++) {
+      hash = (hash << 5) - hash + content.charCodeAt(i)
+      hash |= 0
+    }
+    localStorage.setItem(`announcement_banner_dismissed_${Math.abs(hash)}`, 'true')
+
+    const { container } = renderWithProviders(<AnnouncementBanner />)
 
     expect(container).toBeEmptyDOMElement()
   })
