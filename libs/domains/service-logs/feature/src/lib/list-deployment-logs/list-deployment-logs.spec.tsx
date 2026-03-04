@@ -1,4 +1,5 @@
 import { type DeploymentHistoryEnvironmentV2, type Status } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import { useDeploymentStatus, useLinks, useService } from '@qovery/domains/services/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -10,15 +11,20 @@ window.HTMLElement.prototype.scroll = jest.fn()
 jest.mock('../hooks/use-deployment-logs/use-deployment-logs')
 jest.mock('@qovery/domains/services/feature')
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useParams: () => ({
-    organizationId: '0',
-    projectId: '1',
-    environmentId: '2',
-    serviceId: '3',
-    versionId: '4',
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useSearch: () => ({}),
+  useNavigate: () => jest.fn(),
+  useParams: () => ({ organizationId: '1' }),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
   }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+    <a {...props} href={`${props.to}`}>
+      {children}
+    </a>
+  ),
 }))
 
 jest.mock('../hooks/use-deployment-history/use-deployment-history', () => ({
