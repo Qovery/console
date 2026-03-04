@@ -1,0 +1,149 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`PortValidationWarning API_ERROR reason should match snapshot with retry button 1`] = `
+<body>
+  <div>
+    <div
+      class="flex flex-row gap-x-3 p-3 border rounded text-sm border-red-500 bg-red-50 text-red-500 mb-4"
+      data-accent-color="red"
+    >
+      <div
+        class="-order-2 text-lg leading-6"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-circle-exclamation "
+        />
+      </div>
+      <div
+        class="-order-1 mr-auto gap-x-3 text-neutral-400"
+      >
+        <span
+          class="block font-medium leading-6"
+        >
+          Unable to validate ports
+        </span>
+        <span
+          class="text-neutral-400"
+        >
+          Failed to fetch Kubernetes services. Please try again.
+        </span>
+      </div>
+      <button
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
+        type="button"
+      >
+        Retry
+      </button>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`PortValidationWarning API_TIMEOUT reason should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700 mb-4"
+      data-accent-color="yellow"
+    >
+      <div
+        class="-order-2 text-lg leading-6"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-clock "
+        />
+      </div>
+      <div
+        class="-order-1 mr-auto gap-x-3 text-neutral-400"
+      >
+        <span
+          class="block font-medium leading-6"
+        >
+          Validation timed out
+        </span>
+        <span
+          class="text-neutral-400"
+        >
+          Port validation request timed out. Please try again.
+        </span>
+      </div>
+      <button
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
+        type="button"
+      >
+        Retry
+      </button>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`PortValidationWarning SERVICE_NOT_DEPLOYED reason should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700 mb-4"
+      data-accent-color="yellow"
+    >
+      <div
+        class="-order-2 text-lg leading-6"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-triangle-exclamation "
+        />
+      </div>
+      <div
+        class="-order-1 mr-auto gap-x-3 text-neutral-400"
+      >
+        <span
+          class="block font-medium leading-6"
+        >
+          Port validation unavailable
+        </span>
+        <span
+          class="text-neutral-400"
+        >
+          Port validation will be available after deployment.
+        </span>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`PortValidationWarning SERVICE_STOPPED reason should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700 mb-4"
+      data-accent-color="yellow"
+    >
+      <div
+        class="-order-2 text-lg leading-6"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-triangle-exclamation "
+        />
+      </div>
+      <div
+        class="-order-1 mr-auto gap-x-3 text-neutral-400"
+      >
+        <span
+          class="block font-medium leading-6"
+        >
+          Port validation unavailable
+        </span>
+        <span
+          class="text-neutral-400"
+        >
+          Port validation requires the helm chart to be deployed.
+        </span>
+      </div>
+    </div>
+  </div>
+</body>
+`;
