@@ -151,7 +151,7 @@ export function DeploymentLogsPlaceholder({
     is_part_last_deployment: isPartLastDeployment,
   } = serviceStatus || {}
 
-  const { data: service } = useService({ environmentId: environment.id, serviceId })
+  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
   const hideLogs = !isPartLastDeployment
 
   const outOfDateOrUpToDate =

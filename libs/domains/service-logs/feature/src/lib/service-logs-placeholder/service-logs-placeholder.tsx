@@ -1,14 +1,13 @@
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { subDays } from 'date-fns'
 import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
-import { useQueryParams } from 'use-query-params'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
+import { type ServiceLogsParams } from '@qovery/shared/router'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Button, Icon, Link, LoaderDots, Tooltip } from '@qovery/shared/ui'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
-import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 export function LoaderPlaceholder({
   title = 'Service logs are loading…',
@@ -18,11 +17,11 @@ export function LoaderPlaceholder({
   description?: ReactNode
 }) {
   return (
-    <div className="flex w-full flex-col items-center justify-center gap-5 text-center">
+    <div className="flex w-full flex-col items-center justify-center gap-3 text-center">
       <LoaderDots />
       <div className="flex flex-col gap-3">
-        <p className="text-neutral-300">{title}</p>
-        {description && <span className="text-sm text-neutral-350">{description}</span>}
+        <p className="text-neutral">{title}</p>
+        {description && <span className="text-sm text-neutral-subtle">{description}</span>}
       </div>
     </div>
   )
@@ -45,12 +44,13 @@ export function ServiceLogsPlaceholder({
   databaseMode,
   itemsLength,
 }: ServiceLogsPlaceholderProps) {
-  const { organizationId, projectId, environmentId, serviceId } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
   const { state: deploymentState } = deploymentStatus ?? {}
   const [showPlaceholder, setShowPlaceholder] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  const queryParams = useSearch({ strict: false })
 
   const { data: deploymentIds = [] } = useServiceDeploymentId({
     clusterId: environment.cluster_id ?? '',
@@ -95,6 +95,22 @@ export function ServiceLogsPlaceholder({
   const hasDeploymentIdFilter = useMemo(() => {
     return Boolean(queryParams.deploymentId)
   }, [queryParams.deploymentId])
+
+  const setQueryParams = useCallback(
+    (searchParams: ServiceLogsParams) => {
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+        params: {
+          organizationId,
+          projectId,
+          environmentId,
+          serviceId,
+        },
+        search: searchParams,
+      })
+    },
+    [navigate, organizationId, projectId, environmentId, serviceId]
+  )
 
   useEffect(() => {
     // Hide the placeholder after x seconds if no logs are found
@@ -209,13 +225,13 @@ export function ServiceLogsPlaceholder({
             <div className="flex flex-col items-center justify-center gap-0.5">
               {hasFilters ? (
                 <div className="flex flex-col gap-0.5">
-                  <p className="text-neutral-50">No logs found for the selected filters for now</p>
-                  <p className="text-sm text-neutral-350">Live logs will show up here once they're available</p>
+                  <p className="text-neutral">No logs found for the selected filters for now</p>
+                  <p className="text-sm text-neutral-subtle">Live logs will show up here once they're available</p>
                 </div>
               ) : (
                 <div className="flex flex-col gap-0.5">
-                  <p className="text-neutral-50">No logs are available for your service {serviceName}</p>
-                  <p className="text-sm text-neutral-350">Please check the service configuration</p>
+                  <p className="text-neutral">No logs are available for your service {serviceName}</p>
+                  <p className="text-sm text-neutral-subtle">Please check the service configuration</p>
                 </div>
               )}
             </div>
@@ -256,8 +272,8 @@ export function ServiceLogsPlaceholder({
       () =>
         showPlaceholder ? (
           <>
-            <p className="mb-1 text-neutral-300">No service logs available for {serviceName}</p>
-            <p className="mb-4 text-sm text-neutral-350">Please check if the service is up and running</p>
+            <p className="mb-1 text-neutral">No service logs available for {serviceName}</p>
+            <p className="mb-4 text-sm text-neutral-subtle">Please check if the service is up and running</p>
             <Link
               as="button"
               size="sm"

@@ -36,10 +36,8 @@ import {
   DATABASE_SETTINGS_GENERAL_URL,
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
-  ENVIRONMENT_LOGS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
-  SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
 import {
   ActionToolbar,
@@ -945,8 +943,6 @@ export function ServiceActionToolbar({
   if (!service || !deploymentStatus)
     return <Skeleton height={variant === 'default' ? 36 : 28} width={variant === 'default' ? 184 : 67} />
 
-  const environmentLogsLink = ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)
-
   return (
     <ActionToolbar.Root>
       <MenuManageDeployment
@@ -959,7 +955,16 @@ export function ServiceActionToolbar({
         <>
           <Tooltip content="Logs">
             <ActionToolbar.Button asChild>
-              <Link to={environmentLogsLink + SERVICE_LOGS_URL(service.id)} color="neutral">
+              <Link
+                to="/organization/$orgnizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                params={{
+                  orgnizationId: environment.organization.id,
+                  projectId: environment.project.id,
+                  environmentId: environment.id,
+                  serviceId: service.id,
+                }}
+                color="neutral"
+              >
                 <Icon iconName="scroll" />
               </Link>
             </ActionToolbar.Button>

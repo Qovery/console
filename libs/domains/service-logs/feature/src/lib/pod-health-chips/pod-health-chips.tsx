@@ -1,13 +1,15 @@
-import { useMemo, useState } from 'react'
-import { useQueryParams } from 'use-query-params'
+import { useNavigate, useParams } from '@tanstack/react-router'
+import { useCallback, useMemo, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type Pod, useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
+import { type ServiceLogsParams } from '@qovery/shared/router'
 import { Button, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
-import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 export function PodHealthChips({ service }: { service: AnyService }) {
+  const navigate = useNavigate()
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const [openStatus, setOpenStatus] = useState<string | null>(null)
 
   const { data: metrics = [], isLoading: isMetricsLoading } = useMetrics({
@@ -19,7 +21,21 @@ export function PodHealthChips({ service }: { service: AnyService }) {
     serviceId: service?.id,
   })
 
-  const [, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  const setQueryParams = useCallback(
+    (searchParams: ServiceLogsParams) => {
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+        params: {
+          organizationId,
+          projectId,
+          environmentId,
+          serviceId,
+        },
+        search: searchParams,
+      })
+    },
+    [navigate, organizationId, projectId, environmentId, serviceId]
+  )
 
   const pods: Pod[] = useMemo(() => {
     // NOTE: metrics or runningStatuses could be undefined because backend doesn't have the info.

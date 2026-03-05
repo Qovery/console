@@ -59,7 +59,7 @@ export function EnvironmentStages({
           <div className="flex h-full gap-0.5 overflow-y-scroll py-6 pl-4 pr-3">
             {!deploymentStages ? (
               <div className="mt-6 flex h-full w-full justify-center">
-                <LoaderSpinner className="h-6 w-6" theme="dark" />
+                <LoaderSpinner className="h-6 w-6" />
               </div>
             ) : (
               <>

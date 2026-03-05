@@ -529,7 +529,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
         <div
           className={twMerge(
             clsx(
-              'has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 relative h-9 rounded border border-neutral bg-surface-neutral text-sm outline-none transition-colors focus-within:border-brand-strong focus-within:outline focus-within:outline-[2px] focus-within:outline-offset-0 focus-within:outline-brand-4 hover:border-neutral-component hover:focus-within:border-brand-strong',
+              'has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 relative h-8 rounded-md border border-neutral bg-surface-neutral text-sm outline-none transition-colors focus-within:border-brand-strong focus-within:outline focus-within:outline-[2px] focus-within:outline-offset-0 focus-within:outline-brand-4 hover:border-neutral-component hover:focus-within:border-brand-strong',
               {
                 'cursor-text': !disabled && selected.length !== 0,
               },
@@ -542,7 +542,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
           }}
         >
           <div className="relative flex h-full w-full">
-            <div className="absolute top-0 z-10 flex h-[34px] w-7 items-center justify-end rounded-l bg-surface-neutral after:absolute after:-right-[12px] after:top-0 after:block after:h-full after:w-3 after:bg-gradient-to-l after:from-transparent after:to-surface-neutral after:to-80% after:content-['']">
+            <div className="absolute top-0 z-10 flex h-full w-7 items-center justify-end rounded-md bg-surface-neutral after:absolute after:-right-[12px] after:top-0 after:block after:h-full after:w-3 after:bg-gradient-to-l after:from-transparent after:to-surface-neutral after:to-80% after:content-['']">
               {isLoading ? (
                 <Icon iconName="loader" iconStyle="regular" className="animate-spin text-neutral-subtle" />
               ) : (
@@ -557,7 +557,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                     key={option.value}
                     className={twMerge(
                       clsx(
-                        'relative inline-flex h-7 cursor-default items-center whitespace-nowrap rounded bg-surface-neutral-component py-1 pe-6 pl-2 text-sm text-neutral transition-colors hover:bg-surface-neutral-componentHover disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+                        'relative inline-flex h-6 cursor-default items-center whitespace-nowrap rounded-md bg-surface-neutral-component py-1 pe-6 pl-2 text-sm text-neutral transition-colors hover:bg-surface-neutral-componentHover disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
                         badgeClassName
                       )
                     )}
@@ -585,7 +585,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                   >
                     {option.label}
                     <button
-                      className="outline-hidden absolute right-[0.5px] flex h-7 w-6 cursor-pointer items-center justify-center border border-transparent p-0 text-neutral-subtle outline-none transition-colors hover:text-neutral"
+                      className="outline-hidden absolute right-[0.5px] flex h-6 w-6 cursor-pointer items-center justify-center border border-transparent p-0 text-neutral-subtle outline-none transition-colors hover:text-neutral"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           handleUnselect(option)
@@ -645,7 +645,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
             </div>
           </div>
           {selected.length > 0 && (
-            <div className="absolute right-0 top-0 flex h-[34px] w-6 items-center justify-center rounded-r bg-surface-neutral before:absolute before:-left-7 before:top-0 before:block before:h-full before:w-7 before:bg-gradient-to-r before:from-transparent before:to-surface-neutral before:content-['']">
+            <div className="absolute right-0 top-0 flex h-full w-7 items-center justify-center rounded-r bg-surface-neutral before:absolute before:-left-7 before:top-0 before:block before:h-full before:w-7 before:bg-gradient-to-r before:from-transparent before:to-surface-neutral before:content-['']">
               <button
                 type="button"
                 className="flex h-5 w-5 items-center justify-center rounded border border-transparent p-0 text-xs text-neutral-subtle hover:text-neutral"

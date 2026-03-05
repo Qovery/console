@@ -1,5 +1,5 @@
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { type Dispatch, type SetStateAction } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Icon } from '@qovery/shared/ui'
 
 export interface ShowNewLogsButtonProps {
@@ -22,7 +22,7 @@ export function ShowNewLogsButton({ pauseLogs, setPauseLogs, newMessagesAvailabl
         type="button"
         onClick={() => {
           setPauseLogs(false)
-          if (hash) navigate(pathname + search)
+          if (hash) navigate({ to: pathname + search })
         }}
       >
         New logs

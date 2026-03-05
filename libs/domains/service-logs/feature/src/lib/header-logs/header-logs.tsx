@@ -1,3 +1,4 @@
+import { useSearch } from '@tanstack/react-router'
 import {
   DatabaseModeEnum,
   type DeploymentHistoryEnvironmentV2,
@@ -6,7 +7,6 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useMemo } from 'react'
-import { useQueryParams } from 'use-query-params'
 import {
   ServiceActionToolbar,
   ServiceAvatar,
@@ -17,7 +17,6 @@ import {
 import { ActionTriggerStatusChip, Button, Icon, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
 import { pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 import { PodHealthChips } from '../pod-health-chips/pod-health-chips'
 
 export interface HeaderLogsProps extends PropsWithChildren {
@@ -29,22 +28,6 @@ export interface HeaderLogsProps extends PropsWithChildren {
   deploymentHistory?: DeploymentHistoryEnvironmentV2
 }
 
-function EndCurve() {
-  return (
-    <svg
-      className="relative -left-0.5 -top-[1px]"
-      xmlns="http://www.w3.org/2000/svg"
-      width="40"
-      height="48"
-      fill="none"
-      viewBox="0 0 40 49"
-    >
-      <path fill="#1A2031" d="M0 .955h5.071a16 16 0 0114.545 9.334l17.722 38.666H0v-48z"></path>
-      <path stroke="#2A3041" d="M37.084 48.955L18.037 7.764A11 11 0 008.052 1.38H0"></path>
-    </svg>
-  )
-}
-
 export function HeaderLogs({
   type,
   environment,
@@ -54,9 +37,9 @@ export function HeaderLogs({
   deploymentHistory,
   children,
 }: HeaderLogsProps) {
-  const [queryParams] = useQueryParams(queryParamsServiceLogs)
-  const { data: service } = useService({ environmentId: environment.id, serviceId })
-  const { data: links = [] } = useLinks({ serviceId: serviceId, serviceType: service?.serviceType })
+  const queryParams = useSearch({ strict: false })
+  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
+  const { data: links = [] } = useLinks({ serviceId: serviceId, serviceType: service?.serviceType, suspense: true })
   const filteredLinks = links.filter((link) => !(link.is_default && link.is_qovery_domain))
 
   const isHistoricalServiceLogs = useMemo(
@@ -79,13 +62,13 @@ export function HeaderLogs({
 
   return (
     <div
-      className="flex h-12 w-full items-center justify-between border-b border-neutral-500 bg-neutral-900"
+      className="sticky top-[45px] z-header flex h-12 w-full items-center justify-between border-b border-neutral bg-background"
       style={{
         paddingRight: 'var(--padding-sidebar, 16px)',
       }}
     >
       <div className="flex h-full">
-        <div className="flex h-full items-center gap-4 border-t border-neutral-500 bg-neutral-600 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral-50">
+        <div className="flex h-full items-center gap-3 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral">
           <span className="flex items-center gap-2">
             <span className="flex items-center gap-2.5">
               <ServiceAvatar size="xs" service={service} border="none" />
@@ -141,7 +124,7 @@ export function HeaderLogs({
               {filteredLinks.length > 0 && (
                 <>
                   <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
-                    <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
+                    <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
                   </svg>
                   <ServiceLinksPopover
                     organizationId={environment.organization.id}
@@ -165,7 +148,7 @@ export function HeaderLogs({
               {type === 'SERVICE' && !isHistoricalServiceLogs && (
                 <>
                   <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
-                    <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
+                    <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
                   </svg>
                   <PodHealthChips service={service} />
                 </>
@@ -173,7 +156,6 @@ export function HeaderLogs({
             </>
           )}
         </div>
-        <EndCurve />
       </div>
       {children}
     </div>

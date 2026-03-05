@@ -154,9 +154,12 @@ export function ListDeploymentLogs({
     if (stage) updateStageId(stage.id)
   }, [serviceId, serviceStatus, updateStageId, stage])
 
-  const { data: service } = useService({ environmentId: environment.id, serviceId })
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
-  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({ environmentId: environment.id })
+  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId, suspense: true })
+  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({
+    environmentId: environment.id,
+    suspense: true,
+  })
   const {
     data: logs = [],
     pauseLogs,

@@ -55,7 +55,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       data-radix-collection-item=""
       data-state="closed"
       tabindex="-1"
-      to="/organization/123/project/123/environment/3840068565336064/logs/0/service-logs"
+      to="/organization/$orgnizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
       type="button"
     >
       <i
@@ -212,7 +212,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       data-radix-collection-item=""
       data-state="closed"
       tabindex="-1"
-      to="/organization/123/project/123/environment/3840068565336064/logs/0/service-logs"
+      to="/organization/$orgnizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
       type="button"
     >
       <i
