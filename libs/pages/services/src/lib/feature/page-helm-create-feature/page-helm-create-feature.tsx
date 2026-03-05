@@ -8,6 +8,7 @@ import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { type HelmValuesArgumentsData, type HelmValuesFileData } from '@qovery/domains/service-helm/feature'
+import { serviceTemplates } from '@qovery/domains/services/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   SERVICES_HELM_CREATION_GENERAL_URL,
@@ -18,7 +19,6 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { ROUTER_SERVICE_HELM_CREATION } from '../../router/router'
-import { serviceTemplates } from '../page-new-feature/service-templates'
 
 export const steps: { title: string }[] = [
   { title: 'General data' },

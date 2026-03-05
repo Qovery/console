@@ -35,11 +35,10 @@ import Terraform from 'devicon/icons/terraform/terraform-original.svg'
 import Vue from 'devicon/icons/vuejs/vuejs-original.svg'
 import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactElement } from 'react'
-import { type IconURI } from '@qovery/domains/services/feature'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
 import { TemplateIds } from '@qovery/shared/util-services'
+import { type IconURI } from '../service-icon/service-icon'
 
-const Qovery = '/assets/logos/logo-icon.svg'
 const Datadog = '/assets/devicon/datadog.svg'
 const Crossplane = '/assets/devicon/crossplane.svg'
 const Kubecost = '/assets/devicon/kubecost.svg'
@@ -86,6 +85,7 @@ export type ServiceTemplateOptionType = {
   recommended?: boolean
   cloud_provider?: keyof typeof CloudProviderEnum
   template_id?: (typeof TemplateIds)[keyof typeof TemplateIds]
+  badge?: string
 }
 
 export type LifecycleJobOptionsType = {
@@ -123,9 +123,9 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'managed-aws-terraform',
         template_id: TemplateIds.TERRAFORM,
-        title: 'AWS RDS via Terraform',
-        description:
-          'Create a PostgreSQL database using AWS RDS via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
+        badge: 'NEW',
+        title: 'Terraform',
+        description: 'Deploy external cloud resources directly from your Terraform configuration.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/postgresql',
         type: 'LIFECYCLE_JOB',
@@ -170,9 +170,9 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'managed-gcp-terraform',
         template_id: TemplateIds.TERRAFORM,
-        title: 'Managed via Terraform',
-        description:
-          'Create a PostgreSQL database using Google Cloud SQL via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
+        badge: 'NEW',
+        title: 'Terraform',
+        description: 'Deploy external cloud resources directly from your Terraform configuration.',
         icon: GCP,
         icon_uri: 'app://qovery-console/postgresql',
         type: 'LIFECYCLE_JOB',
@@ -212,9 +212,9 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'managed-aws-terraform',
         template_id: TemplateIds.TERRAFORM,
-        title: 'AWS ElastiCache via Terraform',
-        description:
-          'Create a Redis database using AWS ElastiCache via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
+        badge: 'NEW',
+        title: 'Terraform',
+        description: 'Deploy external cloud resources directly from your Terraform configuration.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/redis',
         type: 'LIFECYCLE_JOB',
@@ -225,9 +225,9 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'managed-gcp-terraform',
         template_id: TemplateIds.TERRAFORM,
-        title: 'Managed via Terraform',
-        description:
-          'Create a Redis database using Google Cloud Memorystore via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
+        badge: 'NEW',
+        title: 'Terraform',
+        description: 'Deploy external cloud resources directly from your Terraform configuration.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/redis',
         type: 'LIFECYCLE_JOB',
@@ -236,18 +236,6 @@ export const serviceTemplates: ServiceTemplateType[] = [
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
     ],
-  },
-  {
-    tag: 'IAC',
-    slug: 'terraform',
-    title: 'Terraform',
-    template_id: TemplateIds.TERRAFORM,
-    description: 'Terraform is an open-source infrastructure as code software tool.',
-    icon: Terraform,
-    icon_uri: 'app://qovery-console/terraform',
-    type: 'LIFECYCLE_JOB',
-    dockerfile:
-      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
     tag: 'IAC',
@@ -410,9 +398,9 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'terraform',
         template_id: TemplateIds.TERRAFORM,
+        badge: 'NEW',
         title: 'Terraform',
-        description:
-          'Deploy an AWS Lambda function using Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
+        description: 'Deploy external cloud resources directly from your Terraform configuration.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/aws',
         type: 'LIFECYCLE_JOB',
@@ -452,9 +440,9 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'managed-aws-terraform',
         template_id: TemplateIds.TERRAFORM,
-        title: 'AWS RDS via Terraform',
-        description:
-          'Create a MySQL database using AWS RDS via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
+        badge: 'NEW',
+        title: 'Terraform',
+        description: 'Deploy external cloud resources directly from your Terraform configuration.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/mysql',
         type: 'LIFECYCLE_JOB',
@@ -478,9 +466,9 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'managed-gcp-terraform',
         template_id: TemplateIds.TERRAFORM,
-        title: 'Managed via Terraform',
-        description:
-          'Create a MySQL database using Google Cloud SQL via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
+        badge: 'NEW',
+        title: 'Terraform',
+        description: 'Deploy external cloud resources directly from your Terraform configuration.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/mysql',
         type: 'LIFECYCLE_JOB',
@@ -520,9 +508,9 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'managed-aws-terraform',
         template_id: TemplateIds.TERRAFORM,
-        title: 'AWS DocumentDB via Terraform',
-        description:
-          'Create a MongoDB database using AWS DocumentDB via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
+        badge: 'NEW',
+        title: 'Terraform',
+        description: 'Deploy external cloud resources directly from your Terraform configuration.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/mongodb',
         type: 'LIFECYCLE_JOB',
@@ -533,9 +521,9 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'managed-gcp-terraform',
         template_id: TemplateIds.TERRAFORM,
-        title: 'Managed via Terraform',
-        description:
-          'Create a MongoDB database using Google Cloud Firestore via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
+        badge: 'NEW',
+        title: 'Terraform',
+        description: 'Deploy external cloud resources directly from your Terraform configuration.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/mongodb',
         type: 'LIFECYCLE_JOB',
@@ -935,9 +923,9 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 's3-terraform',
         template_id: TemplateIds.TERRAFORM,
-        title: 'S3 via Terraform',
-        description:
-          'Do operations on S3 using Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
+        badge: 'NEW',
+        title: 'Terraform',
+        description: 'Deploy external cloud resources directly from your Terraform configuration.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/aws',
         type: 'LIFECYCLE_JOB',
@@ -987,9 +975,9 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'bigquery-terraform',
         template_id: TemplateIds.TERRAFORM,
-        title: 'BigQuery via Terraform',
-        description:
-          'Do operations on BigQuery using Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
+        badge: 'NEW',
+        title: 'Terraform',
+        description: 'Deploy external cloud resources directly from your Terraform configuration.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/gcp',
         type: 'LIFECYCLE_JOB',
@@ -1166,9 +1154,9 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'managed-aws-terraform',
         template_id: TemplateIds.TERRAFORM,
-        title: 'AWS Elasticsearch via Terraform',
-        description:
-          'Create an Elasticsearch database using AWS Elasticsearch via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
+        badge: 'NEW',
+        title: 'Terraform',
+        description: 'Deploy external cloud resources directly from your Terraform configuration.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/elasticsearch',
         type: 'LIFECYCLE_JOB',
@@ -1179,9 +1167,9 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'managed-gcp-terraform',
         template_id: TemplateIds.TERRAFORM,
-        title: 'Managed via Terraform',
-        description:
-          'Create an Elasticsearch database using Google Cloud Elasticsearch via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
+        badge: 'NEW',
+        title: 'Terraform',
+        description: 'Deploy external cloud resources directly from your Terraform configuration.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/elasticsearch',
         type: 'LIFECYCLE_JOB',

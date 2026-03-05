@@ -29,7 +29,8 @@ function Services() {
           as="button"
           variant="outline"
           className="gap-2"
-          to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
+          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
+          params={{ organizationId, projectId, environmentId }}
         >
           <Icon iconName="circle-plus" iconStyle="regular" />
           New service

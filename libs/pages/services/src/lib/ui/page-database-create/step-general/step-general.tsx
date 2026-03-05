@@ -12,6 +12,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
 import { GeneralSetting } from '@qovery/domains/services/feature'
+import { serviceTemplates } from '@qovery/domains/services/feature'
 import { type Value } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
 import {
@@ -28,7 +29,6 @@ import {
 } from '@qovery/shared/ui'
 import { type GeneralData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 import { findTemplateData } from '../../../feature/page-job-create-feature/page-job-create-feature'
-import { serviceTemplates } from '../../../feature/page-new-feature/service-templates'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
