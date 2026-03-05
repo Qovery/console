@@ -79,7 +79,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
             <button
               title="Previous stage"
               onClick={() => setCurrentPage((prev) => prev - 1)}
-              className="relative flex items-center text-neutral-350 after:block after:h-[1px] after:w-0.5 after:bg-neutral-250 after:content-['']"
+              className="after:bg-border-neutral relative flex items-center text-neutral-subtle after:block after:h-[1px] after:w-0.5 after:content-['']"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +90,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                 className="flex items-center justify-center"
               >
                 <path
-                  className="fill-neutral-100 stroke-neutral-250"
+                  className="stroke-border-neutral fill-surface-neutral-component"
                   d="M1.5 8.993v0c0-.91.23-1.804.669-2.591A5.098 5.098 0 013.99 4.507s0 0 0 0L9.49 1.2h0a4.863 4.863 0 012.508-.7 4.864 4.864 0 012.51.7l5.5 3.31h0a5.097 5.097 0 011.82 1.892c.439.787.67 1.68.671 2.59v6.015c0 .91-.23 1.804-.669 2.591a5.097 5.097 0 01-1.822 1.895l-5.5 3.307h0c-.763.459-1.628.7-2.508.7-.88 0-1.746-.241-2.51-.7 0 0 0 0 0 0l-5.5-3.31h0a5.098 5.098 0 01-1.82-1.892 5.333 5.333 0 01-.671-2.589V8.993z"
                 />
               </svg>
@@ -123,7 +123,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
             <button
               title="Next stage"
               onClick={() => setCurrentPage((prev) => prev + 1)}
-              className="relative flex items-center text-neutral-350"
+              className="relative flex items-center text-neutral-subtle"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -134,7 +134,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                 className="flex items-center justify-center"
               >
                 <path
-                  className="fill-neutral-100 stroke-neutral-250"
+                  className="stroke-border-neutral fill-surface-neutral-component"
                   d="M1.5 8.993v0c0-.91.23-1.804.669-2.591A5.098 5.098 0 013.99 4.507s0 0 0 0L9.49 1.2h0a4.863 4.863 0 012.508-.7 4.864 4.864 0 012.51.7l5.5 3.31h0a5.097 5.097 0 011.82 1.892c.439.787.67 1.68.671 2.59v6.015c0 .91-.23 1.804-.669 2.591a5.097 5.097 0 01-1.822 1.895l-5.5 3.307h0c-.763.459-1.628.7-2.508.7-.88 0-1.746-.241-2.51-.7 0 0 0 0 0 0l-5.5-3.31h0a5.098 5.098 0 01-1.82-1.892 5.333 5.333 0 01-.671-2.589V8.993z"
                 />
               </svg>
