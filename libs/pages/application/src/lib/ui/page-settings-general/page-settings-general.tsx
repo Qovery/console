@@ -2,14 +2,20 @@ import { BuildModeEnum, type Organization, TerraformAutoDeployConfigTerraformAct
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
+import {
+  AnnotationSetting,
+  ContainerRegistryCreateEditModal,
+  LabelSetting,
+  useContainerImages,
+  useContainerRegistries,
+  useContainerVersions,
+} from '@qovery/domains/organizations/feature'
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { AutoDeploySection, GeneralSetting } from '@qovery/domains/services/feature'
+import { AutoDeploySection, GeneralContainerSettings, GeneralSetting } from '@qovery/domains/services/feature'
 import {
   EditGitRepositorySettingsFeature,
   EntrypointCmdInputs,
-  GeneralContainerSettings,
   JobGeneralSettings,
   SettingsHeading,
 } from '@qovery/shared/console-shared'
@@ -42,9 +48,27 @@ export function PageSettingsGeneral({
   organization,
 }: PageSettingsGeneralProps) {
   const { control, formState, watch } = useFormContext()
+  const organizationId = organization?.id ?? ''
   const watchBuildMode = watch('build_mode')
   const watchFieldProvider = watch('source_provider')
   const isLifecycleJob = service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE'
+
+  const ContainerSettings = ({ isSetting }: { isSetting?: boolean }) => {
+    const { data: containerRegistries = [] } = useContainerRegistries({ organizationId })
+
+    return (
+      <GeneralContainerSettings
+        organizationId={organizationId}
+        containerRegistries={containerRegistries}
+        useContainerImages={useContainerImages}
+        useContainerVersions={useContainerVersions}
+        renderCreateRegistryModal={({ organizationId, onClose }) => (
+          <ContainerRegistryCreateEditModal organizationId={organizationId} onClose={onClose} />
+        )}
+        isSetting={isSetting}
+      />
+    )
+  }
 
   const blockContentBuildDeploy = (
     <>
@@ -149,7 +173,7 @@ export function PageSettingsGeneral({
                         .exhaustive()}
                     />
                   ) : (
-                    <GeneralContainerSettings organization={organization} isSetting />
+                    <ContainerSettings isSetting />
                   )}
                 </Section>
                 <Section className="gap-4">
@@ -221,7 +245,7 @@ export function PageSettingsGeneral({
               <>
                 <Section className="gap-4">
                   <Heading>Source</Heading>
-                  <GeneralContainerSettings organization={organization} isSetting />
+                  <ContainerSettings isSetting />
                 </Section>
                 <Section className="gap-4">
                   <Heading>Deploy</Heading>

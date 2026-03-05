@@ -386,6 +386,7 @@ const bypassLayoutRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/cluster/create/$slug',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug',
 ]
 
 function useBypassLayout(): boolean {

@@ -2,7 +2,11 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import selectEvent from 'react-select-event'
 import { organizationFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { GeneralContainerSettings } from './general-container-settings'
+import {
+  GeneralContainerSettings,
+  type UseContainerImagesHook,
+  type UseContainerVersionsHook,
+} from './general-container-settings'
 
 const mockOrganization = organizationFactoryMock(1)[0]
 
@@ -54,12 +58,30 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
 
 describe('CreateGeneralContainer', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<GeneralContainerSettings />))
+    const { baseElement } = renderWithProviders(
+      wrapWithReactHookForm(
+        <GeneralContainerSettings
+          organizationId={mockOrganization.id}
+          containerRegistries={containerRegistriesMock}
+          useContainerImages={useContainerImagesMock}
+          useContainerVersions={useContainerVersionsMock}
+        />
+      )
+    )
     expect(baseElement).toBeTruthy()
   })
 
   it('should render inputs available in the requests', async () => {
-    renderWithProviders(wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />))
+    renderWithProviders(
+      wrapWithReactHookForm(
+        <GeneralContainerSettings
+          organizationId={mockOrganization.id}
+          containerRegistries={containerRegistriesMock}
+          useContainerImages={useContainerImagesMock}
+          useContainerVersions={useContainerVersionsMock}
+        />
+      )
+    )
     await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
     await selectEvent.select(screen.getByLabelText('Image name'), ['my-image'])
     await selectEvent.select(screen.getByLabelText('Image tag'), ['3.0.0'])
@@ -70,7 +92,14 @@ describe('CreateGeneralContainer', () => {
 
   it('should render inputs NOT available in the requests', async () => {
     const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />)
+      wrapWithReactHookForm(
+        <GeneralContainerSettings
+          organizationId={mockOrganization.id}
+          containerRegistries={containerRegistriesMock}
+          useContainerImages={useContainerImagesMock}
+          useContainerVersions={useContainerVersionsMock}
+        />
+      )
     )
     // Registry
     await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])

@@ -3,7 +3,14 @@ import { type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
+import {
+  AnnotationSetting,
+  ContainerRegistryCreateEditModal,
+  LabelSetting,
+  useContainerImages,
+  useContainerRegistries,
+  useContainerVersions,
+} from '@qovery/domains/organizations/feature'
 import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
 import { serviceTemplates } from '@qovery/domains/services/feature'
 import { EntrypointCmdInputs, GeneralContainerSettings, GitRepositorySettings } from '@qovery/shared/console-shared'
@@ -34,6 +41,22 @@ export function StepGeneral(props: StepGeneralProps) {
   const isTemplate = slug !== undefined
   const dataTemplate = serviceTemplates.find((service) => service.slug === slug)
   const dataOptionTemplate = option !== 'current' ? findTemplateData(slug, option) : null
+
+  const ContainerSettings = ({ organizationId }: { organizationId: string }) => {
+    const { data: containerRegistries = [] } = useContainerRegistries({ organizationId })
+
+    return (
+      <GeneralContainerSettings
+        organizationId={organizationId}
+        containerRegistries={containerRegistries}
+        useContainerImages={useContainerImages}
+        useContainerVersions={useContainerVersions}
+        renderCreateRegistryModal={({ organizationId, onClose }) => (
+          <ContainerRegistryCreateEditModal organizationId={organizationId} onClose={onClose} />
+        )}
+      />
+    )
+  }
 
   return (
     <Section>
@@ -109,7 +132,7 @@ export function StepGeneral(props: StepGeneralProps) {
           {watchServiceType === 'APPLICATION' && (
             <GitRepositorySettings gitDisabled={false} organizationId={organizationId} />
           )}
-          {watchServiceType === 'CONTAINER' && <GeneralContainerSettings organization={props.organization} />}
+          {watchServiceType === 'CONTAINER' && <ContainerSettings organizationId={organizationId} />}
         </Section>
 
         {watchServiceType && (

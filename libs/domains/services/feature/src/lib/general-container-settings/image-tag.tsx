@@ -1,7 +1,7 @@
 import { type Control, Controller } from 'react-hook-form'
-import { useContainerVersions } from '@qovery/domains/organizations/feature'
 import { type Value } from '@qovery/shared/interfaces'
 import { Icon, InputSelect, InputText, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
+import { useContainerVersions } from '../hooks/use-container-versions/use-container-versions'
 import { type ContainerFormProps } from './general-container-settings'
 
 export function ImageTag({

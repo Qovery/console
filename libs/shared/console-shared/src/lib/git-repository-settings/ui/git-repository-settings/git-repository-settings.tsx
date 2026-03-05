@@ -54,7 +54,7 @@ export function GitRepositorySettings({
 
   return (
     <div className="flex flex-col gap-4">
-      <GitProviderSetting disabled={gitDisabled} />
+      <GitProviderSetting disabled={gitDisabled} organizationId={organizationId} />
       {selectedToken && isGitTokenExpired(selectedToken) && (
         <Callout.Root color="yellow" className="items-center">
           <Callout.Icon>
@@ -105,6 +105,7 @@ export function GitRepositorySettings({
           {watchFieldProvider && (
             <GitRepositorySetting
               disabled={gitDisabled}
+              organizationId={organizationId}
               gitProvider={watchFieldProvider}
               gitTokenId={watchFieldGitTokenId}
               urlRepository={urlRepository}
@@ -113,6 +114,7 @@ export function GitRepositorySettings({
           {watchFieldProvider && watchFieldRepository && (
             <GitBranchSettings
               disabled={gitDisabled}
+              organizationId={organizationId}
               gitProvider={watchFieldProvider}
               gitTokenId={watchFieldGitTokenId}
               rootPathLabel={rootPathLabel}
