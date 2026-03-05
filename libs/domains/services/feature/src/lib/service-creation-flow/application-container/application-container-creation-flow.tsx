@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import {
   type Dispatch,
   type PropsWithChildren,
@@ -16,7 +16,6 @@ import type {
   FlowPortData,
   FlowVariableData,
 } from '@qovery/shared/interfaces'
-import { SERVICES_NEW_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 
 export interface ApplicationContainerCreateContextInterface {
@@ -77,10 +76,13 @@ export function ApplicationContainerCreationFlow({
   defaultServiceType,
 }: ApplicationContainerCreationFlowProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const { template } = useSearch({ strict: false })
 
   const [currentStep, setCurrentStep] = useState<number>(1)
   const generalForm = useForm<ApplicationGeneralData>({
     defaultValues: {
+      name: template ?? '',
+      icon_uri: `app://qovery-console/${template ?? 'application'}`,
       auto_deploy: true,
     },
     mode: 'onChange',
