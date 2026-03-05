@@ -1,16 +1,22 @@
+import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useAnnouncementBannerModule from '../hooks/use-announcement-banner/use-announcement-banner'
 import { AnnouncementBanner } from './announcement-banner'
 
 jest.mock('../hooks/use-announcement-banner/use-announcement-banner')
+jest.mock('@qovery/shared/util-hooks', () => ({
+  useLocalStorage: jest.fn(),
+}))
 
 describe('AnnouncementBanner', () => {
   const mockUseAnnouncementBanner = useAnnouncementBannerModule.useAnnouncementBanner as jest.MockedFunction<
     typeof useAnnouncementBannerModule.useAnnouncementBanner
   >
+  const mockSetDismissedMessage = jest.fn()
 
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(useLocalStorage as jest.Mock).mockReturnValue([null, mockSetDismissedMessage])
   })
 
   it('should render nothing when banner data is null', () => {
@@ -85,17 +91,30 @@ describe('AnnouncementBanner', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
-  it('should hide banner when dismiss button is clicked', async () => {
+  it('should call setDismissedMessage with banner message when dismiss button is clicked', async () => {
     mockUseAnnouncementBanner.mockReturnValue({
       message: 'Dismissible message',
       variant: 'warning',
       dismissible: true,
     })
 
-    const { userEvent, container } = renderWithProviders(<AnnouncementBanner />)
+    const { userEvent } = renderWithProviders(<AnnouncementBanner />)
 
-    const dismissButton = screen.getByRole('button', { name: 'Dismiss' })
-    await userEvent.click(dismissButton)
+    await userEvent.click(screen.getByRole('button', { name: 'Dismiss' }))
+
+    expect(mockSetDismissedMessage).toHaveBeenCalledWith('Dismissible message')
+  })
+
+  it('should not show banner when already dismissed in localStorage', () => {
+    const localStorageMock = useLocalStorage as jest.Mock
+    localStorageMock.mockReturnValue(['Already dismissed message', jest.fn()])
+    mockUseAnnouncementBanner.mockReturnValue({
+      message: 'Already dismissed message',
+      variant: 'info',
+      dismissible: true,
+    })
+
+    const { container } = renderWithProviders(<AnnouncementBanner />)
 
     expect(container).toBeEmptyDOMElement()
   })

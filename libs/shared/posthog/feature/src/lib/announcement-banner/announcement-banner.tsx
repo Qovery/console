@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { Banner } from '@qovery/shared/ui'
+import { useLocalStorage } from '@qovery/shared/util-hooks'
 import {
   type AnnouncementBannerPayload,
   useAnnouncementBanner,
@@ -13,7 +13,9 @@ const VARIANT_TO_COLOR_MAP: Record<AnnouncementBannerPayload['variant'], 'brand'
 
 export function AnnouncementBanner() {
   const bannerData = useAnnouncementBanner()
-  const [isDismissed, setIsDismissed] = useState(false)
+  const [dismissedMessage, setDismissedMessage] = useLocalStorage<string | null>('announcement_banner_dismissed', null)
+
+  const isDismissed = Boolean(bannerData && dismissedMessage === bannerData.message)
 
   if (!bannerData || isDismissed) {
     return null
@@ -31,7 +33,7 @@ export function AnnouncementBanner() {
   }
 
   const handleDismiss = () => {
-    setIsDismissed(true)
+    setDismissedMessage(bannerData.message)
   }
 
   return (

@@ -1,4 +1,4 @@
-import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
+import { BuildModeEnum, type Organization, TerraformAutoDeployConfigTerraformActionEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -28,6 +28,12 @@ const buildModeItems = Object.values(BuildModeEnum).map((value) => ({
   label: upperCaseFirstLetter(value),
   value: value,
 }))
+
+const triggeredActionItems = [
+  { label: 'Plan & apply', value: TerraformAutoDeployConfigTerraformActionEnum.DEFAULT },
+  { label: 'Plan', value: TerraformAutoDeployConfigTerraformActionEnum.PLAN },
+  { label: 'Skip', value: TerraformAutoDeployConfigTerraformActionEnum.NOOP },
+]
 
 export function PageSettingsGeneral({
   onSubmit,
@@ -192,7 +198,22 @@ export function PageSettingsGeneral({
                 </Section>
                 <Section className="gap-4">
                   <Heading>Build and deploy</Heading>
-                  <AutoDeploySection serviceId={terraform.id} source="TERRAFORM" />
+                  <AutoDeploySection serviceId={terraform.id} source="TERRAFORM">
+                    <Controller
+                      name="terraform_action"
+                      control={control}
+                      render={({ field, fieldState: { error } }) => (
+                        <InputSelect
+                          label="Triggered action"
+                          options={triggeredActionItems}
+                          onChange={field.onChange}
+                          value={field.value}
+                          error={error?.message}
+                          portal
+                        />
+                      )}
+                    />
+                  </AutoDeploySection>
                 </Section>
               </>
             ))

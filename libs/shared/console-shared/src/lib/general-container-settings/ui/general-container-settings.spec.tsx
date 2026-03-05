@@ -12,16 +12,18 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 
 jest.mock('@qovery/domains/organizations/feature', () => ({
   ...jest.requireActual('@qovery/domains/organizations/feature'),
-  useContainerImages: () => ({
-    data: [
-      {
-        image_name: 'my-image',
-        versions: [],
-      },
-    ],
-    isFetching: false,
-    refetch: () => Promise.resolve(),
-  }),
+  useContainerImages: ({ containerRegistryId }: { containerRegistryId: string }) => {
+    const dataByRegistry = {
+      '0': [{ image_name: 'my-image', versions: [] }],
+      '1': [{ image_name: 'my-ecr-image', versions: [] }],
+    }
+
+    return {
+      data: dataByRegistry[containerRegistryId as keyof typeof dataByRegistry] ?? [],
+      isFetching: false,
+      refetch: () => Promise.resolve(),
+    }
+  },
   useContainerVersions: () => ({
     data: [
       {
@@ -38,6 +40,13 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
         updated_at: '2022-07-21T09:59:42.01426Z',
         kind: 'DOCKER_HUB',
         name: 'my-registry',
+      },
+      {
+        id: '1',
+        created_at: '2022-07-21T09:59:42.01426Z',
+        updated_at: '2022-07-21T09:59:42.01426Z',
+        kind: 'ECR',
+        name: 'my-ecr-registry',
       },
     ],
   }),
@@ -73,5 +82,43 @@ describe('CreateGeneralContainer', () => {
     // Image tag
     await userEvent.type(screen.getByLabelText('Image tag'), '12.0.0')
     expect(screen.getByDisplayValue('12.0.0')).toBeInTheDocument()
+  })
+
+  it('should reset image name and tag when registry changes', async () => {
+    const defaultValues = {
+      registry: '0',
+      image_name: 'my-image',
+      image_tag: '1.1.0',
+    }
+
+    renderWithProviders(
+      wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />, {
+        defaultValues,
+      })
+    )
+
+    expect(screen.getByText('my-image')).toBeInTheDocument()
+    expect(screen.getByText('1.1.0')).toBeInTheDocument()
+
+    await selectEvent.select(screen.getByLabelText('Registry'), ['my-ecr-registry'])
+
+    expect(screen.queryByText('my-image')).not.toBeInTheDocument()
+    expect(screen.queryByText('1.1.0')).not.toBeInTheDocument()
+  })
+
+  it('should show image list from the selected registry only', async () => {
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />)
+    )
+
+    await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
+    await userEvent.click(screen.getByLabelText('Image name'))
+    expect(screen.getByText('my-image')).toBeInTheDocument()
+    expect(screen.queryByText('my-ecr-image')).not.toBeInTheDocument()
+
+    await selectEvent.select(screen.getByLabelText('Registry'), ['my-ecr-registry'])
+    await userEvent.click(screen.getByLabelText('Image name'))
+    expect(screen.getByText('my-ecr-image')).toBeInTheDocument()
+    expect(screen.queryByText('my-image')).not.toBeInTheDocument()
   })
 })

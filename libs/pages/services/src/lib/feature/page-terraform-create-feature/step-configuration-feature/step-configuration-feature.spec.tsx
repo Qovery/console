@@ -1,3 +1,4 @@
+import { TerraformAutoDeployConfigTerraformActionEnum } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
 import { type TerraformGeneralData } from '@qovery/domains/service-terraform/feature'
 import { renderHook, renderWithProviders } from '@qovery/shared/util-tests'
@@ -8,6 +9,7 @@ const generalDataDefaultValues: TerraformGeneralData = {
   description: 'Terraform service',
   auto_approve: false,
   auto_deploy: false,
+  terraform_action: TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
   terraform_files_source: {
     git_repository: {
       url: 'https://github.com/Qovery/github',

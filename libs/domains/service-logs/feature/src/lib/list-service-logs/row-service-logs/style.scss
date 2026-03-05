@@ -15,7 +15,7 @@
 
 @keyframes rowAppear {
   0% {
-    background-color: theme('colors.neutral.500');
+    background-color: var(--neutral-2);
   }
   100% {
     background-color: transparent;

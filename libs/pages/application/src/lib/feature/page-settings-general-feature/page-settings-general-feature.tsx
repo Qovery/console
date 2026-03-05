@@ -9,6 +9,7 @@ import {
   type JobRequest,
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
+  TerraformAutoDeployConfigTerraformActionEnum,
   type TerraformRequest,
 } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -63,7 +64,10 @@ export const handleGitApplicationSubmit = (
 
     const git_repository = {
       provider: data.provider ?? 'GITHUB',
-      url: data.git_repository?.url || application.git_repository?.url || '',
+      url: match(data.is_public_repository)
+        .with(true, () => data.repository ?? '')
+        .with(false, undefined, () => data.git_repository?.url || application.git_repository?.url || '')
+        .exhaustive(),
       branch: data.branch,
       root_path: data.root_path,
       git_token_id: data.git_token_id,
@@ -129,7 +133,10 @@ export const handleJobSubmit = (
   if (isJobGitSource(job.source)) {
     const git_repository = {
       provider: data.provider ?? 'GITHUB',
-      url: data.git_repository?.url ?? '',
+      url: match(data.is_public_repository)
+        .with(true, () => data.repository ?? '')
+        .with(false, undefined, () => data.git_repository?.url ?? '')
+        .exhaustive(),
       branch: data.branch,
       root_path: data.root_path,
       git_token_id: data.git_token_id,
@@ -189,7 +196,10 @@ export const handleHelmSubmit = (data: HelmGeneralData, helm: Helm): HelmRequest
     .with('GIT', (): HelmRequestAllOfSourceOneOf => {
       return {
         git_repository: {
-          url: data.git_repository?.url ?? '',
+          url: match(data.is_public_repository)
+            .with(true, () => data.repository ?? '')
+            .with(false, undefined, () => data.git_repository?.url ?? '')
+            .exhaustive(),
           branch: data.branch,
           root_path: data.root_path,
           git_token_id: data.git_token_id,
@@ -225,7 +235,10 @@ export const handleTerraformSubmit = (data: TerraformGeneralData, terraform: Ter
   ...terraform,
   name: data.name,
   description: data.description,
-  auto_deploy: data.auto_deploy ?? false,
+  auto_deploy_config: {
+    auto_deploy: data.auto_deploy ?? false,
+    terraform_action: data.terraform_action ?? TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
+  },
   terraform_files_source: {
     git_repository: {
       url: match(data.is_public_repository)
@@ -332,7 +345,9 @@ export function PageSettingsGeneralFeature() {
       arguments: joinArgsWithQuotes(service.arguments),
     }))
     .with({ serviceType: 'TERRAFORM' }, (service) => ({
-      auto_deploy: service.auto_deploy,
+      auto_deploy: service.auto_deploy_config?.auto_deploy ?? service.auto_deploy,
+      terraform_action:
+        service.auto_deploy_config?.terraform_action ?? TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
     }))
     .otherwise(() => undefined)
 
@@ -385,7 +400,14 @@ export function PageSettingsGeneralFeature() {
     if (!payload) return null
 
     if (data.is_public_repository) {
-      payload.auto_deploy = false
+      if ('auto_deploy_config' in payload) {
+        payload.auto_deploy_config = {
+          ...payload.auto_deploy_config,
+          auto_deploy: false,
+        }
+      } else if ('auto_deploy' in payload) {
+        payload.auto_deploy = false
+      }
     }
 
     editService({

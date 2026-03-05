@@ -175,31 +175,46 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                   ))
                   .otherwise(() => null)}
                 {(service?.serviceType === 'TERRAFORM' ||
-                  (service?.serviceType === 'JOB' && service?.job_type !== 'CRON')) && (
-                  <Tooltip content="Service logs">
-                    <Link
-                      as="button"
-                      color="neutral"
-                      variant="outline"
-                      size="md"
-                      iconOnly
-                      to={
-                        ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-                        SERVICE_LOGS_URL(
-                          serviceId,
-                          undefined,
-                          isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
-                          'history',
-                          isDeploymentHistory(data)
-                            ? formatInTimeZone(new Date(data.auditing_data.created_at), 'yyyy-MM-dd HH:mm:ss', 'UTC')
-                            : undefined
-                        )
-                      }
-                    >
-                      <Icon iconName="scroll" />
-                    </Link>
-                  </Tooltip>
-                )}
+                  (service?.serviceType === 'JOB' && service?.job_type !== 'CRON')) &&
+                  // Show only when logs can be available (hide during build or active deployment)
+                  match(state)
+                    .with(
+                      P.when((s) => ['ONGOING', 'CANCELING', 'QUEUED', 'BUILDING'].includes(String(s))),
+                      () => null
+                    )
+                    .otherwise(() => (
+                      <Tooltip content="Service logs">
+                        <Link
+                          as="button"
+                          color="neutral"
+                          variant="outline"
+                          size="md"
+                          iconOnly
+                          to={
+                            ENVIRONMENT_LOGS_URL(
+                              environment?.organization.id,
+                              environment?.project.id,
+                              environment?.id
+                            ) +
+                            SERVICE_LOGS_URL(
+                              serviceId,
+                              undefined,
+                              isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
+                              'history',
+                              isDeploymentHistory(data)
+                                ? formatInTimeZone(
+                                    new Date(data.auditing_data.created_at),
+                                    'yyyy-MM-dd HH:mm:ss',
+                                    'UTC'
+                                  )
+                                : undefined
+                            )
+                          }
+                        >
+                          <Icon iconName="scroll" />
+                        </Link>
+                      </Tooltip>
+                    ))}
                 <Tooltip content="Pipeline">
                   <Link
                     as="button"

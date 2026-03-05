@@ -17,13 +17,20 @@ export interface ContainerFormProps {
 }
 
 export function GeneralContainerSettings({ organization, isSetting }: GeneralContainerSettingsProps) {
-  const { control, watch } = useFormContext<ContainerFormProps>()
+  const { control, watch, setValue } = useFormContext<ContainerFormProps>()
   const { openModal, closeModal } = useModal()
   const watchRegistry = watch('registry')
   const watchImageName = watch('image_name')
   const watchImageTag = watch('image_tag')
 
   const { data: containerRegistries = [] } = useContainerRegistries({ organizationId: organization?.id ?? '' })
+
+  const handleRegistryChange = (nextRegistry: string, currentRegistry?: string) => {
+    if (currentRegistry && currentRegistry !== nextRegistry) {
+      setValue('image_name', '')
+      setValue('image_tag', '')
+    }
+  }
 
   return (
     <>
@@ -38,7 +45,11 @@ export function GeneralContainerSettings({ organization, isSetting }: GeneralCon
             <InputSelect
               dataTestId="input-select-registry"
               className="mb-0.5"
-              onChange={field.onChange}
+              onChange={(value) => {
+                const nextRegistry = String(value)
+                handleRegistryChange(nextRegistry, field.value)
+                field.onChange(nextRegistry)
+              }}
               value={field.value}
               options={containerRegistries
                 ?.filter((c) => !c.cluster)
@@ -57,7 +68,10 @@ export function GeneralContainerSettings({ organization, isSetting }: GeneralCon
                       <ContainerRegistryCreateEditModal
                         organizationId={organization.id}
                         onClose={(response) => {
-                          response && field.onChange(response.id)
+                          if (response) {
+                            handleRegistryChange(response.id, field.value)
+                            field.onChange(response.id)
+                          }
                           closeModal()
                         }}
                       />
@@ -76,6 +90,7 @@ export function GeneralContainerSettings({ organization, isSetting }: GeneralCon
       </div>
       {organization && watchRegistry && (
         <ImageName
+          key={watchRegistry}
           control={control}
           organizationId={organization.id}
           containerRegistryId={watchRegistry}
@@ -84,6 +99,7 @@ export function GeneralContainerSettings({ organization, isSetting }: GeneralCon
       )}
       {organization && watchRegistry && watchImageName && (
         <ImageTag
+          key={`${watchRegistry}-${watchImageName}`}
           control={control}
           organizationId={organization.id}
           containerRegistryId={watchRegistry}
