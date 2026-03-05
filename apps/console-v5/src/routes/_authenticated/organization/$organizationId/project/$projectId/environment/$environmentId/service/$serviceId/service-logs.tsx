@@ -5,12 +5,11 @@ import {
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
-import { Suspense, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
 import { PodLogsFeature } from '@qovery/pages/logs/environment'
 import { serviceLogsParamsSchema } from '@qovery/shared/router'
-import { LoaderSpinner } from '@qovery/shared/ui'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 
@@ -20,14 +19,6 @@ export const Route = createFileRoute(
   component: RouteComponent,
   validateSearch: serviceLogsParamsSchema,
 })
-
-function Loader() {
-  return (
-    <div className="flex min-h-[calc(100vh-108px)] items-center justify-center">
-      <LoaderSpinner className="w-6" />
-    </div>
-  )
-}
 
 function ServiceLogs() {
   const { environmentId = '', organizationId = '', projectId = '' } = Route.useParams()
@@ -80,10 +71,8 @@ function ServiceLogs() {
 
 function RouteComponent() {
   return (
-    <Suspense fallback={<Loader />}>
-      <ServiceStageIdsProvider>
-        <ServiceLogs />
-      </ServiceStageIdsProvider>
-    </Suspense>
+    <ServiceStageIdsProvider>
+      <ServiceLogs />
+    </ServiceStageIdsProvider>
   )
 }
