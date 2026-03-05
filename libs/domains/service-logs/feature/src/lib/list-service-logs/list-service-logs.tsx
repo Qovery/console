@@ -247,7 +247,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
       <div>
         <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
         {isLogsLoading && isLiveMode ? (
-          <div className="flex h-[calc(100vh-216px)] flex-col items-center justify-center pb-[68px]">
+          <div className="flex h-[calc(100vh-216px)] flex-col items-center justify-center">
             <Placeholder
               environment={environment}
               hasMetricsEnabled={hasMetricsEnabled}
