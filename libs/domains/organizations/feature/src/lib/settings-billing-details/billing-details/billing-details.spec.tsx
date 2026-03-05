@@ -59,8 +59,8 @@ describe('BillingDetails', () => {
   })
 
   it('should show "VAT number" label for EU country', () => {
-    const { getByText, queryByText } = render(
-      wrapWithReactHookForm<BillingInfo>(<BillingDetails {...props} />, {
+    const { getByText, queryByText } = renderWithProviders(
+      wrapWithReactHookForm<BillingInfoRequest>(<BillingDetails {...props} />, {
         defaultValues: { ...defaultValues, country_code: 'FR' },
       })
     )
@@ -68,21 +68,23 @@ describe('BillingDetails', () => {
     expect(queryByText('VAT number (optional)')).not.toBeInTheDocument()
   })
 
-  it('should show "EIN (optional)" label for US', () => {
-    const { getByText } = render(
-      wrapWithReactHookForm<BillingInfo>(<BillingDetails {...props} />, {
+  it('should show "VAT number" label for US', () => {
+    const { getByText, queryByText } = renderWithProviders(
+      wrapWithReactHookForm<BillingInfoRequest>(<BillingDetails {...props} />, {
         defaultValues: { ...defaultValues, country_code: 'US' },
       })
     )
-    expect(getByText('EIN (optional)')).toBeInTheDocument()
+    expect(getByText('VAT number')).toBeInTheDocument()
+    expect(queryByText('EIN (optional)')).not.toBeInTheDocument()
   })
 
-  it('should show "VAT number (optional)" label for non-EU, non-US country', () => {
-    const { getByText } = render(
-      wrapWithReactHookForm<BillingInfo>(<BillingDetails {...props} />, {
+  it('should show "VAT number" label for non-EU, non-US country', () => {
+    const { getByText, queryByText } = renderWithProviders(
+      wrapWithReactHookForm<BillingInfoRequest>(<BillingDetails {...props} />, {
         defaultValues: { ...defaultValues, country_code: 'JP' },
       })
     )
-    expect(getByText('VAT number (optional)')).toBeInTheDocument()
+    expect(getByText('VAT number')).toBeInTheDocument()
+    expect(queryByText('VAT number (optional)')).not.toBeInTheDocument()
   })
 })
