@@ -80,19 +80,11 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(
   }
 )
 
-type RouterLinkComponentProps = RouterLinkProps & {
-  className?: string
-}
-
 export type LinkProps =
-  | (Omit<RouterLinkComponentProps, 'color' | 'ref' | 'params'> &
-      VariantProps<typeof linkVariants> & {
-        params?: Record<string, string>
-      })
-  | (Omit<RouterLinkComponentProps, 'color' | 'ref' | 'params'> &
-      VariantProps<typeof buttonVariants> & { as: 'button' } & {
-        params?: Record<string, string>
-      })
+  | (RouterLinkProps & Omit<ComponentPropsWithoutRef<'a'>, 'color' | 'ref'> & VariantProps<typeof linkVariants>)
+  | (RouterLinkProps &
+      Omit<ComponentPropsWithoutRef<'a'>, 'color' | 'ref'> &
+      VariantProps<typeof buttonVariants> & { as: 'button' })
 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(props, forwardedRef) {
   return match(props)
