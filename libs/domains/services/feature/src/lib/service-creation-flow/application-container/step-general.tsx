@@ -204,7 +204,12 @@ export function ApplicationContainerStepGeneral({
                 type="button"
                 variant="plain"
                 color="neutral"
-                to={SERVICES_URL(organizationId, projectId, environmentId)}
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
+                params={{
+                  organizationId,
+                  projectId,
+                  environmentId,
+                }}
               >
                 Cancel
               </Link>

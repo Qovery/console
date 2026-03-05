@@ -1,4 +1,3 @@
-import { type ReactNode } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputSelect } from '@qovery/shared/ui'
 import { useContainerRegistries } from '../hooks/use-container-registries/use-container-registries'
@@ -22,7 +21,7 @@ export function GeneralContainerSettings({
   openContainerRegistryCreateEditModal,
   isSetting,
 }: GeneralContainerSettingsProps) {
-  const { control, watch } = useFormContext<ContainerFormProps>()
+  const { control, watch, setValue } = useFormContext<ContainerFormProps>()
   const watchRegistry = watch('registry') ?? ''
   const watchImageName = watch('image_name')
   const watchImageTag = watch('image_tag')
@@ -41,7 +40,12 @@ export function GeneralContainerSettings({
           <InputSelect
             dataTestId="input-select-registry"
             className="mb-0.5"
-            onChange={field.onChange}
+            onChange={(value) => {
+              const nextRegistry = String(value)
+              field.onChange(nextRegistry)
+              setValue('image_name', '')
+              setValue('image_tag', '')
+            }}
             value={field.value}
             options={containerRegistries
               ?.filter((c) => !c.cluster)
@@ -62,6 +66,7 @@ export function GeneralContainerSettings({
       />
       {watchRegistry && (
         <ImageName
+          key={watchRegistry}
           control={control}
           organizationId={organizationId}
           containerRegistryId={watchRegistry}
@@ -70,8 +75,9 @@ export function GeneralContainerSettings({
       )}
       {watchRegistry && watchImageName && (
         <ImageTag
+          key={`${watchRegistry}-${watchImageName}`}
           control={control}
-          organizationId={organization.id}
+          organizationId={organizationId}
           containerRegistryId={watchRegistry}
           imageName={watchImageName}
           imageTag={watchImageTag}
