@@ -1,15 +1,9 @@
-import { type ContainerRegistryResponse, type Organization } from 'qovery-typescript-axios'
+import { type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import {
-  ContainerRegistryCreateEditModal,
-  useContainerImages,
-  useContainerRegistries,
-  useContainerVersions,
-} from '@qovery/domains/organizations/feature'
-import { GeneralContainerSettings } from '@qovery/domains/services/feature'
 import { IconEnum, type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { BlockContent, Icon, InputSelect } from '@qovery/shared/ui'
+import { GeneralContainerSettings } from '../../general-container-settings/ui/general-container-settings'
 import EditGitRepositorySettingsFeature from '../../git-repository-settings/feature/edit-git-repository-settings-feature/edit-git-repository-settings-feature'
 import GitRepositorySettings from '../../git-repository-settings/ui/git-repository-settings/git-repository-settings'
 
@@ -27,27 +21,8 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
   const watchTemplateType = watch('template_type')
   const organizationId = props.organization?.id
 
-  const renderCreateRegistryModal = ({
-    organizationId,
-    onClose,
-  }: {
-    organizationId: string
-    onClose: (response?: ContainerRegistryResponse) => void
-  }) => <ContainerRegistryCreateEditModal organizationId={organizationId} onClose={onClose} />
-
   const ContainerSettings = ({ isSetting }: { isSetting?: boolean }) => {
-    const { data: containerRegistries = [] } = useContainerRegistries({ organizationId: organizationId as string })
-
-    return (
-      <GeneralContainerSettings
-        organizationId={organizationId as string}
-        containerRegistries={containerRegistries}
-        useContainerImages={useContainerImages}
-        useContainerVersions={useContainerVersions}
-        renderCreateRegistryModal={renderCreateRegistryModal}
-        isSetting={isSetting}
-      />
-    )
+    return <GeneralContainerSettings organization={props.organization} isSetting={isSetting} />
   }
 
   return (
