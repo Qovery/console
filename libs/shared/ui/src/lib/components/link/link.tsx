@@ -1,6 +1,6 @@
-import { Link as RouterLink } from '@tanstack/react-router'
+import { Link as RouterLink, type LinkProps as RouterLinkProps } from '@tanstack/react-router'
 import { type VariantProps, cva } from 'class-variance-authority'
-import { type ComponentProps, type ComponentPropsWithoutRef, forwardRef } from 'react'
+import { type ComponentPropsWithoutRef, forwardRef } from 'react'
 import { match } from 'ts-pattern'
 import { twMerge } from '@qovery/shared/util-js'
 import { buttonVariants } from '../button-primitive/button-primitive'
@@ -80,7 +80,9 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(
   }
 )
 
-type RouterLinkComponentProps = ComponentProps<typeof RouterLink>
+type RouterLinkComponentProps = RouterLinkProps & {
+  className?: string
+}
 
 export type LinkProps =
   | (Omit<RouterLinkComponentProps, 'color' | 'ref' | 'params'> &
@@ -94,23 +96,17 @@ export type LinkProps =
 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(props, forwardedRef) {
   return match(props)
-    .with({ as: 'button' }, ({ className, children, color, radius, size, variant, as, params, iconOnly, ...rest }) => (
+    .with({ as: 'button' }, ({ className, children, color, radius, size, variant, as, iconOnly, ...rest }) => (
       <RouterLink
         ref={forwardedRef}
         className={twMerge(buttonVariants({ color, radius, size, variant, iconOnly }), className)}
         {...rest}
-        {...(params ? { params: params as unknown as ComponentProps<typeof RouterLink>['params'] } : {})}
       >
         {children}
       </RouterLink>
     ))
-    .otherwise(({ className, children, color, size, underline, params, ...rest }) => (
-      <RouterLink
-        ref={forwardedRef}
-        className={twMerge(linkVariants({ color, size, underline }), className)}
-        {...rest}
-        {...(params ? { params: params as unknown as ComponentProps<typeof RouterLink>['params'] } : {})}
-      >
+    .otherwise(({ className, children, color, size, underline, ...rest }) => (
+      <RouterLink ref={forwardedRef} className={twMerge(linkVariants({ color, size, underline }), className)} {...rest}>
         {children}
       </RouterLink>
     ))

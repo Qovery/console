@@ -14,7 +14,7 @@ import { type DeploymentHistoryService, type Environment, OrganizationEventOrigi
 import { useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
+import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
   Button,
   CopyToClipboard,
@@ -190,32 +190,26 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                           variant="outline"
                           size="md"
                           iconOnly
-                          to={
-                            ENVIRONMENT_LOGS_URL(
-                              environment?.organization.id,
-                              environment?.project.id,
-                              environment?.id
-                            ) +
-                            SERVICE_LOGS_URL(
-                              serviceId,
-                              undefined,
-                              isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
-                              'history',
-                              isDeploymentHistory(data)
-                                ? formatInTimeZone(
-                                    new Date(data.auditing_data.created_at),
-                                    'yyyy-MM-dd HH:mm:ss',
-                                    'UTC'
-                                  )
-                                : undefined
-                            )
-                          }
+                          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                          search={{
+                            mode: 'history',
+                            deploymentId: isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
+                            startDate: isDeploymentHistory(data)
+                              ? formatInTimeZone(new Date(data.auditing_data.created_at), 'yyyy-MM-dd HH:mm:ss', 'UTC')
+                              : undefined,
+                          }}
+                          params={{
+                            organizationId: environment?.organization.id ?? '',
+                            projectId: environment?.project.id ?? '',
+                            environmentId: environment?.id ?? '',
+                            serviceId,
+                          }}
                         >
                           <Icon iconName="scroll" />
                         </Link>
                       </Tooltip>
                     ))}
-                <Tooltip content="Pipeline">
+                {/*<Tooltip content="Pipeline">
                   <Link
                     as="button"
                     color="neutral"
@@ -231,7 +225,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                   >
                     <Icon iconName="timeline" />
                   </Link>
-                </Tooltip>
+                </Tooltip>*/}
               </div>
             </div>
           )
