@@ -93,7 +93,8 @@ function DeploymentHistoryPlaceholder({
           {deploymentsByServiceId.length > 0 ? (
             deploymentsByServiceId.map((deploymentHistory: DeploymentService) => (
               <div key={deploymentHistory.execution_id} className="flex items-center pb-2 last:pb-0">
-                <Link
+                {/* TODO new-nav : Route not yet created */}
+                {/*<Link
                   className={`flex w-full justify-between rounded bg-neutral-550 p-3 transition hover:bg-neutral-600 ${
                     versionId === deploymentHistory.execution_id ? 'bg-neutral-600' : ''
                   }`}
@@ -109,7 +110,7 @@ function DeploymentHistoryPlaceholder({
                   <span className="text-ssm text-neutral-300">
                     {dateFullFormat(deploymentHistory.auditing_data.created_at)}
                   </span>
-                </Link>
+                </Link>*/}
               </div>
             ))
           ) : (
@@ -232,7 +233,8 @@ export function DeploymentLogsPlaceholder({
       <div className="flex flex-col items-center justify-center gap-4 text-center">
         <ErrorIcon />
         <span className="text-neutral-300">An error occurred during the precheck step.</span>
-        <Link
+        {/* TODO new-nav : Route not yet created */}
+        {/*<Link
           className="gap-1.5"
           as="button"
           variant="surface"
@@ -244,7 +246,7 @@ export function DeploymentLogsPlaceholder({
         >
           Open precheck
           <Icon iconName="list-check" />
-        </Link>
+        </Link>*/}
       </div>
     )
   }
@@ -259,7 +261,8 @@ export function DeploymentLogsPlaceholder({
       <div className="flex flex-col items-center justify-center gap-4 text-center">
         <ErrorIcon />
         <span className="text-neutral-300">An error occurred during deployment of another service.</span>
-        <Link
+        {/* TODO new-nav : Route not yet created */}
+        {/*<Link
           className="gap-1.5"
           as="button"
           variant="surface"
@@ -271,7 +274,7 @@ export function DeploymentLogsPlaceholder({
         >
           Open pipeline
           <Icon iconName="timeline" />
-        </Link>
+        </Link>*/}
       </div>
     )
   }

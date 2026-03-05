@@ -5,8 +5,7 @@ import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react
 import { P, match } from 'ts-pattern'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { type ServiceLogsParams } from '@qovery/shared/router'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Button, Icon, Link, LoaderDots, Tooltip } from '@qovery/shared/ui'
+import { Button, Link, LoaderDots, Tooltip } from '@qovery/shared/ui'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
 
 export function LoaderPlaceholder({
@@ -190,10 +189,18 @@ export function ServiceLogsPlaceholder({
                 size="sm"
                 color="brand"
                 className="max-w-max"
-                to={
-                  ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id) +
-                  SERVICE_LOGS_URL(serviceId, undefined, deploymentId, 'history', subDays(new Date(), 28).toISOString())
-                }
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                params={{
+                  organizationId: environment.organization.id,
+                  projectId: environment.project.id,
+                  environmentId: environment.id,
+                  serviceId,
+                }}
+                search={{
+                  mode: 'history',
+                  startDate: subDays(new Date(), 28).toISOString(),
+                  deploymentId,
+                }}
               >
                 Previous deployment with service logs associated
               </Link>
@@ -274,7 +281,8 @@ export function ServiceLogsPlaceholder({
           <>
             <p className="mb-1 text-neutral">No service logs available for {serviceName}</p>
             <p className="mb-4 text-sm text-neutral-subtle">Please check if the service is up and running</p>
-            <Link
+            {/* TODO new-nav : Route not yet created */}
+            {/*<Link
               as="button"
               size="sm"
               variant="surface"
@@ -286,7 +294,7 @@ export function ServiceLogsPlaceholder({
             >
               Go to latest deployment
               <Icon iconName="arrow-right" className="ml-1" />
-            </Link>
+            </Link>*/}
           </>
         ) : (
           <LoaderPlaceholder />

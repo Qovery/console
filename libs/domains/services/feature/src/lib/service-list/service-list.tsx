@@ -14,7 +14,6 @@ import {
 import { type Environment } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { Checkbox, EmptyState, Icon, Link, TableFilter, TablePrimitives, Tooltip, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
@@ -305,7 +304,7 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
                 onClick={() => {
                   navigate({
                     to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
-                    params: { organizationId, projectId, environmentId, serviceId: id },
+                    params: { organizationId, projectId, environmentId, serviceId: row.original.id },
                   })
                 }}
               >
