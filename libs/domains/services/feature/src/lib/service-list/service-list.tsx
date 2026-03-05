@@ -15,14 +15,6 @@ import { type Environment } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import {
-  APPLICATION_URL,
-  DATABASE_GENERAL_URL,
-  DATABASE_URL,
-  SERVICES_GENERAL_URL,
-  SERVICES_NEW_URL,
-  SERVICES_URL,
-} from '@qovery/shared/routes'
 import { Checkbox, EmptyState, Icon, Link, TableFilter, TablePrimitives, Tooltip, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
@@ -255,7 +247,8 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
           as="button"
           size="lg"
           className="mt-5 gap-2"
-          to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
+          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
+          params={{ organizationId, projectId, environmentId }}
         >
           New service
           <Icon iconName="circle-plus" iconStyle="regular" />
@@ -310,16 +303,10 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
               <Table.Row
                 className={twMerge('h-[68px] ')}
                 onClick={() => {
-                  const link = match(row.original)
-                    .with(
-                      { serviceType: ServiceTypeEnum.DATABASE },
-                      ({ id }) => DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
-                    )
-                    .otherwise(
-                      ({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL
-                    )
-
-                  navigate({ to: link })
+                  navigate({
+                    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+                    params: { organizationId, projectId, environmentId, serviceId: id },
+                  })
                 }}
               >
                 {row.getVisibleCells().map((cell, i) => (

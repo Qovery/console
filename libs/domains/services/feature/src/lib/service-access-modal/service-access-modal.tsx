@@ -2,7 +2,6 @@ import type { Credentials, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typ
 import { match } from 'ts-pattern'
 import { type Application, type Container, type Database } from '@qovery/domains/services/data-access'
 import { useVariables } from '@qovery/domains/variables/feature'
-import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import {
   Accordion,
   Button,
@@ -168,11 +167,13 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                       <span className="font-medium text-neutral-350">No ports declared yet.</span>
                       <Link
                         className="justify-center"
-                        to={
-                          APPLICATION_URL(organizationId, projectId, service.environment.id, service.id) +
-                          APPLICATION_SETTINGS_URL +
-                          APPLICATION_SETTINGS_PORT_URL
-                        }
+                        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/port"
+                        params={{
+                          organizationId,
+                          projectId,
+                          environmentId: service.environment.id,
+                          serviceId: service.id,
+                        }}
                         onClick={() => onClose()}
                       >
                         Declare a port in application settings
@@ -214,11 +215,13 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                       <div className="flex h-14 items-center justify-center">
                         <Link
                           onClick={() => onClose()}
-                          to={
-                            APPLICATION_URL(organizationId, projectId, service.environment.id, service.id) +
-                            APPLICATION_SETTINGS_URL +
-                            APPLICATION_SETTINGS_PORT_URL
-                          }
+                          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/port"
+                          params={{
+                            organizationId,
+                            projectId,
+                            environmentId: service.environment.id,
+                            serviceId: service.id,
+                          }}
                         >
                           Declare a port in application settings
                         </Link>

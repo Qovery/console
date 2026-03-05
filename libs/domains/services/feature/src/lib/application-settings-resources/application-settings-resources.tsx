@@ -7,7 +7,6 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { hasGpuInstance, useCluster } from '@qovery/domains/clusters/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
-import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import {
   Callout,
   ExternalLink,
@@ -140,7 +139,8 @@ export function ApplicationSettingsResources({
               `Maximum value allowed based on the selected cluster instance type: ${service.maximum_cpu} milli vCPU. `}
             {clusterId && (
               <Link
-                to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+                params={{ organizationId, clusterId }}
                 size="xs"
               >
                 Edit node
@@ -173,7 +173,8 @@ export function ApplicationSettingsResources({
               `Maximum value allowed based on the selected cluster instance type: ${service.maximum_memory} MiB. `}
             {clusterId && (
               <Link
-                to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+                params={{ organizationId, clusterId }}
                 size="xs"
               >
                 Edit node
@@ -189,7 +190,8 @@ export function ApplicationSettingsResources({
       {!canSetGPU && 'GPUs not allowed on this cluster. '}
       {clusterId && (
         <Link
-          to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+          to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+          params={{ organizationId, clusterId }}
           size="xs"
         >
           {canSetGPU ? 'Edit node' : 'Enable it here'}

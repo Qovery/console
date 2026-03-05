@@ -3,7 +3,6 @@ import { ServiceSubActionDto } from 'qovery-ws-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { CLUSTER_URL } from '@qovery/shared/routes'
 import { Link, Skeleton, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { useCheckRunningStatusClosed } from '../../hooks/use-check-running-status-closed/use-check-running-status-closed'
 import { useServiceDeploymentAndRunningStatuses } from '../../hooks/use-service-deployment-and-running-statuses/use-service-deployment-and-running-statuses'
@@ -64,7 +63,8 @@ export function ServiceRunningStatusCell({
         <Tooltip content="See cluster">
           <Link
             as="button"
-            to={CLUSTER_URL(organizationId, environment.id)}
+            to="/organization/$organizationId/cluster/$clusterId/overview"
+            params={{ organizationId, clusterId: environment.cluster_id ?? '' }}
             onClick={(e) => e.stopPropagation()}
             className="gap-2 whitespace-nowrap text-sm"
             size="md"
