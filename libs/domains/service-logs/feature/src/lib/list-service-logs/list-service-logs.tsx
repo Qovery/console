@@ -46,8 +46,8 @@ function Placeholder({
     return (
       <div className="flex flex-col items-center justify-center gap-4 text-center">
         <div>
-          <p className="text-neutral-50">No logs found for your request.</p>
-          <p className="text-sm text-neutral-300">Want to search on a larger time period? Try it with Observe</p>
+          <p className="text-neutral">No logs found for your request.</p>
+          <p className="text-sm text-neutral-subtle">Want to search on a larger time period? Try it with Observe</p>
         </div>
         <div className="max-w-max">
           <EnableObservabilityButtonContactUs text="Unlock with Observe plan" />

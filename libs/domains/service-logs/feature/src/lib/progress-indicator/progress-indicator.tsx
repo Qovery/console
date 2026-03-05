@@ -18,9 +18,9 @@ export function ProgressIndicator({ pauseLogs, message, className }: ProgressInd
       <span className="mr-1.5">{pauseLogs ? 'Streaming paused' : message}</span>
       {!pauseLogs && (
         <>
-          <span className="bg-neutral mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] rounded-[0.5px]" />
-          <span className="bg-neutral mr-[2px] h-[3px] w-[3px]  animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite] rounded-[0.5px]" />
-          <span className="bg-neutral h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] rounded-[0.5px]" />
+          <span className="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] rounded-[0.5px] bg-surface-neutralInvert-subtle" />
+          <span className="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite] rounded-[0.5px] bg-surface-neutralInvert-subtle" />
+          <span className="h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] rounded-[0.5px] bg-surface-neutralInvert-subtle" />
         </>
       )}
     </div>
