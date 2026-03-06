@@ -29,15 +29,25 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
     query: '(min-width: 1536px)',
   })
 
+  const handleNavigate = () => {
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId',
+      params: { organizationId, projectId, environmentId: overview.id },
+    })
+  }
+
   return (
     <Table.Row
       key={overview.id}
-      className={twMerge('w-full hover:cursor-pointer hover:bg-surface-neutral-subtle', gridLayoutClassName)}
-      onClick={() => {
-        navigate({
-          to: '/organization/$organizationId/project/$projectId/environment/$environmentId',
-          params: { organizationId, projectId, environmentId: overview.id },
-        })
+      tabIndex={0}
+      role="link"
+      className={twMerge(
+        'w-full hover:cursor-pointer hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle',
+        gridLayoutClassName
+      )}
+      onClick={handleNavigate}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') handleNavigate()
       }}
     >
       <Table.Cell className={twMerge(cellClassName, 'border-none p-0')}>
