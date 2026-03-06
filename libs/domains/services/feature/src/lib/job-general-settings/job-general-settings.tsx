@@ -27,20 +27,6 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
   const watchTemplateType = watch('template_type')
   const organizationId = props.organization?.id
 
-  const ContainerSettings = ({ isSetting }: { isSetting?: boolean }) => {
-    if (!organizationId) {
-      return null
-    }
-
-    return (
-      <GeneralContainerSettings
-        organizationId={organizationId}
-        isSetting={isSetting}
-        openContainerRegistryCreateEditModal={props.openContainerRegistryCreateEditModal ?? (() => undefined)}
-      />
-    )
-  }
-
   return (
     <>
       {!props.isEdition && (
@@ -103,12 +89,28 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
             (props.isEdition ? (
               <div data-testid="container-fields">
                 <BlockContent title="Container Settings" classNameContent="space-y-4">
-                  {organizationId ? <ContainerSettings isSetting /> : null}
+                  {organizationId ? (
+                    <GeneralContainerSettings
+                      organizationId={organizationId}
+                      isSetting
+                      openContainerRegistryCreateEditModal={
+                        props.openContainerRegistryCreateEditModal ?? (() => undefined)
+                      }
+                    />
+                  ) : null}
                 </BlockContent>
               </div>
             ) : (
               <div data-testid="container-fields" className="space-y-4">
-                {organizationId ? <ContainerSettings isSetting={props.isEdition} /> : null}
+                {organizationId ? (
+                  <GeneralContainerSettings
+                    organizationId={organizationId}
+                    isSetting={props.isEdition}
+                    openContainerRegistryCreateEditModal={
+                      props.openContainerRegistryCreateEditModal ?? (() => undefined)
+                    }
+                  />
+                ) : null}
               </div>
             ))}
         </>

@@ -46,30 +46,6 @@ export function StepGeneral(props: StepGeneralProps) {
   const dataTemplate = serviceTemplates.find((service) => service.slug === slug)
   const dataOptionTemplate = option !== 'current' ? findTemplateData(slug, option) : null
 
-  const ContainerSettings = ({ organizationId }: { organizationId: string }) => {
-    return (
-      <GeneralContainerSettings
-        organizationId={organizationId}
-        openContainerRegistryCreateEditModal={() =>
-          openModal({
-            content: (
-              <ContainerRegistryCreateEditModal
-                organizationId={organizationId}
-                onClose={() => {
-                  closeModal()
-                }}
-              />
-            ),
-            options: {
-              fakeModal: true,
-              width: 680,
-            },
-          })
-        }
-      />
-    )
-  }
-
   return (
     <Section>
       {isTemplate ? (
@@ -144,7 +120,27 @@ export function StepGeneral(props: StepGeneralProps) {
           {watchServiceType === 'APPLICATION' && (
             <GitRepositorySettings gitDisabled={false} organizationId={organizationId} />
           )}
-          {watchServiceType === 'CONTAINER' && <ContainerSettings organizationId={organizationId} />}
+          {watchServiceType === 'CONTAINER' && (
+            <GeneralContainerSettings
+              organizationId={organizationId}
+              openContainerRegistryCreateEditModal={() =>
+                openModal({
+                  content: (
+                    <ContainerRegistryCreateEditModal
+                      organizationId={organizationId}
+                      onClose={() => {
+                        closeModal()
+                      }}
+                    />
+                  ),
+                  options: {
+                    fakeModal: true,
+                    width: 680,
+                  },
+                })
+              }
+            />
+          )}
         </Section>
 
         {watchServiceType && (
