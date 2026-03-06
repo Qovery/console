@@ -2,7 +2,6 @@ import { useParams } from '@tanstack/react-router'
 import { type PodStatusDto, type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
-import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import {
   DescriptionDetails as Dd,
   DescriptionListRoot as Dl,
@@ -45,19 +44,21 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
     <div className="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3">
       <div className="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-subtle" />
       <Link
-        to={
-          ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-          SERVICE_LOGS_URL(
-            serviceId,
-            match(serviceType)
-              // TODO: Job are a bit quirky because job_name and pod_name are mixed up and we are not able to filter by job_name currently.
-              // So we chose to disable log filter by pod for Jobs
-              .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => undefined)
-              .otherwise(() => pod.name)
-          )
-        }
-        className="absolute right-2 top-2 gap-2"
         as="button"
+        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+        params={{
+          organizationId,
+          projectId,
+          environmentId,
+          serviceId,
+        }}
+        search={{
+          instance: match(serviceType)
+            // Jobs are a bit quirky because job_name and pod_name are mixed up and we are not able to filter by job_name currently.
+            // So we chose to disable log filter by pod for Jobs
+            .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => undefined)
+            .otherwise(() => pod.name),
+        }}
         type="button"
         size="sm"
         color="neutral"

@@ -1,6 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { type ClusterCredentials, type CredentialCluster } from 'qovery-typescript-axios'
-import { CLUSTER_SETTINGS_CREDENTIALS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Heading, Link, Section } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
@@ -31,7 +30,8 @@ export function CredentialsListClustersModal({
         {clusters.map((cluster) => (
           <Link
             key={cluster.id}
-            to={`${CLUSTER_URL(organizationId, cluster.id)}${CLUSTER_SETTINGS_URL}${CLUSTER_SETTINGS_CREDENTIALS_URL}`}
+            to="/organization/$organizationId/cluster/$clusterId/settings/credentials"
+            params={{ organizationId, clusterId: cluster.id }}
             target="_blank"
             rel="noreferrer"
             color="brand"

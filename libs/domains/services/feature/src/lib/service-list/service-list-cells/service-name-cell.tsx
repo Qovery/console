@@ -2,7 +2,6 @@ import { useNavigate } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { AnimatedGradientText, Badge, Button, Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { formatCronExpression, pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import useDeploymentStatus from '../../hooks/use-deployment-status/use-deployment-status'
@@ -17,8 +16,8 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
   const deploymentRequestsCount = Number(deploymentStatus?.deployment_requests_count)
 
   const LinkDeploymentStatus = () => {
-    const environmentLog = ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)
-    const deploymentLog = DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id)
+    // const environmentLog = ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)
+    // const deploymentLog = DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id)
     // const precheckLog = ENVIRONMENT_PRE_CHECK_LOGS_URL(deploymentStatus?.execution_id ?? '')
 
     return match(deploymentStatus?.state)
@@ -27,34 +26,36 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
       ))
       .with('CANCELED', () => <span className="text-ssm font-normal text-neutral-subtle">Last deployment aborted</span>)
       .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', (s) => (
-        <Link
-          to={environmentLog + deploymentLog}
-          color="brand"
-          underline
-          size="ssm"
-          className="group flex truncate"
-          onClick={(e) => e.stopPropagation()}
-        >
+        // TODO new-nav : Route not yet created
+        // <Link
+        //   to=""
+        //   color="brand"
+        //   underline
+        //   size="ssm"
+        //   className="group flex truncate"
+        //   onClick={(e) => e.stopPropagation()}
+        // >
+        <div className="group flex truncate">
           <AnimatedGradientText shimmerWidth={80} className="group-hover:text-brand">
             <span className="flex items-center gap-0.5">
               {upperCaseFirstLetter(s)}... <Icon iconName="arrow-up-right" />
             </span>
           </AnimatedGradientText>
-        </Link>
+        </div>
+        // </Link>
       ))
       .with('DEPLOYMENT_ERROR', 'DELETE_ERROR', 'STOP_ERROR', 'RESTART_ERROR', 'BUILD_ERROR', () => (
-        <Link
-          // to={deploymentStatus?.steps === null ? environmentLog + precheckLog : environmentLog + deploymentLog}
-          to={environmentLog + deploymentLog}
-          color="red"
-          underline
-          size="ssm"
-          className="truncate"
-          onClick={(e) => e.stopPropagation()}
+        <button
+          className="flex cursor-pointer truncate text-ssm font-medium text-negative underline-offset-2 hover:text-negative-hover hover:underline"
+          onClick={(e) => {
+            e.stopPropagation()
+            // TODO new-nav : Route not yet created
+            // navigate({ to: (environmentLog + deploymentLog) as never })
+          }}
         >
           Last deployment failed
           <Icon iconName="arrow-up-right" />
-        </Link>
+        </button>
       ))
       .otherwise(() => null)
   }

@@ -55,7 +55,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       data-radix-collection-item=""
       data-state="closed"
       tabindex="-1"
-      to="/organization/$orgnizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
       type="button"
     >
       <i
@@ -212,7 +212,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       data-radix-collection-item=""
       data-state="closed"
       tabindex="-1"
-      to="/organization/$orgnizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
       type="button"
     >
       <i
@@ -288,8 +288,9 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
+        search="[object Object]"
         tabindex="-1"
-        to="/organization/123/audit-logs/general?targetId=0&targetType=HELM&projectId=123&environmentId=3840068565336064"
+        to="/organization/$organizationId/audit-logs"
       >
         <i
           aria-hidden="true"
@@ -316,7 +317,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         data-radix-collection-item=""
         role="menuitem"
         tabindex="-1"
-        to="/organization/123/project/123/environment/3840068565336064/application/0/settings/general"
+        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings"
       >
         <i
           aria-hidden="true"

@@ -11,7 +11,6 @@ import { Suspense, useCallback, useEffect } from 'react'
 import { type FormEventHandler } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { Controller, useFormContext } from 'react-hook-form'
-import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
   Button,
@@ -237,7 +236,8 @@ function SettingsRolesEditContent({
                   color="brand"
                   size="xs"
                   className="mb-1 gap-1"
-                  to={SETTINGS_URL(organizationId) + SETTINGS_ROLES_URL}
+                  to="/organization/$organizationId/settings/roles"
+                  params={{ organizationId }}
                 >
                   <Icon iconName="arrow-left" className="mr-1 text-xs" />
                   Back

@@ -7,7 +7,7 @@ import {
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { useServices } from '@qovery/domains/services/feature'
-import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
+import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Button, DropdownMenu, Icon, Link, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
@@ -286,11 +286,15 @@ export function MenuOtherActions({ state, environment }: { state: StateEnum; env
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
           <Link
             className="gap-0"
-            to={AUDIT_LOGS_PARAMS_URL(environment.organization.id, {
+            to="/organization/$organizationId/audit-logs"
+            params={{
+              organizationId: environment.organization.id,
+            }}
+            search={{
               targetType: OrganizationEventTargetType.ENVIRONMENT,
               projectId: environment.project.id,
               targetId: environment.id,
-            })}
+            }}
           >
             See audit logs
           </Link>
@@ -339,7 +343,8 @@ export function EnvironmentActionToolbar({ environment, variant = 'default' }: E
       {variant === 'default' && (
         <>
           <Tooltip content="Pipeline">
-            <Link
+            {/* TODO new-nav : Route not yet created */}
+            {/*<Link
               as="button"
               to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
               className="w-7"
@@ -348,7 +353,7 @@ export function EnvironmentActionToolbar({ environment, variant = 'default' }: E
               variant="outline"
             >
               <Icon iconName="timeline" />
-            </Link>
+            </Link>*/}
           </Tooltip>
           <MenuOtherActions environment={environment} state={deploymentStatus.state} />
         </>

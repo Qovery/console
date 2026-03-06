@@ -1,7 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useParams } from '@tanstack/react-router'
 import { type GitWebhookStatusResponse } from 'qovery-typescript-axios'
-import { APPLICATION_SETTINGS_GENERAL_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { Icon, Link, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { useGitWebhookStatus } from '../hooks/use-git-webhook-status/use-git-webhook-status'
 
@@ -54,14 +53,16 @@ export function AutoDeployBadge({ serviceId }: AutoDeployBadgeProps) {
   const config = webhookStatus ? webhookStatusConfig[webhookStatus.status] : undefined
   const tooltipContent = config?.tooltip ?? 'Auto-deploy enabled. Click to view settings.'
 
-  const settingsUrl =
-    APPLICATION_URL(organizationId, projectId, environmentId, routeServiceId) +
-    APPLICATION_SETTINGS_URL +
-    APPLICATION_SETTINGS_GENERAL_URL
-
   return (
     <Tooltip content={tooltipContent}>
-      <Link as="button" color="neutral" variant="outline" size="xs" to={settingsUrl}>
+      <Link
+        as="button"
+        color="neutral"
+        variant="outline"
+        size="xs"
+        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/general"
+        params={{ organizationId, projectId, environmentId, serviceId: routeServiceId }}
+      >
         <Icon className="text-neutral" iconName="arrows-rotate" />
         <span className="ml-1.5">Auto-deploy</span>
         {isLoading ? (

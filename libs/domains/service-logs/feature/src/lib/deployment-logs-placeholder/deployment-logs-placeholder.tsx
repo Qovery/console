@@ -9,15 +9,8 @@ import {
 import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
 import { type DeploymentService } from '@qovery/shared/interfaces'
-import {
-  DEPLOYMENT_LOGS_VERSION_URL,
-  ENVIRONMENT_LOGS_URL,
-  ENVIRONMENT_PRE_CHECK_LOGS_URL,
-  ENVIRONMENT_STAGES_URL,
-} from '@qovery/shared/routes'
-import { Icon, Link, LoaderDots, StatusChip } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/util-dates'
-import { mergeDeploymentServices, trimId } from '@qovery/shared/util-js'
+import { LoaderDots } from '@qovery/shared/ui'
+import { mergeDeploymentServices } from '@qovery/shared/util-js'
 
 function ErrorIcon() {
   return (
@@ -93,7 +86,8 @@ function DeploymentHistoryPlaceholder({
           {deploymentsByServiceId.length > 0 ? (
             deploymentsByServiceId.map((deploymentHistory: DeploymentService) => (
               <div key={deploymentHistory.execution_id} className="flex items-center pb-2 last:pb-0">
-                <Link
+                {/* TODO new-nav : Route not yet created */}
+                {/*<Link
                   className={`flex w-full justify-between rounded bg-neutral-550 p-3 transition hover:bg-neutral-600 ${
                     versionId === deploymentHistory.execution_id ? 'bg-neutral-600' : ''
                   }`}
@@ -109,7 +103,7 @@ function DeploymentHistoryPlaceholder({
                   <span className="text-ssm text-neutral-300">
                     {dateFullFormat(deploymentHistory.auditing_data.created_at)}
                   </span>
-                </Link>
+                </Link>*/}
               </div>
             ))
           ) : (
@@ -232,7 +226,8 @@ export function DeploymentLogsPlaceholder({
       <div className="flex flex-col items-center justify-center gap-4 text-center">
         <ErrorIcon />
         <span className="text-neutral-300">An error occurred during the precheck step.</span>
-        <Link
+        {/* TODO new-nav : Route not yet created */}
+        {/*<Link
           className="gap-1.5"
           as="button"
           variant="surface"
@@ -244,7 +239,7 @@ export function DeploymentLogsPlaceholder({
         >
           Open precheck
           <Icon iconName="list-check" />
-        </Link>
+        </Link>*/}
       </div>
     )
   }
@@ -259,7 +254,8 @@ export function DeploymentLogsPlaceholder({
       <div className="flex flex-col items-center justify-center gap-4 text-center">
         <ErrorIcon />
         <span className="text-neutral-300">An error occurred during deployment of another service.</span>
-        <Link
+        {/* TODO new-nav : Route not yet created */}
+        {/*<Link
           className="gap-1.5"
           as="button"
           variant="surface"
@@ -271,7 +267,7 @@ export function DeploymentLogsPlaceholder({
         >
           Open pipeline
           <Icon iconName="timeline" />
-        </Link>
+        </Link>*/}
       </div>
     )
   }

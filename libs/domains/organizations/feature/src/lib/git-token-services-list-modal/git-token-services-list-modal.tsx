@@ -136,7 +136,7 @@ export function GitTokenServicesListModal({
                                   <Link
                                     color="brand"
                                     onClick={() => onClose()}
-                                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/application/$serviceId"
+                                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId"
                                     params={{
                                       organizationId,
                                       environmentId: environment.environment_id,

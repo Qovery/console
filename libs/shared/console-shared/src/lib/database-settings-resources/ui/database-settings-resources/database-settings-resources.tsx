@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type Database } from '@qovery/domains/services/data-access'
-import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Callout, ExternalLink, Icon, InputText, Link, inputSizeUnitRules } from '@qovery/shared/ui'
 import SettingsResourcesInstanceTypesFeature from '../../feature/settings-resources-instance-types-feature/setting-resources-instance-types-feature'
 
@@ -78,11 +77,8 @@ export function DatabaseSettingsResources({
                         vCPU.{' '}
                         {clusterId && (
                           <Link
-                            to={
-                              CLUSTER_URL(organizationId, clusterId) +
-                              CLUSTER_SETTINGS_URL +
-                              CLUSTER_SETTINGS_RESOURCES_URL
-                            }
+                            to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+                            params={{ organizationId, clusterId }}
                             size="xs"
                           >
                             Edit node
@@ -117,11 +113,8 @@ export function DatabaseSettingsResources({
                         MiB.{' '}
                         {clusterId && (
                           <Link
-                            to={
-                              CLUSTER_URL(organizationId, clusterId) +
-                              CLUSTER_SETTINGS_URL +
-                              CLUSTER_SETTINGS_RESOURCES_URL
-                            }
+                            to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+                            params={{ organizationId, clusterId }}
                             size="xs"
                           >
                             Edit node

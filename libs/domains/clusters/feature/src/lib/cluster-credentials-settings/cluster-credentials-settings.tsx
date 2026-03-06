@@ -3,13 +3,7 @@ import { type CloudProviderEnum, type ClusterCredentials } from 'qovery-typescri
 import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
-import {
-  CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
-  CLUSTER_SETTINGS_URL,
-  CLUSTER_URL,
-  SETTINGS_CREDENTIALS_URL,
-  SETTINGS_URL,
-} from '@qovery/shared/routes'
+import { CLUSTER_SETTINGS_IMAGE_REGISTRY_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Callout, ExternalLink, Icon, InputSelect, Link, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import { ClusterCredentialsModal } from '../cluster-credentials-modal/cluster-credentials-modal'
 
@@ -94,7 +88,12 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting }: Cluster
             )}
           />
 
-          <Link color="brand" to={`${SETTINGS_URL(organizationId)}${SETTINGS_CREDENTIALS_URL}`} className="flex gap-1">
+          <Link
+            color="brand"
+            to="/organization/$organizationId/settings/cloud-credentials"
+            params={{ organizationId }}
+            className="flex gap-1"
+          >
             See and edit all Cloud credentials
             <Icon iconName="key" iconStyle="regular" />
           </Link>

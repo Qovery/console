@@ -142,9 +142,10 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   class="flex min-w-0 shrink flex-col pr-2"
                 >
                   <a
-                    class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm hover:underline inline max-w-max truncate"
+                    class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm inline max-w-max truncate"
                     data-state="closed"
-                    to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/services/general"
+                    params="[object Object]"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId"
                   >
                     gcp
                   </a>
@@ -177,7 +178,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <a
                 class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-8 px-2.5 rounded-full bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral gap-2 whitespace-nowrap text-sm"
                 data-state="closed"
-                to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/services/general"
+                params="[object Object]"
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -226,7 +228,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <a
                 class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-8 px-2.5 rounded-full bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral gap-2 whitespace-nowrap text-sm"
                 data-state="closed"
-                to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/logs"
+                params="[object Object]"
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -271,7 +274,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
             <a
               class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral truncate"
               data-state="closed"
-              to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/cluster/28480911-95f9-48c9-8e58-2685dbfc9004"
+              params="[object Object]"
+              to="/organization/$organizationId/cluster/$clusterId"
             >
               <svg
                 class="shrink-0 mr-2"
@@ -337,9 +341,10 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   class="flex min-w-0 shrink flex-col pr-2"
                 >
                   <a
-                    class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm hover:underline inline max-w-max truncate"
+                    class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm inline max-w-max truncate"
                     data-state="closed"
-                    to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/2fe51760-af0b-4f2f-b752-88a813e1375d/services/general"
+                    params="[object Object]"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId"
                   >
                     my-prod-env
                   </a>
@@ -372,7 +377,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <a
                 class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-8 px-2.5 rounded-full bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral gap-2 whitespace-nowrap text-sm"
                 data-state="closed"
-                to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/2fe51760-af0b-4f2f-b752-88a813e1375d/services/general"
+                params="[object Object]"
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -421,7 +427,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <a
                 class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-8 px-2.5 rounded-full bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral gap-2 whitespace-nowrap text-sm"
                 data-state="closed"
-                to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/2fe51760-af0b-4f2f-b752-88a813e1375d/logs"
+                params="[object Object]"
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -452,7 +459,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
             <a
               class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral truncate"
               data-state="closed"
-              to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/cluster/c531a994-603f-4edf-86cd-bdaea66a46a9"
+              params="[object Object]"
+              to="/organization/$organizationId/cluster/$clusterId"
             >
               <svg
                 class="text-neutral shrink-0 mr-2"
@@ -511,9 +519,10 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   class="flex min-w-0 shrink flex-col pr-2"
                 >
                   <a
-                    class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm hover:underline inline max-w-max truncate"
+                    class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm inline max-w-max truncate"
                     data-state="closed"
-                    to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/0cd5d05e-0839-48ff-be67-ca3f4fcf8250/services/general"
+                    params="[object Object]"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId"
                   >
                     my-dev-env
                   </a>
@@ -546,7 +555,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <a
                 class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-8 px-2.5 rounded-full bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral gap-2 whitespace-nowrap text-sm"
                 data-state="closed"
-                to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/0cd5d05e-0839-48ff-be67-ca3f4fcf8250/services/general"
+                params="[object Object]"
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -595,7 +605,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <a
                 class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-8 px-2.5 rounded-full bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral gap-2 whitespace-nowrap text-sm"
                 data-state="closed"
-                to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/0cd5d05e-0839-48ff-be67-ca3f4fcf8250/logs"
+                params="[object Object]"
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -626,7 +637,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
             <a
               class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral truncate"
               data-state="closed"
-              to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/cluster/c531a994-603f-4edf-86cd-bdaea66a46a9"
+              params="[object Object]"
+              to="/organization/$organizationId/cluster/$clusterId"
             >
               <svg
                 class="text-neutral shrink-0 mr-2"
@@ -685,9 +697,10 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   class="flex min-w-0 shrink flex-col pr-2"
                 >
                   <a
-                    class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm hover:underline inline max-w-max truncate"
+                    class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm inline max-w-max truncate"
                     data-state="closed"
-                    to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/services/general"
+                    params="[object Object]"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId"
                   >
                     fgsdfg-sdfg-sdfg
                   </a>
@@ -720,7 +733,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <a
                 class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-8 px-2.5 rounded-full bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral gap-2 whitespace-nowrap text-sm"
                 data-state="closed"
-                to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/services/general"
+                params="[object Object]"
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -769,7 +783,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <a
                 class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-8 px-2.5 rounded-full bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral gap-2 whitespace-nowrap text-sm"
                 data-state="closed"
-                to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/logs"
+                params="[object Object]"
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -814,7 +829,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
             <a
               class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral truncate"
               data-state="closed"
-              to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/cluster/c531a994-603f-4edf-86cd-bdaea66a46a9"
+              params="[object Object]"
+              to="/organization/$organizationId/cluster/$clusterId"
             >
               <svg
                 class="text-neutral shrink-0 mr-2"

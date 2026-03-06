@@ -2,7 +2,6 @@ import { createFileRoute, useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { EnvironmentMode, useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceList } from '@qovery/domains/services/feature'
-import { SERVICES_NEW_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Heading, Icon, Link, Section, Skeleton, TablePrimitives } from '@qovery/shared/ui'
 
 const { Table } = TablePrimitives

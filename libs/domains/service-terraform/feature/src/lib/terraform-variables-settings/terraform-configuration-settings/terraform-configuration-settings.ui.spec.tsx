@@ -3,15 +3,14 @@ import { useForm } from 'react-hook-form'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { TerraformConfigurationSettings, type TerraformGeneralData } from './terraform-configuration-settings'
 
-jest.mock('react-router-dom', () => {
-  const actual = jest.requireActual('react-router-dom')
+jest.mock('@tanstack/react-router', () => {
   return {
-    ...actual,
+    ...jest.requireActual('@tanstack/react-router'),
     useParams: () => ({
       organizationId: 'org',
       projectId: 'proj',
       environmentId: 'env',
-      applicationId: 'app',
+      serviceId: 'app',
     }),
   }
 })

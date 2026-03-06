@@ -207,7 +207,8 @@ export function EnvironmentDeploymentList() {
                     )
                   )
                   .otherwise(() => null)}
-                <Tooltip content="Pipeline">
+                {/* TODO new-nav : Route not yet created */}
+                {/*<Tooltip content="Pipeline">
                   <Link
                     as="button"
                     color="neutral"
@@ -223,7 +224,7 @@ export function EnvironmentDeploymentList() {
                   >
                     <Icon iconName="timeline" />
                   </Link>
-                </Tooltip>
+                </Tooltip>*/}
               </div>
             </div>
           )

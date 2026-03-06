@@ -29,17 +29,6 @@ import {
   isJobGitSource,
 } from '@qovery/shared/enums'
 import {
-  APPLICATION_SETTINGS_GENERAL_URL,
-  APPLICATION_SETTINGS_URL,
-  APPLICATION_URL,
-  AUDIT_LOGS_PARAMS_URL,
-  DATABASE_SETTINGS_GENERAL_URL,
-  DATABASE_SETTINGS_URL,
-  DATABASE_URL,
-  SERVICES_GENERAL_URL,
-  SERVICES_URL,
-} from '@qovery/shared/routes'
-import {
   ActionToolbar,
   DropdownMenu,
   Icon,
@@ -799,7 +788,10 @@ function MenuOtherActions({
                 serviceType: service.serviceType,
                 skipDestroy,
               })
-              navigate({ to: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL })
+              navigate({
+                to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+                params: { organizationId, projectId, environmentId },
+              })
             } catch (error) {
               console.error(error)
             }
@@ -870,12 +862,14 @@ function MenuOtherActions({
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
           <Link
             className="gap-0"
-            to={AUDIT_LOGS_PARAMS_URL(organizationId, {
+            to="/organization/$organizationId/audit-logs"
+            params={{ organizationId }}
+            search={{
               targetId: service.id,
               targetType: service.serviceType,
               projectId,
               environmentId,
-            })}
+            }}
           >
             See audit logs
           </Link>
@@ -886,26 +880,8 @@ function MenuOtherActions({
         <DropdownMenu.Item icon={<Icon iconName="gear" />} asChild>
           <Link
             className="gap-0"
-            to={match(service?.serviceType)
-              .with(
-                'DATABASE',
-                () =>
-                  `${DATABASE_URL(
-                    organizationId,
-                    projectId,
-                    environmentId,
-                    service.id
-                  )}${DATABASE_SETTINGS_URL}${DATABASE_SETTINGS_GENERAL_URL}`
-              )
-              .otherwise(
-                () =>
-                  `${APPLICATION_URL(
-                    organizationId,
-                    projectId,
-                    environmentId,
-                    service.id
-                  )}${APPLICATION_SETTINGS_URL}${APPLICATION_SETTINGS_GENERAL_URL}`
-              )}
+            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings"
+            params={{ organizationId, projectId, environmentId, serviceId: service.id }}
           >
             Open settings
           </Link>
@@ -956,9 +932,9 @@ export function ServiceActionToolbar({
           <Tooltip content="Logs">
             <ActionToolbar.Button asChild>
               <Link
-                to="/organization/$orgnizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
                 params={{
-                  orgnizationId: environment.organization.id,
+                  organizationId: environment.organization.id,
                   projectId: environment.project.id,
                   environmentId: environment.id,
                   serviceId: service.id,
