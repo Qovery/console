@@ -1,16 +1,13 @@
 import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
-import {
-  GitBranchSettings,
-  GitProviderSetting,
-  GitPublicRepositorySettings,
-  GitRepositorySetting,
-  GitTokenCreateEditModal,
-  isGitTokenExpired,
-  useGitTokens,
-} from '@qovery/domains/organizations/feature'
 import { Button, Callout, Icon, useModal } from '@qovery/shared/ui'
-import ConfirmationGitModal from '../confirmation-git-modal/confirmation-git-modal'
+import GitBranchSettings from '../git-branch-settings/git-branch-settings'
+import GitProviderSetting from '../git-provider-setting/git-provider-setting'
+import GitPublicRepositorySettings from '../git-public-repository-settings/git-public-repository-settings'
+import GitRepositorySetting from '../git-repository-setting/git-repository-setting'
+import GitTokenCreateEditModal from '../git-token-create-edit-modal/git-token-create-edit-modal'
+import { isGitTokenExpired, useGitTokens } from '../hooks/use-git-tokens/use-git-tokens'
+import ConfirmationGitModal from './confirmation-git-modal/confirmation-git-modal'
 
 export interface GitRepositorySettingsProps {
   gitDisabled: boolean

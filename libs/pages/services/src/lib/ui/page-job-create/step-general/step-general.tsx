@@ -7,16 +7,14 @@ import { match } from 'ts-pattern'
 import {
   AnnotationSetting,
   ContainerRegistryCreateEditModal,
+  EditGitRepositorySettingsFeature,
+  GitRepositorySettings,
   LabelSetting,
 } from '@qovery/domains/organizations/feature'
 import { type Job } from '@qovery/domains/services/data-access'
 import { AutoDeploySetting, BuildSettings, GeneralSetting, JobGeneralSettings } from '@qovery/domains/services/feature'
 import { serviceTemplates } from '@qovery/domains/services/feature'
-import {
-  EditGitRepositorySettingsFeature,
-  EntrypointCmdInputs,
-  GitRepositorySettings,
-} from '@qovery/shared/console-shared'
+import { EntrypointCmdInputs } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
@@ -163,7 +161,9 @@ export function StepGeneral(props: StepGeneralProps) {
                 },
               })
             }
-            renderEditGitSettings={() => <EditGitRepositorySettingsFeature />}
+            renderEditGitSettings={() => (
+              <EditGitRepositorySettingsFeature organizationId={props.organization?.id ?? ''} />
+            )}
             renderGitRepositorySettings={({ organizationId, rootPathLabel, rootPathHint }) => (
               <GitRepositorySettings
                 gitDisabled={false}

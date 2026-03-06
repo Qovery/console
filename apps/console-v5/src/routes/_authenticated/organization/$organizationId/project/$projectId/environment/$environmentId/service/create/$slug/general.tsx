@@ -2,10 +2,11 @@ import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import {
   AnnotationSetting,
   ContainerRegistryCreateEditModal,
+  GitRepositorySettings,
   LabelSetting,
 } from '@qovery/domains/organizations/feature'
 import { ApplicationContainerStepGeneral, GeneralContainerSettings } from '@qovery/domains/services/feature'
-import { EntrypointCmdInputs, GitRepositorySettings } from '@qovery/shared/console-shared'
+import { EntrypointCmdInputs } from '@qovery/shared/console-shared'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { applicationContainerCreateParamsSchema } from '@qovery/shared/router'
 import { useModal } from '@qovery/shared/ui'

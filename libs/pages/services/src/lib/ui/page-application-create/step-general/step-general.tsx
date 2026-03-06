@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import {
   AnnotationSetting,
   ContainerRegistryCreateEditModal,
+  GitRepositorySettings,
   LabelSetting,
 } from '@qovery/domains/organizations/feature'
 import {
@@ -15,7 +16,7 @@ import {
   GeneralSetting,
 } from '@qovery/domains/services/feature'
 import { serviceTemplates } from '@qovery/domains/services/feature'
-import { EntrypointCmdInputs, GitRepositorySettings } from '@qovery/shared/console-shared'
+import { EntrypointCmdInputs } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'

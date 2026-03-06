@@ -5,6 +5,8 @@ import { match } from 'ts-pattern'
 import {
   AnnotationSetting,
   ContainerRegistryCreateEditModal,
+  EditGitRepositorySettings,
+  GitRepositorySettings,
   LabelSetting,
 } from '@qovery/domains/organizations/feature'
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
@@ -15,13 +17,8 @@ import {
   GeneralSetting,
   JobGeneralSettings,
 } from '@qovery/domains/services/feature'
-import {
-  EditGitRepositorySettingsFeature,
-  EntrypointCmdInputs,
-  GitRepositorySettings,
-  SettingsHeading,
-} from '@qovery/shared/console-shared'
-import { ServiceTypeEnum, isJobGitSource } from '@qovery/shared/enums'
+import { EntrypointCmdInputs, SettingsHeading } from '@qovery/shared/console-shared'
+import { ServiceTypeEnum, isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import { Button, Callout, Heading, Icon, InputSelect, InputText, Section, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
@@ -177,7 +174,12 @@ export function PageSettingsGeneral({
                       },
                     })
                   }
-                  renderEditGitSettings={() => <EditGitRepositorySettingsFeature />}
+                  renderEditGitSettings={() => (
+                    <EditGitRepositorySettings
+                      organizationId={organizationId}
+                      gitRepository={isJobGitSource(job.source) ? job.source.docker?.git_repository : undefined}
+                    />
+                  )}
                   renderGitRepositorySettings={({ organizationId, rootPathLabel, rootPathHint }) => (
                     <GitRepositorySettings
                       gitDisabled={false}
@@ -190,7 +192,9 @@ export function PageSettingsGeneral({
                 <Section className="gap-4">
                   <Heading>Source</Heading>
                   {isJobGitSource(job.source) ? (
-                    <EditGitRepositorySettingsFeature
+                    <EditGitRepositorySettings
+                      organizationId={organizationId}
+                      gitRepository={job.source.docker?.git_repository}
                       rootPathLabel={match(job.job_type === 'LIFECYCLE' ? job.schedule.lifecycle_type : undefined)
                         .with('CLOUDFORMATION', () => 'Template folder path')
                         .with('TERRAFORM', () => 'Manifest folder path')
@@ -232,7 +236,7 @@ export function PageSettingsGeneral({
               <>
                 <Section className="gap-4">
                   <Heading>Source</Heading>
-                  <EditGitRepositorySettingsFeature />
+                  <EditGitRepositorySettings organizationId={organizationId} gitRepository={app.git_repository} />
                 </Section>
                 <Section className="gap-4">
                   <Heading>Build and deploy</Heading>
@@ -251,7 +255,9 @@ export function PageSettingsGeneral({
               <>
                 <Section className="gap-4">
                   <Heading>Source</Heading>
-                  <EditGitRepositorySettingsFeature
+                  <EditGitRepositorySettings
+                    organizationId={organizationId}
+                    gitRepository={terraform.terraform_files_source?.git?.git_repository}
                     rootPathLabel="Terraform root folder path"
                     rootPathHint="Provide the folder path where the Terraform code is located in the repository."
                   />
@@ -302,7 +308,10 @@ export function PageSettingsGeneral({
                   <SourceSetting disabled />
                   {watchFieldProvider === 'GIT' && (
                     <div className="mt-3">
-                      <EditGitRepositorySettingsFeature />
+                      <EditGitRepositorySettings
+                        organizationId={organizationId}
+                        gitRepository={isHelmGitSource(helm.source) ? helm.source.git?.git_repository : undefined}
+                      />
                     </div>
                   )}
                 </Section>
