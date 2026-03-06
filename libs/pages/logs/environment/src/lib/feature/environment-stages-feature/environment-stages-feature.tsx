@@ -6,7 +6,7 @@ import {
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
 import { match } from 'ts-pattern'
@@ -14,9 +14,11 @@ import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
 import { useDeploymentHistory, useDeploymentHistoryExecutionId } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
+import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
   Banner,
+  Button,
   Icon,
   Indicator,
   LoaderSpinner,
@@ -70,6 +72,7 @@ export function EnvironmentStagesFeature({
 
   const [hideSkipped, setHideSkipped] = useState<CheckedState>(true)
   const navigate = useNavigate()
+  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
 
   const getServiceById = (id: string) => services.find((service) => service.id === id) as AnyService
   const getServiceFromDeploymentHistoryId = (id: string) =>
@@ -108,6 +111,8 @@ export function EnvironmentStagesFeature({
       )
       .otherwise(() => false)
 
+  const hasError = deploymentStages?.some((stage) => stage.stage?.status === 'ERROR')
+
   return (
     <div className="h-full w-full bg-neutral-800">
       {showBannerNew && (
@@ -133,6 +138,25 @@ export function EnvironmentStagesFeature({
         hideSkipped={hideSkipped}
         setHideSkipped={setHideSkipped}
         deploymentHistory={deploymentHistory}
+        banner={
+          hasError ? (
+            <Banner
+              color="brand"
+              buttonLabel="Launch diagnostic"
+              buttonIconRight="angle-right"
+              onClickButton={() => {
+                const message = 'Why did my deployment fail?'
+                setDevopsCopilotOpen(true)
+                sendMessageRef?.current?.(message)
+              }}
+            >
+              <span className="flex items-center gap-1.5">
+                <Icon iconName="sparkles" />
+                AI Copilot identified likely causes and fixes for this deployment error
+              </span>
+            </Banner>
+          ) : undefined
+        }
       >
         <>
           {matchServicesWithStatuses(deploymentStages)?.map((s) => {

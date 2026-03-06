@@ -46,7 +46,7 @@ export function useMessageSubmission({ refs, state, actions }: UseMessageSubmiss
   const fullContentRef = useRef('')
 
   const handleSendMessage = useCallback(
-    async (messageOverride?: string) => {
+    async (messageOverride?: string, newThread = false) => {
       refs.controller.current = new AbortController()
       lastSubmitResult.current = null
       fullContentRef.current = ''
@@ -76,7 +76,7 @@ export function useMessageSubmission({ refs, state, actions }: UseMessageSubmiss
         owner: 'user',
         timestamp: Date.now(),
       }
-      const updatedThread = [...state.thread, newMessage]
+      const updatedThread = newThread ? [newMessage] : [...state.thread, newMessage]
       actions.setThread(updatedThread)
 
       actions.setInputMessage('')
@@ -97,7 +97,7 @@ export function useMessageSubmission({ refs, state, actions }: UseMessageSubmiss
           state.userId,
           trimmedInputMessage,
           token,
-          state.threadId,
+          newThread ? undefined : state.threadId,
           contextPayload,
           (chunk) => {
             const parsedChunk = parseStreamChunk(chunk, fullContentRef.current)
