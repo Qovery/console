@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { GeneralSettingsPage } from '@qovery/domains/service-settings/feature'
+import { useOrganization } from '@qovery/domains/organizations/feature'
+import { ServiceGeneralSettings } from '@qovery/domains/service-settings/feature'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/general'
@@ -9,10 +10,13 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { organizationId, projectId, environmentId, serviceId } = Route.useParams()
+  const { data: organization } = useOrganization({ organizationId, suspense: true })
+
+  if (!organization) return null
 
   return (
-    <GeneralSettingsPage
-      organizationId={organizationId}
+    <ServiceGeneralSettings
+      organization={organization}
       projectId={projectId}
       environmentId={environmentId}
       serviceId={serviceId}

@@ -1,3 +1,4 @@
+import { type Organization } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -6,7 +7,6 @@ import {
   ContainerRegistryCreateEditModal,
   useAnnotationsGroups,
   useLabelsGroups,
-  useOrganization,
 } from '@qovery/domains/organizations/feature'
 import {
   type ServiceGeneralData,
@@ -25,8 +25,8 @@ import { HelmGeneralSettings } from './helm-general-settings/helm-general-settin
 import { JobGeneralSettings } from './job-general-settings/job-general-settings'
 import { TerraformGeneralSettings } from './terraform-general-settings/terraform-general-settings'
 
-export interface GeneralSettingsPageProps {
-  organizationId: string
+export interface ServiceGeneralSettingsProps {
+  organization: Organization
   projectId: string
   environmentId: string
   serviceId: string
@@ -38,29 +38,33 @@ const GeneralSettingsFallback = () => (
   </div>
 )
 
-export function GeneralSettingsPage(props: GeneralSettingsPageProps) {
+export function ServiceGeneralSettings(props: ServiceGeneralSettingsProps) {
   return (
     <Suspense fallback={<GeneralSettingsFallback />}>
-      <GeneralSettingsPageContent {...props} />
+      <ServiceGeneralSettingsContent {...props} />
     </Suspense>
   )
 }
 
-function GeneralSettingsPageContent({ organizationId, projectId, environmentId, serviceId }: GeneralSettingsPageProps) {
+function ServiceGeneralSettingsContent({
+  organization,
+  projectId,
+  environmentId,
+  serviceId,
+}: ServiceGeneralSettingsProps) {
   useDocumentTitle('General - Service settings')
   const { openModal, closeModal } = useModal()
 
-  const { data: organization } = useOrganization({ organizationId, suspense: true })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
-  const { data: labelsGroups = [] } = useLabelsGroups({ organizationId, suspense: true })
-  const { data: annotationsGroups = [] } = useAnnotationsGroups({ organizationId, suspense: true })
+  const { data: labelsGroups = [] } = useLabelsGroups({ organizationId: organization.id, suspense: true })
+  const { data: annotationsGroups = [] } = useAnnotationsGroups({ organizationId: organization.id, suspense: true })
   const { data: databaseConfigurations, isLoading: isDatabaseVersionLoading } = useListDatabaseConfigurations({
     environmentId,
     suspense: true,
     enabled: service?.serviceType === 'DATABASE',
   })
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
-    organizationId,
+    organizationId: organization.id,
     projectId,
     environmentId,
   })
@@ -109,7 +113,7 @@ function GeneralSettingsPageContent({ organizationId, projectId, environmentId, 
 
   const openContainerRegistryCreateEditModal = () => {
     openModal({
-      content: <ContainerRegistryCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+      content: <ContainerRegistryCreateEditModal organizationId={organization.id} onClose={closeModal} />,
       options: {
         fakeModal: true,
         width: 680,
@@ -176,4 +180,4 @@ function GeneralSettingsPageContent({ organizationId, projectId, environmentId, 
   )
 }
 
-export default GeneralSettingsPage
+export default ServiceGeneralSettings
