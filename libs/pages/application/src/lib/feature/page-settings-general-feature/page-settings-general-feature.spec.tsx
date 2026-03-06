@@ -13,12 +13,13 @@ import {
   terraformFactoryMock,
 } from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import PageSettingsGeneralFeature, {
+import PageSettingsGeneralFeature from './page-settings-general-feature'
+import {
   handleGitApplicationSubmit,
   handleHelmSubmit,
   handleJobSubmit,
   handleTerraformSubmit,
-} from './page-settings-general-feature'
+} from './page-settings-general-payloads'
 
 describe('PageSettingsGeneralFeature', () => {
   let application: Application

@@ -1,5 +1,5 @@
+import { useParams } from '@tanstack/react-router'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { Icon, InputSelect, Tooltip, useModal } from '@qovery/shared/ui'
 import { useLabelsGroups } from '../hooks/use-labels-groups/use-labels-groups'
 import { LabelCreateEditModal } from '../label-create-edit-modal/label-create-edit-modal'
@@ -10,7 +10,7 @@ export interface LabelSettingProps {
 
 export function LabelSetting({ filterPropagateToCloudProvider = false }: LabelSettingProps = {}) {
   const { control } = useFormContext()
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { data: labelsGroups = [] } = useLabelsGroups({ organizationId })
   const { openModal, closeModal } = useModal()
 

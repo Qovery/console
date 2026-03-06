@@ -1,14 +1,14 @@
 import { BuildModeEnum, TerraformAutoDeployConfigTerraformActionEnum } from 'qovery-typescript-axios'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
+import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
+import { joinArgsWithQuotes } from '@qovery/shared/util-js'
 import {
   type DatabaseGeneralData,
   type HelmGeneralData,
   type TerraformGeneralData,
-} from '@qovery/domains/services/feature'
-import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
-import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { joinArgsWithQuotes } from '@qovery/shared/util-js'
+} from './service-general-settings-payloads'
 
 export type ServiceGeneralData =
   | ApplicationGeneralData

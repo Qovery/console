@@ -4,6 +4,9 @@ import {
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
+import { type ServiceGeneralData } from './service-general-default-values'
 import {
   type DatabaseGeneralData,
   type HelmGeneralData,
@@ -13,10 +16,7 @@ import {
   handleHelmSubmit,
   handleJobSubmit,
   handleTerraformSubmit,
-} from '@qovery/domains/services/feature'
-import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { buildEditServicePayload } from '@qovery/shared/util-services'
-import { type ServiceGeneralData } from './service-general-default-values'
+} from './service-general-settings-payloads'
 
 export function buildServiceGeneralPayload({
   service,
