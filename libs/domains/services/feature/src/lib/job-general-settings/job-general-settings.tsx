@@ -1,11 +1,10 @@
 import { type Organization } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum, type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { BlockContent, Icon, InputSelect } from '@qovery/shared/ui'
-import { GeneralContainerSettings } from '../../general-container-settings/ui/general-container-settings'
-import EditGitRepositorySettingsFeature from '../../git-repository-settings/feature/edit-git-repository-settings-feature/edit-git-repository-settings-feature'
-import GitRepositorySettings from '../../git-repository-settings/ui/git-repository-settings/git-repository-settings'
+import { GeneralContainerSettings } from '../general-container-settings/general-container-settings'
 
 export interface JobGeneralSettingProps {
   organization?: Organization
@@ -13,6 +12,13 @@ export interface JobGeneralSettingProps {
   isEdition?: boolean
   rootPathLabel?: string
   rootPathHint?: string
+  openContainerRegistryCreateEditModal?: () => void
+  renderEditGitSettings?: () => ReactNode
+  renderGitRepositorySettings?: (options: {
+    organizationId: string
+    rootPathLabel?: string
+    rootPathHint?: string
+  }) => ReactNode
 }
 
 export function JobGeneralSettings(props: JobGeneralSettingProps) {
@@ -22,7 +28,17 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
   const organizationId = props.organization?.id
 
   const ContainerSettings = ({ isSetting }: { isSetting?: boolean }) => {
-    return <GeneralContainerSettings organization={props.organization} isSetting={isSetting} />
+    if (!organizationId) {
+      return null
+    }
+
+    return (
+      <GeneralContainerSettings
+        organizationId={organizationId}
+        isSetting={isSetting}
+        openContainerRegistryCreateEditModal={props.openContainerRegistryCreateEditModal ?? (() => undefined)}
+      />
+    )
   }
 
   return (
@@ -64,7 +80,7 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
           {watchServiceType === 'APPLICATION' &&
             (props.isEdition ? (
               <div data-testid="git-fields">
-                <EditGitRepositorySettingsFeature />
+                {props.renderEditGitSettings?.()}
                 <BlockContent title="Build & deploy">
                   <InputSelect
                     dataTestId="input-select-mode"
@@ -76,12 +92,11 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
                 </BlockContent>
               </div>
             ) : (
-              <GitRepositorySettings
-                gitDisabled={false}
-                rootPathLabel={props.rootPathLabel}
-                rootPathHint={props.rootPathHint}
-                organizationId={props.organization?.id ?? ''}
-              />
+              props.renderGitRepositorySettings?.({
+                organizationId: props.organization?.id ?? '',
+                rootPathLabel: props.rootPathLabel,
+                rootPathHint: props.rootPathHint,
+              })
             ))}
 
           {watchServiceType === 'CONTAINER' &&

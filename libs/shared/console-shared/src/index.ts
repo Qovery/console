@@ -5,7 +5,6 @@ export * from './lib/github-application-callback/github-application-callback-fea
 export * from './lib/force-run-modal/feature/force-run-modal-feature'
 export * from './lib/force-run-modal/ui/force-run-modal'
 export * from './lib/job-configure-settings/ui/job-configure-settings'
-export * from './lib/job-general-settings/ui/job-general-settings'
 export * from './lib/entrypoint-cmd-inputs/ui/entrypoint-cmd-inputs'
 export * from './lib/flow-create-port/ui/flow-create-port/flow-create-port'
 export * from './lib/flow-create-port/ui/crud-modal/crud-modal'

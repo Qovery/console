@@ -6,21 +6,23 @@ import {
   AnnotationSetting,
   ContainerRegistryCreateEditModal,
   LabelSetting,
-  useContainerImages,
-  useContainerRegistries,
-  useContainerVersions,
 } from '@qovery/domains/organizations/feature'
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { AutoDeploySection, GeneralContainerSettings, GeneralSetting } from '@qovery/domains/services/feature'
+import {
+  AutoDeploySection,
+  GeneralContainerSettings,
+  GeneralSetting,
+  JobGeneralSettings,
+} from '@qovery/domains/services/feature'
 import {
   EditGitRepositorySettingsFeature,
   EntrypointCmdInputs,
-  JobGeneralSettings,
+  GitRepositorySettings,
   SettingsHeading,
 } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isJobGitSource } from '@qovery/shared/enums'
-import { Button, Callout, Heading, Icon, InputSelect, InputText, Section } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, InputSelect, InputText, Section, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageSettingsGeneralProps {
@@ -48,24 +50,33 @@ export function PageSettingsGeneral({
   organization,
 }: PageSettingsGeneralProps) {
   const { control, formState, watch } = useFormContext()
+  const { openModal, closeModal } = useModal()
   const organizationId = organization?.id ?? ''
   const watchBuildMode = watch('build_mode')
   const watchFieldProvider = watch('source_provider')
   const isLifecycleJob = service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE'
 
   const ContainerSettings = ({ isSetting }: { isSetting?: boolean }) => {
-    const { data: containerRegistries = [] } = useContainerRegistries({ organizationId })
-
     return (
       <GeneralContainerSettings
         organizationId={organizationId}
-        containerRegistries={containerRegistries}
-        useContainerImages={useContainerImages}
-        useContainerVersions={useContainerVersions}
-        renderCreateRegistryModal={({ organizationId, onClose }) => (
-          <ContainerRegistryCreateEditModal organizationId={organizationId} onClose={onClose} />
-        )}
         isSetting={isSetting}
+        openContainerRegistryCreateEditModal={() =>
+          openModal({
+            content: (
+              <ContainerRegistryCreateEditModal
+                organizationId={organizationId}
+                onClose={() => {
+                  closeModal()
+                }}
+              />
+            ),
+            options: {
+              fakeModal: true,
+              width: 680,
+            },
+          })
+        }
       />
     )
   }
@@ -150,6 +161,31 @@ export function PageSettingsGeneral({
                   isEdition={true}
                   jobType={job.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
                   organization={organization}
+                  openContainerRegistryCreateEditModal={() =>
+                    openModal({
+                      content: (
+                        <ContainerRegistryCreateEditModal
+                          organizationId={organizationId}
+                          onClose={() => {
+                            closeModal()
+                          }}
+                        />
+                      ),
+                      options: {
+                        fakeModal: true,
+                        width: 680,
+                      },
+                    })
+                  }
+                  renderEditGitSettings={() => <EditGitRepositorySettingsFeature />}
+                  renderGitRepositorySettings={({ organizationId, rootPathLabel, rootPathHint }) => (
+                    <GitRepositorySettings
+                      gitDisabled={false}
+                      organizationId={organizationId}
+                      rootPathLabel={rootPathLabel}
+                      rootPathHint={rootPathHint}
+                    />
+                  )}
                 />
                 <Section className="gap-4">
                   <Heading>Source</Heading>

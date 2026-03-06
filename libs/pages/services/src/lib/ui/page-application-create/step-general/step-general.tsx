@@ -7,17 +7,19 @@ import {
   AnnotationSetting,
   ContainerRegistryCreateEditModal,
   LabelSetting,
-  useContainerImages,
-  useContainerRegistries,
-  useContainerVersions,
 } from '@qovery/domains/organizations/feature'
-import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
+import {
+  AutoDeploySetting,
+  BuildSettings,
+  GeneralContainerSettings,
+  GeneralSetting,
+} from '@qovery/domains/services/feature'
 import { serviceTemplates } from '@qovery/domains/services/feature'
-import { EntrypointCmdInputs, GeneralContainerSettings, GitRepositorySettings } from '@qovery/shared/console-shared'
+import { EntrypointCmdInputs, GitRepositorySettings } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import { Button, Heading, Icon, InputSelect, InputText, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputSelect, InputText, Section, useModal } from '@qovery/shared/ui'
 import { findTemplateData } from '../../../feature/page-job-create-feature/page-job-create-feature'
 
 export interface StepGeneralProps {
@@ -28,6 +30,7 @@ export interface StepGeneralProps {
 
 export function StepGeneral(props: StepGeneralProps) {
   const { control, watch, formState } = useFormContext<ApplicationGeneralData>()
+  const { openModal, closeModal } = useModal()
   const { organizationId = '', environmentId = '', projectId = '', slug, option } = useParams()
   const navigate = useNavigate()
   const [openExtraAttributes, setOpenExtraAttributes] = useState(false)
@@ -43,17 +46,25 @@ export function StepGeneral(props: StepGeneralProps) {
   const dataOptionTemplate = option !== 'current' ? findTemplateData(slug, option) : null
 
   const ContainerSettings = ({ organizationId }: { organizationId: string }) => {
-    const { data: containerRegistries = [] } = useContainerRegistries({ organizationId })
-
     return (
       <GeneralContainerSettings
         organizationId={organizationId}
-        containerRegistries={containerRegistries}
-        useContainerImages={useContainerImages}
-        useContainerVersions={useContainerVersions}
-        renderCreateRegistryModal={({ organizationId, onClose }) => (
-          <ContainerRegistryCreateEditModal organizationId={organizationId} onClose={onClose} />
-        )}
+        openContainerRegistryCreateEditModal={() =>
+          openModal({
+            content: (
+              <ContainerRegistryCreateEditModal
+                organizationId={organizationId}
+                onClose={() => {
+                  closeModal()
+                }}
+              />
+            ),
+            options: {
+              fakeModal: true,
+              width: 680,
+            },
+          })
+        }
       />
     )
   }
