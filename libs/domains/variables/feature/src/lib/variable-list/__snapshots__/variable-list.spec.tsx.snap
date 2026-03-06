@@ -9,7 +9,7 @@ exports[`VariableList should match snapshot 1`] = `
       class="flex min-h-0 flex-col gap-4"
     >
       <h3
-        class="text-base font-medium text-neutral"
+        class="text-neutral text-sm font-bold"
       >
         Custom variables
       </h3>
@@ -74,7 +74,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </th>
                 <th
-                  class="h-11 px-4 text-left font-code border-r border-neutral pl-0 group relative flex items-center font-medium"
+                  class="h-11 px-4 text-left font-code border-neutral border-r pl-0 group relative flex items-center font-medium"
                 />
                 <th
                   class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
@@ -162,7 +162,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="divide-y divide-neutral"
             >
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                class="hover:bg-surface-neutral-subtle h-16 items-center grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -193,7 +193,7 @@ exports[`VariableList should match snapshot 1`] = `
                         class="flex items-center truncate"
                       >
                         <span
-                          class="mr-2 inline-flex h-4 items-center rounded bg-surface-info-component px-1 text-2xs font-bold text-info"
+                          class="bg-surface-info-component text-info mr-2 inline-flex h-4 items-center rounded px-1 text-2xs font-bold"
                         >
                           ALIAS
                         </span>
@@ -206,11 +206,11 @@ exports[`VariableList should match snapshot 1`] = `
                       </div>
                     </div>
                     <div
-                      class="flex flex-row gap-1 text-2xs text-neutral-subtle"
+                      class="text-neutral-subtle flex flex-row gap-1 text-2xs"
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-regular fa-arrow-turn-down-right text-2xs text-neutral-subtle"
+                        class="fa-regular fa-arrow-turn-down-right text-neutral-subtle text-2xs"
                       />
                       <span>
                         QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME
@@ -219,7 +219,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-4 py-0 border-r border-neutral pl-0 flex h-full items-center first:relative"
+                  class="px-4 py-0 border-neutral border-r pl-0 flex h-full items-center first:relative"
                 >
                   <button
                     aria-expanded="false"
@@ -255,7 +255,7 @@ exports[`VariableList should match snapshot 1`] = `
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
-                    class="text-sm text-neutral-subtle"
+                    class="text-neutral-subtle text-sm"
                     data-state="closed"
                   >
                     6 months
@@ -264,7 +264,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                class="hover:bg-surface-neutral-subtle h-16 items-center grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -295,7 +295,7 @@ exports[`VariableList should match snapshot 1`] = `
                         class="flex items-center truncate"
                       >
                         <span
-                          class="mr-2 inline-flex h-4 items-center rounded bg-surface-info-component px-1 text-2xs font-bold text-info"
+                          class="bg-surface-info-component text-info mr-2 inline-flex h-4 items-center rounded px-1 text-2xs font-bold"
                         >
                           ALIAS
                         </span>
@@ -308,11 +308,11 @@ exports[`VariableList should match snapshot 1`] = `
                       </div>
                     </div>
                     <div
-                      class="flex flex-row gap-1 text-2xs text-neutral-subtle"
+                      class="text-neutral-subtle flex flex-row gap-1 text-2xs"
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-regular fa-arrow-turn-down-right text-2xs text-neutral-subtle"
+                        class="fa-regular fa-arrow-turn-down-right text-neutral-subtle text-2xs"
                       />
                       <span>
                         QOVERY_OUTPUT_JOB_ZEDE360F7_DB_HOST
@@ -321,7 +321,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-4 py-0 border-r border-neutral pl-0 flex h-full items-center first:relative"
+                  class="px-4 py-0 border-neutral border-r pl-0 flex h-full items-center first:relative"
                 >
                   <button
                     aria-expanded="false"
@@ -357,7 +357,7 @@ exports[`VariableList should match snapshot 1`] = `
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
-                    class="text-sm text-neutral-subtle"
+                    class="text-neutral-subtle text-sm"
                     data-state="closed"
                   >
                     2 months
@@ -366,7 +366,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                class="hover:bg-surface-neutral-subtle h-16 items-center grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -397,7 +397,7 @@ exports[`VariableList should match snapshot 1`] = `
                         class="flex items-center truncate"
                       >
                         <span
-                          class="mr-2 inline-flex h-4 items-center rounded bg-surface-accent1-component px-1 text-2xs font-bold text-accent1"
+                          class="bg-surface-accent1-component text-accent1 mr-2 inline-flex h-4 items-center rounded px-1 text-2xs font-bold"
                         >
                           FILE
                         </span>
@@ -412,7 +412,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-4 py-0 border-r border-neutral pl-0 flex h-full items-center first:relative"
+                  class="px-4 py-0 border-neutral border-r pl-0 flex h-full items-center first:relative"
                 >
                   <button
                     aria-expanded="false"
@@ -437,7 +437,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-regular fa-file-lines ml-0.5 text-neutral-subtle"
+                      class="fa-regular fa-file-lines text-neutral-subtle ml-0.5"
                     />
                     <span
                       class="cursor-pointer truncate hover:underline"
@@ -556,7 +556,7 @@ exports[`VariableList should match snapshot 1`] = `
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
-                    class="text-sm text-neutral-subtle"
+                    class="text-neutral-subtle text-sm"
                     data-state="closed"
                   >
                     6 months
@@ -565,7 +565,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                class="hover:bg-surface-neutral-subtle h-16 items-center grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -606,7 +606,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-4 py-0 border-r border-neutral pl-0 flex h-full items-center first:relative"
+                  class="px-4 py-0 border-neutral border-r pl-0 flex h-full items-center first:relative"
                 >
                   <button
                     aria-expanded="false"
@@ -663,7 +663,7 @@ exports[`VariableList should match snapshot 1`] = `
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
-                    class="text-sm text-neutral-subtle"
+                    class="text-neutral-subtle text-sm"
                     data-state="closed"
                   >
                     10 months
@@ -672,7 +672,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                class="hover:bg-surface-neutral-subtle h-16 items-center grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -713,7 +713,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-4 py-0 border-r border-neutral pl-0 flex h-full items-center first:relative"
+                  class="px-4 py-0 border-neutral border-r pl-0 flex h-full items-center first:relative"
                 >
                   <button
                     aria-expanded="false"
@@ -863,7 +863,7 @@ exports[`VariableList should match snapshot 1`] = `
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
-                    class="text-sm text-neutral-subtle"
+                    class="text-neutral-subtle text-sm"
                     data-state="closed"
                   >
                     6 months
@@ -872,7 +872,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                class="hover:bg-surface-neutral-subtle h-16 items-center grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -963,7 +963,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-4 py-0 border-r border-neutral pl-0 flex h-full items-center first:relative"
+                  class="px-4 py-0 border-neutral border-r pl-0 flex h-full items-center first:relative"
                 >
                   <button
                     aria-expanded="false"
@@ -1113,7 +1113,7 @@ exports[`VariableList should match snapshot 1`] = `
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
-                    class="text-sm text-neutral-subtle"
+                    class="text-neutral-subtle text-sm"
                     data-state="closed"
                   >
                     2 days
@@ -1122,7 +1122,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                class="hover:bg-surface-neutral-subtle h-16 items-center grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -1172,7 +1172,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-4 py-0 border-r border-neutral pl-0 flex h-full items-center first:relative"
+                  class="px-4 py-0 border-neutral border-r pl-0 flex h-full items-center first:relative"
                 >
                   <button
                     aria-expanded="false"
@@ -1229,7 +1229,7 @@ exports[`VariableList should match snapshot 1`] = `
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
-                    class="text-sm text-neutral-subtle"
+                    class="text-neutral-subtle text-sm"
                     data-state="closed"
                   >
                     5 months
@@ -1238,7 +1238,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                class="hover:bg-surface-neutral-subtle h-16 items-center grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -1269,7 +1269,7 @@ exports[`VariableList should match snapshot 1`] = `
                         class="flex items-center truncate"
                       >
                         <span
-                          class="mr-2 inline-flex h-4 items-center rounded bg-surface-info-component px-1 text-2xs font-bold text-info"
+                          class="bg-surface-info-component text-info mr-2 inline-flex h-4 items-center rounded px-1 text-2xs font-bold"
                         >
                           ALIAS
                         </span>
@@ -1282,11 +1282,11 @@ exports[`VariableList should match snapshot 1`] = `
                       </div>
                     </div>
                     <div
-                      class="flex flex-row gap-1 text-2xs text-neutral-subtle"
+                      class="text-neutral-subtle flex flex-row gap-1 text-2xs"
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-regular fa-arrow-turn-down-right text-2xs text-neutral-subtle"
+                        class="fa-regular fa-arrow-turn-down-right text-neutral-subtle text-2xs"
                       />
                       <span>
                         FOO
@@ -1295,7 +1295,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-4 py-0 border-r border-neutral pl-0 flex h-full items-center first:relative"
+                  class="px-4 py-0 border-neutral border-r pl-0 flex h-full items-center first:relative"
                 >
                   <button
                     aria-expanded="false"
@@ -1331,7 +1331,7 @@ exports[`VariableList should match snapshot 1`] = `
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
-                    class="text-sm text-neutral-subtle"
+                    class="text-neutral-subtle text-sm"
                     data-state="closed"
                   >
                     2 months
@@ -1348,7 +1348,7 @@ exports[`VariableList should match snapshot 1`] = `
       class="flex min-h-0 flex-col gap-4"
     >
       <h3
-        class="text-base font-medium text-neutral"
+        class="text-neutral text-sm font-bold"
       >
         Built-in variables
       </h3>
@@ -1397,7 +1397,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </th>
                 <th
-                  class="h-11 px-4 text-left font-code border-r border-neutral pl-0 group relative flex items-center font-medium"
+                  class="h-11 px-4 text-left font-code border-neutral border-r pl-0 group relative flex items-center font-medium"
                 />
                 <th
                   class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
@@ -1422,7 +1422,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </th>
                 <th
-                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium opacity-0"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
                 >
                   <div
                     class="relative inline-block"
@@ -1463,7 +1463,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="divide-y divide-neutral"
             >
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_50px_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)]"
+                class="hover:bg-surface-neutral-subtle h-16 items-center grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_50px_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)]"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -1488,7 +1488,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-4 py-0 border-r border-neutral pl-0 flex h-full items-center first:relative"
+                  class="px-4 py-0 border-neutral border-r pl-0 flex h-full items-center first:relative"
                 >
                   <button
                     aria-expanded="false"
@@ -1530,7 +1530,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative opacity-0"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <a
                     class="flex items-center gap-2 text-sm font-medium"
@@ -1543,7 +1543,7 @@ exports[`VariableList should match snapshot 1`] = `
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <span
-                    class="text-sm text-neutral-subtle"
+                    class="text-neutral-subtle text-sm"
                     data-state="closed"
                   >
                     13 days
