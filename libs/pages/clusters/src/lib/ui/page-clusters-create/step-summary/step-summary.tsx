@@ -307,6 +307,33 @@ export function StepSummary(props: StepSummaryProps) {
 
                   <div className="space-y-4">
                     <div>
+                      <span className="text-sm font-bold text-neutral-400">Infrastructure charts source</span>
+                      <ul className="list-none space-y-2 text-sm text-neutral-400">
+                        <li>
+                          <span className="font-medium">Repository URL: </span>
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.eks_anywhere_parameters
+                              ?.git_repository?.url
+                          }
+                        </li>
+                        <li>
+                          <span className="font-medium">Branch: </span>
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.eks_anywhere_parameters
+                              ?.git_repository?.branch
+                          }
+                        </li>
+                        <li>
+                          <span className="font-medium">YAML file path: </span>
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.eks_anywhere_parameters
+                              ?.yaml_file_path
+                          }
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
                       <span className="text-sm font-bold text-neutral-400">Cert Manager</span>
                       <ul className="list-none space-y-2 text-sm text-neutral-400">
                         <li>
