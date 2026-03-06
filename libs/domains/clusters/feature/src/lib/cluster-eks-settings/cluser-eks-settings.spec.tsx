@@ -13,12 +13,13 @@ describe('ClusterEksSettings', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should have 3 sections', () => {
+  it('should have 4 sections', () => {
     const { baseElement } = render(<ClusterEksSettings />)
     const sections = baseElement.querySelectorAll('section')
-    expect(sections).toHaveLength(3)
-    expect(sections[0].querySelector('h2')?.textContent).toBe('Cert Manager')
-    expect(sections[1].querySelector('h2')?.textContent).toBe('MetalLB')
-    expect(sections[2].querySelector('h2')?.textContent).toBe('Nginx')
+    expect(sections).toHaveLength(4)
+    expect(sections[0].querySelector('h2')?.textContent).toBe('Infrastructure charts source')
+    expect(sections[1].querySelector('h2')?.textContent).toBe('Cert Manager')
+    expect(sections[2].querySelector('h2')?.textContent).toBe('MetalLB')
+    expect(sections[3].querySelector('h2')?.textContent).toBe('Nginx')
   })
 })

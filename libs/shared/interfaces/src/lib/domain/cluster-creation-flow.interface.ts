@@ -1,6 +1,7 @@
 import {
   type CloudProviderEnum,
   type ClusterFeatureKarpenterParameters,
+  type ClusterInfrastructureChartsParameters,
   type ClusterKeda,
 } from 'qovery-typescript-axios'
 
@@ -55,21 +56,7 @@ export interface ClusterResourcesData {
   disk_throughput?: number
   karpenter?: KarpenterData
   scw_control_plane?: SCWControlPlaneFeatureType
-  infrastructure_charts_parameters?: {
-    cert_manager_parameters?: {
-      kubernetes_namespace?: string
-    }
-    metal_lb_parameters?: {
-      ip_address_pools?: string[]
-    }
-    nginx_parameters?: {
-      replica_count?: number
-      default_ssl_certificate?: string
-      publish_status_address?: string
-      annotation_metal_lb_load_balancer_ips?: string
-      annotation_external_dns_kubernetes_target?: string
-    }
-  }
+  infrastructure_charts_parameters?: ClusterInfrastructureChartsParameters
 }
 
 // XXX: Necessary to have `eks_subnets` for Karpenter migration
