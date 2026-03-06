@@ -4,13 +4,21 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseDefaultAdvancedSettingsProps {
   serviceType: Exclude<ServiceType, 'DATABASE'>
+  enabled?: boolean
+  suspense?: boolean
 }
 
-export function useDefaultAdvancedSettings({ serviceType }: UseDefaultAdvancedSettingsProps) {
+export function useDefaultAdvancedSettings({
+  serviceType,
+  enabled = true,
+  suspense = false,
+}: UseDefaultAdvancedSettingsProps) {
   return useQuery({
     ...queries.services.defaultAdvancedSettings({
       serviceType,
     }),
+    enabled,
+    suspense,
   })
 }
 

@@ -1,8 +1,21 @@
 import { type Application } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import * as hooks from '../hooks/use-edit-advanced-settings/use-edit-advanced-settings'
-import { AdvancedSettings } from './advanced-settings'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { AdvancedSettings } from './service-advanced-settings'
+
+const mockMutateEdit = jest.fn()
+
+jest.mock('../hooks/use-advanced-settings/use-advanced-settings', () => ({
+  useAdvancedSettings: () => ({ data: undefined }),
+}))
+
+jest.mock('../hooks/use-default-advanced-settings/use-default-advanced-settings', () => ({
+  useDefaultAdvancedSettings: () => ({ data: undefined }),
+}))
+
+jest.mock('../hooks/use-edit-advanced-settings/use-edit-advanced-settings', () => ({
+  useEditAdvancedSettings: () => ({ mutate: mockMutateEdit, isLoading: false }),
+}))
 
 const mockApplication: Application = applicationFactoryMock(1)[0]
 
@@ -25,6 +38,10 @@ const defaultAdvancedSettings: Record<string, AdvancedSettingsType> = {
 }
 
 describe('AdvancedSettings', () => {
+  beforeEach(() => {
+    mockMutateEdit.mockClear()
+  })
+
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
       <AdvancedSettings
@@ -35,7 +52,8 @@ describe('AdvancedSettings', () => {
     )
     expect(baseElement).toBeTruthy()
   })
-  it('should have three inputs', () => {
+
+  it('should have five textbox inputs', () => {
     renderWithProviders(
       <AdvancedSettings
         service={mockApplication}
@@ -43,25 +61,10 @@ describe('AdvancedSettings', () => {
         defaultAdvancedSettings={defaultAdvancedSettings}
       />
     )
-    expect(screen.getAllByRole('textbox').length).toBe(5)
-  })
-  // TODO: flaky test to fix
-  it.skip('should show the sticky action bar if form dirty', async () => {
-    const { userEvent } = renderWithProviders(
-      <AdvancedSettings
-        service={mockApplication}
-        advancedSettings={advancedSettings}
-        defaultAdvancedSettings={defaultAdvancedSettings}
-      />
-    )
-    const input = screen.getByLabelText('deployment.affinity.node.required')
-    await userEvent.clear(input)
-    await userEvent.type(input, 'hello')
-
-    await waitFor(() => expect(screen.getByTestId('sticky-action-form-toaster')).toHaveClass('visible'))
+    expect(screen.getAllByRole('textbox')).toHaveLength(5)
   })
 
-  it('should disabled the form submit', async () => {
+  it('should disable the form submit when required field is cleared', async () => {
     const { userEvent, container } = renderWithProviders(
       <AdvancedSettings
         service={mockApplication}
@@ -74,7 +77,6 @@ describe('AdvancedSettings', () => {
       await userEvent.type(input, '79')
       await userEvent.clear(input)
     }
-
     expect(screen.getByTestId('submit-button')).toBeDisabled()
   })
 
@@ -91,12 +93,11 @@ describe('AdvancedSettings', () => {
       await userEvent.type(input, '79')
       await userEvent.clear(input)
     }
-
     expect(screen.getByTestId('submit-button')).toBeEnabled()
   })
 
-  it('should display only overridden settings', async () => {
-    const advancedSettings = {
+  it('should display only overridden settings when toggle is on', async () => {
+    const advancedSettingsOverride = {
       'cronjob.success_jobs_history_limit': 3,
       'deployment.custom_domain_check_enabled': true,
       'deployment.affinity.node.required': { key: 'value' },
@@ -104,21 +105,16 @@ describe('AdvancedSettings', () => {
     const { userEvent } = renderWithProviders(
       <AdvancedSettings
         service={mockApplication}
-        advancedSettings={advancedSettings}
+        advancedSettings={advancedSettingsOverride}
         defaultAdvancedSettings={defaultAdvancedSettings}
       />
     )
     await userEvent.click(screen.getByRole('checkbox'))
-    const count = screen.getAllByRole('row').filter((row) => row.classList.contains('hidden')).length
-
-    expect(count).toBe(2)
+    const hiddenRows = screen.getAllByRole('row').filter((row) => row.classList.contains('hidden'))
+    expect(hiddenRows).toHaveLength(2)
   })
 
-  it('should call endpoint on submit', async () => {
-    const mutate = jest.fn()
-    jest.spyOn(hooks, 'useEditAdvancedSettings').mockImplementation(() => ({
-      mutate,
-    }))
+  it('should call edit endpoint on submit', async () => {
     const { userEvent, container } = renderWithProviders(
       <AdvancedSettings
         service={mockApplication}
@@ -128,10 +124,9 @@ describe('AdvancedSettings', () => {
     )
     const input = container.querySelector('textarea[name="test_empty"]')
     if (input) await userEvent.type(input, '79')
-
     await userEvent.click(screen.getByTestId('submit-button'))
 
-    expect(mutate).toHaveBeenCalledWith({
+    expect(mockMutateEdit).toHaveBeenCalledWith({
       payload: {
         'cronjob.success_jobs_history_limit': 3,
         'deployment.affinity.node.required': {},

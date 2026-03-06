@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import clsx from 'clsx'
 import {
@@ -17,12 +18,16 @@ import {
   CopyToClipboardButtonIcon,
   Icon,
   InputToggle,
+  LoaderSpinner,
   StickyActionFormToaster,
   TablePrimitives,
   Tooltip,
 } from '@qovery/shared/ui'
 import { generateAdvancedSettingDocUrl, objectFlattener, twMerge } from '@qovery/shared/util-js'
+import { useAdvancedSettings } from '../hooks/use-advanced-settings/use-advanced-settings'
+import { useDefaultAdvancedSettings } from '../hooks/use-default-advanced-settings/use-default-advanced-settings'
 import { useEditAdvancedSettings } from '../hooks/use-edit-advanced-settings/use-edit-advanced-settings'
+import { useService } from '../hooks/use-service/use-service'
 
 const { Table } = TablePrimitives
 
@@ -36,74 +41,73 @@ interface Entry {
   value: string
 }
 
+type AdvancedSettingsData =
+  | { advancedSettings: ApplicationAdvancedSettings; defaultAdvancedSettings: ApplicationAdvancedSettings }
+  | { advancedSettings: ContainerAdvancedSettings; defaultAdvancedSettings: ContainerAdvancedSettings }
+  | { advancedSettings: JobAdvancedSettings; defaultAdvancedSettings: JobAdvancedSettings }
+  | { advancedSettings: HelmAdvancedSettings; defaultAdvancedSettings: HelmAdvancedSettings }
+
 export type AdvancedSettingsProps = {
-  organizationId: string
-  projectId: string
+  organizationId?: string
+  projectId?: string
   service: Exclude<AnyService, Database>
-} & (
-  | {
-      advancedSettings: ApplicationAdvancedSettings
-      defaultAdvancedSettings: ApplicationAdvancedSettings
-    }
-  | {
-      advancedSettings: ContainerAdvancedSettings
-      defaultAdvancedSettings: ContainerAdvancedSettings
-    }
-  | {
-      advancedSettings: JobAdvancedSettings
-      defaultAdvancedSettings: JobAdvancedSettings
-    }
-  | {
-      advancedSettings: HelmAdvancedSettings
-      defaultAdvancedSettings: HelmAdvancedSettings
-    }
-)
+} & (AdvancedSettingsData | { advancedSettings?: never; defaultAdvancedSettings?: never })
 
 export function AdvancedSettings({
   organizationId,
   projectId,
-  service: {
+  service,
+  advancedSettings: advancedSettingsProp,
+  defaultAdvancedSettings: defaultAdvancedSettingsProp,
+}: AdvancedSettingsProps) {
+  const {
     id: serviceId,
     serviceType,
     environment: { id: environmentId },
-  },
-  defaultAdvancedSettings,
-  advancedSettings,
-}: AdvancedSettingsProps) {
+  } = service
+
+  const { data: advancedSettingsFetched } =
+    useAdvancedSettings({
+      serviceId,
+      serviceType,
+      suspense: true,
+    }) ?? {}
+  const { data: defaultAdvancedSettingsFetched } =
+    useDefaultAdvancedSettings({
+      serviceType,
+      suspense: true,
+    }) ?? {}
+
+  const advancedSettings = advancedSettingsProp ?? advancedSettingsFetched
+  const defaultAdvancedSettings = defaultAdvancedSettingsProp ?? defaultAdvancedSettingsFetched
+
   const [overriddenOnly, setOverriddenOnly] = useState(false)
   const { control, handleSubmit, formState, reset } = useForm<Record<string, string>>({
     mode: 'onChange',
     defaultValues: {
-      ...Object.entries(advancedSettings).reduce<Record<string, string>>((acc, [key, value]) => {
-        acc[key] = formatValue(value)
-        return acc
-      }, {}),
+      ...(advancedSettings
+        ? Object.entries(advancedSettings).reduce<Record<string, string>>((acc, [key, value]) => {
+            acc[key] = formatValue(value)
+            return acc
+          }, {})
+        : {}),
     },
   })
-  // https://github.com/react-hook-form/react-hook-form/issues/3213
   const isDirty = Boolean(Object.keys(formState.dirtyFields).length)
 
   const { mutate: editAdvancedSettings, isLoading: isEditAdvancedSettings } = useEditAdvancedSettings({
-    organizationId,
-    projectId,
+    organizationId: organizationId ?? '',
+    projectId: projectId ?? '',
     environmentId,
   })
 
   const data: Entry[] = useMemo(() => {
     const entries: Entry[] = []
-
-    if (!advancedSettings || !defaultAdvancedSettings) {
-      return []
-    }
-
+    if (!advancedSettings || !defaultAdvancedSettings) return []
     for (const [k1, v1] of Object.entries(advancedSettings)) {
       for (const [k2, v2] of Object.entries(defaultAdvancedSettings)) {
         if (k1 === k2) {
-          entries.push({
-            name: k1,
-            defaultValue: v2,
-            value: v1,
-          })
+          entries.push({ name: k1, defaultValue: v2, value: v1 })
         }
       }
     }
@@ -112,27 +116,14 @@ export function AdvancedSettings({
 
   const onSubmit = handleSubmit((data: Record<string, string>) => {
     let dataFormatted = { ...data }
-
     Object.keys(dataFormatted).forEach((key) => {
-      if (key.includes('.')) {
-        delete dataFormatted[key]
-      }
+      if (key.includes('.')) delete dataFormatted[key]
     })
-
     dataFormatted = objectFlattener(dataFormatted)
-
-    // below is a hack to handle the weird way the payload behaves
-    // empty string must be sent as ''
-    // empty numbers must be sent as null
-    // the thing is we don't know in advance if the value is a string or a number
-    // the interface has this information, but we can't check the type of the property of the interface
-    // we can't do ApplicationAdvanceSettings[key] === 'string' or 'number'
-    // so if field is empty string replace by value found in defaultSettings (because default value is well typed)
     Object.keys(dataFormatted).forEach((key) => {
-      // check if we can convert this string to object
       try {
         JSON.parse(dataFormatted[key])
-      } catch (e) {
+      } catch {
         if (dataFormatted[key] === '') {
           dataFormatted[key] = defaultAdvancedSettings ? defaultAdvancedSettings[key as keyof _AdvancedSettings] : ''
         }
@@ -140,24 +131,16 @@ export function AdvancedSettings({
       }
       dataFormatted[key] = JSON.parse(dataFormatted[key])
     })
-
-    editAdvancedSettings({
-      serviceId,
-      payload: {
-        serviceType,
-        ...dataFormatted,
-      },
-    })
+    editAdvancedSettings({ serviceId, payload: { serviceType, ...dataFormatted } })
   })
 
-  const columnHelper = createColumnHelper<Entry>()
   const columns = useMemo(() => {
+    const columnHelper = createColumnHelper<Entry>()
     return [
       columnHelper.accessor('name', {
         header: 'Settings',
         cell(info) {
           const name = info.getValue()
-
           return (
             <Tooltip classNameTrigger="px-4 truncate font-medium" content={name}>
               <a
@@ -175,15 +158,14 @@ export function AdvancedSettings({
       columnHelper.accessor('defaultValue', {
         header: 'Default Value',
         cell(info) {
-          let defaultValue = info.getValue()
-          defaultValue = formatValue(defaultValue)
+          const defaultValue = formatValue(info.getValue())
           return (
             <div className="flex px-4">
               <Tooltip classNameTrigger="truncate" content={defaultValue}>
                 <div>{defaultValue}</div>
               </Tooltip>
               <CopyToClipboardButtonIcon
-                className="invisible ml-2 text-neutral-300 group-hover:visible"
+                className="invisible ml-2 text-neutral-subtle group-hover:visible"
                 content={defaultValue}
               />
             </div>
@@ -207,7 +189,7 @@ export function AdvancedSettings({
                     {error?.message && (
                       <Tooltip content={error.message} align="center" side="top">
                         <div data-testid="warning-icon-left" className="flex items-center">
-                          <Icon iconName="triangle-exclamation" className="block text-sm text-yellow-500" />
+                          <Icon iconName="triangle-exclamation" className="block text-sm text-warning" />
                         </div>
                       </Tooltip>
                     )}
@@ -215,9 +197,9 @@ export function AdvancedSettings({
                       rows={1}
                       className={twMerge(
                         clsx(
-                          'min-h-[34px] w-full appearance-none rounded border border-neutral-250 bg-transparent px-3 py-1.5 pr-3 text-sm text-neutral-400 outline-0 hover:border-brand-500 focus:border-brand-500 focus:outline focus:outline-[3px] focus:outline-brand-100',
+                          'min-h-[34px] w-full appearance-none rounded border border-neutral bg-transparent px-3 py-1.5 pr-3 text-sm text-neutral outline-0 hover:border-brand-component focus:border-brand-component focus:outline focus:outline-[3px] focus:outline-surface-brand-subtle',
                           {
-                            'border-red-500 hover:border-red-500 focus:border-red-500 focus:outline-1 focus:outline-red-500':
+                            'border-negative-component hover:border-surface-negative-solid focus:border-surface-negative-solid focus:outline-1 focus:outline-surface-negative-subtle':
                               Boolean(error?.message),
                           }
                         )
@@ -234,31 +216,31 @@ export function AdvancedSettings({
         },
       }),
     ]
-  }, [])
+  }, [control])
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
+  const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() })
+
+  if (!advancedSettings || !defaultAdvancedSettings) {
+    return null
+  }
 
   return (
     <>
       <InputToggle
         small
         className="mb-6"
+        dataTestId="show-overriden-only-toggle"
         value={overriddenOnly}
         onChange={setOverriddenOnly}
         title="Show only overridden settings"
       />
-
       <form onSubmit={onSubmit}>
         <div className="relative">
-          <div className="overflow-hidden rounded border">
+          <div className="overflow-hidden rounded">
             <Table.Root className="w-full table-fixed text-sm">
               <Table.Header>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <Table.Row key={headerGroup.id} className="divide-x divide-neutral-200">
+                  <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
                     {headerGroup.headers.map((header) => (
                       <Table.ColumnHeaderCell className="font-medium" key={header.id}>
                         {flexRender(header.column.columnDef.header, header.getContext())}
@@ -274,7 +256,7 @@ export function AdvancedSettings({
                   return (
                     <Table.Row
                       key={row.id}
-                      className={`divide-x divide-neutral-200 hover:bg-neutral-100 ${isHidden ? 'hidden' : ''}`}
+                      className={`divide-x divide-neutral hover:bg-surface-neutral-subtle ${isHidden ? 'hidden' : ''}`}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <Table.Cell key={cell.id} className="group h-10 px-0">
@@ -300,4 +282,37 @@ export function AdvancedSettings({
   )
 }
 
-export default AdvancedSettings
+export function ServiceAdvancedSettings() {
+  const {
+    organizationId = '',
+    projectId = '',
+    environmentId = '',
+    serviceId = '',
+  } = useParams({
+    strict: false,
+  })
+  const { data: service } = useService({ environmentId, serviceId })
+
+  if (!service) return null
+  if (service.serviceType === 'DATABASE') {
+    return <p className="text-sm text-neutral-subtle">No advanced settings available for this service.</p>
+  }
+
+  return (
+    <AdvancedSettings
+      organizationId={organizationId}
+      projectId={projectId}
+      service={service as Exclude<AnyService, Database>}
+    />
+  )
+}
+
+export function ServiceAdvancedSettingsLoader() {
+  return (
+    <div className="flex flex-1 items-center justify-center">
+      <LoaderSpinner className="w-6" />
+    </div>
+  )
+}
+
+export default ServiceAdvancedSettings
