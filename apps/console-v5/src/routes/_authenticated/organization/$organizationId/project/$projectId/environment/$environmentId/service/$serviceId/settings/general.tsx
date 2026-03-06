@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { GeneralSettingsPage } from '../../../../../../../../../../../features/service-general-settings'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/general'
@@ -7,5 +8,14 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  return <div className="px-10 py-7">General</div>
+  const { organizationId, projectId, environmentId, serviceId } = Route.useParams()
+
+  return (
+    <GeneralSettingsPage
+      organizationId={organizationId}
+      projectId={projectId}
+      environmentId={environmentId}
+      serviceId={serviceId}
+    />
+  )
 }
