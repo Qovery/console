@@ -157,7 +157,8 @@ export function StepSummaryFeature() {
               {generalData.source_provider === 'GIT' && (
                 <ul className="list-none space-y-2 text-sm text-neutral-400">
                   <li>
-                    <strong className="font-medium">Repository:</strong> {generalData.repository}
+                    <strong className="font-medium">Repository:</strong>{' '}
+                    {generalData.repository || generalData.git_repository?.url}
                   </li>
                   <li>
                     <strong className="font-medium">Branch:</strong> {generalData.branch}
