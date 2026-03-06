@@ -1,7 +1,6 @@
+import { useParams } from '@tanstack/react-router'
 import { type ClusterLogsError } from 'qovery-typescript-axios'
 import { type ReactNode, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { CLUSTERS_GENERAL_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { CopyToClipboardButtonIcon, ExternalLink, Icon, Link, Tabs, Tooltip, Truncate } from '@qovery/shared/ui'
 import { type ErrorLogsProps } from '../layout-logs'
 
@@ -20,7 +19,7 @@ export interface TabsClusterLogsProps {
 export function TabsClusterLogs(props: TabsClusterLogsProps) {
   const { scrollToError, tabInformation, errors, defaultSection = TabsClusterLogsSection.INFORMATION } = props
 
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
 
   const [section, setSection] = useState(errors && errors?.length > 0 ? TabsClusterLogsSection.ERROR : defaultSection)
 
@@ -127,7 +126,8 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                         color="neutral"
                         variant="surface"
                         size="md"
-                        to={CLUSTERS_URL(organizationId) + CLUSTERS_GENERAL_URL}
+                        to="/organization/$organizationId/clusters"
+                        params={{ organizationId }}
                         className="mr-2 gap-1"
                       >
                         Cluster settings

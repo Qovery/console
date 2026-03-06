@@ -1,23 +1,14 @@
+import { useParams } from '@tanstack/react-router'
 import {
   type DeploymentHistoryApplication,
   type DeploymentHistoryDatabase,
   type DeploymentHistoryHelmResponse,
 } from 'qovery-typescript-axios'
 import { type MouseEvent, useState } from 'react'
-import { Link as RouterLink, useParams } from 'react-router-dom'
 import { type Container } from '@qovery/domains/services/data-access'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type DeploymentServiceLegacy } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import {
-  APPLICATION_GENERAL_URL,
-  APPLICATION_URL,
-  DATABASE_GENERAL_URL,
-  DATABASE_URL,
-  DEPLOYMENT_LOGS_VERSION_URL,
-  ENVIRONMENT_LOGS_URL,
-  SERVICE_LOGS_URL,
-} from '@qovery/shared/routes'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { Badge } from '../../badge/badge'
@@ -60,9 +51,7 @@ export function TableRowDeployment({
 }: TableRowDeploymentProps) {
   const [copy, setCopy] = useState(false)
   const [hoverId, setHoverId] = useState(false)
-  const { organizationId, projectId, environmentId, applicationId, databaseId } = useParams()
-
-  const pathEnvironmentLogs = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
 
   const handleCopy = (e: MouseEvent) => {
     e.preventDefault()
@@ -74,8 +63,6 @@ export function TableRowDeployment({
       setHoverId(false)
     }, 2000)
   }
-
-  const serviceId = applicationId || databaseId || data?.id
 
   return (
     <TableRow
@@ -132,12 +119,9 @@ export function TableRowDeployment({
         {(data as DeploymentServiceLegacy).type && (
           <div className="px-3">
             <Skeleton show={isLoading} width={120} height={20}>
-              <RouterLink
-                to={
-                  (data as DeploymentServiceLegacy)?.type === ServiceTypeEnum.DATABASE
-                    ? `${DATABASE_URL(organizationId, projectId, environmentId, data?.id) + DATABASE_GENERAL_URL}`
-                    : `${APPLICATION_URL(organizationId, projectId, environmentId, data?.id) + APPLICATION_GENERAL_URL}`
-                }
+              <Link
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                params={{ organizationId, projectId, environmentId, serviceId: data?.id }}
               >
                 <div className="flex items-center">
                   <div className="w-8 text-center">
@@ -148,7 +132,7 @@ export function TableRowDeployment({
                   </div>
                   <p className="text-xs font-medium text-neutral-400">{data?.name}</p>
                 </div>
-              </RouterLink>
+              </Link>
             </Skeleton>
           </div>
         )}
@@ -172,12 +156,11 @@ export function TableRowDeployment({
                 variant="outline"
                 color="neutral"
                 size="md"
-                to={
-                  fromService
-                    ? pathEnvironmentLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, (data as DeploymentServiceLegacy).id)
-                    : pathEnvironmentLogs +
-                      DEPLOYMENT_LOGS_VERSION_URL(serviceId, (data as DeploymentServiceLegacy).execution_id)
-                }
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                params={{ organizationId, projectId, environmentId, serviceId: data?.id }}
+                search={{
+                  deploymentId: (data as DeploymentServiceLegacy).execution_id,
+                }}
               >
                 <Icon iconName="scroll" />
               </Link>

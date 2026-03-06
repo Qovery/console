@@ -4,11 +4,8 @@ import { Link as RouterLink, useLocation, useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import {
   ALERTING_URL,
-  AUDIT_LOGS_URL,
   CLUSTERS_URL,
   CLUSTER_URL,
-  ENVIRONMENTS_GENERAL_URL,
-  ENVIRONMENTS_URL,
   INFRA_LOGS_URL,
   ORGANIZATION_AUDIT_LOGS_URL,
   ORGANIZATION_PROJECT_URL,
@@ -66,11 +63,8 @@ export function Navigation({ defaultOrganizationId, clusterNotification, alertin
                     'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchOrganizationRoute,
                   }
                 )}
-                to={
-                  projectId
-                    ? ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL
-                    : ORGANIZATION_URL(organizationId)
-                }
+                to={projectId ? '/organization/$organizationId/project/$projectId' : '/organization/$organizationId'}
+                params={projectId ? { organizationId, projectId } : { organizationId }}
               >
                 <Icon iconName="layer-group" className="text-[18px]" />
               </Link>
@@ -88,7 +82,8 @@ export function Navigation({ defaultOrganizationId, clusterNotification, alertin
                     'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchClusterRoute,
                   }
                 )}
-                to={CLUSTERS_URL(organizationId)}
+                to="/organization/$organizationId/clusters"
+                params={{ organizationId }}
               >
                 <Icon iconName="cloud-word" className="text-[18px]" />
               </Link>
@@ -115,7 +110,8 @@ export function Navigation({ defaultOrganizationId, clusterNotification, alertin
                     'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchEventsRoute,
                   }
                 )}
-                to={AUDIT_LOGS_URL(organizationId)}
+                to="/organization/$organizationId/audit-logs"
+                params={{ organizationId }}
               >
                 <Icon iconName="clock-rotate-left" className="text-[18px]" />
               </Link>
@@ -134,7 +130,8 @@ export function Navigation({ defaultOrganizationId, clusterNotification, alertin
                       'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchAlertingRoute,
                     }
                   )}
-                  to={ALERTING_URL(organizationId)}
+                  to="/organization/$organizationId/alerts"
+                  params={{ organizationId }}
                 >
                   <Icon iconName="bell" className="text-[18px]" />
                 </Link>
@@ -162,7 +159,8 @@ export function Navigation({ defaultOrganizationId, clusterNotification, alertin
                       'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchSettingsRoute,
                     }
                   )}
-                  to={SETTINGS_URL(organizationId)}
+                  to="/organization/$organizationId/settings"
+                  params={{ organizationId }}
                 >
                   <Icon iconName="gear" className="text-[18px]" />
                 </Link>

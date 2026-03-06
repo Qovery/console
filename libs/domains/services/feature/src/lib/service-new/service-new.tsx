@@ -70,6 +70,7 @@ function Card({
     }
 
     return (
+      // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
       <Link to={link!} className={className}>
         {children}
       </Link>
@@ -183,6 +184,7 @@ function CardOption({
 
   return (
     <Link
+      // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
       to={to}
       className="flex items-start gap-3 rounded-sm border border-neutral bg-surface-neutral-component p-3 transition hover:bg-surface-neutral-componentHover"
       onClick={() =>
@@ -356,6 +358,7 @@ function CardService({
 
   return (
     <Link
+      // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
       to={to}
       className="flex gap-6 rounded border border-neutral p-5 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-surface-neutral-subtle"
       onClick={() =>
