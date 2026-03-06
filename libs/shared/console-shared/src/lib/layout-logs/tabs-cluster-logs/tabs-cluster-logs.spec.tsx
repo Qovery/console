@@ -1,6 +1,16 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import TabsClusterLogs, { type TabsClusterLogsProps, TabsClusterLogsSection } from './tabs-cluster-logs'
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({ buildLocation: () => ({ href: '/' }) }),
+  useParams: () => ({ organizationId: '1' }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+}))
 
 describe('TabsClusterLogs', () => {
   const props: TabsClusterLogsProps = {

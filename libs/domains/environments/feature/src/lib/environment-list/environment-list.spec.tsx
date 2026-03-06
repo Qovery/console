@@ -256,20 +256,4 @@ describe('EnvironmentList', () => {
       '/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/services/general'
     )
   })
-  it('should navigate to environment live logs on environment status click', () => {
-    renderWithProviders(<EnvironmentList {...environmentListProps} />)
-    expect(
-      document.querySelector(
-        'a[to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/services/general"]'
-      )
-    ).toBeInTheDocument()
-  })
-  it('should navigate to environment deployment logs on environment deployment status click', () => {
-    renderWithProviders(<EnvironmentList {...environmentListProps} />)
-    expect(
-      document.querySelector(
-        'a[to="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/logs"]'
-      )
-    ).toBeInTheDocument()
-  })
 })

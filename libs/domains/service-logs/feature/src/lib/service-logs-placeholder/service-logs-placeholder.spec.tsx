@@ -187,7 +187,8 @@ describe('ServiceLogsPlaceholder', () => {
       await waitFor(() => {
         expect(screen.getByText('No service logs available for my-app')).toBeInTheDocument()
         expect(screen.getByText('Please check if the service is up and running')).toBeInTheDocument()
-        expect(screen.getByText('Go to latest deployment')).toBeInTheDocument()
+        // TODO new-nav : Route not yet created
+        // expect(screen.getByText('Go to latest deployment')).toBeInTheDocument()
       })
     })
 
@@ -213,7 +214,8 @@ describe('ServiceLogsPlaceholder', () => {
 
       await waitFor(() => {
         expect(screen.getByText('No service logs available for my-service')).toBeInTheDocument()
-        expect(screen.getByText('Go to latest deployment')).toBeInTheDocument()
+        // TODO new-nav : Route not yet created
+        // expect(screen.getByText('Go to latest deployment')).toBeInTheDocument()
       })
     })
   })

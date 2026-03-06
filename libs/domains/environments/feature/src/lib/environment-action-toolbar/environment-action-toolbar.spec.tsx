@@ -6,11 +6,6 @@ import { EnvironmentActionToolbar } from './environment-action-toolbar'
 const mockEnvironment = environmentFactoryMock(1)[0]
 const mockServices = applicationFactoryMock(3)
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => jest.fn(),
-}))
-
 jest.mock('../hooks/use-deployment-status/use-deployment-status', () => {
   return {
     ...jest.requireActual('../hooks/use-deployment-status/use-deployment-status'),

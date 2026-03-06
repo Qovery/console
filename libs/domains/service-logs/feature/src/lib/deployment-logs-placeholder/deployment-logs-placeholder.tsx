@@ -9,15 +9,8 @@ import {
 import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
 import { type DeploymentService } from '@qovery/shared/interfaces'
-import {
-  DEPLOYMENT_LOGS_VERSION_URL,
-  ENVIRONMENT_LOGS_URL,
-  ENVIRONMENT_PRE_CHECK_LOGS_URL,
-  ENVIRONMENT_STAGES_URL,
-} from '@qovery/shared/routes'
-import { Icon, Link, LoaderDots, StatusChip } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/util-dates'
-import { mergeDeploymentServices, trimId } from '@qovery/shared/util-js'
+import { LoaderDots } from '@qovery/shared/ui'
+import { mergeDeploymentServices } from '@qovery/shared/util-js'
 
 function ErrorIcon() {
   return (

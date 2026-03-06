@@ -437,7 +437,13 @@ describe('ServiceList', () => {
     await userEvent.click(rows[1])
 
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general',
+      params: {
+        environmentId: '55867c71-56f9-4b4f-ab22-5904c9dbafda',
+        organizationId: '1',
+        projectId: 'cf021d82-2c5e-41de-96eb-eb69c022eddc',
+        serviceId: '037c9e87-e098-4970-8b1f-9a5ffe9e4b89',
+      },
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
     })
   })
 

@@ -1,13 +1,22 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { ServiceTypeEnum, StateEnum } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { applicationDeploymentsFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import TableRowDeployment, { type TableRowDeploymentProps } from './table-row-deployment'
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useParams: () => ({ organizationId: '0', projectId: '1', environmentId: '2', applicationId: '3', databaseId: '4' }),
+jest.mock('@tanstack/react-router', () => ({
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useParams: () => ({ organizationId: '0', projectId: '1', environmentId: '2', serviceId: '3' }),
+  useSearch: () => ({
+    instance: '',
+  }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
+  }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
 
 describe('TableRowDeployment', () => {
@@ -62,7 +71,10 @@ describe('TableRowDeployment', () => {
     renderWithProviders(<TableRowDeployment {...props} />)
 
     const btnLogs = screen.getByTestId('btn-logs')
-    expect(btnLogs).toHaveAttribute('to', '/organization/0/project/1/environment/2/logs/3/deployment-logs/0')
+    expect(btnLogs).toHaveAttribute(
+      'to',
+      '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
+    )
   })
 
   it('should have link to deployment logs with version', async () => {
@@ -80,6 +92,9 @@ describe('TableRowDeployment', () => {
     renderWithProviders(<TableRowDeployment {...props} />)
 
     const btnLogs = screen.getByTestId('btn-logs')
-    expect(btnLogs).toHaveAttribute('to', '/organization/0/project/1/environment/2/logs/3/deployment-logs/execution-id')
+    expect(btnLogs).toHaveAttribute(
+      'to',
+      '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
+    )
   })
 })

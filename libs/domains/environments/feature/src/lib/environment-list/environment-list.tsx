@@ -14,13 +14,7 @@ import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type RunningState } from '@qovery/shared/enums'
-import {
-  CLUSTERS_NEW_URL,
-  CLUSTERS_URL,
-  ENVIRONMENT_LOGS_URL,
-  SERVICES_GENERAL_URL,
-  SERVICES_URL,
-} from '@qovery/shared/routes'
+import { CLUSTERS_NEW_URL, CLUSTERS_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import {
   Button,
   EmptyState,
