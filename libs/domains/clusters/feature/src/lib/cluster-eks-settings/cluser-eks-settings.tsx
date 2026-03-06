@@ -1,12 +1,27 @@
-import { Controller } from 'react-hook-form'
-import { useFormContext } from 'react-hook-form'
+import { type ReactNode } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
 import { Heading, InputText, Section } from '@qovery/shared/ui'
+import { type ClusterEksSettingsFormData } from './cluster-eks-settings-form.utils'
 
-export const ClusterEksSettings = () => {
-  const { control } = useFormContext()
+export interface ClusterEksSettingsProps {
+  gitSettings?: ReactNode
+}
+
+export const ClusterEksSettings = ({ gitSettings }: ClusterEksSettingsProps) => {
+  const { control } = useFormContext<ClusterEksSettingsFormData>()
 
   return (
     <>
+      <Section className="gap-4">
+        <div className="space-y-1">
+          <Heading level={2}>Infrastructure charts source</Heading>
+          <p className="text-sm text-neutral-350">
+            Configure the git repository and YAML file path used for your EKS Anywhere.
+          </p>
+        </div>
+        {gitSettings}
+      </Section>
+
       <Section className="gap-4">
         <div className="space-y-1">
           <Heading level={2}>Cert Manager</Heading>
