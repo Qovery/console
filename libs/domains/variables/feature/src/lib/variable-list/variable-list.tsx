@@ -21,8 +21,10 @@ import {
   Checkbox,
   DropdownMenu,
   EmptyState,
+  Heading,
   Icon,
   PasswordShowHide,
+  Section,
   TableFilter,
   TableFilterSearch,
   TablePrimitives,
@@ -606,8 +608,10 @@ export function VariableList({
     tableInstance: typeof table,
     filterValue: string,
     setFilterValue: (value: string) => void,
-    rowGridClassName: string
+    rowGridClassName: string,
+    isBuiltInTable: boolean
   ) => {
+    const hideServiceLinkColumn = isServiceScope && !isBuiltInTable
     return (
       <div className="flex grow flex-col justify-between">
         <Table.Root className={twMerge('w-full min-w-[800px] text-xs', className)}>
@@ -615,11 +619,11 @@ export function VariableList({
             {tableInstance.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className={twMerge('w-full items-center text-xs', rowGridClassName)}>
                 {headerGroup.headers.map((header) => (
-                  // Keep this column hidden (not removed) in Service scope to preserve visual column alignment
+                  // Keep this column hidden (not removed) in Service scope (custom vars only) to preserve visual column alignment
                   <Table.ColumnHeaderCell
                     className={twMerge(
                       `${header.column.id === 'actions' ? 'border-r border-neutral pl-0' : ''} group relative flex items-center font-medium`,
-                      isServiceScope && header.column.id === 'service_name' && 'opacity-0'
+                      hideServiceLinkColumn && header.column.id === 'service_name' && 'opacity-0'
                     )}
                     key={header.id}
                   >
@@ -667,12 +671,12 @@ export function VariableList({
               <Fragment key={row.id}>
                 <Table.Row className={twMerge('h-16 items-center hover:bg-surface-neutral-subtle', rowGridClassName)}>
                   {row.getVisibleCells().map((cell) => (
-                    // Keep this cell hidden (not removed) in service scope to preserve visual column alignment
+                    // Keep this cell hidden (not removed) in service scope (custom vars only) to preserve visual column alignment
                     <Table.Cell
                       key={cell.id}
                       className={twMerge(
                         `${cell.column.id === 'actions' ? 'border-r border-neutral pl-0' : ''} flex h-full items-center first:relative`,
-                        isServiceScope && cell.column.id === 'service_name' && 'opacity-0'
+                        hideServiceLinkColumn && cell.column.id === 'service_name' && 'opacity-0'
                       )}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -692,16 +696,16 @@ export function VariableList({
   return (
     <div className="flex min-h-0 flex-col gap-8">
       {nonBuiltInVariables.length > 0 && (
-        <section className="flex min-h-0 flex-col gap-4">
-          <h3 className="text-base font-medium text-neutral">Custom variables</h3>
-          {renderTable(table, globalFilter, setGlobalFilter, gridLayoutClassName)}
-        </section>
+        <Section className="flex min-h-0 flex-col gap-4">
+          <Heading level={3}>Custom variables</Heading>
+          {renderTable(table, globalFilter, setGlobalFilter, gridLayoutClassName, false)}
+        </Section>
       )}
       {builtInVariables.length > 0 && (
-        <section className="flex min-h-0 flex-col gap-4">
-          <h3 className="text-base font-medium text-neutral">Built-in variables</h3>
-          {renderTable(builtInTable, builtInGlobalFilter, setBuiltInGlobalFilter, builtInGridLayoutClassName)}
-        </section>
+        <Section className="flex min-h-0 flex-col gap-4">
+          <Heading level={3}>Built-in variables</Heading>
+          {renderTable(builtInTable, builtInGlobalFilter, setBuiltInGlobalFilter, builtInGridLayoutClassName, true)}
+        </Section>
       )}
       <VariableListActionBar selectedRows={selectedRows} resetRowSelection={() => table.resetRowSelection()} />
     </div>

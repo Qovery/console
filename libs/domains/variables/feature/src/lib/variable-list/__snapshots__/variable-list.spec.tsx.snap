@@ -9,7 +9,7 @@ exports[`VariableList should match snapshot 1`] = `
       class="flex min-h-0 flex-col gap-4"
     >
       <h3
-        class="text-base font-medium text-neutral"
+        class="text-neutral text-sm font-bold"
       >
         Custom variables
       </h3>
@@ -1348,7 +1348,7 @@ exports[`VariableList should match snapshot 1`] = `
       class="flex min-h-0 flex-col gap-4"
     >
       <h3
-        class="text-base font-medium text-neutral"
+        class="text-neutral text-sm font-bold"
       >
         Built-in variables
       </h3>
@@ -1422,7 +1422,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </th>
                 <th
-                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium opacity-0"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
                 >
                   <div
                     class="relative inline-block"
@@ -1530,7 +1530,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative opacity-0"
+                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
                 >
                   <a
                     class="flex items-center gap-2 text-sm font-medium"
