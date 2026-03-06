@@ -22,7 +22,6 @@ import {
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_JOB_CREATION_VARIABLE_URL,
   SERVICES_SETTINGS_DANGER_ZONE_URL,
-  SERVICES_SETTINGS_GENERAL_URL,
   SERVICES_SETTINGS_PIPELINE_URL,
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
   SERVICES_SETTINGS_RULES_URL,
@@ -58,7 +57,6 @@ import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-
 import PageSettingsDeploymentPipelineFeature from '../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
 import PageSettingsDeploymentRulesFeature from '../feature/page-settings-deployment-rules-feature/page-settings-deployment-rules-feature'
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
-import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import PageSettingsPreviewEnvironmentsFeature from '../feature/page-settings-preview-environments-feature/page-settings-preview-environments-feature'
 import { StepConfigurationFeature as TerraformStepConfigurationFeature } from '../feature/page-terraform-create-feature/step-configuration-feature/step-configuration-feature'
 import { StepGeneralFeature as TerraformStepGeneralFeature } from '../feature/page-terraform-create-feature/step-general-feature/step-general-feature'
@@ -95,10 +93,6 @@ export const ROUTER_SERVICES: Route[] = [
 ]
 
 export const ROUTER_ENVIRONMENTS_SETTINGS: Route[] = [
-  {
-    path: SERVICES_SETTINGS_GENERAL_URL,
-    component: <PageSettingsGeneralFeature />,
-  },
   {
     path: SERVICES_SETTINGS_RULES_URL,
     component: <PageSettingsDeploymentRulesFeature />,

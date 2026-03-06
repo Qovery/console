@@ -4,6 +4,15 @@ import { databaseFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DatabaseGeneralSettings } from './database-general-settings'
 
+jest.mock('@qovery/domains/organizations/feature', () => ({
+  AnnotationSetting: () => null,
+  LabelSetting: () => null,
+}))
+
+jest.mock('@qovery/domains/services/feature', () => ({
+  GeneralSetting: () => null,
+}))
+
 describe('DatabaseGeneralSettings', () => {
   const database = databaseFactoryMock(1, DatabaseModeEnum.CONTAINER)[0]
 

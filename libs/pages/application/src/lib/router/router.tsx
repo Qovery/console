@@ -5,7 +5,6 @@ import {
   APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS,
   APPLICATION_SETTINGS_DOCKERFILE_URL,
   APPLICATION_SETTINGS_DOMAIN_URL,
-  APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_HEALTHCHECKS_URL,
   APPLICATION_SETTINGS_NETWORKING_URL,
   APPLICATION_SETTINGS_PORT_URL,
@@ -27,7 +26,6 @@ import PageSettingsDeploymentRestrictionsFeature from '../feature/page-settings-
 import { PageSettingsDockerfileFeature } from '../feature/page-settings-dockerfile-feature/page-settings-dockerfile-feature'
 import PageSettingsDomainsFeature from '../feature/page-settings-domains-feature/page-settings-domains-feature'
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
-import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import PageSettingsHealthchecksFeature from '../feature/page-settings-healthchecks-feature/page-settings-healthchecks-feature'
 import { PageSettingsNetworkingFeature } from '../feature/page-settings-networking-feature/page-settings-networking-feature'
 import PageSettingsPortsFeature from '../feature/page-settings-ports-feature/page-settings-ports-feature'
@@ -52,10 +50,6 @@ export const ROUTER_APPLICATION: Route[] = [
 ]
 
 export const ROUTER_APPLICATION_SETTINGS: Route[] = [
-  {
-    path: APPLICATION_SETTINGS_GENERAL_URL,
-    component: <PageSettingsGeneralFeature />,
-  },
   {
     path: APPLICATION_SETTINGS_DOCKERFILE_URL,
     component: <PageSettingsDockerfileFeature />,

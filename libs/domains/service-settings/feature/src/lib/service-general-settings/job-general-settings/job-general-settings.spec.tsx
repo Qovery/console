@@ -1,18 +1,37 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BuildModeEnum } from 'qovery-typescript-axios'
-import { cronjobFactoryMock } from '@qovery/shared/factories'
+import { cronjobFactoryMock, organizationFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { JobGeneralSettings } from './job-general-settings'
 
+jest.mock('@qovery/domains/organizations/feature', () => ({
+  AnnotationSetting: () => null,
+  EditGitRepositorySettings: () => null,
+  GitRepositorySettings: () => null,
+  LabelSetting: () => null,
+}))
+
+jest.mock('@qovery/domains/services/feature', () => ({
+  AutoDeploySection: () => null,
+  GeneralContainerSettings: () => null,
+  GeneralSetting: () => null,
+  JobGeneralSettings: () => null,
+}))
+
+jest.mock('@qovery/shared/console-shared', () => ({
+  EntrypointCmdInputs: () => null,
+}))
+
 describe('JobGeneralSettings', () => {
   const service = cronjobFactoryMock(1)[0]
+  const organization = organizationFactoryMock(1)[0]
 
   it('should render main sections', () => {
     renderWithProviders(
       wrapWithReactHookForm(
         <JobGeneralSettings
           service={service}
-          organizationId="org-id"
+          organization={organization}
           openContainerRegistryCreateEditModal={jest.fn()}
         />,
         {
