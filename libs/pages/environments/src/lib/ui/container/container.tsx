@@ -3,7 +3,7 @@ import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { CreateCloneEnvironmentModal } from '@qovery/domains/environments/feature'
 import { ProjectAvatar, useProject } from '@qovery/domains/projects/feature'
-import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
+import { VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
@@ -56,7 +56,6 @@ export function Container({ children }: PropsWithChildren) {
     <div className="flex h-14 items-center justify-center px-5">
       {matchEnvVariableRoute ? (
         <>
-          <ShowAllVariablesToggle className="mr-2" />
           <VariablesActionToolbar
             scope="PROJECT"
             projectId={projectId}

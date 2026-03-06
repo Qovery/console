@@ -9,11 +9,11 @@ import {
 } from '@qovery/domains/organizations/feature'
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
+import { serviceTemplates } from '@qovery/domains/services/feature'
 import { SERVICES_HELM_CREATION_VALUES_STEP_1_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Callout, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { findTemplateData } from '../../page-job-create-feature/page-job-create-feature'
-import { serviceTemplates } from '../../page-new-feature/service-templates'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
 export function StepGeneralFeature() {
@@ -108,7 +108,7 @@ export function StepGeneralFeature() {
               <SourceSetting />
               {watchFieldProvider === 'GIT' && (
                 <div className="flex flex-col gap-3">
-                  <GitProviderSetting />
+                  <GitProviderSetting organizationId={organizationId} />
                   {watchFieldIsPublicRepository ? (
                     <>
                       <GitPublicRepositorySettings />
@@ -125,10 +125,15 @@ export function StepGeneralFeature() {
                   ) : (
                     <>
                       {watchFieldGitProvider && (
-                        <GitRepositorySetting gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
+                        <GitRepositorySetting
+                          organizationId={organizationId}
+                          gitProvider={watchFieldGitProvider}
+                          gitTokenId={watchFieldGitTokenId}
+                        />
                       )}
                       {watchFieldGitProvider && watchFieldGitRepository && (
                         <GitBranchSettings
+                          organizationId={organizationId}
                           gitProvider={watchFieldGitProvider}
                           gitTokenId={watchFieldGitTokenId}
                           rootPathLabel="Chart root folder path"

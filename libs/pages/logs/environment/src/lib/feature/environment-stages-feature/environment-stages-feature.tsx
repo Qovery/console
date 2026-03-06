@@ -79,7 +79,7 @@ export function EnvironmentStagesFeature({
     return (
       <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
         <div className="flex h-full w-full justify-center border border-neutral-500 bg-neutral-600 pt-11">
-          <LoaderSpinner className="h-6 w-6" theme="dark" />
+          <LoaderSpinner className="h-6 w-6" />
         </div>
       </div>
     )
@@ -112,7 +112,7 @@ export function EnvironmentStagesFeature({
     <div className="h-full w-full bg-neutral-800">
       {showBannerNew && (
         <Banner
-          color="purple"
+          color="brand"
           buttonLabel="See latest"
           buttonIconRight="arrow-right"
           onClickButton={() =>

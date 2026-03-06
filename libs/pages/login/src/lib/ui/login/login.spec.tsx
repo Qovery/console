@@ -40,12 +40,12 @@ describe('Login', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should call invitation detail if token are in the localStorage', async () => {
+  it('should still render login page if invite token is in localStorage', async () => {
     mockGlobal()
     localStorage.setItem('inviteToken', 'token')
     renderWithProviders(<Login {...props} />)
 
-    expect(screen.queryByText('Connect to Qovery')).not.toBeInTheDocument()
+    expect(screen.getByText('Connect to Qovery')).toBeInTheDocument()
   })
 
   it('should display SSO connection error when auth0Error is present', () => {

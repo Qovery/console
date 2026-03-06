@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`GcpExistingVPC should match snapshots 1`] = `
 <body>
@@ -13,7 +13,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
           Deploy on an existing VPC
         </h4>
         <a
-          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs"
+          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-xs"
           href="https://www.qovery.com/docs/configuration/integrations/kubernetes/gke/managed#use-existing-vpc"
           rel="noopener noreferrer"
           target="_blank"
@@ -21,7 +21,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
           How to configure your VPC
           <i
             aria-hidden="true"
-            class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+            class="fa-regular fa-arrow-up-right-from-square text-2xs leading-4"
           />
         </a>
       </div>
@@ -34,7 +34,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral  input--label-up "
           >
             <div
               class="pointer-events-none"
@@ -67,7 +67,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral  input--label-up "
           >
             <div
               class="pointer-events-none"
@@ -100,7 +100,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral  input--label-up "
           >
             <div
               class="pointer-events-none"
@@ -133,7 +133,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral  input--label-up "
           >
             <div
               class="pointer-events-none"
@@ -166,7 +166,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral  input--label-up "
           >
             <div
               class="pointer-events-none"
@@ -199,7 +199,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral  input--label-up "
           >
             <div
               class="pointer-events-none"

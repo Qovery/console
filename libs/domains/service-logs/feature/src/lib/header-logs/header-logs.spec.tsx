@@ -1,6 +1,23 @@
+import { type ReactNode } from 'react'
 import { useLinks, useService } from '@qovery/domains/services/feature'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { HeaderLogs, type HeaderLogsProps } from './header-logs'
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useSearch: () => ({}),
+  useNavigate: () => jest.fn(),
+  useParams: () => ({ organizationId: '1' }),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
+  }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+    <a {...props} href={`${props.to}`}>
+      {children}
+    </a>
+  ),
+}))
 
 jest.mock('@qovery/domains/services/feature', () => ({
   ...jest.requireActual('@qovery/domains/services/feature'),

@@ -7,36 +7,23 @@ jest.mock('../hooks/use-last-deployed-commit/use-last-deployed-commit', () => {
     useLastDeployedCommit: () => ({
       data: {
         commits: [
-          { created_at: '123', author_name: 'foo', git_commit_id: '123', message: 'lorem', tag: '' },
-          { created_at: '456', author_name: 'foo', git_commit_id: '456', message: 'ipsum', tag: '' },
+          { created_at: '2024-01-15T12:00:00Z', author_name: 'foo', git_commit_id: '123', message: 'lorem', tag: '' },
+          { created_at: '2024-01-14T12:00:00Z', author_name: 'foo', git_commit_id: '456', message: 'ipsum', tag: '' },
         ],
         delta: 1,
-        deployedCommit: { created_at: '456', author_name: 'foo', git_commit_id: '456', message: 'ipsum', tag: '' },
+        deployedCommit: {
+          created_at: '2024-01-14T12:00:00Z',
+          author_name: 'foo',
+          git_commit_id: '456',
+          message: 'ipsum',
+          tag: '',
+        },
       },
     }),
   }
 })
 
 describe('SelectCommitModal', () => {
-  it('should match snapshot', () => {
-    const onCancel = jest.fn()
-    const onSubmit = jest.fn()
-    const { container } = renderWithProviders(
-      <SelectCommitModal
-        title="Deploy other version"
-        description="Type a version to deploy"
-        submitLabel="Deploy"
-        serviceId="1"
-        serviceType="APPLICATION"
-        gitRepository={{}}
-        onCancel={onCancel}
-        onSubmit={onSubmit}
-      >
-        For X service
-      </SelectCommitModal>
-    )
-    expect(container).toMatchSnapshot()
-  })
   it('should call cancel properly', async () => {
     const onCancel = jest.fn()
     const onSubmit = jest.fn()
@@ -77,5 +64,24 @@ describe('SelectCommitModal', () => {
     await userEvent.click(screen.getByRole('radio', { name: /123/i }))
     await userEvent.click(screen.getByRole('button', { name: /Deploy/i }))
     expect(onSubmit).toHaveBeenCalledWith('123')
+  })
+  it('should match snapshot', () => {
+    const onCancel = jest.fn()
+    const onSubmit = jest.fn()
+    const { container } = renderWithProviders(
+      <SelectCommitModal
+        title="Deploy other version"
+        description="Type a version to deploy"
+        submitLabel="Deploy"
+        serviceId="1"
+        serviceType="APPLICATION"
+        gitRepository={{}}
+        onCancel={onCancel}
+        onSubmit={onSubmit}
+      >
+        For X service
+      </SelectCommitModal>
+    )
+    expect(container).toMatchSnapshot()
   })
 })

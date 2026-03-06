@@ -1,10 +1,9 @@
+import { getRouteApi } from '@tanstack/react-router'
 import { differenceInHours } from 'date-fns'
 import posthog from 'posthog-js'
 import { type Cluster, type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { memo, useEffect, useMemo, useRef } from 'react'
-import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useQueryParams } from 'use-query-params'
 import { EnableObservabilityButtonContactUs } from '@qovery/domains/observability/feature'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { TablePrimitives } from '@qovery/shared/ui'
@@ -16,9 +15,13 @@ import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
 import { HeaderServiceLogs } from './header-service-logs/header-service-logs'
 import { RowServiceLogs } from './row-service-logs/row-service-logs'
-import { ServiceLogsProvider, queryParamsServiceLogs } from './service-logs-context/service-logs-context'
+import { ServiceLogsProvider } from './service-logs-context/service-logs-context'
 
 const { Table } = TablePrimitives
+
+const route = getRouteApi(
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
+)
 
 const MemoizedRowServiceLogs = memo(RowServiceLogs)
 
@@ -43,8 +46,8 @@ function Placeholder({
     return (
       <div className="flex flex-col items-center justify-center gap-4 text-center">
         <div>
-          <p className="text-neutral-50">No logs found for your request.</p>
-          <p className="text-sm text-neutral-300">Want to search on a larger time period? Try it with Observe</p>
+          <p className="text-neutral">No logs found for your request.</p>
+          <p className="text-sm text-neutral-subtle">Want to search on a larger time period? Try it with Observe</p>
         </div>
         <div className="max-w-max">
           <EnableObservabilityButtonContactUs text="Unlock with Observe plan" />
@@ -66,10 +69,10 @@ function Placeholder({
 }
 
 function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; environment: Environment }) {
-  const { serviceId } = useParams()
+  const { serviceId } = route.useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
 
-  const [queryParams] = useQueryParams(queryParamsServiceLogs)
+  const queryParams = route.useSearch()
 
   const isLiveMode = useMemo(() => {
     if (queryParams.mode === 'live') {
@@ -101,8 +104,8 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
       return hoursRange < 24
     }, [cluster?.metrics_parameters?.enabled, queryParams.startDate, queryParams.endDate, isLiveMode]) ?? true
 
-  const { data: service } = useService({ environmentId: environment.id, serviceId })
-  const { data: runningStatus } = useRunningStatus({ environmentId: environment.id, serviceId })
+  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
+  const { data: runningStatus } = useRunningStatus({ environmentId: environment.id, serviceId, suspense: true })
 
   const serviceEnabled = service?.serviceType === 'DATABASE' ? service?.mode === 'CONTAINER' : true
 
@@ -220,21 +223,19 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
     (!isLogsFetched && !isLogsLoading)
   ) {
     return (
-      <div className="w-full p-1">
-        <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
+      <div className="w-full">
+        <div>
           <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
-          <div className="h-[calc(100vh-176px)] border-r border-neutral-500 bg-neutral-600">
-            <div className="flex h-full flex-col items-center justify-center">
-              <Placeholder
-                environment={environment}
-                hasMetricsEnabled={hasMetricsEnabled}
-                type={isLiveMode ? 'live' : 'history'}
-                isLogsFetched={isLogsFetched}
-                serviceName={service?.name}
-                itemsLength={logs.length}
-                databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
-              />
-            </div>
+          <div className="flex h-[calc(100vh-216px)] flex-col items-center justify-center">
+            <Placeholder
+              environment={environment}
+              hasMetricsEnabled={hasMetricsEnabled}
+              type={isLiveMode ? 'live' : 'history'}
+              isLogsFetched={isLogsFetched}
+              serviceName={service?.name}
+              itemsLength={logs.length}
+              databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
+            />
           </div>
         </div>
       </div>
@@ -242,11 +243,11 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
-      <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
+    <div className="w-full">
+      <div>
         <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
         {isLogsLoading && isLiveMode ? (
-          <div className="flex h-full flex-col items-center justify-center pb-[68px]">
+          <div className="flex h-[calc(100vh-216px)] flex-col items-center justify-center">
             <Placeholder
               environment={environment}
               hasMetricsEnabled={hasMetricsEnabled}
@@ -259,7 +260,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
           </div>
         ) : (
           <div
-            className="h-[calc(100vh-160px)] w-full overflow-x-scroll overflow-y-scroll pb-3"
+            className="w-full pb-3"
             ref={refScrollSection}
             onWheel={(event) => {
               if (!liveLogs) return
@@ -282,7 +283,10 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
                 setPauseLogs={setPauseLogs}
               />
             )}
-            <Table.Root className="w-full border-separate border-spacing-y-0.5 text-xs">
+            <Table.Root
+              className="w-full border-separate border-spacing-y-0.5 text-xs"
+              containerClassName="rounded-none border-none bg-background"
+            >
               <Table.Body className="divide-y-0">
                 {logs.map((log, index) => {
                   const timestamp = log.timestamp
@@ -326,7 +330,7 @@ export interface ListServiceLogsProps {
 }
 
 export function ListServiceLogs({ cluster, environment, serviceStatus, environmentStatus }: ListServiceLogsProps) {
-  const { serviceId = '' } = useParams()
+  const { serviceId = '' } = route.useParams()
 
   return (
     <ServiceLogsProvider

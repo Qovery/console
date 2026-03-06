@@ -7,12 +7,12 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
       class="p-5"
     >
       <h2
-        class="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
+        class="h4 max-w-sm truncate text-neutral"
       >
         Create Environment
       </h2>
       <p
-        class="mt-2 text-sm text-neutral-350 dark:text-neutral-50"
+        class="mt-2 text-sm text-neutral-subtle"
       >
         Create a new environment and deploy your applications.
       </p>
@@ -20,7 +20,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
         aria-controls="radix-:rd:"
         aria-expanded="false"
         aria-haspopup="dialog"
-        class="mt-2 cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+        class="hover:text-brandHover mt-2 cursor-pointer text-sm font-medium text-brand transition"
         data-state="closed"
         type="button"
       >
@@ -34,7 +34,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
         class="mt-6"
       >
         <div
-          class="mb-6"
+          class="mb-3"
           data-testid="input-text-wrapper"
         >
           <div
@@ -42,7 +42,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input     "
+              class="input group     "
             >
               <div
                 class=""
@@ -66,7 +66,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
           </div>
         </div>
         <div
-          class="mb-6"
+          class="mb-3"
         >
           <div
             class="input input--select    "
@@ -156,15 +156,15 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
             <div
               class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
             >
-              <span
-                class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-                role="img"
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-angle-down text-sm text-neutral-subtle"
               />
             </div>
           </div>
         </div>
         <div
-          class="mb-6"
+          class="mb-3"
         >
           <div
             class="input input--select input--has-icon   "
@@ -175,7 +175,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
               data-testid="selected-icon"
             >
               <span
-                class="items-center shrink-0 text-xs border rounded-md border-neutral-250 text-neutral-400 dark:border-neutral-350 dark:text-neutral-300 flex h-4 w-4 justify-center p-0 font-semibold"
+                class="text-neutral items-center shrink-0 text-xs border-neutral border flex h-4 w-4 justify-center p-0 font-semibold rounded"
                 data-accent-color="neutral"
               >
                 D
@@ -207,7 +207,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                   class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                 >
                   <span
-                    class="mr-1 text-sm text-neutral-400"
+                    class="mr-1 text-sm text-neutral"
                   >
                     Development
                   </span>
@@ -263,9 +263,9 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
             <div
               class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
             >
-              <span
-                class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-                role="img"
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-angle-down text-sm text-neutral-subtle"
               />
             </div>
           </div>
@@ -274,14 +274,14 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
           class="mt-6 flex justify-end gap-3"
         >
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
             data-testid="cancel-button"
             type="button"
           >
             Cancel
           </button>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
             data-testid="submit-button"
             disabled=""
             type="submit"

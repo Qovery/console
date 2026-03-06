@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useParams } from '@tanstack/react-router'
 import {
   BlockContent,
   Button,
@@ -17,7 +17,7 @@ import { useDeleteGitToken } from '../hooks/use-delete-git-token/use-delete-git-
 import { useGitTokens } from '../hooks/use-git-tokens/use-git-tokens'
 
 export function GitTokenList() {
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { data: gitTokens = [], isFetched: isFetchedGitTokens } = useGitTokens({ organizationId })
@@ -34,12 +34,12 @@ export function GitTokenList() {
           {gitTokens?.map((gitToken) => (
             <li
               key={gitToken.id}
-              className="flex items-center justify-between border-b border-neutral-250 px-5 py-4 last:border-0"
+              className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
             >
-              <div className="flex">
+              <div className="flex items-center">
                 <Icon name={gitToken.type} width="20px" height="20px" />
                 <div className="ml-4">
-                  <p className="mb-1 flex items-center gap-2 text-xs font-medium text-neutral-400">
+                  <p className="mb-1 flex items-center gap-2 text-xs font-medium text-neutral">
                     <Truncate truncateLimit={60} text={gitToken.name ?? ''} />
                     <ExpiredTokenBadge token={gitToken} />
                     {gitToken.description && (
@@ -50,7 +50,7 @@ export function GitTokenList() {
                       </Tooltip>
                     )}
                   </p>
-                  <p className="text-xs text-neutral-350">
+                  <p className="text-xs text-neutral-subtle">
                     {gitToken.updated_at && (
                       <span className="inline-block" title={dateUTCString(gitToken.updated_at)}>
                         Last updated {timeAgo(new Date(gitToken.updated_at))}
@@ -72,9 +72,10 @@ export function GitTokenList() {
               </div>
               <div>
                 <Button
-                  variant="surface"
+                  variant="outline"
                   color="neutral"
                   size="md"
+                  iconOnly
                   className="relative mr-2"
                   disabled={gitToken.associated_services_count === 0}
                   onClick={() => {
@@ -90,15 +91,16 @@ export function GitTokenList() {
                     })
                   }}
                 >
-                  <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
+                  <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
                     {gitToken.associated_services_count}
                   </span>
                   <Icon iconName="layer-group" iconStyle="regular" />
                 </Button>
                 <Button
-                  variant="surface"
+                  variant="outline"
                   color="neutral"
                   size="md"
+                  iconOnly
                   className="mr-2"
                   onClick={() => {
                     openModal({
@@ -116,8 +118,9 @@ export function GitTokenList() {
                   <Icon iconName="gear" iconStyle="regular" />
                 </Button>
                 <Button
-                  variant="surface"
+                  variant="outline"
                   color="neutral"
+                  iconOnly
                   size="md"
                   onClick={() => {
                     openModalConfirmation({
@@ -142,8 +145,8 @@ export function GitTokenList() {
         </ul>
       ) : (
         <div className="px-5 py-4 text-center">
-          <Icon iconName="wave-pulse" className="text-neutral-350" />
-          <p className="mt-1 text-xs font-medium text-neutral-350">
+          <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+          <p className="mt-1 text-xs font-medium text-neutral-subtle">
             No Git Tokens found. <br /> Please add one.
           </p>
         </div>

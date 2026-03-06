@@ -1,0 +1,476 @@
+import {
+  type SortingState,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import clsx from 'clsx'
+import { type ServiceStateDto } from 'qovery-ws-typescript-axios'
+import { Fragment, type PropsWithChildren, memo, useEffect, useMemo, useState } from 'react'
+import { P, match } from 'ts-pattern'
+import { type AnyService } from '@qovery/domains/services/data-access'
+import { ServiceTypeEnum, isJobContainerSource } from '@qovery/shared/enums'
+import {
+  Badge,
+  Button,
+  CopyToClipboard,
+  EmptyState,
+  Icon,
+  StatusChip,
+  TablePrimitives,
+  Tooltip,
+  Truncate,
+} from '@qovery/shared/ui'
+import { dateFullFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
+import { formatMetric, pluralize, twMerge } from '@qovery/shared/util-js'
+import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useRunningStatus } from '../../hooks/use-running-status/use-running-status'
+import { type Pod, PodDetails } from '../../pod-details/pod-details'
+import { EmptyState as EmptyStatePodsMetrics } from './empty-state'
+import { InstanceMetricsSkeleton } from './instance-metrics-skeleton'
+
+const { Table } = TablePrimitives
+
+const columnHelper = createColumnHelper<Pod>()
+const placeholder = <Icon iconStyle="regular" iconName="circle-question" className="text-sm text-neutral-subtle" />
+
+export interface InstanceMetricsMemoizedProps extends PropsWithChildren {
+  environmentId: string
+  serviceId: string
+  pods: Pod[]
+  service: AnyService
+  isServiceLoading: boolean
+  isServiceError: boolean
+  isMetricsLoading: boolean
+  isMetricsError: boolean
+  isRunningStatusesLoading: boolean
+  isRunningStatusesError: boolean
+}
+
+// NOTE: Memoized component to avoid loop with re-rendering, because of the useReactTable hook and the WS subscription
+// https://qovery.atlassian.net/browse/FRT-1391
+const InstanceMetricsMemoized = memo(InstanceMetricsTable)
+
+function InstanceMetricsTable({
+  environmentId,
+  serviceId,
+  children,
+  pods,
+  service,
+  isMetricsError,
+  isMetricsLoading,
+  isRunningStatusesError,
+  isRunningStatusesLoading,
+  isServiceError,
+  isServiceLoading,
+}: InstanceMetricsMemoizedProps) {
+  const [sorting, setSorting] = useState<SortingState>([])
+
+  const containerImage = match(service)
+    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, () => true)
+    .with({ serviceType: ServiceTypeEnum.CONTAINER }, () => true)
+    .otherwise(() => false)
+
+  const columns = useMemo(() => {
+    const podsColumn = columnHelper.accessor('podName', {
+      header: () => `${pluralize(pods.length, 'Instance', 'Instances')} (${pods.length})`,
+      cell: (info) => {
+        const podName = info.getValue()
+        return podName.length > 23 ? (
+          <Tooltip content={podName}>
+            <div className="inline-block">
+              <CopyToClipboard text={podName}>
+                <Button variant="outline" color="neutral" onClick={(e) => e.stopPropagation()}>
+                  {podName.substring(0, 10)}...{podName.slice(-10)}
+                </Button>
+              </CopyToClipboard>
+            </div>
+          </Tooltip>
+        ) : (
+          <CopyToClipboard text={podName}>
+            <Button className="truncate" variant="outline" color="neutral" onClick={(e) => e.stopPropagation()}>
+              {podName}
+            </Button>
+          </CopyToClipboard>
+        )
+      },
+    })
+    const statusColumn = columnHelper.accessor('state', {
+      header: 'Status',
+      cell: (info) => (
+        <Badge variant="outline" radius="full" className="gap-2 capitalize">
+          <StatusChip status={info.getValue() ?? 'UNKNOWN'} />
+          <span className="text-neutral">{info.getValue()?.toLowerCase() ?? 'Unknown'}</span>
+        </Badge>
+      ),
+      sortingFn: (rowA, rowB, columnId) => {
+        const stateA = rowA.getValue<ServiceStateDto>(columnId)
+        const stateB = rowB.getValue<ServiceStateDto>(columnId)
+
+        if (stateA === 'ERROR' && stateB === 'ERROR') {
+          return 0
+        } else if (stateA === 'ERROR' && stateB !== 'ERROR') {
+          return -1
+        } else if (stateA !== 'ERROR' && stateB === 'ERROR') {
+          return 1
+        } else if (stateA === 'WARNING' && stateB === 'WARNING') {
+          return 0
+        } else if (stateA === 'WARNING' && stateB !== 'WARNING') {
+          return -1
+        } else if (stateA !== 'WARNING' && stateB === 'WARNING') {
+          return 1
+        } else {
+          return stateA.localeCompare(stateB)
+        }
+      },
+    })
+    const versionColumn = columnHelper.accessor('service_version', {
+      header: 'Version',
+      cell: (info) => {
+        const value = info.getValue()
+        return (
+          value && (
+            <Badge variant="surface" className="max-w-full shrink">
+              {containerImage ? (
+                <Truncate text={value} truncateLimit={20} />
+              ) : (
+                <span className="max-w-full truncate">
+                  <Icon className="mr-2" iconName="code-commit" iconStyle="regular" />
+                  {value.substring(0, 7)}
+                </span>
+              )}
+            </Badge>
+          )
+        )
+      },
+    })
+
+    const memoryColumn = columnHelper.accessor('memory.current', {
+      header: 'Memory',
+      minSize: 120,
+      cell: (info) =>
+        match(info.row.original)
+          .with({ serviceType: ServiceTypeEnum.JOB, state: 'COMPLETED' }, () => null)
+          .with({ memory: P.not(P.nullish) }, (pod) => formatMetric(pod.memory))
+          .otherwise(() => placeholder),
+    })
+
+    const cpuColumn = columnHelper.accessor('cpu.current', {
+      header: 'vCPU',
+      minSize: 120,
+      cell: (info) =>
+        match(info.row.original)
+          .with({ serviceType: ServiceTypeEnum.JOB, state: 'COMPLETED' }, () => null)
+          .with({ cpu: P.not(P.nullish) }, (pod) => formatMetric(pod.cpu))
+          .otherwise(() => placeholder),
+    })
+
+    const storageColumn = columnHelper.accessor('storages', {
+      header: 'Storage',
+      cell: (info) => {
+        const value = info.getValue()
+        return value?.length
+          ? // https://qovery.slack.com/archives/C02NQ0LC8M9/p1693235796272359
+            `${Math.max(...value.map(({ current_percent }) => current_percent))}%`
+          : '-'
+      },
+    })
+
+    const restartColumns = columnHelper.accessor('restart_count', {
+      header: 'Restart',
+      cell: (info) => {
+        const value = info.getValue()
+        return value ?? '-'
+      },
+    })
+
+    const startedAtColumn = (header = 'Age', dateFormat: 'relative' | 'absolute' = 'relative') =>
+      columnHelper.accessor('started_at', {
+        header,
+        cell: (info) => {
+          const value = info.getValue()
+          return value ? (
+            <Tooltip content={dateUTCString(value)}>
+              <span className="truncate text-xs text-neutral">
+                {dateFormat === 'relative' ? timeAgo(new Date(value)) : dateFullFormat(value)}
+              </span>
+            </Tooltip>
+          ) : (
+            placeholder
+          )
+        },
+      })
+
+    return match(service)
+      .with({ serviceType: ServiceTypeEnum.JOB }, (job) => {
+        return match(job)
+          .with({ job_type: 'CRON' }, () => [
+            startedAtColumn(`Job executions`, 'absolute'),
+            statusColumn,
+            versionColumn,
+            memoryColumn,
+            cpuColumn,
+            restartColumns,
+            podsColumn,
+          ])
+          .with({ job_type: 'LIFECYCLE' }, () => [
+            startedAtColumn('Job executions', 'absolute'),
+            statusColumn,
+            versionColumn,
+            memoryColumn,
+            cpuColumn,
+            restartColumns,
+            podsColumn,
+          ])
+          .exhaustive()
+      })
+      .with({ serviceType: ServiceTypeEnum.DATABASE }, () => [
+        podsColumn,
+        statusColumn,
+        memoryColumn,
+        cpuColumn,
+        storageColumn,
+        startedAtColumn(),
+      ])
+      .otherwise(() => [
+        podsColumn,
+        statusColumn,
+        versionColumn,
+        memoryColumn,
+        cpuColumn,
+        storageColumn,
+        restartColumns,
+        startedAtColumn(),
+      ])
+  }, [service, pods.length])
+
+  const table = useReactTable({
+    data: pods,
+    columns,
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getRowCanExpand: () => true,
+    getExpandedRowModel: getExpandedRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  })
+
+  // Need useEffect because sort column is based on async data
+  useEffect(() => {
+    table.setSorting(
+      service.serviceType === 'JOB'
+        ? [{ id: 'started_at', desc: true }]
+        : [
+            {
+              id: 'podName',
+              desc: false,
+            },
+          ]
+    )
+  }, [service.serviceType, table.setSorting])
+
+  if (pods.length === 0 && !isMetricsLoading && isRunningStatusesLoading) {
+    // NOTE: runningStatuses may never resolve if service not started
+    return <EmptyStatePodsMetrics serviceId={serviceId} environmentId={environmentId} />
+  } else if (
+    (pods.length === 0 && !isMetricsLoading && !isRunningStatusesLoading) ||
+    isMetricsError ||
+    isRunningStatusesError ||
+    isServiceError
+  ) {
+    return (
+      <EmptyState
+        icon="circle-question"
+        className="bg-surface-neutral"
+        title="Metrics for instances are not available, try again"
+        description="There is a technical issue on retrieving the instance metrics."
+      />
+    )
+  } else if (isServiceLoading || pods.length === 0) {
+    return <InstanceMetricsSkeleton />
+  }
+
+  return (
+    <>
+      <div className="no-scrollbar overflow-x-scroll rounded-lg border border-neutral xl:overflow-hidden">
+        <Table.Root
+          containerClassName="border-none"
+          className="w-full overflow-y-scroll rounded-lg text-xs xl:overflow-auto"
+        >
+          <Table.Header>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Table.Row key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <Table.ColumnHeaderCell
+                    className="font-medium first:w-1/4 first:pl-[52px]"
+                    key={header.id}
+                    style={{ minWidth: header.column.columnDef.minSize }}
+                  >
+                    <button
+                      type="button"
+                      className={twMerge(
+                        'flex items-center gap-1',
+                        header.column.getCanSort() ? 'cursor-pointer select-none' : ''
+                      )}
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {match(header.column.getIsSorted())
+                        .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
+                        .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
+                        .with(false, () => null)
+                        .exhaustive()}
+                    </button>
+                  </Table.ColumnHeaderCell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table.Header>
+          <Table.Body className="[&>tr:last-child>td:first-child]:rounded-bl-lg [&>tr:last-child>td:last-child]:rounded-br-lg [&>tr:not(:last-child)>td]:border-b [&>tr:not(:last-child)>td]:border-neutral">
+            {table.getRowModel().rows.map((row) => (
+              <Fragment key={row.id}>
+                <Table.Row
+                  className={clsx(
+                    'hover:bg-surface-neutral-subtle',
+                    row.getIsExpanded() && 'bg-surface-neutral-subtle'
+                  )}
+                  onClick={row.getToggleExpandedHandler()}
+                >
+                  {row.getVisibleCells().map((cell, index) => (
+                    <Table.Cell
+                      key={cell.id}
+                      className={index === 0 ? 'text-nowrap' : ''}
+                      style={{ minWidth: cell.column.columnDef.minSize }}
+                    >
+                      {index === 0 && (
+                        <button
+                          className="text-md pointer inline-flex h-14 w-9 items-center justify-start text-neutral-subtle"
+                          type="button"
+                          onClick={(e) => {
+                            row.getToggleExpandedHandler()()
+                            e.stopPropagation()
+                          }}
+                        >
+                          <Icon
+                            className="pl-1"
+                            iconName={row.getIsExpanded() ? 'chevron-up' : 'chevron-down'}
+                            aria-hidden
+                          />
+                        </button>
+                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </Table.Cell>
+                  ))}
+                </Table.Row>
+                {row.getIsExpanded() && row.original.containers && service.serviceType && (
+                  <Table.Row className="bg-surface-neutral-subtle text-xs">
+                    {/* 2nd row is a custom 1 cell row */}
+                    <Table.Cell colSpan={row.getVisibleCells().length} className="p-0">
+                      <PodDetails pod={row.original} serviceId={serviceId} serviceType={service.serviceType} />
+                    </Table.Cell>
+                  </Table.Row>
+                )}
+              </Fragment>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </div>
+      {children}
+    </>
+  )
+}
+
+export interface InstanceMetricsProps extends PropsWithChildren {
+  environmentId: string
+  serviceId: string
+  service: AnyService
+}
+
+interface InstanceMetricsContentProps extends InstanceMetricsProps {
+  pods: Pod[]
+  isMetricsLoading: boolean
+  isMetricsError: boolean
+  isRunningStatusesLoading: boolean
+  isRunningStatusesError: boolean
+}
+
+function InstanceMetricsContent({
+  environmentId,
+  serviceId,
+  pods,
+  service,
+  isMetricsLoading,
+  isMetricsError,
+  isRunningStatusesLoading,
+  isRunningStatusesError,
+  children,
+}: InstanceMetricsContentProps) {
+  return (
+    <InstanceMetricsMemoized
+      environmentId={environmentId}
+      serviceId={serviceId}
+      pods={pods}
+      service={service}
+      isServiceLoading={false}
+      isServiceError={false}
+      isMetricsLoading={isMetricsLoading}
+      isMetricsError={isMetricsError}
+      isRunningStatusesLoading={isRunningStatusesLoading}
+      isRunningStatusesError={isRunningStatusesError}
+    >
+      {children}
+    </InstanceMetricsMemoized>
+  )
+}
+
+export function InstanceMetrics(props: InstanceMetricsProps) {
+  const { environmentId, serviceId, service } = props
+
+  const {
+    data: metrics = [],
+    isLoading: isMetricsLoading,
+    isError: isMetricsError,
+  } = useMetrics({ environmentId, serviceId })
+  const {
+    data: runningStatuses,
+    isLoading: isRunningStatusesLoading,
+    isError: isRunningStatusesError,
+  } = useRunningStatus({ environmentId, serviceId })
+
+  const pods: Pod[] = useMemo(() => {
+    // NOTE: metrics or runningStatuses could be undefined because backend doesn't have the info.
+    // So we must find all possible pods by merging the two into a Set.
+    const podNames = new Set([
+      ...(runningStatuses?.pods.map(({ name }) => name) ?? []),
+      ...(metrics?.map(({ pod_name }) => pod_name) ?? []),
+    ])
+
+    return [...podNames].map((podName) => ({
+      ...(metrics?.find(({ pod_name }) => pod_name === podName) ?? {}),
+      ...(runningStatuses?.pods.find(({ name }) => name === podName) ?? {}),
+      podName,
+    }))
+  }, [metrics, runningStatuses])
+
+  return (
+    <InstanceMetricsContent
+      environmentId={environmentId}
+      serviceId={serviceId}
+      pods={pods}
+      service={service}
+      isMetricsLoading={isMetricsLoading}
+      isMetricsError={isMetricsError}
+      isRunningStatusesLoading={isRunningStatusesLoading}
+      isRunningStatusesError={isRunningStatusesError}
+    >
+      {props.children}
+    </InstanceMetricsContent>
+  )
+}
+
+export default InstanceMetrics

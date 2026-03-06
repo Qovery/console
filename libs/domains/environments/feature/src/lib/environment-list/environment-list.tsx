@@ -14,14 +14,7 @@ import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type RunningState } from '@qovery/shared/enums'
-import {
-  CLUSTERS_NEW_URL,
-  CLUSTERS_URL,
-  CLUSTER_URL,
-  ENVIRONMENT_LOGS_URL,
-  SERVICES_GENERAL_URL,
-  SERVICES_URL,
-} from '@qovery/shared/routes'
+import { CLUSTERS_NEW_URL, CLUSTERS_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import {
   Button,
   EmptyState,
@@ -57,11 +50,12 @@ function EnvironmentNameCell({ environment }: { environment: Environment }) {
           <Tooltip content={environment.name}>
             <Link
               className="inline max-w-max truncate"
-              color="current"
-              to={
-                SERVICES_URL(environment.organization.id, environment.project.id, environment.id) + SERVICES_GENERAL_URL
-              }
-              underline
+              to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+              params={{
+                organizationId: environment.organization.id,
+                projectId: environment.project.id,
+                environmentId: environment.id,
+              }}
               onClick={(e) => e.stopPropagation()}
             >
               {environment.name}
@@ -88,6 +82,7 @@ function EnvironmentStatusCell({
   runningStatus?: RunningState
   value?: string
 }) {
+  const navigate = useNavigate()
   const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
     clusterId: environment.cluster_id,
   })
@@ -97,7 +92,8 @@ function EnvironmentStatusCell({
       <Tooltip content="See cluster">
         <Link
           as="button"
-          to={CLUSTER_URL(environment.organization.id, environment.cluster_id)}
+          to="/organization/$organizationId/cluster/$clusterId"
+          params={{ organizationId: environment.organization.id, clusterId: environment.cluster_id }}
           onClick={(e) => e.stopPropagation()}
           className="gap-2 whitespace-nowrap text-sm"
           size="md"
@@ -117,8 +113,15 @@ function EnvironmentStatusCell({
       <Tooltip content="See overview">
         <Link
           as="button"
-          to={SERVICES_URL(environment.organization.id, environment.project.id, environment.id) + SERVICES_GENERAL_URL}
-          onClick={(e) => e.stopPropagation()}
+          to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+          params={{
+            organizationId: environment.organization.id,
+            projectId: environment.project.id,
+            environmentId: environment.id,
+          }}
+          onClick={(e) => {
+            e.stopPropagation()
+          }}
           className="gap-2 whitespace-nowrap text-sm"
           size="md"
           color="neutral"
@@ -201,8 +204,12 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
               <Tooltip content="See logs">
                 <Link
                   as="button"
-                  to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
-                  onClick={(e) => e.stopPropagation()}
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+                  params={{
+                    organizationId: environment.organization.id,
+                    projectId: environment.project.id,
+                    environmentId: environment.id,
+                  }}
                   className="gap-2 whitespace-nowrap text-sm"
                   size="md"
                   color="neutral"
@@ -231,7 +238,8 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
             <Tooltip content={`${environment.cluster_name} (${environment.cloud_provider.cluster})`}>
               <Link
                 as="button"
-                to={CLUSTER_URL(environment.organization.id, environment.cluster_id)}
+                to="/organization/$organizationId/cluster/$clusterId"
+                params={{ organizationId: environment.organization.id, clusterId: environment.cluster_id }}
                 onClick={(e) => e.stopPropagation()}
                 color="neutral"
                 variant="surface"

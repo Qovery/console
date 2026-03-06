@@ -10,7 +10,7 @@ export const ClusterEksSettings = () => {
       <Section className="gap-4">
         <div className="space-y-1">
           <Heading level={2}>Cert Manager</Heading>
-          <p className="text-sm text-neutral-350">Configure the certificate manager for your EKS cluster.</p>
+          <p className="text-sm text-neutral-subtle">Configure the certificate manager for your EKS cluster.</p>
         </div>
         <Controller
           name="infrastructure_charts_parameters.cert_manager_parameters.kubernetes_namespace"
@@ -36,7 +36,7 @@ export const ClusterEksSettings = () => {
       <Section className="gap-4">
         <div className="space-y-1">
           <Heading level={2}>MetalLB</Heading>
-          <p className="text-sm text-neutral-350">Configure your load-balancer (using MetalLB)</p>
+          <p className="text-sm text-neutral-subtle">Configure your load-balancer (using MetalLB)</p>
         </div>
         <Controller
           name="infrastructure_charts_parameters.metal_lb_parameters.ip_address_pools"
@@ -63,7 +63,7 @@ export const ClusterEksSettings = () => {
       <Section className="gap-4">
         <div className="space-y-1">
           <Heading level={2}>Nginx</Heading>
-          <p className="text-sm text-neutral-350">Configure Nginx for your EKS cluster.</p>
+          <p className="text-sm text-neutral-subtle">Configure Nginx for your EKS cluster.</p>
         </div>
 
         <Controller

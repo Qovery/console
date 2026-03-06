@@ -346,7 +346,7 @@ const TerraformVariablesLoadingState = () => {
   return (
     <div className="flex items-center justify-center border-b border-t border-neutral-250 bg-neutral-100 p-4">
       <div className="flex flex-col items-center gap-4 py-4">
-        <LoaderSpinner classWidth="w-6" theme="light" />
+        <LoaderSpinner classWidth="w-6" />
         <div className="flex flex-col items-center gap-1">
           <span className="text-center text-sm font-medium text-neutral-350">Fetching .tfvars files...</span>
           <span className="text-center text-sm text-neutral-350">Pulling your Terraform variable definitions.</span>

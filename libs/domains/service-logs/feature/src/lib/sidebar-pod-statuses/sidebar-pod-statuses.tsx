@@ -1,11 +1,10 @@
+import { useSearch } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { type PropsWithChildren, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type Pod, useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
-import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { usePodColor } from '@qovery/shared/util-hooks'
@@ -30,7 +29,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     environmentId: service?.environment.id,
     serviceId: service?.id,
   })
-  const [searchParams] = useSearchParams()
+  const searchParams = useSearch({ strict: false })
   const getColorByPod = usePodColor()
 
   const pods: Pod[] = useMemo(() => {
@@ -284,17 +283,20 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                                   variant="surface"
                                   color="neutral"
                                   size="xs"
-                                  to={
-                                    ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) +
-                                    SERVICE_LOGS_URL(
-                                      service?.id,
-                                      searchParams.get('pod_name') === pod.podName ? '' : pod.podName
-                                    )
-                                  }
+                                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                                  params={{
+                                    organizationId,
+                                    projectId,
+                                    environmentId: service.environment.id,
+                                    serviceId: service.id,
+                                  }}
+                                  search={{
+                                    instance: searchParams.instance === pod.podName ? '' : pod.podName,
+                                  }}
                                   className={twMerge(
                                     clsx('gap-1.5 font-code', {
                                       'outline outline-1 outline-brand-400 hover:!border-brand-400 dark:border-brand-400':
-                                        searchParams.get('pod_name') === pod.podName,
+                                        searchParams.instance === pod.podName,
                                     })
                                   )}
                                 >
@@ -344,17 +346,20 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                                 variant="surface"
                                 color="neutral"
                                 size="xs"
-                                to={
-                                  ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) +
-                                  SERVICE_LOGS_URL(
-                                    service?.id,
-                                    searchParams.get('pod_name') === pod.podName ? '' : pod.podName
-                                  )
-                                }
+                                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                                params={{
+                                  organizationId,
+                                  projectId,
+                                  environmentId: service.environment.id,
+                                  serviceId: service.id,
+                                }}
+                                search={{
+                                  instance: searchParams.instance === pod.podName ? '' : pod.podName,
+                                }}
                                 className={twMerge(
                                   clsx('gap-1.5 font-code', {
                                     'outline outline-1 outline-brand-400 hover:!border-brand-400 dark:border-brand-400':
-                                      searchParams.get('pod_name') === pod.podName,
+                                      searchParams.instance === pod.podName,
                                   })
                                 )}
                               >

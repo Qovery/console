@@ -11,6 +11,38 @@ const props: StepGeneralProps = {
   onSubmit: jest.fn(),
 }
 
+jest.mock('@qovery/domains/organizations/feature', () => ({
+  ...jest.requireActual('@qovery/domains/organizations/feature'),
+  useContainerRegistries: () => ({
+    data: [
+      {
+        id: 'registry-1',
+        name: 'my-registry',
+        kind: 'DOCKER_HUB',
+      },
+    ],
+  }),
+  useContainerImages: () => ({
+    data: [
+      {
+        image_name: 'my-image',
+        versions: ['1.0.0'],
+      },
+    ],
+    isFetching: false,
+    refetch: () => Promise.resolve(),
+  }),
+  useContainerVersions: () => ({
+    data: [
+      {
+        image_name: 'my-image',
+        versions: ['1.0.0'],
+      },
+    ],
+    isFetching: false,
+  }),
+}))
+
 describe('StepGeneral', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(wrapWithReactHookForm(<StepGeneral {...props} />))

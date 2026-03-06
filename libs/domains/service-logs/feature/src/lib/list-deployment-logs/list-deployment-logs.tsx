@@ -15,7 +15,7 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ServiceStateChip, useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
@@ -154,9 +154,12 @@ export function ListDeploymentLogs({
     if (stage) updateStageId(stage.id)
   }, [serviceId, serviceStatus, updateStageId, stage])
 
-  const { data: service } = useService({ environmentId: environment.id, serviceId })
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
-  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({ environmentId: environment.id })
+  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId, suspense: true })
+  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({
+    environmentId: environment.id,
+    suspense: true,
+  })
   const {
     data: logs = [],
     pauseLogs,
@@ -333,7 +336,8 @@ export function ListDeploymentLogs({
               )
             }
           >
-            <Link
+            {/* TODO new-nav : Route not yet created */}
+            {/*<Link
               as="button"
               className="gap-1.5 truncate"
               variant="surface"
@@ -344,24 +348,27 @@ export function ListDeploymentLogs({
             >
               Go to pipeline
               <Icon iconName="timeline" />
-            </Link>
+            </Link>*/}
           </Indicator>
           <Link
             as="button"
             className="gap-1.5"
             variant="surface"
-            to={
-              ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id) +
-              SERVICE_LOGS_URL(
-                serviceId,
-                undefined,
-                versionId,
-                isDeploymentProgressing ? 'live' : 'history',
+            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+            params={{
+              organizationId: environment.organization.id,
+              projectId: environment.project.id,
+              environmentId: environment.id,
+              serviceId,
+            }}
+            search={{
+              mode: isDeploymentProgressing ? 'live' : 'history',
+              startDate:
                 isDeploymentProgressing || !lastLogTimestamp
                   ? undefined
-                  : dateYearMonthDayHourMinuteSecond(new Date(lastLogTimestamp))
-              )
-            }
+                  : dateYearMonthDayHourMinuteSecond(new Date(lastLogTimestamp)),
+              deploymentId: versionId,
+            }}
           >
             {match(service)
               .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')

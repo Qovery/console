@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import {
   type ApplicationGitRepository,
   type GitProviderEnum,
@@ -8,9 +9,7 @@ import {
   type TerraformRequestDockerfileFragment,
 } from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
-import { APPLICATION_URL, APPLICATION_VARIABLES_URL } from '@qovery/shared/routes'
 import {
   Callout,
   CopyButton,
@@ -104,9 +103,9 @@ export const TerraformConfigurationSettings = ({
   methods: UseFormReturn<TerraformGeneralData>
   isSettings?: boolean
 }) => {
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: versions = [], isLoading: isTerraformVersionLoading } = useTerraformAvailableVersions()
-  const cliCommand = `qovery terraform setup-backend --terraform ${isSettings ? applicationId : '<SERVICE_ID>'}`
+  const cliCommand = `qovery terraform setup-backend --terraform ${isSettings ? serviceId : '<SERVICE_ID>'}`
   const backend = methods.watch('backend')
   const dockerfileFragmentSource = methods.watch('dockerfile_fragment_source') ?? 'none'
 
@@ -316,10 +315,8 @@ export const TerraformConfigurationSettings = ({
                     <span>
                       Define environment variables in{' '}
                       <Link
-                        to={
-                          APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
-                          APPLICATION_VARIABLES_URL
-                        }
+                        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables"
+                        params={{ organizationId, projectId, environmentId, serviceId }}
                       >
                         the variables section
                       </Link>

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`NetworkingSetting should match snapshot in empty state 1`] = `
 <body>
@@ -11,7 +11,7 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
       >
         <div>
           <h1
-            class="text-neutral-400 text-xl font-bold mb-2"
+            class="text-neutral text-2xl font-bold mb-2"
           >
             Networking
           </h1>
@@ -36,12 +36,12 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
           </span>
         </div>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100 gap-2"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert gap-2"
         >
           Add port
           <i
             aria-hidden="true"
-            class="fa-solid fa-plus-circle "
+            class="fa-regular fa-plus-circle "
           />
         </button>
       </div>
@@ -49,14 +49,14 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
         class="w-full"
       >
         <div
-          class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
+          class="mb-5 rounded border border-neutral bg-surface-neutral-subtle w-full"
           data-testid="block-content"
         >
           <div
-            class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
+            class="flex h-9 items-center justify-between border-b border-neutral px-4"
           >
             <h2
-              class="text-ssm font-medium text-neutral-400"
+              class="text-ssm font-medium text-neutral"
             >
               Services exposed publicly
             </h2>
@@ -69,7 +69,7 @@ exports[`NetworkingSetting should match snapshot in empty state 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-wave-pulse text-neutral-300"
+                class="fa-regular fa-wave-pulse text-neutral-300"
               />
               <p
                 class="mb-3 mt-1 text-xs font-medium text-neutral-350"
@@ -96,7 +96,7 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
       >
         <div>
           <h1
-            class="text-neutral-400 text-xl font-bold mb-2"
+            class="text-neutral text-2xl font-bold mb-2"
           >
             Networking
           </h1>
@@ -121,12 +121,12 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
           </span>
         </div>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100 gap-2"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert gap-2"
         >
           Add port
           <i
             aria-hidden="true"
-            class="fa-solid fa-plus-circle "
+            class="fa-regular fa-plus-circle "
           />
         </button>
       </div>
@@ -134,14 +134,14 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
         class="w-full"
       >
         <div
-          class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
+          class="mb-5 rounded border border-neutral bg-surface-neutral-subtle w-full"
           data-testid="block-content"
         >
           <div
-            class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
+            class="flex h-9 items-center justify-between border-b border-neutral px-4"
           >
             <h2
-              class="text-ssm font-medium text-neutral-400"
+              class="text-ssm font-medium text-neutral"
             >
               Services exposed publicly
             </h2>
@@ -181,23 +181,23 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
                 class="flex gap-2"
               >
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
                   data-testid="edit-port"
                   type="button"
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-gear "
+                    class="fa-regular fa-gear "
                   />
                 </button>
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
                   data-testid="remove-port"
                   type="button"
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-trash "
+                    class="fa-regular fa-trash "
                   />
                 </button>
               </div>
@@ -230,23 +230,23 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
                 class="flex gap-2"
               >
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
                   data-testid="edit-port"
                   type="button"
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-gear "
+                    class="fa-regular fa-gear "
                   />
                 </button>
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
                   data-testid="remove-port"
                   type="button"
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-trash "
+                    class="fa-regular fa-trash "
                   />
                 </button>
               </div>

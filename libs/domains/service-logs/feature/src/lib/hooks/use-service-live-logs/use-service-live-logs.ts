@@ -1,7 +1,6 @@
 import { type QueryClient } from '@tanstack/react-query'
+import { useParams, useSearch } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useQueryParams } from 'use-query-params'
 import {
   type NormalizedServiceLog,
   buildLokiQuery,
@@ -9,7 +8,6 @@ import {
 } from '@qovery/domains/service-logs/data-access'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
-import { queryParamsServiceLogs } from '../../list-service-logs/service-logs-context/service-logs-context'
 
 export interface UseServiceLiveLogsProps {
   clusterId?: string
@@ -21,8 +19,8 @@ const DEBOUNCE_TIME = 400
 const LIMIT = 200
 
 export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: UseServiceLiveLogsProps) {
-  const { organizationId, projectId, environmentId } = useParams()
-  const [queryParams] = useQueryParams(queryParamsServiceLogs)
+  const { organizationId, projectId, environmentId } = useParams({ strict: false })
+  const queryParams = useSearch({ strict: false })
 
   const serviceLogsBuffer = useRef<NormalizedServiceLog[]>([])
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)

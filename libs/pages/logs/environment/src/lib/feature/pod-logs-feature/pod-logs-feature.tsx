@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import {
   type DeploymentStageWithServicesStatuses,
   type Environment,
@@ -5,7 +6,6 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { memo } from 'react'
-import { useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { ListServiceLogs } from '@qovery/domains/service-logs/feature'
 import { useService } from '@qovery/domains/services/feature'
@@ -23,11 +23,12 @@ export interface PodLogsFeatureProps {
 }
 
 export function PodLogsFeature({ environment, deploymentStages, environmentStatus }: PodLogsFeatureProps) {
-  const { serviceId = '' } = useParams()
-  const { data: service } = useService({ environmentId: environment.id, serviceId })
+  const { serviceId = '' } = useParams({ strict: false })
+  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
   const { data: cluster } = useCluster({
     organizationId: environment.organization.id,
     clusterId: environment.cluster_id,
+    suspense: true,
   })
 
   useDocumentTitle(`Service logs ${service ? `- ${service?.name}` : '- Loading...'}`)
@@ -37,7 +38,7 @@ export function PodLogsFeature({ environment, deploymentStages, environmentStatu
   if (!cluster) return null
 
   return (
-    <div className="h-full w-full bg-neutral-900">
+    <div className="h-full w-full">
       <ListServiceLogs
         cluster={cluster}
         environment={environment}

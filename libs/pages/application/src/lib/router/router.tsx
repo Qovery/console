@@ -1,11 +1,4 @@
 import {
-  APPLICATION_DEPLOYMENTS_URL,
-  APPLICATION_GENERAL_URL,
-  APPLICATION_MONITORING_ALERTS_CREATION_URL,
-  APPLICATION_MONITORING_ALERTS_URL,
-  APPLICATION_MONITORING_ALERT_EDIT_URL,
-  APPLICATION_MONITORING_GENERAL_URL,
-  APPLICATION_MONITORING_URL,
   APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
   APPLICATION_SETTINGS_CONFIGURE_URL,
   APPLICATION_SETTINGS_DANGER_ZONE_URL,
@@ -27,13 +20,6 @@ import {
   APPLICATION_VARIABLES_URL,
   type Route,
 } from '@qovery/shared/routes'
-import { PageAlertingCreateFeature } from '../feature/page-alerting-create-feature/page-alerting-create-feature'
-import { PageAlertingEditFeature } from '../feature/page-alerting-edit-feature/page-alerting-edit-feature'
-import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
-import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
-import { PageMonitoringAlertsFeature } from '../feature/page-monitoring-alerts-feature/page-monitoring-alerts-feature'
-import { PageMonitoringDashboardFeature } from '../feature/page-monitoring-dashboard-feature/page-monitoring-dashboard-feature'
-import { PageMonitoringFeature } from '../feature/page-monitoring-feature/page-monitoring-feature'
 import PageSettingsAdvancedFeature from '../feature/page-settings-advanced-feature/page-settings-advanced-feature'
 import PageSettingsConfigureJobFeature from '../feature/page-settings-configure-job-feature/page-settings-configure-job-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
@@ -56,43 +42,12 @@ import PageVariablesFeature from '../feature/page-variables-feature/page-variabl
 
 export const ROUTER_APPLICATION: Route[] = [
   {
-    path: APPLICATION_GENERAL_URL,
-    component: <PageGeneralFeature />,
-  },
-  {
-    path: APPLICATION_DEPLOYMENTS_URL,
-    component: <PageDeploymentsFeature />,
-  },
-  {
     path: APPLICATION_VARIABLES_URL,
     component: <PageVariablesFeature />,
   },
   {
     path: `${APPLICATION_SETTINGS_URL}/*`,
     component: <PageSettingsFeature />,
-  },
-  {
-    path: `${APPLICATION_MONITORING_URL}/*`,
-    component: <PageMonitoringFeature />,
-  },
-]
-
-export const ROUTER_APPLICATION_MONITORING: Route[] = [
-  {
-    path: APPLICATION_MONITORING_GENERAL_URL,
-    component: <PageMonitoringDashboardFeature />,
-  },
-  {
-    path: `${APPLICATION_MONITORING_ALERTS_CREATION_URL}/*`,
-    component: <PageAlertingCreateFeature />,
-  },
-  {
-    path: APPLICATION_MONITORING_ALERT_EDIT_URL(),
-    component: <PageAlertingEditFeature />,
-  },
-  {
-    path: APPLICATION_MONITORING_ALERTS_URL,
-    component: <PageMonitoringAlertsFeature />,
   },
 ]
 

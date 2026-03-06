@@ -2,7 +2,6 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import * as useCreateCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import * as useEditCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
-import * as useDeleteCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import { getByText, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useClusterCloudProviderInfoHook from '../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
 import ClusterCredentialsModal, { type ClusterCredentialsModalProps, handleSubmit } from './cluster-credentials-modal'
@@ -10,7 +9,6 @@ import ClusterCredentialsModal, { type ClusterCredentialsModalProps, handleSubmi
 jest.mock('@qovery/domains/cloud-providers/feature', () => ({
   useCreateCloudProviderCredential: jest.fn(),
   useEditCloudProviderCredential: jest.fn(),
-  useDeleteCloudProviderCredential: jest.fn(),
 }))
 
 jest.mock('../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info', () => ({
@@ -21,7 +19,6 @@ let props: ClusterCredentialsModalProps
 
 const mockCreateCredential = jest.fn()
 const mockEditCredential = jest.fn()
-const mockDeleteCredential = jest.fn()
 
 describe('ClusterCredentialsModal', () => {
   beforeEach(() => {
@@ -40,10 +37,6 @@ describe('ClusterCredentialsModal', () => {
     jest.spyOn(useEditCloudProviderCredentialHook, 'useEditCloudProviderCredential').mockReturnValue({
       mutateAsync: mockEditCredential,
       isLoading: false,
-    })
-
-    jest.spyOn(useDeleteCloudProviderCredentialHook, 'useDeleteCloudProviderCredential').mockReturnValue({
-      mutateAsync: mockDeleteCredential,
     })
 
     jest.spyOn(useClusterCloudProviderInfoHook, 'useClusterCloudProviderInfo').mockReturnValue({
@@ -131,28 +124,6 @@ describe('ClusterCredentialsModal', () => {
       await userEvent.click(submitButton)
 
       expect(mockEditCredential).toHaveBeenCalled()
-    })
-
-    it('should handle delete confirmation', async () => {
-      const { userEvent } = renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
-
-      const deleteButton = screen.getByTestId('delete-button')
-      await userEvent.click(deleteButton)
-
-      const confirmationInput = screen.getByTestId('input-value')
-      await userEvent.type(confirmationInput, 'delete')
-
-      const modalTitle = screen.getByText('Delete credential')
-      expect(modalTitle).toBeInTheDocument()
-
-      const confirmationModal = modalTitle.parentElement
-
-      if (confirmationModal) {
-        const confirmButton = getByText(confirmationModal, 'Confirm')
-        await userEvent.click(confirmButton)
-      }
-
-      expect(mockDeleteCredential).toHaveBeenCalled()
     })
   })
 })

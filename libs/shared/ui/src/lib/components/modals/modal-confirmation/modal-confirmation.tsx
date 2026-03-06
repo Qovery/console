@@ -49,8 +49,8 @@ export function ModalConfirmation({
 
   return (
     <div className="p-6">
-      <h2 className="h4 mb-2 max-w-sm text-neutral-400 dark:text-neutral-50">{title}</h2>
-      <div className="mb-6 text-sm text-neutral-350 dark:text-neutral-50">
+      <h2 className="h4 mb-2 max-w-sm text-neutral">{title}</h2>
+      <div className="mb-6 text-sm text-neutral-subtle">
         {confirmationMethod === 'action' ? (
           description ? (
             description
@@ -66,7 +66,7 @@ export function ModalConfirmation({
               <span
                 data-testid="copy-cta"
                 onClick={copyToClipboard}
-                className="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
+                className="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-info"
               >
                 {name} <Icon iconName="copy" />
               </span>

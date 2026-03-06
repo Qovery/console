@@ -7,8 +7,8 @@ import { NotificationChannelOverview } from './notification-channel-overview'
 const mockUseAlertReceivers = jest.spyOn(useAlertReceivers, 'useAlertReceivers') as jest.Mock
 const mockUseDeleteAlertReceiver = jest.spyOn(useDeleteAlertReceiver, 'useDeleteAlertReceiver') as jest.Mock
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: 'org-123' }),
 }))
 

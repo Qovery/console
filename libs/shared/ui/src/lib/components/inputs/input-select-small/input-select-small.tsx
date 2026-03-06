@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { type Value } from '@qovery/shared/interfaces'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
-import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
 export interface InputSelectSmallProps {
   name: string
@@ -14,6 +13,7 @@ export interface InputSelectSmallProps {
   onChange?: (item: string | undefined) => void
   defaultValue?: string
   inputClassName?: string
+  disabled?: boolean
 }
 
 export function InputSelectSmall(props: InputSelectSmallProps) {
@@ -27,6 +27,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
     getValue,
     dataTestId,
     inputClassName = '',
+    disabled = false,
   } = props
 
   const [value, setValue] = useState(defaultValue)
@@ -48,14 +49,15 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
   }, [defaultValue])
 
   return (
-    <div className={`${className} relative flex items-center gap-4`}>
-      {label && <label className="shrink-0 text-sm">{label}</label>}
+    <div className={`${className} group relative flex items-center gap-4`}>
+      {label && <label className="shrink-0 text-sm text-neutral">{label}</label>}
       <select
         data-testid={dataTestId || 'input-select-small'}
         name={name}
         value={value}
+        disabled={disabled}
         className={twMerge(
-          'h-9 w-full cursor-pointer appearance-none rounded border border-neutral-250 bg-neutral-100 px-3 pr-6 text-sm font-medium text-neutral-400 shadow-sm transition-colors hover:bg-neutral-50 hover:outline-brand-500 active:shadow-none disabled:shadow-none hover:[&:not(:active)]:border-neutral-300',
+          'h-9 w-full cursor-pointer appearance-none rounded border border-neutral bg-surface-neutral px-3 pr-6 text-sm text-neutral transition-colors hover:bg-surface-neutral-component focus:outline-none disabled:cursor-not-allowed disabled:bg-surface-neutral disabled:text-neutral-subtle disabled:hover:bg-surface-neutral',
           inputClassName
         )}
         onChange={(e) => onClickItem(e.target.value)}
@@ -67,8 +69,8 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
         ))}
       </select>
       <Icon
-        name={IconAwesomeEnum.CHEVRON_DOWN}
-        className="pointer-events-none absolute right-4 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-400"
+        iconName="chevron-down"
+        className="pointer-events-none absolute right-3 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
       />
     </div>
   )

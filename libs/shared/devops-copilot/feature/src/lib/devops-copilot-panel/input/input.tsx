@@ -52,7 +52,7 @@ export const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, sto
               <Icon iconName="arrow-up" className={loading ? 'opacity-0' : ''} />
             ) : (
               <>
-                <LoaderSpinner className="absolute left-0 right-0 m-auto group-hover:opacity-0" theme="dark" />
+                <LoaderSpinner className="absolute left-0 right-0 m-auto group-hover:opacity-0" />
                 <Icon
                   className="absolute left-0 right-0 m-auto opacity-0 group-hover:opacity-100"
                   iconName="stop"

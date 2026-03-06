@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ClusterAccessModal should match snapshot 1`] = `
 <body>
@@ -7,12 +7,12 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
       class="flex flex-col p-5"
     >
       <h1
-        class="text-xl font-bold h4 max-w-sm truncate text-neutral-400"
+        class="text-2xl font-bold h4 max-w-sm truncate text-neutral"
       >
         Access to your cluster
       </h1>
       <p
-        class="mb-6 mt-2 text-sm text-neutral-350"
+        class="mb-6 mt-2 text-sm text-neutral-subtle"
       >
         This section explains how to connect to your 
         cluster using kubectl, k9s.
@@ -21,7 +21,7 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
         class="flex flex-col gap-4"
       >
         <li
-          class="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm"
+          class="flex flex-col gap-2 rounded border border-neutral px-4 py-3 text-sm"
         >
           <span
             class="font-medium"
@@ -31,12 +31,12 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
             Download/Update Qovery CLI
           </span>
           <p
-            class="text-neutral-350"
+            class="text-neutral-subtle"
           >
             Download and install the Qovery CLI (or update its version to the latest version)
           </p>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-sm"
             href="https://www.qovery.com/docs/cli/overview#installation"
             rel="noopener noreferrer"
             target="_blank"
@@ -44,12 +44,12 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
             https://www.qovery.com/docs/cli/overview#installation
             <i
               aria-hidden="true"
-              class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
+              class="fa-regular fa-arrow-up-right-from-square text-xs leading-5"
             />
           </a>
         </li>
         <li
-          class="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm"
+          class="flex flex-col gap-2 rounded border border-neutral px-4 py-3 text-sm"
         >
           <span
             class="font-medium"
@@ -59,7 +59,7 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
             Get your kubeconfig
           </span>
           <div
-            class="flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400"
+            class="flex justify-between gap-6 rounded-sm bg-surface-neutral-subtle p-3 text-neutral"
           >
             <div>
               <span
@@ -70,19 +70,19 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               qovery cluster kubeconfig --cluster-id 000
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 cursor-pointer gap-2 font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral cursor-pointer gap-2 font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>
         </li>
         <li
-          class="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm"
+          class="flex flex-col gap-2 rounded border border-neutral px-4 py-3 text-sm"
         >
           <span
             class="font-medium"
@@ -92,12 +92,12 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
             Export your kubeconfig
           </span>
           <p
-            class="text-neutral-350"
+            class="text-neutral-subtle"
           >
             Replace the path from the previous command's output and run the following command in your terminal.
           </p>
           <div
-            class="flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400"
+            class="flex justify-between gap-6 rounded-sm bg-surface-neutral-subtle p-3 text-neutral"
           >
             <div>
               <span
@@ -108,19 +108,19 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               export KUBECONFIG=&lt;path&gt;
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 cursor-pointer gap-2 font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral cursor-pointer gap-2 font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>
         </li>
         <li
-          class="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm"
+          class="flex flex-col gap-2 rounded border border-neutral px-4 py-3 text-sm"
         >
           <span
             class="font-medium"
@@ -130,7 +130,7 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
             Use your favorite tool to access your cluster. Examples:
           </span>
           <div
-            class="flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400"
+            class="flex justify-between gap-6 rounded-sm bg-surface-neutral-subtle p-3 text-neutral"
           >
             <div>
               <span
@@ -141,18 +141,18 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               kubectl
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 cursor-pointer gap-2 font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral cursor-pointer gap-2 font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>
           <div
-            class="flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400"
+            class="flex justify-between gap-6 rounded-sm bg-surface-neutral-subtle p-3 text-neutral"
           >
             <div>
               <span
@@ -163,13 +163,13 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               k9s
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 cursor-pointer gap-2 font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral cursor-pointer gap-2 font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>
@@ -187,12 +187,12 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
       class="flex flex-col p-5"
     >
       <h1
-        class="text-xl font-bold h4 max-w-sm truncate text-neutral-400"
+        class="text-2xl font-bold h4 max-w-sm truncate text-neutral"
       >
         Access to your cluster
       </h1>
       <p
-        class="mb-6 mt-2 text-sm text-neutral-350"
+        class="mb-6 mt-2 text-sm text-neutral-subtle"
       >
         This section explains how to connect to your 
         self-managed 
@@ -202,7 +202,7 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
         class="flex flex-col gap-4"
       >
         <li
-          class="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm"
+          class="flex flex-col gap-2 rounded border border-neutral px-4 py-3 text-sm"
         >
           <span
             class="font-medium"
@@ -212,12 +212,12 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
             Download/Update Qovery CLI
           </span>
           <p
-            class="text-neutral-350"
+            class="text-neutral-subtle"
           >
             Download and install the Qovery CLI (or update its version to the latest version)
           </p>
           <a
-            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-sm"
             href="https://www.qovery.com/docs/cli/overview#installation"
             rel="noopener noreferrer"
             target="_blank"
@@ -225,12 +225,12 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
             https://www.qovery.com/docs/cli/overview#installation
             <i
               aria-hidden="true"
-              class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
+              class="fa-regular fa-arrow-up-right-from-square text-xs leading-5"
             />
           </a>
         </li>
         <li
-          class="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm"
+          class="flex flex-col gap-2 rounded border border-neutral px-4 py-3 text-sm"
         >
           <span
             class="font-medium"
@@ -240,7 +240,7 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
             Run your debug pod
           </span>
           <div
-            class="flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400"
+            class="flex justify-between gap-6 rounded-sm bg-surface-neutral-subtle p-3 text-neutral"
           >
             <div>
               <span
@@ -251,19 +251,19 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
               qovery cluster debug-pod --cluster-id 000
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 cursor-pointer gap-2 font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral cursor-pointer gap-2 font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>
         </li>
         <li
-          class="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm"
+          class="flex flex-col gap-2 rounded border border-neutral px-4 py-3 text-sm"
         >
           <span
             class="font-medium"
@@ -273,7 +273,7 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
             Use your favorite tool to access your cluster. Examples:
           </span>
           <div
-            class="flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400"
+            class="flex justify-between gap-6 rounded-sm bg-surface-neutral-subtle p-3 text-neutral"
           >
             <div>
               <span
@@ -284,18 +284,18 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
               kubectl
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 cursor-pointer gap-2 font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral cursor-pointer gap-2 font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>
           <div
-            class="flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400"
+            class="flex justify-between gap-6 rounded-sm bg-surface-neutral-subtle p-3 text-neutral"
           >
             <div>
               <span
@@ -306,13 +306,13 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
               k9s
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 cursor-pointer gap-2 font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral cursor-pointer gap-2 font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
-                class="fa-solid fa-copy text-xs"
+                class="fa-regular fa-copy text-xs"
               />
             </button>
           </div>

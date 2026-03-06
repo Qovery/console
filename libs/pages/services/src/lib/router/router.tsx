@@ -9,7 +9,6 @@ import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_POST_URL,
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
-  SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_GENERAL_URL,
   SERVICES_HELM_CREATION_SUMMARY_URL,
@@ -22,7 +21,6 @@ import {
   SERVICES_JOB_CREATION_POST_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_JOB_CREATION_VARIABLE_URL,
-  SERVICES_NEW_URL,
   SERVICES_SETTINGS_DANGER_ZONE_URL,
   SERVICES_SETTINGS_GENERAL_URL,
   SERVICES_SETTINGS_PIPELINE_URL,
@@ -44,7 +42,6 @@ import { StepVariableFeature as ApplicationStepVariablesFeature } from '../featu
 import { StepGeneralFeature as DatabaseStepGeneralFeature } from '../feature/page-database-create-feature/step-general-feature/step-general-feature'
 import { StepResourcesFeature as DatabaseStepResourcesFeature } from '../feature/page-database-create-feature/step-resources-feature/step-resources-feature'
 import { StepSummaryFeature as DatabaseStepSummaryFeature } from '../feature/page-database-create-feature/step-summary-feature/step-summary-feature'
-import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import { StepGeneralFeature as HelmStepGeneralFeature } from '../feature/page-helm-create-feature/step-general-feature/step-general-feature'
 import { StepSummaryFeature as HelmStepSummaryFeature } from '../feature/page-helm-create-feature/step-summary-feature/step-summary-feature'
@@ -57,7 +54,6 @@ import StepIntroductionFeature from '../feature/page-job-create-feature/step-int
 import { StepResourcesFeature } from '../feature/page-job-create-feature/step-resources-feature/step-resources-feature'
 import { StepSummaryFeature } from '../feature/page-job-create-feature/step-summary-feature/step-summary-feature'
 import { StepVariableFeature } from '../feature/page-job-create-feature/step-variable-feature/step-variable-feature'
-import { PageNewFeature } from '../feature/page-new-feature/page-new-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import PageSettingsDeploymentPipelineFeature from '../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
 import PageSettingsDeploymentRulesFeature from '../feature/page-settings-deployment-rules-feature/page-settings-deployment-rules-feature'
@@ -81,14 +77,6 @@ export const ROUTER_SERVICES: Route[] = [
     ),
   },
   {
-    path: SERVICES_DEPLOYMENTS_URL,
-    component: (
-      <Container>
-        <PageDeploymentsFeature />
-      </Container>
-    ),
-  },
-  {
     path: SERVICES_VARIABLES_URL,
     component: (
       <Container>
@@ -103,10 +91,6 @@ export const ROUTER_SERVICES: Route[] = [
         <PageSettingsFeature />
       </Container>
     ),
-  },
-  {
-    path: SERVICES_NEW_URL,
-    component: <PageNewFeature />,
   },
 ]
 

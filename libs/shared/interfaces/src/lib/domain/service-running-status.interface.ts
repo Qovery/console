@@ -1,12 +1,15 @@
-import { type ServiceStateDto } from 'qovery-ws-typescript-axios'
+import { type Status } from 'qovery-typescript-axios'
+import { type ServiceActionDetailsDto, type ServiceStateDto } from 'qovery-ws-typescript-axios'
 
-export interface ServiceRunningStatus {
-  id: string
-  state: keyof typeof ServiceStateDto
-  pods: {
-    name: string
-    state: keyof typeof ServiceStateDto
-    restart_count: number
-    state_message: string
-  }[]
+export type ServiceRunningStatus = {
+  triggered_action: ServiceActionDetailsDto | undefined
+  state: ServiceStateDto | 'UNKNOWN' | undefined
+  stateLabel: string | undefined
+}
+
+export type ServiceStatuses = {
+  runningStatus: ServiceRunningStatus
+  deploymentStatus?: Status & {
+    stateLabel: string | undefined
+  }
 }

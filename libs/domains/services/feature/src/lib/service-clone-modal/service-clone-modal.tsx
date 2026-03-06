@@ -1,6 +1,6 @@
+import { useNavigate } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
@@ -66,9 +66,9 @@ export function ServiceCloneModal({ onClose, organizationId, projectId, serviceI
     })
 
     if (service.serviceType === 'DATABASE') {
-      navigate(DATABASE_URL(organizationId, projectId, environmentId, result.id) + DATABASE_GENERAL_URL)
+      navigate({ to: DATABASE_URL(organizationId, projectId, environmentId, result.id) + DATABASE_GENERAL_URL })
     } else {
-      navigate(APPLICATION_URL(organizationId, projectId, environmentId, result.id) + APPLICATION_GENERAL_URL)
+      navigate({ to: APPLICATION_URL(organizationId, projectId, environmentId, result.id) + APPLICATION_GENERAL_URL })
     }
     return onClose()
   })

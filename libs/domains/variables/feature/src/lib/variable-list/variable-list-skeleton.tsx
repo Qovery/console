@@ -7,11 +7,15 @@ export function VariableListSkeleton() {
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full border-b bg-white">
+      <Table.Root className="w-full">
         <Table.Header>
           <Table.Row>
             {[...Array(5)].map((_, index) => (
-              <Table.ColumnHeaderCell key={index} className="first:border-r" style={{ width: columnSizes[index] }}>
+              <Table.ColumnHeaderCell
+                key={index}
+                className="border-neutral first:border-r"
+                style={{ width: columnSizes[index] }}
+              >
                 <Skeleton height={16} width={100} />
               </Table.ColumnHeaderCell>
             ))}
@@ -21,7 +25,11 @@ export function VariableListSkeleton() {
           {[...Array(3)].map((_, index) => (
             <Table.Row key={index}>
               {[...Array(5)].map((_, index) => (
-                <Table.Cell key={index} className="h-14 first:border-r" style={{ width: columnSizes[index] }}>
+                <Table.Cell
+                  key={index}
+                  className="h-14 border-neutral first:border-r"
+                  style={{ width: columnSizes[index] }}
+                >
                   {index === 0 ? (
                     <div className="flex items-center justify-between">
                       <Skeleton height={16} width={300} />

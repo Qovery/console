@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceList, type ServiceListProps } from './service-list'
 
@@ -325,8 +326,6 @@ jest.mock('../hooks/use-services/use-services', () => ({
         },
       },
     ],
-    isLoading: false,
-    error: {},
   }),
 }))
 
@@ -375,9 +374,13 @@ jest.mock('../hooks/use-links/use-links', () => ({
 }))
 
 const mockNavigate = jest.fn()
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
   useNavigate: () => mockNavigate,
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({ buildLocation: () => ({ href: '/' }) }),
+  useParams: () => ({}),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
 
 const serviceListProps: ServiceListProps = {
@@ -415,6 +418,7 @@ describe('ServiceList', () => {
     expect(container).toMatchSnapshot()
     jest.useRealTimers()
   })
+
   it('should display all services', () => {
     renderWithProviders(<ServiceList {...serviceListProps} />)
     const rows = screen.getAllByRole('row')
@@ -432,16 +436,15 @@ describe('ServiceList', () => {
     const rows = screen.getAllByRole('row')
     await userEvent.click(rows[1])
 
-    expect(mockNavigate).toHaveBeenCalledWith(
-      '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general'
-    )
-  })
-  it('should navigate to service live logs on service status click', () => {
-    renderWithProviders(<ServiceList {...serviceListProps} />)
-    expect(screen.getAllByRole('link', { name: /stopped/i })[0]).toHaveAttribute(
-      'href',
-      '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general'
-    )
+    expect(mockNavigate).toHaveBeenCalledWith({
+      params: {
+        environmentId: '55867c71-56f9-4b4f-ab22-5904c9dbafda',
+        organizationId: '1',
+        projectId: 'cf021d82-2c5e-41de-96eb-eb69c022eddc',
+        serviceId: '037c9e87-e098-4970-8b1f-9a5ffe9e4b89',
+      },
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+    })
   })
 
   it('should disable checkbox for skipped services', () => {

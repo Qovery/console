@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ClusterTerminal should match snapshot 1`] = `
 <body
@@ -6,43 +6,43 @@ exports[`ClusterTerminal should match snapshot 1`] = `
 >
   <div />
   <div
-    class="dark fixed bottom-0 left-0 w-full animate-slidein-up-md-faded bg-neutral-650"
+    class="fixed bottom-0 left-0 z-dropdown w-full animate-slidein-up-md-faded bg-surface-neutral-subtle shadow-[0_-4px_60px_rgba(0,0,0,0.08)]"
   >
     <button
-      class="flex h-4 w-full items-center justify-center border-t border-neutral-500 bg-neutral-550 transition-colors hover:bg-neutral-650"
+      class="flex h-4 w-full items-center justify-center border-t border-neutral bg-surface-neutral-componentActive transition-colors hover:bg-surface-neutral-componentHover"
       type="button"
     >
       <i
         aria-hidden="true"
-        class="fa-regular fa-grip-lines text-white"
+        class="fa-regular fa-grip-lines text-neutral"
       />
     </button>
     <div
-      class="flex h-11 justify-end border-y border-neutral-500 px-4 py-2"
+      class="flex h-11 justify-end border-y border-neutral px-4 py-2"
     >
       <div
         class="flex items-center gap-1"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
         >
           Close shell
           <i
             aria-hidden="true"
-            class="fa-solid fa-xmark ml-2 text-sm"
+            class="fa-regular fa-xmark ml-2 text-sm"
           />
         </button>
       </div>
     </div>
     <div
-      class="relative min-h-[248px] bg-neutral-700 px-4 py-2"
+      class="relative min-h-[248px] border-neutral bg-surface-neutral-subtle px-4 py-2"
       style="height: 248px;"
     >
       <div
         class="flex h-40 items-start justify-center p-5"
       >
         <div
-          class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+          class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
           data-testid="spinner"
         />
       </div>

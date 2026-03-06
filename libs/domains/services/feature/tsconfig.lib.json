@@ -6,7 +6,8 @@
   },
   "files": [
     "../../../../node_modules/@nx/react/typings/cssmodule.d.ts",
-    "../../../../node_modules/@nx/react/typings/image.d.ts"
+    "../../../../node_modules/@nx/react/typings/image.d.ts",
+    "../../../../apps/console-v5/src/router-types.d.ts"
   ],
   "exclude": [
     "jest.config.ts",
@@ -19,5 +20,11 @@
     "src/**/*.spec.jsx",
     "src/**/*.test.jsx"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
+  "include": [
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "../../../shared/router/src/lib/router-types/application-container-create-search.ts"
+  ]
 }

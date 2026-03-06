@@ -1,7 +1,9 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Organization } from 'qovery-typescript-axios'
 import { useAuth } from '@qovery/shared/auth'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useUserAccount } from '@qovery/shared/iam/feature'
+import { Callout, Icon, Section } from '@qovery/shared/ui'
 import { useAICopilotConfig } from '../hooks/use-ai-copilot-config/use-ai-copilot-config'
 import { useAICopilotRecurringTasks } from '../hooks/use-ai-copilot-recurring-tasks/use-ai-copilot-recurring-tasks'
 import { useDeleteAICopilotRecurringTask } from '../hooks/use-delete-ai-copilot-recurring-task/use-delete-ai-copilot-recurring-task'
@@ -54,31 +56,46 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
   return (
     <div className="w-full justify-between">
       <div className="max-w-content-with-navigation-left p-8">
-        {!isEnabled && !isLoadingConfig ? (
-          <SectionAICopilotOptIn
-            organization={organization}
-            isLoading={isLoadingConfig}
-            onEnable={() => handleToggleCopilot(true)}
-          />
-        ) : (
-          <>
-            <SectionAICopilotConfiguration
+        <Section>
+          <SettingsHeading title="AI Copilot Configuration" description="Configure your Copilot" showNeedHelp={false} />
+          <Callout.Root color="purple" className="mb-4">
+            <Callout.Icon>
+              <Icon iconName="flask" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>Beta Feature</Callout.TextHeading>
+              <Callout.TextDescription>
+                The AI Copilot is currently in beta. This is an experimental feature and functionality may change.
+                Billing terms are not final and will be communicated before any charges apply.
+              </Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
+          {!isEnabled && !isLoadingConfig ? (
+            <SectionAICopilotOptIn
               organization={organization}
-              isLoading={isLoadingConfig || !orgConfig}
-              isUpdating={updateConfigMutation.isLoading}
-              currentMode={currentMode}
-              onModeChange={(mode) => updateConfigMutation.mutate({ enabled: true, readOnly: mode === 'read-only' })}
-              onDisable={() => handleToggleCopilot(false)}
+              isLoading={isLoadingConfig}
+              onEnable={() => handleToggleCopilot(true)}
             />
+          ) : (
+            <div className="flex flex-col gap-8">
+              <SectionAICopilotConfiguration
+                organization={organization}
+                isLoading={isLoadingConfig || !orgConfig}
+                isUpdating={updateConfigMutation.isLoading}
+                currentMode={currentMode}
+                onModeChange={(mode) => updateConfigMutation.mutate({ enabled: true, readOnly: mode === 'read-only' })}
+                onDisable={() => handleToggleCopilot(false)}
+              />
 
-            <SectionScheduledTasks
-              tasks={tasks}
-              isLoading={isLoadingTasks}
-              onToggleTask={(taskId) => toggleTaskMutation.mutate({ taskId })}
-              onDeleteTask={(taskId) => deleteTaskMutation.mutate({ taskId })}
-            />
-          </>
-        )}
+              <SectionScheduledTasks
+                tasks={tasks}
+                isLoading={isLoadingTasks}
+                onToggleTask={(taskId) => toggleTaskMutation.mutate({ taskId })}
+                onDeleteTask={(taskId) => deleteTaskMutation.mutate({ taskId })}
+              />
+            </div>
+          )}
+        </Section>
       </div>
     </div>
   )

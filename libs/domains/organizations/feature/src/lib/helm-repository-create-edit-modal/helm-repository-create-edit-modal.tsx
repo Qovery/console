@@ -351,8 +351,8 @@ export function HelmRepositoryCreateEditModal({
                   />
                   {isEditDirty && (
                     <>
-                      <hr />
-                      <span className="text-sm text-neutral-350">Confirm your password</span>
+                      <hr className="border-neutral" />
+                      <span className="text-sm text-neutral-subtle">Confirm your password</span>
                     </>
                   )}
                   {(!isEdit || isEditDirty) && (
@@ -436,8 +436,8 @@ export function HelmRepositoryCreateEditModal({
               />
               {isEditDirty && (
                 <>
-                  <hr />
-                  <span className="text-sm text-neutral-350">Confirm your secret key</span>
+                  <hr className="border-neutral" />
+                  <span className="text-sm text-neutral-subtle">Confirm your secret key</span>
                 </>
               )}
               {(!isEdit || isEditDirty) && (
@@ -537,8 +537,8 @@ export function HelmRepositoryCreateEditModal({
                   />
                   {isEditDirty && (
                     <>
-                      <hr />
-                      <span className="text-sm text-neutral-350">Confirm your secret key</span>
+                      <hr className="border-neutral" />
+                      <span className="text-sm text-neutral-subtle">Confirm your secret key</span>
                     </>
                   )}
                   {(!isEdit || isEditDirty) && (

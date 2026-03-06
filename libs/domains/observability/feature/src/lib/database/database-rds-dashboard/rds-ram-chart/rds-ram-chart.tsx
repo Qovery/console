@@ -69,7 +69,7 @@ export function RdsRamChart({
         dataKey="Available RAM"
         name="Available RAM"
         type="linear"
-        stroke="var(--color-green-500)"
+        stroke="var(--positive-11)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}

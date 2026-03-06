@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ActionTriggerStatusChip shoud match size snapshot 1`] = `
 <body>
@@ -10,21 +10,21 @@ exports[`ActionTriggerStatusChip shoud match size snapshot 1`] = `
         class="relative inline-block"
       >
         <span
-          class="flex items-center justify-center rounded-full border border-neutral-200 text-neutral-350 dark:border-neutral-400 dark:text-neutral-250"
+          class="flex items-center justify-center rounded-full border border-neutral text-neutral-subtle"
         >
           <i
             aria-hidden="true"
-            class="fa-solid fa-play "
+            class="fa-regular fa-rocket "
           />
         </span>
         <span
           class="absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2"
         >
           <div
-            class="relative rounded-full bg-white dark:bg-neutral-600"
+            class="h-[14px] w-[14px] relative rounded-full bg-background"
           >
             <svg
-              class="text-neutral-300"
+              class="text-neutral-300 h-full w-full"
               fill="none"
               height="16"
               viewBox="0 0 24 24"
@@ -33,7 +33,7 @@ exports[`ActionTriggerStatusChip shoud match size snapshot 1`] = `
             >
               <g
                 clip-path="url(#clip0_5937_4698)"
-                fill="#A0AFC5"
+                fill="currentColor"
               >
                 <path
                   d="M12 2.25a9.75 9.75 0 110 19.5 9.75 9.75 0 010-19.5zM12 24a12 12 0 100-24 12 12 0 000 24z"
