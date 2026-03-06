@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { type Control, Controller, useFormContext, useWatch } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { useContainerImages, useContainerRegistries } from '@qovery/domains/organizations/feature'
 import { type Value } from '@qovery/shared/interfaces'
 import { InputSelect, InputText } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
+import { useContainerImages } from '../hooks/use-container-images/use-container-images'
+import { useContainerRegistries } from '../hooks/use-container-registries/use-container-registries'
 import { type ContainerFormProps } from './general-container-settings'
 
 const DEBOUNCE_TIME = 500

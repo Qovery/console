@@ -99,7 +99,7 @@ export function StepValuesOverrideFilesFeature() {
 
   const gitRepositorySettings = (
     <>
-      <GitProviderSetting />
+      <GitProviderSetting organizationId={organizationId} />
       {watchFieldIsPublicRepository ? (
         <>
           <GitPublicRepositorySettings hideRootPath />
@@ -116,11 +116,20 @@ export function StepValuesOverrideFilesFeature() {
       ) : (
         <>
           {watchFieldGitProvider && (
-            <GitRepositorySetting gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
+            <GitRepositorySetting
+              organizationId={organizationId}
+              gitProvider={watchFieldGitProvider}
+              gitTokenId={watchFieldGitTokenId}
+            />
           )}
           {watchFieldGitProvider && watchFieldGitRepository && (
             <>
-              <GitBranchSettings gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} hideRootPath />
+              <GitBranchSettings
+                organizationId={organizationId}
+                gitProvider={watchFieldGitProvider}
+                gitTokenId={watchFieldGitTokenId}
+                hideRootPath
+              />
               {watchFieldGitBranch && <GitPathsSettings methods={valuesOverrideFileForm} />}
             </>
           )}

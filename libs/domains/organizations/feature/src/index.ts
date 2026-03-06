@@ -4,6 +4,8 @@ export * from './lib/label-annotation-items-list-modal/label-annotation-items-li
 export * from './lib/git-branch-settings/git-branch-settings'
 export * from './lib/git-provider-setting/git-provider-setting'
 export * from './lib/git-repository-setting/git-repository-setting'
+export * from './lib/git-repository-service-settings/git-repository-settings'
+export * from './lib/git-repository-service-settings/edit-git-repository-settings/edit-git-repository-settings'
 export * from './lib/git-public-repository-settings/git-public-repository-settings'
 export * from './lib/git-token-create-edit-modal/git-token-create-edit-modal'
 export * from './lib/helm-repository-create-edit-modal/helm-repository-create-edit-modal'

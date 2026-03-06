@@ -1,14 +1,14 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { Suspense } from 'react'
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import EditGitRepositorySettingsFeature from './edit-git-repository-settings-feature'
+import { EditGitRepositorySettings } from './edit-git-repository-settings'
 
-describe('EditGitRepositorySettingsFeature', () => {
+describe('EditGitRepositorySettings', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
       wrapWithReactHookForm(
         <Suspense fallback={<div />}>
-          <EditGitRepositorySettingsFeature />
+          <EditGitRepositorySettings organizationId="org-id" />
         </Suspense>
       )
     )

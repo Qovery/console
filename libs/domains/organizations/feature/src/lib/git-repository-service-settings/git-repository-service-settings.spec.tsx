@@ -1,8 +1,7 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { GitProviderEnum } from 'qovery-typescript-axios'
-import * as SharedUI from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import GitRepositorySettings, { type GitRepositorySettingsProps } from './git-repository-settings'
+import GitRepositoryServiceSettings, { type GitRepositoryServiceSettingsProps } from './git-repository-service-settings'
 
 const mockOpenModal = jest.fn()
 const mockCloseModal = jest.fn()
@@ -15,13 +14,16 @@ jest.mock('@qovery/shared/ui', () => {
 })
 
 const mockUseGitTokens = jest.fn()
-jest.mock('@qovery/domains/organizations/feature', () => ({
-  ...jest.requireActual('@qovery/domains/organizations/feature'),
-  useGitTokens: (props: unknown) => mockUseGitTokens(props),
-}))
+jest.mock('../hooks/use-git-tokens/use-git-tokens', () => {
+  const actual = jest.requireActual('../hooks/use-git-tokens/use-git-tokens')
+  return {
+    ...actual,
+    useGitTokens: (props: unknown) => mockUseGitTokens(props),
+  }
+})
 
-describe('GitRepositorySettings', () => {
-  const props: GitRepositorySettingsProps = {
+describe('GitRepositoryServiceSettings', () => {
+  const props: GitRepositoryServiceSettingsProps = {
     gitDisabled: true,
     editGitSettings: jest.fn(),
     currentProvider: 'GITHUB',
@@ -57,13 +59,13 @@ describe('GitRepositorySettings', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<GitRepositorySettings {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<GitRepositoryServiceSettings {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should render disabled fields', async () => {
     renderWithProviders(
-      wrapWithReactHookForm(<GitRepositorySettings {...props} />, {
+      wrapWithReactHookForm(<GitRepositoryServiceSettings {...props} />, {
         defaultValues: defaultValues,
       })
     )
@@ -76,7 +78,7 @@ describe('GitRepositorySettings', () => {
 
   it('should dispatch open modal if click on edit', async () => {
     const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(<GitRepositorySettings {...props} />, {
+      wrapWithReactHookForm(<GitRepositoryServiceSettings {...props} />, {
         defaultValues: defaultValues,
       })
     )
@@ -112,7 +114,7 @@ describe('GitRepositorySettings', () => {
       }
 
       renderWithProviders(
-        wrapWithReactHookForm(<GitRepositorySettings {...props} />, {
+        wrapWithReactHookForm(<GitRepositoryServiceSettings {...props} />, {
           defaultValues: defaultValuesWithToken,
         })
       )
@@ -142,7 +144,7 @@ describe('GitRepositorySettings', () => {
       }
 
       renderWithProviders(
-        wrapWithReactHookForm(<GitRepositorySettings {...props} />, {
+        wrapWithReactHookForm(<GitRepositoryServiceSettings {...props} />, {
           defaultValues: defaultValuesWithToken,
         })
       )
@@ -170,7 +172,7 @@ describe('GitRepositorySettings', () => {
       }
 
       renderWithProviders(
-        wrapWithReactHookForm(<GitRepositorySettings {...props} />, {
+        wrapWithReactHookForm(<GitRepositoryServiceSettings {...props} />, {
           defaultValues: defaultValuesWithToken,
         })
       )
@@ -185,7 +187,7 @@ describe('GitRepositorySettings', () => {
       })
 
       renderWithProviders(
-        wrapWithReactHookForm(<GitRepositorySettings {...props} />, {
+        wrapWithReactHookForm(<GitRepositoryServiceSettings {...props} />, {
           defaultValues: defaultValues,
         })
       )
@@ -223,7 +225,7 @@ describe('GitRepositorySettings', () => {
       }
 
       renderWithProviders(
-        wrapWithReactHookForm(<GitRepositorySettings {...props} />, {
+        wrapWithReactHookForm(<GitRepositoryServiceSettings {...props} />, {
           defaultValues: defaultValuesWithExpiredToken,
         })
       )
@@ -252,7 +254,7 @@ describe('GitRepositorySettings', () => {
         }
 
         renderWithProviders(
-          wrapWithReactHookForm(<GitRepositorySettings {...props} />, {
+          wrapWithReactHookForm(<GitRepositoryServiceSettings {...props} />, {
             defaultValues: defaultValuesWithToken,
           })
         )
@@ -287,7 +289,7 @@ describe('GitRepositorySettings', () => {
         }
 
         const { userEvent } = renderWithProviders(
-          wrapWithReactHookForm(<GitRepositorySettings {...props} />, {
+          wrapWithReactHookForm(<GitRepositoryServiceSettings {...props} />, {
             defaultValues: defaultValuesWithToken,
           })
         )
@@ -327,7 +329,7 @@ describe('GitRepositorySettings', () => {
         }
 
         renderWithProviders(
-          wrapWithReactHookForm(<GitRepositorySettings {...props} />, {
+          wrapWithReactHookForm(<GitRepositoryServiceSettings {...props} />, {
             defaultValues: defaultValuesWithToken,
           })
         )

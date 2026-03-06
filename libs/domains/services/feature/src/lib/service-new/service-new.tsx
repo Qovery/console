@@ -6,8 +6,6 @@ import { type ReactElement, cloneElement, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import {
-  SERVICES_APPLICATION_CREATION_URL,
-  SERVICES_APPLICATION_TEMPLATE_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DATABASE_TEMPLATE_CREATION_URL,
@@ -37,6 +35,54 @@ const getEnvironmentBasePath = (organizationId: string, projectId: string, envir
 
 const getServicesPath = (organizationId: string, projectId: string, environmentId: string, subPath: string) =>
   `${getEnvironmentBasePath(organizationId, projectId, environmentId)}${subPath}`
+
+const CREATE_FLOW_SLUG_BY_TYPE: Partial<Record<ServiceType, string>> = {
+  APPLICATION: 'application',
+  CONTAINER: 'container',
+  DATABASE: 'database',
+  HELM: 'helm',
+  JOB: 'lifecycle-job',
+  LIFECYCLE_JOB: 'lifecycle-job',
+  CRON_JOB: 'cron-job',
+  TERRAFORM: 'terraform',
+}
+
+const CREATE_FLOW_SLUGS = new Set(Object.values(CREATE_FLOW_SLUG_BY_TYPE))
+
+/**
+ * Path = flow slug (from config), template = preset id in query.
+ * Works for card-by-type (Application > Next.js) and card-by-template (Apache Kafka > Container).
+ * */
+function getCreateFlowPathParams(
+  type: ServiceType,
+  parentSlug: string,
+  slug: string
+): { flowSlug: string; templateSlug: string | undefined } {
+  if (slug === 'current') {
+    const flowSlug = CREATE_FLOW_SLUGS.has(parentSlug) ? parentSlug : CREATE_FLOW_SLUG_BY_TYPE[type] ?? parentSlug
+    const templateSlug = CREATE_FLOW_SLUGS.has(parentSlug) ? undefined : parentSlug
+    return { flowSlug, templateSlug }
+  }
+  const flowSlug = CREATE_FLOW_SLUGS.has(parentSlug) ? parentSlug : slug
+  const templateSlug = CREATE_FLOW_SLUGS.has(parentSlug) ? (CREATE_FLOW_SLUGS.has(slug) ? undefined : slug) : parentSlug
+  return { flowSlug, templateSlug }
+}
+
+/** Builds /service/create/:flowSlug with optional ?template= for presets. Use for any type listed in CREATE_FLOW_SLUG_BY_TYPE. */
+function getCreateFlowPath(flowSlug: string, templateSlug?: string): string {
+  const path = `/service/create/${flowSlug}`
+  if (templateSlug && templateSlug !== 'current') {
+    return `${path}?template=${encodeURIComponent(templateSlug)}`
+  }
+  return path
+}
+
+function buildCreateFlowPathForType(type: ServiceType, parentSlug: string, slug: string): string | undefined {
+  const flowSlug = CREATE_FLOW_SLUG_BY_TYPE[type]
+  if (!flowSlug) return undefined
+  const { flowSlug: resolvedFlowSlug, templateSlug } = getCreateFlowPathParams(type, parentSlug, slug)
+  return getCreateFlowPath(resolvedFlowSlug, templateSlug)
+}
 
 function Card({
   title,
@@ -105,15 +151,16 @@ function Card({
   )
 }
 
+/** Types listed in CREATE_FLOW_SLUG_BY_TYPE use /service/create/:flowSlug?template=; others use legacy URLs until migrated. */
 const servicePathSuffix = (type: ServiceType, parentSlug: string, slug: string) =>
   match(type)
-    .with('APPLICATION', 'CONTAINER', () => SERVICES_APPLICATION_TEMPLATE_CREATION_URL(parentSlug, slug))
+    .with('APPLICATION', 'CONTAINER', () => buildCreateFlowPathForType(type, parentSlug, slug))
     .with('DATABASE', () => SERVICES_DATABASE_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('LIFECYCLE_JOB', () => SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('HELM', () => SERVICES_HELM_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('JOB', 'CRON_JOB', () => undefined)
     .with('TERRAFORM', () => undefined)
-    .otherwise(() => undefined)
+    .otherwise(() => buildCreateFlowPathForType(type, parentSlug, slug))
 
 interface CardOptionProps extends ServiceTemplateOptionType {
   parentSlug: string
@@ -475,7 +522,7 @@ export function ServiceNew({
         title: 'Application',
         description: 'Deploy a long running service running from Git or a Container Registry.',
         icon: <Icon name="APPLICATION" width={32} height={32} />,
-        link: getServicesPath(organizationId, projectId, environmentId, SERVICES_APPLICATION_CREATION_URL),
+        link: getServicesPath(organizationId, projectId, environmentId, getCreateFlowPath('application')),
         cloud_provider: cloudProvider,
       },
       {

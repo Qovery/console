@@ -10,28 +10,7 @@ jest.mock('@qovery/shared/util-hooks', () => ({
   useDebounce: () => 'my-custom-image',
 }))
 
-jest.mock('@qovery/domains/organizations/feature', () => ({
-  ...jest.requireActual('@qovery/domains/organizations/feature'),
-  useContainerImages: ({ containerRegistryId }: { containerRegistryId: string }) => {
-    const dataByRegistry = {
-      '0': [{ image_name: 'my-image', versions: [] }],
-      '1': [{ image_name: 'my-ecr-image', versions: [] }],
-    }
-
-    return {
-      data: dataByRegistry[containerRegistryId as keyof typeof dataByRegistry] ?? [],
-      isFetching: false,
-      refetch: () => Promise.resolve(),
-    }
-  },
-  useContainerVersions: () => ({
-    data: [
-      {
-        image_name: 'my-image',
-        versions: ['1.1.0', '2.0.0', '3.0.0'],
-      },
-    ],
-  }),
+jest.mock('../hooks/use-container-registries/use-container-registries', () => ({
   useContainerRegistries: () => ({
     data: [
       {
@@ -52,14 +31,44 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   }),
 }))
 
+jest.mock('../hooks/use-container-images/use-container-images', () => ({
+  useContainerImages: ({ containerRegistryId }: { containerRegistryId: string }) => {
+    const dataByRegistry: Record<string, { image_name: string; versions: string[] }[]> = {
+      '0': [{ image_name: 'my-image', versions: [] }],
+      '1': [{ image_name: 'my-ecr-image', versions: [] }],
+    }
+    return {
+      data: dataByRegistry[containerRegistryId] ?? [],
+      isFetching: false,
+      refetch: () => Promise.resolve(),
+    }
+  },
+}))
+
+jest.mock('../hooks/use-container-versions/use-container-versions', () => ({
+  useContainerVersions: () => ({
+    data: [
+      {
+        image_name: 'my-image',
+        versions: ['1.1.0', '2.0.0', '3.0.0'],
+      },
+    ],
+  }),
+}))
+
+const defaultProps = {
+  organizationId: mockOrganization.id,
+  openContainerRegistryCreateEditModal: jest.fn(),
+}
+
 describe('CreateGeneralContainer', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<GeneralContainerSettings />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<GeneralContainerSettings {...defaultProps} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should render inputs available in the requests', async () => {
-    renderWithProviders(wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />))
+    renderWithProviders(wrapWithReactHookForm(<GeneralContainerSettings {...defaultProps} />))
     await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
     await selectEvent.select(screen.getByLabelText('Image name'), ['my-image'])
     await selectEvent.select(screen.getByLabelText('Image tag'), ['3.0.0'])
@@ -69,9 +78,7 @@ describe('CreateGeneralContainer', () => {
   })
 
   it('should render inputs NOT available in the requests', async () => {
-    const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />)
-    )
+    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<GeneralContainerSettings {...defaultProps} />))
     // Registry
     await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
 
@@ -92,7 +99,7 @@ describe('CreateGeneralContainer', () => {
     }
 
     renderWithProviders(
-      wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />, {
+      wrapWithReactHookForm(<GeneralContainerSettings {...defaultProps} />, {
         defaultValues,
       })
     )
@@ -107,9 +114,7 @@ describe('CreateGeneralContainer', () => {
   })
 
   it('should show image list from the selected registry only', async () => {
-    const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />)
-    )
+    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<GeneralContainerSettings {...defaultProps} />))
 
     await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
     await userEvent.click(screen.getByLabelText('Image name'))

@@ -1,31 +1,21 @@
 import { type ApplicationGitRepository, type GitProviderEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
-import { P, match } from 'ts-pattern'
-import { useService } from '@qovery/domains/services/feature'
-import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
-import GitRepositorySettings from '../../ui/git-repository-settings/git-repository-settings'
+import GitRepositorySettings from '../git-repository-settings'
 
-interface EditGitRepositorySettingsFeatureProps {
+interface EditGitRepositorySettingsProps {
+  organizationId: string
+  gitRepository?: ApplicationGitRepository
   rootPathLabel?: string
   rootPathHint?: string
 }
 
-export function EditGitRepositorySettingsFeature({
+export function EditGitRepositorySettings({
+  organizationId,
+  gitRepository,
   rootPathHint,
   rootPathLabel,
-}: EditGitRepositorySettingsFeatureProps) {
-  const { applicationId = '', organizationId = '' } = useParams()
-  const { data: service } = useService({ serviceId: applicationId })
-
-  const gitRepository = match(service)
-    .with({ serviceType: 'JOB', source: P.when(isJobGitSource) }, (job) => job.source.docker?.git_repository)
-    .with({ serviceType: 'APPLICATION' }, (application) => application.git_repository)
-    .with({ serviceType: 'HELM', source: P.when(isHelmGitSource) }, (helm) => helm.source?.git?.git_repository)
-    .with({ serviceType: 'TERRAFORM' }, (terraform) => terraform.terraform_files_source?.git?.git_repository)
-    .otherwise(() => undefined)
-
+}: EditGitRepositorySettingsProps) {
   const { setValue } = useFormContext<{
     provider: GitProviderEnum | undefined
     repository?: string
@@ -73,4 +63,4 @@ export function EditGitRepositorySettingsFeature({
   )
 }
 
-export default EditGitRepositorySettingsFeature
+export default EditGitRepositorySettings

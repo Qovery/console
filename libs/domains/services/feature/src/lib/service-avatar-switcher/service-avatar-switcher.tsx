@@ -28,21 +28,21 @@ export function ServiceAvatarSwitcher({ onChange, service }: ServiceAvatarSwitch
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <button className="relative rounded-full transition hover:bg-neutral-100" type="button">
+        <button className="relative rounded-full transition hover:bg-surface-neutral-componentHover" type="button">
           <ServiceTemplateIndicator service={service} size="md">
             <ServiceAvatar service={service} border="solid" size="md" />
           </ServiceTemplateIndicator>
           <Icon
             iconName="angle-down"
-            className="absolute bottom-0 right-0 rounded-full bg-white p-0.5 text-neutral-300"
+            className="absolute bottom-0 right-0 rounded-full bg-surface-neutral p-0.5 text-neutral-subtle"
           />
         </button>
       </Popover.Trigger>
       <Popover.Content side="bottom" className="flex flex-col gap-2" style={{ width: 400 }}>
-        <span className="text-sm text-neutral-350">Change icon</span>
+        <span className="text-sm text-neutral-subtle">Change icon</span>
         <InputSearch placeholder="Search..." className="mb-1" onChange={(value) => setSearchTerm(value)} autofocus />
         {filteredIcons.length > 0 ? (
-          <div className="grid grid-cols-8 gap-2 text-sm text-neutral-350">
+          <div className="grid grid-cols-8 gap-2 text-sm text-neutral-subtle">
             {filteredIcons.map(({ icon, title, uri }) => {
               const isSelected = uri === service.icon_uri
               // XXX: corner case as application and container have the same icon, we want to hide one of them.
@@ -55,8 +55,8 @@ export function ServiceAvatarSwitcher({ onChange, service }: ServiceAvatarSwitch
                     <img
                       className={clsx(
                         'h-[38px] max-h-[38px] w-[38px] max-w-[38px] cursor-pointer select-none rounded border p-2',
-                        isSelected && 'border-brand-500 bg-brand-50',
-                        !isSelected && 'border-neutral-250 transition hover:border-neutral-300'
+                        isSelected && 'border-brand-strong bg-surface-brand-subtle',
+                        !isSelected && 'border-neutral transition hover:border-neutral-component'
                       )}
                       width="100%"
                       height="100%"
@@ -70,7 +70,7 @@ export function ServiceAvatarSwitcher({ onChange, service }: ServiceAvatarSwitch
             })}
           </div>
         ) : (
-          <div className="px-3 py-6 text-center text-neutral-350">
+          <div className="px-3 py-6 text-center text-neutral-subtle">
             <Icon iconName="wave-pulse" />
             <p className="mt-1 text-xs font-medium">No result for this search</p>
           </div>

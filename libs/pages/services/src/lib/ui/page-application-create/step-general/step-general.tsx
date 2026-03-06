@@ -3,14 +3,24 @@ import { type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
-import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
+import {
+  AnnotationSetting,
+  ContainerRegistryCreateEditModal,
+  GitRepositorySettings,
+  LabelSetting,
+} from '@qovery/domains/organizations/feature'
+import {
+  AutoDeploySetting,
+  BuildSettings,
+  GeneralContainerSettings,
+  GeneralSetting,
+} from '@qovery/domains/services/feature'
 import { serviceTemplates } from '@qovery/domains/services/feature'
-import { EntrypointCmdInputs, GeneralContainerSettings, GitRepositorySettings } from '@qovery/shared/console-shared'
+import { EntrypointCmdInputs } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import { Button, Heading, Icon, InputSelect, InputText, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputSelect, InputText, Section, useModal } from '@qovery/shared/ui'
 import { findTemplateData } from '../../../feature/page-job-create-feature/page-job-create-feature'
 
 export interface StepGeneralProps {
@@ -21,6 +31,7 @@ export interface StepGeneralProps {
 
 export function StepGeneral(props: StepGeneralProps) {
   const { control, watch, formState } = useFormContext<ApplicationGeneralData>()
+  const { openModal, closeModal } = useModal()
   const { organizationId = '', environmentId = '', projectId = '', slug, option } = useParams()
   const navigate = useNavigate()
   const [openExtraAttributes, setOpenExtraAttributes] = useState(false)
@@ -109,7 +120,27 @@ export function StepGeneral(props: StepGeneralProps) {
           {watchServiceType === 'APPLICATION' && (
             <GitRepositorySettings gitDisabled={false} organizationId={organizationId} />
           )}
-          {watchServiceType === 'CONTAINER' && <GeneralContainerSettings organization={props.organization} />}
+          {watchServiceType === 'CONTAINER' && (
+            <GeneralContainerSettings
+              organizationId={organizationId}
+              openContainerRegistryCreateEditModal={() =>
+                openModal({
+                  content: (
+                    <ContainerRegistryCreateEditModal
+                      organizationId={organizationId}
+                      onClose={() => {
+                        closeModal()
+                      }}
+                    />
+                  ),
+                  options: {
+                    fakeModal: true,
+                    width: 680,
+                  },
+                })
+              }
+            />
+          )}
         </Section>
 
         {watchServiceType && (
