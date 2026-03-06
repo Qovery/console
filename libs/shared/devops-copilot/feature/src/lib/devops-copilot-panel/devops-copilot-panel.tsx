@@ -7,7 +7,6 @@ import { type Cluster, type Environment, type Organization, type Project } from 
 import { type CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { SETTINGS_AI_COPILOT_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { AnimatedGradientText, Button, Callout, Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -790,7 +789,9 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                 </div>
 
                 <Link
-                  to={`${SETTINGS_URL(context?.organization?.id)}${SETTINGS_AI_COPILOT_URL}`}
+                  as="button"
+                  to="/organization/$organizationId/settings/ai-copilot"
+                  params={{ organizationId: context?.organization?.id ?? '' }}
                   onClick={handleOnClose}
                 >
                   <Button className="flex gap-2" size="md">

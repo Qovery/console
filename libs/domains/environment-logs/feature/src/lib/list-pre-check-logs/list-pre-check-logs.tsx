@@ -6,8 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
-import { Icon, Indicator, Link, LoaderDots, TablePrimitives } from '@qovery/shared/ui'
+import { Indicator, LoaderDots, TablePrimitives } from '@qovery/shared/ui'
 import { HeaderPreCheckLogs } from '../header-pre-check-logs/header-pre-check-logs'
 import { type EnvironmentPreCheckLogId, usePreCheckLogs } from '../hooks/use-pre-check-logs/use-pre-check-logs'
 import { RowPreCheckLogs } from './row-pre-check-logs/row-pre-check-logs'
@@ -92,7 +91,8 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
               )
             }
           >
-            <Link
+            {/* TODO new-nav : Route not yet created */}
+            {/*<Link
               as="button"
               className="gap-1.5"
               variant="surface"
@@ -103,7 +103,7 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
             >
               Go to pipeline
               <Icon iconName="timeline" />
-            </Link>
+            </Link>*/}
           </Indicator>
         </HeaderPreCheckLogs>
         <div className="max-h-[calc(100vh-170px)] w-full overflow-y-scroll pb-12" ref={refScrollSection}>

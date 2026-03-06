@@ -1,6 +1,5 @@
 import { type Link as LinkProps } from 'qovery-typescript-axios'
 import { type ReactNode, useMemo } from 'react'
-import { APPLICATION_SETTINGS_DOMAIN_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import {
   CopyToClipboardButtonIcon,
   Icon,
@@ -52,11 +51,6 @@ export function ServiceLinksPopover({
     [filteredLinks]
   )
 
-  const pathDomainsSetting =
-    APPLICATION_URL(organizationId, projectId, environmentId, serviceId) +
-    APPLICATION_SETTINGS_URL +
-    APPLICATION_SETTINGS_DOMAIN_URL
-
   if (!links) {
     return <Skeleton height={40} width={110} />
   }
@@ -71,7 +65,12 @@ export function ServiceLinksPopover({
           </p>
           {serviceType !== 'HELM' && (
             <Popover.Close>
-              <Link to={pathDomainsSetting} color="neutral" className="text-ssm">
+              <Link
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/domain"
+                params={{ organizationId, projectId, environmentId, serviceId }}
+                color="neutral"
+                className="text-ssm"
+              >
                 Customize
                 <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
               </Link>
