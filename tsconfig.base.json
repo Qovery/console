@@ -39,6 +39,7 @@
       "@qovery/domains/service-helm/feature": ["libs/domains/service-helm/feature/src/index.ts"],
       "@qovery/domains/service-logs/data-access": ["libs/domains/service-logs/data-access/src/index.ts"],
       "@qovery/domains/service-logs/feature": ["libs/domains/service-logs/feature/src/index.ts"],
+      "@qovery/domains/service-settings/feature": ["libs/domains/service-settings/feature/src/index.ts"],
       "@qovery/domains/service-terraform/data-access": ["libs/domains/service-terraform/data-access/src/index.ts"],
       "@qovery/domains/service-terraform/feature": ["libs/domains/service-terraform/feature/src/index.ts"],
       "@qovery/domains/services/data-access": ["libs/domains/services/data-access/src/index.ts"],

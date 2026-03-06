@@ -1,12 +1,12 @@
+import { useParams } from '@tanstack/react-router'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { Icon, InputSelect, Tooltip, useModal } from '@qovery/shared/ui'
 import { AnnotationCreateEditModal } from '../annotation-create-edit-modal/annotation-create-edit-modal'
 import { useAnnotationsGroups } from '../hooks/use-annotations-groups/use-annotations-groups'
 
 export function AnnotationSetting() {
   const { control } = useFormContext()
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { data: annotationsGroups = [] } = useAnnotationsGroups({ organizationId })
   const { openModal, closeModal } = useModal()
 

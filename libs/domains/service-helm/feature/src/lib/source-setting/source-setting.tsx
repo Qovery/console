@@ -1,6 +1,6 @@
+import { useParams } from '@tanstack/react-router'
 import { type HelmRepositoryKindEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { HelmRepositoryCreateEditModal } from '@qovery/domains/organizations/feature'
 import { Icon, InputSelect, InputText, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import { useHelmCharts } from '../hooks/use-helm-charts/use-helm-charts'
@@ -40,100 +40,96 @@ export function HelmChartsSetting({
         value: version,
       })) ?? []
 
-  return (
+  return !isOci && isFetchingHelmCharts ? (
+    <div className="flex justify-center">
+      <LoaderSpinner />
+    </div>
+  ) : (
     <>
-      {!isOci && isFetchingHelmCharts ? (
-        <div className="flex justify-center">
-          <LoaderSpinner />
-        </div>
-      ) : (
-        <>
-          <Controller
-            name="chart_name"
-            control={control}
-            rules={{
-              required: 'Please enter a chart name.',
-            }}
-            render={({ field, fieldState: { error } }) =>
-              !isOci ? (
-                <InputSelect
-                  label="Chart name"
-                  options={helmsChartsOptions}
-                  onChange={(event) => {
-                    setValue('chart_version', undefined)
-                    field.onChange(event)
-                  }}
-                  value={field.value}
-                  error={
-                    helmsChartsOptions.length === 0
-                      ? 'No chart name found. Please verify that the helm repository is correct.'
-                      : error?.message
-                  }
-                  isSearchable
-                />
-              ) : (
-                <InputText
-                  label="Chart name"
-                  name={field.name}
-                  onChange={(event) => {
-                    event.target.value = event.target.value.trim()
-                    field.onChange(event)
-                  }}
-                  value={field.value}
-                  error={error?.message}
-                />
-              )
-            }
-          />
-          {watchChartName && (
-            <Controller
-              name="chart_version"
-              control={control}
-              rules={{
-                required: 'Please enter a version.',
+      <Controller
+        name="chart_name"
+        control={control}
+        rules={{
+          required: 'Please enter a chart name.',
+        }}
+        render={({ field, fieldState: { error } }) =>
+          !isOci ? (
+            <InputSelect
+              label="Chart name"
+              options={helmsChartsOptions}
+              onChange={(event) => {
+                setValue('chart_version', undefined)
+                field.onChange(event)
               }}
-              render={({ field, fieldState: { error } }) =>
-                !isOci && helmsChartsVersionsOptions.length > 0 ? (
-                  <InputSelect
-                    label="Version"
-                    options={helmsChartsVersionsOptions}
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                    isSearchable
-                    filterOption="startsWith"
-                  />
-                ) : (
-                  <InputText
-                    label="Version"
-                    name={field.name}
-                    onChange={(event) => {
-                      event.target.value = event.target.value.trim()
-                      field.onChange(event)
-                    }}
-                    value={field.value}
-                    error={error?.message}
-                    hint={
-                      !isOci && helmsChartsVersionsOptions.length === 0 ? (
-                        <span className="text-orange-500">
-                          No version found. Please verify that the chart name or helm repository is correct. You can
-                          still enter your version manually.
-                        </span>
-                      ) : undefined
-                    }
-                  />
-                )
+              value={field.value}
+              error={
+                helmsChartsOptions.length === 0
+                  ? 'No chart name found. Please verify that the helm repository is correct.'
+                  : error?.message
               }
+              isSearchable
             />
-          )}
-        </>
+          ) : (
+            <InputText
+              label="Chart name"
+              name={field.name}
+              onChange={(event) => {
+                event.target.value = event.target.value.trim()
+                field.onChange(event)
+              }}
+              value={field.value}
+              error={error?.message}
+            />
+          )
+        }
+      />
+      {watchChartName && (
+        <Controller
+          name="chart_version"
+          control={control}
+          rules={{
+            required: 'Please enter a version.',
+          }}
+          render={({ field, fieldState: { error } }) =>
+            !isOci && helmsChartsVersionsOptions.length > 0 ? (
+              <InputSelect
+                label="Version"
+                options={helmsChartsVersionsOptions}
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
+                isSearchable
+                filterOption="startsWith"
+              />
+            ) : (
+              <InputText
+                label="Version"
+                name={field.name}
+                onChange={(event) => {
+                  event.target.value = event.target.value.trim()
+                  field.onChange(event)
+                }}
+                value={field.value}
+                error={error?.message}
+                hint={
+                  !isOci && helmsChartsVersionsOptions.length === 0 ? (
+                    <span className="text-orange-500">
+                      No version found. Please verify that the chart name or helm repository is correct. You can still
+                      enter your version manually.
+                    </span>
+                  ) : undefined
+                }
+              />
+            )
+          }
+        />
       )}
     </>
   )
 }
 
 export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const { control, watch, resetField } = useFormContext()
   const watchFieldProvider = watch('source_provider')
