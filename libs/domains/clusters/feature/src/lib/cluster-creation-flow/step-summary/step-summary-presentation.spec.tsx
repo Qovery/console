@@ -10,6 +10,7 @@ const mockGoToResources = jest.fn()
 const mockGoToKubeconfig = jest.fn()
 const mockGoToEksConfig = jest.fn()
 const mockGoToGeneral = jest.fn()
+const mockGoToAddons = jest.fn()
 
 const defaultProps: StepSummaryPresentationProps = {
   onSubmit: mockOnSubmit,
@@ -19,6 +20,7 @@ const defaultProps: StepSummaryPresentationProps = {
   goToKubeconfig: mockGoToKubeconfig,
   goToEksConfig: mockGoToEksConfig,
   goToGeneral: mockGoToGeneral,
+  goToAddons: mockGoToAddons,
   isLoadingCreate: false,
   isLoadingCreateAndDeploy: false,
   generalData: {
@@ -33,6 +35,7 @@ const defaultProps: StepSummaryPresentationProps = {
     instance_type: 't3.medium',
   },
   featuresData: { vpc_mode: 'DEFAULT', features: {} },
+  addonsData: { observabilityActivated: false, kedaActivated: false, secretManagers: [] },
   kubeconfigData: undefined,
   detailInstanceType: {
     type: 't3.medium',

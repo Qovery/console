@@ -7,7 +7,7 @@ type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
 export type VariablesActionToolbarProps = {
   onCreateVariable?: (variable: VariableResponse | void) => void
   onImportEnvFile?: () => void
-  importEnvFileAccess?: 'button' | 'dropdown'
+  showDopplerButton?: boolean
 } & (
   | {
       scope: Extract<Scope, 'PROJECT'>
@@ -29,7 +29,7 @@ export type VariablesActionToolbarProps = {
 export function VariablesActionToolbar({
   onCreateVariable,
   onImportEnvFile,
-  importEnvFileAccess = 'button',
+  showDopplerButton = false,
   ...props
 }: VariablesActionToolbarProps) {
   const { openModal, closeModal } = useModal()
@@ -54,52 +54,57 @@ export function VariablesActionToolbar({
     })
 
   return (
-    <div className="flex gap-3">
-      <DropdownMenu.Root>
-        {showImportButton ? (
-          <DropdownMenu.Trigger asChild>
-            <Button color="neutral" variant="outline" size="md" className="gap-2">
-              <Icon iconName="arrow-up-from-line" iconStyle="regular" />
-              Import variable
-            </Button>
-          </DropdownMenu.Trigger>
-        ) : (
-          <DropdownMenu.Trigger asChild>
-            <Button color="neutral" variant="outline" size="md" className="flex w-8 justify-center">
-              <Icon iconName="ellipsis-vertical" iconStyle="regular" />
-            </Button>
-          </DropdownMenu.Trigger>
-        )}
-        <DropdownMenu.Content>
-          {showImportButton && onImportEnvFile && (
-            <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="file-import" />}>
-              Import from .env file
-            </DropdownMenu.Item>
+    <div className="flex gap-2">
+      {showDopplerButton ? (
+        <Button
+          color="neutral"
+          variant="outline"
+          size="md"
+          onClick={() => window.open('https://dashboard.doppler.com', '_blank')}
+        >
+          Import from Doppler
+        </Button>
+      ) : (
+        <DropdownMenu.Root>
+          {onImportEnvFile ? (
+            <DropdownMenu.Trigger asChild>
+              <Button color="neutral" variant="outline" size="md" className="gap-2">
+                <Icon iconName="arrow-up-from-line" iconStyle="regular" />
+                Import variable
+              </Button>
+            </DropdownMenu.Trigger>
+          ) : (
+            <DropdownMenu.Trigger asChild>
+              <Button color="neutral" variant="outline" size="md" className="flex w-8 justify-center">
+                <Icon iconName="ellipsis-vertical" iconStyle="regular" />
+              </Button>
+            </DropdownMenu.Trigger>
           )}
+          <DropdownMenu.Content>
+            {onImportEnvFile && (
+              <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="file-import" />}>
+                Import from .env file
+              </DropdownMenu.Item>
+            )}
 
-          {!showImportButton && onImportEnvFile && (
-            <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="file-import" />}>
-              Import from .env file
+            <DropdownMenu.Item asChild icon={<Icon iconName="circle-info" iconStyle="regular" />}>
+              <a href="https://dashboard.doppler.com" target="_blank" rel="noopener noreferrer">
+                Import from Doppler
+                <Tooltip content="Documentation">
+                  <a
+                    className="ml-auto text-sm"
+                    href="https://www.qovery.com/docs/configuration/integrations/secret-managers/doppler#doppler"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+                  </a>
+                </Tooltip>
+              </a>
             </DropdownMenu.Item>
-          )}
-
-          <DropdownMenu.Item asChild icon={<Icon iconName="circle-info" iconStyle="regular" />}>
-            <a href="https://dashboard.doppler.com" target="_blank" rel="noopener noreferrer">
-              Import from Doppler
-              <Tooltip content="Documentation">
-                <a
-                  className="ml-auto text-sm"
-                  href="https://www.qovery.com/docs/configuration/integrations/secret-managers/doppler#doppler"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
-                </a>
-              </Tooltip>
-            </a>
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+      )}
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <Button color="brand" variant="solid" size="md" className="gap-2">

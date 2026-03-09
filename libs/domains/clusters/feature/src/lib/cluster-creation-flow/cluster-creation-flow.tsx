@@ -30,7 +30,29 @@ export interface ClusterContainerCreateContextInterface {
   setFeaturesData: Dispatch<SetStateAction<ClusterFeaturesData | undefined>>
   kubeconfigData: ClusterKubeconfigData | undefined
   setKubeconfigData: Dispatch<SetStateAction<ClusterKubeconfigData | undefined>>
+  addonsData: ClusterAddonsData
+  setAddonsData: Dispatch<SetStateAction<ClusterAddonsData>>
   creationFlowUrl: string
+}
+
+export type ClusterAddonsSecretManager = {
+  id: string
+  name: string
+  typeLabel: string
+  authentication: 'Automatic' | 'Manual'
+  provider: 'AWS' | 'GCP'
+  source: 'aws-manager' | 'aws-parameter' | 'gcp-secret'
+  authType?: 'sts' | 'static'
+  region?: string
+  roleArn?: string
+  accessKey?: string
+  secretAccessKey?: string
+}
+
+export type ClusterAddonsData = {
+  observabilityActivated: boolean
+  kedaActivated: boolean
+  secretManagers: ClusterAddonsSecretManager[]
 }
 
 export const ClusterContainerCreateContext = createContext<ClusterContainerCreateContextInterface | undefined>(
@@ -67,6 +89,7 @@ export const steps = (clusterGeneralData?: ClusterGeneralData) => {
     .with({ installation_type: 'MANAGED', cloud_provider: 'GCP' }, () => [
       { title: 'Create new cluster', key: 'general' },
       { title: 'Set features', key: 'features' },
+      { title: 'Add-ons', key: 'addons' },
       { title: 'Ready to install', key: 'summary' },
     ])
     .with({ installation_type: 'MANAGED', cloud_provider: 'AZURE' }, () => [
@@ -78,6 +101,7 @@ export const steps = (clusterGeneralData?: ClusterGeneralData) => {
       { title: 'Create new cluster', key: 'general' },
       { title: 'Resources', key: 'resources' },
       { title: 'Network', key: 'features' },
+      { title: 'Add-ons', key: 'addons' },
       { title: 'Ready to install', key: 'summary' },
     ])
     .otherwise(() => [])
@@ -126,6 +150,11 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
     features: {},
   })
   const [kubeconfigData, setKubeconfigData] = useState<ClusterKubeconfigData | undefined>()
+  const [addonsData, setAddonsData] = useState<ClusterAddonsData>({
+    observabilityActivated: false,
+    kedaActivated: false,
+    secretManagers: [],
+  })
 
   const navigate = useNavigate()
 
@@ -179,6 +208,8 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
         setFeaturesData,
         kubeconfigData,
         setKubeconfigData,
+        addonsData,
+        setAddonsData,
         creationFlowUrl,
       }}
     >
