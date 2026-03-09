@@ -167,19 +167,29 @@ function SecretManagerIntegrationModal({
   const authenticationType = methods.watch('authenticationType')
   const isStaticCredentials = authenticationType === 'static'
   const isAwsCluster = clusterProvider === 'AWS'
+  const isGcpCluster = clusterProvider === 'GCP'
   const isGcpSecretManagerOnAws = option.value === 'gcp-secret' && isAwsCluster
+  const isAwsSecretManagerOnGcp = option.icon === 'AWS' && isGcpCluster
+  const isManualOnlyGcpIntegration = isGcpSecretManagerOnAws
+  const isManualOnlyAwsIntegration = isAwsSecretManagerOnGcp
+  const isGcpManualTabOnGcpSecretManager = option.value === 'gcp-secret' && isGcpCluster && activeTab === 'manual'
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     accept: { 'application/json': ['.json'] },
   })
 
   useEffect(() => {
-    if (activeTab === 'manual' && !authenticationType) {
-      methods.setValue('authenticationType', 'sts', { shouldDirty: false })
+    if (
+      (activeTab === 'manual' || isManualOnlyAwsIntegration) &&
+      !authenticationType &&
+      !(isGcpCluster && option.value === 'gcp-secret')
+    ) {
+      methods.setValue('authenticationType', isManualOnlyAwsIntegration ? 'static' : 'sts', { shouldDirty: false })
     }
-  }, [activeTab, authenticationType, methods])
+  }, [activeTab, authenticationType, isGcpCluster, isManualOnlyAwsIntegration, methods, option.value])
 
   const handleSubmit = methods.handleSubmit((data) => {
+    const useGcpManualPayload = activeTab === 'manual' && isGcpCluster && option.value === 'gcp-secret'
     onSubmit({
       id: initialValues?.id ?? `secret-manager-${Date.now()}`,
       name: data.secretManagerName.trim() || 'Secret manager',
@@ -187,8 +197,9 @@ function SecretManagerIntegrationModal({
       authentication: activeTab === 'manual' ? 'Manual' : 'Automatic',
       provider: option.icon,
       source: option.value,
-      authType:
-        activeTab === 'manual' && data.authenticationType
+      authType: useGcpManualPayload
+        ? 'static'
+        : activeTab === 'manual' && data.authenticationType
           ? (data.authenticationType as 'sts' | 'static')
           : undefined,
       region: data.region || undefined,
@@ -212,69 +223,320 @@ function SecretManagerIntegrationModal({
     onClose()
   })
 
+  const handleAwsManualOnlySubmit = methods.handleSubmit((data) => {
+    onSubmit({
+      id: initialValues?.id ?? `secret-manager-${Date.now()}`,
+      name: data.secretManagerName.trim() || 'Secret manager',
+      typeLabel: option.typeLabel,
+      authentication: 'Manual',
+      provider: option.icon,
+      source: option.value,
+      authType: 'static',
+      region: data.region || undefined,
+      roleArn: undefined,
+      accessKey: data.accessKey || undefined,
+      secretAccessKey: data.secretAccessKey || undefined,
+    })
+    onClose()
+  })
+
   useEffect(() => {
     methods.trigger().then()
   }, [methods.trigger])
 
-  if (isGcpSecretManagerOnAws) {
+  const renderGcpManualIntegrationSections = () => (
+    <>
+      <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+        <h3 className="text-sm font-medium text-neutral">1. Connect to your GCP Console and create/open a project</h3>
+        <p className="text-sm text-neutral-subtle">Make sure you are connected to the right GCP account</p>
+        <ExternalLink href="https://console.cloud.google.com/" size="sm">
+          https://console.cloud.google.com/
+        </ExternalLink>
+      </div>
+      <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+        <h3 className="text-sm font-medium text-neutral">
+          2. Open the embedded Google shell and run the following command
+        </h3>
+        <div className="flex gap-6 rounded border border-neutral bg-surface-neutral-subtle p-3 text-neutral retina:border-[0.5px]">
+          <div>
+            <span className="select-none">$ </span>
+            curl https://setup.qovery.com/create_credentials_gcp.sh | \ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role
+            qovery-service-account{' '}
+          </div>
+          <CopyButton
+            content=" curl https://setup.qovery.com/create_credentials_gcp.sh | \
+bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
+          />
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
+        <h3 className="text-sm font-medium text-neutral">3. Download the key.json generated and drag and drop it here</h3>
+        <div {...getRootProps()}>
+          <input className="hidden" {...getInputProps()} />
+          <Dropzone typeFile=".json" isDragActive={isDragActive} />
+        </div>
+        <Controller
+          name="secretManagerName"
+          control={methods.control}
+          render={({ field }) => (
+            <InputText
+              name={field.name}
+              label="Secret manager name"
+              value={field.value}
+              onChange={field.onChange}
+              hint="Display name in Qovery"
+            />
+          )}
+        />
+      </div>
+    </>
+  )
+
+  const renderAwsManualIntegrationSections = () => (
+    <div className="flex flex-col gap-4">
+      {isManualOnlyAwsIntegration ? (
+        <>
+          <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+            <h3 className="text-sm font-medium text-neutral">1. Create a user for Qovery</h3>
+            <p className="text-sm text-neutral-subtle">Follow the instructions available on this page</p>
+            <ExternalLink href="https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster" size="sm">
+              How to create new credentials
+            </ExternalLink>
+          </div>
+          <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
+            <h3 className="text-sm font-medium text-neutral">2. Fill in these information</h3>
+            <Controller
+              name="region"
+              control={methods.control}
+              render={({ field }) => (
+                <InputSelect
+                  label="Region"
+                  value={field.value}
+                  placeholder="Select a region"
+                  onChange={(value) => field.onChange(value as string)}
+                  options={regionOptions}
+                  isSearchable
+                  portal
+                />
+              )}
+            />
+            <Controller
+              name="accessKey"
+              control={methods.control}
+              render={({ field }) => (
+                <InputText name={field.name} label="Access key" value={field.value} onChange={field.onChange} />
+              )}
+            />
+            <Controller
+              name="secretAccessKey"
+              control={methods.control}
+              render={({ field }) => (
+                <InputText
+                  name={field.name}
+                  label="Secret access key"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+            <Controller
+              name="secretManagerName"
+              control={methods.control}
+              render={({ field }) => (
+                <InputText
+                  name={field.name}
+                  label="Secret manager name"
+                  value={field.value}
+                  onChange={field.onChange}
+                  hint="Display name in Qovery"
+                />
+              )}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <Controller
+            name="authenticationType"
+            control={methods.control}
+            render={({ field }) => (
+              <InputSelect
+                label="Authentication type"
+                value={field.value}
+                placeholder="Select an authentication type"
+                onChange={(value) => field.onChange(value as string)}
+                options={authenticationOptions}
+                portal
+              />
+            )}
+          />
+
+          {!authenticationType && (
+            <p className="text-sm text-neutral-subtle">Select an authentication type to see the required information.</p>
+          )}
+          {authenticationType && isStaticCredentials ? (
+            <>
+              <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+                <h3 className="text-sm font-medium text-neutral">1. Create a user for Qovery</h3>
+                <p className="text-sm text-neutral-subtle">Follow the instructions available on this page</p>
+                <ExternalLink href="https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster" size="sm">
+                  How to create new credentials
+                </ExternalLink>
+              </div>
+              <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
+                <h3 className="text-sm font-medium text-neutral">2. Fill in these information</h3>
+                <Controller
+                  name="region"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <InputSelect
+                      label="Region"
+                      value={field.value}
+                      placeholder="Select a region"
+                      onChange={(value) => field.onChange(value as string)}
+                      options={regionOptions}
+                      isSearchable
+                      portal
+                    />
+                  )}
+                />
+                <Controller
+                  name="accessKey"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <InputText name={field.name} label="Access key" value={field.value} onChange={field.onChange} />
+                  )}
+                />
+                <Controller
+                  name="secretAccessKey"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <InputText
+                      name={field.name}
+                      label="Secret access key"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
+                <Controller
+                  name="secretManagerName"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <InputText
+                      name={field.name}
+                      label="Secret manager name"
+                      value={field.value}
+                      onChange={field.onChange}
+                      hint="Display name in Qovery"
+                    />
+                  )}
+                />
+              </div>
+            </>
+          ) : authenticationType ? (
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+            <h3 className="text-sm font-medium text-neutral">1. Connect to your AWS Console</h3>
+            <p className="text-sm text-neutral-subtle">Make sure you are connected to the right AWS account</p>
+            <ExternalLink href="https://aws.amazon.com/fr/console/" size="sm">
+              https://aws.amazon.com/fr/console/
+            </ExternalLink>
+          </div>
+          <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+            <h3 className="text-sm font-medium text-neutral">2. Create a role for Qovery and grant assume role permissions</h3>
+            <p className="text-sm text-neutral-subtle">
+              Execute the following Cloudformation stack and retrieve the role ARN from the “Output” section.
+            </p>
+            <ExternalLink
+              href="https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fs3.amazonaws.com%2Fcloudformation-qovery-role-creation%2Ftemplate.json&stackName=qovery-role-creation"
+              size="sm"
+            >
+              Cloudformation stack
+            </ExternalLink>
+          </div>
+          <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
+            <h3 className="text-sm font-medium text-neutral">3. Provide your credentials info</h3>
+            <Controller
+              name="region"
+              control={methods.control}
+              render={({ field }) => (
+                <InputSelect
+                  label="Region"
+                  value={field.value}
+                  placeholder="Select a region"
+                  onChange={(value) => field.onChange(value as string)}
+                  options={regionOptions}
+                  isSearchable
+                  portal
+                />
+              )}
+            />
+            <Controller
+              name="roleArn"
+              control={methods.control}
+              render={({ field }) => (
+                <InputText name={field.name} label="Role ARN" value={field.value} onChange={field.onChange} />
+              )}
+            />
+            <Controller
+              name="secretManagerName"
+              control={methods.control}
+              render={({ field }) => (
+                <InputText
+                  name={field.name}
+                  label="Secret manager name"
+                  value={field.value}
+                  onChange={field.onChange}
+                  hint="Display name in Qovery"
+                />
+              )}
+            />
+          </div>
+        </div>
+          ) : null}
+        </>
+      )}
+    </div>
+  )
+
+  if (isManualOnlyGcpIntegration) {
     return (
       <FormProvider {...methods}>
         <form onSubmit={handleGcpAwsSubmit} className="flex flex-col">
           <div className="px-5 pt-5">
             <h2 className="text-lg font-medium text-neutral">{`${option.label} integration`}</h2>
             <p className="mt-1 text-sm text-neutral-subtle">
-              Link your AWS secret manager to use external secrets on all service running on your cluster
+              {`Link your ${option.icon === 'GCP' ? 'GCP' : 'AWS'} secret manager to use external secrets on all service running on your cluster`}
             </p>
           </div>
           <div className="flex flex-col gap-3 px-5 pb-6 pt-4">
-            <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
-              <h3 className="text-sm font-medium text-neutral">
-                1. Connect to your GCP Console and create/open a project
-              </h3>
-              <p className="text-sm text-neutral-subtle">Make sure you are connected to the right GCP account</p>
-              <ExternalLink href="https://console.cloud.google.com/" size="sm">
-                https://console.cloud.google.com/
-              </ExternalLink>
-            </div>
-            <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
-              <h3 className="text-sm font-medium text-neutral">
-                2. Open the embedded Google shell and run the following command
-              </h3>
-              <div className="flex gap-6 rounded border border-neutral bg-surface-neutral-subtle p-3 text-neutral retina:border-[0.5px]">
-                <div>
-                  <span className="select-none">$ </span>
-                  curl https://setup.qovery.com/create_credentials_gcp.sh | \ bash -s -- $GOOGLE_CLOUD_PROJECT
-                  qovery_role qovery-service-account{' '}
-                </div>
-                <CopyButton
-                  content=" curl https://setup.qovery.com/create_credentials_gcp.sh | \
-bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
-              <h3 className="text-sm font-medium text-neutral">
-                3. Download the key.json generated and drag and drop it here
-              </h3>
-              <div {...getRootProps()}>
-                <input className="hidden" {...getInputProps()} />
-                <Dropzone typeFile=".json" isDragActive={isDragActive} />
-              </div>
-              <Controller
-                name="secretManagerName"
-                control={methods.control}
-                render={({ field }) => (
-                  <InputText
-                    name={field.name}
-                    label="Secret manager name"
-                    value={field.value}
-                    onChange={field.onChange}
-                    hint="Display name in Qovery"
-                  />
-                )}
-              />
-            </div>
+            {renderGcpManualIntegrationSections()}
           </div>
+          <div className="flex justify-end gap-3 border-t border-neutral px-5 py-4">
+            <Button type="button" variant="plain" color="neutral" size="lg" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" size="lg">
+              {mode === 'edit' ? 'Save changes' : 'Add secret manager'}
+            </Button>
+          </div>
+        </form>
+      </FormProvider>
+    )
+  }
+
+  if (isManualOnlyAwsIntegration) {
+    return (
+      <FormProvider {...methods}>
+        <form onSubmit={handleAwsManualOnlySubmit} className="flex flex-col">
+          <div className="px-5 pt-5">
+            <h2 className="text-lg font-medium text-neutral">{`${option.label} integration`}</h2>
+            <p className="mt-1 text-sm text-neutral-subtle">
+              {`Link your ${option.icon === 'GCP' ? 'GCP' : 'AWS'} secret manager to use external secrets on all service running on your cluster`}
+            </p>
+          </div>
+          <div className="flex flex-col gap-4 px-5 pb-6 pt-4">{renderAwsManualIntegrationSections()}</div>
           <div className="flex justify-end gap-3 border-t border-neutral px-5 py-4">
             <Button type="button" variant="plain" color="neutral" size="lg" onClick={onClose}>
               Cancel
@@ -362,164 +624,11 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
           )}
 
           {activeTab === 'manual' && (
-            <div className="flex flex-col gap-4">
-              <Controller
-                name="authenticationType"
-                control={methods.control}
-                  render={({ field }) => (
-                    <InputSelect
-                      label="Authentication type"
-                      value={field.value}
-                      placeholder="Select an authentication type"
-                      onChange={(value) => field.onChange(value as string)}
-                      options={authenticationOptions}
-                      portal
-                    />
-                  )}
-                />
-
-              {!authenticationType && (
-                <p className="text-sm text-neutral-subtle">
-                  Select an authentication type to see the required information.
-                </p>
-              )}
-              {authenticationType && isStaticCredentials ? (
-                <>
-                  <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
-                    <h3 className="text-sm font-medium text-neutral">1. Create a user for Qovery</h3>
-                    <p className="text-sm text-neutral-subtle">Follow the instructions available on this page</p>
-                    <ExternalLink
-                      href="https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster"
-                      size="sm"
-                    >
-                      How to create new credentials
-                    </ExternalLink>
-                  </div>
-                  <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
-                    <h3 className="text-sm font-medium text-neutral">2. Fill in these information</h3>
-                    <Controller
-                      name="region"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputSelect
-                          label="Region"
-                          value={field.value}
-                          placeholder="Select a region"
-                          onChange={(value) => field.onChange(value as string)}
-                          options={regionOptions}
-                          isSearchable
-                          portal
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="accessKey"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputText
-                          name={field.name}
-                          label="Access key"
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="secretAccessKey"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputText
-                          name={field.name}
-                          label="Secret access key"
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="secretManagerName"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputText
-                          name={field.name}
-                          label="Secret manager name"
-                          value={field.value}
-                          onChange={field.onChange}
-                          hint="Display name in Qovery"
-                        />
-                      )}
-                    />
-                  </div>
-                </>
-              ) : authenticationType ? (
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
-                    <h3 className="text-sm font-medium text-neutral">1. Connect to your AWS Console</h3>
-                    <p className="text-sm text-neutral-subtle">Make sure you are connected to the right AWS account</p>
-                    <ExternalLink href="https://aws.amazon.com/fr/console/" size="sm">
-                      https://aws.amazon.com/fr/console/
-                    </ExternalLink>
-                  </div>
-                  <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
-                    <h3 className="text-sm font-medium text-neutral">
-                      2. Create a role for Qovery and grant assume role permissions
-                    </h3>
-                    <p className="text-sm text-neutral-subtle">
-                      Execute the following Cloudformation stack and retrieve the role ARN from the “Output” section.
-                    </p>
-                    <ExternalLink
-                      href="https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fs3.amazonaws.com%2Fcloudformation-qovery-role-creation%2Ftemplate.json&stackName=qovery-role-creation"
-                      size="sm"
-                    >
-                      Cloudformation stack
-                    </ExternalLink>
-                  </div>
-                  <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
-                    <h3 className="text-sm font-medium text-neutral">3. Provide your credentials info</h3>
-                    <Controller
-                      name="region"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputSelect
-                          label="Region"
-                          value={field.value}
-                          placeholder="Select a region"
-                          onChange={(value) => field.onChange(value as string)}
-                          options={regionOptions}
-                          isSearchable
-                          portal
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="roleArn"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputText
-                          name={field.name}
-                          label="Role ARN"
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="secretManagerName"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputText
-                          name={field.name}
-                          label="Secret manager name"
-                          value={field.value}
-                          onChange={field.onChange}
-                          hint="Display name in Qovery"
-                        />
-                      )}
-                    />
-                  </div>
-                </div>
-              ) : null}
-            </div>
+            isGcpManualTabOnGcpSecretManager ? (
+              <div className="flex flex-col gap-3">{renderGcpManualIntegrationSections()}</div>
+            ) : (
+              renderAwsManualIntegrationSections()
+            )
           )}
         </div>
         <div className="flex justify-end gap-3 border-t border-neutral px-5 py-4">
@@ -557,6 +666,20 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
     'keda-autoscaler': addonsData.kedaActivated,
   }))
   const [integrations, setIntegrations] = useState<ClusterAddonsSecretManager[]>(() => addonsData.secretManagers)
+  const visibleAddons = useMemo(
+    () =>
+      generalData?.cloud_provider === 'GCP' ? ADDONS.filter((addon) => addon.id !== 'keda-autoscaler') : ADDONS,
+    [generalData?.cloud_provider]
+  )
+  const secretManagerDropdownOptions = useMemo(() => {
+    if (generalData?.cloud_provider !== 'GCP') {
+      return SECRET_MANAGER_OPTIONS
+    }
+
+    const gcpOption = SECRET_MANAGER_OPTIONS.find((option) => option.value === 'gcp-secret')
+    const awsOptions = SECRET_MANAGER_OPTIONS.filter((option) => option.value !== 'gcp-secret')
+    return gcpOption ? [gcpOption, ...awsOptions] : SECRET_MANAGER_OPTIONS
+  }, [generalData?.cloud_provider])
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault()
     onSubmit()
@@ -565,10 +688,10 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
   useEffect(() => {
     setAddonsData({
       observabilityActivated: Boolean(activatedAddons['qovery-observe']),
-      kedaActivated: Boolean(activatedAddons['keda-autoscaler']),
+      kedaActivated: generalData?.cloud_provider === 'GCP' ? false : Boolean(activatedAddons['keda-autoscaler']),
       secretManagers: integrations,
     })
-  }, [activatedAddons, integrations, setAddonsData])
+  }, [activatedAddons, generalData?.cloud_provider, integrations, setAddonsData])
 
   const getSecretManagerOption = (source: SecretManagerOption['value']) =>
     SECRET_MANAGER_OPTIONS.find((option) => option.value === source) ?? SECRET_MANAGER_OPTIONS[0]
@@ -612,10 +735,10 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
 
       <form onSubmit={handleFormSubmit}>
         <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral shadow-[0_0_4px_0_rgba(0,0,0,0.01),0_2px_3px_0_rgba(0,0,0,0.02)]">
-          {ADDONS.map((addon, index) => (
+          {visibleAddons.map((addon, index) => (
             <div
               key={addon.id}
-              className={`flex flex-col gap-3 p-4 ${index < ADDONS.length - 1 ? 'border-b border-neutral' : ''}`}
+              className={`flex flex-col gap-3 p-4 ${index < visibleAddons.length - 1 ? 'border-b border-neutral' : ''}`}
             >
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
@@ -661,7 +784,7 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
                       </Button>
                     </DropdownMenu.Trigger>
                     <DropdownMenu.Content align="start">
-                      {SECRET_MANAGER_OPTIONS.map((option) => (
+                      {secretManagerDropdownOptions.map((option) => (
                         <DropdownMenu.Item
                           key={option.value}
                           color="neutral"

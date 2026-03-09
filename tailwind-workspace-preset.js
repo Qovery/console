@@ -318,6 +318,10 @@ module.exports = {
             component: 'var(--negative-3)',
             subtle: 'var(--negative-2)',
           },
+          negativeInvert: {
+            component: 'var(--negative-invert-3)',
+            subtle: 'var(--negative-invert-2)',
+          },
           positive: {
             solid: 'var(--positive-9)',
             solidHover: 'var(--positive-10)',
@@ -413,6 +417,10 @@ module.exports = {
           strong: 'var(--negative-9)',
           component: 'var(--negative-alpha-7)',
           subtle: 'var(--negative-6)',
+        },
+        negativeInvert: {
+          DEFAULT: 'var(--negative-invert-6)',
+          subtle: 'var(--negative-invert-6)',
         },
         warning: {
           strong: 'var(--warning-9)',

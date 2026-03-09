@@ -110,6 +110,7 @@ export function VariablesActionToolbar({
           <Button color="brand" variant="solid" size="md" className="gap-2">
             <Icon iconName="circle-plus" iconStyle="regular" />
             New variable
+            <Icon iconName="angle-down" />
           </Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>

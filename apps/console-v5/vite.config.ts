@@ -102,3 +102,20 @@ export default defineConfig(({ mode }) => {
     },
   }
 })
+
+function resolveGitBranch() {
+  try {
+    const branch = execSync('git rev-parse --abbrev-ref HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString()
+      .trim()
+    if (branch && branch !== 'HEAD') {
+      return branch
+    }
+    const shortSha = execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString()
+      .trim()
+    return shortSha || 'unknown'
+  } catch {
+    return 'unknown'
+  }
+}
