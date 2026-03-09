@@ -7,6 +7,7 @@ import { join } from 'path'
 import { defineConfig, loadEnv } from 'vite'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 
+<<<<<<< HEAD
 const readGitValue = (command: string): string | undefined => {
   try {
     const value = execSync(command, {
@@ -36,6 +37,10 @@ export default defineConfig(({ mode }) => {
     clientEnv.NX_PUBLIC_GIT_SHA = gitSha
   }
 
+=======
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+>>>>>>> ddc4969b3 (refactor(vite.config): remove Git branch resolution logic to simplify configuration)
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/apps/console',
@@ -106,20 +111,3 @@ export default defineConfig(({ mode }) => {
     },
   }
 })
-
-function resolveGitBranch() {
-  try {
-    const branch = execSync('git rev-parse --abbrev-ref HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
-      .toString()
-      .trim()
-    if (branch && branch !== 'HEAD') {
-      return branch
-    }
-    const shortSha = execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
-      .toString()
-      .trim()
-    return shortSha || 'unknown'
-  } catch {
-    return 'unknown'
-  }
-}
