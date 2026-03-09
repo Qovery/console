@@ -133,6 +133,60 @@ describe('Probe Formatted', () => {
     expect(result).toEqual(expectedOutput)
   })
 
+  it('should format EXEC type with plain command string', () => {
+    const currentData = {
+      current_type: ProbeTypeEnum.EXEC,
+      type: {
+        exec: { command: 'python -c "import os; print(os.getpid())"' },
+      },
+      initial_delay_seconds: '30',
+      period_seconds: '10',
+      timeout_seconds: '5',
+      success_threshold: '1',
+      failure_threshold: '3',
+    }
+
+    const result = probeFormatted(currentData, defaultPort)
+
+    expect(result).toEqual({
+      type: {
+        exec: { command: ['sh', '-c', 'python -c "import os; print(os.getpid())"'] },
+      },
+      initial_delay_seconds: 30,
+      period_seconds: 10,
+      timeout_seconds: 5,
+      success_threshold: 1,
+      failure_threshold: 3,
+    })
+  })
+
+  it('should handle malformed JSON array in EXEC command', () => {
+    const currentData = {
+      current_type: ProbeTypeEnum.EXEC,
+      type: {
+        exec: { command: '["broken' },
+      },
+      initial_delay_seconds: '30',
+      period_seconds: '10',
+      timeout_seconds: '5',
+      success_threshold: '1',
+      failure_threshold: '3',
+    }
+
+    const result = probeFormatted(currentData, defaultPort)
+
+    expect(result).toEqual({
+      type: {
+        exec: { command: ['sh', '-c', '["broken'] },
+      },
+      initial_delay_seconds: 30,
+      period_seconds: 10,
+      timeout_seconds: 5,
+      success_threshold: 1,
+      failure_threshold: 3,
+    })
+  })
+
   it('should format NONE type correctly', () => {
     const currentData = {
       currentType: ProbeTypeEnum.NONE,

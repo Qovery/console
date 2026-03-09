@@ -33,12 +33,23 @@ export function probeFormatted(currentData: FieldValues, defaultPort: number | n
       },
     }
   } else {
+    const rawCommand = currentData?.['type']?.[type]?.['command']
+    let command: string[]
+    if (Array.isArray(rawCommand)) {
+      command = rawCommand
+    } else if (typeof rawCommand === 'string' && rawCommand.trimStart().startsWith('[')) {
+      try {
+        command = JSON.parse(rawCommand)
+      } catch {
+        command = ['sh', '-c', rawCommand]
+      }
+    } else if (typeof rawCommand === 'string' && rawCommand.length > 0) {
+      command = ['sh', '-c', rawCommand]
+    } else {
+      command = []
+    }
     dataType = {
-      [type]: {
-        command: !Array.isArray(currentData?.['type']?.[type]?.['command'])
-          ? JSON.parse(currentData?.['type']?.[type]?.['command'])
-          : currentData?.['type'][type]['command'],
-      },
+      [type]: { command },
     }
   }
 

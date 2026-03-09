@@ -301,7 +301,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
           content: (
             <div className="flex w-full justify-between">
               Command
-              <Tooltip content='Allows you to specify the command to run within your container to verify the status of your application. Expected format: ["cat", "/tmp/healthy"].'>
+              <Tooltip content='Specify the command to run inside your container. You can enter a plain command (e.g. python -c "print(1)") or a JSON array (e.g. ["cat", "/tmp/healthy"]).'>
                 <span>
                   <Icon className="text-neutral-350" iconName="circle-info" iconStyle="regular" />
                 </span>
@@ -315,6 +315,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
             <Controller
               name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.command`}
               control={control}
+              rules={{ required: 'Please enter a command' }}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="flex-1 shrink-0 grow"
@@ -336,6 +337,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
             <Controller
               name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.command`}
               control={control}
+              rules={{ required: 'Please enter a command' }}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="flex-1 shrink-0 grow"
