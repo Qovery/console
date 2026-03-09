@@ -42,7 +42,6 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
 
   return (
     <div className="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3">
-      <div className="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-subtle" />
       <Link
         as="button"
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
@@ -63,10 +62,12 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
         size="sm"
         color="neutral"
         variant="surface"
+        className="relative max-w-fit gap-0.5"
       >
         Logs
         <Icon iconName="scroll" />
       </Link>
+      <div className="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-component" />
       {containers.length ? (
         <Tabs.Root defaultValue={defaultContainer}>
           <Tabs.List className={serviceType !== 'HELM' ? 'hidden' : ''}>
