@@ -129,7 +129,8 @@ export function HelmChartsSetting({
   )
 }
 
-function HelmRepositorySourceContent({ organizationId }: { organizationId: string }) {
+function HelmRepositorySourceContent() {
+  const { organizationId = '' } = useParams({ strict: false })
   const { control, watch } = useFormContext()
   const { openModal, closeModal } = useModal()
   const watchRepository = watch('repository')
@@ -196,7 +197,6 @@ function HelmRepositorySourceContent({ organizationId }: { organizationId: strin
 }
 
 export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
-  const { organizationId = '' } = useParams({ strict: false })
   const { control, watch, resetField } = useFormContext()
   const watchFieldProvider = watch('source_provider')
 
@@ -239,7 +239,7 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
             </div>
           }
         >
-          <HelmRepositorySourceContent organizationId={organizationId} />
+          <HelmRepositorySourceContent />
         </Suspense>
       )}
     </div>
