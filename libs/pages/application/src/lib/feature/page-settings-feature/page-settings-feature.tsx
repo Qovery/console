@@ -9,7 +9,6 @@ import {
   APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS,
   APPLICATION_SETTINGS_DOCKERFILE_URL,
   APPLICATION_SETTINGS_DOMAIN_URL,
-  APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_HEALTHCHECKS_URL,
   APPLICATION_SETTINGS_NETWORKING_URL,
   APPLICATION_SETTINGS_PORT_URL,
@@ -41,12 +40,6 @@ export function PageSettingsFeature() {
   )}${APPLICATION_SETTINGS_URL}`
 
   const { data: service } = useService({ serviceId: applicationId })
-
-  const generalSettings = {
-    title: 'General',
-    icon: IconAwesomeEnum.WHEEL,
-    url: pathSettings + APPLICATION_SETTINGS_GENERAL_URL,
-  }
 
   const valuesOverrideSetting = {
     title: 'Values',
@@ -154,7 +147,6 @@ export function PageSettingsFeature() {
   const links = match(service)
     .returnType<NavigationLeftLinkProps[]>()
     .with({ serviceType: 'APPLICATION' }, () => [
-      generalSettings,
       resourcesSettings,
       storageSettings,
       domainSettings,
@@ -165,7 +157,6 @@ export function PageSettingsFeature() {
       dangerzoneSettings,
     ])
     .with({ serviceType: 'CONTAINER' }, () => [
-      generalSettings,
       resourcesSettings,
       storageSettings,
       domainSettings,
@@ -175,7 +166,6 @@ export function PageSettingsFeature() {
       dangerzoneSettings,
     ])
     .with({ serviceType: 'HELM' }, (s) => [
-      generalSettings,
       valuesOverrideSetting,
       networkingSetting,
       domainSettings,
@@ -184,7 +174,6 @@ export function PageSettingsFeature() {
       dangerzoneSettings,
     ])
     .with({ serviceType: 'TERRAFORM' }, () => [
-      generalSettings,
       terraformConfigurationSetting,
       terraformVariablesSetting,
       terraformArgumentsSetting,
@@ -194,7 +183,6 @@ export function PageSettingsFeature() {
       dangerzoneSettings,
     ])
     .with({ serviceType: 'JOB' }, (s) => [
-      generalSettings,
       ...(s.job_type === 'LIFECYCLE' && isJobGitSource(s.source) ? [dockerfileSetting] : []),
       configureJobSetting,
       resourcesSettings,
@@ -203,6 +191,7 @@ export function PageSettingsFeature() {
       dangerzoneSettings,
     ])
     .otherwise(() => [])
+  const defaultSettingsUrl = links[0]?.url ?? pathSettings + APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL
 
   if (!service) return null
 
@@ -216,7 +205,7 @@ export function PageSettingsFeature() {
             element={<ErrorBoundary key={route.path}>{route.component}</ErrorBoundary>}
           />
         ))}
-        <Route path="*" element={<Navigate replace to={pathSettings + APPLICATION_SETTINGS_GENERAL_URL} />} />
+        <Route path="*" element={<Navigate replace to={defaultSettingsUrl} />} />
       </Routes>
     </PageSettings>
   )

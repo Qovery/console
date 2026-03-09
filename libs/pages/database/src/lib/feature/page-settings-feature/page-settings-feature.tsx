@@ -2,7 +2,6 @@ import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
 import {
   DATABASE_SETTINGS_DANGER_ZONE_URL,
-  DATABASE_SETTINGS_GENERAL_URL,
   DATABASE_SETTINGS_RESOURCES_URL,
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
@@ -24,11 +23,6 @@ export function PageSettingsFeature() {
 
   const links = [
     {
-      title: 'General',
-      icon: 'icon-solid-wheel',
-      url: pathSettings + DATABASE_SETTINGS_GENERAL_URL,
-    },
-    {
       title: 'Resources',
       icon: 'icon-solid-chart-bullet',
       url: pathSettings + DATABASE_SETTINGS_RESOURCES_URL,
@@ -39,6 +33,7 @@ export function PageSettingsFeature() {
       url: pathSettings + DATABASE_SETTINGS_DANGER_ZONE_URL,
     },
   ]
+  const defaultSettingsUrl = links[0]?.url ?? pathSettings + DATABASE_SETTINGS_RESOURCES_URL
 
   return (
     <PageSettings links={links}>
@@ -50,7 +45,7 @@ export function PageSettingsFeature() {
             element={<ErrorBoundary key={route.path}>{route.component}</ErrorBoundary>}
           />
         ))}
-        <Route path="*" element={<Navigate replace to={pathSettings + DATABASE_SETTINGS_GENERAL_URL} />} />
+        <Route path="*" element={<Navigate replace to={defaultSettingsUrl} />} />
       </Routes>
     </PageSettings>
   )

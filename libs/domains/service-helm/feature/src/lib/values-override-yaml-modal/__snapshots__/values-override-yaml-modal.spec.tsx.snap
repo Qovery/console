@@ -42,37 +42,8 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
               class="p-0"
             >
               <div
-                class="relative"
-              >
-                <section
-                  style="display: flex; position: relative; text-align: initial; width: 100%; height: calc(100vh - 278px);"
-                >
-                  <div
-                    style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
-                  >
-                    <div
-                      class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
-                      data-testid="spinner"
-                    />
-                  </div>
-                  <div
-                    style="width: 100%; display: none;"
-                  />
-                </section>
-                <button
-                  aria-controls="radix-:ri:"
-                  aria-expanded="false"
-                  aria-haspopup="dialog"
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral absolute right-4 top-4 px-2.5"
-                  data-state="closed"
-                  type="button"
-                >
-                  <i
-                    aria-hidden="true"
-                    class="fa-regular fa-wand-magic-sparkles text-sm"
-                  />
-                </button>
-              </div>
+                data-testid="code-editor-variable"
+              />
             </div>
           </div>
           <div
@@ -101,14 +72,21 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
             <div
               class="p-0"
             >
-              <div
-                class="flex justify-center px-5 py-14"
+              <section
+                style="display: flex; position: relative; text-align: initial; width: 100%; height: calc(100vh - 278px);"
               >
                 <div
-                  class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
-                  data-testid="spinner"
+                  style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
+                >
+                  <div
+                    class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
+                    data-testid="spinner"
+                  />
+                </div>
+                <div
+                  style="width: 100%; display: none;"
                 />
-              </div>
+              </section>
             </div>
           </div>
         </div>
