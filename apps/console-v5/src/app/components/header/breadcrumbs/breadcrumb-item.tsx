@@ -2,7 +2,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { Command } from 'cmdk'
 import { type ReactNode, useCallback, useMemo, useRef, useState } from 'react'
-import { Command as CommandMenu, Icon, Popover } from '@qovery/shared/ui'
+import { Command as CommandMenu, Icon, Popover, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
 export interface BreadcrumbItemData {
@@ -81,7 +81,11 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
   )
 
   if (!items || items.length === 0) {
-    return <span className="text-sm font-medium text-neutral">{item.label}</span>
+    return (
+      <span className="text-sm font-medium text-neutral">
+        <Truncate text={item.label} truncateLimit={30} />
+      </span>
+    )
   }
 
   return (
@@ -98,7 +102,7 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
         )}
       >
         {item.prefix}
-        {item.label}
+        <Truncate text={item.label} truncateLimit={30} />
         {item.suffix}
       </Link>
       <Popover.Root open={open} onOpenChange={handleOpenChange}>
