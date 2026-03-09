@@ -1,4 +1,5 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
+import { useParams } from '@tanstack/react-router'
 import {
   type DeploymentHistoryEnvironmentV2,
   type DeploymentStageWithServicesStatuses,
@@ -7,9 +8,8 @@ import {
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
 import { type Dispatch, type PropsWithChildren, type SetStateAction } from 'react'
-import { NavLink } from 'react-router-dom'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_PRE_CHECK_LOGS_URL } from '@qovery/shared/routes'
-import { Checkbox, Icon, LoaderSpinner, StageStatusChip, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { Checkbox, Icon, Link, LoaderSpinner, StageStatusChip, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { HeaderEnvironmentStages } from '../header-environment-stages/header-environment-stages'
 
@@ -33,16 +33,35 @@ export function EnvironmentStages({
   setHideSkipped,
   children,
 }: EnvironmentStagesProps) {
+  const { organizationId, projectId, environmentId } = useParams({ strict: false })
   const executionId = environmentStatus.last_deployment_id
 
   return (
-    <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
+    <div className="h-[calc(100vh-64px)] p-1">
+      <div className="flex shrink-0 flex-col gap-6">
+        <div className="flex flex-col items-start gap-3">
+          <Link
+            to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployments"
+            params={{ organizationId, projectId, environmentId }}
+            color="neutral"
+            className="flex gap-2 text-neutral-subtle"
+          >
+            <Icon iconName="arrow-left" />
+            Deployment history
+          </Link>
+          {/*<div className="flex justify-between">
+            <div className="flex">
+              <Heading>Deployment details</Heading>
+            </div>
+          </div>*/}
+        </div>
+      </div>
       <HeaderEnvironmentStages
         environment={environment}
         environmentStatus={environmentStatus}
         deploymentHistory={deploymentHistory}
       >
-        <div className="flex items-center gap-3 text-sm font-medium text-neutral-50">
+        <div className="flex items-center gap-3 text-sm font-medium text-neutral">
           <Checkbox
             name="skipped"
             id="skipped"
@@ -54,9 +73,11 @@ export function EnvironmentStages({
           <label htmlFor="skipped">Hide skipped</label>
         </div>
       </HeaderEnvironmentStages>
-      <div className="flex h-[calc(100vh-120px)] justify-center border border-t-0 border-neutral-500 bg-neutral-600">
+      <hr className="mt-2 w-full border-neutral" />
+
+      <div className="flex h-[calc(100vh-120px)] justify-center">
         <div className="h-full w-full">
-          <div className="flex h-full gap-0.5 overflow-y-scroll py-6 pl-4 pr-3">
+          <div className="flex h-full gap-0.5 overflow-y-scroll py-6">
             {!deploymentStages ? (
               <div className="mt-6 flex h-full w-full justify-center">
                 <LoaderSpinner className="h-6 w-6" />
@@ -82,7 +103,7 @@ export function EnvironmentStages({
                       </div>
                       {executionId && (
                         <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
-                          <NavLink
+                          <Link
                             to={
                               ENVIRONMENT_LOGS_URL(
                                 environment.organization.id,
@@ -97,7 +118,7 @@ export function EnvironmentStages({
                             </span>
                             <span className="text-sm">Pre-check logs</span>
                             <StatusChip className="ml-auto" status={preCheckStage.status} />
-                          </NavLink>
+                          </Link>
                         </div>
                       )}
                     </div>
