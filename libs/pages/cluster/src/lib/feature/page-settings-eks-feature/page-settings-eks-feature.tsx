@@ -79,6 +79,7 @@ export function PageSettingsEKSAnywhereFeature() {
                   gitSettings={
                     <GitRepositorySettings
                       gitDisabled={gitDisabled}
+                      showAuthProviders={false}
                       organizationId={organizationId}
                       editGitSettings={editGitSettings}
                       currentProvider={currentGitRepository?.provider}

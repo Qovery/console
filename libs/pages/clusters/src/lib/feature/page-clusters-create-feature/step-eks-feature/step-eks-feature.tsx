@@ -60,6 +60,7 @@ export function StepEKSFeature() {
                 gitSettings={
                   <GitRepositorySettings
                     gitDisabled={false}
+                    showAuthProviders={false}
                     organizationId={organizationId}
                     rootPathLabel="YAML file path"
                     rootPathHint="Provide the path to the EKS Anywhere cluster YAML file in the repository."
