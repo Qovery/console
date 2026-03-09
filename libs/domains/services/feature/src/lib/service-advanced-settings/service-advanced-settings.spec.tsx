@@ -5,6 +5,11 @@ import { AdvancedSettings } from './service-advanced-settings'
 
 const mockMutateEdit = jest.fn()
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: '', projectId: '' }),
+}))
+
 jest.mock('../hooks/use-advanced-settings/use-advanced-settings', () => ({
   useAdvancedSettings: () => ({ data: undefined }),
 }))

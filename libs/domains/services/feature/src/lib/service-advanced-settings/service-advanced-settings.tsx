@@ -48,18 +48,17 @@ type AdvancedSettingsData =
   | { advancedSettings: HelmAdvancedSettings; defaultAdvancedSettings: HelmAdvancedSettings }
 
 export type AdvancedSettingsProps = {
-  organizationId?: string
-  projectId?: string
   service: Exclude<AnyService, Database>
 } & (AdvancedSettingsData | { advancedSettings?: never; defaultAdvancedSettings?: never })
 
 export function AdvancedSettings({
-  organizationId,
-  projectId,
   service,
   advancedSettings: advancedSettingsProp,
   defaultAdvancedSettings: defaultAdvancedSettingsProp,
 }: AdvancedSettingsProps) {
+  const { organizationId = '', projectId = '' } = useParams({
+    strict: false,
+  })
   const {
     id: serviceId,
     serviceType,
@@ -283,28 +282,17 @@ export function AdvancedSettings({
 }
 
 export function ServiceAdvancedSettings() {
-  const {
-    organizationId = '',
-    projectId = '',
-    environmentId = '',
-    serviceId = '',
-  } = useParams({
+  const { environmentId = '', serviceId = '' } = useParams({
     strict: false,
   })
-  const { data: service } = useService({ environmentId, serviceId })
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
 
   if (!service) return null
   if (service.serviceType === 'DATABASE') {
     return <p className="text-sm text-neutral-subtle">No advanced settings available for this service.</p>
   }
 
-  return (
-    <AdvancedSettings
-      organizationId={organizationId}
-      projectId={projectId}
-      service={service as Exclude<AnyService, Database>}
-    />
-  )
+  return <AdvancedSettings service={service as Exclude<AnyService, Database>} />
 }
 
 export function ServiceAdvancedSettingsLoader() {
