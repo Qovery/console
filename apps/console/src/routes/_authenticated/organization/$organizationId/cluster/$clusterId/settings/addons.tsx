@@ -714,6 +714,7 @@ function RouteComponent() {
   )
   const [observabilityEnabled, setObservabilityEnabled] = useState(false)
   const [kedaEnabled, setKedaEnabled] = useState(false)
+  const isGcpCluster = cluster?.cloud_provider === 'GCP'
   const baseSecretManagers = useMemo(
     () =>
       match(selectedCaseId)
@@ -784,7 +785,7 @@ function RouteComponent() {
     const cloneCluster = {
       ...cluster,
       keda: {
-        enabled: kedaEnabled,
+        enabled: isGcpCluster ? false : kedaEnabled,
       },
     }
 
@@ -908,38 +909,40 @@ function RouteComponent() {
                 </div>
               </div>
             </div>
-            <div className="border-b border-neutral p-4">
-              <div className="flex flex-col gap-3">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-neutral">KEDA autoscaler</span>
-                    <Badge size="sm" radius="full" variant="surface" color="green" className="text-[13px]">
-                      Free
-                    </Badge>
+            {!isGcpCluster && (
+              <div className="border-b border-neutral p-4">
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-neutral">KEDA autoscaler</span>
+                      <Badge size="sm" radius="full" variant="surface" color="green" className="text-[13px]">
+                        Free
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-neutral-subtle">
+                      Qovery KEDA autoscaler allows you to add event-based autoscaling on all the services running on this
+                      cluster.
+                    </p>
                   </div>
-                  <p className="text-sm text-neutral-subtle">
-                    Qovery KEDA autoscaler allows you to add event-based autoscaling on all the services running on this
-                    cluster.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    color="neutral"
-                    variant={kedaEnabled ? 'surface' : 'outline'}
-                    size="md"
-                    className="gap-2"
-                    onClick={() => setKedaEnabled((prev) => !prev)}
-                  >
-                    <Icon iconName="circle-check" iconStyle="regular" className="text-xs" />
-                    {kedaEnabled ? 'Activated' : 'Activate'}
-                  </Button>
-                  <Button type="button" color="neutral" variant="plain" size="md">
-                    More details
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      color="neutral"
+                      variant={kedaEnabled ? 'surface' : 'outline'}
+                      size="md"
+                      className="gap-2"
+                      onClick={() => setKedaEnabled((prev) => !prev)}
+                    >
+                      <Icon iconName="circle-check" iconStyle="regular" className="text-xs" />
+                      {kedaEnabled ? 'Activated' : 'Activate'}
+                    </Button>
+                    <Button type="button" color="neutral" variant="plain" size="md">
+                      More details
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
             <div className="p-4">
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1">

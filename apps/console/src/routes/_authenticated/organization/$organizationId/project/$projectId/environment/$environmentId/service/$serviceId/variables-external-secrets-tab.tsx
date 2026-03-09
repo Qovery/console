@@ -1,8 +1,11 @@
 import {
+  type ColumnFiltersState,
   type RowSelectionState,
   type SortingState,
   createColumnHelper,
   flexRender,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
@@ -26,6 +29,7 @@ import {
   SyncStatusBadge,
   TableFilterSearch,
   TablePrimitives,
+  TableFilter,
   Tooltip,
   useModal,
   useModalConfirmation,
@@ -292,6 +296,7 @@ function AddSecretModal({
                 className="mb-3 w-full"
                 name={field.name}
                 label="Source"
+                portal
                 options={SECRET_SOURCES.map((option) => ({
                   label: option.label,
                   value: option.value,
@@ -440,6 +445,7 @@ function AttachSecretsModal({ selectedCount, onClose, onAttach }: AttachSecretsM
                 className="mb-3 w-full"
                 name={field.name}
                 label="Source"
+                portal
                 options={SECRET_SOURCES.map((option) => ({
                   label: option.label,
                   value: option.value,
@@ -502,6 +508,7 @@ export function ExternalSecretsTab() {
   const [search, setSearch] = useState('')
   const [secrets, setSecrets] = useState(baseSecrets)
   const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -510,6 +517,7 @@ export function ExternalSecretsTab() {
     setSecrets(baseSecrets)
     setSearch('')
     setSorting([])
+    setColumnFilters([])
     setRowSelection({})
   }, [baseSecrets])
 
@@ -800,11 +808,22 @@ export function ExternalSecretsTab() {
       columnHelper.accessor('status', {
         header: 'Status',
         enableSorting: false,
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterValue) => {
+          if (!Array.isArray(filterValue) || filterValue.length === 0) return true
+          return filterValue.includes(row.getValue(columnId))
+        },
         cell: (info) => <SyncStatusBadge status={info.getValue()} />,
       }),
-      columnHelper.accessor('source', {
+      columnHelper.accessor((row) => row.source ?? 'No source', {
+        id: 'source',
         header: 'Source',
         enableSorting: false,
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterValue) => {
+          if (!Array.isArray(filterValue) || filterValue.length === 0) return true
+          return filterValue.includes(row.getValue(columnId))
+        },
         cell: (info) => {
           const secret = info.row.original
           if (!secret.source) {
@@ -894,13 +913,16 @@ export function ExternalSecretsTab() {
   const table = useReactTable({
     data: secrets,
     columns,
-    state: { sorting, rowSelection, globalFilter: search },
+    state: { sorting, rowSelection, globalFilter: search, columnFilters },
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setSearch,
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     getRowId: (row) => row.id,
   })
 
@@ -981,7 +1003,9 @@ export function ExternalSecretsTab() {
                       header.column.id === 'name' && 'border-r border-neutral'
                     )}
                   >
-                    {header.column.getCanSort() ? (
+                    {['status', 'source'].includes(header.column.id) ? (
+                      <TableFilter column={header.column} />
+                    ) : header.column.getCanSort() ? (
                       <button
                         type="button"
                         className="flex cursor-pointer select-none items-center gap-1"
@@ -1031,45 +1055,47 @@ export function ExternalSecretsTab() {
         </Table.Root>
       )}
 
-      <div className={`fixed inset-x-0 bottom-14 z-50 flex justify-center ${hasSelection ? '' : 'hidden'}`}>
-        <div className="inline-flex items-center gap-6 rounded-md border border-neutral bg-surface-neutralInvert-component px-4 py-2 text-neutralInvert shadow-xl">
+      <div className={`fixed inset-x-0 bottom-14 z-30 flex justify-center ${hasSelection ? '' : 'hidden'}`}>
+        <div className="inline-flex h-14 items-center rounded-md border border-neutral bg-[var(--background-invert-1)] px-4 text-neutralInvert shadow-xl">
           <span className="text-sm font-medium text-neutralInvert">
             {selectedIds.length} selected {pluralize(selectedIds.length, 'secret')}
           </span>
-          <div className="flex items-center gap-3">
+          <div className="ml-8 flex items-center gap-4">
             <button type="button" className="text-ssm font-medium underline" onClick={() => setRowSelection({})}>
               Unselect
             </button>
-            <Button
-              color="neutral"
-              variant="outline"
-              size="xs"
-              className="gap-2"
-              onClick={() => handleSynchronize(selectedIds)}
-            >
-              <Icon iconName="rotate" iconStyle="regular" />
-              Synchronize
-            </Button>
-            <Button
-              color="neutral"
-              variant="outline"
-              size="xs"
-              className="gap-2"
-              onClick={() => handleOpenAttach(selectedIds)}
-            >
-              <Icon iconName="link" iconStyle="regular" />
-              Attach
-            </Button>
-            <Button
-              aria-label="Delete selected"
-              color="red"
-              variant="outline"
-              size="xs"
-              iconOnly
-              onClick={() => handleConfirmDeleteSecrets(selectedIds)}
-            >
-              <Icon iconName="trash" iconStyle="regular" />
-            </Button>
+            <div className="flex items-center gap-1.5">
+              <Button
+                color="neutralInverted"
+                variant="outline"
+                size="md"
+                className="gap-2"
+                onClick={() => handleSynchronize(selectedIds)}
+              >
+                <Icon iconName="rotate" iconStyle="regular" />
+                Synchronize
+              </Button>
+              <Button
+                color="neutralInverted"
+                variant="outline"
+                size="md"
+                className="gap-2"
+                onClick={() => handleOpenAttach(selectedIds)}
+              >
+                <Icon iconName="link" iconStyle="regular" />
+                Attach
+              </Button>
+              <Button
+                aria-label="Delete selected"
+                color="redInverted"
+                variant="outline"
+                size="md"
+                iconOnly
+                onClick={() => handleConfirmDeleteSecrets(selectedIds)}
+              >
+                <Icon iconName="trash" iconStyle="regular" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
