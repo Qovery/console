@@ -148,7 +148,9 @@ body {
   }
 
   button,
-  a {
+  a,
+  [role='link'],
+  [role='button'] {
     &:focus {
       outline: none;
     }
