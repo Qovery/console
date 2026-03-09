@@ -1,4 +1,4 @@
-import { Link, useParams } from '@tanstack/react-router'
+import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { EnvironmentModeEnum, type EnvironmentOverviewResponse } from 'qovery-typescript-axios'
 import { useMediaQuery } from 'react-responsive'
 import { match } from 'ts-pattern'
@@ -17,6 +17,7 @@ const gridLayoutClassName =
   'grid w-full grid-cols-[1fr_20%_min(20%,160px)_min(15%,120px)_max(10%,106px)] xl:grid-cols-[1fr_25%_min(20%,240px)_160px_96px]'
 
 function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
+  const navigate = useNavigate()
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const environment = environments.find((env) => env.id === overview.id)
@@ -28,17 +29,32 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
     query: '(min-width: 1536px)',
   })
 
+  const handleNavigate = () => {
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId',
+      params: { organizationId, projectId, environmentId: overview.id },
+    })
+  }
+
   return (
-    <Table.Row key={overview.id} className={twMerge('w-full hover:bg-surface-neutral-subtle', gridLayoutClassName)}>
-      <Table.Cell className={twMerge(cellClassName, 'border-none')}>
-        <div className="flex h-full flex-col justify-center gap-1 xl:flex-row xl:items-center xl:justify-between xl:gap-2">
-          <Link
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId"
-            params={{ organizationId, projectId, environmentId: overview.id }}
-            className="text-wrap break-all text-sm font-medium"
-          >
-            <Truncate text={overview.name} truncateLimit={isVeryLargeScreen ? 72 : isDesktopOrLaptop ? 50 : 40} />
-          </Link>
+    <Table.Row
+      key={overview.id}
+      tabIndex={0}
+      role="link"
+      className={twMerge(
+        'w-full hover:cursor-pointer hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle',
+        gridLayoutClassName
+      )}
+      onClick={handleNavigate}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') handleNavigate()
+      }}
+    >
+      <Table.Cell className={twMerge(cellClassName, 'border-none p-0')}>
+        <div className="flex h-full flex-col justify-center gap-1 px-4 py-2 xl:flex-row xl:items-center xl:justify-between xl:gap-2">
+          <span className="text-wrap break-all text-sm font-medium">
+            <Truncate text={overview.name} truncateLimit={isVeryLargeScreen ? 72 : isDesktopOrLaptop ? 40 : 30} />
+          </span>
           <div className="flex flex-shrink-0 items-center gap-2">
             <span className="font-normal text-neutral-subtle">
               {overview.service_count} {pluralize(overview.service_count, 'service')}
@@ -64,6 +80,9 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
             <Link
               to="/organization/$organizationId/cluster/$clusterId/overview"
               params={{ organizationId, clusterId: overview.cluster.id }}
+              onClick={(e) => {
+                e.stopPropagation()
+              }}
               className="group lg:inline-flex lg:items-center lg:gap-2"
             >
               <ClusterAvatar cluster={overview.cluster} size="sm" className="hidden lg:inline-block" />
