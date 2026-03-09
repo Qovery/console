@@ -1,5 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import { type HelmRepositoryKindEnum } from 'qovery-typescript-axios'
+import { Suspense } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { HelmRepositoryCreateEditModal } from '@qovery/domains/organizations/feature'
 import { Icon, InputSelect, InputText, LoaderSpinner, useModal } from '@qovery/shared/ui'
@@ -113,7 +114,7 @@ export function HelmChartsSetting({
                 error={error?.message}
                 hint={
                   !isOci && helmsChartsVersionsOptions.length === 0 ? (
-                    <span className="text-orange-500">
+                    <span className="text-warning">
                       No version found. Please verify that the chart name or helm repository is correct. You can still
                       enter your version manually.
                     </span>
@@ -128,21 +129,76 @@ export function HelmChartsSetting({
   )
 }
 
-export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
-  const { organizationId = '' } = useParams({ strict: false })
+function HelmRepositorySourceContent({ organizationId }: { organizationId: string }) {
+  const { control, watch } = useFormContext()
   const { openModal, closeModal } = useModal()
-  const { control, watch, resetField } = useFormContext()
-  const watchFieldProvider = watch('source_provider')
   const watchRepository = watch('repository')
 
-  const {
-    data: helmRepositories = [],
-    isLoading: isLoadingHelmRepositories,
-    isFetched: isFetchedHelmRepositories,
-  } = useHelmRepositories({
+  const { data: helmRepositories = [] } = useHelmRepositories({
     organizationId,
-    enabled: watchFieldProvider === 'HELM_REPOSITORY',
+    enabled: true,
+    suspense: true,
   })
+
+  return (
+    <div className="flex flex-col gap-3">
+      <Controller
+        name="repository"
+        control={control}
+        rules={{
+          required: 'Please select a repository.',
+          validate: () => true,
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputSelect
+            label="Repository"
+            options={helmRepositories.map((helmRepository) => ({
+              label: helmRepository.name ?? '',
+              value: helmRepository.id,
+            }))}
+            onChange={field.onChange}
+            value={field.value}
+            error={error?.message}
+            isSearchable
+            menuListButton={{
+              title: 'Select helm repository',
+              label: 'New helm repository',
+              icon: <Icon iconName="circle-plus" className="text-brand" />,
+              onClick: () => {
+                openModal({
+                  content: (
+                    <HelmRepositoryCreateEditModal
+                      organizationId={organizationId}
+                      onClose={(response) => {
+                        response && field.onChange(response.id)
+                        closeModal()
+                      }}
+                    />
+                  ),
+                  options: {
+                    fakeModal: true,
+                  },
+                })
+              },
+            }}
+          />
+        )}
+      />
+      {watchRepository && (
+        <HelmChartsSetting
+          organizationId={organizationId}
+          helmRepositoryId={watchRepository}
+          kind={helmRepositories.find((r) => r.id === watchRepository)?.kind}
+        />
+      )}
+    </div>
+  )
+}
+
+export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
+  const { organizationId = '' } = useParams({ strict: false })
+  const { control, watch, resetField } = useFormContext()
+  const watchFieldProvider = watch('source_provider')
 
   return (
     <div className="flex flex-col gap-3">
@@ -176,65 +232,15 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
         )}
       />
       {watchFieldProvider === 'HELM_REPOSITORY' && (
-        <div className="flex flex-col gap-3">
-          {!isFetchedHelmRepositories || isLoadingHelmRepositories ? (
+        <Suspense
+          fallback={
             <div className="flex justify-center">
               <LoaderSpinner />
             </div>
-          ) : (
-            <>
-              <Controller
-                name="repository"
-                control={control}
-                rules={{
-                  required: 'Please select a repository.',
-                  validate: () => true,
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputSelect
-                    label="Repository"
-                    options={helmRepositories.map((helmRepository) => ({
-                      label: helmRepository.name ?? '',
-                      value: helmRepository.id,
-                    }))}
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                    isSearchable
-                    menuListButton={{
-                      title: 'Select helm repository',
-                      label: 'New helm repository',
-                      icon: <Icon iconName="circle-plus" className="text-brand-500" />,
-                      onClick: () => {
-                        openModal({
-                          content: (
-                            <HelmRepositoryCreateEditModal
-                              organizationId={organizationId}
-                              onClose={(response) => {
-                                response && field.onChange(response.id)
-                                closeModal()
-                              }}
-                            />
-                          ),
-                          options: {
-                            fakeModal: true,
-                          },
-                        })
-                      },
-                    }}
-                  />
-                )}
-              />
-              {watchRepository && (
-                <HelmChartsSetting
-                  organizationId={organizationId}
-                  helmRepositoryId={watchRepository}
-                  kind={helmRepositories.find((r) => r.id === watchRepository)?.kind}
-                />
-              )}
-            </>
-          )}
-        </div>
+          }
+        >
+          <HelmRepositorySourceContent organizationId={organizationId} />
+        </Suspense>
       )}
     </div>
   )
