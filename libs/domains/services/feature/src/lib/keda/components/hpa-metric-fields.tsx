@@ -16,20 +16,22 @@ export function HpaMetricFields({ control, hpaMetricType }: HpaMetricFieldsProps
         control={control}
         render={({ field }) => (
           <div className="mb-5">
-            <label className="mb-3 block text-sm font-medium text-neutral-400">Autoscaling metric</label>
+            <label className="mb-3 block text-sm font-medium text-neutral" htmlFor={field.name}>
+              Autoscaling metric
+            </label>
             <RadioGroup.Root onValueChange={field.onChange} value={field.value} className="flex flex-col gap-3">
-              <label className="flex cursor-pointer items-start gap-3 rounded border border-neutral-250 bg-neutral-100 p-4">
+              <label className="flex cursor-pointer items-start gap-3 rounded border border-neutral bg-surface-neutral p-4">
                 <RadioGroup.Item value="CPU" />
                 <div className="flex flex-col gap-1">
-                  <span className="font-medium text-neutral-400">CPU only</span>
-                  <span className="text-sm text-neutral-350">Scale based on CPU usage</span>
+                  <span className="font-medium text-neutral">CPU only</span>
+                  <span className="text-sm text-neutral-subtle">Scale based on CPU usage</span>
                 </div>
               </label>
-              <label className="flex cursor-pointer items-start gap-3 rounded border border-neutral-250 bg-neutral-100 p-4">
+              <label className="flex cursor-pointer items-start gap-3 rounded border border-neutral bg-surface-neutral p-4">
                 <RadioGroup.Item value="CPU_AND_MEMORY" />
                 <div className="flex flex-col gap-1">
-                  <span className="font-medium text-neutral-400">CPU + Memory</span>
-                  <span className="text-sm text-neutral-350">Scale based on CPU and memory usage</span>
+                  <span className="font-medium text-neutral">CPU + Memory</span>
+                  <span className="text-sm text-neutral-subtle">Scale based on CPU and memory usage</span>
                 </div>
               </label>
             </RadioGroup.Root>
