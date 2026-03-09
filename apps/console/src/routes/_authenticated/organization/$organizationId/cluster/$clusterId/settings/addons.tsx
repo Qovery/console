@@ -74,10 +74,10 @@ const SECRET_MANAGER_USE_CASES: UseCaseOption[] = [
 ]
 
 const SECRET_MANAGER_OPTIONS: SecretManagerOption[] = [
-  { value: 'aws-manager', label: 'AWS Manager type', icon: 'AWS' },
-  { value: 'aws-parameter', label: 'AWS Parameter store', icon: 'AWS' },
-  { value: 'gcp-secret', label: 'GCP Secret manager', icon: 'GCP' },
-].map((option) => ({ ...option, typeLabel: option.label }))
+  { value: 'aws-manager', label: 'AWS Manager type', icon: 'AWS', typeLabel: 'AWS Manager type' },
+  { value: 'aws-parameter', label: 'AWS Parameter store', icon: 'AWS', typeLabel: 'AWS Parameter store' },
+  { value: 'gcp-secret', label: 'GCP Secret manager', icon: 'GCP', typeLabel: 'GCP Secret manager' },
+]
 
 const BASE_SECRET_MANAGERS: SecretManagerItem[] = [
   {

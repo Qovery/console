@@ -297,7 +297,6 @@ function AddSecretModal({
             render={({ field }) => (
               <InputSelect
                 className="mb-3 w-full"
-                name={field.name}
                 label="Source"
                 portal
                 options={SECRET_SOURCES.map((option) => ({
@@ -327,7 +326,6 @@ function AddSecretModal({
             render={({ field }) => (
               <InputSelect
                 className="mb-3 w-full"
-                name={field.name}
                 label="Reference"
                 options={REFERENCE_OPTIONS.map((reference) => ({ label: reference, value: reference }))}
                 value={field.value}
@@ -446,7 +444,6 @@ function AttachSecretsModal({ selectedCount, onClose, onAttach }: AttachSecretsM
             render={({ field }) => (
               <InputSelect
                 className="mb-3 w-full"
-                name={field.name}
                 label="Source"
                 portal
                 options={SECRET_SOURCES.map((option) => ({
@@ -945,7 +942,6 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
           <div className="flex items-center gap-2">
             <TableFilterSearch
               className="h-8 w-[200px]"
-              placeholder="Search secrets"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />

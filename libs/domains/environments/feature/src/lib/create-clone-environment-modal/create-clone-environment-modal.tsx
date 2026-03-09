@@ -36,6 +36,12 @@ export type CloneMigrationUseCaseOption = {
   id: string
   label: string
 }
+type CloneUseCaseOverrides = {
+  forceDifferentCluster?: boolean
+  forceSelfManaged?: boolean
+  sourceManagers?: SecretManagerDescriptor[]
+  targetManagers?: SecretManagerDescriptor[]
+}
 
 const SECRET_MANAGER_FIXTURES = {
   awsProd: { id: 'secret-manager-aws-prod', name: 'Prod secret manager', provider: 'AWS' as const },
@@ -157,24 +163,10 @@ function CloneMigrationHelperModal({
             <button
               type="button"
               onClick={() => handleSelect('migrate')}
-              className={`${cardBase} ${
-                selectedAction === 'migrate'
-                  ? 'outline-brand-strong focus:outline-brand-strong'
-                  : 'outline-neutral focus:outline-neutral'
-              }`}
+              className={`${cardBase} outline-neutral focus:outline-neutral`}
             >
-              <div
-                className={`${iconBase} ${
-                  selectedAction === 'migrate'
-                    ? 'bg-surface-brand-component text-brand'
-                    : 'bg-surface-neutral-component'
-                }`}
-              >
-                <Icon
-                  iconName="right-left"
-                  iconStyle="regular"
-                  className={selectedAction === 'migrate' ? 'text-brand' : undefined}
-                />
+              <div className={`${iconBase} bg-surface-neutral-component`}>
+                <Icon iconName="right-left" iconStyle="regular" />
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-sm font-medium text-neutral">Migrate to another secret manager</span>
@@ -429,7 +421,7 @@ export function CreateCloneEnvironmentModal({
     [clusters, environmentToClone?.cluster_id]
   )
   const isSelfManagedTarget = selectedCluster?.kubernetes === KubernetesEnum.SELF_MANAGED
-  const useCaseOverrides = useMemo(() => {
+  const useCaseOverrides = useMemo<CloneUseCaseOverrides>(() => {
     return match(selectedCaseId)
       .with('self-managed', () => ({
         forceDifferentCluster: true,
@@ -487,6 +479,10 @@ export function CreateCloneEnvironmentModal({
   }
 
   const onSubmit = methods.handleSubmit(async ({ name, cluster, mode, project_id }) => {
+    if (!cluster) {
+      return
+    }
+
     if (environmentToClone) {
       const payload = {
         name,
