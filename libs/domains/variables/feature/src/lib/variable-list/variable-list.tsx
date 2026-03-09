@@ -12,7 +12,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, type ReactNode, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { ExternalServiceEnum, IconEnum } from '@qovery/shared/enums'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
@@ -53,6 +53,9 @@ type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
 
 export type VariableListProps = {
   className?: string
+  hideSectionLabel?: boolean
+  showOnly?: 'custom' | 'built-in'
+  headerActions?: ReactNode
   onCreateVariable?: (variable: VariableResponse | void) => void
   onEditVariable?: (variable: VariableResponse | void) => void
   onDeleteVariable?: (variable: VariableResponse) => void
@@ -78,6 +81,9 @@ export type VariableListProps = {
 
 export function VariableList({
   className,
+  hideSectionLabel = false,
+  showOnly,
+  headerActions,
   onCreateVariable,
   onEditVariable,
   onDeleteVariable,
@@ -170,15 +176,17 @@ export function VariableList({
       ? 'grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0%,40%)_minmax(0,12%)]'
       : isEnvironmentScope
         ? 'grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)]'
-        : 'grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]'
+        : 'grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)_88px]'
   const builtInGridLayoutClassName =
     props.scope === 'PROJECT'
       ? 'grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_50px_minmax(0,40%)_minmax(0,12%)]'
-      : 'grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_50px_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)]'
+      : isEnvironmentScope
+        ? 'grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_50px_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)]'
+        : 'grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)_88px]'
 
   const columnHelper = createColumnHelper<(typeof variables)[number]>()
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    const baseColumns = [
       columnHelper.display({
         id: 'select',
         enableColumnFilter: false,
@@ -220,6 +228,7 @@ export function VariableList({
       columnHelper.accessor('key', {
         id: 'key',
         header: ({ table }) => {
+          if (headerActions) return 'Name'
           const totalRows = table.getPreFilteredRowModel().rows.length
           const isSearching = table.getRowCount() !== totalRows
           return isSearching
@@ -230,6 +239,8 @@ export function VariableList({
         size: showServiceLinkColumn ? 40 : 45,
         cell: (info) => {
           const variable = info.row.original
+          const isFileVariable = environmentVariableFile(variable)
+          const showFilePathUnderName = isServiceScope && showOnly === 'custom' && isFileVariable
 
           return (
             <div className="flex flex-col justify-center gap-1">
@@ -253,7 +264,7 @@ export function VariableList({
                       OVERRIDE
                     </span>
                   )}
-                  {variable.mount_path && (
+                  {variable.mount_path && !showFilePathUnderName && (
                     <span className="mr-2 inline-flex h-4 items-center rounded bg-surface-accent1-component px-1 text-2xs font-bold text-accent1">
                       FILE
                     </span>
@@ -277,6 +288,12 @@ export function VariableList({
                   </Tooltip>
                 )}
               </div>
+              {showFilePathUnderName && (
+                <div className="flex flex-row items-center gap-1 text-xs text-neutral-subtle">
+                  <Icon iconName="file" iconStyle="regular" className="text-xs text-neutral-subtle" />
+                  <span>{getEnvironmentVariableFileMountPath(variable)}</span>
+                </div>
+              )}
               {(variable.aliased_variable || variable.overridden_variable) && (
                 <div className="flex flex-row gap-1 text-2xs text-neutral-subtle">
                   <Icon iconName="arrow-turn-down-right" iconStyle="regular" className="text-2xs text-neutral-subtle" />
@@ -296,73 +313,195 @@ export function VariableList({
           const disableOverride = match(variable.scope)
             .with('APPLICATION', 'CONTAINER', 'JOB', 'HELM', () => true)
             .otherwise(() => alreadyOverridden)
+          const isDoppler = variable.owned_by === ExternalServiceEnum.DOPPLER
+          const canEdit = isDoppler || variable.scope !== 'BUILT_IN'
+          const isBuiltIn = variable.scope === 'BUILT_IN'
+          const showAliasOnly = isServiceScope && showOnly === 'built-in' && isBuiltIn
+
+          if (!isServiceScope) {
+            return (
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                  <Button variant="outline" size="md" aria-label="actions" className="w-8 justify-center">
+                    <Icon iconName="ellipsis-vertical" iconStyle="regular" />
+                  </Button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content align="end">
+                  {isDoppler ? (
+                    <DropdownMenu.Item
+                      icon={<Icon iconName="arrow-up-right-from-square" />}
+                      onSelect={() => window.open('https://dashboard.doppler.com', '_blank')}
+                    >
+                      Edit in Doppler
+                    </DropdownMenu.Item>
+                  ) : (
+                    <>
+                      {variable.scope !== 'BUILT_IN' && (
+                        <DropdownMenu.Item icon={<Icon iconName="pen" />} onSelect={() => _onEditVariable(variable)}>
+                          Edit
+                        </DropdownMenu.Item>
+                      )}
+                      {!variable.overridden_variable && !variable.aliased_variable && (
+                        <>
+                          <DropdownMenu.Item
+                            icon={<Icon iconName="pen-swirl" />}
+                            onSelect={() => _onCreateVariable(variable, 'ALIAS')}
+                          >
+                            Create alias
+                          </DropdownMenu.Item>
+                          {variable.scope !== 'BUILT_IN' && variable.scope !== props.scope && (
+                            <DropdownMenu.Item
+                              icon={<Icon iconName="pen-line" />}
+                              disabled={disableOverride}
+                              onSelect={() => _onCreateVariable(variable, 'OVERRIDE')}
+                            >
+                              <Tooltip
+                                disabled={!disableOverride}
+                                content={
+                                  alreadyOverridden
+                                    ? 'Variable already overridden'
+                                    : 'You can’t override variables on the application scope'
+                                }
+                              >
+                                <span>Create override</span>
+                              </Tooltip>
+                            </DropdownMenu.Item>
+                          )}
+                        </>
+                      )}
+                      {variable.owned_by === 'QOVERY' && variable.scope !== 'BUILT_IN' && (
+                        <>
+                          <DropdownMenu.Separator />
+                          <DropdownMenu.Item
+                            icon={<Icon iconName="trash" />}
+                            onSelect={() => _onDeleteVariable(variable)}
+                            color="red"
+                          >
+                            Delete
+                          </DropdownMenu.Item>
+                        </>
+                      )}
+                    </>
+                  )}
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+            )
+          }
+
+          if (showAliasOnly) {
+            if (variable.overridden_variable || variable.aliased_variable) {
+              return <div className="flex items-center justify-end" />
+            }
+
+            return (
+              <Button
+                aria-label="Create alias"
+                color="neutral"
+                size="xs"
+                variant="outline"
+                iconOnly
+                type="button"
+                onClick={() => _onCreateVariable(variable, 'ALIAS')}
+              >
+                <Tooltip content="Create alias">
+                  <div className="flex h-full w-full items-center justify-center">
+                    <Icon iconName="pen-swirl" />
+                  </div>
+                </Tooltip>
+              </Button>
+            )
+          }
 
           return (
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
-                <Button variant="outline" size="md" aria-label="actions" className="w-8 justify-center">
-                  <Icon iconName="ellipsis-vertical" iconStyle="regular" />
-                </Button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content>
-                {variable.owned_by === ExternalServiceEnum.DOPPLER ? (
-                  <DropdownMenu.Item
-                    icon={<Icon iconName="arrow-up-right-from-square" />}
-                    onSelect={() => window.open('https://dashboard.doppler.com', '_blank')}
-                  >
-                    Edit in Doppler
-                  </DropdownMenu.Item>
-                ) : (
-                  <>
-                    {variable.scope !== 'BUILT_IN' && (
-                      <DropdownMenu.Item icon={<Icon iconName="pen" />} onSelect={() => _onEditVariable(variable)}>
-                        Edit
-                      </DropdownMenu.Item>
-                    )}
-                    {!variable.overridden_variable && !variable.aliased_variable && (
-                      <>
-                        <DropdownMenu.Item
-                          icon={<Icon iconName="pen-swirl" />}
-                          onSelect={() => _onCreateVariable(variable, 'ALIAS')}
-                        >
-                          Create alias
-                        </DropdownMenu.Item>
-                        {variable.scope !== 'BUILT_IN' && variable.scope !== props.scope && (
+            <div className="flex items-center justify-end gap-1">
+              <Button
+                aria-label={isDoppler ? 'Edit in Doppler' : 'Edit'}
+                color="neutral"
+                size="xs"
+                variant="outline"
+                iconOnly
+                type="button"
+                disabled={!canEdit}
+                onClick={() => {
+                  if (!canEdit) return
+                  if (isDoppler) {
+                    window.open('https://dashboard.doppler.com', '_blank')
+                    return
+                  }
+                  _onEditVariable(variable)
+                }}
+              >
+                <Tooltip content={isDoppler ? 'Edit in Doppler' : 'Edit'}>
+                  <div className="flex h-full w-full items-center justify-center">
+                    <Icon iconName={isDoppler ? 'arrow-up-right-from-square' : 'pen'} />
+                  </div>
+                </Tooltip>
+              </Button>
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                  <Button aria-label="Other actions" color="neutral" size="xs" variant="outline" iconOnly>
+                    <Tooltip content="Other actions">
+                      <div className="flex h-full w-full items-center justify-center">
+                        <Icon iconName="ellipsis-vertical" iconStyle="regular" />
+                      </div>
+                    </Tooltip>
+                  </Button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content align="end">
+                  {isDoppler ? (
+                    <DropdownMenu.Item
+                      icon={<Icon iconName="arrow-up-right-from-square" />}
+                      onSelect={() => window.open('https://dashboard.doppler.com', '_blank')}
+                    >
+                      Edit in Doppler
+                    </DropdownMenu.Item>
+                  ) : (
+                    <>
+                      {!variable.overridden_variable && !variable.aliased_variable && (
+                        <>
                           <DropdownMenu.Item
-                            icon={<Icon iconName="pen-line" />}
-                            disabled={disableOverride}
-                            onSelect={() => _onCreateVariable(variable, 'OVERRIDE')}
+                            icon={<Icon iconName="pen-swirl" />}
+                            onSelect={() => _onCreateVariable(variable, 'ALIAS')}
                           >
-                            <Tooltip
-                              disabled={!disableOverride}
-                              content={
-                                alreadyOverridden
-                                  ? 'Variable already overridden'
-                                  : 'You can’t override variables on the application scope'
-                              }
-                            >
-                              <span>Create override</span>
-                            </Tooltip>
+                            Create alias
                           </DropdownMenu.Item>
-                        )}
-                      </>
-                    )}
-                    {variable.owned_by === 'QOVERY' && variable.scope !== 'BUILT_IN' && (
-                      <>
-                        <DropdownMenu.Separator />
-                        <DropdownMenu.Item
-                          icon={<Icon iconName="trash" />}
-                          onSelect={() => _onDeleteVariable(variable)}
-                          color="red"
-                        >
-                          Delete
-                        </DropdownMenu.Item>
-                      </>
-                    )}
-                  </>
-                )}
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
+                          {variable.scope !== 'BUILT_IN' && variable.scope !== props.scope && (
+                            <DropdownMenu.Item
+                              icon={<Icon iconName="pen-line" />}
+                              disabled={disableOverride}
+                              onSelect={() => _onCreateVariable(variable, 'OVERRIDE')}
+                            >
+                              <Tooltip
+                                disabled={!disableOverride}
+                                content={
+                                  alreadyOverridden
+                                    ? 'Variable already overridden'
+                                    : 'You can’t override variables on the application scope'
+                                }
+                              >
+                                <span>Create override</span>
+                              </Tooltip>
+                            </DropdownMenu.Item>
+                          )}
+                        </>
+                      )}
+                      {variable.owned_by === 'QOVERY' && variable.scope !== 'BUILT_IN' && (
+                        <>
+                          <DropdownMenu.Separator />
+                          <DropdownMenu.Item
+                            icon={<Icon iconName="trash" />}
+                            onSelect={() => _onDeleteVariable(variable)}
+                            color="red"
+                          >
+                            Delete
+                          </DropdownMenu.Item>
+                        </>
+                      )}
+                    </>
+                  )}
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+            </div>
           )
         },
       }),
@@ -373,7 +512,9 @@ export function VariableList({
         filterFn: 'arrIncludesSome',
         cell: (info) => {
           const variable = info.row.original
-          if (environmentVariableFile(variable)) {
+          const shouldRenderFilePathInName = isServiceScope && showOnly === 'custom'
+
+          if (environmentVariableFile(variable) && !shouldRenderFilePathInName) {
             return (
               <div className="flex w-full items-center gap-2 text-sm" onClick={() => _onEditVariable(variable)}>
                 {variable.value !== null ? (
@@ -476,9 +617,21 @@ export function VariableList({
           )
         },
       }),
-    ],
-    [variables.length, _onCreateVariable, _onEditVariable, props.scope]
-  )
+    ]
+
+    if (!isServiceScope) {
+      return baseColumns
+    }
+
+    const actionsColumn = baseColumns.find((column) => (column as { id?: string }).id === 'actions')
+    const orderedColumns = baseColumns.filter((column) => (column as { id?: string }).id !== 'actions')
+
+    if (actionsColumn) {
+      orderedColumns.push(actionsColumn)
+    }
+
+    return orderedColumns
+  }, [variables.length, _onCreateVariable, _onEditVariable, props.scope, showOnly, !!headerActions, isServiceScope])
   const nonBuiltInColumns = useMemo(() => {
     if (!isEnvironmentScope && props.scope !== 'PROJECT') {
       return columns
@@ -599,7 +752,7 @@ export function VariableList({
       <EmptyState
         title="No variable found"
         description="You can create a variable from the button on the top"
-        className="mt-2 rounded-t-sm bg-background pt-10"
+        className="mt-2 rounded-t-sm bg-surface-neutral pt-10"
       />
     )
   }
@@ -611,10 +764,31 @@ export function VariableList({
     rowGridClassName: string,
     isBuiltInTable: boolean
   ) => {
-    const hideServiceLinkColumn = isServiceScope && !isBuiltInTable
+    const totalRows = tableInstance.getPreFilteredRowModel().rows.length
+    const isSearching = tableInstance.getRowCount() !== totalRows
+    const countText = isSearching
+      ? `${tableInstance.getRowCount()}/${totalRows} ${pluralize(tableInstance.getRowCount(), 'variable')}`
+      : `${totalRows} ${pluralize(totalRows, 'variable')}`
+
     return (
       <div className="flex grow flex-col justify-between">
-        <Table.Root className={twMerge('w-full min-w-[1200px] text-xs', className)}>
+        {headerActions && (
+          <div className="flex items-center justify-between border-b border-neutral px-4 py-2">
+            <span className="text-sm font-medium text-neutral">{countText}</span>
+            <div className="flex items-center gap-2">
+              <TableFilterSearch
+                className="h-8 w-[200px]"
+                value={filterValue ?? ''}
+                onChange={(event) => setFilterValue(event.target.value)}
+              />
+              {headerActions}
+            </div>
+          </div>
+        )}
+        <Table.Root
+          className={twMerge('w-full min-w-[800px] text-xs', className)}
+          containerClassName={headerActions ? 'border-0 rounded-none' : undefined}
+        >
           <Table.Header>
             {tableInstance.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className={twMerge('w-full items-center text-xs', rowGridClassName)}>
@@ -622,8 +796,11 @@ export function VariableList({
                   // Keep this column hidden (not removed) in Service scope (custom vars only) to preserve visual column alignment
                   <Table.ColumnHeaderCell
                     className={twMerge(
-                      `${header.column.id === 'actions' ? 'border-r border-neutral pl-0' : ''} group relative flex items-center font-medium`,
-                      hideServiceLinkColumn && header.column.id === 'service_name' && 'opacity-0'
+                      'group relative flex items-center font-medium',
+                      header.column.id === 'actions' && 'justify-end',
+                      !isServiceScope && header.column.id === 'actions' && 'border-r border-neutral pl-0',
+                      isServiceScope && header.column.id === 'key' && 'border-r border-neutral',
+                      isServiceScope && header.column.id === 'service_name' && 'opacity-0'
                     )}
                     key={header.id}
                   >
@@ -653,9 +830,10 @@ export function VariableList({
                     ) : (
                       flexRender(header.column.columnDef.header, header.getContext())
                     )}
-                    {header.column.id === 'key' && (
+                    {header.column.id === 'key' && !headerActions && (
                       <span className="absolute -right-9 top-[7px]">
                         <TableFilterSearch
+                          className="h-8 w-[200px]"
                           value={filterValue ?? ''}
                           onChange={(event) => setFilterValue(event.target.value)}
                         />
@@ -675,8 +853,11 @@ export function VariableList({
                     <Table.Cell
                       key={cell.id}
                       className={twMerge(
-                        `${cell.column.id === 'actions' ? 'border-r border-neutral pl-0' : ''} flex h-full items-center first:relative`,
-                        hideServiceLinkColumn && cell.column.id === 'service_name' && 'opacity-0'
+                        'flex h-full items-center first:relative',
+                        cell.column.id === 'actions' && 'justify-end',
+                        !isServiceScope && cell.column.id === 'actions' && 'border-r border-neutral pl-0',
+                        isServiceScope && cell.column.id === 'key' && 'border-r border-neutral',
+                        isServiceScope && cell.column.id === 'service_name' && 'opacity-0'
                       )}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -695,17 +876,17 @@ export function VariableList({
 
   return (
     <div className="flex min-h-0 flex-col gap-8">
-      {nonBuiltInVariables.length > 0 && (
-        <Section className="flex min-h-0 flex-col gap-4">
-          <Heading level={3}>Custom variables</Heading>
-          {renderTable(table, globalFilter, setGlobalFilter, gridLayoutClassName, false)}
-        </Section>
+      {showOnly !== 'built-in' && nonBuiltInVariables.length > 0 && (
+        <section className="flex min-h-0 flex-col gap-4">
+          {!hideSectionLabel && <h3 className="text-base font-medium text-neutral">Custom variables</h3>}
+          {renderTable(table, globalFilter, setGlobalFilter, gridLayoutClassName)}
+        </section>
       )}
-      {builtInVariables.length > 0 && (
-        <Section className="flex min-h-0 flex-col gap-4">
-          <Heading level={3}>Built-in variables</Heading>
-          {renderTable(builtInTable, builtInGlobalFilter, setBuiltInGlobalFilter, builtInGridLayoutClassName, true)}
-        </Section>
+      {showOnly !== 'custom' && builtInVariables.length > 0 && (
+        <section className="flex min-h-0 flex-col gap-4">
+          {!hideSectionLabel && <h3 className="text-base font-medium text-neutral">Built-in variables</h3>}
+          {renderTable(builtInTable, builtInGlobalFilter, setBuiltInGlobalFilter, builtInGridLayoutClassName)}
+        </section>
       )}
       <VariableListActionBar selectedRows={selectedRows} resetRowSelection={() => table.resetRowSelection()} />
     </div>

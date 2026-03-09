@@ -17,9 +17,9 @@ const { Table } = TablePrimitives
 const gridLayoutClassName =
   'grid w-full grid-cols-[minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px]'
 
-function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
-  const navigate = useNavigate()
+function EnvRow({ overview, cloneUseCaseId }: { overview: EnvironmentOverviewResponse; cloneUseCaseId?: string }) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const environment = environments.find((env) => env.id === overview.id)
   const cellClassName = 'h-auto border-l border-neutral py-2'
@@ -108,8 +108,16 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
         >
           {environment && overview.deployment_status && overview.service_count > 0 && (
             <>
-              <MenuManageDeployment environment={environment} deploymentStatus={overview.deployment_status} />
-              <MenuOtherActions environment={environment} state={overview.deployment_status?.last_deployment_state} />
+              <MenuManageDeployment
+                environment={environment}
+                deploymentStatus={overview.deployment_status}
+                variant="default"
+              />
+              <MenuOtherActions
+                environment={environment}
+                state={overview.deployment_status?.last_deployment_state}
+                cloneUseCaseId={cloneUseCaseId}
+              />
             </>
           )}
         </div>
@@ -122,10 +130,12 @@ export function EnvironmentSection({
   type,
   items,
   onCreateEnvClicked,
+  cloneUseCaseId,
 }: {
   type: EnvironmentModeEnum
   items: EnvironmentOverviewResponse[]
   onCreateEnvClicked?: () => void
+  cloneUseCaseId?: string
 }) {
   const title = match(type)
     .with('PRODUCTION', () => 'Production')
@@ -193,7 +203,7 @@ export function EnvironmentSection({
 
           <Table.Body className="divide-y divide-neutral">
             {items.map((environmentOverview) => (
-              <EnvRow key={environmentOverview.id} overview={environmentOverview} />
+              <EnvRow key={environmentOverview.id} overview={environmentOverview} cloneUseCaseId={cloneUseCaseId} />
             ))}
           </Table.Body>
         </Table.Root>

@@ -13,7 +13,7 @@ export function TableFilterSearch({ className, ...props }: TableFilterSearchProp
       />
       <input
         className={twMerge(
-          'w-36 rounded border border-neutral bg-background py-1.5 pl-7 outline-0 transition-colors placeholder:text-neutral-subtle hover:border-neutral-component focus:outline-none',
+          'w-36 rounded-md border border-neutral bg-background py-1.5 pl-7 text-sm outline-0 transition-colors placeholder:text-neutral-subtle hover:border-neutral-component focus:outline-none',
           className
         )}
         placeholder="Search"
