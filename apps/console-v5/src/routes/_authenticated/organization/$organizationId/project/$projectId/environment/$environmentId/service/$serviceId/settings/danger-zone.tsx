@@ -8,14 +8,11 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  const { organizationId, projectId, environmentId, serviceId } = Route.useParams()
+  const { organizationId, projectId, environmentId } = Route.useParams()
   const navigate = Route.useNavigate()
 
   return (
     <ServiceDangerZoneSettings
-      organizationId={organizationId}
-      environmentId={environmentId}
-      serviceId={serviceId}
       onDeleteSuccess={() =>
         navigate({
           to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',

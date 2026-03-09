@@ -1,4 +1,5 @@
 import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
+import { useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
 import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
@@ -6,10 +7,6 @@ import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import { Sidebar } from '@qovery/shared/ui'
 
 export interface ServiceSettingsLayoutProps {
-  organizationId: string
-  projectId: string
-  environmentId: string
-  serviceId: string
   children: ReactNode
 }
 
@@ -31,13 +28,15 @@ type SidebarSettingsGroupItem = {
 
 const toSettingsPath = (basePath: string, suffix: string) => `${basePath}${suffix}`
 
-export function ServiceSettingsLayout({
-  organizationId,
-  projectId,
-  environmentId,
-  serviceId,
-  children,
-}: ServiceSettingsLayoutProps) {
+export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) {
+  const {
+    organizationId = '',
+    projectId = '',
+    environmentId = '',
+    serviceId = '',
+  } = useParams({
+    strict: false,
+  })
   const pathSettings = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}/settings`
 
   const linkItem = (title: string, to: string, icon: IconName, iconStyle?: IconStyle): SidebarSettingsLinkItem => ({

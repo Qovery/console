@@ -26,15 +26,8 @@ function RouteComponent() {
 }
 
 function RouteContent() {
-  const { organizationId, projectId, environmentId, serviceId } = Route.useParams()
-
   return (
-    <ServiceSettingsLayout
-      organizationId={organizationId}
-      projectId={projectId}
-      environmentId={environmentId}
-      serviceId={serviceId}
-    >
+    <ServiceSettingsLayout>
       <Outlet />
     </ServiceSettingsLayout>
   )

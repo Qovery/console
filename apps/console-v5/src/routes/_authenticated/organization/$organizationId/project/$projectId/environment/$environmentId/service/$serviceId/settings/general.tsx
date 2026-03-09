@@ -9,17 +9,10 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  const { organizationId, projectId, environmentId, serviceId } = Route.useParams()
+  const { organizationId } = Route.useParams()
   const { data: organization } = useOrganization({ organizationId, suspense: true })
 
   if (!organization) return null
 
-  return (
-    <ServiceGeneralSettings
-      organization={organization}
-      projectId={projectId}
-      environmentId={environmentId}
-      serviceId={serviceId}
-    />
-  )
+  return <ServiceGeneralSettings organization={organization} />
 }

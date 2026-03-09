@@ -1,21 +1,15 @@
+import { useParams } from '@tanstack/react-router'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useDeleteService, useService } from '@qovery/domains/services/feature'
 import { BlockContentDelete } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export interface ServiceDangerZoneSettingsProps {
-  organizationId: string
-  environmentId: string
-  serviceId: string
   onDeleteSuccess: () => void
 }
 
-export function ServiceDangerZoneSettings({
-  organizationId,
-  environmentId,
-  serviceId,
-  onDeleteSuccess,
-}: ServiceDangerZoneSettingsProps) {
+export function ServiceDangerZoneSettings({ onDeleteSuccess }: ServiceDangerZoneSettingsProps) {
+  const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   useDocumentTitle('Danger zone - Service settings')
 
   const { data: environment } = useEnvironment({ environmentId, suspense: true })

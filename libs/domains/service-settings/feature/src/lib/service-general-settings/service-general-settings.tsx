@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { type Organization } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -27,9 +28,6 @@ import { TerraformGeneralSettings } from './terraform-general-settings/terraform
 
 export interface ServiceGeneralSettingsProps {
   organization: Organization
-  projectId: string
-  environmentId: string
-  serviceId: string
 }
 
 const GeneralSettingsFallback = () => (
@@ -46,13 +44,15 @@ export function ServiceGeneralSettings(props: ServiceGeneralSettingsProps) {
   )
 }
 
-function ServiceGeneralSettingsContent({
-  organization,
-  projectId,
-  environmentId,
-  serviceId,
-}: ServiceGeneralSettingsProps) {
+function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsProps) {
   useDocumentTitle('General - Service settings')
+  const {
+    projectId = '',
+    environmentId = '',
+    serviceId = '',
+  } = useParams({
+    strict: false,
+  })
   const { openModal, closeModal } = useModal()
 
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
