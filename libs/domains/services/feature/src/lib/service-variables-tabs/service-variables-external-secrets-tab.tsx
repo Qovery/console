@@ -35,12 +35,15 @@ import {
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
-import {
-  type UseCaseOption,
-  useUseCasePage,
-} from '../../../../../../../../../../app/components/use-cases/use-case-context'
 
 const { Table } = TablePrimitives
+
+export type ExternalSecretsUseCaseId =
+  | 'filled'
+  | 'secret-manager-addon-not-detected'
+  | 'secret-manager-addon-no-manager'
+  | 'secret-manager-addon-not-redeployed'
+  | 'empty'
 
 interface ExternalSecret {
   id: string
@@ -131,7 +134,7 @@ const FAKE_SECRETS: ExternalSecret[] = [
 
 const EMPTY_SECRETS: ExternalSecret[] = []
 
-const EXTERNAL_SECRETS_USE_CASES: UseCaseOption[] = [
+export const EXTERNAL_SECRETS_USE_CASES: { id: ExternalSecretsUseCaseId; label: string }[] = [
   { id: 'filled', label: 'Filled' },
   { id: 'secret-manager-addon-not-detected', label: 'Secret manager add-on not detected' },
   { id: 'secret-manager-addon-no-manager', label: 'Secret manager add-on with no manager' },
@@ -486,14 +489,11 @@ function AttachSecretsModal({ selectedCount, onClose, onAttach }: AttachSecretsM
   )
 }
 
-export function ExternalSecretsTab() {
-  const useCaseOptions = EXTERNAL_SECRETS_USE_CASES
-  const { selectedCaseId } = useUseCasePage({
-    pageId: 'service-variables-external-secrets',
-    options: useCaseOptions,
-    defaultCaseId: 'filled',
-  })
+interface ExternalSecretsTabProps {
+  selectedCaseId?: ExternalSecretsUseCaseId
+}
 
+export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecretsTabProps) {
   const baseSecrets = useMemo(
     () =>
       match(selectedCaseId)

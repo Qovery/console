@@ -1,12 +1,18 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { Suspense, useState } from 'react'
 import { match } from 'ts-pattern'
-import { useDeployService, useService } from '@qovery/domains/services/feature'
+import {
+  BuiltInTab,
+  CustomTab,
+  EXTERNAL_SECRETS_USE_CASES,
+  ExternalSecretsTab,
+  type ExternalSecretsUseCaseId,
+  useDeployService,
+  useService,
+} from '@qovery/domains/services/feature'
 import { Heading, Icon, LoaderSpinner, Navbar, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { BuiltInTab } from './variables-built-in-tab'
-import { CustomTab } from './variables-custom-tab'
-import { ExternalSecretsTab } from './variables-external-secrets-tab'
+import { useUseCasePage } from '../../../../../../../../../../app/components/use-cases/use-case-context'
 
 type VariableTab = 'custom' | 'external-secrets' | 'built-in'
 
@@ -21,6 +27,11 @@ function RouteComponent() {
   useDocumentTitle('Service - Variables')
 
   const [activeTab, setActiveTab] = useState<VariableTab>('custom')
+  const { selectedCaseId } = useUseCasePage({
+    pageId: 'service-variables-external-secrets',
+    options: EXTERNAL_SECRETS_USE_CASES,
+    defaultCaseId: 'filled',
+  })
 
   const { data: service } = useService({
     environmentId,
@@ -105,7 +116,9 @@ function RouteComponent() {
                     toasterCallback={toasterCallback}
                   />
                 )}
-                {activeTab === 'external-secrets' && <ExternalSecretsTab />}
+                {activeTab === 'external-secrets' && (
+                  <ExternalSecretsTab selectedCaseId={selectedCaseId as ExternalSecretsUseCaseId} />
+                )}
                 {activeTab === 'built-in' && scope && (
                   <BuiltInTab
                     scope={scope}
