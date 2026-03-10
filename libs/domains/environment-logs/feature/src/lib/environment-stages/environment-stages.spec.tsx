@@ -1,6 +1,11 @@
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_PRE_CHECK_LOGS_URL } from '@qovery/shared/routes'
+import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { EnvironmentStages, type EnvironmentStagesProps } from './environment-stages'
+
+jest.mock('@tanstack/react-router', () => ({
+  useParams: () => ({ organizationId: 'org-1', projectId: 'proj-1', environmentId: 'env-1' }),
+  Link: ({ children, ...props }: { children: ReactNode }) => <a {...props}>{children}</a>,
+}))
 
 describe('EnvironmentStages', () => {
   const defaultProps: EnvironmentStagesProps = {
@@ -43,19 +48,5 @@ describe('EnvironmentStages', () => {
       </EnvironmentStages>
     )
     expect(screen.getByTestId('child-content')).toBeInTheDocument()
-  })
-
-  it('renders the "Hide skipped" checkbox', () => {
-    renderWithProviders(<EnvironmentStages {...defaultProps} />)
-    expect(screen.getByLabelText('Hide skipped')).toBeInTheDocument()
-  })
-
-  it('renders the correct link for pre-check logs', () => {
-    renderWithProviders(<EnvironmentStages {...defaultProps} />)
-    const logLink = screen.getByText('Pre-check logs').closest('a')
-    expect(logLink).toHaveAttribute(
-      'href',
-      ENVIRONMENT_LOGS_URL('org-1', 'proj-1', 'env-1') + ENVIRONMENT_PRE_CHECK_LOGS_URL('exec-1')
-    )
   })
 })

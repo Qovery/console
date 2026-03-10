@@ -1,4 +1,3 @@
-import { type CheckedState } from '@radix-ui/react-checkbox'
 import clsx from 'clsx'
 import {
   type DeploymentStageWithServicesStatuses,
@@ -68,7 +67,7 @@ export function EnvironmentStagesFeature({
     executionId,
   })
 
-  const [hideSkipped, setHideSkipped] = useState<CheckedState>(true)
+  const [hideSkipped, setHideSkipped] = useState<boolean>(true)
   const navigate = useNavigate()
 
   const getServiceById = (id: string) => services.find((service) => service.id === id) as AnyService
