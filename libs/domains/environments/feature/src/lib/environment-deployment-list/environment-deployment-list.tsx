@@ -485,7 +485,12 @@ export function EnvironmentDeploymentList() {
             <Fragment key={row.id}>
               <Table.Row
                 onClick={() => handleRowClick(row)}
-                className="h-[68px] divide-x divide-neutral hover:cursor-pointer"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleRowClick(row)
+                }}
+                tabIndex={0}
+                role="link"
+                className="h-[68px] divide-x divide-neutral hover:cursor-pointer hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle"
               >
                 {row.getVisibleCells().map((cell) => (
                   <Table.Cell
