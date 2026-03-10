@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   AnnotationSetting,
   ContainerRegistryCreateEditModal,
@@ -20,7 +20,7 @@ export const Route = createFileRoute(
 })
 
 function General() {
-  const { organizationId = '', projectId = '', environmentId = '', slug } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '', slug } = Route.useParams()
   const navigate = useNavigate()
   const search = Route.useSearch()
 
@@ -36,10 +36,9 @@ function General() {
     })
   }
 
-  const isContainer = slug === 'container'
   const creationFlowUrl = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/create/${slug}`
 
-  useDocumentTitle(isContainer ? 'General - Create Container' : 'General - Create Application')
+  useDocumentTitle('General - Create Service')
 
   const handleSubmit = (_data: ApplicationGeneralData) => {
     navigate({ to: `${creationFlowUrl}/resources`, search })

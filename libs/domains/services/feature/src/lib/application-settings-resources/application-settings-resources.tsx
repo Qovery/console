@@ -1,9 +1,8 @@
+import { useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
-import { type Environment } from 'qovery-typescript-axios'
 import { useEffect, useRef } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { hasGpuInstance, useCluster } from '@qovery/domains/clusters/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
@@ -19,6 +18,7 @@ import {
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
 import { loadHpaSettingsFromAdvancedSettings } from '@qovery/shared/util-services'
+import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { KedaSettings } from '../keda/components/keda-settings'
 import { FixedInstancesMode } from './fixed-instances-mode'
@@ -27,7 +27,6 @@ import { HpaAutoscalingMode } from './hpa-autoscaling-mode'
 export interface ApplicationSettingsResourcesProps {
   displayWarningCpu: boolean
   displayInstanceLimits?: boolean
-  environment?: Environment
   service?: Exclude<AnyService, Helm | Database>
   minInstances?: number
   maxInstances?: number
@@ -35,7 +34,6 @@ export interface ApplicationSettingsResourcesProps {
 }
 
 export function ApplicationSettingsResources({
-  environment,
   displayWarningCpu,
   displayInstanceLimits = true,
   service,
@@ -44,9 +42,10 @@ export function ApplicationSettingsResources({
   advancedSettings,
 }: ApplicationSettingsResourcesProps) {
   const { control, watch, setValue } = useFormContext()
-  const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
-  const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId: applicationId })
-  const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId })
+  const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
+  const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
+  const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId, suspense: true })
   const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
   const clusterFeatureKarpenter = cluster?.features?.find((f) => f.id === 'KARPENTER')
   const isKarpenterCluster = Boolean(clusterFeatureKarpenter)
