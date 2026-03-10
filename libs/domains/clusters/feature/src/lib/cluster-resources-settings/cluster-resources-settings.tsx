@@ -276,7 +276,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                           className="overflow-hidden"
                         >
                           <div className="flex flex-col">
-                            <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
+                            <div className="flex border-t border-neutral p-4 text-sm font-medium text-neutral">
                               <div className="w-full">
                                 <p className="mb-2">
                                   Instance types scope{' '}

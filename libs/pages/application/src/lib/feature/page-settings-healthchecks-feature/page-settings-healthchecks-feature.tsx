@@ -9,7 +9,7 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { type HealthcheckData } from '@qovery/shared/interfaces'
-import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
+import { APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsHealthchecks from '../../ui/page-settings-healthchecks/page-settings-healthchecks'
 
@@ -135,7 +135,7 @@ export function SettingsHealthchecksFeature({ service }: { service: Application 
           projectId,
           environmentId,
           applicationId
-        )}${APPLICATION_SETTINGS_URL}${APPLICATION_SETTINGS_RESOURCES_URL}`}
+        )}${APPLICATION_SETTINGS_URL}`}
         onSubmit={onSubmit}
         loading={isLoadingEditService}
         environmentMode={environment?.mode}

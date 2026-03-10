@@ -8,7 +8,6 @@ import {
   APPLICATION_SETTINGS_HEALTHCHECKS_URL,
   APPLICATION_SETTINGS_NETWORKING_URL,
   APPLICATION_SETTINGS_PORT_URL,
-  APPLICATION_SETTINGS_RESOURCES_URL,
   APPLICATION_SETTINGS_STORAGE_URL,
   APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
   APPLICATION_SETTINGS_TERRAFORM_CONFIGURATION_URL,
@@ -29,7 +28,6 @@ import { PageSettingsFeature } from '../feature/page-settings-feature/page-setti
 import PageSettingsHealthchecksFeature from '../feature/page-settings-healthchecks-feature/page-settings-healthchecks-feature'
 import { PageSettingsNetworkingFeature } from '../feature/page-settings-networking-feature/page-settings-networking-feature'
 import PageSettingsPortsFeature from '../feature/page-settings-ports-feature/page-settings-ports-feature'
-import PageSettingsResourcesFeature from '../feature/page-settings-resources-feature/page-settings-resources-feature'
 import PageSettingsStorageFeature from '../feature/page-settings-storage-feature/page-settings-storage-feature'
 import { PageSettingsTerraformArgumentsFeature } from '../feature/page-settings-terraform-arguments-feature/page-settings-terraform-arguments-feature'
 import PageSettingsTerraformConfigurationFeature from '../feature/page-settings-terraform-configuration-feature/page-settings-terraform-configuration-feature'
@@ -57,10 +55,6 @@ export const ROUTER_APPLICATION_SETTINGS: Route[] = [
   {
     path: APPLICATION_SETTINGS_CONFIGURE_URL,
     component: <PageSettingsConfigureJobFeature />,
-  },
-  {
-    path: APPLICATION_SETTINGS_RESOURCES_URL,
-    component: <PageSettingsResourcesFeature />,
   },
   {
     path: APPLICATION_SETTINGS_STORAGE_URL,
