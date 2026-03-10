@@ -96,6 +96,7 @@ export function EnvironmentStages({
                       </div>
                       {executionId && (
                         <div className="flex flex-col gap-1.5 bg-surface-neutral-subtle p-1.5">
+                          {/* TODO new-nav : Route not yet created */}
                           <Link
                             to={
                               ENVIRONMENT_LOGS_URL(

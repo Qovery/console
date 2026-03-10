@@ -154,8 +154,8 @@ function PipelineContent({
   const [hideSkipped, setHideSkipped] = useState<boolean>(true)
 
   if (!environment || !environmentStatus) {
-    // Suspend until WS data arrives — the parent Pipeline component
-    // will re-render this component once setEnvironmentStatus is called.
+    // Suspend until WS data arrives.
+    // The parent Pipeline component will re-render this component once setEnvironmentStatus is called.
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     throw new Promise(() => {})
   }
@@ -262,6 +262,7 @@ function PipelineContent({
                         return (
                           <Link
                             key={service?.id}
+                            // TODO new-nav : Route not yet created
                             // @ts-expect-error-next-line
                             to={
                               ENVIRONMENT_LOGS_URL(
