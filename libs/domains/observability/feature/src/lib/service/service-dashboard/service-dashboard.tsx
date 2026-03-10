@@ -15,6 +15,7 @@ import { usePodCount } from '../../hooks/use-pod-count/use-pod-count'
 import { usePodNames } from '../../hooks/use-pod-names/use-pod-names'
 import { DashboardProvider, useDashboardContext } from '../../util-filter/dashboard-context'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
+import { CardNodeEvents } from './card-node-events/card-node-events'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
 import { CardPercentile99 } from './card-percentile-99/card-percentile-99'
@@ -292,6 +293,7 @@ function ServiceDashboardContent() {
             </div>
           </div>
         </Section>
+        <CardNodeEvents clusterId={environment.cluster_id} />
         <Section className="gap-4">
           <div className="flex items-center justify-between gap-2">
             <Heading weight="medium">Resources</Heading>
