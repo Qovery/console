@@ -43,9 +43,9 @@ export function ApplicationSettingsResources({
 }: ApplicationSettingsResourcesProps) {
   const { control, watch, setValue } = useFormContext()
   const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
-  const { data: environment } = useEnvironment({ environmentId })
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
-  const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId })
+  const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId, suspense: true })
   const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
   const clusterFeatureKarpenter = cluster?.features?.find((f) => f.id === 'KARPENTER')
   const isKarpenterCluster = Boolean(clusterFeatureKarpenter)

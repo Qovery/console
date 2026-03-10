@@ -3,6 +3,7 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseEnvironmentProps {
   environmentId: string
+  suspense?: boolean
 }
 
 /**
@@ -11,9 +12,10 @@ export interface UseEnvironmentProps {
  * the one from `environments` domain.
  * This is not a big deal as query is factorize in data-access
  * */
-export function useEnvironment({ environmentId }: UseEnvironmentProps) {
+export function useEnvironment({ environmentId, suspense = false }: UseEnvironmentProps) {
   return useQuery({
     ...queries.environments.details({ environmentId: environmentId }),
     enabled: Boolean(environmentId),
+    suspense,
   })
 }
