@@ -115,7 +115,11 @@ export function CardInstanceStatus({
   const isLoading = isLoadingMetricsInstanceErrors || isLoadingMetricsAutoscalingReached
 
   const isAutoscalingEnabled = match(service)
-    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (s) => s.max_running_instances !== s.min_running_instances)
+    .with(
+      { serviceType: 'APPLICATION' },
+      { serviceType: 'CONTAINER' },
+      (s) => s.max_running_instances !== s.min_running_instances
+    )
     .otherwise(() => false)
 
   return (

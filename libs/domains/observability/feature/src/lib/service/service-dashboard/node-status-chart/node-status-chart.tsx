@@ -20,7 +20,8 @@ export function NodeStatusChart({
   isFullscreen?: boolean
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
-  const showReferenceLines = isFullscreen || timeRange === '5m' || timeRange === '15m' || timeRange === '30m' || timeRange === '1h'
+  const showReferenceLines =
+    isFullscreen || timeRange === '5m' || timeRange === '15m' || timeRange === '30m' || timeRange === '1h'
 
   const { data: totalMetrics, isLoading: isLoadingTotal } = useMetrics({
     clusterId,
@@ -48,8 +49,20 @@ export function NodeStatusChart({
       { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
     >()
 
-    processMetricsData(totalMetrics, timeSeriesMap, () => 'Total', (value) => parseFloat(value), useLocalTime)
-    processMetricsData(readyMetrics, timeSeriesMap, () => 'Node ready', (value) => parseFloat(value), useLocalTime)
+    processMetricsData(
+      totalMetrics,
+      timeSeriesMap,
+      () => 'Total',
+      (value) => parseFloat(value),
+      useLocalTime
+    )
+    processMetricsData(
+      readyMetrics,
+      timeSeriesMap,
+      () => 'Node ready',
+      (value) => parseFloat(value),
+      useLocalTime
+    )
 
     for (const point of timeSeriesMap.values()) {
       const total = point['Total'] as number | null

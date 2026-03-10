@@ -86,7 +86,7 @@ export function CardNodeEvents({ clusterId }: { clusterId: string }) {
   if (isLoading) {
     return (
       <Section className="w-full cursor-default rounded border border-neutral-250 bg-neutral-50">
-        <div className="flex items-center gap-1.5 px-5 pt-4 pb-4">
+        <div className="flex items-center gap-1.5 px-5 pb-4 pt-4">
           <Skeleton show width={200} height={16} />
         </div>
         <div className="flex flex-col gap-2 px-5 pb-5">
