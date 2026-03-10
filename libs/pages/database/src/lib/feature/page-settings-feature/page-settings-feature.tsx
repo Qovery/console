@@ -1,11 +1,6 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
-import {
-  DATABASE_SETTINGS_DANGER_ZONE_URL,
-  DATABASE_SETTINGS_RESOURCES_URL,
-  DATABASE_SETTINGS_URL,
-  DATABASE_URL,
-} from '@qovery/shared/routes'
+import { DATABASE_SETTINGS_DANGER_ZONE_URL, DATABASE_SETTINGS_URL, DATABASE_URL } from '@qovery/shared/routes'
 import { ErrorBoundary } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_DATABASE_SETTINGS } from '../../router/router'
@@ -23,17 +18,12 @@ export function PageSettingsFeature() {
 
   const links = [
     {
-      title: 'Resources',
-      icon: 'icon-solid-chart-bullet',
-      url: pathSettings + DATABASE_SETTINGS_RESOURCES_URL,
-    },
-    {
       title: 'Danger zone',
       icon: 'icon-solid-skull',
       url: pathSettings + DATABASE_SETTINGS_DANGER_ZONE_URL,
     },
   ]
-  const defaultSettingsUrl = links[0]?.url ?? pathSettings + DATABASE_SETTINGS_RESOURCES_URL
+  const defaultSettingsUrl = links[0]?.url ?? pathSettings + DATABASE_SETTINGS_DANGER_ZONE_URL
 
   return (
     <PageSettings links={links}>

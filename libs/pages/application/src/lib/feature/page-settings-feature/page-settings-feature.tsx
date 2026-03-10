@@ -12,7 +12,6 @@ import {
   APPLICATION_SETTINGS_HEALTHCHECKS_URL,
   APPLICATION_SETTINGS_NETWORKING_URL,
   APPLICATION_SETTINGS_PORT_URL,
-  APPLICATION_SETTINGS_RESOURCES_URL,
   APPLICATION_SETTINGS_STORAGE_URL,
   APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
   APPLICATION_SETTINGS_TERRAFORM_CONFIGURATION_URL,
@@ -75,12 +74,6 @@ export function PageSettingsFeature() {
       .otherwise(() => ''),
     icon: IconAwesomeEnum.GEARS,
     url: pathSettings + APPLICATION_SETTINGS_CONFIGURE_URL,
-  }
-
-  const resourcesSettings = {
-    title: 'Resources',
-    icon: IconAwesomeEnum.CHART_BULLET,
-    url: pathSettings + APPLICATION_SETTINGS_RESOURCES_URL,
   }
 
   const storageSettings = {
@@ -147,7 +140,6 @@ export function PageSettingsFeature() {
   const links = match(service)
     .returnType<NavigationLeftLinkProps[]>()
     .with({ serviceType: 'APPLICATION' }, () => [
-      resourcesSettings,
       storageSettings,
       domainSettings,
       portSettings,
@@ -157,7 +149,6 @@ export function PageSettingsFeature() {
       dangerzoneSettings,
     ])
     .with({ serviceType: 'CONTAINER' }, () => [
-      resourcesSettings,
       storageSettings,
       domainSettings,
       portSettings,
@@ -177,7 +168,6 @@ export function PageSettingsFeature() {
       terraformConfigurationSetting,
       terraformVariablesSetting,
       terraformArgumentsSetting,
-      resourcesSettings,
       deploymentRestrictionsSettings,
       advancedSettings,
       dangerzoneSettings,
@@ -185,7 +175,6 @@ export function PageSettingsFeature() {
     .with({ serviceType: 'JOB' }, (s) => [
       ...(s.job_type === 'LIFECYCLE' && isJobGitSource(s.source) ? [dockerfileSetting] : []),
       configureJobSetting,
-      resourcesSettings,
       deploymentRestrictionsSettings,
       advancedSettings,
       dangerzoneSettings,

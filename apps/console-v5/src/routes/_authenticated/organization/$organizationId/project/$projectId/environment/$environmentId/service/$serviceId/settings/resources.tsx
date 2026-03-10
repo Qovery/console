@@ -1,4 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Suspense } from 'react'
+import { ServiceResourcesSettings } from '@qovery/domains/service-settings/feature'
+import { LoaderSpinner } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/resources'
@@ -6,6 +9,16 @@ export const Route = createFileRoute(
   component: RouteComponent,
 })
 
+const ResourcesLoader = () => (
+  <div className="flex min-h-page-container items-center justify-center">
+    <LoaderSpinner />
+  </div>
+)
+
 function RouteComponent() {
-  return <div className="px-10 py-7">Resources</div>
+  return (
+    <Suspense fallback={<ResourcesLoader />}>
+      <ServiceResourcesSettings />
+    </Suspense>
+  )
 }
