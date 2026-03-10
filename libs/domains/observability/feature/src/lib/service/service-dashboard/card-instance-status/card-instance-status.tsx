@@ -10,19 +10,34 @@ import { useDashboardContext } from '../../../util-filter/dashboard-context'
 import { CardMetricButton } from '../card-metric/card-metric'
 import { InstanceStatusChart } from '../instance-status-chart/instance-status-chart'
 
-const query = (timeRange: string, selector: string) => `
-  sum(increase(kube_pod_container_status_restarts_total{${selector}}[${timeRange}]))
-  +
-  count(
-    max by (pod) (
-      max_over_time(
-        kube_pod_container_status_waiting_reason{
-          ${selector},
-          reason!~"ContainerCreating|PodInitializing|Completed"
-        }[${timeRange}]
-      )
-    ) > 0
-  )
+const query = (timeRange: string, subQueryTimeRange: string, selector: string, serviceId: string) => `
+  (sum by () (
+    sum_over_time(
+      (
+        sum by (pod, reason) (
+          clamp_max(
+            clamp_min(
+              (
+                k8s_event_logger_q_k8s_events_total{
+                  qovery_com_service_id="${serviceId}",
+                  reason=~"Failed|OOMKilled|BackOff|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady|Killing",
+                  type="Warning"
+                }
+                -
+                k8s_event_logger_q_k8s_events_total{
+                  qovery_com_service_id="${serviceId}",
+                  reason=~"Failed|OOMKilled|BackOff|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady|Killing",
+                  type="Warning"
+                } offset ${subQueryTimeRange}
+              ),
+              0
+            ),
+            1
+          )
+        )
+      )[${timeRange}:${subQueryTimeRange}]
+    )
+  ) or vector(0))
 `
 
 // TODO PG think to use recorder rule
@@ -75,7 +90,7 @@ export function CardInstanceStatus({
   const { data: service } = useService({ serviceId })
   const { data: metricsInstanceErrors, isLoading: isLoadingMetricsInstanceErrors } = useInstantMetrics({
     clusterId,
-    query: query(queryTimeRange, selector),
+    query: query(queryTimeRange, subQueryTimeRange, selector, serviceId),
     startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
@@ -100,8 +115,7 @@ export function CardInstanceStatus({
   const isLoading = isLoadingMetricsInstanceErrors || isLoadingMetricsAutoscalingReached
 
   const isAutoscalingEnabled = match(service)
-    .with({ serviceType: 'APPLICATION' }, (s) => s.max_running_instances !== s.min_running_instances)
-    .with({ serviceType: 'CONTAINER' }, (s) => s.max_running_instances !== s.min_running_instances)
+    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (s) => s.max_running_instances !== s.min_running_instances)
     .otherwise(() => false)
 
   return (
