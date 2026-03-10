@@ -1,4 +1,3 @@
-import { type CheckedState } from '@radix-ui/react-checkbox'
 import { type QueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { clsx } from 'clsx'
@@ -9,22 +8,17 @@ import {
 } from 'qovery-typescript-axios'
 import { Fragment, Suspense, useCallback, useState } from 'react'
 import { match } from 'ts-pattern'
-import { EnvironmentStages, HeaderEnvironmentStages } from '@qovery/domains/environment-logs/feature'
-import {
-  useDeploymentHistory,
-  useDeploymentHistoryExecutionId,
-  useEnvironment,
-} from '@qovery/domains/environments/feature'
+import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
+import { useDeploymentHistoryExecutionId, useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
-  Checkbox,
-  Heading,
   Icon,
   Indicator,
   Link,
   Section,
+  Skeleton,
   StageStatusChip,
   StatusChip,
   Tooltip,
@@ -56,62 +50,43 @@ function matchServicesWithStatuses(deploymentStages?: DeploymentStageWithService
   })
 }
 
+function Loading() {
+  const { organizationId, projectId, environmentId } = Route.useParams()
+  return (
+    <div className="flex flex-col gap-3">
+      <Link
+        to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployments"
+        params={{ organizationId, projectId, environmentId }}
+        color="neutral"
+        className="flex gap-2 text-neutral-subtle"
+      >
+        <Icon iconName="arrow-left" />
+        Deployment history
+      </Link>
+      <div className="flex flex-col border-b border-neutral pb-5">
+        <div className="flex gap-3">
+          <Skeleton height={24} width={190} />
+          <Skeleton height={24} width={24} />
+          <Skeleton height={24} width={50} />
+        </div>
+      </div>
+      <div className="mt-3 flex gap-5">
+        <Skeleton height={122} width={240} />
+        <Skeleton height={122} width={240} />
+        <Skeleton height={122} width={240} />
+        <Skeleton height={122} width={240} />
+      </div>
+    </div>
+  )
+}
+
 function Pipeline() {
   const { organizationId, environmentId, projectId, deploymentId } = Route.useParams()
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
-  const { data: services = [] } = useServices({ environmentId, suspense: true })
-  const { data: listDeploymentHistory = [] } = useDeploymentHistory({ environmentId, suspense: true })
-  const { data: deploymentHistory } = useDeploymentHistoryExecutionId({
-    environmentId,
-    executionId: deploymentId,
-    suspense: true,
-  })
 
-  const [hideSkipped, setHideSkipped] = useState<boolean>(true)
   const [deploymentStages, setDeploymentStages] = useState<DeploymentStageWithServicesStatuses[]>()
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
   const [preCheckStage, setPreCheckStage] = useState<EnvironmentStatusesWithStagesPreCheckStage>()
-
-  const getServiceById = (id: string) => services.find((service) => service.id === id) as AnyService
-  const getServiceFromDeploymentHistoryId = (id: string) =>
-    deploymentHistory?.stages.flatMap((s) => s.services).find((s) => s.identifier.service_id === id)
-
-  // if (!environmentStatus) {
-  //   return (
-  //     <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
-  //       <div className="flex h-full w-full justify-center border border-neutral-500 bg-neutral-600 pt-11">
-  //         <LoaderSpinner className="h-6 w-6" />
-  //       </div>
-  //     </div>
-  //   )
-  // }
-
-  const latestDeployment =
-    Array.isArray(listDeploymentHistory) && listDeploymentHistory.length > 0 ? listDeploymentHistory[0] : null
-
-  const lastDeploymentStatus = latestDeployment?.status ?? null
-  const lastDeploymentExecutionId = latestDeployment?.identifier?.execution_id ?? ''
-
-  const showBannerNew =
-    deploymentHistory?.identifier.execution_id !== lastDeploymentExecutionId &&
-    match(lastDeploymentStatus)
-      .with(
-        'DEPLOYING',
-        'DELETING',
-        'RESTARTING',
-        'BUILDING',
-        'STOP_QUEUED',
-        'CANCELING',
-        'QUEUED',
-        'DELETE_QUEUED',
-        'DEPLOYMENT_QUEUED',
-        () => true
-      )
-      .otherwise(() => false)
-
-  // const versionIdUrl = deploymentVersionId || preCheckVersionId || stageVersionId
-  // const versionIdUrl = deploymentId
-  // const isLatestVersion = environmentDeploymentHistory[0]?.identifier.execution_id === versionIdUrl
 
   const messageHandler = useCallback(
     (
@@ -132,7 +107,7 @@ function Pipeline() {
     },
     [setDeploymentStages]
   )
-  // XXX: If we don't have a version, it works like WS otherwise, it works like a REST API
+
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/status',
     urlSearchParams: {
@@ -141,16 +116,53 @@ function Pipeline() {
       project: projectId,
       environment: environmentId,
       version: deploymentId,
-      // version: isLatestVersion ? undefined : versionIdUrl,
     },
     enabled:
       Boolean(organizationId) && Boolean(environment?.cluster_id) && Boolean(projectId) && Boolean(environmentId),
     onMessage: messageHandler,
   })
 
+  return (
+    <Suspense fallback={<Loading />}>
+      <PipelineContent
+        deploymentStages={deploymentStages}
+        environmentStatus={environmentStatus}
+        preCheckStage={preCheckStage}
+      />
+    </Suspense>
+  )
+}
+
+function PipelineContent({
+  deploymentStages,
+  environmentStatus,
+  preCheckStage,
+}: {
+  deploymentStages?: DeploymentStageWithServicesStatuses[]
+  environmentStatus?: EnvironmentStatus
+  preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
+}) {
+  const { environmentId, deploymentId } = Route.useParams()
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
+  const { data: services = [] } = useServices({ environmentId, suspense: true })
+  const { data: deploymentHistory } = useDeploymentHistoryExecutionId({
+    environmentId,
+    executionId: deploymentId,
+    suspense: true,
+  })
+
+  const [hideSkipped, setHideSkipped] = useState<boolean>(true)
+
   if (!environment || !environmentStatus) {
-    return
+    // Suspend until WS data arrives — the parent Pipeline component
+    // will re-render this component once setEnvironmentStatus is called.
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    throw new Promise(() => {})
   }
+
+  const getServiceById = (id: string) => services.find((service) => service.id === id) as AnyService
+  const getServiceFromDeploymentHistoryId = (id: string) =>
+    deploymentHistory?.stages.flatMap((s) => s.services).find((s) => s.identifier.service_id === id)
 
   return (
     <div>
@@ -315,13 +327,11 @@ function Pipeline() {
 }
 
 function RouteComponent() {
-  const { organizationId, projectId, environmentId } = Route.useParams()
-
   return (
     <div className="container mx-auto flex min-h-page-container flex-col pt-6">
       <Section className="min-h-0 flex-1 gap-8">
         <div className="flex min-h-0 flex-1 flex-col gap-8 pb-20">
-          <Suspense fallback={<div>loading....</div>}>
+          <Suspense fallback={<Loading />}>
             <Pipeline />
           </Suspense>
         </div>

@@ -36,7 +36,7 @@ export function EnvironmentStages({
   const executionId = environmentStatus.last_deployment_id
 
   return (
-    <div className="h-[calc(100vh-64px)] p-1">
+    <div className="h-[calc(100vh-64px)]">
       <div className="flex shrink-0 flex-col gap-6">
         <div className="flex flex-col items-start gap-3">
           <Link

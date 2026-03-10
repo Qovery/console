@@ -483,7 +483,10 @@ export function EnvironmentDeploymentList() {
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
-              <Table.Row onClick={() => handleRowClick(row)} className="h-[68px] divide-x divide-neutral">
+              <Table.Row
+                onClick={() => handleRowClick(row)}
+                className="h-[68px] divide-x divide-neutral hover:cursor-pointer"
+              >
                 {row.getVisibleCells().map((cell) => (
                   <Table.Cell
                     key={cell.id}
