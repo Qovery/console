@@ -67,7 +67,7 @@ function Pipeline() {
     suspense: true,
   })
 
-  const [hideSkipped, setHideSkipped] = useState<CheckedState>(true)
+  const [hideSkipped, setHideSkipped] = useState<boolean>(true)
   const [deploymentStages, setDeploymentStages] = useState<DeploymentStageWithServicesStatuses[]>()
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
   const [preCheckStage, setPreCheckStage] = useState<EnvironmentStatusesWithStagesPreCheckStage>()
@@ -153,7 +153,7 @@ function Pipeline() {
   }
 
   return (
-    <div className="">
+    <div>
       <EnvironmentStages
         environment={environment}
         environmentStatus={environmentStatus}
@@ -163,7 +163,8 @@ function Pipeline() {
         setHideSkipped={setHideSkipped}
         deploymentHistory={deploymentHistory}
       >
-        <div>
+        {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
+        <>
           {matchServicesWithStatuses(deploymentStages)?.map((s) => {
             const stageTotalDurationSec = s.stage?.steps?.total_duration_sec ?? 0
             const stageName = s?.stage?.name || ''
@@ -174,14 +175,14 @@ function Pipeline() {
               <Fragment key={s.stage?.id}>
                 <div
                   className={clsx(
-                    'h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral-500 bg-neutral-650',
+                    'h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral bg-surface-neutral',
                     {
                       'text-neutral-50': s?.stage?.status !== 'SKIPPED',
                       'text-neutral-300': s?.stage?.status === 'SKIPPED',
                     }
                   )}
                 >
-                  <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
+                  <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral px-3 py-2.5">
                     <Indicator
                       align="end"
                       side="right"
@@ -191,7 +192,7 @@ function Pipeline() {
                             <span>
                               <TriggerActionIcon
                                 triggerAction={deploymentHistory?.trigger_action}
-                                className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-650 text-xs text-neutral-250"
+                                className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface-neutral text-xs text-neutral-subtle"
                               />
                             </span>
                           </Tooltip>
@@ -205,11 +206,11 @@ function Pipeline() {
                       </Tooltip>
                     </Indicator>
                     <div className="flex flex-col gap-0.5">
-                      <span className="flex gap-1.5 text-sm font-medium">
+                      <span className="flex gap-1.5 text-sm font-medium text-neutral">
                         <Truncate text={upperCaseFirstLetter(stageName) || ''} truncateLimit={20} />
                         {s?.stage?.description && (
                           <Tooltip content={s?.stage?.description}>
-                            <span className="text-neutral-250">
+                            <span className="text-neutral-subtle">
                               <Icon iconName="info-circle" iconStyle="regular" />
                             </span>
                           </Tooltip>
@@ -224,7 +225,7 @@ function Pipeline() {
                         .otherwise(() => null)}
                     </div>
                   </div>
-                  <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
+                  <div className="flex flex-col gap-1.5 bg-surface-neutral-subtle p-1.5">
                     {s.services.length > 0 ? (
                       s.services.map((service) => {
                         const fullService = getServiceById(service.id!)
@@ -237,9 +238,9 @@ function Pipeline() {
                           return (
                             <div
                               key={service?.id}
-                              className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2"
+                              className="bg-neutral flex w-full items-center gap-2.5 rounded border border-neutral px-2.5 py-2"
                             >
-                              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-400 text-neutral-250">
+                              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral text-neutral-250">
                                 <Icon iconName="trash-can-xmark" iconStyle="solid" />
                               </span>
                               <span className="text-sm">{serviceFromDeploymentHistoryId?.identifier.name}</span>
@@ -259,7 +260,7 @@ function Pipeline() {
                               ) + DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentId ?? '')
                             }
                             className={clsx(
-                              'flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400',
+                              'flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2 text-neutral hover:border-neutral-component hover:text-neutral',
                               {
                                 'text-neutral-300': !service.is_part_last_deployment,
                               }
@@ -269,7 +270,7 @@ function Pipeline() {
                               service={fullService}
                               border="solid"
                               size="sm"
-                              className={clsx('border-neutral-400', {
+                              className={clsx('border-neutral', {
                                 'opacity-50': !service.is_part_last_deployment,
                               })}
                             />
@@ -290,21 +291,24 @@ function Pipeline() {
                       })
                     ) : (
                       <div className="px-3 py-6 text-center" data-testid="placeholder-stage">
-                        <Icon iconName="wave-pulse" className="text-neutral-350" />
-                        <p className="mt-1 text-xs font-medium text-neutral-350">No service for this stage.</p>
+                        <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+                        <p className="mt-1 text-xs font-medium text-neutral-subtle">No service for this stage.</p>
                       </div>
                     )}
                   </div>
                 </div>
                 <div className="mt-4 w-4 last:hidden">
                   <svg xmlns="http://www.w3.org/2000/svg" width="17" height="9" fill="none" viewBox="0 0 17 9">
-                    <path fill="#383E50" d="M16.092 4.5L8.592.17v8.66l7.5-4.33zm-16 .75h9.25v-1.5H.092v1.5z"></path>
+                    <path
+                      fill="var(--neutral-6)"
+                      d="M16.092 4.5L8.592.17v8.66l7.5-4.33zm-16 .75h9.25v-1.5H.092v1.5z"
+                    ></path>
                   </svg>
                 </div>
               </Fragment>
             )
           })}
-        </div>
+        </>
       </EnvironmentStages>
     </div>
   )
@@ -319,7 +323,6 @@ function RouteComponent() {
         <div className="flex min-h-0 flex-1 flex-col gap-8 pb-20">
           <Suspense fallback={<div>loading....</div>}>
             <Pipeline />
-            {/*<EnvironmentDeploymentList />*/}
           </Suspense>
         </div>
       </Section>

@@ -25,7 +25,7 @@ export function HeaderEnvironmentStages({
     <div className="flex h-12 w-full items-center justify-between">
       <div className="flex h-full">
         <div
-          className={clsx('flex h-full items-center gap-4 text-sm font-medium text-neutral-50', {
+          className={clsx('flex h-full items-center gap-4 text-sm font-medium text-neutral', {
             'pr-2': environmentStatus?.state === 'DEPLOYING',
           })}
         >
@@ -46,7 +46,7 @@ export function HeaderEnvironmentStages({
           {deploymentHistory?.trigger_action && (
             <>
               <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
-                <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
+                <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
               </svg>
               <Tooltip
                 content={
@@ -70,13 +70,13 @@ export function HeaderEnvironmentStages({
           {environmentStatus?.state !== 'DEPLOYING' && (
             <>
               <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
-                <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
+                <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
               </svg>
               <span
                 className="flex items-center gap-1.5"
                 title={dateUTCString(environmentStatus.last_deployment_date ?? '')}
               >
-                <Icon iconName="stopwatch" iconStyle="regular" className="text-base text-neutral-250" />
+                <Icon iconName="stopwatch" iconStyle="regular" className="text-base text-neutral-subtle" />
                 {Math.floor(totalDurationSec / 60)}m : {totalDurationSec % 60}s
               </span>
             </>
