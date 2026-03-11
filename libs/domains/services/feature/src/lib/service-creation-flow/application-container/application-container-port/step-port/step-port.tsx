@@ -83,7 +83,7 @@ export function ApplicationContainerStepPort({ onBack, onSubmit, loading = false
             onEditPort={(port) => openPortModal(port)}
             onRemovePort={removePort}
             onBack={onBack}
-            onSubmit={() => void submitPortForm()}
+            onSubmit={() => submitPortForm()}
             loading={loading}
             hidePortName
           />
