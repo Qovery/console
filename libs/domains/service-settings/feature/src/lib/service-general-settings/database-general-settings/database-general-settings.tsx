@@ -171,7 +171,7 @@ export function DatabaseGeneralSettings({
                 <SegmentedControl.Item value={DatabaseAccessibilityEnum.PRIVATE}>Private access</SegmentedControl.Item>
                 <SegmentedControl.Item value={DatabaseAccessibilityEnum.PUBLIC}>Public access</SegmentedControl.Item>
               </SegmentedControl.Root>
-              <p className="mt-2 text-sm text-neutral-350">
+              <p className="mt-2 text-sm text-neutral">
                 {match({ watchMode, watchAccessibility })
                   .with(
                     { watchMode: 'CONTAINER', watchAccessibility: 'PRIVATE' },
