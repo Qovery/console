@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ApplicationContainerCreationFlow } from '../../application-container-creation-flow'
 import { ApplicationContainerStepPort } from './step-port'
@@ -8,18 +7,6 @@ const mockOnSubmit = jest.fn()
 
 jest.mock('@qovery/shared/assistant/feature', () => ({
   AssistantTrigger: () => null,
-}))
-
-jest.mock('@qovery/shared/ui', () => ({
-  ...jest.requireActual('@qovery/shared/ui'),
-  Link: ({ children, as: As = 'a', ...props }: { children?: ReactNode; as?: string; [key: string]: unknown }) =>
-    As === 'button' ? (
-      <button type="button" {...props}>
-        {children}
-      </button>
-    ) : (
-      <a {...props}>{children}</a>
-    ),
 }))
 
 jest.mock('@tanstack/react-router', () => ({
