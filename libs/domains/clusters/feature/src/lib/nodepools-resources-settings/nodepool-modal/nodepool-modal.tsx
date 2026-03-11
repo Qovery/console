@@ -353,7 +353,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                     rules={{ required: 'Please enter a start time.' }}
                     render={({ field, fieldState: { error } }) => (
                       <InputText
-                        label={`Start time (${cluster.region})`}
+                        label="Start time (UTC)"
                         name={field.name}
                         type="time"
                         onChange={field.onChange}
