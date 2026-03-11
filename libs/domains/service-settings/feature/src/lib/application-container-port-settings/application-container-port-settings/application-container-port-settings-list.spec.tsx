@@ -1,4 +1,5 @@
 import { PortProtocolEnum } from 'qovery-typescript-axios'
+import { Section } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
   ApplicationContainerPortSettingsList,
@@ -36,7 +37,11 @@ const props: ApplicationContainerPortSettingsListProps = {
 }
 
 const renderComponent = (componentProps: ApplicationContainerPortSettingsListProps = props) =>
-  renderWithProviders(<ApplicationContainerPortSettingsList {...componentProps} />)
+  renderWithProviders(
+    <Section>
+      <ApplicationContainerPortSettingsList {...componentProps} />
+    </Section>
+  )
 
 describe('ApplicationContainerPortSettingsList', () => {
   beforeEach(() => {
