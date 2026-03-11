@@ -1,4 +1,5 @@
 import { PortProtocolEnum } from 'qovery-typescript-axios'
+import { Section } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
   ApplicationContainerPortSettingsList,
@@ -35,6 +36,13 @@ const props: ApplicationContainerPortSettingsListProps = {
   ports,
 }
 
+const renderComponent = (componentProps: ApplicationContainerPortSettingsListProps = props) =>
+  renderWithProviders(
+    <Section>
+      <ApplicationContainerPortSettingsList {...componentProps} />
+    </Section>
+  )
+
 describe('ApplicationContainerPortSettingsList', () => {
   beforeEach(() => {
     props.onAddPort = jest.fn()
@@ -44,42 +52,40 @@ describe('ApplicationContainerPortSettingsList', () => {
   })
 
   it('renders successfully', () => {
-    const { baseElement } = renderWithProviders(<ApplicationContainerPortSettingsList {...props} />)
+    const { baseElement } = renderComponent()
     expect(baseElement).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Ports' })).toBeInTheDocument()
   })
 
   it('shows empty state when no ports', () => {
     props.ports = []
-    renderWithProviders(<ApplicationContainerPortSettingsList {...props} />)
+    renderComponent()
     expect(screen.getByText('No ports are set')).toBeInTheDocument()
   })
 
   it('calls onAddPort when Add port is clicked', async () => {
-    const { userEvent } = renderWithProviders(<ApplicationContainerPortSettingsList {...props} />)
+    const { userEvent } = renderComponent()
     await userEvent.click(screen.getByTestId('add-button'))
     expect(props.onAddPort).toHaveBeenCalledTimes(1)
   })
 
   it('calls onEditPort when edit button is clicked', async () => {
-    const { userEvent } = renderWithProviders(<ApplicationContainerPortSettingsList {...props} />)
+    const { userEvent } = renderComponent()
     await userEvent.click(screen.getAllByTestId('edit-button')[0])
     expect(props.onEditPort).toHaveBeenCalledWith(ports[0])
   })
 
   it('calls onRemovePort with warning when port is used by healthcheck', async () => {
-    const { userEvent } = renderWithProviders(
-      <ApplicationContainerPortSettingsList
-        {...props}
-        livenessProbeType={{
-          http: {
-            path: '/',
-            scheme: 'HTTP',
-            port: 3000,
-          },
-        }}
-      />
-    )
+    const { userEvent } = renderComponent({
+      ...props,
+      livenessProbeType: {
+        http: {
+          path: '/',
+          scheme: 'HTTP',
+          port: 3000,
+        },
+      },
+    })
 
     await userEvent.click(screen.getAllByTestId('delete-button')[0])
 

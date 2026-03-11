@@ -1,5 +1,5 @@
 import { PortProtocolEnum, type ProbeType, type ServicePort } from 'qovery-typescript-axios'
-import { isMatchingPortHealthCheck } from './port-healthcheck'
+import { isMatchingPortHealthCheck } from './is-matching-port-healthcheck'
 
 describe('isMatchingPortHealthCheck', () => {
   const port: ServicePort = {
