@@ -21,7 +21,7 @@ export function TableEdition(props: TableEditionProps) {
       {props.tableBody?.map((row, index) => (
         <div
           data-testid="edition-table-row"
-          className={`flex min-h-10 border-solid border-neutral hover:bg-surface-neutral  ${
+          className={`flex min-h-10 border-solid border-neutral ${
             props.tableBody && props.tableBody.length - 1 !== index ? 'border-b' : ''
           } ${row.className || ''}`}
           key={index}

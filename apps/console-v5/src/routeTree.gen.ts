@@ -100,6 +100,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugPortsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/ports'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugHealthChecksRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/health-checks'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/general'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsValuesOverrideFileRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-file'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsValuesOverrideArgumentsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-arguments'
@@ -833,6 +834,15 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
         AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRoute,
     } as any,
   )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugHealthChecksRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugHealthChecksRouteImport.update(
+    {
+      id: '/health-checks',
+      path: '/health-checks',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugGeneralRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugGeneralRouteImport.update(
     {
@@ -1138,6 +1148,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-arguments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsValuesOverrideArgumentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-file': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsValuesOverrideFileRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugGeneralRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/health-checks': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugHealthChecksRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/ports': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugPortsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugResourcesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRoute
@@ -1241,6 +1252,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-arguments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsValuesOverrideArgumentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-file': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsValuesOverrideFileRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugGeneralRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/health-checks': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugHealthChecksRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/ports': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugPortsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugResourcesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRoute
@@ -1357,6 +1369,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-arguments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsValuesOverrideArgumentsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-file': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsValuesOverrideFileRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugGeneralRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/health-checks': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugHealthChecksRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/ports': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugPortsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugResourcesRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRoute
@@ -1473,6 +1486,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-arguments'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-file'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/general'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/health-checks'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/ports'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/'
@@ -1576,6 +1590,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-arguments'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-file'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/general'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/health-checks'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/ports'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring'
@@ -1691,6 +1706,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-arguments'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/values-override-file'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/general'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/health-checks'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/ports'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/'
@@ -2346,6 +2362,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugPortsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRoute
     }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/health-checks': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/health-checks'
+      path: '/health-checks'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/health-checks'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugHealthChecksRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRoute
+    }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/general': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/general'
       path: '/general'
@@ -2808,6 +2831,7 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
 
 interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugGeneralRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugHealthChecksRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugHealthChecksRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugPortsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugPortsRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugResourcesRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugResourcesRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugIndexRoute
@@ -2817,6 +2841,8 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
   {
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugGeneralRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugGeneralRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugHealthChecksRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugHealthChecksRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugPortsRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugPortsRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugResourcesRoute:

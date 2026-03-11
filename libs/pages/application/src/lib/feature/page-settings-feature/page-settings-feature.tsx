@@ -11,7 +11,6 @@ import {
   APPLICATION_SETTINGS_DOMAIN_URL,
   APPLICATION_SETTINGS_HEALTHCHECKS_URL,
   APPLICATION_SETTINGS_NETWORKING_URL,
-  APPLICATION_SETTINGS_PORT_URL,
   APPLICATION_SETTINGS_STORAGE_URL,
   APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
   APPLICATION_SETTINGS_TERRAFORM_CONFIGURATION_URL,
@@ -88,12 +87,6 @@ export function PageSettingsFeature() {
     url: pathSettings + APPLICATION_SETTINGS_DOMAIN_URL,
   }
 
-  const portSettings = {
-    title: 'Port',
-    icon: IconAwesomeEnum.PLUG,
-    url: pathSettings + APPLICATION_SETTINGS_PORT_URL,
-  }
-
   const healthchecksSettings = {
     title: 'Health Checks',
     icon: IconAwesomeEnum.SHIELD_CHECK,
@@ -142,7 +135,6 @@ export function PageSettingsFeature() {
     .with({ serviceType: 'APPLICATION' }, () => [
       storageSettings,
       domainSettings,
-      portSettings,
       healthchecksSettings,
       deploymentRestrictionsSettings,
       advancedSettings,
@@ -151,7 +143,6 @@ export function PageSettingsFeature() {
     .with({ serviceType: 'CONTAINER' }, () => [
       storageSettings,
       domainSettings,
-      portSettings,
       healthchecksSettings,
       advancedSettings,
       dangerzoneSettings,
