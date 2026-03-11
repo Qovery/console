@@ -25,7 +25,7 @@ export function HeaderEnvironmentStages({
     <div className="flex h-12 w-full items-center justify-between">
       <div className="flex h-full">
         <div
-          className={clsx('flex h-full items-center gap-4 text-sm font-medium text-neutral', {
+          className={clsx('flex h-full items-center gap-3 text-sm font-medium text-neutral', {
             'pr-2': environmentStatus?.state === 'DEPLOYING',
           })}
         >
