@@ -1,41 +1,34 @@
-import clsx from 'clsx'
+import { type QueryClient } from '@tanstack/react-query'
+import { useParams } from '@tanstack/react-router'
+import { clsx } from 'clsx'
 import {
   type DeploymentStageWithServicesStatuses,
-  type Environment,
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
-import { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
-import { Fragment } from 'react/jsx-runtime'
+import { Fragment, Suspense, useCallback, useState } from 'react'
 import { match } from 'ts-pattern'
-import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
-import { useDeploymentHistory, useDeploymentHistoryExecutionId } from '@qovery/domains/environments/feature'
+import { useDeploymentHistoryExecutionId, useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
-  Banner,
   Icon,
   Indicator,
-  LoaderSpinner,
+  Link,
+  Skeleton,
   StageStatusChip,
   StatusChip,
   Tooltip,
   TriggerActionIcon,
   Truncate,
 } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { QOVERY_WS } from '@qovery/shared/util-node-env'
+import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
+import { EnvironmentStages } from '../environment-stages/environment-stages'
 
-export interface EnvironmentStagesFeatureProps {
-  environment: Environment
-  deploymentStages?: DeploymentStageWithServicesStatuses[]
-  environmentStatus?: EnvironmentStatus
-  preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
-}
-
-export function matchServicesWithStatuses(deploymentStages?: DeploymentStageWithServicesStatuses[]) {
+function matchServicesWithStatuses(deploymentStages?: DeploymentStageWithServicesStatuses[]) {
   if (!deploymentStages) return []
 
   return deploymentStages.map((deploymentStage) => {
@@ -50,80 +43,39 @@ export function matchServicesWithStatuses(deploymentStages?: DeploymentStageWith
   })
 }
 
-export function EnvironmentStagesFeature({
-  environment,
-  environmentStatus,
+function PipelineContent({
   deploymentStages,
+  environmentStatus,
   preCheckStage,
-}: EnvironmentStagesFeatureProps) {
-  useDocumentTitle(`Environment stages ${environment ? `- ${environment?.name}` : '- Loading...'}`)
-
-  const executionId = environmentStatus?.last_deployment_id
-
-  const { data: services = [] } = useServices({ environmentId: environment.id })
-  const { data: listDeploymentHistory = [] } = useDeploymentHistory({ environmentId: environment.id })
+}: {
+  deploymentStages?: DeploymentStageWithServicesStatuses[]
+  environmentStatus?: EnvironmentStatus
+  preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
+}) {
+  const { environmentId = '', deploymentId = '' } = useParams({ strict: false })
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
+  const { data: services = [] } = useServices({ environmentId, suspense: true })
   const { data: deploymentHistory } = useDeploymentHistoryExecutionId({
-    environmentId: environment.id,
-    executionId,
+    environmentId,
+    executionId: deploymentId,
+    suspense: true,
   })
 
   const [hideSkipped, setHideSkipped] = useState<boolean>(true)
-  const navigate = useNavigate()
+
+  if (!environment || !environmentStatus) {
+    // Suspend until WS data arrives.
+    // The parent Pipeline component will re-render this component once setEnvironmentStatus is called.
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    throw new Promise(() => {})
+  }
 
   const getServiceById = (id: string) => services.find((service) => service.id === id) as AnyService
   const getServiceFromDeploymentHistoryId = (id: string) =>
     deploymentHistory?.stages.flatMap((s) => s.services).find((s) => s.identifier.service_id === id)
 
-  if (!environmentStatus) {
-    return (
-      <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
-        <div className="flex h-full w-full justify-center border border-neutral-500 bg-neutral-600 pt-11">
-          <LoaderSpinner className="h-6 w-6" />
-        </div>
-      </div>
-    )
-  }
-
-  const latestDeployment =
-    Array.isArray(listDeploymentHistory) && listDeploymentHistory.length > 0 ? listDeploymentHistory[0] : null
-
-  const lastDeploymentStatus = latestDeployment?.status ?? null
-  const lastDeploymentExecutionId = latestDeployment?.identifier?.execution_id ?? ''
-
-  const showBannerNew =
-    deploymentHistory?.identifier.execution_id !== lastDeploymentExecutionId &&
-    match(lastDeploymentStatus)
-      .with(
-        'DEPLOYING',
-        'DELETING',
-        'RESTARTING',
-        'BUILDING',
-        'STOP_QUEUED',
-        'CANCELING',
-        'QUEUED',
-        'DELETE_QUEUED',
-        'DEPLOYMENT_QUEUED',
-        () => true
-      )
-      .otherwise(() => false)
-
   return (
-    <div className="h-full w-full bg-neutral-800">
-      {showBannerNew && (
-        <Banner
-          color="brand"
-          buttonLabel="See latest"
-          buttonIconRight="arrow-right"
-          onClickButton={() =>
-            navigate(
-              ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-                ENVIRONMENT_STAGES_URL(lastDeploymentExecutionId)
-            )
-          }
-        >
-          A new deployment has been initiated
-        </Banner>
-      )}
+    <div>
       <EnvironmentStages
         environment={environment}
         environmentStatus={environmentStatus}
@@ -133,6 +85,7 @@ export function EnvironmentStagesFeature({
         setHideSkipped={setHideSkipped}
         deploymentHistory={deploymentHistory}
       >
+        {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
         <>
           {matchServicesWithStatuses(deploymentStages)?.map((s) => {
             const stageTotalDurationSec = s.stage?.steps?.total_duration_sec ?? 0
@@ -144,14 +97,14 @@ export function EnvironmentStagesFeature({
               <Fragment key={s.stage?.id}>
                 <div
                   className={clsx(
-                    'h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral-500 bg-neutral-650',
+                    'h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral bg-surface-neutral',
                     {
                       'text-neutral-50': s?.stage?.status !== 'SKIPPED',
                       'text-neutral-300': s?.stage?.status === 'SKIPPED',
                     }
                   )}
                 >
-                  <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
+                  <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral px-3 py-2.5">
                     <Indicator
                       align="end"
                       side="right"
@@ -161,7 +114,7 @@ export function EnvironmentStagesFeature({
                             <span>
                               <TriggerActionIcon
                                 triggerAction={deploymentHistory?.trigger_action}
-                                className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-650 text-xs text-neutral-250"
+                                className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface-neutral text-xs text-neutral-subtle"
                               />
                             </span>
                           </Tooltip>
@@ -175,11 +128,11 @@ export function EnvironmentStagesFeature({
                       </Tooltip>
                     </Indicator>
                     <div className="flex flex-col gap-0.5">
-                      <span className="flex gap-1.5 text-sm font-medium">
+                      <span className="flex gap-1.5 text-sm font-medium text-neutral">
                         <Truncate text={upperCaseFirstLetter(stageName) || ''} truncateLimit={20} />
                         {s?.stage?.description && (
                           <Tooltip content={s?.stage?.description}>
-                            <span className="text-neutral-250">
+                            <span className="text-neutral-subtle">
                               <Icon iconName="info-circle" iconStyle="regular" />
                             </span>
                           </Tooltip>
@@ -194,7 +147,7 @@ export function EnvironmentStagesFeature({
                         .otherwise(() => null)}
                     </div>
                   </div>
-                  <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
+                  <div className="flex flex-col gap-1.5 bg-surface-neutral-subtle p-1.5">
                     {s.services.length > 0 ? (
                       s.services.map((service) => {
                         const fullService = getServiceById(service.id!)
@@ -207,9 +160,9 @@ export function EnvironmentStagesFeature({
                           return (
                             <div
                               key={service?.id}
-                              className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2"
+                              className="bg-neutral flex w-full items-center gap-2.5 rounded border border-neutral px-2.5 py-2"
                             >
-                              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-400 text-neutral-250">
+                              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral text-neutral-250">
                                 <Icon iconName="trash-can-xmark" iconStyle="solid" />
                               </span>
                               <span className="text-sm">{serviceFromDeploymentHistoryId?.identifier.name}</span>
@@ -217,17 +170,20 @@ export function EnvironmentStagesFeature({
                           )
 
                         return (
-                          <NavLink
+                          <Link
                             key={service?.id}
+                            // TODO new-nav : Route not yet created
+                            // @ts-expect-error-next-line
                             to={
                               ENVIRONMENT_LOGS_URL(
                                 environment.organization.id,
                                 environment.project.id,
                                 environment.id
-                              ) + DEPLOYMENT_LOGS_VERSION_URL(service.id, executionId ?? '')
+                                // ) + DEPLOYMENT_LOGS_VERSION_URL(service.id, executionId ?? '')
+                              ) + DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentId ?? '')
                             }
                             className={clsx(
-                              'flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400',
+                              'flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2 text-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle hover:text-neutral',
                               {
                                 'text-neutral-300': !service.is_part_last_deployment,
                               }
@@ -237,7 +193,7 @@ export function EnvironmentStagesFeature({
                               service={fullService}
                               border="solid"
                               size="sm"
-                              className={clsx('border-neutral-400', {
+                              className={clsx('border-neutral', {
                                 'opacity-50': !service.is_part_last_deployment,
                               })}
                             />
@@ -253,20 +209,23 @@ export function EnvironmentStagesFeature({
                               className="ml-auto"
                               status={!service.is_part_last_deployment ? 'SKIPPED' : service.state}
                             />
-                          </NavLink>
+                          </Link>
                         )
                       })
                     ) : (
                       <div className="px-3 py-6 text-center" data-testid="placeholder-stage">
-                        <Icon iconName="wave-pulse" className="text-neutral-350" />
-                        <p className="mt-1 text-xs font-medium text-neutral-350">No service for this stage.</p>
+                        <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+                        <p className="mt-1 text-xs font-medium text-neutral-subtle">No service for this stage.</p>
                       </div>
                     )}
                   </div>
                 </div>
                 <div className="mt-4 w-4 last:hidden">
                   <svg xmlns="http://www.w3.org/2000/svg" width="17" height="9" fill="none" viewBox="0 0 17 9">
-                    <path fill="#383E50" d="M16.092 4.5L8.592.17v8.66l7.5-4.33zm-16 .75h9.25v-1.5H.092v1.5z"></path>
+                    <path
+                      fill="var(--neutral-6)"
+                      d="M16.092 4.5L8.592.17v8.66l7.5-4.33zm-16 .75h9.25v-1.5H.092v1.5z"
+                    ></path>
                   </svg>
                 </div>
               </Fragment>
@@ -278,4 +237,85 @@ export function EnvironmentStagesFeature({
   )
 }
 
-export default EnvironmentStagesFeature
+function Loading() {
+  const { organizationId, projectId, environmentId } = useParams({ strict: false })
+  return (
+    <div className="flex flex-col gap-3">
+      <Link
+        to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployments"
+        params={{ organizationId, projectId, environmentId }}
+        color="neutral"
+        className="flex gap-2 text-neutral-subtle"
+      >
+        <Icon iconName="arrow-left" />
+        Deployment history
+      </Link>
+      <div className="flex flex-col border-b border-neutral pb-5">
+        <div className="flex gap-3">
+          <Skeleton height={24} width={190} />
+          <Skeleton height={24} width={24} />
+          <Skeleton height={24} width={50} />
+        </div>
+      </div>
+      <div className="mt-3 flex gap-5">
+        <Skeleton height={122} width={240} />
+        <Skeleton height={122} width={240} />
+        <Skeleton height={122} width={240} />
+        <Skeleton height={122} width={240} />
+      </div>
+    </div>
+  )
+}
+
+export function EnvironmentPipeline() {
+  const { organizationId, environmentId = '', projectId = '', deploymentId = '' } = useParams({ strict: false })
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
+
+  const [deploymentStages, setDeploymentStages] = useState<DeploymentStageWithServicesStatuses[]>()
+  const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
+  const [preCheckStage, setPreCheckStage] = useState<EnvironmentStatusesWithStagesPreCheckStage>()
+
+  const messageHandler = useCallback(
+    (
+      _: QueryClient,
+      {
+        stages,
+        environment,
+        pre_check_stage,
+      }: {
+        stages: DeploymentStageWithServicesStatuses[]
+        environment: EnvironmentStatus
+        pre_check_stage: EnvironmentStatusesWithStagesPreCheckStage
+      }
+    ) => {
+      setDeploymentStages(stages)
+      setEnvironmentStatus(environment)
+      setPreCheckStage(pre_check_stage)
+    },
+    [setDeploymentStages]
+  )
+
+  useReactQueryWsSubscription({
+    url: QOVERY_WS + '/deployment/status',
+    urlSearchParams: {
+      organization: organizationId,
+      cluster: environment?.cluster_id,
+      project: projectId,
+      environment: environmentId,
+      version: deploymentId,
+    },
+    enabled:
+      Boolean(organizationId) && Boolean(environment?.cluster_id) && Boolean(projectId) && Boolean(environmentId),
+    onMessage: messageHandler,
+  })
+
+  return (
+    <Suspense fallback={<Loading />}>
+      <PipelineContent
+        deploymentStages={deploymentStages}
+        environmentStatus={environmentStatus}
+        preCheckStage={preCheckStage}
+      />
+    </Suspense>
+  )
+}

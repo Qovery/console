@@ -78,7 +78,7 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
       tabindex="-1"
     >
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-warning-component data-[highlighted]:text-warning hover:text-warning cursor-pointer hover:bg-surface-warning-component text-warning relative"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-warning-component data-[highlighted]:text-warning hover:text-warning cursor-pointer hover:bg-surface-warning-component text-warning"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -88,14 +88,14 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
           aria-hidden="true"
           class="fa-regular fa-rotate-right text-sm mr-2 text-warning"
         />
-        Redeploy
         <div
-          class="absolute right-5"
-          data-state="closed"
+          class="flex w-full items-center justify-between"
         >
+          Redeploy
           <i
             aria-hidden="true"
             class="fa-regular fa-circle-exclamation "
+            data-state="closed"
           />
         </div>
       </div>
@@ -110,14 +110,14 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
           aria-hidden="true"
           class="fa-regular fa-circle-stop text-sm mr-2 text-brand-9"
         />
-        Stop
         <div
-          class="absolute right-5"
-          data-state="closed"
+          class="flex w-full items-center justify-between"
         >
+          Stop
           <i
             aria-hidden="true"
             class="fa-regular fa-circle-exclamation "
+            data-state="closed"
           />
         </div>
       </div>
@@ -132,14 +132,14 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
           aria-hidden="true"
           class="fa-regular fa-inbox-out text-sm mr-2 text-negative"
         />
-        Uninstall
         <div
-          class="absolute right-5"
-          data-state="closed"
+          class="flex w-full items-center justify-between"
         >
+          Uninstall
           <i
             aria-hidden="true"
             class="fa-regular fa-circle-exclamation "
+            data-state="closed"
           />
         </div>
       </div>

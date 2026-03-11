@@ -1,5 +1,6 @@
-import { useParams } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import {
+  type Row,
   type SortingState,
   createColumnHelper,
   flexRender,
@@ -11,7 +12,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
-import { type DeploymentHistoryEnvironmentV2, OrganizationEventOrigin, StateEnum } from 'qovery-typescript-axios'
+import {
+  type DeploymentHistoryEnvironmentV2,
+  OrganizationEventOrigin,
+  type QueuedDeploymentRequestWithStages,
+  StateEnum,
+} from 'qovery-typescript-axios'
 import { Fragment, useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
@@ -22,7 +28,6 @@ import {
   DropdownMenu,
   EmptyState,
   Icon,
-  Link,
   StatusChip,
   TableFilter,
   TablePrimitives,
@@ -53,6 +58,7 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistoryEnv
 }
 
 export function EnvironmentDeploymentList() {
+  const navigate = useNavigate()
   const { environmentId = '' } = useParams({
     from: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments',
   })
@@ -407,6 +413,22 @@ export function EnvironmentDeploymentList() {
     )
   }
 
+  const handleRowClick = (row: Row<DeploymentHistoryEnvironmentV2 | QueuedDeploymentRequestWithStages>) => {
+    const data = row.original
+
+    if (!environment || !('execution_id' in data.identifier)) return
+
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId',
+      params: {
+        organizationId: environment?.organization.id,
+        projectId: environment?.project.id,
+        environmentId: environment?.id,
+        deploymentId: data.identifier.execution_id,
+      },
+    })
+  }
+
   return (
     <div className="flex grow flex-col justify-between">
       <Table.Root className="w-full min-w-[1080px] table-fixed overflow-x-scroll text-ssm">
@@ -461,7 +483,15 @@ export function EnvironmentDeploymentList() {
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
-              <Table.Row className="h-[68px] divide-x divide-neutral">
+              <Table.Row
+                onClick={() => handleRowClick(row)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleRowClick(row)
+                }}
+                tabIndex={0}
+                role="link"
+                className="h-[68px] divide-x divide-neutral hover:cursor-pointer hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle"
+              >
                 {row.getVisibleCells().map((cell) => (
                   <Table.Cell
                     key={cell.id}

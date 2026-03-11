@@ -45,9 +45,7 @@ export function MenuManageDeployment({
 
   const tooltipService = (content: string) => (
     <Tooltip side="bottom" content={content}>
-      <div className="absolute right-5">
-        <Icon iconName="circle-exclamation" iconStyle="regular" />
-      </div>
+      <Icon iconName="circle-exclamation" iconStyle="regular" />
     </Tooltip>
   )
 
@@ -176,34 +174,40 @@ export function MenuManageDeployment({
           <DropdownMenu.Item
             icon={<Icon iconName="play" />}
             onSelect={mutationDeploy}
-            className="relative"
             color={displayYellowColor ? 'yellow' : 'brand'}
           >
-            Deploy
-            {tooltipEnvironmentNeedUpdate}
+            <div className="flex w-full items-center justify-between">
+              Deploy
+              {tooltipEnvironmentNeedUpdate}
+            </div>
           </DropdownMenu.Item>
         )}
         {isRedeployAvailable(state) && (
           <DropdownMenu.Item
             icon={<Icon iconName="rotate-right" />}
             onSelect={mutationRedeploy}
-            className="relative"
             color={displayYellowColor ? 'yellow' : 'brand'}
           >
-            Redeploy
-            {tooltipEnvironmentNeedUpdate}
+            <div className="flex w-full items-center justify-between">
+              Redeploy
+              {tooltipEnvironmentNeedUpdate}
+            </div>
           </DropdownMenu.Item>
         )}
         {isStopAvailable(state) && (
           <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
-            Stop
-            {tooltipService('Stop compute resources *but* keep the data')}
+            <div className="flex w-full items-center justify-between">
+              Stop
+              {tooltipService('Stop compute resources *but* keep the data')}
+            </div>
           </DropdownMenu.Item>
         )}
         {isDeleteAvailable(state) && (
           <DropdownMenu.Item icon={<Icon iconName="inbox-out" />} color="red" onSelect={mutationUninstall}>
-            Uninstall
-            {tooltipService('Delete all resources and associated data *but* keep the services configuration')}
+            <div className="flex w-full items-center justify-between">
+              Uninstall
+              {tooltipService('Delete all resources and associated data *but* keep the services configuration')}
+            </div>
           </DropdownMenu.Item>
         )}
         {match(state)

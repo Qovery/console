@@ -78,7 +78,10 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
           <Tooltip content="See previous stage">
             <button
               title="Previous stage"
-              onClick={() => setCurrentPage((prev) => prev - 1)}
+              onClick={(e) => {
+                setCurrentPage((prev) => prev - 1)
+                e.stopPropagation()
+              }}
               className="relative flex items-center text-neutral-disabled after:block after:h-[1px] after:w-0.5 after:border-b after:border-neutral after:content-['']"
             >
               <svg
@@ -106,7 +109,8 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
         {visibleStages.map((stage, index) => (
           <DropdownMenu.Trigger
             key={startIndex + index}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation()
               setIndex(stage, startIndex + index)
               setOpen(true)
             }}
@@ -126,7 +130,10 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
           <Tooltip content="See next stage">
             <button
               title="Next stage"
-              onClick={() => setCurrentPage((prev) => prev + 1)}
+              onClick={(e) => {
+                setCurrentPage((prev) => prev + 1)
+                e.stopPropagation()
+              }}
               className="relative flex items-center text-neutral-disabled"
             >
               <svg
@@ -248,6 +255,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                 asChild
                               >
                                 <Link
+                                  // TODO new-nav : Route not yet created
                                   to={
                                     ENVIRONMENT_LOGS_URL(
                                       environment.organization.id,
@@ -255,6 +263,9 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                       environment.id
                                     ) + ENVIRONMENT_STAGES_URL()
                                   }
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                  }}
                                 >
                                   {service.details && (
                                     <ServiceAvatar
@@ -295,6 +306,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                               asChild
                             >
                               <Link
+                                // TODO new-nav : Route not yet created
                                 to={
                                   ENVIRONMENT_LOGS_URL(
                                     environment.organization.id,
@@ -306,6 +318,9 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                     service.identifier.execution_id
                                   )
                                 }
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                }}
                               >
                                 {service.details && (
                                   <ServiceAvatar
