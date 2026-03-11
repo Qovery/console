@@ -183,7 +183,7 @@ function PipelineContent({
                               ) + DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentId ?? '')
                             }
                             className={clsx(
-                              'flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2 text-neutral hover:border-neutral-component hover:text-neutral',
+                              'flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2 text-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle hover:text-neutral',
                               {
                                 'text-neutral-300': !service.is_part_last_deployment,
                               }
