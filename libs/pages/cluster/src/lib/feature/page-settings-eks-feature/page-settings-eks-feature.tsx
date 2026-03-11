@@ -1,19 +1,32 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { ClusterEksSettings, useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
-import { SettingsHeading } from '@qovery/shared/console-shared'
-import { type ClusterResourcesData } from '@qovery/shared/interfaces'
+import {
+  ClusterEksSettings,
+  type ClusterEksSettingsFormData,
+  getEksAnywhereGitFormValues,
+  getInfrastructureChartsParametersWithEksAnywhereGit,
+  stripEksAnywhereGitFormFields,
+  useCluster,
+  useEditCluster,
+} from '@qovery/domains/clusters/feature'
+import { GitRepositorySettings, SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, LoaderSpinner, Section } from '@qovery/shared/ui'
 
 export function PageSettingsEKSAnywhereFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
   const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
+  const [gitDisabled, setGitDisabled] = useState(true)
+  const currentGitRepository = cluster?.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository
+  const currentRepository = getEksAnywhereGitFormValues(cluster).repository
 
-  const methods = useForm<ClusterResourcesData>({
+  const methods = useForm<ClusterEksSettingsFormData>({
     mode: 'onChange',
-    defaultValues: cluster,
+    defaultValues: {
+      ...cluster,
+      ...getEksAnywhereGitFormValues(cluster),
+    },
   })
 
   const onSubmit = methods.handleSubmit(async (data) => {
@@ -24,7 +37,8 @@ export function PageSettingsEKSAnywhereFeature() {
           clusterId: cluster.id,
           clusterRequest: {
             ...cluster,
-            ...data,
+            ...stripEksAnywhereGitFormFields(data),
+            infrastructure_charts_parameters: getInfrastructureChartsParametersWithEksAnywhereGit(data),
           },
         })
       } catch (error) {
@@ -33,9 +47,19 @@ export function PageSettingsEKSAnywhereFeature() {
     }
   })
 
+  const editGitSettings = () => {
+    setGitDisabled(false)
+    methods.setValue('provider', currentGitRepository?.provider)
+    methods.setValue('repository', undefined)
+  }
+
   useEffect(() => {
     if (cluster && !isClusterLoading) {
-      methods.reset(cluster)
+      methods.reset({
+        ...cluster,
+        ...getEksAnywhereGitFormValues(cluster),
+      })
+      setGitDisabled(true)
     }
   }, [cluster, isClusterLoading, methods])
 
@@ -51,7 +75,21 @@ export function PageSettingsEKSAnywhereFeature() {
           ) : (
             <form onSubmit={onSubmit}>
               <div className="space-y-10">
-                <ClusterEksSettings />
+                <ClusterEksSettings
+                  gitSettings={
+                    <GitRepositorySettings
+                      gitDisabled={gitDisabled}
+                      showAuthProviders={false}
+                      organizationId={organizationId}
+                      editGitSettings={editGitSettings}
+                      currentProvider={currentGitRepository?.provider}
+                      currentRepository={currentRepository}
+                      urlRepository={currentGitRepository?.url}
+                      rootPathLabel="YAML file path"
+                      rootPathHint="Provide the path to the EKS Anywhere cluster YAML file in the repository."
+                    />
+                  }
+                />
                 <div className="flex justify-end">
                   <Button
                     data-testid="submit-button"
