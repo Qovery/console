@@ -70,7 +70,7 @@ export function EnvironmentStages({
 
       <div className="flex justify-center">
         <div className="relative h-full w-full">
-          <div className="scrollShadow flex h-full gap-0.5 overflow-x-auto py-6">
+          <div className="scroll-shadow flex h-full gap-0.5 overflow-x-auto py-6">
             {!deploymentStages ? (
               <div className="mt-6 flex h-full w-full justify-center">
                 <LoaderSpinner className="h-6 w-6" />

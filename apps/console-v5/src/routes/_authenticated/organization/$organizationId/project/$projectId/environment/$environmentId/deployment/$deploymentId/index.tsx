@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { EnvironmentPipeline } from '@qovery/domains/environment-logs/feature'
 import { Section } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/'
@@ -9,6 +10,8 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
+  useDocumentTitle('Deployment details')
+
   return (
     <div className="container mx-auto flex min-h-page-container flex-col pt-6">
       <Section className="min-h-0 flex-1 gap-8">

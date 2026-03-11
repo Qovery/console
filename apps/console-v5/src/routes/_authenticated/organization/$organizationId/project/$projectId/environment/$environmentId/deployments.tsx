@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import { EnvironmentDeploymentListSkeleton } from '@qovery/domains/environments/feature'
 import { EnvironmentDeploymentList } from '@qovery/domains/environments/feature'
 import { Heading, Section } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
@@ -11,6 +12,8 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
+  useDocumentTitle('Deployment history')
+
   return (
     <div className="container mx-auto flex min-h-page-container flex-col pt-6">
       <Section className="min-h-0 flex-1 gap-8">
