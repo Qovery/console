@@ -72,7 +72,7 @@ export function PortListRows<TPort>({
             <div className="ml-auto flex gap-2">
               <Button
                 data-testid="edit-button"
-                variant="surface"
+                variant="outline"
                 color="neutral"
                 size="md"
                 type="button"
@@ -84,7 +84,7 @@ export function PortListRows<TPort>({
 
               <Button
                 data-testid="delete-button"
-                variant="surface"
+                variant="outline"
                 color="neutral"
                 size="md"
                 type="button"
