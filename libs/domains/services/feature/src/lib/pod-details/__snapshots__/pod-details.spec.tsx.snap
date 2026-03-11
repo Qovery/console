@@ -7,7 +7,7 @@ exports[`PodDetails should match snapshot with container based pod and with mult
       class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
       <a
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative max-w-fit gap-0.5"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative z-dropdown max-w-fit gap-0.5"
         params="[object Object]"
         search="[object Object]"
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
@@ -143,7 +143,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
       class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
       <a
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative max-w-fit gap-0.5"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative z-dropdown max-w-fit gap-0.5"
         params="[object Object]"
         search="[object Object]"
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
@@ -155,9 +155,6 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
           class="fa-regular fa-scroll "
         />
       </a>
-      <div
-        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-component"
-      />
       <div
         data-orientation="horizontal"
         dir="ltr"
@@ -273,7 +270,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
       class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
       <a
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative max-w-fit gap-0.5"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative z-dropdown max-w-fit gap-0.5"
         params="[object Object]"
         search="[object Object]"
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
@@ -285,9 +282,6 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
           class="fa-regular fa-scroll "
         />
       </a>
-      <div
-        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-component"
-      />
       <div
         data-orientation="horizontal"
         dir="ltr"
@@ -372,7 +366,7 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
       class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
       <a
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative max-w-fit gap-0.5"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative z-dropdown max-w-fit gap-0.5"
         params="[object Object]"
         search="[object Object]"
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
@@ -384,9 +378,6 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
           class="fa-regular fa-scroll "
         />
       </a>
-      <div
-        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-component"
-      />
       <dl
         class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0"
       >
