@@ -36,7 +36,7 @@ export function EnvironmentStages({
   const executionId = environmentStatus.last_deployment_id
 
   return (
-    <div className="h-[calc(100vh-64px)]">
+    <div className="h-full">
       <div className="flex shrink-0 flex-col gap-6">
         <div className="flex flex-col items-start gap-3">
           <Link
@@ -68,7 +68,7 @@ export function EnvironmentStages({
       </HeaderEnvironmentStages>
       <hr className="mt-2 w-full border-neutral" />
 
-      <div className="flex h-[calc(100vh-120px)] justify-center">
+      <div className="flex justify-center">
         <div className="h-full w-full">
           <div className="flex h-full gap-0.5 overflow-y-scroll py-6">
             {!deploymentStages ? (
