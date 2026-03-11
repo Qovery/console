@@ -6,18 +6,10 @@ import {
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
-import {
-  type Dispatch,
-  type PropsWithChildren,
-  type SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { type Dispatch, type PropsWithChildren, type SetStateAction } from 'react'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_PRE_CHECK_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, InputToggle, Link, LoaderSpinner, StageStatusChip, StatusChip, Tooltip } from '@qovery/shared/ui'
-import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { HeaderEnvironmentStages } from '../header-environment-stages/header-environment-stages'
 
 export interface EnvironmentStagesProps extends PropsWithChildren {
@@ -42,29 +34,6 @@ export function EnvironmentStages({
 }: EnvironmentStagesProps) {
   const { organizationId, projectId, environmentId } = useParams({ strict: false })
   const executionId = environmentStatus.last_deployment_id
-  const [canScrollRight, setCanScrollRight] = useState(false)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-
-  const containerRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
-
-  const computeCanScroll = useCallback(() => {
-    if (containerRef.current && contentRef.current) {
-      const canScrollRight =
-        contentRef.current.scrollLeft + contentRef.current.clientWidth < contentRef.current.scrollWidth
-      setCanScrollRight(canScrollRight)
-      const canScrollLeft = contentRef.current.scrollLeft > 0
-      setCanScrollLeft(canScrollLeft)
-    }
-  }, [containerRef, contentRef])
-
-  const onScroll = useCallback(() => {
-    computeCanScroll()
-  }, [computeCanScroll])
-
-  useEffect(() => {
-    computeCanScroll()
-  }, [computeCanScroll])
 
   return (
     <div className="h-full">
@@ -100,20 +69,8 @@ export function EnvironmentStages({
       <hr className="mt-2 w-full border-neutral" />
 
       <div className="flex justify-center">
-        <div className="relative h-full w-full" ref={containerRef}>
-          <div
-            className={twMerge(
-              'pointer-events-none absolute left-0 top-0 z-overlay h-full w-[80px] bg-gradient-to-r from-background to-transparent opacity-0',
-              canScrollLeft && 'opacity-100'
-            )}
-          />
-          <div
-            className={twMerge(
-              'pointer-events-none absolute right-0 top-0 z-overlay h-full w-[80px] bg-gradient-to-l from-background to-transparent opacity-0',
-              canScrollRight && 'opacity-100'
-            )}
-          />
-          <div className="flex h-full gap-0.5 overflow-y-scroll py-6" ref={contentRef} onScroll={onScroll}>
+        <div className="relative h-full w-full">
+          <div className="scrollShadow flex h-full gap-0.5 overflow-x-auto py-6">
             {!deploymentStages ? (
               <div className="mt-6 flex h-full w-full justify-center">
                 <LoaderSpinner className="h-6 w-6" />

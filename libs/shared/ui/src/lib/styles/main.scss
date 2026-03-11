@@ -259,3 +259,41 @@ svg:focus,
 .chargebee-field-wrapper input {
   color: green;
 }
+
+/* Scroll shadow */
+@property --left-fade {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --right-fade {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@keyframes scrollfade {
+  0% {
+    --left-fade: 0;
+  }
+  10%,
+  100% {
+    --left-fade: 80px;
+  }
+  0%,
+  90% {
+    --right-fade: 80px;
+  }
+  100% {
+    --right-fade: 0;
+  }
+}
+
+.scrollShadow {
+  overflow-x: scroll;
+  mask: linear-gradient(to right, #0000, #ffff var(--left-fade) calc(100% - var(--right-fade)), #0000);
+  animation: scrollfade;
+  animation-timeline: --scrollfade;
+  scroll-timeline: --scrollfade x;
+}
