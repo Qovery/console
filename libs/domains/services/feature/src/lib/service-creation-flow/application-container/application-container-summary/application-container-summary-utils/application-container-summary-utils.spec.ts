@@ -1,9 +1,5 @@
 import { PortProtocolEnum } from 'qovery-typescript-axios'
-import {
-  buildApplicationContainerCreatePayload,
-  buildAutoscalingPolicy,
-  prepareVariableImportRequest,
-} from './application-container-summary-utils'
+import { buildApplicationContainerCreatePayload, buildAutoscalingPolicy } from './application-container-summary-utils'
 
 describe('application-container-summary-utils', () => {
   it('should build application payload', () => {
@@ -123,30 +119,5 @@ describe('application-container-summary-utils', () => {
         ],
       })
     )
-  })
-
-  it('should prepare variable import request only when variables exist', () => {
-    expect(prepareVariableImportRequest([])).toBeNull()
-
-    expect(
-      prepareVariableImportRequest([
-        {
-          variable: 'MY_VAR',
-          value: 'value',
-          scope: 'APPLICATION',
-          isSecret: false,
-        },
-      ])
-    ).toEqual({
-      overwrite: true,
-      vars: [
-        {
-          name: 'MY_VAR',
-          value: 'value',
-          scope: 'APPLICATION',
-          is_secret: false,
-        },
-      ],
-    })
   })
 })

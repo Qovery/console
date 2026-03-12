@@ -8,15 +8,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { FunnelFlowBody } from '@qovery/shared/ui'
+import { prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { buildHpaAdvancedSettingsPayload } from '@qovery/shared/util-services'
 import { useCreateService } from '../../../../hooks/use-create-service/use-create-service'
 import { useDeployService } from '../../../../hooks/use-deploy-service/use-deploy-service'
 import { useEditAdvancedSettings } from '../../../../hooks/use-edit-advanced-settings/use-edit-advanced-settings'
 import { steps, useApplicationContainerCreateContext } from '../../application-container-creation-flow'
-import {
-  buildApplicationContainerCreatePayload,
-  prepareVariableImportRequest,
-} from '../application-container-summary-utils/application-container-summary-utils'
+import { buildApplicationContainerCreatePayload } from '../application-container-summary-utils/application-container-summary-utils'
 import { ApplicationContainerSummaryView } from '../application-container-summary-view/application-container-summary-view'
 
 export interface ApplicationContainerStepSummaryProps {

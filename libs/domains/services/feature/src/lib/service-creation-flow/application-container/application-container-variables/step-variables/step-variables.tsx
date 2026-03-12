@@ -1,4 +1,4 @@
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
+import { useParams } from '@tanstack/react-router'
 import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { FormProvider, useFieldArray } from 'react-hook-form'
@@ -8,12 +8,14 @@ import { FunnelFlowBody } from '@qovery/shared/ui'
 import { computeAvailableScope } from '@qovery/shared/util-js'
 import { useApplicationContainerCreateContext } from '../../application-container-creation-flow'
 
-export function ApplicationContainerStepVariables() {
-  const { setCurrentStep, variablesForm, portForm, generalForm, creationFlowUrl } =
-    useApplicationContainerCreateContext()
+export interface ApplicationContainerStepVariablesProps {
+  onBack: () => void
+  onSubmit: () => void | Promise<void>
+}
+
+export function ApplicationContainerStepVariables({ onBack, onSubmit }: ApplicationContainerStepVariablesProps) {
+  const { setCurrentStep, variablesForm, generalForm } = useApplicationContainerCreateContext()
   const { environmentId = '' } = useParams({ strict: false })
-  const search = useSearch({ strict: false })
-  const navigate = useNavigate()
 
   const serviceType = generalForm.getValues('serviceType') === 'APPLICATION' ? 'APPLICATION' : 'CONTAINER'
   const availableScopes = useMemo<APIVariableScopeEnum[]>(
@@ -43,21 +45,15 @@ export function ApplicationContainerStepVariables() {
     })
   }
 
-  const handleSubmit = variablesForm.handleSubmit(() => {
-    navigate({ to: `${creationFlowUrl}/summary`, search })
-  })
-
-  const handleBack = () => {
-    const hasPorts = Boolean(portForm.getValues('ports')?.length)
-    navigate({ to: `${creationFlowUrl}/${hasPorts ? 'health-checks' : 'ports'}`, search })
-  }
+  const handleSubmit = variablesForm.handleSubmit(async () => onSubmit())
 
   return (
     <FunnelFlowBody>
       <FormProvider {...variablesForm}>
         <FlowCreateVariable
+          environmentId={environmentId}
           availableScopes={availableScopes}
-          onBack={handleBack}
+          onBack={onBack}
           onSubmit={handleSubmit}
           onAdd={handleAddVariable}
           onRemove={remove}

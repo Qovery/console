@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   ApplicationContainerCreationFlow,
@@ -43,39 +42,10 @@ function VariablesState() {
   return <div data-testid="variables-state">{JSON.stringify(variablesForm.watch('variables'))}</div>
 }
 
-function VariablesFixture({ hasPorts = false }: { hasPorts?: boolean }) {
-  const { portForm } = useApplicationContainerCreateContext()
-  const [ready, setReady] = useState(false)
-
-  useEffect(() => {
-    portForm.reset({
-      ports: hasPorts
-        ? [
-            {
-              application_port: 3000,
-              is_public: true,
-              protocol: 'HTTP',
-              external_port: 443,
-              name: 'web',
-            },
-          ]
-        : [],
-      healthchecks: undefined,
-    })
-    setReady(true)
-  }, [hasPorts, portForm])
-
-  if (!ready) return null
-
-  return (
-    <>
-      <ApplicationContainerStepVariables />
-      <VariablesState />
-    </>
-  )
-}
-
 describe('ApplicationContainerStepVariables', () => {
+  const onBack = jest.fn()
+  const onSubmit = jest.fn()
+
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -86,7 +56,10 @@ describe('ApplicationContainerStepVariables', () => {
         creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application"
         defaultServiceType="APPLICATION"
       >
-        <VariablesFixture />
+        <>
+          <ApplicationContainerStepVariables onBack={onBack} onSubmit={onSubmit} />
+          <VariablesState />
+        </>
       </ApplicationContainerCreationFlow>
     )
 
@@ -97,44 +70,33 @@ describe('ApplicationContainerStepVariables', () => {
     })
   })
 
-  it('navigates to ports when going back without ports', async () => {
+  it('calls onBack when going back', async () => {
     const { userEvent } = renderWithProviders(
       <ApplicationContainerCreationFlow
         creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application"
         defaultServiceType="APPLICATION"
       >
-        <VariablesFixture />
+        <ApplicationContainerStepVariables onBack={onBack} onSubmit={onSubmit} />
       </ApplicationContainerCreationFlow>
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Back' }))
 
-    expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/application/ports',
-      search: { template: 'nextjs' },
-    })
+    expect(onBack).toHaveBeenCalled()
   })
 
-  it('navigates to summary on continue and back to health checks when ports exist', async () => {
+  it('calls onSubmit on continue', async () => {
     const { userEvent } = renderWithProviders(
       <ApplicationContainerCreationFlow
         creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application"
         defaultServiceType="APPLICATION"
       >
-        <VariablesFixture hasPorts />
+        <ApplicationContainerStepVariables onBack={onBack} onSubmit={onSubmit} />
       </ApplicationContainerCreationFlow>
     )
 
-    await userEvent.click(screen.getByRole('button', { name: 'Back' }))
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
 
-    expect(mockNavigate).toHaveBeenNthCalledWith(1, {
-      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/application/health-checks',
-      search: { template: 'nextjs' },
-    })
-    expect(mockNavigate).toHaveBeenNthCalledWith(2, {
-      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/application/summary',
-      search: { template: 'nextjs' },
-    })
+    expect(onSubmit).toHaveBeenCalled()
   })
 })
