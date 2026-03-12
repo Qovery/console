@@ -77,7 +77,6 @@ export function StepVariableFeature() {
     <FunnelFlowBody>
       <FormProvider {...methods}>
         <FlowCreateVariable
-          environmentId={environmentId}
           availableScopes={availableScopes}
           onBack={onBack}
           onSubmit={onSubmit}

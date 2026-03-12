@@ -1,24 +1,17 @@
-import { type PropsWithChildren, useEffect, useState } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import {
-  ApplicationContainerCreationFlow,
-  useApplicationContainerCreateContext,
-} from '../../application-container-creation-flow'
 import { ApplicationContainerStepSummary } from './step-summary'
 
 const mockNavigate = jest.fn()
+const mockSetCurrentStep = jest.fn()
 const mockCreateService = jest.fn()
 const mockImportVariables = jest.fn()
 const mockDeployService = jest.fn()
 const mockEditAdvancedSettings = jest.fn()
 const mockCapture = jest.fn()
+const mockUseApplicationContainerCreateContext = jest.fn()
 
 jest.mock('posthog-js', () => ({
   capture: (...args: unknown[]) => mockCapture(...args),
-}))
-
-jest.mock('@qovery/shared/assistant/feature', () => ({
-  AssistantTrigger: () => null,
 }))
 
 jest.mock('@tanstack/react-router', () => ({
@@ -52,60 +45,87 @@ jest.mock('../../../../hooks/use-edit-advanced-settings/use-edit-advanced-settin
   useEditAdvancedSettings: () => ({ mutateAsync: mockEditAdvancedSettings }),
 }))
 
-function SummaryFixture({ autoscalingMode = 'NONE' }: PropsWithChildren<{ autoscalingMode?: 'NONE' | 'HPA' }>) {
-  const { generalForm, resourcesForm, portForm, variablesForm } = useApplicationContainerCreateContext()
-  const [ready, setReady] = useState(false)
+jest.mock('../../application-container-creation-flow', () => ({
+  steps: Array.from({ length: 6 }, () => ({ title: 'step' })),
+  useApplicationContainerCreateContext: () => mockUseApplicationContainerCreateContext(),
+}))
 
-  useEffect(() => {
-    generalForm.reset({
-      name: 'console-app',
-      serviceType: 'APPLICATION',
-      auto_deploy: true,
-      repository: 'https://github.com/Qovery/console',
-      branch: 'staging',
-      root_path: '/',
-      dockerfile_path: 'Dockerfile',
-    })
-    resourcesForm.reset({
-      cpu: 500,
-      memory: 512,
-      gpu: 0,
-      min_running_instances: 1,
-      max_running_instances: 2,
-      autoscaling_mode: autoscalingMode,
-      hpa_metric_type: 'CPU',
-      hpa_cpu_average_utilization_percent: 60,
-    })
-    portForm.reset({
-      ports: [
-        {
-          application_port: 3000,
-          is_public: true,
-          protocol: 'HTTP',
-          external_port: 443,
-          name: 'web',
-        },
-      ],
-      healthchecks: undefined,
-    })
-    variablesForm.reset({
-      variables: [
-        {
-          variable: 'NODE_ENV',
-          value: 'production',
-          scope: 'APPLICATION',
-          isSecret: false,
-        },
-      ],
-    })
-    setReady(true)
-  }, [autoscalingMode, generalForm, portForm, resourcesForm, variablesForm])
+jest.mock('../application-container-summary-view/application-container-summary-view', () => ({
+  ApplicationContainerSummaryView: ({
+    generalData,
+    onSubmit,
+  }: {
+    generalData: { serviceType: 'APPLICATION' | 'CONTAINER' }
+    onSubmit: (withDeploy: boolean) => void
+  }) => (
+    <div>
+      <h1>Ready to create your {generalData.serviceType === 'APPLICATION' ? 'Application' : 'Container'}</h1>
+      <button data-testid="button-create" type="button" onClick={() => onSubmit(false)}>
+        Create
+      </button>
+      <button data-testid="button-create-deploy" type="button" onClick={() => onSubmit(true)}>
+        Create and deploy
+      </button>
+    </div>
+  ),
+}))
 
-  if (!ready) {
-    return null
-  }
+const generalData = {
+  name: 'console-app',
+  serviceType: 'APPLICATION' as const,
+  auto_deploy: true,
+  repository: 'https://github.com/Qovery/console',
+  branch: 'staging',
+  root_path: '/',
+  dockerfile_path: 'Dockerfile',
+}
 
-  return <ApplicationContainerStepSummary selectedRegistryName="Docker Hub" annotationsGroup={[]} labelsGroup={[]} />
+const portData = {
+  ports: [
+    {
+      application_port: 3000,
+      is_public: true,
+      protocol: 'HTTP',
+      external_port: 443,
+      name: 'web',
+    },
+  ],
+  healthchecks: undefined,
+}
+
+const variablesData = [
+  {
+    variable: 'NODE_ENV',
+    value: 'production',
+    scope: 'APPLICATION' as const,
+    isSecret: false,
+  },
+]
+
+function renderComponent({ autoscalingMode = 'NONE' }: { autoscalingMode?: 'NONE' | 'HPA' } = {}) {
+  mockUseApplicationContainerCreateContext.mockReturnValue({
+    creationFlowUrl: '/organization/org-1/project/proj-1/environment/env-1/service/create/application',
+    setCurrentStep: mockSetCurrentStep,
+    generalForm: { getValues: () => generalData },
+    resourcesForm: {
+      getValues: () => ({
+        cpu: 500,
+        memory: 512,
+        gpu: 0,
+        min_running_instances: 1,
+        max_running_instances: 2,
+        autoscaling_mode: autoscalingMode,
+        hpa_metric_type: 'CPU',
+        hpa_cpu_average_utilization_percent: 60,
+      }),
+    },
+    portForm: { getValues: () => portData },
+    variablesForm: { getValues: () => ({ variables: variablesData }) },
+  })
+
+  return renderWithProviders(
+    <ApplicationContainerStepSummary selectedRegistryName="Docker Hub" annotationsGroup={[]} labelsGroup={[]} />
+  )
 }
 
 describe('ApplicationContainerStepSummary', () => {
@@ -118,14 +138,10 @@ describe('ApplicationContainerStepSummary', () => {
   })
 
   it('renders summary and creates the service', async () => {
-    const { userEvent } = renderWithProviders(
-      <ApplicationContainerCreationFlow creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application">
-        <SummaryFixture />
-      </ApplicationContainerCreationFlow>
-    )
+    const { userEvent } = renderComponent()
 
-    expect(screen.getByTestId('funnel-body-content')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Ready to create your Application' })).toBeInTheDocument()
+    expect(mockSetCurrentStep).toHaveBeenCalledWith(6)
 
     await userEvent.click(screen.getByTestId('button-create'))
 
@@ -169,11 +185,7 @@ describe('ApplicationContainerStepSummary', () => {
   })
 
   it('deploys after create when create and deploy is clicked', async () => {
-    const { userEvent } = renderWithProviders(
-      <ApplicationContainerCreationFlow creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application">
-        <SummaryFixture autoscalingMode="HPA" />
-      </ApplicationContainerCreationFlow>
-    )
+    const { userEvent } = renderComponent({ autoscalingMode: 'HPA' })
 
     await userEvent.click(screen.getByTestId('button-create-deploy'))
 
