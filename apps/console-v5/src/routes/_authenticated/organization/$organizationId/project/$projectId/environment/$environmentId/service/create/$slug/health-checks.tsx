@@ -1,38 +1,31 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Suspense } from 'react'
-import {
-  ApplicationContainerStepPort,
-  type ApplicationContainerStepPortSubmitData,
-} from '@qovery/domains/services/feature'
+import { ApplicationContainerStepHealthchecks } from '@qovery/domains/services/feature'
 import { applicationContainerCreateParamsSchema } from '@qovery/shared/router'
 import { LoaderSpinner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/ports'
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/health-checks'
 )({
-  component: Ports,
+  component: Healthchecks,
   validateSearch: applicationContainerCreateParamsSchema,
 })
 
-function Ports() {
+function Healthchecks() {
   const { organizationId = '', projectId = '', environmentId = '', slug } = Route.useParams()
   const search = Route.useSearch()
   const navigate = useNavigate()
 
   const creationFlowUrl = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/create/${slug}`
 
-  useDocumentTitle('Ports - Create Service')
+  useDocumentTitle('Health checks - Create Service')
 
   const handleBack = () => {
-    navigate({ to: `${creationFlowUrl}/resources`, search })
+    navigate({ to: `${creationFlowUrl}/ports`, search })
   }
 
-  const handleSubmit = async ({ portData }: ApplicationContainerStepPortSubmitData) => {
-    if ((portData.ports?.length ?? 0) > 0) {
-      navigate({ to: `${creationFlowUrl}/health-checks`, search })
-      return
-    }
+  const handleSubmit = async () => {
     //@TODO: Next creation steps will be added later. For now, keep the form state in context only.
   }
 
@@ -44,7 +37,7 @@ function Ports() {
         </div>
       }
     >
-      <ApplicationContainerStepPort onBack={handleBack} onSubmit={handleSubmit} />
+      <ApplicationContainerStepHealthchecks onBack={handleBack} onSubmit={handleSubmit} />
     </Suspense>
   )
 }
