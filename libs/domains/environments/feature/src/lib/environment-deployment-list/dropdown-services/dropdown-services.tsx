@@ -357,7 +357,10 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                               <DropdownMenu.Item
                                 className="flex w-full cursor-pointer items-center justify-between gap-2 border-t border-neutral-200 bg-brand-50 px-2 py-2 text-xs text-brand-500 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
                                 onSelect={() => {
-                                  const executionId = 'execution_id' in deploymentHistory.identifier ? deploymentHistory.identifier.execution_id : undefined
+                                  const executionId =
+                                    'execution_id' in deploymentHistory.identifier
+                                      ? deploymentHistory.identifier.execution_id
+                                      : undefined
                                   const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
                                   setDevopsCopilotOpen(true)
                                   sendMessageRef?.current?.(message)
