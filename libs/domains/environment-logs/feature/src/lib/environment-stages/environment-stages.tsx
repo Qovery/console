@@ -65,7 +65,7 @@ export function EnvironmentStages({
             title="Hide skipped"
             className="flex-row-reverse gap-2"
           />
-          <EnvironmentActionToolbar variant="deployment" environment={environment} />
+          <EnvironmentActionToolbar variant="header" environment={environment} />
         </div>
       </HeaderEnvironmentStages>
       <hr className="mt-2 w-full border-neutral" />
