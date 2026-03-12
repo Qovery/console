@@ -1,5 +1,6 @@
 import { type default as FieldContainer } from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import { type default as CbInstance } from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
+import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { type BillingInfoRequest, type CreditCard } from 'qovery-typescript-axios'
 import { useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -22,6 +23,7 @@ import PageOrganizationBilling from '../../ui/page-organization-billing/page-org
 export function PageOrganizationBillingFeature() {
   useDocumentTitle('Billing details - Organization settings')
   const { organizationId = '' } = useParams()
+  const sendDataToGTM = useGTMDispatch()
   const { openModalConfirmation } = useModalConfirmation()
   const { data: creditCards = [], isLoading: isLoadingCreditCards } = useCreditCards({ organizationId })
   const { mutateAsync: deleteCreditCard } = useDeleteCreditCard()
@@ -85,6 +87,8 @@ export function PageOrganizationBillingFeature() {
           throw new Error('No token returned from Chargebee')
         }
 
+        const isFirstCard = creditCards.length === 0 && !editingCardId
+
         await addCreditCard({
           organizationId,
           creditCardRequest: {
@@ -95,6 +99,10 @@ export function PageOrganizationBillingFeature() {
             expiry_month: tokenData.card?.expiry_month || 0,
           },
         })
+
+        if (isFirstCard) {
+          sendDataToGTM({ event: 'trial_add_credit_card' })
+        }
 
         if (editingCardId) {
           await deleteCreditCard({ organizationId, creditCardId: editingCardId })

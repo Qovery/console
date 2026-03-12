@@ -5,6 +5,10 @@ import PageOrganizationBillingSummaryFeature from './page-organization-billing-s
 
 import SpyInstance = jest.SpyInstance
 
+jest.mock('@elgorditosalsero/react-gtm-hook', () => ({
+  useGTMDispatch: jest.fn(() => jest.fn()),
+}))
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1' }),

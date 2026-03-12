@@ -2,6 +2,10 @@ import posthog from 'posthog-js'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { PageNewFeature } from './page-new-feature'
 
+jest.mock('@elgorditosalsero/react-gtm-hook', () => ({
+  useGTMDispatch: jest.fn(() => jest.fn()),
+}))
+
 jest.mock('posthog-js', () => ({
   capture: jest.fn(),
 }))
