@@ -1,4 +1,3 @@
-import { useParams } from '@tanstack/react-router'
 import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { FormProvider, useFieldArray } from 'react-hook-form'
@@ -15,7 +14,6 @@ export interface ApplicationContainerStepVariablesProps {
 
 export function ApplicationContainerStepVariables({ onBack, onSubmit }: ApplicationContainerStepVariablesProps) {
   const { setCurrentStep, variablesForm, generalForm } = useApplicationContainerCreateContext()
-  const { environmentId = '' } = useParams({ strict: false })
 
   const serviceType = generalForm.getValues('serviceType') === 'APPLICATION' ? 'APPLICATION' : 'CONTAINER'
   const availableScopes = useMemo<APIVariableScopeEnum[]>(
@@ -51,7 +49,6 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
     <FunnelFlowBody>
       <FormProvider {...variablesForm}>
         <FlowCreateVariable
-          environmentId={environmentId}
           availableScopes={availableScopes}
           onBack={onBack}
           onSubmit={handleSubmit}
