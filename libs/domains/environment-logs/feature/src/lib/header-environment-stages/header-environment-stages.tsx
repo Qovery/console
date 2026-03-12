@@ -39,22 +39,22 @@ export function HeaderEnvironmentStages({
             <rect width="1" height="16" fill="var(--neutral-6)" />
           </svg>
 
-          <div className="flex items-center gap-2">
-            {environmentStatus?.state !== 'DEPLOYING' && (
+          {environmentStatus?.state !== 'DEPLOYING' && (
+            <div className="flex items-center gap-2">
               <Badge variant="surface" className="max-w-full whitespace-nowrap">
                 <span className="flex items-center gap-1.5">
                   <Icon iconName="calendar-day" className="text-xs text-neutral-subtle" />
                   {dateUTCString(environmentStatus.last_deployment_date ?? '')}
                 </span>
               </Badge>
-            )}
-            <Badge variant="surface" className="max-w-full whitespace-nowrap">
-              <span className="flex items-center gap-1.5">
-                <Icon iconName="stopwatch" iconStyle="regular" className="text-xs text-neutral-subtle" />
-                {Math.floor(totalDurationSec / 60)}m : {totalDurationSec % 60}s
-              </span>
-            </Badge>
-          </div>
+              <Badge variant="surface" className="max-w-full whitespace-nowrap">
+                <span className="flex items-center gap-1.5">
+                  <Icon iconName="stopwatch" iconStyle="regular" className="text-xs text-neutral-subtle" />
+                  {Math.floor(totalDurationSec / 60)}m : {totalDurationSec % 60}s
+                </span>
+              </Badge>
+            </div>
+          )}
         </div>
       </div>
       {children}

@@ -128,7 +128,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-rotate-right text-sm mr-2 text-brand-9"
+          class="fa-regular fa-rotate-right text-sm mr-2 min-w-5 text-brand-9"
         />
         Update
       </div>
@@ -141,7 +141,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-circle-stop text-sm mr-2 text-brand-9"
+          class="fa-regular fa-circle-stop text-sm mr-2 min-w-5 text-brand-9"
         />
         Stop
       </div>
@@ -285,7 +285,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-circle-info text-sm mr-2 text-brand-9"
+          class="fa-regular fa-circle-info text-sm mr-2 min-w-5 text-brand-9"
         />
         Access info
       </div>
@@ -298,7 +298,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-clock-rotate-left text-sm mr-2 text-brand-9"
+          class="fa-regular fa-clock-rotate-left text-sm mr-2 min-w-5 text-brand-9"
         />
         See audit logs
       </div>
@@ -311,7 +311,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-copy text-sm mr-2 text-brand-9"
+          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand-9"
         />
         Copy identifier
       </div>
@@ -326,7 +326,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-gear text-sm mr-2 text-brand-9"
+          class="fa-regular fa-gear text-sm mr-2 min-w-5 text-brand-9"
         />
         Open settings
       </a>
@@ -339,7 +339,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-download text-sm mr-2 text-brand-9"
+          class="fa-regular fa-download text-sm mr-2 min-w-5 text-brand-9"
         />
         Get Kubeconfig
       </div>
@@ -357,7 +357,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-trash text-sm mr-2 text-negative"
+          class="fa-regular fa-trash text-sm mr-2 min-w-5 text-negative"
         />
         Delete cluster
       </div>
@@ -501,7 +501,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-circle-info text-sm mr-2 text-brand-9"
+          class="fa-regular fa-circle-info text-sm mr-2 min-w-5 text-brand-9"
         />
         Access info
       </div>
@@ -514,7 +514,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-clock-rotate-left text-sm mr-2 text-brand-9"
+          class="fa-regular fa-clock-rotate-left text-sm mr-2 min-w-5 text-brand-9"
         />
         See audit logs
       </div>
@@ -527,7 +527,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-copy text-sm mr-2 text-brand-9"
+          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand-9"
         />
         Copy identifier
       </div>
@@ -542,7 +542,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-gear text-sm mr-2 text-brand-9"
+          class="fa-regular fa-gear text-sm mr-2 min-w-5 text-brand-9"
         />
         Open settings
       </a>
@@ -555,7 +555,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-download text-sm mr-2 text-brand-9"
+          class="fa-regular fa-download text-sm mr-2 min-w-5 text-brand-9"
         />
         Get Kubeconfig
       </div>
@@ -573,7 +573,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-trash text-sm mr-2 text-negative"
+          class="fa-regular fa-trash text-sm mr-2 min-w-5 text-negative"
         />
         Delete cluster
       </div>
