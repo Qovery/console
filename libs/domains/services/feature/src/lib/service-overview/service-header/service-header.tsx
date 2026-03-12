@@ -131,7 +131,7 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
               {environment.cluster_name}
             </div>
           </div>
-          <ServiceActionToolbar environment={environment} serviceId={serviceId} />
+          <ServiceActionToolbar environment={environment} serviceId={serviceId} variant="header" />
         </div>
         {service.description && <p className="text-neutral-subtle">{service.description}</p>}
         <div className="mt-3 flex items-center gap-1">

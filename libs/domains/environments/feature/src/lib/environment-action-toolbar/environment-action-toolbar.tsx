@@ -28,16 +28,16 @@ import useUninstallEnvironment from '../hooks/use-uninstall-environment/use-unin
 import { TerraformExportModal } from '../terraform-export-modal/terraform-export-modal'
 import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
-type ActionToolbarVariant = 'default' | 'deployment'
+type ActionToolbarVariant = 'default' | 'header'
 
 export function MenuManageDeployment({
   environment,
   deploymentStatus,
-  variant,
+  variant = 'default',
 }: {
   environment: Environment
   deploymentStatus: EnvironmentStatus
-  variant: ActionToolbarVariant
+  variant?: ActionToolbarVariant
 }) {
   const state = deploymentStatus.state
   const environmentNeedUpdate = deploymentStatus?.deployment_status !== EnvironmentDeploymentStatusEnum.UP_TO_DATE
@@ -143,13 +143,13 @@ export function MenuManageDeployment({
       <DropdownMenu.Trigger asChild>
         <Button
           aria-label="Manage Deployment"
-          color={displayYellowColor ? 'yellow' : 'neutral'}
-          size="sm"
-          variant="outline"
-          className="w-7"
+          color={displayYellowColor ? 'yellow' : variant === 'header' ? 'brand' : 'neutral'}
+          variant={variant === 'header' ? 'solid' : 'outline'}
+          size={variant === 'header' ? 'md' : 'sm'}
+          iconOnly={variant === 'default'}
         >
           <Tooltip content="Manage Deployment">
-            <div className="flex h-full w-full items-center justify-center">
+            <div className="flex h-full w-full items-center justify-center gap-1.5">
               {match(state)
                 .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', () => (
                   <Icon iconName="loader" className="animate-spin" />
@@ -160,11 +160,17 @@ export function MenuManageDeployment({
                 .otherwise(() => (
                   <Icon iconName="rocket" />
                 ))}
+              {variant === 'header' && (
+                <>
+                  Deploy
+                  <Icon iconName="chevron-down" />
+                </>
+              )}
             </div>
           </Tooltip>
         </Button>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content>
+      <DropdownMenu.Content align="end">
         {isCancelBuildAvailable(state) && (
           <DropdownMenu.Item icon={<Icon iconName="xmark" />} onSelect={mutationCancelDeployment}>
             {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment'}
@@ -237,7 +243,15 @@ export function MenuManageDeployment({
   )
 }
 
-export function MenuOtherActions({ state, environment }: { state: StateEnum; environment: Environment }) {
+export function MenuOtherActions({
+  state,
+  environment,
+  variant = 'default',
+}: {
+  state: StateEnum
+  environment: Environment
+  variant?: ActionToolbarVariant
+}) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteEnvironment } = useDeleteEnvironment({ projectId: environment.project.id })
@@ -278,7 +292,13 @@ export function MenuOtherActions({ state, environment }: { state: StateEnum; env
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <Button aria-label="Other actions" color="neutral" size="sm" variant="outline" className="w-7">
+        <Button
+          aria-label="Other actions"
+          color="neutral"
+          size={variant === 'header' ? 'md' : 'sm'}
+          iconOnly
+          variant="outline"
+        >
           <Tooltip content="Other actions">
             <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="ellipsis-v" iconStyle="solid" />

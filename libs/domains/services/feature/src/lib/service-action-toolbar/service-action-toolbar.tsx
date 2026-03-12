@@ -28,16 +28,7 @@ import {
   isJobContainerSource,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import {
-  ActionToolbar,
-  DropdownMenu,
-  Icon,
-  Link,
-  Skeleton,
-  Tooltip,
-  useModal,
-  useModalConfirmation,
-} from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, Link, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
   isCancelBuildAvailable,
@@ -46,6 +37,7 @@ import {
   isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
+  twMerge,
   urlCodeEditor,
 } from '@qovery/shared/util-js'
 import { ConfirmationCancelLifecycleModal } from '../confirmation-cancel-lifecycle-modal/confirmation-cancel-lifecycle-modal'
@@ -66,7 +58,7 @@ import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
 import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
 
-type ActionToolbarVariant = 'default' | 'deployment'
+type ActionToolbarVariant = 'default' | 'header'
 
 function MenuManageDeployment({
   deploymentStatus,
@@ -370,30 +362,35 @@ function MenuManageDeployment({
 
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button
+      <DropdownMenu.Trigger>
+        <Button
           aria-label="Manage Deployment"
-          color={displayYellowColor ? 'yellow' : 'neutral'}
-          size={variant === 'default' ? 'md' : 'sm'}
-          variant={variant === 'default' ? 'outline' : 'surface'}
-          radius={variant === 'deployment' ? 'rounded' : 'none'}
+          color={displayYellowColor ? 'yellow' : variant === 'header' ? 'brand' : 'neutral'}
+          variant={variant === 'header' ? 'solid' : 'outline'}
+          size={variant === 'header' ? 'md' : 'sm'}
+          iconOnly={variant === 'default'}
         >
           <Tooltip content="Manage Deployment">
-            <div className="flex h-full w-full items-center justify-center">
+            <div className="flex h-full w-full items-center justify-center gap-1.5">
               {match(state)
                 .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', () => (
-                  <Icon iconName="loader" className="mr-3 animate-spin" />
+                  <Icon iconName="loader" className="animate-spin" />
                 ))
                 .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', () => (
-                  <Icon iconName="clock" iconStyle="regular" className="mr-3" />
+                  <Icon iconName="clock" iconStyle="regular" />
                 ))
                 .otherwise(() => (
-                  <Icon iconName="play" className="mr-4" />
+                  <Icon iconName="rocket" />
                 ))}
-              <Icon iconName="chevron-down" />
+              {variant === 'header' && (
+                <>
+                  <span>Deploy</span>
+                  <Icon iconName="chevron-down" />
+                </>
+              )}
             </div>
           </Tooltip>
-        </ActionToolbar.Button>
+        </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         {isCancelBuildAvailable(state) && (
@@ -684,10 +681,14 @@ function MenuOtherActions({
   state,
   environment,
   service,
+  shellAction,
+  variant,
 }: {
   state: StateEnum
   environment: Environment
   service: AnyService
+  shellAction?: () => void
+  variant?: ActionToolbarVariant
 }) {
   const {
     id: environmentId,
@@ -845,15 +846,34 @@ function MenuOtherActions({
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button aria-label="Other actions">
+        <Button aria-label="Other actions" variant="outline" size={variant === 'header' ? 'md' : 'sm'} iconOnly>
           <Tooltip content="Other actions">
             <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="ellipsis-v" />
             </div>
           </Tooltip>
-        </ActionToolbar.Button>
+        </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
+        <DropdownMenu.Item icon={<Icon iconName="scroll" />} asChild>
+          <Link
+            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+            params={{
+              organizationId: environment.organization.id,
+              projectId: environment.project.id,
+              environmentId: environment.id,
+              serviceId: service.id,
+            }}
+            className="gap-0"
+          >
+            Logs
+          </Link>
+        </DropdownMenu.Item>
+        {shellAction && (
+          <DropdownMenu.Item icon={<Icon iconName="terminal" />} onSelect={shellAction}>
+            Cloud shell
+          </DropdownMenu.Item>
+        )}
         {editCodeUrl && (
           <a href={editCodeUrl} target="_blank" rel="noreferrer">
             <DropdownMenu.Item icon={<Icon iconName="code" />}>Edit code</DropdownMenu.Item>
@@ -871,7 +891,7 @@ function MenuOtherActions({
               environmentId,
             }}
           >
-            See audit logs
+            Audit logs
           </Link>
         </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(copyContent)}>
@@ -920,42 +940,21 @@ export function ServiceActionToolbar({
     return <Skeleton height={variant === 'default' ? 36 : 28} width={variant === 'default' ? 184 : 67} />
 
   return (
-    <ActionToolbar.Root>
+    <div className={twMerge('flex gap-1.5', variant === 'header' && 'flex-row-reverse gap-2')}>
       <MenuManageDeployment
         deploymentStatus={deploymentStatus}
         environment={environment}
         service={service}
         variant={variant}
       />
-      {variant === 'default' && (
-        <>
-          <Tooltip content="Logs">
-            <ActionToolbar.Button asChild>
-              <Link
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
-                params={{
-                  organizationId: environment.organization.id,
-                  projectId: environment.project.id,
-                  environmentId: environment.id,
-                  serviceId: service.id,
-                }}
-                color="neutral"
-              >
-                <Icon iconName="scroll" />
-              </Link>
-            </ActionToolbar.Button>
-          </Tooltip>
-          {shellAction && (
-            <Tooltip content="Qovery cloud shell">
-              <ActionToolbar.Button onClick={shellAction}>
-                <Icon iconName="terminal" />
-              </ActionToolbar.Button>
-            </Tooltip>
-          )}
-          <MenuOtherActions state={deploymentStatus.state} environment={environment} service={service} />
-        </>
-      )}
-    </ActionToolbar.Root>
+      <MenuOtherActions
+        state={deploymentStatus.state}
+        environment={environment}
+        service={service}
+        shellAction={shellAction}
+        variant={variant}
+      />
+    </div>
   )
 }
 

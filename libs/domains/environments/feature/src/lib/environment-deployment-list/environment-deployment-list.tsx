@@ -213,7 +213,6 @@ export function EnvironmentDeploymentList() {
                     )
                   )
                   .otherwise(() => null)}
-                {/* TODO new-nav : Route not yet created */}
                 {/*<Tooltip content="Pipeline">
                   <Link
                     as="button"
