@@ -68,6 +68,7 @@ function InstanceMetricsTable({
   isServiceLoading,
 }: InstanceMetricsMemoizedProps) {
   const [sorting, setSorting] = useState<SortingState>([])
+  const [hoveredRowId, setHoveredRowId] = useState<string | null>(null)
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, () => true)
@@ -337,8 +338,10 @@ function InstanceMetricsTable({
                 <Table.Row
                   className={clsx(
                     'hover:bg-surface-neutral-subtle',
-                    row.getIsExpanded() && 'bg-surface-neutral-subtle'
+                    hoveredRowId === row.id && 'bg-surface-neutral-subtle'
                   )}
+                  onMouseEnter={() => setHoveredRowId(row.id)}
+                  onMouseLeave={() => setHoveredRowId(null)}
                   onClick={row.getToggleExpandedHandler()}
                 >
                   {row.getVisibleCells().map((cell, index) => (
@@ -368,7 +371,11 @@ function InstanceMetricsTable({
                   ))}
                 </Table.Row>
                 {row.getIsExpanded() && row.original.containers && service.serviceType && (
-                  <Table.Row className="bg-surface-neutral-subtle text-xs">
+                  <Table.Row
+                    className={clsx('text-xs', hoveredRowId === row.id && 'bg-surface-neutral-subtle')}
+                    onMouseEnter={() => setHoveredRowId(row.id)}
+                    onMouseLeave={() => setHoveredRowId(null)}
+                  >
                     {/* 2nd row is a custom 1 cell row */}
                     <Table.Cell colSpan={row.getVisibleCells().length} className="p-0">
                       <PodDetails pod={row.original} serviceId={serviceId} serviceType={service.serviceType} />
