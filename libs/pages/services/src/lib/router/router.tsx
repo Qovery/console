@@ -1,10 +1,5 @@
 import {
   type Route,
-  SERVICES_CREATION_GENERAL_URL,
-  SERVICES_CREATION_PORTS_URL,
-  SERVICES_CREATION_POST_URL,
-  SERVICES_CREATION_RESOURCES_URL,
-  SERVICES_CREATION_VARIABLES_URL,
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_POST_URL,
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
@@ -31,11 +26,6 @@ import {
   SERVICES_TERRAFORM_CREATION_SUMMARY_URL,
   SERVICES_VARIABLES_URL,
 } from '@qovery/shared/routes'
-import { StepGeneralFeature as ApplicationStepGeneralFeature } from '../feature/page-application-create-feature/step-general-feature/step-general-feature'
-import { StepPortFeature as ApplicationStepPortFeature } from '../feature/page-application-create-feature/step-port-feature/step-port-feature'
-import { StepResourcesFeature as ApplicationStepResourcesFeature } from '../feature/page-application-create-feature/step-resources-feature/step-resources-feature'
-import { StepSummaryFeature as ApplicationStepSummaryFeature } from '../feature/page-application-create-feature/step-summary-feature/step-summary-feature'
-import { StepVariableFeature as ApplicationStepVariablesFeature } from '../feature/page-application-create-feature/step-variable-feature/step-variable-feature'
 import { StepGeneralFeature as DatabaseStepGeneralFeature } from '../feature/page-database-create-feature/step-general-feature/step-general-feature'
 import { StepResourcesFeature as DatabaseStepResourcesFeature } from '../feature/page-database-create-feature/step-resources-feature/step-resources-feature'
 import { StepSummaryFeature as DatabaseStepSummaryFeature } from '../feature/page-database-create-feature/step-summary-feature/step-summary-feature'
@@ -109,28 +99,7 @@ export const ROUTER_ENVIRONMENTS_SETTINGS: Route[] = [
   },
 ]
 
-export const ROUTER_SERVICE_CREATION: Route[] = [
-  {
-    path: SERVICES_CREATION_GENERAL_URL,
-    component: <ApplicationStepGeneralFeature />,
-  },
-  {
-    path: SERVICES_CREATION_RESOURCES_URL,
-    component: <ApplicationStepResourcesFeature />,
-  },
-  {
-    path: SERVICES_CREATION_PORTS_URL,
-    component: <ApplicationStepPortFeature />,
-  },
-  {
-    path: SERVICES_CREATION_POST_URL,
-    component: <ApplicationStepSummaryFeature />,
-  },
-  {
-    path: SERVICES_CREATION_VARIABLES_URL,
-    component: <ApplicationStepVariablesFeature />,
-  },
-]
+export const ROUTER_SERVICE_CREATION: Route[] = []
 
 export const ROUTER_SERVICE_DATABASE_CREATION: Route[] = [
   {

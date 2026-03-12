@@ -14,6 +14,7 @@ export interface InputTextProps {
   dataTestId?: string
   rightElement?: ReactNode
   placeholder?: string
+  autoFocus?: boolean
 }
 
 export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function InputText(props, ref) {
@@ -30,6 +31,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
     rightElement,
     dataTestId,
     placeholder,
+    autoFocus,
   } = props
 
   const [focused, setFocused] = useState(false)
@@ -93,6 +95,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
               disabled={disabled}
               value={currentValue}
               placeholder={placeholder}
+              autoFocus={autoFocus}
               onChange={(e) => {
                 if (onChange) onChange(e)
                 setCurrentValue(e.currentTarget.value)

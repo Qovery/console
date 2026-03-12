@@ -33,7 +33,7 @@ function Ports() {
       navigate({ to: `${creationFlowUrl}/health-checks`, search })
       return
     }
-    //@TODO: Next creation steps will be added later. For now, keep the form state in context only.
+    navigate({ to: `${creationFlowUrl}/variables`, search })
   }
 
   return (

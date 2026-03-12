@@ -132,6 +132,7 @@ export function ApplicationContainerPortCrudModal({
             className="mb-5"
             type="number"
             name={field.name}
+            autoFocus
             onChange={(e: FormEvent<HTMLInputElement>) => {
               setValue('name', `p${e.currentTarget.value}`)
               field.onChange(e)

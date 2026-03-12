@@ -9,7 +9,6 @@ import { PageEnvironmentLogs } from '@qovery/pages/logs/environment'
 import { PageInfraLogs } from '@qovery/pages/logs/infra'
 import { OverviewPage } from '@qovery/pages/overview/feature'
 import {
-  PageApplicationCreateFeature,
   PageDatabaseCreateFeature,
   PageHelmCreateFeature,
   PageJobCreateFeature,
@@ -34,8 +33,6 @@ import {
   INFRA_LOGS_URL,
   ORGANIZATION_URL,
   OVERVIEW_URL,
-  SERVICES_APPLICATION_CREATION_URL,
-  SERVICES_APPLICATION_TEMPLATE_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DATABASE_TEMPLATE_CREATION_URL,
@@ -139,18 +136,6 @@ export const ROUTER: RouterProps[] = [
   {
     path: `${SERVICES_URL()}${SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL()}/*`,
     component: <PageJobCreateFeature />,
-    protected: true,
-    layout: false,
-  },
-  {
-    path: `${SERVICES_URL()}${SERVICES_APPLICATION_CREATION_URL}/*`,
-    component: <PageApplicationCreateFeature />,
-    protected: true,
-    layout: false,
-  },
-  {
-    path: `${SERVICES_URL()}${SERVICES_APPLICATION_TEMPLATE_CREATION_URL()}/*`,
-    component: <PageApplicationCreateFeature />,
     protected: true,
     layout: false,
   },
