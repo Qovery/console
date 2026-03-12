@@ -82,7 +82,7 @@ export function HeaderLogs({
           </span>
           {type === 'DEPLOYMENT' && (
             <>
-              <ServiceActionToolbar variant="deployment" serviceId={serviceId} environment={environment} />
+              <ServiceActionToolbar variant="default" serviceId={serviceId} environment={environment} />
               {deploymentHistory?.trigger_action && (
                 <>
                   <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">

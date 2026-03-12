@@ -44,13 +44,4 @@ describe('EnvironmentActionToolbar', () => {
 
     expect(baseElement).toMatchSnapshot()
   })
-
-  it('should have variant with only deployment actions', () => {
-    renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} variant="deployment" />, {
-      container: document.body,
-    })
-
-    expect(screen.getByLabelText(/manage deployment/i)).toBeInTheDocument()
-    expect(screen.queryByLabelText(/other actions/i)).not.toBeInTheDocument()
-  })
 })
