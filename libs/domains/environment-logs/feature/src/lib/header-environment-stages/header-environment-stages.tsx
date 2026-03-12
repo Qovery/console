@@ -1,11 +1,8 @@
 import clsx from 'clsx'
 import { type DeploymentHistoryEnvironmentV2, type Environment, type EnvironmentStatus } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { EnvironmentActionToolbar } from '@qovery/domains/environments/feature'
-import { IconEnum } from '@qovery/shared/enums'
-import { ActionTriggerStatusChip, Icon, Tooltip } from '@qovery/shared/ui'
+import { Badge, DeploymentAction, Icon, StatusChip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface HeaderEnvironmentStagesProps extends PropsWithChildren {
   environment: Environment
@@ -25,61 +22,38 @@ export function HeaderEnvironmentStages({
     <div className="flex h-12 w-full items-center justify-between">
       <div className="flex h-full">
         <div
-          className={clsx('flex h-full items-center gap-3 text-sm font-medium text-neutral', {
+          className={clsx('flex h-full items-center gap-4 text-sm font-medium text-neutral', {
             'pr-2': environmentStatus?.state === 'DEPLOYING',
           })}
         >
-          <span className="flex items-center gap-2">
-            <span className="flex items-center gap-2.5">
-              <Icon name={IconEnum.SERVICES} />
-              {environment.name}
-            </span>
-            {environmentStatus.last_deployment_id && (
-              <Tooltip content={`Execution id: ${environmentStatus.last_deployment_id}`} side="bottom">
-                <span>
-                  <Icon className="text-base" iconName="circle-info" iconStyle="regular" />
-                </span>
-              </Tooltip>
-            )}
-          </span>
-          <EnvironmentActionToolbar variant="deployment" environment={environment} />
-          {deploymentHistory?.trigger_action && (
-            <>
-              <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
-                <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
-              </svg>
-              <Tooltip
-                content={
-                  <>
-                    Action: {upperCaseFirstLetter(environmentStatus?.last_deployment_state)} <br /> Status:{' '}
-                    {upperCaseFirstLetter(deploymentHistory.trigger_action).replace(/_/g, ' ')}
-                  </>
-                }
-                side="bottom"
-              >
-                <span>
-                  <ActionTriggerStatusChip
-                    size="sm"
-                    status={environmentStatus?.last_deployment_state}
-                    triggerAction={deploymentHistory.trigger_action}
-                  />
-                </span>
-              </Tooltip>
-            </>
-          )}
+          <div className="flex items-center justify-between gap-3">
+            <DeploymentAction
+              status={deploymentHistory?.trigger_action}
+              className="gap-3 text-2xl"
+              iconClassName="text-neutral-subtle"
+            />
+            <StatusChip status={environmentStatus.state} className="h-5 w-5" />
+          </div>
+
+          <svg width="1" height="16" viewBox="0 0 1 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="1" height="16" fill="var(--neutral-6)" />
+          </svg>
+
           {environmentStatus?.state !== 'DEPLOYING' && (
-            <>
-              <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
-                <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
-              </svg>
-              <span
-                className="flex items-center gap-1.5"
-                title={dateUTCString(environmentStatus.last_deployment_date ?? '')}
-              >
-                <Icon iconName="stopwatch" iconStyle="regular" className="text-base text-neutral-subtle" />
-                {Math.floor(totalDurationSec / 60)}m : {totalDurationSec % 60}s
-              </span>
-            </>
+            <div className="flex items-center gap-2">
+              <Badge variant="surface" className="max-w-full whitespace-nowrap">
+                <span className="flex items-center gap-1.5">
+                  <Icon iconName="calendar-day" className="text-xs text-neutral-subtle" />
+                  {dateUTCString(environmentStatus.last_deployment_date ?? '')}
+                </span>
+              </Badge>
+              <Badge variant="surface" className="max-w-full whitespace-nowrap">
+                <span className="flex items-center gap-1.5">
+                  <Icon iconName="stopwatch" iconStyle="regular" className="text-xs text-neutral-subtle" />
+                  {Math.floor(totalDurationSec / 60)}m : {totalDurationSec % 60}s
+                </span>
+              </Badge>
+            </div>
           )}
         </div>
       </div>

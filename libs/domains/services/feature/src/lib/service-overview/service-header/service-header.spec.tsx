@@ -221,8 +221,8 @@ jest.mock('../../service-access-modal/service-access-modal', () => ({
   getDatabaseConnectionUri: () => mockGetDatabaseConnectionUri(),
 }))
 
-jest.mock('../../service-action-toolbar/service-action-toolbar', () => ({
-  ServiceActionToolbar: () => <div>service-action-toolbar</div>,
+jest.mock('../../service-actions/service-actions', () => ({
+  ServiceActions: () => <div>service-action-toolbar</div>,
 }))
 
 jest.mock('../../service-avatar/service-avatar', () => ({

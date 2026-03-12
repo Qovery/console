@@ -7,6 +7,7 @@ import {
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
 import { type Dispatch, type PropsWithChildren, type SetStateAction } from 'react'
+import { EnvironmentActionToolbar } from '@qovery/domains/environments/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_PRE_CHECK_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, InputToggle, Link, LoaderSpinner, StageStatusChip, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -55,15 +56,16 @@ export function EnvironmentStages({
         environmentStatus={environmentStatus}
         deploymentHistory={deploymentHistory}
       >
-        <div className="flex items-center gap-2 text-sm font-medium text-neutral">
+        <div className="flex items-center gap-4 text-sm font-medium text-neutral">
           <InputToggle
             name="skipped"
             value={hideSkipped}
             onChange={setHideSkipped}
             small
             title="Hide skipped"
-            className="flex-row-reverse gap-3"
+            className="flex-row-reverse gap-2"
           />
+          <EnvironmentActionToolbar variant="header" environment={environment} />
         </div>
       </HeaderEnvironmentStages>
       <hr className="mt-2 w-full border-neutral" />

@@ -100,11 +100,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
         <div className="flex h-full items-center justify-end gap-1.5">
           {environment && overview.deployment_status && overview.service_count > 0 && (
             <>
-              <MenuManageDeployment
-                environment={environment}
-                deploymentStatus={overview.deployment_status}
-                variant="default"
-              />
+              <MenuManageDeployment environment={environment} deploymentStatus={overview.deployment_status} />
               <MenuOtherActions environment={environment} state={overview.deployment_status?.last_deployment_state} />
             </>
           )}

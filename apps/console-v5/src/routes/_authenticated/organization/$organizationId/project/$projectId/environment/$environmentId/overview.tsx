@@ -1,6 +1,12 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
-import { EnvironmentMode, useEnvironment } from '@qovery/domains/environments/feature'
+import {
+  EnvironmentMode,
+  MenuManageDeployment,
+  MenuOtherActions,
+  useDeploymentStatus,
+  useEnvironment,
+} from '@qovery/domains/environments/feature'
 import { ServiceList } from '@qovery/domains/services/feature'
 import { Heading, Icon, Link, Section, Skeleton, TablePrimitives } from '@qovery/shared/ui'
 
@@ -43,8 +49,9 @@ function Services() {
 function EnvironmentOverview() {
   const { environmentId } = useParams({ strict: false })
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, suspense: true })
 
-  if (!environment) {
+  if (!environment || !deploymentStatus) {
     return null
   }
 
@@ -56,6 +63,15 @@ function EnvironmentOverview() {
             <div className="flex items-center gap-3">
               <EnvironmentMode mode={environment.mode} variant="shrink" />
               <Heading>{environment?.name}</Heading>
+            </div>
+
+            <div className="flex gap-2">
+              <MenuOtherActions
+                environment={environment}
+                state={deploymentStatus.last_deployment_state}
+                variant="header"
+              />
+              <MenuManageDeployment environment={environment} deploymentStatus={deploymentStatus} variant="header" />
             </div>
           </div>
           <hr className="w-full border-neutral" />

@@ -94,7 +94,7 @@ const dropdownMenuItemVariants = cva(
   }
 )
 
-const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-2'], {
+const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-2', 'min-w-5'], {
   variants: {
     color: {
       brand: [],
