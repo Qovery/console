@@ -162,7 +162,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   aria-controls="radix-:r9:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral-250"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral"
                   data-state="closed"
                   type="button"
                 >
@@ -376,7 +376,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   aria-controls="radix-:rf:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral-250"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral"
                   data-state="closed"
                   type="button"
                 >

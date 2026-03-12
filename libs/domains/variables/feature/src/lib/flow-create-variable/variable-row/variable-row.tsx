@@ -1,7 +1,7 @@
+import { useParams } from '@tanstack/react-router'
 import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
 import { BlockContent, Button, Icon, InputSelectSmall, InputTextSmall, InputToggle, Tooltip } from '@qovery/shared/ui'
 import { generateScopeLabel } from '@qovery/shared/util-js'
@@ -16,6 +16,7 @@ export interface VariableRowProps {
 }
 
 export function VariableRow(props: VariableRowProps) {
+  const { environmentId = '' } = useParams({ strict: false })
   const { index, availableScopes, gridTemplateColumns = '172px 172px 188px 2fr 1fr' } = props
   const { control, trigger, watch } = useFormContext<FlowVariableData>()
   const [openEditor, setOpenEditor] = useState(true)
@@ -23,7 +24,6 @@ export function VariableRow(props: VariableRowProps) {
   const watchReadOnly = watch().variables[index]?.isReadOnly
   const watchFile = watch().variables[index]?.file
   const watchDescription = watch().variables[index]?.description
-  const { environmentId = '' } = useParams()
 
   const patternNoSpaces = /^[^\s]+$/
   const patternValidVariable = /^[a-zA-Z_][a-zA-Z0-9_]*$/
@@ -51,12 +51,12 @@ export function VariableRow(props: VariableRowProps) {
           render={({ field, fieldState: { error } }) =>
             watchReadOnly ? (
               <Tooltip content={field.value}>
-                <div className="flex items-center justify-between truncate rounded border border-neutral-200 bg-neutral-100 px-2 text-sm text-neutral-350">
+                <div className="flex items-center justify-between truncate rounded border border-neutral bg-surface-neutral-subtle px-2 text-sm text-neutral-subtle">
                   <span className="max-w-full truncate">{field.value}</span>
                   {watchDescription && (
                     <Tooltip content={watchDescription}>
                       <span>
-                        <Icon className="text-neutral-400" iconName="info-circle" iconStyle="regular" />
+                        <Icon className="text-neutral-subtle" iconName="info-circle" iconStyle="regular" />
                       </span>
                     </Tooltip>
                   )}
@@ -82,18 +82,18 @@ export function VariableRow(props: VariableRowProps) {
             color="neutral"
             variant="surface"
             type="button"
-            className="h-[36px] flex-1 shrink-0 grow justify-between"
+            className="h-9 flex-1 shrink-0 grow justify-between"
             onClick={() => setOpenEditor((open) => !open)}
           >
             {openEditor ? (
               <>
                 Close
-                <Icon iconName="angle-up" className="text-neutral-400" />
+                <Icon iconName="angle-up" className="text-neutral-subtle" />
               </>
             ) : (
               <>
                 Edit
-                <Icon iconName="edit" className="text-neutral-400" />
+                <Icon iconName="edit" className="text-neutral-subtle" />
               </>
             )}
           </Button>

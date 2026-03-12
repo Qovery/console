@@ -26,7 +26,7 @@ function Healthchecks() {
   }
 
   const handleSubmit = async () => {
-    //@TODO: Next creation steps will be added later. For now, keep the form state in context only.
+    navigate({ to: `${creationFlowUrl}/variables`, search })
   }
 
   return (

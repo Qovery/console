@@ -22,9 +22,9 @@ const WebSocketListenerMemo = memo(MetricsWebSocketListener)
 function RouteComponent() {
   const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
 
-  const { data: service } = useService({ environmentId, serviceId })
-  const { data: environment } = useEnvironment({ environmentId })
-  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
+  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '', suspense: true })
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
 
   const hasNoMetrics = useMemo(
     () =>
