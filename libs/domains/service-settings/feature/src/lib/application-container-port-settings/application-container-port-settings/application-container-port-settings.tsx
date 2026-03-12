@@ -191,16 +191,14 @@ function ApplicationContainerPortSettingsContent() {
 
       return (
         <Section className="p-8">
-          <div className="max-w-content-with-navigation-left">
-            <ApplicationContainerPortSettingsList
-              ports={service.ports}
-              livenessProbeType={service.healthchecks?.liveness_probe?.type}
-              readinessProbeType={service.healthchecks?.readiness_probe?.type}
-              onAddPort={() => openPortModal()}
-              onEditPort={(port) => openPortModal(port)}
-              onRemovePort={onDeletePort}
-            />
-          </div>
+          <ApplicationContainerPortSettingsList
+            ports={service.ports}
+            livenessProbeType={service.healthchecks?.liveness_probe?.type}
+            readinessProbeType={service.healthchecks?.readiness_probe?.type}
+            onAddPort={() => openPortModal()}
+            onEditPort={(port) => openPortModal(port)}
+            onRemovePort={onDeletePort}
+          />
         </Section>
       )
     })

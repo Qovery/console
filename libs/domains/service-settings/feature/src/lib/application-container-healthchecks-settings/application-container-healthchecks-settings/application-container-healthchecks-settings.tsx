@@ -99,40 +99,41 @@ function ApplicationContainerHealthchecksSettingsContent() {
 
   return (
     <Section className="p-8">
-      <div className="max-w-content-with-navigation-left space-y-6">
-        {'min_running_instances' in service && service.min_running_instances === 1 ? (
-          <Callout.Root color="yellow">
-            <Callout.Icon>
-              <Icon iconName="triangle-exclamation" iconStyle="regular" />
-            </Callout.Icon>
-            <Callout.Text className="text-neutral-subtle">
-              If you need higher availability during upgrades, review your{' '}
-              <Link
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/resources"
-                params={{ organizationId, projectId, environmentId, serviceId }}
-              >
-                resources configuration
-              </Link>
-              .
-            </Callout.Text>
-          </Callout.Root>
-        ) : null}
-
+      <div className="space-y-6">
         <SettingsHeading
           title="Health checks"
           description="Health checks define how Kubernetes verifies if your service is alive and ready to receive traffic."
         />
+        <div className="max-w-content-with-navigation-left space-y-6">
+          {'min_running_instances' in service && service.min_running_instances === 1 ? (
+            <Callout.Root color="yellow">
+              <Callout.Icon>
+                <Icon iconName="triangle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text className="text-neutral-subtle">
+                If you need higher availability during upgrades, review your{' '}
+                <Link
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/resources"
+                  params={{ organizationId, projectId, environmentId, serviceId }}
+                >
+                  resources configuration
+                </Link>
+                .
+              </Callout.Text>
+            </Callout.Root>
+          ) : null}
 
-        <FormProvider {...methods}>
-          <form onSubmit={onSubmit}>
-            <ApplicationContainerHealthchecksForm ports={service.ports?.map((port) => port.internal_port) ?? []} />
-            <div className="flex justify-end">
-              <Button type="submit" size="lg" loading={isLoading}>
-                Save
-              </Button>
-            </div>
-          </form>
-        </FormProvider>
+          <FormProvider {...methods}>
+            <form onSubmit={onSubmit}>
+              <ApplicationContainerHealthchecksForm ports={service.ports?.map((port) => port.internal_port) ?? []} />
+              <div className="flex justify-end">
+                <Button type="submit" size="lg" loading={isLoading}>
+                  Save
+                </Button>
+              </div>
+            </form>
+          </FormProvider>
+        </div>
       </div>
     </Section>
   )

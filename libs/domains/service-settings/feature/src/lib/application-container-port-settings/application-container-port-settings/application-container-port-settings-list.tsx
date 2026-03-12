@@ -1,5 +1,6 @@
 import { type ProbeType, type ServicePort } from 'qovery-typescript-axios'
 import { PortListRows } from '@qovery/domains/services/feature'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { BlockContent, Button, EmptyState, Heading, Icon } from '@qovery/shared/ui'
 import { isMatchingPortHealthCheck } from '../is-matching-port-healthcheck'
 
@@ -23,20 +24,18 @@ export function ApplicationContainerPortSettingsList({
   return (
     <>
       <div className="mb-10 flex justify-between">
-        <div>
-          <Heading className="mb-2">Ports</Heading>
-          <p className="text-sm text-neutral-subtle">
-            Declare TCP/UDP ports used by your application. Declared ports are accessible from other applications within
-            the same environment. You can also expose them on the internet by making them public.
-          </p>
-        </div>
-        <Button size="md" variant="solid" color="brand" type="button" data-testid="add-button" onClick={onAddPort}>
-          Add port
-          <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
-        </Button>
+        <SettingsHeading
+          title="Ports"
+          description="Declare TCP/UDP ports used by your application. Declared ports are accessible from other applications within the same environment. You can also expose them on the internet by making them public. Declared ports are also used to check the liveness/readiness of your application."
+        >
+          <Button size="md" variant="solid" color="brand" type="button" data-testid="add-button" onClick={onAddPort}>
+            Add port
+            <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
+          </Button>
+        </SettingsHeading>
       </div>
 
-      <div className="mb-10">
+      <div className="mb-10 max-w-content-with-navigation-left">
         {ports && ports.length > 0 ? (
           <BlockContent title="Configured ports" classNameContent="p-0">
             <PortListRows
