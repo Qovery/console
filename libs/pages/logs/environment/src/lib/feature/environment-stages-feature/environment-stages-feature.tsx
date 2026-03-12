@@ -145,7 +145,7 @@ export function EnvironmentStagesFeature({
               buttonLabel="Launch diagnostic"
               buttonIconRight="angle-right"
               onClickButton={() => {
-                const message = 'Why did my deployment fail?'
+                const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
                 setDevopsCopilotOpen(true)
                 sendMessageRef?.current?.(message)
               }}

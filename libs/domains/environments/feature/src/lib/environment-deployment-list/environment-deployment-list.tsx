@@ -290,7 +290,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                             <div
                               className="flex cursor-pointer items-center gap-1.5"
                               onClick={() => {
-                                const message = 'Why did my deployment fail?'
+                                const message = `Why did my deployment fail? (deployment id: ${data.identifier.execution_id})`
                                 setDevopsCopilotOpen(true)
                                 sendMessageRef?.current?.(message)
                               }}
@@ -305,7 +305,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                         >
                           <div
                             onClick={() => {
-                              const message = 'Why did my deployment fail?'
+                              const message = `Why did my deployment fail? (deployment id: ${data.identifier.execution_id})`
                               setDevopsCopilotOpen(true)
                               sendMessageRef?.current?.(message)
                             }}

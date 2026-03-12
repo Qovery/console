@@ -115,6 +115,7 @@ export const mutations = {
       project?: { id: string }
       environment?: { id: string; cluster_id?: string }
       service?: { service_type?: string; id?: string }
+      deployment?: { execution_id?: string }
     }
     signal?: AbortSignal
   }) => {
@@ -134,6 +135,7 @@ export const mutations = {
           cluster_id: context?.environment?.cluster_id,
           service_type: context?.service?.service_type,
           service_id: context?.service?.id,
+          deployment_id: context?.deployment?.execution_id,
           text: message,
           instructions: 'Please provide a concise response in Markdown format',
           stream: true,

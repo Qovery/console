@@ -303,6 +303,17 @@ export function ListDeploymentLogs({
 
   const lastLogTimestamp = logs.length > 0 ? logs[logs.length - 1]?.timestamp : undefined
 
+  const isCrashLoopDetected = useMemo(() => {
+    if (!isDeploymentProgressing) return false
+    const warningCounts = new Map<string, number>()
+    for (const log of logs) {
+      const text = log.message?.safe_message ?? ''
+      if (!text.includes('⚠️')) continue
+      warningCounts.set(text, (warningCounts.get(text) ?? 0) + 1)
+    }
+    return [...warningCounts.values()].some((count) => count >= 3)
+  }, [logs, isDeploymentProgressing])
+
   const isError = serviceStatus?.state?.includes('ERROR')
 
   function HeaderLogsComponent() {
@@ -385,6 +396,25 @@ export function ListDeploymentLogs({
       <div className="h-[calc(100vh-64px)] w-full p-1">
         <div className="h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
           <HeaderLogsComponent />
+          {(isError || isCrashLoopDetected || preCheckStage?.status === 'ERROR') && (
+            <Banner
+              color="brand"
+              buttonLabel="Launch diagnostic"
+              buttonIconRight="angle-right"
+              onClickButton={() => {
+                const message = `Why did my deployment fail?${versionId ? ` (deployment id: ${versionId})` : ''}`
+                setDevopsCopilotOpen(true)
+                sendMessageRef?.current?.(message)
+              }}
+            >
+              <span className="flex items-center gap-1.5">
+                <Icon iconName="sparkles" />
+                {isCrashLoopDetected && !isError
+                  ? 'AI Copilot detected a potential issue during this deployment'
+                  : 'AI Copilot identified likely causes and fixes for this deployment error'}
+              </span>
+            </Banner>
+          )}
           <div className="flex h-[calc(100%-48px)] flex-col items-center justify-between bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">
               <DeploymentLogsPlaceholder
@@ -437,21 +467,23 @@ export function ListDeploymentLogs({
             }
           }}
         >
-          {isError && (
+          {(isError || isCrashLoopDetected) && (
             <div className="sticky top-0 z-10">
               <Banner
                 color="brand"
                 buttonLabel="Launch diagnostic"
                 buttonIconRight="angle-right"
                 onClickButton={() => {
-                  const message = 'Why did my deployment fail?'
+                  const message = `Why did my deployment fail?${versionId ? ` (deployment id: ${versionId})` : ''}`
                   setDevopsCopilotOpen(true)
                   sendMessageRef?.current?.(message)
                 }}
               >
                 <span className="flex items-center gap-1.5">
                   <Icon iconName="sparkles" />
-                  AI Copilot identified likely causes and fixes for this deployment error
+                  {isCrashLoopDetected && !isError
+                    ? 'AI Copilot detected a potential issue during this deployment'
+                    : 'AI Copilot identified likely causes and fixes for this deployment error'}
                 </span>
               </Banner>
             </div>

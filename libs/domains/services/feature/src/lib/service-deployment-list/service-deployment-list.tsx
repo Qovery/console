@@ -316,7 +316,8 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                             <div
                               className="flex cursor-pointer items-center gap-1.5"
                               onClick={() => {
-                                const message = 'Why did my deployment fail?'
+                                const executionId = isDeploymentHistory(data) ? data.identifier.execution_id : undefined
+                                const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
                                 setDevopsCopilotOpen(true)
                                 sendMessageRef?.current?.(message)
                               }}
@@ -331,7 +332,8 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                         >
                           <div
                             onClick={() => {
-                              const message = 'Why did my deployment fail?'
+                              const executionId = isDeploymentHistory(data) ? data.identifier.execution_id : undefined
+                              const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
                               setDevopsCopilotOpen(true)
                               sendMessageRef?.current?.(message)
                             }}
