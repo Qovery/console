@@ -108,9 +108,7 @@ function MenuManageDeployment({
 
   const tooltipService = (content: string) => (
     <Tooltip side="bottom" content={content}>
-      <div className="absolute right-2">
-        <Icon iconName="circle-exclamation" iconStyle="regular" />
-      </div>
+      <Icon iconName="circle-exclamation" iconStyle="regular" />
     </Tooltip>
   )
 
@@ -362,7 +360,7 @@ function MenuManageDeployment({
 
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger>
+      <DropdownMenu.Trigger asChild>
         <Button
           aria-label="Manage Deployment"
           color={displayYellowColor ? 'yellow' : variant === 'header' ? 'brand' : 'neutral'}
@@ -445,11 +443,12 @@ function MenuManageDeployment({
                 <DropdownMenu.Item
                   icon={<Icon iconName="play" />}
                   onSelect={mutationDeploy}
-                  className="relative"
                   color={displayYellowColor ? 'yellow' : 'brand'}
                 >
-                  Deploy
-                  {tooltipServiceNeedUpdate}
+                  <div className="flex w-full items-center justify-between">
+                    Deploy
+                    {tooltipServiceNeedUpdate}
+                  </div>
                 </DropdownMenu.Item>
               )}
               {isRedeployAvailable(state) && (
@@ -523,8 +522,10 @@ function MenuManageDeployment({
                   ))}
               {isStopAvailable(state) && (
                 <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
-                  Stop
-                  {tooltipService('Stop compute resources *but* keep the data')}
+                  <div className="flex w-full items-center justify-between">
+                    Stop
+                    {tooltipService('Stop compute resources *but* keep the data')}
+                  </div>
                 </DropdownMenu.Item>
               )}
             </>
