@@ -1,3 +1,4 @@
+import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCreditCards, useCurrentCost } from '@qovery/domains/organizations/feature'
 import { AddCreditCardModalFeature } from '@qovery/shared/console-shared'
@@ -14,6 +15,7 @@ export function PageOrganizationBillingSummaryFeature() {
   useDocumentTitle('Billing summary - Organization settings')
 
   const { openModal, closeModal } = useModal()
+  const sendDataToGTM = useGTMDispatch()
 
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
@@ -60,8 +62,14 @@ export function PageOrganizationBillingSummaryFeature() {
   }
 
   const handleAddCreditCardClick = () => {
+    const isFirstCard = creditCards.length === 0
     openModal({
-      content: <AddCreditCardModalFeature organizationId={organizationId} />,
+      content: (
+        <AddCreditCardModalFeature
+          organizationId={organizationId}
+          onSuccess={isFirstCard ? () => sendDataToGTM({ event: 'trial_add_credit_card' }) : undefined}
+        />
+      ),
     })
   }
 

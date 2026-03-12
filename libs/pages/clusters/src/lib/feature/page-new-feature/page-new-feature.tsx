@@ -1,3 +1,4 @@
+import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import clsx from 'clsx'
 import AWS from 'devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg'
 import Azure from 'devicon/icons/azure/azure-original.svg'
@@ -390,6 +391,7 @@ export function PageNewFeature() {
   const { organizationId = '' } = useParams()
   useDocumentTitle('Create new cluster - Qovery')
   const { openModal, closeModal } = useModal()
+  const sendDataToGTM = useGTMDispatch()
   const { isClusterCreationRestricted, isNoCreditCardRestriction } = useClusterCreationRestriction({
     organizationId,
   })
@@ -413,7 +415,12 @@ export function PageNewFeature() {
 
   const openCreditCardModal = () =>
     openModal({
-      content: <AddCreditCardModalFeature organizationId={organizationId} />,
+      content: (
+        <AddCreditCardModalFeature
+          organizationId={organizationId}
+          onSuccess={() => sendDataToGTM({ event: 'trial_add_credit_card' })}
+        />
+      ),
     })
 
   const cloudProviders: CardClusterProps[] = [
