@@ -155,12 +155,11 @@ describe('ApplicationContainerStepSummary', () => {
       },
     })
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId',
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
       params: {
         organizationId: 'org-1',
         projectId: 'proj-1',
         environmentId: 'env-1',
-        serviceId: 'service-1',
       },
     })
     expect(mockCapture).toHaveBeenCalledWith('create-service', {

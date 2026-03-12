@@ -132,12 +132,11 @@ export function ApplicationContainerStepSummary({
       })
 
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId',
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
         params: {
           organizationId,
           projectId,
           environmentId,
-          serviceId: service.id,
         },
       })
     } catch {
