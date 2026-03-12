@@ -45,7 +45,10 @@ function RouteComponent() {
     <div className="flex h-[calc(100dvh-108px)] w-full flex-col overflow-hidden">
       {isLogsLoading && !isLogsFetched ? (
         <div className="flex h-full flex-1 flex-col items-center justify-center">
-          <LoaderDots />
+          <div className="flex flex-col items-center justify-center gap-3">
+            <LoaderDots />
+            <p className="text-neutral">Cluster logs are loading…</p>
+          </div>
         </div>
       ) : isLogsFetched && logs.length > 0 ? (
         <>
