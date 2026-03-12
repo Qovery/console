@@ -45,7 +45,7 @@ export type UseServiceProps =
  * https://www.typescriptlang.org/docs/handbook/2/functions.html#function-overloads
  **/
 export function useService(props: {
-  environmentId: string
+  environmentId?: string
   serviceId?: string
   suspense?: boolean
 }): UseQueryResult<AnyService>
