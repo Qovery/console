@@ -17,7 +17,7 @@ import { containerRegistryKindToIcon, upperCaseFirstLetter } from '@qovery/share
 import AutoDeployBadge from '../../auto-deploy-badge/auto-deploy-badge'
 import { useMasterCredentials } from '../../hooks/use-master-credentials/use-master-credentials'
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
-import { ServiceActionToolbar } from '../../service-action-toolbar/service-action-toolbar'
+import { ServiceActions } from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
 import { ServiceLinksPopover } from '../../service-links-popover/service-links-popover'
 import { ServiceStateChip } from '../../service-state-chip/service-state-chip'
@@ -131,7 +131,7 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
               {environment.cluster_name}
             </div>
           </div>
-          <ServiceActionToolbar environment={environment} serviceId={serviceId} variant="header" />
+          <ServiceActions environment={environment} serviceId={serviceId} variant="header" />
         </div>
         {service.description && <p className="text-neutral-subtle">{service.description}</p>}
         <div className="mt-3 flex items-center gap-1">

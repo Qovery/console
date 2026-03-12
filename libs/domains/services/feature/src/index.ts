@@ -45,7 +45,7 @@ export * from './lib/hooks/use-list-deployment-stages/use-list-deployment-stages
 export * from './lib/hooks/use-metrics/use-metrics'
 export * from './lib/hooks/use-recent-services/use-recent-services'
 export * from './lib/hooks/use-favorite-services/use-favorite-services'
-export * from './lib/service-action-toolbar/service-action-toolbar'
+export * from './lib/service-actions/service-actions'
 export * from './lib/service-deployment-status-label/service-deployment-status-label'
 export * from './lib/service-overview/service-header/service-header'
 export * from './lib/service-links-popover/service-links-popover'

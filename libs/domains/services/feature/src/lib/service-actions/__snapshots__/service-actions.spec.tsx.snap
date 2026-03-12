@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
+exports[`ServiceActions should match manage deployment snapshot 1`] = `
 <body
   data-scroll-locked="1"
   style="pointer-events: none;"
@@ -139,7 +139,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
 </body>
 `;
 
-exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
+exports[`ServiceActions should match other actions snapshot 1`] = `
 <body
   data-scroll-locked="1"
   style="pointer-events: none;"

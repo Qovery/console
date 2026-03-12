@@ -5,7 +5,7 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { AnimatedGradientText, Badge, Button, Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { formatCronExpression, pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import useDeploymentStatus from '../../hooks/use-deployment-status/use-deployment-status'
-import ServiceActionToolbar from '../../service-action-toolbar/service-action-toolbar'
+import ServiceActions from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
 import ServiceLinksPopover from '../../service-links-popover/service-links-popover'
 import ServiceTemplateIndicator from '../../service-template-indicator/service-template-indicator'
@@ -202,7 +202,7 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
           </div>
         </div>
         <div onClick={(e) => e.stopPropagation()}>
-          <ServiceActionToolbar
+          <ServiceActions
             serviceId={service.id}
             environment={environment}
             shellAction={() => {

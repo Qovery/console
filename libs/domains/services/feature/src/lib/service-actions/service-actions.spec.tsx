@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { environmentFactoryMock, helmFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { ServiceActionToolbar } from './service-action-toolbar'
+import { ServiceActions } from './service-actions'
 
 const mockHelm = helmFactoryMock(1)[0]
 const mockEnvironment = environmentFactoryMock(1)[0]
@@ -34,10 +34,10 @@ jest.mock('../hooks/use-deployment-status/use-deployment-status', () => {
   }
 })
 
-describe('ServiceActionToolbar', () => {
+describe('ServiceActions', () => {
   it('should match manage deployment snapshot', async () => {
     const { userEvent, baseElement } = renderWithProviders(
-      <ServiceActionToolbar serviceId={mockHelm.id} environment={mockEnvironment} />,
+      <ServiceActions serviceId={mockHelm.id} environment={mockEnvironment} />,
       {
         container: document.body,
       }
@@ -50,7 +50,7 @@ describe('ServiceActionToolbar', () => {
 
   it('should match other actions snapshot', async () => {
     const { userEvent, baseElement } = renderWithProviders(
-      <ServiceActionToolbar serviceId={mockHelm.id} environment={mockEnvironment} />,
+      <ServiceActions serviceId={mockHelm.id} environment={mockEnvironment} />,
       {
         container: document.body,
       }

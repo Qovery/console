@@ -8,7 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useMemo } from 'react'
 import {
-  ServiceActionToolbar,
+  ServiceActions,
   ServiceAvatar,
   ServiceLinksPopover,
   useLinks,
@@ -82,7 +82,7 @@ export function HeaderLogs({
           </span>
           {type === 'DEPLOYMENT' && (
             <>
-              <ServiceActionToolbar variant="default" serviceId={serviceId} environment={environment} />
+              <ServiceActions variant="default" serviceId={serviceId} environment={environment} />
               {deploymentHistory?.trigger_action && (
                 <>
                   <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">

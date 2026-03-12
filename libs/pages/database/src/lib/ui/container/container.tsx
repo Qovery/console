@@ -8,7 +8,7 @@ import { type AnyService, type Database } from '@qovery/domains/services/data-ac
 import {
   NeedRedeployFlag,
   ServiceAccessModal,
-  ServiceActionToolbar,
+  ServiceActions,
   ServiceAvatar,
   ServiceStateChip,
   ServiceTerminalContext,
@@ -75,7 +75,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
       <Skeleton width={150} height={36} show={!service}>
         <div className="flex">
           {environment && service && (
-            <ServiceActionToolbar
+            <ServiceActions
               serviceId={service.id}
               environment={environment}
               shellAction={(service as Database).mode === 'CONTAINER' ? () => setOpen(true) : undefined}

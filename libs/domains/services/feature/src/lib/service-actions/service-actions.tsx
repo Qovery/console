@@ -925,7 +925,7 @@ function MenuOtherActions({
   )
 }
 
-export function ServiceActionToolbar({
+export function ServiceActions({
   environment,
   serviceId,
   shellAction,
@@ -983,4 +983,4 @@ export function ServiceActionToolbar({
   )
 }
 
-export default ServiceActionToolbar
+export default ServiceActions
