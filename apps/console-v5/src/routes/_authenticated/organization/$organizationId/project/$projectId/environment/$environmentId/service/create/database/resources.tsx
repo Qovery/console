@@ -29,12 +29,13 @@ function Resources() {
   const generalValues = generalForm.getValues()
   const databaseType = generalValues.type ?? 'POSTGRESQL'
 
-  const { data: environment } = useEnvironment({ environmentId })
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const cloudProvider = environment?.cloud_provider.provider as CloudProviderEnum | undefined
   const { data: cluster } = useCluster({
     organizationId,
     clusterId: environment?.cluster_id ?? '',
     enabled: Boolean(environment?.cluster_id),
+    suspense: true,
   })
   const { data: databaseInstanceTypes } = useCloudProviderDatabaseInstanceTypes(
     match(cloudProvider ?? CloudProviderEnum.AWS)
