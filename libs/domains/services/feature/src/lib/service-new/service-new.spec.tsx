@@ -74,8 +74,8 @@ describe('ServiceNew', () => {
     expect(screen.getByRole('heading', { name: 'More template' })).toBeInTheDocument()
   })
 
-  it('should link database entries to the database create flow', () => {
-    const { container } = renderWithProviders(
+  it('should link database entries to the database create flow', async () => {
+    const { container, userEvent } = renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
 
@@ -84,6 +84,9 @@ describe('ServiceNew', () => {
         'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database"]'
       )
     ).toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('PostgreSQL'))
+
     expect(
       container.querySelector(
         'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database?template=postgresql&option=container"]'

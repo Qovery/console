@@ -35,7 +35,7 @@ describe('DatabaseSummaryView', () => {
     expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument()
     expect(screen.getByTestId('button-create')).toBeInTheDocument()
     expect(screen.getByTestId('button-create-deploy')).toBeInTheDocument()
-    expect(screen.getByText('Postgresql')).toBeInTheDocument()
+    expect(screen.getByText('PostgreSQL')).toBeInTheDocument()
   })
 
   it('shows the managed callout and instance type for managed databases', () => {
