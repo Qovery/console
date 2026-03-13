@@ -6,12 +6,19 @@ import {
   DatabaseModeEnum,
   DatabaseTypeEnum,
 } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { DatabaseCreationFlow, useDatabaseCreateContext } from '../database-creation-flow'
+import { type ReactNode } from 'react'
+import { useForm } from 'react-hook-form'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { type DatabaseCreateGeneralData, type DatabaseCreateResourcesData } from '../database-create-utils'
+import {
+  DatabaseCreateContext,
+  type DatabaseCreateContextInterface,
+  defaultDatabaseResourcesData,
+} from '../database-creation-flow'
 import { DatabaseStepGeneral } from './step-general'
 
 const mockOnSubmit = jest.fn()
+const mockSetCurrentStep = jest.fn()
 const mockSearch = {
   template: 'postgresql',
   option: 'container',
@@ -67,39 +74,77 @@ jest.mock('@tanstack/react-router', () => ({
   useSearch: () => mockSearch,
 }))
 
-function FormInitializer() {
-  const { generalForm } = useDatabaseCreateContext()
+interface TestProviderProps {
+  children: ReactNode
+  generalValues?: Partial<DatabaseCreateGeneralData>
+  resourcesValues?: Partial<DatabaseCreateResourcesData>
+}
 
-  useEffect(() => {
-    generalForm.setValue('name', 'postgres', { shouldValidate: true })
-    generalForm.setValue('type', DatabaseTypeEnum.POSTGRESQL, { shouldValidate: true })
-    generalForm.setValue('mode', DatabaseModeEnum.CONTAINER, { shouldValidate: true })
-    generalForm.setValue('version', '16', { shouldValidate: true })
-    generalForm.setValue('accessibility', DatabaseAccessibilityEnum.PRIVATE, { shouldValidate: true })
-  }, [generalForm])
+function TestProvider({ children, generalValues, resourcesValues }: TestProviderProps) {
+  const generalForm = useForm<DatabaseCreateGeneralData>({
+    mode: 'onChange',
+    defaultValues: {
+      name: '',
+      description: '',
+      accessibility: DatabaseAccessibilityEnum.PRIVATE,
+      icon_uri: 'app://qovery-console/postgresql',
+      mode: DatabaseModeEnum.CONTAINER,
+      type: DatabaseTypeEnum.POSTGRESQL,
+      version: '',
+      labels_groups: [],
+      annotations_groups: [],
+      ...generalValues,
+    },
+  })
 
-  return null
+  const resourcesForm = useForm<DatabaseCreateResourcesData>({
+    mode: 'onChange',
+    defaultValues: {
+      ...defaultDatabaseResourcesData,
+      ...resourcesValues,
+    },
+  })
+
+  const value: DatabaseCreateContextInterface = {
+    currentStep: 1,
+    setCurrentStep: mockSetCurrentStep,
+    creationFlowUrl: '/organization/org-1/project/proj-1/environment/env-1/service/create/database',
+    generalForm,
+    resourcesForm,
+  }
+
+  return <DatabaseCreateContext.Provider value={value}>{children}</DatabaseCreateContext.Provider>
+}
+
+function renderComponent({
+  generalValues,
+  resourcesValues,
+}: {
+  generalValues?: Partial<DatabaseCreateGeneralData>
+  resourcesValues?: Partial<DatabaseCreateResourcesData>
+} = {}) {
+  return renderWithProviders(
+    <TestProvider generalValues={generalValues} resourcesValues={resourcesValues}>
+      <DatabaseStepGeneral
+        onSubmit={mockOnSubmit}
+        labelSetting={<div data-testid="label-setting">Labels</div>}
+        annotationSetting={<div data-testid="annotation-setting">Annotations</div>}
+        cloudProvider="AWS"
+        cluster={cluster}
+        clusterVpc={clusterVpc}
+        databaseConfigurations={databaseConfigurations}
+      />
+    </TestProvider>
+  )
 }
 
 describe('DatabaseStepGeneral', () => {
   beforeEach(() => {
-    mockOnSubmit.mockClear()
+    jest.clearAllMocks()
   })
 
   it('renders successfully with database sections', () => {
-    renderWithProviders(
-      <DatabaseCreationFlow creationFlowUrl="/create/database">
-        <DatabaseStepGeneral
-          onSubmit={mockOnSubmit}
-          labelSetting={<div data-testid="label-setting">Labels</div>}
-          annotationSetting={<div data-testid="annotation-setting">Annotations</div>}
-          cloudProvider="AWS"
-          cluster={cluster}
-          clusterVpc={clusterVpc}
-          databaseConfigurations={databaseConfigurations}
-        />
-      </DatabaseCreationFlow>
-    )
+    renderComponent()
 
     expect(screen.getByRole('heading', { name: 'PostgreSQL - Container' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Database mode' })).toBeInTheDocument()
@@ -108,30 +153,26 @@ describe('DatabaseStepGeneral', () => {
   })
 
   it('submits the form when required values are present', async () => {
-    const { userEvent } = renderWithProviders(
-      <DatabaseCreationFlow creationFlowUrl="/create/database">
-        <FormInitializer />
-        <DatabaseStepGeneral
-          onSubmit={mockOnSubmit}
-          labelSetting={<div>Labels</div>}
-          annotationSetting={<div>Annotations</div>}
-          cloudProvider="AWS"
-          cluster={cluster}
-          clusterVpc={clusterVpc}
-          databaseConfigurations={databaseConfigurations}
-        />
-      </DatabaseCreationFlow>
-    )
-
-    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
-
-    expect(mockOnSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({
+    renderComponent({
+      generalValues: {
         name: 'postgres',
         type: DatabaseTypeEnum.POSTGRESQL,
         mode: DatabaseModeEnum.CONTAINER,
         version: '16',
-      })
-    )
+        accessibility: DatabaseAccessibilityEnum.PRIVATE,
+      },
+    })
+    ;(document.querySelector('form') as HTMLFormElement).requestSubmit()
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'postgres',
+          type: DatabaseTypeEnum.POSTGRESQL,
+          mode: DatabaseModeEnum.CONTAINER,
+          version: '16',
+        })
+      )
+    })
   })
 })

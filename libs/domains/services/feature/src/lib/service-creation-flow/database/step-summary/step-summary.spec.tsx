@@ -9,6 +9,26 @@ const mockDeployService = jest.fn()
 const mockCapture = jest.fn()
 const mockUseDatabaseCreateContext = jest.fn()
 
+const baseContextValue = {
+  creationFlowUrl: '/organization/org-1/project/proj-1/environment/env-1/service/create/database',
+  setCurrentStep: mockSetCurrentStep,
+  generalForm: {
+    getValues: () => ({
+      name: 'postgres',
+      accessibility: DatabaseAccessibilityEnum.PRIVATE,
+      mode: DatabaseModeEnum.MANAGED,
+      type: DatabaseTypeEnum.POSTGRESQL,
+      version: '16',
+    }),
+  },
+  resourcesForm: {
+    getValues: () => ({
+      storage: 20,
+      instance_type: 'db.t3.small',
+    }),
+  },
+}
+
 jest.mock('posthog-js', () => ({
   capture: (...args: unknown[]) => mockCapture(...args),
 }))
@@ -54,39 +74,21 @@ jest.mock('../database-summary-view/database-summary-view', () => ({
   ),
 }))
 
-function renderComponent() {
-  mockUseDatabaseCreateContext.mockReturnValue({
-    creationFlowUrl: '/organization/org-1/project/proj-1/environment/env-1/service/create/database',
-    setCurrentStep: mockSetCurrentStep,
-    generalForm: {
-      getValues: () => ({
-        name: 'postgres',
-        accessibility: DatabaseAccessibilityEnum.PRIVATE,
-        mode: DatabaseModeEnum.MANAGED,
-        type: DatabaseTypeEnum.POSTGRESQL,
-        version: '16',
-      }),
-    },
-    resourcesForm: {
-      getValues: () => ({
-        storage: 20,
-        instance_type: 'db.t3.small',
-      }),
-    },
-  })
-
+function setup() {
+  mockUseDatabaseCreateContext.mockReturnValue(baseContextValue)
   return renderWithProviders(<DatabaseStepSummary labelsGroup={[]} annotationsGroup={[]} />)
 }
 
 describe('DatabaseStepSummary', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseDatabaseCreateContext.mockReturnValue(baseContextValue)
     mockCreateService.mockResolvedValue({ id: 'database-1' })
     mockDeployService.mockResolvedValue(undefined)
   })
 
   it('creates the database and navigates to overview', async () => {
-    const { userEvent } = renderComponent()
+    const { userEvent } = setup()
 
     expect(mockSetCurrentStep).toHaveBeenCalledWith(3)
     await userEvent.click(screen.getByTestId('button-create'))
@@ -117,7 +119,7 @@ describe('DatabaseStepSummary', () => {
   })
 
   it('deploys after create when create and deploy is clicked', async () => {
-    const { userEvent } = renderComponent()
+    const { userEvent } = setup()
 
     await userEvent.click(screen.getByTestId('button-create-deploy'))
 

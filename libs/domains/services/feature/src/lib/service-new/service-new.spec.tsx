@@ -74,7 +74,7 @@ describe('ServiceNew', () => {
     expect(screen.getByRole('heading', { name: 'More template' })).toBeInTheDocument()
   })
 
-  it('should link database entries to the modern database create flow', () => {
+  it('should link database entries to the database create flow', () => {
     const { container } = renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
