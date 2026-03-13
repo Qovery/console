@@ -80,10 +80,12 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
     [navigate]
   )
 
-  if (!items || items.length === 0) {
+  if (!items || items.length <= 1) {
     return (
-      <span className="text-sm font-medium text-neutral">
+      <span className="flex items-center gap-1.5 text-sm font-medium text-neutral">
+        {item.prefix}
         <Truncate text={item.label} truncateLimit={30} />
+        {item.suffix}
       </span>
     )
   }
