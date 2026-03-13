@@ -103,8 +103,9 @@ describe('ServiceDomainSettings', () => {
   it('renders for application services', () => {
     renderWithProviders(<ServiceDomainSettings />)
 
-    expect(screen.getByText('Domain')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('example.com')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'Domain' })).toBeInTheDocument()
+    expect(screen.getByText('Configured domains')).toBeInTheDocument()
+    expect(screen.getByText('example.com')).toBeInTheDocument()
   })
 
   it('renders for helm services', () => {
@@ -112,7 +113,7 @@ describe('ServiceDomainSettings', () => {
 
     renderWithProviders(<ServiceDomainSettings />)
 
-    expect(screen.getByText('Domain')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'Domain' })).toBeInTheDocument()
   })
 
   it('does not render for unsupported service types', () => {

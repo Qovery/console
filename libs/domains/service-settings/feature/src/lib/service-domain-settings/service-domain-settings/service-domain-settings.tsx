@@ -12,7 +12,7 @@ import {
   EmptyState,
   ExternalLink,
   Icon,
-  InputText,
+  InputTextSmall,
   Link,
   LoaderSpinner,
   Section,
@@ -191,8 +191,8 @@ function ServiceDomainSettingsContent({
           <LoaderSpinner />
         </div>
       ) : customDomains && customDomains.length > 0 ? (
-        <BlockContent title="Configured domains" classNameContent="space-y-5">
-          {customDomains.map((customDomain) => {
+        <BlockContent title="Configured domains" classNameContent="p-0">
+          {customDomains.map((customDomain, index) => {
             const checkedCustomDomain = checkedCustomDomains?.find(
               ({ domain_name }) => customDomain.domain === domain_name
             )
@@ -200,72 +200,74 @@ function ServiceDomainSettingsContent({
             return (
               <div
                 key={`domain-${customDomain.domain}-${customDomain.id}`}
-                className="flex w-full items-center justify-between gap-3"
+                className="flex w-full items-center justify-between gap-2 border-b border-neutral px-4 py-3 last:border-0"
                 data-testid="form-row"
               >
-                <InputText
-                  name={`domain-${customDomain.domain}-${customDomain.id}`}
-                  className="flex-1 shrink-0 grow"
-                  value={customDomain.domain}
-                  label="Default Domain"
-                  disabled
-                />
-                <Tooltip
-                  disabled={isFetchingCheckedCustomDomains}
-                  content={
-                    <div className="max-w-64">
-                      <span className="text-xs font-medium">Click to check set-up again.</span>
-                      {checkedCustomDomain?.error_details ? (
-                        <p className="text-[11px] font-normal">{checkedCustomDomain.error_details}</p>
-                      ) : null}
-                    </div>
-                  }
-                >
+                <div className="flex flex-col">
+                  <h2 className="mb-1 flex text-xs font-medium text-neutral">Domain #{index + 1}</h2>
+                  <p className="text-xs text-neutral-subtle">
+                    URL: <span className="text-neutral">{customDomain.domain}</span>
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Tooltip
+                    disabled={isFetchingCheckedCustomDomains}
+                    content={
+                      <div className="max-w-64">
+                        <span className="text-xs font-medium">Click to check set-up again.</span>
+                        {checkedCustomDomain?.error_details ? (
+                          <p className="text-[11px] font-normal">{checkedCustomDomain.error_details}</p>
+                        ) : null}
+                      </div>
+                    }
+                  >
+                    <Button
+                      data-testid="recheck-button"
+                      variant="outline"
+                      color="neutral"
+                      size="md"
+                      type="button"
+                      className="group relative"
+                      onClick={() => refetchCheckCustomDomains()}
+                      iconOnly
+                    >
+                      {isFetchingCheckedCustomDomains ? (
+                        <LoaderSpinner className="absolute left-0 right-0 m-auto group-hover:hidden" />
+                      ) : checkedCustomDomain?.error_details ? (
+                        <Icon
+                          iconName="circle-exclamation"
+                          iconStyle="regular"
+                          className="text-negative group-hover:hidden"
+                        />
+                      ) : (
+                        <Icon iconName="check" className="text-positive group-hover:hidden" />
+                      )}
+                      <Icon iconName="arrow-rotate-right" className="hidden group-hover:block" />
+                    </Button>
+                  </Tooltip>
                   <Button
-                    data-testid="recheck-button"
+                    data-testid="edit-button"
                     variant="outline"
                     color="neutral"
-                    size="lg"
+                    size="md"
                     type="button"
-                    className="group relative h-[52px] w-[52px] justify-center"
-                    onClick={() => refetchCheckCustomDomains()}
+                    onClick={() => onOpenCrudModal(customDomain)}
+                    iconOnly
                   >
-                    {isFetchingCheckedCustomDomains ? (
-                      <LoaderSpinner className="absolute left-0 right-0 m-auto group-hover:hidden" />
-                    ) : checkedCustomDomain?.error_details ? (
-                      <Icon
-                        iconName="circle-exclamation"
-                        iconStyle="regular"
-                        className="text-negative group-hover:hidden"
-                      />
-                    ) : (
-                      <Icon iconName="check" className="text-positive group-hover:hidden" />
-                    )}
-                    <Icon iconName="arrow-rotate-right" className="hidden group-hover:block" />
+                    <Icon iconName="gear" iconStyle="regular" />
                   </Button>
-                </Tooltip>
-                <Button
-                  data-testid="edit-button"
-                  variant="outline"
-                  color="neutral"
-                  size="lg"
-                  type="button"
-                  className="h-[52px] w-[52px] justify-center"
-                  onClick={() => onOpenCrudModal(customDomain)}
-                >
-                  <Icon iconName="gear" iconStyle="regular" />
-                </Button>
-                <Button
-                  data-testid="delete-button"
-                  variant="outline"
-                  color="neutral"
-                  size="lg"
-                  type="button"
-                  className="h-[52px] w-[52px] justify-center"
-                  onClick={() => onDeleteDomain(customDomain)}
-                >
-                  <Icon iconName="trash" iconStyle="regular" />
-                </Button>
+                  <Button
+                    data-testid="delete-button"
+                    variant="outline"
+                    color="neutral"
+                    size="md"
+                    type="button"
+                    iconOnly
+                    onClick={() => onDeleteDomain(customDomain)}
+                  >
+                    <Icon iconName="trash" iconStyle="regular" />
+                  </Button>
+                </div>
               </div>
             )
           })}
