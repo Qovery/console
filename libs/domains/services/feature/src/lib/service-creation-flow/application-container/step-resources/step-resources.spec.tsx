@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { ApplicationContainerCreationFlow } from './application-container-creation-flow'
+import { ApplicationContainerCreationFlow } from '../application-container-creation-flow'
 import { ApplicationContainerStepResources } from './step-resources'
 
 const mockOnSubmit = jest.fn()

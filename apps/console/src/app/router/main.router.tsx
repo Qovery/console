@@ -9,7 +9,6 @@ import { PageEnvironmentLogs } from '@qovery/pages/logs/environment'
 import { PageInfraLogs } from '@qovery/pages/logs/infra'
 import { OverviewPage } from '@qovery/pages/overview/feature'
 import {
-  PageDatabaseCreateFeature,
   PageHelmCreateFeature,
   PageJobCreateFeature,
   PageServices,
@@ -34,8 +33,6 @@ import {
   ORGANIZATION_URL,
   OVERVIEW_URL,
   SERVICES_CRONJOB_CREATION_URL,
-  SERVICES_DATABASE_CREATION_URL,
-  SERVICES_DATABASE_TEMPLATE_CREATION_URL,
   SERVICES_HELM_CREATION_URL,
   SERVICES_HELM_TEMPLATE_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
@@ -108,18 +105,6 @@ export const ROUTER: RouterProps[] = [
     component: <PageServices />,
     protected: true,
     layout: true,
-  },
-  {
-    path: `${SERVICES_URL()}${SERVICES_DATABASE_CREATION_URL}/*`,
-    component: <PageDatabaseCreateFeature />,
-    protected: true,
-    layout: false,
-  },
-  {
-    path: `${SERVICES_URL()}${SERVICES_DATABASE_TEMPLATE_CREATION_URL()}/*`,
-    component: <PageDatabaseCreateFeature />,
-    protected: true,
-    layout: false,
   },
   {
     path: `${SERVICES_URL()}${SERVICES_CRONJOB_CREATION_URL}/*`,

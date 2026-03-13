@@ -1,8 +1,5 @@
 import {
   type Route,
-  SERVICES_DATABASE_CREATION_GENERAL_URL,
-  SERVICES_DATABASE_CREATION_POST_URL,
-  SERVICES_DATABASE_CREATION_RESOURCES_URL,
   SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_GENERAL_URL,
   SERVICES_HELM_CREATION_SUMMARY_URL,
@@ -26,9 +23,6 @@ import {
   SERVICES_TERRAFORM_CREATION_SUMMARY_URL,
   SERVICES_VARIABLES_URL,
 } from '@qovery/shared/routes'
-import { StepGeneralFeature as DatabaseStepGeneralFeature } from '../feature/page-database-create-feature/step-general-feature/step-general-feature'
-import { StepResourcesFeature as DatabaseStepResourcesFeature } from '../feature/page-database-create-feature/step-resources-feature/step-resources-feature'
-import { StepSummaryFeature as DatabaseStepSummaryFeature } from '../feature/page-database-create-feature/step-summary-feature/step-summary-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import { StepGeneralFeature as HelmStepGeneralFeature } from '../feature/page-helm-create-feature/step-general-feature/step-general-feature'
 import { StepSummaryFeature as HelmStepSummaryFeature } from '../feature/page-helm-create-feature/step-summary-feature/step-summary-feature'
@@ -100,21 +94,6 @@ export const ROUTER_ENVIRONMENTS_SETTINGS: Route[] = [
 ]
 
 export const ROUTER_SERVICE_CREATION: Route[] = []
-
-export const ROUTER_SERVICE_DATABASE_CREATION: Route[] = [
-  {
-    path: SERVICES_DATABASE_CREATION_GENERAL_URL,
-    component: <DatabaseStepGeneralFeature />,
-  },
-  {
-    path: SERVICES_DATABASE_CREATION_RESOURCES_URL,
-    component: <DatabaseStepResourcesFeature />,
-  },
-  {
-    path: SERVICES_DATABASE_CREATION_POST_URL,
-    component: <DatabaseStepSummaryFeature />,
-  },
-]
 
 export const ROUTER_SERVICE_JOB_CREATION: Route[] = [
   {

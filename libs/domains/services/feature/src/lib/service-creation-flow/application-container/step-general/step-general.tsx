@@ -8,10 +8,10 @@ import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { Button, FunnelFlowBody, Heading, Icon, InputSelect, Link, Section } from '@qovery/shared/ui'
 import { parseCmd } from '@qovery/shared/util-js'
-import { AutoDeploySetting } from '../../auto-deploy-setting/auto-deploy-setting'
-import { BuildSettings } from '../../build-settings/build-settings'
-import { GeneralSetting } from '../../general-setting/general-setting'
-import { useApplicationContainerCreateContext } from './application-container-creation-flow'
+import { AutoDeploySetting } from '../../../auto-deploy-setting/auto-deploy-setting'
+import { BuildSettings } from '../../../build-settings/build-settings'
+import { GeneralSetting } from '../../../general-setting/general-setting'
+import { useApplicationContainerCreateContext } from '../application-container-creation-flow'
 
 export interface ApplicationContainerStepGeneralProps extends PropsWithChildren {
   gitRepositorySettings: ReactNode
