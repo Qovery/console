@@ -11,7 +11,6 @@ import {
   APPLICATION_SETTINGS_DOMAIN_URL,
   APPLICATION_SETTINGS_HEALTHCHECKS_URL,
   APPLICATION_SETTINGS_NETWORKING_URL,
-  APPLICATION_SETTINGS_STORAGE_URL,
   APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
   APPLICATION_SETTINGS_TERRAFORM_CONFIGURATION_URL,
   APPLICATION_SETTINGS_TERRAFORM_VARIABLES_URL,
@@ -75,12 +74,6 @@ export function PageSettingsFeature() {
     url: pathSettings + APPLICATION_SETTINGS_CONFIGURE_URL,
   }
 
-  const storageSettings = {
-    title: 'Storage',
-    icon: IconAwesomeEnum.HARD_DRIVE,
-    url: pathSettings + APPLICATION_SETTINGS_STORAGE_URL,
-  }
-
   const domainSettings = {
     title: 'Domain',
     icon: IconAwesomeEnum.EARTH_AMERICAS,
@@ -133,7 +126,6 @@ export function PageSettingsFeature() {
   const links = match(service)
     .returnType<NavigationLeftLinkProps[]>()
     .with({ serviceType: 'APPLICATION' }, () => [
-      storageSettings,
       domainSettings,
       healthchecksSettings,
       deploymentRestrictionsSettings,
@@ -141,7 +133,6 @@ export function PageSettingsFeature() {
       dangerzoneSettings,
     ])
     .with({ serviceType: 'CONTAINER' }, () => [
-      storageSettings,
       domainSettings,
       healthchecksSettings,
       advancedSettings,

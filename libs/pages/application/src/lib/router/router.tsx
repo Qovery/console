@@ -6,7 +6,6 @@ import {
   APPLICATION_SETTINGS_DOCKERFILE_URL,
   APPLICATION_SETTINGS_DOMAIN_URL,
   APPLICATION_SETTINGS_NETWORKING_URL,
-  APPLICATION_SETTINGS_STORAGE_URL,
   APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
   APPLICATION_SETTINGS_TERRAFORM_CONFIGURATION_URL,
   APPLICATION_SETTINGS_TERRAFORM_VARIABLES_URL,
@@ -24,7 +23,6 @@ import { PageSettingsDockerfileFeature } from '../feature/page-settings-dockerfi
 import PageSettingsDomainsFeature from '../feature/page-settings-domains-feature/page-settings-domains-feature'
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import { PageSettingsNetworkingFeature } from '../feature/page-settings-networking-feature/page-settings-networking-feature'
-import PageSettingsStorageFeature from '../feature/page-settings-storage-feature/page-settings-storage-feature'
 import { PageSettingsTerraformArgumentsFeature } from '../feature/page-settings-terraform-arguments-feature/page-settings-terraform-arguments-feature'
 import PageSettingsTerraformConfigurationFeature from '../feature/page-settings-terraform-configuration-feature/page-settings-terraform-configuration-feature'
 import { PageSettingsTerraformVariablesFeature } from '../feature/page-settings-terraform-variables/page-settings-terraform-variables'
@@ -51,10 +49,6 @@ export const ROUTER_APPLICATION_SETTINGS: Route[] = [
   {
     path: APPLICATION_SETTINGS_CONFIGURE_URL,
     component: <PageSettingsConfigureJobFeature />,
-  },
-  {
-    path: APPLICATION_SETTINGS_STORAGE_URL,
-    component: <PageSettingsStorageFeature />,
   },
   {
     path: APPLICATION_SETTINGS_DOMAIN_URL,
