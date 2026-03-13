@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ServiceNew } from './service-new'
 
 jest.mock('@tanstack/react-router', () => ({
@@ -93,15 +93,19 @@ describe('ServiceNew', () => {
 
     await userEvent.click(screen.getByText('PostgreSQL'))
 
-    expect(
-      container.querySelector(
-        'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database?template=postgresql&option=container"]'
-      )
-    ).toBeInTheDocument()
-    expect(
-      container.querySelector(
-        'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database?template=postgresql&option=managed"]'
-      )
-    ).toBeInTheDocument()
+    await waitFor(() => {
+      expect(
+        container.querySelector(
+          'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database?template=postgresql&option=container"]'
+        )
+      ).toBeInTheDocument()
+    })
+    await waitFor(() => {
+      expect(
+        container.querySelector(
+          'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database?template=postgresql&option=managed"]'
+        )
+      ).toBeInTheDocument()
+    })
   })
 })

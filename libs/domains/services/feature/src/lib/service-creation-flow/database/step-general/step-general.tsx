@@ -5,6 +5,7 @@ import {
   type ClusterFeatureAwsExistingVpc,
   type DatabaseConfiguration,
   DatabaseModeEnum,
+  DatabaseTypeEnum,
 } from 'qovery-typescript-axios'
 import { type FormEventHandler, type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
@@ -118,9 +119,9 @@ export function DatabaseStepGeneral({
                   name: '',
                   created_at: '',
                   version: '',
-                  icon_uri: methods.watch('icon_uri'),
-                  type: watchType,
-                  mode: watchMode,
+                  icon_uri: methods.watch('icon_uri') ?? 'app://qovery-console/database',
+                  type: watchType ?? DatabaseTypeEnum.POSTGRESQL,
+                  mode: watchMode ?? DatabaseModeEnum.CONTAINER,
                   service_type: 'DATABASE',
                   serviceType: 'DATABASE',
                   environment: { id: '' },

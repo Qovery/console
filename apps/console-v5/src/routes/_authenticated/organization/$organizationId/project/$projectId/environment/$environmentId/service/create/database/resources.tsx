@@ -74,7 +74,18 @@ function Resources() {
   }
 
   if (!generalValues.name || !generalValues.type || !generalValues.version || !generalValues.mode) {
-    return <Navigate to={`${creationFlowUrl}/general`} search={search} replace />
+    return (
+      <Navigate
+        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/general"
+        params={{
+          organizationId,
+          projectId,
+          environmentId,
+        }}
+        search={search}
+        replace
+      />
+    )
   }
 
   return (
