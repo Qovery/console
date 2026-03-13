@@ -215,7 +215,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
             <div className="order-last flex w-full lg:order-none lg:ml-auto lg:w-auto">
               <Skeleton width={150} height={36} show={!cluster && !clusterStatus}>
                 {cluster && clusterStatus ? (
-                  <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} />
+                  <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} variant="header" />
                 ) : (
                   <div />
                 )}
