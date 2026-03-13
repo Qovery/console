@@ -370,7 +370,7 @@ function CardService({
                 .map((props) => (
                   <CardOption
                     key={props.slug}
-                    parentSlug={slug}
+                    parentSlug={slug ?? ''}
                     organizationId={organizationId}
                     projectId={projectId}
                     environmentId={environmentId}
