@@ -3,7 +3,10 @@ import { type FormEventHandler, useEffect } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, FunnelFlowBody, Heading, InputSelect, InputText, Section } from '@qovery/shared/ui'
-import { type DatabaseCreateResourcesData, getDefaultManagedDatabaseInstanceType } from '../database-create-utils'
+import {
+  type DatabaseCreateResourcesData,
+  getDefaultManagedDatabaseInstanceType,
+} from '../database-create-utils/database-create-utils'
 import { useDatabaseCreateContext } from '../database-creation-flow'
 
 export interface DatabaseStepResourcesProps {

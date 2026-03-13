@@ -2,7 +2,10 @@ import { CloudProviderEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-ty
 import { type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { type DatabaseCreateGeneralData, type DatabaseCreateResourcesData } from '../database-create-utils'
+import {
+  type DatabaseCreateGeneralData,
+  type DatabaseCreateResourcesData,
+} from '../database-create-utils/database-create-utils'
 import {
   DatabaseCreateContext,
   type DatabaseCreateContextInterface,

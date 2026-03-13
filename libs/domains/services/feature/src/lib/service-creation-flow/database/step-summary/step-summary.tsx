@@ -12,7 +12,7 @@ import {
   type DatabaseCreateGeneralData,
   type DatabaseCreateResourcesData,
   buildDatabaseCreatePayload,
-} from '../database-create-utils'
+} from '../database-create-utils/database-create-utils'
 import { databaseCreationSteps, useDatabaseCreateContext } from '../database-creation-flow'
 import { DatabaseSummaryView } from '../database-summary-view/database-summary-view'
 

@@ -75,7 +75,7 @@ export * from './lib/service-creation-flow/application-container/application-con
 export * from './lib/service-creation-flow/application-container/application-container-summary/application-container-summary-utils/application-container-summary-utils'
 export * from './lib/service-creation-flow/application-container/application-container-summary/application-container-summary-view/application-container-summary-view'
 export * from './lib/service-creation-flow/application-container/application-container-summary/step-summary/step-summary'
-export * from './lib/service-creation-flow/database/database-create-utils'
+export * from './lib/service-creation-flow/database/database-create-utils/database-create-utils'
 export * from './lib/service-creation-flow/database/database-creation-flow'
 export * from './lib/service-creation-flow/database/step-general/step-general'
 export * from './lib/service-creation-flow/database/step-resources/step-resources'

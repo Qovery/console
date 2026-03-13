@@ -8,7 +8,7 @@ import {
   type DatabaseCreateGeneralData,
   type DatabaseCreateResourcesData,
   formatDatabaseTypeLabel,
-} from '../database-create-utils'
+} from '../database-create-utils/database-create-utils'
 
 export interface DatabaseSummaryViewProps {
   generalData: DatabaseCreateGeneralData

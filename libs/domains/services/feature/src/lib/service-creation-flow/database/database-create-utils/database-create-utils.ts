@@ -10,7 +10,7 @@ import {
 import { type ReactElement, cloneElement, createElement } from 'react'
 import { type Value } from '@qovery/shared/interfaces'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { serviceTemplates } from '../../service-new/service-templates'
+import { serviceTemplates } from '../../../service-new/service-templates'
 
 export interface DatabaseTemplateMatch {
   templateTitle?: string

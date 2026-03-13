@@ -7,7 +7,7 @@ import {
   type DatabaseCreateGeneralData,
   type DatabaseCreateResourcesData,
   findDatabaseTemplateMatch,
-} from './database-create-utils'
+} from './database-create-utils/database-create-utils'
 
 export interface DatabaseCreateContextInterface {
   currentStep: number

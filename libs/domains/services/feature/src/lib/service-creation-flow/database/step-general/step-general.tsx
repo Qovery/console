@@ -28,7 +28,7 @@ import {
   findDatabaseTemplateMatch,
   generateDatabaseTypeAndVersionOptions,
   getDefaultDatabaseMode,
-} from '../database-create-utils'
+} from '../database-create-utils/database-create-utils'
 import { useDatabaseCreateContext } from '../database-creation-flow'
 
 export interface DatabaseStepGeneralProps {
