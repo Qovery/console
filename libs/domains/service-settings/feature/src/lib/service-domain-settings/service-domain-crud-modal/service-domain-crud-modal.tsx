@@ -132,11 +132,11 @@ export function ServiceDomainCrudModal({
         />
 
         {cnameTarget ? (
-          <div className="overflow-hidden rounded-xl border border-neutral">
+          <div className="overflow-hidden rounded-md border border-neutral">
             <div className="border-b border-neutral bg-surface-neutral-subtle px-4 py-2 text-xs font-medium text-neutral">
               CNAME configuration
             </div>
-            <div className="space-y-3 bg-surface-neutral px-4 pb-3 pt-1.5 font-code text-xs">
+            <div className="space-y-3 bg-surface-neutral px-4 pb-3 pt-2 font-code text-xs">
               <div>
                 <span className="block text-brand-9">{watchDomain || '<your-domain>'} CNAME</span>
                 <span className="block text-brand-12">{cnameTarget}</span>
