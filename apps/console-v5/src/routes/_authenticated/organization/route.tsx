@@ -95,6 +95,12 @@ const PROJECT_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/overview',
   },
   {
+    id: 'deployment-rules',
+    label: 'Deployment rules',
+    iconName: 'ruler',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/deployment-rules',
+  },
+  {
     id: 'variables',
     label: 'Variables',
     iconName: 'key',

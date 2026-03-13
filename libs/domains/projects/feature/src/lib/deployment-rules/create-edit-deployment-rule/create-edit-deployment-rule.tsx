@@ -1,10 +1,10 @@
-import { type Cluster } from 'qovery-typescript-axios'
+import { useQuery } from '@tanstack/react-query'
+import { useNavigate, useParams } from '@tanstack/react-router'
+import { type Value as ApiValue, type Cluster, type ProjectDeploymentRuleRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { type Control, Controller, type FieldValues } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
+import { type Control, Controller, type FieldValues, useForm } from 'react-hook-form'
 import { environmentModeValues, timezoneValues, weekdaysValues } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
-import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
   Button,
@@ -17,8 +17,128 @@ import {
   Link,
   Section,
 } from '@qovery/shared/ui'
+import { dateToHours } from '@qovery/shared/util-dates'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { queries } from '@qovery/state/util-queries'
+import { useCreateDeploymentRule } from '../../hooks/use-create-deployment-rule/use-create-deployment-rule'
+import { useDeploymentRule } from '../../hooks/use-deployment-rule/use-deployment-rule'
+import { useEditDeploymentRule } from '../../hooks/use-edit-deployment-rule/use-edit-deployment-rule'
 
-export interface PageCreateEditDeploymentRuleProps {
+export function CreateDeploymentRule() {
+  const { organizationId = '', projectId = '' } = useParams({ strict: false })
+  useDocumentTitle('Create Deployment Rule - Qovery')
+
+  const { control, handleSubmit, setValue } = useForm()
+  const navigate = useNavigate()
+
+  const { mutateAsync: createDeploymentRule } = useCreateDeploymentRule()
+  const { data: clusters } = useQuery({
+    ...queries.clusters.list({ organizationId }),
+    select(items) {
+      items?.sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
+      return items as Cluster[]
+    },
+  })
+
+  useEffect(() => {
+    setValue('timezone', 'UTC')
+    setValue('start_time', '08:00')
+    setValue('stop_time', '19:00')
+    setValue('mode', 'PRODUCTION')
+    setValue('auto_stop', false)
+    setValue('weekdays', weekdaysValues)
+  }, [setValue])
+
+  const onSubmit = handleSubmit(async (data) => {
+    if (!data) {
+      return
+    }
+
+    const fields = data as ProjectDeploymentRuleRequest
+    fields.start_time = `1970-01-01T${fields.start_time}:00.000Z`
+    fields.stop_time = `1970-01-01T${fields.stop_time}:00.000Z`
+    fields.weekdays = data['weekdays'][0].value ? data['weekdays'].map((day: ApiValue) => day.value) : data['weekdays']
+
+    try {
+      await createDeploymentRule({ projectId, deploymentRuleRequest: fields })
+      navigate({ to: `/organization/${organizationId}/project/${projectId}/deployment-rules` })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+  return <CreateEditDeploymentRule title="Create rule" control={control} clusters={clusters} onSubmit={onSubmit} />
+}
+
+export function EditDeploymentRule() {
+  const { organizationId = '', projectId = '', deploymentRuleId = '' } = useParams({ strict: false })
+  useDocumentTitle('Edit Deployment Rule - Qovery')
+
+  const { control, handleSubmit, setValue } = useForm()
+  const navigate = useNavigate()
+
+  const { data: deploymentRule } = useDeploymentRule({ projectId, deploymentRuleId })
+  const { data: clusters } = useQuery({
+    ...queries.clusters.list({ organizationId }),
+    select(items) {
+      items?.sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
+      return items as Cluster[]
+    },
+  })
+  const { mutateAsync: editDeploymentRule } = useEditDeploymentRule()
+
+  useEffect(() => {
+    const startTime = deploymentRule?.start_time && dateToHours(deploymentRule.start_time)
+    const stopTime = deploymentRule?.stop_time && dateToHours(deploymentRule.stop_time)
+
+    setValue('id', deploymentRule?.id)
+    setValue('name', deploymentRule?.name)
+    setValue('timezone', 'UTC')
+    setValue('start_time', startTime)
+    setValue('stop_time', stopTime)
+    setValue('mode', deploymentRule?.mode)
+    setValue('auto_stop', deploymentRule?.auto_stop)
+    setValue('weekdays', deploymentRule?.weekdays)
+    setValue('wildcard', deploymentRule?.wildcard)
+    setValue('description', deploymentRule?.description)
+    setValue('cluster_id', deploymentRule?.cluster_id)
+  }, [deploymentRule, setValue])
+
+  const onSubmit = handleSubmit(async (data) => {
+    if (!data) {
+      return
+    }
+
+    const fields = data as ProjectDeploymentRuleRequest & { id?: string }
+    fields.start_time = `1970-01-01T${fields.start_time}:00.000Z`
+    fields.stop_time = `1970-01-01T${fields.stop_time}:00.000Z`
+    delete fields.id
+
+    try {
+      await editDeploymentRule({
+        projectId,
+        deploymentRuleId,
+        deploymentRuleRequest: fields,
+      })
+      navigate({ to: `/organization/${organizationId}/project/${projectId}/deployment-rules` })
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+  return (
+    <CreateEditDeploymentRule
+      title={`Edit ${deploymentRule?.name ?? ''}`}
+      btnLabel="Edit rule"
+      control={control}
+      clusters={clusters}
+      onSubmit={onSubmit}
+      defaultAutoStop={deploymentRule?.auto_stop}
+    />
+  )
+}
+
+export interface CreateEditDeploymentRuleProps {
   title: string
   control?: Control<FieldValues>
   btnLabel?: string
@@ -27,9 +147,9 @@ export interface PageCreateEditDeploymentRuleProps {
   defaultAutoStop?: boolean
 }
 
-export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRuleProps) {
+export function CreateEditDeploymentRule(props: CreateEditDeploymentRuleProps) {
   const { title, control, onSubmit, clusters, btnLabel = 'Create rule', defaultAutoStop = false } = props
-  const { organizationId, projectId } = useParams()
+  const { organizationId, projectId } = useParams({ strict: false })
   const [autoStop, setAutoStop] = useState(defaultAutoStop)
 
   useEffect(() => {
@@ -47,30 +167,32 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
     : []
 
   return (
-    <div className="mt-2 rounded bg-white">
+    <div className="mt-2">
       <div className="flex">
         <div className="flex-grow overflow-y-auto">
           <Section className="px-10 py-7">
-            <div className="max-w-[620px]">
-              <Link
-                color="brand"
-                size="xs"
-                to={ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_DEPLOYMENT_RULES_URL}
-                className="mb-2"
-              >
-                <Icon name="icon-solid-arrow-left" className="mr-1 text-xs" />
-                Back{' '}
-              </Link>
+            <Link
+              color="brand"
+              size="xs"
+              to="/organization/$organizationId/project/$projectId/deployment-rules"
+              params={{ organizationId, projectId }}
+              className="mb-2"
+            >
+              <Icon iconName="arrow-left" className="mr-1 text-xs" />
+              Back{' '}
+            </Link>
 
-              <Heading className="mb-2">{title}</Heading>
-
-              <div className="mb-10">
-                <p className="text-xs leading-5 text-neutral-400">
+            <div className="mb-8 flex w-full justify-between gap-2 border-b border-neutral">
+              <div className="flex flex-col gap-2 pb-6">
+                <Heading>{title}</Heading>
+                <p className="max-w-2xl text-sm text-neutral-subtle">
                   Declaring deployment rules at the project level allows you to apply defaults rule to all newly created
                   environments.
                 </p>
               </div>
+            </div>
 
+            <div className="max-w-content-with-navigation-left">
               <form onSubmit={onSubmit}>
                 <BlockContent title="Matching rule definition">
                   <Controller
@@ -117,7 +239,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                     )}
                   />
 
-                  <p className="text-xs text-neutral-350">
+                  <p className="text-xs text-neutral-subtle">
                     Use wildcards to specify just part of the name of the target environment (ex: [PR] Dev-*).
                   </p>
                 </BlockContent>
@@ -256,5 +378,3 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
     </div>
   )
 }
-
-export default PageCreateEditDeploymentRule
