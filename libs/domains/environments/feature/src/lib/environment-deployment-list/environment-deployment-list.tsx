@@ -10,6 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
+import posthog from 'posthog-js'
 import { type DeploymentHistoryEnvironmentV2, OrganizationEventOrigin, StateEnum } from 'qovery-typescript-axios'
 import { Fragment, useCallback, useContext, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -290,6 +291,10 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                             <div
                               className="flex cursor-pointer items-center gap-1.5"
                               onClick={() => {
+                                posthog.capture('ai-copilot-troubleshoot-triggered', {
+                                  source: 'environment-deployment-list',
+                                  deployment_id: data.identifier.execution_id,
+                                })
                                 const message = `Why did my deployment fail? (deployment id: ${data.identifier.execution_id})`
                                 setDevopsCopilotOpen(true)
                                 sendMessageRef?.current?.(message)
@@ -305,6 +310,10 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                         >
                           <div
                             onClick={() => {
+                              posthog.capture('ai-copilot-troubleshoot-triggered', {
+                                source: 'environment-deployment-list',
+                                deployment_id: data.identifier.execution_id,
+                              })
                               const message = `Why did my deployment fail? (deployment id: ${data.identifier.execution_id})`
                               setDevopsCopilotOpen(true)
                               sendMessageRef?.current?.(message)

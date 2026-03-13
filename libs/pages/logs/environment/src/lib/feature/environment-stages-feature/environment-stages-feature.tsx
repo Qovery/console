@@ -1,5 +1,6 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
 import clsx from 'clsx'
+import posthog from 'posthog-js'
 import {
   type DeploymentStageWithServicesStatuses,
   type Environment,
@@ -145,6 +146,10 @@ export function EnvironmentStagesFeature({
               buttonLabel="Launch diagnostic"
               buttonIconRight="angle-right"
               onClickButton={() => {
+                posthog.capture('ai-copilot-troubleshoot-triggered', {
+                  source: 'environment-stages',
+                  deployment_id: executionId,
+                })
                 const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
                 setDevopsCopilotOpen(true)
                 sendMessageRef?.current?.(message)

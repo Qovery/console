@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import download from 'downloadjs'
+import posthog from 'posthog-js'
 import {
   type Environment,
   type EnvironmentStatus,
@@ -402,6 +403,11 @@ export function ListDeploymentLogs({
               buttonLabel="Launch diagnostic"
               buttonIconRight="angle-right"
               onClickButton={() => {
+                posthog.capture('ai-copilot-troubleshoot-triggered', {
+                  source: 'deployment-logs',
+                  deployment_id: versionId,
+                  trigger_reason: isCrashLoopDetected ? 'crash-loop' : 'error',
+                })
                 const message = `Why did my deployment fail?${versionId ? ` (deployment id: ${versionId})` : ''}`
                 setDevopsCopilotOpen(true)
                 sendMessageRef?.current?.(message)
@@ -474,6 +480,11 @@ export function ListDeploymentLogs({
                 buttonLabel="Launch diagnostic"
                 buttonIconRight="angle-right"
                 onClickButton={() => {
+                  posthog.capture('ai-copilot-troubleshoot-triggered', {
+                    source: 'deployment-logs',
+                    deployment_id: versionId,
+                    trigger_reason: isCrashLoopDetected ? 'crash-loop' : 'error',
+                  })
                   const message = `Why did my deployment fail?${versionId ? ` (deployment id: ${versionId})` : ''}`
                   setDevopsCopilotOpen(true)
                   sendMessageRef?.current?.(message)

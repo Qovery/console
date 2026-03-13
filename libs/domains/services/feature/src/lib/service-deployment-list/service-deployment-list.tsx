@@ -10,6 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
+import posthog from 'posthog-js'
 import {
   type DeploymentHistoryService,
   type DeploymentHistoryTriggerAction,
@@ -317,6 +318,10 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                               className="flex cursor-pointer items-center gap-1.5"
                               onClick={() => {
                                 const executionId = isDeploymentHistory(data) ? data.identifier.execution_id : undefined
+                                posthog.capture('ai-copilot-troubleshoot-triggered', {
+                                  source: 'service-deployment-list',
+                                  deployment_id: executionId,
+                                })
                                 const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
                                 setDevopsCopilotOpen(true)
                                 sendMessageRef?.current?.(message)
@@ -333,6 +338,10 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                           <div
                             onClick={() => {
                               const executionId = isDeploymentHistory(data) ? data.identifier.execution_id : undefined
+                              posthog.capture('ai-copilot-troubleshoot-triggered', {
+                                source: 'service-deployment-list',
+                                deployment_id: executionId,
+                              })
                               const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
                               setDevopsCopilotOpen(true)
                               sendMessageRef?.current?.(message)
