@@ -9,7 +9,7 @@ export interface UseCustomDomainsProps {
   suspense?: boolean
 }
 
-export function useCustomDomains({ serviceId, serviceType, suspense }: UseCustomDomainsProps) {
+export function useCustomDomains({ serviceId, serviceType, suspense = false }: UseCustomDomainsProps) {
   return useQuery({
     ...queries.services.customDomains({
       serviceId,
