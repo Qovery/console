@@ -1,6 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type ServiceStorageStorageInner } from 'qovery-typescript-axios'
+import { Suspense } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService, type Application, type Container } from '@qovery/domains/services/data-access'
 import { useDeploymentStatus, useEditService, useService } from '@qovery/domains/services/feature'
@@ -28,6 +29,80 @@ const StorageSettingsContentFallback = () => (
 
 const isSupportedService = (service?: AnyService): service is Application | Container =>
   service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER'
+
+interface StorageSettingsInnerContentProps {
+  onOpenStorageModal: (storage?: ServiceStorageStorageInner) => void
+  onDeleteStorage: (storage: ServiceStorageStorageInner) => void
+}
+
+function StorageSettingsInnerContent({ onOpenStorageModal, onDeleteStorage }: StorageSettingsInnerContentProps) {
+  const { environmentId, serviceId } = useParams({ strict: false })
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId, suspense: true })
+
+  if (!service || !deploymentStatus || !isSupportedService(service)) {
+    return null
+  }
+
+  const storages = service.storage ?? []
+
+  return storages.length > 0 ? (
+    <BlockContent title="Storage" classNameContent="p-0">
+      {storages.map((storage, index) => (
+        <div
+          key={storage.id ?? `${storage.mount_point}-${storage.size}-${storage.type}-${index}`}
+          className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
+          data-testid="form-row"
+        >
+          <div className="flex flex-col">
+            <h2 className="mb-1 flex text-xs font-medium text-neutral">Storage #{index + 1}</h2>
+            <div className="flex gap-3 text-xs text-neutral-subtle">
+              <p>
+                Size: <span className="text-neutral">{storage.size.toString()} GiB</span>
+              </p>
+              <p>
+                Path: <span className="text-neutral">{storage.mount_point}</span>
+              </p>
+              <p>
+                Type: <span className="text-neutral">{storage.type}</span>
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              data-testid="edit-button"
+              variant="outline"
+              color="neutral"
+              size="md"
+              type="button"
+              onClick={() => onOpenStorageModal(storage)}
+              iconOnly
+            >
+              <Icon iconName="gear" iconStyle="regular" />
+            </Button>
+            <Button
+              data-testid="delete-button"
+              variant="outline"
+              color="neutral"
+              size="md"
+              type="button"
+              iconOnly
+              onClick={() => onDeleteStorage(storage)}
+            >
+              <Icon iconName="trash" iconStyle="regular" />
+            </Button>
+          </div>
+        </div>
+      ))}
+    </BlockContent>
+  ) : (
+    <EmptyState
+      icon="hard-drive"
+      title="No storage are set"
+      description="Qovery applications can use storage to store data that persists across deploys and restarts, making it easy to deploy stateful applications."
+    />
+  )
+}
 
 export function ApplicationContainerStorageSettings() {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
@@ -103,8 +178,6 @@ export function ApplicationContainerStorageSettings() {
     })
   }
 
-  const storages = isSupportedService(service) ? service.storage ?? [] : []
-
   return (
     <Section className="p-8">
       <div className="space-y-6">
@@ -129,75 +202,14 @@ export function ApplicationContainerStorageSettings() {
         </SettingsHeading>
 
         <div className="max-w-content-with-navigation-left">
-          {!service || !deploymentStatus ? (
-            <StorageSettingsContentFallback />
-          ) : storages.length > 0 ? (
-            <BlockContent title="Storage">
-              {storages.map((storage, index) => (
-                <div
-                  key={storage.id ?? `${storage.mount_point}-${storage.size}-${storage.type}`}
-                  className={clsx(
-                    'flex w-full items-center justify-between gap-3',
-                    storages.length !== index + 1 && 'mb-5'
-                  )}
-                  data-testid="form-row"
-                >
-                  <InputText
-                    name={`size-${storage.id ?? index}`}
-                    className="flex-1 shrink-0 grow"
-                    value={storage.size.toString()}
-                    label="Size in GiB"
-                    disabled
-                  />
-
-                  <InputText
-                    name={`path-${storage.id ?? index}`}
-                    className="flex-1 shrink-0 grow"
-                    value={storage.mount_point}
-                    label="Path"
-                    disabled
-                  />
-
-                  <InputText
-                    name={`type-${storage.id ?? index}`}
-                    className="flex-1 shrink-0 grow"
-                    value={storage.type}
-                    label="Type"
-                    disabled
-                  />
-
-                  <Button
-                    data-testid="edit-button"
-                    variant="outline"
-                    color="neutral"
-                    size="lg"
-                    type="button"
-                    className="h-[52px] w-[52px] justify-center"
-                    onClick={() => openStorageModal(storage)}
-                  >
-                    <Icon iconName="gear" iconStyle="regular" />
-                  </Button>
-                  <Button
-                    data-testid="delete-button"
-                    variant="outline"
-                    color="neutral"
-                    size="lg"
-                    type="button"
-                    className="h-[52px] w-[52px] justify-center"
-                    onClick={() => onDeleteStorage(storage)}
-                  >
-                    <Icon iconName="trash" iconStyle="regular" />
-                  </Button>
-                </div>
-              ))}
-            </BlockContent>
-          ) : (
-            <EmptyState
-              icon="hard-drive"
-              title="No storage are set"
-              description="Qovery applications can use storage to store data that persists across deploys and restarts, making it easy to deploy stateful applications."
+          <Suspense fallback={<StorageSettingsContentFallback />}>
+            <StorageSettingsInnerContent
+              environmentId={environmentId}
+              serviceId={serviceId}
+              onOpenStorageModal={openStorageModal}
+              onDeleteStorage={onDeleteStorage}
             />
-          )}
+          </Suspense>
         </div>
       </div>
     </Section>

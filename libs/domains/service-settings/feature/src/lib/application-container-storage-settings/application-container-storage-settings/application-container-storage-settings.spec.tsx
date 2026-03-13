@@ -89,8 +89,8 @@ describe('ApplicationContainerStorageSettings', () => {
     renderWithProviders(<ApplicationContainerStorageSettings />)
 
     expect(screen.getByRole('heading', { level: 1, name: 'Storage' })).toBeInTheDocument()
-    expect(screen.getByDisplayValue('20')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('/data')).toBeInTheDocument()
+    expect(screen.getByText('20 GiB')).toBeInTheDocument()
+    expect(screen.getByText('/data')).toBeInTheDocument()
   })
 
   it('renders for container services', () => {
@@ -99,7 +99,7 @@ describe('ApplicationContainerStorageSettings', () => {
     renderWithProviders(<ApplicationContainerStorageSettings />)
 
     expect(screen.getByRole('heading', { level: 1, name: 'Storage' })).toBeInTheDocument()
-    expect(screen.getByDisplayValue('/data')).toBeInTheDocument()
+    expect(screen.getByText('/data')).toBeInTheDocument()
   })
 
   it('does not render for unsupported service types', () => {
