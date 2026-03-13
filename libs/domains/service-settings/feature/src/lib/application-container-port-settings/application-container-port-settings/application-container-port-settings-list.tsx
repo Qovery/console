@@ -1,7 +1,7 @@
 import { type ProbeType, type ServicePort } from 'qovery-typescript-axios'
 import { PortListRows } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, EmptyState, Heading, Icon } from '@qovery/shared/ui'
+import { BlockContent, Button, EmptyState, Icon } from '@qovery/shared/ui'
 import { isMatchingPortHealthCheck } from '../is-matching-port-healthcheck'
 
 export interface ApplicationContainerPortSettingsListProps {
@@ -23,7 +23,7 @@ export function ApplicationContainerPortSettingsList({
 }: ApplicationContainerPortSettingsListProps) {
   return (
     <>
-      <div className="mb-10 flex justify-between">
+      <div className="flex justify-between">
         <SettingsHeading
           title="Ports"
           description="Declare TCP/UDP ports used by your application. Declared ports are accessible from other applications within the same environment. You can also expose them on the internet by making them public. Declared ports are also used to check the liveness/readiness of your application."

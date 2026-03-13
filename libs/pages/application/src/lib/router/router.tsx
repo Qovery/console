@@ -4,7 +4,6 @@ import {
   APPLICATION_SETTINGS_DANGER_ZONE_URL,
   APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS,
   APPLICATION_SETTINGS_DOCKERFILE_URL,
-  APPLICATION_SETTINGS_DOMAIN_URL,
   APPLICATION_SETTINGS_NETWORKING_URL,
   APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
   APPLICATION_SETTINGS_TERRAFORM_CONFIGURATION_URL,
@@ -20,7 +19,6 @@ import PageSettingsConfigureJobFeature from '../feature/page-settings-configure-
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import PageSettingsDeploymentRestrictionsFeature from '../feature/page-settings-deployment-restrictions-feature/page-settings-deployment-restrictions-feature'
 import { PageSettingsDockerfileFeature } from '../feature/page-settings-dockerfile-feature/page-settings-dockerfile-feature'
-import PageSettingsDomainsFeature from '../feature/page-settings-domains-feature/page-settings-domains-feature'
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import { PageSettingsNetworkingFeature } from '../feature/page-settings-networking-feature/page-settings-networking-feature'
 import { PageSettingsTerraformArgumentsFeature } from '../feature/page-settings-terraform-arguments-feature/page-settings-terraform-arguments-feature'
@@ -49,10 +47,6 @@ export const ROUTER_APPLICATION_SETTINGS: Route[] = [
   {
     path: APPLICATION_SETTINGS_CONFIGURE_URL,
     component: <PageSettingsConfigureJobFeature />,
-  },
-  {
-    path: APPLICATION_SETTINGS_DOMAIN_URL,
-    component: <PageSettingsDomainsFeature />,
   },
   {
     path: APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS,

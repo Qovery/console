@@ -8,7 +8,6 @@ import {
   APPLICATION_SETTINGS_DANGER_ZONE_URL,
   APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS,
   APPLICATION_SETTINGS_DOCKERFILE_URL,
-  APPLICATION_SETTINGS_DOMAIN_URL,
   APPLICATION_SETTINGS_HEALTHCHECKS_URL,
   APPLICATION_SETTINGS_NETWORKING_URL,
   APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
@@ -74,12 +73,6 @@ export function PageSettingsFeature() {
     url: pathSettings + APPLICATION_SETTINGS_CONFIGURE_URL,
   }
 
-  const domainSettings = {
-    title: 'Domain',
-    icon: IconAwesomeEnum.EARTH_AMERICAS,
-    url: pathSettings + APPLICATION_SETTINGS_DOMAIN_URL,
-  }
-
   const healthchecksSettings = {
     title: 'Health Checks',
     icon: IconAwesomeEnum.SHIELD_CHECK,
@@ -126,22 +119,15 @@ export function PageSettingsFeature() {
   const links = match(service)
     .returnType<NavigationLeftLinkProps[]>()
     .with({ serviceType: 'APPLICATION' }, () => [
-      domainSettings,
       healthchecksSettings,
       deploymentRestrictionsSettings,
       advancedSettings,
       dangerzoneSettings,
     ])
-    .with({ serviceType: 'CONTAINER' }, () => [
-      domainSettings,
-      healthchecksSettings,
-      advancedSettings,
-      dangerzoneSettings,
-    ])
+    .with({ serviceType: 'CONTAINER' }, () => [healthchecksSettings, advancedSettings, dangerzoneSettings])
     .with({ serviceType: 'HELM' }, (s) => [
       valuesOverrideSetting,
       networkingSetting,
-      domainSettings,
       ...(isHelmGitSource(s.source) ? [deploymentRestrictionsSettings] : []),
       advancedSettings,
       dangerzoneSettings,
