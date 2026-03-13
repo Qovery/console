@@ -227,25 +227,6 @@ exports[`ServiceActions should match other actions snapshot 1`] = `
       tabindex="-1"
     >
       <a
-        href="https://gitpod.io/#/tree/"
-        rel="noreferrer"
-        target="_blank"
-      >
-        <div
-          class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"
-          data-orientation="vertical"
-          data-radix-collection-item=""
-          role="menuitem"
-          tabindex="-1"
-        >
-          <i
-            aria-hidden="true"
-            class="fa-regular fa-code text-sm mr-2 min-w-5 text-brand-9"
-          />
-          Edit code
-        </div>
-      </a>
-      <a
         class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""

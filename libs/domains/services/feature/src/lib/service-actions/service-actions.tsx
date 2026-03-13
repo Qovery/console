@@ -38,7 +38,6 @@ import {
   isRestartAvailable,
   isStopAvailable,
   twMerge,
-  urlCodeEditor,
 } from '@qovery/shared/util-js'
 import { ConfirmationCancelLifecycleModal } from '../confirmation-cancel-lifecycle-modal/confirmation-cancel-lifecycle-modal'
 import { ForceUnlockModal } from '../force-unlock-modal/force-unlock-modal'
@@ -821,29 +820,6 @@ function MenuOtherActions({
     })
   }
 
-  const editCodeUrl = match(service)
-    .with(
-      { serviceType: 'APPLICATION' },
-      {
-        serviceType: 'JOB',
-        source: P.when(isJobGitSource),
-      },
-      {
-        serviceType: 'HELM',
-        source: P.when(isHelmGitSource),
-      },
-      (service) => {
-        const gitRepository = match(service)
-          .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
-          .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
-          .with({ serviceType: 'HELM' }, ({ source }) => source.git?.git_repository)
-          .exhaustive()
-
-        return urlCodeEditor(gitRepository)
-      }
-    )
-    .otherwise(() => null)
-
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -876,11 +852,6 @@ function MenuOtherActions({
           <DropdownMenu.Item icon={<Icon iconName="terminal" />} onSelect={shellAction}>
             Cloud shell
           </DropdownMenu.Item>
-        )}
-        {editCodeUrl && (
-          <a href={editCodeUrl} target="_blank" rel="noreferrer">
-            <DropdownMenu.Item icon={<Icon iconName="code" />}>Edit code</DropdownMenu.Item>
-          </a>
         )}
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
           <Link

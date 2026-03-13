@@ -1,11 +1,17 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { memo, useMemo } from 'react'
+import { memo, useContext, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
 import { TerraformResourcesSection } from '@qovery/domains/service-terraform/feature'
-import { ObservabilityCallout, ServiceOverview } from '@qovery/domains/services/feature'
+import {
+  ObservabilityCallout,
+  ServiceOverview,
+  ServiceTerminal,
+  ServiceTerminalContext,
+  ServiceTerminalProvider,
+} from '@qovery/domains/services/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { serviceOverviewParamsSchema } from '@qovery/shared/router'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
@@ -18,9 +24,11 @@ export const Route = createFileRoute(
 })
 
 const WebSocketListenerMemo = memo(MetricsWebSocketListener)
+const ServiceTerminalMemo = memo(ServiceTerminal)
 
-function RouteComponent() {
+function RouteComponentContent() {
   const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { open, setOpen } = useContext(ServiceTerminalContext)
 
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '', suspense: true })
@@ -39,6 +47,20 @@ function RouteComponent() {
     [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]
   )
 
+  const shellAction = useMemo(() => {
+    if (!service) return undefined
+
+    return match(service)
+      .with({ serviceType: 'DATABASE' }, (s) => (s.mode === 'CONTAINER' ? () => setOpen(true) : undefined))
+      .with(
+        { serviceType: 'APPLICATION' },
+        { serviceType: 'CONTAINER' },
+        { serviceType: 'JOB' },
+        () => () => setOpen(true)
+      )
+      .otherwise(() => undefined)
+  }, [service, setOpen])
+
   return (
     <>
       <ServiceOverview
@@ -50,6 +72,7 @@ function RouteComponent() {
             <EnableObservabilityModal />
           </ObservabilityCallout>
         }
+        shellAction={shellAction}
       />
       {environment && service?.serviceType && (
         <WebSocketListenerMemo
@@ -61,6 +84,23 @@ function RouteComponent() {
           serviceType={service?.serviceType}
         />
       )}
+      {open && environment && service && (
+        <ServiceTerminalMemo
+          organizationId={environment.organization.id}
+          clusterId={environment.cluster_id}
+          projectId={environment.project.id}
+          environmentId={environment.id}
+          serviceId={service.id}
+        />
+      )}
     </>
+  )
+}
+
+function RouteComponent() {
+  return (
+    <ServiceTerminalProvider>
+      <RouteComponentContent />
+    </ServiceTerminalProvider>
   )
 }

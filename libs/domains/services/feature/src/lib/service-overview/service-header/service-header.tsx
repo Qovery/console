@@ -62,9 +62,10 @@ export interface ServiceHeaderProps {
   environment: Environment
   serviceId: string
   service: AnyService
+  shellAction?: () => void
 }
 
-function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeaderProps) {
+function ServiceHeaderContent({ environment, serviceId, service, shellAction }: ServiceHeaderProps) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: masterCredentials } = useMasterCredentials({ serviceId, serviceType: service?.serviceType })
 
@@ -131,7 +132,7 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
               {environment.cluster_name}
             </div>
           </div>
-          <ServiceActions environment={environment} serviceId={serviceId} variant="header" />
+          <ServiceActions environment={environment} serviceId={serviceId} variant="header" shellAction={shellAction} />
         </div>
         {service.description && <p className="text-neutral-subtle">{service.description}</p>}
         <div className="mt-3 flex items-center gap-1">
