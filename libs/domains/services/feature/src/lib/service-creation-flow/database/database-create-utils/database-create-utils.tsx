@@ -7,8 +7,8 @@ import {
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
 } from 'qovery-typescript-axios'
-import { type ReactElement, cloneElement, createElement } from 'react'
 import { type Value } from '@qovery/shared/interfaces'
+import { Icon } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { serviceTemplates } from '../../../service-new/service-templates'
 
@@ -61,28 +61,6 @@ const DATABASE_VPC_KEY_PREFIX_BY_TYPE: Record<DatabaseTypeEnum, string> = {
 export function formatDatabaseTypeLabel(value: string) {
   const formattedValue = upperCaseFirstLetter(value.toLowerCase()).replace(/db/g, 'DB').replace(/sql/g, 'SQL')
   return formattedValue
-}
-
-function getDatabaseTypeIcon(databaseType: string) {
-  const databaseTemplate = serviceTemplates.find(
-    (serviceTemplate) => serviceTemplate.slug === databaseType.toLowerCase()
-  )
-
-  if (!databaseTemplate?.icon) {
-    return undefined
-  }
-
-  if (typeof databaseTemplate.icon === 'string') {
-    return createElement('img', {
-      src: databaseTemplate.icon,
-      alt: databaseTemplate.title,
-      className: 'h-4 w-4 object-contain select-none',
-    })
-  }
-
-  return cloneElement(databaseTemplate.icon as ReactElement, {
-    className: 'h-4 w-4 object-contain select-none',
-  })
 }
 
 export function findDatabaseTemplateMatch(template?: string, option?: string): DatabaseTemplateMatch {
@@ -153,7 +131,7 @@ export function generateDatabaseTypeAndVersionOptions(
     return {
       label: formatDatabaseTypeLabel(databaseType),
       value: databaseType,
-      icon: getDatabaseTypeIcon(databaseType),
+      icon: <Icon name={databaseType} width="16px" height="16px" />,
     }
   })
 
