@@ -34,10 +34,11 @@ const isSupportedService = (service?: AnyService): service is Application | Cont
 export function ServiceDomainSettings() {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
-  const { data: service } = useService({ environmentId, serviceId })
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { data: links = [], isLoading: areLinksLoading } = useLinks({
     serviceId,
     serviceType: service?.serviceType,
+    suspense: true,
   })
 
   if (service && !isSupportedService(service)) {
