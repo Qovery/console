@@ -187,21 +187,23 @@ export function Container({ children }: PropsWithChildren) {
   const contentTabs = !matchSettingsRoute && (
     <div className="flex h-14 items-center justify-center px-5">
       {matchEnvVariableRoute ? (
-        <VariablesActionToolbar
-          scope="ENVIRONMENT"
-          projectId={projectId}
-          environmentId={environmentId}
-          onCreateVariable={() =>
-            toast(
-              'SUCCESS',
-              'Creation success',
-              'You need to redeploy your environment for your changes to be applied.',
-              toasterCallback,
-              undefined,
-              'Redeploy'
-            )
-          }
-        />
+        <>
+          <VariablesActionToolbar
+            scope="ENVIRONMENT"
+            projectId={projectId}
+            environmentId={environmentId}
+            onCreateVariable={() =>
+              toast(
+                'SUCCESS',
+                'Creation success',
+                'You need to redeploy your environment for your changes to be applied.',
+                toasterCallback,
+                undefined,
+                'Redeploy'
+              )
+            }
+          />
+        </>
       ) : (
         <Skeleton width={154} height={40} show={isLoadingDeploymentStatus}>
           <PostHogFeature
