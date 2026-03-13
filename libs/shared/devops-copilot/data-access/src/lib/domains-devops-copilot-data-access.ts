@@ -163,7 +163,7 @@ export const mutations = {
     readOnly?: boolean
   }) => {
     const response = await devopsCopilotAxios.post(`/owner/${userSub}/organization/${organizationId}/thread`, {
-      title: message.substring(0, 50),
+      title: message,
       read_only: readOnly,
     })
 
