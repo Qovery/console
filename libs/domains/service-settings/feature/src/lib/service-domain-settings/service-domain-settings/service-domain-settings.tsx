@@ -249,7 +249,7 @@ function ServiceDomainSettingsContent() {
                   variant="solid"
                   color="brand"
                   as="button"
-                  size="xs"
+                  size="sm"
                 >
                   {noPublicLinkCta.label}
                   <Icon iconName="arrow-right" className="text-xs" />
@@ -259,7 +259,7 @@ function ServiceDomainSettingsContent() {
                   type="button"
                   variant="outline"
                   color="neutral"
-                  size="xs"
+                  size="sm"
                   href="https://www.qovery.com/docs/configuration/application#custom-domains"
                 >
                   Learn more

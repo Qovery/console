@@ -65,7 +65,7 @@ export function ApplicationContainerPortSettingsList({
             />
           </BlockContent>
         ) : (
-          <EmptyState title="No ports are set" description="Define a custom port for your application" />
+          <EmptyState icon="plug" title="No ports are set" description="Define a custom port for your application" />
         )}
       </div>
     </>

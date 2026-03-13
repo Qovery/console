@@ -6,9 +6,10 @@ import { queries } from '@qovery/state/util-queries'
 export interface UseCheckCustomDomainsProps {
   serviceId: string
   serviceType: ServiceType
+  suspense?: boolean
 }
 
-export function useCheckCustomDomains({ serviceId, serviceType }: UseCheckCustomDomainsProps) {
+export function useCheckCustomDomains({ serviceId, serviceType, suspense }: UseCheckCustomDomainsProps) {
   return useQuery({
     ...queries.services.checkCustomDomains({
       serviceId,
@@ -17,6 +18,7 @@ export function useCheckCustomDomains({ serviceId, serviceType }: UseCheckCustom
     enabled: match(serviceType)
       .with('APPLICATION', 'CONTAINER', 'HELM', () => true)
       .otherwise(() => false),
+    suspense,
   })
 }
 
