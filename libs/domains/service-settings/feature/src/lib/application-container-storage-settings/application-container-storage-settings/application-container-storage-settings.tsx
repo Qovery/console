@@ -203,12 +203,7 @@ export function ApplicationContainerStorageSettings() {
 
         <div className="max-w-content-with-navigation-left">
           <Suspense fallback={<StorageSettingsContentFallback />}>
-            <StorageSettingsInnerContent
-              environmentId={environmentId}
-              serviceId={serviceId}
-              onOpenStorageModal={openStorageModal}
-              onDeleteStorage={onDeleteStorage}
-            />
+            <StorageSettingsInnerContent onOpenStorageModal={openStorageModal} onDeleteStorage={onDeleteStorage} />
           </Suspense>
         </div>
       </div>
