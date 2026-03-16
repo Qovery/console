@@ -5,22 +5,12 @@ import { useCallback, useContext, useMemo, useRef, useState } from 'react'
 import { ServiceAvatar, useFavoriteServices, useRecentServices } from '@qovery/domains/services/feature'
 import { AssistantContext } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import {
-  APPLICATION_URL,
-  DATABASE_URL,
-  SETTINGS_API_URL,
-  SETTINGS_CONTAINER_REGISTRIES_URL,
-  SETTINGS_GIT_REPOSITORY_ACCESS_URL,
-  SETTINGS_HELM_REPOSITORIES_URL,
-  SETTINGS_MEMBERS_URL,
-  SETTINGS_URL,
-  SETTINGS_WEBHOOKS,
-  USER_URL,
-} from '@qovery/shared/routes'
-import { Command, type CommandDialogProps, Icon, Truncate } from '@qovery/shared/ui'
+import { UserSettingsModal } from '@qovery/shared/iam/feature'
+import { Command, type CommandDialogProps, Icon, Truncate, useModal } from '@qovery/shared/ui'
 import { QOVERY_DOCS_URL, QOVERY_ROADMAP_URL } from '@qovery/shared/util-const'
 import { useQuickActions } from '../hooks/use-quick-actions/use-quick-actions'
 import { useServicesSearch } from '../hooks/use-services-search/use-services-search'
+import { ORGANIZATION_SETTINGS_ROUTES, type OrganizationSettingsRoute, SPOTLIGHT_ROUTES } from '../routes'
 import { SubCommand } from '../sub-command/sub-command'
 
 type Item = {
@@ -89,10 +79,10 @@ export interface SpotlightProps extends Pick<CommandDialogProps, 'open' | 'onOpe
 }
 
 export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps) {
-  // TODO: testing-only - migrate to TanStack Router hooks for console-v5.
   const navigate = useNavigate()
   const quickActions = useQuickActions()
   const { setAssistantOpen } = useContext(AssistantContext)
+  const { openModal } = useModal()
   const { data: services = [], isLoading: isLoadingServices } = useServicesSearch({ organizationId })
   const [searchInput, setSearchInput] = useState('')
   const { getRecentServices, addToRecentServices } = useRecentServices({ organizationId })
@@ -109,12 +99,24 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
 
   const iconClassName = 'text-brand text-sm text-center w-6'
 
-  const navigateTo = useCallback(
-    (link: string) => () => {
-      navigate({ to: link })
-      onOpenChange?.(false)
+  const closeSpotlight = useCallback(() => {
+    onOpenChange?.(false)
+  }, [onOpenChange])
+
+  const navigateToPath = useCallback(
+    (to: string) => () => {
+      navigate({ to })
+      closeSpotlight()
     },
-    [navigate, onOpenChange]
+    [closeSpotlight, navigate]
+  )
+
+  const navigateToOrganizationRoute = useCallback(
+    (to: OrganizationSettingsRoute) => () => {
+      navigate({ to, params: { organizationId } })
+      closeSpotlight()
+    },
+    [closeSpotlight, navigate, organizationId]
   )
 
   const openExternalLink = useCallback(
@@ -124,62 +126,70 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
     []
   )
 
+  const openPersonalSettings = useCallback(() => {
+    openModal({ content: <UserSettingsModal /> })
+    closeSpotlight()
+  }, [closeSpotlight, openModal])
+
   const navigateToService = useCallback(
     (service: ServiceLightResponse) => {
-      const serviceLink =
-        service.service_type === 'DATABASE'
-          ? DATABASE_URL(organizationId, service.project_id, service.environment_id, service.id)
-          : APPLICATION_URL(organizationId, service.project_id, service.environment_id, service.id)
-
       addToRecentServices(service)
       setSelectedService(undefined)
       setSearchInput('')
 
-      navigate({ to: serviceLink })
-      onOpenChange?.(false)
+      navigate({
+        to: SPOTLIGHT_ROUTES.serviceOverview,
+        params: {
+          organizationId,
+          projectId: service.project_id,
+          environmentId: service.environment_id,
+          serviceId: service.id,
+        },
+      })
+      closeSpotlight()
     },
-    [addToRecentServices, navigate, onOpenChange, organizationId]
+    [addToRecentServices, closeSpotlight, navigate, organizationId]
   )
 
   const settingsItems: Item[] = useMemo(
     () => [
       {
         label: 'View my container registries',
-        onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_CONTAINER_REGISTRIES_URL),
+        onSelect: navigateToOrganizationRoute(ORGANIZATION_SETTINGS_ROUTES.containerRegistries),
         iconName: 'box',
       },
       {
         label: 'View my helm repositories',
-        onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_HELM_REPOSITORIES_URL),
+        onSelect: navigateToOrganizationRoute(ORGANIZATION_SETTINGS_ROUTES.helmRepositories),
         iconEnum: IconEnum.HELM_OFFICIAL,
       },
       {
         label: 'View my git tokens',
-        onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_GIT_REPOSITORY_ACCESS_URL),
+        onSelect: navigateToOrganizationRoute(ORGANIZATION_SETTINGS_ROUTES.gitRepositoryAccess),
         iconName: 'key',
       },
       {
         label: 'View my webhooks',
-        onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_WEBHOOKS),
+        onSelect: navigateToOrganizationRoute(ORGANIZATION_SETTINGS_ROUTES.webhook),
         iconName: 'tower-broadcast',
       },
       {
         label: 'View my API tokens',
-        onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_API_URL),
+        onSelect: navigateToOrganizationRoute(ORGANIZATION_SETTINGS_ROUTES.apiToken),
         iconName: 'cloud-arrow-up',
       },
       {
         label: 'View my team members',
-        onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL),
+        onSelect: navigateToOrganizationRoute(ORGANIZATION_SETTINGS_ROUTES.members),
         iconName: 'user-group',
       },
       {
         label: 'Go to personal settings',
-        onSelect: navigateTo(USER_URL),
+        onSelect: openPersonalSettings,
         iconName: 'gear-complex',
       },
     ],
-    [navigateTo, organizationId]
+    [navigateToOrganizationRoute, openPersonalSettings]
   )
 
   const helpItems: Item[] = useMemo(
@@ -336,7 +346,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
             <>
               <Command.Group heading="Quick actions">
                 {quickActions.map(({ label, iconName, link }) => (
-                  <Command.Item key={link} onSelect={navigateTo(link)} value={label}>
+                  <Command.Item key={link} onSelect={navigateToPath(link)} value={label}>
                     <Icon className={iconClassName} iconName={iconName} />
                     {label}
                   </Command.Item>
