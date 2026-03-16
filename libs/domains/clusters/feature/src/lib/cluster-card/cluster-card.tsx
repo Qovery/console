@@ -14,7 +14,7 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { ClusterActionToolbar } from '../cluster-action-toolbar/cluster-action-toolbar'
+import { ClusterActions } from '../cluster-actions/cluster-actions'
 import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
 import { ClusterRunningStatusIndicator } from '../cluster-running-status-indicator/cluster-running-status-indicator'
 import { ClusterType } from '../cluster-type/cluster-type'
@@ -200,7 +200,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
         <Skeleton className="min-w-max" height={36} width={146} show={!clusterDeploymentStatus}>
           {clusterDeploymentStatus && (
             <div onClick={(e) => e.preventDefault()}>
-              <ClusterActionToolbar cluster={cluster} clusterStatus={clusterDeploymentStatus} variant="card" />
+              <ClusterActions cluster={cluster} clusterStatus={clusterDeploymentStatus} variant="card" />
             </div>
           )}
         </Skeleton>

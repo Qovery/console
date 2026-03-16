@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
+exports[`ClusterActions should match manage deployment snapshot 1`] = `
 <body
   data-scroll-locked="1"
   style="pointer-events: none;"
@@ -126,7 +126,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
 </body>
 `;
 
-exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
+exports[`ClusterActions should match other actions snapshot 1`] = `
 <body
   data-scroll-locked="1"
   style="pointer-events: none;"
@@ -311,7 +311,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
 </body>
 `;
 
-exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
+exports[`ClusterActions should match outdated snapshot 1`] = `
 <body
   data-scroll-locked="1"
   style="pointer-events: none;"

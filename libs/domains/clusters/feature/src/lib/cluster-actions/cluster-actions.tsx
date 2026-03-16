@@ -295,13 +295,13 @@ function MenuOtherActions({
   )
 }
 
-export interface ClusterActionToolbarProps {
+export interface ClusterActionsProps {
   cluster: Cluster
   clusterStatus: ClusterStatus
   variant?: ActionToolbarVariant
 }
 
-export function ClusterActionToolbar({ cluster, clusterStatus, variant = 'default' }: ClusterActionToolbarProps) {
+export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: ClusterActionsProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const showSelfManagedGuideKey = 'show-self-managed-guide'
@@ -448,4 +448,4 @@ export function ClusterActionToolbar({ cluster, clusterStatus, variant = 'defaul
   )
 }
 
-export default ClusterActionToolbar
+export default ClusterActions
