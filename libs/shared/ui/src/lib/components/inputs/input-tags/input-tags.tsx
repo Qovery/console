@@ -1,4 +1,6 @@
-import { type FormEvent, type KeyboardEvent, useEffect, useRef, useState } from 'react'
+import clsx from 'clsx'
+import { type FormEvent, type KeyboardEvent, useLayoutEffect, useRef, useState } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
 export interface InputTagsProps {
@@ -16,16 +18,30 @@ export function InputTags(props: InputTagsProps) {
   const [currentTags, setCurrentTags] = useState(tags || [])
   const [inputValue, setInputValue] = useState('')
   const [focused, setFocused] = useState(false)
+  const [hasInteracted, setHasInteracted] = useState(false)
 
-  useEffect(() => {
-    if (tags?.length > 0) setCurrentTags(tags)
+  useLayoutEffect(() => {
+    setCurrentTags(tags || [])
   }, [tags, setCurrentTags])
 
   const ref = useRef<HTMLInputElement>(null)
   const hasFocus = focused
-  const hasLabelUp = hasFocus || currentTags?.length > 0 ? 'input--label-up' : ''
-
-  const inputActions = hasFocus ? 'input--focused' : ''
+  const hasTags = currentTags.length > 0
+  const hasLabelUp = hasFocus || hasTags
+  const containerClassName = twMerge(
+    clsx('input', className, {
+      'input--focused': hasFocus,
+      'input--label-up': hasLabelUp,
+      '!pb-1': focused || hasTags,
+    })
+  )
+  const labelClassName = twMerge(
+    clsx('input__label', {
+      'text-xs': hasFocus,
+      'translate-y-2 text-sm': !hasFocus,
+      'transition-none': !hasInteracted,
+    })
+  )
 
   const handleKeyDown = (event: FormEvent<HTMLInputElement>) => {
     const key = (event as KeyboardEvent<HTMLInputElement>).key
@@ -46,6 +62,7 @@ export function InputTags(props: InputTagsProps) {
       if (currentTags.find((v) => value.toLowerCase() === v.toLowerCase())) return
 
       const newTags = [...currentTags, value]
+      setHasInteracted(true)
       setCurrentTags(newTags)
       setInputValue('')
       onChange && onChange(newTags)
@@ -54,6 +71,7 @@ export function InputTags(props: InputTagsProps) {
 
   const removeTag = (index: number) => {
     const newTags = currentTags.filter((el: string, i: number) => i !== index)
+    setHasInteracted(true)
     setCurrentTags(newTags)
     onChange && onChange(newTags)
   }
@@ -61,15 +79,16 @@ export function InputTags(props: InputTagsProps) {
   return (
     <div
       data-testid={dataTestId}
-      className={`input ${inputActions} ${hasLabelUp} ${
-        focused || currentTags?.length > 0 ? '!pb-1' : ''
-      } ${className}`}
+      className={containerClassName}
       onClick={() => ref?.current?.focus()}
-      onFocus={() => setFocused(true)}
+      onFocus={() => {
+        setHasInteracted(true)
+        setFocused(true)
+      }}
       onBlur={() => setFocused(false)}
     >
-      <label className={`${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'}`}>{label}</label>
-      <div className={`${focused || currentTags?.length > 0 ? 'pt-3' : ''}`}>
+      <label className={labelClassName}>{label}</label>
+      <div className={twMerge(clsx({ 'pt-3': focused || hasTags }))}>
         {currentTags.map((tag, index) => (
           <div
             data-testid={`input-tags-${index}`}
@@ -91,13 +110,18 @@ export function InputTags(props: InputTagsProps) {
           data-testid="input-tags-field"
           onKeyDown={handleKeyDown}
           type="text"
-          className={`bg-transparent ${!focused ? 'text-transparent' : ''} ${
-            focused || currentTags?.length > 0 || inputValue.length > 0
-              ? 'inline-flex text-ssm text-neutral'
-              : 'absolute left-0 top-0 h-full w-full'
-          }`}
-          placeholder={currentTags?.length > 0 ? placeholder : ''}
-          onChange={(e) => setInputValue(e.currentTarget.value)}
+          className={twMerge(
+            clsx('bg-transparent', {
+              'text-transparent': !focused,
+              'inline-flex text-ssm text-neutral': focused || hasTags || inputValue.length > 0,
+              'absolute left-0 top-0 h-full w-full': !focused && !hasTags && inputValue.length === 0,
+            })
+          )}
+          placeholder={hasTags ? placeholder : ''}
+          onChange={(e) => {
+            setHasInteracted(true)
+            setInputValue(e.currentTarget.value)
+          }}
           value={inputValue}
         />
       </div>

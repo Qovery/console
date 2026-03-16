@@ -41,4 +41,21 @@ describe('InputTextAreaArea', () => {
 
     expect(input as HTMLInputElement).toHaveValue('some new text value')
   })
+
+  it('should disable the label transition until the field is interacted with', () => {
+    props.value = 'prefilled value'
+
+    render(<InputTextArea {...props} />)
+
+    const label = screen.getByText(props.label)
+    const input = screen.getByRole('textbox')
+    const container = screen.getByLabelText('textarea-container')
+
+    expect(container).toHaveClass('input--label-up')
+    expect(label).toHaveClass('transition-none')
+
+    fireEvent.focus(input)
+
+    expect(screen.getByText(props.label)).not.toHaveClass('transition-none')
+  })
 })

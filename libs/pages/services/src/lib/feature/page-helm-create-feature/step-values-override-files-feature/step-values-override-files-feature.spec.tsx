@@ -6,6 +6,17 @@ import { type HelmGeneralData } from '../page-helm-create-feature'
 import { HelmCreateContext } from '../page-helm-create-feature'
 import StepValuesOverrideFilesFeature from './step-values-override-files-feature'
 
+jest.mock('../../../router/router', () => ({
+  ROUTER_SERVICE_HELM_CREATION: [],
+}))
+
+jest.mock('@qovery/domains/organizations/feature', () => ({
+  GitBranchSettings: () => <div data-testid="git-branch-settings" />,
+  GitProviderSetting: () => <div data-testid="git-provider-setting" />,
+  GitPublicRepositorySettings: () => <div data-testid="git-public-repository-settings" />,
+  GitRepositorySetting: () => <div data-testid="git-repository-setting" />,
+}))
+
 const defaultValues: HelmGeneralData = {
   source_provider: 'GIT',
   provider: 'GITHUB',
@@ -107,7 +118,7 @@ describe('StepValuesOverrideFilesFeature', () => {
     const button = screen.getByRole('button', { name: 'Continue' })
 
     // wait for form to be valid because we have selects (necessary with react hook form)
-    waitFor(async () => {
+    await waitFor(async () => {
       expect(button).toBeEnabled()
       await userEvent.click(button)
     })

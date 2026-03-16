@@ -13,19 +13,19 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input group     "
+            class="input group"
           >
             <div
               class=""
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm transition-none"
                 for="Public repository URL (.git)"
               >
                 Public repository URL (.git)
               </label>
               <input
-                class="input__value "
+                class="input__value"
                 data-testid="input-text"
                 id="Public repository URL (.git)"
                 name="repository"
@@ -58,19 +58,19 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
       >
         <div
           aria-label="input-container"
-          class="input group     "
+          class="input group"
         >
           <div
             class=""
           >
             <label
-              class="translate-y-2 text-sm"
+              class="input__label translate-y-2 text-sm transition-none"
               for="Branch"
             >
               Branch
             </label>
             <input
-              class="input__value "
+              class="input__value"
               data-testid="input-text"
               id="Branch"
               name="branch"
@@ -91,19 +91,19 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input group    input--label-up "
+            class="input group input--label-up"
           >
             <div
               class=""
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm transition-none"
                 for="Root service path"
               >
                 Root service path
               </label>
               <input
-                class="input__value "
+                class="input__value"
                 data-testid="input-text"
                 id="Root service path"
                 name="root_path"

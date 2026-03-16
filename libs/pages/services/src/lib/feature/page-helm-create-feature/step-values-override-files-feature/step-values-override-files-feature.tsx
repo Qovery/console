@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Controller, FormProvider, type UseFormReturn } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import {
   GitBranchSettings,
@@ -44,6 +44,7 @@ export function StepValuesOverrideFilesFeature() {
   useDocumentTitle('General - Values override as file')
 
   const { generalForm, valuesOverrideFileForm, setCurrentStep, creationFlowUrl } = useHelmCreateContext()
+  const { organizationId = '' } = useParams()
 
   const generalData = generalForm.getValues()
 

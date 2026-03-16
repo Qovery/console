@@ -18,19 +18,19 @@ exports[`GeneralSetting should match snapshot 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input group     "
+              class="input group"
             >
               <div
                 class=""
               >
                 <label
-                  class="translate-y-2 text-sm"
+                  class="input__label translate-y-2 text-sm transition-none"
                   for="Name"
                 >
                   Name
                 </label>
                 <input
-                  class="input__value "
+                  class="input__value"
                   data-testid="input-text"
                   id="Name"
                   name="name"
@@ -48,10 +48,10 @@ exports[`GeneralSetting should match snapshot 1`] = `
     >
       <div
         aria-label="textarea-container"
-        class="input pb-0 pr-2    "
+        class="input pb-0 pr-2"
       >
         <label
-          class="translate-y-2 text-sm"
+          class="input__label translate-y-2 text-sm transition-none"
           for="Description (optional)"
         >
           Description (optional)

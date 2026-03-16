@@ -552,19 +552,19 @@ exports[`SourceSetting should match snapshot helm chart settings with OCI kind 1
       >
         <div
           aria-label="input-container"
-          class="input group    input--label-up "
+          class="input group input--label-up"
         >
           <div
             class=""
           >
             <label
-              class="translate-y-2 text-sm"
+              class="input__label translate-y-2 text-sm transition-none"
               for="Chart name"
             >
               Chart name
             </label>
             <input
-              class="input__value "
+              class="input__value"
               data-testid="input-text"
               id="Chart name"
               name="chart_name"
@@ -584,19 +584,19 @@ exports[`SourceSetting should match snapshot helm chart settings with OCI kind 1
       >
         <div
           aria-label="input-container"
-          class="input group    input--label-up "
+          class="input group input--label-up"
         >
           <div
             class=""
           >
             <label
-              class="translate-y-2 text-sm"
+              class="input__label translate-y-2 text-sm transition-none"
               for="Version"
             >
               Version
             </label>
             <input
-              class="input__value "
+              class="input__value"
               data-testid="input-text"
               id="Version"
               name="chart_version"

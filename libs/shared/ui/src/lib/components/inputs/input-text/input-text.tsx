@@ -1,4 +1,6 @@
-import { type ChangeEventHandler, type ReactNode, forwardRef, useEffect, useRef, useState } from 'react'
+import clsx from 'clsx'
+import { type ChangeEventHandler, type ReactNode, forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
 export interface InputTextProps {
@@ -35,25 +37,19 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
   } = props
 
   const [focused, setFocused] = useState(false)
+  const [hasInteracted, setHasInteracted] = useState(false)
   const inputRef = useRef<HTMLDivElement>(null)
   const [currentValue, setCurrentValue] = useState(value)
   const [currentType, setCurrentType] = useState(type)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setCurrentValue(value)
   }, [value, setCurrentValue])
 
   const hasFocus = focused
-  const hasLabelUp =
-    hasFocus || (currentValue?.toString() && currentValue?.toString().length > 0) || placeholder
-      ? 'input--label-up'
-      : ''
-
-  const hasError = error && error.length > 0 ? 'input--error' : ''
-
-  const inputActions = hasFocus ? 'input--focused' : disabled ? 'input--disabled' : ''
-
-  const isDisabled = disabled ? 'input--disabled !border-neutral' : ''
+  const hasValue = Boolean(currentValue?.toString()?.length)
+  const hasLabelUp = hasFocus || hasValue || Boolean(placeholder)
+  const hasError = Boolean(error?.length)
 
   const displayPicker = () => {
     const input = inputRef.current?.querySelector('input')
@@ -68,6 +64,27 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
   }
 
   const isInputDate = type === 'time' || type === 'date' || type === 'datetime'
+  const inputContainerClassName = twMerge(
+    clsx('input group', {
+      'input--focused': hasFocus,
+      'input--disabled': disabled,
+      '!border-neutral': disabled,
+      'input--error': hasError,
+      'input--label-up': hasLabelUp,
+    })
+  )
+  const labelClassName = twMerge(
+    clsx('input__label', {
+      'text-xs': hasFocus,
+      'translate-y-2 text-sm': !hasFocus,
+      'transition-none': !hasInteracted,
+    })
+  )
+  const inputValueClassName = twMerge(
+    clsx('input__value', {
+      '!pr-9': Boolean(rightElement),
+    })
+  )
 
   return (
     <div
@@ -76,13 +93,9 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
       data-testid={`${dataTestId || 'input-text'}-wrapper`}
     >
       <div className="relative">
-        <div
-          aria-label="input-container"
-          className={`input group ${inputActions} ${isDisabled} ${hasError} ${hasLabelUp} `}
-          ref={inputRef}
-        >
-          <div className={`${disabled ? 'pointer-events-none' : ''}`}>
-            <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'}`}>
+        <div aria-label="input-container" className={inputContainerClassName} ref={inputRef}>
+          <div className={clsx({ 'pointer-events-none': disabled })}>
+            <label htmlFor={label} className={labelClassName}>
               {label}
             </label>
             <input
@@ -90,17 +103,21 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
               ref={ref}
               name={name}
               id={label}
-              className={`input__value ${rightElement ? '!pr-9' : ''}`}
+              className={inputValueClassName}
               type={currentType}
               disabled={disabled}
               value={currentValue}
               placeholder={placeholder}
               autoFocus={autoFocus}
               onChange={(e) => {
+                setHasInteracted(true)
                 if (onChange) onChange(e)
                 setCurrentValue(e.currentTarget.value)
               }}
-              onFocus={() => setFocused(true)}
+              onFocus={() => {
+                setHasInteracted(true)
+                setFocused(true)
+              }}
               onBlur={() => setFocused(false)}
             />
             {isInputDate && (
@@ -108,7 +125,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
                 <Icon iconName="angle-down" className="text-sm text-neutral-subtle group-hover:text-neutral" />
               </div>
             )}
-            {(currentValue as string)?.length > 0 && type === 'password' && (
+            {hasValue && type === 'password' && (
               <div
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral transition-colors hover:text-neutral"
                 onClick={() => (currentType === 'password' ? setCurrentType('text') : setCurrentType('password'))}
