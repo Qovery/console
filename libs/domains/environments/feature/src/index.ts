@@ -8,6 +8,7 @@ export * from './lib/create-clone-environment-modal/create-clone-environment-mod
 export * from './lib/environment-action-toolbar/environment-action-toolbar'
 export * from './lib/environment-deployment-list/environment-deployment-list'
 export * from './lib/need-redeploy-flag/need-redeploy-flag'
+export * from './lib/environment-deployment-pipeline/environment-deployment-pipeline/environment-deployment-pipeline'
 export * from './lib/hooks/use-deployment-status/use-deployment-status'
 export * from './lib/hooks/use-deployment-stages/use-deployment-stages'
 export * from './lib/hooks/use-environment/use-environment'

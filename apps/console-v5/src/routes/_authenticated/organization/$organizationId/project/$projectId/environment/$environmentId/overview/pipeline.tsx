@@ -1,4 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { EnvironmentDeploymentPipeline } from '@qovery/domains/environments/feature'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline'
@@ -7,10 +9,7 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  return (
-    <div>
-      Hello
-      "/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline"!
-    </div>
-  )
+  useDocumentTitle('Deployment Pipeline')
+
+  return <EnvironmentDeploymentPipeline />
 }

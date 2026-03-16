@@ -41,7 +41,7 @@ const BoardRoot = ({ children, className }: PropsWithChildren & { className?: st
 
   return (
     <BoardContext.Provider value={{ boardId }}>
-      <div className={twMerge('flex h-full w-full overflow-x-scroll pb-5', className)}>{children}</div>
+      <div className={twMerge('scroll-shadow flex h-full w-full overflow-x-scroll pb-5', className)}>{children}</div>
     </BoardContext.Provider>
   )
 }
