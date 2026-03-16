@@ -175,10 +175,7 @@ function ServiceDeploymentRestrictionsSettingsInner({
                 Mode: <span className="text-neutral">{deploymentRestriction.mode}</span>
               </p>
               <p>
-                Type: <span className="text-neutral">{deploymentRestriction.type}</span>
-              </p>
-              <p>
-                Value: <span className="text-neutral">{deploymentRestriction.value}</span>
+                Path: <span className="text-neutral">{deploymentRestriction.value}</span>
               </p>
             </div>
           </div>

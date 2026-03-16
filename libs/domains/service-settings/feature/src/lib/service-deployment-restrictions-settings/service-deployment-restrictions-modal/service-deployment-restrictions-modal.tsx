@@ -115,7 +115,7 @@ export function ServiceDeploymentRestrictionsModal({
           rules={{ required: 'Please enter a value.' }}
           render={({ field, fieldState: { error } }) => (
             <InputSelect
-              className="mb-6"
+              className="mb-6 hidden"
               onChange={field.onChange}
               value={field.value}
               error={error?.message}
@@ -140,7 +140,7 @@ export function ServiceDeploymentRestrictionsModal({
               onChange={field.onChange}
               value={field.value}
               error={error?.message}
-              label="Value"
+              label="Path"
             />
           )}
         />

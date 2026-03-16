@@ -1,6 +1,18 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import { ServiceTerminal, type ServiceTerminalProps } from './service-terminal'
 
+jest.mock('@qovery/state/util-queries', () => ({
+  useReactQueryWsSubscription: jest.fn(),
+}))
+
+jest.mock('../..', () => ({
+  ...jest.requireActual('../..'),
+  useRunningStatus: jest.fn(() => ({
+    data: undefined,
+    isLoading: false,
+  })),
+}))
+
 const props: ServiceTerminalProps = {
   organizationId: '0',
   clusterId: '0',

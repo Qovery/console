@@ -52,8 +52,8 @@ describe('ServiceDeploymentRestrictionsModal', () => {
       container: document.body,
     })
 
-    await userEvent.clear(screen.getByLabelText('Value'))
-    await userEvent.type(screen.getByLabelText('Value'), 'baz')
+    await userEvent.clear(screen.getByLabelText('Path'))
+    await userEvent.type(screen.getByLabelText('Path'), 'baz')
     await userEvent.click(submitButton)
 
     expect(useCreateDeploymentRestriction().mutate).toHaveBeenCalledWith({
@@ -78,8 +78,8 @@ describe('ServiceDeploymentRestrictionsModal', () => {
       container: document.body,
     })
 
-    await userEvent.clear(screen.getByLabelText('Value'))
-    await userEvent.type(screen.getByLabelText('Value'), 'baz')
+    await userEvent.clear(screen.getByLabelText('Path'))
+    await userEvent.type(screen.getByLabelText('Path'), 'baz')
     await userEvent.click(submitButton)
 
     expect(useEditDeploymentRestriction().mutate).toHaveBeenCalledWith({
