@@ -145,7 +145,7 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
                   placeholder="Search..."
                   value={searchQuery}
                   onValueChange={setSearchQuery}
-                  className="h-9 border border-neutral bg-surface-neutral py-0 pl-10 pr-6 text-sm"
+                  className="h-9 rounded-sm border border-neutral bg-surface-neutral py-0 pl-10 pr-6 text-sm"
                 />
               </div>
             </div>

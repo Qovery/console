@@ -42,7 +42,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
                 </span>
               </div>
             </div>
-            <hr className="relative -left-5 my-5 w-[calc(100%+41px)] border-0 border-b border-neutral" />
+            <hr className="relative -left-4 my-4 w-[calc(100%+32px)] border-0 border-b border-neutral" />
             <Controller
               name="name"
               control={control}

@@ -34,7 +34,7 @@ export function GitTokenList() {
           {gitTokens?.map((gitToken) => (
             <li
               key={gitToken.id}
-              className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
+              className="flex items-center justify-between border-b border-neutral p-4 last:border-0"
             >
               <div className="flex items-center">
                 <Icon name={gitToken.type} width="20px" height="20px" />
@@ -144,7 +144,7 @@ export function GitTokenList() {
           ))}
         </ul>
       ) : (
-        <div className="px-5 py-4 text-center">
+        <div className="p-4 text-center">
           <Icon iconName="wave-pulse" className="text-neutral-subtle" />
           <p className="mt-1 text-xs font-medium text-neutral-subtle">
             No Git Tokens found. <br /> Please add one.

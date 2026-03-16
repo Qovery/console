@@ -16,7 +16,7 @@ import WebhookCrudModal from './webhook-crud-modal/webhook-crud-modal'
 const WebhookSkeleton = () => (
   <BlockContent title="Webhook" classNameContent="p-0">
     {[0, 1, 2].map((index) => (
-      <div key={index} className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0">
+      <div key={index} className="flex items-center justify-between border-b border-neutral p-4 last:border-0">
         <div className="flex flex-col gap-1">
           <Skeleton width={320} height={16} show={true} />
           <Skeleton width={220} height={16} show={true} />
@@ -92,7 +92,7 @@ const WebhookList = ({ organizationId }: { organizationId: string }) => {
             <li
               key={webhook.id}
               data-testid="webhook-row"
-              className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
+              className="flex items-center justify-between border-b border-neutral p-4 last:border-0"
             >
               <div className="flex flex-col">
                 <p className="mb-1 flex text-xs font-medium text-neutral">
@@ -153,7 +153,7 @@ const WebhookList = ({ organizationId }: { organizationId: string }) => {
           ))}
         </ul>
       ) : (
-        <div className="px-5 py-4 text-center">
+        <div className="p-4 text-center">
           <Icon iconName="wave-pulse" className="text-neutral-subtle" />
           <p className="mt-1 text-xs font-medium text-neutral-subtle" data-testid="empty-webhook">
             No webhook found. <br /> Please add one.

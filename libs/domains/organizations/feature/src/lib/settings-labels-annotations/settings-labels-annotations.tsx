@@ -30,7 +30,7 @@ import { LabelCreateEditModal } from '../label-create-edit-modal/label-create-ed
 const LabelsAnnotationsRowsSkeleton = () => (
   <ul>
     {[0, 1, 2, 3].map((index) => (
-      <li key={index} className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0">
+      <li key={index} className="flex items-center justify-between border-b border-neutral p-4 last:border-0">
         <div className="space-y-2">
           <Skeleton width={180} height={12} show={true} />
           <Skeleton width={260} height={12} show={true} />
@@ -71,7 +71,7 @@ function LabelsGroupsList({ organizationId, onOpenItems, onEdit, onDelete }: Lab
       {labelsGroups.map((labelsGroup) => (
         <li
           key={labelsGroup.id}
-          className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
+          className="flex items-center justify-between border-b border-neutral p-4 last:border-0"
         >
           <div className="flex flex-col">
             <h2 className="mb-1 flex text-xs font-medium text-neutral">
