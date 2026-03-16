@@ -1,4 +1,4 @@
-import { type ChangeEventHandler, type ReactNode, forwardRef, useEffect, useRef, useState } from 'react'
+import { type ChangeEventHandler, type ReactNode, forwardRef, useLayoutEffect, useRef, useState } from 'react'
 import Icon from '../../icon/icon'
 
 export interface InputTextProps {
@@ -35,11 +35,12 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
   } = props
 
   const [focused, setFocused] = useState(false)
+  const [hasInteracted, setHasInteracted] = useState(false)
   const inputRef = useRef<HTMLDivElement>(null)
   const [currentValue, setCurrentValue] = useState(value)
   const [currentType, setCurrentType] = useState(type)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setCurrentValue(value)
   }, [value, setCurrentValue])
 
@@ -68,6 +69,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
   }
 
   const isInputDate = type === 'time' || type === 'date' || type === 'datetime'
+  const labelClassName = `${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'} ${!hasInteracted ? '!transition-none' : ''}`
 
   return (
     <div
@@ -82,7 +84,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
           ref={inputRef}
         >
           <div className={`${disabled ? 'pointer-events-none' : ''}`}>
-            <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'}`}>
+            <label htmlFor={label} className={labelClassName}>
               {label}
             </label>
             <input
@@ -97,10 +99,14 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
               placeholder={placeholder}
               autoFocus={autoFocus}
               onChange={(e) => {
+                setHasInteracted(true)
                 if (onChange) onChange(e)
                 setCurrentValue(e.currentTarget.value)
               }}
-              onFocus={() => setFocused(true)}
+              onFocus={() => {
+                setHasInteracted(true)
+                setFocused(true)
+              }}
               onBlur={() => setFocused(false)}
             />
             {isInputDate && (

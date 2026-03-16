@@ -42,4 +42,17 @@ describe('InputTags', () => {
     expect(screen.getByTestId('input-tags-0')).toHaveTextContent('hello')
     expect(screen.queryByTestId(/input-tags-1/i)).not.toBeInTheDocument()
   })
+
+  it('should disable the label transition until the field is interacted with', () => {
+    renderWithProviders(<InputTags {...props} />)
+
+    const label = screen.getByText(props.label)
+    const input = screen.getByTestId('input-tags-field')
+
+    expect(label).toHaveClass('!transition-none')
+
+    fireEvent.focus(input)
+
+    expect(screen.getByText(props.label)).not.toHaveClass('!transition-none')
+  })
 })

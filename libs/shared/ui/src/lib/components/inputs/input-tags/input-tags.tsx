@@ -1,4 +1,4 @@
-import { type FormEvent, type KeyboardEvent, useEffect, useRef, useState } from 'react'
+import { type FormEvent, type KeyboardEvent, useLayoutEffect, useRef, useState } from 'react'
 import Icon from '../../icon/icon'
 
 export interface InputTagsProps {
@@ -16,9 +16,10 @@ export function InputTags(props: InputTagsProps) {
   const [currentTags, setCurrentTags] = useState(tags || [])
   const [inputValue, setInputValue] = useState('')
   const [focused, setFocused] = useState(false)
+  const [hasInteracted, setHasInteracted] = useState(false)
 
-  useEffect(() => {
-    if (tags?.length > 0) setCurrentTags(tags)
+  useLayoutEffect(() => {
+    setCurrentTags(tags || [])
   }, [tags, setCurrentTags])
 
   const ref = useRef<HTMLInputElement>(null)
@@ -26,6 +27,7 @@ export function InputTags(props: InputTagsProps) {
   const hasLabelUp = hasFocus || currentTags?.length > 0 ? 'input--label-up' : ''
 
   const inputActions = hasFocus ? 'input--focused' : ''
+  const labelClassName = `${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'} ${!hasInteracted ? '!transition-none' : ''}`
 
   const handleKeyDown = (event: FormEvent<HTMLInputElement>) => {
     const key = (event as KeyboardEvent<HTMLInputElement>).key
@@ -46,6 +48,7 @@ export function InputTags(props: InputTagsProps) {
       if (currentTags.find((v) => value.toLowerCase() === v.toLowerCase())) return
 
       const newTags = [...currentTags, value]
+      setHasInteracted(true)
       setCurrentTags(newTags)
       setInputValue('')
       onChange && onChange(newTags)
@@ -54,6 +57,7 @@ export function InputTags(props: InputTagsProps) {
 
   const removeTag = (index: number) => {
     const newTags = currentTags.filter((el: string, i: number) => i !== index)
+    setHasInteracted(true)
     setCurrentTags(newTags)
     onChange && onChange(newTags)
   }
@@ -65,10 +69,13 @@ export function InputTags(props: InputTagsProps) {
         focused || currentTags?.length > 0 ? '!pb-1' : ''
       } ${className}`}
       onClick={() => ref?.current?.focus()}
-      onFocus={() => setFocused(true)}
+      onFocus={() => {
+        setHasInteracted(true)
+        setFocused(true)
+      }}
       onBlur={() => setFocused(false)}
     >
-      <label className={`${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'}`}>{label}</label>
+      <label className={labelClassName}>{label}</label>
       <div className={`${focused || currentTags?.length > 0 ? 'pt-3' : ''}`}>
         {currentTags.map((tag, index) => (
           <div
@@ -97,7 +104,10 @@ export function InputTags(props: InputTagsProps) {
               : 'absolute left-0 top-0 h-full w-full'
           }`}
           placeholder={currentTags?.length > 0 ? placeholder : ''}
-          onChange={(e) => setInputValue(e.currentTarget.value)}
+          onChange={(e) => {
+            setHasInteracted(true)
+            setInputValue(e.currentTarget.value)
+          }}
           value={inputValue}
         />
       </div>

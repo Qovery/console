@@ -1,4 +1,4 @@
-import { type FormEvent, type ReactNode, forwardRef, useEffect, useRef, useState } from 'react'
+import { type FormEvent, type ReactNode, forwardRef, useLayoutEffect, useRef, useState } from 'react'
 
 export interface InputTextAreaProps {
   label: string
@@ -16,9 +16,10 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
   const { label, value = '', name, onChange, className, hint, error, dataTestId = 'input-textarea' } = props
 
   const [currentValue, setCurrentValue] = useState(value)
+  const [hasInteracted, setHasInteracted] = useState(false)
 
-  useEffect(() => {
-    if (value) setCurrentValue(value)
+  useLayoutEffect(() => {
+    setCurrentValue(value)
   }, [value, setCurrentValue])
 
   const [focused, setFocused] = useState(false)
@@ -26,11 +27,12 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
   const inputRef = useRef<HTMLDivElement>(null)
 
   const hasFocus = focused
-  const hasLabelUp = hasFocus || (value && value.length > 0) ? 'input--label-up' : ''
+  const hasLabelUp = hasFocus || (currentValue && currentValue.length > 0) ? 'input--label-up' : ''
   const hasError = error && error.length > 0 ? 'input--error' : ''
   const inputActions = hasFocus ? 'input--focused' : ''
 
   const isDisabled = props.disabled ? 'input--disabled !border-neutral' : ''
+  const labelClassName = `${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'} ${!hasInteracted ? '!transition-none' : ''}`
 
   return (
     <div
@@ -43,7 +45,7 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
         className={`input pb-0 pr-2 ${inputActions} ${hasError} ${isDisabled} ${hasLabelUp}`}
         ref={inputRef}
       >
-        <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'}`}>
+        <label htmlFor={label} className={labelClassName}>
           {label}
         </label>
         <textarea
@@ -53,10 +55,14 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
           className="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral outline-0"
           value={!currentValue ? undefined : currentValue}
           onChange={(e) => {
+            setHasInteracted(true)
             if (onChange) onChange(e)
             setCurrentValue(e.currentTarget.value)
           }}
-          onFocus={() => setFocused(true)}
+          onFocus={() => {
+            setHasInteracted(true)
+            setFocused(true)
+          }}
           onBlur={() => setFocused(false)}
           disabled={props.disabled}
         />
