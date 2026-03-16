@@ -131,6 +131,17 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
               value={clusterDeleteMode}
             />
           )}
+          {cluster.kubernetes !== 'SELF_MANAGED' && (
+            <Callout.Root className="mb-3" color="sky">
+              <Callout.Icon>
+                <Icon iconName="info-circle" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                Before deleting, Qovery reconciles the cluster state. Missing managed resources can be recreated
+                temporarily so the deletion workflow can clean everything up and avoid orphan cloud resources.
+              </Callout.Text>
+            </Callout.Root>
+          )}
           <p className="font-medium">
             Use it carefully this action is irreversible. Please confirm that you are aware of the operation impact:
           </p>
