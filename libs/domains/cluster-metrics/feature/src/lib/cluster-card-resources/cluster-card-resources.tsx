@@ -44,7 +44,7 @@ export function ClusterCardResources({ organizationId, clusterId }: ClusterCardR
   ]
 
   return (
-    <div className="flex flex-col gap-2.5 rounded-lg border border-neutral bg-surface-neutral p-4">
+    <div className="flex flex-col gap-2.5 rounded border border-neutral bg-surface-neutral p-4">
       <p className="text-sm text-neutral-subtle">Total cluster resources</p>
       <ul className="flex w-full flex-col text-sm text-neutral">
         {resources.map(({ label, icon, value, isPercentage }) =>
