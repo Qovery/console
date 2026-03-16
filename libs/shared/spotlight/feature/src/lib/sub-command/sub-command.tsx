@@ -5,10 +5,10 @@ import { Command as Cmdk } from 'cmdk'
 import { type ServiceLightResponse } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useEffect, useRef } from 'react'
 import { useFavoriteServices } from '@qovery/domains/services/feature'
-import { ENVIRONMENTS_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Command, Icon, Kbd, Truncate } from '@qovery/shared/ui'
 import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { SPOTLIGHT_ROUTES } from '../routes'
 
 const CustomKbd = ({ children, className }: PropsWithChildren<{ className?: string }>) => {
   return (
@@ -97,22 +97,34 @@ export function SubCommand({
     }
   }, [service, open, setOpen, listRef])
 
+  const closeSubCommand = () => {
+    onSpotlightOpenChange?.(false)
+    setOpen(false)
+    resetSelection()
+  }
+
   // Navigation and action handlers
   const navigateToProject = () => {
     if (service?.project_id) {
-      navigate({ to: ENVIRONMENTS_URL(organizationId, service.project_id) })
-      onSpotlightOpenChange?.(false)
-      setOpen(false)
-      resetSelection()
+      navigate({
+        to: SPOTLIGHT_ROUTES.project,
+        params: { organizationId, projectId: service.project_id },
+      })
+      closeSubCommand()
     }
   }
 
   const navigateToEnvironment = () => {
     if (service?.project_id && service?.environment_id) {
-      navigate({ to: SERVICES_URL(organizationId, service.project_id, service.environment_id) })
-      onSpotlightOpenChange?.(false)
-      setOpen(false)
-      resetSelection()
+      navigate({
+        to: SPOTLIGHT_ROUTES.environment,
+        params: {
+          organizationId,
+          projectId: service.project_id,
+          environmentId: service.environment_id,
+        },
+      })
+      closeSubCommand()
     }
   }
 

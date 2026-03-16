@@ -26,13 +26,13 @@ const SpotlightTriggerBase = ({ organizationId }: { organizationId: string }) =>
   return (
     <>
       <button
-        className="group flex max-w-52 items-center gap-2 rounded border border-neutral bg-surface-neutral px-2 py-1 text-sm transition-colors hover:border-neutral-component lg:min-w-[200px] lg:max-w-max"
+        className="group flex h-7 w-[200px] items-center gap-1.5 rounded-md border border-neutral bg-surface-neutral pl-2 pr-1.5 text-ssm transition-colors hover:border-neutral-component"
         onClick={() => setOpenSpotlight(!openSpotlight)}
       >
         <Icon
           iconName="magnifying-glass"
           iconStyle="regular"
-          className="text-neutral-subtle group-hover:text-neutral"
+          className="text-xs text-neutral-subtle transition-colors group-hover:text-neutral"
         />
         <span className="text-neutral-subtle">Search</span>
         <div className="ml-auto flex gap-1 text-neutral-subtle">

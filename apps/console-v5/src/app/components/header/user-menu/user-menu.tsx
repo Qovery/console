@@ -39,8 +39,9 @@ export function UserMenu() {
         <button className="cursor-pointer select-none rounded-full bg-surface-neutral-component focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-9 focus-visible:ring-offset-2 focus-visible:ring-offset-background-secondary">
           <Avatar
             src={userToken?.picture}
+            className="h-7 w-7"
             fallback={<span className="text-xs font-medium text-neutral">{initials}</span>}
-            size="sm"
+            size="custom"
             radius="full"
           />
         </button>
