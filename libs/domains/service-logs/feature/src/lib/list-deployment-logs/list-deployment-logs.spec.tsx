@@ -16,7 +16,7 @@ jest.mock('@tanstack/react-router', () => ({
   useSearch: () => ({}),
   useNavigate: () => jest.fn(),
   useParams: () => ({ organizationId: '1' }),
-  useLocation: () => ({ pathname: '/', search: '' }),
+  useLocation: () => ({ pathname: '/', search: '', hash: '' }),
   useRouter: () => ({
     buildLocation: () => ({ href: '/' }),
   }),
