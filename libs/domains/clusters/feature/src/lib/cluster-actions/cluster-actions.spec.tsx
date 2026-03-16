@@ -2,7 +2,7 @@ import { ClusterDeploymentStatusEnum, ClusterStateEnum, type ClusterStatus } fro
 import type { ReactNode } from 'react'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { ClusterActionToolbar } from './cluster-action-toolbar'
+import { ClusterActions } from './cluster-actions'
 
 const mockCluster = clusterFactoryMock(1)[0]
 const mockClusterStatus: ClusterStatus = {
@@ -25,11 +25,11 @@ jest.mock('@tanstack/react-router', () => ({
   Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
 
-describe('ClusterActionToolbar', () => {
+describe('ClusterActions', () => {
   it('should match manage deployment snapshot', async () => {
     mockCluster.deployment_status = ClusterDeploymentStatusEnum.UP_TO_DATE
     const { userEvent, baseElement } = renderWithProviders(
-      <ClusterActionToolbar cluster={mockCluster} organizationId="1" clusterStatus={mockClusterStatus} />,
+      <ClusterActions cluster={mockCluster} organizationId="1" clusterStatus={mockClusterStatus} />,
       {
         container: document.body,
       }
@@ -43,7 +43,7 @@ describe('ClusterActionToolbar', () => {
   it('should match other actions snapshot', async () => {
     mockCluster.deployment_status = ClusterDeploymentStatusEnum.UP_TO_DATE
     const { userEvent, baseElement } = renderWithProviders(
-      <ClusterActionToolbar cluster={mockCluster} organizationId="1" clusterStatus={mockClusterStatus} />,
+      <ClusterActions cluster={mockCluster} organizationId="1" clusterStatus={mockClusterStatus} />,
       {
         container: document.body,
       }
@@ -57,7 +57,7 @@ describe('ClusterActionToolbar', () => {
   it('should match outdated snapshot', async () => {
     mockCluster.deployment_status = ClusterDeploymentStatusEnum.OUT_OF_DATE
     const { userEvent, baseElement } = renderWithProviders(
-      <ClusterActionToolbar cluster={mockCluster} organizationId="1" clusterStatus={mockClusterStatus} />,
+      <ClusterActions cluster={mockCluster} organizationId="1" clusterStatus={mockClusterStatus} />,
       {
         container: document.body,
       }
