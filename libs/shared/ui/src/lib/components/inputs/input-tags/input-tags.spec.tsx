@@ -1,4 +1,4 @@
-import { fireEvent, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { fireEvent, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import InputTags, { type InputTagsProps } from './input-tags'
 
 describe('InputTags', () => {
@@ -43,16 +43,26 @@ describe('InputTags', () => {
     expect(screen.queryByTestId(/input-tags-1/i)).not.toBeInTheDocument()
   })
 
-  it('should disable the label transition until the field is interacted with', () => {
+  it('should disable the label transition while syncing prefilled tags', async () => {
     renderWithProviders(<InputTags {...props} />)
 
     const label = screen.getByText(props.label)
-    const input = screen.getByTestId('input-tags-field')
 
-    expect(label).toHaveClass('transition-none')
+    expect(label).toHaveClass('!transition-none')
 
-    fireEvent.focus(input)
+    await waitFor(() => expect(screen.getByText(props.label)).not.toHaveClass('!transition-none'))
+  })
 
-    expect(screen.getByText(props.label)).not.toHaveClass('transition-none')
+  it('should disable the label transition when tags are injected after focus', async () => {
+    const { rerender } = renderWithProviders(<InputTags {...props} tags={[]} />)
+
+    fireEvent.focus(screen.getByTestId('input-tags-field'))
+
+    rerender(<InputTags {...props} tags={['hello', 'world']} />)
+
+    expect(screen.getByTestId('input-tags')).toHaveClass('input--label-up')
+    expect(screen.getByText(props.label)).toHaveClass('!transition-none')
+
+    await waitFor(() => expect(screen.getByText(props.label)).not.toHaveClass('!transition-none'))
   })
 })
