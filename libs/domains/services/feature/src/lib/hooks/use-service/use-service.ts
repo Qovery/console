@@ -70,22 +70,20 @@ export function useService<
                   : never,
 >(props: { serviceId: string; serviceType: T; suspense?: boolean }): UseQueryResult<R>
 export function useService({ serviceId, suspense = false, ...props }: UseServiceProps) {
-  const serviceTypeFromProps = 'serviceType' in props ? props.serviceType : undefined
   const { data: serviceType } = useServiceType({
     environmentId: 'environmentId' in props ? props.environmentId : undefined,
     serviceId,
     suspense,
+    enabled: Boolean(serviceId) && Boolean('environmentId' in props),
   })
-  const resolvedServiceType = serviceTypeFromProps ?? serviceType
-  const enabled = Boolean(serviceId) && Boolean(resolvedServiceType)
 
   return useQuery({
     ...queries.services.details({
-      serviceId: serviceId ?? '',
-      serviceType: (resolvedServiceType ?? 'APPLICATION') as ServiceType,
+      serviceId: serviceId!,
+      serviceType: 'serviceType' in props ? props.serviceType : serviceType!,
     }),
     suspense,
-    enabled,
+    enabled: Boolean(serviceId) && Boolean(serviceType),
   })
 }
 

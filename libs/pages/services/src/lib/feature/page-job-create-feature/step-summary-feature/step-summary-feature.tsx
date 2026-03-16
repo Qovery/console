@@ -5,11 +5,10 @@ import {
   type LifecycleTemplateResponseVariablesInnerFile,
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
-  type VariableImportRequest,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { P, match } from 'ts-pattern'
+import { match } from 'ts-pattern'
 import { useAnnotationsGroups, useContainerRegistry, useLabelsGroups } from '@qovery/domains/organizations/feature'
 import { type DockerfileSettingsData, useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import { useCreateVariable, useImportVariables } from '@qovery/domains/variables/feature'
@@ -30,6 +29,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { prepareVariableImportRequest } from '@qovery/shared/util-js'
 import StepSummary from '../../../ui/page-job-create/step-summary/step-summary'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
@@ -138,23 +138,6 @@ function prepareJobRequest({
   }
 
   return jobRequest
-}
-
-function prepareVariableImportRequest(variables: VariableData[]): VariableImportRequest | null {
-  if (variables && variables.length === 0) {
-    return null
-  }
-
-  return {
-    overwrite: true,
-    vars: variables
-      .map(({ variable: name = '', scope, value = '', isSecret: is_secret }) =>
-        match(scope)
-          .with(P.nullish, () => undefined)
-          .otherwise((scope) => ({ name, scope, value, is_secret }))
-      )
-      .filter((i) => !!i),
-  }
 }
 
 export function StepSummaryFeature() {

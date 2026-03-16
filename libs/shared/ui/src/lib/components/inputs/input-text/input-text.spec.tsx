@@ -59,4 +59,28 @@ describe('InputText', () => {
     const input = screen.getByRole('textbox')
     expect(input).toHaveClass('!pr-9')
   })
+
+  it('should keep the label up when the field is prefilled', () => {
+    props.value = 'prefilled value'
+
+    render(<InputText {...props} />)
+
+    expect(screen.getByLabelText('input-container')).toHaveClass('input--label-up')
+    expect(screen.getByRole('textbox')).toHaveValue('prefilled value')
+  })
+
+  it('should disable the label transition until the field is interacted with', () => {
+    props.value = 'prefilled value'
+
+    render(<InputText {...props} />)
+
+    const label = screen.getByText(props.label)
+    const input = screen.getByRole('textbox')
+
+    expect(label).toHaveClass('transition-none')
+
+    fireEvent.focus(input)
+
+    expect(screen.getByText(props.label)).not.toHaveClass('transition-none')
+  })
 })

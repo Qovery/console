@@ -8,7 +8,7 @@ import { type AnyService, type Database } from '@qovery/domains/services/data-ac
 import {
   AutoDeployBadge,
   NeedRedeployFlag,
-  ServiceActionToolbar,
+  ServiceActions,
   ServiceAvatar,
   ServiceStateChip,
   ServiceTemplateIndicator,
@@ -116,7 +116,7 @@ export function Container({ children }: ContainerProps) {
     <div className="flex flex-row items-center gap-4">
       <Skeleton width={150} height={36} show={!service || !environment}>
         {service && environment && (
-          <ServiceActionToolbar serviceId={service.id} environment={environment} shellAction={() => setOpen(true)} />
+          <ServiceActions serviceId={service.id} environment={environment} shellAction={() => setOpen(true)} />
         )}
       </Skeleton>
       <div className="h-4 w-px bg-neutral-250" />

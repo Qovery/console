@@ -40,19 +40,19 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
             >
               <div
                 aria-label="input-container"
-                class="input group     "
+                class="input group"
               >
                 <div
                   class=""
                 >
                   <label
-                    class="translate-y-2 text-sm"
+                    class="input__label translate-y-2 text-sm transition-none"
                     for="Service name"
                   >
                     Service name
                   </label>
                   <input
-                    class="input__value "
+                    class="input__value"
                     data-testid="input-text"
                     id="Service name"
                     name="service_name"
@@ -168,19 +168,19 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
             >
               <div
                 aria-label="input-container"
-                class="input group input--disabled input--disabled !border-neutral  input--label-up "
+                class="input group input--disabled !border-neutral input--label-up"
               >
                 <div
                   class="pointer-events-none"
                 >
                   <label
-                    class="translate-y-2 text-sm"
+                    class="input__label translate-y-2 text-sm transition-none"
                     for="External port"
                   >
                     External port
                   </label>
                   <input
-                    class="input__value "
+                    class="input__value"
                     data-testid="input-text"
                     disabled=""
                     id="External port"
@@ -201,19 +201,19 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
             >
               <div
                 aria-label="input-container"
-                class="input group     "
+                class="input group"
               >
                 <div
                   class=""
                 >
                   <label
-                    class="translate-y-2 text-sm"
+                    class="input__label translate-y-2 text-sm transition-none"
                     for="Namespace (optional)"
                   >
                     Namespace (optional)
                   </label>
                   <input
-                    class="input__value "
+                    class="input__value"
                     data-testid="input-text"
                     id="Namespace (optional)"
                     name="namespace"
@@ -234,19 +234,19 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
               >
                 <div
                   aria-label="input-container"
-                  class="input group     "
+                  class="input group"
                 >
                   <div
                     class=""
                   >
                     <label
-                      class="translate-y-2 text-sm"
+                      class="input__label translate-y-2 text-sm transition-none"
                       for="Port name"
                     >
                       Port name
                     </label>
                     <input
-                      class="input__value "
+                      class="input__value"
                       data-testid="input-text"
                       id="Port name"
                       name="name"
@@ -330,19 +330,19 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
             >
               <div
                 aria-label="input-container"
-                class="input group    input--label-up "
+                class="input group input--label-up"
               >
                 <div
                   class=""
                 >
                   <label
-                    class="translate-y-2 text-sm"
+                    class="input__label translate-y-2 text-sm transition-none"
                     for="Service name"
                   >
                     Service name
                   </label>
                   <input
-                    class="input__value "
+                    class="input__value"
                     data-testid="input-text"
                     id="Service name"
                     name="service_name"
@@ -362,19 +362,19 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
             >
               <div
                 aria-label="input-container"
-                class="input group    input--label-up "
+                class="input group input--label-up"
               >
                 <div
                   class=""
                 >
                   <label
-                    class="translate-y-2 text-sm"
+                    class="input__label translate-y-2 text-sm transition-none"
                     for="Service port"
                   >
                     Service port
                   </label>
                   <input
-                    class="input__value "
+                    class="input__value"
                     data-testid="input-text"
                     id="Service port"
                     name="internal_port"
@@ -490,19 +490,19 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
             >
               <div
                 aria-label="input-container"
-                class="input group input--disabled input--disabled !border-neutral  input--label-up "
+                class="input group input--disabled !border-neutral input--label-up"
               >
                 <div
                   class="pointer-events-none"
                 >
                   <label
-                    class="translate-y-2 text-sm"
+                    class="input__label translate-y-2 text-sm transition-none"
                     for="External port"
                   >
                     External port
                   </label>
                   <input
-                    class="input__value "
+                    class="input__value"
                     data-testid="input-text"
                     disabled=""
                     id="External port"
@@ -523,19 +523,19 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
             >
               <div
                 aria-label="input-container"
-                class="input group    input--label-up "
+                class="input group input--label-up"
               >
                 <div
                   class=""
                 >
                   <label
-                    class="translate-y-2 text-sm"
+                    class="input__label translate-y-2 text-sm transition-none"
                     for="Namespace (optional)"
                   >
                     Namespace (optional)
                   </label>
                   <input
-                    class="input__value "
+                    class="input__value"
                     data-testid="input-text"
                     id="Namespace (optional)"
                     name="namespace"
@@ -556,19 +556,19 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
               >
                 <div
                   aria-label="input-container"
-                  class="input group    input--label-up "
+                  class="input group input--label-up"
                 >
                   <div
                     class=""
                   >
                     <label
-                      class="translate-y-2 text-sm"
+                      class="input__label translate-y-2 text-sm transition-none"
                       for="Port name"
                     >
                       Port name
                     </label>
                     <input
-                      class="input__value "
+                      class="input__value"
                       data-testid="input-text"
                       id="Port name"
                       name="name"

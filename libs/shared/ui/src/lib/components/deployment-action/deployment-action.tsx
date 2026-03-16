@@ -5,6 +5,7 @@ import {
   StateEnum,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
+import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
 
 export const getDeploymentAction = (
@@ -108,16 +109,20 @@ export const getDeploymentAction = (
 
 export const DeploymentAction = ({
   status,
+  className,
+  iconClassName,
 }: {
   status: StateEnum | ServiceActionStatusEnum | DeploymentHistoryTriggerAction | ServiceSubActionEnum | undefined
+  className?: string
+  iconClassName?: string
 }) => {
   const action = getDeploymentAction(status)
   if (!status || !action) return null
 
   return (
-    <div className="flex items-center gap-2">
-      {action.icon}
-      <span className="text-sm text-neutral">{action.status}</span>
+    <div className={twMerge('flex items-center gap-2 text-sm', className)}>
+      <span className={iconClassName}>{action.icon}</span>
+      <span className="text-neutral">{action.status}</span>
     </div>
   )
 }
