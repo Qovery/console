@@ -167,7 +167,7 @@ function AnnotationsGroupsList({ organizationId, onOpenItems, onEdit, onDelete }
       {annotationsGroups.map((annotationsGroup) => (
         <li
           key={annotationsGroup.id}
-          className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
+          className="flex items-center justify-between border-b border-neutral p-4 last:border-0"
         >
           <div className="flex flex-col">
             <h2 className="mb-1 flex text-xs font-medium text-neutral">
