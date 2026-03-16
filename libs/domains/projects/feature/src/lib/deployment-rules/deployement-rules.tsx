@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { Reorder } from 'framer-motion'
 import { type Cluster, type ProjectDeploymentRule } from 'qovery-typescript-axios'
@@ -37,6 +37,22 @@ function DeploymentRulesListSkeleton() {
       </ul>
     </BlockContent>
   )
+}
+
+function DeploymentRulesEmptyStateSkeleton() {
+  return (
+    <div className="flex w-full flex-col items-center rounded-lg border border-neutral px-6 py-10">
+      <Skeleton width={48} height={48} rounded />
+      <Skeleton className="mt-6 w-full max-w-72" height={18} />
+      <Skeleton className="mt-3 w-full max-w-lg" height={14} />
+      <Skeleton className="mt-2 w-full max-w-md" height={14} />
+      <Skeleton className="mt-6" width={136} height={36} />
+    </div>
+  )
+}
+
+function DeploymentRulesContentSkeleton({ hasRules }: { hasRules: boolean }) {
+  return hasRules ? <DeploymentRulesListSkeleton /> : <DeploymentRulesEmptyStateSkeleton />
 }
 
 interface DeploymentRulesContentProps {
@@ -216,14 +232,18 @@ function DeploymentRulesContent({ organizationId, projectId, linkNewRule }: Depl
 
 export function DeploymentRules() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { projectId = '', organizationId = '' } = useParams({ strict: false })
   useDocumentTitle('Deployment rules - Qovery')
 
   const linkNewRule = `/organization/${organizationId}/project/${projectId}/deployment-rules/create`
+  const cachedDeploymentRules =
+    queryClient.getQueryData<ProjectDeploymentRule[]>(queries.projects.listDeploymentRules({ projectId }).queryKey) ??
+    []
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="p-8">
+      <Section className="pt-6">
         <div className="mb-8 flex w-full justify-between gap-2 border-b border-neutral">
           <div className="flex flex-col gap-2 pb-6">
             <Heading> Deployment rules</Heading>
@@ -237,7 +257,7 @@ export function DeploymentRules() {
           </Button>
         </div>
         <div className="max-w-content-with-navigation-left">
-          <Suspense fallback={<DeploymentRulesListSkeleton />}>
+          <Suspense fallback={<DeploymentRulesContentSkeleton hasRules={cachedDeploymentRules.length > 0} />}>
             <DeploymentRulesContent organizationId={organizationId} projectId={projectId} linkNewRule={linkNewRule} />
           </Suspense>
         </div>

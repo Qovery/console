@@ -28,7 +28,12 @@ export function CreateDeploymentRule() {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
   useDocumentTitle('Create Deployment Rule - Qovery')
 
-  const { control, handleSubmit, setValue } = useForm()
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { isSubmitting },
+  } = useForm()
   const navigate = useNavigate()
 
   const { mutateAsync: createDeploymentRule } = useCreateDeploymentRule()
@@ -67,14 +72,27 @@ export function CreateDeploymentRule() {
     }
   })
 
-  return <CreateEditDeploymentRule title="Create rule" control={control} clusters={clusters} onSubmit={onSubmit} />
+  return (
+    <CreateEditDeploymentRule
+      title="Create rule"
+      control={control}
+      clusters={clusters}
+      onSubmit={onSubmit}
+      isSubmitting={isSubmitting}
+    />
+  )
 }
 
 export function EditDeploymentRule() {
   const { organizationId = '', projectId = '', deploymentRuleId = '' } = useParams({ strict: false })
   useDocumentTitle('Edit Deployment Rule - Qovery')
 
-  const { control, handleSubmit, setValue } = useForm()
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { isSubmitting },
+  } = useForm()
   const navigate = useNavigate()
 
   const { data: deploymentRule } = useDeploymentRule({ projectId, deploymentRuleId })
@@ -134,6 +152,7 @@ export function EditDeploymentRule() {
       clusters={clusters}
       onSubmit={onSubmit}
       defaultAutoStop={deploymentRule?.auto_stop}
+      isSubmitting={isSubmitting}
     />
   )
 }
@@ -145,10 +164,19 @@ export interface CreateEditDeploymentRuleProps {
   onSubmit: () => void
   clusters?: Cluster[]
   defaultAutoStop?: boolean
+  isSubmitting?: boolean
 }
 
 export function CreateEditDeploymentRule(props: CreateEditDeploymentRuleProps) {
-  const { title, control, onSubmit, clusters, btnLabel = 'Create rule', defaultAutoStop = false } = props
+  const {
+    title,
+    control,
+    onSubmit,
+    clusters,
+    btnLabel = 'Create rule',
+    defaultAutoStop = false,
+    isSubmitting = false,
+  } = props
   const { organizationId, projectId } = useParams({ strict: false })
   const [autoStop, setAutoStop] = useState(defaultAutoStop)
 
@@ -170,7 +198,7 @@ export function CreateEditDeploymentRule(props: CreateEditDeploymentRuleProps) {
     <div className="mt-2">
       <div className="flex">
         <div className="flex-grow overflow-y-auto">
-          <Section className="px-10 py-7">
+          <Section className="pt-6">
             <Link
               color="brand"
               size="xs"
@@ -293,6 +321,7 @@ export function CreateEditDeploymentRule(props: CreateEditDeploymentRuleProps) {
                           title="Deploy on specific timeframe"
                           description="Specify a timeframe to automatically start & stop your environment."
                           small
+                          forceAlignTop
                         />
                       )}
                     />
@@ -366,7 +395,7 @@ export function CreateEditDeploymentRule(props: CreateEditDeploymentRuleProps) {
                   </div>
                 </BlockContent>
                 <div className="flex justify-end">
-                  <Button className="mb-14" size="lg" type="submit">
+                  <Button className="mb-14" size="lg" type="submit" loading={isSubmitting}>
                     {btnLabel}
                   </Button>
                 </div>

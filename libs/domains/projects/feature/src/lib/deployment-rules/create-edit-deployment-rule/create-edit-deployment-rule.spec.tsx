@@ -86,6 +86,7 @@ describe('CreateEditDeploymentRule', () => {
       onSubmit: jest.fn(),
       clusters: clusterFactoryMock(2),
       control: undefined,
+      isSubmitting: false,
     }
   })
 
@@ -116,6 +117,28 @@ describe('CreateEditDeploymentRule', () => {
 
     expect(baseElement).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Create rule' })).toBeInTheDocument()
+  })
+
+  it('should display a loading state on submit button', () => {
+    const Wrapper = () => {
+      const { control } = useForm<{
+        id: string
+        name: string
+        timezone: string
+        start_time: string
+        stop_time: string
+        mode: string
+        auto_stop: boolean
+        description: string
+        cluster_id: string
+      }>()
+
+      return <CreateEditDeploymentRule {...props} control={control} isSubmitting />
+    }
+
+    renderWithProviders(<Wrapper />)
+
+    expect(screen.getByTestId('spinner')).toBeInTheDocument()
   })
 
   it('should render EditDeploymentRule successfully', () => {
