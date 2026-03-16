@@ -3,8 +3,8 @@ import { type FormEventHandler, useEffect } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
 import { Button, FunnelFlowBody, Heading, Link, Section } from '@qovery/shared/ui'
-import { ApplicationSettingsResources } from '../../application-settings-resources/application-settings-resources'
-import { useApplicationContainerCreateContext } from './application-container-creation-flow'
+import { ApplicationSettingsResources } from '../../../application-settings-resources/application-settings-resources'
+import { useApplicationContainerCreateContext } from '../application-container-creation-flow'
 
 export interface ApplicationContainerStepResourcesProps {
   onSubmit: (data: ApplicationResourcesData) => void

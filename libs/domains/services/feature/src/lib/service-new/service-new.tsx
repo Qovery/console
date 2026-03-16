@@ -7,8 +7,6 @@ import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import {
   SERVICES_CRONJOB_CREATION_URL,
-  SERVICES_DATABASE_CREATION_URL,
-  SERVICES_DATABASE_TEMPLATE_CREATION_URL,
   SERVICES_HELM_CREATION_URL,
   SERVICES_HELM_TEMPLATE_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
@@ -80,6 +78,19 @@ function getCreateFlowPath(flowSlug: string, templateSlug?: string): string {
 function buildCreateFlowPathForType(type: ServiceType, parentSlug: string, slug: string): string | undefined {
   const flowSlug = CREATE_FLOW_SLUG_BY_TYPE[type]
   if (!flowSlug) return undefined
+
+  if (type === 'DATABASE') {
+    const templateSlug = parentSlug === flowSlug || parentSlug === 'current' ? undefined : parentSlug
+    const optionSlug = slug === 'current' ? undefined : slug
+    const path = getCreateFlowPath(flowSlug, templateSlug)
+
+    if (optionSlug) {
+      return `${path}${templateSlug ? '&' : '?'}option=${encodeURIComponent(optionSlug)}`
+    }
+
+    return path
+  }
+
   const { flowSlug: resolvedFlowSlug, templateSlug } = getCreateFlowPathParams(type, parentSlug, slug)
   return getCreateFlowPath(resolvedFlowSlug, templateSlug)
 }
@@ -115,9 +126,13 @@ function Card({
       )
     }
 
+    if (!link) {
+      return <div className={className}>{children}</div>
+    }
+
     return (
       // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
-      <Link to={link!} className={className}>
+      <Link to={link} className={className}>
         {children}
       </Link>
     )
@@ -155,8 +170,7 @@ function Card({
 /** Types listed in CREATE_FLOW_SLUG_BY_TYPE use /service/create/:flowSlug?template=; others use legacy URLs until migrated. */
 const servicePathSuffix = (type: ServiceType, parentSlug: string, slug: string) =>
   match(type)
-    .with('APPLICATION', 'CONTAINER', () => buildCreateFlowPathForType(type, parentSlug, slug))
-    .with('DATABASE', () => SERVICES_DATABASE_TEMPLATE_CREATION_URL(parentSlug, slug))
+    .with('APPLICATION', 'CONTAINER', 'DATABASE', () => buildCreateFlowPathForType(type, parentSlug, slug))
     .with('LIFECYCLE_JOB', () => SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('HELM', () => SERVICES_HELM_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('JOB', 'CRON_JOB', () => undefined)
@@ -299,6 +313,10 @@ function CardService({
 }) {
   const [expanded, setExpanded] = useState(false)
 
+  if (options && !slug) {
+    return null
+  }
+
   if (options) {
     return (
       <div
@@ -354,7 +372,7 @@ function CardService({
                 .map((props) => (
                   <CardOption
                     key={props.slug}
-                    parentSlug={slug!}
+                    parentSlug={slug ?? ''}
                     organizationId={organizationId}
                     projectId={projectId}
                     environmentId={environmentId}
@@ -398,7 +416,7 @@ function CardService({
     )
   }
 
-  const pathSuffix = link ?? servicePathSuffix(type!, slug!, 'current')
+  const pathSuffix = link ?? (type && slug ? servicePathSuffix(type, slug, 'current') : undefined)
   const to = pathSuffix ? getServicesPath(organizationId, projectId, environmentId, pathSuffix) : undefined
 
   if (!to) return null
@@ -532,7 +550,12 @@ export function ServiceNew({
         title: 'Database',
         description: 'Easy and fastest way to deploy the most popular databases.',
         icon: <Icon name="DATABASE" width={32} height={32} />,
-        link: getServicesPath(organizationId, projectId, environmentId, SERVICES_DATABASE_CREATION_URL),
+        link: getServicesPath(
+          organizationId,
+          projectId,
+          environmentId,
+          buildCreateFlowPathForType('DATABASE', 'database', 'current') ?? '/service/create/database'
+        ),
         cloud_provider: cloudProvider,
       },
       {

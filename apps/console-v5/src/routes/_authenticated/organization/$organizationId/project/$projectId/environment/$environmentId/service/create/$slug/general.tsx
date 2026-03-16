@@ -8,7 +8,7 @@ import {
 import { ApplicationContainerStepGeneral, GeneralContainerSettings } from '@qovery/domains/services/feature'
 import { EntrypointCmdInputs } from '@qovery/shared/console-shared'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
-import { applicationContainerCreateParamsSchema } from '@qovery/shared/router'
+import { serviceCreateParamsSchema } from '@qovery/shared/router'
 import { useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -16,7 +16,7 @@ export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/general'
 )({
   component: General,
-  validateSearch: applicationContainerCreateParamsSchema,
+  validateSearch: serviceCreateParamsSchema,
 })
 
 function General() {

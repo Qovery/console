@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { ApplicationContainerCreationFlow } from './application-container-creation-flow'
+import { ApplicationContainerCreationFlow } from '../application-container-creation-flow'
 import { ApplicationContainerStepResources } from './step-resources'
 
 const mockOnSubmit = jest.fn()
@@ -33,7 +33,7 @@ jest.mock('@tanstack/react-router', () => ({
   useNavigate: () => jest.fn(),
 }))
 
-jest.mock('../../application-settings-resources/application-settings-resources', () => ({
+jest.mock('../../../application-settings-resources/application-settings-resources', () => ({
   ApplicationSettingsResources: () => <div data-testid="application-settings-resources">Resources form</div>,
 }))
 

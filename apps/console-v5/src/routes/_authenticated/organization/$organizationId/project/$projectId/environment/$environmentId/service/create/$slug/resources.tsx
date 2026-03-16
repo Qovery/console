@@ -1,14 +1,14 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { ApplicationContainerStepResources } from '@qovery/domains/services/feature'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
-import { applicationContainerCreateParamsSchema } from '@qovery/shared/router'
+import { serviceCreateParamsSchema } from '@qovery/shared/router'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources'
 )({
   component: Resources,
-  validateSearch: applicationContainerCreateParamsSchema,
+  validateSearch: serviceCreateParamsSchema,
 })
 
 function Resources() {

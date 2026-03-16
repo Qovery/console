@@ -1,11 +1,11 @@
 import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
-import { applicationContainerCreateParamsSchema } from '@qovery/shared/router'
+import { serviceCreateParamsSchema } from '@qovery/shared/router'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/'
 )({
   component: RouteComponent,
-  validateSearch: applicationContainerCreateParamsSchema,
+  validateSearch: serviceCreateParamsSchema,
 })
 
 function RouteComponent() {
