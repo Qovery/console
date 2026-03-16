@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { type FormEvent, type ReactNode, forwardRef, useLayoutEffect, useRef, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
@@ -28,15 +29,25 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
   const inputRef = useRef<HTMLDivElement>(null)
 
   const hasFocus = focused
-  const hasLabelUp = hasFocus || (currentValue && currentValue.length > 0) ? 'input--label-up' : ''
-  const hasError = error && error.length > 0 ? 'input--error' : ''
-  const inputActions = hasFocus ? 'input--focused' : ''
-
-  const isDisabled = props.disabled ? 'input--disabled !border-neutral' : ''
+  const hasValue = Boolean(currentValue?.length)
+  const hasLabelUp = hasFocus || hasValue
+  const hasError = Boolean(error?.length)
+  const isDisabled = Boolean(props.disabled)
+  const textareaContainerClassName = twMerge(
+    clsx('input pb-0 pr-2', {
+      'input--focused': hasFocus,
+      'input--error': hasError,
+      'input--disabled': isDisabled,
+      '!border-neutral': isDisabled,
+      'input--label-up': hasLabelUp,
+    })
+  )
   const labelClassName = twMerge(
-    'input__label',
-    hasFocus ? 'text-xs' : 'translate-y-2 text-sm',
-    !hasInteracted && 'transition-none'
+    clsx('input__label', {
+      'text-xs': hasFocus,
+      'translate-y-2 text-sm': !hasFocus,
+      'transition-none': !hasInteracted,
+    })
   )
 
   return (
@@ -45,11 +56,7 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
       className={className}
       onClick={() => inputRef.current?.querySelector('textarea')?.focus()}
     >
-      <div
-        aria-label="textarea-container"
-        className={twMerge('input pb-0 pr-2', inputActions, hasError, isDisabled, hasLabelUp)}
-        ref={inputRef}
-      >
+      <div aria-label="textarea-container" className={textareaContainerClassName} ref={inputRef}>
         <label htmlFor={label} className={labelClassName}>
           {label}
         </label>
@@ -69,7 +76,7 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
             setFocused(true)
           }}
           onBlur={() => setFocused(false)}
-          disabled={props.disabled}
+          disabled={isDisabled}
         />
       </div>
       {hint && !error && <p className="mt-0.5 px-3 text-xs font-normal text-neutral-subtle">{hint}</p>}

@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { type FormEvent, type KeyboardEvent, useLayoutEffect, useRef, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
@@ -25,13 +26,21 @@ export function InputTags(props: InputTagsProps) {
 
   const ref = useRef<HTMLInputElement>(null)
   const hasFocus = focused
-  const hasLabelUp = hasFocus || currentTags?.length > 0 ? 'input--label-up' : ''
-
-  const inputActions = hasFocus ? 'input--focused' : ''
+  const hasTags = currentTags.length > 0
+  const hasLabelUp = hasFocus || hasTags
+  const containerClassName = twMerge(
+    clsx('input', className, {
+      'input--focused': hasFocus,
+      'input--label-up': hasLabelUp,
+      '!pb-1': focused || hasTags,
+    })
+  )
   const labelClassName = twMerge(
-    'input__label',
-    hasFocus ? 'text-xs' : 'translate-y-2 text-sm',
-    !hasInteracted && 'transition-none'
+    clsx('input__label', {
+      'text-xs': hasFocus,
+      'translate-y-2 text-sm': !hasFocus,
+      'transition-none': !hasInteracted,
+    })
   )
 
   const handleKeyDown = (event: FormEvent<HTMLInputElement>) => {
@@ -70,13 +79,7 @@ export function InputTags(props: InputTagsProps) {
   return (
     <div
       data-testid={dataTestId}
-      className={twMerge(
-        'input',
-        inputActions,
-        hasLabelUp,
-        focused || currentTags?.length > 0 ? '!pb-1' : '',
-        className
-      )}
+      className={containerClassName}
       onClick={() => ref?.current?.focus()}
       onFocus={() => {
         setHasInteracted(true)
@@ -85,7 +88,7 @@ export function InputTags(props: InputTagsProps) {
       onBlur={() => setFocused(false)}
     >
       <label className={labelClassName}>{label}</label>
-      <div className={twMerge(focused || currentTags?.length > 0 ? 'pt-3' : '')}>
+      <div className={twMerge(clsx({ 'pt-3': focused || hasTags }))}>
         {currentTags.map((tag, index) => (
           <div
             data-testid={`input-tags-${index}`}
@@ -108,13 +111,13 @@ export function InputTags(props: InputTagsProps) {
           onKeyDown={handleKeyDown}
           type="text"
           className={twMerge(
-            'bg-transparent',
-            !focused && 'text-transparent',
-            focused || currentTags?.length > 0 || inputValue.length > 0
-              ? 'inline-flex text-ssm text-neutral'
-              : 'absolute left-0 top-0 h-full w-full'
+            clsx('bg-transparent', {
+              'text-transparent': !focused,
+              'inline-flex text-ssm text-neutral': focused || hasTags || inputValue.length > 0,
+              'absolute left-0 top-0 h-full w-full': !focused && !hasTags && inputValue.length === 0,
+            })
           )}
-          placeholder={currentTags?.length > 0 ? placeholder : ''}
+          placeholder={hasTags ? placeholder : ''}
           onChange={(e) => {
             setHasInteracted(true)
             setInputValue(e.currentTarget.value)
