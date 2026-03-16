@@ -132,7 +132,22 @@ export function ServiceDeploymentRestrictionsModal({
         <Controller
           name="value"
           control={control}
-          rules={{ required: 'Please enter a value.' }}
+          rules={{
+            required: 'Please enter a path.',
+            validate: (value: string) => {
+              if (!value) {
+                return 'Please enter a path.'
+              }
+              if (value.startsWith('/')) {
+                return 'Path must not start with a forward slash (/)'
+              }
+              if (value.includes('*')) {
+                return 'Wildcards (*) are not supported in the path'
+              }
+              // allow path prefixes (e.g. docs/) for partial matching
+              return true
+            },
+          }}
           render={({ field, fieldState: { error } }) => (
             <InputText
               className="mb-3"
@@ -141,6 +156,7 @@ export function ServiceDeploymentRestrictionsModal({
               value={field.value}
               error={error?.message}
               label="Path"
+              hint="e.g. docs/, src/jobs, src/index.ts"
             />
           )}
         />
