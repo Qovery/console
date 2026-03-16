@@ -168,7 +168,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
             >
               <div
                 aria-label="input-container"
-                class="input group input--disabled input--disabled !border-neutral input--label-up"
+                class="input group input--disabled !border-neutral input--label-up"
               >
                 <div
                   class="pointer-events-none"
@@ -490,7 +490,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
             >
               <div
                 aria-label="input-container"
-                class="input group input--disabled input--disabled !border-neutral input--label-up"
+                class="input group input--disabled !border-neutral input--label-up"
               >
                 <div
                   class="pointer-events-none"
