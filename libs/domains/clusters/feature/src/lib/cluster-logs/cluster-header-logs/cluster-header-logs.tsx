@@ -30,20 +30,24 @@ export function ClusterHeaderLogs(props: ClusterHeaderLogsProps) {
     <>
       <Button
         data-testid="scroll-up-button"
-        className="ml-2 w-10 justify-center !rounded-br-none !rounded-tr-none !border-r-0"
+        className="!rounded-br-none !rounded-tr-none !border-r-0"
         type="button"
         variant="outline"
         color="neutral"
+        size="sm"
+        iconOnly
         onClick={() => forcedScroll()}
       >
         <Icon iconName="arrow-up-to-line" />
       </Button>
       <Button
         data-testid="scroll-down-button"
-        className="mr-2 w-10 justify-center !rounded-bl-none !rounded-tl-none"
+        className="mr-2 !rounded-bl-none !rounded-tl-none"
         variant="outline"
         type="button"
         color="neutral"
+        size="sm"
+        iconOnly
         onClick={() => forcedScroll(true)}
       >
         <Icon iconName="arrow-down-to-line" />
@@ -52,7 +56,9 @@ export function ClusterHeaderLogs(props: ClusterHeaderLogsProps) {
         type="button"
         variant="outline"
         color="neutral"
-        className="w-10 justify-center"
+        size="sm"
+        className="mr-1"
+        iconOnly
         onClick={() => downloadJSON()}
       >
         <Icon iconName="cloud-arrow-down" />
