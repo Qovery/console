@@ -30,7 +30,7 @@ export function ClusterHeaderLogs(props: ClusterHeaderLogsProps) {
     <>
       <Button
         data-testid="scroll-up-button"
-        className="!rounded-br-none !rounded-tr-none !border-r-0"
+        className="rounded-br-none rounded-tr-none border-r-0"
         type="button"
         variant="outline"
         color="neutral"
@@ -42,7 +42,7 @@ export function ClusterHeaderLogs(props: ClusterHeaderLogsProps) {
       </Button>
       <Button
         data-testid="scroll-down-button"
-        className="mr-2 !rounded-bl-none !rounded-tl-none"
+        className="mr-2 rounded-bl-none rounded-tl-none"
         variant="outline"
         type="button"
         color="neutral"
