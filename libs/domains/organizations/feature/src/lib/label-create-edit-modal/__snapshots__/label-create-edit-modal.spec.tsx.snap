@@ -34,7 +34,7 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                 class=""
               >
                 <label
-                  class="input__label translate-y-2 text-sm transition-none"
+                  class="input__label translate-y-2 text-sm"
                   for="Group name"
                 >
                   Group name

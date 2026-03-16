@@ -125,7 +125,7 @@ exports[`GitBranchSettings should match snapshot 1`] = `
             class=""
           >
             <label
-              class="input__label translate-y-2 text-sm transition-none"
+              class="input__label translate-y-2 text-sm !transition-none"
               for="Application root folder path"
             >
               Application root folder path

@@ -132,7 +132,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
                 class=""
               >
                 <label
-                  class="input__label translate-y-2 text-sm transition-none"
+                  class="input__label translate-y-2 text-sm !transition-none"
                   for="Dockerfile path"
                 >
                   Dockerfile path
@@ -183,7 +183,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
                 class=""
               >
                 <label
-                  class="input__label translate-y-2 text-sm transition-none"
+                  class="input__label translate-y-2 text-sm"
                   for="Dockerfile stage (optional)"
                 >
                   Dockerfile stage (optional)
@@ -348,7 +348,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
                 class=""
               >
                 <label
-                  class="input__label translate-y-2 text-sm transition-none"
+                  class="input__label translate-y-2 text-sm !transition-none"
                   for="Dockerfile path"
                 >
                   Dockerfile path
@@ -399,7 +399,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
                 class=""
               >
                 <label
-                  class="input__label translate-y-2 text-sm transition-none"
+                  class="input__label translate-y-2 text-sm"
                   for="Dockerfile stage (optional)"
                 >
                   Dockerfile stage (optional)
