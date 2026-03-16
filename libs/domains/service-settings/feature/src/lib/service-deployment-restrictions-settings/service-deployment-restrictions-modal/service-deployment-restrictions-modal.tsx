@@ -6,21 +6,25 @@ import {
 } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { type Application, type Helm, type Job, type Terraform } from '@qovery/domains/services/data-access'
 import { useCreateDeploymentRestriction, useEditDeploymentRestriction } from '@qovery/domains/services/feature'
 import { ExternalLink, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
 
 type DeploymentRestriction = ApplicationDeploymentRestriction | TerraformDeploymentRestrictionResponse
+type SupportedService = Application | Job | Helm | Terraform
 
 interface ServiceDeploymentRestrictionsModalProps {
   deploymentRestriction?: DeploymentRestriction
   onClose: () => void
   serviceId: string
+  serviceType: SupportedService['serviceType']
 }
 
 export function ServiceDeploymentRestrictionsModal({
   deploymentRestriction,
   onClose,
   serviceId,
+  serviceType,
 }: ServiceDeploymentRestrictionsModalProps) {
   const { mutate: createRestriction, isLoading: isCreateRestrictionLoading } = useCreateDeploymentRestriction()
   const { mutate: editRestriction, isLoading: isEditRestrictionLoading } = useEditDeploymentRestriction()
@@ -45,14 +49,14 @@ export function ServiceDeploymentRestrictionsModal({
     if (deploymentRestriction) {
       editRestriction({
         serviceId,
-        serviceType: 'JOB',
+        serviceType,
         deploymentRestrictionId: deploymentRestriction.id,
         payload,
       })
     } else {
       createRestriction({
         serviceId,
-        serviceType: 'JOB',
+        serviceType,
         payload,
       })
     }
@@ -64,7 +68,7 @@ export function ServiceDeploymentRestrictionsModal({
     <FormProvider {...methods}>
       <ModalCrud
         title={deploymentRestriction ? 'Edit restriction' : 'Create restriction'}
-        description="Specify which changes in your repository should trigger or not an auto-deploy of your job."
+        description="Specify which changes in your repository should trigger or not an auto-deploy of your service."
         isEdit={Boolean(deploymentRestriction)}
         loading={isCreateRestrictionLoading || isEditRestrictionLoading}
         onSubmit={handleSubmit}

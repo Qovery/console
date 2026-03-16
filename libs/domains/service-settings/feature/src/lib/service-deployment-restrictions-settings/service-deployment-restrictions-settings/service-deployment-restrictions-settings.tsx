@@ -4,9 +4,16 @@ import {
   type TerraformDeploymentRestrictionResponse,
 } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
-import { type AnyService, type Job } from '@qovery/domains/services/data-access'
+import {
+  type AnyService,
+  type Application,
+  type Helm,
+  type Job,
+  type Terraform,
+} from '@qovery/domains/services/data-access'
 import { useDeleteDeploymentRestriction, useDeploymentRestrictions, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
+import { isHelmGitSource } from '@qovery/shared/enums'
 import {
   BlockContent,
   Button,
@@ -20,6 +27,7 @@ import {
 import { ServiceDeploymentRestrictionsModal } from '../service-deployment-restrictions-modal/service-deployment-restrictions-modal'
 
 type DeploymentRestriction = ApplicationDeploymentRestriction | TerraformDeploymentRestrictionResponse
+type SupportedService = Application | Job | Helm | Terraform
 
 const ContentFallback = () => (
   <div className="flex justify-center py-12">
@@ -27,7 +35,11 @@ const ContentFallback = () => (
   </div>
 )
 
-const isSupportedService = (service?: AnyService): service is Job => service?.serviceType === 'JOB'
+const isSupportedService = (service?: AnyService): service is SupportedService =>
+  service?.serviceType === 'APPLICATION' ||
+  service?.serviceType === 'JOB' ||
+  service?.serviceType === 'TERRAFORM' ||
+  (service?.serviceType === 'HELM' && isHelmGitSource(service.source))
 
 export function ServiceDeploymentRestrictionsSettings() {
   const { environmentId = '', serviceId = '' } = useParams({ strict: false })
@@ -47,6 +59,7 @@ export function ServiceDeploymentRestrictionsSettings() {
       content: (
         <ServiceDeploymentRestrictionsModal
           serviceId={service.id}
+          serviceType={service.serviceType}
           deploymentRestriction={deploymentRestriction}
           onClose={closeModal}
         />
@@ -62,7 +75,7 @@ export function ServiceDeploymentRestrictionsSettings() {
       <div className="space-y-6">
         <SettingsHeading
           title="Deployment Restrictions"
-          description="Specify which changes in your repository should trigger or not an auto-deploy of your job."
+          description="Specify which changes in your repository should trigger or not an auto-deploy of your service."
         >
           <Button
             size="md"
@@ -111,7 +124,7 @@ function ServiceDeploymentRestrictionsSettingsInner({
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { data: deploymentRestrictions = [], isLoading: isLoadingDeploymentRestrictions } = useDeploymentRestrictions({
     serviceId,
-    serviceType: 'JOB',
+    serviceType: isSupportedService(service) ? service.serviceType : 'APPLICATION',
   })
   const { mutate: deleteRestriction } = useDeleteDeploymentRestriction()
 
@@ -127,7 +140,7 @@ function ServiceDeploymentRestrictionsSettingsInner({
       action: () => {
         deleteRestriction({
           serviceId,
-          serviceType: 'JOB',
+          serviceType: service.serviceType,
           deploymentRestrictionId: deploymentRestriction.id,
         })
       },

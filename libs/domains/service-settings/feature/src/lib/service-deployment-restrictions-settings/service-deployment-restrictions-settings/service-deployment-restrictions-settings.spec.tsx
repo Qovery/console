@@ -1,6 +1,12 @@
 import { type ReactNode } from 'react'
-import { type Application } from '@qovery/domains/services/data-access'
-import { applicationFactoryMock, cronjobFactoryMock } from '@qovery/shared/factories'
+import { type Container } from '@qovery/domains/services/data-access'
+import {
+  applicationFactoryMock,
+  containerFactoryMock,
+  cronjobFactoryMock,
+  helmFactoryMock,
+  terraformFactoryMock,
+} from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceDeploymentRestrictionsSettings } from './service-deployment-restrictions-settings'
 
@@ -85,8 +91,35 @@ describe('ServiceDeploymentRestrictionsSettings', () => {
     expect(screen.getByText('src/jobs')).toBeInTheDocument()
   })
 
+  it('renders for application services', () => {
+    mockService = applicationFactoryMock(1)[0]
+
+    renderWithProviders(<ServiceDeploymentRestrictionsSettings />)
+
+    expect(screen.getByRole('heading', { level: 1, name: 'Deployment Restrictions' })).toBeInTheDocument()
+    expect(screen.getByText('src/jobs')).toBeInTheDocument()
+  })
+
+  it('renders for helm git source services', () => {
+    mockService = helmFactoryMock(1)[0]
+
+    renderWithProviders(<ServiceDeploymentRestrictionsSettings />)
+
+    expect(screen.getByRole('heading', { level: 1, name: 'Deployment Restrictions' })).toBeInTheDocument()
+    expect(screen.getByText('src/jobs')).toBeInTheDocument()
+  })
+
+  it('renders for terraform services', () => {
+    mockService = terraformFactoryMock(1)[0]
+
+    renderWithProviders(<ServiceDeploymentRestrictionsSettings />)
+
+    expect(screen.getByRole('heading', { level: 1, name: 'Deployment Restrictions' })).toBeInTheDocument()
+    expect(screen.getByText('src/jobs')).toBeInTheDocument()
+  })
+
   it('does not render for unsupported service types', () => {
-    mockService = applicationFactoryMock(1)[0] as Application
+    mockService = containerFactoryMock(1)[0] as Container
 
     renderWithProviders(<ServiceDeploymentRestrictionsSettings />)
 

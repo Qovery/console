@@ -7,6 +7,7 @@ import { ServiceDeploymentRestrictionsModal } from './service-deployment-restric
 const createProps = {
   onClose: jest.fn(),
   serviceId: 'service-1',
+  serviceType: 'JOB' as const,
 }
 
 const editProps = {
@@ -19,6 +20,7 @@ const editProps = {
   },
   onClose: jest.fn(),
   serviceId: 'service-1',
+  serviceType: 'JOB' as const,
 }
 
 jest.mock('@qovery/domains/services/feature', () => {
