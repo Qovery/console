@@ -14,7 +14,18 @@ import {
 import { type Environment } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { Checkbox, EmptyState, Icon, Link, TableFilter, TablePrimitives, Tooltip, Truncate } from '@qovery/shared/ui'
+import {
+  Badge,
+  Checkbox,
+  EmptyState,
+  Icon,
+  Link,
+  Skeleton,
+  TableFilter,
+  TablePrimitives,
+  Tooltip,
+  Truncate,
+} from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
 import { useServices } from '../hooks/use-services/use-services'
@@ -33,11 +44,7 @@ export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
   environment: Environment
 }
 
-export function ServiceList({ ...props }: ServiceListProps) {
-  return <ServiceListTable {...props} />
-}
-
-export function ServiceListTable({ className, environment, ...props }: ServiceListProps) {
+export function ServiceList({ className, containerClassName, environment, ...props }: ServiceListProps) {
   const clusterId = environment.cluster_id || ''
   const environmentId = environment.id || ''
   const organizationId = environment.organization.id || ''
@@ -235,6 +242,12 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
     },
   })
 
+  const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
+
+  const statusFacetedUniqueValues = Array.from(
+    table.getColumn('runningStatus')?.getFacetedUniqueValues().entries() ?? []
+  )
+
   if (services.length === 0) {
     return (
       <EmptyState
@@ -256,77 +269,95 @@ export function ServiceListTable({ className, environment, ...props }: ServiceLi
     )
   }
 
-  const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
-
   return (
-    <div className="flex grow flex-col justify-between">
-      <Table.Root className={twMerge('w-full min-w-[1080px] overflow-x-scroll text-ssm', className)} {...props}>
-        <Table.Header>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <Table.Row key={headerGroup.id}>
-              {headerGroup.headers.map((header, i) => (
-                <Table.ColumnHeaderCell
-                  className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r border-neutral pl-0' : ''} font-medium`}
-                  key={header.id}
-                  style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
-                >
-                  {header.column.getCanFilter() ? (
-                    <TableFilter column={header.column} />
-                  ) : header.column.getCanSort() ? (
-                    <button
-                      type="button"
-                      className={twMerge(
-                        'flex items-center gap-1 truncate',
-                        header.column.getCanSort() ? 'cursor-pointer select-none' : ''
-                      )}
-                      onClick={header.column.getToggleSortingHandler()}
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                      {match(header.column.getIsSorted())
-                        .with('asc', () => <Icon className="text-ssm" iconName="arrow-down" />)
-                        .with('desc', () => <Icon className="text-ssm" iconName="arrow-up" />)
-                        .with(false, () => null)
-                        .exhaustive()}
-                    </button>
-                  ) : (
-                    flexRender(header.column.columnDef.header, header.getContext())
-                  )}
-                </Table.ColumnHeaderCell>
-              ))}
-            </Table.Row>
-          ))}
-        </Table.Header>
-        <Table.Body>
-          {table.getRowModel().rows.map((row) => (
-            <Fragment key={row.id}>
-              <Table.Row
-                className={twMerge('h-[68px] ')}
-                onClick={() => {
-                  navigate({
-                    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
-                    params: { organizationId, projectId, environmentId, serviceId: row.original.id },
-                  })
-                }}
-              >
-                {row.getVisibleCells().map((cell, i) => (
-                  <Table.Cell
-                    key={cell.id}
-                    className={`px-6 ${i === 1 ? 'border-r border-neutral pl-0' : ''} first:relative`}
-                    style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
+    <div>
+      <div className="flex gap-2 px-4 py-2">
+        {statusFacetedUniqueValues.some(([value]) => value === undefined) ? (
+          <Skeleton height={24} width={70} />
+        ) : (
+          statusFacetedUniqueValues.map(([value, count]: [string, number]) => (
+            <Badge key={value}>
+              {count} {value}
+            </Badge>
+          ))
+        )}
+      </div>
+      <div className="flex grow flex-col justify-between">
+        <Table.Root
+          className={twMerge(
+            'w-full min-w-[1080px] overflow-x-scroll overflow-y-scroll rounded-lg text-xs xl:overflow-auto',
+            className
+          )}
+          containerClassName={twMerge('rounded-none border-none', containerClassName)}
+          {...props}
+        >
+          <Table.Header className="border-t border-neutral">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Table.Row key={headerGroup.id}>
+                {headerGroup.headers.map((header, i) => (
+                  <Table.ColumnHeaderCell
+                    className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r border-neutral pl-0' : ''} font-medium`}
+                    key={header.id}
+                    style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                   >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Table.Cell>
+                    {header.column.getCanFilter() ? (
+                      <TableFilter column={header.column} />
+                    ) : header.column.getCanSort() ? (
+                      <button
+                        type="button"
+                        className={twMerge(
+                          'flex items-center gap-1 truncate',
+                          header.column.getCanSort() ? 'cursor-pointer select-none' : ''
+                        )}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {match(header.column.getIsSorted())
+                          .with('asc', () => <Icon className="text-ssm" iconName="arrow-down" />)
+                          .with('desc', () => <Icon className="text-ssm" iconName="arrow-up" />)
+                          .with(false, () => null)
+                          .exhaustive()}
+                      </button>
+                    ) : (
+                      flexRender(header.column.columnDef.header, header.getContext())
+                    )}
+                  </Table.ColumnHeaderCell>
                 ))}
               </Table.Row>
-            </Fragment>
-          ))}
-        </Table.Body>
-      </Table.Root>
-      <ServiceListActionBar
-        environment={environment}
-        selectedRows={selectedRows}
-        resetRowSelection={() => table.resetRowSelection()}
-      />
+            ))}
+          </Table.Header>
+          <Table.Body>
+            {table.getRowModel().rows.map((row) => (
+              <Fragment key={row.id}>
+                <Table.Row
+                  className={twMerge('h-[68px] ')}
+                  onClick={() => {
+                    navigate({
+                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+                      params: { organizationId, projectId, environmentId, serviceId: row.original.id },
+                    })
+                  }}
+                >
+                  {row.getVisibleCells().map((cell, i) => (
+                    <Table.Cell
+                      key={cell.id}
+                      className={`px-6 ${i === 1 ? 'border-r border-neutral pl-0' : ''} first:relative`}
+                      style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </Table.Cell>
+                  ))}
+                </Table.Row>
+              </Fragment>
+            ))}
+          </Table.Body>
+        </Table.Root>
+        <ServiceListActionBar
+          environment={environment}
+          selectedRows={selectedRows}
+          resetRowSelection={() => table.resetRowSelection()}
+        />
+      </div>
     </div>
   )
 }
