@@ -1,3 +1,4 @@
+import { useLocation, useParams } from '@tanstack/react-router'
 import {
   type ColumnFiltersState,
   type FilterFn,
@@ -15,10 +16,8 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ServiceStateChip, useDeploymentStatus, useService } from '@qovery/domains/services/feature'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
@@ -146,7 +145,7 @@ export function ListDeploymentLogs({
   preCheckStage,
 }: ListDeploymentLogsProps) {
   const { hash } = useLocation()
-  const { organizationId, projectId, serviceId, versionId } = useParams()
+  const { organizationId, projectId, serviceId, executionId } = useParams({ strict: false })
   const refScrollSection = useRef<HTMLDivElement>(null)
   const { updateStageId } = useContext(ServiceStageIdsContext)
 
@@ -173,7 +172,7 @@ export function ListDeploymentLogs({
     projectId,
     environmentId: environment.id,
     serviceId,
-    versionId,
+    versionId: executionId,
   })
 
   // `useEffect` used to scroll to the bottom of the logs when new logs are added or when the pauseLogs state changes
@@ -282,7 +281,7 @@ export function ListDeploymentLogs({
     [columnFilters]
   )
 
-  const isLastVersion = environmentDeploymentHistory?.[0]?.identifier.execution_id === versionId || !versionId
+  const isLastVersion = environmentDeploymentHistory?.[0]?.identifier.execution_id === executionId || !executionId
   const isDeploymentProgressing = isLastVersion
     ? match(deploymentStatus?.state)
         .with(
@@ -313,8 +312,8 @@ export function ListDeploymentLogs({
         serviceStatus={serviceStatus}
         environmentStatus={environmentStatus}
         deploymentHistory={
-          versionId
-            ? environmentDeploymentHistory.find((d) => d.identifier.execution_id === versionId)
+          executionId
+            ? environmentDeploymentHistory.find((d) => d.identifier.execution_id === executionId)
             : environmentDeploymentHistory[0]
         }
       >
@@ -367,7 +366,7 @@ export function ListDeploymentLogs({
                 isDeploymentProgressing || !lastLogTimestamp
                   ? undefined
                   : dateYearMonthDayHourMinuteSecond(new Date(lastLogTimestamp)),
-              deploymentId: versionId,
+              deploymentId: executionId,
             }}
           >
             {match(service)
@@ -385,7 +384,7 @@ export function ListDeploymentLogs({
 
   if (!logs || logs.length === 0 || !serviceStatus.is_part_last_deployment) {
     return (
-      <div className="h-[calc(100vh-64px)] w-full p-1">
+      <div className="h-[calc(100vh-64px)] w-full">
         <div className="h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
           <HeaderLogsComponent />
           <div className="flex h-[calc(100%-48px)] flex-col items-center justify-between bg-neutral-600">
@@ -404,11 +403,12 @@ export function ListDeploymentLogs({
       </div>
     )
   }
+
   return (
-    <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden bg-neutral-900 p-1">
-      <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
+    <div className="h-[calc(100vh-108px)] w-full overflow-hidden">
+      <div className="relative h-full bg-background">
         <HeaderLogsComponent />
-        <div className="flex h-12 w-full items-center justify-between border-b border-r border-neutral-500 px-4 py-2.5">
+        <div className="flex w-full items-center justify-between border-b border-neutral px-4 py-2.5">
           <FiltersStageStep
             service={service}
             serviceStatus={serviceStatus}
@@ -417,16 +417,15 @@ export function ListDeploymentLogs({
           />
           <Button
             onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
-            size="sm"
-            variant="surface"
-            color="neutral"
-            className="w-7 justify-center"
+            variant="outline"
+            size="md"
+            iconOnly
           >
             <Icon iconName="file-arrow-down" iconStyle="regular" />
           </Button>
         </div>
         <div
-          className="max-h-[calc(100vh-170px)] w-full overflow-y-scroll pb-12"
+          className="h-[calc(100vh-108px)] w-full overflow-y-scroll pb-12"
           ref={refScrollSection}
           onWheel={(event) => {
             if (
@@ -447,7 +446,10 @@ export function ListDeploymentLogs({
               setPauseLogs={setPauseLogs}
             />
           )}
-          <Table.Root className="w-full text-xs">
+          <Table.Root
+            className="w-full border-separate border-spacing-y-0.5 text-xs"
+            containerClassName="rounded-none border-none bg-background"
+          >
             <Table.Body className="divide-y-0">
               {table.getRowModel().rows.map((row) => (
                 <MemoizedRowDeploymentLogs key={row.id} {...row} />

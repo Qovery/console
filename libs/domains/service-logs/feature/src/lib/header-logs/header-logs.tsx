@@ -62,7 +62,7 @@ export function HeaderLogs({
 
   return (
     <div
-      className="sticky top-[45px] z-header flex h-12 w-full items-center justify-between border-b border-neutral bg-background"
+      className="z-header flex h-12 w-full items-center justify-between border-b border-neutral bg-background"
       style={{
         paddingRight: 'var(--padding-sidebar, 16px)',
       }}
