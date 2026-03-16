@@ -14,7 +14,6 @@ import { type DeploymentHistoryService, type Environment, OrganizationEventOrigi
 import { useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
   Button,
   CopyToClipboard,
@@ -209,23 +208,25 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                         </Link>
                       </Tooltip>
                     ))}
-                {/*<Tooltip content="Pipeline">
+                <Tooltip content="Pipeline">
                   <Link
                     as="button"
                     color="neutral"
                     variant="outline"
                     size="md"
                     iconOnly
-                    to={
-                      state === 'QUEUED'
-                        ? ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id)
-                        : ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-                          ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id : undefined)
-                    }
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                    params={{
+                      organizationId: environment?.organization.id ?? '',
+                      projectId: environment?.project.id ?? '',
+                      environmentId: environment?.id ?? '',
+                      serviceId,
+                      executionId: isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
+                    }}
                   >
                     <Icon iconName="timeline" />
                   </Link>
-                </Tooltip>*/}
+                </Tooltip>
               </div>
             </div>
           )

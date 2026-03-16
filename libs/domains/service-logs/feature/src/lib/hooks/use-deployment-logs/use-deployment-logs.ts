@@ -1,7 +1,7 @@
 import { type QueryClient } from '@tanstack/react-query'
+import { useLocation } from '@tanstack/react-router'
 import { type EnvironmentLogs } from 'qovery-typescript-axios'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
