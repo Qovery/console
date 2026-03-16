@@ -35,11 +35,11 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
       <Section>
         <BlockContent title="Opt-in to AI Copilot" classNameContent="p-0">
           {isLoading ? (
-            <div className="flex justify-center p-5">
+            <div className="flex justify-center p-4">
               <LoaderSpinner className="w-5" />
             </div>
           ) : (
-            <form onSubmit={onSubmit} className="p-6">
+            <form onSubmit={onSubmit} className="p-4">
               <div className="flex items-start gap-3">
                 <div className="flex-1 space-y-4">
                   <div>

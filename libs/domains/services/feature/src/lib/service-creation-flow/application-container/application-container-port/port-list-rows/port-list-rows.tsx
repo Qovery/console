@@ -41,7 +41,7 @@ export function PortListRows<TPort>({
         return (
           <div
             key={getKey(port)}
-            className="grid w-full grid-cols-[auto_80px] items-center gap-4 border-b border-neutral px-5 py-4 last:border-0"
+            className="grid w-full grid-cols-[auto_80px] items-center gap-4 border-b border-neutral p-4 last:border-0"
             data-testid="form-row"
           >
             <div

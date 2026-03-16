@@ -82,9 +82,9 @@ const RegistryRow = ({ registry }: { registry: ContainerRegistryResponse }) => {
     <li
       data-testid={`registries-list-${registry.id}`}
       key={registry.id}
-      className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
+      className="flex items-center justify-between border-b border-neutral p-4 last:border-0"
     >
-      <div className="flex">
+      <div className="flex items-center">
         <Icon name={registry.kind ? containerRegistryKindToIcon(registry.kind) : IconEnum.AWS} width="20" height="20" />
         <div className="ml-4">
           <h2 className="mb-1 flex text-xs font-medium text-neutral">
@@ -153,7 +153,7 @@ const ContainerRegistriesRowsSkeleton = ({ title }: { title: string }) => (
     {[0, 1, 2, 3].map((index) => (
       <div
         key={index}
-        className="flex w-full items-center justify-between gap-3 border-b border-neutral px-5 py-4 last:border-0"
+        className="flex w-full items-center justify-between gap-3 border-b border-neutral p-4 last:border-0"
       >
         <div className="flex items-center gap-4">
           <Skeleton width={20} height={20} show={true} />

@@ -28,7 +28,7 @@ export function BlockContent({
         <h2 className="text-ssm font-medium text-neutral">{title}</h2>
         {headRight}
       </div>
-      <div className={twMerge('p-5', classNameContent)}>{children}</div>
+      <div className={twMerge('p-4', classNameContent)}>{children}</div>
     </div>
   )
 }

@@ -21,7 +21,7 @@ exports[`GitTokenList should match snapshot 1`] = `
       >
         <ul>
           <li
-            class="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
+            class="flex items-center justify-between border-b border-neutral p-4 last:border-0"
           >
             <div
               class="flex items-center"
@@ -102,7 +102,7 @@ exports[`GitTokenList should match snapshot 1`] = `
             </div>
           </li>
           <li
-            class="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
+            class="flex items-center justify-between border-b border-neutral p-4 last:border-0"
           >
             <div
               class="flex items-center"

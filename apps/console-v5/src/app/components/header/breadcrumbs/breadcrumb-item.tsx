@@ -2,7 +2,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { Command } from 'cmdk'
 import { type ReactNode, useCallback, useMemo, useRef, useState } from 'react'
-import { Command as CommandMenu, Icon, Popover, Truncate } from '@qovery/shared/ui'
+import { Button, Command as CommandMenu, Icon, Popover, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
 export interface BreadcrumbItemData {
@@ -109,26 +109,22 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
       </Link>
       <Popover.Root open={open} onOpenChange={handleOpenChange}>
         <Popover.Trigger>
-          <button
-            type="button"
+          <Button
+            variant="plain"
+            color="neutral"
+            size="xs"
+            iconOnly
             className={twMerge(
               clsx(
-                'relative top-[1px] flex h-6 w-6 items-center justify-center rounded text-neutral-disabled transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
+                'relative text-neutral-disabled transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
                 {
                   'text-neutral': open,
                 }
               )
             )}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 14 14">
-              <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M3.67 8.338a.583.583 0 0 1 .826 0L7 10.842l2.504-2.504a.583.583 0 1 1 .825.824L7.412 12.08a.583.583 0 0 1-.824 0L3.67 9.162a.583.583 0 0 1 0-.824M6.588 1.92a.583.583 0 0 1 .824 0l2.917 2.918a.583.583 0 1 1-.825.824L7 3.158 4.496 5.662a.583.583 0 0 1-.825-.824z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
-          </button>
+            <Icon iconName="angles-up-down" />
+          </Button>
         </Popover.Trigger>
         <Popover.Content
           className="z-dropdown -ml-2.5 flex w-[340px] flex-col p-3 pb-0"
@@ -149,7 +145,7 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
                   placeholder="Search..."
                   value={searchQuery}
                   onValueChange={setSearchQuery}
-                  className="h-9 border border-neutral bg-surface-neutral py-0 pl-10 pr-6 text-sm"
+                  className="h-9 rounded-sm border border-neutral bg-surface-neutral py-0 pl-10 pr-6 text-sm"
                 />
               </div>
             </div>

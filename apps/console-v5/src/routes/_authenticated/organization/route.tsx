@@ -62,7 +62,7 @@ const ORGANIZATION_TABS: NavigationTab[] = [
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
-    routeId: '/_authenticated/organization/$organizationId/settings/general',
+    routeId: '/_authenticated/organization/$organizationId/settings',
   },
 ]
 

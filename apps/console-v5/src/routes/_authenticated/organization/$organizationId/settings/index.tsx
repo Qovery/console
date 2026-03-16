@@ -11,6 +11,5 @@ function RouteComponent() {
     return null
   }
 
-  // Redirect to overview
-  return <Navigate to="/organization/$organizationId/settings" params={{ organizationId }} />
+  return <Navigate to="/organization/$organizationId/settings/general" params={{ organizationId }} replace />
 }

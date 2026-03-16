@@ -34,7 +34,7 @@ type CredentialRowProps = {
 const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: CredentialRowProps) => {
   return (
     <div
-      className="grid w-full grid-cols-[1fr_auto] items-center justify-between gap-3 border-b border-neutral px-5 py-4 last:border-0"
+      className="grid w-full grid-cols-[1fr_auto] items-center justify-between gap-3 border-b border-neutral p-4 last:border-0"
       key={credential.id}
     >
       <div className="grid grid-cols-[32px_1fr] gap-2">
@@ -273,7 +273,7 @@ const Loader = () => (
     {[0, 1, 2, 3].map((_, i) => (
       <div
         key={i}
-        className="grid w-full grid-cols-[1fr_auto] items-center justify-between gap-3 border-b border-neutral px-5 py-4 last:border-0"
+        className="grid w-full grid-cols-[1fr_auto] items-center justify-between gap-3 border-b border-neutral p-4 last:border-0"
       >
         <div className="grid grid-cols-[32px_1fr] gap-2">
           <Skeleton width={32} height={32} show={true} rounded className="-ml-1.5 shrink-0" />

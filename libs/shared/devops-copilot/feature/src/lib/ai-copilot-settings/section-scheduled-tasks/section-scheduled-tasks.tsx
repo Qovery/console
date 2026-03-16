@@ -58,7 +58,7 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
         ) : tasks.length > 0 ? (
           <ul>
             {tasks.map((task) => (
-              <li key={task.id} className="flex items-center border-b border-neutral px-5 py-4 last:border-0">
+              <li key={task.id} className="flex items-center border-b border-neutral p-4 last:border-0">
                 <div className="flex-1">
                   <p className="mb-1 text-xs font-medium text-neutral">{task.user_intent}</p>
                   <p className="text-xs text-neutral-disabled">

@@ -28,7 +28,7 @@ function PageOrganizationApi(props: PageOrganizationApiProps) {
               <li
                 data-testid={`token-list-${token.id}`}
                 key={token.id}
-                className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0"
+                className="flex items-center justify-between border-b border-neutral p-4 last:border-0"
               >
                 <div className="flex">
                   <div>
@@ -68,7 +68,7 @@ function PageOrganizationApi(props: PageOrganizationApiProps) {
             ))}
           </ul>
         ) : (
-          <div className="px-5 py-4 text-center">
+          <div className="p-4 text-center">
             <Icon iconName="wave-pulse" className="text-neutral-subtle" />
             <p className="mt-1 text-xs font-medium text-neutral-subtle">
               No Api Token found. <br /> Please add one.
@@ -84,7 +84,7 @@ const SettingsApiTokenSkeleton = () => (
   <div className="max-w-content-with-navigation-left">
     <BlockContent title="Token List" classNameContent="p-0">
       {[0, 1, 2, 3].map((index) => (
-        <div key={index} className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0">
+        <div key={index} className="flex items-center justify-between border-b border-neutral p-4 last:border-0">
           <div className="space-y-2">
             <Skeleton width={200} height={12} show={true} />
             <Skeleton width={260} height={12} show={true} />

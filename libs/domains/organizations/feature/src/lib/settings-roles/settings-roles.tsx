@@ -52,7 +52,7 @@ function RolesTable({ organizationId, onDeleteRole }: RolesTableProps) {
           <div
             data-testid={`role-${role.id}`}
             key={role.id}
-            className={`flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0 ${
+            className={`flex items-center justify-between border-b border-neutral p-4 last:border-0 ${
               isDefaultRole(role.name) ? 'bg-surface-neutral-component' : ''
             }`}
           >
@@ -122,7 +122,7 @@ function RolesTable({ organizationId, onDeleteRole }: RolesTableProps) {
 const RolesTableSkeleton = () => (
   <BlockContent title="Roles" className="overflow-hidden" classNameContent="p-0">
     {[0, 1, 2, 3].map((index) => (
-      <div key={index} className="flex items-center justify-between border-b border-neutral px-5 py-4 last:border-0">
+      <div key={index} className="flex items-center justify-between border-b border-neutral p-4 last:border-0">
         <div className="flex items-center gap-5">
           <Skeleton rounded width={20} height={20} show={true} />
           <div className="space-y-2">

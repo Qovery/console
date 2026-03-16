@@ -130,10 +130,7 @@ const GitRepositoryAccessSkeleton = () => (
   <div className="max-w-content-with-navigation-left space-y-8">
     <BlockContent title="Git tokens" classNameContent="p-0">
       {[0, 1, 2, 3].map((index) => (
-        <div
-          key={index}
-          className="flex items-center justify-between gap-3 border-b border-neutral px-5 py-4 last:border-0"
-        >
+        <div key={index} className="flex items-center justify-between gap-3 border-b border-neutral p-4 last:border-0">
           <div className="flex items-center gap-4">
             <Skeleton width={20} height={20} show={true} />
             <div className="space-y-2">
