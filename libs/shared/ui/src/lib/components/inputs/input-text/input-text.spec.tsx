@@ -77,10 +77,10 @@ describe('InputText', () => {
     const label = screen.getByText(props.label)
     const input = screen.getByRole('textbox')
 
-    expect(label).toHaveClass('transition-none')
+    expect(label).toHaveClass('!transition-none')
 
     fireEvent.focus(input)
 
-    expect(screen.getByText(props.label)).not.toHaveClass('transition-none')
+    expect(screen.getByText(props.label)).not.toHaveClass('!transition-none')
   })
 })
