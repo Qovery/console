@@ -1,4 +1,5 @@
 import { type FormEvent, type KeyboardEvent, useLayoutEffect, useRef, useState } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
 export interface InputTagsProps {
@@ -27,7 +28,11 @@ export function InputTags(props: InputTagsProps) {
   const hasLabelUp = hasFocus || currentTags?.length > 0 ? 'input--label-up' : ''
 
   const inputActions = hasFocus ? 'input--focused' : ''
-  const labelClassName = `${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'} ${!hasInteracted ? '!transition-none' : ''}`
+  const labelClassName = twMerge(
+    'input__label',
+    hasFocus ? 'text-xs' : 'translate-y-2 text-sm',
+    !hasInteracted && 'transition-none'
+  )
 
   const handleKeyDown = (event: FormEvent<HTMLInputElement>) => {
     const key = (event as KeyboardEvent<HTMLInputElement>).key
@@ -65,9 +70,13 @@ export function InputTags(props: InputTagsProps) {
   return (
     <div
       data-testid={dataTestId}
-      className={`input ${inputActions} ${hasLabelUp} ${
-        focused || currentTags?.length > 0 ? '!pb-1' : ''
-      } ${className}`}
+      className={twMerge(
+        'input',
+        inputActions,
+        hasLabelUp,
+        focused || currentTags?.length > 0 ? '!pb-1' : '',
+        className
+      )}
       onClick={() => ref?.current?.focus()}
       onFocus={() => {
         setHasInteracted(true)
@@ -76,7 +85,7 @@ export function InputTags(props: InputTagsProps) {
       onBlur={() => setFocused(false)}
     >
       <label className={labelClassName}>{label}</label>
-      <div className={`${focused || currentTags?.length > 0 ? 'pt-3' : ''}`}>
+      <div className={twMerge(focused || currentTags?.length > 0 ? 'pt-3' : '')}>
         {currentTags.map((tag, index) => (
           <div
             data-testid={`input-tags-${index}`}
@@ -98,11 +107,13 @@ export function InputTags(props: InputTagsProps) {
           data-testid="input-tags-field"
           onKeyDown={handleKeyDown}
           type="text"
-          className={`bg-transparent ${!focused ? 'text-transparent' : ''} ${
+          className={twMerge(
+            'bg-transparent',
+            !focused && 'text-transparent',
             focused || currentTags?.length > 0 || inputValue.length > 0
               ? 'inline-flex text-ssm text-neutral'
               : 'absolute left-0 top-0 h-full w-full'
-          }`}
+          )}
           placeholder={currentTags?.length > 0 ? placeholder : ''}
           onChange={(e) => {
             setHasInteracted(true)

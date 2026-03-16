@@ -52,10 +52,10 @@ describe('InputTextAreaArea', () => {
     const container = screen.getByLabelText('textarea-container')
 
     expect(container).toHaveClass('input--label-up')
-    expect(label).toHaveClass('!transition-none')
+    expect(label).toHaveClass('transition-none')
 
     fireEvent.focus(input)
 
-    expect(screen.getByText(props.label)).not.toHaveClass('!transition-none')
+    expect(screen.getByText(props.label)).not.toHaveClass('transition-none')
   })
 })
