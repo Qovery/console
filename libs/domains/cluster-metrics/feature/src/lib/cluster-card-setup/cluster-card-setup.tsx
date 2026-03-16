@@ -26,7 +26,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
     !deploymentStatus?.is_deployed || !deploymentStatus?.last_deployment_date || !cluster?.created_at || !kubeVersion
 
   return (
-    <div className="flex flex-col gap-2.5 rounded border border-neutral bg-surface-neutral p-4">
+    <div className="flex flex-col gap-2.5 rounded-lg border border-neutral bg-surface-neutral p-4">
       <p className="text-sm text-neutral-subtle">Cluster setup</p>
       <div
         className={clsx('flex flex-col text-sm text-neutral', {
