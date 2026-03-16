@@ -83,7 +83,7 @@ function Item({ cluster, project }: { cluster: Cluster; project: Project }) {
           </div>
           <div className="flex min-w-0 items-center gap-1.5">
             <span className="min-w-0 overflow-hidden">
-              <AnimatedGradientText className="block w-full truncate from-neutral-300 via-neutral-350 to-neutral-300 text-left text-ssm">
+              <AnimatedGradientText className="block w-full truncate from-[var(--neutral-10)] via-[var(--neutral-11)] to-[var(--neutral-10)] text-left text-ssm">
                 {currentStepLabel}
               </AnimatedGradientText>
             </span>
