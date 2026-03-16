@@ -41,19 +41,19 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input group input--disabled input--disabled !border-neutral  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral input--label-up"
           >
             <div
               class="pointer-events-none"
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm transition-none"
                 for="Service to clone"
               >
                 Service to clone
               </label>
               <input
-                class="input__value "
+                class="input__value"
                 data-testid="input-text"
                 disabled=""
                 id="Service to clone"
@@ -74,19 +74,19 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input group    input--label-up "
+            class="input group input--label-up"
           >
             <div
               class=""
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm transition-none"
                 for="New service name"
               >
                 New service name
               </label>
               <input
-                class="input__value "
+                class="input__value"
                 data-testid="input-text"
                 id="New service name"
                 name="name"

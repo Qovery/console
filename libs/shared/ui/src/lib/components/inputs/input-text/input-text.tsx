@@ -1,4 +1,5 @@
 import { type ChangeEventHandler, type ReactNode, forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
 export interface InputTextProps {
@@ -69,7 +70,11 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
   }
 
   const isInputDate = type === 'time' || type === 'date' || type === 'datetime'
-  const labelClassName = `${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'} ${!hasInteracted ? '!transition-none' : ''}`
+  const labelClassName = twMerge(
+    'input__label',
+    hasFocus ? 'text-xs' : 'translate-y-2 text-sm',
+    !hasInteracted && 'transition-none'
+  )
 
   return (
     <div
@@ -80,10 +85,10 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
       <div className="relative">
         <div
           aria-label="input-container"
-          className={`input group ${inputActions} ${isDisabled} ${hasError} ${hasLabelUp} `}
+          className={twMerge('input group', inputActions, isDisabled, hasError, hasLabelUp)}
           ref={inputRef}
         >
-          <div className={`${disabled ? 'pointer-events-none' : ''}`}>
+          <div className={twMerge(disabled && 'pointer-events-none')}>
             <label htmlFor={label} className={labelClassName}>
               {label}
             </label>
@@ -92,7 +97,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
               ref={ref}
               name={name}
               id={label}
-              className={`input__value ${rightElement ? '!pr-9' : ''}`}
+              className={twMerge('input__value', rightElement && '!pr-9')}
               type={currentType}
               disabled={disabled}
               value={currentValue}

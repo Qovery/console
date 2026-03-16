@@ -38,19 +38,19 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input group     "
+            class="input group"
           >
             <div
               class=""
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm transition-none"
                 for="VPC Name"
               >
                 VPC Name
               </label>
               <input
-                class="input__value "
+                class="input__value"
                 data-testid="input-text"
                 id="VPC Name"
                 name="gcp_existing_vpc.vpc_name"
@@ -70,19 +70,19 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input group     "
+            class="input group"
           >
             <div
               class=""
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm transition-none"
                 for="External project id (optional)"
               >
                 External project id (optional)
               </label>
               <input
-                class="input__value "
+                class="input__value"
                 data-testid="input-text"
                 id="External project id (optional)"
                 name="gcp_existing_vpc.vpc_project_id"
@@ -115,19 +115,19 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input group     "
+            class="input group"
           >
             <div
               class=""
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm transition-none"
                 for="Subnetwork range name (optional)"
               >
                 Subnetwork range name (optional)
               </label>
               <input
-                class="input__value "
+                class="input__value"
                 data-testid="input-text"
                 id="Subnetwork range name (optional)"
                 name="gcp_existing_vpc.subnetwork_name"
@@ -147,19 +147,19 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input group     "
+            class="input group"
           >
             <div
               class=""
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm transition-none"
                 for="Pod IPv4 address range name (optional)"
               >
                 Pod IPv4 address range name (optional)
               </label>
               <input
-                class="input__value "
+                class="input__value"
                 data-testid="input-text"
                 id="Pod IPv4 address range name (optional)"
                 name="gcp_existing_vpc.ip_range_pods_name"
@@ -179,19 +179,19 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input group     "
+            class="input group"
           >
             <div
               class=""
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm transition-none"
                 for="Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)"
               >
                 Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)
               </label>
               <input
-                class="input__value "
+                class="input__value"
                 data-testid="input-text"
                 id="Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)"
                 name="gcp_existing_vpc.additional_ip_range_pods_names"
@@ -211,19 +211,19 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input group     "
+            class="input group"
           >
             <div
               class=""
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm transition-none"
                 for="IPv4 service range name (optional)"
               >
                 IPv4 service range name (optional)
               </label>
               <input
-                class="input__value "
+                class="input__value"
                 data-testid="input-text"
                 id="IPv4 service range name (optional)"
                 name="gcp_existing_vpc.ip_range_services_name"

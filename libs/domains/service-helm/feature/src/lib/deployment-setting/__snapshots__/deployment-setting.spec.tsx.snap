@@ -16,19 +16,19 @@ exports[`DeploymentSetting should match snapshot 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input group    input--label-up "
+              class="input group input--label-up"
             >
               <div
                 class=""
               >
                 <label
-                  class="translate-y-2 text-sm"
+                  class="input__label translate-y-2 text-sm transition-none"
                   for="Helm arguments"
                 >
                   Helm arguments
                 </label>
                 <input
-                  class="input__value "
+                  class="input__value"
                   data-testid="input-text"
                   id="Helm arguments"
                   name="arguments"
@@ -67,19 +67,19 @@ exports[`DeploymentSetting should match snapshot 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input group    input--label-up "
+            class="input group input--label-up"
           >
             <div
               class=""
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm transition-none"
                 for="Helm timeout"
               >
                 Helm timeout
               </label>
               <input
-                class="input__value "
+                class="input__value"
                 data-testid="input-text"
                 id="Helm timeout"
                 name="timeout_sec"

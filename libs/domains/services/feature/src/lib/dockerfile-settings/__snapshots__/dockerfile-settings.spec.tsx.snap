@@ -126,19 +126,19 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input group    input--label-up "
+              class="input group input--label-up"
             >
               <div
                 class=""
               >
                 <label
-                  class="translate-y-2 text-sm"
+                  class="input__label translate-y-2 text-sm transition-none"
                   for="Dockerfile path"
                 >
                   Dockerfile path
                 </label>
                 <input
-                  class="input__value "
+                  class="input__value"
                   data-testid="input-text-dockerfile"
                   id="Dockerfile path"
                   name="dockerfile_path"
@@ -177,19 +177,19 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input group     "
+              class="input group"
             >
               <div
                 class=""
               >
                 <label
-                  class="translate-y-2 text-sm"
+                  class="input__label translate-y-2 text-sm transition-none"
                   for="Dockerfile stage (optional)"
                 >
                   Dockerfile stage (optional)
                 </label>
                 <input
-                  class="input__value "
+                  class="input__value"
                   data-testid="input-text"
                   id="Dockerfile stage (optional)"
                   name="docker_target_build_stage"
@@ -342,19 +342,19 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input group    input--label-up "
+              class="input group input--label-up"
             >
               <div
                 class=""
               >
                 <label
-                  class="translate-y-2 text-sm"
+                  class="input__label translate-y-2 text-sm transition-none"
                   for="Dockerfile path"
                 >
                   Dockerfile path
                 </label>
                 <input
-                  class="input__value "
+                  class="input__value"
                   data-testid="input-text-dockerfile"
                   id="Dockerfile path"
                   name="dockerfile_path"
@@ -393,19 +393,19 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input group     "
+              class="input group"
             >
               <div
                 class=""
               >
                 <label
-                  class="translate-y-2 text-sm"
+                  class="input__label translate-y-2 text-sm transition-none"
                   for="Dockerfile stage (optional)"
                 >
                   Dockerfile stage (optional)
                 </label>
                 <input
-                  class="input__value "
+                  class="input__value"
                   data-testid="input-text"
                   id="Dockerfile stage (optional)"
                   name="docker_target_build_stage"

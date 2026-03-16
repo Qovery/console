@@ -1,4 +1,5 @@
 import { type FormEvent, type ReactNode, forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 
 export interface InputTextAreaProps {
   label: string
@@ -32,7 +33,11 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
   const inputActions = hasFocus ? 'input--focused' : ''
 
   const isDisabled = props.disabled ? 'input--disabled !border-neutral' : ''
-  const labelClassName = `${hasFocus ? 'text-xs' : 'translate-y-2 text-sm'} ${!hasInteracted ? '!transition-none' : ''}`
+  const labelClassName = twMerge(
+    'input__label',
+    hasFocus ? 'text-xs' : 'translate-y-2 text-sm',
+    !hasInteracted && 'transition-none'
+  )
 
   return (
     <div
@@ -42,7 +47,7 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
     >
       <div
         aria-label="textarea-container"
-        className={`input pb-0 pr-2 ${inputActions} ${hasError} ${isDisabled} ${hasLabelUp}`}
+        className={twMerge('input pb-0 pr-2', inputActions, hasError, isDisabled, hasLabelUp)}
         ref={inputRef}
       >
         <label htmlFor={label} className={labelClassName}>
