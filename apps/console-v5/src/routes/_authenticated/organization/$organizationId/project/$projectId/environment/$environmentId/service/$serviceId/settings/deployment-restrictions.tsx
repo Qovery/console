@@ -1,4 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { ServiceDeploymentRestrictionsSettings } from '@qovery/domains/service-settings/feature'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/deployment-restrictions'
@@ -7,5 +9,7 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  return <div className="px-10 py-7">Deployment restrictions</div>
+  useDocumentTitle('Deployment restrictions - Service settings')
+
+  return <ServiceDeploymentRestrictionsSettings />
 }

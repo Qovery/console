@@ -3,7 +3,7 @@ import { useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
 import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
-import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
+import { isJobGitSource } from '@qovery/shared/enums'
 import { Sidebar } from '@qovery/shared/ui'
 
 export interface ServiceSettingsLayoutProps {
@@ -121,7 +121,6 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
       domainLink,
       portLink,
       healthchecksLink,
-      deploymentRestrictionsLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
@@ -140,7 +139,6 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
       valuesOverrideLink,
       networkingLink,
       domainLink,
-      ...(isHelmGitSource(helm.source) ? [deploymentRestrictionsLink] : []),
       advancedSettingsLink,
       dangerZoneLink,
     ])
@@ -150,7 +148,6 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
       terraformVariablesLink,
       terraformArgumentsLink,
       resourcesLink,
-      deploymentRestrictionsLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])

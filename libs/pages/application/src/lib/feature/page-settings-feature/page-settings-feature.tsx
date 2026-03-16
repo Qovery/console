@@ -1,12 +1,11 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
-import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
+import { isJobGitSource } from '@qovery/shared/enums'
 import {
   APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
   APPLICATION_SETTINGS_CONFIGURE_URL,
   APPLICATION_SETTINGS_DANGER_ZONE_URL,
-  APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS,
   APPLICATION_SETTINGS_DOCKERFILE_URL,
   APPLICATION_SETTINGS_HEALTHCHECKS_URL,
   APPLICATION_SETTINGS_NETWORKING_URL,
@@ -79,12 +78,6 @@ export function PageSettingsFeature() {
     url: pathSettings + APPLICATION_SETTINGS_HEALTHCHECKS_URL,
   }
 
-  const deploymentRestrictionsSettings = {
-    title: 'Deployment restrictions',
-    icon: IconAwesomeEnum.CART_FLATBED,
-    url: pathSettings + APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS,
-  }
-
   const advancedSettings = {
     title: 'Advanced settings',
     icon: IconAwesomeEnum.GEARS,
@@ -118,17 +111,11 @@ export function PageSettingsFeature() {
 
   const links = match(service)
     .returnType<NavigationLeftLinkProps[]>()
-    .with({ serviceType: 'APPLICATION' }, () => [
-      healthchecksSettings,
-      deploymentRestrictionsSettings,
-      advancedSettings,
-      dangerzoneSettings,
-    ])
+    .with({ serviceType: 'APPLICATION' }, () => [healthchecksSettings, advancedSettings, dangerzoneSettings])
     .with({ serviceType: 'CONTAINER' }, () => [healthchecksSettings, advancedSettings, dangerzoneSettings])
     .with({ serviceType: 'HELM' }, (s) => [
       valuesOverrideSetting,
       networkingSetting,
-      ...(isHelmGitSource(s.source) ? [deploymentRestrictionsSettings] : []),
       advancedSettings,
       dangerzoneSettings,
     ])
@@ -136,19 +123,18 @@ export function PageSettingsFeature() {
       terraformConfigurationSetting,
       terraformVariablesSetting,
       terraformArgumentsSetting,
-      deploymentRestrictionsSettings,
       advancedSettings,
       dangerzoneSettings,
     ])
     .with({ serviceType: 'JOB' }, (s) => [
       ...(s.job_type === 'LIFECYCLE' && isJobGitSource(s.source) ? [dockerfileSetting] : []),
       configureJobSetting,
-      deploymentRestrictionsSettings,
       advancedSettings,
       dangerzoneSettings,
     ])
     .otherwise(() => [])
-  const defaultSettingsUrl = links[0]?.url ?? pathSettings + APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL
+  const defaultSettingsUrl =
+    links[0] && 'url' in links[0] ? links[0].url : pathSettings + APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL
 
   if (!service) return null
 
