@@ -11,7 +11,6 @@ import { match } from 'ts-pattern'
 import { useDeploymentHistoryExecutionId, useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
   Icon,
   Indicator,

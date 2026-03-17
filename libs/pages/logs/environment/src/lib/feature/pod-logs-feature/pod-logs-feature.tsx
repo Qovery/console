@@ -7,11 +7,10 @@ import {
 } from 'qovery-typescript-axios'
 import { memo } from 'react'
 import { useCluster } from '@qovery/domains/clusters/feature'
-import { ListServiceLogs } from '@qovery/domains/service-logs/feature'
+import { ListServiceLogs, getServiceStatusesById } from '@qovery/domains/service-logs/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
-import { getServiceStatusesById } from '../deployment-logs-feature/deployment-logs-feature'
 
 // XXX: Prevent web-socket invalidations when re-rendering
 const WebSocketListenerMemo = memo(MetricsWebSocketListener)

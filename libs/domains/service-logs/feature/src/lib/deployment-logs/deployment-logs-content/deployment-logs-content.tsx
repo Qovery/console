@@ -10,11 +10,11 @@ import {
 import { memo } from 'react'
 import { match } from 'ts-pattern'
 import { useDeploymentHistory } from '@qovery/domains/environments/feature'
-import { ListDeploymentLogs } from '@qovery/domains/service-logs/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { Banner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
+import { ListDeploymentLogs } from '../../list-deployment-logs/list-deployment-logs'
 
 // XXX: Prevent web-socket invalidations when re-rendering
 const WebSocketListenerMemo = memo(MetricsWebSocketListener)
@@ -104,7 +104,7 @@ export function getStageFromServiceId(
   return undefined
 }
 
-export function DeploymentLogsFeature({
+export function DeploymentLogsContent({
   environment,
   environmentStatus,
   deploymentStages,
@@ -208,4 +208,4 @@ export function DeploymentLogsFeature({
   )
 }
 
-export default DeploymentLogsFeature
+export default DeploymentLogsContent

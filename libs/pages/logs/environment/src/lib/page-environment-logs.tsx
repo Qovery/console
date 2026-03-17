@@ -7,7 +7,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, Route, Routes, matchPath, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useDeploymentHistory, useEnvironment } from '@qovery/domains/environments/feature'
-import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
+import { DeploymentLogsContent, ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
 import {
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
@@ -21,7 +21,6 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { trimId } from '@qovery/shared/util-js'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
-import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import EnvironmentStagesFeature from './feature/environment-stages-feature/environment-stages-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
 import PreCheckLogsFeature from './feature/pre-check-logs-feature/pre-check-logs-feature'
@@ -262,7 +261,7 @@ export function PageEnvironmentLogs() {
           <Route
             path={DEPLOYMENT_LOGS_VERSION_URL()}
             element={
-              <DeploymentLogsFeature
+              <DeploymentLogsContent
                 key={location.pathname}
                 environment={environment}
                 deploymentStages={deploymentStages}
