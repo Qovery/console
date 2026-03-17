@@ -58,7 +58,7 @@ import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
 import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
 
-type ActionToolbarVariant = 'default' | 'header'
+type ActionToolbarVariant = 'default' | 'header' | 'deploy-dropdown-only'
 
 function MenuManageDeployment({
   deploymentStatus,
@@ -972,13 +972,15 @@ export function ServiceActions({
         </Tooltip>
       )}
 
-      <MenuOtherActions
-        state={deploymentStatus.state}
-        environment={environment}
-        service={service}
-        shellAction={shellAction}
-        variant={variant}
-      />
+      {variant !== 'deploy-dropdown-only' && (
+        <MenuOtherActions
+          state={deploymentStatus.state}
+          environment={environment}
+          service={service}
+          shellAction={shellAction}
+          variant={variant}
+        />
+      )}
     </div>
   )
 }
