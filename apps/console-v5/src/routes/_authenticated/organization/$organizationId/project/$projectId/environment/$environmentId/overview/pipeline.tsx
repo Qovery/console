@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { EnvironmentDeploymentPipeline } from '@qovery/domains/environments/feature'
+import { ServicesDeploymentPipeline } from '@qovery/domains/services/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -11,5 +11,5 @@ export const Route = createFileRoute(
 function RouteComponent() {
   useDocumentTitle('Deployment Pipeline')
 
-  return <EnvironmentDeploymentPipeline />
+  return <ServicesDeploymentPipeline />
 }

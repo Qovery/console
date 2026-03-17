@@ -5,7 +5,7 @@ import { InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui
 import { useCreateDeploymentStage } from '../../hooks/use-create-deployment-stage/use-create-deployment-stage'
 import { useEditDeploymentStage } from '../../hooks/use-edit-deployment-stage/use-edit-deployment-stage'
 
-export interface EnvironmentDeploymentStageModalProps {
+export interface ServicesDeploymentStageModalProps {
   environmentId: string
   onClose: () => void
   stage?: DeploymentStageResponse
@@ -16,11 +16,7 @@ interface StageFormValues {
   description: string
 }
 
-export function EnvironmentDeploymentStageModal({
-  environmentId,
-  onClose,
-  stage,
-}: EnvironmentDeploymentStageModalProps) {
+export function ServicesDeploymentStageModal({ environmentId, onClose, stage }: ServicesDeploymentStageModalProps) {
   const methods = useForm<StageFormValues>({
     defaultValues: {
       name: stage?.name ?? '',
@@ -107,4 +103,4 @@ export function EnvironmentDeploymentStageModal({
   )
 }
 
-export default EnvironmentDeploymentStageModal
+export default ServicesDeploymentStageModal

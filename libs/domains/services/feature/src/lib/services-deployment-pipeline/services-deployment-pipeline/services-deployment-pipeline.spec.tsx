@@ -1,8 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
 import { type ReactNode } from 'react'
 import { applicationFactoryMock, databaseFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { EnvironmentDeploymentPipeline, SKIPPED_STAGE_ID } from './environment-deployment-pipeline'
+import { SKIPPED_STAGE_ID, ServicesDeploymentPipeline } from './services-deployment-pipeline'
 
 const mockAttachServiceToDeploymentStage = jest.fn()
 const mockDeleteDeploymentStage = jest.fn()
@@ -58,15 +57,17 @@ jest.mock('@tanstack/react-router', () => ({
   }),
 }))
 
-jest.mock('@tanstack/react-query', () => ({
-  ...jest.requireActual('@tanstack/react-query'),
-  useQuery: jest.fn(),
-}))
-
 jest.mock('../../hooks/use-list-deployment-stages/use-list-deployment-stages', () => ({
   useListDeploymentStages: () => ({
     data: mockDeploymentStages,
     isLoading: mockIsDeploymentStagesLoading,
+  }),
+}))
+
+jest.mock('../../hooks/use-services/use-services', () => ({
+  useServices: () => ({
+    data: mockServices,
+    isLoading: mockIsServicesLoading,
   }),
 }))
 
@@ -82,12 +83,12 @@ jest.mock('../../hooks/use-delete-deployment-stage/use-delete-deployment-stage',
   }),
 }))
 
-jest.mock('../environment-deployment-stage-modal/environment-deployment-stage-modal', () => ({
-  EnvironmentDeploymentStageModal: () => <div>stage-modal</div>,
+jest.mock('../services-deployment-stage-modal/services-deployment-stage-modal', () => ({
+  ServicesDeploymentStageModal: () => <div>stage-modal</div>,
 }))
 
-jest.mock('../environment-deployment-stage-order-modal/environment-deployment-stage-order-modal', () => ({
-  EnvironmentDeploymentStageOrderModal: () => <div>stage-order-modal</div>,
+jest.mock('../services-deployment-stage-order-modal/services-deployment-stage-order-modal', () => ({
+  ServicesDeploymentStageOrderModal: () => <div>stage-order-modal</div>,
 }))
 
 jest.mock('@qovery/shared/ui', () => {
@@ -153,7 +154,7 @@ jest.mock('@qovery/shared/ui', () => {
   }
 })
 
-describe('EnvironmentDeploymentPipeline', () => {
+describe('ServicesDeploymentPipeline', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockServices = [applicationService, databaseService]
@@ -179,14 +180,10 @@ describe('EnvironmentDeploymentPipeline', () => {
       },
     ]
     mockIsDeploymentStagesLoading = false
-    ;(useQuery as jest.Mock).mockImplementation(() => ({
-      data: mockServices,
-      isLoading: mockIsServicesLoading,
-    }))
   })
 
   it('renders stages, services, and database subtitle', () => {
-    renderWithProviders(<EnvironmentDeploymentPipeline />)
+    renderWithProviders(<ServicesDeploymentPipeline />)
 
     expect(screen.getByRole('heading', { level: 1, name: 'Pipeline' })).toBeInTheDocument()
     expect(screen.getByText('Build')).toBeInTheDocument()
@@ -199,7 +196,7 @@ describe('EnvironmentDeploymentPipeline', () => {
   it('shows a loader while data is loading', () => {
     mockIsServicesLoading = true
 
-    renderWithProviders(<EnvironmentDeploymentPipeline />)
+    renderWithProviders(<ServicesDeploymentPipeline />)
 
     expect(screen.getByRole('status')).toBeInTheDocument()
   })
@@ -227,14 +224,14 @@ describe('EnvironmentDeploymentPipeline', () => {
       },
     ]
 
-    renderWithProviders(<EnvironmentDeploymentPipeline />)
+    renderWithProviders(<ServicesDeploymentPipeline />)
 
     expect(screen.getByText('Skipped')).toBeInTheDocument()
     expect(screen.getByText('Skipped service')).toBeInTheDocument()
   })
 
   it('opens the add stage modal', async () => {
-    const { userEvent } = renderWithProviders(<EnvironmentDeploymentPipeline />)
+    const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
 
     await userEvent.click(screen.getByRole('button', { name: /add stage/i }))
 
@@ -242,7 +239,7 @@ describe('EnvironmentDeploymentPipeline', () => {
   })
 
   it('opens the delete confirmation for a stage', async () => {
-    const { userEvent } = renderWithProviders(<EnvironmentDeploymentPipeline />)
+    const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
 
     await userEvent.click(screen.getByRole('button', { name: 'Stage actions for Build' }))
     await userEvent.click(screen.getByRole('menuitem', { name: 'Delete stage' }))
@@ -255,7 +252,7 @@ describe('EnvironmentDeploymentPipeline', () => {
   })
 
   it('opens the order modal from the stage actions', async () => {
-    const { userEvent } = renderWithProviders(<EnvironmentDeploymentPipeline />)
+    const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
 
     await userEvent.click(screen.getByRole('button', { name: 'Stage actions for Build' }))
     await userEvent.click(screen.getByRole('menuitem', { name: 'Edit order' }))
@@ -264,7 +261,7 @@ describe('EnvironmentDeploymentPipeline', () => {
   })
 
   it('moves a service to the skipped virtual stage', async () => {
-    const { userEvent } = renderWithProviders(<EnvironmentDeploymentPipeline />)
+    const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
 
     await userEvent.click(screen.getByRole('button', { name: `Move stage-service-1 to ${SKIPPED_STAGE_ID}` }))
 
@@ -282,7 +279,7 @@ describe('EnvironmentDeploymentPipeline', () => {
   })
 
   it('moves a service to another stage', async () => {
-    const { userEvent } = renderWithProviders(<EnvironmentDeploymentPipeline />)
+    const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
 
     await userEvent.click(screen.getByRole('button', { name: 'Move stage-service-1 to stage-2' }))
 

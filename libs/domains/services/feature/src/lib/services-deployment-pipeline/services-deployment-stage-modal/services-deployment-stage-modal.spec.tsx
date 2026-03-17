@@ -1,6 +1,6 @@
 import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { EnvironmentDeploymentStageModal } from './environment-deployment-stage-modal'
+import { ServicesDeploymentStageModal } from './services-deployment-stage-modal'
 
 const mockCreateDeploymentStage = jest.fn()
 const mockEditDeploymentStage = jest.fn()
@@ -26,7 +26,7 @@ jest.mock('@qovery/shared/ui', () => ({
   }),
 }))
 
-describe('EnvironmentDeploymentStageModal', () => {
+describe('ServicesDeploymentStageModal', () => {
   const stage = {
     ...deploymentStagesFactoryMock(1)[0],
     id: 'stage-1',
@@ -41,7 +41,7 @@ describe('EnvironmentDeploymentStageModal', () => {
   })
 
   it('prefills the form in edit mode', () => {
-    renderWithProviders(<EnvironmentDeploymentStageModal environmentId="env-1" onClose={mockOnClose} stage={stage} />)
+    renderWithProviders(<ServicesDeploymentStageModal environmentId="env-1" onClose={mockOnClose} stage={stage} />)
 
     expect(screen.getByLabelText('Name')).toHaveValue('Build')
     expect(screen.getByLabelText('Description (optional)')).toHaveValue('Compile and package')
@@ -49,7 +49,7 @@ describe('EnvironmentDeploymentStageModal', () => {
 
   it('creates a stage', async () => {
     const { userEvent } = renderWithProviders(
-      <EnvironmentDeploymentStageModal environmentId="env-1" onClose={mockOnClose} />
+      <ServicesDeploymentStageModal environmentId="env-1" onClose={mockOnClose} />
     )
 
     await userEvent.type(screen.getByLabelText('Name'), 'Deploy')
@@ -71,7 +71,7 @@ describe('EnvironmentDeploymentStageModal', () => {
 
   it('edits a stage', async () => {
     const { userEvent } = renderWithProviders(
-      <EnvironmentDeploymentStageModal environmentId="env-1" onClose={mockOnClose} stage={stage} />
+      <ServicesDeploymentStageModal environmentId="env-1" onClose={mockOnClose} stage={stage} />
     )
 
     await userEvent.clear(screen.getByLabelText('Name'))
@@ -95,7 +95,7 @@ describe('EnvironmentDeploymentStageModal', () => {
 
   it('enables the unsaved changes alert when the form becomes dirty', async () => {
     const { userEvent } = renderWithProviders(
-      <EnvironmentDeploymentStageModal environmentId="env-1" onClose={mockOnClose} />
+      <ServicesDeploymentStageModal environmentId="env-1" onClose={mockOnClose} />
     )
 
     await userEvent.type(screen.getByLabelText('Name'), 'Deploy')

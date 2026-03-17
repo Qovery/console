@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react'
 import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { EnvironmentDeploymentStageOrderModal } from './environment-deployment-stage-order-modal'
+import { ServicesDeploymentStageOrderModal } from './services-deployment-stage-order-modal'
 
 const mockMoveDeploymentStage = jest.fn()
 
@@ -40,7 +40,7 @@ jest.mock('framer-motion', () => ({
   },
 }))
 
-describe('EnvironmentDeploymentStageOrderModal', () => {
+describe('ServicesDeploymentStageOrderModal', () => {
   const stages = deploymentStagesFactoryMock(3).map((stage, index) => ({
     ...stage,
     id: `stage-${index + 1}`,
@@ -55,7 +55,7 @@ describe('EnvironmentDeploymentStageOrderModal', () => {
   })
 
   it('renders the stages in order', () => {
-    renderWithProviders(<EnvironmentDeploymentStageOrderModal onClose={onClose} stages={stages} />)
+    renderWithProviders(<ServicesDeploymentStageOrderModal onClose={onClose} stages={stages} />)
 
     expect(screen.getByText('Stage 1')).toBeInTheDocument()
     expect(screen.getByText('Stage 2')).toBeInTheDocument()
@@ -63,9 +63,7 @@ describe('EnvironmentDeploymentStageOrderModal', () => {
   })
 
   it('closes when cancel is clicked', async () => {
-    const { userEvent } = renderWithProviders(
-      <EnvironmentDeploymentStageOrderModal onClose={onClose} stages={stages} />
-    )
+    const { userEvent } = renderWithProviders(<ServicesDeploymentStageOrderModal onClose={onClose} stages={stages} />)
 
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
@@ -73,9 +71,7 @@ describe('EnvironmentDeploymentStageOrderModal', () => {
   })
 
   it('submits a reorder and rehydrates with the returned stages', async () => {
-    const { userEvent } = renderWithProviders(
-      <EnvironmentDeploymentStageOrderModal onClose={onClose} stages={stages} />
-    )
+    const { userEvent } = renderWithProviders(<ServicesDeploymentStageOrderModal onClose={onClose} stages={stages} />)
 
     await userEvent.click(screen.getByRole('button', { name: 'Reorder stages' }))
     await userEvent.click(screen.getAllByRole('button', { name: 'Commit reorder' })[0])

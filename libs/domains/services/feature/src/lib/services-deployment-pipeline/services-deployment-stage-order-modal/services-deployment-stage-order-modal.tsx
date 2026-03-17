@@ -6,12 +6,12 @@ import { BadgeDeploymentOrder, Button, Heading, ScrollShadowWrapper, Section } f
 import { findMovedIndices } from '@qovery/shared/util-js'
 import { useMoveDeploymentStage } from '../../hooks/use-move-deployment-stage/use-move-deployment-stage'
 
-export interface EnvironmentDeploymentStageOrderModalProps {
+export interface ServicesDeploymentStageOrderModalProps {
   onClose: () => void
   stages: DeploymentStageResponse[]
 }
 
-export function EnvironmentDeploymentStageOrderModal({ onClose, stages }: EnvironmentDeploymentStageOrderModalProps) {
+export function ServicesDeploymentStageOrderModal({ onClose, stages }: ServicesDeploymentStageOrderModalProps) {
   const [currentStages, setCurrentStages] = useState(stages)
   const [localStages, setLocalStages] = useState(stages)
   const { mutateAsync: moveDeploymentStage } = useMoveDeploymentStage()
@@ -74,4 +74,4 @@ export function EnvironmentDeploymentStageOrderModal({ onClose, stages }: Enviro
   )
 }
 
-export default EnvironmentDeploymentStageOrderModal
+export default ServicesDeploymentStageOrderModal

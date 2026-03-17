@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type DeploymentStageResponse } from 'qovery-typescript-axios'
@@ -24,12 +23,12 @@ import {
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { queries } from '@qovery/state/util-queries'
 import { useAttachServiceToDeploymentStage } from '../../hooks/use-attach-service-to-deployment-stage/use-attach-service-to-deployment-stage'
 import { useDeleteDeploymentStage } from '../../hooks/use-delete-deployment-stage/use-delete-deployment-stage'
 import { useListDeploymentStages } from '../../hooks/use-list-deployment-stages/use-list-deployment-stages'
-import { EnvironmentDeploymentStageModal } from '../environment-deployment-stage-modal/environment-deployment-stage-modal'
-import { EnvironmentDeploymentStageOrderModal } from '../environment-deployment-stage-order-modal/environment-deployment-stage-order-modal'
+import { useServices } from '../../hooks/use-services/use-services'
+import { ServicesDeploymentStageModal } from '../services-deployment-stage-modal/services-deployment-stage-modal'
+import { ServicesDeploymentStageOrderModal } from '../services-deployment-stage-order-modal/services-deployment-stage-order-modal'
 
 export const SKIPPED_STAGE_ID = '__VIRTUAL_SKIPPED__'
 
@@ -107,19 +106,12 @@ function updateLocalStages(
   )
 }
 
-export function EnvironmentDeploymentPipeline() {
+export function ServicesDeploymentPipeline() {
   const { environmentId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  const { data: services, isLoading: isServicesLoading } = useQuery({
-    ...queries.services.list(environmentId),
-    enabled: Boolean(environmentId),
-    select(services) {
-      services.sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
-      return services
-    },
-  })
+  const { data: services, isLoading: isServicesLoading } = useServices({ environmentId })
   const { data: deploymentStages, isLoading: isDeploymentStagesLoading } = useListDeploymentStages({ environmentId })
   const { mutate: attachServiceToDeploymentStage } = useAttachServiceToDeploymentStage()
   const { mutate: deleteDeploymentStage } = useDeleteDeploymentStage({ environmentId })
@@ -201,7 +193,7 @@ export function EnvironmentDeploymentPipeline() {
             className="gap-1.5"
             onClick={() =>
               openModal({
-                content: <EnvironmentDeploymentStageModal environmentId={environmentId} onClose={closeModal} />,
+                content: <ServicesDeploymentStageModal environmentId={environmentId} onClose={closeModal} />,
                 options: {
                   width: 488,
                 },
@@ -308,7 +300,7 @@ export function EnvironmentDeploymentPipeline() {
                                   onSelect={() =>
                                     openModal({
                                       content: (
-                                        <EnvironmentDeploymentStageModal
+                                        <ServicesDeploymentStageModal
                                           environmentId={environmentId}
                                           onClose={closeModal}
                                           stage={stage}
@@ -328,7 +320,7 @@ export function EnvironmentDeploymentPipeline() {
                                   onSelect={() =>
                                     openModal({
                                       content: (
-                                        <EnvironmentDeploymentStageOrderModal
+                                        <ServicesDeploymentStageOrderModal
                                           onClose={closeModal}
                                           stages={stages.filter(({ id }) => id !== SKIPPED_STAGE_ID)}
                                         />
@@ -434,4 +426,4 @@ export function EnvironmentDeploymentPipeline() {
   )
 }
 
-export default EnvironmentDeploymentPipeline
+export default ServicesDeploymentPipeline
