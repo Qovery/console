@@ -347,6 +347,7 @@ export function ListDeploymentLogs({
                       serviceId,
                       executionId: deployment.identifier.execution_id,
                     }}
+                    replace={true}
                   >
                     <Tooltip content={deployment.identifier.execution_id}>
                       <span>{trimId(deployment.identifier.execution_id ?? '')}</span>

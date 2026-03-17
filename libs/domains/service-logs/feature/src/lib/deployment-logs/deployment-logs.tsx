@@ -6,14 +6,18 @@ import {
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
-import { Suspense, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { useEnvironment } from '@qovery/domains/environments/feature'
+import { useService } from '@qovery/domains/services/feature'
 import { Skeleton } from '@qovery/shared/ui'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
+import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { ServiceStageIdsProvider } from '../service-stage-ids-context/service-stage-ids-context'
 import { DeploymentLogsContent } from './deployment-logs-content/deployment-logs-content'
 import { LoaderPlaceholder } from './deployment-logs-placeholder/deployment-logs-placeholder'
+
+const WebSocketListenerMemo = memo(MetricsWebSocketListener)
 
 function Loader() {
   return (
@@ -46,27 +50,32 @@ function DeploymentLogsWrapper({
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
 }) {
   if (!environment || !environmentStatus) {
-    // Suspend until WS data arrives.
-    // The parent Pipeline component will re-render this component once setEnvironmentStatus is called.
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    throw new Promise(() => {})
+    return <Loader />
   }
 
   return (
-    <div>
-      <DeploymentLogsContent
-        environment={environment}
-        deploymentStages={deploymentStages}
-        environmentStatus={environmentStatus}
-        preCheckStage={preCheckStage}
-      />
-    </div>
+    <DeploymentLogsContent
+      environment={environment}
+      deploymentStages={deploymentStages}
+      environmentStatus={environmentStatus}
+      preCheckStage={preCheckStage}
+    />
   )
 }
 
 export function DeploymentLogs() {
-  const { organizationId, projectId, environmentId, executionId } = useParams({ strict: false })
-
+  const {
+    organizationId,
+    projectId,
+    environmentId = '',
+    serviceId = '',
+    executionId = '',
+  } = useParams({ strict: false })
+  const { data: service } = useService({
+    environmentId,
+    serviceId,
+    suspense: true,
+  })
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const [deploymentStages, setDeploymentStages] = useState<DeploymentStageWithServicesStatuses[]>()
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
@@ -85,7 +94,6 @@ export function DeploymentLogs() {
         pre_check_stage: EnvironmentStatusesWithStagesPreCheckStage
       }
     ) => {
-      console.log('Deployment status update received')
       setDeploymentStages(stages)
       setEnvironmentStatus(environment)
       setPreCheckStage(pre_check_stage)
@@ -119,14 +127,23 @@ export function DeploymentLogs() {
   return (
     <div>
       <ServiceStageIdsProvider>
-        <Suspense fallback={<Loader />}>
-          <DeploymentLogsWrapper
-            environment={environment}
-            deploymentStages={deploymentStages}
-            environmentStatus={environmentStatus}
-            preCheckStage={preCheckStage}
+        <DeploymentLogsWrapper
+          environment={environment}
+          deploymentStages={deploymentStages}
+          environmentStatus={environmentStatus}
+          preCheckStage={preCheckStage}
+        />
+
+        {service && environment && (
+          <WebSocketListenerMemo
+            organizationId={environment.organization.id}
+            clusterId={environment.cluster_id}
+            projectId={environment.project.id}
+            environmentId={environment.id}
+            serviceId={service.id}
+            serviceType={service.serviceType}
           />
-        </Suspense>
+        )}
       </ServiceStageIdsProvider>
     </div>
   )
