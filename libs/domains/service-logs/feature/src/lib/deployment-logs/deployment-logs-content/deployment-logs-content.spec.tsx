@@ -9,7 +9,7 @@ import { renderWithProviders } from '@qovery/shared/util-tests'
 import DeploymentLogsFeature, {
   type DeploymentLogsFeatureProps,
   getServiceStatusesById,
-} from './deployment-logs-feature'
+} from './deployment-logs-content'
 
 const services: DeploymentStageWithServicesStatuses[] = [
   {

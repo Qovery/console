@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from '@tanstack/react-router'
+import { Link, useLocation, useParams } from '@tanstack/react-router'
 import {
   type ColumnFiltersState,
   type FilterFn,
@@ -7,6 +7,7 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import clsx from 'clsx'
 import download from 'downloadjs'
 import {
   type Environment,
@@ -18,9 +19,10 @@ import {
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
-import { Button, DropdownMenu, Icon, TablePrimitives } from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
-import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
+import { trimId } from '@qovery/shared/util-js'
+import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-placeholder/deployment-logs-placeholder'
 import HeaderLogs from '../header-logs/header-logs'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
@@ -145,7 +147,6 @@ export function ListDeploymentLogs({
   preCheckStage,
 }: ListDeploymentLogsProps) {
   const { hash } = useLocation()
-  const navigate = useNavigate()
   const { organizationId = '', projectId = '', serviceId = '', executionId = '' } = useParams({ strict: false })
   const refScrollSection = useRef<HTMLDivElement>(null)
   const { updateStageId } = useContext(ServiceStageIdsContext)
@@ -327,27 +328,34 @@ export function ListDeploymentLogs({
                 <Icon iconName="angle-down" />
               </Button>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-[15rem] overflow-y-auto">
+            <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-80 overflow-y-auto">
               {environmentDeploymentHistory.map((deployment) => (
                 <DropdownMenu.Item
+                  asChild
                   key={deployment.identifier.execution_id}
-                  onSelect={() => {
-                    navigate({
-                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
-                      params: {
-                        organizationId,
-                        projectId,
-                        environmentId: environment.id,
-                        serviceId,
-                        executionId: deployment.identifier.execution_id,
-                      },
-                      replace: true,
-                    })
-                  }}
-                  icon={deployment.identifier.execution_id === executionId ? <Icon iconName="check" /> : undefined}
-                  className="min-h-8"
+                  className={clsx('min-h-9', {
+                    'bg-surface-brand-component': deployment.identifier.execution_id === executionId,
+                  })}
                 >
-                  {dateYearMonthDayHourMinuteSecond(new Date(deployment.auditing_data.created_at))}
+                  <Link
+                    className="flex w-full justify-between"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                    params={{
+                      organizationId,
+                      projectId,
+                      environmentId: environment.id,
+                      serviceId,
+                      executionId: deployment.identifier.execution_id,
+                    }}
+                  >
+                    <Tooltip content={deployment.identifier.execution_id}>
+                      <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
+                    </Tooltip>
+                    <span className="flex items-center gap-2.5 text-xs text-neutral-subtle">
+                      {dateYearMonthDayHourMinuteSecond(new Date(deployment.auditing_data.created_at))}
+                      <StatusChip status={deployment.status} />
+                    </span>
+                  </Link>
                 </DropdownMenu.Item>
               ))}
             </DropdownMenu.Content>
@@ -359,7 +367,7 @@ export function ListDeploymentLogs({
 
   if (!logs || logs.length === 0 || !serviceStatus.is_part_last_deployment) {
     return (
-      <div className="h-[calc(100vh-64px)] w-full">
+      <div className="h-[calc(100vh-208px)] w-full">
         <div className="relative h-full bg-background">
           <HeaderLogsComponent />
           <div className="flex h-[calc(100%-48px)] flex-col items-center justify-between">
