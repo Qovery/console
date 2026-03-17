@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import { Reorder } from 'framer-motion'
 import { type DeploymentStageResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { BadgeDeploymentOrder, Button, ScrollShadowWrapper } from '@qovery/shared/ui'
+import { BadgeDeploymentOrder, Button, Heading, ScrollShadowWrapper, Section } from '@qovery/shared/ui'
 import { findMovedIndices } from '@qovery/shared/util-js'
 import { useMoveDeploymentStage } from '../../hooks/use-move-deployment-stage/use-move-deployment-stage'
 
@@ -39,9 +39,11 @@ export function EnvironmentDeploymentStageOrderModal({ onClose, stages }: Enviro
   }
 
   return (
-    <div className="p-6">
-      <h2 className="h4 mb-1 max-w-sm truncate text-neutral">Edit execution order</h2>
-      <p className="mb-6 text-sm text-neutral-subtle">You can drag and drop stages to modify their order.</p>
+    <Section className="p-6">
+      <div className="mb-6 flex flex-col gap-1">
+        <Heading>Edit execution order</Heading>
+        <p className="text-sm text-neutral-subtle">You can drag and drop stages to modify their order.</p>
+      </div>
 
       <ScrollShadowWrapper className="max-h-[500px]">
         <Reorder.Group axis="y" values={localStages} onReorder={setLocalStages} className="flex flex-col gap-1">
@@ -68,7 +70,7 @@ export function EnvironmentDeploymentStageOrderModal({ onClose, stages }: Enviro
           Cancel
         </Button>
       </div>
-    </div>
+    </Section>
   )
 }
 

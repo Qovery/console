@@ -1,4 +1,4 @@
-import { render, screen } from '__tests__/utils/setup-jest'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import Truncate, { truncateText } from './truncate'
 
 describe('Truncate', () => {
@@ -8,16 +8,16 @@ describe('Truncate', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<Truncate {...props} />)
+    const { baseElement } = renderWithProviders(<Truncate {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should truncate the current text', () => {
-    render(<Truncate {...props} />)
+    renderWithProviders(<Truncate {...props} />)
 
     const text = screen.queryByTestId('truncate-text')
     const textTruncate = truncateText(props.text, props.truncateLimit)
 
-    expect(text?.textContent).toBe(`${textTruncate}...`)
+    expect(text?.textContent).toBe(`${textTruncate}…`)
   })
 })

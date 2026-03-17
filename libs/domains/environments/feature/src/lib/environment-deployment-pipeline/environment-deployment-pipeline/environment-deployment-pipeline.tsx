@@ -175,8 +175,15 @@ export function EnvironmentDeploymentPipeline() {
   const isLoading = isServicesLoading || isDeploymentStagesLoading || !stages || !services
 
   return (
-    <Section className="flex w-full flex-col p-8 pb-0">
-      <div className="flex flex-col gap-6">
+    <Section className="relative flex w-full flex-col bg-surface-neutral p-4 pb-0">
+      <div
+        className="pointer-events-none absolute inset-2"
+        style={{
+          backgroundImage: `radial-gradient(circle at center, var(--neutral-3) 0.125rem, transparent 0.125rem)`,
+          backgroundSize: '1.5rem 1.5rem',
+        }}
+      />
+      <div className="relative flex flex-col gap-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col gap-1">
             <Heading>Pipeline</Heading>
@@ -206,7 +213,7 @@ export function EnvironmentDeploymentPipeline() {
           </Button>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="relative -ml-4 w-[calc(100%+2rem)] overflow-x-auto">
           {isLoading ? (
             <div className="flex justify-center py-10">
               <LoaderSpinner />
@@ -219,18 +226,18 @@ export function EnvironmentDeploymentPipeline() {
                 const showArrow = index < stages.length - 1 && !isVirtualSkippedStage
 
                 return (
-                  <div className="relative shrink-0" key={stageId}>
+                  <div className="relative shrink-0 first:ml-4 last:mr-4" key={stageId}>
                     {showArrow && (
                       <svg
+                        className="absolute left-full top-0"
                         aria-hidden="true"
-                        className="absolute left-full top-5 text-neutral-subtle"
                         xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="43"
+                        width="19"
+                        height="56"
                         fill="none"
-                        viewBox="0 0 16 43"
+                        viewBox="0 0 19 56"
                       >
-                        <path fill="currentColor" d="M16 21.5 8.5 17.17v8.66L16 21.5Zm-16 .75h9.25v-1.5H0v1.5Z" />
+                        <path fill="var(--neutral-6)" d="M0 27h19v1H0z"></path>
                       </svg>
                     )}
 
@@ -261,13 +268,13 @@ export function EnvironmentDeploymentPipeline() {
                         )
                       }}
                       heading={
-                        <div className="flex grow items-center gap-1.5">
+                        <div className="flex grow items-center gap-2">
                           {!isVirtualSkippedStage && <BadgeDeploymentOrder order={deployment_order} />}
-                          <span className="flex items-center gap-1.5 text-sm font-bold text-neutral">
+                          <span className="flex items-center gap-1 truncate text-xs text-neutral">
                             {isVirtualSkippedStage && (
                               <Icon iconName="ban" iconStyle="regular" className="text-neutral-subtle" />
                             )}
-                            <Truncate truncateLimit={28} text={upperCaseFirstLetter(name) || ''} />
+                            <Truncate truncateLimit={18} text={name || ''} />
                             {description && (
                               <Tooltip content={description}>
                                 <span>
@@ -286,9 +293,11 @@ export function EnvironmentDeploymentPipeline() {
                                 <Button
                                   type="button"
                                   color="neutral"
-                                  variant="plain"
-                                  className="ml-auto h-8 w-8 justify-center px-0"
+                                  variant="outline"
+                                  size="xs"
+                                  className="ml-auto justify-center"
                                   aria-label={`Stage actions for ${name}`}
+                                  iconOnly
                                 >
                                   <Icon iconName="ellipsis" />
                                 </Button>
@@ -357,12 +366,12 @@ export function EnvironmentDeploymentPipeline() {
                       }
                     >
                       {!stageServices || stageServices.length === 0 ? (
-                        <div className="px-3 py-6 text-center">
+                        <div className="mt-2.5 flex flex-col items-center gap-2 rounded border border-neutral bg-surface-neutral p-3 text-center">
                           <Icon
                             iconName={isVirtualSkippedStage ? 'ban' : 'wave-pulse'}
                             className="text-neutral-subtle"
                           />
-                          <p className="mt-2 text-xs font-medium leading-5 text-neutral-subtle">
+                          <p className="text-xs text-neutral-subtle">
                             {isVirtualSkippedStage ? (
                               <>
                                 Skipped services are excluded from environment-level deployments. <br /> Drag services
@@ -393,9 +402,8 @@ export function EnvironmentDeploymentPipeline() {
                                 >
                                   {service && (
                                     <Avatar
-                                      className="mr-2"
-                                      size="sm"
-                                      border="solid"
+                                      className="mr-2 h-5 w-6"
+                                      size="custom"
                                       fallback={<Icon name={getServiceIconName(service)} height="100%" width="100%" />}
                                     />
                                   )}

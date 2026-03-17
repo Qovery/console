@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { motion } from 'framer-motion'
 import {
   type DragEvent,
@@ -41,7 +42,7 @@ const BoardRoot = ({ children, className }: PropsWithChildren & { className?: st
 
   return (
     <BoardContext.Provider value={{ boardId }}>
-      <div className={twMerge('scroll-shadow flex h-full w-full overflow-x-scroll pb-5', className)}>{children}</div>
+      <div className={twMerge('flex h-full w-full overflow-x-scroll pb-5', className)}>{children}</div>
     </BoardContext.Provider>
   )
 }
@@ -193,16 +194,23 @@ const BoardColumn = <T extends Card>({
   }
 
   return (
-    <motion.div layout="position" layoutId={columnId} className="flex w-60 shrink-0 flex-col rounded">
-      <div className="flex h-[58px] items-center justify-between rounded-t-lg border border-neutral bg-surface-neutral-subtle px-3 py-2 text-neutral">
-        {heading}
-      </div>
+    <motion.div
+      layout="position"
+      layoutId={columnId}
+      className={twMerge(
+        clsx(
+          'flex w-60 shrink-0 flex-col rounded-lg border border-neutral bg-surface-neutral-subtle transition-colors',
+          active && 'bg-surface-neutral-componentHover'
+        )
+      )}
+    >
+      <div className="flex h-9 items-center justify-between px-3 pt-3 font-code text-xs text-neutral">{heading}</div>
 
       <div
         onDrop={(e) => handleDragEnd(e)}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`w-full rounded-b-lg border border-t-0 border-neutral px-1 text-neutral transition-colors ${active ? 'bg-surface-neutral-componentHover' : 'bg-surface-neutral-component'}`}
+        className="w-full rounded-b-lg px-3 text-neutral transition-colors"
       >
         {children}
         <BoardDropIndicator columnId={columnId} />
@@ -227,7 +235,7 @@ const BoardCard = ({ children, cardId, columnId }: BoardCardProps) => {
         layoutId={cardId}
         draggable="true"
         onDragStart={(e) => handleDragStart(e as unknown as DragEvent)}
-        className="cursor-grab rounded border border-neutral bg-surface-neutral px-2 py-3 text-neutral active:cursor-grabbing active:border-neutral-strong"
+        className="cursor-grab rounded border border-neutral bg-surface-neutral p-3 text-neutral active:cursor-grabbing"
       >
         {children}
       </motion.div>
@@ -248,7 +256,7 @@ const BoardDropIndicator = ({ beforeId, columnId }: BoardDropIndicatorProps) => 
       data-before={beforeId ?? '-1'}
       data-board={boardId}
       data-column={columnId}
-      className="my-0.5 h-0.5 w-full bg-surface-neutral-solid opacity-0"
+      className="h-1.5 w-full bg-surface-neutral-solid opacity-0 first:mt-1.5 last:mb-1.5"
     />
   )
 }
