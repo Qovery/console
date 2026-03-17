@@ -3,7 +3,7 @@
 exports[`ClusterCard should match snapshot 1`] = `
 <div>
   <a
-    class="duration-50 flex flex-col gap-5 rounded-lg border border-neutral bg-surface-neutral p-5 shadow-sm transition-all hover:border-brand-strong"
+    class="duration-50 flex flex-col rounded-lg border border-neutral bg-surface-neutral p-5 pb-4 shadow-sm transition-all hover:border-brand-strong"
     to="/"
   >
     <div
@@ -82,7 +82,7 @@ exports[`ClusterCard should match snapshot 1`] = `
       </div>
     </div>
     <div
-      class="flex flex-wrap gap-2"
+      class="mt-5 flex flex-wrap gap-2"
     >
       <span
         class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md"
@@ -124,10 +124,10 @@ exports[`ClusterCard should match snapshot 1`] = `
       </span>
     </div>
     <hr
-      class="border-neutral"
+      class="mt-5 border-neutral"
     />
     <div
-      class="flex items-center justify-between"
+      class="mt-4 flex items-center justify-between"
     >
       <div
         aria-busy="false"
@@ -135,46 +135,31 @@ exports[`ClusterCard should match snapshot 1`] = `
       >
         <div>
           <div
-            aria-orientation="horizontal"
-            data-orientation="horizontal"
-            dir="ltr"
-            role="toolbar"
-            style="outline: none;"
-            tabindex="0"
+            class="flex items-center gap-2"
           >
             <button
               aria-expanded="false"
               aria-haspopup="menu"
               aria-label="Manage Deployment"
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-warning-strong h-8 px-2.5 hover:bg-surface-warning-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border border-warning-component hover:border-warning-strong data-[state=open]:bg-surface-warning-subtle data-[state=open]:border-warning-strong text-warning text-sm outline-0 min-w-[36px]"
-              data-orientation="horizontal"
-              data-radix-collection-item=""
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-warning-strong text-sm h-8 justify-center px-0 rounded-md w-8 border border-warning-subtle text-warning hover:border-warning-component hover:bg-surface-warning-subtle data-[state=open]:bg-surface-warning-subtle"
               data-state="closed"
-              id="radix-:rs:"
-              tabindex="-1"
+              id="radix-:ro:"
               type="button"
             >
               <div
-                class="flex h-full w-full items-center justify-center"
+                class="flex h-full w-full items-center justify-center gap-1.5"
                 data-state="closed"
               >
                 <i
                   aria-hidden="true"
-                  class="fa-regular fa-play mr-4"
-                />
-                <i
-                  aria-hidden="true"
-                  class="fa-regular fa-chevron-down "
+                  class="fa-regular fa-rocket "
                 />
               </div>
             </button>
             <button
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
-              data-orientation="horizontal"
-              data-radix-collection-item=""
+              aria-label="Logs"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 justify-center px-0 rounded-md w-8 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
               data-state="closed"
-              tabindex="-1"
-              type="button"
             >
               <i
                 aria-hidden="true"
@@ -182,12 +167,9 @@ exports[`ClusterCard should match snapshot 1`] = `
               />
             </button>
             <button
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
-              data-orientation="horizontal"
-              data-radix-collection-item=""
+              aria-label="Qovery cloud shell"
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 justify-center px-0 rounded-md w-8 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
               data-state="closed"
-              tabindex="-1"
-              type="button"
             >
               <i
                 aria-hidden="true"
@@ -198,12 +180,9 @@ exports[`ClusterCard should match snapshot 1`] = `
               aria-expanded="false"
               aria-haspopup="menu"
               aria-label="Other actions"
-              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 select-none outline-neutral-strong h-8 px-2.5 bg-surface-neutral border border-neutral hover:bg-surface-neutral-subtle active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:border-neutral-strong active:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle data-[state=open]:border-neutral-strong text-neutral-subtle text-sm outline-0 min-w-[36px]"
-              data-orientation="horizontal"
-              data-radix-collection-item=""
+              class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 justify-center px-0 rounded-md w-8 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
               data-state="closed"
-              id="radix-:r14:"
-              tabindex="-1"
+              id="radix-:rt:"
               type="button"
             >
               <div

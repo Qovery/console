@@ -8,7 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type ReactNode, useCallback, useEffect, useMemo } from 'react'
 import { P, match } from 'ts-pattern'
-import { ActionToolbar, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
   isDeleteAvailable,
@@ -27,12 +27,24 @@ import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-down
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
 import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-cluster'
 
-function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatus }) {
+type ActionToolbarVariant = 'default' | 'header' | 'card'
+
+function MenuManageDeployment({
+  cluster,
+  clusterStatus,
+  variant = 'default',
+}: {
+  cluster: Cluster
+  clusterStatus: ClusterStatus
+  variant?: ActionToolbarVariant
+}) {
   const { openModalConfirmation } = useModalConfirmation()
   const { openModal } = useModal()
   const { mutate: deployCluster } = useDeployCluster()
   const { mutate: stopCluster } = useStopCluster()
   const { mutate: upgradeCluster } = useUpgradeCluster({ organizationId: cluster.organization.id })
+  const hasTextActionButton = variant === 'header'
+  const actionButtonSize = variant === 'default' ? 'sm' : 'md'
 
   if (
     !clusterStatus.status ||
@@ -49,6 +61,9 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
     clusterStatus.status === 'DEPLOYED' &&
     cluster.kubernetes !== 'PARTIALLY_MANAGED'
   const clusterNeedUpdate = cluster.deployment_status !== 'UP_TO_DATE' && clusterStatus.status !== 'STOPPED'
+  const actionButtonVariant = hasTextActionButton ? 'solid' : 'outline'
+  const actionButtonColor =
+    clusterNeedUpdate || k8sUpdateAvailable ? 'yellow' : hasTextActionButton ? 'brand' : 'neutral'
 
   const tooltipClusterNeedUpdate = clusterNeedUpdate && (
     <Tooltip side="bottom" content="Configuration has changed and needs to be applied">
@@ -153,24 +168,40 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
   return entries.length > 0 ? (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button
+        <Button
           aria-label="Manage Deployment"
-          color={clusterNeedUpdate || k8sUpdateAvailable ? 'yellow' : 'neutral'}
+          size={actionButtonSize}
+          variant={actionButtonVariant}
+          color={actionButtonColor}
+          iconOnly={!hasTextActionButton}
         >
           <Tooltip content="Manage Deployment">
-            <div className="flex h-full w-full items-center justify-center">
-              <Icon iconName="play" className="mr-4" />
-              <Icon iconName="chevron-down" />
+            <div className="flex h-full w-full items-center justify-center gap-1.5">
+              <Icon iconName="rocket" />
+              {hasTextActionButton && (
+                <>
+                  {clusterStatus.is_deployed ? 'Deploy' : 'Install'}
+                  <Icon iconName="chevron-down" />
+                </>
+              )}
             </div>
           </Tooltip>
-        </ActionToolbar.Button>
+        </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>{entries.map((c) => c)}</DropdownMenu.Content>
     </DropdownMenu.Root>
   ) : null
 }
 
-function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatus }) {
+function MenuOtherActions({
+  cluster,
+  clusterStatus,
+  variant = 'default',
+}: {
+  cluster: Cluster
+  clusterStatus: ClusterStatus
+  variant?: ActionToolbarVariant
+}) {
   const navigate = useNavigate()
   const { openModal } = useModal()
   const [, copyToClipboard] = useCopyToClipboard()
@@ -196,13 +227,19 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button aria-label="Other actions">
+        <Button
+          aria-label="Other actions"
+          color="neutral"
+          variant="outline"
+          size={variant === 'default' ? 'sm' : 'md'}
+          iconOnly
+        >
           <Tooltip content="Other actions">
             <div className="flex h-full w-full items-center justify-center">
               <Icon width={20} iconName="ellipsis-v" />
             </div>
           </Tooltip>
-        </ActionToolbar.Button>
+        </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={() => openAccessModal('MANAGED')}>
@@ -258,12 +295,13 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
   )
 }
 
-export interface ClusterActionToolbarProps {
+export interface ClusterActionsProps {
   cluster: Cluster
   clusterStatus: ClusterStatus
+  variant?: ActionToolbarVariant
 }
 
-export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionToolbarProps) {
+export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: ClusterActionsProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const showSelfManagedGuideKey = 'show-self-managed-guide'
@@ -320,54 +358,64 @@ export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionTo
     return () => (bool ? closeModal() : undefined)
   }, [searchParams, location.search, location.pathname, cluster.kubernetes, closeModal, openInstallationGuideModal])
 
-  const actionToolbarButtons = match(cluster)
+  const primaryActionButton = match(cluster)
     .with({ cloud_provider: P.not('ON_PREMISE'), kubernetes: 'SELF_MANAGED' }, () => (
       <Tooltip content="Installation guide">
-        <ActionToolbar.Button onClick={() => openInstallationGuideModal()}>
+        <Button onClick={() => openInstallationGuideModal()} iconOnly size={variant === 'default' ? 'sm' : 'md'}>
           <Icon iconName="circle-info" />
-        </ActionToolbar.Button>
+        </Button>
       </Tooltip>
     ))
     .with({ cloud_provider: 'ON_PREMISE', kubernetes: 'SELF_MANAGED' }, () => (
       <Tooltip content="Installation guide">
-        <ActionToolbar.Button
+        <Button
           onClick={() => openInstallationGuideModal({ type: 'ON_PREMISE' })}
           color={!runningStatus ? 'yellow' : 'neutral'}
+          variant="outline"
+          iconOnly
+          size={variant === 'default' ? 'sm' : 'md'}
         >
           <Icon iconName="circle-info" />
-        </ActionToolbar.Button>
+        </Button>
       </Tooltip>
     ))
-    .otherwise(() => (
-      <>
-        <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} />
-        <Tooltip content="Logs">
-          <ActionToolbar.Button
-            onClick={() =>
-              navigate({
-                to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
-                params: {
-                  organizationId: cluster.organization.id,
-                  clusterId: cluster.id,
-                },
-              })
-            }
-          >
-            <Icon iconName="scroll" />
-          </ActionToolbar.Button>
-        </Tooltip>
-      </>
-    ))
+    .otherwise(() => <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} variant={variant} />)
 
-  return (
-    <ActionToolbar.Root>
-      {actionToolbarButtons}
-      <Tooltip content="Qovery cloud shell">
-        <ActionToolbar.Button
+  const cloudShellButton = (
+    <Tooltip content="Qovery cloud shell">
+      <Button
+        aria-label="Qovery cloud shell"
+        color="neutral"
+        variant="outline"
+        size={variant === 'default' ? 'sm' : 'md'}
+        iconOnly
+        onClick={() =>
+          navigate({
+            to: '/organization/$organizationId/cluster/$clusterId/overview',
+            search: { hasShell: true },
+            params: {
+              organizationId: cluster.organization.id,
+              clusterId: cluster.id,
+            },
+          })
+        }
+      >
+        <Icon iconName="terminal" />
+      </Button>
+    </Tooltip>
+  )
+  const logsButton =
+    variant === 'card' && cluster.kubernetes !== 'SELF_MANAGED' ? (
+      <Tooltip content="Logs">
+        <Button
+          aria-label="Logs"
+          color="neutral"
+          variant="outline"
+          size="md"
+          iconOnly
           onClick={() =>
             navigate({
-              to: '/organization/$organizationId/cluster/$clusterId/overview',
-              search: { hasShell: true },
+              to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
               params: {
                 organizationId: cluster.organization.id,
                 clusterId: cluster.id,
@@ -375,12 +423,29 @@ export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionTo
             })
           }
         >
-          <Icon iconName="terminal" />
-        </ActionToolbar.Button>
+          <Icon iconName="scroll" />
+        </Button>
       </Tooltip>
-      <MenuOtherActions cluster={cluster} clusterStatus={clusterStatus} />
-    </ActionToolbar.Root>
+    ) : null
+
+  return (
+    <div className="flex items-center gap-2">
+      {variant === 'header' ? (
+        <>
+          {primaryActionButton}
+          {cloudShellButton}
+          <MenuOtherActions cluster={cluster} clusterStatus={clusterStatus} variant={variant} />
+        </>
+      ) : (
+        <>
+          {primaryActionButton}
+          {logsButton}
+          {cloudShellButton}
+          <MenuOtherActions cluster={cluster} clusterStatus={clusterStatus} variant={variant} />
+        </>
+      )}
+    </div>
   )
 }
 
-export default ClusterActionToolbar
+export default ClusterActions

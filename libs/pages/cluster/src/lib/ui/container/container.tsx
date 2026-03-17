@@ -3,7 +3,7 @@ import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { useClusterMetricsSocket } from '@qovery/domains/cluster-metrics/feature'
 import {
-  ClusterActionToolbar,
+  ClusterActions,
   ClusterAvatar,
   ClusterType,
   hasGpuInstance,
@@ -31,7 +31,7 @@ export function Container({ children }: PropsWithChildren) {
   const headerActions = (
     <div className="flex flex-row items-center gap-4">
       <Skeleton width={150} height={36} show={isLoading}>
-        {cluster && clusterStatus ? <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} /> : <div />}
+        {cluster && clusterStatus ? <ClusterActions cluster={cluster} clusterStatus={clusterStatus} /> : <div />}
       </Skeleton>
       <div className="h-4 w-px bg-neutral-250" />
       <div className="flex flex-row items-center gap-2">

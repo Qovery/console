@@ -11,7 +11,7 @@ import {
 import { ClusterCardResources } from '@qovery/domains/cluster-metrics/feature'
 import { ClusterCardSetup } from '@qovery/domains/cluster-metrics/feature'
 import {
-  ClusterActionToolbar,
+  ClusterActions,
   ClusterAvatar,
   ClusterNeedRedeployFlag,
   ClusterTerminal,
@@ -42,7 +42,7 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 
 function TableSkeleton() {
   return (
-    <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+    <div className="overflow-hidden rounded border border-neutral bg-surface-neutral">
       <div className="flex divide-x divide-neutral border-b border-neutral">
         <div className="h-8 w-1/4 bg-surface-neutral"></div>
         <div className="h-8 w-1/4 bg-surface-neutral"></div>
@@ -215,7 +215,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
             <div className="order-last flex w-full lg:order-none lg:ml-auto lg:w-auto">
               <Skeleton width={150} height={36} show={!cluster && !clusterStatus}>
                 {cluster && clusterStatus ? (
-                  <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} />
+                  <ClusterActions cluster={cluster} clusterStatus={clusterStatus} variant="header" />
                 ) : (
                   <div />
                 )}

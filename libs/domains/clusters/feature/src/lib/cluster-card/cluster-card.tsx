@@ -14,7 +14,7 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { ClusterActionToolbar } from '../cluster-action-toolbar/cluster-action-toolbar'
+import { ClusterActions } from '../cluster-actions/cluster-actions'
 import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
 import { ClusterRunningStatusIndicator } from '../cluster-running-status-indicator/cluster-running-status-indicator'
 import { ClusterType } from '../cluster-type/cluster-type'
@@ -112,7 +112,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
           params: { organizationId: cluster.organization.id, clusterId: cluster.id },
         }).href
       }
-      className="duration-50 flex flex-col gap-5 rounded-lg border border-neutral bg-surface-neutral p-5 shadow-sm transition-all hover:border-brand-strong"
+      className="duration-50 flex flex-col rounded-lg border border-neutral bg-surface-neutral p-5 pb-4 shadow-sm transition-all hover:border-brand-strong"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -153,7 +153,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
               )
           )}
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="mt-5 flex flex-wrap gap-2">
         {cluster.kubernetes === 'SELF_MANAGED' ? (
           <>
             <Badge color="neutral">
@@ -195,12 +195,12 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
           </>
         )}
       </div>
-      <hr className="border-neutral" />
-      <div className="flex items-center justify-between">
+      <hr className="mt-5 border-neutral" />
+      <div className="mt-4 flex items-center justify-between">
         <Skeleton className="min-w-max" height={36} width={146} show={!clusterDeploymentStatus}>
           {clusterDeploymentStatus && (
             <div onClick={(e) => e.preventDefault()}>
-              <ClusterActionToolbar cluster={cluster} clusterStatus={clusterDeploymentStatus} />
+              <ClusterActions cluster={cluster} clusterStatus={clusterDeploymentStatus} variant="card" />
             </div>
           )}
         </Skeleton>
