@@ -115,7 +115,7 @@ export function EnvironmentDeploymentList() {
             <div
               className={twMerge(
                 clsx(
-                  'flex w-full items-center justify-between gap-2 before:absolute before:-top-[1px] before:left-0 before:block before:h-[calc(100%+2px)] before:w-1',
+                  'relative flex w-full items-center justify-between gap-2 before:absolute before:-left-4 before:-top-3 before:block before:h-[calc(100%+1.5rem)] before:w-0.5',
                   {
                     'before:bg-surface-brand-solid': [
                       'DEPLOYING',
