@@ -225,10 +225,7 @@ export function Login() {
         <div className="relative hidden w-1/2 overflow-hidden bg-neutral-650 px-20 before:absolute before:left-0 before:top-0 before:h-screen before:w-full before:bg-[radial-gradient(73.24%_73.24%_at_50%_0%,rgba(81,55,184,0.82)_0%,rgba(124,131,229,0)_100%)] motion-safe:before:animate-[pulse_5s_ease-in-out_infinite] lg:block">
           <div className="relative text-center motion-safe:animate-[fadein_1s_ease-in-out_forwards] motion-safe:opacity-0">
             <h2 className="mb-1 mt-[13%] font-bold leading-[48px] text-white">
-              <span className="text-4xl">
-                The Leading <br />
-              </span>
-              <span className="text-[32px]">DevOps Automation Platform</span>
+              The Leading <br /> DevOps Automation Platform
             </h2>
             <p className="mb-12 text-white">
               Trusted by 50.000 developers and DevOps engineers <br /> from the best companies

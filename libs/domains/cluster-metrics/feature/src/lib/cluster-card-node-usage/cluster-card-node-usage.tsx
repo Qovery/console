@@ -98,7 +98,7 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
             className={!cluster || metricsNotAvailable ? 'mt-1' : ''}
             rounded
           >
-            <span className="text-[28px] font-bold text-neutral">{metrics?.nodes?.length}</span>
+            <span className="text-[28px] font-medium text-neutral">{metrics?.nodes?.length}</span>
           </Skeleton>
         </div>
         {match(cluster?.cloud_provider)

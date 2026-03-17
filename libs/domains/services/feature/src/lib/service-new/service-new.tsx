@@ -151,7 +151,7 @@ function Card({
                   variant="surface"
                   color="purple"
                   size="sm"
-                  className="h-4 border-transparent bg-surface-accent1-component px-1 text-[8px] font-bold text-accent1"
+                  className="h-4 border-transparent bg-surface-accent1-component px-1 text-[8px]  text-accent1"
                 >
                   {badge}
                 </Badge>
@@ -226,7 +226,7 @@ function CardOption({
                 variant="surface"
                 color="purple"
                 size="sm"
-                className="h-4 border-transparent bg-surface-accent1-component px-1 text-[8px] font-bold text-accent1"
+                className="h-4 border-transparent bg-surface-accent1-component px-1 text-[8px]  text-accent1"
               >
                 {badge}
               </Badge>
@@ -266,7 +266,7 @@ function CardOption({
               variant="surface"
               color="purple"
               size="sm"
-              className="h-4 border-transparent bg-surface-accent1-component px-1 text-[8px] font-bold text-accent1"
+              className="h-4 border-transparent bg-surface-accent1-component px-1 text-[8px]  text-accent1"
             >
               {badge}
             </Badge>
