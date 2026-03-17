@@ -9,7 +9,7 @@ exports[`VariableList should match snapshot 1`] = `
       class="flex min-h-0 flex-col gap-4"
     >
       <h3
-        class="text-neutral text-sm font-bold"
+        class="text-neutral text-sm font-medium"
       >
         Custom variables
       </h3>
@@ -1348,7 +1348,7 @@ exports[`VariableList should match snapshot 1`] = `
       class="flex min-h-0 flex-col gap-4"
     >
       <h3
-        class="text-neutral text-sm font-bold"
+        class="text-neutral text-sm font-medium"
       >
         Built-in variables
       </h3>

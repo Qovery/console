@@ -7,7 +7,7 @@ exports[`LabelAnnotationItemsListModal should match snapshots with annotation 1`
       class="flex flex-col p-6"
     >
       <h1
-        class="font-bold mb-6 text-2xl text-neutral"
+        class="font-medium mb-6 text-2xl text-neutral"
       >
         Associated services (
         3
@@ -163,7 +163,7 @@ exports[`LabelAnnotationItemsListModal should match snapshots with label 1`] = `
       class="flex flex-col p-6"
     >
       <h1
-        class="font-bold mb-6 text-2xl text-neutral"
+        class="font-medium mb-6 text-2xl text-neutral"
       >
         Associated services (
         3

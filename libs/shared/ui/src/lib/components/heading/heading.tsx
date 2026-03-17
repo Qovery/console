@@ -23,7 +23,7 @@ const headingVariants = cva(['text-neutral'], {
   },
   defaultVariants: {
     level: 1,
-    weight: 'bold',
+    weight: 'medium',
   },
 })
 

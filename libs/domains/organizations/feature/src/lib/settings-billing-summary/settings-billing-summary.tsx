@@ -171,7 +171,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           <div className="mb-3 flex gap-2">
             <div className="h-[114px]  flex-1  rounded  border border-neutral bg-surface-neutral p-5">
               <div className="mb-1 text-xs font-medium text-neutral-subtle">Current plan</div>
-              <div className="mb-1 text-sm font-bold text-neutral">
+              <div className="mb-1 text-sm font-medium text-neutral">
                 <div className="h-5">{formatPlanDisplay(props.currentCost?.plan)}</div>
               </div>
               <ExternalLink href="https://www.qovery.com/pricing" size="xs">
@@ -182,7 +182,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
               <div className="mb-1 text-xs font-medium text-neutral-subtle">Current bill</div>
               <div className="mb-2">
                 <div className="h-5">
-                  <strong className="text-sm font-bold text-neutral">
+                  <strong className="text-sm font-medium text-neutral">
                     {costToHuman(props.currentCost?.cost?.total || 0, props.currentCost?.cost?.currency_code || 'USD')}
                   </strong>{' '}
                   <span className="text-xs text-neutral-subtle">/ {billingRecurrence}</span>
@@ -206,12 +206,12 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                     {props.creditCard ? (
                       <>
                         <svg className="w-6" children={imagesCreditCart[props.creditCard.brand as keyof CardImages]} />
-                        <span className="flex-1 text-xs font-bold text-neutral">
+                        <span className="flex-1 text-xs font-medium text-neutral">
                           **** {props.creditCard?.last_digit}
                         </span>
                       </>
                     ) : (
-                      <span className="text-xs font-bold text-neutral">No credit card provided</span>
+                      <span className="text-xs font-medium text-neutral">No credit card provided</span>
                     )}
                   </div>
                 </div>

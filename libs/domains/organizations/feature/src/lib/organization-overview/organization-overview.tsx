@@ -17,7 +17,7 @@ export function OrganizationOverview({ children }: PropsWithChildren) {
             <Avatar
               src={organization?.logo_url ?? undefined}
               alt={organization?.name}
-              size="md"
+              size="sm"
               border="solid"
               fallback={organization?.name?.charAt(0).toUpperCase()}
             />
