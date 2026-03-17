@@ -40,7 +40,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
         data-testid="scroll-shadow-wrapper"
       >
         <div
-          class="pointer-events-none sticky top-0 z-10 -mb-4 h-4 w-full bg-scroll-shadow-up transition-opacity duration-300 opacity-0"
+          class="pointer-events-none sticky top-0 z-overlay -mb-4 h-5 w-full bg-scroll-shadow-up transition-opacity duration-300 opacity-0"
           data-testid="scroll-shadow-top"
         />
         <ul>
@@ -380,7 +380,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
           </li>
         </ul>
         <div
-          class="pointer-events-none sticky bottom-0 z-10 -mt-4 h-4 w-full rotate-180 bg-scroll-shadow-bottom transition-opacity duration-300 opacity-0"
+          class="pointer-events-none sticky bottom-0 z-overlay -mt-4 h-5 w-full rotate-180 bg-scroll-shadow-bottom transition-opacity duration-300 opacity-0"
           data-testid="scroll-shadow-bottom"
         />
       </div>
