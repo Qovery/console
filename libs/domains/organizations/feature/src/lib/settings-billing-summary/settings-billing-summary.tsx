@@ -45,7 +45,7 @@ function getBillingRecurrenceStr(renewalAt: string | null | undefined): string {
 
 const BillingSummarySkeleton = () => (
   <div className="w-full">
-    <Section className="px-8 pt-6 pb-8">
+    <Section className="px-8 pb-8 pt-6">
       <div className="relative mb-8 border-b border-neutral pb-6">
         <Skeleton height={32} width={132} show />
         <div className="absolute right-0 top-0 flex shrink-0 gap-3">
@@ -122,7 +122,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
 
   return (
     <div className="w-full">
-      <Section className="px-8 pt-6 pb-8">
+      <Section className="px-8 pb-8 pt-6">
         <div className="relative">
           <SettingsHeading title="Plan details" showNeedHelp={false} />
           <div className="absolute right-0 top-0 flex shrink-0 gap-3">

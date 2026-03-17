@@ -177,7 +177,7 @@ export function SettingsWebhook() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pt-6 pb-8">
+      <Section className="px-8 pb-8 pt-6">
         <div className="relative">
           <SettingsHeading
             title="Webhook"

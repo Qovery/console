@@ -190,7 +190,7 @@ function ApplicationContainerPortSettingsContent() {
       }
 
       return (
-        <Section className="px-8 pt-6 pb-8">
+        <Section className="px-8 pb-8 pt-6">
           <ApplicationContainerPortSettingsList
             ports={service.ports}
             livenessProbeType={service.healthchecks?.liveness_probe?.type}

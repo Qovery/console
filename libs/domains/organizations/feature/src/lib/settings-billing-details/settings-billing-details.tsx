@@ -125,7 +125,7 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
   return (
     <FormProvider {...methods}>
       <div className="w-full">
-        <Section className="px-8 pt-6 pb-8">
+        <Section className="px-8 pb-8 pt-6">
           <SettingsHeading title="Payment method" showNeedHelp={false} />
 
           <div className="max-w-content-with-navigation-left">
@@ -270,7 +270,7 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
 function SettingsBillingDetailsSkeleton() {
   return (
     <div className="w-full">
-      <Section className="px-8 pt-6 pb-8">
+      <Section className="px-8 pb-8 pt-6">
         <SettingsHeading title="Payment method" showNeedHelp={false} />
 
         <div className="max-w-content-with-navigation-left">
