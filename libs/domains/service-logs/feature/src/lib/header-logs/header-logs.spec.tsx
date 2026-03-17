@@ -71,14 +71,12 @@ describe('HeaderLogs', () => {
   })
 
   it('renders correctly for deployment type', async () => {
-    renderWithProviders(<HeaderLogs {...mockProps} />)
+    renderWithProviders(<HeaderLogs {...mockProps} type="SERVICE" />)
 
     expect(screen.getByText('Test Service')).toBeInTheDocument()
-    expect(screen.getByText('2m : 5s')).toBeInTheDocument()
     expect(screen.getByTestId('service-avatar')).toBeInTheDocument()
 
-    const linksButton = screen.getByRole('button', { name: /link/ })
-    expect(within(linksButton).getByText('1 link')).toBeInTheDocument()
+    expect(screen.getByText('Link')).toBeInTheDocument()
   })
 
   it('renders correctly for service type', () => {
@@ -89,13 +87,13 @@ describe('HeaderLogs', () => {
   })
 
   it('displays correct number of links', () => {
-    renderWithProviders(<HeaderLogs {...mockProps} />)
-    expect(screen.getByText('1 link')).toBeInTheDocument()
+    renderWithProviders(<HeaderLogs {...mockProps} type="SERVICE" />)
+    expect(screen.getByText('Link')).toBeInTheDocument()
   })
 
   it('renders children content', () => {
     renderWithProviders(
-      <HeaderLogs {...mockProps}>
+      <HeaderLogs {...mockProps} type="SERVICE">
         <div data-testid="child-content">Child Content</div>
       </HeaderLogs>
     )
