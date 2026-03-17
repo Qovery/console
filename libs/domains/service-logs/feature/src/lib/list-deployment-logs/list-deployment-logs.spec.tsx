@@ -35,6 +35,9 @@ jest.mock('../hooks/use-deployment-history/use-deployment-history', () => ({
         identifier: {
           execution_id: '4',
         },
+        auditing_data: {
+          created_at: '2024-09-18T07:03:29.819774Z',
+        },
       },
     ],
   }),
