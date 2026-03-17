@@ -48,7 +48,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                 class=""
               >
                 <label
-                  class="input__label translate-y-2 text-sm transition-none"
+                  class="input__label translate-y-2 text-sm"
                   for="Environment name"
                 >
                   Environment name

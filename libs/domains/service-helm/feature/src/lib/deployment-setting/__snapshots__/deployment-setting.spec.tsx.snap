@@ -22,7 +22,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
                 class=""
               >
                 <label
-                  class="input__label translate-y-2 text-sm transition-none"
+                  class="input__label translate-y-2 text-sm !transition-none"
                   for="Helm arguments"
                 >
                   Helm arguments
@@ -73,7 +73,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
               class=""
             >
               <label
-                class="input__label translate-y-2 text-sm transition-none"
+                class="input__label translate-y-2 text-sm !transition-none"
                 for="Helm timeout"
               >
                 Helm timeout

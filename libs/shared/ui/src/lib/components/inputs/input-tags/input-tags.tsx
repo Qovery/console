@@ -1,5 +1,4 @@
-import clsx from 'clsx'
-import { type FormEvent, type KeyboardEvent, useLayoutEffect, useRef, useState } from 'react'
+import { type FormEvent, type KeyboardEvent, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
@@ -12,35 +11,48 @@ export interface InputTagsProps {
   dataTestId?: string
 }
 
+const areTagsEqual = (left: string[], right: string[]) =>
+  left.length === right.length && left.every((tag, index) => tag === right[index])
+
 export function InputTags(props: InputTagsProps) {
   const { label, tags, placeholder = 'Add new tag', onChange, className = '', dataTestId = 'input-tags' } = props
+  const initialTags = tags ?? []
 
-  const [currentTags, setCurrentTags] = useState(tags || [])
+  const [currentTags, setCurrentTags] = useState(initialTags)
   const [inputValue, setInputValue] = useState('')
   const [focused, setFocused] = useState(false)
-  const [hasInteracted, setHasInteracted] = useState(false)
+  const previousTagsRef = useRef(initialTags)
+  const [isLabelTransitionDisabled, setIsLabelTransitionDisabled] = useState(Boolean(initialTags.length))
 
+  // TODO(new-inputs): remove this workaround once the floating label logic is handled by the new inputs.
+  // It keeps the label transition disabled for one frame when tags are injected after mount.
   useLayoutEffect(() => {
-    setCurrentTags(tags || [])
-  }, [tags, setCurrentTags])
+    const nextTags = tags ?? []
+
+    if (areTagsEqual(previousTagsRef.current, nextTags)) return
+
+    previousTagsRef.current = nextTags
+    setIsLabelTransitionDisabled(true)
+    setCurrentTags(nextTags)
+  }, [tags])
+
+  useEffect(() => {
+    if (!isLabelTransitionDisabled) return
+
+    const frameId = requestAnimationFrame(() => setIsLabelTransitionDisabled(false))
+
+    return () => cancelAnimationFrame(frameId)
+  }, [isLabelTransitionDisabled])
 
   const ref = useRef<HTMLInputElement>(null)
   const hasFocus = focused
   const hasTags = currentTags.length > 0
-  const hasLabelUp = hasFocus || hasTags
-  const containerClassName = twMerge(
-    clsx('input', className, {
-      'input--focused': hasFocus,
-      'input--label-up': hasLabelUp,
-      '!pb-1': focused || hasTags,
-    })
-  )
+  const hasLabelUp = hasFocus || hasTags ? 'input--label-up' : ''
+  const inputActions = hasFocus ? 'input--focused' : ''
   const labelClassName = twMerge(
-    clsx('input__label', {
-      'text-xs': hasFocus,
-      'translate-y-2 text-sm': !hasFocus,
-      'transition-none': !hasInteracted,
-    })
+    'input__label',
+    hasFocus ? 'text-xs' : 'translate-y-2 text-sm',
+    isLabelTransitionDisabled && '!transition-none'
   )
 
   const handleKeyDown = (event: FormEvent<HTMLInputElement>) => {
@@ -62,7 +74,6 @@ export function InputTags(props: InputTagsProps) {
       if (currentTags.find((v) => value.toLowerCase() === v.toLowerCase())) return
 
       const newTags = [...currentTags, value]
-      setHasInteracted(true)
       setCurrentTags(newTags)
       setInputValue('')
       onChange && onChange(newTags)
@@ -71,7 +82,6 @@ export function InputTags(props: InputTagsProps) {
 
   const removeTag = (index: number) => {
     const newTags = currentTags.filter((el: string, i: number) => i !== index)
-    setHasInteracted(true)
     setCurrentTags(newTags)
     onChange && onChange(newTags)
   }
@@ -79,16 +89,13 @@ export function InputTags(props: InputTagsProps) {
   return (
     <div
       data-testid={dataTestId}
-      className={containerClassName}
+      className={twMerge('input', inputActions, hasLabelUp, focused || hasTags ? '!pb-1' : '', className)}
       onClick={() => ref?.current?.focus()}
-      onFocus={() => {
-        setHasInteracted(true)
-        setFocused(true)
-      }}
+      onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
     >
       <label className={labelClassName}>{label}</label>
-      <div className={twMerge(clsx({ 'pt-3': focused || hasTags }))}>
+      <div className={twMerge(focused || hasTags ? 'pt-3' : '')}>
         {currentTags.map((tag, index) => (
           <div
             data-testid={`input-tags-${index}`}
@@ -111,15 +118,14 @@ export function InputTags(props: InputTagsProps) {
           onKeyDown={handleKeyDown}
           type="text"
           className={twMerge(
-            clsx('bg-transparent', {
-              'text-transparent': !focused,
-              'inline-flex text-ssm text-neutral': focused || hasTags || inputValue.length > 0,
-              'absolute left-0 top-0 h-full w-full': !focused && !hasTags && inputValue.length === 0,
-            })
+            'bg-transparent',
+            !focused && 'text-transparent',
+            focused || hasTags || inputValue.length > 0
+              ? 'inline-flex text-ssm text-neutral'
+              : 'absolute left-0 top-0 h-full w-full'
           )}
           placeholder={hasTags ? placeholder : ''}
           onChange={(e) => {
-            setHasInteracted(true)
             setInputValue(e.currentTarget.value)
           }}
           value={inputValue}

@@ -1,5 +1,12 @@
-import clsx from 'clsx'
-import { type ChangeEventHandler, type ReactNode, forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import {
+  type ChangeEventHandler,
+  type ReactNode,
+  forwardRef,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
@@ -37,19 +44,36 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
   } = props
 
   const [focused, setFocused] = useState(false)
-  const [hasInteracted, setHasInteracted] = useState(false)
   const inputRef = useRef<HTMLDivElement>(null)
+  const previousValueRef = useRef(value)
   const [currentValue, setCurrentValue] = useState(value)
   const [currentType, setCurrentType] = useState(type)
+  const [isLabelTransitionDisabled, setIsLabelTransitionDisabled] = useState(Boolean(value?.toString().length))
 
+  // TODO(new-inputs): remove this workaround once the floating label logic is handled by the new inputs.
+  // It keeps the label transition disabled for one frame when a prop value is injected after mount.
   useLayoutEffect(() => {
+    if (previousValueRef.current === value) return
+
+    previousValueRef.current = value
+    setIsLabelTransitionDisabled(true)
     setCurrentValue(value)
-  }, [value, setCurrentValue])
+  }, [value])
+
+  useEffect(() => {
+    if (!isLabelTransitionDisabled) return
+
+    const frameId = requestAnimationFrame(() => setIsLabelTransitionDisabled(false))
+
+    return () => cancelAnimationFrame(frameId)
+  }, [isLabelTransitionDisabled])
 
   const hasFocus = focused
-  const hasValue = Boolean(currentValue?.toString()?.length)
-  const hasLabelUp = hasFocus || hasValue || Boolean(placeholder)
-  const hasError = Boolean(error?.length)
+  const hasValue = Boolean(currentValue?.toString().length)
+  const hasLabelUp = hasFocus || hasValue || Boolean(placeholder) ? 'input--label-up' : ''
+  const hasError = error && error.length > 0 ? 'input--error' : ''
+  const inputActions = hasFocus ? 'input--focused' : disabled ? 'input--disabled' : ''
+  const isDisabled = disabled ? 'input--disabled !border-neutral' : ''
 
   const displayPicker = () => {
     const input = inputRef.current?.querySelector('input')
@@ -64,26 +88,10 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
   }
 
   const isInputDate = type === 'time' || type === 'date' || type === 'datetime'
-  const inputContainerClassName = twMerge(
-    clsx('input group', {
-      'input--focused': hasFocus,
-      'input--disabled': disabled,
-      '!border-neutral': disabled,
-      'input--error': hasError,
-      'input--label-up': hasLabelUp,
-    })
-  )
   const labelClassName = twMerge(
-    clsx('input__label', {
-      'text-xs': hasFocus,
-      'translate-y-2 text-sm': !hasFocus,
-      'transition-none': !hasInteracted,
-    })
-  )
-  const inputValueClassName = twMerge(
-    clsx('input__value', {
-      '!pr-9': Boolean(rightElement),
-    })
+    'input__label',
+    hasFocus ? 'text-xs' : 'translate-y-2 text-sm',
+    isLabelTransitionDisabled && '!transition-none'
   )
 
   return (
@@ -93,8 +101,12 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
       data-testid={`${dataTestId || 'input-text'}-wrapper`}
     >
       <div className="relative">
-        <div aria-label="input-container" className={inputContainerClassName} ref={inputRef}>
-          <div className={clsx({ 'pointer-events-none': disabled })}>
+        <div
+          aria-label="input-container"
+          className={twMerge('input group', inputActions, isDisabled, hasError, hasLabelUp)}
+          ref={inputRef}
+        >
+          <div className={twMerge(disabled && 'pointer-events-none')}>
             <label htmlFor={label} className={labelClassName}>
               {label}
             </label>
@@ -103,21 +115,17 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
               ref={ref}
               name={name}
               id={label}
-              className={inputValueClassName}
+              className={twMerge('input__value', rightElement && '!pr-9')}
               type={currentType}
               disabled={disabled}
               value={currentValue}
               placeholder={placeholder}
               autoFocus={autoFocus}
               onChange={(e) => {
-                setHasInteracted(true)
                 if (onChange) onChange(e)
                 setCurrentValue(e.currentTarget.value)
               }}
-              onFocus={() => {
-                setHasInteracted(true)
-                setFocused(true)
-              }}
+              onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
             />
             {isInputDate && (
