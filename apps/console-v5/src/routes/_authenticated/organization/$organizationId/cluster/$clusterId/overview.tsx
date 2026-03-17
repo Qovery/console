@@ -239,7 +239,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
         ) : (
           <div className="flex flex-col gap-4">
             <TableLegend />
-            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+            <div className="overflow-hidden rounded border border-neutral bg-surface-neutral">
               <ClusterTableNode organizationId={organizationId} clusterId={clusterId} className="border-0" />
             </div>
           </div>
