@@ -16,9 +16,6 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { ListDeploymentLogs } from '../../list-deployment-logs/list-deployment-logs'
 
-// XXX: Prevent web-socket invalidations when re-rendering
-const WebSocketListenerMemo = memo(MetricsWebSocketListener)
-
 export interface DeploymentLogsFeatureProps {
   environment: Environment
   deploymentStages?: DeploymentStageWithServicesStatuses[]
@@ -193,16 +190,6 @@ export function DeploymentLogsContent({
           stage={stageFromServiceId}
           preCheckStage={preCheckStage}
         />
-        {service && environment && (
-          <WebSocketListenerMemo
-            organizationId={environment.organization.id}
-            clusterId={environment.cluster_id}
-            projectId={environment.project.id}
-            environmentId={environment.id}
-            serviceId={service.id}
-            serviceType={service.serviceType}
-          />
-        )}
       </div>
     </>
   )
