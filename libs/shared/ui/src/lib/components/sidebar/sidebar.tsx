@@ -37,12 +37,7 @@ const sidebarItemVariants = cva(
     variants: {
       active: {
         true: ['text-brand', 'bg-surface-brand-component', 'border-r-surface-brand-solid'],
-        false: [
-          'text-neutral-subtle',
-          'hover:text-brand',
-          'hover:bg-surface-neutral-subtle',
-          'hover:border-r-surface-brand-solid',
-        ],
+        false: ['text-neutral-subtle', 'hover:bg-surface-neutral-subtle'],
       },
     },
     defaultVariants: {
