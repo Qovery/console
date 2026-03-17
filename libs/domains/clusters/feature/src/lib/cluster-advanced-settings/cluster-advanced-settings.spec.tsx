@@ -70,7 +70,9 @@ describe('ClusterAdvancedSettings', () => {
       )
     )
 
-    expect(screen.getByText('Settings')).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Settings' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Default Value' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Value' })).toBeInTheDocument()
     const spinners = screen.queryAllByTestId('spinner')
     expect(spinners.length).toBeLessThanOrEqual(1)
   })
