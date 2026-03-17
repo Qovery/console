@@ -186,7 +186,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   data-state="closed"
                 >
                   <svg
-                    class="text-neutral h-full w-full"
+                    class="text-neutral-subtle h-full w-full"
                     fill="none"
                     height="16"
                     viewBox="0 0 24 24"
@@ -236,7 +236,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   data-state="closed"
                 >
                   <svg
-                    class="text-neutral h-full w-full"
+                    class="text-neutral-subtle h-full w-full"
                     fill="none"
                     height="16"
                     viewBox="0 0 24 24"
@@ -385,7 +385,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   data-state="closed"
                 >
                   <svg
-                    class="text-neutral h-full w-full"
+                    class="text-neutral-subtle h-full w-full"
                     fill="none"
                     height="16"
                     viewBox="0 0 24 24"
@@ -563,7 +563,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   data-state="closed"
                 >
                   <svg
-                    class="text-neutral h-full w-full"
+                    class="text-neutral-subtle h-full w-full"
                     fill="none"
                     height="16"
                     viewBox="0 0 24 24"
@@ -741,7 +741,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   data-state="closed"
                 >
                   <svg
-                    class="text-neutral h-full w-full"
+                    class="text-neutral-subtle h-full w-full"
                     fill="none"
                     height="16"
                     viewBox="0 0 24 24"
@@ -791,7 +791,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
                   data-state="closed"
                 >
                   <svg
-                    class="text-green-500 h-full w-full"
+                    class="text-positive h-full w-full"
                     fill="none"
                     height="16"
                     viewBox="0 0 24 24"

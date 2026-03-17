@@ -7,7 +7,7 @@ exports[`EnvironmentStatusChip should match snapshot with deployment status 1`] 
     data-state="closed"
   >
     <div
-      class="relative flex items-center justify-center text-brand-500 dark:text-brand-300 h-full w-full"
+      class="relative flex items-center justify-center text-brand h-full w-full"
     >
       <div
         class="absolute left-0 top-0 h-full w-full animate-spin rounded-full border-[1.5px] border-current border-r-transparent"

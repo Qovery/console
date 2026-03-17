@@ -188,7 +188,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                             class=""
                           >
                             <label
-                              class="input__label translate-y-2 text-sm transition-none"
+                              class="input__label translate-y-2 text-sm"
                               for="Overrides path"
                             >
                               Overrides path
