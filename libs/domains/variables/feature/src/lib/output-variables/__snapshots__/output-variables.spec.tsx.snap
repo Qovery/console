@@ -10,9 +10,11 @@ exports[`OutputVariables when serviceType is JOB should match snapshot 1`] = `
         class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral border-none"
       >
         <table
-          class="min-w-full divide-y divide-neutral text-neutral w-full rounded-t-none border-x-0 border-b-0 border-t text-ssm"
+          class="min-w-full divide-y divide-neutral text-neutral w-full rounded-t-none text-ssm"
         >
-          <thead>
+          <thead
+            class="text-xs"
+          >
             <tr>
               <th
                 class="h-11 border-neutral px-4 text-left font-code font-medium"
@@ -107,9 +109,11 @@ exports[`OutputVariables when serviceType is TERRAFORM should match snapshot 1`]
         class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral border-none"
       >
         <table
-          class="min-w-full divide-y divide-neutral text-neutral w-full rounded-t-none border-x-0 border-b-0 border-t text-ssm"
+          class="min-w-full divide-y divide-neutral text-neutral w-full rounded-t-none text-ssm"
         >
-          <thead>
+          <thead
+            class="text-xs"
+          >
             <tr>
               <th
                 class="h-11 border-neutral px-4 text-left font-code font-medium"

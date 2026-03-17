@@ -68,6 +68,8 @@ describe('ShowUsageModal', () => {
       })
     )
 
+    await userEvent.clear(screen.getByLabelText('Link expiration time (in hours)'))
+    await userEvent.type(screen.getByLabelText('Link expiration time (in hours)'), '24')
     await userEvent.click(screen.getByTestId('submit-button'))
 
     expect(onSubmit).toHaveBeenCalled()

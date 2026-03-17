@@ -141,7 +141,7 @@ describe('ServiceOverview', () => {
 
     expect(screen.getByText('output-variables')).toBeInTheDocument()
     expect(screen.queryByText('terraform-resources')).not.toBeInTheDocument()
-    await userEvent.click(screen.getByRole('link', { name: 'Infrastructure Resources' }))
+    await userEvent.click(screen.getByRole('link', { name: /infrastructure resources/i }))
     expect(screen.getByText('terraform-resources')).toBeInTheDocument()
     expect(screen.queryByText('service-instance')).not.toBeInTheDocument()
   })
