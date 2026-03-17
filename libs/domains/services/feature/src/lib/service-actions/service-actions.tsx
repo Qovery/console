@@ -38,7 +38,6 @@ import {
   isRestartAvailable,
   isStopAvailable,
   twMerge,
-  urlCodeEditor,
 } from '@qovery/shared/util-js'
 import { ConfirmationCancelLifecycleModal } from '../confirmation-cancel-lifecycle-modal/confirmation-cancel-lifecycle-modal'
 import { ForceUnlockModal } from '../force-unlock-modal/force-unlock-modal'
@@ -821,29 +820,6 @@ function MenuOtherActions({
     })
   }
 
-  const editCodeUrl = match(service)
-    .with(
-      { serviceType: 'APPLICATION' },
-      {
-        serviceType: 'JOB',
-        source: P.when(isJobGitSource),
-      },
-      {
-        serviceType: 'HELM',
-        source: P.when(isHelmGitSource),
-      },
-      (service) => {
-        const gitRepository = match(service)
-          .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
-          .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
-          .with({ serviceType: 'HELM' }, ({ source }) => source.git?.git_repository)
-          .exhaustive()
-
-        return urlCodeEditor(gitRepository)
-      }
-    )
-    .otherwise(() => null)
-
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -857,30 +833,27 @@ function MenuOtherActions({
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         {variant === 'header' && (
-          <DropdownMenu.Item icon={<Icon iconName="scroll" />} asChild>
-            <Link
-              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
-              params={{
-                organizationId: environment.organization.id,
-                projectId: environment.project.id,
-                environmentId: environment.id,
-                serviceId: service.id,
-              }}
-              className="gap-0"
-            >
-              Logs
-            </Link>
-          </DropdownMenu.Item>
-        )}
-        {shellAction && (
-          <DropdownMenu.Item icon={<Icon iconName="terminal" />} onSelect={shellAction}>
-            Cloud shell
-          </DropdownMenu.Item>
-        )}
-        {editCodeUrl && (
-          <a href={editCodeUrl} target="_blank" rel="noreferrer">
-            <DropdownMenu.Item icon={<Icon iconName="code" />}>Edit code</DropdownMenu.Item>
-          </a>
+          <>
+            <DropdownMenu.Item icon={<Icon iconName="scroll" />} asChild>
+              <Link
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                params={{
+                  organizationId: environment.organization.id,
+                  projectId: environment.project.id,
+                  environmentId: environment.id,
+                  serviceId: service.id,
+                }}
+                className="gap-0"
+              >
+                Logs
+              </Link>
+            </DropdownMenu.Item>
+            {shellAction && (
+              <DropdownMenu.Item icon={<Icon iconName="terminal" />} onSelect={shellAction}>
+                Cloud shell
+              </DropdownMenu.Item>
+            )}
+          </>
         )}
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
           <Link
@@ -936,14 +909,33 @@ export function ServiceActions({
   variant?: ActionToolbarVariant
   shellAction?: () => void
 }) {
+  const navigate = useNavigate()
   const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
 
   if (!service || !deploymentStatus)
     return <Skeleton height={variant === 'default' ? 36 : 28} width={variant === 'default' ? 184 : 67} />
 
+  const effectiveShellAction =
+    service.serviceType === 'DATABASE'
+      ? undefined
+      : shellAction ??
+        (() =>
+          navigate({
+            to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+            params: {
+              organizationId: environment.organization.id,
+              projectId: environment.project.id,
+              environmentId: environment.id,
+              serviceId: service.id,
+            },
+            search: {
+              hasShell: true,
+            },
+          }))
+
   return (
-    <div className={twMerge('flex gap-1.5', variant === 'header' && 'flex-row-reverse gap-2')}>
+    <div className={twMerge('flex items-center gap-1.5', variant === 'header' && 'flex-row-reverse gap-2')}>
       <MenuManageDeployment
         deploymentStatus={deploymentStatus}
         environment={environment}
@@ -952,31 +944,47 @@ export function ServiceActions({
       />
 
       {variant === 'default' && (
-        <Tooltip content="Logs">
-          <Link
-            as="button"
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
-            params={{
-              organizationId: environment.organization.id,
-              projectId: environment.project.id,
-              environmentId: environment.id,
-              serviceId: service.id,
-            }}
-            color="neutral"
-            variant="outline"
-            size="sm"
-            iconOnly
-          >
-            <Icon iconName="scroll" />
-          </Link>
-        </Tooltip>
+        <>
+          <Tooltip content="Logs">
+            <Link
+              as="button"
+              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+              params={{
+                organizationId: environment.organization.id,
+                projectId: environment.project.id,
+                environmentId: environment.id,
+                serviceId: service.id,
+              }}
+              color="neutral"
+              variant="outline"
+              size="sm"
+              iconOnly
+            >
+              <Icon iconName="scroll" />
+            </Link>
+          </Tooltip>
+          {effectiveShellAction && (
+            <Tooltip content="Qovery cloud shell">
+              <Button
+                aria-label="Qovery cloud shell"
+                color="neutral"
+                variant="outline"
+                size="sm"
+                iconOnly
+                onClick={effectiveShellAction}
+              >
+                <Icon iconName="terminal" />
+              </Button>
+            </Tooltip>
+          )}
+        </>
       )}
 
       <MenuOtherActions
         state={deploymentStatus.state}
         environment={environment}
         service={service}
-        shellAction={shellAction}
+        shellAction={effectiveShellAction}
         variant={variant}
       />
     </div>

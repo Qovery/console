@@ -1,5 +1,5 @@
-import { useLocation } from '@tanstack/react-router'
-import { type PropsWithChildren, createContext, useState } from 'react'
+import { useLocation, useNavigate, useSearch } from '@tanstack/react-router'
+import { type PropsWithChildren, createContext, useCallback, useEffect, useState } from 'react'
 
 export const ServiceTerminalContext = createContext<{
   open: boolean
@@ -11,14 +11,38 @@ export const ServiceTerminalContext = createContext<{
 })
 
 export const ServiceTerminalProvider = ({ children }: PropsWithChildren) => {
-  const { state } = useLocation()
-  const [open, setOpen] = useState(Boolean((state as { hasShell?: boolean } | undefined)?.hasShell))
+  const location = useLocation()
+  const navigate = useNavigate()
+  const search = useSearch({ strict: false }) as { hasShell?: boolean }
+  const hasShellFromLocationState = Boolean((location.state as { hasShell?: boolean } | undefined)?.hasShell)
+  const syncedOpen = typeof search.hasShell === 'boolean' ? search.hasShell : hasShellFromLocationState
+  const [open, setOpen] = useState(syncedOpen)
+
+  useEffect(() => {
+    setOpen(syncedOpen)
+  }, [syncedOpen])
+
+  const handleSetOpen = useCallback(
+    (newOpen: boolean) => {
+      setOpen(newOpen)
+
+      if (!newOpen) {
+        navigate({
+          to: location.pathname,
+          search: {
+            hasShell: undefined,
+          },
+        })
+      }
+    },
+    [location.pathname, navigate]
+  )
 
   return (
     <ServiceTerminalContext.Provider
       value={{
         open,
-        setOpen,
+        setOpen: handleSetOpen,
       }}
     >
       {children}
