@@ -118,7 +118,7 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
         className={twMerge('w-full rounded-t-none text-ssm', className)}
         {...props}
       >
-        <Table.Header>
+        <Table.Header className="text-xs">
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
