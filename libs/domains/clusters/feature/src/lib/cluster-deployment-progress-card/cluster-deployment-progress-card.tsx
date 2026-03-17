@@ -141,8 +141,8 @@ function Item({ cluster, project }: { cluster: Cluster; project: Project }) {
     <div className="[&:not(:last-child)]:border-b [&:not(:last-child)]:border-neutral">
       <div className="relative flex w-full items-center justify-between gap-4 overflow-hidden bg-surface-neutral-component p-4 text-sm shadow-sm [&:only-child]:rounded-xl">
         <div className="flex shrink-0 items-center gap-2 text-neutral">
-          {isSucceeded && <Icon iconName="check-circle" iconStyle="regular" className="text-green-500" />}
-          {isFailed && <Icon iconName="circle-xmark" iconStyle="regular" className="text-red-500" />}
+          {isSucceeded && <Icon iconName="check-circle" iconStyle="regular" className="text-positive" />}
+          {isFailed && <Icon iconName="circle-xmark" iconStyle="regular" className="text-negative" />}
           {!isSucceeded && !isFailed && !isInstalling && (
             <Icon iconName="clock" iconStyle="regular" className="text-neutral-subtle" />
           )}

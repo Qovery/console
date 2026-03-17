@@ -314,7 +314,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                           {startGpu} to {endGpu}
                         </span>
                         {watchGpu?.consolidate_after && (
-                          <span className="text-neutral-350">Consolidate after: {watchGpu.consolidate_after}</span>
+                          <span className="text-neutral-subtle">Consolidate after: {watchGpu.consolidate_after}</span>
                         )}
                       </span>
                     ) : (

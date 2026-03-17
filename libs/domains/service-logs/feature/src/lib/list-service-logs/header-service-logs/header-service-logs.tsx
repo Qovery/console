@@ -217,7 +217,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
                 <Icon
                   iconName="check"
                   iconStyle="regular"
-                  className={`text-green-500 ${!updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
+                  className={`text-positive ${!updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
                 />
                 Browser time
               </DropdownMenu.Item>
@@ -232,7 +232,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
                 <Icon
                   iconName="check"
                   iconStyle="regular"
-                  className={`text-green-500 ${updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
+                  className={`text-positive ${updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
                 />
                 UTC
               </DropdownMenu.Item>

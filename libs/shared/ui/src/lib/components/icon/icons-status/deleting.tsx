@@ -8,7 +8,7 @@ export const DeletingIcon = forwardRef<ElementRef<typeof SpinnerIcon>, IconSVGPr
   forwardedRef
 ) {
   return (
-    <SpinnerIcon className={twMerge('text-brand-500 dark:text-brand-300', className)} ref={forwardedRef}>
+    <SpinnerIcon className={twMerge('text-brand', className)} ref={forwardedRef}>
       <svg
         className="mx-auto scale-90"
         xmlns="http://www.w3.org/2000/svg"

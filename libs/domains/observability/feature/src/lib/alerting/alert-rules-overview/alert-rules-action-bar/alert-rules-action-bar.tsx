@@ -92,7 +92,7 @@ export function AlertRulesActionBar({
                 <Button
                   size="md"
                   variant="outline"
-                  className="items-center gap-2 text-red-500"
+                  className="items-center gap-2 text-negative"
                   onClick={handleDeleteAllAlertRules}
                   disabled={deletableAlertRules.length === 0}
                 >
