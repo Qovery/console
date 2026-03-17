@@ -65,6 +65,7 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
       <EmptyState
         icon="wave-pulse"
         title="No infrastructure resources found"
+        className="border-none bg-surface-neutral"
         description="Terraform resources will appear here after your first successful deployment."
       />
     )

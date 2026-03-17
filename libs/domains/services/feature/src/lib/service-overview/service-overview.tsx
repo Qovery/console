@@ -3,7 +3,7 @@ import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useMemo, useState } from 'react'
 import { OutputVariables } from '@qovery/domains/variables/feature'
-import { Heading, Icon, Link, Section, TabsPrimitives } from '@qovery/shared/ui'
+import { Heading, Icon, Link, Navbar, Section } from '@qovery/shared/ui'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { ScaledObjectStatus, type ScaledObjectStatusDto } from '../keda/scaled-object-status/scaled-object-status'
@@ -13,8 +13,6 @@ import { ServiceHeader } from './service-header/service-header'
 import { ServiceInstance } from './service-instance/service-instance'
 import { ServiceLastDeployment } from './service-last-deployment/service-last-deployment'
 import { ServiceOverviewSkeleton } from './service-overview-skeleton'
-
-const { Tabs } = TabsPrimitives
 
 export interface ServiceOverviewProps {
   environment?: Environment
@@ -145,24 +143,47 @@ function ServiceOverviewContent({
             )}
             {isTerraformService && (
               <Section className="gap-3">
-                <Tabs.Root
-                  value={activeTab}
-                  onValueChange={setActiveTab}
-                  className="w-full overflow-hidden rounded-lg border border-neutral"
-                >
-                  <Tabs.List className="bg-surface-neutral-subtle">
-                    <Tabs.Trigger value="variables">Output Variables</Tabs.Trigger>
-                    <Tabs.Trigger value="resources">Infrastructure Resources</Tabs.Trigger>
-                  </Tabs.List>
-                  <Tabs.Content value="variables">
-                    <OutputVariables
-                      serviceId={service.id}
-                      serviceType={service?.serviceType}
-                      className="table-fixed"
-                    />
-                  </Tabs.Content>
-                  <Tabs.Content value="resources">{terraformResourcesSection ?? null}</Tabs.Content>
-                </Tabs.Root>
+                <div>
+                  <div className="overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
+                    <div className="no-scrollbar overflow-x-auto pb-2">
+                      <Navbar.Root activeId={activeTab} className="ml-3">
+                        <Navbar.Item
+                          id="variables"
+                          href="#"
+                          onClick={(event) => {
+                            event.preventDefault()
+                            setActiveTab('variables')
+                          }}
+                        >
+                          Output variables
+                        </Navbar.Item>
+                        <Navbar.Item
+                          id="resources"
+                          href="#"
+                          onClick={(event) => {
+                            event.preventDefault()
+                            setActiveTab('resources')
+                          }}
+                        >
+                          Infrastructure resources
+                        </Navbar.Item>
+                      </Navbar.Root>
+                    </div>
+                  </div>
+                  <div className="relative -top-2 rounded-lg bg-background">
+                    <div className="overflow-hidden rounded-lg border border-neutral">
+                      {activeTab === 'variables' ? (
+                        <OutputVariables
+                          serviceId={service.id}
+                          serviceType={service?.serviceType}
+                          className="table-fixed"
+                        />
+                      ) : (
+                        terraformResourcesSection ?? null
+                      )}
+                    </div>
+                  </div>
+                </div>
               </Section>
             )}
           </Section>

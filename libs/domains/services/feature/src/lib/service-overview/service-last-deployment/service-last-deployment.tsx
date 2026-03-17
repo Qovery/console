@@ -49,7 +49,7 @@ export interface ServiceLastDeploymentProps {
 }
 export function ServiceLastDeploymentSkeleton() {
   return (
-    <div className="flex gap-2.5 rounded-lg border border-neutral bg-surface-neutral px-5 py-4">
+    <div className="flex gap-2.5 rounded-lg border border-neutral bg-surface-neutral p-4">
       <Skeleton width={100} height={16} />
       <Skeleton width={100} height={16} />
       <Skeleton width={150} height={16} />
@@ -145,7 +145,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
     ) : null
 
   return (
-    <div className="flex rounded-lg border border-neutral bg-surface-neutral px-5 py-4">
+    <div className="flex rounded-lg border border-neutral bg-surface-neutral p-4">
       <div className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
         <span className="font-medium">
           <DeploymentAction status={lastDeployment.status_details.status} />

@@ -105,7 +105,7 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
       <EmptyState
         title="No output variables found"
         icon="wave-pulse"
-        className="border-none"
+        className="border-none bg-surface-neutral"
         description={`${scopeName} output variables will appear here after your first successful deployment.`}
       />
     )
@@ -115,10 +115,10 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
     <div className="overflow-hidden">
       <Table.Root
         containerClassName="border-none"
-        className={twMerge('w-full rounded-t-none border-x-0 border-b-0 border-t text-ssm', className)}
+        className={twMerge('w-full rounded-t-none text-ssm', className)}
         {...props}
       >
-        <Table.Header>
+        <Table.Header className="text-xs">
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id}>
               {headerGroup.headers.map((header) => (

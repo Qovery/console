@@ -22,13 +22,21 @@ jest.mock('@qovery/shared/ui', () => ({
   Section: ({ children }: { children?: ReactNode }) => <section>{children}</section>,
   Link: ({ children }: { children?: ReactNode }) => <a href="https://qovery.com">{children}</a>,
   Icon: () => <span>icon</span>,
-  TabsPrimitives: {
-    Tabs: {
-      Root: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-      List: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-      Trigger: ({ children }: { children?: ReactNode }) => <button>{children}</button>,
-      Content: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-    },
+  Navbar: {
+    Root: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+    Item: ({
+      children,
+      href,
+      onClick,
+    }: {
+      children?: ReactNode
+      href?: string
+      onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void
+    }) => (
+      <a href={href} onClick={onClick}>
+        {children}
+      </a>
+    ),
   },
 }))
 
@@ -122,15 +130,18 @@ describe('ServiceOverview', () => {
     expect(screen.getByText('Check your cloud provider console to get more information')).toBeInTheDocument()
   })
 
-  it('renders terraform resources section and hides service instances block', () => {
+  it('renders terraform resources section and hides service instances block', async () => {
     mockUseService.mockReturnValue({
       data: { id: 'service-tf-1', serviceType: 'TERRAFORM', autoscaling: { mode: 'FIXED' } },
     })
 
-    renderWithProviders(
+    const { userEvent } = renderWithProviders(
       <ServiceOverview environment={environment} terraformResourcesSection={<div>terraform-resources</div>} />
     )
 
+    expect(screen.getByText('output-variables')).toBeInTheDocument()
+    expect(screen.queryByText('terraform-resources')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('link', { name: /infrastructure resources/i }))
     expect(screen.getByText('terraform-resources')).toBeInTheDocument()
     expect(screen.queryByText('service-instance')).not.toBeInTheDocument()
   })
