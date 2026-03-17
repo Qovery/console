@@ -2,100 +2,95 @@ import { DeploymentRestrictionModeEnum, DeploymentRestrictionTypeEnum } from 'qo
 import selectEvent from 'react-select-event'
 import { useCreateDeploymentRestriction, useEditDeploymentRestriction } from '@qovery/domains/services/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { CrudModalFeature } from './crud-modal-feature'
+import { ServiceDeploymentRestrictionsModal } from './service-deployment-restrictions-modal'
 
 const createProps = {
   onClose: jest.fn(),
-  serviceId: '1',
-  serviceType: 'APPLICATION' as const,
+  serviceId: 'service-1',
+  serviceType: 'JOB' as const,
 }
 
 const editProps = {
   deploymentRestriction: {
-    id: '3',
+    id: 'restriction-1',
     created_at: '2022-07-21T09:59:41.999006Z',
     mode: DeploymentRestrictionModeEnum.EXCLUDE,
     type: DeploymentRestrictionTypeEnum.PATH,
     value: 'foobar',
   },
   onClose: jest.fn(),
-  serviceId: '1',
-  serviceType: 'APPLICATION' as const,
+  serviceId: 'service-1',
+  serviceType: 'JOB' as const,
 }
 
 jest.mock('@qovery/domains/services/feature', () => {
-  const mutate1 = jest.fn()
-  const mutate2 = jest.fn()
+  const createMutate = jest.fn()
+  const editMutate = jest.fn()
+
   return {
     ...jest.requireActual('@qovery/domains/services/feature'),
     useCreateDeploymentRestriction: () => ({
-      mutate: mutate1,
+      mutate: createMutate,
+      isLoading: false,
     }),
     useEditDeploymentRestriction: () => ({
-      mutate: mutate2,
+      mutate: editMutate,
+      isLoading: false,
     }),
   }
 })
 
-describe('CrudModalFeature', () => {
-  it('should create deployment restriction', async () => {
-    const { userEvent } = renderWithProviders(<CrudModalFeature {...createProps} />)
+describe('ServiceDeploymentRestrictionsModal', () => {
+  it('creates a deployment restriction', async () => {
+    const { userEvent } = renderWithProviders(<ServiceDeploymentRestrictionsModal {...createProps} />)
 
     const submitButton = await screen.findByRole('button', { name: /create/i })
-    // https://react-hook-form.com/advanced-usage#TransformandParse
+
     expect(submitButton).toBeInTheDocument()
 
-    const mode = screen.getByLabelText('Mode')
-    await selectEvent.select(mode, ['MATCH'], {
+    await selectEvent.select(screen.getByLabelText('Mode'), ['MATCH'], {
       container: document.body,
     })
 
-    await userEvent.clear(screen.getByLabelText('Value'))
-    await userEvent.type(screen.getByLabelText('Value'), 'baz')
-
-    expect(submitButton).toBeEnabled()
-
+    await userEvent.clear(screen.getByLabelText('Path'))
+    await userEvent.type(screen.getByLabelText('Path'), 'baz')
     await userEvent.click(submitButton)
+
     expect(useCreateDeploymentRestriction().mutate).toHaveBeenCalledWith({
       payload: {
         mode: 'MATCH',
         type: 'PATH',
         value: 'baz',
       },
-      serviceId: '1',
-      serviceType: 'APPLICATION',
+      serviceId: 'service-1',
+      serviceType: 'JOB',
     })
   })
 
-  it('should edit deployment restriction', async () => {
-    const { userEvent } = renderWithProviders(<CrudModalFeature {...editProps} />)
+  it('edits a deployment restriction', async () => {
+    const { userEvent } = renderWithProviders(<ServiceDeploymentRestrictionsModal {...editProps} />)
 
     const submitButton = await screen.findByRole('button', { name: /confirm/i })
-    // https://react-hook-form.com/advanced-usage#TransformandParse
+
     expect(submitButton).toBeInTheDocument()
 
-    const mode = screen.getByLabelText('Mode')
-    await selectEvent.select(mode, ['MATCH'], {
+    await selectEvent.select(screen.getByLabelText('Mode'), ['MATCH'], {
       container: document.body,
     })
 
-    // Keep the same type
-
-    await userEvent.clear(screen.getByLabelText('Value'))
-    await userEvent.type(screen.getByLabelText('Value'), 'baz')
-
-    expect(submitButton).toBeEnabled()
-
+    await userEvent.clear(screen.getByLabelText('Path'))
+    await userEvent.type(screen.getByLabelText('Path'), 'baz')
     await userEvent.click(submitButton)
+
     expect(useEditDeploymentRestriction().mutate).toHaveBeenCalledWith({
       payload: {
         mode: 'MATCH',
         type: 'PATH',
         value: 'baz',
       },
-      deploymentRestrictionId: '3',
-      serviceId: '1',
-      serviceType: 'APPLICATION',
+      deploymentRestrictionId: 'restriction-1',
+      serviceId: 'service-1',
+      serviceType: 'JOB',
     })
   })
 })

@@ -6,3 +6,4 @@ export * from './lib/application-container-port-settings/application-container-p
 export * from './lib/application-container-healthchecks-settings/application-container-healthchecks-settings/application-container-healthchecks-settings'
 export * from './lib/application-container-storage-settings/application-container-storage-settings/application-container-storage-settings'
 export * from './lib/service-domain-settings/service-domain-settings/service-domain-settings'
+export * from './lib/service-deployment-restrictions-settings/service-deployment-restrictions-settings/service-deployment-restrictions-settings'
