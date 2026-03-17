@@ -33,9 +33,9 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="max-w-content-with-navigation-left p-8">
+      <Section className="px-8 pt-6 pb-8">
         <SettingsHeading title="Preview environments" />
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
           <BlockContent title="Global settings">
             <Controller
               name="auto_preview"

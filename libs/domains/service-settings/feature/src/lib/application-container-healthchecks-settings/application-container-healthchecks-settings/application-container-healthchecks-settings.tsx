@@ -98,7 +98,7 @@ function ApplicationContainerHealthchecksSettingsContent() {
   })
 
   return (
-    <Section className="p-8">
+    <Section className="px-8 pt-6 pb-8">
       <div className="space-y-6">
         <SettingsHeading
           title="Health checks"

@@ -268,7 +268,7 @@ export function AuditLogs({
   )
 
   return (
-    <Section className="grow p-8">
+    <Section className="mt-6 grow px-8">
       <Heading level={1} className="mb-4">
         Audit logs
       </Heading>

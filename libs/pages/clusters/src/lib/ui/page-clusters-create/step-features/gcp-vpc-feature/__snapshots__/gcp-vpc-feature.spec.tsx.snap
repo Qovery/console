@@ -44,7 +44,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
               class=""
             >
               <label
-                class="input__label translate-y-2 text-sm transition-none"
+                class="input__label translate-y-2 text-sm"
                 for="VPC Name"
               >
                 VPC Name
@@ -76,7 +76,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
               class=""
             >
               <label
-                class="input__label translate-y-2 text-sm transition-none"
+                class="input__label translate-y-2 text-sm"
                 for="External project id (optional)"
               >
                 External project id (optional)
@@ -121,7 +121,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
               class=""
             >
               <label
-                class="input__label translate-y-2 text-sm transition-none"
+                class="input__label translate-y-2 text-sm"
                 for="Subnetwork range name (optional)"
               >
                 Subnetwork range name (optional)
@@ -153,7 +153,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
               class=""
             >
               <label
-                class="input__label translate-y-2 text-sm transition-none"
+                class="input__label translate-y-2 text-sm"
                 for="Pod IPv4 address range name (optional)"
               >
                 Pod IPv4 address range name (optional)
@@ -185,7 +185,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
               class=""
             >
               <label
-                class="input__label translate-y-2 text-sm transition-none"
+                class="input__label translate-y-2 text-sm"
                 for="Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)"
               >
                 Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)
@@ -217,7 +217,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
               class=""
             >
               <label
-                class="input__label translate-y-2 text-sm transition-none"
+                class="input__label translate-y-2 text-sm"
                 for="IPv4 service range name (optional)"
               >
                 IPv4 service range name (optional)

@@ -2,9 +2,9 @@ import { useParams } from '@tanstack/react-router'
 import { type EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, type FieldValues, useForm } from 'react-hook-form'
-import { NeedHelp } from '@qovery/shared/assistant/feature'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { timezoneValues, weekdaysValues } from '@qovery/shared/enums'
-import { BlockContent, Button, Heading, InputSelect, InputText, InputToggle, Section } from '@qovery/shared/ui'
+import { BlockContent, Button, InputSelect, InputText, InputToggle, Section } from '@qovery/shared/ui'
 import { dateToHours } from '@qovery/shared/util-dates'
 import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-rule'
 import { useEditDeploymentRule } from '../hooks/use-edit-deployment-rule/use-edit-deployment-rule'
@@ -59,16 +59,9 @@ export const SettingsDeploymentRules = () => {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="max-w-content-with-navigation-left  p-8">
-        <div className="mb-8 flex w-full justify-between gap-2 border-b border-neutral">
-          <div className="flex w-full items-start justify-between gap-4 pb-6">
-            <div className="flex flex-col gap-2">
-              <Heading>Deployment rules</Heading>
-              <NeedHelp className="mt-2" />
-            </div>
-          </div>
-        </div>
-        <form onSubmit={onSubmit}>
+      <Section className="px-8 pt-6 pb-8">
+        <SettingsHeading title="Deployment rules" />
+        <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
           <BlockContent title="Start & stop">
             <div className="flex items-center gap-3">
               <Controller

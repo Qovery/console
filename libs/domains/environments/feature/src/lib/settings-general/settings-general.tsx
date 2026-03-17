@@ -38,9 +38,9 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="max-w-content-with-navigation-left p-8">
+      <Section className="px-8 pt-6 pb-8">
         <SettingsHeading title="General" />
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
           <BlockContent title="General information">
             <Controller
               name="name"
