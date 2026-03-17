@@ -63,17 +63,13 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
   const isBuildingOrDeploying =
     (type === 'BUILD' && status === 'BUILDING') || (type === 'DEPLOY' && status === 'DEPLOYING')
 
-  // TODO new-nav : Fix remaining color tokens
   const buttonClasses = clsx(
-    'flex h-8 items-center gap-1.5 rounded-lg border border-neutral bg-surface-neutral px-2.5 text-sm font-medium text-neutral-subtle transition hover:border-neutral-component hover:bg-surface-neutral-component',
+    'hover:border-neutral-subtle flex h-8 items-center gap-1.5 rounded-lg border border-neutral bg-surface-neutral px-2.5 text-sm font-medium text-neutral-subtle transition hover:bg-surface-neutral-component',
     {
-      'hover:border-positive-component hover:bg-surface-positive-subtle': status === 'SUCCESS',
-      'hover:border-red-500': status === 'ERROR',
-      'hover:border-brand-500': isBuildingOrDeploying,
-      'text-neutral': isFilterActive(type),
-      'border-brand-500 bg-neutral-500': isBuildingOrDeploying && isFilterActive(type),
-      'border-positive-strong': status === 'SUCCESS' && isFilterActive(type),
-      'border-red-500 bg-neutral-500': status === 'ERROR' && isFilterActive(type),
+      'border-neutral-strong bg-surface-neutral-subtle text-neutral': isFilterActive(type),
+      'border-brand-component bg-surface-brand-subtle': isBuildingOrDeploying && isFilterActive(type),
+      'border-positive-strong bg-surface-positive-subtle': status === 'SUCCESS' && isFilterActive(type),
+      'border-negative-strong bg-surface-negative-subtle': status === 'ERROR' && isFilterActive(type),
     }
   )
 
