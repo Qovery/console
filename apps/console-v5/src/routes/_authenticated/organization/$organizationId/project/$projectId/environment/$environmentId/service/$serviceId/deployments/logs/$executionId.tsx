@@ -45,7 +45,7 @@ function RouteComponent() {
     },
     [setDeploymentStages]
   )
-  // XXX: If we don't have a version, it works like WS otherwise, it works like a REST API
+
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/status',
     urlSearchParams: {
@@ -54,8 +54,6 @@ function RouteComponent() {
       project: projectId,
       environment: environmentId,
       version: executionId,
-      // TODO new-nav : Check if we need this check on isLatestVersion
-      // version: isLatestVersion ? undefined : versionIdUrl,
     },
     enabled:
       Boolean(organizationId) && Boolean(environment?.cluster_id) && Boolean(projectId) && Boolean(environmentId),
