@@ -60,7 +60,7 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
                 setCopyLinkIcon('check')
                 copyToClipboard(`${currentUrl}#${rowId}`)
                 setTimeout(() => setCopyLinkIcon('link'), 1000)
-                if (isHighlighted) navigate(pathname)
+                if (isHighlighted) navigate({ to: pathname })
               }}
             >
               <Icon iconName={copyLinkIcon} iconStyle="regular" />
