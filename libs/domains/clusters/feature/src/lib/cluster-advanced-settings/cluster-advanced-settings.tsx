@@ -50,10 +50,7 @@ export function ClusterAdvancedSettings({
       const displayDefaultValue = formatValue(defaultValue)
 
       const isHidden =
-        showOverriddenOnly &&
-        defaultAdvancedSettings &&
-        clusterAdvancedSettings &&
-        equal(defaultValue, currentValue)
+        showOverriddenOnly && defaultAdvancedSettings && clusterAdvancedSettings && equal(defaultValue, currentValue)
 
       return {
         key,
