@@ -17,9 +17,10 @@ import {
 } from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { ServiceStateChip, useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
+import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Banner, Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
@@ -27,6 +28,7 @@ import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deploy
 import HeaderLogs from '../header-logs/header-logs'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
+import { useGenerateBuildUsageReport } from '../hooks/use-generate-build-usage-report/use-generate-build-usage-report'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
@@ -152,6 +154,7 @@ export function ListDeploymentLogs({
   const refScrollSection = useRef<HTMLDivElement>(null)
   const { updateStageId } = useContext(ServiceStageIdsContext)
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
+  const { mutateAsync: generateBuildUsageReport, isLoading: isBuildReportLoading } = useGenerateBuildUsageReport()
 
   useEffect(() => {
     if (stage) updateStageId(stage.id)
@@ -282,6 +285,10 @@ export function ListDeploymentLogs({
     [columnFilters]
   )
 
+  const currentDeployment = versionId
+    ? environmentDeploymentHistory.find((d) => d.identifier.execution_id === versionId)
+    : environmentDeploymentHistory[0]
+
   const isLastVersion = environmentDeploymentHistory?.[0]?.identifier.execution_id === versionId || !versionId
   const isDeploymentProgressing = isLastVersion
     ? match(deploymentStatus?.state)
@@ -325,11 +332,7 @@ export function ListDeploymentLogs({
         serviceId={serviceId ?? ''}
         serviceStatus={serviceStatus}
         environmentStatus={environmentStatus}
-        deploymentHistory={
-          versionId
-            ? environmentDeploymentHistory.find((d) => d.identifier.execution_id === versionId)
-            : environmentDeploymentHistory[0]
-        }
+        deploymentHistory={currentDeployment}
       >
         <div className="flex items-center gap-4">
           <Indicator
@@ -448,15 +451,48 @@ export function ListDeploymentLogs({
             isFilterActive={isFilterActive}
             toggleColumnFilter={toggleColumnFilter}
           />
-          <Button
-            onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
-            size="sm"
-            variant="surface"
-            color="neutral"
-            className="w-7 justify-center"
-          >
-            <Icon iconName="file-arrow-down" iconStyle="regular" />
-          </Button>
+          <div className="flex gap-1.5">
+            <Button
+              onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
+              size="sm"
+              variant="surface"
+              color="neutral"
+              className="w-7 justify-center"
+            >
+              <Icon iconName="file-arrow-down" iconStyle="regular" />
+            </Button>
+            {match(service)
+              .with({ serviceType: 'CONTAINER' }, () => false)
+              .with({ serviceType: 'DATABASE', mode: 'CONTAINER' }, () => false)
+              .with({ serviceType: 'JOB', source: P.when(isJobContainerSource) }, () => false)
+              .with({ serviceType: 'HELM', values_override: P.when(isHelmRepositorySource) }, () => false)
+              .otherwise(() => true) &&
+              currentDeployment?.identifier.execution_id && (
+                <Button
+                  size="sm"
+                  variant="surface"
+                  color="neutral"
+                  className="w-7 justify-center"
+                  loading={isBuildReportLoading}
+                  onClick={async () => {
+                    try {
+                      const res = await generateBuildUsageReport({
+                        environmentId: environment.id,
+                        executionId: currentDeployment.identifier.execution_id,
+                        reportExpirationInSeconds: 3600,
+                      })
+                      if (res.report_url) {
+                        window.open(res.report_url, '_blank')
+                      }
+                    } catch {
+                      // error handled by mutation hook notification
+                    }
+                  }}
+                >
+                  <Icon iconName="chart-line" />
+                </Button>
+              )}
+          </div>
         </div>
         <div
           className="max-h-[calc(100vh-170px)] w-full overflow-y-scroll pb-12"

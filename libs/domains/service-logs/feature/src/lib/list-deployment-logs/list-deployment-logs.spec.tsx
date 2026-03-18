@@ -21,6 +21,13 @@ jest.mock('react-router-dom', () => ({
   }),
 }))
 
+jest.mock('../hooks/use-generate-build-usage-report/use-generate-build-usage-report', () => ({
+  useGenerateBuildUsageReport: () => ({
+    mutateAsync: jest.fn(),
+    isLoading: false,
+  }),
+}))
+
 jest.mock('../hooks/use-deployment-history/use-deployment-history', () => ({
   ...jest.requireActual('../hooks/use-deployment-history/use-deployment-history'),
   useDeploymentHistory: () => ({
@@ -142,7 +149,9 @@ describe('ListDeploymentLogs', () => {
       <ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />
     )
 
-    const buildButton = screen.getByRole('button', { name: /build/i })
+    const buildButtons = screen.getAllByRole('button', { name: /build/i })
+    // Pick the filter button (not the "Build runner usage" button)
+    const buildButton = buildButtons.find((btn) => !btn.textContent?.includes('runner')) ?? buildButtons[0]
     await userEvent.click(buildButton)
 
     await waitFor(() => {
