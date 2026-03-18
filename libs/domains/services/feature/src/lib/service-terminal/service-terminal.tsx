@@ -39,9 +39,7 @@ export function ServiceTerminal({
   const [terminalParentHeight, setTerminalParentHeight] = useState(MIN_TERMINAL_HEIGHT)
   const [addons, setAddons] = useState<Array<ITerminalAddon>>([])
   const isTerminalLoading = addons.length < 2
-  const { attachWebSocket, detachWebSocket, isTerminalReady, resetTerminalReadiness } = useTerminalReadiness({
-    readyPrompt: '/ #',
-  })
+  const { attachWebSocket, detachWebSocket, isTerminalReady, resetTerminalReadiness } = useTerminalReadiness()
   const showDelayedLoader = !isTerminalReady
   const fitAddon = addons[0] as FitAddon | undefined
 

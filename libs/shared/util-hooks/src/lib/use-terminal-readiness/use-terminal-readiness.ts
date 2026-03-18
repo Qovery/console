@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 const DEFAULT_OUTPUT_BUFFER_SIZE = 100
 const ANSI_ESCAPE_SEQUENCE_REGEX = new RegExp(String.raw`\u001b\[[0-?]*[ -/]*[@-~]`, 'g')
@@ -7,8 +7,12 @@ const ANSI_OSC_SEQUENCE_REGEX = new RegExp(String.raw`\u001b\][^\u0007]*(\u0007|
 type TerminalMessageData = Blob | ArrayBuffer | string
 
 export interface UseTerminalReadinessOptions {
-  readyPrompt: string
+  readyPrompt?: string | string[]
   outputBufferSize?: number
+}
+
+function sanitizeTerminalOutput(output: string) {
+  return output.replace(ANSI_ESCAPE_SEQUENCE_REGEX, '').replace(ANSI_OSC_SEQUENCE_REGEX, '').replace(/\r/g, '')
 }
 
 function decodeTerminalBuffer(buffer: ArrayBuffer, decoderRef: { current: TextDecoder | null }) {
@@ -29,7 +33,15 @@ function decodeTerminalBuffer(buffer: ArrayBuffer, decoderRef: { current: TextDe
 export function useTerminalReadiness({
   readyPrompt,
   outputBufferSize = DEFAULT_OUTPUT_BUFFER_SIZE,
-}: UseTerminalReadinessOptions) {
+}: UseTerminalReadinessOptions = {}) {
+  const readyPromptKey = readyPrompt
+    ? JSON.stringify(Array.isArray(readyPrompt) ? readyPrompt : [readyPrompt])
+    : undefined
+  const readyPrompts = useMemo<string[]>(() => {
+    // Terminal components often pass prompt arrays inline. We memoize from a serialized
+    // signature so equivalent prompt lists do not recreate websocket callbacks and trigger reconnect loops.
+    return readyPromptKey ? (JSON.parse(readyPromptKey) as string[]) : []
+  }, [readyPromptKey])
   const decoderRef = useRef<TextDecoder | null>(null)
   const messageListenerCleanupRef = useRef<(() => void) | null>(null)
   const terminalOutputBufferRef = useRef('')
@@ -42,19 +54,24 @@ export function useTerminalReadiness({
 
   const updateTerminalReadiness = useCallback(
     (terminalChunk: string) => {
+      const sanitizedTerminalChunk = sanitizeTerminalOutput(terminalChunk)
+
       // Shell prompts can arrive as binary frames and be split across multiple websocket messages.
       // We keep a rolling sanitized buffer so readiness tracks the prompt users actually see.
-      terminalOutputBufferRef.current = (terminalOutputBufferRef.current + terminalChunk)
-        .replace(ANSI_ESCAPE_SEQUENCE_REGEX, '')
-        .replace(ANSI_OSC_SEQUENCE_REGEX, '')
-        .replace(/\r/g, '')
-        .slice(-outputBufferSize)
+      terminalOutputBufferRef.current = (terminalOutputBufferRef.current + sanitizedTerminalChunk).slice(
+        -outputBufferSize
+      )
 
-      if (terminalOutputBufferRef.current.includes(readyPrompt)) {
+      // Some shells print a banner before the prompt, and prompts vary a lot across images.
+      // When no explicit prompt is configured, the first visible shell output is enough to hide the loader.
+      if (
+        (readyPrompts.length > 0 && readyPrompts.some((prompt) => terminalOutputBufferRef.current.includes(prompt))) ||
+        (readyPrompts.length === 0 && sanitizedTerminalChunk.trim().length > 0)
+      ) {
         setIsTerminalReady(true)
       }
     },
-    [outputBufferSize, readyPrompt]
+    [outputBufferSize, readyPrompts]
   )
 
   const decodeTerminalMessage = useCallback(

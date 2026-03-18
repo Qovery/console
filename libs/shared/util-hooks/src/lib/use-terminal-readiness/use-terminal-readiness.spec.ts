@@ -59,6 +59,65 @@ describe('useTerminalReadiness', () => {
     expect(result.current.isTerminalReady).toBe(true)
   })
 
+  it('supports alternative shell prompts such as dollar-based prompts', async () => {
+    const { result } = renderHook(() => useTerminalReadiness({ readyPrompt: ['/ #', '$'] }))
+    const websocket = new MockWebSocket()
+
+    act(() => {
+      result.current.attachWebSocket(websocket as unknown as WebSocket)
+    })
+
+    await emitTerminalMessage(websocket, '/app $')
+
+    expect(result.current.isTerminalReady).toBe(true)
+  })
+
+  it('marks the terminal as ready on the first visible output when no prompt is configured', async () => {
+    const { result } = renderHook(() => useTerminalReadiness())
+    const websocket = new MockWebSocket()
+
+    act(() => {
+      result.current.attachWebSocket(websocket as unknown as WebSocket)
+    })
+
+    await emitTerminalMessage(
+      websocket,
+      'Welcome to fish, the friendly interactive shell\nType help for instructions on how to use fish\n'
+    )
+
+    expect(result.current.isTerminalReady).toBe(true)
+  })
+
+  it('ignores pure control sequences before the first visible output', async () => {
+    const { result } = renderHook(() => useTerminalReadiness())
+    const websocket = new MockWebSocket()
+
+    act(() => {
+      result.current.attachWebSocket(websocket as unknown as WebSocket)
+    })
+
+    await emitTerminalMessage(websocket, '\u001b[32m\r')
+    expect(result.current.isTerminalReady).toBe(false)
+
+    await emitTerminalMessage(websocket, 'root@ip-10-3-12-40 /opt# ')
+    expect(result.current.isTerminalReady).toBe(true)
+  })
+
+  it('keeps websocket callbacks stable when prompt arrays are passed inline on rerender', () => {
+    const { result, rerender } = renderHook(
+      ({ readyPrompt }: { readyPrompt: string[] }) => useTerminalReadiness({ readyPrompt }),
+      {
+        initialProps: { readyPrompt: ['/ #', '$'] },
+      }
+    )
+
+    const initialAttachWebSocket = result.current.attachWebSocket
+
+    rerender({ readyPrompt: ['/ #', '$'] })
+
+    expect(result.current.attachWebSocket).toBe(initialAttachWebSocket)
+  })
+
   it('resets readiness when requested explicitly', async () => {
     const { result } = renderHook(() => useTerminalReadiness({ readyPrompt: '/ #' }))
     const websocket = new MockWebSocket()
