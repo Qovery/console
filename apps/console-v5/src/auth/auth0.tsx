@@ -5,12 +5,21 @@ import { OAUTH_AUDIENCE, OAUTH_DOMAIN, OAUTH_KEY } from '@qovery/shared/util-nod
 export interface Auth0ContextType {
   isAuthenticated: boolean
   user: User | undefined
-  login: () => void
+  login: (returnTo?: string) => void
   logout: () => void
   isLoading: boolean
 }
 
 export const Auth0Context = createContext<Auth0ContextType | undefined>(undefined)
+
+// Holds the returnTo path from Auth0's appState between onRedirectCallback and the callback component
+let _pendingReturnTo: string | undefined
+
+export function consumePendingReturnTo(): string | undefined {
+  const val = _pendingReturnTo
+  _pendingReturnTo = undefined
+  return val
+}
 
 export function Auth0Wrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -25,6 +34,9 @@ export function Auth0Wrapper({ children }: { children: React.ReactNode }) {
       useRefreshTokens={true}
       cacheLocation="localstorage"
       skipRedirectCallback={window.location.pathname !== '/login/auth0-callback'}
+      onRedirectCallback={(appState) => {
+        _pendingReturnTo = appState?.returnTo
+      }}
     >
       <Auth0ContextProvider>{children}</Auth0ContextProvider>
     </Auth0Provider>
@@ -37,7 +49,7 @@ function Auth0ContextProvider({ children }: { children: React.ReactNode }) {
   const contextValue = {
     isAuthenticated,
     user,
-    login: loginWithRedirect,
+    login: (returnTo?: string) => loginWithRedirect({ appState: { returnTo } }),
     logout: () => logout({ logoutParams: { returnTo: window.location.origin } }),
     isLoading,
   }
