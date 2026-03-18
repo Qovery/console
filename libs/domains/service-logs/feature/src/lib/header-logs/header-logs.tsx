@@ -99,40 +99,28 @@ export function HeaderLogs({
                   <div className="flex gap-1.5">
                     <ServiceActions variant="deploy-dropdown-only" serviceId={serviceId} environment={environment} />
                     {!isNotDeployedOrStopped && !isManagedDatabase && filteredLinks.length > 0 && (
-                      <>
-                        {filteredLinks.length > 0 && (
-                          <ServiceLinksPopover
-                            organizationId={environment.organization.id}
-                            projectId={environment.project.id}
-                            environmentId={environment.id}
-                            serviceId={serviceId}
-                            align="start"
-                          >
-                            <Button variant="outline" color="neutral" className="relative">
-                              <div className="flex items-center gap-1">
-                                <Icon iconName="link" iconStyle="regular" />
-                                {pluralize(filteredLinks.length, 'Link', 'Links')}
-                                <Icon iconName="angle-down" />
-                              </div>
-                            </Button>
-                          </ServiceLinksPopover>
-                        )}
-                        {type === 'SERVICE' && !isHistoricalServiceLogs && (
-                          <>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
-                              <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
-                            </svg>
-                            <PodHealthChips service={service} />
-                          </>
-                        )}
-                      </>
+                      <ServiceLinksPopover
+                        organizationId={environment.organization.id}
+                        projectId={environment.project.id}
+                        environmentId={environment.id}
+                        serviceId={serviceId}
+                        align="start"
+                      >
+                        <Button variant="outline" color="neutral" className="relative">
+                          <div className="flex items-center gap-1">
+                            <Icon iconName="link" iconStyle="regular" />
+                            {pluralize(filteredLinks.length, 'Link', 'Links')}
+                            <Icon iconName="angle-down" />
+                          </div>
+                        </Button>
+                      </ServiceLinksPopover>
                     )}
                   </div>
                   <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
                     <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
                   </svg>
                   <span
-                    className="flex items-center gap-1.5 truncate"
+                    className="flex items-center gap-1.5 truncate font-normal"
                     title={dateUTCString(serviceStatus.last_deployment_date ?? '')}
                   >
                     <Icon iconName="stopwatch" iconStyle="regular" className="text-base text-neutral-subtle" />
