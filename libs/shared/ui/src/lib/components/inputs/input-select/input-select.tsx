@@ -173,14 +173,14 @@ export function InputSelect({
   }
 
   const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
-    <span className="mr-1 flex text-sm text-neutral">
+    <span className={`mr-1 flex text-sm ${disabled ? 'text-neutral-disabled' : 'text-neutral'}`}>
       {props.data.label}
       {props.index + 1 !== (selectedItems as MultiValue<Value>).length && ', '}
     </span>
   )
 
   const SingleValue = (props: SingleValueProps<Value>) => (
-    <span className="mr-1 text-sm text-neutral">
+    <span className={`mr-1 text-sm ${disabled ? 'text-neutral-disabled' : 'text-neutral'}`}>
       {props.data.label}
       {props.data.description ? `: ${props.data.description}` : ''}
     </span>
@@ -324,8 +324,10 @@ export function InputSelect({
             htmlFor={label}
             className={
               hasIcon
-                ? `!translate-y-0 !text-xs ${selectedWithIconClassName}`
-                : `${hasLabelUp ? '!translate-y-0 !text-xs' : 'top-1.5 translate-y-2 text-sm'}`
+                ? `!translate-y-0 !text-xs ${selectedWithIconClassName} ${disabled ? '!text-neutral-disabled' : ''}`
+                : `${hasLabelUp ? '!translate-y-0 !text-xs' : 'top-1.5 translate-y-2 text-sm'} ${
+                    disabled ? '!text-neutral-disabled' : ''
+                  }`
             }
           >
             {label}
@@ -340,7 +342,11 @@ export function InputSelect({
         <input type="hidden" name={label} value={selectedValue} />
         {!isFilter && (
           <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
-            <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />
+            <Icon
+              iconName="angle-down"
+              iconStyle="solid"
+              className={`text-sm ${disabled ? 'text-neutral-disabled' : 'text-neutral-subtle'}`}
+            />
           </div>
         )}
         {currentIcon?.onClickEditable && (

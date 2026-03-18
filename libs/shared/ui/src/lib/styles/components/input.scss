@@ -94,6 +94,10 @@
     @apply text-neutral-disabled;
   }
 
+  .input__value {
+    @apply text-neutral-disabled;
+  }
+
   .input__button--focused {
     box-shadow: none;
   }
