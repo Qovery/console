@@ -14,7 +14,9 @@ const bannerVariants = cva('flex h-10 items-center justify-center text-sm font-m
     },
   },
 })
-export interface BannerProps extends ComponentPropsWithoutRef<'div'>, VariantProps<typeof bannerVariants> {
+type BannerDivProps = Omit<ComponentPropsWithoutRef<'div'>, 'color'>
+
+export interface BannerProps extends BannerDivProps, VariantProps<typeof bannerVariants> {
   buttonLabel?: string
   buttonIconRight?: IconName
   onClickButton?: () => void
@@ -32,11 +34,12 @@ export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>
     dismissible = false,
     onDismiss,
     className,
+    ...props
   },
   forwardedRef
 ) {
   return (
-    <div className={twMerge(bannerVariants({ color }), 'relative', className)} ref={forwardedRef}>
+    <div className={twMerge(bannerVariants({ color }), 'relative', className)} ref={forwardedRef} {...props}>
       {children}
       {buttonLabel && (
         <Button type="button" className="ml-4 gap-1" variant="solid" color={color} onClick={onClickButton}>
