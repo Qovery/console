@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ServiceTerminal should match snapshot 1`] = `
-<body
-  style="overflow: hidden;"
->
+<body>
   <div />
   <div
     class="fixed bottom-0 left-0 z-dropdown w-full animate-slidein-up-md-faded bg-surface-neutral-subtle shadow-[0_-4px_60px_rgba(0,0,0,0.08)]"
