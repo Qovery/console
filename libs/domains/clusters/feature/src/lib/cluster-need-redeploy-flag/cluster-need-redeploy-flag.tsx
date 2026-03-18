@@ -10,7 +10,13 @@ export function ClusterNeedRedeployFlag({ deploymentStatus, onClickButton }: Clu
   const buttonLabel = (deploymentStatus === ClusterDeploymentStatusEnum.OUT_OF_DATE ? 'Redeploy' : 'Deploy') + ' now'
 
   return (
-    <Banner color="yellow" buttonIconRight="rotate-right" buttonLabel={buttonLabel} onClickButton={onClickButton}>
+    <Banner
+      className="relative left-1/2 w-screen -translate-x-1/2"
+      color="yellow"
+      buttonIconRight="rotate-right"
+      buttonLabel={buttonLabel}
+      onClickButton={onClickButton}
+    >
       This cluster needs to be{' '}
       {deploymentStatus === ClusterDeploymentStatusEnum.OUT_OF_DATE ? 'redeployed' : 'deployed'} to apply the
       configuration changes
