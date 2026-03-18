@@ -44,6 +44,14 @@ describe.skip('PageGeneral', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should render a divider under the heading and spacing before filters', () => {
+    const { container } = renderWithProviders(<AuditLogs {...props} />)
+
+    const divider = container.querySelector('hr.w-full.border-neutral')
+    expect(divider).toBeInTheDocument()
+    expect(divider?.parentElement?.nextElementSibling).toHaveClass('mt-8')
+  })
+
   it('should render 5 placeholders if it is loading', () => {
     renderWithProviders(<AuditLogs {...props} isLoading={true} />)
     expect(screen.getAllByTestId('row-event')).toHaveLength(5)

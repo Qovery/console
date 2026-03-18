@@ -269,10 +269,11 @@ export function AuditLogs({
 
   return (
     <Section className="mt-6 grow px-8">
-      <Heading level={1} className="mb-4">
-        Audit logs
-      </Heading>
-      <div className="flex items-start">
+      <div className="flex flex-col gap-6">
+        <Heading level={1}>Audit logs</Heading>
+        <hr className="w-full border-neutral" />
+      </div>
+      <div className="mt-8 flex items-start">
         <FilterSection
           clearFilter={handleClearFilter}
           queryParams={queryParams}
