@@ -19,6 +19,9 @@ function Consumer() {
   return (
     <>
       <span>{open ? 'open' : 'closed'}</span>
+      <button type="button" onClick={() => setOpen(true)}>
+        open
+      </button>
       <button type="button" onClick={() => setOpen(false)}>
         close
       </button>
@@ -42,7 +45,7 @@ describe('ServiceTerminalProvider', () => {
       </ServiceTerminalProvider>
     )
 
-    expect(screen.getByText('open')).toBeInTheDocument()
+    expect(screen.getByText('open', { selector: 'span' })).toBeInTheDocument()
   })
 
   it('removes hasShell from the url when the terminal closes', async () => {
@@ -55,7 +58,6 @@ describe('ServiceTerminalProvider', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'close' }))
 
-    expect(screen.getByText('closed')).toBeInTheDocument()
     expect(mockNavigate).toHaveBeenCalledWith({
       to: '/service/overview',
       search: {
@@ -64,15 +66,20 @@ describe('ServiceTerminalProvider', () => {
     })
   })
 
-  it('supports the legacy hasShell location state fallback', () => {
-    mockUseLocation.mockReturnValue({ pathname: '/service/overview', state: { hasShell: true } })
-
-    renderWithProviders(
+  it('adds hasShell to the url when the terminal opens', async () => {
+    const { userEvent } = renderWithProviders(
       <ServiceTerminalProvider>
         <Consumer />
       </ServiceTerminalProvider>
     )
 
-    expect(screen.getByText('open')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'open' }))
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/service/overview',
+      search: {
+        hasShell: true,
+      },
+    })
   })
 })
