@@ -73,7 +73,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
             data-testid="input-select-cluster"
           >
             <label
-              class="top-1.5 translate-y-2 text-sm"
+              class="top-1.5 translate-y-2 text-sm "
               for="Cluster"
             >
               Cluster
@@ -182,7 +182,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
               </span>
             </div>
             <label
-              class="!translate-y-0 !text-xs ml-8"
+              class="!translate-y-0 !text-xs ml-8 "
               for="Type"
             >
               Type

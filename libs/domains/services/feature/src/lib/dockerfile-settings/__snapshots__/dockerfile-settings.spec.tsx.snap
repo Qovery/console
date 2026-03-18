@@ -14,7 +14,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
           data-testid="select"
         >
           <label
-            class="!translate-y-0 !text-xs"
+            class="!translate-y-0 !text-xs "
             for="File source"
           >
             File source
@@ -230,7 +230,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
           data-testid="select"
         >
           <label
-            class="!translate-y-0 !text-xs"
+            class="!translate-y-0 !text-xs "
             for="File source"
           >
             File source

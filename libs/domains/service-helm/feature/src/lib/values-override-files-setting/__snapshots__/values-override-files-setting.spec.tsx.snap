@@ -46,7 +46,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
               data-testid="select"
             >
               <label
-                class="!translate-y-0 !text-xs"
+                class="!translate-y-0 !text-xs "
                 for="File source"
               >
                 File source
@@ -208,7 +208,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
               data-testid="select"
             >
               <label
-                class="!translate-y-0 !text-xs"
+                class="!translate-y-0 !text-xs "
                 for="File source"
               >
                 File source
@@ -349,7 +349,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
               data-testid="select"
             >
               <label
-                class="!translate-y-0 !text-xs"
+                class="!translate-y-0 !text-xs "
                 for="File source"
               >
                 File source

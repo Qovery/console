@@ -105,7 +105,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
           data-testid="select"
         >
           <label
-            class="top-1.5 translate-y-2 text-sm"
+            class="top-1.5 translate-y-2 text-sm "
             for="Project"
           >
             Project
@@ -212,7 +212,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
           data-testid="select"
         >
           <label
-            class="top-1.5 translate-y-2 text-sm"
+            class="top-1.5 translate-y-2 text-sm "
             for="Environment"
           >
             Environment

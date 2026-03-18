@@ -54,7 +54,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
               data-testid="select"
             >
               <label
-                class="!translate-y-0 !text-xs"
+                class="!translate-y-0 !text-xs "
                 for="Delete mode"
               >
                 Delete mode

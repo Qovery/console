@@ -58,7 +58,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                     data-testid="select"
                   >
                     <label
-                      class="!translate-y-0 !text-xs"
+                      class="!translate-y-0 !text-xs "
                       for="File source"
                     >
                       File source
@@ -322,7 +322,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                     data-testid="select"
                   >
                     <label
-                      class="!translate-y-0 !text-xs"
+                      class="!translate-y-0 !text-xs "
                       for="File source"
                     >
                       File source
