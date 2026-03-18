@@ -389,7 +389,7 @@ export function ListDeploymentLogs({
   }
 
   return (
-    <div className="h-[calc(100vh-108px)] w-full overflow-hidden">
+    <div className="h-full w-full overflow-hidden">
       <div className="relative h-full bg-background">
         <HeaderLogsComponent />
         <div className="flex w-full items-center justify-between border-b border-neutral px-4 py-2.5">
@@ -409,7 +409,7 @@ export function ListDeploymentLogs({
           </Button>
         </div>
         <div
-          className="h-[calc(100vh-108px)] w-full overflow-y-scroll pb-12"
+          className="h-[calc(100vh-209px)] w-full overflow-y-scroll "
           ref={refScrollSection}
           onWheel={(event) => {
             if (
