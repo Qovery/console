@@ -10,11 +10,11 @@ exports[`SourceSetting should match snapshot 1`] = `
         class=""
       >
         <div
-          class="input input--select    "
+          class="input input--select"
           data-testid="select"
         >
           <label
-            class="!translate-y-0 !text-xs "
+            class="!translate-y-0 !text-xs"
             for="Helm source"
           >
             Helm source
@@ -109,11 +109,11 @@ exports[`SourceSetting should match snapshot 1`] = `
           class=""
         >
           <div
-            class="input input--select    "
+            class="input input--select"
             data-testid="select"
           >
             <label
-              class="!translate-y-0 !text-xs "
+              class="!translate-y-0 !text-xs"
               for="Repository"
             >
               Repository
@@ -214,11 +214,11 @@ exports[`SourceSetting should match snapshot 1`] = `
           class=""
         >
           <div
-            class="input input--select    "
+            class="input input--select"
             data-testid="select"
           >
             <label
-              class="top-1.5 translate-y-2 text-sm "
+              class="top-1.5 translate-y-2 text-sm"
               for="Chart name"
             >
               Chart name
@@ -330,11 +330,11 @@ exports[`SourceSetting should match snapshot helm chart settings with HTTPS kind
       class=""
     >
       <div
-        class="input input--select    "
+        class="input input--select"
         data-testid="select"
       >
         <label
-          class="!translate-y-0 !text-xs "
+          class="!translate-y-0 !text-xs"
           for="Chart name"
         >
           Chart name
@@ -435,11 +435,11 @@ exports[`SourceSetting should match snapshot helm chart settings with HTTPS kind
       class=""
     >
       <div
-        class="input input--select    "
+        class="input input--select"
         data-testid="select"
       >
         <label
-          class="!translate-y-0 !text-xs "
+          class="!translate-y-0 !text-xs"
           for="Version"
         >
           Version

@@ -67,11 +67,11 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
             class=""
           >
             <div
-              class="input input--select    "
+              class="input input--select"
               data-testid="select"
             >
               <label
-                class="!translate-y-0 !text-xs "
+                class="!translate-y-0 !text-xs"
                 for="Select protocol"
               >
                 Select protocol
@@ -389,11 +389,11 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
             class=""
           >
             <div
-              class="input input--select    "
+              class="input input--select"
               data-testid="select"
             >
               <label
-                class="!translate-y-0 !text-xs "
+                class="!translate-y-0 !text-xs"
                 for="Select protocol"
               >
                 Select protocol

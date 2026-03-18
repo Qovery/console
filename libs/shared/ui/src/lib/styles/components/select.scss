@@ -4,6 +4,17 @@
   color: theme('textColor.neutral.DEFAULT');
 }
 
+.input-select__control .input-select__input input:-webkit-autofill,
+.input-select__control .input-select__input input:-webkit-autofill:hover,
+.input-select__control .input-select__input input:-webkit-autofill:focus,
+.input-select__control .input-select__input input:-webkit-autofill:active {
+  -webkit-text-fill-color: currentColor;
+  caret-color: currentColor;
+  -webkit-box-shadow: 0 0 0 1000px var(--neutral-1) inset;
+  box-shadow: 0 0 0 1000px var(--neutral-1) inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 .input-select__control {
   border: none !important;
   background: none !important;

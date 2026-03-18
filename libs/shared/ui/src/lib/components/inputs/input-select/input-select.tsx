@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useId, useState } from 'react'
+import clsx from 'clsx'
 import Select, {
   type GroupBase,
   type MenuListProps,
@@ -15,6 +16,7 @@ import Select, {
 import CreatableSelect from 'react-select/creatable'
 import { match } from 'ts-pattern'
 import { type Value } from '@qovery/shared/interfaces'
+import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../../icon/icon'
 import { LoaderSpinner } from '../../loader-spinner/loader-spinner'
 
@@ -129,7 +131,14 @@ export function InputSelect({
     <div role="listbox">
       <components.MenuList {...props}>
         {menuListButton && (
-          <div className={`flex h-9 items-start p-1 ${menuListButton.title ? 'justify-between' : 'justify-end'}`}>
+          <div
+            className={twMerge(
+              clsx('flex h-9 items-start p-1', {
+                'justify-between': menuListButton.title,
+                'justify-end': !menuListButton.title,
+              })
+            )}
+          >
             {menuListButton.title && <span className="text-sm font-medium text-neutral">{menuListButton.title}</span>}
             <button
               type="button"
@@ -173,14 +182,28 @@ export function InputSelect({
   }
 
   const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
-    <span className={`mr-1 flex text-sm ${disabled ? 'text-neutral-disabled' : 'text-neutral'}`}>
+    <span
+      className={twMerge(
+        clsx('mr-1 flex text-sm', {
+          'text-neutral-disabled': disabled,
+          'text-neutral': !disabled,
+        })
+      )}
+    >
       {props.data.label}
       {props.index + 1 !== (selectedItems as MultiValue<Value>).length && ', '}
     </span>
   )
 
   const SingleValue = (props: SingleValueProps<Value>) => (
-    <span className={`mr-1 text-sm ${disabled ? 'text-neutral-disabled' : 'text-neutral'}`}>
+    <span
+      className={twMerge(
+        clsx('mr-1 text-sm', {
+          'text-neutral-disabled': disabled,
+          'text-neutral': !disabled,
+        })
+      )}
+    >
       {props.data.label}
       {props.data.description ? `: ${props.data.description}` : ''}
     </span>
@@ -306,9 +329,13 @@ export function InputSelect({
   return (
     <div className={className}>
       <div
-        className={`input input--select ${hasIcon ? 'input--has-icon' : ''} ${inputActions} ${
-          disabled ? '!border-neutral !bg-surface-neutral-subtle' : ''
-        } ${isFilter ? 'input--filter' : ''}`}
+        className={twMerge(
+          clsx('input input--select', inputActions, {
+            'input--has-icon': hasIcon,
+            '!border-neutral !bg-surface-neutral-subtle': disabled,
+            'input--filter': isFilter,
+          })
+        )}
         data-testid={dataTestId || 'select'}
       >
         {hasIcon && (
@@ -322,13 +349,14 @@ export function InputSelect({
         {label && (
           <label
             htmlFor={label}
-            className={
-              hasIcon
-                ? `!translate-y-0 !text-xs ${selectedWithIconClassName} ${disabled ? '!text-neutral-disabled' : ''}`
-                : `${hasLabelUp ? '!translate-y-0 !text-xs' : 'top-1.5 translate-y-2 text-sm'} ${
-                    disabled ? '!text-neutral-disabled' : ''
-                  }`
-            }
+            className={twMerge(
+              clsx({
+                '!translate-y-0 !text-xs': hasIcon || hasLabelUp,
+                [selectedWithIconClassName]: hasIcon,
+                'top-1.5 translate-y-2 text-sm': !hasIcon && !hasLabelUp,
+                '!text-neutral-disabled': disabled,
+              })
+            )}
           >
             {label}
           </label>
@@ -345,7 +373,12 @@ export function InputSelect({
             <Icon
               iconName="angle-down"
               iconStyle="solid"
-              className={`text-sm ${disabled ? 'text-neutral-disabled' : 'text-neutral-subtle'}`}
+              className={twMerge(
+                clsx('text-sm', {
+                  'text-neutral-disabled': disabled,
+                  'text-neutral-subtle': !disabled,
+                })
+              )}
             />
           </div>
         )}

@@ -7,7 +7,7 @@ exports[`InputSelect should apply disabled classes to selected value, label and 
       class=""
     >
       <div
-        class="input input--select input--has-icon !bg-surface-neutral-subtle !border-neutral !pointer-events-none !border-neutral !bg-surface-neutral-subtle "
+        class="input input--select !pointer-events-none input--has-icon !border-neutral !bg-surface-neutral-subtle"
         data-testid="select"
       >
         <div
