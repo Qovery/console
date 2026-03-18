@@ -7,13 +7,11 @@ import {
   type Stage,
   type Status,
 } from 'qovery-typescript-axios'
-import { memo } from 'react'
 import { match } from 'ts-pattern'
 import { useDeploymentHistory } from '@qovery/domains/environments/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { Banner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { ListDeploymentLogs } from '../../list-deployment-logs/list-deployment-logs'
 
 export interface DeploymentLogsFeatureProps {
@@ -182,15 +180,13 @@ export function DeploymentLogsContent({
           A new deployment has been initiated
         </Banner>
       )}
-      <div className="h-full w-full bg-neutral-900">
-        <ListDeploymentLogs
-          environment={environment}
-          serviceStatus={serviceStatus}
-          environmentStatus={environmentStatus}
-          stage={stageFromServiceId}
-          preCheckStage={preCheckStage}
-        />
-      </div>
+      <ListDeploymentLogs
+        environment={environment}
+        serviceStatus={serviceStatus}
+        environmentStatus={environmentStatus}
+        stage={stageFromServiceId}
+        preCheckStage={preCheckStage}
+      />
     </>
   )
 }
