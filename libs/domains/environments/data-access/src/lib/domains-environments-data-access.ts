@@ -1,4 +1,5 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
+import globalAxios from 'axios'
 import {
   type CloneEnvironmentRequest,
   type CreateEnvironmentRequest,
@@ -274,6 +275,26 @@ export const mutations = {
   }) {
     const result = await environmentApi.checkDockerfile(environmentId, dockerfileCheckRequest)
     return result.data
+  },
+  async generateBuildUsageReport({
+    environmentId,
+    executionId,
+    reportExpirationInSeconds,
+  }: {
+    environmentId: string
+    executionId: string
+    reportExpirationInSeconds: number
+  }) {
+    // Endpoint not yet available in the generated TypeScript client, calling directly via axios.
+    // The global axios instance has auth interceptors already configured.
+    const response = await globalAxios.post<{ report_url?: string; delete_report_url?: string }>(
+      `/environment/${environmentId}/deploymentBuildUsageReport`,
+      {
+        execution_id: executionId,
+        report_expiration_in_seconds: reportExpirationInSeconds,
+      }
+    )
+    return response.data
   },
 }
 

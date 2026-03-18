@@ -16,8 +16,9 @@ import {
 } from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { ServiceStateChip, useDeploymentStatus, useService } from '@qovery/domains/services/feature'
+import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
@@ -25,6 +26,7 @@ import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deploy
 import HeaderLogs from '../header-logs/header-logs'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
+import { useGenerateBuildUsageReport } from '../hooks/use-generate-build-usage-report/use-generate-build-usage-report'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
@@ -149,6 +151,7 @@ export function ListDeploymentLogs({
   const { organizationId, projectId, serviceId, versionId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
   const { updateStageId } = useContext(ServiceStageIdsContext)
+  const { mutateAsync: generateBuildUsageReport, isLoading: isBuildReportLoading } = useGenerateBuildUsageReport()
 
   useEffect(() => {
     if (stage) updateStageId(stage.id)
@@ -279,6 +282,10 @@ export function ListDeploymentLogs({
     [columnFilters]
   )
 
+  const currentDeployment = versionId
+    ? environmentDeploymentHistory.find((d) => d.identifier.execution_id === versionId)
+    : environmentDeploymentHistory[0]
+
   const isLastVersion = environmentDeploymentHistory?.[0]?.identifier.execution_id === versionId || !versionId
   const isDeploymentProgressing = isLastVersion
     ? match(deploymentStatus?.state)
@@ -309,11 +316,7 @@ export function ListDeploymentLogs({
         serviceId={serviceId ?? ''}
         serviceStatus={serviceStatus}
         environmentStatus={environmentStatus}
-        deploymentHistory={
-          versionId
-            ? environmentDeploymentHistory.find((d) => d.identifier.execution_id === versionId)
-            : environmentDeploymentHistory[0]
-        }
+        deploymentHistory={currentDeployment}
       >
         <div className="flex items-center gap-4">
           <Indicator
@@ -371,6 +374,38 @@ export function ListDeploymentLogs({
             Go to service logs
             <Icon iconName="arrow-right" />
           </Link>
+          {match(service)
+            .with({ serviceType: 'CONTAINER' }, () => false)
+            .with({ serviceType: 'DATABASE', mode: 'CONTAINER' }, () => false)
+            .with({ serviceType: 'JOB', source: P.when(isJobContainerSource) }, () => false)
+            .with({ serviceType: 'HELM', values_override: P.when(isHelmRepositorySource) }, () => false)
+            .otherwise(() => true) &&
+            currentDeployment?.identifier.execution_id && (
+              <Button
+                variant="surface"
+                color="neutral"
+                size="md"
+                className="gap-1.5"
+                loading={isBuildReportLoading}
+                onClick={async () => {
+                  try {
+                    const res = await generateBuildUsageReport({
+                      environmentId: environment.id,
+                      executionId: currentDeployment.identifier.execution_id,
+                      reportExpirationInSeconds: 3600,
+                    })
+                    if (res.report_url) {
+                      window.open(res.report_url, '_blank')
+                    }
+                  } catch {
+                    // error handled by mutation hook notification
+                  }
+                }}
+              >
+                Build runner usage
+                <Icon iconName="chart-line" />
+              </Button>
+            )}
         </div>
       </HeaderLogs>
     )
