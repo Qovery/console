@@ -368,7 +368,7 @@ function MenuManageDeployment({
           color={displayYellowColor ? 'yellow' : variant === 'header' ? 'brand' : 'neutral'}
           variant={variant === 'header' ? 'solid' : 'outline'}
           size={variant === 'header' ? 'md' : 'sm'}
-          iconOnly={variant === 'default'}
+          iconOnly={['default', 'deploy-dropdown-only'].includes(variant)}
         >
           <Tooltip content="Manage Deployment">
             <div className="flex h-full w-full items-center justify-center gap-1.5">
