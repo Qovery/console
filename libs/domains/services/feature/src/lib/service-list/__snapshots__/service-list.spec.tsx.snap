@@ -348,7 +348,7 @@ exports[`ServiceList should match snapshot 1`] = `
                           data-testid="truncate-text"
                         >
                           acarranoqovery/javas
-                          ...
+                          …
                         </span>
                       </a>
                     </span>
@@ -679,7 +679,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         data-testid="truncate-text"
                       >
                         stefanprodan/podinfo
-                        ...
+                        …
                       </span>
                     </span>
                   </div>
@@ -1270,7 +1270,7 @@ exports[`ServiceList should match snapshot 1`] = `
                           data-testid="truncate-text"
                         >
                           acarranoqovery/test_
-                          ...
+                          …
                         </span>
                       </a>
                     </span>
@@ -1677,7 +1677,7 @@ exports[`ServiceList should match snapshot 1`] = `
                           data-testid="truncate-text"
                         >
                           acarranoqovery/test_
-                          ...
+                          …
                         </span>
                       </a>
                     </span>

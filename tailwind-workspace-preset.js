@@ -187,9 +187,9 @@ module.exports = {
       },
       backgroundImage: {
         'scroll-shadow-bottom':
-          'linear-gradient(180deg,hsla(0,0%,100%,0) 40%,hsla(0,0%,100%,0)),radial-gradient(farthest-side at 50% 0,rgba(0,0,0,.13),transparent)',
+          'linear-gradient(180deg,var(--background-1) 0%,transparent 75%),radial-gradient(farthest-side at 50% 0,var(--neutral-invert-12),transparent)',
         'scroll-shadow-up':
-          'radial-gradient(farthest-side at 50% 0,rgba(0,0,0,.13),transparent),linear-gradient(180deg,hsla(0,0%,100%,0) 40%,hsla(0,0%,100%,0))',
+          'radial-gradient(farthest-side at 50% 0,var(--neutral-invert-12),transparent),linear-gradient(180deg,var(--background-1) 0%,transparent 75%)',
       },
       colors: {
         brand: { ...colorsBrand, ...colorsIndigo },
