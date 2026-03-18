@@ -1,5 +1,5 @@
-import { type ReactNode, useEffect, useId, useState } from 'react'
 import clsx from 'clsx'
+import { type ReactNode, useEffect, useId, useState } from 'react'
 import Select, {
   type GroupBase,
   type MenuListProps,
