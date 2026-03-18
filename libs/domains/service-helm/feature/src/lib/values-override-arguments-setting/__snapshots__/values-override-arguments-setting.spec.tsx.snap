@@ -125,6 +125,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     class="hidden"
                   />
                   <input
+                    autocomplete="off"
                     class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                     data-testid="input-value"
                     name="arguments.0.key"
@@ -149,6 +150,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                       class="hidden"
                     />
                     <input
+                      autocomplete="off"
                       class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle pr-11"
                       data-testid="input-value"
                       name="arguments.0.value"
@@ -230,6 +232,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     class="hidden"
                   />
                   <input
+                    autocomplete="off"
                     class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                     data-testid="input-value"
                     name="arguments.1.key"
@@ -339,6 +342,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     class="hidden"
                   />
                   <input
+                    autocomplete="off"
                     class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                     data-testid="input-value"
                     name="arguments.2.key"
@@ -363,6 +367,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                       class="hidden"
                     />
                     <input
+                      autocomplete="off"
                       class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle pr-11"
                       data-testid="input-value"
                       name="arguments.2.value"

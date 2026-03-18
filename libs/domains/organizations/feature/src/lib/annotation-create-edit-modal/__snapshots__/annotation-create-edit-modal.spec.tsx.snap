@@ -40,6 +40,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
                   Group name
                 </label>
                 <input
+                  autocomplete="off"
                   class="input__value"
                   data-testid="input-text"
                   id="Group name"
@@ -93,6 +94,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
                       class="hidden"
                     />
                     <input
+                      autocomplete="off"
                       class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                       data-testid="annotations.0.key"
                       name="annotations.0.key"
@@ -114,6 +116,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
                       class="hidden"
                     />
                     <input
+                      autocomplete="off"
                       class="absolute left-0 top-0 h-full w-full rounded bg-transparent px-2 text-sm text-neutral placeholder:text-neutral-subtle"
                       data-testid="annotations.0.value"
                       name="annotations.0.value"

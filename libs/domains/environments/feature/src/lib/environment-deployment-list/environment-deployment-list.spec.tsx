@@ -104,25 +104,13 @@ jest.mock('../hooks/use-deployment-queue/use-deployment-queue', () => ({
 }))
 
 jest.mock('@tanstack/react-router', () => {
-  const actual = jest.requireActual('@tanstack/react-router')
-  const { forwardRef } = jest.requireActual('react') as typeof import('react')
-
-  const MockLink = forwardRef((props: any, ref: any) => (
-    <a ref={ref} {...props}>
-      {typeof props.children === 'function' ? props.children({ isActive: false }) : props.children}
-    </a>
-  ))
-  MockLink.displayName = 'MockTanstackRouterLink'
-
   return {
-    ...actual,
     useParams: () => ({ organizationId: '1' }),
     useNavigate: () => jest.fn(),
     useLocation: () => ({ pathname: '/', search: '' }),
     useRouter: () => ({
       buildLocation: () => ({ href: '/' }),
     }),
-    Link: MockLink,
   }
 })
 

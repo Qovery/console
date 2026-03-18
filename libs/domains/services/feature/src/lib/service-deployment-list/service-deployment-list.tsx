@@ -110,7 +110,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
             <div
               className={twMerge(
                 clsx(
-                  'flex items-center justify-between before:absolute before:-top-[1px] before:left-0 before:block before:h-[calc(100%+2px)] before:w-1',
+                  'relative flex items-center justify-between before:absolute before:-left-4 before:-top-3 before:block before:h-[calc(100%+1.5rem)] before:w-0.5',
                   {
                     'before:bg-surface-brand-solid': ['ONGOING', 'CANCELING'].includes(state),
                     'before:bg-neutral-subtle': ['QUEUED'].includes(state),

@@ -13,7 +13,9 @@ export const ClusterTerminalContext = createContext<{
 export const ClusterTerminalProvider = ({ children }: PropsWithChildren) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const search = useSearch({ strict: false }) as { hasShell?: boolean }
+  const search = useSearch({
+    from: '/_authenticated/organization/$organizationId/cluster/$clusterId/overview',
+  })
   const [open, setOpen] = useState(Boolean(search.hasShell))
 
   useEffect(() => {

@@ -7,7 +7,7 @@ exports[`GitProviderSetting should match snapshot 1`] = `
       class=""
     >
       <div
-        class="input input--select    "
+        class="input input--select"
         data-testid="select"
       >
         <label

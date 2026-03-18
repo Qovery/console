@@ -30,6 +30,7 @@ exports[`GeneralSetting should match snapshot 1`] = `
                   Name
                 </label>
                 <input
+                  autocomplete="off"
                   class="input__value"
                   data-testid="input-text"
                   id="Name"

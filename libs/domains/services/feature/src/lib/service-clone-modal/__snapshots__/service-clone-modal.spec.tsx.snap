@@ -53,6 +53,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
                 Service to clone
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 disabled=""
@@ -86,6 +87,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
                 New service name
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 id="New service name"
@@ -101,7 +103,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
         class="mb-6"
       >
         <div
-          class="input input--select    "
+          class="input input--select"
           data-testid="select"
         >
           <label
@@ -208,7 +210,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
         class="mb-6"
       >
         <div
-          class="input input--select    "
+          class="input input--select"
           data-testid="select"
         >
           <label
