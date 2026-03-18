@@ -68,7 +68,7 @@ describe('GitWebhookStatusBadge', () => {
     expect(screen.getByText('Working')).toBeInTheDocument()
   })
 
-  it('shows red "Not Configured" badge for NOT_CONFIGURED status', () => {
+  it('shows red "Not configured" badge for NOT_CONFIGURED status', () => {
     mockUseGitWebhookStatus.mockReturnValue({
       data: { status: 'NOT_CONFIGURED' },
       isLoading: false,
@@ -78,7 +78,7 @@ describe('GitWebhookStatusBadge', () => {
 
     renderWithProviders(<GitWebhookStatusBadge serviceId="service-123" />)
 
-    expect(screen.getByText('Not Configured')).toBeInTheDocument()
+    expect(screen.getByText('Not configured')).toBeInTheDocument()
   })
 
   it('shows yellow "Misconfigured" badge for MISCONFIGURED status', () => {
@@ -94,7 +94,7 @@ describe('GitWebhookStatusBadge', () => {
     expect(screen.getByText('Misconfigured')).toBeInTheDocument()
   })
 
-  it('shows neutral "Unable to Verify" badge for UNABLE_TO_VERIFY status', () => {
+  it('shows neutral "Unable to verify" badge for UNABLE_TO_VERIFY status', () => {
     mockUseGitWebhookStatus.mockReturnValue({
       data: { status: 'UNABLE_TO_VERIFY' },
       isLoading: false,
@@ -104,7 +104,7 @@ describe('GitWebhookStatusBadge', () => {
 
     renderWithProviders(<GitWebhookStatusBadge serviceId="service-123" />)
 
-    expect(screen.getByText('Unable to Verify')).toBeInTheDocument()
+    expect(screen.getByText('Unable to verify')).toBeInTheDocument()
   })
 
   it('has tooltip present for status badge', async () => {
