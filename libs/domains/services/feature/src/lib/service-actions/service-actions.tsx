@@ -856,22 +856,6 @@ function MenuOtherActions({
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        {variant === 'header' && (
-          <DropdownMenu.Item icon={<Icon iconName="scroll" />} asChild>
-            <Link
-              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
-              params={{
-                organizationId: environment.organization.id,
-                projectId: environment.project.id,
-                environmentId: environment.id,
-                serviceId: service.id,
-              }}
-              className="gap-0"
-            >
-              Logs
-            </Link>
-          </DropdownMenu.Item>
-        )}
         {shellAction && (
           <DropdownMenu.Item icon={<Icon iconName="terminal" />} onSelect={shellAction}>
             Cloud shell

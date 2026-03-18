@@ -113,11 +113,12 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
           <Tooltip content={levelLowercase} disabled={!log.level || levelLowercase === 'unknown'}>
             <span
               className={twMerge(
-                clsx('absolute left-0.5 top-0 block h-full w-1 bg-neutral-500', {
-                  'bg-sky-500': levelLowercase === 'info',
-                  'bg-yellow-500': levelLowercase === 'warning',
-                  'bg-red-500 hover:bg-red-400 group-hover:bg-red-400': isErrorOrCritical,
-                  'bg-red-400': isExpanded && isErrorOrCritical,
+                clsx('absolute left-0.5 top-0 block h-full w-1 bg-surface-neutral-componentHover', {
+                  'bg-surface-info-solid': levelLowercase === 'info',
+                  'bg-surface-warning-solid': levelLowercase === 'warning',
+                  'bg-surface-negative-solid hover:bg-surface-negative-subtle group-hover:bg-surface-negative-subtle':
+                    isErrorOrCritical,
+                  'bg-surface-negative-subtle': isExpanded && isErrorOrCritical,
                 })
               )}
             />
@@ -192,7 +193,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
             clsx(
               'sl-expanded relative -top-0.5 h-[calc(100%+2px)] text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:content-[""]',
               {
-                'bg-red-500/10': isErrorOrCritical,
+                'bg-surface-negative-subtle': isErrorOrCritical,
               }
             )
           )}
