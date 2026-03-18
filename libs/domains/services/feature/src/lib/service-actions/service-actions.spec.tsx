@@ -67,27 +67,6 @@ describe('ServiceActions', () => {
     expect(baseElement).toMatchSnapshot()
   })
 
-  it('should navigate to the service overview with hasShell when cloud shell is clicked in default variant', async () => {
-    const { userEvent } = renderWithProviders(
-      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />
-    )
-
-    await userEvent.click(screen.getByLabelText(/cloud shell/i))
-
-    expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
-      params: {
-        organizationId: mockEnvironment.organization.id,
-        projectId: mockEnvironment.project.id,
-        environmentId: mockEnvironment.id,
-        serviceId: mockService.id,
-      },
-      search: {
-        hasShell: true,
-      },
-    })
-  })
-
   it('should render cloud shell in header other actions and navigate to the service overview', async () => {
     const { userEvent } = renderWithProviders(
       <ServiceActions serviceId={mockService.id} environment={mockEnvironment} variant="header" />,
@@ -113,13 +92,22 @@ describe('ServiceActions', () => {
     })
   })
 
-  it('should call shellAction override when cloud shell is clicked', async () => {
+  it('should call shellAction override when cloud shell is clicked in header other actions', async () => {
     const shellAction = jest.fn()
     const { userEvent } = renderWithProviders(
-      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} shellAction={shellAction} />
+      <ServiceActions
+        serviceId={mockService.id}
+        environment={mockEnvironment}
+        shellAction={shellAction}
+        variant="header"
+      />,
+      {
+        container: document.body,
+      }
     )
 
-    await userEvent.click(screen.getByLabelText(/cloud shell/i))
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+    await userEvent.click(screen.getByText(/cloud shell/i))
 
     expect(shellAction).toHaveBeenCalledTimes(1)
     expect(mockNavigate).not.toHaveBeenCalled()
@@ -165,5 +153,18 @@ describe('ServiceActions', () => {
     expect(screen.queryByText(/cloud shell/i)).not.toBeInTheDocument()
     expect(shellAction).not.toHaveBeenCalled()
     expect(mockNavigate).not.toHaveBeenCalled()
+  })
+
+  it('should not display logs entry in header other actions', async () => {
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} variant="header" />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+
+    expect(screen.queryByRole('menuitem', { name: /^logs$/i })).not.toBeInTheDocument()
   })
 })

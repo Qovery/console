@@ -169,7 +169,7 @@ export function Breadcrumbs() {
     <div className="flex items-center gap-2">
       {breadcrumbData.map((data, index) => (
         <div key={data.item.id} className="flex items-center gap-2">
-          <BreadcrumbItem item={data.item} items={data.items} />
+          <BreadcrumbItem item={data.item} items={data.items} isCurrentScope={index === breadcrumbData.length - 1} />
           {index < breadcrumbData.length - 1 && <Separator />}
         </div>
       ))}

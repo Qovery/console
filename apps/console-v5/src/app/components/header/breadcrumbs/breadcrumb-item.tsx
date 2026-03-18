@@ -17,9 +17,10 @@ export interface BreadcrumbItemData {
 interface BreadcrumbItemProps {
   item: BreadcrumbItemData
   items?: BreadcrumbItemData[]
+  isCurrentScope?: boolean
 }
 
-export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
+export function BreadcrumbItem({ item, items, isCurrentScope = false }: BreadcrumbItemProps) {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [open, setOpen] = useState(false)
@@ -82,11 +83,22 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
 
   if (!items || items.length <= 1) {
     return (
-      <span className="flex items-center gap-1.5 text-sm font-medium text-neutral">
+      <Link
+        to={item.path}
+        className={twMerge(
+          clsx(
+            'flex items-center gap-1.5 rounded text-sm font-medium transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
+            {
+              'text-neutral-subtle': !isCurrentScope,
+              'text-neutral': isCurrentScope,
+            }
+          )
+        )}
+      >
         {item.prefix}
         <Truncate text={item.label} truncateLimit={30} />
         {item.suffix}
-      </span>
+      </Link>
     )
   }
 
@@ -96,9 +108,10 @@ export function BreadcrumbItem({ item, items }: BreadcrumbItemProps) {
         to={item.path}
         className={twMerge(
           clsx(
-            'flex items-center gap-1.5 rounded text-sm font-medium text-neutral-subtle transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
+            'flex items-center gap-1.5 rounded text-sm font-medium transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
             {
-              'text-neutral': open,
+              'text-neutral-subtle': !isCurrentScope,
+              'text-neutral': isCurrentScope || open,
             }
           )
         )}

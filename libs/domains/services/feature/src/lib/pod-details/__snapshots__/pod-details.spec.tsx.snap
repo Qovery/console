@@ -4,10 +4,10 @@ exports[`PodDetails should match snapshot with container based pod and with mult
 <body>
   <div>
     <div
-      class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden bg-surface-neutral-subtle pb-4 pl-4 pr-20 pt-3"
     >
       <a
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative z-dropdown max-w-fit gap-0.5"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral relative z-dropdown max-w-fit gap-0.5"
         params="[object Object]"
         search="[object Object]"
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
@@ -140,10 +140,10 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
 <body>
   <div>
     <div
-      class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden bg-surface-neutral-subtle pb-4 pl-4 pr-20 pt-3"
     >
       <a
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative z-dropdown max-w-fit gap-0.5"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral relative z-dropdown max-w-fit gap-0.5"
         params="[object Object]"
         search="[object Object]"
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
@@ -267,10 +267,10 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
 <body>
   <div>
     <div
-      class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden bg-surface-neutral-subtle pb-4 pl-4 pr-20 pt-3"
     >
       <a
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative z-dropdown max-w-fit gap-0.5"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral relative z-dropdown max-w-fit gap-0.5"
         params="[object Object]"
         search="[object Object]"
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
@@ -363,10 +363,10 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
 <body>
   <div>
     <div
-      class="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden bg-surface-neutral-subtle pb-4 pl-4 pr-20 pt-3"
     >
       <a
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral relative z-dropdown max-w-fit gap-0.5"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral relative z-dropdown max-w-fit gap-0.5"
         params="[object Object]"
         search="[object Object]"
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
