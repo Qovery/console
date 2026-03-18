@@ -48,7 +48,7 @@ export function GitWebhookStatusBadge({ serviceId }: GitWebhookStatusBadgeProps)
 
   if (isLoading) {
     return (
-      <Badge color="neutral" size="sm" variant="surface" className="gap-1">
+      <Badge color="neutral" variant="surface" className="gap-1">
         <LoaderSpinner classWidth="w-3" />
         <span>Checking...</span>
       </Badge>
@@ -59,7 +59,7 @@ export function GitWebhookStatusBadge({ serviceId }: GitWebhookStatusBadgeProps)
     return (
       <Tooltip content="Could not fetch webhook status. Click to retry.">
         <button type="button" onClick={() => refetch()} className="inline-flex">
-          <Badge color="neutral" size="sm" variant="surface" className="cursor-pointer gap-1">
+          <Badge color="neutral" variant="surface" className="cursor-pointer gap-1">
             <Icon iconName="circle-exclamation" className="text-xs" />
             <span>Error</span>
           </Badge>

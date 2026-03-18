@@ -10,6 +10,7 @@ export interface InputToggleProps {
   className?: string
   dataTestId?: string
   forceAlignTop?: boolean
+  forceAlignCenter?: boolean
   disabled?: boolean
   name?: string
 }
@@ -23,6 +24,7 @@ export function InputToggle(props: InputToggleProps) {
     title,
     className = '',
     forceAlignTop = false,
+    forceAlignCenter = false,
     disabled = false,
     name,
   } = props
@@ -42,6 +44,7 @@ export function InputToggle(props: InputToggleProps) {
 
   const toggleSizeBg = small ? 'w-8 h-4.5' : 'w-12 h-6'
   const toggleSizeCircle = small ? 'w-3.5 h-3.5' : 'w-5 h-5'
+  const alignmentClass = forceAlignTop ? 'items-start' : description || forceAlignCenter ? 'items-center' : 'items-start'
 
   const changeToggle = () => {
     if (disabled) return
@@ -55,9 +58,7 @@ export function InputToggle(props: InputToggleProps) {
   return (
     <div
       data-testid="input-toggle"
-      className={`flex text-sm  ${description && !forceAlignTop ? 'items-center' : 'items-start'} ${className} ${
-        disabled ? 'opacity-50' : ''
-      }`}
+      className={clsx('flex text-sm', alignmentClass, className, { 'opacity-50': disabled })}
     >
       <div
         data-testid={props.dataTestId || 'input-toggle-button'}

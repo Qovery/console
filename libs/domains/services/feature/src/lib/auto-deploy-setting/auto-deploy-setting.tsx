@@ -24,6 +24,7 @@ export function AutoDeploySetting({ source, className = '', titleSuffix }: AutoD
         return (
           <InputToggle
             className={className}
+            forceAlignCenter
             value={field.value}
             onChange={field.onChange}
             title={
@@ -36,7 +37,6 @@ export function AutoDeploySetting({ source, className = '', titleSuffix }: AutoD
                 title
               )
             }
-            forceAlignTop
             small
           />
         )

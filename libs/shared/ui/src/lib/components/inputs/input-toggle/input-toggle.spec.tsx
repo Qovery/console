@@ -126,6 +126,14 @@ describe('InputToggle', () => {
     expect(container).toHaveClass('custom-class')
   })
 
+  it('should align center when forceAlignCenter is true', () => {
+    render(<InputToggle {...props} forceAlignCenter />)
+
+    const container = screen.getByTestId('input-toggle')
+    expect(container).toHaveClass('items-center')
+    expect(container).not.toHaveClass('items-start')
+  })
+
   it('should use custom dataTestId when provided', () => {
     render(<InputToggle {...props} dataTestId="custom-toggle" />)
 
