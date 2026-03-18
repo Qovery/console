@@ -144,7 +144,7 @@ exports[`InstanceMetrics should match snapshot with data 1`] = `
                   data-state="closed"
                 >
                   <svg
-                    class="text-neutral-300 h-full w-full"
+                    class="text-neutral-disabled h-full w-full"
                     fill="none"
                     height="16"
                     viewBox="0 0 24 24"

@@ -7,7 +7,7 @@ export const SkipIcon = forwardRef<SVGSVGElement, IconSVGProps>(function SkipIco
   forwardedRef
 ) {
   return (
-    <span className={twMerge('block rounded-full border border-neutral-300 text-neutral-300', className)}>
+    <span className={twMerge('block rounded-full border border-neutral text-neutral-disabled', className)}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="14"

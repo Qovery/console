@@ -192,9 +192,9 @@ export function ClusterTableNode({
               <Tooltip content={status()}>
                 <span className="flex items-center gap-1">
                   {isWarning ? (
-                    <Icon iconName="circle-exclamation" iconStyle="regular" className="text-base text-yellow-500" />
+                    <Icon iconName="circle-exclamation" iconStyle="regular" className="text-base text-warning" />
                   ) : (
-                    <Icon iconName="circle-check" iconStyle="regular" className="text-base text-green-500" />
+                    <Icon iconName="circle-check" iconStyle="regular" className="text-base text-positive" />
                   )}
                 </span>
               </Tooltip>

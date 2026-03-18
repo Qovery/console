@@ -24,7 +24,7 @@ exports[`ActionTriggerStatusChip shoud match size snapshot 1`] = `
             class="h-[14px] w-[14px] relative rounded-full bg-background"
           >
             <svg
-              class="text-neutral-300 h-full w-full"
+              class="text-neutral-disabled h-full w-full"
               fill="none"
               height="16"
               viewBox="0 0 24 24"

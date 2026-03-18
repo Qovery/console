@@ -144,7 +144,7 @@ export function ApplicationContainerPortCrudModal({
               isMatchingHealthCheck && (
                 <Tooltip side="left" content="A health check is running on this port">
                   <div>
-                    <Icon iconName="shield-check" className="text-green-500 hover:text-green-700" />
+                    <Icon iconName="shield-check" className="text-positive hover:text-positive-hover" />
                   </div>
                 </Tooltip>
               )
