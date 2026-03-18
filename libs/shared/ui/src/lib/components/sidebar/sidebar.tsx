@@ -28,7 +28,6 @@ const sidebarItemVariants = cva(
     'text-sm',
     'font-medium',
     'cursor-pointer',
-    'transition-colors',
     'truncate',
     'border-r',
     'border-r-transparent',
@@ -55,7 +54,6 @@ const sidebarSubItemVariants = cva(
     'text-sm',
     'font-medium',
     'cursor-pointer',
-    'transition-colors',
     'truncate',
     'pl-[39px]',
     'border-r',
@@ -65,12 +63,7 @@ const sidebarSubItemVariants = cva(
     variants: {
       active: {
         true: ['text-brand', 'bg-surface-brand-component', 'border-r-surface-brand-solid'],
-        false: [
-          'text-neutral-subtle',
-          'hover:text-brand',
-          'hover:bg-surface-neutral-subtle',
-          'hover:border-r-surface-brand-solid',
-        ],
+        false: ['text-neutral-subtle', 'hover:bg-surface-neutral-subtle'],
       },
     },
     defaultVariants: {
