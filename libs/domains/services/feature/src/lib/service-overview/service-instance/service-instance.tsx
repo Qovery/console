@@ -126,7 +126,7 @@ export function ServiceInstance({ service }: { service: AnyService }) {
   return (
     <div>
       <div className="overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
-        <div className="no-scrollbar overflow-x-auto px-4 pb-5 pt-3.5">
+        <div className="no-scrollbar overflow-x-auto px-4 pb-4 pt-3.5">
           <div className="flex min-w-[960px] justify-end gap-6">
             {resources && resources}
             {valuesOverride && valuesOverride}

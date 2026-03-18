@@ -41,7 +41,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
   const defaultContainer = filteredContainers[0]?.name
 
   return (
-    <div className="relative flex flex-col gap-y-3 overflow-hidden bg-surface-neutral-subtle pb-4 pl-4 pr-20 pt-3">
+    <div className="relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3">
       <Link
         as="button"
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
@@ -61,7 +61,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
         type="button"
         size="sm"
         color="neutral"
-        variant="outline"
+        variant="surface"
         className="relative z-dropdown max-w-fit gap-0.5"
       >
         Logs

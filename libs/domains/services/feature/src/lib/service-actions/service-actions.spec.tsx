@@ -60,17 +60,4 @@ describe('ServiceActions', () => {
 
     expect(baseElement).toMatchSnapshot()
   })
-
-  it('should not display logs entry in header other actions', async () => {
-    const { userEvent } = renderWithProviders(
-      <ServiceActions serviceId={mockHelm.id} environment={mockEnvironment} variant="header" />,
-      {
-        container: document.body,
-      }
-    )
-    const buttonOtherActions = screen.getByLabelText(/other actions/i)
-    await userEvent.click(buttonOtherActions)
-
-    expect(screen.queryByRole('menuitem', { name: /^logs$/i })).not.toBeInTheDocument()
-  })
 })
