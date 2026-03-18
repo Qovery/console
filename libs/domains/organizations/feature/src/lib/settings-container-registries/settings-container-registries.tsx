@@ -261,7 +261,7 @@ export function SettingsContainerRegistries() {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="p-8">
+      <Section className="px-8 pb-8 pt-6">
         <div className="relative">
           <SettingsHeading
             title="Container registries"

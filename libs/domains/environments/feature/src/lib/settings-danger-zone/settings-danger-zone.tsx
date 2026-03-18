@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, OVERVIEW_URL } from '@qovery/shared/routes'
-import { BlockContentDelete } from '@qovery/shared/ui'
+import { BlockContentDelete, Section } from '@qovery/shared/ui'
 import { useDeleteEnvironment } from '../hooks/use-delete-environment/use-delete-environment'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 
@@ -15,7 +15,7 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <div className="max-w-content-with-navigation-left p-8">
+      <Section className="max-w-content-with-navigation-left px-8 pb-8 pt-6">
         <BlockContentDelete
           title="Delete Environment"
           list={[
@@ -38,7 +38,7 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
             name: environment?.name,
           }}
         />
-      </div>
+      </Section>
     </div>
   )
 }

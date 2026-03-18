@@ -179,7 +179,7 @@ export function ApplicationContainerStorageSettings() {
   }
 
   return (
-    <Section className="p-8">
+    <Section className="px-8 pb-8 pt-6">
       <div className="space-y-6">
         <SettingsHeading title="Storage" description="Add persistent local storage for your application.">
           <Tooltip

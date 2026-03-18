@@ -347,7 +347,7 @@ export function SettingsCloudCredentials() {
 
   return (
     <div className="w-full">
-      <Section className="p-8">
+      <Section className="px-8 pb-8 pt-6">
         <div className="relative">
           <SettingsHeading title="Cloud Credentials" description="Manage your Cloud providers credentials." />
 

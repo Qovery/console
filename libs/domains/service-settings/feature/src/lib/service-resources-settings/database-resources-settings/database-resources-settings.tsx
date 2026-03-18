@@ -115,7 +115,7 @@ function DatabaseResourcesSettingsForm({
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="p-8">
+      <Section className="px-8 pb-8 pt-6">
         <SettingsHeading title="Resources" description="Manage the database resources." />
         <div className="max-w-content-with-navigation-left">
           <form className="space-y-10" onSubmit={onSubmit}>

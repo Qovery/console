@@ -2,7 +2,8 @@ import { createFileRoute, useParams } from '@tanstack/react-router'
 import { type FormEventHandler, useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { useEditProject, useProject } from '@qovery/domains/projects/feature'
-import { BlockContent, Button, Heading, InputText, InputTextArea, Section } from '@qovery/shared/ui'
+import { SettingsHeading } from '@qovery/shared/console-shared'
+import { BlockContent, Button, InputText, InputTextArea, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -22,9 +23,9 @@ function PageProjectGeneral(props: PageProjectGeneralProps) {
 
   return (
     <div key={getValues().toString()} className="flex w-full flex-col justify-between">
-      <Section className="max-w-content-with-navigation-left p-8">
-        <Heading className="mb-10">Project infos</Heading>
-        <form onSubmit={onSubmit}>
+      <Section className="px-8 pb-8 pt-6">
+        <SettingsHeading title="General" showNeedHelp={false} />
+        <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
           <BlockContent title="Project settings">
             <Controller
               name="name"

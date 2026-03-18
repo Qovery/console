@@ -96,7 +96,7 @@ export function SettingsGitRepositoryAccess() {
 
   return (
     <div className="w-full justify-between">
-      <Section className="p-8">
+      <Section className="px-8 pb-8 pt-6">
         <div className="relative">
           <SettingsHeading
             title="Git Repository Access"

@@ -74,7 +74,7 @@ function ServiceOverviewContent({
     return (
       <>
         <NeedRedeployFlag />
-        <Section className="flex flex-1 grow flex-col gap-6 overflow-auto px-10 py-7">
+        <Section className="flex flex-1 grow flex-col gap-6 overflow-auto px-8 pb-8 pt-6">
           <ServiceHeader environment={environment} serviceId={service.id} service={service} />
           {isDatabaseManaged ? (
             <div className="flex flex-col items-center gap-1 border border-neutral bg-surface-neutral-subtle py-10 text-sm text-neutral">
@@ -96,7 +96,7 @@ function ServiceOverviewContent({
     <>
       <NeedRedeployFlag />
       <div className="flex min-h-0 flex-1 grow flex-col gap-6 pb-24">
-        <div className="flex shrink-0 flex-col gap-5 py-8 text-sm">
+        <div className="flex shrink-0 flex-col gap-5 pb-8 pt-6 text-sm">
           <Section className="gap-8">
             <ServiceHeader environment={environment} serviceId={service.id} service={service} />
             {hasNoMetrics && observabilityCallout}
