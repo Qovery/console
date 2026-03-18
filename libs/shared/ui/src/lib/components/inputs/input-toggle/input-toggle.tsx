@@ -15,17 +15,7 @@ export interface InputToggleProps {
 }
 
 export function InputToggle(props: InputToggleProps) {
-  const {
-    small,
-    value,
-    onChange,
-    description,
-    title,
-    className = '',
-    align = 'center',
-    disabled = false,
-    name,
-  } = props
+  const { small, value, onChange, description, title, className = '', align = 'center', disabled = false, name } = props
 
   const [toggleActive, setToggleActive] = useState(value)
   const [animateEnabled, setAnimateEnabled] = useState(false)
