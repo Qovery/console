@@ -88,7 +88,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
   }
 
   const baseClassNames =
-    'flex text-left items-start gap-4 relative rounded border border-neutral transition-all hover:border-brand-strong bg-surface-neutral p-5 transition w-[397px]'
+    'flex text-left items-start gap-4 relative rounded border border-neutral transition-all hover:border-brand-strong bg-surface-neutral p-4 transition w-[397px]'
 
   return match(props)
     .with({ selectedInstallationType: 'self-managed' }, ({ selectedInstallationType, openInstallationGuideModal }) => (
@@ -202,32 +202,32 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
       const position = (index + 1) % 3
 
       return clsx(className, {
-        '-ml-[calc(100%+20px)] w-[calc(200%+20px)] lg:w-[calc(300%+40px)]': position === 2, // 3n+2
-        'w-[calc(200%+20px)] lg:-ml-[calc(200%+40px)] lg:w-[calc(300%+40px)]': position === 0, // 3n+3
-        'w-[calc(200%+20px)] lg:w-[calc(300%+40px)]': position === 1, // 3n+1
-        '-ml-[calc(100%+20px)] lg:-ml-0': index === 3,
+        '-ml-[calc(100%+16px)] w-[calc(200%+16px)] lg:w-[calc(300%+32px)]': position === 2, // 3n+2
+        'w-[calc(200%+16px)] lg:-ml-[calc(200%+32px)] lg:w-[calc(300%+32px)]': position === 0, // 3n+3
+        'w-[calc(200%+16px)] lg:w-[calc(300%+32px)]': position === 1, // 3n+1
+        '-ml-[calc(100%+16px)] lg:-ml-0': index === 3,
       })
     }
 
     return (
-      <div ref={ref} className="h-fit w-[calc(100%/2-20px)] lg:w-[calc(100%/3-20px)]">
+      <div ref={ref} className="h-fit w-[calc(100%/2-16px)] lg:w-[calc(100%/3-16px)]">
         <button
           onClick={() => setExpanded(!expanded)}
           className={twMerge(
             clsx(
-              'flex h-32 w-full cursor-pointer justify-start gap-4 rounded border border-neutral p-5 shadow-sm transition hover:border-brand-strong',
+              'flex h-32 w-full cursor-pointer justify-start gap-4 rounded-md border border-neutral p-4 shadow-sm transition hover:border-brand-strong',
               {
                 'border-brand-strong': expanded,
               }
             )
           )}
         >
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col justify-between">
             <div>
               {typeof icon === 'string' ? (
-                <img className="select-none" width={48} height={48} src={icon} alt={title} />
+                <img className="select-none" width={32} height={32} src={icon} alt={title} />
               ) : (
-                cloneElement(icon as ReactElement, { className: 'w-[48px] h-[48px]' })
+                cloneElement(icon as ReactElement, { className: 'w-[32px] h-[32px]' })
               )}
             </div>
             <p className="text-base font-semibold text-neutral">{title}</p>
@@ -247,27 +247,29 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
               animate={{ opacity: 1 }}
               exit={{ opacity: 0.25, pointerEvents: 'none' }}
               transition={{ duration: 0.15 }}
-              className={getExpanderPosition('relative mt-5 overflow-hidden', index)}
+              className={getExpanderPosition('relative mt-4 overflow-hidden', index)}
             >
-              <div className="flex flex-col gap-6 rounded border border-neutral bg-surface-neutral-subtle p-5">
-                <div className="flex gap-6 font-bold">
+              <div className="flex flex-col gap-6 rounded-md border border-neutral bg-surface-neutral-subtle p-4">
+                <div className="flex gap-3 font-medium">
                   <div>
                     {typeof icon === 'string' ? (
-                      <img className="select-none" width={32} height={32} src={icon} alt={title} />
+                      <img className="select-none" width={24} height={24} src={icon} alt={title} />
                     ) : (
-                      cloneElement(icon as ReactElement, { className: 'w-[32px] h-[32px]' })
+                      cloneElement(icon as ReactElement, { className: 'w-[24px] h-[24px]' })
                     )}
                   </div>
-                  <span className="text-lg text-neutral">{title}</span>
+                  <span className="text-base text-neutral">{title}</span>
                 </div>
-                <div className="flex gap-5">
+                <div className="flex gap-3">
                   {options.map((optionProps) => (
                     <CardOption key={optionProps.title} {...optionProps} />
                   ))}
                 </div>
                 <Button
-                  className="absolute right-5 top-5 h-9 w-9 items-center justify-center"
-                  variant="outline"
+                  className="absolute right-4 top-4"
+                  variant="plain"
+                  size="xs"
+                  iconOnly
                   color="neutral"
                   onClick={() => setExpanded(false)}
                 >
@@ -284,7 +286,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
 
     return (
       <button
-        className="relative flex h-32 w-[calc(100%/2-20px)] cursor-pointer justify-between gap-4 rounded border border-neutral p-5 shadow-sm transition hover:border-brand-strong lg:w-[calc(100%/3-20px)]"
+        className="relative flex h-32 w-[calc(100%/2-16px)] cursor-pointer justify-between gap-4 rounded-md border border-neutral p-4 shadow-sm transition hover:border-brand-strong lg:w-[calc(100%/3-16px)]"
         onClick={() => {
           posthog.capture('select-cluster', {
             selectedCloudProvider,
@@ -293,12 +295,12 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
           openInstallationGuideModal()
         }}
       >
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col justify-between">
           <div>
             {typeof icon === 'string' ? (
-              <img className="select-none" width={48} height={48} src={icon} alt={title} />
+              <img className="select-none" width={32} height={32} src={icon} alt={title} />
             ) : (
-              cloneElement(icon as ReactElement, { className: 'w-[48px] h-[48px]' })
+              cloneElement(icon as ReactElement, { className: 'w-[32px] h-[32px]' })
             )}
           </div>
           <p className="truncate text-base font-semibold text-neutral">{title}</p>
@@ -504,13 +506,13 @@ export function ClusterNew() {
   ]
 
   return (
-    <div className="flex w-full flex-col gap-10">
+    <div className="mt-8 flex w-full flex-col gap-10">
       <Section>
         <div className="mb-5 flex flex-col gap-0.5">
           <Heading>Qovery on your local machine</Heading>
           <p className="text-sm text-neutral-subtle">Quickly test and validate the Qovery solution on your computer.</p>
         </div>
-        <div className="flex flex-wrap gap-5">
+        <div className="flex flex-wrap gap-4">
           <CardCluster {...cloudProviders[0]} />
         </div>
       </Section>
@@ -519,7 +521,7 @@ export function ClusterNew() {
           <Heading>Or choose your hosting mode</Heading>
           <p className="text-sm text-neutral-subtle">Manage your infrastructure across different hosting mode.</p>
         </div>
-        <div className="flex w-[calc(100%+20px)] flex-wrap gap-5">
+        <div className="flex w-[calc(100%+16px)] flex-wrap gap-4">
           {cloudProviders.slice(1).map((props, index) => (
             <CardCluster key={props.title} index={index} {...props} />
           ))}

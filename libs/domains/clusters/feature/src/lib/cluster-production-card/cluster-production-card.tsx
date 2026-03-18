@@ -16,7 +16,7 @@ export function ClusterProductionCard({ cluster, clusterStatus }: { cluster: Clu
     <Link
       to="/organization/$organizationId/cluster/$clusterId/overview"
       params={{ organizationId: cluster.organization.id, clusterId: cluster.id }}
-      className="duration-50 flex flex-col gap-5 rounded border border-neutral bg-surface-neutral p-5 text-neutral transition-colors hover:bg-surface-neutral-subtle"
+      className="duration-50 flex flex-col gap-5 rounded-lg border border-neutral bg-surface-neutral p-5 text-neutral transition-colors hover:bg-surface-neutral-subtle"
     >
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-md border border-neutral bg-surface-neutral-subtle">
