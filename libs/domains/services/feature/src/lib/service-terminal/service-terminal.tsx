@@ -69,15 +69,6 @@ export function ServiceTerminal({
   const [selectedPod, setSelectedPod] = useState<string | undefined>()
   const [selectedContainer, setSelectedContainer] = useState<string | undefined>()
 
-  // Lock body scroll when terminal is open
-  useEffect(() => {
-    const originalStyle = window.getComputedStyle(document.body).overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = originalStyle
-    }
-  }, [])
-
   const onOpenHandler = useCallback(
     (_: QueryClient, event: Event) => {
       const websocket = event.target as WebSocket
