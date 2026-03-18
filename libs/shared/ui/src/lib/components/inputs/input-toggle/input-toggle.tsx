@@ -44,7 +44,11 @@ export function InputToggle(props: InputToggleProps) {
 
   const toggleSizeBg = small ? 'w-8 h-4.5' : 'w-12 h-6'
   const toggleSizeCircle = small ? 'w-3.5 h-3.5' : 'w-5 h-5'
-  const alignmentClass = forceAlignTop ? 'items-start' : description || forceAlignCenter ? 'items-center' : 'items-start'
+  const alignmentClass = forceAlignTop
+    ? 'items-start'
+    : description || forceAlignCenter
+      ? 'items-center'
+      : 'items-start'
 
   const changeToggle = () => {
     if (disabled) return
