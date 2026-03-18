@@ -7,6 +7,7 @@ import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
+import { consumePendingReturnTo } from '../../auth/auth0'
 
 type Auth0CallbackSearch = {
   error?: string
@@ -37,7 +38,12 @@ function useRedirectIfLogged() {
 
       // User has at least 1 organization attached
       if (organizations.length > 0) {
-        navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0]?.id } })
+        const returnTo = consumePendingReturnTo()
+        if (returnTo) {
+          navigate({ to: returnTo })
+        } else {
+          navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0]?.id } })
+        }
       } else {
         const { data: userSignUp } = await refetchUserSignUp()
         if (userSignUp?.dx_auth) {
