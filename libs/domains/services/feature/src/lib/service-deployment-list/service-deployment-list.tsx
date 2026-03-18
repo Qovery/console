@@ -173,41 +173,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                     </DropdownMenu.Root>
                   ))
                   .otherwise(() => null)}
-                {(service?.serviceType === 'TERRAFORM' ||
-                  (service?.serviceType === 'JOB' && service?.job_type !== 'CRON')) &&
-                  // Show only when logs can be available (hide during build or active deployment)
-                  match(state)
-                    .with(
-                      P.when((s) => ['ONGOING', 'CANCELING', 'QUEUED', 'BUILDING'].includes(String(s))),
-                      () => null
-                    )
-                    .otherwise(() => (
-                      <Tooltip content="Service logs">
-                        <Link
-                          as="button"
-                          color="neutral"
-                          variant="outline"
-                          size="md"
-                          iconOnly
-                          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
-                          search={{
-                            mode: 'history',
-                            deploymentId: isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
-                            startDate: isDeploymentHistory(data)
-                              ? formatInTimeZone(new Date(data.auditing_data.created_at), 'yyyy-MM-dd HH:mm:ss', 'UTC')
-                              : undefined,
-                          }}
-                          params={{
-                            organizationId: environment?.organization.id ?? '',
-                            projectId: environment?.project.id ?? '',
-                            environmentId: environment?.id ?? '',
-                            serviceId,
-                          }}
-                        >
-                          <Icon iconName="scroll" />
-                        </Link>
-                      </Tooltip>
-                    ))}
                 <Tooltip content="Pipeline">
                   <Link
                     as="button"
