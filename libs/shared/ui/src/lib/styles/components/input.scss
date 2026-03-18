@@ -34,17 +34,6 @@
   @apply absolute bottom-[7px] left-0 w-full appearance-none bg-transparent px-3 text-sm text-neutral ring-0;
 }
 
-.input__value:-webkit-autofill,
-.input__value:-webkit-autofill:hover,
-.input__value:-webkit-autofill:focus,
-.input__value:-webkit-autofill:active {
-  -webkit-text-fill-color: currentColor;
-  caret-color: currentColor;
-  -webkit-box-shadow: 0 0 0 1000px var(--neutral-1) inset;
-  box-shadow: 0 0 0 1000px var(--neutral-1) inset;
-  transition: background-color 9999s ease-in-out 0s;
-}
-
 .input__value[type='time'] {
   overflow: visible;
   color: transparent;

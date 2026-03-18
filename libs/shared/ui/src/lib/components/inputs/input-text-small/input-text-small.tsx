@@ -30,6 +30,7 @@ export interface InputTextSmallProps {
   hasShowPasswordButton?: boolean
   disabled?: boolean
   spellCheck?: boolean
+  autoComplete?: string
 }
 
 export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(function InputTextSmall(
@@ -54,6 +55,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
     label,
     dataTestId = 'input-value',
     spellCheck = false,
+    autoComplete = 'off',
   } = props
 
   const [focused, setFocused] = useState(false)
@@ -116,6 +118,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
           data-testid={dataTestId}
           onKeyDown={onKeyDown}
           spellCheck={spellCheck}
+          autoComplete={autoComplete}
         />
         {hasShowPasswordButton && (
           <div
