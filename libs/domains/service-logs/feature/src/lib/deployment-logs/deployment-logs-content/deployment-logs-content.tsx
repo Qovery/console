@@ -14,7 +14,7 @@ import { Banner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ListDeploymentLogs } from '../../list-deployment-logs/list-deployment-logs'
 
-export interface DeploymentLogsFeatureProps {
+export interface DeploymentLogsContentProps {
   environment: Environment
   deploymentStages?: DeploymentStageWithServicesStatuses[]
   environmentStatus?: EnvironmentStatus
@@ -104,7 +104,7 @@ export function DeploymentLogsContent({
   environmentStatus,
   deploymentStages,
   preCheckStage,
-}: DeploymentLogsFeatureProps) {
+}: DeploymentLogsContentProps) {
   const { serviceId = '', executionId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
 
