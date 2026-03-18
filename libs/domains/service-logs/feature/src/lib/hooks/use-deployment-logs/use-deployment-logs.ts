@@ -13,7 +13,7 @@ export interface UseDeploymentLogsProps {
   projectId?: string
   environmentId?: string
   serviceId?: string
-  versionId?: string
+  executionId?: string
 }
 
 export interface EnvironmentLogIds extends EnvironmentLogs {
@@ -29,7 +29,7 @@ export function useDeploymentLogs({
   projectId,
   environmentId,
   serviceId,
-  versionId,
+  executionId,
 }: UseDeploymentLogsProps) {
   const { hash } = useLocation()
   const { data: deploymentHistory = [] } = useDeploymentHistory({ environmentId: environmentId ?? '', suspense: true })
@@ -63,7 +63,7 @@ export function useDeploymentLogs({
   )
 
   // XXX: If we don't have a version, it works like WS otherwise, it works like a REST API
-  const isLatestVersion = deploymentHistory[0]?.identifier.execution_id === versionId
+  const isLatestVersion = deploymentHistory[0]?.identifier.execution_id === executionId
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/logs',
@@ -72,7 +72,7 @@ export function useDeploymentLogs({
       cluster: environment?.cluster_id,
       project: projectId,
       environment: environmentId,
-      version: isLatestVersion ? undefined : versionId,
+      version: isLatestVersion ? undefined : executionId,
     },
     enabled:
       Boolean(organizationId) && Boolean(environment?.cluster_id) && Boolean(projectId) && Boolean(environmentId),
