@@ -52,6 +52,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
                     Service name
                   </label>
                   <input
+                    autocomplete="off"
                     class="input__value"
                     data-testid="input-text"
                     id="Service name"
@@ -67,7 +68,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
             class=""
           >
             <div
-              class="input input--select    "
+              class="input input--select"
               data-testid="select"
             >
               <label
@@ -180,6 +181,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
                     External port
                   </label>
                   <input
+                    autocomplete="off"
                     class="input__value"
                     data-testid="input-text"
                     disabled=""
@@ -213,6 +215,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
                     Namespace (optional)
                   </label>
                   <input
+                    autocomplete="off"
                     class="input__value"
                     data-testid="input-text"
                     id="Namespace (optional)"
@@ -246,6 +249,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
                       Port name
                     </label>
                     <input
+                      autocomplete="off"
                       class="input__value"
                       data-testid="input-text"
                       id="Port name"
@@ -342,6 +346,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                     Service name
                   </label>
                   <input
+                    autocomplete="off"
                     class="input__value"
                     data-testid="input-text"
                     id="Service name"
@@ -374,6 +379,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                     Service port
                   </label>
                   <input
+                    autocomplete="off"
                     class="input__value"
                     data-testid="input-text"
                     id="Service port"
@@ -389,7 +395,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
             class=""
           >
             <div
-              class="input input--select    "
+              class="input input--select"
               data-testid="select"
             >
               <label
@@ -502,6 +508,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                     External port
                   </label>
                   <input
+                    autocomplete="off"
                     class="input__value"
                     data-testid="input-text"
                     disabled=""
@@ -535,6 +542,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                     Namespace (optional)
                   </label>
                   <input
+                    autocomplete="off"
                     class="input__value"
                     data-testid="input-text"
                     id="Namespace (optional)"
@@ -568,6 +576,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                       Port name
                     </label>
                     <input
+                      autocomplete="off"
                       class="input__value"
                       data-testid="input-text"
                       id="Port name"

@@ -25,6 +25,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
                 Public repository URL (.git)
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 id="Public repository URL (.git)"
@@ -70,6 +71,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
               Branch
             </label>
             <input
+              autocomplete="off"
               class="input__value"
               data-testid="input-text"
               id="Branch"
@@ -103,6 +105,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
                 Root service path
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 id="Root service path"

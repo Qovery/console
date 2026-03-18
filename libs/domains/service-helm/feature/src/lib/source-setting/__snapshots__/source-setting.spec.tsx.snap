@@ -10,7 +10,7 @@ exports[`SourceSetting should match snapshot 1`] = `
         class=""
       >
         <div
-          class="input input--select    "
+          class="input input--select"
           data-testid="select"
         >
           <label
@@ -109,7 +109,7 @@ exports[`SourceSetting should match snapshot 1`] = `
           class=""
         >
           <div
-            class="input input--select    "
+            class="input input--select"
             data-testid="select"
           >
             <label
@@ -214,7 +214,7 @@ exports[`SourceSetting should match snapshot 1`] = `
           class=""
         >
           <div
-            class="input input--select    "
+            class="input input--select"
             data-testid="select"
           >
             <label
@@ -330,7 +330,7 @@ exports[`SourceSetting should match snapshot helm chart settings with HTTPS kind
       class=""
     >
       <div
-        class="input input--select    "
+        class="input input--select"
         data-testid="select"
       >
         <label
@@ -435,7 +435,7 @@ exports[`SourceSetting should match snapshot helm chart settings with HTTPS kind
       class=""
     >
       <div
-        class="input input--select    "
+        class="input input--select"
         data-testid="select"
       >
         <label
@@ -564,6 +564,7 @@ exports[`SourceSetting should match snapshot helm chart settings with OCI kind 1
               Chart name
             </label>
             <input
+              autocomplete="off"
               class="input__value"
               data-testid="input-text"
               id="Chart name"
@@ -596,6 +597,7 @@ exports[`SourceSetting should match snapshot helm chart settings with OCI kind 1
               Version
             </label>
             <input
+              autocomplete="off"
               class="input__value"
               data-testid="input-text"
               id="Version"

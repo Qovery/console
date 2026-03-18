@@ -54,6 +54,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                   Environment name
                 </label>
                 <input
+                  autocomplete="off"
                   class="input__value"
                   data-testid="input-text"
                   id="Environment name"
@@ -69,7 +70,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
           class="mb-3"
         >
           <div
-            class="input input--select    "
+            class="input input--select"
             data-testid="input-select-cluster"
           >
             <label
@@ -167,7 +168,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
           class="mb-3"
         >
           <div
-            class="input input--select input--has-icon   "
+            class="input input--select input--has-icon"
             data-testid="input-select-mode"
           >
             <div
