@@ -564,6 +564,7 @@ exports[`SourceSetting should match snapshot helm chart settings with OCI kind 1
               Chart name
             </label>
             <input
+              autocomplete="off"
               class="input__value"
               data-testid="input-text"
               id="Chart name"
@@ -596,6 +597,7 @@ exports[`SourceSetting should match snapshot helm chart settings with OCI kind 1
               Version
             </label>
             <input
+              autocomplete="off"
               class="input__value"
               data-testid="input-text"
               id="Version"

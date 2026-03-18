@@ -54,6 +54,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                   Environment name
                 </label>
                 <input
+                  autocomplete="off"
                   class="input__value"
                   data-testid="input-text"
                   id="Environment name"

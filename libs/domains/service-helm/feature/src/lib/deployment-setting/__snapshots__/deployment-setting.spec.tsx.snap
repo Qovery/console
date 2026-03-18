@@ -28,6 +28,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
                   Helm arguments
                 </label>
                 <input
+                  autocomplete="off"
                   class="input__value"
                   data-testid="input-text"
                   id="Helm arguments"
@@ -79,6 +80,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
                 Helm timeout
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 id="Helm timeout"

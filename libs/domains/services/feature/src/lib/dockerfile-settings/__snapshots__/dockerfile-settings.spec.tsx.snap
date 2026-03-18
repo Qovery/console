@@ -138,6 +138,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
                   Dockerfile path
                 </label>
                 <input
+                  autocomplete="off"
                   class="input__value"
                   data-testid="input-text-dockerfile"
                   id="Dockerfile path"
@@ -189,6 +190,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
                   Dockerfile stage (optional)
                 </label>
                 <input
+                  autocomplete="off"
                   class="input__value"
                   data-testid="input-text"
                   id="Dockerfile stage (optional)"
@@ -354,6 +356,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
                   Dockerfile path
                 </label>
                 <input
+                  autocomplete="off"
                   class="input__value"
                   data-testid="input-text-dockerfile"
                   id="Dockerfile path"
@@ -405,6 +408,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
                   Dockerfile stage (optional)
                 </label>
                 <input
+                  autocomplete="off"
                   class="input__value"
                   data-testid="input-text"
                   id="Dockerfile stage (optional)"
