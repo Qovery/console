@@ -74,7 +74,7 @@ export const SettingsDeploymentRules = () => {
                     onChange={field.onChange}
                     title="Deploy on specific timeframe"
                     description="Your environment will be automatically started and stopped on a specific timeframe."
-                    forceAlignTop
+                    align="top"
                     small
                   />
                 )}

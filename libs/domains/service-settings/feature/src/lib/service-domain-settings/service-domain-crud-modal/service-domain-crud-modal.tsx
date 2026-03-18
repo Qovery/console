@@ -166,7 +166,7 @@ export function ServiceDomainCrudModal({
               }}
               title="Domain behind a CDN or DNS proxy (e.g. Cloudflare, CloudFront, Route 53)"
               description="Check this if the traffic on this domain is managed by a CDN or DNS proxy."
-              forceAlignTop
+              align="top"
               small
             />
           )}
@@ -182,7 +182,7 @@ export function ServiceDomainCrudModal({
               onChange={field.onChange}
               title="Generate certificate"
               description="Qovery will generate and manage the certificate for this domain."
-              forceAlignTop
+              align="top"
               small
             />
           )}

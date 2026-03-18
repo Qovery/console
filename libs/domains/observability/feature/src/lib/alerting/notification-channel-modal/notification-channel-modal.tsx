@@ -472,7 +472,7 @@ export function NotificationChannelModal({
                       onChange={field.onChange}
                       title="Require TLS"
                       description="Force TLS encryption for SMTP connection"
-                      forceAlignTop
+                      align="top"
                       small
                     />
                   )}

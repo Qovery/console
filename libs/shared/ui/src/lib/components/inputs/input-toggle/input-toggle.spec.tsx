@@ -113,7 +113,7 @@ describe('InputToggle', () => {
   })
 
   it('should display title and description when provided', () => {
-    render(<InputToggle {...props} title="Test Title" description="Test Description" />)
+    render(<InputToggle {...props} title="Test Title" description="Test Description" align="center" />)
 
     expect(screen.getByText('Test Title')).toBeInTheDocument()
     expect(screen.getByText('Test Description')).toBeInTheDocument()
@@ -126,12 +126,20 @@ describe('InputToggle', () => {
     expect(container).toHaveClass('custom-class')
   })
 
-  it('should align center when forceAlignCenter is true', () => {
-    render(<InputToggle {...props} forceAlignCenter />)
+  it('should align center by default', () => {
+    render(<InputToggle {...props} />)
 
     const container = screen.getByTestId('input-toggle')
     expect(container).toHaveClass('items-center')
     expect(container).not.toHaveClass('items-start')
+  })
+
+  it('should align top when align is top', () => {
+    render(<InputToggle {...props} align="top" />)
+
+    const container = screen.getByTestId('input-toggle')
+    expect(container).toHaveClass('items-start')
+    expect(container).not.toHaveClass('items-center')
   })
 
   it('should use custom dataTestId when provided', () => {

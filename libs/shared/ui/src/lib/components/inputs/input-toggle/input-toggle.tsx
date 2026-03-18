@@ -9,8 +9,7 @@ export interface InputToggleProps {
   description?: string
   className?: string
   dataTestId?: string
-  forceAlignTop?: boolean
-  forceAlignCenter?: boolean
+  align?: 'center' | 'top'
   disabled?: boolean
   name?: string
 }
@@ -23,8 +22,7 @@ export function InputToggle(props: InputToggleProps) {
     description,
     title,
     className = '',
-    forceAlignTop = false,
-    forceAlignCenter = false,
+    align = 'center',
     disabled = false,
     name,
   } = props
@@ -44,11 +42,7 @@ export function InputToggle(props: InputToggleProps) {
 
   const toggleSizeBg = small ? 'w-8 h-4.5' : 'w-12 h-6'
   const toggleSizeCircle = small ? 'w-3.5 h-3.5' : 'w-5 h-5'
-  const alignmentClass = forceAlignTop
-    ? 'items-start'
-    : description || forceAlignCenter
-      ? 'items-center'
-      : 'items-start'
+  const alignmentClass = align === 'top' ? 'items-start' : 'items-center'
 
   const changeToggle = () => {
     if (disabled) return
@@ -97,7 +91,7 @@ export function InputToggle(props: InputToggleProps) {
       {title && (
         <div
           onClick={changeToggle}
-          className={`${description && forceAlignTop ? 'relative -top-0.5' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''} flex flex-col gap-1`}
+          className={`${description && align === 'top' ? 'relative -top-0.5' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''} flex flex-col gap-1`}
         >
           {title && <p className="font-medium text-neutral">{title}</p>}
           {description && <div className="text-neutral-subtle">{description}</div>}

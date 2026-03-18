@@ -73,7 +73,7 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
               onChange={field.onChange}
               title="Production cluster"
               description="Actions on productions clusters will be more restricted"
-              forceAlignTop
+              align="top"
               small
             />
           </div>
@@ -91,7 +91,7 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
                   onChange={field.onChange}
                   title="Metrics enabled"
                   description="Enable metrics for the cluster (Qovery admin only)"
-                  forceAlignTop
+                  align="top"
                   small
                 />
               </div>
@@ -107,7 +107,7 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
                   onChange={field.onChange}
                   title="Alert enabled"
                   description="Enable alerts for the cluster (requires metrics to be enabled)"
-                  forceAlignTop
+                  align="top"
                   small
                   disabled={!metricsEnabled}
                 />
@@ -125,7 +125,7 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
                     onChange={field.onChange}
                     title="CloudWatch exporter enabled"
                     description="Monitor AWS managed database (RDS)"
-                    forceAlignTop
+                    align="top"
                     small
                     disabled={!metricsEnabled}
                   />
@@ -146,7 +146,7 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
                 onChange={field.onChange}
                 title="KEDA enabled"
                 description="Enable KEDA for the cluster"
-                forceAlignTop
+                align="top"
                 small
               />
             </div>

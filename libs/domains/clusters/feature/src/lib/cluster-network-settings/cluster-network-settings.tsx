@@ -62,7 +62,7 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
         description="Create EKS nodes inside private subnets?"
         className="mb-4"
         value={feature.eks_create_nodes_in_private_subnet}
-        forceAlignTop
+        align="top"
         small
         disabled
       />

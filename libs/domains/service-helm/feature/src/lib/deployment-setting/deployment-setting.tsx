@@ -90,7 +90,7 @@ export function DeploymentSetting() {
             className="mt-2"
             value={field.value}
             onChange={field.onChange}
-            forceAlignTop
+            align="top"
             small
           />
         )}

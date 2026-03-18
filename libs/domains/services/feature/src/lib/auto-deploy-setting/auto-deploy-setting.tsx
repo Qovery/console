@@ -24,9 +24,9 @@ export function AutoDeploySetting({ source, className = '', titleSuffix }: AutoD
         return (
           <InputToggle
             className={className}
-            forceAlignCenter
             value={field.value}
             onChange={field.onChange}
+            align="center"
             title={
               titleSuffix ? (
                 <span className="flex items-center gap-2">
