@@ -835,40 +835,10 @@ function MenuOtherActions({
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-<<<<<<< feat/new-nav/design-improvments
-        {shellAction && (
+        {variant === 'header' && shellAction && (
           <DropdownMenu.Item icon={<Icon iconName="terminal" />} onSelect={shellAction}>
             Cloud shell
           </DropdownMenu.Item>
-        )}
-        {editCodeUrl && (
-          <a href={editCodeUrl} target="_blank" rel="noreferrer">
-            <DropdownMenu.Item icon={<Icon iconName="code" />}>Edit code</DropdownMenu.Item>
-          </a>
-=======
-        {variant === 'header' && (
-          <>
-            <DropdownMenu.Item icon={<Icon iconName="scroll" />} asChild>
-              <Link
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
-                params={{
-                  organizationId: environment.organization.id,
-                  projectId: environment.project.id,
-                  environmentId: environment.id,
-                  serviceId: service.id,
-                }}
-                className="gap-0"
-              >
-                Logs
-              </Link>
-            </DropdownMenu.Item>
-            {shellAction && (
-              <DropdownMenu.Item icon={<Icon iconName="terminal" />} onSelect={shellAction}>
-                Cloud shell
-              </DropdownMenu.Item>
-            )}
-          </>
->>>>>>> new-navigation
         )}
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
           <Link
@@ -978,20 +948,6 @@ export function ServiceActions({
               <Icon iconName="scroll" />
             </Link>
           </Tooltip>
-          {effectiveShellAction && (
-            <Tooltip content="Qovery cloud shell">
-              <Button
-                aria-label="Qovery cloud shell"
-                color="neutral"
-                variant="outline"
-                size="sm"
-                iconOnly
-                onClick={effectiveShellAction}
-              >
-                <Icon iconName="terminal" />
-              </Button>
-            </Tooltip>
-          )}
         </>
       )}
 
