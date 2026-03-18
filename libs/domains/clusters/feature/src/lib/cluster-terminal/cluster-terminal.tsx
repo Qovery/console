@@ -4,13 +4,13 @@ import { FitAddon } from '@xterm/addon-fit'
 import { type ITerminalAddon } from '@xterm/xterm'
 import Color from 'color'
 import { DebugFlavor } from 'qovery-ws-typescript-axios'
-import { type MouseEvent as MouseDownEvent, memo, useCallback, useContext, useEffect, useState } from 'react'
+import { type MouseEvent as MouseDownEvent, memo, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { XTerm } from 'react-xtermjs'
 import { Button, Icon, LoaderSpinner, toast } from '@qovery/shared/ui'
+import { useTerminalReadiness } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
-import useClusterRunningStatus from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import { ClusterTerminalContext } from './cluster-terminal-provider'
 
 const MemoizedXTerm = memo(XTerm)
@@ -21,20 +21,16 @@ export interface ClusterTerminalProps {
 }
 
 export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalProps) {
-  const { data: runningStatuses } = useClusterRunningStatus({
-    organizationId,
-    clusterId,
-  })
-
-  const isRunningStatusesLoading = typeof runningStatuses !== 'object'
-
   const { setOpen } = useContext(ClusterTerminalContext)
   const MIN_TERMINAL_HEIGHT = 248
   const MAX_TERMINAL_HEIGHT = document.body.clientHeight - 64 - 60 // 64 (navbar) + 60 (terminal header)
   const [terminalParentHeight, setTerminalParentHeight] = useState(MIN_TERMINAL_HEIGHT)
   const [addons, setAddons] = useState<Array<ITerminalAddon>>([])
-  const isTerminalLoading = addons.length < 2 || isRunningStatusesLoading
-  const [showDelayedLoader, setShowDelayedLoader] = useState(true)
+  const isTerminalLoading = addons.length < 2
+  const { attachWebSocket, detachWebSocket, isTerminalReady } = useTerminalReadiness({
+    readyPrompt: '/ #',
+  })
+  const showDelayedLoader = !isTerminalReady
   const fitAddon = addons[0] as FitAddon | undefined
 
   const getCssVariableHex = (variableName: string): string => {
@@ -46,6 +42,19 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
   const foreground = getCssVariableHex('--neutral-12')
   const selectionBackground = getCssVariableHex('--brand-3')
   const selectionForeground = getCssVariableHex('--neutral-12')
+  const terminalOptions = useMemo(
+    () => ({
+      theme: {
+        background: backgroundColor,
+        foreground: foreground,
+        cursor: foreground,
+        cursorAccent: backgroundColor,
+        selectionBackground: selectionBackground,
+        selectionForeground: selectionForeground,
+      },
+    }),
+    [backgroundColor, foreground, selectionBackground, selectionForeground]
+  )
 
   // Lock body scroll when terminal is open
   useEffect(() => {
@@ -56,33 +65,27 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
     }
   }, [])
 
-  // Hack to avoid having connection delay with server
-  useEffect(() => {
-    if (!isTerminalLoading) {
-      const timer = setTimeout(() => setShowDelayedLoader(false), 4_000)
-      return () => clearTimeout(timer)
-    }
-    return () => null
-  }, [isTerminalLoading])
-
   const onOpenHandler = useCallback(
     (_: QueryClient, event: Event) => {
       const websocket = event.target as WebSocket
       const fitAddon = new FitAddon()
       // As WS are open twice in dev mode / strict mode it doesn't happens in production
+      attachWebSocket(websocket)
       setAddons([fitAddon, new AttachAddon(websocket)])
     },
-    [setAddons]
+    [attachWebSocket, setAddons]
   )
 
   const onCloseHandler = useCallback(
     (_: QueryClient, event: CloseEvent) => {
+      detachWebSocket()
+
       if (event.code !== 1006 && event.reason) {
         toast('ERROR', 'Not available', event.reason)
         setOpen(false)
       }
     },
-    [setOpen]
+    [detachWebSocket, setOpen]
   )
 
   // Necesssary to calculate the number of rows and columns (tty) for the terminal
@@ -145,12 +148,13 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
           {fitAddon && !showDelayedLoader && (
             <Button
               color="neutral"
-              variant="surface"
+              variant="outline"
               onClick={() => {
                 terminalParentHeight === MAX_TERMINAL_HEIGHT
                   ? setTerminalParentHeight(MIN_TERMINAL_HEIGHT)
                   : setTerminalParentHeight(MAX_TERMINAL_HEIGHT)
               }}
+              iconOnly
             >
               <Icon
                 iconName={terminalParentHeight === MAX_TERMINAL_HEIGHT ? 'chevron-down' : 'chevron-up'}
@@ -158,7 +162,7 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
               />
             </Button>
           )}
-          <Button color="neutral" variant="surface" onClick={() => setOpen(false)}>
+          <Button color="neutral" variant="outline" onClick={() => setOpen(false)}>
             Close shell
             <Icon iconName="xmark" className="ml-2 text-sm" />
           </Button>
@@ -174,20 +178,7 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
           </div>
         ) : (
           <>
-            <MemoizedXTerm
-              className="h-full"
-              addons={addons}
-              options={{
-                theme: {
-                  background: backgroundColor,
-                  foreground: foreground,
-                  cursor: foreground,
-                  cursorAccent: backgroundColor,
-                  selectionBackground: selectionBackground,
-                  selectionForeground: selectionForeground,
-                },
-              }}
-            />
+            <MemoizedXTerm className="h-full" addons={addons} options={terminalOptions} />
             {showDelayedLoader && (
               <div className="absolute inset-0 flex items-start justify-center border-neutral bg-surface-neutral-subtle pt-7">
                 <LoaderSpinner />

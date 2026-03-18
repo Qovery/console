@@ -142,8 +142,11 @@ function MenuManageDeployment({
                 <div className="flex flex-col gap-1">
                   <span>
                     This will run the{' '}
-                    <code className="rounded bg-neutral-200 px-1 font-mono text-xs">terraform destroy</code> command,
-                    terminating all resources managed by your Terraform project while keeping the Qovery service.
+                    <code className="rounded bg-surface-neutral-component px-1 font-mono text-xs">
+                      terraform destroy
+                    </code>{' '}
+                    command, terminating all resources managed by your Terraform project while keeping the Qovery
+                    service.
                   </span>
                   <span>To confirm, type "destroy". This action cannot be undone.</span>
                 </div>
@@ -254,7 +257,7 @@ function MenuManageDeployment({
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
+            For <strong className="font-medium text-neutral">{service.name}</strong>
           </p>
         </SelectCommitModal>
       ),
@@ -285,7 +288,7 @@ function MenuManageDeployment({
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
+            For <strong className="font-medium text-neutral">{service.name}</strong>
           </p>
         </SelectVersionModal>
       ),
@@ -317,7 +320,7 @@ function MenuManageDeployment({
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
+            For <strong className="font-medium text-neutral">{service.name}</strong>
           </p>
         </SelectVersionModal>
       ),
@@ -349,7 +352,7 @@ function MenuManageDeployment({
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
+            For <strong className="font-medium text-neutral">{service.name}</strong>
           </p>
         </SelectCommitModal>
       ),

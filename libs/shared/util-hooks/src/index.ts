@@ -14,4 +14,5 @@ export { useDocumentTitle, useClickAway, useCopyToClipboard, useDebounce, useLoc
 export * from './lib/use-format-hotkeys/use-format-hotkeys'
 export * from './lib/use-support-chat/use-support-chat'
 export * from './lib/use-pod-color/use-pod-color'
+export * from './lib/use-terminal-readiness/use-terminal-readiness'
 export * from './lib/use-utm-params/use-utm-params'
