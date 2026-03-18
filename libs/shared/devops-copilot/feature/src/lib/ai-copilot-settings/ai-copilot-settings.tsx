@@ -55,9 +55,9 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
 
   return (
     <div className="w-full justify-between">
-      <div className="max-w-content-with-navigation-left p-8">
-        <Section>
-          <SettingsHeading title="AI Copilot Configuration" description="Configure your Copilot" showNeedHelp={false} />
+      <Section className="px-8 pt-6 pb-8">
+        <SettingsHeading title="AI Copilot Configuration" description="Configure your Copilot" showNeedHelp={false} />
+        <div className="max-w-content-with-navigation-left">
           <Callout.Root color="purple" className="mb-4">
             <Callout.Icon>
               <Icon iconName="flask" />
@@ -95,8 +95,8 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
               />
             </div>
           )}
-        </Section>
-      </div>
+        </div>
+      </Section>
     </div>
   )
 }

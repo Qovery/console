@@ -11,4 +11,9 @@ describe('AICopilotSettings', () => {
     const { baseElement } = renderWithProviders(<AICopilotSettings {...props} />)
     expect(baseElement).toBeTruthy()
   })
+
+  it('should match snapshot', () => {
+    const { container } = renderWithProviders(<AICopilotSettings {...props} />)
+    expect(container).toMatchSnapshot()
+  })
 })
