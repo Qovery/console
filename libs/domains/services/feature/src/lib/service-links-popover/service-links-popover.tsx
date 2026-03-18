@@ -58,7 +58,7 @@ export function ServiceLinksPopover({
   return (
     <Popover.Root modal={true}>
       <Popover.Trigger className={filteredLinks.length === 0 ? 'hidden' : ''}>{children}</Popover.Trigger>
-      <Popover.Content side={side} className="max-w-[280px] border-transparent p-2 text-sm text-neutral" align={align}>
+      <Popover.Content side={side} className="max-w-[280px] border-neutral p-2 text-sm text-neutral" align={align}>
         <div className="flex items-center justify-between p-2">
           <p className="font-medium text-neutral">
             {filteredLinks?.length ?? 0} {pluralize(filteredLinks?.length ?? 0, 'link')} attached

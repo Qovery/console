@@ -111,10 +111,12 @@ export const DeploymentAction = ({
   status,
   className,
   iconClassName,
+  textClassName,
 }: {
   status: StateEnum | ServiceActionStatusEnum | DeploymentHistoryTriggerAction | ServiceSubActionEnum | undefined
   className?: string
   iconClassName?: string
+  textClassName?: string
 }) => {
   const action = getDeploymentAction(status)
   if (!status || !action) return null
@@ -122,7 +124,7 @@ export const DeploymentAction = ({
   return (
     <div className={twMerge('flex items-center gap-2 text-sm', className)}>
       <span className={iconClassName}>{action.icon}</span>
-      <span className="text-neutral">{action.status}</span>
+      <span className={twMerge('text-neutral', textClassName)}>{action.status}</span>
     </div>
   )
 }

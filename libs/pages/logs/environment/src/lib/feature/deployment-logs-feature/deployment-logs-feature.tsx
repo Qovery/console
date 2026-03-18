@@ -113,8 +113,15 @@ export function DeploymentLogsFeature({
   const { serviceId = '', executionId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
 
-  const { data: service, isFetched: isFetchedService } = useService({ environmentId: environment.id, serviceId })
-  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({ environmentId: environment.id })
+  const { data: service, isFetched: isFetchedService } = useService({
+    environmentId: environment.id,
+    serviceId,
+    suspense: true,
+  })
+  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({
+    environmentId: environment.id,
+    suspense: true,
+  })
 
   useDocumentTitle(`Deployment logs - ${service?.name ?? 'Loading...'}`)
 
@@ -171,6 +178,7 @@ export function DeploymentLogsFeature({
                 serviceId,
                 executionId: lastDeploymentExecutionId,
               },
+              replace: true,
             })
           }
         >

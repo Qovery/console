@@ -5,7 +5,7 @@ import {
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
 import { DeploymentLogsFeature } from '@qovery/pages/logs/environment'
@@ -18,7 +18,7 @@ export const Route = createFileRoute(
   component: RouteComponent,
 })
 
-function RouteComponent() {
+function DeploymentLogs() {
   const { organizationId, projectId, environmentId, executionId } = Route.useParams()
 
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
@@ -60,6 +60,13 @@ function RouteComponent() {
     onMessage: messageHandler,
   })
 
+  useEffect(() => {
+    // Reset local state when URL parameters change
+    setDeploymentStages(undefined)
+    setEnvironmentStatus(undefined)
+    setPreCheckStage(undefined)
+  }, [organizationId, projectId, environmentId, executionId])
+
   if (!environment || !deploymentStages || !environmentStatus || !preCheckStage) {
     return null
   }
@@ -76,4 +83,8 @@ function RouteComponent() {
       </ServiceStageIdsProvider>
     </div>
   )
+}
+
+function RouteComponent() {
+  return <DeploymentLogs />
 }
