@@ -173,7 +173,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                     </DropdownMenu.Root>
                   ))
                   .otherwise(() => null)}
-                <Tooltip content="Pipeline">
+                <Tooltip content="Logs">
                   <Link
                     as="button"
                     color="neutral"
@@ -189,7 +189,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                       executionId: isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
                     }}
                   >
-                    <Icon iconName="timeline" />
+                    <Icon iconName="scroll" />
                   </Link>
                 </Tooltip>
               </div>
