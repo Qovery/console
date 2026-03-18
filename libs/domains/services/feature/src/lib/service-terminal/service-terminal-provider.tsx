@@ -13,7 +13,9 @@ export const ServiceTerminalContext = createContext<{
 export const ServiceTerminalProvider = ({ children }: PropsWithChildren) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const search = useSearch({ strict: false }) as { hasShell?: boolean }
+  const search = useSearch({
+    from: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+  })
   const hasShellFromLocationState = Boolean((location.state as { hasShell?: boolean } | undefined)?.hasShell)
   const syncedOpen = typeof search.hasShell === 'boolean' ? search.hasShell : hasShellFromLocationState
   const [open, setOpen] = useState(syncedOpen)
