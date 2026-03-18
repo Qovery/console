@@ -55,7 +55,7 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
 
   return (
     <div className="w-full justify-between">
-      <Section className="px-8 pt-6 pb-8">
+      <Section className="px-8 pb-8 pt-6">
         <SettingsHeading title="AI Copilot Configuration" description="Configure your Copilot" showNeedHelp={false} />
         <div className="max-w-content-with-navigation-left">
           <Callout.Root color="purple" className="mb-4">
