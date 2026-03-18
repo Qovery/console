@@ -14,7 +14,7 @@ exports[`ServiceActions should match manage deployment snapshot 1`] = `
   />
   <div
     aria-hidden="true"
-    class="flex gap-1.5"
+    class="flex items-center gap-1.5"
     data-aria-hidden="true"
   >
     <button
@@ -48,12 +48,22 @@ exports[`ServiceActions should match manage deployment snapshot 1`] = `
       />
     </a>
     <button
+      aria-label="Qovery cloud shell"
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+      data-state="closed"
+    >
+      <i
+        aria-hidden="true"
+        class="fa-regular fa-terminal "
+      />
+    </button>
+    <button
       aria-expanded="false"
       aria-haspopup="menu"
       aria-label="Other actions"
       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
       data-state="closed"
-      id="radix-:ra:"
+      id="radix-:rb:"
       type="button"
     >
       <div
@@ -153,7 +163,7 @@ exports[`ServiceActions should match other actions snapshot 1`] = `
   />
   <div
     aria-hidden="true"
-    class="flex gap-1.5"
+    class="flex items-center gap-1.5"
     data-aria-hidden="true"
   >
     <button
@@ -162,7 +172,7 @@ exports[`ServiceActions should match other actions snapshot 1`] = `
       aria-label="Manage Deployment"
       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-warning-strong text-xs h-7 justify-center px-0 rounded w-7 border border-warning-subtle text-warning hover:border-warning-component hover:bg-surface-warning-subtle data-[state=open]:bg-surface-warning-subtle"
       data-state="closed"
-      id="radix-:rm:"
+      id="radix-:rn:"
       type="button"
     >
       <div
@@ -186,13 +196,23 @@ exports[`ServiceActions should match other actions snapshot 1`] = `
       />
     </a>
     <button
-      aria-controls="radix-:rr:"
+      aria-label="Qovery cloud shell"
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+      data-state="closed"
+    >
+      <i
+        aria-hidden="true"
+        class="fa-regular fa-terminal "
+      />
+    </button>
+    <button
+      aria-controls="radix-:rt:"
       aria-expanded="true"
       aria-haspopup="menu"
       aria-label="Other actions"
       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
       data-state="open"
-      id="radix-:rq:"
+      id="radix-:rs:"
       type="button"
     >
       <div
@@ -212,7 +232,7 @@ exports[`ServiceActions should match other actions snapshot 1`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -8px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      aria-labelledby="radix-:rq:"
+      aria-labelledby="radix-:rs:"
       aria-orientation="vertical"
       class="flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-down-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-up-md-faded"
       data-align="start"
@@ -221,30 +241,11 @@ exports[`ServiceActions should match other actions snapshot 1`] = `
       data-side="bottom"
       data-state="open"
       dir="ltr"
-      id="radix-:rr:"
+      id="radix-:rt:"
       role="menu"
       style="outline: none; --radix-dropdown-menu-content-transform-origin: var(--radix-popper-transform-origin); --radix-dropdown-menu-content-available-width: var(--radix-popper-available-width); --radix-dropdown-menu-content-available-height: var(--radix-popper-available-height); --radix-dropdown-menu-trigger-width: var(--radix-popper-anchor-width); --radix-dropdown-menu-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
       tabindex="-1"
     >
-      <a
-        href="https://gitpod.io/#/tree/"
-        rel="noreferrer"
-        target="_blank"
-      >
-        <div
-          class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"
-          data-orientation="vertical"
-          data-radix-collection-item=""
-          role="menuitem"
-          tabindex="-1"
-        >
-          <i
-            aria-hidden="true"
-            class="fa-regular fa-code text-sm mr-2 min-w-5 text-brand-9"
-          />
-          Edit code
-        </div>
-      </a>
       <a
         class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral gap-0"
         data-orientation="vertical"

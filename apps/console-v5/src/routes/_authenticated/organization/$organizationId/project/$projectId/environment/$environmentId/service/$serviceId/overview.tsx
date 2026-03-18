@@ -5,8 +5,12 @@ import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
 import { TerraformResourcesSection } from '@qovery/domains/service-terraform/feature'
-import { ObservabilityCallout, ServiceOverview } from '@qovery/domains/services/feature'
-import { useService } from '@qovery/domains/services/feature'
+import {
+  ObservabilityCallout,
+  ServiceOverview,
+  ServiceTerminalProvider,
+  useService,
+} from '@qovery/domains/services/feature'
 import { serviceOverviewParamsSchema } from '@qovery/shared/router'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 
@@ -40,7 +44,7 @@ function RouteComponent() {
   )
 
   return (
-    <>
+    <ServiceTerminalProvider>
       <ServiceOverview
         environment={environment}
         terraformResourcesSection={serviceId ? <TerraformResourcesSection terraformId={serviceId} /> : undefined}
@@ -61,6 +65,6 @@ function RouteComponent() {
           serviceType={service?.serviceType}
         />
       )}
-    </>
+    </ServiceTerminalProvider>
   )
 }
