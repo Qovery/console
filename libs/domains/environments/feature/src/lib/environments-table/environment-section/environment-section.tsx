@@ -1,5 +1,6 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { EnvironmentModeEnum, type EnvironmentOverviewResponse } from 'qovery-typescript-axios'
+import { type KeyboardEvent, type MouseEvent } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
@@ -14,7 +15,7 @@ import useEnvironments from '../../hooks/use-environments/use-environments'
 const { Table } = TablePrimitives
 
 const gridLayoutClassName =
-  'grid w-full grid-cols-[1fr_20%_min(20%,160px)_min(15%,120px)_max(10%,106px)] xl:grid-cols-[1fr_25%_min(20%,240px)_160px_96px]'
+  'grid w-full grid-cols-[minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px]'
 
 function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const navigate = useNavigate()
@@ -28,6 +29,10 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const isVeryLargeScreen = useMediaQuery({
     query: '(min-width: 1536px)',
   })
+
+  const stopRowNavigation = (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => {
+    event.stopPropagation()
+  }
 
   const handleNavigate = () => {
     navigate({
@@ -80,9 +85,8 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
             <Link
               to="/organization/$organizationId/cluster/$clusterId/overview"
               params={{ organizationId, clusterId: overview.cluster.id }}
-              onClick={(e) => {
-                e.stopPropagation()
-              }}
+              onClick={stopRowNavigation}
+              onKeyDown={stopRowNavigation}
               className="group lg:inline-flex lg:items-center lg:gap-2"
             >
               <ClusterAvatar cluster={overview.cluster} size="sm" className="hidden lg:inline-block" />
@@ -97,7 +101,11 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
         <div className="flex h-full items-center">{timeAgo(new Date(overview.updated_at ?? Date.now()))} ago</div>
       </Table.Cell>
       <Table.Cell className={cellClassName}>
-        <div className="flex h-full items-center justify-end gap-1.5">
+        <div
+          className="flex h-full items-center justify-end gap-1.5"
+          onClick={stopRowNavigation}
+          onKeyDown={stopRowNavigation}
+        >
           {environment && overview.deployment_status && overview.service_count > 0 && (
             <>
               <MenuManageDeployment environment={environment} deploymentStatus={overview.deployment_status} />
@@ -154,7 +162,7 @@ export function EnvironmentSection({
     <Section className="flex flex-col gap-3.5">
       <div className="flex items-center gap-2">
         <EnvironmentMode mode={type} variant="shrink" />
-        <Heading level={3}>{title}</Heading>
+        <Heading>{title}</Heading>
       </div>
       {items.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-md border border-neutral bg-surface-neutral-subtle p-8">
@@ -162,7 +170,7 @@ export function EnvironmentSection({
           <EmptyState />
         </div>
       ) : (
-        <Table.Root className="divide-y divide-neutral">
+        <Table.Root className="w-full min-w-[1080px]" containerClassName="no-scrollbar overflow-x-auto">
           <Table.Header>
             <Table.Row className={twMerge('w-full items-center text-xs', gridLayoutClassName)}>
               <Table.ColumnHeaderCell className="flex h-9 items-center text-neutral-subtle">

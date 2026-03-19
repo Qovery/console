@@ -7,17 +7,17 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
       class="p-6"
     >
       <h2
-        class="h4 mb-1 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
+        class="h4 mb-1 max-w-sm truncate text-neutral"
       >
         Deploy latest version for..
       </h2>
       <p
-        class="mb-4 text-sm text-neutral-350 dark:text-neutral-50"
+        class="mb-4 text-sm text-neutral-subtle"
       >
         Select the services you want to update to the latest version
       </p>
       <div
-        class="mb-4 flex items-center justify-between text-sm text-neutral-400 dark:text-neutral-50"
+        class="mb-4 flex items-center justify-between text-sm text-neutral"
       >
         <p>
           For
@@ -29,7 +29,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
           </strong>
         </p>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
           data-testid="deselect-all"
         >
           Deselect All
@@ -45,28 +45,35 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
         />
         <ul>
           <li
-            class="rounded-t  flex justify-between border border-b-0 p-4 dark:border-neutral-400 border border-brand-500 bg-brand-50 dark:bg-neutral-500 false"
+            class="flex justify-between border border-b-0 p-4 rounded-t cursor-pointer border-brand-strong bg-surface-brand-subtle"
             data-testid="outdated-service-row"
           >
             <div
-              class="flex font-medium text-neutral-400 dark:text-neutral-50"
+              class="flex font-medium text-neutral"
             >
-              <div
-                class="relative flex items-center gap-2 mr-4"
+              <span
+                class="mr-4 flex items-center"
               >
-                <input
-                  class="input-checkbox relative h-0 w-0 appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:-translate-y-1/2 before:items-center before:justify-center before:rounded before:border before:border-neutral before:bg-surface-neutral before:text-neutralInvert mr-5 before:w-4 before:h-4 cursor-pointer before:text-xs before:font-black before:leading-none before:transition-colors before:content-[''] checked:before:border-brand-strong checked:before:bg-surface-brand-solid hover:before:border-brand-strong checked:hover:before:bg-surface-brand-solidHover disabled:before:border-neutral disabled:before:bg-surface-neutral-subtle disabled:checked:before:border-neutral disabled:checked:before:bg-surface-neutral-subtle disabled:hover:before:border-neutral"
-                  data-testid="input-checkbox"
-                  id="0"
-                  name="0"
-                  type="checkbox"
-                  value="0"
-                />
-                <i
-                  aria-hidden="true"
-                  class="fa-regular fa-check pointer-events-none absolute leading-[16px] text-neutralInvert left-[2.75px] text-xs"
-                />
-              </div>
+                <button
+                  aria-checked="true"
+                  class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                  data-state="checked"
+                  role="checkbox"
+                  type="button"
+                  value="on"
+                >
+                  <span
+                    class="flex h-full w-full items-center justify-center"
+                    data-state="checked"
+                    style="pointer-events: none;"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-regular fa-check text-xs text-neutralInvert group-disabled:text-neutral-disabled"
+                    />
+                  </span>
+                </button>
+              </span>
               Amy Maxwell
             </div>
             <div
@@ -76,22 +83,19 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 class="flex items-center opacity-50"
                 data-testid="current-commit-block"
               >
-                <div
-                  class="relative block rounded-full border border-neutral  mr-2"
-                  data-state="closed"
-                  data-testid="avatar"
-                  style="width: 28px; height: 28px;"
+                <span
+                  class="flex items-center justify-center rounded-full border border-neutral mr-2 h-7 w-7"
                 >
-                  <div
-                    class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
+                  <span
+                    class="flex items-center justify-center h-full w-full rounded-full h-full w-full"
                   >
                     <span
-                      class="relative text-xs font-medium text-neutral"
+                      class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-xs font-medium text-neutral"
                     >
                       U
                     </span>
-                  </div>
-                </div>
+                  </span>
+                </span>
                 <div
                   class="block w-fit cursor-pointer"
                   data-state="closed"
@@ -115,26 +119,23 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
               </div>
               <i
                 aria-hidden="true"
-                class="fa-regular fa-arrow-left mx-2 -scale-100 text-neutral-400"
+                class="fa-regular fa-arrow-left mx-2 -scale-100 text-neutral-subtle"
               />
               <div
                 class="flex items-center "
                 data-testid="last-commit-block"
               >
-                <div
-                  class="relative block rounded-full border border-neutral  mr-2"
-                  data-state="closed"
-                  data-testid="avatar"
-                  style="width: 28px; height: 28px;"
+                <span
+                  class="flex items-center justify-center rounded-full border border-neutral mr-2 h-7 w-7"
                 >
-                  <div
-                    class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
+                  <span
+                    class="flex items-center justify-center h-full w-full rounded-full h-full w-full"
                   >
                     <span
-                      class="relative text-xs font-medium text-neutral"
+                      class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-xs font-medium text-neutral"
                     />
-                  </div>
-                </div>
+                  </span>
+                </span>
                 <div
                   class="block w-fit cursor-pointer"
                   data-state="closed"
@@ -159,24 +160,24 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
             </div>
           </li>
           <li
-            class="  flex justify-between border border-b-0 p-4 dark:border-neutral-400 border-neutral-250 border-t-brand-500"
+            class="flex justify-between border border-b-0 border-neutral p-4 cursor-pointer border-t-brand-strong"
             data-testid="outdated-service-row"
           >
             <div
-              class="flex font-medium text-neutral-400 dark:text-neutral-50"
+              class="flex font-medium text-neutral"
             >
-              <div
-                class="relative flex items-center gap-2 mr-4"
+              <span
+                class="mr-4 flex items-center"
               >
-                <input
-                  class="input-checkbox relative h-0 w-0 appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:-translate-y-1/2 before:items-center before:justify-center before:rounded before:border before:border-neutral before:bg-surface-neutral before:text-neutralInvert mr-5 before:w-4 before:h-4 cursor-pointer before:text-xs before:font-black before:leading-none before:transition-colors before:content-[''] checked:before:border-brand-strong checked:before:bg-surface-brand-solid hover:before:border-brand-strong checked:hover:before:bg-surface-brand-solidHover disabled:before:border-neutral disabled:before:bg-surface-neutral-subtle disabled:checked:before:border-neutral disabled:checked:before:bg-surface-neutral-subtle disabled:hover:before:border-neutral"
-                  data-testid="input-checkbox"
-                  id="1"
-                  name="1"
-                  type="checkbox"
-                  value="1"
+                <button
+                  aria-checked="false"
+                  class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                  data-state="unchecked"
+                  role="checkbox"
+                  type="button"
+                  value="on"
                 />
-              </div>
+              </span>
               Jeff Rhodes
             </div>
             <div
@@ -186,22 +187,19 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 class="flex items-center "
                 data-testid="current-commit-block"
               >
-                <div
-                  class="relative block rounded-full border border-neutral  mr-2"
-                  data-state="closed"
-                  data-testid="avatar"
-                  style="width: 28px; height: 28px;"
+                <span
+                  class="flex items-center justify-center rounded-full border border-neutral mr-2 h-7 w-7"
                 >
-                  <div
-                    class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
+                  <span
+                    class="flex items-center justify-center h-full w-full rounded-full h-full w-full"
                   >
                     <span
-                      class="relative text-xs font-medium text-neutral"
+                      class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-xs font-medium text-neutral"
                     >
                       U
                     </span>
-                  </div>
-                </div>
+                  </span>
+                </span>
                 <div
                   class="block w-fit cursor-pointer"
                   data-state="closed"
@@ -225,26 +223,23 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
               </div>
               <i
                 aria-hidden="true"
-                class="fa-regular fa-arrow-left mx-2 -scale-100 text-neutral-400"
+                class="fa-regular fa-arrow-left mx-2 -scale-100 text-neutral-subtle"
               />
               <div
                 class="flex items-center opacity-50"
                 data-testid="last-commit-block"
               >
-                <div
-                  class="relative block rounded-full border border-neutral  mr-2"
-                  data-state="closed"
-                  data-testid="avatar"
-                  style="width: 28px; height: 28px;"
+                <span
+                  class="flex items-center justify-center rounded-full border border-neutral mr-2 h-7 w-7"
                 >
-                  <div
-                    class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
+                  <span
+                    class="flex items-center justify-center h-full w-full rounded-full h-full w-full"
                   >
                     <span
-                      class="relative text-xs font-medium text-neutral"
+                      class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-xs font-medium text-neutral"
                     />
-                  </div>
-                </div>
+                  </span>
+                </span>
                 <div
                   class="block w-fit cursor-pointer"
                   data-state="closed"
@@ -269,24 +264,24 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
             </div>
           </li>
           <li
-            class=" rounded-b !border-b flex justify-between border border-b-0 p-4 dark:border-neutral-400 border-neutral-250 false"
+            class="flex justify-between border border-b-0 border-neutral p-4 rounded-b !border-b cursor-pointer"
             data-testid="outdated-service-row"
           >
             <div
-              class="flex font-medium text-neutral-400 dark:text-neutral-50"
+              class="flex font-medium text-neutral"
             >
-              <div
-                class="relative flex items-center gap-2 mr-4"
+              <span
+                class="mr-4 flex items-center"
               >
-                <input
-                  class="input-checkbox relative h-0 w-0 appearance-none font-icons before:absolute before:left-0 before:top-0 before:flex before:-translate-y-1/2 before:items-center before:justify-center before:rounded before:border before:border-neutral before:bg-surface-neutral before:text-neutralInvert mr-5 before:w-4 before:h-4 cursor-pointer before:text-xs before:font-black before:leading-none before:transition-colors before:content-[''] checked:before:border-brand-strong checked:before:bg-surface-brand-solid hover:before:border-brand-strong checked:hover:before:bg-surface-brand-solidHover disabled:before:border-neutral disabled:before:bg-surface-neutral-subtle disabled:checked:before:border-neutral disabled:checked:before:bg-surface-neutral-subtle disabled:hover:before:border-neutral"
-                  data-testid="input-checkbox"
-                  id="2"
-                  name="2"
-                  type="checkbox"
-                  value="2"
+                <button
+                  aria-checked="false"
+                  class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                  data-state="unchecked"
+                  role="checkbox"
+                  type="button"
+                  value="on"
                 />
-              </div>
+              </span>
               Joseph Morgan
             </div>
             <div
@@ -296,22 +291,19 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 class="flex items-center "
                 data-testid="current-commit-block"
               >
-                <div
-                  class="relative block rounded-full border border-neutral  mr-2"
-                  data-state="closed"
-                  data-testid="avatar"
-                  style="width: 28px; height: 28px;"
+                <span
+                  class="flex items-center justify-center rounded-full border border-neutral mr-2 h-7 w-7"
                 >
-                  <div
-                    class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
+                  <span
+                    class="flex items-center justify-center h-full w-full rounded-full h-full w-full"
                   >
                     <span
-                      class="relative text-xs font-medium text-neutral"
+                      class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-xs font-medium text-neutral"
                     >
                       U
                     </span>
-                  </div>
-                </div>
+                  </span>
+                </span>
                 <div
                   class="block w-fit cursor-pointer"
                   data-state="closed"
@@ -335,26 +327,23 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
               </div>
               <i
                 aria-hidden="true"
-                class="fa-regular fa-arrow-left mx-2 -scale-100 text-neutral-400"
+                class="fa-regular fa-arrow-left mx-2 -scale-100 text-neutral-subtle"
               />
               <div
                 class="flex items-center opacity-50"
                 data-testid="last-commit-block"
               >
-                <div
-                  class="relative block rounded-full border border-neutral  mr-2"
-                  data-state="closed"
-                  data-testid="avatar"
-                  style="width: 28px; height: 28px;"
+                <span
+                  class="flex items-center justify-center rounded-full border border-neutral mr-2 h-7 w-7"
                 >
-                  <div
-                    class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
+                  <span
+                    class="flex items-center justify-center h-full w-full rounded-full h-full w-full"
                   >
                     <span
-                      class="relative text-xs font-medium text-neutral"
+                      class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-xs font-medium text-neutral"
                     />
-                  </div>
-                </div>
+                  </span>
+                </span>
                 <div
                   class="block w-fit cursor-pointer"
                   data-state="closed"
@@ -385,7 +374,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
         />
       </div>
       <div
-        class="sticky bottom-0 -mb-6 flex justify-end gap-3 bg-white py-6 dark:bg-neutral-550"
+        class="sticky bottom-0 -mb-6 flex justify-end gap-3 bg-background py-6"
       >
         <button
           class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"

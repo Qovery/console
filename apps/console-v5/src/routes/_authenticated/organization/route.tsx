@@ -438,10 +438,10 @@ function OrganizationRoute() {
       {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
       <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-auto">
         <ErrorBoundary>
+          <Header />
+
           <Suspense fallback={<MainLoader />}>
             <>
-              <Header />
-
               <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
                 <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
                   {navigationContext && <NavigationBar context={navigationContext} />}

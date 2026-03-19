@@ -177,6 +177,7 @@ export function CreateCloneEnvironmentModal({
               value={field.value}
               label={environmentToClone?.name ? 'New environment name' : 'Environment name'}
               error={error?.message}
+              autoFocus
             />
           )}
         />

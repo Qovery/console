@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { SpotlightTrigger } from '@qovery/pages/layout'
 import { LogoIcon } from '@qovery/shared/ui'
 import { Breadcrumbs } from './breadcrumbs/breadcrumbs'
@@ -22,11 +23,15 @@ export function Header() {
       <div className="flex items-center gap-4">
         <LogoIcon />
         <Separator />
-        <Breadcrumbs />
-        <div className="ml-auto flex items-center gap-3">
-          <SpotlightTrigger />
-          <UserMenu />
-        </div>
+        <Suspense fallback={<div />}>
+          <>
+            <Breadcrumbs />
+            <div className="ml-auto flex items-center gap-3">
+              <SpotlightTrigger />
+              <UserMenu />
+            </div>
+          </>
+        </Suspense>
       </div>
     </header>
   )
