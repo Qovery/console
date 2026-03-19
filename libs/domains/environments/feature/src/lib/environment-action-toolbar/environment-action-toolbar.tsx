@@ -247,10 +247,12 @@ export function MenuOtherActions({
   state,
   environment,
   cloneUseCaseId,
+  variant = 'default',
 }: {
   state: StateEnum
   environment: Environment
   cloneUseCaseId?: string
+  variant?: ActionToolbarVariant
 }) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
