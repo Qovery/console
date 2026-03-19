@@ -23,7 +23,7 @@ export function Header() {
       <div className="flex items-center gap-4">
         <LogoIcon />
         <Separator />
-        <Suspense fallback={<div />}>
+        <Suspense fallback={<div className="h-8" />}>
           <>
             <Breadcrumbs />
             <div className="ml-auto flex items-center gap-3">
