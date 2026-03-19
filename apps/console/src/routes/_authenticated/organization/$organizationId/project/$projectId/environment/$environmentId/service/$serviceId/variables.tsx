@@ -101,7 +101,7 @@ function RouteComponent() {
             </div>
 
             <div className="relative -mt-2 rounded-lg">
-              <div className="overflow-hidden rounded-lg border border-neutral bg-background">
+              <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
                 {activeTab === 'custom' && scope && (
                   <CustomTab
                     scope={scope}

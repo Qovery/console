@@ -1,26 +1,25 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { type CloudProvider, type ClusterRegion } from 'qovery-typescript-axios'
-import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
-import { useDropzone } from 'react-dropzone'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { type CloudProvider, type ClusterRegion, ServiceTypeEnum } from 'qovery-typescript-axios'
+import { useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
-import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
+import {
+  type SecretManagerAssociatedProject,
+  SecretManagerAssociatedServicesModal,
+  SecretManagerIntegrationModal,
+  useCluster,
+  useEditCluster,
+} from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import {
   Badge,
   Button,
-  Callout,
-  CopyButton,
   DropdownMenu,
-  Dropzone,
-  ExternalLink,
   Icon,
   IconFlag,
+  Indicator,
   InputSelect,
-  InputText,
-  Navbar,
   Section,
   useModal,
   useModalConfirmation,
@@ -40,17 +39,6 @@ type SecretManagerOption = {
   typeLabel: string
 }
 
-type IntegrationTab = 'automatic' | 'manual'
-
-type SecretManagerIntegrationFormValues = {
-  authenticationType: string
-  region: string
-  roleArn: string
-  accessKey: string
-  secretAccessKey: string
-  secretManagerName: string
-}
-
 type SecretManagerItem = {
   id: string
   name: string
@@ -64,6 +52,7 @@ type SecretManagerItem = {
   accessKey?: string
   secretAccessKey?: string
   usedByServices?: number
+  associatedItems?: SecretManagerAssociatedProject[]
 }
 
 const SECRET_MANAGER_USE_CASES: UseCaseOption[] = [
@@ -74,20 +63,94 @@ const SECRET_MANAGER_USE_CASES: UseCaseOption[] = [
 ]
 
 const SECRET_MANAGER_OPTIONS: SecretManagerOption[] = [
-  { value: 'aws-manager', label: 'AWS Manager type', icon: 'AWS', typeLabel: 'AWS Manager type' },
+  { value: 'aws-manager', label: 'AWS Secret manager', icon: 'AWS', typeLabel: 'AWS Secret manager' },
   { value: 'aws-parameter', label: 'AWS Parameter store', icon: 'AWS', typeLabel: 'AWS Parameter store' },
   { value: 'gcp-secret', label: 'GCP Secret manager', icon: 'GCP', typeLabel: 'GCP Secret manager' },
 ]
+
+function createSecretManagerAssociatedItems(totalServices: number): SecretManagerAssociatedProject[] {
+  const projects = [
+    { project_id: 'project-platform', project_name: 'platform' },
+    { project_id: 'project-billing', project_name: 'billing' },
+    { project_id: 'project-observability', project_name: 'observability' },
+  ]
+  const environments = [
+    { environment_id: 'environment-production', environment_name: 'production' },
+    { environment_id: 'environment-staging', environment_name: 'staging' },
+    { environment_id: 'environment-development', environment_name: 'development' },
+  ]
+  const services = ['api', 'worker', 'scheduler', 'ingest', 'web', 'batch', 'cron', 'admin', 'sync', 'processor']
+  const serviceTypes = [
+    ServiceTypeEnum.APPLICATION,
+    ServiceTypeEnum.CONTAINER,
+    ServiceTypeEnum.DATABASE,
+    ServiceTypeEnum.HELM,
+    ServiceTypeEnum.JOB,
+    ServiceTypeEnum.TERRAFORM,
+  ]
+
+  const flatItems = Array.from({ length: totalServices }, (_, index) => {
+    const project = projects[index % projects.length]
+    const environment = environments[Math.floor(index / projects.length) % environments.length]
+    const serviceName = services[index % services.length]
+    const serviceType = serviceTypes[index % serviceTypes.length]
+
+    return {
+      project_id: project.project_id,
+      project_name: project.project_name,
+      environment_id: environment.environment_id,
+      environment_name: environment.environment_name,
+      service_id: `${project.project_id}-${environment.environment_id}-${serviceName}-${index + 1}`,
+      service_name: `${serviceName}-${index + 1}`,
+      service_type: serviceType,
+    }
+  })
+
+  return flatItems.reduce<SecretManagerAssociatedProject[]>((projectsAcc, item) => {
+    let project = projectsAcc.find((projectEntry) => projectEntry.project_id === item.project_id)
+
+    if (!project) {
+      project = {
+        project_id: item.project_id,
+        project_name: item.project_name,
+        environments: [],
+      }
+      projectsAcc.push(project)
+    }
+
+    let environment = project.environments.find(
+      (environmentEntry) => environmentEntry.environment_id === item.environment_id
+    )
+
+    if (!environment) {
+      environment = {
+        environment_id: item.environment_id,
+        environment_name: item.environment_name,
+        services: [],
+      }
+      project.environments.push(environment)
+    }
+
+    environment.services.push({
+      service_id: item.service_id,
+      service_name: item.service_name,
+      service_type: item.service_type,
+    })
+
+    return projectsAcc
+  }, [])
+}
 
 const BASE_SECRET_MANAGERS: SecretManagerItem[] = [
   {
     id: 'secret-manager-prod',
     name: 'Prod secret manager',
-    typeLabel: 'AWS Manager type',
+    typeLabel: 'AWS Secret manager',
     authentication: 'Automatic',
     provider: 'AWS' as const,
     source: 'aws-manager',
     usedByServices: 32,
+    associatedItems: createSecretManagerAssociatedItems(32),
   },
   {
     id: 'secret-manager-gcp-staging',
@@ -240,7 +303,7 @@ function SecretManagerDeletionHelperModal({
               selectedAction === 'detach' ? 'bg-surface-brand-component text-brand' : 'bg-surface-neutral-component'
             }`}
           >
-            <Icon iconName="link" className={selectedAction === 'detach' ? 'text-brand' : undefined} />
+            <Icon iconName="link-broken" className={selectedAction === 'detach' ? 'text-brand' : undefined} />
           </div>
           <div className="flex flex-col gap-1">
             <span className="text-sm font-medium text-neutral">Detach all references</span>
@@ -284,405 +347,6 @@ function SecretManagerDeletionHelperModal({
         </Button>
       </div>
     </div>
-  )
-}
-
-function SecretManagerIntegrationModal({
-  option,
-  regionOptions,
-  clusterProvider,
-  mode = 'create',
-  initialValues,
-  onClose,
-  onSubmit,
-}: {
-  option: SecretManagerOption
-  regionOptions: Array<{ label: string; value: string; icon?: JSX.Element }>
-  clusterProvider?: string
-  mode?: 'create' | 'edit'
-  initialValues?: SecretManagerItem
-  onClose: () => void
-  onSubmit: (payload: SecretManagerItem) => void
-}) {
-  const [activeTab, setActiveTab] = useState<IntegrationTab>(
-    initialValues?.authentication === 'Manual' ? 'manual' : 'automatic'
-  )
-  const methods = useForm<SecretManagerIntegrationFormValues>({
-    mode: 'onChange',
-    defaultValues: {
-      authenticationType: initialValues?.authType ?? '',
-      region: initialValues?.region ?? '',
-      roleArn: initialValues?.roleArn ?? '',
-      accessKey: initialValues?.accessKey ?? '',
-      secretAccessKey: initialValues?.secretAccessKey ?? '',
-      secretManagerName: initialValues?.name ?? '',
-    },
-  })
-
-  const authenticationOptions = useMemo(
-    () => [
-      { label: 'Assume role via STS', value: 'sts' },
-      { label: 'Static credentials', value: 'static' },
-    ],
-    []
-  )
-
-  const authenticationType = methods.watch('authenticationType')
-  const isStaticCredentials = authenticationType === 'static'
-  const isAwsCluster = clusterProvider === 'AWS'
-  const isGcpSecretManagerOnAws = option.value === 'gcp-secret' && isAwsCluster
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    multiple: false,
-    accept: { 'application/json': ['.json'] },
-  })
-
-  useEffect(() => {
-    if (activeTab === 'manual' && !authenticationType) {
-      methods.setValue('authenticationType', 'sts', { shouldDirty: false })
-    }
-  }, [activeTab, authenticationType, methods])
-
-  const handleSubmit = methods.handleSubmit((data) => {
-    onSubmit({
-      id: initialValues?.id ?? `secret-manager-${Date.now()}`,
-      name: data.secretManagerName.trim() || 'Secret manager',
-      typeLabel: option.typeLabel,
-      authentication: activeTab === 'manual' ? 'Manual' : 'Automatic',
-      provider: option.icon,
-      source: option.value,
-      authType:
-        activeTab === 'manual' && data.authenticationType ? (data.authenticationType as 'sts' | 'static') : undefined,
-      region: data.region || undefined,
-      roleArn: data.roleArn || undefined,
-      accessKey: data.accessKey || undefined,
-      secretAccessKey: data.secretAccessKey || undefined,
-    })
-    onClose()
-  })
-
-  const handleGcpAwsSubmit = methods.handleSubmit((data) => {
-    onSubmit({
-      id: initialValues?.id ?? `secret-manager-${Date.now()}`,
-      name: data.secretManagerName.trim() || 'Secret manager',
-      typeLabel: option.typeLabel,
-      authentication: 'Manual',
-      provider: option.icon,
-      source: option.value,
-      authType: 'static',
-    })
-    onClose()
-  })
-
-  useEffect(() => {
-    methods.trigger().then()
-  }, [methods.trigger])
-
-  if (isGcpSecretManagerOnAws) {
-    return (
-      <FormProvider {...methods}>
-        <form onSubmit={handleGcpAwsSubmit} className="flex flex-col">
-          <div className="px-5 pt-5">
-            <h2 className="text-lg font-medium text-neutral">{`${option.label} integration`}</h2>
-            <p className="mt-1 text-sm text-neutral-subtle">
-              Link your AWS secret manager to use external secrets on all service running on your cluster
-            </p>
-          </div>
-          <div className="flex flex-col gap-3 px-5 pb-6 pt-4">
-            <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
-              <h3 className="text-sm font-medium text-neutral">
-                1. Connect to your GCP Console and create/open a project
-              </h3>
-              <p className="text-sm text-neutral-subtle">Make sure you are connected to the right GCP account</p>
-              <ExternalLink href="https://console.cloud.google.com/" size="sm">
-                https://console.cloud.google.com/
-              </ExternalLink>
-            </div>
-            <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
-              <h3 className="text-sm font-medium text-neutral">
-                2. Open the embedded Google shell and run the following command
-              </h3>
-              <div className="flex gap-6 rounded border border-neutral bg-surface-neutral-subtle p-3 text-neutral retina:border-[0.5px]">
-                <div>
-                  <span className="select-none">$ </span>
-                  curl https://setup.qovery.com/create_credentials_gcp.sh | \ bash -s -- $GOOGLE_CLOUD_PROJECT
-                  qovery_role qovery-service-account{' '}
-                </div>
-                <CopyButton
-                  content=" curl https://setup.qovery.com/create_credentials_gcp.sh | \
-bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
-              <h3 className="text-sm font-medium text-neutral">
-                3. Download the key.json generated and drag and drop it here
-              </h3>
-              <div {...getRootProps()}>
-                <input className="hidden" {...getInputProps()} />
-                <Dropzone typeFile=".json" isDragActive={isDragActive} />
-              </div>
-              <Controller
-                name="secretManagerName"
-                control={methods.control}
-                render={({ field }) => (
-                  <InputText
-                    name={field.name}
-                    label="Secret manager name"
-                    value={field.value}
-                    onChange={field.onChange}
-                    hint="Display name in Qovery"
-                  />
-                )}
-              />
-            </div>
-          </div>
-          <div className="flex justify-end gap-3 border-t border-neutral px-5 py-4">
-            <Button type="button" variant="plain" color="neutral" size="lg" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit" size="lg">
-              {mode === 'edit' ? 'Save changes' : 'Add secret manager'}
-            </Button>
-          </div>
-        </form>
-      </FormProvider>
-    )
-  }
-
-  return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit} className="flex flex-col">
-        <div className="bg-surface-neutral-subtle px-5 pt-5">
-          <h2 className="text-lg font-medium text-neutral">{`${option.label} integration`}</h2>
-          <p className="mt-1 text-sm text-neutral-subtle">
-            {`Link your ${option.icon === 'GCP' ? 'GCP' : 'AWS'} secret manager to use external secrets on all service running on your cluster`}
-          </p>
-          <div className="-mx-5 mt-4 border-b border-neutral px-5">
-            <Navbar.Root activeId={activeTab}>
-              <Navbar.Item id="automatic" onClick={() => setActiveTab('automatic')}>
-                <Icon iconName="link" iconStyle="regular" />
-                Automatic integration
-              </Navbar.Item>
-              <Navbar.Item id="manual" onClick={() => setActiveTab('manual')}>
-                <Icon iconName="hammer" iconStyle="regular" />
-                Manual integration
-              </Navbar.Item>
-            </Navbar.Root>
-          </div>
-        </div>
-        <div className="p-5">
-          {activeTab === 'automatic' && (
-            <div className="flex flex-col gap-4">
-              <div>
-                <p className="text-sm font-medium text-neutral">Automatic integration</p>
-                <p className="text-sm text-neutral-subtle">
-                  Qovery will use the cluster’s credentials to configure access to your Secrets Manager automatically
-                </p>
-              </div>
-              <div className="flex flex-col gap-4">
-                <Controller
-                  name="region"
-                  control={methods.control}
-                  render={({ field }) => (
-                    <InputSelect
-                      label="Region"
-                      value={field.value}
-                      placeholder="Select a region"
-                      onChange={(value) => field.onChange(value as string)}
-                      options={regionOptions}
-                      isSearchable
-                      portal
-                    />
-                  )}
-                />
-                <Controller
-                  name="secretManagerName"
-                  control={methods.control}
-                  render={({ field }) => (
-                    <InputText
-                      name={field.name}
-                      label="Secret manager name"
-                      value={field.value}
-                      onChange={field.onChange}
-                      hint="Display name in Qovery"
-                    />
-                  )}
-                />
-              </div>
-              {option.icon === 'AWS' && (
-                <Callout.Root color="sky">
-                  <Callout.Icon>
-                    <Icon iconName="circle-info" iconStyle="regular" />
-                  </Callout.Icon>
-                  <Callout.Text>
-                    Automatic integration requires the secret manager to be in the same AWS account as the cluster
-                  </Callout.Text>
-                </Callout.Root>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'manual' && (
-            <div className="flex flex-col gap-4">
-              <Controller
-                name="authenticationType"
-                control={methods.control}
-                render={({ field }) => (
-                  <InputSelect
-                    label="Authentication type"
-                    value={field.value}
-                    placeholder="Select an authentication type"
-                    onChange={(value) => field.onChange(value as string)}
-                    options={authenticationOptions}
-                    portal
-                  />
-                )}
-              />
-
-              {!authenticationType && (
-                <p className="text-sm text-neutral-subtle">
-                  Select an authentication type to see the required information.
-                </p>
-              )}
-              {authenticationType && isStaticCredentials ? (
-                <>
-                  <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
-                    <h3 className="text-sm font-medium text-neutral">1. Create a user for Qovery</h3>
-                    <p className="text-sm text-neutral-subtle">Follow the instructions available on this page</p>
-                    <ExternalLink
-                      href="https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster"
-                      size="sm"
-                    >
-                      How to create new credentials
-                    </ExternalLink>
-                  </div>
-                  <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
-                    <h3 className="text-sm font-medium text-neutral">2. Fill in these information</h3>
-                    <Controller
-                      name="region"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputSelect
-                          label="Region"
-                          value={field.value}
-                          placeholder="Select a region"
-                          onChange={(value) => field.onChange(value as string)}
-                          options={regionOptions}
-                          isSearchable
-                          portal
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="accessKey"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputText name={field.name} label="Access key" value={field.value} onChange={field.onChange} />
-                      )}
-                    />
-                    <Controller
-                      name="secretAccessKey"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputText
-                          name={field.name}
-                          label="Secret access key"
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="secretManagerName"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputText
-                          name={field.name}
-                          label="Secret manager name"
-                          value={field.value}
-                          onChange={field.onChange}
-                          hint="Display name in Qovery"
-                        />
-                      )}
-                    />
-                  </div>
-                </>
-              ) : authenticationType ? (
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
-                    <h3 className="text-sm font-medium text-neutral">1. Connect to your AWS Console</h3>
-                    <p className="text-sm text-neutral-subtle">Make sure you are connected to the right AWS account</p>
-                    <ExternalLink href="https://aws.amazon.com/fr/console/" size="sm">
-                      https://aws.amazon.com/fr/console/
-                    </ExternalLink>
-                  </div>
-                  <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
-                    <h3 className="text-sm font-medium text-neutral">
-                      2. Create a role for Qovery and grant assume role permissions
-                    </h3>
-                    <p className="text-sm text-neutral-subtle">
-                      Execute the following Cloudformation stack and retrieve the role ARN from the “Output” section.
-                    </p>
-                    <ExternalLink
-                      href="https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fs3.amazonaws.com%2Fcloudformation-qovery-role-creation%2Ftemplate.json&stackName=qovery-role-creation"
-                      size="sm"
-                    >
-                      Cloudformation stack
-                    </ExternalLink>
-                  </div>
-                  <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
-                    <h3 className="text-sm font-medium text-neutral">3. Provide your credentials info</h3>
-                    <Controller
-                      name="region"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputSelect
-                          label="Region"
-                          value={field.value}
-                          placeholder="Select a region"
-                          onChange={(value) => field.onChange(value as string)}
-                          options={regionOptions}
-                          isSearchable
-                          portal
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="roleArn"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputText name={field.name} label="Role ARN" value={field.value} onChange={field.onChange} />
-                      )}
-                    />
-                    <Controller
-                      name="secretManagerName"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <InputText
-                          name={field.name}
-                          label="Secret manager name"
-                          value={field.value}
-                          onChange={field.onChange}
-                          hint="Display name in Qovery"
-                        />
-                      )}
-                    />
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          )}
-        </div>
-        <div className="flex justify-end gap-3 border-t border-neutral px-5 py-4">
-          <Button type="button" variant="plain" color="neutral" size="lg" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button type="submit" size="lg">
-            {mode === 'edit' ? 'Save changes' : 'Add secret manager'}
-          </Button>
-        </div>
-      </form>
-    </FormProvider>
   )
 }
 
@@ -735,7 +399,22 @@ function RouteComponent() {
     [selectedCaseId]
   )
   const [secretManagers, setSecretManagers] = useState<SecretManagerItem[]>(() => baseSecretManagers)
+  const secretManagerDropdownOptions = useMemo(() => {
+    if (cluster?.cloud_provider !== 'GCP') {
+      return SECRET_MANAGER_OPTIONS
+    }
 
+    const gcpOption = SECRET_MANAGER_OPTIONS.find((option) => option.value === 'gcp-secret')
+    const awsOptions = SECRET_MANAGER_OPTIONS.filter((option) => option.value !== 'gcp-secret')
+    return gcpOption ? [gcpOption, ...awsOptions] : SECRET_MANAGER_OPTIONS
+  }, [cluster?.cloud_provider])
+  const hasAwsAutomaticIntegrationConfigured = secretManagers.some(
+    (secretManager) => secretManager.provider === 'AWS' && secretManager.authentication === 'Automatic'
+  )
+  const hasAwsManualStsIntegrationConfigured = secretManagers.some(
+    (secretManager) =>
+      secretManager.provider === 'AWS' && secretManager.authentication === 'Manual' && secretManager.authType === 'sts'
+  )
   useEffect(() => {
     if (cluster) {
       setObservabilityEnabled(Boolean(cluster.metrics_parameters?.enabled))
@@ -757,6 +436,8 @@ function RouteComponent() {
           option={option}
           regionOptions={regionOptions}
           clusterProvider={cluster?.cloud_provider}
+          hasAwsAutomaticIntegrationConfigured={hasAwsAutomaticIntegrationConfigured}
+          hasAwsManualStsIntegrationConfigured={hasAwsManualStsIntegrationConfigured}
           mode={integration ? 'edit' : 'create'}
           initialValues={integration}
           onClose={closeModal}
@@ -764,7 +445,13 @@ function RouteComponent() {
             setSecretManagers((prev) => {
               if (integration) {
                 return prev.map((item) =>
-                  item.id === integration.id ? { ...payload, usedByServices: integration.usedByServices ?? 0 } : item
+                  item.id === integration.id
+                    ? {
+                        ...payload,
+                        usedByServices: integration.usedByServices ?? 0,
+                        associatedItems: integration.associatedItems,
+                      }
+                    : item
                 )
               }
               return [...prev, { ...payload, usedByServices: 0 }]
@@ -774,6 +461,23 @@ function RouteComponent() {
       ),
       options: {
         width: 676,
+        fakeModal: true,
+      },
+    })
+  }
+
+  const openSecretManagerAssociatedServicesModal = (integration: SecretManagerItem) => {
+    openModal({
+      content: (
+        <SecretManagerAssociatedServicesModal
+          associatedItems={integration.associatedItems ?? []}
+          organizationId={organizationId}
+          title="Associated services"
+          description={`${integration.name} is referenced by the following environments and services.`}
+          onClose={closeModal}
+        />
+      ),
+      options: {
         fakeModal: true,
       },
     })
@@ -920,8 +624,8 @@ function RouteComponent() {
                       </Badge>
                     </div>
                     <p className="text-sm text-neutral-subtle">
-                      Qovery KEDA autoscaler allows you to add event-based autoscaling on all the services running on this
-                      cluster.
+                      Qovery KEDA autoscaler allows you to add event-based autoscaling on all the services running on
+                      this cluster.
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -967,12 +671,12 @@ function RouteComponent() {
                       </Button>
                     </DropdownMenu.Trigger>
                     <DropdownMenu.Content align="start">
-                      {SECRET_MANAGER_OPTIONS.map((option) => (
+                      {secretManagerDropdownOptions.map((option) => (
                         <DropdownMenu.Item
                           key={option.value}
                           color="neutral"
                           icon={<Icon name={option.icon} width={16} height={16} />}
-                          onClick={() => openSecretManagerModal(option)}
+                          onSelect={() => openSecretManagerModal(option)}
                         >
                           {option.label}
                         </DropdownMenu.Item>
@@ -1003,6 +707,26 @@ function RouteComponent() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
+                            <Indicator
+                              content={
+                                <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
+                                  {manager.usedByServices ?? 0}
+                                </span>
+                              }
+                            >
+                              <Button
+                                type="button"
+                                variant="outline"
+                                color="neutral"
+                                size="md"
+                                iconOnly
+                                className="relative"
+                                disabled={(manager.usedByServices ?? 0) === 0}
+                                onClick={() => openSecretManagerAssociatedServicesModal(manager)}
+                              >
+                                <Icon iconName="layer-group" iconStyle="regular" />
+                              </Button>
+                            </Indicator>
                             {manager.authentication !== 'Automatic' && (
                               <Button
                                 type="button"

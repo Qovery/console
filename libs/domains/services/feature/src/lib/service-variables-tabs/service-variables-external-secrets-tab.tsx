@@ -4,9 +4,9 @@ import {
   type SortingState,
   createColumnHelper,
   flexRender,
+  getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
-  getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
@@ -22,19 +22,22 @@ import {
   EmptyState,
   Icon,
   InputSelect,
-  InputText,
-  InputTextArea,
   ModalCrud,
   type SyncStatus,
-  SyncStatusBadge,
+  TableFilter,
   TableFilterSearch,
   TablePrimitives,
-  TableFilter,
   Tooltip,
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
+import {
+  AddSecretModal,
+  type ExternalSecret,
+  SECRET_SOURCES,
+  type SecretSourceOption,
+} from './add-secret-modal/add-secret-modal'
 
 const { Table } = TablePrimitives
 
@@ -45,20 +48,11 @@ export type ExternalSecretsUseCaseId =
   | 'secret-manager-addon-not-redeployed'
   | 'empty'
 
-interface ExternalSecret {
-  id: string
-  name: string
-  description?: string
-  filePath?: string
-  isFile?: boolean
-  reference: string
+interface ExternalSecretRow extends ExternalSecret {
   status: SyncStatus
-  source: string | null
-  sourceIcon?: string
-  lastSync: string
 }
 
-const FAKE_SECRETS: ExternalSecret[] = [
+const FAKE_SECRETS: ExternalSecretRow[] = [
   {
     id: '1',
     name: 'DB_PASSWORD',
@@ -66,7 +60,7 @@ const FAKE_SECRETS: ExternalSecret[] = [
     status: 'synced',
     source: 'Prod secret manager',
     sourceIcon: 'aws',
-    lastSync: '32 min ago',
+    scope: 'Environment',
   },
   {
     id: '2',
@@ -77,7 +71,7 @@ const FAKE_SECRETS: ExternalSecret[] = [
     status: 'synced',
     source: 'Prod secret manager',
     sourceIcon: 'aws',
-    lastSync: '32 min ago',
+    scope: 'Application',
   },
   {
     id: '3',
@@ -86,7 +80,7 @@ const FAKE_SECRETS: ExternalSecret[] = [
     status: 'synced',
     source: 'Prod secret manager',
     sourceIcon: 'aws',
-    lastSync: '32 min ago',
+    scope: 'Application',
   },
   {
     id: '4',
@@ -95,7 +89,7 @@ const FAKE_SECRETS: ExternalSecret[] = [
     status: 'broken',
     source: 'GCP secret manager',
     sourceIcon: 'gcp',
-    lastSync: '32 min ago',
+    scope: 'Application',
   },
   {
     id: '5',
@@ -104,7 +98,7 @@ const FAKE_SECRETS: ExternalSecret[] = [
     status: 'broken',
     source: 'Prod secret manager',
     sourceIcon: 'aws',
-    lastSync: '32 min ago',
+    scope: 'Application',
   },
   {
     id: '6',
@@ -112,7 +106,7 @@ const FAKE_SECRETS: ExternalSecret[] = [
     reference: 'my-app/prod/redis-auth',
     status: 'detached',
     source: null,
-    lastSync: '32 min ago',
+    scope: 'Application',
   },
   {
     id: '7',
@@ -120,19 +114,11 @@ const FAKE_SECRETS: ExternalSecret[] = [
     reference: 'my-app/prod/oauth-secrets',
     status: 'detached',
     source: null,
-    lastSync: '32 min ago',
-  },
-  {
-    id: '8',
-    name: 'GCP_API_KEY',
-    reference: 'my-app/prod/billing-keys',
-    status: 'detached',
-    source: null,
-    lastSync: '32 min ago',
+    scope: 'Application',
   },
 ]
 
-const EMPTY_SECRETS: ExternalSecret[] = []
+const EMPTY_SECRETS: ExternalSecretRow[] = []
 
 export const EXTERNAL_SECRETS_USE_CASES: { id: ExternalSecretsUseCaseId; label: string }[] = [
   { id: 'filled', label: 'Filled' },
@@ -140,44 +126,6 @@ export const EXTERNAL_SECRETS_USE_CASES: { id: ExternalSecretsUseCaseId; label: 
   { id: 'secret-manager-addon-no-manager', label: 'Secret manager add-on with no manager' },
   { id: 'secret-manager-addon-not-redeployed', label: 'Secret manager add-on not redeployed' },
   { id: 'empty', label: 'No secrets yet' },
-]
-
-type SecretSourceOption = {
-  value: 'aws-manager' | 'aws-parameter' | 'gcp-secret'
-  label: string
-  tableLabel: string
-  icon: 'aws' | 'gcp'
-}
-
-const SECRET_SOURCES: SecretSourceOption[] = [
-  {
-    value: 'aws-manager',
-    label: 'AWS Manager type',
-    tableLabel: 'Prod secret manager',
-    icon: 'aws',
-  },
-  {
-    value: 'aws-parameter',
-    label: 'AWS Parameter store',
-    tableLabel: 'AWS Parameter store',
-    icon: 'aws',
-  },
-  {
-    value: 'gcp-secret',
-    label: 'GCP Secret manager',
-    tableLabel: 'GCP secret manager',
-    icon: 'gcp',
-  },
-]
-
-const REFERENCE_OPTIONS = [
-  'my-app/prod/db-password',
-  'my-app/prod/api-key',
-  'my-app/prod/secret-token',
-  'my-app/prod/user-credentials',
-  'my-app/prod/payment-gateway',
-  'my-app/prod/db-host',
-  'my-app/prod/db-port',
 ]
 
 const ADD_SECRET_OPTIONS = [
@@ -193,209 +141,44 @@ const ADD_SECRET_OPTIONS = [
   },
 ]
 
-const gridLayoutClassName = 'grid w-full grid-cols-[32px_minmax(0,2fr)_minmax(0,2fr)_110px_minmax(0,1.5fr)_110px_80px]'
+const gridLayoutClassName = 'grid w-full grid-cols-[32px_minmax(0,1fr)_240px_124px_220px_140px_104px]'
 
-const columnHelper = createColumnHelper<ExternalSecret>()
-
-interface AddSecretModalProps {
-  defaultSource?: SecretSourceOption
-  isFile?: boolean
-  mode?: 'create' | 'edit'
-  initialSecret?: ExternalSecret
-  onClose: () => void
-  onSubmit: (secret: Omit<ExternalSecret, 'id' | 'lastSync' | 'status'>) => void
+const STATUS_LABELS: Record<SyncStatus, string> = {
+  synced: 'Valid',
+  broken: 'Invalid',
+  syncing: 'Checking...',
+  detached: 'Detached',
 }
 
-type AddSecretFormValues = {
-  source: SecretSourceOption['value']
-  reference: string
-  path: string
-  secretName: string
-  description: string
+function ExternalSecretStatusBadge({ status }: { status: SyncStatus }) {
+  return match(status)
+    .with('synced', () => (
+      <span className="inline-flex h-6 items-center gap-1 rounded-[6px] border border-positive-subtle bg-surface-positive-subtle px-1.5 text-[12px] font-medium text-positive">
+        <Icon iconName="circle-check" iconStyle="regular" className="text-[12px]" />
+        <span>Valid</span>
+      </span>
+    ))
+    .with('broken', () => (
+      <span className="inline-flex h-6 items-center gap-1 rounded-[6px] border border-negative-subtle bg-surface-negative-subtle px-1.5 text-[12px] font-medium text-negative">
+        <Icon iconName="circle-exclamation" className="text-[12px]" />
+        <span>Invalid</span>
+      </span>
+    ))
+    .with('syncing', () => (
+      <span className="inline-flex h-6 items-center gap-1 rounded-[6px] border border-info-subtle bg-surface-info-subtle px-1.5 text-[12px] font-medium text-info">
+        <Icon iconName="spinner-third" iconStyle="regular" className="animate-spin text-[12px]" />
+        <span>Checking...</span>
+      </span>
+    ))
+    .otherwise(() => (
+      <span className="inline-flex h-6 items-center gap-1 rounded-[6px] border border-neutral-component bg-surface-neutral-component px-1.5 text-[12px] font-medium text-neutral-subtle">
+        <Icon iconName="link-broken" className="text-[12px]" />
+        <span>Detached</span>
+      </span>
+    ))
 }
 
-function AddSecretModal({
-  defaultSource,
-  isFile = false,
-  mode = 'create',
-  initialSecret,
-  onClose,
-  onSubmit,
-}: AddSecretModalProps) {
-  const methods = useForm<AddSecretFormValues>({
-    defaultValues: {
-      source: defaultSource?.value ?? SECRET_SOURCES[0].value,
-      reference: initialSecret?.reference ?? '',
-      path: initialSecret?.filePath ?? '',
-      secretName: initialSecret?.name ?? '',
-      description: initialSecret?.description ?? '',
-    },
-    mode: 'onChange',
-  })
-  const { enableAlertClickOutside } = useModal()
-  const [referenceInput, setReferenceInput] = useState('')
-
-  const secretNameValue = methods.watch('secretName')
-
-  const handleSubmit = methods.handleSubmit((data) => {
-    const finalReference = data.reference || referenceInput || REFERENCE_OPTIONS[0]
-    const finalName = data.secretName.trim() || finalReference.split('/').pop()?.toUpperCase() || 'NEW_SECRET'
-    const selectedSource = SECRET_SOURCES.find((option) => option.value === data.source) ?? SECRET_SOURCES[0]
-    const descriptionValue = data.description.trim()
-    const fallbackFilePath = `/vault/secrets/${finalReference.split('/').pop() || 'secret'}`
-    const finalPath = data.path.trim() || fallbackFilePath
-
-    onSubmit({
-      name: finalName,
-      description: descriptionValue ? descriptionValue : undefined,
-      filePath: isFile ? finalPath : undefined,
-      isFile,
-      reference: finalReference,
-      source: selectedSource.tableLabel,
-      sourceIcon: selectedSource.icon,
-    })
-    onClose()
-  })
-
-  useEffect(() => {
-    enableAlertClickOutside(methods.formState.isDirty)
-  }, [enableAlertClickOutside, methods.formState.isDirty])
-
-  useEffect(() => {
-    methods.trigger().then()
-  }, [methods.trigger])
-
-  return (
-    <FormProvider {...methods}>
-      <ModalCrud
-        title={
-          isFile
-            ? mode === 'edit'
-              ? 'Edit secret as file'
-              : 'Add secret as file'
-            : mode === 'edit'
-              ? 'Edit secret'
-              : 'Add secret'
-        }
-        description={
-          isFile
-            ? mode === 'edit'
-              ? 'Edit an external secret file to use on this service. Qovery will resolve its value at deployment and mount it inside your container.'
-              : 'Add an external secret file to use on this service. Qovery will resolve its value at deployment and mount it inside your container.'
-            : mode === 'edit'
-              ? 'Edit an external secret to use on this service. Qovery will resolve its value at deployment.'
-              : 'Add an external secret to use on this service. Qovery will resolve its value at deployment.'
-        }
-        onSubmit={handleSubmit}
-        onClose={onClose}
-        submitLabel={mode === 'edit' ? 'Edit secret' : 'Add secret'}
-      >
-        <>
-          <Controller
-            name="source"
-            control={methods.control}
-            render={({ field }) => (
-              <InputSelect
-                className="mb-3 w-full"
-                label="Source"
-                portal
-                options={SECRET_SOURCES.map((option) => ({
-                  label: option.label,
-                  value: option.value,
-                  icon: (
-                    <Icon
-                      name={match(option.icon)
-                        .with('aws', () => 'AWS' as const)
-                        .with('gcp', () => 'GCP' as const)
-                        .exhaustive()}
-                      width="16"
-                      height="16"
-                    />
-                  ),
-                }))}
-                value={field.value}
-                onChange={(value) => field.onChange(value as SecretSourceOption['value'])}
-                placeholder="Select a source"
-              />
-            )}
-          />
-
-          <Controller
-            name="reference"
-            control={methods.control}
-            render={({ field }) => (
-              <InputSelect
-                className="mb-3 w-full"
-                label="Reference"
-                options={REFERENCE_OPTIONS.map((reference) => ({ label: reference, value: reference }))}
-                value={field.value}
-                onChange={(value) => {
-                  const selected = value as string
-                  field.onChange(selected)
-                  if (!secretNameValue) {
-                    const inferredName = selected.split('/').pop()?.toUpperCase()
-                    if (inferredName) {
-                      methods.setValue('secretName', inferredName, { shouldValidate: true })
-                    }
-                  }
-                }}
-                onInputChange={(value) => setReferenceInput(value)}
-                isSearchable
-                isCreatable
-                placeholder="Reference"
-              />
-            )}
-          />
-
-          {isFile && (
-            <Controller
-              name="path"
-              control={methods.control}
-              render={({ field }) => (
-                <InputText
-                  className="mb-3 w-full"
-                  name={field.name}
-                  label="Path"
-                  value={field.value}
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          )}
-
-          <Controller
-            name="secretName"
-            control={methods.control}
-            render={({ field }) => (
-              <InputText
-                className="mb-3 w-full"
-                name={field.name}
-                label="Secret name"
-                value={field.value}
-                onChange={field.onChange}
-                hint="Name that other Qovery services will use"
-              />
-            )}
-          />
-
-          <Controller
-            name="description"
-            control={methods.control}
-            render={({ field }) => (
-              <InputTextArea
-                className="mb-6 w-full"
-                label="Description"
-                name={field.name}
-                value={field.value}
-                onChange={field.onChange}
-              />
-            )}
-          />
-        </>
-      </ModalCrud>
-    </FormProvider>
-  )
-}
+const columnHelper = createColumnHelper<ExternalSecretRow>()
 
 interface AttachSecretsModalProps {
   selectedCount: number
@@ -518,22 +301,32 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
     setRowSelection({})
   }, [baseSecrets])
 
-  const handleSynchronize = useCallback((secretIds?: string[]) => {
-    const targetIds = secretIds ? new Set(secretIds) : null
-    const shouldSync = (secret: ExternalSecret) => !targetIds || targetIds.has(secret.id)
-    setSecrets((prev) =>
-      prev.map((s) =>
-        shouldSync(s) && (s.status === 'synced' || s.status === 'broken') ? { ...s, status: 'syncing' as const } : s
-      )
-    )
-    setTimeout(() => {
-      setSecrets((prev) =>
-        prev.map((s) => (shouldSync(s) && s.status === 'syncing' ? { ...s, status: 'synced' as const } : s))
-      )
-    }, 3000)
-  }, [])
+  const handleCheckReferences = useCallback(
+    (secretIds?: string[]) => {
+      const targetIds = secretIds ? new Set(secretIds) : null
+      const previousStatuses = new Map(secrets.map((secret) => [secret.id, secret.status]))
+      const shouldCheck = (secret: ExternalSecretRow) => !targetIds || targetIds.has(secret.id)
 
-  const getSourceOption = useCallback((secret?: ExternalSecret) => {
+      setSecrets((prev) =>
+        prev.map((secret) =>
+          shouldCheck(secret) && secret.status !== 'syncing' ? { ...secret, status: 'syncing' as const } : secret
+        )
+      )
+
+      setTimeout(() => {
+        setSecrets((prev) =>
+          prev.map((secret) =>
+            shouldCheck(secret) && secret.status === 'syncing'
+              ? { ...secret, status: previousStatuses.get(secret.id) ?? secret.status }
+              : secret
+          )
+        )
+      }, 3000)
+    },
+    [secrets]
+  )
+
+  const getSourceOption = useCallback((secret?: ExternalSecretRow) => {
     if (!secret?.source) {
       return SECRET_SOURCES[0]
     }
@@ -554,7 +347,6 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
                   ...secret,
                   id: `secret-${Date.now()}`,
                   status: 'synced',
-                  lastSync: 'just now',
                 },
                 ...prev,
               ])
@@ -571,7 +363,7 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
   )
 
   const handleOpenEditSecret = useCallback(
-    (secret: ExternalSecret) => {
+    (secret: ExternalSecretRow) => {
       openModal({
         content: (
           <AddSecretModal
@@ -686,12 +478,8 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
           description: 'Secret add-on has been activated on your cluster but no secret manager are linked to it.',
           icon: 'lock-keyhole' as const,
           actions: (
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <Button color="neutral" size="md" variant="solid" className="gap-2" type="button">
-                <Icon iconName="circle-plus" iconStyle="regular" />
-                Add secret manager
-              </Button>
-              <Button color="neutral" size="md" variant="outline" className="gap-2" type="button">
+            <div className="flex items-center justify-center">
+              <Button color="neutral" size="md" variant="solid" type="button">
                 Cluster settings
                 <Icon iconName="chevron-right" />
               </Button>
@@ -806,13 +594,31 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
         header: 'Status',
         enableSorting: false,
         enableColumnFilter: true,
+        meta: {
+          customFacetEntry: ({ value, count }) => {
+            const status = value as SyncStatus
+            return (
+              <>
+                <span className="text-sm font-medium">{STATUS_LABELS[status] ?? value}</span>
+                <span className="text-xs text-neutral-subtle">{count}</span>
+              </>
+            )
+          },
+          customFilterValue: ({ filterValue }) => (
+            <span className="flex items-center gap-1">
+              {filterValue
+                .map((value) => STATUS_LABELS[value as SyncStatus] ?? value)
+                .join(', ')}
+            </span>
+          ),
+        },
         filterFn: (row, columnId, filterValue) => {
           if (!Array.isArray(filterValue) || filterValue.length === 0) return true
           return filterValue.includes(row.getValue(columnId))
         },
-        cell: (info) => <SyncStatusBadge status={info.getValue()} />,
+        cell: (info) => <ExternalSecretStatusBadge status={info.getValue()} />,
       }),
-      columnHelper.accessor((row) => row.source ?? 'No source', {
+      columnHelper.accessor((row) => row.source ?? 'No sources detected', {
         id: 'source',
         header: 'Source',
         enableSorting: false,
@@ -824,7 +630,7 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
         cell: (info) => {
           const secret = info.row.original
           if (!secret.source) {
-            return <span className="text-sm text-neutral">No source</span>
+            return <span className="text-sm text-neutral-subtle">No sources detected</span>
           }
           return (
             <span className="flex items-center gap-1.5 text-sm text-neutral">
@@ -843,22 +649,28 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
           )
         },
       }),
-      columnHelper.accessor('lastSync', {
-        header: 'Last sync',
+      columnHelper.accessor('scope', {
+        header: 'Scope',
         enableSorting: false,
-        cell: (info) => <span className="text-sm text-neutral-subtle">{info.getValue()}</span>,
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterValue) => {
+          if (!Array.isArray(filterValue) || filterValue.length === 0) return true
+          return filterValue.includes(row.getValue(columnId))
+        },
+        cell: (info) => <span className="text-sm capitalize text-neutral">{info.getValue()}</span>,
       }),
       columnHelper.display({
         id: 'actions',
+        header: 'Actions',
         cell: (info) => {
           const secret = info.row.original
           const isSyncing = secret.status === 'syncing'
           return (
-            <div className="flex items-center justify-end gap-1">
+            <div className="flex items-center justify-end gap-2">
               <Button
                 aria-label="Edit"
                 color="neutral"
-                size="xs"
+                size="sm"
                 variant="outline"
                 iconOnly
                 type="button"
@@ -871,40 +683,28 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
                   </div>
                 </Tooltip>
               </Button>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <Button aria-label="Other actions" color="neutral" size="xs" variant="outline" iconOnly disabled={isSyncing}>
-                    <Tooltip content="Other actions">
-                      <div className="flex h-full w-full items-center justify-center">
-                        <Icon iconName="ellipsis-vertical" iconStyle="regular" />
-                      </div>
-                    </Tooltip>
-                  </Button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content align="end">
-                  <DropdownMenu.Item
-                    icon={<Icon iconName="rotate" />}
-                    disabled={isSyncing}
-                    onSelect={() => handleSynchronize([secret.id])}
-                  >
-                    Synchronize
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    icon={<Icon iconName="trash" />}
-                    color="red"
-                    disabled={isSyncing}
-                    onSelect={() => handleConfirmDeleteSecrets([secret.id])}
-                  >
-                    Delete
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
+              <Button
+                aria-label="Delete"
+                color="neutral"
+                size="sm"
+                variant="outline"
+                iconOnly
+                type="button"
+                disabled={isSyncing}
+                onClick={() => handleConfirmDeleteSecrets([secret.id])}
+              >
+                <Tooltip content="Delete">
+                  <div className="flex h-full w-full items-center justify-center">
+                    <Icon iconName="trash" />
+                  </div>
+                </Tooltip>
+              </Button>
             </div>
           )
         },
       }),
     ],
-    [handleConfirmDeleteSecrets, handleOpenEditSecret, handleSynchronize]
+    [handleConfirmDeleteSecrets, handleOpenEditSecret]
   )
 
   const table = useReactTable({
@@ -938,16 +738,24 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
       {/* Header bar */}
       {!shouldShowEmptyState && (
         <div className="flex items-center justify-between border-b border-neutral bg-surface-neutral px-4 py-2">
-          <span className="text-sm font-medium text-neutral">{countText}</span>
+          <div className="flex items-center gap-1.5 text-sm font-medium text-neutral">
+            <span>{countText}</span>
+            <Tooltip content="Number of external secrets linked to this service">
+              <span>
+                <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+              </span>
+            </Tooltip>
+          </div>
           <div className="flex items-center gap-2">
             <TableFilterSearch
-              className="h-8 w-[200px]"
+              className="h-8 w-[180px]"
+              placeholder="Search secrets"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <Button color="neutral" variant="outline" size="md" className="gap-2" onClick={() => handleSynchronize()}>
+            <Button color="neutral" variant="outline" size="md" className="gap-2" onClick={() => handleCheckReferences()}>
               <Icon iconName="rotate" iconStyle="regular" />
-              Synchronize secrets
+              Check references
             </Button>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
@@ -986,7 +794,7 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
           </EmptyState>
         </div>
       ) : (
-        <Table.Root className="w-full min-w-[800px] text-xs" containerClassName="border-0 rounded-none">
+        <Table.Root className="w-full min-w-[1240px] text-xs" containerClassName="border-0 rounded-none">
           <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className={twMerge('w-full items-center text-xs', gridLayoutClassName)}>
@@ -999,7 +807,7 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
                       header.column.id === 'name' && 'border-r border-neutral'
                     )}
                   >
-                    {['status', 'source'].includes(header.column.id) ? (
+                    {['status', 'source', 'scope'].includes(header.column.id) ? (
                       <TableFilter column={header.column} />
                     ) : header.column.getCanSort() ? (
                       <button
@@ -1066,10 +874,10 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
                 variant="outline"
                 size="md"
                 className="gap-2"
-                onClick={() => handleSynchronize(selectedIds)}
+                onClick={() => handleCheckReferences(selectedIds)}
               >
                 <Icon iconName="rotate" iconStyle="regular" />
-                Synchronize
+                Check references
               </Button>
               <Button
                 color="neutralInverted"

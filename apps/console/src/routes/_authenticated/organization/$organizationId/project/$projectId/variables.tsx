@@ -1,7 +1,9 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { VariableList, VariablesActionToolbar } from '@qovery/domains/variables/feature'
-import { Heading, LoaderSpinner, Section, toast } from '@qovery/shared/ui'
+import { Heading, Icon, LoaderSpinner, Navbar, Section, toast } from '@qovery/shared/ui'
+
+type VariableTab = 'custom' | 'built-in'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/project/$projectId/variables')({
   component: RouteComponent,
@@ -9,6 +11,7 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 
 function RouteComponent() {
   const { projectId = '' } = useParams({ strict: false })
+  const [activeTab, setActiveTab] = useState<VariableTab>('custom')
 
   return (
     <Suspense
@@ -23,28 +26,72 @@ function RouteComponent() {
           <div className="flex shrink-0 flex-col gap-6">
             <div className="flex justify-between">
               <Heading>Project variables</Heading>
-              <VariablesActionToolbar
-                scope="PROJECT"
-                projectId={projectId}
-                onCreateVariable={() => toast('success', 'Creation success')}
-              />
             </div>
             <hr className="w-full border-neutral" />
           </div>
-          <div className="flex min-h-0 flex-1 flex-col gap-8">
-            <VariableList
-              scope="PROJECT"
-              projectId={projectId}
-              onCreateVariable={() => {
-                toast('success', 'Creation success')
-              }}
-              onEditVariable={() => {
-                toast('success', 'Edition success')
-              }}
-              onDeleteVariable={() => {
-                toast('success', 'Deletion success')
-              }}
-            />
+
+          <div className="flex flex-col">
+            <div className="relative overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
+              <div className="bg-surface-neutral-subtle px-4 pb-2">
+                <Navbar.Root activeId={activeTab} className="relative">
+                  <Navbar.Item id="custom" onClick={() => setActiveTab('custom')}>
+                    <Icon iconName="sliders" iconStyle="regular" />
+                    Custom
+                  </Navbar.Item>
+                  <Navbar.Item id="built-in" onClick={() => setActiveTab('built-in')}>
+                    <Icon iconName="cube" iconStyle="regular" />
+                    Built-in
+                  </Navbar.Item>
+                </Navbar.Root>
+              </div>
+            </div>
+
+            <div className="relative -mt-2 rounded-lg">
+              <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+                {activeTab === 'custom' && (
+                  <VariableList
+                    showOnly="custom"
+                    hideSectionLabel
+                    headerActions={
+                      <VariablesActionToolbar
+                        scope="PROJECT"
+                        projectId={projectId}
+                        onCreateVariable={() => toast('SUCCESS', 'Creation success')}
+                      />
+                    }
+                    scope="PROJECT"
+                    projectId={projectId}
+                    onCreateVariable={() => {
+                      toast('SUCCESS', 'Creation success')
+                    }}
+                    onEditVariable={() => {
+                      toast('SUCCESS', 'Edition success')
+                    }}
+                    onDeleteVariable={() => {
+                      toast('SUCCESS', 'Deletion success')
+                    }}
+                  />
+                )}
+                {activeTab === 'built-in' && (
+                  <VariableList
+                    showOnly="built-in"
+                    hideSectionLabel
+                    headerActions={<div className="hidden" />}
+                    scope="PROJECT"
+                    projectId={projectId}
+                    onCreateVariable={() => {
+                      toast('SUCCESS', 'Creation success')
+                    }}
+                    onEditVariable={() => {
+                      toast('SUCCESS', 'Edition success')
+                    }}
+                    onDeleteVariable={() => {
+                      toast('SUCCESS', 'Deletion success')
+                    }}
+                  />
+                )}
+              </div>
+            </div>
           </div>
         </Section>
       </div>

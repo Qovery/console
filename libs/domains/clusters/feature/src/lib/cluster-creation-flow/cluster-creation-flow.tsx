@@ -43,6 +43,7 @@ export type ClusterAddonsSecretManager = {
   provider: 'AWS' | 'GCP'
   source: 'aws-manager' | 'aws-parameter' | 'gcp-secret'
   authType?: 'sts' | 'static'
+  gcpProjectId?: string
   region?: string
   roleArn?: string
   accessKey?: string
@@ -66,6 +67,8 @@ export const useClusterContainerCreateContext = () => {
     throw new Error('useClusterContainerCreateContext must be used within a ClusterContainerCreateContext')
   return clusterContainerCreateContext
 }
+
+export const useMaybeClusterContainerCreateContext = () => useContext(ClusterContainerCreateContext)
 
 export const steps = (clusterGeneralData?: ClusterGeneralData) => {
   return match(clusterGeneralData)

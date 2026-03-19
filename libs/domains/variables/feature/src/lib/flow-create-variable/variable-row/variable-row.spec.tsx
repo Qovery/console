@@ -24,6 +24,7 @@ describe('VariableRow', () => {
       wrapWithReactHookForm<FlowVariableData>(<VariableRow {...props} />, {
         defaultValues: {
           variables: [],
+          externalSecrets: [],
         },
       })
     )

@@ -52,9 +52,21 @@ function getValueEditorLanguage({ isFile, mountPath }: { isFile: boolean; mountP
   return 'plaintext'
 }
 
+export interface CreateUpdateVariableModalSubmitData {
+  key: string
+  value?: string | null
+  description?: string
+  scope: Scope
+  isSecret: boolean
+  isFile: boolean
+  enable_interpolation_in_file?: boolean
+  mountPath?: string
+}
+
 export type CreateUpdateVariableModalProps = {
   closeModal: () => void
   onSubmit?: (variable?: VariableResponse | void) => void
+  onSubmitLocal?: (data: CreateUpdateVariableModalSubmitData) => void
   variable?: VariableResponse
   mode: 'CREATE' | 'UPDATE'
   type: keyof typeof APIVariableTypeEnum
@@ -78,7 +90,7 @@ export type CreateUpdateVariableModalProps = {
 )
 
 export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps) {
-  const { scope, closeModal, onSubmit, variable, mode, type, isFile } = props
+  const { scope, closeModal, onSubmit, onSubmitLocal, variable, mode, type, isFile } = props
   const _isFile = (variable && environmentVariableFile(variable)) || (isFile ?? false)
   const { enableAlertClickOutside } = useModal()
   const [loading, setLoading] = useState(false)
@@ -166,6 +178,22 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
 
     if (!_isFile) {
       delete cloneData.mountPath
+    }
+
+    if (onSubmitLocal) {
+      onSubmitLocal({
+        key: cloneData.key,
+        value: cloneData.value,
+        description: cloneData.description,
+        scope: cloneData.scope,
+        isSecret: cloneData.isSecret,
+        isFile: _isFile,
+        enable_interpolation_in_file: cloneData.enable_interpolation_in_file,
+        mountPath: cloneData.mountPath ?? undefined,
+      })
+      onSubmit?.()
+      closeModal()
+      return
     }
 
     try {
