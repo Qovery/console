@@ -142,6 +142,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizelegibility;
   min-height: 100vh;
+  min-width: 44.5rem;
 
   main:not(.h-screen, .layout-onboarding) {
     height: calc(100vh - theme('spacing.16'));

@@ -105,6 +105,12 @@ const easingFunctions = {
 module.exports = {
   darkMode: ['selector', '[data-theme="dark"]'],
   theme: {
+    container: {
+      screens: {
+        xl: '1280px',
+        '2xl': '1536px',
+      },
+    },
     extend: {
       zIndex: {
         header: 'var(--header-zindex)',

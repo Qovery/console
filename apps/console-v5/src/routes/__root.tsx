@@ -10,7 +10,6 @@ interface RouterContext {
 }
 
 const RootLayout = () => {
-  // Putting the modal provider and toast behavior here to let modals and toast have access to the Router context which they don't have in main.tsx
   return (
     <>
       <ModalProvider>

@@ -421,12 +421,10 @@ function OrganizationRoute() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
-    if (location.pathname.includes('/settings/roles/edit/')) {
-      // Reset roles edit scroll: Suspense fallback keeps shared layout scroll position otherwise.
-      const scrollContainer = scrollContainerRef.current
-      if (scrollContainer) {
-        scrollContainer.scrollTop = 0
-      }
+    const scrollContainer = scrollContainerRef.current
+
+    if (scrollContainer) {
+      scrollContainer.scrollTop = 0
     }
   }, [location.pathname])
 
@@ -439,10 +437,10 @@ function OrganizationRoute() {
       {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
       <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-auto">
         <ErrorBoundary>
+          <Header />
+
           <Suspense fallback={<MainLoader />}>
             <>
-              <Header />
-
               <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
                 <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
                   {navigationContext && <NavigationBar context={navigationContext} />}
