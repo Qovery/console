@@ -20,7 +20,7 @@ export const webflow = createQueryKeys('webflow', {
       })
 
       if (!response.ok) {
-        throw new Error(`Webflow API error: ${response.status} ${response.statusText}`)
+        throw new Error(`Changelog error: ${response.status} ${response.statusText}`)
       }
 
       const data = (await response.json()) as Changelog[]
