@@ -209,7 +209,6 @@ export function InputSelect({
         valueClassName
       )}
     >
-    <span className={twMerge('mr-1 text-sm text-neutral', valueClassName)}>
       {props.data.label}
       {props.data.description ? `: ${props.data.description}` : ''}
     </span>
@@ -383,10 +382,6 @@ export function InputSelect({
                 iconClassName
               )}
             />
-          <div
-            className={twMerge('pointer-events-none absolute right-4 top-1/2 -translate-y-1/2', iconClassName)}
-          >
-            <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />
           </div>
         )}
         {currentIcon?.onClickEditable && (

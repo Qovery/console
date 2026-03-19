@@ -242,10 +242,12 @@ export function MenuOtherActions({
   state,
   environment,
   cloneUseCaseId,
+  variant = 'default',
 }: {
   state: StateEnum
   environment: Environment
   cloneUseCaseId?: string
+  variant?: ActionToolbarVariant
 }) {
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
