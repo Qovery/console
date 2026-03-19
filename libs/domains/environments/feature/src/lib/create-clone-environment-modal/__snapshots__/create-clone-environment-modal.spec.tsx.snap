@@ -42,13 +42,13 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
           >
             <div
               aria-label="input-container"
-              class="input group"
+              class="input group input--focused input--label-up"
             >
               <div
                 class=""
               >
                 <label
-                  class="input__label translate-y-2 text-sm"
+                  class="input__label text-xs"
                   for="Environment name"
                 >
                   Environment name
