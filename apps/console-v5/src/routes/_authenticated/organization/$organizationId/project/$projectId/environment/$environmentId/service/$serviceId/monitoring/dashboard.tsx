@@ -88,7 +88,9 @@ function RouteComponent() {
     return (
       <div className="relative">
         <Section className="relative h-full w-full gap-4 border-t border-neutral p-8 pt-10">
-          <div className="text-base font-medium text-neutral">Service health check</div>
+          <Heading weight="medium" level={2}>
+            Service health check
+          </Heading>
           <PlaceholderMonitoring />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-background"></div>
         </Section>
