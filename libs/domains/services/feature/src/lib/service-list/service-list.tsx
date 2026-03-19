@@ -51,7 +51,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
   const projectId = environment.project.id || ''
 
   const { data: services } = useServices({ environmentId, suspense: true })
-  const { data: deploymentStages } = useListDeploymentStages({ environmentId })
+  const { data: deploymentStages } = useListDeploymentStages({ environmentId, suspense: true })
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
