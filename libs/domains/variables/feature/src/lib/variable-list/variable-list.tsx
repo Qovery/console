@@ -21,10 +21,8 @@ import {
   Checkbox,
   DropdownMenu,
   EmptyState,
-  Heading,
   Icon,
   PasswordShowHide,
-  Section,
   TableFilter,
   TableFilterSearch,
   TablePrimitives,
@@ -130,6 +128,23 @@ export function VariableList({
     })
   }
 
+  const _onCreateStandaloneVariable = (isFile = false) =>
+    openModal({
+      content: (
+        <CreateUpdateVariableModal
+          closeModal={closeModal}
+          type="VALUE"
+          mode="CREATE"
+          onSubmit={onCreateVariable}
+          isFile={isFile}
+          {...props}
+        />
+      ),
+      options: {
+        fakeModal: true,
+      },
+    })
+
   const _onEditVariable: (variable: VariableResponse) => void = (variable) => {
     openModal({
       content: (
@@ -176,13 +191,13 @@ export function VariableList({
       ? 'grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0%,40%)_minmax(0,12%)]'
       : isEnvironmentScope
         ? 'grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)]'
-        : 'grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)_88px]'
+        : 'grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]'
   const builtInGridLayoutClassName =
     props.scope === 'PROJECT'
       ? 'grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_50px_minmax(0,40%)_minmax(0,12%)]'
       : isEnvironmentScope
         ? 'grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_50px_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)]'
-        : 'grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)_88px]'
+        : 'grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]'
 
   const columnHelper = createColumnHelper<(typeof variables)[number]>()
   const columns = useMemo(() => {
@@ -307,6 +322,7 @@ export function VariableList({
       }),
       columnHelper.display({
         id: 'actions',
+        header: 'Actions',
         cell: (info) => {
           const variable = info.row.original
           const alreadyOverridden = variables.some(({ overridden_variable }) => variable.id === overridden_variable?.id)
@@ -322,7 +338,7 @@ export function VariableList({
             return (
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
-                  <Button variant="outline" size="md" aria-label="actions" className="w-8 justify-center">
+                  <Button variant="outline" size="sm" aria-label="actions" className="justify-center">
                     <Icon iconName="ellipsis-vertical" iconStyle="regular" />
                   </Button>
                 </DropdownMenu.Trigger>
@@ -397,7 +413,7 @@ export function VariableList({
               <Button
                 aria-label="Create alias"
                 color="neutral"
-                size="xs"
+                size="sm"
                 variant="outline"
                 iconOnly
                 type="button"
@@ -413,11 +429,11 @@ export function VariableList({
           }
 
           return (
-            <div className="flex items-center justify-end gap-1">
+            <div className="flex items-center justify-end gap-2">
               <Button
                 aria-label={isDoppler ? 'Edit in Doppler' : 'Edit'}
                 color="neutral"
-                size="xs"
+                size="sm"
                 variant="outline"
                 iconOnly
                 type="button"
@@ -439,7 +455,7 @@ export function VariableList({
               </Button>
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
-                  <Button aria-label="Other actions" color="neutral" size="xs" variant="outline" iconOnly>
+                  <Button aria-label="Other actions" color="neutral" size="sm" variant="outline" iconOnly>
                     <Tooltip content="Other actions">
                       <div className="flex h-full w-full items-center justify-center">
                         <Icon iconName="ellipsis-vertical" iconStyle="regular" />
@@ -542,7 +558,7 @@ export function VariableList({
         .otherwise(({ organizationId, projectId, environmentId }) => [
           columnHelper.accessor('service_name', {
             header: 'Service link',
-            enableColumnFilter: true,
+            enableColumnFilter: !isServiceScope,
             filterFn: 'arrIncludesSome',
             size: 15,
             meta: {
@@ -573,7 +589,9 @@ export function VariableList({
                   )}
                   {variable.service_name}
                 </Link>
-              ) : null
+              ) : (
+                <span className="text-sm text-neutral-subtle">-</span>
+              )
             },
           }),
         ]),
@@ -634,7 +652,11 @@ export function VariableList({
   }, [variables.length, _onCreateVariable, _onEditVariable, props.scope, showOnly, !!headerActions, isServiceScope])
   const nonBuiltInColumns = useMemo(() => {
     if (!isEnvironmentScope && props.scope !== 'PROJECT') {
-      return columns
+      return columns.filter((column) => {
+        const id = (column as { id?: string }).id
+        const accessorKey = (column as { accessorKey?: string }).accessorKey
+        return id !== 'service_name' && accessorKey !== 'service_name'
+      })
     }
     return columns.filter((column) => {
       const id = (column as { id?: string }).id
@@ -747,6 +769,53 @@ export function VariableList({
     return <VariableListSkeleton />
   }
 
+  if (showOnly === 'custom' && nonBuiltInVariables.length === 0) {
+    return (
+      <div className="bg-background">
+        <EmptyState
+          title="No custom variables added yet"
+          description="Add environment variables to configure your service at build or runtime."
+          icon="wave-pulse"
+          className="rounded-none border-0 bg-transparent py-12"
+        >
+          <div className="flex items-center gap-2">
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <Button color="neutral" variant="solid" size="md" className="gap-1.5">
+                  <Icon iconName="circle-plus" iconStyle="regular" />
+                  Add variable
+                  <Icon iconName="angle-down" />
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                <DropdownMenu.Item onSelect={() => _onCreateStandaloneVariable()} icon={<Icon iconName="key" />}>
+                  Variable
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  onSelect={() => _onCreateStandaloneVariable(true)}
+                  icon={<Icon iconName="file-lines" iconStyle="regular" />}
+                >
+                  Variable as file
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+
+            <Button
+              color="neutral"
+              variant="outline"
+              size="md"
+              className="gap-1.5"
+              onClick={() => window.open('https://dashboard.doppler.com', '_blank')}
+            >
+              <Icon iconName="arrow-up-right-from-square" iconStyle="regular" />
+              Import from Doppler
+            </Button>
+          </div>
+        </EmptyState>
+      </div>
+    )
+  }
+
   if (variables.length === 0) {
     return (
       <EmptyState
@@ -769,12 +838,22 @@ export function VariableList({
     const countText = isSearching
       ? `${tableInstance.getRowCount()}/${totalRows} ${pluralize(tableInstance.getRowCount(), 'variable')}`
       : `${totalRows} ${pluralize(totalRows, 'variable')}`
+    const countTooltipContent = isBuiltInTable
+      ? 'Qovery automatically injects built-in variables for service interconnection and system information.'
+      : 'Custom variables are values you define to configure your service behavior at build and runtime.'
 
     return (
       <div className="flex grow flex-col justify-between">
         {headerActions && (
-          <div className="flex items-center justify-between border-b border-neutral px-4 py-2">
-            <span className="text-sm font-medium text-neutral">{countText}</span>
+          <div className="flex items-center justify-between border-b border-neutral bg-surface-neutral px-4 py-2">
+            <div className="flex items-center gap-1.5 text-sm font-medium text-neutral">
+              <span>{countText}</span>
+              <Tooltip content={countTooltipContent}>
+                <span>
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+                </span>
+              </Tooltip>
+            </div>
             <div className="flex items-center gap-2">
               <TableFilterSearch
                 className="h-8 w-[200px]"
@@ -793,14 +872,12 @@ export function VariableList({
             {tableInstance.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className={twMerge('w-full items-center text-xs', rowGridClassName)}>
                 {headerGroup.headers.map((header) => (
-                  // Keep this column hidden (not removed) in Service scope (custom vars only) to preserve visual column alignment
                   <Table.ColumnHeaderCell
                     className={twMerge(
                       'group relative flex items-center font-medium',
                       header.column.id === 'actions' && 'justify-end',
                       !isServiceScope && header.column.id === 'actions' && 'border-r border-neutral pl-0',
-                      isServiceScope && header.column.id === 'key' && 'border-r border-neutral',
-                      isServiceScope && header.column.id === 'service_name' && 'opacity-0'
+                      isServiceScope && header.column.id === 'key' && 'border-r border-neutral'
                     )}
                     key={header.id}
                   >
@@ -849,15 +926,13 @@ export function VariableList({
               <Fragment key={row.id}>
                 <Table.Row className={twMerge('h-16 items-center hover:bg-surface-neutral-subtle', rowGridClassName)}>
                   {row.getVisibleCells().map((cell) => (
-                    // Keep this cell hidden (not removed) in service scope (custom vars only) to preserve visual column alignment
                     <Table.Cell
                       key={cell.id}
                       className={twMerge(
                         'flex h-full items-center first:relative',
                         cell.column.id === 'actions' && 'justify-end',
                         !isServiceScope && cell.column.id === 'actions' && 'border-r border-neutral pl-0',
-                        isServiceScope && cell.column.id === 'key' && 'border-r border-neutral',
-                        isServiceScope && cell.column.id === 'service_name' && 'opacity-0'
+                        isServiceScope && cell.column.id === 'key' && 'border-r border-neutral'
                       )}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -879,13 +954,13 @@ export function VariableList({
       {showOnly !== 'built-in' && nonBuiltInVariables.length > 0 && (
         <section className="flex min-h-0 flex-col gap-4">
           {!hideSectionLabel && <h3 className="text-base font-medium text-neutral">Custom variables</h3>}
-          {renderTable(table, globalFilter, setGlobalFilter, gridLayoutClassName)}
+          {renderTable(table, globalFilter, setGlobalFilter, gridLayoutClassName, false)}
         </section>
       )}
       {showOnly !== 'custom' && builtInVariables.length > 0 && (
         <section className="flex min-h-0 flex-col gap-4">
           {!hideSectionLabel && <h3 className="text-base font-medium text-neutral">Built-in variables</h3>}
-          {renderTable(builtInTable, builtInGlobalFilter, setBuiltInGlobalFilter, builtInGridLayoutClassName)}
+          {renderTable(builtInTable, builtInGlobalFilter, setBuiltInGlobalFilter, builtInGridLayoutClassName, true)}
         </section>
       )}
       <VariableListActionBar selectedRows={selectedRows} resetRowSelection={() => table.resetRowSelection()} />

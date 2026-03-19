@@ -222,7 +222,11 @@ function CloneMigrationHelperModal({
             }`}
           >
             <Icon
+<<<<<<< HEAD
               iconName="link"
+=======
+              iconName="link-broken"
+>>>>>>> f98bdb5c4 (feat(secret-managers): integrate secret manager associated services and enhance variable management with new tabs)
               iconStyle="regular"
               className={selectedAction === 'detach' ? 'text-brand' : undefined}
             />
@@ -298,7 +302,7 @@ function CloneMigrationTableModal({
       {
         label: 'Detach all references',
         value: '__detach_all__',
-        icon: <Icon iconName="link" iconStyle="regular" className="text-sm" />,
+        icon: <Icon iconName="link-broken" iconStyle="regular" className="text-sm" />,
       },
       {
         label: 'Convert to empty Qovery secrets',

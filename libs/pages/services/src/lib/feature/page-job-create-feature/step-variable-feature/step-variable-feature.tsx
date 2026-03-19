@@ -64,9 +64,10 @@ export function StepVariableFeature() {
 
   const removePort = (index: number) => {
     const newVariables = methods.getValues().variables
+    const externalSecrets = methods.getValues().externalSecrets
     newVariables.splice(index, 1)
     setVariables(newVariables)
-    methods.reset({ variables: newVariables })
+    methods.reset({ variables: newVariables, externalSecrets })
   }
 
   useEffect(() => {
