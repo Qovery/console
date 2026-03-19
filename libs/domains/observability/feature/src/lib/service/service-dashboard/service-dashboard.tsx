@@ -238,8 +238,8 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
         </div>
       </div>
       <div className="space-y-10 px-8 py-10">
-        <Section className="gap-4">
-          <Heading weight="medium">Service health check</Heading>
+        <Section className="gap-3">
+          <div className="text-base font-medium text-neutral">Service health check</div>
           <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <CardInstanceStatus
               clusterId={environment.cluster_id}
@@ -292,9 +292,9 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
             </div>
           </div>
         </Section>
-        <Section className="gap-4">
+        <Section className="gap-3">
           <div className="flex items-center justify-between gap-2">
-            <Heading weight="medium">Resources</Heading>
+            <div className="text-base font-medium text-neutral">Resources</div>
             {!resourcesModeLoading && resourcesMode && (
               <Tooltip
                 content={
