@@ -7,7 +7,7 @@ export interface Changelog {
   firstPublishedAt: string
 }
 
-const CHANGELOG_ASSET_PATH = '/webflow/changelog.json'
+const CHANGELOG_ASSET_PATH = '/changelog/latest.json'
 
 export const webflow = createQueryKeys('webflow', {
   changelogs: {

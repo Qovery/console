@@ -1,6 +1,6 @@
 import { webflow } from './webflow-data-access'
 
-const CHANGELOGS = [
+const changelogs = [
   {
     name: 'Qovery changelog',
     summary: 'A release note.',
@@ -20,7 +20,7 @@ describe('webflow data access', () => {
   it('requests changelogs from the generated static asset', async () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
-      json: jest.fn().mockResolvedValue(CHANGELOGS),
+      json: jest.fn().mockResolvedValue(changelogs),
     }) as typeof fetch
 
     const result = await webflow.changelogs.queryFn({
@@ -30,9 +30,9 @@ describe('webflow data access', () => {
       client: {} as never,
     } as never)
 
-    expect(result).toEqual(CHANGELOGS)
+    expect(result).toEqual(changelogs)
     expect(global.fetch).toHaveBeenCalledWith(
-      '/webflow/changelog.json',
+      '/changelog/latest.json',
       expect.objectContaining({
         headers: {
           Accept: 'application/json',
