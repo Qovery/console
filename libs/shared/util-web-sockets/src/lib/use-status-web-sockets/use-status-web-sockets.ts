@@ -2,10 +2,12 @@ import { type EnvironmentStatus, type EnvironmentStatusesWithStages } from 'qove
 import {
   type ApplicationStatusDto,
   type DatabaseStatusDto,
+  type ServiceActionDetailsDto,
   type ServiceStatusDto,
   type TerraformStatusDto,
 } from 'qovery-ws-typescript-axios'
 import { v7 as uuidv7 } from 'uuid'
+import { type RunningState } from '@qovery/shared/enums'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { queries } from '@qovery/state/util-queries'
@@ -89,14 +91,16 @@ export function useStatusWebSockets({
     enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
     onMessage(queryClient, message: ServiceStatusDto) {
       for (const env of message.environments) {
-        // TODO [To update once rust-backed will be deployed]: check against current value and update it only if it has changed (to avoid too many re-render)
-        queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => ({
-          state: env.state,
-        }))
-        // // NOTE: we have to force this reset change because of the way the socket works.
-        // // You can have information about an service (eg. if it's stopping)
-        // TODO [To update once rust-backed will be deployed]: Remove reset cache strategy
-        queryClient.resetQueries([...queries.services.runningStatus._def, env.id])
+        // Setting the environment status only if it has changed
+        const currentEnvironmentStatus:
+          | { state: RunningState; triggered_action: ServiceActionDetailsDto | undefined }
+          | undefined = queryClient.getQueryData(queries.environments.runningStatus(env.id).queryKey)
+        if (env.state !== currentEnvironmentStatus?.state) {
+          queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => ({
+            state: env.state,
+          }))
+        }
+
         const services: (ApplicationStatusDto | DatabaseStatusDto | TerraformStatusDto)[] = [
           ...env.applications,
           ...env.containers,
@@ -106,30 +110,16 @@ export function useStatusWebSockets({
           ...env.terraform,
         ]
         for (const serviceRunningStatus of services) {
-          // TODO [To update once rust-backed will be deployed]: check against current value and update it only if it has changed (to avoid too many re-render)
-          queryClient.setQueryData(
-            queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey,
-            () => serviceRunningStatus
+          // Setting the service status only if it has changed
+          const currentServiceStatus = queryClient.getQueryData(
+            queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey
           )
-        }
-      }
-    },
-    onClose(queryClient, event: CloseEvent) {
-      // NOTE: API returns a string for the reason, which allows us to know if the status is available or not
-      // clusterId is required everywhere and environmentId is necessary for the service list
-      const isNotFound = event.reason.includes('NotFound') || event.reason.includes('not found')
-      if (isNotFound && clusterId) {
-        if (environmentId) {
-          queryClient.setQueryData(queries.services.checkRunningStatusClosed(clusterId, environmentId).queryKey, {
-            clusterId,
-            environmentId,
-            reason: event.reason,
-          })
-        } else {
-          queryClient.setQueryData(queries.environments.checkRunningStatusClosed(clusterId).queryKey, {
-            clusterId,
-            reason: event.reason,
-          })
+          if (JSON.stringify(serviceRunningStatus) !== JSON.stringify(currentServiceStatus)) {
+            queryClient.setQueryData(
+              queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey,
+              () => serviceRunningStatus
+            )
+          }
         }
       }
     },
