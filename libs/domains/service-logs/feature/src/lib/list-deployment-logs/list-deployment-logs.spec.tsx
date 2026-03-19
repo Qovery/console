@@ -16,7 +16,7 @@ jest.mock('@tanstack/react-router', () => ({
   useSearch: () => ({}),
   useNavigate: () => jest.fn(),
   useParams: () => ({ organizationId: '1' }),
-  useLocation: () => ({ pathname: '/', search: '' }),
+  useLocation: () => ({ pathname: '/', search: '', hash: '' }),
   useRouter: () => ({
     buildLocation: () => ({ href: '/' }),
   }),
@@ -34,6 +34,9 @@ jest.mock('../hooks/use-deployment-history/use-deployment-history', () => ({
       {
         identifier: {
           execution_id: '4',
+        },
+        auditing_data: {
+          created_at: '2024-09-18T07:03:29.819774Z',
         },
       },
     ],

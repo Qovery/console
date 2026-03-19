@@ -1,3 +1,4 @@
+import { useNavigate, useParams } from '@tanstack/react-router'
 import {
   type DeploymentStageWithServicesStatuses,
   type Environment,
@@ -6,21 +7,14 @@ import {
   type Stage,
   type Status,
 } from 'qovery-typescript-axios'
-import { memo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeploymentHistory } from '@qovery/domains/environments/feature'
-import { ListDeploymentLogs, SidebarPodStatuses } from '@qovery/domains/service-logs/feature'
 import { useService } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Banner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
+import { ListDeploymentLogs } from '../../list-deployment-logs/list-deployment-logs'
 
-// XXX: Prevent web-socket invalidations when re-rendering
-const WebSocketListenerMemo = memo(MetricsWebSocketListener)
-
-export interface DeploymentLogsFeatureProps {
+export interface DeploymentLogsContentProps {
   environment: Environment
   deploymentStages?: DeploymentStageWithServicesStatuses[]
   environmentStatus?: EnvironmentStatus
@@ -105,17 +99,24 @@ export function getStageFromServiceId(
   return undefined
 }
 
-export function DeploymentLogsFeature({
+export function DeploymentLogsContent({
   environment,
   environmentStatus,
   deploymentStages,
   preCheckStage,
-}: DeploymentLogsFeatureProps) {
-  const { serviceId = '', versionId } = useParams()
+}: DeploymentLogsContentProps) {
+  const { serviceId = '', executionId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
 
-  const { data: service, isFetched: isFetchedService } = useService({ environmentId: environment.id, serviceId })
-  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({ environmentId: environment.id })
+  const { data: service, isFetched: isFetchedService } = useService({
+    environmentId: environment.id,
+    serviceId,
+    suspense: true,
+  })
+  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({
+    environmentId: environment.id,
+    suspense: true,
+  })
 
   useDocumentTitle(`Deployment logs - ${service?.name ?? 'Loading...'}`)
 
@@ -139,7 +140,7 @@ export function DeploymentLogsFeature({
   const lastDeploymentExecutionId = latestDeployment?.identifier?.execution_id ?? ''
 
   const showBannerNew =
-    versionId !== lastDeploymentExecutionId &&
+    executionId !== lastDeploymentExecutionId &&
     match(lastDeploymentStatus)
       .with(
         'DEPLOYING',
@@ -163,42 +164,31 @@ export function DeploymentLogsFeature({
           buttonLabel="See latest"
           buttonIconRight="arrow-right"
           onClickButton={() =>
-            navigate(
-              ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-                DEPLOYMENT_LOGS_VERSION_URL(serviceId, lastDeploymentExecutionId)
-            )
+            navigate({
+              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+              params: {
+                organizationId: environment.organization.id,
+                projectId: environment.project.id,
+                environmentId: environment.id,
+                serviceId,
+                executionId: lastDeploymentExecutionId,
+              },
+              replace: true,
+            })
           }
         >
           A new deployment has been initiated
         </Banner>
       )}
-      <div className="h-full w-full bg-neutral-900">
-        <SidebarPodStatuses
-          organizationId={environment.organization.id}
-          projectId={environment.project.id}
-          service={service}
-        >
-          <ListDeploymentLogs
-            environment={environment}
-            serviceStatus={serviceStatus}
-            environmentStatus={environmentStatus}
-            stage={stageFromServiceId}
-            preCheckStage={preCheckStage}
-          />
-        </SidebarPodStatuses>
-        {service && environment && (
-          <WebSocketListenerMemo
-            organizationId={environment.organization.id}
-            clusterId={environment.cluster_id}
-            projectId={environment.project.id}
-            environmentId={environment.id}
-            serviceId={service.id}
-            serviceType={service.serviceType}
-          />
-        )}
-      </div>
+      <ListDeploymentLogs
+        environment={environment}
+        serviceStatus={serviceStatus}
+        environmentStatus={environmentStatus}
+        stage={stageFromServiceId}
+        preCheckStage={preCheckStage}
+      />
     </>
   )
 }
 
-export default DeploymentLogsFeature
+export default DeploymentLogsContent

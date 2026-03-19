@@ -5,7 +5,7 @@ import { ServiceDeploymentList, ServiceDeploymentListSkeleton } from '@qovery/do
 import { Heading, Section } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments'
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/'
 )({
   component: RouteComponent,
 })

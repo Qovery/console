@@ -11,7 +11,6 @@ import { match } from 'ts-pattern'
 import { useDeploymentHistoryExecutionId, useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
   Icon,
   Indicator,
@@ -172,16 +171,14 @@ function PipelineContent({
                         return (
                           <Link
                             key={service?.id}
-                            // TODO new-nav : Route not yet created
-                            // @ts-expect-error-next-line
-                            to={
-                              ENVIRONMENT_LOGS_URL(
-                                environment.organization.id,
-                                environment.project.id,
-                                environment.id
-                                // ) + DEPLOYMENT_LOGS_VERSION_URL(service.id, executionId ?? '')
-                              ) + DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentId ?? '')
-                            }
+                            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                            params={{
+                              organizationId: environment.organization.id,
+                              projectId: environment.project.id,
+                              environmentId: environment.id,
+                              serviceId: service.id,
+                              executionId: deploymentHistory?.identifier.execution_id ?? '',
+                            }}
                             className={clsx(
                               'flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2 text-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle hover:text-neutral',
                               {

@@ -7,9 +7,9 @@ import { Route, Routes } from 'react-router-dom'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import DeploymentLogsFeature, {
-  type DeploymentLogsFeatureProps,
+  type DeploymentLogsContentProps,
   getServiceStatusesById,
-} from './deployment-logs-feature'
+} from './deployment-logs-content'
 
 const services: DeploymentStageWithServicesStatuses[] = [
   {
@@ -43,7 +43,7 @@ const services: DeploymentStageWithServicesStatuses[] = [
 ]
 
 describe('DeploymentLogsFeature', () => {
-  const props: DeploymentLogsFeatureProps = {
+  const props: DeploymentLogsContentProps = {
     environment: environmentFactoryMock(1)[0],
     statusStages: services,
   }

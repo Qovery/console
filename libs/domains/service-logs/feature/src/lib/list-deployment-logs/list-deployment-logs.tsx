@@ -1,3 +1,4 @@
+import { Link, useLocation, useParams } from '@tanstack/react-router'
 import {
   type ColumnFiltersState,
   type FilterFn,
@@ -6,6 +7,7 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import clsx from 'clsx'
 import download from 'downloadjs'
 import {
   type Environment,
@@ -15,13 +17,12 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { ServiceStateChip, useDeploymentStatus, useService } from '@qovery/domains/services/feature'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
+import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
+import { Button, DropdownMenu, Icon, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
-import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
+import { trimId } from '@qovery/shared/util-js'
+import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-placeholder/deployment-logs-placeholder'
 import HeaderLogs from '../header-logs/header-logs'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
@@ -146,7 +147,7 @@ export function ListDeploymentLogs({
   preCheckStage,
 }: ListDeploymentLogsProps) {
   const { hash } = useLocation()
-  const { organizationId, projectId, serviceId, versionId } = useParams()
+  const { organizationId = '', projectId = '', serviceId = '', executionId = '' } = useParams({ strict: false })
   const refScrollSection = useRef<HTMLDivElement>(null)
   const { updateStageId } = useContext(ServiceStageIdsContext)
 
@@ -173,7 +174,7 @@ export function ListDeploymentLogs({
     projectId,
     environmentId: environment.id,
     serviceId,
-    versionId,
+    executionId,
   })
 
   // `useEffect` used to scroll to the bottom of the logs when new logs are added or when the pauseLogs state changes
@@ -282,7 +283,7 @@ export function ListDeploymentLogs({
     [columnFilters]
   )
 
-  const isLastVersion = environmentDeploymentHistory?.[0]?.identifier.execution_id === versionId || !versionId
+  const isLastVersion = environmentDeploymentHistory?.[0]?.identifier.execution_id === executionId || !executionId
   const isDeploymentProgressing = isLastVersion
     ? match(deploymentStatus?.state)
         .with(
@@ -302,9 +303,9 @@ export function ListDeploymentLogs({
         .otherwise(() => false)
     : false
 
-  const lastLogTimestamp = logs.length > 0 ? logs[logs.length - 1]?.timestamp : undefined
-
   function HeaderLogsComponent() {
+    const currentDeploymentHistory = environmentDeploymentHistory.find((d) => d.identifier.execution_id === executionId)
+
     return (
       <HeaderLogs
         type="DEPLOYMENT"
@@ -312,72 +313,54 @@ export function ListDeploymentLogs({
         serviceId={serviceId ?? ''}
         serviceStatus={serviceStatus}
         environmentStatus={environmentStatus}
-        deploymentHistory={
-          versionId
-            ? environmentDeploymentHistory.find((d) => d.identifier.execution_id === versionId)
-            : environmentDeploymentHistory[0]
-        }
+        deploymentHistory={executionId ? currentDeploymentHistory : environmentDeploymentHistory[0]}
       >
         <div className="flex items-center gap-4">
-          <Indicator
-            align="start"
-            side="left"
-            className="left-[3px] top-[3px]"
-            content={
-              environmentStatus?.last_deployment_state.includes('ERROR') && (
-                <span className="flex h-3 w-3 items-center justify-center rounded bg-red-500 text-2xs">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="2" height="8" fill="none" viewBox="0 0 2 8">
-                    <path
-                      fill="#fff"
-                      d="M1.483.625H.517A.267.267 0 0 0 .25.892v3.716c0 .148.12.267.267.267h.966c.148 0 .267-.12.267-.267V.892a.267.267 0 0 0-.267-.267M.25 6.142v.966c0 .148.12.267.267.267h.966c.148 0 .267-.12.267-.267v-.966a.267.267 0 0 0-.267-.267H.517a.267.267 0 0 0-.267.267"
-                    ></path>
-                  </svg>
-                </span>
-              )
-            }
-          >
-            {/* TODO new-nav : Route not yet created */}
-            {/*<Link
-              as="button"
-              className="gap-1.5 truncate"
-              variant="surface"
-              to={
-                ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-                ENVIRONMENT_STAGES_URL(versionId)
-              }
-            >
-              Go to pipeline
-              <Icon iconName="timeline" />
-            </Link>*/}
-          </Indicator>
-          <Link
-            as="button"
-            className="gap-1.5"
-            variant="surface"
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
-            params={{
-              organizationId: environment.organization.id,
-              projectId: environment.project.id,
-              environmentId: environment.id,
-              serviceId,
-            }}
-            search={{
-              mode: isDeploymentProgressing ? 'live' : 'history',
-              startDate:
-                isDeploymentProgressing || !lastLogTimestamp
-                  ? undefined
-                  : dateYearMonthDayHourMinuteSecond(new Date(lastLogTimestamp)),
-              deploymentId: versionId,
-            }}
-          >
-            {match(service)
-              .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
-              .otherwise(() => true) ? (
-              <ServiceStateChip mode="running" environmentId={environment.id} serviceId={serviceId} />
-            ) : null}
-            Go to service logs
-            <Icon iconName="arrow-right" />
-          </Link>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <Button variant="outline" className="gap-1.5">
+                <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
+                {isLastVersion
+                  ? 'Latest'
+                  : dateYearMonthDayHourMinuteSecond(
+                      new Date(currentDeploymentHistory?.auditing_data.created_at ?? '')
+                    )}
+                <Icon iconName="angle-down" />
+              </Button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-80 overflow-y-auto">
+              {environmentDeploymentHistory.map((deployment) => (
+                <DropdownMenu.Item
+                  asChild
+                  key={deployment.identifier.execution_id}
+                  className={clsx('min-h-9', {
+                    'bg-surface-brand-component': deployment.identifier.execution_id === executionId,
+                  })}
+                >
+                  <Link
+                    className="flex w-full justify-between"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                    params={{
+                      organizationId,
+                      projectId,
+                      environmentId: environment.id,
+                      serviceId,
+                      executionId: deployment.identifier.execution_id,
+                    }}
+                    replace={true}
+                  >
+                    <Tooltip content={deployment.identifier.execution_id}>
+                      <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
+                    </Tooltip>
+                    <span className="flex items-center gap-2.5 text-xs text-neutral-subtle">
+                      {dateYearMonthDayHourMinuteSecond(new Date(deployment.auditing_data.created_at))}
+                      <StatusChip status={deployment.status} />
+                    </span>
+                  </Link>
+                </DropdownMenu.Item>
+              ))}
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
         </div>
       </HeaderLogs>
     )
@@ -385,10 +368,10 @@ export function ListDeploymentLogs({
 
   if (!logs || logs.length === 0 || !serviceStatus.is_part_last_deployment) {
     return (
-      <div className="h-[calc(100vh-64px)] w-full p-1">
-        <div className="h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
+      <div className="h-[calc(100vh-208px)] w-full">
+        <div className="relative h-full bg-background">
           <HeaderLogsComponent />
-          <div className="flex h-[calc(100%-48px)] flex-col items-center justify-between bg-neutral-600">
+          <div className="flex h-[calc(100%-48px)] flex-col items-center justify-between">
             <div className="flex h-full flex-col items-center justify-center">
               <DeploymentLogsPlaceholder
                 environment={environment}
@@ -404,11 +387,12 @@ export function ListDeploymentLogs({
       </div>
     )
   }
+
   return (
-    <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden bg-neutral-900 p-1">
-      <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
+    <div className="h-full w-full overflow-hidden">
+      <div className="relative h-full bg-background">
         <HeaderLogsComponent />
-        <div className="flex h-12 w-full items-center justify-between border-b border-r border-neutral-500 px-4 py-2.5">
+        <div className="flex w-full items-center justify-between border-b border-neutral px-4 py-2.5">
           <FiltersStageStep
             service={service}
             serviceStatus={serviceStatus}
@@ -417,16 +401,15 @@ export function ListDeploymentLogs({
           />
           <Button
             onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
-            size="sm"
-            variant="surface"
-            color="neutral"
-            className="w-7 justify-center"
+            variant="outline"
+            size="md"
+            iconOnly
           >
             <Icon iconName="file-arrow-down" iconStyle="regular" />
           </Button>
         </div>
         <div
-          className="max-h-[calc(100vh-170px)] w-full overflow-y-scroll pb-12"
+          className="h-[calc(100vh-209px)] w-full overflow-y-scroll "
           ref={refScrollSection}
           onWheel={(event) => {
             if (
@@ -447,7 +430,10 @@ export function ListDeploymentLogs({
               setPauseLogs={setPauseLogs}
             />
           )}
-          <Table.Root className="w-full text-xs">
+          <Table.Root
+            className="w-full border-separate border-spacing-y-0.5 text-xs"
+            containerClassName="rounded-none border-none bg-background"
+          >
             <Table.Body className="divide-y-0">
               {table.getRowModel().rows.map((row) => (
                 <MemoizedRowDeploymentLogs key={row.id} {...row} />

@@ -52,8 +52,8 @@ export function LoaderPlaceholder({
     <div className="flex w-full flex-col items-center justify-center gap-5 text-center">
       <LoaderDots />
       <div className="flex flex-col gap-3">
-        <p className="text-neutral-300">{title}</p>
-        <span className="text-sm text-neutral-350">{description}</span>
+        <p className="text-neutral">{title}</p>
+        <span className="text-neutral-subtitle text-sm">{description}</span>
       </div>
     </div>
   )
@@ -213,8 +213,8 @@ export function DeploymentLogsPlaceholder({
           </defs>
         </svg>
         <div className="flex flex-col gap-3">
-          <p className="text-neutral-300">Deployment has been canceled.</p>
-          <span className="text-sm text-neutral-350">No logs to display.</span>
+          <p className="text-neutral">Deployment has been canceled.</p>
+          <span className="text-sm text-neutral-subtle">No logs to display.</span>
         </div>
       </div>
     )
@@ -225,7 +225,7 @@ export function DeploymentLogsPlaceholder({
     return (
       <div className="flex flex-col items-center justify-center gap-4 text-center">
         <ErrorIcon />
-        <span className="text-neutral-300">An error occurred during the precheck step.</span>
+        <span className="text-neutral">An error occurred during the precheck step.</span>
         {/* TODO new-nav : Route not yet created */}
         {/*<Link
           className="gap-1.5"
@@ -253,7 +253,7 @@ export function DeploymentLogsPlaceholder({
     return (
       <div className="flex flex-col items-center justify-center gap-4 text-center">
         <ErrorIcon />
-        <span className="text-neutral-300">An error occurred during deployment of another service.</span>
+        <span className="text-neutral">An error occurred during deployment of another service.</span>
         {/* TODO new-nav : Route not yet created */}
         {/*<Link
           className="gap-1.5"

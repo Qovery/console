@@ -57,7 +57,7 @@ import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
 import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
 
-type ActionToolbarVariant = 'default' | 'header'
+type ActionToolbarVariant = 'default' | 'header' | 'deploy-dropdown-only'
 
 function MenuManageDeployment({
   deploymentStatus,
@@ -368,7 +368,7 @@ function MenuManageDeployment({
           color={displayYellowColor ? 'yellow' : variant === 'header' ? 'brand' : 'neutral'}
           variant={variant === 'header' ? 'solid' : 'outline'}
           size={variant === 'header' ? 'md' : 'sm'}
-          iconOnly={variant === 'default'}
+          iconOnly={['default', 'deploy-dropdown-only'].includes(variant)}
         >
           <Tooltip content="Manage Deployment">
             <div className="flex h-full w-full items-center justify-center gap-1.5">
@@ -951,13 +951,15 @@ export function ServiceActions({
         </>
       )}
 
-      <MenuOtherActions
-        state={deploymentStatus.state}
-        environment={environment}
-        service={service}
-        shellAction={effectiveShellAction}
-        variant={variant}
-      />
+      {variant !== 'deploy-dropdown-only' && (
+        <MenuOtherActions
+          state={deploymentStatus.state}
+          environment={environment}
+          service={service}
+          shellAction={effectiveShellAction}
+          variant={variant}
+        />
+      )}
     </div>
   )
 }
