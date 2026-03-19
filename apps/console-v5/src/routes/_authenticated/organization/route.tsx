@@ -420,12 +420,10 @@ function OrganizationRoute() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
-    if (location.pathname.includes('/settings/roles/edit/')) {
-      // Reset roles edit scroll: Suspense fallback keeps shared layout scroll position otherwise.
-      const scrollContainer = scrollContainerRef.current
-      if (scrollContainer) {
-        scrollContainer.scrollTop = 0
-      }
+    const scrollContainer = scrollContainerRef.current
+
+    if (scrollContainer) {
+      scrollContainer.scrollTop = 0
     }
   }, [location.pathname])
 
