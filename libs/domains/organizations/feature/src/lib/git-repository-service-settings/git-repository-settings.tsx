@@ -11,6 +11,7 @@ import ConfirmationGitModal from './confirmation-git-modal/confirmation-git-moda
 
 export interface GitRepositorySettingsProps {
   gitDisabled: boolean
+  showAuthProviders?: boolean
   currentProvider?: string
   currentRepository?: string
   editGitSettings?: () => void
@@ -22,6 +23,7 @@ export interface GitRepositorySettingsProps {
 
 export function GitRepositorySettings({
   gitDisabled,
+  showAuthProviders = true,
   editGitSettings,
   currentRepository,
   currentProvider,
@@ -37,7 +39,7 @@ export function GitRepositorySettings({
     branch: string
     root_path: string
     git_token_name: string
-    git_token_id?: string
+    git_token_id?: string | null
   }>()
   const { openModal, closeModal } = useModal()
 
@@ -47,11 +49,16 @@ export function GitRepositorySettings({
   const watchFieldGitTokenId = watch('git_token_id')
 
   const { data: gitTokens = [] } = useGitTokens({ organizationId })
-  const selectedToken = gitTokens.find((t) => t.id === watchFieldGitTokenId)
+  const effectiveGitTokenId = watchFieldGitTokenId ?? undefined
+  const selectedToken = gitTokens.find((t) => t.id === effectiveGitTokenId)
 
   return (
     <div className="flex flex-col gap-4">
-      <GitProviderSetting disabled={gitDisabled} organizationId={organizationId} />
+      <GitProviderSetting
+        disabled={gitDisabled}
+        showAuthProviders={showAuthProviders}
+        organizationId={organizationId}
+      />
       {selectedToken && isGitTokenExpired(selectedToken) && (
         <Callout.Root color="yellow" className="items-center">
           <Callout.Icon>
@@ -104,7 +111,7 @@ export function GitRepositorySettings({
               disabled={gitDisabled}
               organizationId={organizationId}
               gitProvider={watchFieldProvider}
-              gitTokenId={watchFieldGitTokenId}
+              gitTokenId={effectiveGitTokenId}
               urlRepository={urlRepository}
             />
           )}
@@ -113,7 +120,7 @@ export function GitRepositorySettings({
               disabled={gitDisabled}
               organizationId={organizationId}
               gitProvider={watchFieldProvider}
-              gitTokenId={watchFieldGitTokenId}
+              gitTokenId={effectiveGitTokenId}
               rootPathLabel={rootPathLabel}
               rootPathHint={rootPathHint}
             />

@@ -1,8 +1,14 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ClusterEksSettings } from '@qovery/domains/clusters/feature'
-import { type ClusterResourcesData } from '@qovery/shared/interfaces'
+import {
+  ClusterEksSettings,
+  type ClusterEksSettingsFormData,
+  getEksAnywhereGitFormValues,
+  getInfrastructureChartsParametersWithEksAnywhereGit,
+  stripEksAnywhereGitFormFields,
+} from '@qovery/domains/clusters/feature'
+import { GitRepositorySettings } from '@qovery/shared/console-shared'
 import {
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_SUMMARY_URL,
@@ -23,13 +29,19 @@ export function StepEKSFeature() {
     setCurrentStep(3)
   }, [setCurrentStep])
 
-  const methods = useForm<ClusterResourcesData>({
-    defaultValues: resourcesData,
+  const methods = useForm<ClusterEksSettingsFormData>({
+    defaultValues: {
+      ...resourcesData,
+      ...getEksAnywhereGitFormValues(resourcesData),
+    },
     mode: 'onChange',
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    setResourcesData(data)
+    setResourcesData({
+      ...stripEksAnywhereGitFormFields(data),
+      infrastructure_charts_parameters: getInfrastructureChartsParametersWithEksAnywhereGit(data),
+    })
     navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)
   })
 
@@ -44,7 +56,17 @@ export function StepEKSFeature() {
 
           <form onSubmit={onSubmit}>
             <div className="space-y-10">
-              <ClusterEksSettings />
+              <ClusterEksSettings
+                gitSettings={
+                  <GitRepositorySettings
+                    gitDisabled={false}
+                    showAuthProviders={false}
+                    organizationId={organizationId}
+                    rootPathLabel="YAML file path"
+                    rootPathHint="Provide the path to the EKS Anywhere cluster YAML file in the repository."
+                  />
+                }
+              />
 
               <div className="flex justify-between">
                 <Button

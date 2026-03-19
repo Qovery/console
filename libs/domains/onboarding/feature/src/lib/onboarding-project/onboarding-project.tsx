@@ -1,3 +1,4 @@
+import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { PlanEnum, type SignUpRequest } from 'qovery-typescript-axios'
@@ -19,6 +20,7 @@ export function OnboardingProject() {
 
   const navigate = useNavigate()
   const { user, getAccessTokenSilently } = useAuth()
+  const sendDataToGTM = useGTMDispatch()
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject()
   const { mutateAsync: editBillingInfo } = useEditBillingInfo()
@@ -121,6 +123,7 @@ export function OnboardingProject() {
       posthog.capture('onboarding-organization-created', {
         plan: planToUse,
       })
+      sendDataToGTM({ event: 'onboarding-organization-created', plan: planToUse })
 
       navigate({ to: `${ENVIRONMENTS_URL(organization.id, project.id)}${ENVIRONMENTS_GENERAL_URL}` })
     } catch (error) {

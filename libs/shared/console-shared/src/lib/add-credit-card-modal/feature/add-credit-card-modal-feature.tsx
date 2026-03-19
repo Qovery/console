@@ -9,9 +9,10 @@ import AddCreditCardModal from '../ui/add-credit-card-modal'
 
 export interface AddCreditCardModalFeatureProps {
   organizationId: string
+  onSuccess?: () => void
 }
 
-export function AddCreditCardModalFeature({ organizationId }: AddCreditCardModalFeatureProps) {
+export function AddCreditCardModalFeature({ organizationId, onSuccess }: AddCreditCardModalFeatureProps) {
   const { closeModal } = useModal()
   const [loading, setLoading] = useState(false)
   const [cbInstance, setCbInstance] = useState<CbInstance | null>(null)
@@ -69,6 +70,8 @@ export function AddCreditCardModalFeature({ organizationId }: AddCreditCardModal
           expiry_month: data.card?.expiry_month || 0,
         },
       })
+
+      onSuccess?.()
       closeModal()
     } catch (error) {
       toastError(error as unknown as SerializedError)

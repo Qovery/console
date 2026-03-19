@@ -1,4 +1,5 @@
 export * from './lib/cluster-eks-settings/cluser-eks-settings'
+export * from './lib/cluster-eks-settings/cluster-eks-settings-form.utils'
 export * from './lib/cluster-type/cluster-type'
 export * from './lib/cluster-delete-modal/cluster-delete-modal'
 export * from './lib/cluster-installation-guide-modal/cluster-installation-guide-modal'

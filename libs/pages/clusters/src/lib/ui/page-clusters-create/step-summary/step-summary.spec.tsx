@@ -72,6 +72,15 @@ describe('StepSummary', () => {
         resourcesData: {
           ...props.resourcesData,
           infrastructure_charts_parameters: {
+            eks_anywhere_parameters: {
+              git_repository: {
+                url: 'https://github.com/qovery/eks-anywhere.git',
+                branch: 'main',
+                git_token_id: 'token-id',
+                provider: 'GITHUB',
+              },
+              yaml_file_path: 'clusters/prod/cluster.yaml',
+            },
             cert_manager_parameters: {
               kubernetes_namespace: 'test-namespace',
             },
@@ -109,6 +118,10 @@ describe('StepSummary', () => {
 
       const eksAnywhereSection = screen.getByTestId('summary-eks-anywhere')
       expect(eksAnywhereSection).toBeInTheDocument()
+      const eksAnywhereText = eksAnywhereSection.textContent ?? ''
+      expect(eksAnywhereText.indexOf('Infrastructure charts source')).toBeLessThan(
+        eksAnywhereText.indexOf('Cert Manager')
+      )
       expect(eksAnywhereSection).toHaveTextContent('Namespace: test-namespace')
       expect(eksAnywhereSection).toHaveTextContent('IP pool: 10.0.0.0/24')
       expect(eksAnywhereSection).toHaveTextContent('Number of replicas: 2')
@@ -116,6 +129,9 @@ describe('StepSummary', () => {
       expect(eksAnywhereSection).toHaveTextContent('Publish status address: test-address')
       expect(eksAnywhereSection).toHaveTextContent('Annotation IPs: test-ips')
       expect(eksAnywhereSection).toHaveTextContent('Annotation external DNS target: test-target')
+      expect(eksAnywhereSection).toHaveTextContent('Repository URL: https://github.com/qovery/eks-anywhere.git')
+      expect(eksAnywhereSection).toHaveTextContent('Branch: main')
+      expect(eksAnywhereSection).toHaveTextContent('YAML file path: clusters/prod/cluster.yaml')
     })
   })
 

@@ -10,6 +10,7 @@ import { isGitTokenExpired, useGitTokens } from '../hooks/use-git-tokens/use-git
 export interface GitProviderSettingProps {
   organizationId: string
   disabled?: boolean
+  showAuthProviders?: boolean
 }
 
 export interface TokenSelectionResult {
@@ -73,11 +74,11 @@ export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens:
   return [...currentAuthProviders, ...currentGitTokens]
 }
 
-export function GitProviderSetting({ disabled, organizationId }: GitProviderSettingProps) {
+export function GitProviderSetting({ disabled, organizationId, showAuthProviders = true }: GitProviderSettingProps) {
   const { control, watch, setValue, clearErrors } = useFormContext()
   const { openModal, closeModal } = useModal()
 
-  const { data: authProviders = [] } = useAuthProviders({ organizationId, enabled: !disabled })
+  const { data: authProviders = [] } = useAuthProviders({ organizationId, enabled: !disabled && showAuthProviders })
   const { data: gitTokens = [] } = useGitTokens({ organizationId, enabled: !disabled })
   const watchFieldIsPublicRepository = watch('is_public_repository')
   const watchFieldProvider = watch('provider')
@@ -99,7 +100,7 @@ export function GitProviderSetting({ disabled, organizationId }: GitProviderSett
             },
       ]
     : [
-        ...mergeProviders(authProviders, gitTokens),
+        ...mergeProviders(showAuthProviders ? authProviders : [], gitTokens),
         {
           label: 'Public repository (Github, Gitlab, Bitbucket)',
           value: 'PUBLIC',
