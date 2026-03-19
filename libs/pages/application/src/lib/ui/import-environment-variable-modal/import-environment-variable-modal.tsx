@@ -50,6 +50,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
           <div className="mb-6">
             <InputToggle
               dataTestId="overwrite-enabled"
+              align="center"
               small
               value={props.overwriteEnabled}
               onChange={props.setOverwriteEnabled}

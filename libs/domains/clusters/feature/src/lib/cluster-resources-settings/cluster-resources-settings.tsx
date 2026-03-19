@@ -236,7 +236,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                             }}
                             title="Enable Karpenter"
                             description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
-                            forceAlignTop
+                            align="top"
                             disabled={props.hasAlreadyKarpenter}
                             small
                           />

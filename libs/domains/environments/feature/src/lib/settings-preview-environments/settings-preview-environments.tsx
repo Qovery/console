@@ -51,7 +51,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                   }}
                   title="Turn on Preview Environments"
                   description="Use this environment as Blueprint to create a preview environment when a Pull Request is submitted on one of your services. The environment will be automatically deleted when the PR is merged."
-                  forceAlignTop
+                  align="top"
                   small
                 />
               )}
@@ -67,7 +67,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                   onChange={field.onChange}
                   title="Create on demand"
                   description="Trigger the creation of the preview environment only when requested within the Pull Request. Disabling this option will create a preview environment for each Pull Request."
-                  forceAlignTop
+                  align="top"
                   small
                 />
               )}
@@ -94,7 +94,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                               field.onChange(value)
                             }}
                             title={
-                              <span className="relative -top-1 flex items-center">
+                              <span className="relative flex items-center">
                                 <Icon name={getIconName(service)} className="mr-3" />
                                 {service.name}
                               </span>

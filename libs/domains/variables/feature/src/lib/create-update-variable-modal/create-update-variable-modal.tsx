@@ -413,7 +413,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             render={({ field }) => (
               <InputToggle
                 small
-                forceAlignTop
+                align="top"
                 className="mb-3 mt-5"
                 value={field.value}
                 onChange={field.onChange}

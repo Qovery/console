@@ -601,7 +601,7 @@ export function HelmRepositoryCreateEditModal({
                 value={field.value}
                 title="Skip TLS verification"
                 description="skip tls certificate checks for the repository (--insecure-skip-tls-verify)"
-                forceAlignTop
+                align="top"
               />
             )}
           />

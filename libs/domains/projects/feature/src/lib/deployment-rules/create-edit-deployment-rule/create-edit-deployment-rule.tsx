@@ -321,7 +321,7 @@ export function CreateEditDeploymentRule(props: CreateEditDeploymentRuleProps) {
                           title="Deploy on specific timeframe"
                           description="Specify a timeframe to automatically start & stop your environment."
                           small
-                          forceAlignTop
+                          align="top"
                         />
                       )}
                     />

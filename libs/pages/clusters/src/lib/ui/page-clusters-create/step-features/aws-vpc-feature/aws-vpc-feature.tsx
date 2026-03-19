@@ -124,7 +124,7 @@ export function AWSVpcFeature({ isKarpenter = false }: AWSVpcFeatureProps) {
             className="mb-4 ml-4 mt-1"
             value={field.value}
             onChange={field.onChange}
-            forceAlignTop
+            align="top"
             small
           />
         )}

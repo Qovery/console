@@ -4,7 +4,7 @@ exports[`AutoDeploySetting should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex text-sm  items-start  "
+      class="flex text-sm items-center"
       data-testid="input-toggle"
     >
       <div

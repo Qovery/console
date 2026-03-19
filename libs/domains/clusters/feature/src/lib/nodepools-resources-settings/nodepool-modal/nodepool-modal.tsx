@@ -32,7 +32,7 @@ function LimitsFields({ prefix }: { prefix: OverridePrefix }) {
                 onChange={field.onChange}
                 title="Nodepool resources limits"
                 description="Limit resources to control usage and avoid unexpected costs."
-                forceAlignTop
+                align="top"
                 small
               />
               <Tooltip
@@ -260,7 +260,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
               <div className="flex gap-3">
                 <Tooltip content="Consolidation cannot be disabled on this NodePool">
                   <span>
-                    <InputToggle value={true} forceAlignTop disabled small />
+                    <InputToggle value={true} align="top" disabled small />
                   </span>
                 </Tooltip>
                 <div className="relative -top-0.5 text-sm">
@@ -307,7 +307,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                       onChange={field.onChange}
                       title="Consolidation schedule"
                       description="Define when consolidation occurs to optimize resource usage by reducing the number of active nodes."
-                      forceAlignTop
+                      align="top"
                       small
                     />
                     <Tooltip

@@ -9,23 +9,13 @@ export interface InputToggleProps {
   description?: string
   className?: string
   dataTestId?: string
-  forceAlignTop?: boolean
+  align?: 'center' | 'top'
   disabled?: boolean
   name?: string
 }
 
 export function InputToggle(props: InputToggleProps) {
-  const {
-    small,
-    value,
-    onChange,
-    description,
-    title,
-    className = '',
-    forceAlignTop = false,
-    disabled = false,
-    name,
-  } = props
+  const { small, value, onChange, description, title, className = '', align = 'center', disabled = false, name } = props
 
   const [toggleActive, setToggleActive] = useState(value)
   const [animateEnabled, setAnimateEnabled] = useState(false)
@@ -42,6 +32,7 @@ export function InputToggle(props: InputToggleProps) {
 
   const toggleSizeBg = small ? 'w-8 h-4.5' : 'w-12 h-6'
   const toggleSizeCircle = small ? 'w-3.5 h-3.5' : 'w-5 h-5'
+  const alignmentClass = align === 'top' ? 'items-start' : 'items-center'
 
   const changeToggle = () => {
     if (disabled) return
@@ -55,9 +46,7 @@ export function InputToggle(props: InputToggleProps) {
   return (
     <div
       data-testid="input-toggle"
-      className={`flex text-sm  ${description && !forceAlignTop ? 'items-center' : 'items-start'} ${className} ${
-        disabled ? 'opacity-50' : ''
-      }`}
+      className={clsx('flex text-sm', alignmentClass, className, { 'opacity-50': disabled })}
     >
       <div
         data-testid={props.dataTestId || 'input-toggle-button'}
@@ -92,7 +81,7 @@ export function InputToggle(props: InputToggleProps) {
       {title && (
         <div
           onClick={changeToggle}
-          className={`${description && forceAlignTop ? 'relative -top-0.5' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''} flex flex-col gap-1`}
+          className={`${description && align === 'top' ? 'relative -top-0.5' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''} flex flex-col gap-1`}
         >
           {title && <p className="font-medium text-neutral">{title}</p>}
           {description && <div className="text-neutral-subtle">{description}</div>}
