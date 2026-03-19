@@ -5,6 +5,10 @@ import { useChangelogs } from '@qovery/shared/webflow/feature'
 export function SectionChangelog() {
   const { data: changelogs = [] } = useChangelogs()
 
+  if (changelogs.length === 0) {
+    return null
+  }
+
   return (
     <Section className="flex flex-col gap-3">
       <Heading className="flex items-center gap-2">

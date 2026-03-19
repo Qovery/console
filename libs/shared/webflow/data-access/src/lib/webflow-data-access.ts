@@ -1,16 +1,21 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
-import { WEBFLOW_TOKEN } from '@qovery/shared/util-node-env'
 
-const COLLECTION_ID_CHANGELOGS = '68d1659afd533e08dfd9e8fa'
+export interface Changelog {
+  name: string
+  summary: string
+  url: string
+  firstPublishedAt: string
+}
+
+const CHANGELOG_ASSET_PATH = '/webflow/changelog.json'
 
 export const webflow = createQueryKeys('webflow', {
   changelogs: {
-    queryKey: [COLLECTION_ID_CHANGELOGS],
+    queryKey: [CHANGELOG_ASSET_PATH],
     async queryFn() {
-      const response = await fetch(`/api/webflow/v2/collections/${COLLECTION_ID_CHANGELOGS}/items?limit=1`, {
+      const response = await fetch(CHANGELOG_ASSET_PATH, {
         headers: {
-          Authorization: `Bearer ${WEBFLOW_TOKEN}`,
-          'Content-Type': 'application/json',
+          Accept: 'application/json',
         },
       })
 
@@ -18,7 +23,7 @@ export const webflow = createQueryKeys('webflow', {
         throw new Error(`Webflow API error: ${response.status} ${response.statusText}`)
       }
 
-      const data = await response.json()
+      const data = (await response.json()) as Changelog[]
       return data
     },
   },
