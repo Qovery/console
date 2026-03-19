@@ -7,6 +7,7 @@ import {
 } from 'qovery-typescript-axios'
 import {
   buildDatabaseCreatePayload,
+  canSelectManagedDatabaseMode,
   filterDatabaseTypes,
   findDatabaseTemplateMatch,
   formatDatabaseTypeLabel,
@@ -100,6 +101,30 @@ describe('database-create-utils', () => {
     expect(getDefaultDatabaseMode({ cloudProvider: 'AZURE', showManagedWithVpcOptions: false })).toBe(
       DatabaseModeEnum.MANAGED
     )
+  })
+
+  it('returns whether managed database mode can be selected', () => {
+    expect(
+      canSelectManagedDatabaseMode({
+        cloudProvider: 'AWS',
+        cluster: { kubernetes: 'EKS' },
+        showManagedWithVpcOptions: true,
+      })
+    ).toBe(true)
+    expect(
+      canSelectManagedDatabaseMode({
+        cloudProvider: 'AWS',
+        cluster: { kubernetes: 'SELF_MANAGED' },
+        showManagedWithVpcOptions: true,
+      })
+    ).toBe(false)
+    expect(
+      canSelectManagedDatabaseMode({
+        cloudProvider: 'GCP',
+        cluster: { kubernetes: 'GKE' },
+        showManagedWithVpcOptions: true,
+      })
+    ).toBe(false)
   })
 
   it('returns the expected default managed instance type', () => {

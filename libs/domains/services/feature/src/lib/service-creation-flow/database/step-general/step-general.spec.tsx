@@ -134,9 +134,17 @@ function TestProvider({ children, generalValues, resourcesValues }: TestProvider
 function renderComponent({
   generalValues,
   resourcesValues,
+  cloudProvider = 'AWS',
+  clusterValue = cluster,
+  clusterVpcValue = clusterVpc,
+  databaseConfigurationsValue = databaseConfigurations,
 }: {
   generalValues?: Partial<DatabaseCreateGeneralData>
   resourcesValues?: Partial<DatabaseCreateResourcesData>
+  cloudProvider?: string
+  clusterValue?: Cluster
+  clusterVpcValue?: ClusterFeatureAwsExistingVpc
+  databaseConfigurationsValue?: DatabaseConfiguration[]
 } = {}) {
   return renderWithProviders(
     <TestProvider generalValues={generalValues} resourcesValues={resourcesValues}>
@@ -144,10 +152,10 @@ function renderComponent({
         onSubmit={mockOnSubmit}
         labelSetting={<div data-testid="label-setting">Labels</div>}
         annotationSetting={<div data-testid="annotation-setting">Annotations</div>}
-        cloudProvider="AWS"
-        cluster={cluster}
-        clusterVpc={clusterVpc}
-        databaseConfigurations={databaseConfigurations}
+        cloudProvider={cloudProvider}
+        cluster={clusterValue}
+        clusterVpc={clusterVpcValue}
+        databaseConfigurations={databaseConfigurationsValue}
       />
     </TestProvider>
   )
@@ -167,12 +175,60 @@ describe('DatabaseStepGeneral', () => {
     expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument()
   })
 
+  it('renders managed mode on AWS even when the existing VPC payload is missing', () => {
+    renderComponent({
+      cloudProvider: 'AWS',
+      clusterVpcValue: undefined,
+    })
+
+    expect(screen.getByRole('heading', { name: 'Database mode' })).toBeInTheDocument()
+    expect(screen.getByText('Container mode')).toBeInTheDocument()
+    expect(screen.getByText('Managed mode')).toBeInTheDocument()
+  })
+
+  it('renders only the container mode when managed mode is not available', () => {
+    renderComponent({
+      cloudProvider: 'GCP',
+      clusterVpcValue: undefined,
+    })
+
+    expect(screen.getByRole('heading', { name: 'Database mode' })).toBeInTheDocument()
+    expect(screen.getByText('Container mode')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Managed mode')).not.toBeInTheDocument()
+  })
+
   it('submits the form when required values are present', async () => {
     renderComponent({
       generalValues: {
         name: 'postgres',
         type: DatabaseTypeEnum.POSTGRESQL,
         mode: DatabaseModeEnum.CONTAINER,
+        version: '16',
+        accessibility: DatabaseAccessibilityEnum.PRIVATE,
+      },
+    })
+    ;(document.querySelector('form') as HTMLFormElement).requestSubmit()
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'postgres',
+          type: DatabaseTypeEnum.POSTGRESQL,
+          mode: DatabaseModeEnum.CONTAINER,
+          version: '16',
+        })
+      )
+    })
+  })
+
+  it('falls back to container mode when managed mode is preselected but unavailable', async () => {
+    renderComponent({
+      cloudProvider: 'GCP',
+      clusterVpcValue: undefined,
+      generalValues: {
+        name: 'postgres',
+        type: DatabaseTypeEnum.POSTGRESQL,
+        mode: DatabaseModeEnum.MANAGED,
         version: '16',
         accessibility: DatabaseAccessibilityEnum.PRIVATE,
       },

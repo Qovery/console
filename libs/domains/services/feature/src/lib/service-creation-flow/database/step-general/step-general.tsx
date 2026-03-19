@@ -26,6 +26,7 @@ import {
 import { GeneralSetting } from '../../../general-setting/general-setting'
 import {
   type DatabaseCreateGeneralData,
+  canSelectManagedDatabaseMode,
   findDatabaseTemplateMatch,
   generateDatabaseTypeAndVersionOptions,
   getDefaultDatabaseMode,
@@ -70,9 +71,14 @@ export function DatabaseStepGeneral({
     [clusterVpc, databaseConfigurations, watchMode]
   )
 
-  const showManagedWithVpcOptions = clusterVpc
-    ? generateDatabaseTypeAndVersionOptions(databaseConfigurations, clusterVpc).databaseTypeOptions.length > 0
-    : false
+  const showManagedWithVpcOptions =
+    generateDatabaseTypeAndVersionOptions(databaseConfigurations, clusterVpc).databaseTypeOptions.length > 0
+
+  const canSelectManagedMode = canSelectManagedDatabaseMode({
+    cloudProvider,
+    cluster,
+    showManagedWithVpcOptions,
+  })
   const templateMatch = findDatabaseTemplateMatch(template, option)
   const headerTitle = templateMatch.templateTitle
     ? `${templateMatch.templateTitle}${templateMatch.optionTitle ? ` - ${templateMatch.optionTitle}` : ''}`
@@ -95,10 +101,31 @@ export function DatabaseStepGeneral({
     }
   }, [cloudProvider, methods, showManagedWithVpcOptions])
 
+  useEffect(() => {
+    if (methods.getValues('mode') === DatabaseModeEnum.MANAGED && !canSelectManagedMode) {
+      methods.setValue('mode', DatabaseModeEnum.CONTAINER, { shouldValidate: true })
+    }
+  }, [canSelectManagedMode, methods])
+
   const handleSubmit: FormEventHandler<HTMLFormElement> = methods.handleSubmit((data) => {
     methods.reset(data)
     onSubmit(data)
   })
+
+  const existingVpcFeature = cluster?.features?.find((f) => f.id === 'EXISTING_VPC')
+
+  console.log('cloudProvider', cloudProvider)
+  console.log('cluster.kubernetes', cluster?.kubernetes)
+  console.log(
+    'cluster.features ids',
+    cluster?.features?.map((f) => f.id)
+  )
+  console.log('existingVpcFeature', existingVpcFeature)
+  console.log('clusterVpc', clusterVpc)
+  console.log(
+    'managedTypeOptions',
+    generateDatabaseTypeAndVersionOptions(databaseConfigurations, clusterVpc).databaseTypeOptions
+  )
 
   return (
     <FunnelFlowBody>
@@ -144,7 +171,7 @@ export function DatabaseStepGeneral({
                       formValue={field.value}
                       label="Container mode"
                     />
-                    {showManagedWithVpcOptions && cloudProvider === 'AWS' && cluster?.kubernetes !== 'SELF_MANAGED' ? (
+                    {canSelectManagedMode ? (
                       <InputRadio
                         value={DatabaseModeEnum.MANAGED}
                         name={field.name}
