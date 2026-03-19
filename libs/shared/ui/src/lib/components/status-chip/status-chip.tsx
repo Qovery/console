@@ -119,6 +119,7 @@ export function StatusChip({
         </span>
       )
     )
+    .with('UNAVAILABLE', () => <WarningIcon />)
     .exhaustive()
 
   return (

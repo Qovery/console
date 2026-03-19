@@ -224,6 +224,7 @@ export const services = createQueryKeys('services', {
       return new Promise<ApplicationStatusDto | DatabaseStatusDto | TerraformStatusDto | null>(() => {})
     },
   }),
+  // TODO [To update once rust-backed will be deployed]: To remove
   checkRunningStatusClosed: (clusterId: string, environmentId: string) => ({
     queryKey: [clusterId, environmentId],
     // NOTE: Value is set by WebSocket

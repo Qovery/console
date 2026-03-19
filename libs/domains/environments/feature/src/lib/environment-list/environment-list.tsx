@@ -91,7 +91,7 @@ function EnvironmentStatusCell({
   const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
     clusterId: environment.cluster_id,
   })
-
+  // TODO [To update once rust-backed will be deployed]: To remove
   if (checkRunningStatusClosed) {
     return (
       <Tooltip content="See cluster">
@@ -105,7 +105,7 @@ function EnvironmentStatusCell({
           variant="outline"
           radius="full"
         >
-          <StatusChip status={runningStatus} />
+          <StatusChip status="UNAVAILABLE" />
           Status unavailable
         </Link>
       </Tooltip>
