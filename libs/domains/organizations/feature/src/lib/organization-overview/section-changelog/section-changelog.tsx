@@ -5,6 +5,10 @@ import { useChangelogs } from '@qovery/shared/webflow/feature'
 export function SectionChangelog() {
   const { data: changelogs = [] } = useChangelogs()
 
+  if (changelogs.length === 0) {
+    return null
+  }
+
   return (
     <Section className="flex flex-col gap-3">
       <Heading className="flex items-center gap-2">
@@ -20,7 +24,7 @@ export function SectionChangelog() {
           rel="noreferrer"
           className="flex flex-col gap-2 rounded-lg border border-neutral p-4 text-neutral transition-colors hover:bg-surface-neutral-subtle"
         >
-          <p className="text-sm">{changelog.name}</p>
+          <p className="text-sm">{changelog.summary}</p>
           <span className="text-ssm text-neutral-subtle">
             {dateFullFormat(changelog.firstPublishedAt, 'UTC', 'dd MMM, Y')}
           </span>

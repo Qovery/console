@@ -8,7 +8,8 @@ import { defineConfig, loadEnv } from 'vite'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
+  const clientEnv = loadEnv(mode, process.cwd(), '')
+
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/apps/console-v5',
@@ -20,13 +21,6 @@ export default defineConfig(({ mode }) => {
         methods: ['GET'],
         allowedHeaders: ['Content-Type', 'Authorization'],
       },
-      proxy: {
-        '/api/webflow': {
-          target: 'https://api.webflow.com',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api\/webflow/, ''),
-        },
-      },
       fs: {
         allow: ['../..'],
       },
@@ -36,7 +30,7 @@ export default defineConfig(({ mode }) => {
       host: 'localhost',
     },
     define: {
-      'process.env': JSON.stringify(env),
+      'process.env': JSON.stringify(clientEnv),
     },
     plugins: [
       tanstackRouter({
