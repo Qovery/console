@@ -495,6 +495,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             .with(undefined, () => info.getValue())
             .exhaustive()
 
+          // TODO [To update once rust-backed will be deployed]: Remove this workaround
           if (checkRunningStatusClosed) {
             return (
               <Tooltip content="See cluster">
@@ -508,7 +509,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                   variant="outline"
                   radius="full"
                 >
-                  <StatusChip status="STOPPED" />
+                  <StatusChip status="UNAVAILABLE" />
                   Status unavailable
                 </Link>
               </Tooltip>
