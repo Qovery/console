@@ -1,5 +1,6 @@
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { EnvironmentsTable } from './environments-table'
 
 const mockUseProject = jest.fn()
 const mockUseEnvironmentsOverview = jest.fn()
@@ -32,12 +33,6 @@ jest.mock('./environment-section/environment-section', () => ({
   ),
 }))
 
-function renderEnvironmentsTable() {
-  // Load the module after Jest has registered mocks for suspense children and data hooks.
-  const { EnvironmentsTable } = require('./environments-table') as typeof import('./environments-table')
-  return renderWithProviders(<EnvironmentsTable />)
-}
-
 describe('EnvironmentsTable', () => {
   beforeEach(() => {
     mockUseProject.mockReset()
@@ -58,7 +53,7 @@ describe('EnvironmentsTable', () => {
       ],
     })
 
-    renderEnvironmentsTable()
+    renderWithProviders(<EnvironmentsTable />)
 
     expect(screen.getByRole('heading', { name: 'Project Alpha' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'New Environment' })).toBeInTheDocument()
