@@ -6,13 +6,16 @@ import { type ServiceType } from '@qovery/domains/services/data-access'
 import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { Button, Dropzone, Icon, InputSelectSmall, InputTextSmall, InputToggle, useModal } from '@qovery/shared/ui'
 import { computeAvailableScope, generateScopeLabel, parseEnvText } from '@qovery/shared/util-js'
+import { useCreateVariable } from '../hooks/use-create-variable/use-create-variable'
+import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
+import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
 import { useImportVariables } from '../hooks/use-import-variables/use-import-variables'
 import { useVariables } from '../hooks/use-variables/use-variables'
 import { changeScopeForAll } from './utils/change-scope-all'
 import { deleteEntry } from './utils/delete-entry'
 import { parsedToForm } from './utils/file-to-form'
 import { validateKey, warningMessage } from './utils/form-check'
-import { formatData } from './utils/handle-submit'
+import { formatData, importVariablesWithMutations } from './utils/handle-submit'
 import { onDrop } from './utils/on-drop'
 import { triggerToggleAll } from './utils/trigger-toggle-all'
 
@@ -73,7 +76,12 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
       <h2 className="h4 mb-6 max-w-sm text-neutral">Import variables from .env file</h2>
 
       {props.showDropzone ? (
-        <div {...props.dropzoneGetRootProps({ className: 'dropzone' })}>
+        <div
+          {...props.dropzoneGetRootProps({
+            className:
+              'rounded outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
+          })}
+        >
           <input data-testid="drop-input" {...props.dropzoneGetInputProps()} />
           <Dropzone isDragActive={props.dropzoneIsDragActive} />
         </div>
@@ -216,7 +224,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                 </div>
 
                 <div className="flex h-full w-full grow items-center">
-                  <Button type="button" variant="plain" size="md" onClick={() => props.deleteKey(key)}>
+                  <Button type="button" variant="outline" iconOnly size="md" onClick={() => props.deleteKey(key)}>
                     <Icon className="text-base" iconName="trash-can" iconStyle="regular" />
                   </Button>
                 </div>
@@ -296,6 +304,9 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
   })
 
   const { mutateAsync: importVariables, isLoading: isImportVariablesLoading } = useImportVariables()
+  const { mutateAsync: createVariable } = useCreateVariable()
+  const { mutateAsync: editVariable } = useEditVariable()
+  const { mutateAsync: deleteVariable } = useDeleteVariable()
 
   return (
     <FormProvider {...methods}>
@@ -314,6 +325,23 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
             return
           }
           const vars = formatData(methods.getValues(), keys)
+
+          if (scope === APIVariableScopeEnum.TERRAFORM) {
+            await importVariablesWithMutations({
+              vars,
+              overwriteEnabled,
+              existingVars: existingEnvVars,
+              projectId: props.projectId,
+              environmentId: 'environmentId' in props ? props.environmentId : undefined,
+              serviceId: 'serviceId' in props ? props.serviceId : undefined,
+              createVariable,
+              editVariable,
+              deleteVariable,
+            })
+            props.closeModal()
+            return
+          }
+
           await importVariables({
             serviceType: scope as unknown as ServiceTypeForVariableEnum,
             serviceId: parentId,

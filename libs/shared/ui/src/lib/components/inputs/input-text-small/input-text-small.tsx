@@ -126,7 +126,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
             onClick={() => setCurrentType(currentType === 'password' ? 'text' : 'password')}
             className="absolute right-2 -translate-y-[0.5px] transform text-sm text-neutral-subtle hover:text-neutral"
           >
-            <Icon name={currentType === 'password' ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH} />
+            <Icon iconName={currentType === 'password' ? 'eye' : 'eye-slash'} />
           </div>
         )}
       </div>
