@@ -2,8 +2,12 @@ import { createFileRoute, useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { match } from 'ts-pattern'
 import { useDeployService, useService } from '@qovery/domains/services/feature'
-import { VariableList, VariablesActionToolbar } from '@qovery/domains/variables/feature'
-import { Heading, LoaderSpinner, Section, toast } from '@qovery/shared/ui'
+import {
+  ImportEnvironmentVariableModalFeature,
+  VariableList,
+  VariablesActionToolbar,
+} from '@qovery/domains/variables/feature'
+import { Heading, LoaderSpinner, Section, toast, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -35,6 +39,7 @@ function RouteComponent() {
     projectId,
     environmentId,
   })
+  const { openModal, closeModal } = useModal()
 
   const toasterCallback = () => {
     if (!service?.serviceType) {
@@ -65,6 +70,24 @@ function RouteComponent() {
                   projectId={projectId}
                   environmentId={environmentId}
                   serviceId={serviceId}
+                  importEnvFileAccess="dropdown"
+                  onImportEnvFile={() =>
+                    openModal({
+                      content: (
+                        <ImportEnvironmentVariableModalFeature
+                          scope={scope}
+                          projectId={projectId}
+                          environmentId={environmentId}
+                          serviceId={serviceId}
+                          closeModal={closeModal}
+                          serviceType={service.serviceType}
+                        />
+                      ),
+                      options: {
+                        width: 750,
+                      },
+                    })
+                  }
                   onCreateVariable={() =>
                     toast(
                       'SUCCESS',

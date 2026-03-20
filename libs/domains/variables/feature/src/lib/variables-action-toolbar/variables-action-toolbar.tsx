@@ -1,5 +1,5 @@
 import { type APIVariableScopeEnum, type VariableResponse } from 'qovery-typescript-axios'
-import { ActionToolbar, Button, DropdownMenu, Icon, Tooltip, useModal } from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, Tooltip, useModal } from '@qovery/shared/ui'
 import { CreateUpdateVariableModal } from '../create-update-variable-modal/create-update-variable-modal'
 
 type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
@@ -7,6 +7,7 @@ type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
 export type VariablesActionToolbarProps = {
   onCreateVariable?: (variable: VariableResponse | void) => void
   onImportEnvFile?: () => void
+  importEnvFileAccess?: 'button' | 'dropdown'
 } & (
   | {
       scope: Extract<Scope, 'PROJECT'>
@@ -25,8 +26,15 @@ export type VariablesActionToolbarProps = {
     }
 )
 
-export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...props }: VariablesActionToolbarProps) {
+export function VariablesActionToolbar({
+  onCreateVariable,
+  onImportEnvFile,
+  importEnvFileAccess = 'button',
+  ...props
+}: VariablesActionToolbarProps) {
   const { openModal, closeModal } = useModal()
+  const hasImportEnvFile = Boolean(onImportEnvFile)
+  const showImportButton = hasImportEnvFile && importEnvFileAccess === 'button'
 
   const _onCreateVariable = (isFile?: boolean) =>
     openModal({
@@ -48,7 +56,7 @@ export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...p
   return (
     <div className="flex gap-3">
       <DropdownMenu.Root>
-        {onImportEnvFile ? (
+        {showImportButton ? (
           <DropdownMenu.Trigger asChild>
             <Button color="neutral" variant="outline" size="md" className="gap-2">
               <Icon iconName="arrow-up-from-line" iconStyle="regular" />
@@ -63,7 +71,13 @@ export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...p
           </DropdownMenu.Trigger>
         )}
         <DropdownMenu.Content>
-          {onImportEnvFile && (
+          {showImportButton && onImportEnvFile && (
+            <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="file-import" />}>
+              Import from .env file
+            </DropdownMenu.Item>
+          )}
+
+          {!showImportButton && onImportEnvFile && (
             <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="file-import" />}>
               Import from .env file
             </DropdownMenu.Item>
