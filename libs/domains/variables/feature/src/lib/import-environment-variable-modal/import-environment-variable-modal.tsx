@@ -1,10 +1,21 @@
+import * as Dialog from '@radix-ui/react-dialog'
 import { APIVariableScopeEnum, type ServiceTypeForVariableEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { type DropzoneRootProps, useDropzone } from 'react-dropzone'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
-import { Button, Dropzone, Icon, InputSelectSmall, InputTextSmall, InputToggle, useModal } from '@qovery/shared/ui'
+import {
+  Button,
+  Dropzone,
+  Heading,
+  Icon,
+  InputSelectSmall,
+  InputTextSmall,
+  InputToggle,
+  useModal,
+} from '@qovery/shared/ui'
+import { Section } from '@qovery/shared/ui'
 import { computeAvailableScope, generateScopeLabel, parseEnvText } from '@qovery/shared/util-js'
 import { useImportVariables } from '../hooks/use-import-variables/use-import-variables'
 import { useVariables } from '../hooks/use-variables/use-variables'
@@ -69,8 +80,10 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
   const pattern = /^[^\s]+$/
 
   return (
-    <div className="p-6">
-      <h2 className="h4 mb-6 max-w-sm text-neutral">Import variables from .env file</h2>
+    <Section className="p-6">
+      <Dialog.Title asChild>
+        <Heading className="mb-6">Import variables from .env file</Heading>
+      </Dialog.Title>
 
       {props.showDropzone ? (
         <div
@@ -246,7 +259,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
           </form>
         </>
       )}
-    </div>
+    </Section>
   )
 }
 
