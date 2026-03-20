@@ -46,6 +46,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
                 VPC Name
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 disabled=""
@@ -79,6 +80,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
                 External project id
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 disabled=""
@@ -112,6 +114,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
                 Subnetwork range name
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 disabled=""
@@ -145,6 +148,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
                 Pod IPv4 address range name
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 disabled=""
@@ -178,6 +182,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
                 Additional cluster Pod IPv4 ranges names
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 disabled=""
@@ -211,6 +216,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
                 IPv4 service range name
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 disabled=""

@@ -50,6 +50,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
                 VPC Name
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 id="VPC Name"
@@ -82,6 +83,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
                 External project id (optional)
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 id="External project id (optional)"
@@ -127,6 +129,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
                 Subnetwork range name (optional)
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 id="Subnetwork range name (optional)"
@@ -159,6 +162,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
                 Pod IPv4 address range name (optional)
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 id="Pod IPv4 address range name (optional)"
@@ -191,6 +195,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
                 Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 id="Additional cluster Pod IPv4 ranges names (separated with a comma) (optional)"
@@ -223,6 +228,7 @@ exports[`ButtonPopoverSubnets should match snapshots 1`] = `
                 IPv4 service range name (optional)
               </label>
               <input
+                autocomplete="off"
                 class="input__value"
                 data-testid="input-text"
                 id="IPv4 service range name (optional)"
