@@ -112,21 +112,6 @@ export function DatabaseStepGeneral({
     onSubmit(data)
   })
 
-  const existingVpcFeature = cluster?.features?.find((f) => f.id === 'EXISTING_VPC')
-
-  console.log('cloudProvider', cloudProvider)
-  console.log('cluster.kubernetes', cluster?.kubernetes)
-  console.log(
-    'cluster.features ids',
-    cluster?.features?.map((f) => f.id)
-  )
-  console.log('existingVpcFeature', existingVpcFeature)
-  console.log('clusterVpc', clusterVpc)
-  console.log(
-    'managedTypeOptions',
-    generateDatabaseTypeAndVersionOptions(databaseConfigurations, clusterVpc).databaseTypeOptions
-  )
-
   return (
     <FunnelFlowBody>
       <FormProvider {...methods}>
