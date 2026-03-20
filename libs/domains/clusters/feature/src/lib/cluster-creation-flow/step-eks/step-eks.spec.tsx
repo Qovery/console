@@ -77,7 +77,7 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   GitRepositorySettings: () => <MockGitRepositorySettings />,
 }))
 
-jest.mock('../../cluster-eks-settings/cluser-eks-settings', () => ({
+jest.mock('../../cluster-eks-settings/cluster-eks-settings', () => ({
   ClusterEksSettings: ({ gitSettings }: { gitSettings: ReactNode }) => (
     <div data-testid="cluster-eks-settings">{gitSettings}</div>
   ),

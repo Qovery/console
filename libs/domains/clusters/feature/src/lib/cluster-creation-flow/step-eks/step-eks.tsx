@@ -4,7 +4,7 @@ import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { GitRepositorySettings } from '@qovery/domains/organizations/feature'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import { Button, FunnelFlowBody, Heading, Section } from '@qovery/shared/ui'
-import { ClusterEksSettings } from '../../cluster-eks-settings/cluser-eks-settings'
+import { ClusterEksSettings } from '../../cluster-eks-settings/cluster-eks-settings'
 import {
   type ClusterEksSettingsFormData,
   getEksAnywhereGitFormValues,
