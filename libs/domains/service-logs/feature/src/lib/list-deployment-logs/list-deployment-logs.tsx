@@ -22,7 +22,7 @@ import { ServiceStateChip, useDeploymentStatus, useService } from '@qovery/domai
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Banner, Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
+import { Banner, Button, Icon, Indicator, Link, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
 import HeaderLogs from '../header-logs/header-logs'
@@ -468,29 +468,33 @@ export function ListDeploymentLogs({
               .with({ serviceType: 'HELM', values_override: P.when(isHelmRepositorySource) }, () => false)
               .otherwise(() => true) &&
               currentDeployment?.identifier.execution_id && (
-                <Button
-                  size="sm"
-                  variant="surface"
-                  color="neutral"
-                  className="w-7 justify-center"
-                  loading={isBuildReportLoading}
-                  onClick={async () => {
-                    try {
-                      const res = await generateBuildUsageReport({
-                        environmentId: environment.id,
-                        executionId: currentDeployment.identifier.execution_id,
-                        reportExpirationInSeconds: 3600,
-                      })
-                      if (res.report_url) {
-                        window.open(res.report_url, '_blank')
-                      }
-                    } catch {
-                      // error handled by mutation hook notification
-                    }
-                  }}
-                >
-                  <Icon iconName="chart-line" />
-                </Button>
+                <Tooltip content={isBuildReportLoading ? 'Generating build usage report…' : 'Build runner usage'}>
+                  <span>
+                    <Button
+                      size="sm"
+                      variant="surface"
+                      color="neutral"
+                      className="w-7 justify-center"
+                      loading={isBuildReportLoading}
+                      onClick={async () => {
+                        try {
+                          const res = await generateBuildUsageReport({
+                            environmentId: environment.id,
+                            executionId: currentDeployment.identifier.execution_id,
+                            reportExpirationInSeconds: 3600,
+                          })
+                          if (res.report_url) {
+                            window.open(res.report_url, '_blank')
+                          }
+                        } catch {
+                          // error handled by mutation hook notification
+                        }
+                      }}
+                    >
+                      <Icon iconName="chart-line" className={isBuildReportLoading ? 'invisible' : ''} />
+                    </Button>
+                  </span>
+                </Tooltip>
               )}
           </div>
         </div>
