@@ -1,5 +1,4 @@
-import { useLocation, useNavigate, useSearch } from '@tanstack/react-router'
-import { type PropsWithChildren, createContext, useCallback, useEffect, useState } from 'react'
+import { type PropsWithChildren, createContext, useCallback, useState } from 'react'
 
 export const ClusterTerminalContext = createContext<{
   open: boolean
@@ -11,30 +10,13 @@ export const ClusterTerminalContext = createContext<{
 })
 
 export const ClusterTerminalProvider = ({ children }: PropsWithChildren) => {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const search = useSearch({
-    from: '/_authenticated/organization/$organizationId/cluster/$clusterId/overview',
-  })
-  const [open, setOpen] = useState(Boolean(search.hasShell))
-
-  useEffect(() => {
-    setOpen(Boolean(search.hasShell))
-  }, [search.hasShell])
+  const [open, setOpen] = useState(false)
 
   const handleSetOpen = useCallback(
     (newOpen: boolean) => {
       setOpen(newOpen)
-      if (!newOpen) {
-        navigate({
-          to: location.pathname,
-          search: {
-            hasShell: undefined,
-          },
-        })
-      }
     },
-    [location.pathname, navigate]
+    [setOpen]
   )
 
   return (

@@ -72,9 +72,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
     <div className="flex flex-row items-center gap-4">
       <Skeleton width={150} height={36} show={!service}>
         <div className="flex">
-          {environment && service && (
-            <ServiceActions serviceId={service.id} environment={environment} />
-          )}
+          {environment && service && <ServiceActions serviceId={service.id} environment={environment} />}
         </div>
       </Skeleton>
       <div className="h-4 w-px bg-neutral-250" />

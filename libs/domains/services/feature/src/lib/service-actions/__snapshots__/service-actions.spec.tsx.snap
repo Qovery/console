@@ -254,20 +254,6 @@ exports[`ServiceActions should match other actions snapshot 1`] = `
         />
         Copy identifiers
       </div>
-      <a
-        class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral gap-0"
-        data-orientation="vertical"
-        data-radix-collection-item=""
-        role="menuitem"
-        tabindex="-1"
-        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings"
-      >
-        <i
-          aria-hidden="true"
-          class="fa-regular fa-gear text-sm mr-2 min-w-5 text-brand-9"
-        />
-        Open settings
-      </a>
       <div
         class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"
         data-orientation="vertical"

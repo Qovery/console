@@ -851,15 +851,6 @@ function MenuOtherActions({
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(copyContent)}>
           Copy identifiers
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon iconName="gear" />} asChild>
-          <Link
-            className="gap-0"
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings"
-            params={{ organizationId, projectId, environmentId, serviceId: service.id }}
-          >
-            Open settings
-          </Link>
-        </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => openServiceCloneModal()}>
           Clone
         </DropdownMenu.Item>
