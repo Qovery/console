@@ -30,20 +30,23 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
     rules: { required: true },
   })
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    acceptedFiles.forEach((file) => {
-      const reader = new FileReader()
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      acceptedFiles.forEach((file) => {
+        const reader = new FileReader()
 
-      reader.onabort = () => console.log('file reading was aborted')
-      reader.onerror = () => console.log('file reading has failed')
-      reader.onload = () => {
-        fileSize.onChange(file.size / 1000)
-        fileName.onChange(file.name)
-        fileContent.onChange(reader.result)
-      }
-      reader.readAsText(file)
-    })
-  }, [])
+        reader.onabort = () => console.log('file reading was aborted')
+        reader.onerror = () => console.log('file reading has failed')
+        reader.onload = () => {
+          fileSize.onChange(file.size / 1000)
+          fileName.onChange(file.name)
+          fileContent.onChange(reader.result)
+        }
+        reader.readAsText(file)
+      })
+    },
+    [fileContent, fileName, fileSize]
+  )
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     maxFiles: 1,
@@ -78,7 +81,12 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
               </div>
             </div>
           ) : (
-            <div {...getRootProps({ className: 'dropzone' })}>
+            <div
+              {...getRootProps({
+                className:
+                  'rounded outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
+              })}
+            >
               <input data-testid="drop-input" {...getInputProps()} />
               <Dropzone isDragActive={isDragActive} typeFile="kubeconfig" />
             </div>

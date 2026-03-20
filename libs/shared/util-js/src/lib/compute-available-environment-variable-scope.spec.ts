@@ -1,5 +1,9 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { computeAvailableScope, getScopeHierarchy } from './compute-available-environment-variable-scope'
+import {
+  computeAvailableScope,
+  generateScopeLabel,
+  getScopeHierarchy,
+} from './compute-available-environment-variable-scope'
 
 describe('computeAvailableEnvironmentVariableScope', () => {
   describe('when the scope is not set', () => {
@@ -65,5 +69,11 @@ describe('getScopeHierarchy', () => {
   it('should return the hierarchy of the scope', () => {
     const hierarchy = getScopeHierarchy(APIVariableScopeEnum.ENVIRONMENT)
     expect(hierarchy).toBe(2)
+  })
+})
+
+describe('generateScopeLabel', () => {
+  it('should return Service for terraform scope', () => {
+    expect(generateScopeLabel(APIVariableScopeEnum.TERRAFORM)).toBe('Service')
   })
 })
