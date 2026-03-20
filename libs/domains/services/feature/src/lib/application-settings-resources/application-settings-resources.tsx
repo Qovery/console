@@ -1,6 +1,5 @@
 import { useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { useEffect, useRef } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -46,7 +45,6 @@ export function ApplicationSettingsResources({
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
   const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId, suspense: true })
-  const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
   const clusterFeatureKarpenter = cluster?.features?.find((f) => f.id === 'KARPENTER')
   const isKarpenterCluster = Boolean(clusterFeatureKarpenter)
   const isKedaCluster = Boolean(cluster?.keda?.enabled)
@@ -323,7 +321,7 @@ export function ApplicationSettingsResources({
                   { label: 'HPA (Horizontal Pod Autoscaler)', value: 'HPA' },
                 ]
 
-                if ((cloudProvider === 'AWS' || cloudProvider === 'GCP') && isKedaCluster && isKedaFeatureEnabled) {
+                if ((cloudProvider === 'AWS' || cloudProvider === 'GCP') && isKedaCluster) {
                   options.push({ label: 'KEDA (Event-driven autoscaling)', value: 'KEDA' })
                 }
 
@@ -347,7 +345,7 @@ export function ApplicationSettingsResources({
                 )
               }}
             />
-            {currentAutoscalingMode === 'HPA' && autoscalingMode === 'KEDA' && isKedaFeatureEnabled && (
+            {currentAutoscalingMode === 'HPA' && autoscalingMode === 'KEDA' && (
               <Callout.Root color="yellow">
                 <Callout.Icon>
                   <Icon iconName="circle-info" />

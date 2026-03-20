@@ -72,11 +72,6 @@ jest.mock('@tanstack/react-router', () => ({
   useNavigate: () => mockNavigate,
 }))
 
-jest.mock('@qovery/domains/organizations/feature', () => ({
-  ...jest.requireActual('@qovery/domains/organizations/feature'),
-  GitRepositorySettings: () => <MockGitRepositorySettings />,
-}))
-
 jest.mock('../../cluster-eks-settings/cluster-eks-settings', () => ({
   ClusterEksSettings: ({ gitSettings }: { gitSettings: ReactNode }) => (
     <div data-testid="cluster-eks-settings">{gitSettings}</div>
@@ -84,7 +79,7 @@ jest.mock('../../cluster-eks-settings/cluster-eks-settings', () => ({
 }))
 
 const defaultProps: StepEksProps = {
-  organizationId: 'org-123',
+  gitSettings: <MockGitRepositorySettings />,
   onSubmit: mockOnSubmit,
 }
 

@@ -1,5 +1,4 @@
 import { useParams } from '@tanstack/react-router'
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useContext, useMemo, useState } from 'react'
 import { OutputVariables } from '@qovery/domains/variables/feature'
@@ -33,7 +32,6 @@ function ServiceOverviewContent({
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { open } = useContext(ServiceTerminalContext)
   const [activeTab, setActiveTab] = useState('variables')
-  const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
   const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
 
   const isDatabaseManaged = useMemo(
@@ -46,10 +44,9 @@ function ServiceOverviewContent({
   const isTerraformService = useMemo(() => service?.serviceType === 'TERRAFORM', [service])
   const isKedaAutoscaling = useMemo(
     () =>
-      isKedaFeatureEnabled &&
       (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
       service.autoscaling?.mode === 'KEDA',
-    [service, isKedaFeatureEnabled]
+    [service]
   )
   const scaledObject = useMemo<ScaledObjectStatusDto | null>(() => {
     if (

@@ -1,4 +1,3 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
@@ -12,7 +11,6 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
   const { fromDetail } = props
   const { control, setValue, watch } = useFormContext<ClusterGeneralData>()
   const { isQoveryAdminUser } = useUserRole()
-  const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
 
   const metricsEnabled = watch('metrics_parameters.enabled')
   const cloudProvider = watch('cloud_provider')
@@ -135,7 +133,7 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
           )}
         </>
       )}
-      {fromDetail && (cloudProvider === 'AWS' || cloudProvider === 'GCP') && isKedaFeatureEnabled && (
+      {fromDetail && (cloudProvider === 'AWS' || cloudProvider === 'GCP') && (
         <Controller
           name="keda.enabled"
           control={control}

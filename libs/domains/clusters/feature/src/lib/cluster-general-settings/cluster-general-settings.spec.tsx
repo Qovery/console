@@ -41,4 +41,23 @@ describe('ClusterGeneralSettings', () => {
     expect((description.querySelector('textarea') as HTMLTextAreaElement).value).toBe('test')
     expect((toggle.querySelector('input') as HTMLInputElement).value).toBe('false')
   })
+
+  it('should display the KEDA toggle on cluster detail for AWS clusters', () => {
+    renderWithProviders(
+      wrapWithReactHookForm<ClusterGeneralData>(<ClusterGeneralSettings fromDetail />, {
+        defaultValues: {
+          name: 'test',
+          description: 'test',
+          production: false,
+          cloud_provider: 'AWS',
+          keda: {
+            enabled: true,
+          },
+        },
+      })
+    )
+
+    expect(screen.getByText('KEDA enabled')).toBeInTheDocument()
+    expect(screen.getByText('Enable KEDA for the cluster')).toBeInTheDocument()
+  })
 })

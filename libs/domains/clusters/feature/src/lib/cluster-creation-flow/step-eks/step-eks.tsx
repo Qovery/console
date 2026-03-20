@@ -1,7 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
-import { type FormEventHandler, useEffect } from 'react'
+import { type FormEventHandler, type ReactNode, useEffect } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
-import { GitRepositorySettings } from '@qovery/domains/organizations/feature'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import { Button, FunnelFlowBody, Heading, Section } from '@qovery/shared/ui'
 import { ClusterEksSettings } from '../../cluster-eks-settings/cluster-eks-settings'
@@ -14,16 +13,16 @@ import {
 import { steps, useClusterContainerCreateContext } from '../cluster-creation-flow'
 
 export interface StepEksProps {
-  organizationId: string
+  gitSettings?: ReactNode
   onSubmit: () => void
 }
 
 interface StepEksFormProps {
+  gitSettings?: ReactNode
   onSubmit: FormEventHandler<HTMLFormElement>
-  organizationId: string
 }
 
-function StepEksForm({ onSubmit, organizationId }: StepEksFormProps) {
+function StepEksForm({ onSubmit, gitSettings }: StepEksFormProps) {
   const navigate = useNavigate()
   const { formState } = useFormContext<ClusterEksSettingsFormData>()
   const { creationFlowUrl } = useClusterContainerCreateContext()
@@ -37,17 +36,7 @@ function StepEksForm({ onSubmit, organizationId }: StepEksFormProps) {
 
       <form onSubmit={onSubmit}>
         <div className="space-y-10">
-          <ClusterEksSettings
-            gitSettings={
-              <GitRepositorySettings
-                gitDisabled={false}
-                showAuthProviders={false}
-                organizationId={organizationId}
-                rootPathLabel="YAML file path"
-                rootPathHint="Provide the path to the EKS Anywhere cluster YAML file in the repository."
-              />
-            }
-          />
+          <ClusterEksSettings gitSettings={gitSettings} />
 
           <div className="flex justify-between">
             <Button
@@ -69,7 +58,7 @@ function StepEksForm({ onSubmit, organizationId }: StepEksFormProps) {
   )
 }
 
-export function StepEks({ organizationId, onSubmit }: StepEksProps) {
+export function StepEks({ gitSettings, onSubmit }: StepEksProps) {
   const { resourcesData, setResourcesData, setCurrentStep, generalData } = useClusterContainerCreateContext()
 
   useEffect(() => {
@@ -103,7 +92,7 @@ export function StepEks({ organizationId, onSubmit }: StepEksProps) {
   return (
     <FunnelFlowBody>
       <FormProvider {...methods}>
-        <StepEksForm onSubmit={handleSubmit} organizationId={organizationId} />
+        <StepEksForm onSubmit={handleSubmit} gitSettings={gitSettings} />
       </FormProvider>
     </FunnelFlowBody>
   )
