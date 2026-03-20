@@ -1,4 +1,5 @@
 import {
+  type Cluster,
   type ClusterFeatureAwsExistingVpc,
   type DatabaseConfiguration,
   DatabaseModeEnum,
@@ -163,6 +164,18 @@ export function getDefaultDatabaseMode({
   }
 
   return DatabaseModeEnum.MANAGED
+}
+
+export function canSelectManagedDatabaseMode({
+  cloudProvider,
+  cluster,
+  showManagedWithVpcOptions,
+}: {
+  cloudProvider?: string
+  cluster?: Pick<Cluster, 'kubernetes'>
+  showManagedWithVpcOptions: boolean
+}) {
+  return showManagedWithVpcOptions && cloudProvider === 'AWS' && cluster?.kubernetes !== 'SELF_MANAGED'
 }
 
 export function getDefaultManagedDatabaseInstanceType(databaseType?: DatabaseTypeEnum) {
