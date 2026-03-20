@@ -101,6 +101,7 @@ export function DatabaseStepGeneral({
     }
   }, [cloudProvider, methods, showManagedWithVpcOptions])
 
+  // Keep the form state valid when managed mode becomes unavailable after async data loads.
   useEffect(() => {
     if (methods.getValues('mode') === DatabaseModeEnum.MANAGED && !canSelectManagedMode) {
       methods.setValue('mode', DatabaseModeEnum.CONTAINER, { shouldValidate: true })
