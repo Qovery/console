@@ -1,8 +1,9 @@
 import { Outlet, createFileRoute, useParams } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
+import clsx from 'clsx'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { Sidebar } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/settings')({
   component: RouteComponent,
@@ -11,7 +12,6 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 function RouteComponent() {
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const { data: cluster } = useCluster({ organizationId, clusterId })
-  const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
 
   const pathSettings = `/organization/${organizationId}/cluster/${clusterId}/settings`
 
@@ -63,13 +63,14 @@ function RouteComponent() {
     icon: 'skull' as const,
   }
 
+  const eksAnywhereCluster = cluster?.kubernetes === 'PARTIALLY_MANAGED'
+
   const LINKS_SETTINGS = match(cluster)
     .with({ kubernetes: 'SELF_MANAGED' }, () => [generalLink, imageRegistryLink, advancedSettingsLink, dangerZoneLink])
     .with(
       { cloud_provider: 'AWS', kubernetes: 'MANAGED' },
       { cloud_provider: 'AWS', kubernetes: 'PARTIALLY_MANAGED' },
       () => {
-        const eksAnywhereCluster = isEksAnywhereEnabled && cluster?.kubernetes === 'PARTIALLY_MANAGED'
         return [
           generalLink,
           ...(eksAnywhereCluster ? [eksLink] : []),
@@ -112,7 +113,13 @@ function RouteComponent() {
 
   return (
     <div className="flex min-h-0 flex-1">
-      <aside className="relative min-h-[calc(100vh-2.75rem-4rem)] w-52 shrink-0 self-stretch border-r border-neutral">
+      <aside
+        className={twMerge(
+          clsx('relative min-h-[calc(100vh-2.75rem-4rem)] w-52 shrink-0 self-stretch border-r border-neutral', {
+            'w-60': eksAnywhereCluster,
+          })
+        )}
+      >
         <div className="sticky top-16">
           <Sidebar.Root className="mt-6">
             {LINKS_SETTINGS.map((link) => (
