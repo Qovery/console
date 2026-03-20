@@ -104,6 +104,10 @@ export const getDeploymentAction = (
       status: 'Force unlock',
       icon: <Icon iconStyle="regular" iconName="unlock" />,
     }))
+    .with('UNAVAILABLE', () => ({
+      status: 'Status unavailable',
+      icon: <Icon iconStyle="regular" iconName="circle-exclamation" />,
+    }))
     .exhaustive()
 }
 
