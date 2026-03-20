@@ -143,24 +143,10 @@ const EnvironmentLastDeploymentContent = () => {
           description="Create and deploy your first service"
           className="h-auto p-8"
         >
-          <div className="flex gap-2">
-            <Button onClick={handleDeploy} color="neutral" size="md" className="gap-1.5">
-              <Icon iconName="rocket" />
-              Deploy environment
-            </Button>
-            <Link
-              as="button"
-              to="/organization/$organizationId/cluster/new"
-              params={{ organizationId }}
-              variant="outline"
-              color="neutral"
-              size="md"
-              className="gap-1.5"
-            >
-              <Icon iconName="circle-plus" />
-              New cluster
-            </Link>
-          </div>
+          <Button onClick={handleDeploy} color="neutral" size="md" className="gap-1.5">
+            <Icon iconName="rocket" />
+            Deploy environment
+          </Button>
         </EmptyState>
       )}
     </Section>
