@@ -80,7 +80,7 @@ function RouteComponent() {
                           environmentId={environmentId}
                           serviceId={serviceId}
                           closeModal={closeModal}
-                          serviceType={service.serviceType}
+                          serviceType={service?.serviceType}
                         />
                       ),
                       options: {

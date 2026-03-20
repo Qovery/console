@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import InputTextSmall, { type InputTextSmallProps } from './input-text-small'
 
 describe('InputTextSmall', () => {
@@ -11,14 +11,14 @@ describe('InputTextSmall', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<InputTextSmall {...props} />)
+    const { baseElement } = renderWithProviders(<InputTextSmall {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should apply the accurate classes as input actions', () => {
+  it('should apply the accurate classes as input actions', async () => {
     props.error = 'some error'
 
-    const { rerender } = render(<InputTextSmall {...props} />)
+    const { rerender, userEvent } = renderWithProviders(<InputTextSmall {...props} />)
 
     let inputContainer = screen.queryByTestId('input') as HTMLDivElement
 
@@ -31,17 +31,17 @@ describe('InputTextSmall', () => {
     inputContainer = screen.queryByTestId('input') as HTMLDivElement
     const input = screen.getByRole('textbox')
 
-    fireEvent.change(input, { target: { value: 'some new text value' } })
+    await userEvent.type(input, 'some new text value')
 
     expect(inputContainer).not.toHaveClass('input--error')
   })
 
   it('should set the text value when the input event is emitted', async () => {
-    render(<InputTextSmall {...props} />)
+    const { userEvent } = renderWithProviders(<InputTextSmall {...props} />)
 
     const input = screen.getByRole('textbox')
 
-    fireEvent.change(input, { target: { value: 'some new text value' } })
+    await userEvent.type(input, 'some new text value')
 
     expect(input as HTMLInputElement).toHaveValue('some new text value')
   })
@@ -53,7 +53,7 @@ describe('InputTextSmall', () => {
     })
 
     it('should render the error icon and not print the bottom error', () => {
-      render(<InputTextSmall {...props} />)
+      renderWithProviders(<InputTextSmall {...props} />)
 
       const warningIcon = screen.getByTestId('warning-icon-left')
       expect(warningIcon).toBeInTheDocument()
@@ -71,7 +71,7 @@ describe('InputTextSmall', () => {
     })
 
     it('should render the error icon and not print the bottom error', () => {
-      render(<InputTextSmall {...props} />)
+      renderWithProviders(<InputTextSmall {...props} />)
 
       const warningIcon = screen.getByTestId('warning-icon-left')
       expect(warningIcon).toBeInTheDocument()
@@ -83,23 +83,23 @@ describe('InputTextSmall', () => {
   })
 
   it('should render icon', async () => {
-    render(<InputTextSmall {...props} />)
+    const { userEvent } = renderWithProviders(<InputTextSmall {...props} />)
 
     const input = screen.getByRole('textbox')
 
-    fireEvent.change(input, { target: { value: 'some new text value' } })
+    await userEvent.type(input, 'some new text value')
 
     expect(input as HTMLInputElement).toHaveValue('some new text value')
   })
 
   it('should have a show hide button and button should toggle input type', async () => {
-    render(<InputTextSmall {...props} hasShowPasswordButton={true} />)
+    const { userEvent } = renderWithProviders(<InputTextSmall {...props} hasShowPasswordButton={true} />)
     const button = screen.getByTestId('show-password-button')
     expect(button).toBeInTheDocument()
 
     const input = screen.getByRole('textbox')
 
-    fireEvent.click(button)
+    await userEvent.click(button)
     expect(input).toHaveAttribute('type', 'password')
   })
 })
