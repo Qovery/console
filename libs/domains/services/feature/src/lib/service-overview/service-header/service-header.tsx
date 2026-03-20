@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router'
+import { Link, useParams } from '@tanstack/react-router'
 import { type ApplicationGitRepository, type Credentials, type Environment } from 'qovery-typescript-axios'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -126,10 +126,14 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
             <Heading>{service.name}</Heading>
             <ServiceStateChip className="ml-0.5" mode="running" environmentId={environment.id} serviceId={serviceId} />
             <span className="mx-2 h-4 w-px bg-surface-neutral-component" />
-            <div className="flex items-center gap-2 text-ssm">
+            <Link
+              to="/organization/$organizationId/cluster/$clusterId/overview"
+              params={{ organizationId, clusterId: environment.cluster_id }}
+              className="group flex items-center gap-2 text-ssm"
+            >
               <Icon className="w-5" name={environment.cloud_provider.provider} />
-              {environment.cluster_name}
-            </div>
+              <span className="group-hover:underline">{environment.cluster_name}</span>
+            </Link>
           </div>
           <ServiceActions environment={environment} serviceId={serviceId} variant="header" />
         </div>

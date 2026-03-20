@@ -57,7 +57,21 @@ const services = {
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: '', projectId: '' }),
-  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+  Link: ({
+    children,
+    to,
+    params: _params,
+    ...props
+  }: {
+    children?: ReactNode
+    to?: string
+    params?: unknown
+    [key: string]: unknown
+  }) => (
+    <a href={typeof to === 'string' ? to : '#'} {...props}>
+      {children}
+    </a>
+  ),
 }))
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -245,6 +259,7 @@ jest.mock('../../service-links-popover/service-links-popover', () => ({
 describe('ServiceHeader', () => {
   const environment = {
     id: 'environment-id',
+    cluster_id: 'cluster-id',
     cluster_name: 'my-cluster',
     cloud_provider: { provider: 'AWS' },
   } as Environment
@@ -263,6 +278,8 @@ describe('ServiceHeader', () => {
     renderServiceHeader('application-mock')
 
     expect(screen.getByRole('heading', { name: 'console' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'my-cluster' })).toBeInTheDocument()
+    expect(screen.getByText('my-cluster')).toHaveClass('group-hover:underline')
     expect(screen.getByText('my-cluster')).toBeInTheDocument()
     expect(screen.getByText('React Application the Qovery Console')).toBeInTheDocument()
     expect(screen.getByText('GitHub')).toBeInTheDocument()
