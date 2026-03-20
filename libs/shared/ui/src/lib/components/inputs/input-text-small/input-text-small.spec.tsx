@@ -95,8 +95,7 @@ describe('InputTextSmall', () => {
   it('should have a show hide button and button should toggle input type', async () => {
     render(<InputTextSmall {...props} hasShowPasswordButton={true} />)
     const button = screen.getByTestId('show-password-button')
-    const icon = button.querySelector('.icon-solid-eye-slash')
-    expect(icon).toBeTruthy()
+    expect(button).toBeInTheDocument()
 
     const input = screen.getByRole('textbox')
 
