@@ -835,7 +835,7 @@ function MenuOtherActions({
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        {variant === 'header' && shellAction && (
+        {variant !== 'header' && shellAction && (
           <DropdownMenu.Item icon={<Icon iconName="terminal" />} onSelect={shellAction}>
             Cloud shell
           </DropdownMenu.Item>
@@ -919,6 +919,22 @@ export function ServiceActions({
             },
           }))
 
+  const cloudShellButton =
+    variant === 'header' && effectiveShellAction ? (
+      <Tooltip content="Qovery cloud shell">
+        <Button
+          aria-label="Qovery cloud shell"
+          color="neutral"
+          variant="outline"
+          size="md"
+          iconOnly
+          onClick={effectiveShellAction}
+        >
+          <Icon iconName="terminal" />
+        </Button>
+      </Tooltip>
+    ) : null
+
   return (
     <div className={twMerge('flex items-center gap-1.5', variant === 'header' && 'flex-row-reverse gap-2')}>
       <MenuManageDeployment
@@ -927,6 +943,7 @@ export function ServiceActions({
         service={service}
         variant={variant}
       />
+      {cloudShellButton}
 
       {variant === 'default' && (
         <>
