@@ -10,10 +10,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
+import posthog from 'posthog-js'
 import { type DeploymentHistoryEnvironmentV2, OrganizationEventOrigin, StateEnum } from 'qovery-typescript-axios'
-import { Fragment, useCallback, useMemo, useState } from 'react'
+import { Fragment, useCallback, useContext, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
+import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { IconEnum } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
@@ -74,6 +76,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
 
   const { pathname } = useLocation()
   const { openModalConfirmation } = useModalConfirmation()
+  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
 
   const [sorting, setSorting] = useState<SortingState>([])
 
@@ -278,7 +281,54 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                   />
                   <div className="flex flex-col gap-1">
                     <span className="font-medium text-neutral-400">{upperCaseFirstLetter(trigger_action)}</span>
-                    <span className="text-ssm text-neutral-350">{upperCaseFirstLetter(action_status)}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-ssm text-neutral-350">{upperCaseFirstLetter(action_status)}</span>
+                      {action_status === 'ERROR' && (
+                        <Tooltip
+                          classNameContent="rounded-full"
+                          side="bottom"
+                          content={
+                            <div
+                              className="flex cursor-pointer items-center gap-1.5"
+                              onClick={() => {
+                                posthog.capture('ai-copilot-troubleshoot-triggered', {
+                                  source: 'environment-deployment-list',
+                                  deployment_id: data.identifier.execution_id,
+                                })
+                                const message = `Why did my deployment fail? (deployment id: ${data.identifier.execution_id})`
+                                setDevopsCopilotOpen(true)
+                                sendMessageRef?.current?.(message)
+                              }}
+                            >
+                              <Icon iconName="sparkles" iconStyle="solid" className="text-brand-300" />
+                              <span className="text-sm font-thin">Ask AI Copilot for diagnostic</span>
+                              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white">
+                                <Icon iconName="arrow-right" className="text-neutral-400" />
+                              </div>
+                            </div>
+                          }
+                        >
+                          <div
+                            onClick={() => {
+                              posthog.capture('ai-copilot-troubleshoot-triggered', {
+                                source: 'environment-deployment-list',
+                                deployment_id: data.identifier.execution_id,
+                              })
+                              const message = `Why did my deployment fail? (deployment id: ${data.identifier.execution_id})`
+                              setDevopsCopilotOpen(true)
+                              sendMessageRef?.current?.(message)
+                            }}
+                            className="group cursor-pointer"
+                          >
+                            <Icon
+                              iconName="sparkles"
+                              iconStyle="solid"
+                              className="text-neutral-350 transition-colors group-hover:text-brand-500"
+                            />
+                          </div>
+                        </Tooltip>
+                      )}
+                    </div>
                   </div>
                 </div>
               )

@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import download from 'downloadjs'
+import posthog from 'posthog-js'
 import {
   type Environment,
   type EnvironmentStatus,
@@ -18,8 +19,9 @@ import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } f
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ServiceStateChip, useDeploymentStatus, useService } from '@qovery/domains/services/feature'
+import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
+import { Banner, Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
 import HeaderLogs from '../header-logs/header-logs'
@@ -149,6 +151,7 @@ export function ListDeploymentLogs({
   const { organizationId, projectId, serviceId, versionId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
   const { updateStageId } = useContext(ServiceStageIdsContext)
+  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
 
   useEffect(() => {
     if (stage) updateStageId(stage.id)
@@ -301,6 +304,19 @@ export function ListDeploymentLogs({
 
   const lastLogTimestamp = logs.length > 0 ? logs[logs.length - 1]?.timestamp : undefined
 
+  const isCrashLoopDetected = useMemo(() => {
+    if (!isDeploymentProgressing) return false
+    const warningCounts = new Map<string, number>()
+    for (const log of logs) {
+      const text = log.message?.safe_message ?? ''
+      if (!text.includes('⚠️')) continue
+      warningCounts.set(text, (warningCounts.get(text) ?? 0) + 1)
+    }
+    return [...warningCounts.values()].some((count) => count >= 3)
+  }, [logs, isDeploymentProgressing])
+
+  const isError = serviceStatus?.state?.includes('ERROR')
+
   function HeaderLogsComponent() {
     return (
       <HeaderLogs
@@ -381,6 +397,30 @@ export function ListDeploymentLogs({
       <div className="h-[calc(100vh-64px)] w-full p-1">
         <div className="h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
           <HeaderLogsComponent />
+          {(isError || isCrashLoopDetected || preCheckStage?.status === 'ERROR') && (
+            <Banner
+              color="brand"
+              buttonLabel="Launch diagnostic"
+              buttonIconRight="angle-right"
+              onClickButton={() => {
+                posthog.capture('ai-copilot-troubleshoot-triggered', {
+                  source: 'deployment-logs',
+                  deployment_id: versionId,
+                  trigger_reason: isCrashLoopDetected ? 'crash-loop' : 'error',
+                })
+                const message = `Why did my deployment fail?${versionId ? ` (deployment id: ${versionId})` : ''}`
+                setDevopsCopilotOpen(true)
+                sendMessageRef?.current?.(message)
+              }}
+            >
+              <span className="flex items-center gap-1.5">
+                <Icon iconName="sparkles" />
+                {isCrashLoopDetected && !isError
+                  ? 'AI Copilot detected a potential issue during this deployment'
+                  : 'AI Copilot identified likely causes and fixes for this deployment error'}
+              </span>
+            </Banner>
+          )}
           <div className="flex h-[calc(100%-48px)] flex-col items-center justify-between bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">
               <DeploymentLogsPlaceholder
@@ -433,6 +473,32 @@ export function ListDeploymentLogs({
             }
           }}
         >
+          {(isError || isCrashLoopDetected) && (
+            <div className="sticky top-0 z-10">
+              <Banner
+                color="brand"
+                buttonLabel="Launch diagnostic"
+                buttonIconRight="angle-right"
+                onClickButton={() => {
+                  posthog.capture('ai-copilot-troubleshoot-triggered', {
+                    source: 'deployment-logs',
+                    deployment_id: versionId,
+                    trigger_reason: isCrashLoopDetected ? 'crash-loop' : 'error',
+                  })
+                  const message = `Why did my deployment fail?${versionId ? ` (deployment id: ${versionId})` : ''}`
+                  setDevopsCopilotOpen(true)
+                  sendMessageRef?.current?.(message)
+                }}
+              >
+                <span className="flex items-center gap-1.5">
+                  <Icon iconName="sparkles" />
+                  {isCrashLoopDetected && !isError
+                    ? 'AI Copilot detected a potential issue during this deployment'
+                    : 'AI Copilot identified likely causes and fixes for this deployment error'}
+                </span>
+              </Banner>
+            </div>
+          )}
           {logs.length >= 500 && (
             <ShowPreviousLogsButton
               showPreviousLogs={showPreviousLogs}

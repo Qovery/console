@@ -113,13 +113,12 @@ export const mutations = {
     token: string
     context?: {
       project?: { id: string }
-      environment?: { id: string }
+      environment?: { id: string; cluster_id?: string }
       service?: { service_type?: string; id?: string }
+      deployment?: { execution_id?: string }
     }
     signal?: AbortSignal
   }) => {
-    // Using fetch instead of axios for streaming responses
-    // Axios doesn't support streaming in the same way as fetch
     const response = await fetch(
       `${DEVOPS_COPILOT_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread/${threadId}/text`,
       {
@@ -133,8 +132,10 @@ export const mutations = {
           organization_id: organizationId,
           project_id: context?.project?.id,
           environment_id: context?.environment?.id,
+          cluster_id: context?.environment?.cluster_id,
           service_type: context?.service?.service_type,
           service_id: context?.service?.id,
+          deployment_id: context?.deployment?.execution_id,
           text: message,
           instructions: 'Please provide a concise response in Markdown format',
           stream: true,
@@ -162,7 +163,7 @@ export const mutations = {
     readOnly?: boolean
   }) => {
     const response = await devopsCopilotAxios.post(`/owner/${userSub}/organization/${organizationId}/thread`, {
-      title: message.substring(0, 50),
+      title: message,
       read_only: readOnly,
     })
 

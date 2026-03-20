@@ -62,7 +62,7 @@ describe('Header', () => {
       expect(screen.getByText('My Custom Thread')).toBeInTheDocument()
     })
 
-    it('should truncate long thread titles', () => {
+    it('should display long thread titles without manual truncation', () => {
       const longTitle = 'This is a very long thread title that should be truncated at 45 characters'
       const threads = [{ id: 'thread-1', title: longTitle }]
 
@@ -70,7 +70,7 @@ describe('Header', () => {
         <Header {...defaultProps} threadId="thread-1" threads={threads} currentThreadHistoryTitle={longTitle} />
       )
 
-      expect(screen.getByText(longTitle + '...')).toBeInTheDocument()
+      expect(screen.getByText(longTitle)).toBeInTheDocument()
     })
 
     it('should not truncate short thread titles', () => {
