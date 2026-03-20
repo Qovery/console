@@ -13,7 +13,7 @@ import { useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
+import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Indicator, StageStatusChip, StatusChip, Tooltip, TriggerActionIcon, Truncate } from '@qovery/shared/ui'
 import { Icon } from '@qovery/shared/ui'
 import { dateUTCString, formatDurationMinutesSeconds } from '@qovery/shared/util-dates'
@@ -23,6 +23,7 @@ export interface DropdownServicesProps {
   environment: Environment
   deploymentHistory: DeploymentHistoryEnvironmentV2 | QueuedDeploymentRequestWithStages
   stages: DeploymentHistoryStage[] | QueuedDeploymentRequestWithStagesStagesInner[]
+  size?: 'sm' | 'md'
 }
 
 const isDeploymentStageQueue = (data: unknown): data is QueuedDeploymentRequestWithStagesStagesInner => {
@@ -34,7 +35,7 @@ const MAX_VISIBLE_STAGES = 4
 // XXX: This component includes a workaround to enable hover functionality
 // for the DropdownMenu when using Radix, inspired by the discussion in this issue:
 // https://github.com/radix-ui/primitives/issues/1294
-export function DropdownServices({ environment, deploymentHistory, stages }: DropdownServicesProps) {
+export function DropdownServices({ environment, deploymentHistory, stages, size = 'md' }: DropdownServicesProps) {
   const [open, setOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState<number | undefined>()
   const [direction, setDirection] = useState(0)
@@ -76,33 +77,42 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
       <div className="flex items-center">
         {currentPage > 0 && (
           <Tooltip content="See previous stage">
-            <button
-              title="Previous stage"
-              onClick={(e) => {
-                setCurrentPage((prev) => prev - 1)
-                e.stopPropagation()
-              }}
-              className="relative flex items-center text-neutral-disabled after:block after:h-[1px] after:w-0.5 after:border-b after:border-neutral after:content-['']"
+            <div
+              className={twMerge(
+                "relative flex items-center text-neutral-disabled after:block after:h-[1px] after:w-0.5 after:border-b after:border-neutral after:content-['']"
+              )}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="flex items-center justify-center"
+              <button
+                title="Previous stage"
+                onClick={(e) => {
+                  setCurrentPage((prev) => prev - 1)
+                  e.preventDefault()
+                  e.stopPropagation()
+                }}
+                className={twMerge('relative flex items-center text-neutral-disabled', size === 'sm' ? 'w-5' : 'w-6')}
               >
-                <path
-                  fill="var(--neutral-2)"
-                  stroke="var(--neutral-6)"
-                  d="M1.5 8.993v0c0-.91.23-1.804.669-2.591A5.098 5.098 0 013.99 4.507s0 0 0 0L9.49 1.2h0a4.863 4.863 0 012.508-.7 4.864 4.864 0 012.51.7l5.5 3.31h0a5.097 5.097 0 011.82 1.892c.439.787.67 1.68.671 2.59v6.015c0 .91-.23 1.804-.669 2.591a5.097 5.097 0 01-1.822 1.895l-5.5 3.307h0c-.763.459-1.628.7-2.508.7-.88 0-1.746-.241-2.51-.7 0 0 0 0 0 0l-5.5-3.31h0a5.098 5.098 0 01-1.82-1.892 5.333 5.333 0 01-.671-2.589V8.993z"
-                />
-              </svg>
-              <Icon
-                iconName="arrow-left"
-                className="absolute left-1 top-1 flex h-4 w-4 items-center justify-center text-neutral-disabled"
-              />
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="100%"
+                  height="100%"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="flex items-center justify-center"
+                >
+                  <path
+                    fill="var(--neutral-2)"
+                    stroke="var(--neutral-6)"
+                    d="M1.5 8.993v0c0-.91.23-1.804.669-2.591A5.098 5.098 0 013.99 4.507s0 0 0 0L9.49 1.2h0a4.863 4.863 0 012.508-.7 4.864 4.864 0 012.51.7l5.5 3.31h0a5.097 5.097 0 011.82 1.892c.439.787.67 1.68.671 2.59v6.015c0 .91-.23 1.804-.669 2.591a5.097 5.097 0 01-1.822 1.895l-5.5 3.307h0c-.763.459-1.628.7-2.508.7-.88 0-1.746-.241-2.51-.7 0 0 0 0 0 0l-5.5-3.31h0a5.098 5.098 0 01-1.82-1.892 5.333 5.333 0 01-.671-2.589V8.993z"
+                  />
+                </svg>
+                <div className="absolute right-[1px] top-0 flex h-full w-full items-center justify-center">
+                  <Icon
+                    iconName="angle-left"
+                    className={twMerge('text-neutral-disabled', size === 'sm' ? 'text-sm' : 'text-base')}
+                  />
+                </div>
+              </button>
+            </div>
           </Tooltip>
         )}
 
@@ -122,7 +132,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
             style={{ pointerEvents: 'auto' }}
             className="flex items-center py-2 outline-none after:block after:h-[1px] after:w-0.5 after:border-b after:border-neutral after:content-[''] last:after:hidden focus:outline-none"
           >
-            <StageStatusChip status={stage.status} />
+            <StageStatusChip status={stage.status} size={size} />
           </DropdownMenu.Trigger>
         ))}
 
@@ -132,14 +142,15 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
               title="Next stage"
               onClick={(e) => {
                 setCurrentPage((prev) => prev + 1)
+                e.preventDefault()
                 e.stopPropagation()
               }}
-              className="relative flex items-center text-neutral-disabled"
+              className={twMerge('relative flex items-center text-neutral-disabled', size === 'sm' ? 'w-5' : 'w-6')}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
+                width="100%"
+                height="100%"
                 fill="none"
                 viewBox="0 0 24 24"
                 className="flex items-center justify-center"
@@ -150,10 +161,12 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                   d="M1.5 8.993v0c0-.91.23-1.804.669-2.591A5.098 5.098 0 013.99 4.507s0 0 0 0L9.49 1.2h0a4.863 4.863 0 012.508-.7 4.864 4.864 0 012.51.7l5.5 3.31h0a5.097 5.097 0 011.82 1.892c.439.787.67 1.68.671 2.59v6.015c0 .91-.23 1.804-.669 2.591a5.097 5.097 0 01-1.822 1.895l-5.5 3.307h0c-.763.459-1.628.7-2.508.7-.88 0-1.746-.241-2.51-.7 0 0 0 0 0 0l-5.5-3.31h0a5.098 5.098 0 01-1.82-1.892 5.333 5.333 0 01-.671-2.589V8.993z"
                 />
               </svg>
-              <Icon
-                iconName="arrow-right"
-                className="absolute left-1 top-1 flex h-4 w-4 items-center justify-center text-neutral-disabled"
-              />
+              <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center">
+                <Icon
+                  iconName="angle-right"
+                  className={twMerge('text-neutral-disabled', size === 'sm' ? 'text-sm' : 'text-base')}
+                />
+              </div>
             </button>
           </Tooltip>
         )}
@@ -306,18 +319,14 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                               asChild
                             >
                               <Link
-                                // TODO new-nav : Route not yet created
-                                to={
-                                  ENVIRONMENT_LOGS_URL(
-                                    environment.organization.id,
-                                    environment.project.id,
-                                    environment.id
-                                  ) +
-                                  DEPLOYMENT_LOGS_VERSION_URL(
-                                    service.identifier.service_id,
-                                    service.identifier.execution_id
-                                  )
-                                }
+                                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                                params={{
+                                  organizationId: environment.organization.id,
+                                  projectId: environment.project.id,
+                                  environmentId: environment.id,
+                                  serviceId: service.identifier.service_id,
+                                  executionId: service.identifier.execution_id ?? '',
+                                }}
                                 onClick={(e) => {
                                   e.stopPropagation()
                                 }}

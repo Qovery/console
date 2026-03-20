@@ -130,7 +130,7 @@ function ServiceOverviewContent({
                   size="ssm"
                   className="gap-0.5 text-neutral-subtle hover:text-neutral"
                 >
-                  See all deploys
+                  See all deployments
                   <Icon iconName="angle-right" className="text-ssm" />
                 </Link>
               </div>
