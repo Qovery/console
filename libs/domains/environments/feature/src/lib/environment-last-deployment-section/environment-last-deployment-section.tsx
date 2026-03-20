@@ -37,7 +37,7 @@ const EnvironmentLastDeploymentSkeleton = () => {
   return (
     <Section className="flex flex-col gap-3.5">
       <div className="flex items-center justify-between">
-        <Heading level={2}>Last deployment</Heading>
+        <Heading>Last deployment</Heading>
         <Skeleton width={148} height={14} />
       </div>
 
@@ -88,13 +88,14 @@ const EnvironmentLastDeploymentContent = () => {
   return (
     <Section className="flex flex-col gap-3.5">
       <div className="flex items-center justify-between">
-        <Heading level={2}>Last deployment</Heading>
+        <Heading>Last deployment</Heading>
         {lastDeployment && (
           <Link
             to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployments"
             params={{ organizationId, projectId, environmentId }}
             color="neutral"
-            className="gap-1 text-neutral-subtle"
+            size="ssm"
+            className="gap-0.5 text-neutral-subtle hover:text-neutral"
           >
             See all deployments
             <Icon iconName="angle-right" iconStyle="regular" />
