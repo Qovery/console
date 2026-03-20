@@ -14,8 +14,8 @@ export const ClusterEksSettings = ({ gitSettings }: ClusterEksSettingsProps) => 
     <>
       <Section className="gap-4">
         <div className="space-y-1">
-          <Heading level={2}>Infrastructure charts source</Heading>
-          <p className="text-sm text-neutral-350">
+          <Heading>Infrastructure charts source</Heading>
+          <p className="text-sm text-neutral-subtle">
             Configure the git repository and YAML file path used for your EKS Anywhere.
           </p>
         </div>
@@ -24,7 +24,7 @@ export const ClusterEksSettings = ({ gitSettings }: ClusterEksSettingsProps) => 
 
       <Section className="gap-4">
         <div className="space-y-1">
-          <Heading level={2}>Cert Manager</Heading>
+          <Heading>Cert Manager</Heading>
           <p className="text-sm text-neutral-subtle">Configure the certificate manager for your EKS cluster.</p>
         </div>
         <Controller
@@ -50,7 +50,7 @@ export const ClusterEksSettings = ({ gitSettings }: ClusterEksSettingsProps) => 
 
       <Section className="gap-4">
         <div className="space-y-1">
-          <Heading level={2}>MetalLB</Heading>
+          <Heading>MetalLB</Heading>
           <p className="text-sm text-neutral-subtle">Configure your load-balancer (using MetalLB)</p>
         </div>
         <Controller
@@ -77,7 +77,7 @@ export const ClusterEksSettings = ({ gitSettings }: ClusterEksSettingsProps) => 
 
       <Section className="gap-4">
         <div className="space-y-1">
-          <Heading level={2}>Nginx</Heading>
+          <Heading>Nginx</Heading>
           <p className="text-sm text-neutral-subtle">Configure Nginx for your EKS cluster.</p>
         </div>
 

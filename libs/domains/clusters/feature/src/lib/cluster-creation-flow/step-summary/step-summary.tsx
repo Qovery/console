@@ -73,6 +73,10 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
       goToKubeconfig()
       return
     }
+    if (generalData?.installation_type === 'PARTIALLY_MANAGED') {
+      goToEksConfig()
+      return
+    }
     return match(generalData?.cloud_provider)
       .with('AWS', () => goToFeatures())
       .with('GCP', () => goToFeatures())
@@ -94,6 +98,17 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
       credentials: { id: generalData.credentials, name: generalData.credentials_name },
       region: generalData.region,
     }
+    const awsLabelsGroups =
+      generalData.cloud_provider === 'AWS' &&
+      !generalData.production &&
+      generalData.labels_groups &&
+      generalData.labels_groups.length > 0
+        ? {
+            labels_groups: generalData.labels_groups.map((groupId) => ({
+              id: groupId,
+            })),
+          }
+        : {}
 
     if (generalData.installation_type === 'SELF_MANAGED' && kubeconfigData) {
       try {
@@ -108,6 +123,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
             production: generalData.production,
             features: [],
             cloud_provider_credentials: cloudProviderCredentials,
+            ...awsLabelsGroups,
           },
         })
         await editCloudProviderInfo({
@@ -141,6 +157,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
             features: [],
             cloud_provider_credentials: cloudProviderCredentials,
             infrastructure_charts_parameters: resourcesData?.infrastructure_charts_parameters,
+            ...awsLabelsGroups,
           },
         })
         navigate({ to: `/organization/${organizationId}/clusters` })
@@ -289,6 +306,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
             kubernetes: resourcesData.cluster_type as KubernetesEnum,
             features: formatFeatures,
             cloud_provider_credentials: cloudProviderCredentials,
+            ...awsLabelsGroups,
           }
         }
 
@@ -307,6 +325,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           kubernetes: resourcesData.cluster_type as KubernetesEnum,
           features: formatFeatures,
           cloud_provider_credentials: cloudProviderCredentials,
+          ...awsLabelsGroups,
         }
       })
 

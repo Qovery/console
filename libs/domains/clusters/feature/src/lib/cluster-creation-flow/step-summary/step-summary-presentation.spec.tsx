@@ -69,4 +69,56 @@ describe('StepSummaryPresentation', () => {
     expect(mockOnSubmit).toHaveBeenNthCalledWith(1, false)
     expect(mockOnSubmit).toHaveBeenNthCalledWith(2, true)
   })
+
+  it('should render infrastructure charts source for EKS Anywhere summary', () => {
+    renderWithProviders(
+      <StepSummaryPresentation
+        {...defaultProps}
+        generalData={{
+          ...defaultProps.generalData,
+          installation_type: 'PARTIALLY_MANAGED',
+          production: true,
+        }}
+        resourcesData={{
+          ...defaultResourcesData,
+          infrastructure_charts_parameters: {
+            cert_manager_parameters: {
+              kubernetes_namespace: 'cert-manager',
+            },
+            metal_lb_parameters: {
+              ip_address_pools: ['172.19.12.201-172.19.12.250'],
+            },
+            nginx_parameters: {
+              replica_count: 2,
+              default_ssl_certificate: 'cert-manager/default',
+              publish_status_address: '164.132.182.187',
+              annotation_metal_lb_load_balancer_ips: '172.19.12.250',
+              annotation_external_dns_kubernetes_target: '164.132.182.187',
+            },
+            eks_anywhere_parameters: {
+              git_repository: {
+                url: 'https://github.com/qovery/eks-anywhere.git',
+                branch: 'main',
+                git_token_id: 'token-id',
+                provider: 'GITHUB',
+              },
+              yaml_file_path: 'clusters/prod/cluster.yaml',
+            },
+          },
+        }}
+        kubeconfigData={{
+          file_name: 'cluster.yaml',
+          file_content: 'apiVersion: v1',
+          file_size: 1,
+        }}
+      />
+    )
+
+    const eksAnywhereSection = screen.getByTestId('summary-eks-anywhere')
+
+    expect(eksAnywhereSection).toHaveTextContent('Infrastructure charts source')
+    expect(eksAnywhereSection).toHaveTextContent('Repository URL: https://github.com/qovery/eks-anywhere.git')
+    expect(eksAnywhereSection).toHaveTextContent('Branch: main')
+    expect(eksAnywhereSection).toHaveTextContent('YAML file path: clusters/prod/cluster.yaml')
+  })
 })
