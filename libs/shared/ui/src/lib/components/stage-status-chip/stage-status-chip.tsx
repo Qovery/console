@@ -1,14 +1,16 @@
 import { type StageStatusEnum, type StepMetricStatusEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
+import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
 import Skeleton from '../skeleton/skeleton'
 
 export interface StageStatusChipProps {
   status: keyof typeof StageStatusEnum | keyof typeof StepMetricStatusEnum | undefined
+  size?: 'sm' | 'md'
   className?: string
 }
 
-export function StageStatusChip({ status, className = '' }: StageStatusChipProps) {
+export function StageStatusChip({ status, size = 'md', className = '' }: StageStatusChipProps) {
   if (!status) {
     return (
       <Skeleton width={24} height={24}>
@@ -19,7 +21,7 @@ export function StageStatusChip({ status, className = '' }: StageStatusChipProps
 
   const icon = match(status)
     .with('SKIPPED', 'SKIP', () => (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24">
         <path
           fill="var(--neutral-1)"
           stroke="var(--neutral-6)"
@@ -32,7 +34,7 @@ export function StageStatusChip({ status, className = '' }: StageStatusChipProps
       </svg>
     ))
     .with('QUEUED', () => (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24">
         <path
           fill="var(--brand-2)"
           stroke="var(--brand-6)"
@@ -58,7 +60,7 @@ export function StageStatusChip({ status, className = '' }: StageStatusChipProps
     ))
     .with('ONGOING', () => (
       <span className="relative flex h-6 w-6 items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" fill="none" viewBox="0 0 22 24">
+        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 22 24">
           <path
             fill="var(--brand-9)"
             stroke="var(--brand-7)"
@@ -74,7 +76,7 @@ export function StageStatusChip({ status, className = '' }: StageStatusChipProps
       </span>
     ))
     .with('DONE', 'SUCCESS', () => (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24">
         <path
           fill="var(--positive-9)"
           stroke="var(--positive-7)"
@@ -89,7 +91,7 @@ export function StageStatusChip({ status, className = '' }: StageStatusChipProps
       </svg>
     ))
     .with('CANCELED', 'CANCEL', () => (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24">
         <path
           fill="var(--neutral-2)"
           stroke="var(--neutral-6)"
@@ -102,7 +104,7 @@ export function StageStatusChip({ status, className = '' }: StageStatusChipProps
       </svg>
     ))
     .with('ERROR', () => (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24">
         <path
           fill="var(--negative-9)"
           stroke="var(--negative-7)"
@@ -116,7 +118,7 @@ export function StageStatusChip({ status, className = '' }: StageStatusChipProps
     ))
     .exhaustive()
 
-  return <div className={className}>{icon}</div>
+  return <div className={twMerge(size === 'sm' ? 'h-5 w-5' : 'h-6 w-6', className)}>{icon}</div>
 }
 
 export default StageStatusChip

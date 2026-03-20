@@ -125,6 +125,7 @@ const EnvironmentLastDeploymentContent = () => {
                 environment={environment}
                 deploymentHistory={lastDeployment}
                 stages={lastDeployment.stages.filter((stage) => stage.services.length > 0)}
+                size="sm"
               />
             )}
             <DotSeparator />
