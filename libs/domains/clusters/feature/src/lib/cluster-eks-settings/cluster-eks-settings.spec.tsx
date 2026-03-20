@@ -1,7 +1,7 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type ReactNode } from 'react'
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import { ClusterEksSettings } from './cluser-eks-settings'
+import { ClusterEksSettings } from './cluster-eks-settings'
 
 const render = (component: ReactNode) => {
   return renderWithProviders(wrapWithReactHookForm(component))
