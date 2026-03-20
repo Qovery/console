@@ -65,9 +65,9 @@ export function EntrypointCmdInputs({
         )}
       />
       {(watchEntryPoint || watchCmdArguments) && (
-        <div className="flex flex-col gap-1 rounded border border-neutral bg-surface-neutral-subtle px-3 py-2">
+        <div className="flex flex-col rounded-md border border-neutral bg-surface-neutral-subtle px-3 py-2">
           <span className="select-none text-xs text-neutral-subtle">Docker run format:</span>
-          <span className="break-words text-sm text-neutral">
+          <span className="break-words text-sm text-neutral-subtle">
             docker run {watchEntryPoint ? '--entrypoint ' + watchEntryPoint : ''}
             {watchImageName ? ` ${watchImageName}${watchImageTag ? `:${watchImageTag}` : ''}` : ''}{' '}
             {displayParsedCmd(watchCmdArguments ?? '')}

@@ -88,8 +88,8 @@ describe('InputSelect', () => {
     const selectedValue = screen.getByText('Test 1')
     const arrowIcon = select.querySelector('.fa-angle-down')
 
-    expect(label).toHaveClass('!text-neutral-disabled')
-    expect(selectedValue).toHaveClass('text-neutral-disabled')
+    expect(label).toHaveClass('!text-neutral-subtle')
+    expect(selectedValue).toHaveClass('text-neutral-subtle')
     expect(arrowIcon).toHaveClass('text-neutral-disabled')
     expect(baseElement).toMatchSnapshot()
   })

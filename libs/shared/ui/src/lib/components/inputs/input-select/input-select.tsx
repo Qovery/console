@@ -185,7 +185,7 @@ export function InputSelect({
     <span
       className={twMerge(
         clsx('mr-1 flex text-sm', {
-          'text-neutral-disabled': disabled,
+          'text-neutral-subtle': disabled,
           'text-neutral': !disabled,
         })
       )}
@@ -199,7 +199,7 @@ export function InputSelect({
     <span
       className={twMerge(
         clsx('mr-1 text-sm', {
-          'text-neutral-disabled': disabled,
+          'text-neutral-subtle': disabled,
           'text-neutral': !disabled,
         })
       )}
@@ -354,7 +354,7 @@ export function InputSelect({
                 '!translate-y-0 !text-xs': hasIcon || hasLabelUp,
                 [selectedWithIconClassName]: hasIcon,
                 'top-1.5 translate-y-2 text-sm': !hasIcon && !hasLabelUp,
-                '!text-neutral-disabled': disabled,
+                '!text-neutral-subtle': disabled,
               })
             )}
           >

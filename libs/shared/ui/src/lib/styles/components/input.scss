@@ -91,11 +91,11 @@
   box-shadow: none !important;
 
   label {
-    @apply text-neutral-disabled;
+    @apply text-neutral-subtle;
   }
 
   .input__value {
-    @apply text-neutral-disabled;
+    @apply text-neutral-subtle;
   }
 
   .input__button--focused {
