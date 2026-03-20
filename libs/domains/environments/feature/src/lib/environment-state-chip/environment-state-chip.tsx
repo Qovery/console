@@ -51,6 +51,7 @@ function RunningStateChip({ environmentId, ...props }: RunningStateChipProps) {
     clusterId: environment?.cluster_id ?? '',
   })
 
+  // TODO [To update once rust-backed will be deployed]: To remove
   if (checkRunningStatusClosed) {
     return <StatusChip status="STOPPED" {...props} />
   }

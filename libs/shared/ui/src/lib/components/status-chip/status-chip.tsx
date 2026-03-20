@@ -119,6 +119,7 @@ export function StatusChip({
       'RECAP',
       () => <ErrorIcon className={iconClass} />
     )
+    .with('UNAVAILABLE', () => <WarningIcon />)
     .exhaustive()
 
   return (

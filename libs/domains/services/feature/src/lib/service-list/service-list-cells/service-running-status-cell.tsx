@@ -72,7 +72,7 @@ export function ServiceRunningStatusCell({
             variant="outline"
             radius="full"
           >
-            <StatusChip status="STOPPED" />
+            <StatusChip status="UNAVAILABLE" />
             Status unavailable
           </Link>
         </Tooltip>
