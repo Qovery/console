@@ -114,17 +114,6 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
 
   const isKarpenter = cluster?.features?.find((feature) => feature.id === 'KARPENTER')
 
-  if (typeof runningStatus === 'string') {
-    return (
-      <div className="mt-6 h-80 p-8">
-        <div className="flex h-full flex-col items-center justify-center gap-1 rounded border border-neutral bg-surface-neutral py-10 text-sm text-neutral">
-          <Icon className="text-xl text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
-          <span className="font-medium">No metrics available because the running status is unavailable.</span>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <>
       {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
@@ -224,25 +213,36 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
           </div>
           <hr className="w-full border-neutral" />
         </div>
-        <div className="grid gap-6 lg:grid-cols-3">
-          <ClusterCardNodeUsage organizationId={organizationId} clusterId={clusterId} />
-          <ClusterCardResources organizationId={organizationId} clusterId={clusterId} />
-          <ClusterCardSetup organizationId={organizationId} clusterId={clusterId} />
-        </div>
-        {isLoading ? (
-          <TableSkeleton />
-        ) : isKarpenter ? (
-          <div className="flex flex-col gap-4">
-            <TableLegend />
-            <ClusterTableNodepool organizationId={organizationId} clusterId={clusterId} />
-          </div>
-        ) : (
-          <div className="flex flex-col gap-4">
-            <TableLegend />
-            <div className="overflow-hidden rounded border border-neutral bg-surface-neutral">
-              <ClusterTableNode organizationId={organizationId} clusterId={clusterId} className="border-0" />
+        {typeof runningStatus === 'string' ? (
+          <div className="h-64">
+            <div className="flex h-full flex-col items-center justify-center gap-1 rounded border border-neutral bg-surface-neutral py-10 text-sm text-neutral">
+              <Icon className="text-xl text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
+              <span className="font-medium">No metrics available because the running status is unavailable.</span>
             </div>
           </div>
+        ) : (
+          <>
+            <div className="grid gap-6 lg:grid-cols-3">
+              <ClusterCardNodeUsage organizationId={organizationId} clusterId={clusterId} />
+              <ClusterCardResources organizationId={organizationId} clusterId={clusterId} />
+              <ClusterCardSetup organizationId={organizationId} clusterId={clusterId} />
+            </div>
+            {isLoading ? (
+              <TableSkeleton />
+            ) : isKarpenter ? (
+              <div className="flex flex-col gap-4">
+                <TableLegend />
+                <ClusterTableNodepool organizationId={organizationId} clusterId={clusterId} />
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4">
+                <TableLegend />
+                <div className="overflow-hidden rounded border border-neutral bg-surface-neutral">
+                  <ClusterTableNode organizationId={organizationId} clusterId={clusterId} className="border-0" />
+                </div>
+              </div>
+            )}
+          </>
         )}
       </Section>
       {open && cluster && <ClusterTerminal organizationId={cluster.organization.id} clusterId={cluster.id} />}
