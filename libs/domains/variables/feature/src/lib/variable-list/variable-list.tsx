@@ -614,7 +614,7 @@ export function VariableList({
     const hideServiceLinkColumn = isServiceScope && !isBuiltInTable
     return (
       <div className="flex grow flex-col justify-between">
-        <Table.Root className={twMerge('w-full min-w-[1080px] text-xs', className)}>
+        <Table.Root className={twMerge('w-full min-w-[1200px] text-xs', className)}>
           <Table.Header>
             {tableInstance.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className={twMerge('w-full items-center text-xs', rowGridClassName)}>
