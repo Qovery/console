@@ -1,4 +1,3 @@
-import { useNavigate } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -11,7 +10,6 @@ import ServiceLinksPopover from '../../service-links-popover/service-links-popov
 import ServiceTemplateIndicator from '../../service-template-indicator/service-template-indicator'
 
 export function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
-  const navigate = useNavigate()
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId: service.id })
   const deploymentRequestsCount = Number(deploymentStatus?.deployment_requests_count)
 
@@ -202,24 +200,7 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
           </div>
         </div>
         <div onClick={(e) => e.stopPropagation()}>
-          <ServiceActions
-            serviceId={service.id}
-            environment={environment}
-            shellAction={() => {
-              navigate({
-                to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
-                params: {
-                  organizationId: environment.organization.id,
-                  projectId: environment.project.id,
-                  environmentId: environment.id,
-                  serviceId: service.id,
-                },
-                search: {
-                  hasShell: true,
-                },
-              })
-            }}
-          />
+          <ServiceActions serviceId={service.id} environment={environment} />
         </div>
       </div>
     </div>

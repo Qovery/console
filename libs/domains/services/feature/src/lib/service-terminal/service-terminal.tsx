@@ -3,16 +3,15 @@ import { AttachAddon } from '@xterm/addon-attach'
 import { FitAddon } from '@xterm/addon-fit'
 import { type ITerminalAddon } from '@xterm/xterm'
 import Color from 'color'
-import { type MouseEvent as MouseDownEvent, memo, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { XTerm } from 'react-xtermjs'
-import { Button, Icon, LoaderSpinner, toast } from '@qovery/shared/ui'
+import { LoaderSpinner, toast } from '@qovery/shared/ui'
 import { useTerminalReadiness } from '@qovery/shared/util-hooks'
+import { twMerge } from '@qovery/shared/util-js'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { useRunningStatus } from '../..'
 import { InputSearch } from './input-search/input-search'
-import { ServiceTerminalContext } from './service-terminal-provider'
 
 const MemoizedXTerm = memo(XTerm)
 
@@ -22,6 +21,8 @@ export interface ServiceTerminalProps {
   projectId: string
   environmentId: string
   serviceId: string
+  className?: string
+  backgroundClassName?: string
 }
 
 export function ServiceTerminal({
@@ -30,13 +31,11 @@ export function ServiceTerminal({
   projectId,
   environmentId,
   serviceId,
+  className,
+  backgroundClassName = 'bg-background',
 }: ServiceTerminalProps) {
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
 
-  const { setOpen } = useContext(ServiceTerminalContext)
-  const MIN_TERMINAL_HEIGHT = 248
-  const MAX_TERMINAL_HEIGHT = document.body.clientHeight - 64 - 60 // 64 (navbar) + 60 (terminal header)
-  const [terminalParentHeight, setTerminalParentHeight] = useState(MIN_TERMINAL_HEIGHT)
   const [addons, setAddons] = useState<Array<ITerminalAddon>>([])
   const isTerminalLoading = addons.length < 2
   const { attachWebSocket, detachWebSocket, isTerminalReady, resetTerminalReadiness } = useTerminalReadiness()
@@ -48,7 +47,7 @@ export function ServiceTerminal({
     return Color(styles.getPropertyValue(variableName)).hex()
   }
 
-  const backgroundColor = getCssVariableHex('--neutral-2')
+  const backgroundColor = getCssVariableHex('--background-1')
   const foreground = getCssVariableHex('--neutral-12')
   const selectionBackground = getCssVariableHex('--brand-3')
   const selectionForeground = getCssVariableHex('--neutral-12')
@@ -87,10 +86,9 @@ export function ServiceTerminal({
 
       if (event.code !== 1006 && event.reason) {
         toast('ERROR', 'Not available', event.reason)
-        setOpen(false)
       }
     },
-    [detachWebSocket, setOpen]
+    [detachWebSocket]
   )
 
   // Necesssary to calculate the number of rows and columns (tty) for the terminal
@@ -124,38 +122,17 @@ export function ServiceTerminal({
     if (fitAddon) {
       setTimeout(() => fitAddon.fit(), 0)
     }
-  }, [terminalParentHeight, fitAddon])
+  }, [fitAddon])
 
-  const handleMouseDown = (mouseDownEvent: MouseDownEvent<HTMLButtonElement>) => {
-    const startYPosition = mouseDownEvent.pageY
-    const startHeight = terminalParentHeight
-
-    function onMouseMove(mouseMoveEvent: MouseEvent) {
-      const deltaY = mouseMoveEvent.pageY - startYPosition
-      const newParentHeight = startHeight - deltaY
-
-      setTerminalParentHeight(Math.max(Math.min(newParentHeight, MAX_TERMINAL_HEIGHT), MIN_TERMINAL_HEIGHT))
-    }
-
-    function onMouseUp() {
-      document.body.removeEventListener('mousemove', onMouseMove)
-      document.body.removeEventListener('mouseup', onMouseUp)
-    }
-
-    document.body.addEventListener('mousemove', onMouseMove)
-    document.body.addEventListener('mouseup', onMouseUp)
-  }
-
-  return createPortal(
-    <div className="fixed bottom-0 left-0 z-dropdown w-full animate-slidein-up-md-faded bg-surface-neutral-subtle shadow-[0_-4px_60px_rgba(0,0,0,0.08)]">
-      <button
-        className="flex h-4 w-full items-center justify-center border-t border-neutral bg-surface-neutral-componentActive transition-colors hover:bg-surface-neutral-componentHover"
-        type="button"
-        onMouseDown={handleMouseDown}
-      >
-        <Icon iconName="grip-lines" iconStyle="regular" className="text-neutral" />
-      </button>
-      <div className="flex h-11 justify-between border-y border-neutral px-4 py-2">
+  return (
+    <div
+      className={twMerge(
+        'flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-neutral',
+        backgroundClassName,
+        className
+      )}
+    >
+      <div className="flex h-11 justify-between border-b border-neutral px-4 py-2">
         <div className="flex gap-2">
           {runningStatuses && runningStatuses.pods.length > 0 && (
             <InputSearch
@@ -179,33 +156,10 @@ export function ServiceTerminal({
             />
           )}
         </div>
-        <div className="flex items-center gap-1">
-          {fitAddon && !showDelayedLoader && (
-            <Button
-              color="neutral"
-              variant="outline"
-              onClick={() => {
-                terminalParentHeight === MAX_TERMINAL_HEIGHT
-                  ? setTerminalParentHeight(MIN_TERMINAL_HEIGHT)
-                  : setTerminalParentHeight(MAX_TERMINAL_HEIGHT)
-              }}
-              iconOnly
-            >
-              <Icon
-                iconName={terminalParentHeight === MAX_TERMINAL_HEIGHT ? 'chevron-down' : 'chevron-up'}
-                className="text-sm"
-              />
-            </Button>
-          )}
-          <Button color="neutral" variant="outline" onClick={() => setOpen(false)}>
-            Close shell
-            <Icon iconName="xmark" className="ml-2 text-sm" />
-          </Button>
-        </div>
       </div>
       <div
-        className="relative min-h-[248px] border-neutral bg-surface-neutral-subtle px-4 py-2"
-        style={{ height: terminalParentHeight }}
+        className={twMerge('relative min-h-[248px] flex-1 border-neutral px-4 py-2', backgroundClassName)}
+        style={{ height: '100%' }}
       >
         {isTerminalLoading ? (
           <div className="flex h-40 items-start justify-center p-5">
@@ -215,15 +169,19 @@ export function ServiceTerminal({
           <>
             <MemoizedXTerm className="h-full" addons={addons} options={terminalOptions} />
             {showDelayedLoader && (
-              <div className="absolute inset-0 flex items-start justify-center border-neutral bg-surface-neutral-subtle pt-7">
+              <div
+                className={twMerge(
+                  'absolute inset-0 flex items-start justify-center border-neutral pt-7',
+                  backgroundClassName
+                )}
+              >
                 <LoaderSpinner />
               </div>
             )}
           </>
         )}
       </div>
-    </div>,
-    document.body
+    </div>
   )
 }
 

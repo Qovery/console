@@ -80,6 +80,12 @@ const CLUSTER_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
   },
   {
+    id: 'cloud-shell',
+    label: 'Cloud shell',
+    iconName: 'terminal',
+    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
+  },
+  {
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
@@ -157,18 +163,25 @@ const SERVICE_TABS: NavigationTab[] = [
       '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
   },
   {
-    id: 'monitoring',
-    label: 'Monitoring',
-    iconName: 'chart-column',
-    routeId:
-      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
-  },
-  {
     id: 'service-logs',
     label: 'Service Logs',
     iconName: 'scroll',
     routeId:
       '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+  },
+  {
+    id: 'cloud-shell',
+    label: 'Cloud shell',
+    iconName: 'terminal',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell',
+  },
+  {
+    id: 'monitoring',
+    label: 'Monitoring',
+    iconName: 'chart-column',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
   },
   {
     id: 'variables',
@@ -380,6 +393,7 @@ const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell',
 ]
 
 function useFullWidthLayout(): boolean {

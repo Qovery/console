@@ -67,7 +67,20 @@ describe('ServiceActions', () => {
     expect(baseElement).toMatchSnapshot()
   })
 
-  it('should render cloud shell in header other actions and navigate to the service overview', async () => {
+  it('should not display cloud shell entry in default other actions', async () => {
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+
+    expect(screen.queryByRole('menuitem', { name: /cloud shell/i })).not.toBeInTheDocument()
+  })
+
+  it('should not display cloud shell entry in header other actions', async () => {
     const { userEvent } = renderWithProviders(
       <ServiceActions serviceId={mockService.id} environment={mockEnvironment} variant="header" />,
       {
@@ -76,44 +89,12 @@ describe('ServiceActions', () => {
     )
 
     await userEvent.click(screen.getByLabelText(/other actions/i))
-    await userEvent.click(screen.getByText(/cloud shell/i))
 
-    expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
-      params: {
-        organizationId: mockEnvironment.organization.id,
-        projectId: mockEnvironment.project.id,
-        environmentId: mockEnvironment.id,
-        serviceId: mockService.id,
-      },
-      search: {
-        hasShell: true,
-      },
-    })
+    expect(screen.queryByRole('menuitem', { name: /cloud shell/i })).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/qovery cloud shell/i)).not.toBeInTheDocument()
   })
 
-  it('should call shellAction override when cloud shell is clicked in header other actions', async () => {
-    const shellAction = jest.fn()
-    const { userEvent } = renderWithProviders(
-      <ServiceActions
-        serviceId={mockService.id}
-        environment={mockEnvironment}
-        shellAction={shellAction}
-        variant="header"
-      />,
-      {
-        container: document.body,
-      }
-    )
-
-    await userEvent.click(screen.getByLabelText(/other actions/i))
-    await userEvent.click(screen.getByText(/cloud shell/i))
-
-    expect(shellAction).toHaveBeenCalledTimes(1)
-    expect(mockNavigate).not.toHaveBeenCalled()
-  })
-
-  it('should not render cloud shell for databases by default', async () => {
+  it('should not display cloud shell entry for databases by default', async () => {
     mockService = databaseFactoryMock(1)[0]
 
     const { userEvent } = renderWithProviders(
@@ -123,36 +104,11 @@ describe('ServiceActions', () => {
       }
     )
 
-    expect(screen.queryByLabelText(/cloud shell/i)).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/qovery cloud shell/i)).not.toBeInTheDocument()
 
     await userEvent.click(screen.getByLabelText(/other actions/i))
 
-    expect(screen.queryByText(/cloud shell/i)).not.toBeInTheDocument()
-  })
-
-  it('should not render cloud shell for databases even with shellAction override', async () => {
-    mockService = databaseFactoryMock(1)[0]
-    const shellAction = jest.fn()
-
-    const { userEvent } = renderWithProviders(
-      <ServiceActions
-        serviceId={mockService.id}
-        environment={mockEnvironment}
-        shellAction={shellAction}
-        variant="header"
-      />,
-      {
-        container: document.body,
-      }
-    )
-
-    expect(screen.queryByLabelText(/cloud shell/i)).not.toBeInTheDocument()
-
-    await userEvent.click(screen.getByLabelText(/other actions/i))
-
-    expect(screen.queryByText(/cloud shell/i)).not.toBeInTheDocument()
-    expect(shellAction).not.toHaveBeenCalled()
-    expect(mockNavigate).not.toHaveBeenCalled()
+    expect(screen.queryByRole('menuitem', { name: /cloud shell/i })).not.toBeInTheDocument()
   })
 
   it('should not display logs entry in header other actions', async () => {

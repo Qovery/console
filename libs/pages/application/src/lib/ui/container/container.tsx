@@ -1,5 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useContext, useMemo } from 'react'
+import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -12,7 +12,6 @@ import {
   ServiceAvatar,
   ServiceStateChip,
   ServiceTemplateIndicator,
-  ServiceTerminalContext,
   useService,
 } from '@qovery/domains/services/feature'
 import { VariablesProvider } from '@qovery/domains/variables/feature'
@@ -40,8 +39,6 @@ export function Container({ children }: ContainerProps) {
   const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id })
-
-  const { setOpen } = useContext(ServiceTerminalContext)
 
   const hasMetrics = useMemo(
     () =>
@@ -115,9 +112,7 @@ export function Container({ children }: ContainerProps) {
   const headerActions = (
     <div className="flex flex-row items-center gap-4">
       <Skeleton width={150} height={36} show={!service || !environment}>
-        {service && environment && (
-          <ServiceActions serviceId={service.id} environment={environment} shellAction={() => setOpen(true)} />
-        )}
+        {service && environment && <ServiceActions serviceId={service.id} environment={environment} />}
       </Skeleton>
       <div className="h-4 w-px bg-neutral-250" />
       <div className="flex flex-row items-center gap-2">
