@@ -189,7 +189,9 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
           type={currentVariable?.file ? APIVariableTypeEnum.FILE : APIVariableTypeEnum.VALUE}
           isFile={isFile}
           variable={
-            typeof index === 'number' ? mapVariableToModalVariable(currentVariable, index, serviceScope) : undefined
+            typeof index === 'number' && currentVariable
+              ? mapVariableToModalVariable(currentVariable, index, serviceScope)
+              : undefined
           }
           onSubmitLocal={(data) => {
             const mapped = mapModalDataToVariable(data, currentVariable)

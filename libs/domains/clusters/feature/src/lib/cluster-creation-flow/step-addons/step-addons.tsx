@@ -13,7 +13,10 @@ import {
   Section,
   useModal,
 } from '@qovery/shared/ui'
-import { SecretManagerIntegrationModal } from '../../secret-manager-modals/secret-manager-integration-modal'
+import {
+  SecretManagerIntegrationModal,
+  type SecretManagerOption,
+} from '../../secret-manager-modals/secret-manager-integration-modal'
 import { type ClusterAddonsSecretManager, steps, useClusterContainerCreateContext } from '../cluster-creation-flow'
 
 export interface StepAddonsProps {
