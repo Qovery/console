@@ -8,6 +8,10 @@ function RouteComponent() {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
 
   return (
-    <Navigate to="/organization/$organizationId/project/$projectId/overview" params={{ organizationId, projectId }} />
+    <Navigate
+      to="/organization/$organizationId/project/$projectId/overview"
+      params={{ organizationId, projectId }}
+      replace
+    />
   )
 }
