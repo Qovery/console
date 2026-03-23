@@ -1,6 +1,8 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
 import { ModalProvider, ToastBehavior } from '@qovery/shared/ui'
+import { UseCaseBottomBar } from '../app/components/use-cases/use-case-bottom-bar'
+import { UseCaseProvider } from '../app/components/use-cases/use-case-context'
 import { type Auth0ContextType } from '../auth/auth0'
 
 interface RouterContext {
@@ -10,10 +12,14 @@ interface RouterContext {
 
 const RootLayout = () => {
   return (
-    <ModalProvider>
-      <Outlet />
-      <ToastBehavior />
-    </ModalProvider>
+    <UseCaseProvider>
+      <ModalProvider>
+        <Outlet />
+        <ToastBehavior />
+        <UseCaseBottomBar />
+      </ModalProvider>
+      <TanStackRouterDevtools />
+    </UseCaseProvider>
   )
 }
 
