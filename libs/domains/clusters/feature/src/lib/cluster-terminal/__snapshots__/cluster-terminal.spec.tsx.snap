@@ -7,7 +7,7 @@ exports[`ClusterTerminal should match snapshot 1`] = `
       class="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-neutral bg-background"
     >
       <div
-        class="relative min-h-[248px] flex-1 border-neutral bg-background px-4 py-2"
+        class="relative flex-1 border-neutral bg-background px-4 py-2"
         style="height: 100%;"
       >
         <div
