@@ -227,7 +227,7 @@ export function ClusterRunningStatusIndicator({
         <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
       ) : (
         <Badge variant="surface" color="neutral" className="items-center gap-2 border-[#A0AFC54D] pr-2">
-          <span className="text-neutral-400">Status unavailable</span>
+          <span className="text-neutral">Status unavailable</span>
           <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
         </Badge>
       )

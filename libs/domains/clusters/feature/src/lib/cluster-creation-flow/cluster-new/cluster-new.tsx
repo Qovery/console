@@ -44,7 +44,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
   const { organizationId = '' } = useParams({ strict: false })
   const { showPylonForm } = useSupportChat()
 
-  const isEksAnywhereEnabled = false
+  const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
 
   const renderIcon = (className?: string) => {
     return typeof icon === 'string' ? (

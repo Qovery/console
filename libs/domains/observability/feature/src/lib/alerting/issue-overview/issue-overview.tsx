@@ -48,7 +48,7 @@ export function IssueOverview() {
           </div>
         </div>
       ) : (
-        <div className="mt-8 overflow-hidden rounded-md border border-neutral">
+        <div className="mt-8 overflow-hidden rounded-md">
           <Table.Root className="divide-y divide-neutral">
             <Table.Header>
               <Table.Row className="font-code text-xs">

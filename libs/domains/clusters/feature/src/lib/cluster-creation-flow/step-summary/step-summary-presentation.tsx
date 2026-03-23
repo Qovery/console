@@ -168,7 +168,7 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
             </ul>
           </div>
 
-          <Button type="button" variant="plain" size="md" onClick={props.goToGeneral}>
+          <Button type="button" variant="outline" size="md" iconOnly onClick={props.goToGeneral}>
             <Icon className="text-base" iconName="gear-complex" />
           </Button>
         </Section>
@@ -245,7 +245,7 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
                     </li>
                   </ul>
                 </div>
-                <Button type="button" variant="plain" size="md" onClick={props.goToResources}>
+                <Button type="button" variant="plain" iconOnly size="md" onClick={props.goToResources}>
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
               </Section>
@@ -265,7 +265,7 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
                   </li>
                 </ul>
               </div>
-              <Button type="button" variant="plain" size="md" onClick={props.goToKubeconfig}>
+              <Button type="button" variant="outline" size="md" iconOnly onClick={props.goToKubeconfig}>
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </Section>
@@ -285,7 +285,7 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
                     </li>
                   </ul>
                 </div>
-                <Button type="button" variant="plain" size="md" onClick={props.goToKubeconfig}>
+                <Button type="button" variant="outline" size="md" iconOnly onClick={props.goToKubeconfig}>
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
               </Section>
@@ -297,6 +297,33 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
                   <Heading className="mb-3">EKS configuration</Heading>
 
                   <div className="space-y-4">
+                    <div>
+                      <span className="text-sm font-bold text-neutral-subtle">Infrastructure charts source</span>
+                      <ul className="list-none space-y-2 text-sm text-neutral-subtle">
+                        <li>
+                          <span className="font-medium">Repository URL: </span>
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.eks_anywhere_parameters
+                              ?.git_repository?.url
+                          }
+                        </li>
+                        <li>
+                          <span className="font-medium">Branch: </span>
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.eks_anywhere_parameters
+                              ?.git_repository?.branch
+                          }
+                        </li>
+                        <li>
+                          <span className="font-medium">YAML file path: </span>
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.eks_anywhere_parameters
+                              ?.yaml_file_path
+                          }
+                        </li>
+                      </ul>
+                    </div>
+
                     <div>
                       <span className="text-sm font-bold text-neutral-subtle">Cert Manager</span>
                       <ul className="list-none space-y-2 text-sm text-neutral-subtle">
@@ -359,7 +386,7 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
                     </div>
                   </div>
                 </div>
-                <Button type="button" variant="plain" size="md" onClick={props.goToEksConfig}>
+                <Button type="button" variant="outline" size="md" iconOnly onClick={props.goToEksConfig}>
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
               </Section>
@@ -551,7 +578,7 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
                 })}
               </ul>
             </div>
-            <Button type="button" variant="plain" size="md" onClick={props.goToFeatures}>
+            <Button type="button" variant="outline" size="md" iconOnly onClick={props.goToFeatures}>
               <Icon className="text-base" iconName="gear-complex" />
             </Button>
           </Section>

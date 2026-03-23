@@ -6,15 +6,10 @@ import { ServiceOverview } from './service-overview'
 
 const mockUseService = jest.fn()
 const mockUseRunningStatus = jest.fn()
-const mockUseFeatureFlagVariantKey = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ environmentId: 'env-1', serviceId: 'service-1' }),
-}))
-
-jest.mock('posthog-js/react', () => ({
-  useFeatureFlagVariantKey: () => mockUseFeatureFlagVariantKey(),
 }))
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -90,7 +85,6 @@ describe('ServiceOverview', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUseFeatureFlagVariantKey.mockReturnValue(false)
     mockUseRunningStatus.mockReturnValue({ data: null })
   })
 
@@ -152,7 +146,6 @@ describe('ServiceOverview', () => {
   })
 
   it('renders scaled object block for keda autoscaling', () => {
-    mockUseFeatureFlagVariantKey.mockReturnValue(true)
     mockUseService.mockReturnValue({
       data: { id: 'service-app-keda', serviceType: 'APPLICATION', autoscaling: { mode: 'KEDA' } },
     })
