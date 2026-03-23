@@ -14,7 +14,7 @@ exports[`ServiceTerminal should match snapshot 1`] = `
         />
       </div>
       <div
-        class="relative min-h-[248px] flex-1 border-neutral px-4 py-2 bg-background"
+        class="relative min-h-[248px] flex-1 border-neutral bg-background px-4 py-2"
         style="height: 100%;"
       >
         <div

@@ -22,7 +22,6 @@ export interface ServiceTerminalProps {
   environmentId: string
   serviceId: string
   className?: string
-  backgroundClassName?: string
 }
 
 export function ServiceTerminal({
@@ -32,7 +31,6 @@ export function ServiceTerminal({
   environmentId,
   serviceId,
   className,
-  backgroundClassName = 'bg-background',
 }: ServiceTerminalProps) {
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
 
@@ -127,8 +125,7 @@ export function ServiceTerminal({
   return (
     <div
       className={twMerge(
-        'flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-neutral',
-        backgroundClassName,
+        'flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-neutral bg-background',
         className
       )}
     >
@@ -157,10 +154,7 @@ export function ServiceTerminal({
           )}
         </div>
       </div>
-      <div
-        className={twMerge('relative min-h-[248px] flex-1 border-neutral px-4 py-2', backgroundClassName)}
-        style={{ height: '100%' }}
-      >
+      <div className="relative min-h-[248px] flex-1 border-neutral bg-background px-4 py-2" style={{ height: '100%' }}>
         {isTerminalLoading ? (
           <div className="flex h-40 items-start justify-center p-5">
             <LoaderSpinner />
@@ -169,12 +163,7 @@ export function ServiceTerminal({
           <>
             <MemoizedXTerm className="h-full" addons={addons} options={terminalOptions} />
             {showDelayedLoader && (
-              <div
-                className={twMerge(
-                  'absolute inset-0 flex items-start justify-center border-neutral pt-7',
-                  backgroundClassName
-                )}
-              >
+              <div className="absolute inset-0 flex items-start justify-center border-neutral bg-background pt-7">
                 <LoaderSpinner />
               </div>
             )}

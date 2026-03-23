@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { useQuery } from '@tanstack/react-query'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import { Suspense, useLayoutEffect, useRef } from 'react'
-import { useServiceType } from '@qovery/domains/services/feature'
 import { ErrorBoundary, Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
@@ -258,9 +258,9 @@ function useNavigationContext(): NavigationContext | null {
   const location = useLocation()
   const params = useParams({ strict: false })
   const pathname = location.pathname
-  const { data: serviceType } = useServiceType({
-    environmentId: params.environmentId,
-    serviceId: params.serviceId,
+  const { data: service } = useQuery({
+    ...queries.services.list(params.environmentId ?? ''),
+    select: (services) => services.find(({ id }) => id === params.serviceId),
     enabled: Boolean(params.environmentId) && Boolean(params.serviceId),
   })
 
@@ -283,10 +283,17 @@ function useNavigationContext(): NavigationContext | null {
       }
 
       if (hasAllParams) {
-        // If the service is a database, remove the variables tab
+        const isDatabase = service?.serviceType === 'DATABASE'
+        const isManagedDatabase = isDatabase && service.mode === 'MANAGED'
+
+        // Managed databases should not have cloud shell access.
+        // Databases should not expose the variables tab.
         const tabs =
-          context.type === 'service' && serviceType === 'DATABASE'
-            ? context.tabs.filter((tab) => tab.id !== 'variables')
+          context.type === 'service'
+            ? context.tabs.filter(
+                (tab) =>
+                  !(isDatabase && tab.id === 'variables') && !(isManagedDatabase && tab.id === 'cloud-shell')
+              )
             : context.tabs
 
         return {

@@ -18,15 +18,9 @@ export interface ClusterTerminalProps {
   organizationId: string
   clusterId: string
   className?: string
-  backgroundClassName?: string
 }
 
-export function ClusterTerminal({
-  organizationId,
-  clusterId,
-  className,
-  backgroundClassName = 'bg-background',
-}: ClusterTerminalProps) {
+export function ClusterTerminal({ organizationId, clusterId, className }: ClusterTerminalProps) {
   const [addons, setAddons] = useState<Array<ITerminalAddon>>([])
   const isTerminalLoading = addons.length < 2
   const { attachWebSocket, detachWebSocket, isTerminalReady } = useTerminalReadiness()
@@ -107,15 +101,11 @@ export function ClusterTerminal({
   return (
     <div
       className={twMerge(
-        'flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-neutral',
-        backgroundClassName,
+        'flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-neutral bg-background',
         className
       )}
     >
-      <div
-        className={twMerge('relative min-h-[248px] flex-1 border-neutral px-4 py-2', backgroundClassName)}
-        style={{ height: '100%' }}
-      >
+      <div className="relative flex-1 border-neutral bg-background px-4 py-2" style={{ height: '100%' }}>
         {isTerminalLoading ? (
           <div className="flex h-40 items-start justify-center p-5">
             <LoaderSpinner />
@@ -124,12 +114,7 @@ export function ClusterTerminal({
           <>
             <MemoizedXTerm className="h-full" addons={addons} options={terminalOptions} />
             {showDelayedLoader && (
-              <div
-                className={twMerge(
-                  'absolute inset-0 flex items-start justify-center border-neutral pt-7',
-                  backgroundClassName
-                )}
-              >
+              <div className="absolute inset-0 flex items-start justify-center border-neutral bg-background pt-7">
                 <LoaderSpinner />
               </div>
             )}
