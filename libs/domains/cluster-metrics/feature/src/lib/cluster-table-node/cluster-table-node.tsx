@@ -154,14 +154,7 @@ export function ClusterTableNode({
           (condition) => condition.type === 'PIDPressure' && condition.status === 'True'
         )
 
-        const isRemoving =
-          node.unschedulable ||
-          node.taints?.some(
-            (taint) =>
-              taint.key === 'karpenter.sh/disrupted' ||
-              taint.key === 'ToBeDeletedByClusterAutoscaler' ||
-              taint.key === 'node.kubernetes.io/unschedulable'
-          )
+        const isRemoving = node.unschedulable
         const isDeploying = !isReady && !isRemoving
 
         const isWarning =
