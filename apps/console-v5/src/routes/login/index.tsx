@@ -5,7 +5,13 @@ import { z } from 'zod'
 import { useAuth0Error } from '@qovery/pages/login'
 import { AuthEnum, useAuth } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
-import { Button, DropdownMenu, Icon, InputTextSmall, LogoBrandedIcon } from '@qovery/shared/ui'
+import { Button, DropdownMenu, Heading, Icon, InputTextSmall, Link, LogoBrandedIcon, Section } from '@qovery/shared/ui'
+
+const PANEL_TEXT_CLASS_NAME = 'text-[var(--neutral-invert-12)] dark:text-[var(--neutral-12)]'
+const PARTNER_LOGO_CLASS_NAME =
+  'opacity-50 text-[var(--neutral-invert-12)] dark:text-[var(--neutral-12)] [&_path]:fill-current'
+const CERTIFICATION_LOGO_CLASS_NAME =
+  "opacity-50 text-[var(--neutral-invert-12)] dark:text-[var(--neutral-12)] [&_path]:fill-current [&_path[stroke='white']]:stroke-current"
 
 const loginSearchParamsSchema = z.object({
   redirect: z.string().optional(),
@@ -75,10 +81,10 @@ export function Login() {
 
             <p className="mb-10 text-sm text-neutral-subtle">
               By registering and using Qovery, you agree to the processing of your personal data by Qovery as described
-              in the
-              <a href="https://www.qovery.com/terms" className="link ml-1 text-sky-500">
+              in the{' '}
+              <Link href="https://www.qovery.com/terms" className="inline text-info hover:text-info-hover">
                 Privacy Policy
-              </a>
+              </Link>
               .
             </p>
             <div className="flex flex-col gap-3">
@@ -119,7 +125,12 @@ export function Login() {
 
                   <DropdownMenu.Root>
                     <DropdownMenu.Trigger asChild>
-                      <Button variant="surface" color="neutral" size="lg" className="w-full justify-center">
+                      <Button
+                        variant="surface"
+                        color="neutral"
+                        size="lg"
+                        className="w-full justify-center active:scale-100"
+                      >
                         See 3 others options
                         <Icon className="ml-2" iconName="chevron-down" />
                       </Button>
@@ -147,31 +158,33 @@ export function Login() {
                   </DropdownMenu.Root>
 
                   <div className="mt-1 flex justify-center">
-                    <button
+                    <Link
                       onClick={() => {
                         setSsoFormVisible(true)
                         setAuth0Error(null)
                       }}
-                      className="text-sm font-medium text-sky-500 hover:underline"
+                      color="sky"
                     >
                       Use Enterprise Single Sign-On
-                    </button>
+                    </Link>
                   </div>
 
                   {auth0Error && (
-                    <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3">
-                      <p className="text-sm font-medium text-red-800">{auth0Error.error}</p>
-                      <p className="mt-1 text-sm text-red-600">{auth0Error.error_description}</p>
+                    <div className="mb-4 rounded-md border border-negative-component bg-surface-negative-subtle p-3">
+                      <p className="text-sm font-medium text-negative">{auth0Error.error}</p>
+                      <p className="mt-1 text-sm text-neutral-subtle">{auth0Error.error_description}</p>
                     </div>
                   )}
                 </>
               ) : (
                 <FormProvider {...methods}>
-                  <div className="flex flex-col">
-                    <h2 className="text-xl font-medium text-neutral-400">Enterprise Single Sign-On</h2>
-                    <p className="mb-5 mt-1 text-sm text-neutral-350">Enter your company domain to connect with SSO</p>
+                  <Section className="flex flex-col">
+                    <Heading level={2}>Enterprise Single Sign-On</Heading>
+                    <p className="mb-5 mt-1 text-sm text-neutral-subtle">
+                      Enter your company domain to connect with SSO
+                    </p>
                     <div className="flex items-start gap-2">
-                      <div className="relative flex-1">
+                      <div className="relative flex-1 items-center">
                         <Controller
                           name="ssoDomain"
                           control={methods.control}
@@ -199,6 +212,7 @@ export function Login() {
                         variant="solid"
                         color="brand"
                         size="md"
+                        className="h-9"
                         onClick={methods.handleSubmit(validateAndConnect)}
                         disabled={!methods.formState.isValid}
                       >
@@ -206,28 +220,32 @@ export function Login() {
                       </Button>
                     </div>
 
-                    <button
+                    <Link
                       onClick={() => {
                         setSsoFormVisible(false)
                         methods.reset()
                       }}
-                      className="mt-6 self-start text-sm font-medium text-sky-500 hover:underline"
+                      className="mt-6 flex max-w-max gap-1"
+                      color="sky"
                     >
-                      <Icon iconName="arrow-left" className="mr-1" />
+                      <Icon iconName="arrow-left" />
                       Go back
-                    </button>
-                  </div>
+                    </Link>
+                  </Section>
                 </FormProvider>
               )}
             </div>
           </div>
         </div>
-        <div className="relative hidden w-1/2 overflow-hidden bg-neutral-650 px-20 before:absolute before:left-0 before:top-0 before:h-screen before:w-full before:bg-[radial-gradient(73.24%_73.24%_at_50%_0%,rgba(81,55,184,0.82)_0%,rgba(124,131,229,0)_100%)] motion-safe:before:animate-[pulse_5s_ease-in-out_infinite] lg:block">
+        <div className="relative hidden w-1/2 overflow-hidden bg-[var(--neutral-invert-1)] px-20 before:absolute before:left-0 before:top-0 before:h-screen before:w-full before:bg-[radial-gradient(73.24%_73.24%_at_50%_0%,var(--brand-alpha-7)_0%,transparent_100%)] motion-safe:before:animate-[pulse_5s_ease-in-out_infinite] lg:block dark:bg-[var(--neutral-1)]">
           <div className="relative text-center motion-safe:animate-[fadein_1s_ease-in-out_forwards] motion-safe:opacity-0">
-            <h2 className="mb-1 mt-[13%] font-bold leading-[48px] text-white">
-              The Leading <br /> DevOps Automation Platform
+            <h2 className={`mb-1 mt-[13%] font-bold leading-[48px] ${PANEL_TEXT_CLASS_NAME}`}>
+              <span className="text-4xl">
+                The Leading <br />
+              </span>
+              <span className="text-[32px]">DevOps Automation Platform</span>
             </h2>
-            <p className="mb-12 text-white">
+            <p className={`mb-12 ${PANEL_TEXT_CLASS_NAME}`}>
               Trusted by 50.000 developers and DevOps engineers <br /> from the best companies
             </p>
             <ul className="mx-auto mb-12 grid max-w-sm grid-cols-2 gap-12">
@@ -239,6 +257,7 @@ export function Login() {
                   rel="noreferrer"
                 >
                   <svg
+                    className={PARTNER_LOGO_CLASS_NAME}
                     xmlns="http://www.w3.org/2000/svg"
                     width="120"
                     height="25"
@@ -260,7 +279,14 @@ export function Login() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="111" height="28" fill="none" viewBox="0 0 111 28">
+                  <svg
+                    className={PARTNER_LOGO_CLASS_NAME}
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="111"
+                    height="28"
+                    fill="none"
+                    viewBox="0 0 111 28"
+                  >
                     <g clipPath="url(#clip0_16077_1847)" opacity="0.5">
                       <g>
                         <g>
@@ -286,7 +312,14 @@ export function Login() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="111" height="24" fill="none" viewBox="0 0 111 24">
+                  <svg
+                    className={PARTNER_LOGO_CLASS_NAME}
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="111"
+                    height="24"
+                    fill="none"
+                    viewBox="0 0 111 24"
+                  >
                     <g fill="#fff" opacity="0.5">
                       <mask id="path-1-inside-1_16077_1831">
                         <path
@@ -297,7 +330,7 @@ export function Login() {
                       </mask>
                       <path
                         fillRule="evenodd"
-                        stroke="#A097F2"
+                        stroke="var(--brand-8)"
                         strokeWidth="0.369"
                         d="M9.642 4.635C9.18 1.924 6.709.115 4.108.595 2.208.947.75 2.46.308 4.304v.019a.952.952 0 00-.037.203v.018c-.019.074-.019.13-.037.203v.037c-.019.074-.019.148-.037.221v.019c0 .074-.018.147-.018.203 0 .073-.019.147-.019.24v.202c0 .24.037.48.074.701.258 1.55 1.679 2.583 3.154 2.306.535-.092.996-.35 1.365-.7a1.042 1.042 0 011.163-.204c.48.203.996.259 1.512.166 1.42-.258 2.38-1.641 2.232-3.117 0-.056-.018-.13-.018-.185zM21.06 1.241c-5.22 0-8.485 1.845-8.485 4.815 0 3.468 3.339 8.19 8.485 8.19 5.073 0 8.486-4.778 8.486-8.19 0-3.026-3.173-4.815-8.486-4.815zm20.882 4.04v-.074c0-.055 0-.129-.019-.203v-.018c0-.074-.018-.148-.018-.222v-.036c-.019-.148-.055-.296-.074-.425v-.018C41.388 2.44 39.95.928 38.031.577c-2.582-.48-5.073 1.328-5.534 4.04-.018.055-.018.129-.018.184-.148 1.476.811 2.841 2.232 3.118a2.779 2.779 0 001.512-.166 1.045 1.045 0 011.144.203c.369.35.83.609 1.365.7 1.476.277 2.896-.756 3.154-2.305.037-.24.056-.48.074-.701v-.092-.056-.055c-.018-.055-.018-.11-.018-.166zM28.587 16.995c-1.366-.628-3.21.424-4.778.7-.923.148-1.826.24-2.73.24a19.234 19.234 0 01-2.73-.24c-1.568-.258-3.413-1.31-4.778-.7-.701.313-.904 1.088-.627 1.992a4.114 4.114 0 001.051 1.679c.996.977 2.25 1.715 3.431 2.176 1.18.48 2.435.738 3.671.738a10.103 10.103 0 003.671-.738c1.162-.461 2.435-1.217 3.431-2.176a4.115 4.115 0 001.051-1.68c.24-.922.037-1.678-.663-1.991zM105.14 6.738c-2.066 0-3.652.757-4.796 2.454V7.698a.622.622 0 00-.627-.628h-4.095a.622.622 0 00-.628.628v14.904c0 .35.277.628.628.628h4.095c.35 0 .627-.277.627-.628v-8.098c0-1.844.646-3.468 2.582-3.468 1.974 0 2.565 1.9 2.565 3.468v8.098c0 .35.276.628.627.628h4.095c.35 0 .627-.277.627-.628v-8.411c.019-3.524-.978-7.453-5.7-7.453zM73.375 19.356h-.849c-.682-.019-.959-.535-.959-1.236V1.629A.622.622 0 0070.94 1h-3.984a.622.622 0 00-.628.628v16.214c0 4.649 2.989 5.719 5.774 5.719.388 0 .756-.019 1.347-.074.332-.037.59-.295.59-.627v-2.878c-.037-.35-.314-.627-.664-.627zm10.22.018c-2.27 0-3.671-1.881-3.671-4.242 0-2.27 1.346-4.151 3.615-4.151s3.8 1.716 3.8 4.298c0 2.564-1.623 4.095-3.745 4.095zM91.95 7.09h-4.114a.622.622 0 00-.627.627v1.513c-.996-1.495-2.804-2.49-4.925-2.49-4.741 0-7.766 3.707-7.766 8.393 0 4.777 3.154 8.448 7.803 8.448 2.269 0 3.873-.978 4.888-2.564v1.586c0 .35.277.628.627.628h4.114c.35 0 .627-.277.627-.628V7.698a.618.618 0 00-.627-.61zM54.928 19.374c-2.269 0-3.689-1.881-3.689-4.242 0-2.27 1.347-4.151 3.616-4.151 2.268 0 3.8 1.716 3.8 4.298.018 2.564-1.605 4.095-3.727 4.095zM63.285 7.09H59.17a.622.622 0 00-.627.627v1.513c-.996-1.495-2.804-2.49-4.925-2.49-4.741 0-7.767 3.707-7.767 8.393 0 4.777 3.155 8.448 7.804 8.448 2.268 0 3.873-.978 4.888-2.564v1.586c0 .35.277.628.627.628h4.114c.35 0 .627-.277.627-.628V7.698a.618.618 0 00-.627-.61z"
                         clipRule="evenodd"
@@ -314,9 +347,16 @@ export function Login() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="158" height="44" fill="none" viewBox="0 0 158 44">
+                  <svg
+                    className={PARTNER_LOGO_CLASS_NAME}
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="158"
+                    height="44"
+                    fill="none"
+                    viewBox="0 0 158 44"
+                  >
                     <g>
-                      <g fill="#fff" stroke="#A097F2" opacity="0.5">
+                      <g fill="#fff" stroke="var(--brand-8)" opacity="0.5">
                         <path
                           strokeWidth="0.884"
                           d="M1 14.503C1 10.453 8.551 7.5 18.768 7.5c9.72 0 16.435 4.416 16.696 11H29.69c-.314-3.997-4.364-6.192-10.922-6.192-6.794 0-11.34 3.736-11.34 10.007 0 6.271 4.52 9.955 11.34 9.955 6.035 0 10.922-1.881 10.922-6.715h-7.84v-4.207h13.614c0 3.397-.052 8.675-4.076 12.177-1.881 1.62-4.599 2.534-7.133 2.22-2.117-.26-3.658-1.672-4.39-3.475-1.071-2.665-1.594-7.133-5.252-10.007-2.116-1.646-5.46-2.352-7.97-2.9C3.954 18.709 1 17.037 1 14.503z"
@@ -337,7 +377,14 @@ export function Login() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="115" height="35" fill="none" viewBox="0 0 115 35">
+                  <svg
+                    className={PARTNER_LOGO_CLASS_NAME}
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="115"
+                    height="35"
+                    fill="none"
+                    viewBox="0 0 115 35"
+                  >
                     <g clipPath="url(#clip0_16077_1833)" opacity="0.5">
                       <g>
                         <g fill="#fff">
@@ -374,6 +421,7 @@ export function Login() {
                   rel="noreferrer"
                 >
                   <svg
+                    className={PARTNER_LOGO_CLASS_NAME}
                     xmlns="http://www.w3.org/2000/svg"
                     width="197"
                     height="44"
@@ -395,7 +443,7 @@ export function Login() {
                     ></path>
                     <path
                       fill="#fff"
-                      stroke="#000"
+                      stroke="currentColor"
                       strokeWidth="2"
                       opacity="0.4"
                       d="M10.825 15.474a4.336 4.336 0 1 0 0-8.672 4.336 4.336 0 0 0 0 8.672ZM10.825 37.286a4.336 4.336 0 1 0 0-8.672 4.336 4.336 0 0 0 0 8.672Z"
@@ -415,6 +463,7 @@ export function Login() {
                   rel="noreferrer"
                 >
                   <svg
+                    className={PARTNER_LOGO_CLASS_NAME}
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     width="115"
@@ -437,6 +486,7 @@ export function Login() {
                   rel="noreferrer"
                 >
                   <svg
+                    className={PARTNER_LOGO_CLASS_NAME}
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     width="145"
@@ -452,7 +502,7 @@ export function Login() {
                 </a>
               </li>
             </ul>
-            <hr className="mx-auto mb-12 w-80 opacity-10" />
+            <hr className="mx-auto mb-12 w-80 border-[var(--neutral-invert-12)] opacity-10 dark:border-[var(--neutral-12)]" />
             <ul className="mx-auto grid max-w-sm grid-cols-3 gap-16">
               <li className="flex items-center justify-center">
                 <a
@@ -462,6 +512,7 @@ export function Login() {
                   rel="noreferrer"
                 >
                   <svg
+                    className={CERTIFICATION_LOGO_CLASS_NAME}
                     width="59"
                     height="52"
                     viewBox="0 0 59 52"
@@ -489,6 +540,7 @@ export function Login() {
                   rel="noreferrer"
                 >
                   <svg
+                    className={CERTIFICATION_LOGO_CLASS_NAME}
                     width="84"
                     height="49"
                     viewBox="0 0 84 49"
@@ -756,6 +808,7 @@ export function Login() {
                   rel="noreferrer"
                 >
                   <svg
+                    className={CERTIFICATION_LOGO_CLASS_NAME}
                     width="53"
                     height="52"
                     viewBox="0 0 53 52"
@@ -807,22 +860,25 @@ export function Login() {
           >
             <g style={{ mixBlendMode: 'screen' }} opacity="0.1">
               <path
-                fill="#7366FF"
+                fill="var(--brand-9)"
                 d="M0 654.016V217.999l144.333 45.737v307.003L377.859 705.47l17.447 66.47-17.447 100.076L0 654.016z"
               ></path>
               <path
-                fill="#7366FF"
+                fill="var(--brand-9)"
                 d="M377.9 166.546L144.34 301.251.007 217.983 377.814 0l377.858 217.983-79.723 63.474-64.524 19.82L377.9 166.546z"
               ></path>
               <path
-                fill="#A299FF"
+                fill="var(--brand-8)"
                 d="M377.894 269.895l-.086 166.502 144.376 83.243-.026-166.529-144.264-83.216z"
               ></path>
               <path
-                fill="#5219FF"
+                fill="var(--brand-10)"
                 d="M377.808 436.376l-144.282 83.243 144.307 83.285 144.351-83.285-144.376-83.243z"
               ></path>
-              <path fill="#7366FF" d="M377.894 269.895L233.543 353.18l-.017 166.46 144.282-83.243.086-166.502z"></path>
+              <path
+                fill="var(--brand-9)"
+                d="M377.894 269.895L233.543 353.18l-.017 166.46 144.282-83.243.086-166.502z"
+              ></path>
               <path
                 fill="url(#paint0_linear_16093_2637)"
                 d="M755.708 487.473l-377.85 218.008v166.546l377.807-218.026.043-166.528z"
@@ -837,8 +893,8 @@ export function Login() {
                 y2="679.753"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stopColor="#7366FF"></stop>
-                <stop offset="1" stopColor="#A299FF"></stop>
+                <stop stopColor="var(--brand-9)"></stop>
+                <stop offset="1" stopColor="var(--brand-8)"></stop>
               </linearGradient>
             </defs>
           </svg>
