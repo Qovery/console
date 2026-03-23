@@ -1,14 +1,15 @@
-import { INFRA_LOGS_URL } from '@qovery/shared/routes'
+import * as tanstackReactRouter from '@tanstack/react-router'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useDeployCluster from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { ClusterUpdateModal } from './cluster-update-modal'
 
 const useDeployClusterMockSpy = jest.spyOn(useDeployCluster, 'useDeployCluster') as jest.Mock
+const useNavigateMockSpy = jest.spyOn(tanstackReactRouter, 'useNavigate') as jest.Mock
 
 const mockNavigate = jest.fn()
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate,
+const mockDeployCluster = jest.fn()
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
 }))
 
 describe('ClusterUpdateModal', () => {
@@ -22,8 +23,12 @@ describe('ClusterUpdateModal', () => {
 
   beforeEach(() => {
     useDeployClusterMockSpy.mockReturnValue({
-      mutateAsync: jest.fn(),
+      mutateAsync: mockDeployCluster,
+      isLoading: false,
     })
+    useNavigateMockSpy.mockReturnValue(mockNavigate)
+    mockDeployCluster.mockReset()
+    mockNavigate.mockReset()
   })
   it('should render the modal with cluster name', () => {
     renderWithProviders(<ClusterUpdateModal cluster={mockCluster} />)
@@ -40,7 +45,7 @@ describe('ClusterUpdateModal', () => {
     const submitButton = screen.getByTestId('submit-button')
     await userEvent.click(submitButton)
 
-    expect(useDeployClusterMockSpy().mutateAsync).toHaveBeenCalledWith({
+    expect(mockDeployCluster).toHaveBeenCalledWith({
       organizationId: mockCluster.organization.id,
       clusterId: mockCluster.id,
       dryRun: false,
@@ -78,8 +83,12 @@ describe('ClusterUpdateModal', () => {
     const submitButton = screen.getByTestId('submit-button')
     await userEvent.click(submitButton)
 
-    expect(mockNavigate).toHaveBeenCalledWith(INFRA_LOGS_URL(mockCluster.organization.id, mockCluster.id), {
-      state: { prevUrl: '/' },
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
+      params: {
+        organizationId: mockCluster.organization.id,
+        clusterId: mockCluster.id,
+      },
     })
   })
 })
