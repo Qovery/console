@@ -57,9 +57,14 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
     >
       <Table.Cell className={twMerge(cellClassName, 'border-none p-0')}>
         <div className="flex h-full flex-col justify-center gap-1 px-4 py-2 xl:flex-row xl:items-center xl:justify-between xl:gap-2">
-          <span className="text-wrap break-all text-sm font-medium">
-            <Truncate text={overview.name} truncateLimit={isVeryLargeScreen ? 72 : isDesktopOrLaptop ? 40 : 30} />
-          </span>
+          <div className="flex min-w-0 items-center gap-1.5">
+            <span className="text-wrap break-all text-sm font-medium">
+              <Truncate text={overview.name} truncateLimit={isVeryLargeScreen ? 72 : isDesktopOrLaptop ? 40 : 30} />
+            </span>
+            <span className="inline-flex items-center justify-center rounded-[2px] border-[0.5px] border-[#fce5dd] bg-[#fdf1ed] px-1 py-0.5 font-code text-[10px] font-bold uppercase leading-none text-[#ef754f]">
+              ARGOCD
+            </span>
+          </div>
           <div className="flex flex-shrink-0 items-center gap-2">
             <span className="font-normal text-neutral-subtle">
               {overview.service_count} {pluralize(overview.service_count, 'service')}
