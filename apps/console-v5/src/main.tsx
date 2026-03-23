@@ -62,6 +62,7 @@ declare module '@tanstack/react-query' {
 // posthog init
 posthog.init(POSTHOG, {
   api_host: POSTHOG_APIHOST,
+  capture_pageview: 'history_change',
 })
 
 const queryClient = new QueryClient({
