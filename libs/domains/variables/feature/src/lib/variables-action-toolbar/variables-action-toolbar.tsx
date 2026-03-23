@@ -7,6 +7,7 @@ type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
 export type VariablesActionToolbarProps = {
   onCreateVariable?: (variable: VariableResponse | void) => void
   onImportEnvFile?: () => void
+  importEnvFileAccess?: 'button' | 'dropdown'
   showDopplerButton?: boolean
 } & (
   | {
@@ -29,6 +30,7 @@ export type VariablesActionToolbarProps = {
 export function VariablesActionToolbar({
   onCreateVariable,
   onImportEnvFile,
+  importEnvFileAccess = 'button',
   showDopplerButton = false,
   ...props
 }: VariablesActionToolbarProps) {
@@ -66,7 +68,7 @@ export function VariablesActionToolbar({
         </Button>
       ) : (
         <DropdownMenu.Root>
-          {onImportEnvFile ? (
+          {showImportButton ? (
             <DropdownMenu.Trigger asChild>
               <Button color="neutral" variant="outline" size="md" className="gap-2">
                 <Icon iconName="arrow-up-from-line" iconStyle="regular" />
