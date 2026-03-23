@@ -237,7 +237,7 @@ export function Login() {
             </div>
           </div>
         </div>
-        <div className="relative hidden w-1/2 overflow-hidden bg-[var(--neutral-invert-1)] px-20 before:absolute before:left-0 before:top-0 before:h-screen before:w-full before:bg-[radial-gradient(73.24%_73.24%_at_50%_0%,var(--brand-alpha-7)_0%,transparent_100%)] motion-safe:before:animate-[pulse_5s_ease-in-out_infinite] lg:block dark:bg-[var(--neutral-1)]">
+        <div className="relative hidden w-1/2 overflow-hidden bg-[var(--contrast-inverted)] px-20 before:absolute before:left-0 before:top-0 before:h-screen before:w-full before:bg-[radial-gradient(73.24%_73.24%_at_50%_0%,var(--brand-alpha-7)_0%,transparent_100%)] motion-safe:before:animate-[pulse_5s_ease-in-out_infinite] lg:block">
           <div className="relative text-center motion-safe:animate-[fadein_1s_ease-in-out_forwards] motion-safe:opacity-0">
             <h2 className={`mb-1 mt-[13%] font-bold leading-[48px] ${PANEL_TEXT_CLASS_NAME}`}>
               <span className="text-4xl">
