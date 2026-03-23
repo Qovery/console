@@ -8,7 +8,6 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { XTerm } from 'react-xtermjs'
 import { LoaderSpinner, toast } from '@qovery/shared/ui'
 import { useTerminalReadiness } from '@qovery/shared/util-hooks'
-import { twMerge } from '@qovery/shared/util-js'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 
@@ -17,10 +16,9 @@ const MemoizedXTerm = memo(XTerm)
 export interface ClusterTerminalProps {
   organizationId: string
   clusterId: string
-  className?: string
 }
 
-export function ClusterTerminal({ organizationId, clusterId, className }: ClusterTerminalProps) {
+export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalProps) {
   const [addons, setAddons] = useState<Array<ITerminalAddon>>([])
   const isTerminalLoading = addons.length < 2
   const { attachWebSocket, detachWebSocket, isTerminalReady } = useTerminalReadiness()
@@ -99,13 +97,8 @@ export function ClusterTerminal({ organizationId, clusterId, className }: Cluste
   }, [fitAddon])
 
   return (
-    <div
-      className={twMerge(
-        'flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-neutral bg-background',
-        className
-      )}
-    >
-      <div className="relative flex-1 border-neutral bg-background px-4 py-2" style={{ height: '100%' }}>
+    <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-none border-0 bg-background">
+      <div className="relative h-full flex-1 border-neutral bg-background px-4 py-2">
         {isTerminalLoading ? (
           <div className="flex h-40 items-start justify-center p-5">
             <LoaderSpinner />

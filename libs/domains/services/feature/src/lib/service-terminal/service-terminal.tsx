@@ -7,7 +7,6 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { XTerm } from 'react-xtermjs'
 import { LoaderSpinner, toast } from '@qovery/shared/ui'
 import { useTerminalReadiness } from '@qovery/shared/util-hooks'
-import { twMerge } from '@qovery/shared/util-js'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { useRunningStatus } from '../..'
@@ -21,7 +20,6 @@ export interface ServiceTerminalProps {
   projectId: string
   environmentId: string
   serviceId: string
-  className?: string
 }
 
 export function ServiceTerminal({
@@ -30,7 +28,6 @@ export function ServiceTerminal({
   projectId,
   environmentId,
   serviceId,
-  className,
 }: ServiceTerminalProps) {
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
 
@@ -123,12 +120,7 @@ export function ServiceTerminal({
   }, [fitAddon])
 
   return (
-    <div
-      className={twMerge(
-        'flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-neutral bg-background',
-        className
-      )}
-    >
+    <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-none border-0 bg-background">
       <div className="flex h-11 justify-between border-b border-neutral px-4 py-2">
         <div className="flex gap-2">
           {runningStatuses && runningStatuses.pods.length > 0 && (
@@ -154,7 +146,7 @@ export function ServiceTerminal({
           )}
         </div>
       </div>
-      <div className="relative min-h-[248px] flex-1 border-neutral bg-background px-4 py-2" style={{ height: '100%' }}>
+      <div className="relative h-full min-h-[248px] flex-1 border-neutral bg-background px-4 py-2">
         {isTerminalLoading ? (
           <div className="flex h-40 items-start justify-center p-5">
             <LoaderSpinner />

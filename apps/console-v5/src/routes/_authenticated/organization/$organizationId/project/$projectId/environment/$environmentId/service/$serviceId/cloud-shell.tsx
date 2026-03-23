@@ -52,7 +52,6 @@ function RouteComponent() {
           projectId={environment.project.id}
           environmentId={environment.id}
           serviceId={service.id}
-          className="rounded-none border-0"
         />
       </div>
     </div>

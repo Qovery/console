@@ -1,8 +1,8 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { useQuery } from '@tanstack/react-query'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { Suspense, useEffect, useLayoutEffect, useRef } from 'react'
+import { useServiceSummary } from '@qovery/domains/services/feature'
 import { ErrorBoundary, Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
@@ -259,9 +259,9 @@ function useNavigationContext(): NavigationContext | null {
   const location = useLocation()
   const params = useParams({ strict: false })
   const pathname = location.pathname
-  const { data: service } = useQuery({
-    ...queries.services.list(params.environmentId ?? ''),
-    select: (services) => services.find(({ id }) => id === params.serviceId),
+  const { data: service } = useServiceSummary({
+    environmentId: params.environmentId,
+    serviceId: params.serviceId,
     enabled: Boolean(params.environmentId) && Boolean(params.serviceId),
   })
 

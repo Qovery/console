@@ -1,25 +1,15 @@
-import { memo, useContext } from 'react'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import {
-  ServiceTerminal,
-  ServiceTerminalContext,
-  ServiceTerminalProvider,
-  useService,
-  useServiceType,
-} from '@qovery/domains/services/feature'
+import { useService, useServiceType } from '@qovery/domains/services/feature'
 import { NotFoundPage } from '@qovery/pages/layout'
 import { DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_DATABASE } from './router/router'
 import Container from './ui/container/container'
 
-const ServiceTerminalMemo = memo(ServiceTerminal)
-
 function PageDatabaseWrapped() {
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
-  const { open } = useContext(ServiceTerminalContext)
   const { data: environment, error: environmentError } = useEnvironment({ environmentId })
   const { data: serviceType, isSuccess: isSuccessServiceType } = useServiceType({
     environmentId,
@@ -38,42 +28,27 @@ function PageDatabaseWrapped() {
   }
 
   return (
-    <>
-      <Container service={service as AnyService} environment={environment}>
-        <Routes>
-          {ROUTER_DATABASE.map((route) => (
-            <Route key={route.path} path={route.path} element={route.component} />
-          ))}
-          <Route
-            path="*"
-            element={
-              <Navigate
-                replace
-                to={DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL}
-              />
-            }
-          />
-        </Routes>
-      </Container>
-      {open && environment && service && (
-        <ServiceTerminalMemo
-          organizationId={environment.organization.id}
-          clusterId={environment.cluster_id}
-          projectId={environment.project.id}
-          environmentId={environment.id}
-          serviceId={service.id}
+    <Container service={service as AnyService} environment={environment}>
+      <Routes>
+        {ROUTER_DATABASE.map((route) => (
+          <Route key={route.path} path={route.path} element={route.component} />
+        ))}
+        <Route
+          path="*"
+          element={
+            <Navigate
+              replace
+              to={DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL}
+            />
+          }
         />
-      )}
-    </>
+      </Routes>
+    </Container>
   )
 }
 
 export function PageDatabase() {
-  return (
-    <ServiceTerminalProvider>
-      <PageDatabaseWrapped />
-    </ServiceTerminalProvider>
-  )
+  return <PageDatabaseWrapped />
 }
 
 export default PageDatabase

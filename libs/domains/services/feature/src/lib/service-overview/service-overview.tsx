@@ -1,15 +1,13 @@
 import { useParams } from '@tanstack/react-router'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
-import { type ReactNode, Suspense, useContext, useMemo, useState } from 'react'
+import { type ReactNode, Suspense, useMemo, useState } from 'react'
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { Heading, Icon, Link, Navbar, Section } from '@qovery/shared/ui'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { ScaledObjectStatus, type ScaledObjectStatusDto } from '../keda/scaled-object-status/scaled-object-status'
 import { NeedRedeployFlag } from '../need-redeploy-flag/need-redeploy-flag'
-import { ServiceTerminal } from '../service-terminal/service-terminal'
-import { ServiceTerminalContext } from '../service-terminal/service-terminal-provider'
 import { InstanceMetrics } from './instance-metrics/instance-metrics'
 import { ServiceHeader } from './service-header/service-header'
 import { ServiceInstance } from './service-instance/service-instance'
@@ -31,7 +29,6 @@ function ServiceOverviewContent({
 }: ServiceOverviewProps) {
   const { environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
-  const { open } = useContext(ServiceTerminalContext)
   const [activeTab, setActiveTab] = useState('variables')
   const isKedaFeatureEnabled = useFeatureFlagVariantKey('keda')
   const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
@@ -73,17 +70,6 @@ function ServiceOverviewContent({
     return null
   }
 
-  const serviceTerminal =
-    open && (service.serviceType !== 'DATABASE' || service.mode !== DatabaseModeEnum.MANAGED) ? (
-      <ServiceTerminal
-        organizationId={environment.organization.id}
-        clusterId={environment.cluster_id}
-        projectId={environment.project.id}
-        environmentId={environment.id}
-        serviceId={service.id}
-      />
-    ) : null
-
   if (service?.serviceType === 'DATABASE') {
     return (
       <>
@@ -102,7 +88,6 @@ function ServiceOverviewContent({
             </Section>
           )}
         </Section>
-        {serviceTerminal}
       </>
     )
   }
@@ -204,7 +189,6 @@ function ServiceOverviewContent({
           </Section>
         </div>
       </div>
-      {serviceTerminal}
     </>
   )
 }
