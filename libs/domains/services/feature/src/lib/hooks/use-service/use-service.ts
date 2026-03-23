@@ -77,13 +77,19 @@ export function useService({ serviceId, suspense = false, ...props }: UseService
     enabled: Boolean(serviceId) && Boolean('environmentId' in props),
   })
 
+  // Prefer the explicit discriminant when the caller already knows it so the details query
+  // can start from the final identifier without waiting for the service list lookup first
+  const resolvedServiceType = 'serviceType' in props ? props.serviceType : serviceType
+  const query =
+    serviceId && resolvedServiceType ? queries.services.details({ serviceId, serviceType: resolvedServiceType }) : null
+
   return useQuery({
-    ...queries.services.details({
-      serviceId: serviceId!,
-      serviceType: 'serviceType' in props ? props.serviceType : serviceType!,
-    }),
-    suspense,
-    enabled: Boolean(serviceId) && Boolean(serviceType),
+    // `details` needs a concrete service type to select the right endpoint, so we keep the
+    // query disabled until that type is available
+    queryKey: query?.queryKey ?? ['services', 'details', serviceId ?? ''],
+    queryFn: query?.queryFn ?? (async () => undefined as never),
+    suspense: Boolean(resolvedServiceType) && suspense,
+    enabled: Boolean(serviceId) && Boolean(resolvedServiceType),
   })
 }
 
