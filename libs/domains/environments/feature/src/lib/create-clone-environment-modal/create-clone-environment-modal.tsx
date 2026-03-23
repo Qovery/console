@@ -222,11 +222,7 @@ function CloneMigrationHelperModal({
             }`}
           >
             <Icon
-<<<<<<< HEAD
-              iconName="link"
-=======
               iconName="link-broken"
->>>>>>> f98bdb5c4 (feat(secret-managers): integrate secret manager associated services and enhance variable management with new tabs)
               iconStyle="regular"
               className={selectedAction === 'detach' ? 'text-brand' : undefined}
             />

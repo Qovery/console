@@ -52,7 +52,6 @@ function RouteComponent() {
     projectId,
     environmentId,
   })
-  const { openModal, closeModal } = useModal()
 
   const toasterCallback = () => {
     if (!service?.serviceType) {
