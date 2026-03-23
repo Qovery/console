@@ -178,5 +178,4 @@ describe('ServiceOverview', () => {
     expect(screen.getByText('service-last-deployment')).toBeInTheDocument()
     expect(screen.getByText('service-instance')).toBeInTheDocument()
   })
-
 })
