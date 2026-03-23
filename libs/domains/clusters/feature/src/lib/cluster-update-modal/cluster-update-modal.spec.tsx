@@ -1,15 +1,14 @@
-import * as tanstackReactRouter from '@tanstack/react-router'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useDeployCluster from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { ClusterUpdateModal } from './cluster-update-modal'
 
 const useDeployClusterMockSpy = jest.spyOn(useDeployCluster, 'useDeployCluster') as jest.Mock
-const useNavigateMockSpy = jest.spyOn(tanstackReactRouter, 'useNavigate') as jest.Mock
 
 const mockNavigate = jest.fn()
 const mockDeployCluster = jest.fn()
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
+  useNavigate: () => mockNavigate,
 }))
 
 describe('ClusterUpdateModal', () => {
@@ -26,7 +25,6 @@ describe('ClusterUpdateModal', () => {
       mutateAsync: mockDeployCluster,
       isLoading: false,
     })
-    useNavigateMockSpy.mockReturnValue(mockNavigate)
     mockDeployCluster.mockReset()
     mockNavigate.mockReset()
   })
