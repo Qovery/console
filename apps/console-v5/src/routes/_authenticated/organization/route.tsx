@@ -1,6 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
-import { Suspense, useLayoutEffect, useRef } from 'react'
+import posthog from 'posthog-js'
+import { Suspense, useEffect, useLayoutEffect, useRef } from 'react'
 import { useServiceType } from '@qovery/domains/services/feature'
 import { ErrorBoundary, Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
@@ -418,7 +419,18 @@ function OrganizationRoute() {
   const needsFullWidth = useFullWidthLayout()
   const bypassLayout = useBypassLayout()
   const location = useLocation()
+  const { organizationId = '' } = useParams({ strict: false })
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  // Keep group-scoped flags aligned with the active organization
+  useEffect(() => {
+    if (!organizationId) {
+      return
+    }
+
+    posthog.group('organization_id', organizationId)
+    posthog.reloadFeatureFlags()
+  }, [organizationId])
 
   useLayoutEffect(() => {
     const scrollContainer = scrollContainerRef.current
