@@ -1,5 +1,5 @@
 import * as tanstackReactRouter from '@tanstack/react-router'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useDeployCluster from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { ClusterUpdateModal } from './cluster-update-modal'
 
@@ -83,12 +83,14 @@ describe('ClusterUpdateModal', () => {
     const submitButton = screen.getByTestId('submit-button')
     await userEvent.click(submitButton)
 
-    expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
-      params: {
-        organizationId: mockCluster.organization.id,
-        clusterId: mockCluster.id,
-      },
-    })
+    await waitFor(() =>
+      expect(mockNavigate).toHaveBeenCalledWith({
+        to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
+        params: {
+          organizationId: mockCluster.organization.id,
+          clusterId: mockCluster.id,
+        },
+      })
+    )
   })
 })
