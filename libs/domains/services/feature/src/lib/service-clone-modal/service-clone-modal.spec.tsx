@@ -79,7 +79,13 @@ describe('ServiceCloneModal', () => {
       },
     })
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/0/project/1/environment/2951580907208704/application/1/general',
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+      params: {
+        organizationId: '0',
+        projectId: '1',
+        environmentId: mockEnvironments[2].id,
+        serviceId: '1',
+      },
     })
   })
 })
