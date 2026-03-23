@@ -1,6 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
 import {
+  EnvironmentLastDeploymentSection,
   EnvironmentMode,
   MenuManageDeployment,
   MenuOtherActions,
@@ -20,7 +21,7 @@ function RouteComponent() {
   const matchRoute = useMatchRoute()
 
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, suspense: true })
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId })
 
   const tabs = [
     {
@@ -64,6 +65,7 @@ function RouteComponent() {
           <hr className="w-full border-neutral" />
         </div>
         <div className="flex flex-col gap-8">
+          <EnvironmentLastDeploymentSection />
           <Section className="flex flex-col gap-3.5">
             <div className="flex items-center justify-between">
               <Heading level={2}>Services</Heading>
@@ -78,7 +80,6 @@ function RouteComponent() {
                 New service
               </Link>
             </div>
-
             <div>
               <div className="overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
                 <div className="no-scrollbar overflow-x-auto pb-2">

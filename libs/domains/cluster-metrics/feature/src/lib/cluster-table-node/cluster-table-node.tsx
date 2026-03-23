@@ -154,9 +154,30 @@ export function ClusterTableNode({
           (condition) => condition.type === 'PIDPressure' && condition.status === 'True'
         )
 
-        const isWarning = isDiskPressure || isMemoryPressure || !isReady || isPIDPressure || nodeWarning
+        const isRemoving =
+          node.unschedulable ||
+          node.taints?.some(
+            (taint) =>
+              taint.key === 'karpenter.sh/disrupted' ||
+              taint.key === 'ToBeDeletedByClusterAutoscaler' ||
+              taint.key === 'node.kubernetes.io/unschedulable'
+          )
+        const isDeploying = !isReady && !isRemoving
+
+        const isWarning =
+          isDiskPressure ||
+          isMemoryPressure ||
+          (!isReady && !isDeploying && !isRemoving) ||
+          isPIDPressure ||
+          nodeWarning
 
         const status = () => {
+          if (isRemoving) {
+            return 'Removing'
+          }
+          if (isDeploying) {
+            return 'Deploying'
+          }
           if (!isWarning) {
             return 'Ready'
           }
@@ -184,14 +205,19 @@ export function ClusterTableNode({
             className={twMerge(
               clsx(
                 'flex divide-x divide-neutral bg-surface-neutral-subtle transition-colors hover:bg-surface-neutral-componentHover',
-                isWarning && 'bg-surface-warning-subtle hover:bg-surface-warning-subtle'
+                isWarning && 'bg-surface-warning-subtle hover:bg-surface-warning-subtle',
+                isDeploying && 'bg-surface-brand-subtle hover:bg-surface-brand-subtle'
               )
             )}
           >
             <div className="flex h-12 w-1/4 min-w-0 items-center gap-2.5 px-5 font-medium text-neutral">
               <Tooltip content={status()}>
                 <span className="flex items-center gap-1">
-                  {isWarning ? (
+                  {isDeploying ? (
+                    <Icon iconName="circle-half-stroke" iconStyle="regular" className="text-base text-brand" />
+                  ) : isRemoving ? (
+                    <Icon iconName="circle-minus" iconStyle="regular" className="text-base text-neutral-subtle" />
+                  ) : isWarning ? (
                     <Icon iconName="circle-exclamation" iconStyle="regular" className="text-base text-warning" />
                   ) : (
                     <Icon iconName="circle-check" iconStyle="regular" className="text-base text-positive" />

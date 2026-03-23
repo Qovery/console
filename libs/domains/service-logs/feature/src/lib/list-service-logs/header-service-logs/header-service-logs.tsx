@@ -2,12 +2,10 @@ import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { subDays, subHours } from 'date-fns'
 import { useCallback, useMemo, useState } from 'react'
-import { match } from 'ts-pattern'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
-import { ServiceStateChip, useService } from '@qovery/domains/services/feature'
+import { useService } from '@qovery/domains/services/feature'
 import { type ServiceLogsParams } from '@qovery/shared/router'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Button, DatePicker, DropdownMenu, Icon, Link, Tooltip } from '@qovery/shared/ui'
+import { Button, DatePicker, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { HeaderLogs } from '../../header-logs/header-logs'
 import { SearchServiceLogs } from '../../search-service-logs/search-service-logs'
@@ -112,7 +110,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
           <Icon iconName="arrow-right" />
         </Link>*/}
       </HeaderLogs>
-      <div className="sticky top-[93px] z-header flex w-full items-center justify-between gap-2 border-b border-neutral bg-background px-4 py-2.5">
+      <div className="flex w-full items-center justify-between gap-2 border-b border-neutral bg-background px-4 py-2.5">
         <div className="flex w-full items-center gap-2">
           <Button
             variant="surface"

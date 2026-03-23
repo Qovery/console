@@ -11,7 +11,7 @@ import {
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import axios from 'axios'
 import posthog from 'posthog-js'
-import { StrictMode } from 'react'
+import { StrictMode, useEffect } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
 import { IntercomProvider } from 'react-use-intercom'
@@ -62,6 +62,7 @@ declare module '@tanstack/react-query' {
 // posthog init
 posthog.init(POSTHOG, {
   api_host: POSTHOG_APIHOST,
+  capture_pageview: 'history_change',
 })
 
 const queryClient = new QueryClient({
@@ -136,6 +137,17 @@ const queryClient = new QueryClient({
 
 function App() {
   const auth = useAuth0Context()
+
+  // Keep PostHog's identified user in sync once Auth0 resolves the session
+  useEffect(() => {
+    if (!auth.user?.sub) {
+      return
+    }
+
+    posthog.identify(auth.user.sub, {
+      ...auth.user,
+    })
+  }, [auth.user])
 
   // Create a new router instance
   const router = createRouter({ routeTree, context: { auth, queryClient } })

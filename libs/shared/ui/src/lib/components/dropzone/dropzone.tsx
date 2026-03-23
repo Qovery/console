@@ -13,7 +13,7 @@ export function Dropzone({ isDragActive, typeFile = '.env', className }: Dropzon
   return (
     <div
       className={twMerge(
-        `flex min-h-[140px] w-full cursor-pointer items-center justify-center rounded border border-neutral-component bg-surface-neutral-component text-xs text-neutral-subtle transition-all duration-150 ease-in-out hover:bg-surface-neutral-componentHover`,
+        `flex min-h-[140px] w-full cursor-pointer items-center justify-center rounded border border-neutral-component bg-surface-neutral-component text-xs text-neutral-subtle transition-colors duration-150 ease-in-out hover:bg-surface-neutral-componentHover`,
         classNamesDragIsActive,
         className
       )}
