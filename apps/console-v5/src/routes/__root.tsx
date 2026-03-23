@@ -18,7 +18,6 @@ const RootLayout = () => {
         <ToastBehavior />
         <UseCaseBottomBar />
       </ModalProvider>
-      <TanStackRouterDevtools />
     </UseCaseProvider>
   )
 }
