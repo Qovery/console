@@ -2,6 +2,7 @@
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin'
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
+import react from '@vitejs/plugin-react'
 import { execSync } from 'child_process'
 import { join } from 'path'
 import { defineConfig, loadEnv } from 'vite'
