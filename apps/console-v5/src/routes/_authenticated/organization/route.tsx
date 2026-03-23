@@ -422,7 +422,7 @@ function OrganizationRoute() {
   const { organizationId = '' } = useParams({ strict: false })
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
-  // Keep group-scoped flags aligned with the active organization in the v5 router.
+  // Keep group-scoped flags aligned with the active organization
   useEffect(() => {
     if (!organizationId) {
       return

@@ -296,7 +296,7 @@ svg:focus,
 }
 
 .scroll-shadow {
-  overflow-x: scroll;
+  overflow-x: auto;
   mask: linear-gradient(to right, #0000, #ffff var(--left-fade) calc(100% - var(--right-fade)), #0000);
   animation: scrollfade;
   animation-timeline: --scrollfade;
