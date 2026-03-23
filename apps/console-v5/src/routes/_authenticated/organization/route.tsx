@@ -291,8 +291,7 @@ function useNavigationContext(): NavigationContext | null {
         const tabs =
           context.type === 'service'
             ? context.tabs.filter(
-                (tab) =>
-                  !(isDatabase && tab.id === 'variables') && !(isManagedDatabase && tab.id === 'cloud-shell')
+                (tab) => !(isDatabase && tab.id === 'variables') && !(isManagedDatabase && tab.id === 'cloud-shell')
               )
             : context.tabs
 
