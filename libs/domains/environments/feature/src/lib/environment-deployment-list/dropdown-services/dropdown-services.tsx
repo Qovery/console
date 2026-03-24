@@ -9,11 +9,12 @@ import {
   type QueuedDeploymentRequestWithStages,
   type QueuedDeploymentRequestWithStagesStagesInner,
 } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
+import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Indicator, StageStatusChip, StatusChip, Tooltip, TriggerActionIcon, Truncate } from '@qovery/shared/ui'
 import { Icon } from '@qovery/shared/ui'
 import { dateUTCString, formatDurationMinutesSeconds } from '@qovery/shared/util-dates'
@@ -36,6 +37,7 @@ const MAX_VISIBLE_STAGES = 4
 // for the DropdownMenu when using Radix, inspired by the discussion in this issue:
 // https://github.com/radix-ui/primitives/issues/1294
 export function DropdownServices({ environment, deploymentHistory, stages, size = 'md' }: DropdownServicesProps) {
+  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
   const [open, setOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState<number | undefined>()
   const [direction, setDirection] = useState(0)
@@ -259,16 +261,15 @@ export function DropdownServices({ environment, deploymentHistory, stages, size 
                         </div>
                       </div>
                       {match(stage)
-                        .with(P.when(isDeploymentStageQueue), (s) =>
-                          s.services.map((service, index) => {
-                            return (
+                        .with(P.when(isDeploymentStageQueue), (s) => (
+                          <>
+                            {s.services.map((service, index) => (
                               <DropdownMenu.Item
                                 key={index}
-                                className="flex h-[50px] w-full items-center gap-2 border-t border-neutral pl-2 pr-3 text-xs text-neutral focus:outline-none"
+                                className="flex h-[50px] w-full items-center gap-2 border-t border-neutral bg-surface-neutral px-2 pr-3 text-xs text-neutral-subtle transition-colors hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle focus:outline-none"
                                 asChild
                               >
                                 <Link
-                                  // TODO new-nav : Route not yet created
                                   to={
                                     ENVIRONMENT_LOGS_URL(
                                       environment.organization.id,
@@ -276,8 +277,8 @@ export function DropdownServices({ environment, deploymentHistory, stages, size 
                                       environment.id
                                     ) + ENVIRONMENT_STAGES_URL()
                                   }
-                                  onClick={(e) => {
-                                    e.stopPropagation()
+                                  onClick={(event) => {
+                                    event.stopPropagation()
                                   }}
                                 >
                                   {service.details && (
@@ -308,72 +309,97 @@ export function DropdownServices({ environment, deploymentHistory, stages, size 
                                   </span>
                                 </Link>
                               </DropdownMenu.Item>
-                            )
-                          })
-                        )
-                        .otherwise((s) =>
-                          s.services.map((service, index) => (
-                            <DropdownMenu.Item
-                              key={index}
-                              className="flex h-[50px] w-full items-center gap-2 border-t border-neutral bg-surface-neutral pl-2 pr-3 text-xs text-neutral hover:bg-surface-neutral-subtle focus:outline-none"
-                              asChild
-                            >
-                              <Link
-                                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
-                                params={{
-                                  organizationId: environment.organization.id,
-                                  projectId: environment.project.id,
-                                  environmentId: environment.id,
-                                  serviceId: service.identifier.service_id,
-                                  executionId: service.identifier.execution_id ?? '',
-                                }}
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                }}
+                            ))}
+                          </>
+                        ))
+                        .otherwise((s) => (
+                          <>
+                            {s.services.map((service, index) => (
+                              <DropdownMenu.Item
+                                key={index}
+                                className="flex h-[50px] w-full items-center gap-2 border-t border-neutral bg-surface-neutral px-2 pr-3 text-xs text-neutral hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle focus:outline-none"
+                                asChild
                               >
-                                {service.details && (
-                                  <ServiceAvatar
-                                    border="solid"
-                                    size="sm"
-                                    service={
-                                      'job_type' in service.details
-                                        ? {
-                                            icon_uri: service.icon_uri ?? '',
-                                            serviceType: 'JOB' as const,
-                                            job_type: service.details.job_type as 'CRON' | 'LIFECYCLE',
-                                          }
-                                        : {
-                                            icon_uri: service.icon_uri ?? '',
-                                            serviceType: service.identifier.service_type as Exclude<
-                                              AnyService['service_type'],
-                                              'JOB'
-                                            >,
-                                          }
-                                    }
-                                  />
-                                )}
-                                <span className="flex flex-col">
-                                  <span className="truncate text-ssm">
-                                    <Truncate text={service.identifier.name} truncateLimit={16} />
+                                <Link
+                                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                                  params={{
+                                    organizationId: environment.organization.id,
+                                    projectId: environment.project.id,
+                                    environmentId: environment.id,
+                                    serviceId: service.identifier.service_id,
+                                    executionId: service.identifier.execution_id ?? '',
+                                  }}
+                                  onClick={(event) => {
+                                    event.stopPropagation()
+                                  }}
+                                >
+                                  {service.details && (
+                                    <ServiceAvatar
+                                      border="solid"
+                                      size="sm"
+                                      service={
+                                        'job_type' in service.details
+                                          ? {
+                                              icon_uri: service.icon_uri ?? '',
+                                              serviceType: 'JOB' as const,
+                                              job_type: service.details.job_type as 'CRON' | 'LIFECYCLE',
+                                            }
+                                          : {
+                                              icon_uri: service.icon_uri ?? '',
+                                              serviceType: service.identifier.service_type as Exclude<
+                                                AnyService['service_type'],
+                                                'JOB'
+                                              >,
+                                            }
+                                      }
+                                    />
+                                  )}
+                                  <span className="flex flex-col">
+                                    <span className="truncate text-ssm">
+                                      <Truncate text={service.identifier.name} truncateLimit={16} />
+                                    </span>
+                                    {service.total_duration && (
+                                      <span
+                                        title={dateUTCString(service.auditing_data.updated_at)}
+                                        className="text-[11px]"
+                                      >
+                                        {formatDurationMinutesSeconds(service.total_duration ?? '')}
+                                      </span>
+                                    )}
                                   </span>
-                                  {service.total_duration && (
-                                    <span
-                                      title={dateUTCString(service.auditing_data.updated_at)}
-                                      className="text-[11px]"
-                                    >
-                                      {formatDurationMinutesSeconds(service.total_duration ?? '')}
+                                  {service.status_details && (
+                                    <span className="ml-auto">
+                                      <StatusChip status={service.status_details.status} />
                                     </span>
                                   )}
-                                </span>
-                                {service.status_details && (
-                                  <span className="ml-auto">
-                                    <StatusChip status={service.status_details.status} />
-                                  </span>
-                                )}
-                              </Link>
-                            </DropdownMenu.Item>
-                          ))
-                        )}
+                                </Link>
+                              </DropdownMenu.Item>
+                            ))}
+                            {(stage.status === 'ERROR' ||
+                              s.services.some((service) => service.status_details?.status === 'ERROR')) && (
+                              <DropdownMenu.Item
+                                className="flex w-full cursor-pointer items-center justify-between gap-2 border-t border-brand-subtle bg-surface-brand-subtle px-2 py-2 text-xs text-brand transition-colors hover:bg-surface-brand-component focus:bg-surface-brand-component focus:outline-none"
+                                onSelect={() => {
+                                  const executionId =
+                                    'execution_id' in deploymentHistory.identifier
+                                      ? deploymentHistory.identifier.execution_id
+                                      : undefined
+                                  const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
+                                  setDevopsCopilotOpen(true)
+                                  sendMessageRef?.current?.(message)
+                                }}
+                              >
+                                <div className="flex items-center justify-center gap-2">
+                                  <Icon iconName="sparkles" iconStyle="solid" className="text-brand" />
+                                  <span>Ask AI Copilot for diagnostic</span>
+                                </div>
+                                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-neutral-component">
+                                  <Icon iconName="arrow-right" className="text-neutral-subtle" />
+                                </div>
+                              </DropdownMenu.Item>
+                            )}
+                          </>
+                        ))}
                     </div>
                   ))}
                 </motion.div>

@@ -21,6 +21,7 @@ export interface EnvironmentStagesProps extends PropsWithChildren {
   deploymentStages?: DeploymentStageWithServicesStatuses[]
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
   deploymentHistory?: DeploymentHistoryEnvironmentV2
+  banner?: React.ReactNode
 }
 
 export function EnvironmentStages({
@@ -31,6 +32,7 @@ export function EnvironmentStages({
   preCheckStage,
   hideSkipped,
   setHideSkipped,
+  banner,
   children,
 }: EnvironmentStagesProps) {
   const { organizationId, projectId, environmentId } = useParams({ strict: false })
@@ -72,6 +74,7 @@ export function EnvironmentStages({
 
       <div className="flex justify-center">
         <div className="relative h-full w-full">
+          {banner}
           <div className="scroll-shadow flex h-full gap-0.5 overflow-x-auto py-6">
             {!deploymentStages ? (
               <div className="mt-6 flex h-full w-full justify-center">

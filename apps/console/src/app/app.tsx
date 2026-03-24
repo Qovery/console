@@ -3,7 +3,7 @@ import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import * as Sentry from '@sentry/react'
 import axios from 'axios'
 import posthog from 'posthog-js'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   Navigate,
   Route,
@@ -39,6 +39,7 @@ export function App() {
   const { redirectToAcceptPageGuard, onSearchUpdate, checkTokenInStorage } = useInviteMember()
   const [assistantOpen, setAssistantOpen] = useState(false)
   const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
+  const sendMessageRef = useRef<((message: string, createNewChat?: boolean) => void) | null>(null)
 
   useEffect(() => {
     onSearchUpdate()
@@ -112,7 +113,13 @@ export function App() {
 
   return (
     <GTMProvider state={gtmParams}>
-      <DevopsCopilotContext.Provider value={{ devopsCopilotOpen, setDevopsCopilotOpen }}>
+      <DevopsCopilotContext.Provider
+        value={{
+          devopsCopilotOpen,
+          setDevopsCopilotOpen,
+          sendMessageRef,
+        }}
+      >
         <AssistantContext.Provider value={{ assistantOpen, setAssistantOpen }}>
           <ScrollToTop />
           <Routes>

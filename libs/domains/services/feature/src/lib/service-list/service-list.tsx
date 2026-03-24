@@ -174,17 +174,15 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         enableSorting: false,
         filterFn: 'arrIncludesSome',
         size: 15,
-        cell: (info) => {
-          return (
-            <ServiceRunningStatusCell
-              service={info.row.original}
-              environment={environment}
-              organizationId={organizationId}
-              projectId={projectId}
-              clusterId={clusterId}
-            />
-          )
-        },
+        cell: (info) => (
+          <ServiceRunningStatusCell
+            service={info.row.original}
+            environment={environment}
+            organizationId={organizationId}
+            projectId={projectId}
+            clusterId={clusterId}
+          />
+        ),
       }),
       columnHelper.accessor('version', {
         header: 'Target version',

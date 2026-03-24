@@ -60,18 +60,19 @@ export const DevopsCopilotHistory = ({
       <div className="mb-4">
         <div className="p-2 text-xs font-medium text-neutral-500 dark:text-neutral-300">{title}</div>
         {threads.map((thread) => (
-          <div
-            key={thread.id}
-            onClick={() => setThreadId(thread.id)}
-            className={clsx(
-              'cursor-pointer rounded-md p-2 text-sm transition-colors hover:bg-brand-50 dark:text-neutral-50 dark:hover:bg-neutral-400',
-              {
-                'bg-brand-50 dark:bg-neutral-400': threadId === thread.id,
-              }
-            )}
-          >
-            {thread.title.length >= 28 ? `${truncateText(thread.title, 28)}...` : thread.title}
-          </div>
+          <Tooltip key={thread.id} side="right" content={thread.title} delayDuration={400} classNameContent="z-10">
+            <div
+              onClick={() => setThreadId(thread.id)}
+              className={clsx(
+                'cursor-pointer rounded-md p-2 text-sm transition-colors hover:bg-brand-50 dark:text-neutral-50 dark:hover:bg-neutral-400',
+                {
+                  'bg-brand-50 dark:bg-neutral-400': threadId === thread.id,
+                }
+              )}
+            >
+              {thread.title.length >= 28 ? `${truncateText(thread.title, 28)}...` : thread.title}
+            </div>
+          </Tooltip>
         ))}
       </div>
     )
