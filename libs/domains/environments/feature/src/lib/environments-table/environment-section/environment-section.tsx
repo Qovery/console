@@ -147,6 +147,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
                 environment={environment}
                 deploymentStatus={overview.deployment_status}
                 redeployTooltip={isArgoCdHybrid ? ARGOCD_HYBRID_REDEPLOY_TOOLTIP : undefined}
+                requireArgoCdHybridAck={isArgoCdHybrid}
               />
               <MenuOtherActions
                 environment={environment}

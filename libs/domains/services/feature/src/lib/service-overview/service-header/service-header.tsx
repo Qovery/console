@@ -19,7 +19,6 @@ import { useMasterCredentials } from '../../hooks/use-master-credentials/use-mas
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
 import { ServiceActions } from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
-import { ARGOCD_SERVICE_ICON_URI } from '../../service-icon/service-icon'
 import { ServiceLinksPopover } from '../../service-links-popover/service-links-popover'
 import { ServiceStateChip } from '../../service-state-chip/service-state-chip'
 
@@ -115,12 +114,12 @@ function ServiceHeaderContent({ environment, serviceId, service, isArgoCdService
   const avatarService =
     service.serviceType === 'JOB'
       ? {
-          icon_uri: isArgoCdService ? ARGOCD_SERVICE_ICON_URI : service.icon_uri ?? '',
+          icon_uri: isArgoCdService ? 'app://qovery-console/argocd' : service.icon_uri ?? '',
           serviceType: 'JOB' as const,
           job_type: service.job_type,
         }
       : {
-          icon_uri: isArgoCdService ? ARGOCD_SERVICE_ICON_URI : service.icon_uri ?? '',
+          icon_uri: isArgoCdService ? 'app://qovery-console/argocd' : service.icon_uri ?? '',
           serviceType: service.serviceType,
         }
 

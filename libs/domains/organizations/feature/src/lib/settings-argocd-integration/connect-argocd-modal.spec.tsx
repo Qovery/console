@@ -36,7 +36,7 @@ describe('ConnectArgoCdModal', () => {
         initialValues={{
           targetCluster: 'cluster-1',
           argoCdApiUrl: 'https://argocd.example.com/api',
-          accessToken: 'atc123xyz789uvw456opq',
+          accessToken: 'fake-token',
         }}
       />
     )

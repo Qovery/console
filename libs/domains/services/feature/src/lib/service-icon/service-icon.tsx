@@ -58,9 +58,6 @@ const Airbyte = '/assets/devicon/airbyte.svg'
 const EC2 = '/assets/devicon/ec2.svg'
 const Lambda = '/assets/devicon/lambda.svg'
 const S3 = '/assets/devicon/s3.svg'
-const ArgoCD = '/assets/services/Icon isometrie=ArgoCD.svg'
-
-export const ARGOCD_SERVICE_ICON_URI = 'app://qovery-console/argocd'
 
 const serviceIcons = {
   'app://qovery-console/lifecycle-job': { icon: '/assets/services/lifecycle-job.svg', title: 'LifecycleJob' },
@@ -68,7 +65,7 @@ const serviceIcons = {
   'app://qovery-console/container': { icon: '/assets/services/application.svg', title: 'Container' },
   'app://qovery-console/database': { icon: '/assets/services/database.svg', title: 'Database' },
   'app://qovery-console/helm': { icon: '/assets/services/helm.svg', title: 'Helm' },
-  [ARGOCD_SERVICE_ICON_URI]: { icon: ArgoCD, title: 'ArgoCD' },
+  'app://qovery-console/argocd': { icon: '/assets/services/argocd.svg', title: 'ArgoCD' },
   'app://qovery-console/application': {
     icon: '/assets/services/application.svg',
     title: 'Application',

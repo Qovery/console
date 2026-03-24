@@ -265,7 +265,7 @@ describe('SettingsArgoCdIntegration', () => {
     expect(modalConfig.content.props.initialValues).toEqual({
       targetCluster: 'cluster-id',
       argoCdApiUrl: 'https://argocd.example.com/api',
-      accessToken: 'atc123xyz789uvw456opq',
+      accessToken: 'fake-token',
     })
   })
 })

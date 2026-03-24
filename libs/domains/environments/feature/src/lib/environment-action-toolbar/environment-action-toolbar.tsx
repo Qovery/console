@@ -29,35 +29,20 @@ import { TerraformExportModal } from '../terraform-export-modal/terraform-export
 import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
 type ActionToolbarVariant = 'default' | 'header'
-const ARGO_CD_HYBRID_DEPLOY_ACK_KEY = 'argocd-hybrid-deploy-ack'
 
 function ArgoCdHybridDeployInfoModal({
   onUnderstood,
-  onClose,
 }: {
   onUnderstood: () => void
-  onClose: () => void
 }) {
   return (
-    <div className="relative flex w-full flex-col gap-6 rounded-lg border border-neutral bg-white p-5 shadow-lg">
-      <button
-        type="button"
-        aria-label="Close"
-        className="absolute right-2 top-2 p-1 text-neutral-subtle hover:text-neutral"
-        onClick={onClose}
-      >
-        <Icon iconName="xmark" iconStyle="regular" />
-      </button>
-      <div className="flex flex-col gap-1">
-        <h2 className="text-[20px] font-medium leading-7 text-neutral">
-          Environment actions will only affect Qovery services
-        </h2>
-        <p className="text-sm text-neutral-subtle">
-          This environment contains both Qovery and ArgoCD services. Bulk actions such as deploy, redeploy, or restart
-          only apply to Qovery services. ArgoCD services are managed and deployed through ArgoCD.
-        </p>
-      </div>
-      <div>
+    <div className="p-5">
+      <h2 className="h4 mb-2 max-w-sm text-neutral">Environment actions will only affect Qovery services</h2>
+      <p className="mb-6 text-sm text-neutral-subtle">
+        This environment contains both Qovery and ArgoCD services. Bulk actions such as deploy, redeploy, or restart
+        only apply to Qovery services. ArgoCD services are managed and deployed through ArgoCD.
+      </p>
+      <div className="flex">
         <Button size="lg" onClick={onUnderstood}>
           Understood!
         </Button>
@@ -122,53 +107,41 @@ export function MenuManageDeployment({
       environmentId: environment.id,
     })
 
-  const hasAcknowledgedArgoCdHybridDeployModal = () => {
-    try {
-      return localStorage.getItem(`${ARGO_CD_HYBRID_DEPLOY_ACK_KEY}:${environment.id}`) === 'true'
-    } catch {
-      return false
-    }
-  }
-
-  const acknowledgeArgoCdHybridDeployModal = () => {
-    try {
-      localStorage.setItem(`${ARGO_CD_HYBRID_DEPLOY_ACK_KEY}:${environment.id}`, 'true')
-    } catch {
-      // Ignore localStorage failures.
-    }
-  }
-
-  const mutationDeploy = () => {
-    if (requireArgoCdHybridAck && !hasAcknowledgedArgoCdHybridDeployModal()) {
-      openModal({
-        content: (
-          <ArgoCdHybridDeployInfoModal
-            onClose={closeModal}
-            onUnderstood={() => {
-              acknowledgeArgoCdHybridDeployModal()
-              closeModal()
-              executeDeploy()
-            }}
-          />
-        ),
-        options: {
-          width: 488,
-        },
-      })
+  const withArgoCdHybridInfoModal = (action: () => void) => {
+    if (!requireArgoCdHybridAck) {
+      action()
       return
     }
 
-    executeDeploy()
+    openModal({
+      content: (
+        <ArgoCdHybridDeployInfoModal
+          onUnderstood={() => {
+            closeModal()
+            action()
+          }}
+        />
+      ),
+      options: {
+        width: 488,
+      },
+    })
+  }
+
+  const mutationDeploy = () => {
+    withArgoCdHybridInfoModal(executeDeploy)
   }
 
   const mutationRedeploy = () => {
-    openModalConfirmation({
-      mode: environment.mode,
-      title: 'Confirm redeploy',
-      description: 'To confirm the redeploy of your environment, please type the name:',
-      name: environment.name,
-      action: () => deployEnvironment({ environmentId: environment.id }),
-    })
+    withArgoCdHybridInfoModal(() =>
+      openModalConfirmation({
+        mode: environment.mode,
+        title: 'Confirm redeploy',
+        description: 'To confirm the redeploy of your environment, please type the name:',
+        name: environment.name,
+        action: () => deployEnvironment({ environmentId: environment.id }),
+      })
+    )
   }
 
   const mutationStop = () => {
@@ -179,27 +152,31 @@ export function MenuManageDeployment({
         (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
     )
 
-    openModalConfirmation({
-      mode: environment.mode,
-      title: 'Confirm stop',
-      description: 'To confirm the stopping of your environment, please type the name:',
-      warning: hasDatabase
-        ? "RDS instances are automatically restarted by AWS after 7 days. After 7 days, Qovery won't pause it again for you."
-        : null,
-      name: environment.name,
-      action: () => stopEnvironment({ environmentId: environment.id }),
-    })
+    withArgoCdHybridInfoModal(() =>
+      openModalConfirmation({
+        mode: environment.mode,
+        title: 'Confirm stop',
+        description: 'To confirm the stopping of your environment, please type the name:',
+        warning: hasDatabase
+          ? "RDS instances are automatically restarted by AWS after 7 days. After 7 days, Qovery won't pause it again for you."
+          : null,
+        name: environment.name,
+        action: () => stopEnvironment({ environmentId: environment.id }),
+      })
+    )
   }
 
   const mutationUninstall = () => {
-    openModalConfirmation({
-      mode: 'PRODUCTION',
-      title: 'Confirm uninstall',
-      description: 'To confirm the uninstall of your environment, please type the name:',
-      warning: 'Uninstall delete all compute and data of your service',
-      name: environment.name,
-      action: () => uninstallEnvironment({ environmentId: environment.id }),
-    })
+    withArgoCdHybridInfoModal(() =>
+      openModalConfirmation({
+        mode: 'PRODUCTION',
+        title: 'Confirm uninstall',
+        description: 'To confirm the uninstall of your environment, please type the name:',
+        warning: 'Uninstall delete all compute and data of your service',
+        name: environment.name,
+        action: () => uninstallEnvironment({ environmentId: environment.id }),
+      })
+    )
   }
 
   const mutationCancelDeployment = () => {
@@ -214,12 +191,14 @@ export function MenuManageDeployment({
   }
 
   const openUpdateAllModal = () => {
-    openModal({
-      content: <UpdateAllModal environment={environment} />,
-      options: {
-        width: 676,
-      },
-    })
+    withArgoCdHybridInfoModal(() =>
+      openModal({
+        content: <UpdateAllModal environment={environment} />,
+        options: {
+          width: 676,
+        },
+      })
+    )
   }
 
   return (

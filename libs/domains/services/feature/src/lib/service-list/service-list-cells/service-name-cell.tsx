@@ -7,7 +7,6 @@ import { formatCronExpression, pluralize, upperCaseFirstLetter } from '@qovery/s
 import useDeploymentStatus from '../../hooks/use-deployment-status/use-deployment-status'
 import ServiceActions from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
-import { ARGOCD_SERVICE_ICON_URI } from '../../service-icon/service-icon'
 import ServiceLinksPopover from '../../service-links-popover/service-links-popover'
 import ServiceTemplateIndicator from '../../service-template-indicator/service-template-indicator'
 
@@ -77,7 +76,7 @@ export function ServiceNameCell({
   if (argocdOperationLabelOverride) {
     const serviceAvatar = {
       ...service,
-      icon_uri: ARGOCD_SERVICE_ICON_URI,
+      icon_uri: 'app://qovery-console/argocd',
     }
 
     return (
