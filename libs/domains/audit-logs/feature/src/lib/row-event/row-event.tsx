@@ -223,7 +223,7 @@ export function RowEvent(props: RowEventProps) {
         style={{ gridTemplateColumns: columnsWidth }}
         onClick={() => setExpanded(!expanded)}
       >
-        <div className="flex items-center justify-between gap-3 pl-2">
+        <div className="flex min-w-0 items-center justify-between gap-3 pl-2">
           <Skeleton height={10} width={130} show={isPlaceholder}>
             <div className="flex items-center gap-3">
               <Icon
@@ -241,9 +241,9 @@ export function RowEvent(props: RowEventProps) {
             {eventIcon}
           </Skeleton>
         </div>
-        <div className="px-5" data-testid="tag">
+        <div className="min-w-0 px-5" data-testid="tag">
           <Skeleton height={10} width={80} show={isPlaceholder}>
-            <span>
+            <span className="block truncate whitespace-nowrap">
               <span className={isEventTypeFailed ? 'text-negative' : 'text-brand'}>
                 {formatEventName(event.event_type ?? '')}
               </span>
@@ -256,7 +256,7 @@ export function RowEvent(props: RowEventProps) {
             </span>
           </Skeleton>
         </div>
-        <div className="px-4">
+        <div className="min-w-0 px-4">
           <Skeleton height={10} width={80} show={isPlaceholder}>
             <Tooltip
               content={
@@ -302,17 +302,17 @@ export function RowEvent(props: RowEventProps) {
             </Tooltip>
           </Skeleton>
         </div>
-        <div className="px-4 text-neutral-subtle">
+        <div className="min-w-0 px-4 text-neutral-subtle">
           <Skeleton height={10} width={80} show={isPlaceholder}>
             <>{upperCaseFirstLetter(event.target_type ?? '')?.replace(/_/g, ' ')}</>
           </Skeleton>
         </div>
-        <div className="px-4">
+        <div className="min-w-0 px-4">
           <Skeleton height={10} width={80} show={isPlaceholder} className="truncate text-neutral-subtle">
             <Truncate truncateLimit={40} text={event.triggered_by ?? ''} />
           </Skeleton>
         </div>
-        <div className="px-4">
+        <div className="min-w-0 px-4">
           <Skeleton height={16} width={80} show={isPlaceholder} className="justify-end">
             <Tooltip content={event.user_agent} disabled={!event.user_agent} side="right">
               <div className="truncate text-neutral-subtle">
