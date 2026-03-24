@@ -1,12 +1,16 @@
 import { useParams } from '@tanstack/react-router'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { clsx } from 'clsx'
 import {
   type Environment,
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
 import { memo, useEffect, useMemo, useRef } from 'react'
-import { Icon, Indicator, Link, LoaderDots, TablePrimitives } from '@qovery/shared/ui'
+import { useDeploymentHistory } from '@qovery/domains/environments/feature'
+import { Button, DropdownMenu, Icon, Link, LoaderDots, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
+import { trimId } from '@qovery/shared/util-js'
 import { HeaderPreCheckLogs } from '../header-pre-check-logs/header-pre-check-logs'
 import { type EnvironmentPreCheckLogId, usePreCheckLogs } from '../hooks/use-pre-check-logs/use-pre-check-logs'
 import { RowPreCheckLogs } from './row-pre-check-logs/row-pre-check-logs'
@@ -31,6 +35,10 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
     projectId,
     environmentId: environment.id,
     versionId: deploymentId,
+  })
+  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({
+    environmentId: environment.id,
+    suspense: true,
   })
 
   const columnHelper = createColumnHelper<EnvironmentPreCheckLogId>()
@@ -68,40 +76,61 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
     )
   }
 
+  const currentDeploymentHistory = environmentDeploymentHistory.find((d) => d.identifier.execution_id === deploymentId)
+  const isLastVersion = environmentDeploymentHistory?.[0]?.identifier.execution_id === deploymentId || !deploymentId
+
   if (!preCheckStage) return null
 
   return (
     <div className="h-[calc(100vh-108px)] w-full overflow-hidden">
       <div className="relative h-full">
         <HeaderPreCheckLogs preCheckStage={preCheckStage}>
-          <Indicator
-            align="start"
-            side="left"
-            className="left-[2px] top-[3px]"
-            content={
-              environmentStatus?.last_deployment_state.includes('ERROR') && (
-                <span className="flex h-3 w-3 items-center justify-center rounded bg-surface-negative-solid text-2xs">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="2" height="8" fill="none" viewBox="0 0 2 8">
-                    <path
-                      fill="var(--neutral-invert-12)"
-                      d="M1.483.625H.517A.267.267 0 0 0 .25.892v3.716c0 .148.12.267.267.267h.966c.148 0 .267-.12.267-.267V.892a.267.267 0 0 0-.267-.267M.25 6.142v.966c0 .148.12.267.267.267h.966c.148 0 .267-.12.267-.267v-.966a.267.267 0 0 0-.267-.267H.517a.267.267 0 0 0-.267.267"
-                    ></path>
-                  </svg>
-                </span>
-              )
-            }
-          >
-            <Link
-              as="button"
-              className="gap-1.5"
-              variant="outline"
-              to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId"
-              params={{ organizationId, projectId, environmentId: environment.id, deploymentId }}
-            >
-              Go to pipeline
-              <Icon iconName="timeline" />
-            </Link>
-          </Indicator>
+          <div className="flex items-center gap-4">
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <Button variant="outline" className="gap-1.5">
+                  <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
+                  {isLastVersion
+                    ? 'Latest'
+                    : dateYearMonthDayHourMinuteSecond(
+                        new Date(currentDeploymentHistory?.auditing_data.created_at ?? '')
+                      )}
+                  <Icon iconName="angle-down" />
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-80 overflow-y-auto">
+                {environmentDeploymentHistory.map((deployment) => (
+                  <DropdownMenu.Item
+                    asChild
+                    key={deployment.identifier.execution_id}
+                    className={clsx('min-h-9', {
+                      'bg-surface-brand-component': deployment.identifier.execution_id === deploymentId,
+                    })}
+                  >
+                    <Link
+                      className="flex w-full justify-between"
+                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs"
+                      params={{
+                        organizationId,
+                        projectId,
+                        environmentId: environment.id,
+                        deploymentId: deployment.identifier.execution_id,
+                      }}
+                      replace={true}
+                    >
+                      <Tooltip content={deployment.identifier.execution_id}>
+                        <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
+                      </Tooltip>
+                      <span className="flex items-center gap-2.5 text-xs text-neutral-subtle">
+                        {dateYearMonthDayHourMinuteSecond(new Date(deployment.auditing_data.created_at))}
+                        <StatusChip status={deployment.status} />
+                      </span>
+                    </Link>
+                  </DropdownMenu.Item>
+                ))}
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          </div>
         </HeaderPreCheckLogs>
         <div className="h-full w-full overflow-y-scroll pb-12" ref={refScrollSection}>
           <Table.Root className="w-full bg-background text-xs" containerClassName="border-none">

@@ -1,14 +1,15 @@
-import { useRouter } from '@tanstack/react-router'
+import { useParams, useRouter } from '@tanstack/react-router'
 import { type EnvironmentStatusesWithStagesPreCheckStage } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { Button, Icon, StatusChip } from '@qovery/shared/ui'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { Button, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface HeaderPreCheckLogsProps extends PropsWithChildren {
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
 }
 
 export function HeaderPreCheckLogs({ preCheckStage, children }: HeaderPreCheckLogsProps) {
+  const { deploymentId = '' } = useParams({ strict: false })
   const router = useRouter()
   const onBack = () => router.history.back()
   const totalDurationSec = preCheckStage?.total_duration_sec ?? 0
@@ -44,6 +45,15 @@ export function HeaderPreCheckLogs({ preCheckStage, children }: HeaderPreCheckLo
             <Icon iconName="stopwatch" iconStyle="regular" className="text-base text-neutral-subtle" />
             {Math.floor(totalDurationSec / 60)}m : {totalDurationSec % 60}s
           </span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
+            <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
+          </svg>
+          <Tooltip side="bottom" content={<span>Execution id: {deploymentId}</span>}>
+            <span className="flex items-center gap-1.5 truncate">
+              <Icon iconName="code" iconStyle="regular" className="text-base text-neutral-subtle" />
+              <span className="font-normal text-neutral">{trimId(deploymentId)}</span>
+            </span>
+          </Tooltip>
         </div>
       </div>
       {children}
