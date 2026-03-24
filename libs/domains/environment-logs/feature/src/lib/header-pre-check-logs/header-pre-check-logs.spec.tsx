@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { HeaderPreCheckLogs, type HeaderPreCheckLogsProps } from './header-pre-check-logs'
 
@@ -20,6 +21,18 @@ const mockProps: HeaderPreCheckLogsProps = {
     total_duration_sec: 125,
   },
 }
+
+jest.mock('@tanstack/react-router', () => ({
+  useParams: () => ({
+    deploymentId: 'deployment-id',
+  }),
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
+  }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+}))
 
 describe('HeaderPreCheckLogs', () => {
   it('renders correctly with given props', () => {

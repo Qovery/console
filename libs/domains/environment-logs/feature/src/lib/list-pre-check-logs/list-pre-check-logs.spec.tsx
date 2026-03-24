@@ -3,6 +3,59 @@ import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ListPreCheckLogs } from './list-pre-check-logs'
 
+const mockDeploymentHistory = [
+  {
+    identifier: {
+      execution_id: 'exec-123',
+    },
+    status: 'DEPLOYED',
+    action_status: 'SUCCESS',
+    trigger_action: 'DEPLOY',
+    total_duration: 'PT60M',
+    stages: [
+      {
+        name: 'build',
+        status: 'SUCCESS',
+        duration: 'PT60M',
+        services: [
+          {
+            identifier: {
+              name: 'web-service',
+              service_id: 'service-123',
+              execution_id: 'exec-123',
+              service_type: 'APPLICATION',
+            },
+            status_details: {
+              status: 'SUCCESS',
+            },
+            total_duration: 'PT60M',
+            auditing_data: {
+              created_at: '2024-01-30T12:00:00Z',
+              updated_at: '2024-01-30T12:01:00Z',
+              origin: 'CONSOLE',
+              triggered_by: 'User',
+            },
+          },
+        ],
+      },
+    ],
+    auditing_data: {
+      created_at: '2024-01-30T12:00:00Z',
+      updated_at: '2024-01-30T12:01:00Z',
+      origin: 'CONSOLE',
+      triggered_by: 'User',
+    },
+  },
+]
+
+jest.mock('@qovery/domains/environments/feature', () => ({
+  ...jest.requireActual('@qovery/domains/environments/feature'),
+  useDeploymentHistory: () => ({
+    data: mockDeploymentHistory,
+    isFetched: true,
+  }),
+}))
+
 jest.mock('../hooks/use-pre-check-logs/use-pre-check-logs', () => {
   return {
     ...jest.requireActual('../hooks/use-pre-check-logs/use-pre-check-logs'),
