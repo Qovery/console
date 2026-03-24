@@ -6,7 +6,6 @@ import { Button, Icon } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { AssistantMessage } from '../assistant-message/assistant-message'
 import { type Message, type PlanStep } from '../devops-copilot-panel'
-import { EmptyState } from '../empty-state/empty-state'
 import { LoadingIndicator } from '../loading-indicator/loading-indicator'
 import { type renderStreamingMessageWithMermaid } from '../streaming-mermaid-renderer/streaming-mermaid-renderer'
 import { StreamingMessage } from '../streaming-message/streaming-message'
@@ -68,7 +67,6 @@ export function MessageList({
         })
       )}
     >
-      <EmptyState expand={expand} onSuggestionClick={onSuggestionClick} threadLength={thread.length} />
       {thread.map((message: Message) => {
         return match(message.owner)
           .with('user', () => (

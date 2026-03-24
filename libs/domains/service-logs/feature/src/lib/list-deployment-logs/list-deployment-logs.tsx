@@ -410,7 +410,7 @@ export function ListDeploymentLogs({
               </span>
             </Banner>
           )}
-          <div className="flex h-[calc(100%-48px)] flex-col items-center justify-between bg-neutral-600">
+          <div className="flex h-[calc(100%-48px)] flex-col items-center justify-between bg-background">
             <div className="flex h-full flex-col items-center justify-center">
               <DeploymentLogsPlaceholder
                 environment={environment}
@@ -480,7 +480,7 @@ export function ListDeploymentLogs({
                 }}
               >
                 <span className="flex items-center gap-1.5">
-                  <Icon iconName="sparkles" />
+                  <Icon iconName="sparkles" iconStyle="solid" />
                   {isCrashLoopDetected && !isError
                     ? 'AI Copilot detected a potential issue during this deployment'
                     : 'AI Copilot identified likely causes and fixes for this deployment error'}

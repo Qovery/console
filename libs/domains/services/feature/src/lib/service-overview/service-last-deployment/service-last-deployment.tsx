@@ -10,6 +10,7 @@ import {
   DeploymentAction,
   EmptyState,
   Icon,
+  Link,
   Skeleton,
   StatusChip,
   Tooltip,
@@ -58,7 +59,7 @@ export function ServiceLastDeploymentSkeleton() {
 }
 
 function ServiceLastDeploymentContent({ serviceId, serviceType, service }: ServiceLastDeploymentProps) {
-  const { organizationId = '', projectId = '' } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const { data: deploymentHistory = [] } = useDeploymentHistory({
     serviceId,
     serviceType,
@@ -145,7 +146,11 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
     ) : null
 
   return (
-    <div className="flex rounded-lg border border-neutral bg-surface-neutral p-4">
+    <Link
+      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+      params={{ organizationId, environmentId, serviceId, executionId: lastDeployment.identifier.execution_id }}
+      className="flex rounded-lg border border-neutral bg-surface-neutral p-4 transition-colors hover:bg-surface-neutral-subtle"
+    >
       <div className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
         <span className="font-medium">
           <DeploymentAction status={lastDeployment.status_details.status} />
@@ -160,7 +165,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
           </>
         ) : null}
       </div>
-    </div>
+    </Link>
   )
 }
 

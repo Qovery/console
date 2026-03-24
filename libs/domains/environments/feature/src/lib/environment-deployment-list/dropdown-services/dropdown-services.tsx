@@ -15,7 +15,7 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
-import { Indicator, StageStatusChip, StatusChip, Tooltip, TriggerActionIcon, Truncate } from '@qovery/shared/ui'
+import { Button, Indicator, StageStatusChip, StatusChip, Tooltip, TriggerActionIcon, Truncate } from '@qovery/shared/ui'
 import { Icon } from '@qovery/shared/ui'
 import { dateUTCString, formatDurationMinutesSeconds } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -378,7 +378,7 @@ export function DropdownServices({ environment, deploymentHistory, stages, size 
                             {(stage.status === 'ERROR' ||
                               s.services.some((service) => service.status_details?.status === 'ERROR')) && (
                               <DropdownMenu.Item
-                                className="flex w-full cursor-pointer items-center justify-between gap-2 border-t border-brand-subtle bg-surface-brand-subtle px-2 py-2 text-xs text-brand transition-colors hover:bg-surface-brand-component focus:bg-surface-brand-component focus:outline-none"
+                                className="flex w-full cursor-pointer items-center justify-between gap-2 border-t border-neutral bg-surface-brand-subtle p-3 text-ssm text-brand transition-colors hover:bg-surface-brand-component focus:bg-surface-brand-component focus:outline-none"
                                 onSelect={() => {
                                   const executionId =
                                     'execution_id' in deploymentHistory.identifier
@@ -391,11 +391,9 @@ export function DropdownServices({ environment, deploymentHistory, stages, size 
                               >
                                 <div className="flex items-center justify-center gap-2">
                                   <Icon iconName="sparkles" iconStyle="solid" className="text-brand" />
-                                  <span>Ask AI Copilot for diagnostic</span>
+                                  <span>Ask for diagnostic</span>
                                 </div>
-                                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-neutral-component">
-                                  <Icon iconName="arrow-right" className="text-neutral-subtle" />
-                                </div>
+                                <Icon iconName="arrow-right" />
                               </DropdownMenu.Item>
                             )}
                           </>
