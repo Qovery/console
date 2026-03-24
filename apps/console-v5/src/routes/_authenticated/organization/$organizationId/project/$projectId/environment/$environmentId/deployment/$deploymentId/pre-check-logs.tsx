@@ -18,8 +18,6 @@ function PreCheckLogs() {
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const [preCheckStage, setPreCheckStage] = useState<EnvironmentStatusesWithStagesPreCheckStage>()
 
-  console.log('preCheckStage', { preCheckStage, environment })
-
   const messageHandler = useCallback(
     (_: QueryClient, { pre_check_stage }: { pre_check_stage: EnvironmentStatusesWithStagesPreCheckStage }) => {
       setPreCheckStage(pre_check_stage)

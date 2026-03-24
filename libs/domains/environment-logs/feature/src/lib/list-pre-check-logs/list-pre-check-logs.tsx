@@ -22,7 +22,7 @@ export interface ListPreCheckLogsProps {
 }
 
 export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage }: ListPreCheckLogsProps) {
-  const { organizationId, projectId, deploymentId } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', deploymentId = '' } = useParams({ strict: false })
   const refScrollSection = useRef<HTMLDivElement>(null)
 
   const { data: logs = [] } = usePreCheckLogs({
