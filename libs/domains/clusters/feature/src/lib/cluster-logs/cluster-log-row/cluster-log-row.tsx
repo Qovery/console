@@ -114,6 +114,4 @@ function areClusterLogRowPropsEqual(previousProps: ClusterLogRowProps, nextProps
 
 export const ClusterLogRow = memo(ClusterLogRowRoot, areClusterLogRowPropsEqual)
 
-ClusterLogRow.displayName = 'ClusterLogRow'
-
 export default ClusterLogRow
