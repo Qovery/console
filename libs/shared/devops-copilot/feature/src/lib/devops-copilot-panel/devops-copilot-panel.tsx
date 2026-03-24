@@ -496,7 +496,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                 </div>
               </div>
             ) : (
-              <EnableCopilotScreen organizationId={context?.organization?.id} onClose={handleOnClose} />
+              <EnableCopilotScreen organizationId={context?.organization?.id ?? ''} onClose={handleOnClose} />
             )}
           </div>
         </Dialog.Content>

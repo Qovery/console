@@ -1,8 +1,7 @@
-import { SETTINGS_AI_COPILOT_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { Button, Icon, Link } from '@qovery/shared/ui'
 
 export interface EnableCopilotScreenProps {
-  organizationId?: string
+  organizationId: string
   onClose: () => void
 }
 
@@ -31,7 +30,7 @@ export function EnableCopilotScreen({ organizationId, onClose }: EnableCopilotSc
         </span>
       </div>
 
-      <Link to={`${SETTINGS_URL(organizationId)}${SETTINGS_AI_COPILOT_URL}`} onClick={onClose}>
+      <Link to="/organization/$organizationId/settings/ai-copilot" params={{ organizationId }} onClick={onClose}>
         <Button className="flex gap-2" size="md">
           <Icon iconName="sparkles" />
           Enable AI Copilot
