@@ -1,4 +1,5 @@
 /// <reference types='vitest' />
+import { execSync } from 'child_process'
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin'
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
@@ -56,7 +57,7 @@ export default defineConfig(({ mode }) => {
       host: 'localhost',
     },
     define: {
-      'process.env': JSON.stringify(env),
+      'process.env': JSON.stringify(clientEnv),
     },
     plugins: [
       tanstackRouter({
