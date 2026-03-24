@@ -78,20 +78,10 @@ export const DevopsCopilotHistory = ({
     )
   }
 
-  if (isLoading && threads.length === 0) {
+  if ((isLoading && threads.length === 0) || error) {
     return (
-      <div className="flex h-full w-80 items-center justify-center">
-        <div className="text-sm text-neutral-subtle">
-          <LoaderSpinner className="h-6 w-6" />
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="flex h-full w-80 items-center justify-center">
-        <div className="text-sm text-negative">{error}</div>
+      <div className="flex h-full w-80 items-center justify-center border-r border-neutral px-3">
+        {error ? <span className="text-sm text-negative">{error}</span> : <LoaderSpinner />}
       </div>
     )
   }

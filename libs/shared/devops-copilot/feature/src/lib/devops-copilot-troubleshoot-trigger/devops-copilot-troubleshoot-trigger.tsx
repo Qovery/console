@@ -33,7 +33,7 @@ export function DevopsCopilotTroubleshootTrigger({
       content={
         <div className="flex items-center gap-1.5" onClick={openTroubleshoot}>
           <Icon iconName="sparkles" iconStyle="solid" className="text-brand" />
-          <span className="text-ssm font-thin">Ask AI Copilot for diagnostic</span>
+          <span className="text-ssm">Ask for diagnostic</span>
           <Button
             size="xs"
             variant="surface"
