@@ -1,8 +1,10 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { Suspense, useEffect, useLayoutEffect, useRef } from 'react'
+import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useServiceSummary } from '@qovery/domains/services/feature'
+import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
+import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { ErrorBoundary, Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
@@ -443,6 +445,8 @@ function OrganizationRoute() {
   const location = useLocation()
   const { organizationId = '' } = useParams({ strict: false })
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
+  const sendMessageRef = useRef<((message: string, createNewChat?: boolean) => void) | null>(null)
 
   // Keep group-scoped flags aligned with the active organization
   useEffect(() => {
@@ -463,31 +467,51 @@ function OrganizationRoute() {
   }, [location.pathname])
 
   if (bypassLayout) {
-    return <Outlet />
+    return (
+      <DevopsCopilotContext.Provider
+        value={{
+          devopsCopilotOpen,
+          setDevopsCopilotOpen,
+          sendMessageRef,
+        }}
+      >
+        <Outlet />
+        <DevopsCopilotTrigger />
+      </DevopsCopilotContext.Provider>
+    )
   }
 
   return (
-    <div className="flex h-dvh w-full flex-col bg-background">
-      {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
-      <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-auto">
-        <ErrorBoundary>
-          <Header />
+    <DevopsCopilotContext.Provider
+      value={{
+        devopsCopilotOpen,
+        setDevopsCopilotOpen,
+        sendMessageRef,
+      }}
+    >
+      <div className="flex h-dvh w-full flex-col bg-background">
+        {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
+        <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-auto">
+          <ErrorBoundary>
+            <Header />
 
-          <Suspense fallback={<MainLoader />}>
-            <>
-              <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
-                <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
-                  {navigationContext && <NavigationBar context={navigationContext} />}
-                </Navbar.Root>
-              </div>
+            <Suspense fallback={<MainLoader />}>
+              <>
+                <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
+                  <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
+                    {navigationContext && <NavigationBar context={navigationContext} />}
+                  </Navbar.Root>
+                </div>
 
-              <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>
-                <Outlet />
-              </div>
-            </>
-          </Suspense>
-        </ErrorBoundary>
+                <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>
+                  <Outlet />
+                </div>
+              </>
+            </Suspense>
+          </ErrorBoundary>
+        </div>
       </div>
-    </div>
+      <DevopsCopilotTrigger />
+    </DevopsCopilotContext.Provider>
   )
 }

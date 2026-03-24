@@ -6,6 +6,7 @@ import { useThread } from '../use-thread/use-thread'
 interface UseCurrentThreadOptions {
   organizationId: string
   threadId?: string
+  enabled?: boolean
 }
 
 interface UseCurrentThreadResult {
@@ -23,7 +24,11 @@ type RawMessage = {
   vote_type?: 'upvote' | 'downvote'
 }
 
-export function useThreadState({ organizationId, threadId }: UseCurrentThreadOptions): UseCurrentThreadResult {
+export function useThreadState({
+  organizationId,
+  threadId,
+  enabled = true,
+}: UseCurrentThreadOptions): UseCurrentThreadResult {
   const [thread, setThread] = useState<Thread>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
@@ -34,7 +39,7 @@ export function useThreadState({ organizationId, threadId }: UseCurrentThreadOpt
     userId: userSub,
     organizationId,
     threadId: threadId || '',
-    enabled: !!threadId,
+    enabled: !!threadId && enabled,
   })
 
   useEffect(() => {

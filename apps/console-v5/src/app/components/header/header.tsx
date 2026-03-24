@@ -1,5 +1,7 @@
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { Suspense } from 'react'
 import { SpotlightTrigger } from '@qovery/pages/layout'
+import { DevopsCopilotButton } from '@qovery/shared/devops-copilot/feature'
 import { LogoIcon } from '@qovery/shared/ui'
 import { Breadcrumbs } from './breadcrumbs/breadcrumbs'
 import { UserMenu } from './user-menu/user-menu'
@@ -18,6 +20,8 @@ export function Separator() {
 }
 
 export function Header() {
+  const isDevopsCopilotEnabled = useFeatureFlagVariantKey('devops-copilot')
+
   return (
     <header className="relative z-header w-full bg-background-secondary py-4 pl-3 pr-4">
       <div className="flex items-center gap-4">
@@ -28,6 +32,9 @@ export function Header() {
             <Breadcrumbs />
             <div className="ml-auto flex items-center gap-3">
               <SpotlightTrigger />
+              {isDevopsCopilotEnabled && (
+                <DevopsCopilotButton compact showBeta={false} showShortcut={false} className="min-w-[288px]" />
+              )}
               <UserMenu />
             </div>
           </>

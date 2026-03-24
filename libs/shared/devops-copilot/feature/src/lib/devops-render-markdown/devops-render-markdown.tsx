@@ -49,7 +49,7 @@ export const RenderMarkdown: FC<Props> = ({ children, ...props }) => (
           target="_blank"
           rel="noopener noreferrer"
           title={typeof children === 'string' ? children : undefined}
-          className="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
+          className="text-brand transition-colors hover:underline"
           {...props}
         />
       ),
@@ -59,17 +59,17 @@ export const RenderMarkdown: FC<Props> = ({ children, ...props }) => (
         return (
           <div className="relative my-4">
             <pre
-              className="w-full whitespace-pre-wrap rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
+              className="w-full whitespace-pre-wrap rounded bg-surface-neutral-subtle p-4 font-code text-ssm"
               {...props}
             >
               {children}
             </pre>
             {typeof codeContent === 'string' && (
-              <div className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-md border border-neutral-300 bg-white p-1 shadow-md dark:border-neutral-600 dark:bg-neutral-900">
+              <div className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-md border border-neutral bg-background p-1 shadow-md">
                 <CopyToClipboardButtonIcon
                   content={codeContent}
                   tooltipContent="Copy code"
-                  className="text-neutral-400 hover:text-neutral-600 dark:text-white"
+                  className="text-neutral-subtle hover:text-neutral"
                 />
               </div>
             )}
@@ -86,7 +86,7 @@ export const RenderMarkdown: FC<Props> = ({ children, ...props }) => (
         if (isInline) {
           return (
             <code
-              className="rounded border border-yellow-200 bg-yellow-50 px-1 py-0.5 font-mono text-[13px] text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900 dark:text-yellow-200"
+              className="rounded border border-brand-subtle bg-surface-brand-subtle px-1 py-0.5 font-mono text-[13px] text-brand"
               {...props}
             >
               {children}
@@ -120,24 +120,18 @@ export const RenderMarkdown: FC<Props> = ({ children, ...props }) => (
         )
       },
       blockquote: ({ node, ...props }) => (
-        <blockquote className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600" {...props} />
+        <blockquote className="my-4 border-l-4 border-neutral pl-4 italic text-neutral-subtle" {...props} />
       ),
       table: ({ node, ...props }) => (
         <div className="my-6 w-full overflow-x-auto">
           <table className="w-full border-collapse text-sm" {...props} />
         </div>
       ),
-      thead: ({ node, ...props }) => <thead className="bg-neutral-100 dark:bg-neutral-700" {...props} />,
-      tbody: ({ node, ...props }) => (
-        <tbody className="divide-y divide-neutral-200 dark:divide-neutral-600" {...props} />
-      ),
-      tr: ({ node, ...props }) => <tr className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50" {...props} />,
-      th: ({ node, ...props }) => (
-        <th className="border border-neutral-200 px-4 py-2 text-left font-medium dark:border-neutral-600" {...props} />
-      ),
-      td: ({ node, ...props }) => (
-        <td className="border border-neutral-200 px-4 py-2 dark:border-neutral-600" {...props} />
-      ),
+      thead: ({ node, ...props }) => <thead className="bg-surface-neutral-subtle" {...props} />,
+      tbody: ({ node, ...props }) => <tbody className="divide-y divide-neutral" {...props} />,
+      tr: ({ node, ...props }) => <tr className="hover:bg-surface-neutral-subtle" {...props} />,
+      th: ({ node, ...props }) => <th className="border border-neutral px-4 py-2 text-left font-medium" {...props} />,
+      td: ({ node, ...props }) => <td className="border border-neutral px-4 py-2" {...props} />,
     }}
     {...props}
   >

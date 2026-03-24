@@ -10,21 +10,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
-import posthog from 'posthog-js'
-import {
-  type DeploymentHistoryService,
-  type DeploymentHistoryTriggerAction,
-  type Environment,
-  OrganizationEventOrigin,
-  type ServiceSubActionEnum,
-} from 'qovery-typescript-axios'
-import { useCallback, useContext, useMemo, useState } from 'react'
+import { type DeploymentHistoryService, type Environment, OrganizationEventOrigin } from 'qovery-typescript-axios'
+import { useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
-import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
+import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
-  ActionTriggerStatusChip,
   Button,
   CopyToClipboard,
   DeploymentAction,
@@ -40,7 +31,7 @@ import {
   truncateText,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { dateFullFormat, formatDuration, formatInTimeZone } from '@qovery/shared/util-dates'
+import { dateFullFormat, formatDuration } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCancelDeploymentQueueService } from '../hooks/use-cancel-deployment-queue-service/use-cancel-deployment-queue-service'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
@@ -59,18 +50,6 @@ export interface ServiceDeploymentListProps {
 
 export const isDeploymentHistory = (data: unknown): data is DeploymentHistoryService => {
   return typeof data === 'object' && data !== null && 'status' in data && 'details' in data
-}
-
-const formatTriggerAction = (
-  actionTrigger: DeploymentHistoryTriggerAction | Exclude<ServiceSubActionEnum, 'NONE'> | undefined
-) => {
-  return match(actionTrigger)
-    .with('TERRAFORM_PLAN_ONLY', () => 'Plan')
-    .with('TERRAFORM_PLAN_AND_APPLY', () => 'Plan and apply')
-    .with('TERRAFORM_MIGRATE_STATE', () => 'Migrate state')
-    .with('TERRAFORM_FORCE_UNLOCK_STATE', () => 'Force unlock')
-    .with('TERRAFORM_DESTROY', () => 'Destroy')
-    .otherwise(() => upperCaseFirstLetter(actionTrigger ?? ''))
 }
 
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
@@ -95,7 +74,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
     serviceId,
   })
   const { openModalConfirmation } = useModalConfirmation()
-  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
 
   const [sorting, setSorting] = useState<SortingState>([])
 
@@ -245,74 +223,24 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
           return match(data)
             .with(P.when(isDeploymentHistory), (d) => {
               const actionStatus = d.status_details?.status
+              const executionId = isDeploymentHistory(data) ? data.identifier.execution_id : undefined
 
               return (
-                <div className="flex items-center gap-4">
-                  <ActionTriggerStatusChip
-                    size="md"
-                    status={actionStatus}
-                    triggerAction={triggerAction}
-                    statusLink={match(actionStatus)
-                      .with(
-                        'ERROR',
-                        () =>
-                          ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-                          ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id : undefined)
-                      )
-                      .otherwise(() => undefined)}
-                  />
-                  <div className="flex flex-col gap-1">
-                    <span className="font-medium text-neutral-400">{formatTriggerAction(triggerAction)}</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-ssm text-neutral-350">{upperCaseFirstLetter(actionStatus)}</span>
-                      {actionStatus === 'ERROR' && (
-                        <Tooltip
-                          classNameContent="rounded-full"
-                          side="bottom"
-                          content={
-                            <div
-                              className="flex cursor-pointer items-center gap-1.5"
-                              onClick={() => {
-                                const executionId = isDeploymentHistory(data) ? data.identifier.execution_id : undefined
-                                posthog.capture('ai-copilot-troubleshoot-triggered', {
-                                  source: 'service-deployment-list',
-                                  deployment_id: executionId,
-                                })
-                                const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
-                                setDevopsCopilotOpen(true)
-                                sendMessageRef?.current?.(message)
-                              }}
-                            >
-                              <Icon iconName="sparkles" iconStyle="solid" className="text-brand-300" />
-                              <span className="text-sm font-thin">Ask AI Copilot for diagnostic</span>
-                              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white">
-                                <Icon iconName="arrow-right" className="text-neutral-400" />
-                              </div>
-                            </div>
-                          }
-                        >
-                          <div
-                            onClick={() => {
-                              const executionId = isDeploymentHistory(data) ? data.identifier.execution_id : undefined
-                              posthog.capture('ai-copilot-troubleshoot-triggered', {
-                                source: 'service-deployment-list',
-                                deployment_id: executionId,
-                              })
-                              const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
-                              setDevopsCopilotOpen(true)
-                              sendMessageRef?.current?.(message)
-                            }}
-                            className="group cursor-pointer"
-                          >
-                            <Icon
-                              iconName="sparkles"
-                              iconStyle="solid"
-                              className="text-neutral-350 transition-colors group-hover:text-brand-500"
-                            />
-                          </div>
-                        </Tooltip>
-                      )}
-                    </div>
+                <div className="flex items-center justify-between gap-4">
+                  <DeploymentAction status={triggerAction} />
+                  <div className="flex items-center gap-2">
+                    {actionStatus === 'ERROR' && (
+                      <DevopsCopilotTroubleshootTrigger
+                        source="service-deployment-list"
+                        deploymentId={executionId}
+                        message={
+                          executionId
+                            ? `Why did my deployment fail? (execution id: ${executionId})`
+                            : 'Why did my deployment fail?'
+                        }
+                      />
+                    )}
+                    <StatusChip status={actionStatus} />
                   </div>
                 </div>
               )

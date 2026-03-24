@@ -58,15 +58,15 @@ export const DevopsCopilotHistory = ({
 
     return (
       <div className="mb-4">
-        <div className="p-2 text-xs font-medium text-neutral-500 dark:text-neutral-300">{title}</div>
+        <div className="p-2 text-xs font-medium text-neutral-subtle">{title}</div>
         {threads.map((thread) => (
           <Tooltip key={thread.id} side="right" content={thread.title} delayDuration={400} classNameContent="z-10">
             <div
               onClick={() => setThreadId(thread.id)}
               className={clsx(
-                'cursor-pointer rounded-md p-2 text-sm transition-colors hover:bg-brand-50 dark:text-neutral-50 dark:hover:bg-neutral-400',
+                'cursor-pointer rounded-md p-2 text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle',
                 {
-                  'bg-brand-50 dark:bg-neutral-400': threadId === thread.id,
+                  'bg-surface-brand-subtle text-brand': threadId === thread.id,
                 }
               )}
             >
@@ -81,7 +81,7 @@ export const DevopsCopilotHistory = ({
   if (isLoading && threads.length === 0) {
     return (
       <div className="flex h-full w-80 items-center justify-center">
-        <div className="text-sm text-neutral-500">
+        <div className="text-sm text-neutral-subtle">
           <LoaderSpinner className="h-6 w-6" />
         </div>
       </div>
@@ -91,7 +91,7 @@ export const DevopsCopilotHistory = ({
   if (error) {
     return (
       <div className="flex h-full w-80 items-center justify-center">
-        <div className="text-sm text-red-500">{error}</div>
+        <div className="text-sm text-negative">{error}</div>
       </div>
     )
   }
@@ -99,16 +99,16 @@ export const DevopsCopilotHistory = ({
   const groupedThreads = groupThreadsByTimeAgo(threads)
 
   return (
-    <div className="flex h-full w-80 flex-col justify-between border-r border-neutral-200 dark:border-neutral-500">
-      <div className="flex h-[45px] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 dark:border-neutral-500">
+    <div className="flex h-full w-80 flex-col justify-between border-r border-neutral">
+      <div className="flex h-[45px] justify-between border-b border-neutral py-2 pl-4 pr-2">
         <div className="flex w-full items-center justify-between font-bold">
-          <span className="text-sm text-neutral-500 dark:text-white">History</span>
+          <span className="text-sm text-neutral">History</span>
           <Tooltip side="bottom" content="New chat" delayDuration={400} classNameContent="z-10">
             <span>
               <Button
                 type="button"
                 variant="plain"
-                className="text-neutral-500 dark:text-white"
+                className="text-neutral-subtle hover:text-neutral"
                 onClick={() => setThreadId(undefined)}
               >
                 <Icon iconName="pen-to-square" iconStyle="regular" />

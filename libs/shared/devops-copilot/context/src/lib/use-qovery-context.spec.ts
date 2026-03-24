@@ -1,53 +1,28 @@
-import { useMatch, useParams } from 'react-router-dom'
-import { useCluster } from '@qovery/domains/clusters/feature'
-import { useEnvironment } from '@qovery/domains/environments/feature'
-import { useOrganization } from '@qovery/domains/organizations/feature'
-import { useProject } from '@qovery/domains/projects/feature'
-import { useService } from '@qovery/domains/services/feature'
+import { useQuery } from '@tanstack/react-query'
 import { renderHook } from '@qovery/shared/util-tests'
 import { useQoveryContext } from './use-qovery-context'
 
-jest.mock('react-router-dom', () => ({
-  useParams: jest.fn(),
-  useMatch: jest.fn(),
-}))
-
-jest.mock('@qovery/domains/clusters/feature', () => ({
-  useCluster: jest.fn(),
-}))
-
-jest.mock('@qovery/domains/environments/feature', () => ({
-  useEnvironment: jest.fn(),
-}))
-
-jest.mock('@qovery/domains/organizations/feature', () => ({
-  useOrganization: jest.fn(),
-}))
-
-jest.mock('@qovery/domains/projects/feature', () => ({
-  useProject: jest.fn(),
-}))
-
-jest.mock('@qovery/domains/services/feature', () => ({
-  useService: jest.fn(),
+jest.mock('@tanstack/react-query', () => ({
+  useQuery: jest.fn(),
 }))
 
 describe('useQoveryContext', () => {
+  const useQueryMock = useQuery as jest.Mock
+
+  const setPathname = (pathname: string) => {
+    window.history.replaceState({}, '', pathname)
+  }
+
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useParams as jest.Mock).mockReturnValue({})
-    ;(useMatch as jest.Mock).mockReturnValue(null)
-    ;(useOrganization as jest.Mock).mockReturnValue({ data: undefined })
-    ;(useProject as jest.Mock).mockReturnValue({ data: undefined })
-    ;(useEnvironment as jest.Mock).mockReturnValue({ data: undefined })
-    ;(useCluster as jest.Mock).mockReturnValue({ data: undefined })
-    ;(useService as jest.Mock).mockReturnValue({ data: undefined })
+    setPathname('/')
+    useQueryMock.mockReturnValue({ data: undefined })
   })
 
   it('should return context with organization when organizationId is provided', () => {
     const mockOrg = { id: 'org-123', name: 'Test Org' }
-    ;(useParams as jest.Mock).mockReturnValue({ organizationId: 'org-123' })
-    ;(useOrganization as jest.Mock).mockReturnValue({ data: mockOrg })
+    setPathname('/organization/org-123/overview')
+    useQueryMock.mockReturnValueOnce({ data: mockOrg })
 
     const { result } = renderHook(() => useQoveryContext())
 
@@ -57,8 +32,12 @@ describe('useQoveryContext', () => {
 
   it('should return context with cluster when clusterId is provided', () => {
     const mockCluster = { id: 'cluster-123', name: 'Test Cluster' }
-    ;(useParams as jest.Mock).mockReturnValue({ organizationId: 'org-123', clusterId: 'cluster-123' })
-    ;(useCluster as jest.Mock).mockReturnValue({ data: mockCluster })
+    setPathname('/organization/org-123/cluster/cluster-123/overview')
+    useQueryMock
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: mockCluster })
 
     const { result } = renderHook(() => useQoveryContext())
 
@@ -68,11 +47,8 @@ describe('useQoveryContext', () => {
 
   it('should return context with project when projectId is provided', () => {
     const mockProject = { id: 'project-123', name: 'Test Project' }
-    ;(useParams as jest.Mock).mockReturnValue({
-      organizationId: 'org-123',
-      projectId: 'project-123',
-    })
-    ;(useProject as jest.Mock).mockReturnValue({ data: mockProject })
+    setPathname('/organization/org-123/project/project-123/overview')
+    useQueryMock.mockReturnValueOnce({ data: undefined }).mockReturnValueOnce({ data: mockProject })
 
     const { result } = renderHook(() => useQoveryContext())
 
@@ -82,11 +58,11 @@ describe('useQoveryContext', () => {
 
   it('should return context with environment when environmentId is provided', () => {
     const mockEnvironment = { id: 'env-123', name: 'Test Environment', cluster_id: 'cluster-123' }
-    ;(useParams as jest.Mock).mockReturnValue({
-      organizationId: 'org-123',
-      environmentId: 'env-123',
-    })
-    ;(useEnvironment as jest.Mock).mockReturnValue({ data: mockEnvironment })
+    setPathname('/organization/org-123/project/project-123/environment/env-123/overview')
+    useQueryMock
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: mockEnvironment })
 
     const { result } = renderHook(() => useQoveryContext())
 
@@ -96,12 +72,13 @@ describe('useQoveryContext', () => {
 
   it('should return context with service when applicationId is provided', () => {
     const mockService = { id: 'app-123', name: 'Test App' }
-    ;(useParams as jest.Mock).mockReturnValue({
-      organizationId: 'org-123',
-      environmentId: 'env-123',
-      applicationId: 'app-123',
-    })
-    ;(useService as jest.Mock).mockReturnValue({ data: mockService })
+    setPathname('/organization/org-123/project/project-123/environment/env-123/application/app-123/general')
+    useQueryMock
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: mockService })
 
     const { result } = renderHook(() => useQoveryContext())
 
@@ -112,13 +89,13 @@ describe('useQoveryContext', () => {
   it('should prioritize service over environment in current', () => {
     const mockService = { id: 'app-123', name: 'Test App' }
     const mockEnvironment = { id: 'env-123', name: 'Test Environment', cluster_id: 'cluster-123' }
-    ;(useParams as jest.Mock).mockReturnValue({
-      organizationId: 'org-123',
-      environmentId: 'env-123',
-      applicationId: 'app-123',
-    })
-    ;(useService as jest.Mock).mockReturnValue({ data: mockService })
-    ;(useEnvironment as jest.Mock).mockReturnValue({ data: mockEnvironment })
+    setPathname('/organization/org-123/project/project-123/environment/env-123/service/app-123/overview')
+    useQueryMock
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: mockEnvironment })
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: mockService })
 
     const { result } = renderHook(() => useQoveryContext())
 
@@ -126,8 +103,7 @@ describe('useQoveryContext', () => {
   })
 
   it('should return undefined current when no entities are available', () => {
-    const mockUseParams = useParams as jest.Mock
-    mockUseParams.mockReturnValue({})
+    setPathname('/')
 
     const { result } = renderHook(() => useQoveryContext())
 
@@ -144,13 +120,15 @@ describe('useQoveryContext', () => {
 
   it('should include deployment info when on deployment logs page', () => {
     const mockService = { id: 'app-123', name: 'Test App' }
-    ;(useParams as jest.Mock).mockReturnValue({
-      organizationId: 'org-123',
-      environmentId: 'env-123',
-      applicationId: 'app-123',
-    })
-    ;(useService as jest.Mock).mockReturnValue({ data: mockService })
-    ;(useMatch as jest.Mock).mockReturnValueOnce(null).mockReturnValueOnce({ params: { versionId: 'version-123' } })
+    setPathname(
+      '/organization/org-123/project/project-123/environment/env-123/service/app-123/deployments/logs/version-123'
+    )
+    useQueryMock
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: mockService })
 
     const { result } = renderHook(() => useQoveryContext())
 
