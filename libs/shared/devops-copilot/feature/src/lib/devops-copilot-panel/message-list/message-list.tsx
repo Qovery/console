@@ -15,8 +15,6 @@ export interface MessageListProps {
   scrollAreaRef: RefObject<HTMLDivElement>
   expand: boolean
   thread: Message[]
-  docLinks: Array<{ label: string; link: string }>
-  isCopilotEnabled: boolean
   onSuggestionClick: (label: string) => void
   isLoading: boolean
   streamingMessage: string
@@ -36,8 +34,6 @@ export function MessageList({
   scrollAreaRef,
   expand,
   thread,
-  docLinks,
-  isCopilotEnabled,
   onSuggestionClick,
   isLoading,
   streamingMessage,
@@ -72,18 +68,13 @@ export function MessageList({
         })
       )}
     >
-      <EmptyState
-        docLinks={docLinks}
-        expand={expand}
-        onSuggestionClick={onSuggestionClick}
-        threadLength={thread.length}
-      />
+      <EmptyState expand={expand} onSuggestionClick={onSuggestionClick} threadLength={thread.length} />
       {thread.map((message: Message) => {
         return match(message.owner)
           .with('user', () => (
             <div
               key={message.id}
-              className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-brand-50 px-5 py-2.5 text-sm dark:text-neutral-500"
+              className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-surface-brand-subtle px-5 py-2.5 text-sm text-neutral"
             >
               <div className="whitespace-pre-wrap">{message.text}</div>
             </div>

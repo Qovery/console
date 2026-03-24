@@ -12,16 +12,15 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
-import posthog from 'posthog-js'
 import {
   type DeploymentHistoryEnvironmentV2,
   OrganizationEventOrigin,
   type QueuedDeploymentRequestWithStages,
   StateEnum,
 } from 'qovery-typescript-axios'
-import { Fragment, useCallback, useContext, useMemo, useState } from 'react'
+import { Fragment, useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
-import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
+import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
@@ -82,7 +81,6 @@ export function EnvironmentDeploymentList() {
   })
 
   const { openModalConfirmation } = useModalConfirmation()
-  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
 
   const [sorting, setSorting] = useState<SortingState>([])
 
@@ -267,52 +265,16 @@ export function EnvironmentDeploymentList() {
               return (
                 <div className="flex items-center justify-between gap-4">
                   <DeploymentAction status={trigger_action} />
-                  <StatusChip status={action_status} />
-                  {action_status === 'ERROR' && (
-                    <Tooltip
-                      classNameContent="rounded-full"
-                      side="bottom"
-                      content={
-                        <div
-                          className="flex cursor-pointer items-center gap-1.5"
-                          onClick={() => {
-                            posthog.capture('ai-copilot-troubleshoot-triggered', {
-                              source: 'environment-deployment-list',
-                              deployment_id: data.identifier.execution_id,
-                            })
-                            const message = `Why did my deployment fail? (deployment id: ${data.identifier.execution_id})`
-                            setDevopsCopilotOpen(true)
-                            sendMessageRef?.current?.(message)
-                          }}
-                        >
-                          <Icon iconName="sparkles" iconStyle="solid" className="text-brand" />
-                          <span className="text-sm font-thin">Ask AI Copilot for diagnostic</span>
-                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-neutral-component">
-                            <Icon iconName="arrow-right" className="text-neutral-subtle" />
-                          </div>
-                        </div>
-                      }
-                    >
-                      <div
-                        onClick={() => {
-                          posthog.capture('ai-copilot-troubleshoot-triggered', {
-                            source: 'environment-deployment-list',
-                            deployment_id: data.identifier.execution_id,
-                          })
-                          const message = `Why did my deployment fail? (deployment id: ${data.identifier.execution_id})`
-                          setDevopsCopilotOpen(true)
-                          sendMessageRef?.current?.(message)
-                        }}
-                        className="group cursor-pointer"
-                      >
-                        <Icon
-                          iconName="sparkles"
-                          iconStyle="solid"
-                          className="text-neutral-subtle transition-colors group-hover:text-brand"
-                        />
-                      </div>
-                    </Tooltip>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {action_status === 'ERROR' && (
+                      <DevopsCopilotTroubleshootTrigger
+                        source="environment-deployment-list"
+                        deploymentId={data.identifier.execution_id}
+                        message={`Why did my deployment fail? (execution id: ${data.identifier.execution_id})`}
+                      />
+                    )}
+                    <StatusChip status={action_status} />
+                  </div>
                 </div>
               )
             })

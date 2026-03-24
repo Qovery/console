@@ -1,4 +1,5 @@
 export * from './lib/devops-copilot-trigger/devops-copilot-trigger'
+export * from './lib/devops-copilot-troubleshoot-trigger/devops-copilot-troubleshoot-trigger'
 export * from './lib/devops-copilot-context/devops-copilot-context'
 export * from './lib/devops-copilot-button/devops-copilot-button'
 export * from './lib/devops-copilot-panel/devops-copilot-panel'

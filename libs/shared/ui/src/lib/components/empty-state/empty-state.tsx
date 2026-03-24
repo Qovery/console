@@ -4,10 +4,10 @@ import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
 
 export interface EmptyStateProps extends PropsWithChildren {
-  title: string
+  title: ReactNode
   icon?: IconName | ReactNode
   iconStyle?: IconStyle
-  description?: string
+  description?: ReactNode
   className?: string
 }
 
