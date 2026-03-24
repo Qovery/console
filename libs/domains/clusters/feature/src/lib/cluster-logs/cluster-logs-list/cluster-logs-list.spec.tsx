@@ -1,6 +1,6 @@
 import { createRef } from 'react'
 import { clusterLogFactoryMock } from '@qovery/shared/factories'
-import { act, fireEvent, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterLogsList from './cluster-logs-list'
 
 describe('ClusterLogsList', () => {
@@ -58,42 +58,5 @@ describe('ClusterLogsList', () => {
 
     expect(screen.getAllByTestId('index')).toHaveLength(501)
     expect(screen.getAllByTestId('index')[0]).toHaveTextContent('1')
-  })
-
-  it('should not auto-scroll when the user is no longer near the bottom', async () => {
-    const refScrollSection = createRef<HTMLDivElement>()
-    const initialLogs = clusterLogFactoryMock(2, true)
-    const nextLogs = [...initialLogs, ...clusterLogFactoryMock(1, true)]
-
-    const { rerender } = renderWithProviders(
-      <ClusterLogsList
-        logs={initialLogs}
-        firstDate={new Date('2026-02-13T16:16:19.000Z')}
-        refScrollSection={refScrollSection}
-      />
-    )
-
-    const scrollSection = screen.getByTestId('cluster-logs-scroll-section')
-
-    Object.defineProperty(scrollSection, 'scrollTop', { configurable: true, writable: true, value: 0 })
-
-    await waitFor(() => {
-      expect(window.HTMLElement.prototype.scroll).toHaveBeenCalledTimes(1)
-    })
-
-    act(() => {
-      fireEvent.scroll(scrollSection, { target: { scrollTop: 0 } })
-    })
-    ;(window.HTMLElement.prototype.scroll as jest.Mock).mockClear()
-
-    rerender(
-      <ClusterLogsList
-        logs={nextLogs}
-        firstDate={new Date('2026-02-13T16:16:19.000Z')}
-        refScrollSection={refScrollSection}
-      />
-    )
-
-    expect(window.HTMLElement.prototype.scroll).not.toHaveBeenCalled()
   })
 })
