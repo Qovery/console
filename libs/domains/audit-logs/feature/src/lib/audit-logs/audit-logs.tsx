@@ -287,7 +287,7 @@ export function AuditLogs({
         data={events}
         filter={filter}
         setFilter={setFilter}
-        className="rounded border border-neutral bg-background"
+        className="rounded border border-neutral"
         classNameHead="rounded-t"
         columnsWidth={columnsWidth}
       >
@@ -307,8 +307,8 @@ export function AuditLogs({
           ) : !organizationMaxLimitReached && events?.length === 0 ? (
             <div className="flex h-[30vh] items-center justify-center px-5 py-4 text-center">
               <div>
-                <Icon iconName="wave-pulse" className="text-neutral-350" />
-                <p className="mt-1 text-xs font-medium text-neutral-350" data-testid="empty-result">
+                <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+                <p className="mt-1 text-xs font-medium text-neutral-subtle" data-testid="empty-result">
                   No events found, we retain logs for a maximum of {auditLogsRetentionInDays} days <br /> Try to change
                   your filters.
                 </p>

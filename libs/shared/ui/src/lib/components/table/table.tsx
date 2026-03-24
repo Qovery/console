@@ -98,11 +98,11 @@ export function Table<T>({
   }, [data, defaultSortingKey, isSorted, setDataSort])
 
   return (
-    <div className={twMerge('flex flex-col-reverse rounded-sm bg-background', className)}>
+    <div className={twMerge('flex flex-col-reverse rounded-sm bg-surface-neutral', className)}>
       <div className="grow">{children}</div>
       <div
         data-testid="table-container"
-        className={`sticky top-0 grid h-10 items-center border-b border-neutral bg-background ${classNameHead}`}
+        className={`sticky top-0 grid h-10 items-center border-b border-neutral bg-surface-neutral ${classNameHead}`}
         style={{ gridTemplateColumns: columnsWidth }}
       >
         {dataHead.map(
