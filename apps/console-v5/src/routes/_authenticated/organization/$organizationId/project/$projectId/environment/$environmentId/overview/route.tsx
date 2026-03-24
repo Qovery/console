@@ -13,7 +13,6 @@ import {
   useEnvironment,
 } from '@qovery/domains/environments/feature'
 import { ServiceList, useServices } from '@qovery/domains/services/feature'
-import { type AnyService } from '@qovery/domains/services/data-access'
 import { Button, EmptyState, Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
 
 const ARGOCD_HYBRID_REDEPLOY_TOOLTIP = 'Redeploy will only target Qovery created services and not ArgoCD imported ones.'
@@ -21,6 +20,7 @@ const ARGOCD_STATUS_SYNCED_THRESHOLD = 0.8
 const ARGOCD_OPERATION_LABEL = 'No operation detected'
 
 type ArgoCdServiceStatus = 'Synced' | 'Out of sync'
+type ServiceListRows = ReturnType<typeof useServices>['data']
 
 function seededRandom(seed: string): number {
   let hash = 2166136261
@@ -33,7 +33,7 @@ function seededRandom(seed: string): number {
   return (hash >>> 0) / 4294967295
 }
 
-function getArgoCdStatusByServiceId(services: AnyService[], seed: string): Record<string, ArgoCdServiceStatus> {
+function getArgoCdStatusByServiceId(services: ServiceListRows, seed: string): Record<string, ArgoCdServiceStatus> {
   return Object.fromEntries(
     services.map((service) => {
       const status =
@@ -43,7 +43,7 @@ function getArgoCdStatusByServiceId(services: AnyService[], seed: string): Recor
   ) as Record<string, ArgoCdServiceStatus>
 }
 
-function getArgoCdOperationByServiceId(services: AnyService[]): Record<string, string> {
+function getArgoCdOperationByServiceId(services: ServiceListRows): Record<string, string> {
   return Object.fromEntries(services.map((service) => [service.id, ARGOCD_OPERATION_LABEL])) as Record<string, string>
 }
 
@@ -64,7 +64,7 @@ function ArgoCdImportedServicesTable({
 }: {
   title: string
   environment: Environment
-  services: AnyService[]
+  services: ServiceListRows
   argocdStatusByServiceId: Record<string, ArgoCdServiceStatus>
   argocdOperationByServiceId: Record<string, string>
 }) {

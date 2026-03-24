@@ -14,7 +14,6 @@ import {
 import { type Environment } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   Badge,
   Checkbox,
@@ -40,11 +39,13 @@ import {
 } from './service-list-cells'
 
 const { Table } = TablePrimitives
+type ServiceListRows = ReturnType<typeof useServices>['data']
+type ServiceListRow = ServiceListRows[number]
 
 export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
   environment: Environment
   enableSelection?: boolean
-  servicesOverride?: AnyService[]
+  servicesOverride?: ServiceListRows
   argocdStatusByServiceId?: Record<string, 'Synced' | 'Out of sync'>
   argocdOperationByServiceId?: Record<string, string>
   argocdTargetVersionByServiceId?: Record<string, { primary: string; secondary: string }>
@@ -88,7 +89,7 @@ export function ServiceList({
     return map
   }, [deploymentStages])
 
-  const sourceServices = servicesOverride ?? services
+  const sourceServices: ServiceListRows = servicesOverride ?? services
   const hasSelectionColumn = enableSelection
 
   const sortedServices = useMemo(() => {
@@ -104,7 +105,7 @@ export function ServiceList({
     })
   }, [sourceServices, skippedServicesMap])
 
-  const columnHelper = createColumnHelper<(typeof services)[number]>()
+  const columnHelper = createColumnHelper<ServiceListRow>()
   const columns = useMemo(
     () => [
       ...(enableSelection
@@ -268,7 +269,7 @@ export function ServiceList({
     ]
   )
 
-  const table = useReactTable({
+  const table = useReactTable<ServiceListRow>({
     data: sortedServices,
     columns,
     state: {
