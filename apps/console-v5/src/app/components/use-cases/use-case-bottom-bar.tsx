@@ -63,7 +63,10 @@ export function UseCaseBottomBar() {
                   setSelection(activePageId, next)
                 }
               }}
-              className="min-w-0 flex-1 [&_.input-select__control]:!h-10 [&_.input-select__single-value]:!font-mono [&_.input-select__single-value]:!text-xs [&_.input-select__single-value]:!text-neutral [&_.react-select__dropdown-indicator]:!right-0"
+              className="min-w-0 flex-1 [&_.input-select__control]:!h-10 [&_.input-select__value-container]:!top-0 [&_.input-select__value-container]:!mt-0 [&_.input-select__value-container]:!h-10 [&_.input-select__value-container]:!items-center"
+              inputClassName="input--inline !min-h-0 !h-10 !border-0 !bg-transparent !px-0 !py-0 !hover:bg-transparent !outline-none focus-within:!outline-none !shadow-none"
+              valueClassName="text-xs font-mono text-neutral"
+              iconClassName="right-0"
             />
           </div>
         </div>
