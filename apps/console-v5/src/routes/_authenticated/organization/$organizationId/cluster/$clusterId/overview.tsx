@@ -1,6 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
-import { useContext } from 'react'
 import {
   ClusterCardNodeUsage,
   ClusterTableNode,
@@ -14,9 +13,6 @@ import {
   ClusterActions,
   ClusterAvatar,
   ClusterNeedRedeployFlag,
-  ClusterTerminal,
-  ClusterTerminalContext,
-  ClusterTerminalProvider,
   ClusterType,
   hasGpuInstance,
   useCluster,
@@ -29,15 +25,8 @@ import { IconEnum } from '@qovery/shared/enums'
 import { Badge, ErrorBoundary, Heading, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
-type OverviewSearch = {
-  hasShell?: boolean
-}
-
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/overview')({
   component: RouteComponent,
-  validateSearch: (search: Record<string, unknown>): OverviewSearch => ({
-    hasShell: search.hasShell === 'true' || search.hasShell === true,
-  }),
 })
 
 function TableSkeleton() {
@@ -107,8 +96,6 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
     refetchInterval: 4_000,
     enabled: Boolean(organizationId) && Boolean(clusterId),
   })
-
-  const { open } = useContext(ClusterTerminalContext)
 
   const isLoading = isClusterLoading || isClusterStatusLoading || !runningStatus || !clusterMetrics
 
@@ -245,7 +232,6 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
           </>
         )}
       </Section>
-      {open && cluster && <ClusterTerminal organizationId={cluster.organization.id} clusterId={cluster.id} />}
     </>
   )
 }
@@ -262,10 +248,8 @@ function RouteComponent() {
   }
 
   return (
-    <ClusterTerminalProvider>
-      <ErrorBoundary>
-        <ClusterOverview organizationId={organizationId} clusterId={clusterId} />
-      </ErrorBoundary>
-    </ClusterTerminalProvider>
+    <ErrorBoundary>
+      <ClusterOverview organizationId={organizationId} clusterId={clusterId} />
+    </ErrorBoundary>
   )
 }

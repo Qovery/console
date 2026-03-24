@@ -2,7 +2,7 @@ import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { Suspense, useEffect, useLayoutEffect, useRef } from 'react'
-import { useServiceType } from '@qovery/domains/services/feature'
+import { useServiceSummary } from '@qovery/domains/services/feature'
 import { ErrorBoundary, Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
@@ -79,6 +79,12 @@ const CLUSTER_TABS: NavigationTab[] = [
     label: 'Cluster Logs',
     iconName: 'scroll',
     routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
+  },
+  {
+    id: 'cloud-shell',
+    label: 'Cloud shell',
+    iconName: 'terminal',
+    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
   },
   {
     id: 'settings',
@@ -158,18 +164,25 @@ const SERVICE_TABS: NavigationTab[] = [
       '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
   },
   {
-    id: 'monitoring',
-    label: 'Monitoring',
-    iconName: 'chart-column',
-    routeId:
-      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
-  },
-  {
     id: 'service-logs',
     label: 'Service Logs',
     iconName: 'scroll',
     routeId:
       '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+  },
+  {
+    id: 'cloud-shell',
+    label: 'Cloud shell',
+    iconName: 'terminal',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell',
+  },
+  {
+    id: 'monitoring',
+    label: 'Monitoring',
+    iconName: 'chart-column',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
   },
   {
     id: 'variables',
@@ -246,7 +259,7 @@ function useNavigationContext(): NavigationContext | null {
   const location = useLocation()
   const params = useParams({ strict: false })
   const pathname = location.pathname
-  const { data: serviceType } = useServiceType({
+  const { data: service } = useServiceSummary({
     environmentId: params.environmentId,
     serviceId: params.serviceId,
     enabled: Boolean(params.environmentId) && Boolean(params.serviceId),
@@ -271,10 +284,16 @@ function useNavigationContext(): NavigationContext | null {
       }
 
       if (hasAllParams) {
-        // If the service is a database, remove the variables tab
+        const isDatabase = service?.serviceType === 'DATABASE'
+        const isManagedDatabase = isDatabase && service.mode === 'MANAGED'
+
+        // Managed databases should not have cloud shell access.
+        // Databases should not expose the variables tab.
         const tabs =
-          context.type === 'service' && serviceType === 'DATABASE'
-            ? context.tabs.filter((tab) => tab.id !== 'variables')
+          context.type === 'service'
+            ? context.tabs.filter(
+                (tab) => !(isDatabase && tab.id === 'variables') && !(isManagedDatabase && tab.id === 'cloud-shell')
+              )
             : context.tabs
 
         return {
@@ -372,6 +391,7 @@ function NavigationBar({ context }: { context: NavigationContext }) {
 const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/alerts',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
@@ -381,6 +401,7 @@ const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell',
 ]
 
 function useFullWidthLayout(): boolean {

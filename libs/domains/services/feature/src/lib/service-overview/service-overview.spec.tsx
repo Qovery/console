@@ -1,7 +1,6 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { ServiceTerminalContext } from '../service-terminal/service-terminal-provider'
 import { ServiceOverview } from './service-overview'
 
 const mockUseService = jest.fn()
@@ -58,10 +57,6 @@ jest.mock('./service-instance/service-instance', () => ({
 
 jest.mock('./service-last-deployment/service-last-deployment', () => ({
   ServiceLastDeployment: () => <div>service-last-deployment</div>,
-}))
-
-jest.mock('../service-terminal/service-terminal', () => ({
-  ServiceTerminal: ({ serviceId }: { serviceId: string }) => <div>{`service-terminal-${serviceId}`}</div>,
 }))
 
 jest.mock('../keda/scaled-object-status/scaled-object-status', () => ({
@@ -175,33 +170,5 @@ describe('ServiceOverview', () => {
     expect(screen.getByText('need-redeploy-flag')).toBeInTheDocument()
     expect(screen.getByText('service-last-deployment')).toBeInTheDocument()
     expect(screen.getByText('service-instance')).toBeInTheDocument()
-  })
-
-  it('renders the service terminal when the shell is open for a compatible service', () => {
-    mockUseService.mockReturnValue({
-      data: { id: 'service-1', serviceType: 'APPLICATION', autoscaling: { mode: 'FIXED' } },
-    })
-
-    renderWithProviders(
-      <ServiceTerminalContext.Provider value={{ open: true, setOpen: jest.fn() }}>
-        <ServiceOverview environment={environment} />
-      </ServiceTerminalContext.Provider>
-    )
-
-    expect(screen.getByText('service-terminal-service-1')).toBeInTheDocument()
-  })
-
-  it('does not render the service terminal for managed databases when the shell is open', () => {
-    mockUseService.mockReturnValue({
-      data: { id: 'service-db-1', serviceType: 'DATABASE', mode: DatabaseModeEnum.MANAGED },
-    })
-
-    renderWithProviders(
-      <ServiceTerminalContext.Provider value={{ open: true, setOpen: jest.fn() }}>
-        <ServiceOverview environment={environment} />
-      </ServiceTerminalContext.Provider>
-    )
-
-    expect(screen.queryByText('service-terminal-service-db-1')).not.toBeInTheDocument()
   })
 })

@@ -194,6 +194,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                               Overrides path
                             </label>
                             <input
+                              autocomplete="off"
                               class="input__value"
                               data-testid="input-text"
                               id="Overrides path"

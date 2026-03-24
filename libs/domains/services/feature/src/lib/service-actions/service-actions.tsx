@@ -684,13 +684,11 @@ function MenuOtherActions({
   state,
   environment,
   service,
-  shellAction,
   variant,
 }: {
   state: StateEnum
   environment: Environment
   service: AnyService
-  shellAction?: () => void
   variant?: ActionToolbarVariant
 }) {
   const {
@@ -835,11 +833,6 @@ function MenuOtherActions({
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        {variant === 'header' && shellAction && (
-          <DropdownMenu.Item icon={<Icon iconName="terminal" />} onSelect={shellAction}>
-            Cloud shell
-          </DropdownMenu.Item>
-        )}
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
           <Link
             className="gap-0"
@@ -857,15 +850,6 @@ function MenuOtherActions({
         </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(copyContent)}>
           Copy identifiers
-        </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon iconName="gear" />} asChild>
-          <Link
-            className="gap-0"
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings"
-            params={{ organizationId, projectId, environmentId, serviceId: service.id }}
-          >
-            Open settings
-          </Link>
         </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => openServiceCloneModal()}>
           Clone
@@ -886,38 +870,17 @@ function MenuOtherActions({
 export function ServiceActions({
   environment,
   serviceId,
-  shellAction,
   variant = 'default',
 }: {
   environment: Environment
   serviceId: string
   variant?: ActionToolbarVariant
-  shellAction?: () => void
 }) {
-  const navigate = useNavigate()
   const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
 
   if (!service || !deploymentStatus)
     return <Skeleton height={variant === 'default' ? 36 : 28} width={variant === 'default' ? 184 : 67} />
-
-  const effectiveShellAction =
-    service.serviceType === 'DATABASE'
-      ? undefined
-      : shellAction ??
-        (() =>
-          navigate({
-            to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
-            params: {
-              organizationId: environment.organization.id,
-              projectId: environment.project.id,
-              environmentId: environment.id,
-              serviceId: service.id,
-            },
-            search: {
-              hasShell: true,
-            },
-          }))
 
   return (
     <div className={twMerge('flex items-center gap-1.5', variant === 'header' && 'flex-row-reverse gap-2')}>
@@ -956,7 +919,6 @@ export function ServiceActions({
           state={deploymentStatus.state}
           environment={environment}
           service={service}
-          shellAction={effectiveShellAction}
           variant={variant}
         />
       )}

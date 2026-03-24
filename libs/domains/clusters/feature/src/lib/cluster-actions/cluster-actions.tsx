@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from '@tanstack/react-router'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import {
   type Cluster,
   type ClusterStatus,
@@ -265,15 +265,6 @@ function MenuOtherActions({
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(cluster.id)}>
           Copy identifier
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon iconName="gear" />} asChild>
-          <Link
-            className="gap-0"
-            to="/organization/$organizationId/cluster/$clusterId/settings"
-            params={{ organizationId: cluster.organization.id, clusterId: cluster.id }}
-          >
-            Open settings
-          </Link>
-        </DropdownMenu.Item>
         {cluster.kubernetes !== 'SELF_MANAGED' && (
           <DropdownMenu.Item
             icon={<Icon iconName="download" />}
@@ -380,30 +371,6 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
       </Tooltip>
     ))
     .otherwise(() => <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} variant={variant} />)
-
-  const cloudShellButton = (
-    <Tooltip content="Qovery cloud shell">
-      <Button
-        aria-label="Qovery cloud shell"
-        color="neutral"
-        variant="outline"
-        size={variant === 'default' ? 'sm' : 'md'}
-        iconOnly
-        onClick={() =>
-          navigate({
-            to: '/organization/$organizationId/cluster/$clusterId/overview',
-            search: { hasShell: true },
-            params: {
-              organizationId: cluster.organization.id,
-              clusterId: cluster.id,
-            },
-          })
-        }
-      >
-        <Icon iconName="terminal" />
-      </Button>
-    </Tooltip>
-  )
   const logsButton =
     variant === 'card' && cluster.kubernetes !== 'SELF_MANAGED' ? (
       <Tooltip content="Logs">
@@ -433,14 +400,12 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
       {variant === 'header' ? (
         <>
           {primaryActionButton}
-          {cloudShellButton}
           <MenuOtherActions cluster={cluster} clusterStatus={clusterStatus} variant={variant} />
         </>
       ) : (
         <>
           {primaryActionButton}
           {logsButton}
-          {cloudShellButton}
           <MenuOtherActions cluster={cluster} clusterStatus={clusterStatus} variant={variant} />
         </>
       )}
