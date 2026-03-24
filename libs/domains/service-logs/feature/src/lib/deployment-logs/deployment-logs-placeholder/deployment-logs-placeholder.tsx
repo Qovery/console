@@ -175,9 +175,9 @@ export function DeploymentLogsPlaceholder({
   if (hideLogs && service && deploymentsByServiceId.length === 0 && outOfDateOrUpToDate) {
     return (
       <>
-        <p className="mb-1 text-neutral-300">No logs on this execution for {service.name}.</p>
+        <p className="mb-1 text-neutral">No logs on this execution for {service.name}.</p>
         {serviceDeploymentStatus !== ServiceDeploymentStatusEnum.NEVER_DEPLOYED && (
-          <p className="text-sm text-neutral-350">
+          <p className="text-sm text-neutral-subtle">
             This service was deployed more than 30 days ago and thus no deployment logs are available.
           </p>
         )}

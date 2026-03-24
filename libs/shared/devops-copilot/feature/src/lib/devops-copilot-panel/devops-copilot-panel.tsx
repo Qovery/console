@@ -322,13 +322,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   })
 
   return (
-    <Dialog.Root
-      open={true}
-      modal={expand}
-      onOpenChange={() => {
-        document.body.style.pointerEvents = 'initial'
-      }}
-    >
+    <Dialog.Root open={true} modal={expand}>
       <Dialog.Portal>
         {expand && (
           <Dialog.Overlay
@@ -341,17 +335,19 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
           ref={panelRef}
           className={twMerge(
             clsx(
-              'fixed bottom-2 right-2 z-10 flex overflow-hidden rounded-xl border border-neutral bg-background shadow-[0_16px_70px_rgba(0,0,0,0.2)]',
+              'fixed bottom-2 right-2 z-modal flex overflow-hidden rounded-xl border border-neutral bg-background shadow-[0_16px_70px_rgba(0,0,0,0.2)]',
               {
                 'left-4 top-4 animate-[scalein_0.22s_ease_both] opacity-0': expand,
                 'animate-slidein-up-sm-faded': !expand,
-                'border-2 border-brand-strong': !expand && isResizing,
+                '!outline-none !outline-2 !outline-brand-strong': !expand && isResizing,
               }
             )
           )}
           style={style}
         >
-          {!expand && <div className="absolute left-1 top-1 z-10 cursor-nw-resize p-1" onMouseDown={startResize} />}
+          {!expand && (
+            <div className="absolute left-1 top-1 z-dropdown cursor-nw-resize p-1" onMouseDown={startResize} />
+          )}
           {expand && (
             <DevopsCopilotHistory
               data={{

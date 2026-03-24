@@ -107,7 +107,7 @@ const EnvironmentLastDeploymentContent = () => {
         <Link
           to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId"
           params={{ organizationId, environmentId, deploymentId: lastDeployment.identifier.execution_id }}
-          className="flex rounded-lg border border-neutral bg-surface-neutral px-4 py-2 font-normal"
+          className="flex rounded-lg border border-neutral bg-surface-neutral px-4 py-2 font-normal transition-colors hover:bg-surface-neutral-subtle"
         >
           <div className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
             <div className="flex items-center justify-between gap-1.5">
