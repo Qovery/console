@@ -82,34 +82,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
         serviceId={serviceId}
         serviceStatus={serviceStatus}
         environmentStatus={environmentStatus}
-      >
-        {/* TODO new-nav: This path will need to be updated once we have the deployment logs route */}
-        {/*<Link
-          as="button"
-          className="gap-1.5"
-          variant="outline"
-          to={
-            // ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-            // DEPLOYMENT_LOGS_VERSION_URL(serviceId, serviceStatus.execution_id ?? '')
-            '/organization/$orgnizationId/project/4projectId/environment/$environmentId/logs/$logId/deployment-logs/$deploymentId'
-          }
-          params={{
-            organizationId,
-            projectId,
-            environmentId,
-            logId: '',
-            deploymentId: serviceStatus.execution_id ?? '',
-          }}
-        >
-          {match(service)
-            .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
-            .otherwise(() => true) ? (
-            <ServiceStateChip mode="deployment" environmentId={environment.id} serviceId={serviceId} />
-          ) : null}
-          Go to latest deployment
-          <Icon iconName="arrow-right" />
-        </Link>*/}
-      </HeaderLogs>
+      />
       <div className="flex w-full items-center justify-between gap-2 border-b border-neutral bg-background px-4 py-2.5">
         <div className="flex w-full items-center gap-2">
           <Button

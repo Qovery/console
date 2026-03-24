@@ -367,17 +367,21 @@ export function EnvironmentActionToolbar({ environment, variant = 'default' }: E
       {variant === 'default' && (
         <>
           <Tooltip content="Pipeline">
-            {/* TODO new-nav : Route not yet created */}
-            {/*<Link
+            <Link
               as="button"
-              to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
+              params={{
+                organizationId: environment.organization.id,
+                projectId: environment.project.id,
+                environmentId: environment.id,
+              }}
               className="w-7"
               size="xs"
               color="neutral"
               variant="outline"
             >
               <Icon iconName="timeline" />
-            </Link>*/}
+            </Link>
           </Tooltip>
           <MenuOtherActions environment={environment} state={deploymentStatus.state} />
         </>

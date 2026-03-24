@@ -9,8 +9,9 @@ import {
 import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
 import { type DeploymentService } from '@qovery/shared/interfaces'
-import { LoaderDots } from '@qovery/shared/ui'
-import { mergeDeploymentServices } from '@qovery/shared/util-js'
+import { Link, LoaderDots, StatusChip } from '@qovery/shared/ui'
+import { dateFullFormat } from '@qovery/shared/util-dates'
+import { mergeDeploymentServices, trimId } from '@qovery/shared/util-js'
 
 function ErrorIcon() {
   return (
@@ -86,15 +87,18 @@ function DeploymentHistoryPlaceholder({
           {deploymentsByServiceId.length > 0 ? (
             deploymentsByServiceId.map((deploymentHistory: DeploymentService) => (
               <div key={deploymentHistory.execution_id} className="flex items-center pb-2 last:pb-0">
-                {/* TODO new-nav : Route not yet created */}
-                {/*<Link
+                <Link
                   className={`flex w-full justify-between rounded bg-neutral-550 p-3 transition hover:bg-neutral-600 ${
                     versionId === deploymentHistory.execution_id ? 'bg-neutral-600' : ''
                   }`}
-                  to={
-                    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                    DEPLOYMENT_LOGS_VERSION_URL(deploymentHistory.identifier.service_id, deploymentHistory.execution_id)
-                  }
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                  params={{
+                    organizationId,
+                    projectId,
+                    environmentId,
+                    serviceId: deploymentHistory.identifier.service_id,
+                    executionId: deploymentHistory.execution_id,
+                  }}
                 >
                   <span className="flex">
                     <StatusChip className="relative top-[2px] mr-3" status={deploymentHistory.status} />
@@ -103,7 +107,7 @@ function DeploymentHistoryPlaceholder({
                   <span className="text-ssm text-neutral-300">
                     {dateFullFormat(deploymentHistory.auditing_data.created_at)}
                   </span>
-                </Link>*/}
+                </Link>
               </div>
             ))
           ) : (
