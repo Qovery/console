@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ListPreCheckLogs } from './list-pre-check-logs'
@@ -24,8 +25,9 @@ jest.mock('../hooks/use-pre-check-logs/use-pre-check-logs', () => {
   }
 })
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
   useParams: () => ({
     organizationId: '0',
     projectId: '1',
