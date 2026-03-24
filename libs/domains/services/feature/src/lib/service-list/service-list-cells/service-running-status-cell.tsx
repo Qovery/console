@@ -131,7 +131,7 @@ export function ServiceRunningStatusCell({
                       }}
                     >
                       <Icon iconName="sparkles" iconStyle="solid" className="text-brand" />
-                      <span className="text-sm font-thin">Ask AI Copilot for diagnostic</span>
+                      <span className="text-sm">Ask AI Copilot for diagnostic</span>
                       <div className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-neutral-component">
                         <Icon iconName="arrow-right" className="text-neutral-subtle" />
                       </div>
