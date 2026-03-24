@@ -19,6 +19,7 @@ import { useMasterCredentials } from '../../hooks/use-master-credentials/use-mas
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
 import { ServiceActions } from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
+import { ARGOCD_SERVICE_ICON_URI } from '../../service-icon/service-icon'
 import { ServiceLinksPopover } from '../../service-links-popover/service-links-popover'
 import { ServiceStateChip } from '../../service-state-chip/service-state-chip'
 
@@ -62,9 +63,18 @@ export interface ServiceHeaderProps {
   environment: Environment
   serviceId: string
   service: AnyService
+  isArgoCdService?: boolean
 }
 
-function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeaderProps) {
+function ArgoCdTag() {
+  return (
+    <span className="border-argocd bg-surface-argocd-subtle text-argocd inline-flex h-5 items-center justify-center rounded px-1 py-0.5 font-code text-xs font-bold uppercase leading-none retina:border-[0.5px]">
+      ARGOCD
+    </span>
+  )
+}
+
+function ServiceHeaderContent({ environment, serviceId, service, isArgoCdService = false }: ServiceHeaderProps) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: masterCredentials } = useMasterCredentials({ serviceId, serviceType: service?.serviceType })
 
@@ -102,6 +112,18 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
     toast(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
   }
 
+  const avatarService =
+    service.serviceType === 'JOB'
+      ? {
+          icon_uri: isArgoCdService ? ARGOCD_SERVICE_ICON_URI : service.icon_uri ?? '',
+          serviceType: 'JOB' as const,
+          job_type: service.job_type,
+        }
+      : {
+          icon_uri: isArgoCdService ? ARGOCD_SERVICE_ICON_URI : service.icon_uri ?? '',
+          serviceType: service.serviceType,
+        }
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
@@ -126,6 +148,12 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
             />
             <Heading>{service.name}</Heading>
             <ServiceStateChip className="ml-0.5" mode="running" environmentId={environment.id} serviceId={serviceId} />
+            {isArgoCdService && (
+              <>
+                <span className="mx-2 h-4 w-px bg-surface-neutral-component" />
+                <ArgoCdTag />
+              </>
+            )}
             <span className="mx-2 h-4 w-px bg-surface-neutral-component" />
             <Link
               to="/organization/$organizationId/cluster/$clusterId/overview"
@@ -136,7 +164,12 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
               <span className="group-hover:underline">{environment.cluster_name}</span>
             </Link>
           </div>
-          <ServiceActions environment={environment} serviceId={serviceId} variant="header" />
+          <ServiceActions
+            environment={environment}
+            serviceId={serviceId}
+            variant="header"
+            isArgoCdService={isArgoCdService}
+          />
         </div>
         {service.description && <p className="text-neutral-subtle">{service.description}</p>}
         <div className="mt-3 flex items-center gap-1">

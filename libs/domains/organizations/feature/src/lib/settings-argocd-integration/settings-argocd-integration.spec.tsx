@@ -32,6 +32,7 @@ describe('SettingsArgoCdIntegration', () => {
   })
 
   afterEach(() => {
+    jest.useRealTimers()
     jest.restoreAllMocks()
   })
 
@@ -93,5 +94,178 @@ describe('SettingsArgoCdIntegration', () => {
     expect(screen.getByTestId('edit-argocd-integration')).toBeDisabled()
     expect(screen.getByTestId('delete-argocd-integration')).toBeDisabled()
     expect(screen.getByTestId('argocd-cluster-link')).toHaveTextContent('undeletable_cluster')
+  })
+
+  it('should render loaded integration use case when forced by prop', () => {
+    renderWithProviders(<SettingsArgoCdIntegration useCaseId="loaded" />)
+
+    expect(screen.getByText('Linked clusters (3)')).toBeInTheDocument()
+    expect(screen.getByText('Unlinked clusters (2)')).toBeInTheDocument()
+    expect(screen.getByText('Connected')).toBeInTheDocument()
+    expect(screen.getByTestId('edit-argocd-integration')).not.toBeDisabled()
+    expect(screen.getByTestId('delete-argocd-integration')).not.toBeDisabled()
+  })
+
+  it('should render loaded single cluster use case when forced by prop', () => {
+    renderWithProviders(<SettingsArgoCdIntegration useCaseId="loaded-single-cluster" />)
+
+    expect(screen.queryByText('Linked clusters (3)')).not.toBeInTheDocument()
+    expect(screen.queryByText('Unlinked clusters (2)')).not.toBeInTheDocument()
+    expect(screen.getByText('AWS EKS Demo')).toBeInTheDocument()
+    expect(screen.getByText('Connected')).toBeInTheDocument()
+    expect(screen.getByTestId('open-associated-services-linked-aws')).toBeInTheDocument()
+    expect(screen.queryByTestId('link-unlinked-cluster-unlinked-kube-node')).not.toBeInTheDocument()
+  })
+
+  it('should open associated services modal when clicking the layer button', async () => {
+    const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration useCaseId="loaded" />)
+
+    await userEvent.click(screen.getByText('Linked clusters (3)'))
+    await userEvent.click(screen.getByTestId('open-associated-services-linked-aws'))
+
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.anything(),
+      })
+    )
+
+    const modalConfig = mockOpenModal.mock.calls[0][0]
+    expect(modalConfig.content.props.clusterName).toBe('AWS EKS Demo')
+    expect(modalConfig.content.props.associatedItemsCount).toBe(4)
+  })
+
+  it('should move an unlinked cluster to linked clusters when link modal is confirmed', async () => {
+    const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration useCaseId="loaded" />)
+
+    await userEvent.click(screen.getByText('Unlinked clusters (2)'))
+    await userEvent.click(screen.getByTestId('link-unlinked-cluster-unlinked-kube-node'))
+
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          width: 488,
+        }),
+      })
+    )
+
+    const modalConfig = mockOpenModal.mock.calls[0][0]
+    act(() => {
+      modalConfig.content.props.onClose({
+        clusterId: 'cluster-42',
+        clusterName: 'Qovery linked cluster',
+        clusterCloudProvider: 'AWS',
+        clusterType: 'Qovery managed',
+      })
+    })
+
+    expect(mockCloseModal).toHaveBeenCalled()
+    expect(screen.getByText('Linked clusters (4)')).toBeInTheDocument()
+    expect(screen.getByText('Unlinked clusters (1)')).toBeInTheDocument()
+    expect(screen.queryByTestId('link-unlinked-cluster-unlinked-kube-node')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('Linked clusters (4)'))
+    expect(screen.getByText('Qovery linked cluster')).toBeInTheDocument()
+    expect(screen.getByText('kube-node-lease')).toBeInTheDocument()
+  })
+
+  it('should move a linked cluster to unlinked clusters when unlink icon is clicked', async () => {
+    const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration useCaseId="loaded" />)
+
+    await userEvent.click(screen.getByText('Linked clusters (3)'))
+    await userEvent.click(screen.getByTestId('unlink-linked-cluster-linked-aws'))
+
+    expect(screen.getByText('Linked clusters (2)')).toBeInTheDocument()
+    expect(screen.getByText('Unlinked clusters (3)')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('Unlinked clusters (3)'))
+    expect(screen.getByText('kube-system')).toBeInTheDocument()
+  })
+
+  it('should hide unlinked clusters section when all unlinked clusters are linked', async () => {
+    const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration useCaseId="loaded" />)
+
+    await userEvent.click(screen.getByText('Unlinked clusters (2)'))
+    await userEvent.click(screen.getByTestId('link-unlinked-cluster-unlinked-kube-node'))
+    let modalConfig = mockOpenModal.mock.calls.at(-1)?.[0]
+    act(() => {
+      modalConfig.content.props.onClose({
+        clusterId: 'cluster-1',
+        clusterName: 'Cluster One',
+        clusterCloudProvider: 'AWS',
+        clusterType: 'Qovery managed',
+      })
+    })
+
+    await userEvent.click(screen.getByTestId('link-unlinked-cluster-unlinked-istio'))
+    modalConfig = mockOpenModal.mock.calls.at(-1)?.[0]
+    act(() => {
+      modalConfig.content.props.onClose({
+        clusterId: 'cluster-2',
+        clusterName: 'Cluster Two',
+        clusterCloudProvider: 'GCP',
+        clusterType: 'Self managed',
+      })
+    })
+
+    expect(screen.queryByText(/Unlinked clusters \(\d+\)/)).not.toBeInTheDocument()
+    expect(screen.getByText('Linked clusters (5)')).toBeInTheDocument()
+  })
+
+  it('should hide linked clusters section when all linked clusters are unlinked', async () => {
+    const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration useCaseId="loaded" />)
+
+    await userEvent.click(screen.getByText('Linked clusters (3)'))
+    await userEvent.click(screen.getByTestId('unlink-linked-cluster-linked-aws'))
+
+    await userEvent.click(screen.getByTestId('unlink-linked-cluster-linked-gitlab'))
+
+    await userEvent.click(screen.getByTestId('unlink-linked-cluster-linked-gcp'))
+
+    expect(screen.queryByText(/Linked clusters \(\d+\)/)).not.toBeInTheDocument()
+    expect(screen.getByText('Unlinked clusters (5)')).toBeInTheDocument()
+  })
+
+  it('should open delete modal and clear integration on confirm', async () => {
+    const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration useCaseId="loaded" />)
+
+    await userEvent.click(screen.getByTestId('delete-argocd-integration'))
+
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          width: 488,
+        }),
+      })
+    )
+
+    const modalConfig = mockOpenModal.mock.calls[0][0]
+    act(() => {
+      modalConfig.content.props.onSubmit()
+    })
+
+    expect(screen.getByText('No ArgoCD integration configured')).toBeInTheDocument()
+  })
+
+  it('should open edit connection modal with locked target cluster', async () => {
+    const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration useCaseId="loaded" />)
+
+    await userEvent.click(screen.getByTestId('edit-argocd-integration'))
+
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          width: 676,
+        }),
+      })
+    )
+
+    const modalConfig = mockOpenModal.mock.calls[0][0]
+    expect(modalConfig.content.props.isEdit).toBe(true)
+    expect(modalConfig.content.props.disableTargetClusterSelection).toBe(true)
+    expect(modalConfig.content.props.initialValues).toEqual({
+      targetCluster: 'cluster-id',
+      argoCdApiUrl: 'https://argocd.example.com/api',
+      accessToken: 'atc123xyz789uvw456opq',
+    })
   })
 })

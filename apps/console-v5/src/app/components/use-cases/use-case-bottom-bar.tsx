@@ -19,6 +19,10 @@ export function UseCaseBottomBar() {
       ? selectedFromState
       : useCaseOptions[0]?.id
 
+  if (useCaseOptions.length === 0) {
+    return null
+  }
+
   const branchLabel = GIT_BRANCH || 'unknown'
   const commitLabel = GIT_SHA ? GIT_SHA.slice(0, 7) : undefined
 
@@ -47,32 +51,23 @@ export function UseCaseBottomBar() {
           </div>
 
           <div className="flex h-10 min-w-0 flex-1 items-center gap-2 pl-4">
-            {useCaseOptions.length > 0 && resolvedSelection ? (
-              <>
-                <span className="text-xs font-semibold uppercase text-neutral-subtle">Use case</span>
-                <InputSelect
-                  options={useCaseOptions.map((option) => ({
-                    label: option.label,
-                    value: option.id,
-                  }))}
-                  value={resolvedSelection}
-                  onChange={(next) => {
-                    if (activePageId && typeof next === 'string') {
-                      setSelection(activePageId, next)
-                    }
-                  }}
-                  className="min-w-0 flex-1 [&_.input-select__control]:!h-10 [&_.input-select__value-container]:!top-0 [&_.input-select__value-container]:!mt-0 [&_.input-select__value-container]:!h-10 [&_.input-select__value-container]:!items-center"
-                  inputClassName="input--inline !min-h-0 !h-10 !border-0 !bg-transparent !px-0 !py-0 !hover:bg-transparent !outline-none focus-within:!outline-none !shadow-none"
-                  valueClassName="text-xs font-mono text-neutral"
-                  iconClassName="right-0"
-                />
-              </>
-            ) : (
-              <>
-                <span className="text-xs font-semibold uppercase text-neutral-subtle">Use case</span>
-                <span className="min-w-0 truncate font-mono text-xs text-neutral-subtle">No use case detected</span>
-              </>
-            )}
+            <span className="text-xs font-semibold uppercase text-neutral-subtle">Use case</span>
+            <InputSelect
+              options={useCaseOptions.map((option) => ({
+                label: option.label,
+                value: option.id,
+              }))}
+              value={resolvedSelection}
+              onChange={(next) => {
+                if (activePageId && typeof next === 'string') {
+                  setSelection(activePageId, next)
+                }
+              }}
+              className="min-w-0 flex-1 [&_.input-select__control]:!h-10 [&_.input-select__value-container]:!top-0 [&_.input-select__value-container]:!mt-0 [&_.input-select__value-container]:!h-10 [&_.input-select__value-container]:!items-center"
+              inputClassName="input--inline !min-h-0 !h-10 !border-0 !bg-transparent !px-0 !py-0 !hover:bg-transparent !outline-none focus-within:!outline-none !shadow-none"
+              valueClassName="text-xs font-mono text-neutral"
+              iconClassName="right-0"
+            />
           </div>
         </div>
       </div>

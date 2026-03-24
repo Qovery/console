@@ -1,16 +1,32 @@
 import { type Environment } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { AnimatedGradientText, Badge, Button, Icon, Link, Tooltip } from '@qovery/shared/ui'
+import { AnimatedGradientText, Badge, Button, DropdownMenu, Icon, Link, Tooltip } from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { formatCronExpression, pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import useDeploymentStatus from '../../hooks/use-deployment-status/use-deployment-status'
 import ServiceActions from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
+import { ARGOCD_SERVICE_ICON_URI } from '../../service-icon/service-icon'
 import ServiceLinksPopover from '../../service-links-popover/service-links-popover'
 import ServiceTemplateIndicator from '../../service-template-indicator/service-template-indicator'
 
-export function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId: service.id })
+export function ServiceNameCell({
+  service,
+  environment,
+  argocdOperationLabelOverride,
+}: {
+  service: AnyService
+  environment: Environment
+  argocdOperationLabelOverride?: string
+}) {
+  const navigate = useNavigate()
+  const [, copyToClipboard] = useCopyToClipboard()
+  const isArgoCdOverride = argocdOperationLabelOverride !== undefined
+  const { data: deploymentStatus } = useDeploymentStatus({
+    environmentId: isArgoCdOverride ? undefined : environment.id,
+    serviceId: isArgoCdOverride ? undefined : service.id,
+  })
   const deploymentRequestsCount = Number(deploymentStatus?.deployment_requests_count)
 
   const LinkDeploymentStatus = () => {
@@ -56,6 +72,93 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
         </button>
       ))
       .otherwise(() => null)
+  }
+
+  if (argocdOperationLabelOverride) {
+    const serviceAvatar = {
+      ...service,
+      icon_uri: ARGOCD_SERVICE_ICON_URI,
+    }
+
+    return (
+      <div className="flex items-center justify-between">
+        <span className="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral">
+          <ServiceTemplateIndicator service={service} size="sm">
+            <ServiceAvatar service={serviceAvatar} size="sm" border="solid" />
+          </ServiceTemplateIndicator>
+          <span className="flex min-w-0 shrink truncate pr-2">
+            <span className="truncate">{service.name}</span>
+          </span>
+        </span>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <Tooltip content="Restart">
+            <Button variant="outline" color="neutral" size="sm" iconOnly onClick={(e) => e.stopPropagation()}>
+              <Icon iconName="rotate-right" />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Logs">
+            <Link
+              as="button"
+              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+              params={{
+                organizationId: environment.organization.id,
+                projectId: environment.project.id,
+                environmentId: environment.id,
+                serviceId: service.id,
+              }}
+              color="neutral"
+              variant="outline"
+              size="sm"
+              iconOnly
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Icon iconName="scroll" />
+            </Link>
+          </Tooltip>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <Button variant="outline" color="neutral" size="sm" iconOnly onClick={(e) => e.stopPropagation()}>
+                <Icon iconName="ellipsis-v" />
+              </Button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content align="end" onClick={(e) => e.stopPropagation()}>
+              <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
+                <Link
+                  className="gap-0"
+                  to="/organization/$organizationId/audit-logs"
+                  params={{ organizationId: environment.organization.id }}
+                  search={{
+                    targetId: service.id,
+                    targetType: service.serviceType,
+                    projectId: environment.project.id,
+                    environmentId: environment.id,
+                  }}
+                >
+                  See audit logs
+                </Link>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(service.id)}>
+                Copy identifier
+              </DropdownMenu.Item>
+              <DropdownMenu.Item icon={<Icon iconName="gear" />} asChild>
+                <Link
+                  className="gap-0"
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings"
+                  params={{
+                    organizationId: environment.organization.id,
+                    projectId: environment.project.id,
+                    environmentId: environment.id,
+                    serviceId: service.id,
+                  }}
+                >
+                  See manifest
+                </Link>
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -485,4 +485,9 @@ describe('ServiceList', () => {
 
     mockDeploymentStagesData = undefined
   })
+
+  it('should hide selection checkboxes when selection is disabled', () => {
+    renderWithProviders(<ServiceList {...serviceListProps} enableSelection={false} />)
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+  })
 })

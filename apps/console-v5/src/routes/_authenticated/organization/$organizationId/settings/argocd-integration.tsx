@@ -6,6 +6,8 @@ const PAGE_ID = 'org-settings-argocd-integration'
 const USE_CASE_OPTIONS: { id: SettingsArgoCdIntegrationUseCase; label: string }[] = [
   { id: 'empty-state', label: 'Empty state' },
   { id: 'loading-integration', label: 'Importing' },
+  { id: 'loaded', label: 'Loaded' },
+  { id: 'loaded-single-cluster', label: 'Loaded (1 cluster)' },
 ]
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/settings/argocd-integration')({

@@ -7,6 +7,14 @@ import { ExternalLink, Icon, InputSelect, InputText, ModalCrud } from '@qovery/s
 export interface ConnectArgoCdModalProps {
   organizationId: string
   onClose: (response?: ConnectArgoCdModalResponse) => void
+  isEdit?: boolean
+  disableTargetClusterSelection?: boolean
+  initialValues?: Partial<ConnectArgoCdFormValues>
+  initialCluster?: {
+    id: string
+    name: string
+    cloudProvider?: string
+  }
 }
 
 interface ConnectArgoCdFormValues {
@@ -19,19 +27,28 @@ export interface ConnectArgoCdModalResponse {
   clusterId: string
   clusterName: string
   clusterCloudProvider?: string
+  argoCdApiUrl: string
+  accessToken: string
 }
 
 const ARGOCD_TOKEN_COMMAND = '$ argocd account generate-token'
 const ARGOCD_API_ENDPOINT_GUIDE_URL = 'https://argo-cd.readthedocs.io/'
 
-export function ConnectArgoCdModal({ organizationId, onClose }: ConnectArgoCdModalProps) {
+export function ConnectArgoCdModal({
+  organizationId,
+  onClose,
+  isEdit = false,
+  disableTargetClusterSelection = false,
+  initialValues,
+  initialCluster,
+}: ConnectArgoCdModalProps) {
   const [isConnecting, setIsConnecting] = useState(false)
   const methods = useForm<ConnectArgoCdFormValues>({
     mode: 'onChange',
     defaultValues: {
-      targetCluster: '',
-      argoCdApiUrl: '',
-      accessToken: '',
+      targetCluster: initialValues?.targetCluster ?? '',
+      argoCdApiUrl: initialValues?.argoCdApiUrl ?? '',
+      accessToken: initialValues?.accessToken ?? '',
     },
   })
 
@@ -40,14 +57,21 @@ export function ConnectArgoCdModal({ organizationId, onClose }: ConnectArgoCdMod
     enabled: !!organizationId,
   })
 
-  const clusterOptions = useMemo(
-    () =>
-      clusters.map((cluster) => ({
-        label: cluster.name,
-        value: cluster.id,
-      })),
-    [clusters]
-  )
+  const clusterOptions = useMemo(() => {
+    const options = clusters.map((cluster) => ({
+      label: cluster.name,
+      value: cluster.id,
+    }))
+
+    if (initialCluster && !options.some((option) => option.value === initialCluster.id)) {
+      options.unshift({
+        label: initialCluster.name,
+        value: initialCluster.id,
+      })
+    }
+
+    return options
+  }, [clusters, initialCluster])
 
   const onSubmit = methods.handleSubmit(async () => {
     setIsConnecting(true)
@@ -58,15 +82,19 @@ export function ConnectArgoCdModal({ organizationId, onClose }: ConnectArgoCdMod
     const selectedClusterId = methods.getValues('targetCluster')
     const selectedCluster = clusters.find((cluster) => cluster.id === selectedClusterId)
 
-    if (!selectedCluster) {
+    if (!selectedCluster && !initialCluster) {
       onClose()
       return
     }
 
+    const resolvedCluster = selectedCluster ?? initialCluster
+
     onClose({
-      clusterId: selectedCluster.id,
-      clusterName: selectedCluster.name,
-      clusterCloudProvider: selectedCluster.cloud_provider,
+      clusterId: resolvedCluster?.id ?? '',
+      clusterName: resolvedCluster?.name ?? '',
+      clusterCloudProvider: selectedCluster?.cloud_provider ?? initialCluster?.cloudProvider,
+      argoCdApiUrl: methods.getValues('argoCdApiUrl'),
+      accessToken: methods.getValues('accessToken'),
     })
   })
 
@@ -77,12 +105,13 @@ export function ConnectArgoCdModal({ organizationId, onClose }: ConnectArgoCdMod
   return (
     <FormProvider {...methods}>
       <ModalCrud
-        title="Connect ArgoCD with Qovery"
+        title={isEdit ? 'Edit ArgoCD connection' : 'Connect ArgoCD with Qovery'}
         description="Set up the connection between ArgoCD and Qovery so you can monitor all your applications in one place."
         onSubmit={onSubmit}
         onClose={onClose}
         loading={isConnecting}
-        submitLabel="Connect ArgoCD"
+        submitLabel={isEdit ? 'Update connection' : 'Connect ArgoCD'}
+        isEdit={isEdit}
         howItWorks={
           <>
             <p>
@@ -122,6 +151,7 @@ export function ConnectArgoCdModal({ organizationId, onClose }: ConnectArgoCdMod
                     value={field.value}
                     onChange={(value) => field.onChange(value)}
                     options={clusterOptions}
+                    disabled={disableTargetClusterSelection}
                     error={error?.message}
                     isLoading={isLoadingClusters}
                   />

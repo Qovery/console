@@ -10,7 +10,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { P, match } from 'ts-pattern'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { ExternalLink, Icon, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
+import { Callout, ExternalLink, Icon, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
 import { EnvironmentMode } from '../environment-mode/environment-mode'
 import { useCloneEnvironment } from '../hooks/use-clone-environment/use-clone-environment'
 import { useCreateEnvironment } from '../hooks/use-create-environment/use-create-environment'
@@ -19,6 +19,7 @@ export interface CreateCloneEnvironmentModalProps {
   projectId: string
   organizationId: string
   environmentToClone?: Environment
+  isArgoCdHybrid?: boolean
   onClose: () => void
   type?: EnvironmentModeEnum
 }
@@ -27,6 +28,7 @@ export function CreateCloneEnvironmentModal({
   projectId,
   organizationId,
   environmentToClone,
+  isArgoCdHybrid = false,
   onClose,
   type,
 }: CreateCloneEnvironmentModalProps) {
@@ -271,6 +273,14 @@ export function CreateCloneEnvironmentModal({
             />
           )}
         />
+        {environmentToClone && isArgoCdHybrid && (
+          <Callout.Root color="yellow" className="mb-3 items-center gap-3 p-3">
+            <Callout.Icon className="text-warning">
+              <Icon iconName="triangle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text className="text-warning">ArgoCD imported services will not be cloned.</Callout.Text>
+          </Callout.Root>
+        )}
       </ModalCrud>
     </FormProvider>
   )

@@ -15,6 +15,7 @@ import { ServiceOverviewSkeleton } from './service-overview-skeleton'
 
 export interface ServiceOverviewProps {
   environment?: Environment
+  isArgoCdService?: boolean
   hasNoMetrics?: boolean
   terraformResourcesSection?: ReactNode
   observabilityCallout?: ReactNode
@@ -22,6 +23,7 @@ export interface ServiceOverviewProps {
 
 function ServiceOverviewContent({
   environment,
+  isArgoCdService = false,
   hasNoMetrics = false,
   terraformResourcesSection,
   observabilityCallout,
@@ -72,7 +74,12 @@ function ServiceOverviewContent({
       <>
         <NeedRedeployFlag />
         <Section className="flex flex-1 grow flex-col gap-6 overflow-auto px-8 pb-8 pt-6">
-          <ServiceHeader environment={environment} serviceId={service.id} service={service} />
+          <ServiceHeader
+            environment={environment}
+            serviceId={service.id}
+            service={service}
+            isArgoCdService={isArgoCdService}
+          />
           {isDatabaseManaged ? (
             <div className="flex flex-col items-center gap-1 border border-neutral bg-surface-neutral-subtle py-10 text-sm text-neutral">
               <span className="font-medium">Metrics for managed databases are not available</span>
@@ -95,7 +102,12 @@ function ServiceOverviewContent({
       <div className="flex min-h-0 flex-1 grow flex-col gap-6 pb-24">
         <div className="flex shrink-0 flex-col gap-5 pb-8 pt-6 text-sm">
           <Section className="gap-8">
-            <ServiceHeader environment={environment} serviceId={service.id} service={service} />
+            <ServiceHeader
+              environment={environment}
+              serviceId={service.id}
+              service={service}
+              isArgoCdService={isArgoCdService}
+            />
             {hasNoMetrics && observabilityCallout}
             <Section className="gap-3">
               <div className="flex items-center justify-between gap-2">

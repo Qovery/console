@@ -2,7 +2,7 @@ import { createFileRoute, useParams } from '@tanstack/react-router'
 import { memo, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
-import { useEnvironment } from '@qovery/domains/environments/feature'
+import { isFakeArgoCdService, useEnvironment } from '@qovery/domains/environments/feature'
 import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
 import { TerraformResourcesSection } from '@qovery/domains/service-terraform/feature'
 import { ObservabilityCallout, ServiceOverview, useService } from '@qovery/domains/services/feature'
@@ -35,11 +35,16 @@ function RouteComponent() {
         .otherwise(() => false),
     [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]
   )
+  const isArgoCdService = useMemo(
+    () => Boolean(environmentId && serviceId) && isFakeArgoCdService({ environmentId, serviceId }),
+    [environmentId, serviceId]
+  )
 
   return (
     <>
       <ServiceOverview
         environment={environment}
+        isArgoCdService={isArgoCdService}
         terraformResourcesSection={serviceId ? <TerraformResourcesSection terraformId={serviceId} /> : undefined}
         hasNoMetrics={hasNoMetrics}
         observabilityCallout={

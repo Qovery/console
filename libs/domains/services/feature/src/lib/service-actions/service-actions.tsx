@@ -66,11 +66,13 @@ function MenuManageDeployment({
   environment,
   service,
   variant,
+  isArgoCdService = false,
 }: {
   deploymentStatus: Status
   environment: Environment
   service: AnyService
   variant: ActionToolbarVariant
+  isArgoCdService?: boolean
 }) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -382,14 +384,9 @@ function MenuManageDeployment({
                   <Icon iconName="clock" iconStyle="regular" />
                 ))
                 .otherwise(() => (
-                  <Icon iconName="rocket" />
+                  <Icon iconName={variant === 'header' && isArgoCdService ? 'rotate-right' : 'rocket'} />
                 ))}
-              {variant === 'header' && (
-                <>
-                  <span>Deploy</span>
-                  <Icon iconName="chevron-down" />
-                </>
-              )}
+              {variant === 'header' && <span>{isArgoCdService ? 'Restart' : 'Deploy'}</span>}
             </div>
           </Tooltip>
         </Button>
@@ -907,10 +904,12 @@ export function ServiceActions({
   environment,
   serviceId,
   variant = 'default',
+  isArgoCdService = false,
 }: {
   environment: Environment
   serviceId: string
   variant?: ActionToolbarVariant
+  isArgoCdService?: boolean
 }) {
   const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
@@ -925,6 +924,7 @@ export function ServiceActions({
         environment={environment}
         service={service}
         variant={variant}
+        isArgoCdService={isArgoCdService}
       />
 
       {variant === 'default' && (

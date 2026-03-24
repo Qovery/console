@@ -25,4 +25,23 @@ describe('ConnectArgoCdModal', () => {
     expect(screen.getByText('$ argocd account generate-token')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Connect ArgoCD' })).toBeDisabled()
   })
+
+  it('should render edit mode labels', () => {
+    renderWithProviders(
+      <ConnectArgoCdModal
+        organizationId="org-id"
+        onClose={jest.fn()}
+        isEdit
+        disableTargetClusterSelection
+        initialValues={{
+          targetCluster: 'cluster-1',
+          argoCdApiUrl: 'https://argocd.example.com/api',
+          accessToken: 'atc123xyz789uvw456opq',
+        }}
+      />
+    )
+
+    expect(screen.getByText('Edit ArgoCD connection')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Update connection' })).toBeInTheDocument()
+  })
 })

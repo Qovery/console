@@ -4,18 +4,24 @@ import { type KeyboardEvent, type MouseEvent } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
-import { Button, DeploymentAction, Heading, Icon, Section, TablePrimitives, Truncate } from '@qovery/shared/ui'
+import { Button, DeploymentAction, Heading, Icon, Section, TablePrimitives, Tooltip, Truncate } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
-import { MenuManageDeployment, MenuOtherActions } from '../../environment-action-toolbar/environment-action-toolbar'
+import {
+  MenuArgoCdOnlyActions,
+  MenuManageDeployment,
+  MenuOtherActions,
+} from '../../environment-action-toolbar/environment-action-toolbar'
 import EnvironmentMode from '../../environment-mode/environment-mode'
 import EnvironmentStateChip from '../../environment-state-chip/environment-state-chip'
+import { getFakeArgoCdMode } from '../../fake-argocd-mode/fake-argocd-mode'
 import useEnvironments from '../../hooks/use-environments/use-environments'
 
 const { Table } = TablePrimitives
 
 const gridLayoutClassName =
   'grid w-full grid-cols-[minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px]'
+const ARGOCD_HYBRID_REDEPLOY_TOOLTIP = 'Redeploy will only target Qovery created services and not ArgoCD imported ones.'
 
 function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const navigate = useNavigate()
@@ -29,6 +35,10 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const isVeryLargeScreen = useMediaQuery({
     query: '(min-width: 1536px)',
   })
+  const argoCdMode = getFakeArgoCdMode(overview.id)
+  const shouldDisplayArgoCdTag = argoCdMode !== 'none'
+  const isArgoCdOnly = argoCdMode === 'argocd-only'
+  const isArgoCdHybrid = argoCdMode === 'hybrid'
 
   const stopRowNavigation = (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => {
     event.stopPropagation()
@@ -61,9 +71,11 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
             <span className="text-wrap break-all text-sm font-medium">
               <Truncate text={overview.name} truncateLimit={isVeryLargeScreen ? 72 : isDesktopOrLaptop ? 40 : 30} />
             </span>
-            <span className="inline-flex items-center justify-center rounded-[2px] border-[0.5px] border-[#fce5dd] bg-[#fdf1ed] px-1 py-0.5 font-code text-[10px] font-bold uppercase leading-none text-[#ef754f]">
-              ARGOCD
-            </span>
+            {shouldDisplayArgoCdTag && (
+              <span className="inline-flex h-4 items-center justify-center rounded-sm border-argocd bg-surface-argocd-subtle p-0.5 font-code text-[10px] font-bold uppercase leading-none text-argocd retina:border-[0.5px]">
+                ARGOCD
+              </span>
+            )}
           </div>
           <div className="flex flex-shrink-0 items-center gap-2">
             <span className="font-normal text-neutral-subtle">
@@ -75,13 +87,19 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
       </Table.Cell>
       <Table.Cell className={cellClassName}>
         <div className="flex h-full items-center justify-between">
-          <div className="flex flex-col gap-1 xl:flex-row xl:items-center xl:gap-2">
-            <DeploymentAction status={overview.deployment_status?.last_deployment_state} />
-            <span className="text-neutral-subtle">
-              {timeAgo(new Date(overview.deployment_status?.last_deployment_date ?? Date.now()))} ago
-            </span>
-          </div>
-          <EnvironmentStateChip mode="last-deployment" environmentId={overview.id} variant="monochrome" />
+          {isArgoCdOnly ? (
+            <span className="text-neutral-subtle">No operation detected</span>
+          ) : (
+            <>
+              <div className="flex flex-col gap-1 xl:flex-row xl:items-center xl:gap-2">
+                <DeploymentAction status={overview.deployment_status?.last_deployment_state} />
+                <span className="text-neutral-subtle">
+                  {timeAgo(new Date(overview.deployment_status?.last_deployment_date ?? Date.now()))} ago
+                </span>
+              </div>
+              <EnvironmentStateChip mode="last-deployment" environmentId={overview.id} variant="monochrome" />
+            </>
+          )}
         </div>
       </Table.Cell>
       <Table.Cell className={cellClassName}>
@@ -111,10 +129,30 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
           onClick={stopRowNavigation}
           onKeyDown={stopRowNavigation}
         >
-          {environment && overview.deployment_status && overview.service_count > 0 && (
+          {environment && overview.deployment_status && overview.service_count > 0 && isArgoCdOnly && (
             <>
-              <MenuManageDeployment environment={environment} deploymentStatus={overview.deployment_status} />
-              <MenuOtherActions environment={environment} state={overview.deployment_status?.last_deployment_state} />
+              <Button aria-label="Manage Deployment" color="neutral" size="sm" iconOnly variant="outline" disabled>
+                <Tooltip content="Manage Deployment">
+                  <div className="flex h-full w-full items-center justify-center">
+                    <Icon iconName="rocket" />
+                  </div>
+                </Tooltip>
+              </Button>
+              <MenuArgoCdOnlyActions environment={environment} />
+            </>
+          )}
+          {environment && overview.deployment_status && overview.service_count > 0 && !isArgoCdOnly && (
+            <>
+              <MenuManageDeployment
+                environment={environment}
+                deploymentStatus={overview.deployment_status}
+                redeployTooltip={isArgoCdHybrid ? ARGOCD_HYBRID_REDEPLOY_TOOLTIP : undefined}
+              />
+              <MenuOtherActions
+                environment={environment}
+                state={overview.deployment_status?.last_deployment_state}
+                isArgoCdHybrid={isArgoCdHybrid}
+              />
             </>
           )}
         </div>

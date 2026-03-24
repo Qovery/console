@@ -8,6 +8,7 @@ type ServiceLastDeploymentCellProps = {
   organizationId: string
   projectId: string
   environmentId: string
+  timeLabelOverride?: string
 }
 
 export function ServiceLastDeploymentCell({
@@ -15,9 +16,18 @@ export function ServiceLastDeploymentCell({
   organizationId,
   projectId,
   environmentId,
+  timeLabelOverride,
 }: ServiceLastDeploymentCellProps) {
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environmentId, serviceId: service.id })
+  const hasTimeOverride = Boolean(timeLabelOverride)
+  const { data: deploymentStatus } = useDeploymentStatus({
+    environmentId: hasTimeOverride ? undefined : environmentId,
+    serviceId: hasTimeOverride ? undefined : service.id,
+  })
   const date = deploymentStatus?.last_deployment_date
+
+  if (timeLabelOverride) {
+    return <span className="block w-full text-right text-ssm font-normal text-neutral-subtle">{timeLabelOverride}</span>
+  }
 
   return date ? (
     <Link

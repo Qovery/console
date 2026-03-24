@@ -100,6 +100,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/route'
@@ -853,6 +854,14 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
       getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
     } as any,
   )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRouteImport.update(
+    {
+      id: '/project/$projectId/environment/$environmentId/service/$serviceId/manifest',
+      path: '/project/$projectId/environment/$environmentId/service/$serviceId/manifest',
+      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRouteImport.update(
     {
@@ -1315,6 +1324,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdVariablesRoute
@@ -1436,6 +1446,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdVariablesRoute
@@ -1572,6 +1583,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdVariablesRoute
@@ -1708,6 +1720,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables'
@@ -1829,6 +1842,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/settings'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables'
@@ -1964,6 +1978,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables'
@@ -2652,6 +2667,13 @@ declare module '@tanstack/react-router' {
       path: '/project/$projectId/environment/$environmentId/service/$serviceId/overview'
       fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
+      path: '/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell': {
@@ -3372,6 +3394,7 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdVariablesRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdVariablesRoute
@@ -3450,6 +3473,8 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRoute:

@@ -7,8 +7,9 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { useEditService, useServices } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { BlockContent, Button, Icon, InputToggle, Section } from '@qovery/shared/ui'
+import { BlockContent, Button, Callout, Icon, InputToggle, Section } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
+import { getFakeArgoCdMode } from '../fake-argocd-mode/fake-argocd-mode'
 import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-rule'
 import { useEditDeploymentRule } from '../hooks/use-edit-deployment-rule/use-edit-deployment-rule'
 
@@ -18,10 +19,11 @@ interface PageSettingsPreviewEnvironmentsProps {
   loading: boolean
   toggleAll: (value: boolean) => void
   toggleEnablePreview: (value: boolean) => void
+  showArgoCdCallout?: boolean
 }
 
 export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnvironmentsProps) {
-  const { onSubmit, services, loading, toggleAll, toggleEnablePreview } = props
+  const { onSubmit, services, loading, toggleAll, toggleEnablePreview, showArgoCdCallout } = props
   const { control, formState } = useFormContext()
 
   const getIconName = (service: AnyService) =>
@@ -36,6 +38,16 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
       <Section className="px-8 pb-8 pt-6">
         <SettingsHeading title="Preview environments" />
         <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
+          {showArgoCdCallout ? (
+            <Callout.Root color="yellow" className="mb-6 items-center gap-3 p-3">
+              <Callout.Icon className="text-warning">
+                <Icon iconName="triangle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text className="text-warning">
+                ArgoCD linked services won&apos;t be copied in your preview environments.
+              </Callout.Text>
+            </Callout.Root>
+          ) : null}
           <BlockContent title="Global settings">
             <Controller
               name="auto_preview"
@@ -119,7 +131,13 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
   )
 }
 
-export function SettingsPreviewEnvironmentsFeature({ services }: { services: AnyService[] }) {
+export function SettingsPreviewEnvironmentsFeature({
+  services,
+  showArgoCdCallout,
+}: {
+  services: AnyService[]
+  showArgoCdCallout?: boolean
+}) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const [loading, setLoading] = useState(false)
 
@@ -227,6 +245,7 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
         loading={loading}
         toggleAll={toggleAll}
         toggleEnablePreview={toggleEnablePreview}
+        showArgoCdCallout={showArgoCdCallout}
       />
     </FormProvider>
   )
@@ -235,6 +254,7 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
 export function PageSettingsPreviewEnvironmentsFeature() {
   const { environmentId = '' } = useParams({ strict: false })
   const { data: services } = useServices({ environmentId })
+  const showArgoCdCallout = getFakeArgoCdMode(environmentId) === 'hybrid'
 
-  return <SettingsPreviewEnvironmentsFeature services={services} />
+  return <SettingsPreviewEnvironmentsFeature services={services} showArgoCdCallout={showArgoCdCallout} />
 }

@@ -2,6 +2,7 @@ import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { isFakeArgoCdService } from '@qovery/domains/environments/feature'
 import { useServiceSummary } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
@@ -202,6 +203,37 @@ const SERVICE_TABS: NavigationTab[] = [
   },
 ]
 
+const SERVICE_TABS_ARGO: NavigationTab[] = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    iconName: 'table-layout',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+  },
+  {
+    id: 'monitoring',
+    label: 'Monitoring',
+    iconName: 'chart-column',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
+  },
+  {
+    id: 'service-logs',
+    label: 'Service logs',
+    iconName: 'scroll',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+  },
+  {
+    id: 'manifest',
+    label: 'Manifest',
+    iconName: 'file-lines',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest',
+  },
+]
+
 function createRoutePatternRegex(routeIdPattern: string): RegExp {
   const patternPath = routeIdPattern.replace('/_authenticated/organization', '/organization')
   return new RegExp('^' + patternPath.replace(/\$(\w+)/g, '[^/]+') + '(/.*)?$')
@@ -266,6 +298,10 @@ function useNavigationContext(): NavigationContext | null {
     serviceId: params.serviceId,
     enabled: Boolean(params.environmentId) && Boolean(params.serviceId),
   })
+  const isArgoCdService =
+    typeof params.environmentId === 'string' &&
+    typeof params.serviceId === 'string' &&
+    isFakeArgoCdService({ environmentId: params.environmentId, serviceId: params.serviceId })
 
   for (const context of NAVIGATION_CONTEXTS) {
     const patternRegex = createRoutePatternRegex(context.routeIdPattern)
@@ -291,12 +327,13 @@ function useNavigationContext(): NavigationContext | null {
 
         // Managed databases should not have cloud shell access.
         // Databases should not expose the variables tab.
+        const serviceTabs = isArgoCdService ? SERVICE_TABS_ARGO : context.tabs
         const tabs =
           context.type === 'service'
-            ? context.tabs.filter(
+            ? serviceTabs.filter(
                 (tab) => !(isDatabase && tab.id === 'variables') && !(isManagedDatabase && tab.id === 'cloud-shell')
               )
-            : context.tabs
+            : serviceTabs
 
         return {
           type: context.type,
@@ -400,6 +437,7 @@ const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/settings',
   '/_authenticated/organization/$organizationId/audit-logs',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',

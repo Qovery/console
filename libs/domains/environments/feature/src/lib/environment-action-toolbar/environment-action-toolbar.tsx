@@ -29,14 +29,54 @@ import { TerraformExportModal } from '../terraform-export-modal/terraform-export
 import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
 type ActionToolbarVariant = 'default' | 'header'
+const ARGO_CD_HYBRID_DEPLOY_ACK_KEY = 'argocd-hybrid-deploy-ack'
+
+function ArgoCdHybridDeployInfoModal({
+  onUnderstood,
+  onClose,
+}: {
+  onUnderstood: () => void
+  onClose: () => void
+}) {
+  return (
+    <div className="relative flex w-full flex-col gap-6 rounded-lg border border-neutral bg-white p-5 shadow-lg">
+      <button
+        type="button"
+        aria-label="Close"
+        className="absolute right-2 top-2 p-1 text-neutral-subtle hover:text-neutral"
+        onClick={onClose}
+      >
+        <Icon iconName="xmark" iconStyle="regular" />
+      </button>
+      <div className="flex flex-col gap-1">
+        <h2 className="text-[20px] font-medium leading-7 text-neutral">
+          Environment actions will only affect Qovery services
+        </h2>
+        <p className="text-sm text-neutral-subtle">
+          This environment contains both Qovery and ArgoCD services. Bulk actions such as deploy, redeploy, or restart
+          only apply to Qovery services. ArgoCD services are managed and deployed through ArgoCD.
+        </p>
+      </div>
+      <div>
+        <Button size="lg" onClick={onUnderstood}>
+          Understood!
+        </Button>
+      </div>
+    </div>
+  )
+}
 
 export function MenuManageDeployment({
   environment,
   deploymentStatus,
+  redeployTooltip,
+  requireArgoCdHybridAck = false,
   variant = 'default',
 }: {
   environment: Environment
   deploymentStatus: EnvironmentStatus
+  redeployTooltip?: string
+  requireArgoCdHybridAck?: boolean
   variant?: ActionToolbarVariant
 }) {
   const state = deploymentStatus.state
@@ -48,11 +88,16 @@ export function MenuManageDeployment({
       <Icon iconName="circle-exclamation" iconStyle="regular" />
     </Tooltip>
   )
+  const tooltipInfo = (content: string) => (
+    <Tooltip side="bottom" content={content}>
+      <Icon iconName="circle-info" iconStyle="regular" />
+    </Tooltip>
+  )
 
   const tooltipEnvironmentNeedUpdate =
     displayYellowColor && tooltipService('Environment has changed and needs to be applied')
 
-  const { openModal } = useModal()
+  const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
   const logsLink =
@@ -72,10 +117,49 @@ export function MenuManageDeployment({
   // https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1416
   const { data: services = [] } = useServices({ environmentId: environment.id })
 
-  const mutationDeploy = () =>
+  const executeDeploy = () =>
     deployEnvironment({
       environmentId: environment.id,
     })
+
+  const hasAcknowledgedArgoCdHybridDeployModal = () => {
+    try {
+      return localStorage.getItem(`${ARGO_CD_HYBRID_DEPLOY_ACK_KEY}:${environment.id}`) === 'true'
+    } catch {
+      return false
+    }
+  }
+
+  const acknowledgeArgoCdHybridDeployModal = () => {
+    try {
+      localStorage.setItem(`${ARGO_CD_HYBRID_DEPLOY_ACK_KEY}:${environment.id}`, 'true')
+    } catch {
+      // Ignore localStorage failures.
+    }
+  }
+
+  const mutationDeploy = () => {
+    if (requireArgoCdHybridAck && !hasAcknowledgedArgoCdHybridDeployModal()) {
+      openModal({
+        content: (
+          <ArgoCdHybridDeployInfoModal
+            onClose={closeModal}
+            onUnderstood={() => {
+              acknowledgeArgoCdHybridDeployModal()
+              closeModal()
+              executeDeploy()
+            }}
+          />
+        ),
+        options: {
+          width: 488,
+        },
+      })
+      return
+    }
+
+    executeDeploy()
+  }
 
   const mutationRedeploy = () => {
     openModalConfirmation({
@@ -196,7 +280,7 @@ export function MenuManageDeployment({
           >
             <div className="flex w-full items-center justify-between">
               Redeploy
-              {tooltipEnvironmentNeedUpdate}
+              {redeployTooltip ? tooltipInfo(redeployTooltip) : tooltipEnvironmentNeedUpdate}
             </div>
           </DropdownMenu.Item>
         )}
@@ -246,10 +330,12 @@ export function MenuManageDeployment({
 export function MenuOtherActions({
   state,
   environment,
+  isArgoCdHybrid = false,
   variant = 'default',
 }: {
   state: StateEnum
   environment: Environment
+  isArgoCdHybrid?: boolean
   variant?: ActionToolbarVariant
 }) {
   const { openModal, closeModal } = useModal()
@@ -281,6 +367,7 @@ export function MenuOtherActions({
           projectId={environment.project.id}
           organizationId={environment.organization.id}
           environmentToClone={environment}
+          isArgoCdHybrid={isArgoCdHybrid}
         />
       ),
       options: {
@@ -340,6 +427,82 @@ export function MenuOtherActions({
             </DropdownMenu.Item>
           </>
         )}
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  )
+}
+
+export function MenuArgoCdOnlyActions({
+  environment,
+  variant = 'default',
+}: {
+  environment: Environment
+  variant?: ActionToolbarVariant
+}) {
+  const { openModal } = useModal()
+  const [, copyToClipboard] = useCopyToClipboard()
+  const copyContent = `Cluster ID: ${environment.cluster_id}\nOrganization ID: ${environment.organization.id}\nProject ID: ${environment.project.id}\nEnvironment ID: ${environment.id}`
+
+  const openTerraformExportModal = () => {
+    openModal({
+      content: <TerraformExportModal environmentId={environment.id} />,
+    })
+  }
+
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <Button
+          aria-label="Other actions"
+          color="neutral"
+          size={variant === 'header' ? 'md' : 'sm'}
+          iconOnly
+          variant="outline"
+        >
+          <Tooltip content="Other actions">
+            <div className="flex h-full w-full items-center justify-center">
+              <Icon iconName="ellipsis-v" iconStyle="solid" />
+            </div>
+          </Tooltip>
+        </Button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content>
+        <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
+          <Link
+            className="gap-0"
+            to="/organization/$organizationId/audit-logs"
+            params={{
+              organizationId: environment.organization.id,
+            }}
+            search={{
+              targetType: OrganizationEventTargetType.ENVIRONMENT,
+              projectId: environment.project.id,
+              targetId: environment.id,
+            }}
+          >
+            See audit logs
+          </Link>
+        </DropdownMenu.Item>
+        <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(copyContent)}>
+          Copy identifier
+        </DropdownMenu.Item>
+        <DropdownMenu.Item icon={<Icon iconName="file-export" />} onSelect={openTerraformExportModal}>
+          Export as Terraform
+        </DropdownMenu.Item>
+        <DropdownMenu.Separator />
+        <DropdownMenu.Item
+          icon={<Icon iconName="trash-can" />}
+          color="neutral"
+          disabled
+          className="cursor-not-allowed data-[highlighted]:bg-transparent"
+        >
+          <div className="flex w-full items-center justify-between">
+            Delete environment
+            <Tooltip side="bottom" content="ArgoCD environment can only be deleted by revoking the integration">
+              <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-disabled" />
+            </Tooltip>
+          </div>
+        </DropdownMenu.Item>
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   )

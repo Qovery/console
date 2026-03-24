@@ -14,6 +14,7 @@ import {
 import { type Environment } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   Badge,
   Checkbox,
@@ -42,9 +43,26 @@ const { Table } = TablePrimitives
 
 export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
   environment: Environment
+  enableSelection?: boolean
+  servicesOverride?: AnyService[]
+  argocdStatusByServiceId?: Record<string, 'Synced' | 'Out of sync'>
+  argocdOperationByServiceId?: Record<string, string>
+  argocdTargetVersionByServiceId?: Record<string, { primary: string; secondary: string }>
+  argocdLastDeploymentByServiceId?: Record<string, string>
 }
 
-export function ServiceList({ className, containerClassName, environment, ...props }: ServiceListProps) {
+export function ServiceList({
+  className,
+  containerClassName,
+  environment,
+  enableSelection = true,
+  servicesOverride,
+  argocdStatusByServiceId,
+  argocdOperationByServiceId,
+  argocdTargetVersionByServiceId,
+  argocdLastDeploymentByServiceId,
+  ...props
+}: ServiceListProps) {
   const clusterId = environment.cluster_id || ''
   const environmentId = environment.id || ''
   const organizationId = environment.organization.id || ''
@@ -70,8 +88,11 @@ export function ServiceList({ className, containerClassName, environment, ...pro
     return map
   }, [deploymentStages])
 
+  const sourceServices = servicesOverride ?? services
+  const hasSelectionColumn = enableSelection
+
   const sortedServices = useMemo(() => {
-    return [...services].sort((a, b) => {
+    return [...sourceServices].sort((a, b) => {
       const aIsSkipped = skippedServicesMap.get(a.id) || false
       const bIsSkipped = skippedServicesMap.get(b.id) || false
 
@@ -81,63 +102,70 @@ export function ServiceList({ className, containerClassName, environment, ...pro
 
       return 0
     })
-  }, [services, skippedServicesMap])
+  }, [sourceServices, skippedServicesMap])
 
   const columnHelper = createColumnHelper<(typeof services)[number]>()
   const columns = useMemo(
     () => [
-      columnHelper.display({
-        id: 'select',
-        enableColumnFilter: false,
-        enableSorting: false,
-        header: ({ table }) => (
-          <div className="h-5">
-            {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
-            <Checkbox
-              checked={
-                table.getIsSomeRowsSelected()
-                  ? table.getIsAllRowsSelected()
-                    ? true
-                    : 'indeterminate'
-                  : table.getIsAllRowsSelected()
-              }
-              onCheckedChange={(checked) => {
-                if (checked === 'indeterminate') {
-                  return
-                }
-                table.toggleAllRowsSelected(checked)
-              }}
-            />
-          </div>
-        ),
-        cell: ({ row }) => {
-          const isDisabled = !row.getCanSelect()
-          const checkbox = (
-            <Checkbox
-              checked={row.getIsSelected()}
-              disabled={isDisabled}
-              onCheckedChange={(checked) => {
-                if (checked === 'indeterminate') {
-                  return
-                }
-                row.toggleSelected(checked)
-              }}
-            />
-          )
+      ...(enableSelection
+        ? [
+            columnHelper.display({
+              id: 'select',
+              enableColumnFilter: false,
+              enableSorting: false,
+              header: ({ table }) => (
+                <div className="h-5">
+                  {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
+                  <Checkbox
+                    checked={
+                      table.getIsSomeRowsSelected()
+                        ? table.getIsAllRowsSelected()
+                          ? true
+                          : 'indeterminate'
+                        : table.getIsAllRowsSelected()
+                    }
+                    onCheckedChange={(checked) => {
+                      if (checked === 'indeterminate') {
+                        return
+                      }
+                      table.toggleAllRowsSelected(checked)
+                    }}
+                  />
+                </div>
+              ),
+              cell: ({ row }) => {
+                const isDisabled = !row.getCanSelect()
+                const checkbox = (
+                  <Checkbox
+                    checked={row.getIsSelected()}
+                    disabled={isDisabled}
+                    onCheckedChange={(checked) => {
+                      if (checked === 'indeterminate') {
+                        return
+                      }
+                      row.toggleSelected(checked)
+                    }}
+                  />
+                )
 
-          return (
-            <label className="absolute inset-y-0 left-0 flex items-center p-4" onClick={(e) => e.stopPropagation()}>
-              {isDisabled ? (
-                <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
-                  <span>{checkbox}</span>
-                </Tooltip>
-              ) : (
-                checkbox
-              )}
-            </label>
-          )
-        },
-      }),
+                return (
+                  <label
+                    className="absolute inset-y-0 left-0 flex items-center p-4"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {isDisabled ? (
+                      <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
+                        <span>{checkbox}</span>
+                      </Tooltip>
+                    ) : (
+                      checkbox
+                    )}
+                  </label>
+                )
+              },
+            }),
+          ]
+        : []),
       columnHelper.accessor('name', {
         header: 'Service',
         enableColumnFilter: true,
@@ -162,7 +190,11 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         cell: (info) => {
           return (
             <div className="min-w-[400px] flex-1">
-              <ServiceNameCell service={info.row.original} environment={environment} />
+              <ServiceNameCell
+                service={info.row.original}
+                environment={environment}
+                argocdOperationLabelOverride={argocdOperationByServiceId?.[info.row.original.id]}
+              />
             </div>
           )
         },
@@ -174,15 +206,18 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         enableSorting: false,
         filterFn: 'arrIncludesSome',
         size: 15,
-        cell: (info) => (
-          <ServiceRunningStatusCell
-            service={info.row.original}
-            environment={environment}
-            organizationId={organizationId}
-            projectId={projectId}
-            clusterId={clusterId}
-          />
-        ),
+        cell: (info) => {
+          return (
+            <ServiceRunningStatusCell
+              service={info.row.original}
+              environment={environment}
+              organizationId={organizationId}
+              projectId={projectId}
+              clusterId={clusterId}
+              statusLabelOverride={argocdStatusByServiceId?.[info.row.original.id]}
+            />
+          )
+        },
       }),
       columnHelper.accessor('version', {
         header: 'Target version',
@@ -191,7 +226,12 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         size: 30,
         cell: (info) => {
           return (
-            <ServiceVersionCell service={info.row.original} organizationId={organizationId} projectId={projectId} />
+            <ServiceVersionCell
+              service={info.row.original}
+              organizationId={organizationId}
+              projectId={projectId}
+              versionOverride={argocdTargetVersionByServiceId?.[info.row.original.id]}
+            />
           )
         },
       }),
@@ -207,12 +247,25 @@ export function ServiceList({ className, containerClassName, environment, ...pro
               organizationId={organizationId}
               projectId={projectId}
               environmentId={environmentId}
+              timeLabelOverride={argocdLastDeploymentByServiceId?.[info.row.original.id]}
             />
           )
         },
       }),
     ],
-    [columnHelper, environment, clusterId, organizationId, projectId, environmentId]
+    [
+      columnHelper,
+      environment,
+      clusterId,
+      organizationId,
+      projectId,
+      environmentId,
+      argocdStatusByServiceId,
+      argocdOperationByServiceId,
+      argocdLastDeploymentByServiceId,
+      argocdTargetVersionByServiceId,
+      enableSelection,
+    ]
   )
 
   const table = useReactTable({
@@ -222,9 +275,11 @@ export function ServiceList({ className, containerClassName, environment, ...pro
       sorting,
       rowSelection,
     },
-    enableRowSelection: (row) => {
-      return !skippedServicesMap.get(row.original.id)
-    },
+    enableRowSelection: enableSelection
+      ? (row) => {
+          return !skippedServicesMap.get(row.original.id)
+        }
+      : false,
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
@@ -246,7 +301,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
     table.getColumn('runningStatus')?.getFacetedUniqueValues().entries() ?? []
   )
 
-  if (services.length === 0) {
+  if (sourceServices.length === 0) {
     return (
       <EmptyState
         title="No service found"
@@ -294,9 +349,13 @@ export function ServiceList({ className, containerClassName, environment, ...pro
               <Table.Row key={headerGroup.id}>
                 {headerGroup.headers.map((header, i) => (
                   <Table.ColumnHeaderCell
-                    className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r border-neutral pl-0' : ''} font-medium`}
+                    className={
+                      hasSelectionColumn
+                        ? `px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r border-neutral pl-0' : ''} font-medium`
+                        : twMerge('px-6 font-medium', i === 0 && 'border-r border-neutral pl-4')
+                    }
                     key={header.id}
-                    style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
+                    style={{ width: hasSelectionColumn && i === 0 ? '20px' : `${header.getSize()}%` }}
                   >
                     {header.column.getCanFilter() ? (
                       <TableFilter column={header.column} />
@@ -339,8 +398,12 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                   {row.getVisibleCells().map((cell, i) => (
                     <Table.Cell
                       key={cell.id}
-                      className={`px-6 ${i === 1 ? 'border-r border-neutral pl-0' : ''} first:relative`}
-                      style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
+                      className={
+                        hasSelectionColumn
+                          ? `px-6 ${i === 1 ? 'border-r border-neutral pl-0' : ''} first:relative`
+                          : twMerge('px-6', i === 0 && 'border-r border-neutral pl-4')
+                      }
+                      style={{ width: hasSelectionColumn && i === 0 ? '20px' : `${cell.column.getSize()}%` }}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </Table.Cell>
@@ -350,11 +413,13 @@ export function ServiceList({ className, containerClassName, environment, ...pro
             ))}
           </Table.Body>
         </Table.Root>
-        <ServiceListActionBar
-          environment={environment}
-          selectedRows={selectedRows}
-          resetRowSelection={() => table.resetRowSelection()}
-        />
+        {enableSelection ? (
+          <ServiceListActionBar
+            environment={environment}
+            selectedRows={selectedRows}
+            resetRowSelection={() => table.resetRowSelection()}
+          />
+        ) : null}
       </div>
     </div>
   )

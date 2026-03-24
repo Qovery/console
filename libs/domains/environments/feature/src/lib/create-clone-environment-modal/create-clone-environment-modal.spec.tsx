@@ -83,6 +83,16 @@ describe('CreateCloneEnvironmentModal', () => {
   })
 
   describe('cloning mode', function () {
+    it('should display ArgoCD hybrid callout', () => {
+      const mockEnv = environmentFactoryMock(1)[0]
+
+      renderWithProviders(
+        <CreateCloneEnvironmentModal {...props} environmentToClone={mockEnv} isArgoCdHybrid />
+      )
+
+      expect(screen.getByText('ArgoCD imported services will not be cloned.')).toBeInTheDocument()
+    })
+
     it('should submit form on click on button', async () => {
       const mockEnv = environmentFactoryMock(1)[0]
       const { userEvent } = renderWithProviders(<CreateCloneEnvironmentModal {...props} environmentToClone={mockEnv} />)
