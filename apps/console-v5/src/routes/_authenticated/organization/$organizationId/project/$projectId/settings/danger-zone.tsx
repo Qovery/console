@@ -48,7 +48,7 @@ function ProjectDangerZone() {
         projectId,
       })
       setLoading(false)
-      navigate({ to: '/organization/' + organizationId })
+      navigate({ to: '/organization/$organizationId/overview', params: { organizationId } })
     } catch (error) {
       console.error(error)
     }

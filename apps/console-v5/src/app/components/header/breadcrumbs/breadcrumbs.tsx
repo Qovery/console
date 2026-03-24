@@ -40,7 +40,8 @@ export function Breadcrumbs() {
     .map((organization) => ({
       id: organization.id,
       label: organization.name,
-      path: buildLocation({ to: '/organization/$organizationId', params: { organizationId: organization.id } }).href,
+      path: buildLocation({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
+        .href,
       logo_url: organization.logo_url ?? undefined,
     }))
 
@@ -53,7 +54,7 @@ export function Breadcrumbs() {
     id: cluster.id,
     label: cluster.name,
     path: buildLocation({
-      to: '/organization/$organizationId/cluster/$clusterId',
+      to: '/organization/$organizationId/cluster/$clusterId/overview',
       params: { organizationId, clusterId: cluster.id },
     }).href,
   }))
@@ -87,7 +88,7 @@ export function Breadcrumbs() {
       id: service.id,
       label: service.name,
       path: buildLocation({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId',
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
         params: { organizationId, projectId, environmentId, serviceId: service.id },
       }).href,
       prefix: <ServiceAvatar service={service} size="custom" className="h-5 w-5" />,

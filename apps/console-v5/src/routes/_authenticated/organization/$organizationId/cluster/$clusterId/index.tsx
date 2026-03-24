@@ -12,6 +12,10 @@ function RouteComponent() {
   }
 
   return (
-    <Navigate to="/organization/$organizationId/cluster/$clusterId/overview" params={{ organizationId, clusterId }} />
+    <Navigate
+      to="/organization/$organizationId/cluster/$clusterId/overview"
+      params={{ organizationId, clusterId }}
+      replace
+    />
   )
 }
