@@ -226,22 +226,47 @@ exports[`InstanceMetrics should match snapshot with data 1`] = `
 exports[`InstanceMetrics should match snapshot with empty data 1`] = `
 <div>
   <div
-    class="flex flex-col items-center gap-1 border border-neutral bg-surface-neutral py-10 text-sm text-neutral"
+    class="flex h-56 flex-col items-center justify-center gap-4 rounded-lg border border-neutral bg-surface-neutral-subtle p-10 text-center text-sm text-neutral-subtle"
   >
     <span
-      class="icon-solid-play shrink-0 text-md text-neutral-subtle"
-      role="img"
-    />
-    <span
-      class="font-medium"
+      class="relative inline-flex h-10 min-h-10 w-10 min-w-10 items-center justify-center"
     >
-      Service is not running
+      <i
+        aria-hidden="true"
+        class="fa-solid fa-play absolute top-2 text-base text-neutral-disabled"
+      />
+      <svg
+        class="h-10 w-10"
+        fill="none"
+        height="40"
+        viewBox="0 0 40 40"
+        width="40"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          class="fill-surface-neutral-component"
+          d="M0 6a6 6 0 0 1 6-6h28a6 6 0 0 1 6 6v28a6 6 0 0 1-6 6H6a6 6 0 0 1-6-6z"
+          fill="currentColor"
+        />
+        <path
+          class="text-neutral-disabled"
+          d="M.5 7V4.5a4 4 0 0 1 4-4H7M39.5 33v2.5a4 4 0 0 1-4 4H33M.5 33v2.5a4 4 0 0 0 4 4H7M39.5 7V4.5a4 4 0 0 0-4-4H33"
+          stroke="currentColor"
+        />
+      </svg>
     </span>
-    <span
-      class="text-neutral-subtle"
+    <div
+      class="flex flex-col gap-1"
     >
-      Deploy the service first
-    </span>
+      <p
+        class="font-medium"
+      >
+        Service is not running
+      </p>
+      <p>
+        Deploy the service first
+      </p>
+    </div>
   </div>
 </div>
 `;
@@ -249,22 +274,47 @@ exports[`InstanceMetrics should match snapshot with empty data 1`] = `
 exports[`InstanceMetrics should match snapshot with null data 1`] = `
 <div>
   <div
-    class="flex flex-col items-center gap-1 border border-neutral bg-surface-neutral py-10 text-sm text-neutral"
+    class="flex h-56 flex-col items-center justify-center gap-4 rounded-lg border border-neutral bg-surface-neutral-subtle p-10 text-center text-sm text-neutral-subtle"
   >
     <span
-      class="icon-solid-play shrink-0 text-md text-neutral-subtle"
-      role="img"
-    />
-    <span
-      class="font-medium"
+      class="relative inline-flex h-10 min-h-10 w-10 min-w-10 items-center justify-center"
     >
-      Service is not running
+      <i
+        aria-hidden="true"
+        class="fa-solid fa-play absolute top-2 text-base text-neutral-disabled"
+      />
+      <svg
+        class="h-10 w-10"
+        fill="none"
+        height="40"
+        viewBox="0 0 40 40"
+        width="40"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          class="fill-surface-neutral-component"
+          d="M0 6a6 6 0 0 1 6-6h28a6 6 0 0 1 6 6v28a6 6 0 0 1-6 6H6a6 6 0 0 1-6-6z"
+          fill="currentColor"
+        />
+        <path
+          class="text-neutral-disabled"
+          d="M.5 7V4.5a4 4 0 0 1 4-4H7M39.5 33v2.5a4 4 0 0 1-4 4H33M.5 33v2.5a4 4 0 0 0 4 4H7M39.5 7V4.5a4 4 0 0 0-4-4H33"
+          stroke="currentColor"
+        />
+      </svg>
     </span>
-    <span
-      class="text-neutral-subtle"
+    <div
+      class="flex flex-col gap-1"
     >
-      Deploy the service first
-    </span>
+      <p
+        class="font-medium"
+      >
+        Service is not running
+      </p>
+      <p>
+        Deploy the service first
+      </p>
+    </div>
   </div>
 </div>
 `;
