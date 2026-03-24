@@ -25,6 +25,7 @@ export * from './lib/cluster-deployment-progress-card/cluster-deployment-progres
 export * from './lib/section-production-health/section-production-health'
 export * from './lib/cluster-logs/cluster-log-row/cluster-log-row'
 export * from './lib/cluster-logs/cluster-header-logs/cluster-header-logs'
+export * from './lib/cluster-logs/cluster-logs-list/cluster-logs-list'
 export * from './lib/cluster-creation-flow/cluster-new/cluster-new'
 export * from './lib/cluster-creation-flow/step-general/step-general'
 export * from './lib/cluster-creation-flow/step-kubeconfig/step-kubeconfig'
