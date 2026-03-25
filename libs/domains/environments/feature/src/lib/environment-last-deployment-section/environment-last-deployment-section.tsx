@@ -1,6 +1,8 @@
 import { useLinkProps, useParams } from '@tanstack/react-router'
-import { Suspense, useMemo } from 'react'
+import posthog from 'posthog-js'
+import { Suspense, useContext, useMemo } from 'react'
 import { P, match } from 'ts-pattern'
+import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import {
   Button,
   DeploymentAction,
@@ -58,6 +60,7 @@ const EnvironmentLastDeploymentSkeleton = () => {
 
 const EnvironmentLastDeploymentContent = () => {
   const { organizationId = '', environmentId = '', projectId = '' } = useParams({ strict: false })
+  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: deploymentHistory = [] } = useDeploymentHistory({ environmentId, suspense: true })
   const lastDeployment = useMemo(
@@ -85,6 +88,21 @@ const EnvironmentLastDeploymentContent = () => {
     })
   }
 
+  const handleLaunchDiagnostic = () => {
+    if (!lastDeployment) return
+
+    posthog.capture('ai-copilot-troubleshoot-triggered', {
+      source: 'environment-last-deployment',
+      deployment_id: lastDeployment.identifier.execution_id,
+      trigger_reason: 'error',
+    })
+
+    const message = `Why did my deployment fail?${lastDeployment.identifier.execution_id ? ` (deployment id: ${lastDeployment.identifier.execution_id})` : ''}`
+
+    setDevopsCopilotOpen(true)
+    sendMessageRef?.current?.(message)
+  }
+
   return (
     <Section className="flex flex-col gap-3.5">
       <div className="flex items-center justify-between">
@@ -104,40 +122,60 @@ const EnvironmentLastDeploymentContent = () => {
       </div>
 
       {lastDeployment ? (
-        <Link
-          to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId"
-          params={{ organizationId, environmentId, deploymentId: lastDeployment.identifier.execution_id }}
-          className="flex rounded-lg border border-neutral bg-surface-neutral px-4 py-2 font-normal transition-colors hover:bg-surface-neutral-subtle"
-        >
-          <div className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
-            <div className="flex items-center justify-between gap-1.5">
-              <DeploymentAction status={trigger_action} className="gap-1.5" textClassName="font-medium" />
-              {match(lastDeployment)
-                .with(P.when(isDeploymentHistory), (data) => {
-                  return <StatusChip status={data.action_status} />
-                })
-                .otherwise(() => (
-                  <StatusChip status="QUEUED" />
-                ))}
+        <div className="flex flex-col">
+          <Link
+            to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId"
+            params={{ organizationId, environmentId, deploymentId: lastDeployment.identifier.execution_id }}
+            className="relative flex rounded-lg border border-neutral bg-surface-neutral px-4 py-2 font-normal transition-colors hover:bg-surface-neutral-subtle"
+          >
+            <div className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
+              <div className="flex items-center justify-between gap-1.5">
+                <DeploymentAction status={trigger_action} className="gap-1.5" textClassName="font-medium" />
+                {match(lastDeployment)
+                  .with(P.when(isDeploymentHistory), (data) => {
+                    return <StatusChip status={data.action_status} />
+                  })
+                  .otherwise(() => (
+                    <StatusChip status="QUEUED" />
+                  ))}
+              </div>
+              <DotSeparator />
+              {environment && lastDeployment.stages && (
+                <DropdownServices
+                  environment={environment}
+                  deploymentHistory={lastDeployment}
+                  stages={lastDeployment.stages.filter((stage) => stage.services.length > 0)}
+                  size="sm"
+                />
+              )}
+              <DotSeparator />
+              <div className="text-neutral-subtle">
+                Lasted{' '}
+                <Tooltip content={dateUTCString(lastDeployment.auditing_data.created_at)}>
+                  <span>{formatDurationMinutesSeconds(lastDeployment.total_duration ?? '')}</span>
+                </Tooltip>
+              </div>
             </div>
-            <DotSeparator />
-            {environment && lastDeployment.stages && (
-              <DropdownServices
-                environment={environment}
-                deploymentHistory={lastDeployment}
-                stages={lastDeployment.stages.filter((stage) => stage.services.length > 0)}
-                size="sm"
-              />
-            )}
-            <DotSeparator />
-            <div className="text-neutral-subtle">
-              Lasted{' '}
-              <Tooltip content={dateUTCString(lastDeployment.auditing_data.created_at)}>
-                <span>{formatDurationMinutesSeconds(lastDeployment.total_duration ?? '')}</span>
-              </Tooltip>
+          </Link>
+          {lastDeployment.action_status === 'ERROR' && (
+            <div className="-mt-3 flex items-center justify-between gap-3 rounded-b-lg border border-neutral bg-surface-brand-subtle px-4 pb-3 pt-6 text-ssm text-brand">
+              <div className="flex min-w-0 items-center gap-1.5">
+                <Icon iconName="sparkles" iconStyle="solid" className="shrink-0" />
+                <span className="truncate">
+                  AI Copilot identified likely causes and fixes for this deployment error
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={handleLaunchDiagnostic}
+                className="flex shrink-0 items-center gap-0.5 font-medium text-brand transition-opacity hover:opacity-80"
+              >
+                Launch diagnostic
+                <Icon iconName="angle-right" iconStyle="regular" />
+              </button>
             </div>
-          </div>
-        </Link>
+          )}
+        </div>
       ) : (
         <EmptyState
           icon="rocket"
