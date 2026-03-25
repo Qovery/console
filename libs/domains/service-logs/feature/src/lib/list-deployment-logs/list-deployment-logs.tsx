@@ -386,30 +386,6 @@ export function ListDeploymentLogs({
       <div className="h-[calc(100vh-208px)] w-full">
         <div className="relative h-full bg-background">
           <HeaderLogsComponent />
-          {(isError || isCrashLoopDetected || preCheckStage?.status === 'ERROR') && (
-            <Banner
-              color="brand"
-              buttonLabel="Launch diagnostic"
-              buttonIconRight="angle-right"
-              onClickButton={() => {
-                posthog.capture('ai-copilot-troubleshoot-triggered', {
-                  source: 'deployment-logs',
-                  deployment_id: executionId,
-                  trigger_reason: isCrashLoopDetected ? 'crash-loop' : 'error',
-                })
-                const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
-                setDevopsCopilotOpen(true)
-                sendMessageRef?.current?.(message)
-              }}
-            >
-              <span className="flex items-center gap-1.5">
-                <Icon iconName="sparkles" />
-                {isCrashLoopDetected && !isError
-                  ? 'AI Copilot detected a potential issue during this deployment'
-                  : 'AI Copilot identified likely causes and fixes for this deployment error'}
-              </span>
-            </Banner>
-          )}
           <div className="flex h-[calc(100%-48px)] flex-col items-center justify-between bg-background">
             <div className="flex h-full flex-col items-center justify-center">
               <DeploymentLogsPlaceholder
@@ -438,14 +414,22 @@ export function ListDeploymentLogs({
             isFilterActive={isFilterActive}
             toggleColumnFilter={toggleColumnFilter}
           />
-          <Button
-            onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
-            variant="outline"
-            size="md"
-            iconOnly
-          >
-            <Icon iconName="file-arrow-down" iconStyle="regular" />
-          </Button>
+          <div className="flex items-center gap-2">
+            {(isError || isCrashLoopDetected) && (
+              <Button color="brand" variant="surface" className="gap-1.5">
+                <Icon iconName="sparkles" iconStyle="solid" />
+                Launch diagnostic for this error
+              </Button>
+            )}
+            <Button
+              onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
+              variant="outline"
+              size="md"
+              iconOnly
+            >
+              <Icon iconName="file-arrow-down" iconStyle="regular" />
+            </Button>
+          </div>
         </div>
         <div
           className="h-[calc(100vh-209px)] w-full overflow-y-scroll "
@@ -462,32 +446,6 @@ export function ListDeploymentLogs({
             }
           }}
         >
-          {(isError || isCrashLoopDetected) && (
-            <div className="sticky top-0 z-10">
-              <Banner
-                color="brand"
-                buttonLabel="Launch diagnostic"
-                buttonIconRight="angle-right"
-                onClickButton={() => {
-                  posthog.capture('ai-copilot-troubleshoot-triggered', {
-                    source: 'deployment-logs',
-                    deployment_id: executionId,
-                    trigger_reason: isCrashLoopDetected ? 'crash-loop' : 'error',
-                  })
-                  const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
-                  setDevopsCopilotOpen(true)
-                  sendMessageRef?.current?.(message)
-                }}
-              >
-                <span className="flex items-center gap-1.5">
-                  <Icon iconName="sparkles" iconStyle="solid" />
-                  {isCrashLoopDetected && !isError
-                    ? 'AI Copilot detected a potential issue during this deployment'
-                    : 'AI Copilot identified likely causes and fixes for this deployment error'}
-                </span>
-              </Banner>
-            </div>
-          )}
           {logs.length >= 500 && (
             <ShowPreviousLogsButton
               showPreviousLogs={showPreviousLogs}
