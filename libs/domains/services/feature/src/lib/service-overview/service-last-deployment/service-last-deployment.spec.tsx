@@ -110,4 +110,27 @@ describe('ServiceLastDeployment', () => {
     expect(screen.getByText('mock-last-commit')).toBeInTheDocument()
     expect(screen.getByText('mock-last-commit-author')).toBeInTheDocument()
   })
+
+  it('renders the AI diagnostic panel only when the last deployment failed', () => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [
+        {
+          ...baseDeployment,
+          status: 'ERROR',
+          status_details: {
+            ...baseDeployment.status_details,
+            status: 'ERROR',
+          },
+        },
+      ],
+      isFetched: true,
+    })
+
+    renderWithProviders(<ServiceLastDeployment serviceId="service-123" serviceType="APPLICATION" />)
+
+    expect(
+      screen.getByText('AI Copilot identified likely causes and fixes for this deployment error')
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /launch diagnostic/i })).toBeInTheDocument()
+  })
 })
