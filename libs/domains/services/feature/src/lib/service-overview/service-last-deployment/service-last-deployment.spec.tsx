@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceLastDeployment } from './service-last-deployment'
 
@@ -24,6 +25,11 @@ jest.mock('@qovery/shared/util-dates', () => ({
   ...jest.requireActual('@qovery/shared/util-dates'),
   dateUTCString: () => 'mocked-date',
   timeAgo: () => 'mocked-time-ago',
+}))
+
+jest.mock('@qovery/shared/ui', () => ({
+  ...jest.requireActual('@qovery/shared/ui'),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
 
 const baseDeployment = {
