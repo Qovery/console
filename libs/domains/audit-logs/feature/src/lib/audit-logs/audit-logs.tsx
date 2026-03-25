@@ -326,24 +326,24 @@ export function AuditLogs({
                   validTargetIds={validTargetIds}
                 />
               ))}
-              <div className="flex h-14 items-center justify-center border-b border-neutral-200">
-                <p className="flex items-center gap-3 text-sm text-neutral-400">
+              <div className="flex h-14 items-center justify-center border-b border-neutral">
+                <p className="flex items-center gap-3 text-sm text-neutral">
                   {auditLogsRetentionInDays} days limit reached.
                   <Button type="button" variant="outline" className="gap-1.5" onClick={() => showIntercom()}>
                     <span>Upgrade plan</span>
-                    <Icon iconName="arrow-up-right-from-square" className="text-neutral-400" />
+                    <Icon iconName="arrow-up-right-from-square" className="text-neutral" />
                   </Button>
                 </p>
               </div>
               {[...Array(3)].map((_, index) => (
                 <div
                   key={index}
-                  className="flex h-14 items-center justify-between border-b border-neutral-200 px-5 last:border-0"
+                  className="flex h-14 items-center justify-between border-b border-neutral px-5 last:border-0"
                 >
                   {[...Array(6)].map((_, index) => (
                     <div key={index} className="flex items-center gap-4">
                       {index === 0 ? (
-                        <Icon iconName="lock-keyhole" iconStyle="regular" className="text-sm text-neutral-350" />
+                        <Icon iconName="lock-keyhole" iconStyle="regular" className="text-sm text-neutral-subtle" />
                       ) : null}
                       <Skeleton key={index} height={10} width={116} />
                     </div>

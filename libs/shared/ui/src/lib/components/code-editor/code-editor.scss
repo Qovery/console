@@ -61,7 +61,7 @@
 }
 
 .monaco-editor .selected-text {
-  background-color: var(--neutral-2) !important; /* no alpha */
+  background-color: var(--info-3) !important; /* no alpha */
 }
 
 .monaco-editor .selectionHighlight,
@@ -85,7 +85,7 @@
 .audit-logs-simple-code-editor > .monaco-editor,
 .audit-logs-failed-code-editor > .monaco-editor {
   .view-line {
-    background-color: var(--positive-2);
+    background-color: color-mix(in srgb, var(--positive-8) 10%, transparent);
   }
 
   .margin-view-overlays {
@@ -152,7 +152,7 @@
 // Audit logs failed event style
 .audit-logs-failed-code-editor > .monaco-editor {
   .view-line {
-    background-color: var(--negative-2);
+    background-color: color-mix(in srgb, var(--negative-8) 10%, transparent);
     font-family: monospace !important;
   }
 
@@ -215,10 +215,13 @@
   }
 
   .cdr.line-insert {
-    background-color: var(--positive-2);
+    background-color: color-mix(in srgb, var(--positive-8) 10%, transparent);
   }
 
-  .cdr.char-insert,
+  .cdr.char-insert {
+    background-color: color-mix(in srgb, var(--positive-8) 20%, transparent);
+  }
+
   .cmdr.gutter-insert {
     background-color: var(--positive-3);
   }
@@ -237,10 +240,13 @@
 
   //original
   .cdr.line-delete {
-    background-color: var(--negative-2);
+    background-color: color-mix(in srgb, var(--negative-8) 10%, transparent);
   }
 
-  .cdr.char-delete,
+  .cdr.char-delete {
+    background-color: color-mix(in srgb, var(--negative-8) 20%, transparent);
+  }
+
   .cmdr.gutter-delete {
     background-color: var(--negative-3);
   }

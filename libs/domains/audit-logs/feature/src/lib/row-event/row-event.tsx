@@ -285,7 +285,7 @@ export function RowEvent(props: RowEventProps) {
                   <div
                     className={`flex items-center gap-1 truncate pr-2 ${
                       targetExists
-                        ? '-translate-x-3 transition-transform duration-200 hover:text-brand group-hover:translate-x-0'
+                        ? '-translate-x-5 transition-transform duration-200 hover:text-brand group-hover:translate-x-0'
                         : ''
                     }`}
                   >
