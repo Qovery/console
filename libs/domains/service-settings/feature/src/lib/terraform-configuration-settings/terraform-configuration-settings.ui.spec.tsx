@@ -12,12 +12,13 @@ jest.mock('@tanstack/react-router', () => {
       environmentId: 'env',
       serviceId: 'app',
     }),
+    Link: ({ children }: { children: React.ReactNode }) => <a href="/">{children}</a>,
   }
 })
 
-jest.mock('../../hooks/use-terraform-available-versions/use-terraform-available-versions', () => ({
-  __esModule: true,
-  default: () => ({ data: [], isLoading: false }),
+jest.mock('@qovery/domains/service-terraform/feature', () => ({
+  ...jest.requireActual('@qovery/domains/service-terraform/feature'),
+  useTerraformAvailableVersions: () => ({ data: [], isLoading: false }),
 }))
 
 function TestComponent({ isSettings }: { isSettings?: boolean }) {

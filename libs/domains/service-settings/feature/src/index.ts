@@ -7,3 +7,4 @@ export * from './lib/application-container-healthchecks-settings/application-con
 export * from './lib/application-container-storage-settings/application-container-storage-settings/application-container-storage-settings'
 export * from './lib/service-domain-settings/service-domain-settings/service-domain-settings'
 export * from './lib/service-deployment-restrictions-settings/service-deployment-restrictions-settings/service-deployment-restrictions-settings'
+export * from './lib/terraform-configuration-settings/terraform-configuration-settings'

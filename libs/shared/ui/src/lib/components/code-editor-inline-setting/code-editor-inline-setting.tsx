@@ -31,9 +31,10 @@ export function CodeEditorInlineSetting({
           <Button
             type="button"
             size="xs"
+            iconOnly
             variant="outline"
             onClick={onOpenModal}
-            className="aspect-square justify-center p-0 hover:text-neutral-400"
+            className="justify-center p-0"
           >
             <Icon iconName="pen" />
           </Button>
@@ -44,8 +45,8 @@ export function CodeEditorInlineSetting({
         <CodeEditor value={content} readOnly height={height} language={language} />
       ) : (
         <div className="my-4 px-10 py-5 text-center">
-          <Icon iconName="wave-pulse" className="text-neutral-350" />
-          <p className="mb-3 mt-1 text-xs font-medium text-neutral-350">{emptyStateText}</p>
+          <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+          <p className="mb-3 mt-1 text-xs font-medium text-neutral-subtle">{emptyStateText}</p>
           <Button type="button" size="md" variant="outline" onClick={onOpenModal}>
             <Icon iconName="plus" className="mr-2" />
             {addButtonLabel}
