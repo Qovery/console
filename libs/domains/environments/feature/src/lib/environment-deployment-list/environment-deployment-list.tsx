@@ -30,6 +30,7 @@ import {
   DropdownMenu,
   EmptyState,
   Icon,
+  Link,
   StatusChip,
   TableFilter,
   TablePrimitives,
@@ -216,24 +217,24 @@ export function EnvironmentDeploymentList() {
                     )
                   )
                   .otherwise(() => null)}
-                {/* TODO new-nav : Route not yet created */}
-                {/*<Tooltip content="Pipeline">
+                <Tooltip content="Pipeline">
                   <Link
                     as="button"
                     color="neutral"
                     variant="outline"
                     iconOnly
                     size="md"
-                    to={
-                      state === 'QUEUED'
-                        ? ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id)
-                        : ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-                          ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id ?? '' : '')
-                    }
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId"
+                    params={{
+                      organizationId: environment?.organization.id,
+                      projectId: environment?.project.id,
+                      environmentId: environment?.id,
+                      deploymentId: isDeploymentHistory(data) ? data.identifier.execution_id ?? '' : '',
+                    }}
                   >
                     <Icon iconName="timeline" />
                   </Link>
-                </Tooltip>*/}
+                </Tooltip>
               </div>
             </div>
           )

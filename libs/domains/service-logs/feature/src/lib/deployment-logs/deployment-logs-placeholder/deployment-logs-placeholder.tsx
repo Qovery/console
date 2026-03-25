@@ -9,7 +9,7 @@ import {
 import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
 import { type DeploymentService } from '@qovery/shared/interfaces'
-import { Link, LoaderDots, StatusChip } from '@qovery/shared/ui'
+import { Icon, Link, LoaderDots, StatusChip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { mergeDeploymentServices, trimId } from '@qovery/shared/util-js'
 
@@ -230,20 +230,22 @@ export function DeploymentLogsPlaceholder({
       <div className="flex flex-col items-center justify-center gap-4 text-center">
         <ErrorIcon />
         <span className="text-neutral">An error occurred during the precheck step.</span>
-        {/* TODO new-nav : Route not yet created */}
-        {/*<Link
+        <Link
           className="gap-1.5"
           as="button"
           variant="surface"
           color="neutral"
-          to={
-            ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-            ENVIRONMENT_PRE_CHECK_LOGS_URL(versionId)
-          }
+          to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs"
+          params={{
+            organizationId: environment.organization.id,
+            projectId: environment.project.id,
+            environmentId: environment.id,
+            deploymentId: versionId,
+          }}
         >
           Open precheck
           <Icon iconName="list-check" />
-        </Link>*/}
+        </Link>
       </div>
     )
   }
@@ -258,20 +260,22 @@ export function DeploymentLogsPlaceholder({
       <div className="flex flex-col items-center justify-center gap-4 text-center">
         <ErrorIcon />
         <span className="text-neutral">An error occurred during deployment of another service.</span>
-        {/* TODO new-nav : Route not yet created */}
-        {/*<Link
+        <Link
           className="gap-1.5"
           as="button"
           variant="surface"
           color="neutral"
-          to={
-            ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-            ENVIRONMENT_STAGES_URL(versionId)
-          }
+          to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId"
+          params={{
+            organizationId: environment.organization.id,
+            projectId: environment.project.id,
+            environmentId: environment.id,
+            deploymentId: versionId,
+          }}
         >
           Open pipeline
           <Icon iconName="timeline" />
-        </Link>*/}
+        </Link>
       </div>
     )
   }
