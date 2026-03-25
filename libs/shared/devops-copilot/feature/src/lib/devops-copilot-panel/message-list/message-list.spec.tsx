@@ -228,7 +228,7 @@ describe('MessageList', () => {
       const userMessage = container.querySelector('.ml-auto')
       expect(userMessage).toBeInTheDocument()
       expect(userMessage).toHaveClass('rounded-[1.5rem]')
-      expect(userMessage).toHaveClass('bg-brand-50')
+      expect(userMessage).toHaveClass('bg-surface-brand-subtle')
     })
   })
 })
