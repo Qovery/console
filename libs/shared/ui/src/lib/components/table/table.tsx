@@ -102,7 +102,7 @@ export function Table<T>({
       <div className="grow">{children}</div>
       <div
         data-testid="table-container"
-        className={`sticky top-0 grid h-10 items-center border-b border-neutral bg-surface-neutral ${classNameHead}`}
+        className={`sticky top-0 grid h-11 items-center border-b border-neutral bg-surface-neutral ${classNameHead}`}
         style={{ gridTemplateColumns: columnsWidth }}
       >
         {dataHead.map(
@@ -120,7 +120,10 @@ export function Table<T>({
           ) => (
             <div key={index} className={className}>
               {!datePickerData && !hierarchicalFilter && !sort && !hasFilter && (
-                <span data-testid="table-head-title" className={`text-xs font-medium ${classNameTitle}`}>
+                <span
+                  data-testid="table-head-title"
+                  className={`font-code text-xs font-medium ${classNameTitle} flex items-center`}
+                >
                   {title}
                 </span>
               )}

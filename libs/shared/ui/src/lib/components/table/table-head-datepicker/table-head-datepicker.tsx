@@ -114,14 +114,14 @@ export function TableHeadDatePickerFilter({
             <Button
               type="button"
               color="neutral"
-              size="xs"
+              size="sm"
               className="gap-1.5 whitespace-nowrap"
               onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
             >
               {title}
               <span
                 role="button"
-                className="relative flex h-6 cursor-pointer items-center text-xs"
+                className="relative flex h-6 cursor-pointer items-center font-code text-xs"
                 onClick={(event) => cleanFilter(event)}
               >
                 <Icon iconName="xmark" />
@@ -131,8 +131,8 @@ export function TableHeadDatePickerFilter({
             <Button
               type="button"
               color="neutral"
-              size="xs"
-              className="items-center gap-1.5"
+              size="sm"
+              className="items-center gap-1.5 font-code"
               onClick={() => {
                 setIsOpenTimestamp(!isOpenTimestamp)
               }}
