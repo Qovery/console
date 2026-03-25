@@ -51,7 +51,10 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel, siz
         </span>
       </Button>
       <div className={selectedItem ? 'hidden' : ''}>
-        <Icon iconName="magnifying-glass" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle" />
+        <Icon
+          iconName="magnifying-glass"
+          className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle"
+        />
         <input
           placeholder={placeholder}
           className={clsx(
