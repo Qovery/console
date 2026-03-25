@@ -63,7 +63,7 @@ export function EnvironmentStages({
             to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployments"
             params={{ organizationId, projectId, environmentId }}
             color="neutral"
-            className="flex gap-2 text-neutral-subtle"
+            className="gap-1.5 text-neutral-subtle hover:text-neutral"
           >
             <Icon iconName="arrow-left" />
             Deployment history
