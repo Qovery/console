@@ -37,6 +37,17 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
         />
       </div>
     </button>
+    <a
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7"
+      data-state="closed"
+      params="[object Object]"
+      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
+    >
+      <i
+        aria-hidden="true"
+        class="fa-regular fa-timeline "
+      />
+    </a>
     <button
       aria-expanded="false"
       aria-haspopup="menu"
@@ -209,6 +220,17 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         />
       </div>
     </button>
+    <a
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7"
+      data-state="closed"
+      params="[object Object]"
+      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
+    >
+      <i
+        aria-hidden="true"
+        class="fa-regular fa-timeline "
+      />
+    </a>
     <button
       aria-controls="radix-:rv:"
       aria-expanded="true"

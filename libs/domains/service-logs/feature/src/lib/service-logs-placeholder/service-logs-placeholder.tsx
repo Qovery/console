@@ -5,7 +5,7 @@ import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react
 import { P, match } from 'ts-pattern'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { type ServiceLogsParams } from '@qovery/shared/router'
-import { Button, Link, LoaderDots, Tooltip } from '@qovery/shared/ui'
+import { Button, Icon, Link, LoaderDots, Tooltip } from '@qovery/shared/ui'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
 
 export function LoaderPlaceholder({
@@ -281,20 +281,23 @@ export function ServiceLogsPlaceholder({
           <>
             <p className="mb-1 text-neutral">No service logs available for {serviceName}</p>
             <p className="mb-4 text-sm text-neutral-subtle">Please check if the service is up and running</p>
-            {/* TODO new-nav : Route not yet created */}
-            {/*<Link
+            <Link
               as="button"
               size="sm"
               variant="surface"
               color="neutral"
-              to={
-                ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                DEPLOYMENT_LOGS_VERSION_URL(serviceId, deploymentStatus?.execution_id)
-              }
+              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+              params={{
+                organizationId,
+                projectId,
+                environmentId,
+                serviceId,
+                executionId: deploymentStatus?.execution_id,
+              }}
             >
               Go to latest deployment
               <Icon iconName="arrow-right" className="ml-1" />
-            </Link>*/}
+            </Link>
           </>
         ) : (
           <LoaderPlaceholder />

@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { EnvironmentDeploymentList } from './environment-deployment-list'
 
@@ -111,6 +112,7 @@ jest.mock('@tanstack/react-router', () => {
     useRouter: () => ({
       buildLocation: () => ({ href: '/' }),
     }),
+    Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
   }
 })
 

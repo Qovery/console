@@ -1,12 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { mutations } from '@qovery/domains/services/data-access'
-import {
-  APPLICATION_DEPLOYMENTS_URL,
-  APPLICATION_URL,
-  ENVIRONMENT_LOGS_URL,
-  ENVIRONMENT_STAGES_URL,
-} from '@qovery/shared/routes'
+import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 
@@ -41,7 +36,13 @@ export function useRestartService({
           undefined,
           () =>
             navigate({
-              to: APPLICATION_URL(organizationId, projectId, environmentId, data.id) + APPLICATION_DEPLOYMENTS_URL,
+              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
+              params: {
+                organizationId,
+                projectId,
+                environmentId,
+                serviceId: data.id,
+              },
             }),
           undefined,
           'See deployment queue'
@@ -55,6 +56,7 @@ export function useRestartService({
           undefined,
           () =>
             navigate({
+              // TODO new-nav: This should redirect to the deployment details page that we don't have yet (should redirect to '/stages' aka pipeline view, but without the executionId)
               to: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL(),
             }),
           undefined,

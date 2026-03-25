@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Banner } from '@qovery/shared/ui'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
@@ -35,9 +34,13 @@ export function NeedRedeployFlag() {
     if (service) {
       deployService({ serviceId: service.id, serviceType: service.serviceType })
       navigate({
-        to:
-          ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-          DEPLOYMENT_LOGS_VERSION_URL(service.id, 'latest'),
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
+        params: {
+          organizationId,
+          projectId,
+          environmentId,
+          serviceId: service.id,
+        },
       })
     }
   }
