@@ -64,7 +64,7 @@ describe('DevopsCopilotTroubleshootTrigger', () => {
       { wrapper }
     )
 
-    expect(screen.getByText('Ask AI Copilot for diagnostic')).toBeInTheDocument()
+    expect(screen.getByText('Ask for diagnostic')).toBeInTheDocument()
     expect(screen.getAllByTestId('icon-sparkles')).toHaveLength(2)
     expect(screen.getByTestId('icon-arrow-right')).toBeInTheDocument()
   })
