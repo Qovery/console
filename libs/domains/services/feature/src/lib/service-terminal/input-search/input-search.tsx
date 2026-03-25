@@ -7,13 +7,15 @@ export interface InputSearchProps {
   data: string[]
   onChange: (value?: string) => void
   placeholder: string
+  size?: 'sm' | 'md'
   value?: string
   trimLabel?: boolean
 }
 
-export function InputSearch({ data, value, onChange, placeholder, trimLabel }: InputSearchProps) {
+export function InputSearch({ data, value, onChange, placeholder, trimLabel, size = 'sm' }: InputSearchProps) {
   const [items, setItems] = useState(data)
   const inputRef = useRef<HTMLInputElement>(null)
+  const buttonSize = size === 'md' ? 'md' : 'sm'
 
   // https://github.com/radix-ui/primitives/issues/1342
   // We are waiting for radix combobox primitives
@@ -34,6 +36,7 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
       <Button
         color="neutral"
         variant="surface"
+        size={buttonSize}
         className={!selectedItem ? 'hidden' : ''}
         onClick={() => {
           reset()
@@ -48,10 +51,13 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
         </span>
       </Button>
       <div className={selectedItem ? 'hidden' : ''}>
-        <Icon iconName="magnifying-glass" className="absolute left-2.5 top-1.5 text-xs text-neutral-subtle" />
+        <Icon iconName="magnifying-glass" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle" />
         <input
           placeholder={placeholder}
-          className="h-7 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color]"
+          className={clsx(
+            'w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color]',
+            size === 'md' ? 'h-8' : 'h-7'
+          )}
           {...getInputProps({ ref: inputRef })}
         />
       </div>
