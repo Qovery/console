@@ -30,11 +30,9 @@ export function Header() {
         <Suspense fallback={<div className="h-8" />}>
           <>
             <Breadcrumbs />
-            <div className="ml-auto flex items-center gap-3">
+            <div className="ml-auto flex items-center gap-2">
               <SpotlightTrigger />
-              {isDevopsCopilotEnabled && (
-                <DevopsCopilotButton compact showBeta={false} showShortcut={false} className="min-w-[288px]" />
-              )}
+              {isDevopsCopilotEnabled && <DevopsCopilotButton />}
               <UserMenu />
             </div>
           </>

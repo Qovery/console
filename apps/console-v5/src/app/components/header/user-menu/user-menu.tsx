@@ -36,7 +36,7 @@ export function UserMenu() {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <button className="cursor-pointer select-none rounded-full bg-surface-neutral-component focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-9 focus-visible:ring-offset-2 focus-visible:ring-offset-background-secondary">
+        <button className="ml-1 cursor-pointer select-none rounded-full bg-surface-neutral-component focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-9 focus-visible:ring-offset-2 focus-visible:ring-offset-background-secondary">
           <Avatar
             src={userToken?.picture}
             className="h-7 w-7"
