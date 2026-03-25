@@ -15,7 +15,7 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { LoaderSpinner, Section, useModal, useModalConfirmation, useModalMultiConfirmation } from '@qovery/shared/ui'
 import { buildEditServicePayload, isTryingToRemoveLastPublicPort } from '@qovery/shared/util-services'
-import { ApplicationContainerPortSettingsModal } from '../application-container-port-crud-modal/application-container-port-crud-modal'
+import { ApplicationContainerPortSettingsModal } from '../application-container-port-settings-modal/application-container-port-settings-modal'
 import { ApplicationContainerPortSettingsList } from './application-container-port-settings-list'
 
 const PortSettingsFallback = () => (
@@ -126,7 +126,7 @@ function ApplicationContainerPortSettingsContent() {
             />
           ),
           options: {
-            width: 680,
+            width: 488,
           },
         })
       }

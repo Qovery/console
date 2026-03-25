@@ -16,12 +16,21 @@ const CERTIFICATION_LOGO_CLASS_NAME =
 const loginSearchParamsSchema = z.object({
   redirect: z.string().optional(),
 })
+
+function getSafeRedirect(redirectPath?: string) {
+  if (!redirectPath || redirectPath.startsWith('/login')) {
+    return '/'
+  }
+
+  return redirectPath
+}
+
 export const Route = createFileRoute('/login/')({
   validateSearch: loginSearchParamsSchema,
   beforeLoad: ({ context, search }) => {
     // Redirect if already authenticated
     if (context.auth.isAuthenticated) {
-      throw redirect({ to: search.redirect })
+      throw redirect({ to: getSafeRedirect(search.redirect) })
     }
   },
   component: RouteComponent,
