@@ -21,7 +21,7 @@ import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } f
 import { match } from 'ts-pattern'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
-import { Banner, Button, DropdownMenu, Icon, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
 import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-placeholder/deployment-logs-placeholder'
@@ -416,7 +416,21 @@ export function ListDeploymentLogs({
           />
           <div className="flex items-center gap-2">
             {(isError || isCrashLoopDetected) && (
-              <Button color="brand" variant="surface" className="gap-1.5">
+              <Button
+                color="brand"
+                variant="surface"
+                className="gap-1.5"
+                onClick={() => {
+                  posthog.capture('ai-copilot-troubleshoot-triggered', {
+                    source: 'deployment-logs',
+                    deployment_id: executionId,
+                    trigger_reason: isCrashLoopDetected ? 'crash-loop' : 'error',
+                  })
+                  const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
+                  setDevopsCopilotOpen(true)
+                  sendMessageRef?.current?.(message)
+                }}
+              >
                 <Icon iconName="sparkles" iconStyle="solid" />
                 Launch diagnostic for this error
               </Button>
