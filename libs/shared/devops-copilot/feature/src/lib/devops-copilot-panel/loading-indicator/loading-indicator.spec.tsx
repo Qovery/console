@@ -175,14 +175,14 @@ describe('LoadingIndicator', () => {
       render(<LoadingIndicator {...defaultProps} showPlans={{ temp: true }} />)
 
       const completedStep = screen.getByText('Step 1')
-      expect(completedStep).toHaveClass('text-neutral-400')
+      expect(completedStep).toHaveClass('text-neutral-subtle')
     })
 
     it('should not apply neutral color to in-progress step', () => {
       render(<LoadingIndicator {...defaultProps} showPlans={{ temp: true }} />)
 
       const inProgressStep = screen.getByText('Step 2')
-      expect(inProgressStep).not.toHaveClass('text-neutral-400')
+      expect(inProgressStep).not.toHaveClass('text-neutral-subtle')
     })
 
     it('should have cursor-pointer on clickable container', () => {

@@ -8,6 +8,24 @@ jest.mock('@qovery/shared/ui', () => ({
       {children}
     </button>
   ),
+  EmptyState: ({
+    children,
+    title,
+    description,
+    icon,
+  }: {
+    children: ReactNode
+    title: ReactNode
+    description: ReactNode
+    icon: string
+  }) => (
+    <div>
+      <span data-testid={`icon-${icon}`} />
+      <div>{title}</div>
+      <div>{description}</div>
+      {children}
+    </div>
+  ),
   Icon: ({ iconName }: { iconName: string }) => <span data-testid={`icon-${iconName}`} />,
   Link: ({
     children,
