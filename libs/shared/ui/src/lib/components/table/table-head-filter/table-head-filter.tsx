@@ -269,14 +269,20 @@ export function TableHeadFilter<T>({
         trigger={
           <div className="flex">
             {hasFilter ? (
-              <Button type="button" color="neutral" size="xs" className="gap-1.5 whitespace-nowrap">
+              <Button type="button" color="neutral" size="sm" className="gap-1.5 whitespace-nowrap font-code">
                 {title} {!hideFilterNumber ? `(${dataFilterNumber})` : ''}
                 <span role="button" className="flex" onClick={(event) => cleanFilter(event)}>
                   <Icon iconName="xmark" />
                 </span>
               </Button>
             ) : (
-              <Button type="button" variant="surface" color="neutral" size="xs" className="items-center gap-1.5">
+              <Button
+                type="button"
+                variant="surface"
+                color="neutral"
+                size="sm"
+                className="items-center gap-1.5 font-code"
+              >
                 {title}
                 <Icon iconName="angle-down" />
               </Button>

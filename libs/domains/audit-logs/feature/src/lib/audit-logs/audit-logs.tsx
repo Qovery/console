@@ -287,7 +287,7 @@ export function AuditLogs({
         data={events}
         filter={filter}
         setFilter={setFilter}
-        className="rounded border border-neutral bg-background"
+        className="rounded border border-neutral"
         classNameHead="rounded-t"
         columnsWidth={columnsWidth}
       >
@@ -307,8 +307,8 @@ export function AuditLogs({
           ) : !organizationMaxLimitReached && events?.length === 0 ? (
             <div className="flex h-[30vh] items-center justify-center px-5 py-4 text-center">
               <div>
-                <Icon iconName="wave-pulse" className="text-neutral-350" />
-                <p className="mt-1 text-xs font-medium text-neutral-350" data-testid="empty-result">
+                <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+                <p className="mt-1 text-xs font-medium text-neutral-subtle" data-testid="empty-result">
                   No events found, we retain logs for a maximum of {auditLogsRetentionInDays} days <br /> Try to change
                   your filters.
                 </p>
@@ -326,24 +326,24 @@ export function AuditLogs({
                   validTargetIds={validTargetIds}
                 />
               ))}
-              <div className="flex h-14 items-center justify-center border-b border-neutral-200">
-                <p className="flex items-center gap-3 text-sm text-neutral-400">
+              <div className="flex h-14 items-center justify-center border-b border-neutral">
+                <p className="flex items-center gap-3 text-sm text-neutral">
                   {auditLogsRetentionInDays} days limit reached.
                   <Button type="button" variant="outline" className="gap-1.5" onClick={() => showIntercom()}>
                     <span>Upgrade plan</span>
-                    <Icon iconName="arrow-up-right-from-square" className="text-neutral-400" />
+                    <Icon iconName="arrow-up-right-from-square" className="text-neutral" />
                   </Button>
                 </p>
               </div>
               {[...Array(3)].map((_, index) => (
                 <div
                   key={index}
-                  className="flex h-14 items-center justify-between border-b border-neutral-200 px-5 last:border-0"
+                  className="flex h-14 items-center justify-between border-b border-neutral px-5 last:border-0"
                 >
                   {[...Array(6)].map((_, index) => (
                     <div key={index} className="flex items-center gap-4">
                       {index === 0 ? (
-                        <Icon iconName="lock-keyhole" iconStyle="regular" className="text-sm text-neutral-350" />
+                        <Icon iconName="lock-keyhole" iconStyle="regular" className="text-sm text-neutral-subtle" />
                       ) : null}
                       <Skeleton key={index} height={10} width={116} />
                     </div>

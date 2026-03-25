@@ -269,12 +269,10 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
 
       {/* RIGHT: Button stays fixed at top-right */}
       {badges.filter((b) => b.isDeletable).length > 0 && (
-        <div className="flex-shrink-0 self-start">
-          <Button className="gap-2" size="xs" color="neutral" variant="surface" onClick={clearFilter}>
-            Clear all filters
-            <Icon iconName="xmark" iconStyle="regular" />
-          </Button>
-        </div>
+        <Button className="gap-2" size="xs" color="neutral" variant="surface" onClick={clearFilter}>
+          Clear all filters
+          <Icon iconName="xmark" iconStyle="regular" />
+        </Button>
       )}
     </div>
   )
