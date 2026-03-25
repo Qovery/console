@@ -66,11 +66,13 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
 
   if (!logs || logs.length === 0) {
     return (
-      <div className="h-full">
+      <div className="flex flex-col">
         <HeaderPreCheckLogs preCheckStage={preCheckStage} />
-        <div className="flex h-[calc(100%-44px)] w-full flex-col items-center justify-center gap-5 pt-11">
+        <div className="flex h-[calc(100vh-156px)] w-full flex-col items-center justify-center gap-5 overflow-hidden text-center">
           <LoaderDots />
-          <p className="text-neutral">Pre-check logs are loading…</p>
+          <div className="flex flex-col gap-3">
+            <p className="text-neutral">Pre-check logs are loading…</p>
+          </div>
         </div>
       </div>
     )
