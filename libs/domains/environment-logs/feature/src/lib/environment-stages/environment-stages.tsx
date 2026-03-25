@@ -102,15 +102,8 @@ export function EnvironmentStages({
                       {executionId && (
                         <div className="flex flex-col gap-1.5 bg-surface-neutral-subtle p-1.5">
                           <Link
-                            // TODO new-nav : Route not yet created
-                            // @ts-expect-error-next-line
-                            to={
-                              ENVIRONMENT_LOGS_URL(
-                                environment.organization.id,
-                                environment.project.id,
-                                environment.id
-                              ) + ENVIRONMENT_PRE_CHECK_LOGS_URL(executionId)
-                            }
+                            to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs"
+                            params={{ organizationId, projectId, environmentId, deploymentId: executionId }}
                             className="flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2 text-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle hover:text-neutral"
                           >
                             <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral text-neutral-subtle">

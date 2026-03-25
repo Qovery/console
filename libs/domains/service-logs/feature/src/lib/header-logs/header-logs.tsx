@@ -17,7 +17,7 @@ import {
 } from '@qovery/domains/services/feature'
 import { Button, DeploymentAction, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
-import { pluralize } from '@qovery/shared/util-js'
+import { pluralize, trimId } from '@qovery/shared/util-js'
 import { PodHealthChips } from '../pod-health-chips/pod-health-chips'
 
 export interface HeaderLogsProps extends PropsWithChildren {
@@ -129,10 +129,12 @@ export function HeaderLogs({
                   <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
                     <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
                   </svg>
-                  <span className="flex items-center gap-1.5 truncate">
-                    <Icon iconName="code" iconStyle="regular" className="text-base text-neutral-subtle" />
-                    <span className="font-normal text-neutral">{executionId}</span>
-                  </span>
+                  <Tooltip side="bottom" content={<span>Execution id: {executionId}</span>}>
+                    <span className="flex items-center gap-1.5 truncate">
+                      <Icon iconName="code" iconStyle="regular" className="text-base text-neutral-subtle" />
+                      <span className="font-normal text-neutral">{trimId(executionId ?? '')}</span>
+                    </span>
+                  </Tooltip>
                 </div>
               )
             })
