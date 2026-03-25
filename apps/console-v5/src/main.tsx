@@ -15,8 +15,15 @@ import { StrictMode, useEffect } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
 import { IntercomProvider } from 'react-use-intercom'
+import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { LoaderSpinner, ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { INTERCOM, POSTHOG, POSTHOG_APIHOST, QOVERY_API } from '@qovery/shared/util-node-env'
+import {
+  DEVOPS_COPILOT_API_BASE_URL,
+  INTERCOM,
+  POSTHOG,
+  POSTHOG_APIHOST,
+  QOVERY_API,
+} from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
 // TODO: Improve this import to use the shared/ui package
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -153,6 +160,7 @@ function App() {
   const router = createRouter({ routeTree, context: { auth, queryClient } })
 
   useAuthInterceptor(axios, QOVERY_API)
+  useAuthInterceptor(devopsCopilotAxios, DEVOPS_COPILOT_API_BASE_URL)
 
   if (auth.isLoading) {
     return (
