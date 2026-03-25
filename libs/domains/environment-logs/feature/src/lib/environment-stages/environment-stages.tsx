@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import {
   type DeploymentHistoryEnvironmentV2,
   type DeploymentStageWithServicesStatuses,
@@ -7,10 +8,20 @@ import {
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
 import { type Dispatch, type PropsWithChildren, type SetStateAction } from 'react'
-import { EnvironmentActionToolbar } from '@qovery/domains/environments/feature'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_PRE_CHECK_LOGS_URL } from '@qovery/shared/routes'
-import { Icon, InputToggle, Link, LoaderSpinner, StageStatusChip, StatusChip, Tooltip } from '@qovery/shared/ui'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { EnvironmentActionToolbar, useDeploymentHistory } from '@qovery/domains/environments/feature'
+import {
+  Button,
+  DropdownMenu,
+  Icon,
+  InputToggle,
+  Link,
+  LoaderSpinner,
+  StageStatusChip,
+  StatusChip,
+  Tooltip,
+} from '@qovery/shared/ui'
+import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
+import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { HeaderEnvironmentStages } from '../header-environment-stages/header-environment-stages'
 
 export interface EnvironmentStagesProps extends PropsWithChildren {
@@ -35,8 +46,14 @@ export function EnvironmentStages({
   banner,
   children,
 }: EnvironmentStagesProps) {
-  const { organizationId, projectId, environmentId } = useParams({ strict: false })
+  const { organizationId, projectId, environmentId, deploymentId } = useParams({ strict: false })
   const executionId = environmentStatus.last_deployment_id
+  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({
+    environmentId: environment.id,
+    suspense: true,
+  })
+  const currentDeploymentHistory = environmentDeploymentHistory.find((d) => d.identifier.execution_id === deploymentId)
+  const isLastVersion = environmentDeploymentHistory?.[0]?.identifier.execution_id === deploymentId || !deploymentId
 
   return (
     <div className="h-full">
@@ -53,29 +70,69 @@ export function EnvironmentStages({
           </Link>
         </div>
       </div>
-      <HeaderEnvironmentStages
-        environment={environment}
-        environmentStatus={environmentStatus}
-        deploymentHistory={deploymentHistory}
-      >
-        <div className="flex items-center gap-4 text-sm font-medium text-neutral">
-          <InputToggle
-            name="skipped"
-            value={hideSkipped}
-            onChange={setHideSkipped}
-            small
-            title="Hide skipped"
-            className="flex-row-reverse gap-2"
-          />
+      <HeaderEnvironmentStages environmentStatus={environmentStatus} deploymentHistory={deploymentHistory}>
+        <div className="flex items-center gap-2">
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <Button variant="outline" className="gap-1.5" size="md">
+                <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
+                {isLastVersion
+                  ? 'Latest'
+                  : dateYearMonthDayHourMinuteSecond(
+                      new Date(currentDeploymentHistory?.auditing_data.created_at ?? '')
+                    )}
+                <Icon iconName="angle-down" />
+              </Button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-80 overflow-y-auto">
+              {environmentDeploymentHistory.map((deployment) => (
+                <DropdownMenu.Item
+                  asChild
+                  key={deployment.identifier.execution_id}
+                  className={clsx('min-h-9', {
+                    'bg-surface-brand-component': deployment.identifier.execution_id === deploymentId,
+                  })}
+                >
+                  <Link
+                    className="flex w-full justify-between"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId"
+                    params={{
+                      organizationId,
+                      projectId,
+                      environmentId: environment.id,
+                      deploymentId: deployment.identifier.execution_id,
+                    }}
+                  >
+                    <Tooltip content={deployment.identifier.execution_id}>
+                      <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
+                    </Tooltip>
+                    <span className="flex items-center gap-2.5 text-xs text-neutral-subtle">
+                      {dateYearMonthDayHourMinuteSecond(new Date(deployment.auditing_data.created_at))}
+                      <StatusChip status={deployment.status} />
+                    </span>
+                  </Link>
+                </DropdownMenu.Item>
+              ))}
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
           <EnvironmentActionToolbar variant="header" environment={environment} />
         </div>
       </HeaderEnvironmentStages>
-      <hr className="mt-2 w-full border-neutral" />
-
+      <hr className="mb-4 mt-2 w-full border-neutral" />
+      <div className="flex items-center justify-end gap-4 text-sm font-medium text-neutral">
+        <InputToggle
+          name="skipped"
+          value={hideSkipped}
+          onChange={setHideSkipped}
+          small
+          title="Hide skipped"
+          className="flex-row-reverse gap-2"
+        />
+      </div>
       <div className="flex justify-center">
         <div className="relative h-full w-full">
           {banner}
-          <div className="scroll-shadow flex h-full gap-0.5 overflow-x-auto py-6">
+          <div className="scroll-shadow flex h-full gap-0.5 overflow-x-auto py-4">
             {!deploymentStages ? (
               <div className="mt-6 flex h-full w-full justify-center">
                 <LoaderSpinner className="h-6 w-6" />
