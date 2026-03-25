@@ -4,10 +4,11 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import {
   TerraformConfigurationSettings,
+  type TerraformGeneralData,
   buildDockerfileFragment,
   extractDockerfileFragmentFields,
 } from '@qovery/domains/service-settings/feature'
-import { type TerraformGeneralData, useEditService, useService } from '@qovery/domains/services/feature'
+import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
