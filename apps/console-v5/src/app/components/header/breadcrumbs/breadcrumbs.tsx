@@ -9,22 +9,15 @@ import { Avatar } from '@qovery/shared/ui'
 import { Separator } from '../header'
 import { BreadcrumbItem, type BreadcrumbItemData } from './breadcrumb-item'
 
-function normalizeRouteParam(value?: string) {
-  if (!value) {
-    return ''
-  }
-
-  return decodeURIComponent(value).replace(/\s+/g, '').trim()
-}
-
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
-  const params = useParams({ strict: false })
-  const organizationId = normalizeRouteParam(params.organizationId)
-  const clusterId = normalizeRouteParam(params.clusterId)
-  const projectId = normalizeRouteParam(params.projectId)
-  const environmentId = normalizeRouteParam(params.environmentId)
-  const serviceId = normalizeRouteParam(params.serviceId)
+  const {
+    organizationId = '',
+    clusterId = '',
+    projectId = '',
+    environmentId = '',
+    serviceId = '',
+  } = useParams({ strict: false })
 
   const { data: organizations = [] } = useOrganizations({
     enabled: true,
