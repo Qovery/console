@@ -29,69 +29,229 @@ class TerminalRefAddon implements ITerminalAddon {
   }
 }
 
-interface TerminalShellActionLink {
-  action: () => void
-  label: string
+interface TerminalBannerColors {
+  accent1: string
+  positive: string
+  subtle: string
+  warning: string
+}
+
+interface TerminalBannerSegment {
+  bold?: boolean
+  color?: string
+  text: string
 }
 
 class TerminalShellActionsAddon implements ITerminalAddon {
+  private static readonly COPY_COMMAND_LABEL = '[copy command]'
+  private static readonly FIRST_COMMAND_TITLE = '1. Use $ qovery shell'
+  private static readonly SECOND_COMMAND_TITLE = '2. Use $ qovery port-forward'
+  private static readonly LOOKBACK_LINE_COUNT = 6
+
   private linkProviderDisposable?: IDisposable
+  private resizeDisposable?: IDisposable
+  private bannerRenderTimeoutId?: ReturnType<typeof setTimeout>
+  private hasRenderedBanner = false
   private static readonly ANSI_BOLD = '\u001b[1m'
   private static readonly ANSI_RESET = '\u001b[0m'
 
   constructor(
-    private readonly links: TerminalShellActionLink[],
+    private readonly fitAddon: FitAddon,
+    private readonly colors: TerminalBannerColors,
+    private readonly onCopyPortForwardCommand: () => void,
+    private readonly onCopyShellCommand: () => void,
     private readonly shouldWriteBanner: boolean
   ) {}
 
+  private toAnsiColor(color: string): string {
+    const [r, g, b] = Color(color)
+      .rgb()
+      .array()
+      .map((value) => Math.round(value))
+
+    return `\u001b[38;2;${r};${g};${b}m`
+  }
+
+  private formatSegment(segment: TerminalBannerSegment): string {
+    const stylePrefix = `${segment.bold ? TerminalShellActionsAddon.ANSI_BOLD : ''}${segment.color ? this.toAnsiColor(segment.color) : ''}`
+    if (!stylePrefix) {
+      return segment.text
+    }
+
+    return `${stylePrefix}${segment.text}${TerminalShellActionsAddon.ANSI_RESET}`
+  }
+
+  private clampSegments(segments: TerminalBannerSegment[], maxWidth: number): {
+    clippedSegments: TerminalBannerSegment[]
+    trailingPadding: string
+  } {
+    const clippedSegments: TerminalBannerSegment[] = []
+    let remainingWidth = maxWidth
+
+    segments.forEach((segment) => {
+      if (remainingWidth <= 0) {
+        return
+      }
+
+      const clippedText = segment.text.slice(0, remainingWidth)
+      if (!clippedText) {
+        return
+      }
+
+      clippedSegments.push({
+        ...segment,
+        text: clippedText,
+      })
+      remainingWidth -= clippedText.length
+    })
+
+    return {
+      clippedSegments,
+      trailingPadding: ' '.repeat(Math.max(0, remainingWidth)),
+    }
+  }
+
+  private wrapSegments(segments: TerminalBannerSegment[], maxWidth: number): TerminalBannerSegment[][] {
+    if (!segments.some((segment) => segment.text.length > 0)) {
+      return [[{ text: '' }]]
+    }
+
+    const wrappedLines: TerminalBannerSegment[][] = []
+    let currentLine: TerminalBannerSegment[] = []
+    let remainingWidth = maxWidth
+
+    segments.forEach((segment) => {
+      let remainingText = segment.text
+
+      while (remainingText.length > 0) {
+        if (remainingWidth <= 0) {
+          wrappedLines.push(currentLine)
+          currentLine = []
+          remainingWidth = maxWidth
+        }
+
+        const chunkLength = Math.min(remainingWidth, remainingText.length)
+        const chunk = remainingText.slice(0, chunkLength)
+
+        currentLine.push({
+          ...segment,
+          text: chunk,
+        })
+
+        remainingText = remainingText.slice(chunkLength)
+        remainingWidth -= chunkLength
+      }
+    })
+
+    if (currentLine.length > 0) {
+      wrappedLines.push(currentLine)
+    }
+
+    return wrappedLines.length > 0 ? wrappedLines : [[{ text: '' }]]
+  }
+
+  private resolveCopyCommandAction(terminal: Terminal, bufferLineNumber: number): (() => void) | undefined {
+    const contextLines = Array.from({ length: TerminalShellActionsAddon.LOOKBACK_LINE_COUNT }, (_, index) =>
+      terminal.buffer.active.getLine(bufferLineNumber - 2 - index)?.translateToString(false)
+    )
+      .filter((line): line is string => Boolean(line))
+      .join(' ')
+
+    if (contextLines.includes(TerminalShellActionsAddon.SECOND_COMMAND_TITLE)) {
+      return this.onCopyPortForwardCommand
+    }
+
+    if (contextLines.includes(TerminalShellActionsAddon.FIRST_COMMAND_TITLE)) {
+      return this.onCopyShellCommand
+    }
+
+    return undefined
+  }
+
+  private writeBanner(terminal: Terminal): void {
+    const horizontalPadding = 1
+    const maxContentWidth = Math.max(1, terminal.cols - 4 - horizontalPadding * 2)
+    const bannerContentWidth = maxContentWidth
+    const bannerInnerWidth = bannerContentWidth + horizontalPadding * 2
+    const lineContentWidth = bannerInnerWidth + 2
+    const formatBannerLine = (segments: TerminalBannerSegment[]) => {
+      const { clippedSegments, trailingPadding } = this.clampSegments(segments, bannerContentWidth)
+      const styledText = clippedSegments.map((segment) => this.formatSegment(segment)).join('') + trailingPadding
+
+      return `│ ${' '.repeat(horizontalPadding)}${styledText}${' '.repeat(horizontalPadding)} │`
+    }
+
+    const firstCommandLine: TerminalBannerSegment[] = [
+      { bold: true, color: this.colors.warning, text: `${TerminalShellActionsAddon.FIRST_COMMAND_TITLE} ` },
+      { color: this.colors.accent1, text: '<service-url> ' },
+      { color: this.colors.positive, text: '--pod ' },
+      { color: this.colors.accent1, text: '<pod-name> ' },
+      { color: this.colors.positive, text: '--container ' },
+      { color: this.colors.accent1, text: '<container-id>' },
+    ]
+
+    const secondCommandLine: TerminalBannerSegment[] = [
+      { bold: true, color: this.colors.warning, text: `${TerminalShellActionsAddon.SECOND_COMMAND_TITLE} ` },
+      { color: this.colors.positive, text: '--organization ' },
+      { color: this.colors.accent1, text: '<org-id> ' },
+      { color: this.colors.positive, text: '--project ' },
+      { color: this.colors.accent1, text: '<project-id> ' },
+      { color: this.colors.positive, text: '--environment ' },
+      { color: this.colors.accent1, text: '<env-id> ' },
+      { color: this.colors.positive, text: '--service ' },
+      { color: this.colors.accent1, text: '<service-id> ' },
+      { color: this.colors.positive, text: '--port ' },
+      { color: this.colors.accent1, text: '<local-port:target-port>' },
+    ]
+
+    const bannerLines: TerminalBannerSegment[][] = [
+      [{ bold: true, text: 'Connect from your local terminal via the Qovery CLI' }],
+      [{ text: '' }],
+      firstCommandLine,
+      [{ color: this.colors.subtle, text: 'Open an interactive shell inside a running container' }],
+      [{ text: TerminalShellActionsAddon.COPY_COMMAND_LABEL }],
+      [{ text: '' }],
+      secondCommandLine,
+      [{ color: this.colors.subtle, text: 'Forward a pod port to localhost' }],
+      [{ text: TerminalShellActionsAddon.COPY_COMMAND_LABEL }],
+    ]
+
+    terminal.writeln(`┌${'─'.repeat(lineContentWidth)}┐`)
+    terminal.writeln(formatBannerLine([{ text: '' }]))
+    bannerLines.forEach((line) => {
+      this.wrapSegments(line, bannerContentWidth).forEach((wrappedLine) => {
+        terminal.writeln(formatBannerLine(wrappedLine))
+      })
+    })
+    terminal.writeln(formatBannerLine([{ text: '' }]))
+    terminal.writeln(`└${'─'.repeat(lineContentWidth)}┘`)
+    terminal.writeln('')
+  }
+
   activate(terminal: Terminal): void {
     if (this.shouldWriteBanner) {
-      const horizontalPadding = 1
-      const actionLabels = this.links.map(({ label }) => label)
-      const headingLine = 'Quick actions to get started:'
-      const maxContentWidth = Math.max(1, terminal.cols - 4 - horizontalPadding * 2)
-      const actionLines: string[] = []
-      let currentActionLine = ''
-
-      actionLabels.forEach((label) => {
-        const nextLine = currentActionLine ? `${currentActionLine} ${label}` : label
-
-        if (nextLine.length <= maxContentWidth) {
-          currentActionLine = nextLine
-          return
+      const renderWhenFitIsStable = () => {
+        if (this.bannerRenderTimeoutId) {
+          clearTimeout(this.bannerRenderTimeoutId)
         }
 
-        if (currentActionLine) {
-          actionLines.push(currentActionLine)
-        }
-        currentActionLine = label
+        this.bannerRenderTimeoutId = setTimeout(() => {
+          if (this.hasRenderedBanner) {
+            return
+          }
+
+          this.fitAddon.fit()
+          this.writeBanner(terminal)
+          this.hasRenderedBanner = true
+          this.resizeDisposable?.dispose()
+          this.resizeDisposable = undefined
+        }, 120)
+      }
+
+      this.resizeDisposable = terminal.onResize(() => {
+        renderWhenFitIsStable()
       })
-
-      if (currentActionLine) {
-        actionLines.push(currentActionLine)
-      }
-
-      const bannerLines = ['Qovery cloud shell', '', headingLine, ...actionLines]
-      const maxBannerLineLength = Math.max(...bannerLines.map((line) => line.length))
-      const bannerContentWidth = Math.min(Math.max(20, maxBannerLineLength), maxContentWidth)
-      const bannerInnerWidth = bannerContentWidth + horizontalPadding * 2
-      const lineContentWidth = bannerInnerWidth + 2
-      const formatBannerLine = (line: string, bold?: boolean) => {
-        const visibleLine = line.length > bannerContentWidth ? line.slice(0, bannerContentWidth) : line
-        const trailingPadding = ' '.repeat(bannerContentWidth - visibleLine.length)
-        const styledText = bold
-          ? `${TerminalShellActionsAddon.ANSI_BOLD}${visibleLine}${TerminalShellActionsAddon.ANSI_RESET}${trailingPadding}`
-          : `${visibleLine}${trailingPadding}`
-
-        return `│ ${' '.repeat(horizontalPadding)}${styledText}${' '.repeat(horizontalPadding)} │`
-      }
-
-      terminal.writeln(`┌${'─'.repeat(lineContentWidth)}┐`)
-      terminal.writeln(formatBannerLine(''))
-      bannerLines.forEach((line, index) => terminal.writeln(formatBannerLine(line, index === 0)))
-      terminal.writeln(formatBannerLine(''))
-      terminal.writeln(`└${'─'.repeat(lineContentWidth)}┘`)
-      terminal.writeln('')
+      renderWhenFitIsStable()
     }
 
     this.linkProviderDisposable = terminal.registerLinkProvider({
@@ -104,16 +264,17 @@ class TerminalShellActionsAddon implements ITerminalAddon {
         }
 
         const lineText = line.translateToString(false)
-        const lineLinks = this.links.flatMap(({ label, action }) => {
-          const linkRanges = []
-          let fromIndex = 0
+        const linkRanges = []
+        let fromIndex = 0
 
-          while (fromIndex < lineText.length) {
-            const labelIndex = lineText.indexOf(label, fromIndex)
-            if (labelIndex === -1) {
-              break
-            }
+        while (fromIndex < lineText.length) {
+          const labelIndex = lineText.indexOf(TerminalShellActionsAddon.COPY_COMMAND_LABEL, fromIndex)
+          if (labelIndex === -1) {
+            break
+          }
 
+          const action = this.resolveCopyCommandAction(terminal, bufferLineNumber)
+          if (action) {
             linkRanges.push({
               activate: () => action(),
               decorations: {
@@ -122,7 +283,7 @@ class TerminalShellActionsAddon implements ITerminalAddon {
               },
               range: {
                 end: {
-                  x: labelIndex + label.length + 1,
+                  x: labelIndex + TerminalShellActionsAddon.COPY_COMMAND_LABEL.length + 1,
                   y: bufferLineNumber,
                 },
                 start: {
@@ -130,22 +291,28 @@ class TerminalShellActionsAddon implements ITerminalAddon {
                   y: bufferLineNumber,
                 },
               },
-              text: label,
+              text: TerminalShellActionsAddon.COPY_COMMAND_LABEL,
             })
-            fromIndex = labelIndex + label.length
           }
 
-          return linkRanges
-        })
+          fromIndex = labelIndex + TerminalShellActionsAddon.COPY_COMMAND_LABEL.length
+        }
 
-        callback(lineLinks.length > 0 ? lineLinks : undefined)
+        callback(linkRanges.length > 0 ? linkRanges : undefined)
       },
     })
   }
 
   dispose(): void {
+    if (this.bannerRenderTimeoutId) {
+      clearTimeout(this.bannerRenderTimeoutId)
+      this.bannerRenderTimeoutId = undefined
+    }
+
     this.linkProviderDisposable?.dispose()
+    this.resizeDisposable?.dispose()
     this.linkProviderDisposable = undefined
+    this.resizeDisposable = undefined
   }
 }
 
@@ -183,6 +350,19 @@ export function ServiceTerminal({
   const foreground = getCssVariableHex('--neutral-12')
   const selectionBackground = getCssVariableHex('--brand-3')
   const selectionForeground = getCssVariableHex('--neutral-12')
+  const warningTextColor = getCssVariableHex('--warning-11')
+  const accent1TextColor = getCssVariableHex('--accent-11')
+  const positiveTextColor = getCssVariableHex('--positive-11')
+  const subtleTextColor = getCssVariableHex('--neutral-11')
+  const terminalBannerColors = useMemo(
+    () => ({
+      accent1: accent1TextColor,
+      positive: positiveTextColor,
+      subtle: subtleTextColor,
+      warning: warningTextColor,
+    }),
+    [accent1TextColor, positiveTextColor, subtleTextColor, warningTextColor]
+  )
   const terminalOptions = useMemo(
     () => ({
       theme: {
@@ -210,37 +390,29 @@ export function ServiceTerminal({
   ]
     .filter((commandPart): commandPart is string => Boolean(commandPart))
     .join(' ')
-  const portForwardCommand = [
-    'qovery port-forward \\',
-    `  --organization "${organizationId}" \\`,
-    `  --project "${projectId}" \\`,
-    `  --environment "${environmentId}" \\`,
-    `  --service "${serviceId}" \\`,
-    '  --port [local-port]:[target-port]',
-  ].join('\n')
-  const prefillCommand = useCallback((command: string) => {
+  const portForwardCommand = `qovery port-forward --organization ${organizationId} --project ${projectId} --environment ${environmentId} --service ${serviceId} --port <local-port:target-port>`
+  const prefillCommand = useCallback((command: string, shouldPasteInTerminal = true) => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      void navigator.clipboard.writeText(command).catch(() => undefined)
+    }
+
+    if (!shouldPasteInTerminal) {
+      return
+    }
+
     if (!terminalRef.current) {
       return
     }
     terminalRef.current.focus()
     terminalRef.current.paste(`\u0015${command}`)
   }, [])
-  const terminalShellLinks = useMemo(
-    () => [
-      {
-        label: '[connect locally]',
-        action: () => prefillCommand(connectShellCommand),
-      },
-      {
-        label: '[forward port]',
-        action: () => prefillCommand(portForwardCommand),
-      },
-      {
-        label: '[show env variables]',
-        action: () => prefillCommand('printenv'),
-      },
-    ],
-    [connectShellCommand, portForwardCommand, prefillCommand]
+  const onCopyShellCommand = useCallback(
+    () => prefillCommand(connectShellCommand, false),
+    [connectShellCommand, prefillCommand]
+  )
+  const onCopyPortForwardCommand = useCallback(
+    () => prefillCommand(portForwardCommand, false),
+    [portForwardCommand, prefillCommand]
   )
 
   const onOpenHandler = useCallback(
@@ -263,10 +435,16 @@ export function ServiceTerminal({
             terminalRef.current = null
           }
         ),
-        new TerminalShellActionsAddon(terminalShellLinks, shouldWriteShellBanner),
+        new TerminalShellActionsAddon(
+          fitAddon,
+          terminalBannerColors,
+          onCopyPortForwardCommand,
+          onCopyShellCommand,
+          shouldWriteShellBanner
+        ),
       ])
     },
-    [attachWebSocket, setAddons, terminalShellLinks]
+    [attachWebSocket, onCopyPortForwardCommand, onCopyShellCommand, setAddons, terminalBannerColors]
   )
 
   const onCloseHandler = useCallback(
