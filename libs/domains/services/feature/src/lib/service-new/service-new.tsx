@@ -23,10 +23,9 @@ import {
   type TagsEnum,
   serviceTemplates,
 } from './service-templates'
+import { getServiceIconClassName } from '../service-icon/service-icon'
 
 const CloudFormationIcon = '/assets/devicon/cloudformation.svg'
-
-const SERVICE_TEMPLATE_ICON_INVERT_DARK_TITLES = new Set(['Apache Kafka', 'Replibyte', 'Rust', 'Flask', 'Temporal'])
 
 const getEnvironmentBasePath = (organizationId: string, projectId: string, environmentId: string) =>
   `/organization/${organizationId}/project/${projectId}/environment/${environmentId}`
@@ -196,12 +195,14 @@ function CardOption({
   recommended,
   badge,
   template_id,
+  icon_uri,
   organizationId,
   projectId,
   environmentId,
   isTerraformFeatureFlag,
   onUpgradePlanClick,
 }: CardOptionProps) {
+  const iconClassName = getServiceIconClassName(icon_uri)
   const pathSuffix = servicePathSuffix(type, parentSlug, slug)
   const to = pathSuffix ? getServicesPath(organizationId, projectId, environmentId, pathSuffix) : undefined
 
@@ -216,7 +217,7 @@ function CardOption({
         onKeyDown={(e) => e.key === 'Enter' && onUpgradePlanClick()}
         className="flex cursor-pointer items-start gap-3 rounded-sm border border-neutral bg-surface-neutral-subtle p-3 transition hover:bg-surface-neutral-componentHover"
       >
-        <img className="mt-1 select-none" width={24} height={24} src={icon} alt={title} />
+        <img className={twMerge('mt-1 select-none', iconClassName)} width={24} height={24} src={icon} alt={title} />
         <span className="flex flex-1 flex-col gap-1">
           <span className="inline-flex items-center gap-2 text-ssm font-medium text-neutral">
             {title}
@@ -256,7 +257,7 @@ function CardOption({
         })
       }
     >
-      <img className="mt-1 select-none" width={24} height={24} src={icon} alt={title} />
+      <img className={twMerge('mt-1 select-none', iconClassName)} width={24} height={24} src={icon} alt={title} />
       <span>
         <span className="inline-flex items-center gap-2 text-ssm font-medium text-neutral">
           {title}
@@ -299,6 +300,7 @@ function CardService({
   projectId,
   environmentId,
   cloudProvider,
+  icon_uri,
   isTerraformFeatureFlag,
   onUpgradePlanClick,
 }: Omit<ServiceTemplateType, 'cloud_provider'> & {
@@ -312,6 +314,7 @@ function CardService({
   onUpgradePlanClick?: () => void
 }) {
   const [expanded, setExpanded] = useState(false)
+  const iconClassName = getServiceIconClassName(icon_uri)
 
   if (options && !slug) {
     return null
@@ -331,7 +334,7 @@ function CardService({
           <div className="flex w-full flex-col gap-8">
             <div className="relative flex gap-6">
               <img
-                className={twMerge('select-none', SERVICE_TEMPLATE_ICON_INVERT_DARK_TITLES.has(title) && 'dark:invert')}
+                className={twMerge('select-none', iconClassName)}
                 width={52}
                 height={52}
                 src={icon as string}
@@ -397,16 +400,13 @@ function CardService({
             <span className="relative">
               {typeof icon === 'string' ? (
                 <img
-                  className={twMerge(
-                    'max-h-10 w-14 select-none',
-                    SERVICE_TEMPLATE_ICON_INVERT_DARK_TITLES.has(title) && 'dark:invert'
-                  )}
+                  className={twMerge('max-h-10 w-14 select-none', iconClassName)}
                   src={icon}
                   alt={title}
                 />
               ) : (
                 cloneElement(icon as ReactElement, {
-                  className: twMerge('w-10', SERVICE_TEMPLATE_ICON_INVERT_DARK_TITLES.has(title) && 'dark:invert'),
+                  className: twMerge('w-10', iconClassName),
                 })
               )}
             </span>
@@ -440,16 +440,13 @@ function CardService({
       <div className="flex items-center">
         {typeof icon === 'string' ? (
           <img
-            className={twMerge(
-              'max-h-10 w-14 select-none',
-              SERVICE_TEMPLATE_ICON_INVERT_DARK_TITLES.has(title) && 'dark:invert'
-            )}
+            className={twMerge('max-h-10 w-14 select-none', iconClassName)}
             src={icon}
             alt={title}
           />
         ) : (
           cloneElement(icon as ReactElement, {
-            className: twMerge('w-10', SERVICE_TEMPLATE_ICON_INVERT_DARK_TITLES.has(title) && 'dark:invert'),
+            className: twMerge('w-10', iconClassName),
           })
         )}
       </div>

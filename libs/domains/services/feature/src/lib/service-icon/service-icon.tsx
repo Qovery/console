@@ -39,6 +39,12 @@ import Svelte from 'devicon/icons/svelte/svelte-original.svg'
 import Terraform from 'devicon/icons/terraform/terraform-original.svg'
 import Vue from 'devicon/icons/vuejs/vuejs-original.svg'
 
+type ServiceIcon = {
+  icon: string
+  title: string
+  className?: string
+}
+
 const Qovery = '/assets/logos/logo-icon.svg'
 const Datadog = '/assets/devicon/datadog.svg'
 const Crossplane = '/assets/devicon/crossplane.svg'
@@ -67,7 +73,7 @@ export const ServiceIcons = {
   // Devicons
   'app://qovery-console/apache': { icon: Apache, title: 'Apache' },
   'app://qovery-console/apacheairflow': { icon: ApacheAirflow, title: 'Apache Airflow' },
-  'app://qovery-console/apachekafka': { icon: ApacheKafka, title: 'Apache Kafka' },
+  'app://qovery-console/apachekafka': { icon: ApacheKafka, title: 'Apache Kafka', className: 'dark:invert' },
   'app://qovery-console/angular': { icon: Angular, title: 'Angular' },
   'app://qovery-console/aws': { icon: AWS, title: 'AWS' },
   'app://qovery-console/azure': { icon: Azure, title: 'Azure' },
@@ -77,7 +83,7 @@ export const ServiceIcons = {
   'app://qovery-console/docker': { icon: Docker, title: 'Docker' },
   'app://qovery-console/elasticsearch': { icon: Elasticsearch, title: 'Elasticsearch' },
   'app://qovery-console/fastapi': { icon: FastAPI, title: 'FastAPI' },
-  'app://qovery-console/flask': { icon: Flask, title: 'Flask' },
+  'app://qovery-console/flask': { icon: Flask, title: 'Flask', className: 'dark:invert' },
   'app://qovery-console/gcp': { icon: GCP, title: 'GCP' },
   'app://qovery-console/golang': { icon: Golang, title: 'Golang' },
   'app://qovery-console/grafana': { icon: Grafana, title: 'Grafana' },
@@ -100,7 +106,7 @@ export const ServiceIcons = {
   'app://qovery-console/react': { icon: React, title: 'React' },
   'app://qovery-console/redis': { icon: Redis, title: 'Redis' },
   'app://qovery-console/ruby': { icon: Ruby, title: 'Ruby' },
-  'app://qovery-console/rust': { icon: Rust, title: 'Rust' },
+  'app://qovery-console/rust': { icon: Rust, title: 'Rust', className: 'dark:invert' },
   'app://qovery-console/spring': { icon: Spring, title: 'Spring' },
   'app://qovery-console/svelte': { icon: Svelte, title: 'Svelte' },
   'app://qovery-console/terraform': { icon: Terraform, title: 'Terraform' },
@@ -116,10 +122,22 @@ export const ServiceIcons = {
   'app://qovery-console/kubecost': { icon: Kubecost, title: 'Kubecost' },
   'app://qovery-console/qovery': { icon: Qovery, title: 'Qovery' },
   'app://qovery-console/scaleway': { icon: Scaleway, title: 'Scaleway' },
-  'app://qovery-console/temporal': { icon: Temporal, title: 'Temporal' },
+  'app://qovery-console/temporal': { icon: Temporal, title: 'Temporal', className: 'dark:invert' },
   'app://qovery-console/windmill': { icon: Windmill, title: 'Windmill' },
   'app://qovery-console/lambda': { icon: Lambda, title: 'Lambda' },
   'app://qovery-console/s3': { icon: S3, title: 'S3' },
-} as const
+} as const satisfies Record<string, ServiceIcon>
 
 export type IconURI = keyof typeof ServiceIcons
+
+export function isServiceIconURI(iconUri: string): iconUri is IconURI {
+  return iconUri in ServiceIcons
+}
+
+export function getServiceIconClassName(iconUri?: string): string | undefined {
+  if (!iconUri || !isServiceIconURI(iconUri)) {
+    return undefined
+  }
+
+  return ServiceIcons[iconUri].className
+}

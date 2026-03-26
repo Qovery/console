@@ -43,7 +43,7 @@ export function ServiceAvatarSwitcher({ onChange, service }: ServiceAvatarSwitch
         <InputSearch placeholder="Search..." className="mb-1" onChange={(value) => setSearchTerm(value)} autofocus />
         {filteredIcons.length > 0 ? (
           <div className="grid grid-cols-8 gap-2 text-sm text-neutral-subtle">
-            {filteredIcons.map(({ icon, title, uri }) => {
+            {filteredIcons.map(({ icon, title, uri, className }) => {
               const isSelected = uri === service.icon_uri
               // XXX: corner case as application and container have the same icon, we want to hide one of them.
               if (uri === 'app://qovery-console/container') {
@@ -52,18 +52,23 @@ export function ServiceAvatarSwitcher({ onChange, service }: ServiceAvatarSwitch
               return (
                 <Popover.Close key={title}>
                   <Tooltip content={title}>
-                    <img
+                    <button
+                      type="button"
                       className={clsx(
                         'h-[38px] max-h-[38px] w-[38px] max-w-[38px] cursor-pointer select-none rounded border p-2',
                         isSelected && 'border-brand-strong bg-surface-brand-subtle',
                         !isSelected && 'border-neutral transition hover:border-neutral-component'
                       )}
-                      width="100%"
-                      height="100%"
-                      src={icon}
-                      alt={title}
                       onClick={() => handleClick(uri)}
-                    />
+                    >
+                      <img
+                        className={clsx('h-full w-full object-contain', className)}
+                        width="100%"
+                        height="100%"
+                        src={icon}
+                        alt={title}
+                      />
+                    </button>
                   </Tooltip>
                 </Popover.Close>
               )
