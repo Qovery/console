@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DeploymentLogsPlaceholder, type DeploymentLogsPlaceholderProps } from './deployment-logs-placeholder'
@@ -9,14 +10,20 @@ jest.mock('@qovery/domains/services/feature', () => ({
   useService: () => ({ data: mockApplication }),
 }))
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({
     organizationId: 'org-123',
     projectId: 'proj-123',
     environmentId: 'env-123',
     serviceId: 'serv-123',
+    executionId: 'exec-1',
   }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+    <a {...props} href={`${props.to}`}>
+      {children}
+    </a>
+  ),
 }))
 
 describe('DeploymentLogsPlaceholder', () => {
@@ -114,9 +121,8 @@ describe('DeploymentLogsPlaceholder', () => {
       />
     )
 
-    expect(
-      screen.getByText('This service was deployed more than 30 days ago and thus no deployment logs are available.')
-    ).toBeInTheDocument()
+    expect(screen.getByText("Deployment logs are no longer available due to the deployment's age.")).toBeInTheDocument()
+    expect(screen.getByText('No logs to display.')).toBeInTheDocument()
   })
 
   it('should render queued state', () => {
