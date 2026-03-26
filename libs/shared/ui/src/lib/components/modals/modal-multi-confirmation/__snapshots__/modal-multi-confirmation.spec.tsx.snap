@@ -17,7 +17,7 @@ exports[`ModalMultiConfirmation should match delete mode without description 1`]
     />
     <form>
       <div
-        class="flex-row gap-x-4 p-4 border rounded text-sm border-negative-component bg-surface-negative-subtle text-negative mb-5 grid grid-cols-[1fr_auto] gap-y-3"
+        class="flex-row gap-x-4 p-4 border rounded text-sm items-center border-negative-component bg-surface-negative-subtle text-negative mb-5 grid grid-cols-[1fr_auto] gap-y-3"
         data-accent-color="red"
       >
         <div

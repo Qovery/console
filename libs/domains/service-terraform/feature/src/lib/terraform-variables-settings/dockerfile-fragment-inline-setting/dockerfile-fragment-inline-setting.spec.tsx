@@ -1,7 +1,21 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import DockerfileFragmentInlineSetting, {
+import {
+  DockerfileFragmentInlineSetting,
   type DockerfileFragmentInlineSettingProps,
 } from './dockerfile-fragment-inline-setting'
+
+jest.mock('@tanstack/react-router', () => {
+  return {
+    ...jest.requireActual('@tanstack/react-router'),
+    useParams: () => ({
+      organizationId: 'org',
+      projectId: 'proj',
+      environmentId: 'env',
+      serviceId: 'app',
+    }),
+    Link: ({ children }: { children: React.ReactNode }) => <a href="/">{children}</a>,
+  }
+})
 
 const props: DockerfileFragmentInlineSettingProps = {
   onSubmit: jest.fn(),

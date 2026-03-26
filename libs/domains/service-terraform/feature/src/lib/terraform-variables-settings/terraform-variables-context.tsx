@@ -23,8 +23,7 @@ import {
   useListTfVarsFilesFromGitRepo,
   useParseTerraformVariablesFromGitRepo,
 } from '@qovery/domains/organizations/feature'
-import { useService } from '@qovery/domains/services/feature'
-import { type TerraformGeneralData } from './terraform-configuration-settings/terraform-configuration-settings'
+import { type TerraformGeneralData, useService } from '@qovery/domains/services/feature'
 import { buildMetadataByKey, isCustomVariable, isVariableChanged } from './terraform-variables-utils'
 
 export type UIVariable = {
