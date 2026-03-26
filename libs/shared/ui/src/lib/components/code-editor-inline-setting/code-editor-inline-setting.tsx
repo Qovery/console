@@ -35,6 +35,7 @@ export function CodeEditorInlineSetting({
             variant="outline"
             onClick={onOpenModal}
             className="justify-center p-0"
+            aria-label={`Edit ${title}`}
           >
             <Icon iconName="pen" />
           </Button>
