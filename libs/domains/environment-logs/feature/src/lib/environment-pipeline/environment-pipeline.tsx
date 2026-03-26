@@ -98,8 +98,8 @@ function PipelineContent({
                   className={clsx(
                     'h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral bg-surface-neutral',
                     {
-                      'text-neutral-50': s?.stage?.status !== 'SKIPPED',
-                      'text-neutral-300': s?.stage?.status === 'SKIPPED',
+                      'text-neutral': s?.stage?.status !== 'SKIPPED',
+                      'text-neutral-subtle': s?.stage?.status === 'SKIPPED',
                     }
                   )}
                 >
@@ -159,14 +159,39 @@ function PipelineContent({
                           return (
                             <div
                               key={service?.id}
-                              className="bg-neutral flex w-full items-center gap-2.5 rounded border border-neutral px-2.5 py-2"
+                              className="flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2"
                             >
-                              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral text-neutral-250">
+                              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral text-neutral-subtle">
                                 <Icon iconName="trash-can-xmark" iconStyle="solid" />
                               </span>
                               <span className="text-sm">{serviceFromDeploymentHistoryId?.identifier.name}</span>
                             </div>
                           )
+
+                        const serviceItemClassName =
+                          'flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2'
+
+                        if (!service.is_part_last_deployment) {
+                          return (
+                            <div key={service?.id} className={clsx(serviceItemClassName, 'text-neutral-subtle')}>
+                              <ServiceAvatar
+                                service={fullService}
+                                border="solid"
+                                size="sm"
+                                className="border-neutral opacity-50"
+                              />
+                              <span className="flex flex-col gap-0.5 text-sm">
+                                <Truncate text={fullService.name} truncateLimit={16} />
+                                {serviceTotalDurationSec && (
+                                  <span className="text-xs">
+                                    {Math.floor(serviceTotalDurationSec / 60)}m {serviceTotalDurationSec % 60}s
+                                  </span>
+                                )}
+                              </span>
+                              <StatusChip className="ml-auto" status="SKIPPED" />
+                            </div>
+                          )
+                        }
 
                         return (
                           <Link
@@ -180,20 +205,11 @@ function PipelineContent({
                               executionId: deploymentHistory?.identifier.execution_id ?? '',
                             }}
                             className={clsx(
-                              'flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2 text-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle hover:text-neutral',
-                              {
-                                'text-neutral-300': !service.is_part_last_deployment,
-                              }
+                              serviceItemClassName,
+                              'text-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle hover:text-neutral'
                             )}
                           >
-                            <ServiceAvatar
-                              service={fullService}
-                              border="solid"
-                              size="sm"
-                              className={clsx('border-neutral', {
-                                'opacity-50': !service.is_part_last_deployment,
-                              })}
-                            />
+                            <ServiceAvatar service={fullService} border="solid" size="sm" className="border-neutral" />
                             <span className="flex flex-col gap-0.5 text-sm">
                               <Truncate text={fullService.name} truncateLimit={16} />
                               {serviceTotalDurationSec && (
@@ -202,10 +218,7 @@ function PipelineContent({
                                 </span>
                               )}
                             </span>
-                            <StatusChip
-                              className="ml-auto"
-                              status={!service.is_part_last_deployment ? 'SKIPPED' : service.state}
-                            />
+                            <StatusChip className="ml-auto" status={service.state} />
                           </Link>
                         )
                       })
@@ -220,7 +233,7 @@ function PipelineContent({
                 <div className="mt-4 w-4 last:hidden">
                   <svg xmlns="http://www.w3.org/2000/svg" width="17" height="9" fill="none" viewBox="0 0 17 9">
                     <path
-                      fill="var(--neutral-6)"
+                      className="fill-surface-neutral-component"
                       d="M16.092 4.5L8.592.17v8.66l7.5-4.33zm-16 .75h9.25v-1.5H.092v1.5z"
                     ></path>
                   </svg>

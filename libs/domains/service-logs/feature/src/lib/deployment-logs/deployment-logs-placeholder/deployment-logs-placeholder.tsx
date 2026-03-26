@@ -8,10 +8,8 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { useService } from '@qovery/domains/services/feature'
-import { type DeploymentService } from '@qovery/shared/interfaces'
-import { Icon, Link, LoaderDots, StatusChip } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/util-dates'
-import { mergeDeploymentServices, trimId } from '@qovery/shared/util-js'
+import { Icon, Link, LoaderDots } from '@qovery/shared/ui'
+import { mergeDeploymentServices } from '@qovery/shared/util-js'
 
 function ErrorIcon() {
   return (
@@ -74,70 +72,6 @@ export function LoaderPlaceholder({
       <div className="flex flex-col gap-3">
         <p className="text-neutral">{title}</p>
         <span className="text-sm text-neutral-subtle">{description}</span>
-      </div>
-    </div>
-  )
-}
-
-function DeploymentHistoryPlaceholder({
-  serviceName,
-  deploymentsByServiceId,
-}: {
-  serviceName: string
-  deploymentsByServiceId: DeploymentService[]
-}) {
-  const { organizationId = '', projectId = '', environmentId = '', executionId = '' } = useParams({ strict: false })
-
-  return (
-    <div className="text-center">
-      <div>
-        <p className="mb-1 font-medium text-neutral">
-          {serviceName} service was not deployed within this deployment execution.
-        </p>
-        <p className="mb-10 text-sm font-normal text-neutral-subtle">
-          Below the list of executions where this service was deployed.
-        </p>
-      </div>
-      <div className="w-[484px] overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-        <div className="border-b border-neutral bg-surface-neutral-component py-3 font-medium text-neutral">
-          Last deployment logs
-        </div>
-        <div className="max-h-96 overflow-y-auto p-2">
-          {deploymentsByServiceId.length > 0 ? (
-            deploymentsByServiceId.map((deploymentHistory: DeploymentService) => (
-              <div key={deploymentHistory.execution_id} className="flex items-center pb-2 last:pb-0">
-                <Link
-                  className={`flex w-full justify-between rounded bg-surface-neutral-component p-3 transition hover:bg-surface-neutral-componentHover ${
-                    executionId === deploymentHistory.execution_id ? 'bg-surface-neutral-componentHover' : ''
-                  }`}
-                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
-                  params={{
-                    organizationId,
-                    projectId,
-                    environmentId,
-                    serviceId: deploymentHistory.identifier.service_id,
-                    executionId: deploymentHistory.execution_id,
-                  }}
-                >
-                  <span className="flex">
-                    <StatusChip className="relative top-[2px] mr-3" status={deploymentHistory.status} />
-                    <span className="text-ssm text-brand">{trimId(deploymentHistory.execution_id || '')}</span>
-                  </span>
-                  <span className="text-ssm text-neutral-subtle">
-                    {dateFullFormat(deploymentHistory.auditing_data.created_at)}
-                  </span>
-                </Link>
-              </div>
-            ))
-          ) : (
-            <p className="text-sm text-neutral">No history deployment available for this service.</p>
-          )}
-        </div>
-        <div className="flex h-9 items-center justify-center border-t border-neutral bg-surface-neutral-component">
-          <p className="text-xs font-normal text-neutral-subtle">
-            Only the last 20 deployments of the environment over the last 30 days are available.
-          </p>
-        </div>
       </div>
     </div>
   )
@@ -213,7 +147,7 @@ export function DeploymentLogsPlaceholder({
 
   // Show deployment history
   if (hideLogs && service) {
-    return <DeploymentHistoryPlaceholder serviceName={service.name} deploymentsByServiceId={deploymentsByServiceId} />
+    return <p className="text-sm text-neutral">No history deployment available for this service {service.name}.</p>
   }
 
   // Show canceled state
@@ -227,7 +161,7 @@ export function DeploymentLogsPlaceholder({
         <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="none" viewBox="0 0 44 44">
           <g clipPath="url(#clip0_19290_138219)">
             <path
-              fill="var(--neutral-2)"
+              fill="var(--neutral-3)"
               d="M22 44c12.15 0 22-9.85 22-22S34.15 0 22 0 0 9.85 0 22s9.85 22 22 22"
             ></path>
             <path
