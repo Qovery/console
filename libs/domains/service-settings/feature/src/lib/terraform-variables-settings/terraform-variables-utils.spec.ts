@@ -1,6 +1,5 @@
 import { type TerraformVariableDefinition } from 'qovery-typescript-axios'
-import { type UIVariable } from './terraform-variables-context'
-import { buildMetadataByKey, isVariableChanged } from './terraform-variables-utils'
+import { type UIVariable, buildMetadataByKey, isVariableChanged } from '@qovery/domains/service-terraform/feature'
 
 describe('Terraform variables utility functions', () => {
   describe('buildMetadataByKey', () => {
