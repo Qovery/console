@@ -18,9 +18,10 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
+import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
 import { Button, DropdownMenu, Icon, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
@@ -28,6 +29,7 @@ import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-pl
 import HeaderLogs from '../header-logs/header-logs'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
+import { useGenerateBuildUsageReport } from '../hooks/use-generate-build-usage-report/use-generate-build-usage-report'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
@@ -153,6 +155,7 @@ export function ListDeploymentLogs({
   const refScrollSection = useRef<HTMLDivElement>(null)
   const { updateStageId } = useContext(ServiceStageIdsContext)
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
+  const { mutateAsync: generateBuildUsageReport, isLoading: isBuildReportLoading } = useGenerateBuildUsageReport()
 
   useEffect(() => {
     if (stage) updateStageId(stage.id)
@@ -287,6 +290,10 @@ export function ListDeploymentLogs({
   )
 
   const isLastVersion = environmentDeploymentHistory?.[0]?.identifier.execution_id === executionId || !executionId
+  const currentDeployment = executionId
+    ? environmentDeploymentHistory.find((d) => d.identifier.execution_id === executionId)
+    : environmentDeploymentHistory[0]
+
   const isDeploymentProgressing = isLastVersion
     ? match(deploymentStatus?.state)
         .with(
@@ -328,7 +335,7 @@ export function ListDeploymentLogs({
         serviceId={serviceId ?? ''}
         serviceStatus={serviceStatus}
         environmentStatus={environmentStatus}
-        deploymentHistory={executionId ? currentDeploymentHistory : environmentDeploymentHistory[0]}
+        deploymentHistory={currentDeployment}
       >
         <div className="flex items-center gap-4">
           <DropdownMenu.Root>
@@ -438,11 +445,45 @@ export function ListDeploymentLogs({
             <Button
               onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
               variant="outline"
-              size="md"
+              size="sm"
               iconOnly
             >
               <Icon iconName="file-arrow-down" iconStyle="regular" />
             </Button>
+            {match(service)
+              .with({ serviceType: 'CONTAINER' }, () => false)
+              .with({ serviceType: 'DATABASE', mode: 'CONTAINER' }, () => false)
+              .with({ serviceType: 'JOB', source: P.when(isJobContainerSource) }, () => false)
+              .with({ serviceType: 'HELM', values_override: P.when(isHelmRepositorySource) }, () => false)
+              .otherwise(() => true) &&
+              currentDeployment?.identifier.execution_id && (
+                <Tooltip content={isBuildReportLoading ? 'Generating build usage report…' : 'Build runner usage'}>
+                  <span>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      iconOnly
+                      loading={isBuildReportLoading}
+                      onClick={async () => {
+                        try {
+                          const res = await generateBuildUsageReport({
+                            environmentId: environment.id,
+                            executionId: currentDeployment.identifier.execution_id,
+                            reportExpirationInSeconds: 3600,
+                          })
+                          if (res.report_url) {
+                            window.open(res.report_url, '_blank')
+                          }
+                        } catch {
+                          // error handled by mutation hook notification
+                        }
+                      }}
+                    >
+                      <Icon iconName="chart-line" className={isBuildReportLoading ? 'invisible' : ''} />
+                    </Button>
+                  </span>
+                </Tooltip>
+              )}
           </div>
         </div>
         <div

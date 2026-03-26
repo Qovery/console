@@ -276,6 +276,21 @@ export const mutations = {
     const result = await environmentApi.checkDockerfile(environmentId, dockerfileCheckRequest)
     return result.data
   },
+  async generateBuildUsageReport({
+    environmentId,
+    executionId,
+    reportExpirationInSeconds,
+  }: {
+    environmentId: string
+    executionId: string
+    reportExpirationInSeconds: number
+  }) {
+    const response = await environmentDeploymentsApi.generateDeploymentBuildUsageReport(environmentId, {
+      execution_id: executionId,
+      report_expiration_in_seconds: reportExpirationInSeconds,
+    })
+    return response.data
+  },
 }
 
 export type EnvironmentsKeys = inferQueryKeys<typeof environments>
