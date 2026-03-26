@@ -2,18 +2,21 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
-const calloutRootVariants = cva(['flex', 'flex-row', 'gap-x-4', 'p-4', 'border', 'rounded', 'text-sm'], {
-  variants: {
-    color: {
-      green: ['border-positive-component', 'bg-surface-positive-subtle', 'text-positive'],
-      red: ['border-negative-component', 'bg-surface-negative-subtle', 'text-negative'],
-      sky: ['border-info-component', 'bg-surface-info-subtle', 'text-info'],
-      yellow: ['border-warning-component', 'bg-surface-warning-subtle', 'text-warning'],
-      neutral: ['bg-surface-neutral-subtle', 'border-surface-neutral-component', 'text-neutral'],
-      purple: ['border-accent1-subtle', 'bg-surface-accent1-component', 'text-accent1'],
+const calloutRootVariants = cva(
+  ['flex', 'flex-row', 'gap-x-4', 'p-4', 'border', 'rounded', 'text-sm', 'items-center'],
+  {
+    variants: {
+      color: {
+        green: ['border-positive-component', 'bg-surface-positive-subtle', 'text-positive'],
+        red: ['border-negative-component', 'bg-surface-negative-subtle', 'text-negative'],
+        sky: ['border-info-component', 'bg-surface-info-subtle', 'text-info'],
+        yellow: ['border-warning-component', 'bg-surface-warning-subtle', 'text-warning'],
+        neutral: ['bg-surface-neutral-subtle', 'border-neutral', 'text-neutral'],
+        purple: ['border-accent1-subtle', 'bg-surface-accent1-component', 'text-accent1'],
+      },
     },
-  },
-})
+  }
+)
 
 interface CalloutRootProps
   extends VariantProps<typeof calloutRootVariants>,

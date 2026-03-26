@@ -253,7 +253,7 @@ export const TerraformConfigurationSettings = ({
                     </span>
                   )}
                 </p>
-                <div className="flex justify-between gap-6 rounded bg-surface-neutral-componentActive p-3 text-neutral">
+                <div className="flex justify-between gap-6 rounded bg-surface-neutral-component p-3 text-neutral">
                   <div>
                     <span className="select-none">$ </span>
                     {cliCommand}
@@ -383,7 +383,7 @@ export const TerraformConfigurationSettings = ({
 
                     <div className="space-y-4">
                       <div className="space-y-1.5">
-                        <p className="text-sm font-medium text-neutral-subtle">
+                        <p className="text-sm font-medium text-neutral">
                           Simplified example (actual Dockerfile may differ):
                         </p>
                         <pre className="mb-4 overflow-x-auto rounded bg-surface-neutral-subtle p-4 text-xs text-neutral-subtle">
@@ -398,7 +398,7 @@ ENTRYPOINT ["terraform"]`}
                         </pre>
                       </div>
                       <div className="space-y-1.5">
-                        <p className="text-sm font-medium text-neutral-subtle">Custom commands example:</p>
+                        <p className="text-sm font-medium text-neutral">Custom commands example:</p>
                         <pre className="overflow-x-auto rounded bg-surface-neutral-subtle p-3 text-xs text-neutral-subtle">
                           {`RUN apt-get update && apt-get install -y \\
     awscli \\
