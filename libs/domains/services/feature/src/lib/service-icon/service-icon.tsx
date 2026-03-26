@@ -129,15 +129,3 @@ export const ServiceIcons = {
 } as const satisfies Record<string, ServiceIcon>
 
 export type IconURI = keyof typeof ServiceIcons
-
-export function isServiceIconURI(iconUri: string): iconUri is IconURI {
-  return iconUri in ServiceIcons
-}
-
-export function getServiceIconClassName(iconUri?: string): string | undefined {
-  if (!iconUri || !isServiceIconURI(iconUri)) {
-    return undefined
-  }
-
-  return ServiceIcons[iconUri].className
-}

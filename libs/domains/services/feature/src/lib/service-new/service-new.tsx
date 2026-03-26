@@ -17,13 +17,13 @@ import { Badge, Button, ExternalLink, Heading, Icon, InputSearch, Link, Section 
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { TemplateIds } from '@qovery/shared/util-services'
+import { ServiceIcons } from '../service-icon/service-icon'
 import {
   type ServiceTemplateOptionType,
   type ServiceTemplateType,
   type TagsEnum,
   serviceTemplates,
 } from './service-templates'
-import { getServiceIconClassName } from '../service-icon/service-icon'
 
 const CloudFormationIcon = '/assets/devicon/cloudformation.svg'
 
@@ -202,7 +202,7 @@ function CardOption({
   isTerraformFeatureFlag,
   onUpgradePlanClick,
 }: CardOptionProps) {
-  const iconClassName = getServiceIconClassName(icon_uri)
+  const iconClassName = ServiceIcons[icon_uri].className
   const pathSuffix = servicePathSuffix(type, parentSlug, slug)
   const to = pathSuffix ? getServicesPath(organizationId, projectId, environmentId, pathSuffix) : undefined
 
@@ -314,7 +314,7 @@ function CardService({
   onUpgradePlanClick?: () => void
 }) {
   const [expanded, setExpanded] = useState(false)
-  const iconClassName = getServiceIconClassName(icon_uri)
+  const iconClassName = icon_uri ? ServiceIcons[icon_uri].className : undefined
 
   if (options && !slug) {
     return null
@@ -399,11 +399,7 @@ function CardService({
             </div>
             <span className="relative">
               {typeof icon === 'string' ? (
-                <img
-                  className={twMerge('max-h-10 w-14 select-none', iconClassName)}
-                  src={icon}
-                  alt={title}
-                />
+                <img className={twMerge('max-h-10 w-14 select-none', iconClassName)} src={icon} alt={title} />
               ) : (
                 cloneElement(icon as ReactElement, {
                   className: twMerge('w-10', iconClassName),
@@ -439,11 +435,7 @@ function CardService({
       </div>
       <div className="flex items-center">
         {typeof icon === 'string' ? (
-          <img
-            className={twMerge('max-h-10 w-14 select-none', iconClassName)}
-            src={icon}
-            alt={title}
-          />
+          <img className={twMerge('max-h-10 w-14 select-none', iconClassName)} src={icon} alt={title} />
         ) : (
           cloneElement(icon as ReactElement, {
             className: twMerge('w-10', iconClassName),

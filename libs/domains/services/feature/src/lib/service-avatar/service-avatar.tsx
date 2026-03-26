@@ -53,7 +53,11 @@ export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatar
             alt={service.serviceType}
             height="100%"
             width="100%"
-            className={clsx('max-h-full max-w-full object-contain', `rounded-${serviceAvatarRadius}`, serviceAvatar.className)}
+            className={clsx(
+              'max-h-full max-w-full object-contain',
+              `rounded-${serviceAvatarRadius}`,
+              serviceAvatar.className
+            )}
           />
         ) : (
           <Icon name={iconName} height="100%" width="100%" />
