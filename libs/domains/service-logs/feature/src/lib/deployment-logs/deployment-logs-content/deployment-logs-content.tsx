@@ -181,6 +181,7 @@ export function DeploymentLogsContent({
         environmentStatus={environmentStatus}
         stage={stageFromServiceId}
         preCheckStage={preCheckStage}
+        hasNewDeploymentBanner={showBannerNew}
       />
     </>
   )

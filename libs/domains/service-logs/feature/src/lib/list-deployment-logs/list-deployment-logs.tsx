@@ -11,6 +11,7 @@ import clsx from 'clsx'
 import download from 'downloadjs'
 import posthog from 'posthog-js'
 import {
+  type DeploymentHistoryEnvironmentV2,
   type Environment,
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
@@ -141,15 +142,112 @@ export interface ListDeploymentLogsProps {
   stage?: Stage
   environmentStatus?: EnvironmentStatus
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
+  hasNewDeploymentBanner?: boolean
 }
 
-export function ListDeploymentLogs({
+interface DeploymentLogsHeaderProps {
+  environment: Environment
+  serviceStatus: Status
+  environmentStatus?: EnvironmentStatus
+  deploymentHistory: DeploymentHistoryEnvironmentV2[]
+}
+
+const DeploymentLogsHeader = memo(function DeploymentLogsHeader({
+  environment,
+  serviceStatus,
+  environmentStatus,
+  deploymentHistory,
+}: DeploymentLogsHeaderProps) {
+  const { organizationId = '', projectId = '', serviceId = '', executionId = '' } = useParams({ strict: false })
+  const [open, setOpen] = useState(false)
+
+  const currentDeploymentHistory = useMemo(
+    () => deploymentHistory.find((deployment) => deployment.identifier.execution_id === executionId),
+    [deploymentHistory, executionId]
+  )
+
+  const selectedDeploymentHistory = executionId ? currentDeploymentHistory : deploymentHistory[0]
+  const selectedDeploymentDate = selectedDeploymentHistory?.auditing_data.created_at
+  const isLastVersion = deploymentHistory[0]?.identifier.execution_id === executionId || !executionId
+
+  return (
+    <HeaderLogs
+      type="DEPLOYMENT"
+      environment={environment}
+      serviceId={serviceId}
+      serviceStatus={serviceStatus}
+      environmentStatus={environmentStatus}
+    >
+      <div className="flex items-center gap-4">
+        <DropdownMenu.Root open={open} onOpenChange={setOpen}>
+          <DropdownMenu.Trigger asChild>
+            <Button variant="outline" className="gap-1.5">
+              <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
+              {isLastVersion
+                ? 'Latest'
+                : selectedDeploymentDate
+                  ? dateYearMonthDayHourMinuteSecond(new Date(selectedDeploymentDate))
+                  : 'Not available'}
+              <Icon iconName="angle-down" />
+            </Button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-80 overflow-y-auto">
+            {deploymentHistory.map((deployment) => (
+              <DropdownMenu.Item
+                asChild
+                key={deployment.identifier.execution_id}
+                className={clsx('min-h-9', {
+                  'bg-surface-brand-component': deployment.identifier.execution_id === executionId,
+                })}
+              >
+                <Link
+                  className="flex w-full justify-between"
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                  params={{
+                    organizationId,
+                    projectId,
+                    environmentId: environment.id,
+                    serviceId,
+                    executionId: deployment.identifier.execution_id,
+                  }}
+                  replace={true}
+                >
+                  <Tooltip content={deployment.identifier.execution_id}>
+                    <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
+                  </Tooltip>
+                  <span className="flex items-center gap-2.5 text-xs text-neutral-subtle">
+                    {dateYearMonthDayHourMinuteSecond(new Date(deployment.auditing_data.created_at))}
+                    <StatusChip status={deployment.status} />
+                  </span>
+                </Link>
+              </DropdownMenu.Item>
+            ))}
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+      </div>
+    </HeaderLogs>
+  )
+})
+
+interface DeploymentLogsBodyProps {
+  environment: Environment
+  serviceStatus: Status
+  stage?: Stage
+  environmentStatus?: EnvironmentStatus
+  preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
+  deploymentHistory: DeploymentHistoryEnvironmentV2[]
+  hasNewDeploymentBanner: boolean
+}
+
+function DeploymentLogsBody({
   environment,
   environmentStatus,
   serviceStatus,
   stage,
   preCheckStage,
-}: ListDeploymentLogsProps) {
+  deploymentHistory,
+  hasNewDeploymentBanner,
+}: DeploymentLogsBodyProps) {
   const { hash } = useLocation()
   const { organizationId = '', projectId = '', serviceId = '', executionId = '' } = useParams({ strict: false })
   const refScrollSection = useRef<HTMLDivElement>(null)
@@ -163,11 +261,6 @@ export function ListDeploymentLogs({
 
   const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId, suspense: true })
-  const { data: deploymentHistory = [] } = useServiceDeploymentHistory({
-    environmentId: environment.id,
-    serviceId,
-    suspense: true,
-  })
   const {
     data: logs = [],
     pauseLogs,
@@ -198,7 +291,7 @@ export function ListDeploymentLogs({
     if (hash && section) {
       setPauseLogs(true)
       setShowPreviousLogs(true)
-      const row = document.getElementById(hash.substring(1)) // remove the '#' from the hash
+      const row = document.getElementById(hash.substring(1))
       if (row) {
         // scroll the section to the row's position
         setTimeout(() => {
@@ -268,14 +361,13 @@ export function ListDeploymentLogs({
         const currentFilter = prevFilters.find((filter) => filter.id === 'details.stage.step')
         if (currentFilter?.value === type) {
           return defaultColumnsFilters
-        } else {
-          return [
-            {
-              id: 'details.stage.step',
-              value: type,
-            },
-          ]
         }
+        return [
+          {
+            id: 'details.stage.step',
+            value: type,
+          },
+        ]
       })
       setTimeout(() => {
         const section = refScrollSection.current
@@ -286,9 +378,11 @@ export function ListDeploymentLogs({
   )
 
   const isFilterActive = useMemo(
-    () => (type: FilterType) => columnFilters.some((f) => f.value === type),
+    () => (type: FilterType) => columnFilters.some((filter) => filter.value === type),
     [columnFilters]
   )
+  const emptyStateHeightClass = hasNewDeploymentBanner ? 'h-[calc(100vh-156px)]' : 'h-[calc(100vh-116px)]'
+  const logsViewportHeightClass = hasNewDeploymentBanner ? 'h-[calc(100vh-249px)]' : 'h-[calc(100vh-209px)]'
 
   const isLastVersion = deploymentHistory?.[0]?.identifier.execution_id === executionId || !executionId
   const currentDeployment = executionId
@@ -325,86 +419,20 @@ export function ListDeploymentLogs({
   }, [logs, isDeploymentProgressing])
 
   const isError = serviceStatus?.state?.includes('ERROR')
-  function HeaderLogsComponent() {
-    const currentDeploymentHistory = deploymentHistory.find((d) => d.identifier.execution_id === executionId)
-
-    return (
-      <HeaderLogs
-        type="DEPLOYMENT"
-        environment={environment}
-        serviceId={serviceId ?? ''}
-        serviceStatus={serviceStatus}
-        environmentStatus={environmentStatus}
-        deploymentHistory={currentDeployment}
-        deploymentHistory={executionId ? currentDeploymentHistory : deploymentHistory[0]}
-      >
-        <div className="flex items-center gap-4">
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
-              <Button variant="outline" className="gap-1.5">
-                <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
-                {isLastVersion
-                  ? 'Latest'
-                  : dateYearMonthDayHourMinuteSecond(
-                      new Date(currentDeploymentHistory?.auditing_data.created_at ?? '')
-                    )}
-                <Icon iconName="angle-down" />
-              </Button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-80 overflow-y-auto">
-              {deploymentHistory.map((deployment) => (
-                <DropdownMenu.Item
-                  asChild
-                  key={deployment.identifier.execution_id}
-                  className={clsx('min-h-9', {
-                    'bg-surface-brand-component': deployment.identifier.execution_id === executionId,
-                  })}
-                >
-                  <Link
-                    className="flex w-full justify-between"
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
-                    params={{
-                      organizationId,
-                      projectId,
-                      environmentId: environment.id,
-                      serviceId,
-                      executionId: deployment.identifier.execution_id,
-                    }}
-                    replace={true}
-                  >
-                    <Tooltip content={deployment.identifier.execution_id}>
-                      <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
-                    </Tooltip>
-                    <span className="flex items-center gap-2.5 text-xs text-neutral-subtle">
-                      {dateYearMonthDayHourMinuteSecond(new Date(deployment.auditing_data.created_at))}
-                      <StatusChip status={deployment.status} />
-                    </span>
-                  </Link>
-                </DropdownMenu.Item>
-              ))}
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
-        </div>
-      </HeaderLogs>
-    )
-  }
 
   if (!logs || logs.length === 0 || !serviceStatus.is_part_last_deployment) {
     return (
-      <div className="h-[calc(100vh-208px)] w-full">
-        <div className="relative h-full bg-background">
-          <HeaderLogsComponent />
-          <div className="flex h-[calc(100%-48px)] flex-col items-center justify-between bg-background">
-            <div className="flex h-full flex-col items-center justify-center">
-              <DeploymentLogsPlaceholder
-                environment={environment}
-                environmentStatus={environmentStatus}
-                serviceStatus={serviceStatus}
-                itemsLength={logs.length}
-                environmentDeploymentHistory={deploymentHistory}
-                preCheckStage={preCheckStage}
-              />
-            </div>
+      <div className={clsx(emptyStateHeightClass, 'w-full')}>
+        <div className="flex h-full flex-col items-center justify-between bg-background">
+          <div className="flex h-full flex-col items-center justify-center">
+            <DeploymentLogsPlaceholder
+              environment={environment}
+              environmentStatus={environmentStatus}
+              serviceStatus={serviceStatus}
+              itemsLength={logs.length}
+              environmentDeploymentHistory={deploymentHistory}
+              preCheckStage={preCheckStage}
+            />
           </div>
         </div>
       </div>
@@ -412,124 +440,160 @@ export function ListDeploymentLogs({
   }
 
   return (
-    <div className="h-full w-full overflow-hidden">
-      <div className="relative h-full bg-background">
-        <HeaderLogsComponent />
-        <div className="flex w-full items-center justify-between border-b border-neutral px-4 py-2.5">
-          <FiltersStageStep
-            service={service}
-            serviceStatus={serviceStatus}
-            isFilterActive={isFilterActive}
-            toggleColumnFilter={toggleColumnFilter}
-          />
-          <div className="flex items-center gap-2">
-            {(isError || isCrashLoopDetected) && (
-              <Button
-                color="brand"
-                variant="surface"
-                className="gap-1.5"
-                onClick={() => {
-                  posthog.capture('ai-copilot-troubleshoot-triggered', {
-                    source: 'deployment-logs',
-                    deployment_id: executionId,
-                    trigger_reason: isCrashLoopDetected ? 'crash-loop' : 'error',
-                  })
-                  const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
-                  setDevopsCopilotOpen(true)
-                  sendMessageRef?.current?.(message)
-                }}
-              >
-                <Icon iconName="sparkles" iconStyle="solid" />
-                Launch diagnostic for this error
-              </Button>
-            )}
+    <>
+      <div className="flex w-full items-center justify-between border-b border-neutral px-4 py-2.5">
+        <FiltersStageStep
+          service={service}
+          serviceStatus={serviceStatus}
+          isFilterActive={isFilterActive}
+          toggleColumnFilter={toggleColumnFilter}
+        />
+        <div className="flex items-center gap-2">
+          {(isError || isCrashLoopDetected) && (
             <Button
-              onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
-              variant="outline"
-              size="sm"
-              iconOnly
+              color="brand"
+              variant="surface"
+              className="gap-1.5"
+              onClick={() => {
+                posthog.capture('ai-copilot-troubleshoot-triggered', {
+                  source: 'deployment-logs',
+                  deployment_id: executionId,
+                  trigger_reason: isCrashLoopDetected ? 'crash-loop' : 'error',
+                })
+                const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
+                setDevopsCopilotOpen(true)
+                sendMessageRef?.current?.(message)
+              }}
             >
-              <Icon iconName="file-arrow-down" iconStyle="regular" />
+              <Icon iconName="sparkles" iconStyle="solid" />
+              Launch diagnostic for this error
             </Button>
-            {match(service)
-              .with({ serviceType: 'CONTAINER' }, () => false)
-              .with({ serviceType: 'DATABASE', mode: 'CONTAINER' }, () => false)
-              .with({ serviceType: 'JOB', source: P.when(isJobContainerSource) }, () => false)
-              .with({ serviceType: 'HELM', values_override: P.when(isHelmRepositorySource) }, () => false)
-              .otherwise(() => true) &&
-              currentDeployment?.identifier.execution_id && (
-                <Tooltip content={isBuildReportLoading ? 'Generating build usage report…' : 'Build runner usage'}>
-                  <span>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      iconOnly
-                      loading={isBuildReportLoading}
-                      onClick={async () => {
-                        try {
-                          const res = await generateBuildUsageReport({
-                            environmentId: environment.id,
-                            executionId: currentDeployment.identifier.execution_id,
-                            reportExpirationInSeconds: 3600,
-                          })
-                          if (res.report_url) {
-                            window.open(res.report_url, '_blank')
-                          }
-                        } catch {
-                          // error handled by mutation hook notification
+          )}
+          {match(service)
+            .with({ serviceType: 'CONTAINER' }, () => false)
+            .with({ serviceType: 'DATABASE', mode: 'CONTAINER' }, () => false)
+            .with({ serviceType: 'JOB', source: P.when(isJobContainerSource) }, () => false)
+            .with({ serviceType: 'HELM', values_override: P.when(isHelmRepositorySource) }, () => false)
+            .otherwise(() => true) &&
+            currentDeployment?.identifier.execution_id && (
+              <Tooltip content={isBuildReportLoading ? 'Generating build usage report…' : 'Build runner usage'}>
+                <span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    iconOnly
+                    loading={isBuildReportLoading}
+                    onClick={async () => {
+                      try {
+                        const res = await generateBuildUsageReport({
+                          environmentId: environment.id,
+                          executionId: currentDeployment.identifier.execution_id,
+                          reportExpirationInSeconds: 3600,
+                        })
+                        if (res.report_url) {
+                          window.open(res.report_url, '_blank')
                         }
-                      }}
-                    >
-                      <Icon iconName="chart-line" className={isBuildReportLoading ? 'invisible' : ''} />
-                    </Button>
-                  </span>
-                </Tooltip>
-              )}
-          </div>
-        </div>
-        <div
-          className="h-[calc(100vh-209px)] w-full overflow-y-scroll "
-          ref={refScrollSection}
-          onWheel={(event) => {
-            if (
-              !pauseLogs &&
-              refScrollSection.current &&
-              refScrollSection.current.clientHeight !== refScrollSection.current.scrollHeight &&
-              event.deltaY < 0
-            ) {
-              setPauseLogs(true)
-              setNewMessagesAvailable(false)
-            }
-          }}
-        >
-          {logs.length >= 500 && (
-            <ShowPreviousLogsButton
-              showPreviousLogs={showPreviousLogs}
-              setShowPreviousLogs={setShowPreviousLogs}
-              setPauseLogs={setPauseLogs}
-            />
-          )}
-          <Table.Root
-            className="w-full border-separate border-spacing-y-0.5 text-xs"
-            containerClassName="rounded-none border-none bg-background"
+                      } catch {
+                        // error handled by mutation hook notification
+                      }
+                    }}
+                  >
+                    <Icon iconName="chart-line" className={isBuildReportLoading ? 'invisible' : ''} />
+                  </Button>
+                </span>
+              </Tooltip>
+            )}
+          <Button
+            onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
+            variant="outline"
+            size="md"
+            iconOnly
           >
-            <Table.Body className="divide-y-0">
-              {table.getRowModel().rows.map((row) => (
-                <MemoizedRowDeploymentLogs key={row.id} {...row} />
-              ))}
-            </Table.Body>
-          </Table.Root>
-          {isDeploymentProgressing && (
-            <ProgressIndicator className="mb-2 pl-2" pauseLogs={pauseLogs} message="Streaming deployment logs" />
-          )}
+            <Icon iconName="file-arrow-down" iconStyle="regular" />
+          </Button>
         </div>
-        {isLastVersion && (
-          <ShowNewLogsButton
-            pauseLogs={pauseLogs}
+      </div>
+      <div
+        className={clsx(logsViewportHeightClass, 'w-full overflow-y-scroll')}
+        ref={refScrollSection}
+        onWheel={(event) => {
+          if (
+            !pauseLogs &&
+            refScrollSection.current &&
+            refScrollSection.current.clientHeight !== refScrollSection.current.scrollHeight &&
+            event.deltaY < 0
+          ) {
+            setPauseLogs(true)
+            setNewMessagesAvailable(false)
+          }
+        }}
+      >
+        {logs.length >= 500 && (
+          <ShowPreviousLogsButton
+            showPreviousLogs={showPreviousLogs}
+            setShowPreviousLogs={setShowPreviousLogs}
             setPauseLogs={setPauseLogs}
-            newMessagesAvailable={newMessagesAvailable}
           />
         )}
+        <Table.Root
+          className="w-full border-separate border-spacing-y-0.5 text-xs"
+          containerClassName="rounded-none border-none bg-background"
+        >
+          <Table.Body className="divide-y-0">
+            {table.getRowModel().rows.map((row) => (
+              <MemoizedRowDeploymentLogs key={row.id} {...row} />
+            ))}
+          </Table.Body>
+        </Table.Root>
+        {isDeploymentProgressing && (
+          <ProgressIndicator className="mb-2 pl-2" pauseLogs={pauseLogs} message="Streaming deployment logs" />
+        )}
+      </div>
+      {isLastVersion && (
+        <ShowNewLogsButton
+          pauseLogs={pauseLogs}
+          setPauseLogs={setPauseLogs}
+          newMessagesAvailable={newMessagesAvailable}
+        />
+      )}
+    </>
+  )
+}
+
+export function ListDeploymentLogs({
+  environment,
+  environmentStatus,
+  serviceStatus,
+  stage,
+  preCheckStage,
+  hasNewDeploymentBanner = false,
+}: ListDeploymentLogsProps) {
+  const { executionId = '', serviceId = '' } = useParams({ strict: false })
+  const { data: deploymentHistory = [] } = useServiceDeploymentHistory({
+    environmentId: environment.id,
+    serviceId,
+    suspense: true,
+  })
+
+  return (
+    <div className="h-full w-full overflow-hidden">
+      <div className="relative h-full bg-background">
+        <DeploymentLogsHeader
+          environment={environment}
+          serviceStatus={serviceStatus}
+          environmentStatus={environmentStatus}
+          deploymentHistory={deploymentHistory}
+        />
+        <DeploymentLogsBody
+          key={executionId || 'latest'}
+          environment={environment}
+          serviceStatus={serviceStatus}
+          stage={stage}
+          environmentStatus={environmentStatus}
+          preCheckStage={preCheckStage}
+          deploymentHistory={deploymentHistory}
+          hasNewDeploymentBanner={hasNewDeploymentBanner}
+        />
       </div>
     </div>
   )

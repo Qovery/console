@@ -13,7 +13,7 @@ function RouteComponent() {
   return (
     <Suspense
       fallback={
-        <div className="flex h-[calc(100vh-116px)] w-full flex-col justify-center">
+        <div className="flex h-[calc(100vh-202px)] w-full flex-col justify-center">
           <LoaderPlaceholder />
         </div>
       }

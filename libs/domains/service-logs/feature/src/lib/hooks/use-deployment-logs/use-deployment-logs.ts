@@ -79,6 +79,9 @@ export function useDeploymentLogs({
     onMessage: messageHandler,
   })
 
+  // If there are no logs, set the flush delay to 0, otherwise use the debounce time
+  const flushDelay = logs.length === 0 ? 0 : debounceTime
+
   useEffect(() => {
     if (messageChunks.length === 0 || pauseLogs) return
 
@@ -87,19 +90,20 @@ export function useDeploymentLogs({
         setMessageChunks((prevChunks) => prevChunks.slice(1))
         setLogs((prevLogs) => {
           const combinedLogs = [...prevLogs, ...messageChunks[0]]
+
+          if (!hash && combinedLogs.length > 1000) {
+            setDebounceTime(100)
+          }
+
           return [...new Map(combinedLogs.map((item) => [item['timestamp'], item])).values()]
         })
-
-        if (!hash && logs.length > 1000) {
-          setDebounceTime(100)
-        }
       }
-    }, debounceTime)
+    }, flushDelay)
 
     return () => {
       clearTimeout(timerId)
     }
-  }, [messageChunks, pauseLogs, hash])
+  }, [messageChunks, pauseLogs, hash, flushDelay])
 
   // Filter deployment logs by serviceId and stageId
   // Display entries when the name is "delete" or stageId is empty or equal with current stageId

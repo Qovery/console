@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { useDeploymentHistory } from '../use-deployment-history/use-deployment-history'
+import { useQuery } from '@tanstack/react-query'
+import { queries } from '@qovery/state/util-queries'
 
 export interface UseServiceDeploymentHistoryProps {
   environmentId: string
@@ -12,20 +12,14 @@ export function useServiceDeploymentHistory({
   serviceId,
   suspense = false,
 }: UseServiceDeploymentHistoryProps) {
-  const query = useDeploymentHistory({ environmentId, suspense })
-
-  const data = useMemo(
-    () =>
-      (query.data ?? []).filter((history) =>
+  return useQuery({
+    ...queries.environments.deploymentHistoryV2({ environmentId }),
+    suspense,
+    select: (data) =>
+      data?.filter((history) =>
         history.stages?.some((stage) => stage.services?.some((service) => service.identifier.service_id === serviceId))
       ),
-    [query.data, serviceId]
-  )
-
-  return {
-    ...query,
-    data,
-  }
+  })
 }
 
 export default useServiceDeploymentHistory
