@@ -506,7 +506,7 @@ function DeploymentLogsBody({
           <Button
             onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
             variant="outline"
-            size="md"
+            size="sm"
             iconOnly
           >
             <Icon iconName="file-arrow-down" iconStyle="regular" />
