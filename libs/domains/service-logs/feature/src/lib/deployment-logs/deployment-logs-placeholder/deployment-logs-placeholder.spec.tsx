@@ -34,11 +34,17 @@ describe('DeploymentLogsPlaceholder', () => {
     environment: mockEnvironment,
   }
 
-  it('should render deployment history', () => {
+  it('should render loader while deployment logs are still loading', () => {
     renderWithProviders(
       <DeploymentLogsPlaceholder
         itemsLength={1}
         environment={mockEnvironment}
+        serviceStatus={{
+          id: 'serv-123',
+          state: 'BUILDING',
+          service_deployment_status: 'OUT_OF_DATE',
+          is_part_last_deployment: true,
+        }}
         environmentDeploymentHistory={[
           {
             identifier: {
@@ -77,16 +83,16 @@ describe('DeploymentLogsPlaceholder', () => {
       />
     )
 
-    expect(screen.getByText('Last deployment logs')).toBeInTheDocument()
-    // TODO new-nav : Route not yet created
-    // expect(screen.getByText('exec-...c-1')).toBeInTheDocument()
+    expect(screen.getByText('Deployment logs are loading…')).toBeInTheDocument()
   })
 
   it('should render "No history deployment available"', () => {
     props.itemsLength = 1
     renderWithProviders(<DeploymentLogsPlaceholder {...props} />)
 
-    expect(screen.getByText('No history deployment available for this service.')).toBeInTheDocument()
+    expect(
+      screen.getByText(`No history deployment available for this service ${mockApplication.name}.`)
+    ).toBeInTheDocument()
   })
 
   it('should render spinner', () => {
@@ -178,9 +184,7 @@ describe('DeploymentLogsPlaceholder', () => {
     )
 
     expect(screen.getByText('An error occurred during deployment of another service.')).toBeInTheDocument()
-    // TODO new-nav : Route not yet created
-    // const pipelineLink = screen.getByText('Open pipeline')
-    // expect(pipelineLink).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /open pipeline/i })).toBeInTheDocument()
   })
 
   it('should render precheck error state', () => {
@@ -207,7 +211,6 @@ describe('DeploymentLogsPlaceholder', () => {
     )
 
     expect(screen.getByText('An error occurred during the precheck step.')).toBeInTheDocument()
-    // TODO new-nav : Route not yet created
-    // expect(screen.getByText('Open precheck')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /open precheck/i })).toBeInTheDocument()
   })
 })
