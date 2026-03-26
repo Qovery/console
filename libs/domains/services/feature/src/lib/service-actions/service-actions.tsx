@@ -54,9 +54,9 @@ import { useUninstallService } from '../hooks/use-uninstall-service/use-uninstal
 import { RedeployModal } from '../redeploy-modal/redeploy-modal'
 import { SelectCommitModal } from '../select-commit-modal/select-commit-modal'
 import { SelectVersionModal } from '../select-version-modal/select-version-modal'
+import { ServiceAccessModal } from '../service-access-modal/service-access-modal'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
-import { ServiceAccessModal } from '../service-access-modal/service-access-modal'
 import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
 
 type ActionToolbarVariant = 'default' | 'header' | 'deploy-dropdown-only'
@@ -712,7 +712,12 @@ function MenuOtherActions({
   const copyContent = `Cluster ID: ${environment?.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${service.id}`
   const serviceForAccessModal = match(service)
     .returnType<Application | Container | Database | null>()
-    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, { serviceType: 'DATABASE' }, (service) => service)
+    .with(
+      { serviceType: 'APPLICATION' },
+      { serviceType: 'CONTAINER' },
+      { serviceType: 'DATABASE' },
+      (service) => service
+    )
     .otherwise(() => null)
 
   const mutationRemove = async () => {
