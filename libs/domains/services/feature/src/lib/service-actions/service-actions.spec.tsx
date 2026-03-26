@@ -66,4 +66,19 @@ describe('ServiceActions', () => {
 
     expect(baseElement).toMatchSnapshot()
   })
+
+  it('should display access infos in other actions for supported services', async () => {
+    mockService = databaseFactoryMock(1)[0]
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} variant="header" />,
+      {
+        container: document.body,
+      }
+    )
+
+    const buttonOtherActions = screen.getByLabelText(/other actions/i)
+    await userEvent.click(buttonOtherActions)
+
+    expect(screen.getByRole('menuitem', { name: /access infos/i })).toBeInTheDocument()
+  })
 })

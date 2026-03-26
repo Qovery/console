@@ -15,6 +15,7 @@ import {
   type AnyService,
   type Application,
   type Container,
+  type Database,
   type Helm,
   type Job,
   type Terraform,
@@ -55,6 +56,7 @@ import { SelectCommitModal } from '../select-commit-modal/select-commit-modal'
 import { SelectVersionModal } from '../select-version-modal/select-version-modal'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
+import { ServiceAccessModal } from '../service-access-modal/service-access-modal'
 import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
 
 type ActionToolbarVariant = 'default' | 'header' | 'deploy-dropdown-only'
@@ -708,6 +710,10 @@ function MenuOtherActions({
 
   const [, copyToClipboard] = useCopyToClipboard()
   const copyContent = `Cluster ID: ${environment?.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${service.id}`
+  const serviceForAccessModal = match(service)
+    .returnType<Application | Container | Database | null>()
+    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, { serviceType: 'DATABASE' }, (service) => service)
+    .otherwise(() => null)
 
   const mutationRemove = async () => {
     openServiceRemoveModal({
@@ -821,6 +827,26 @@ function MenuOtherActions({
     })
   }
 
+  const openServiceAccessModal = () => {
+    if (!serviceForAccessModal) {
+      return
+    }
+
+    openModal({
+      content: (
+        <ServiceAccessModal
+          organizationId={organizationId}
+          projectId={projectId}
+          service={serviceForAccessModal}
+          onClose={closeModal}
+        />
+      ),
+      options: {
+        width: 680,
+      },
+    })
+  }
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -833,6 +859,11 @@ function MenuOtherActions({
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
+        {serviceForAccessModal && (
+          <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={openServiceAccessModal}>
+            Access infos
+          </DropdownMenu.Item>
+        )}
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
           <Link
             className="gap-0"

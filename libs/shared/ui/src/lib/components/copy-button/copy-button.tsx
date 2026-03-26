@@ -24,7 +24,7 @@ export function CopyButton({ content }: CopyButtonProps) {
     <Button
       type="button"
       color="neutral"
-      variant="surface"
+      variant="outline"
       onClick={() => onClickCopyToClipboard(content)}
       className="cursor-pointer gap-2 font-sans font-medium"
     >

@@ -6,14 +6,14 @@ exports[`SectionExpand should match snapshot 1`] = `
     data-orientation="vertical"
   >
     <div
-      class="mt-px first:mt-0 first:rounded-t last:rounded-b overflow-hidden rounded border border-neutral-250"
+      class="mt-px first:mt-0 first:rounded-t last:rounded-b overflow-hidden rounded border border-neutral"
       data-orientation="vertical"
       data-state="closed"
     >
       <button
         aria-controls="radix-:r7:"
         aria-expanded="false"
-        class="group flex min-h-14 items-center gap-5 bg-white text-sm outline-none w-full cursor-pointer flex-row-reverse justify-between px-4 py-3"
+        class="group flex min-h-14 items-center gap-5 bg-surface-neutral text-sm outline-none w-full cursor-pointer flex-row-reverse justify-between px-4 py-3"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
@@ -33,7 +33,7 @@ exports[`SectionExpand should match snapshot 1`] = `
             my-title
           </span>
           <p
-            class="text-neutral-350"
+            class="text-neutral-subtle"
           >
             description
           </p>
@@ -41,7 +41,7 @@ exports[`SectionExpand should match snapshot 1`] = `
       </button>
       <div
         aria-labelledby="radix-:r6:"
-        class="data-[state=closed]:slidein-up-sm-faded overflow-hidden data-[state=open]:animate-slidein-down-sm-faded border-t border-neutral-250 p-0 text-sm"
+        class="data-[state=closed]:slidein-up-sm-faded overflow-hidden bg-surface-neutral data-[state=open]:animate-slidein-down-sm-faded border-t border-neutral p-0 text-sm"
         data-orientation="vertical"
         data-state="closed"
         hidden=""
