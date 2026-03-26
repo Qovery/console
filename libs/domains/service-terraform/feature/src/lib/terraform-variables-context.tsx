@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { type AxiosError } from 'axios'
 import {
   GitProviderEnum,
@@ -16,7 +17,6 @@ import {
   useState,
 } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { v4 as uuidv4 } from 'uuid'
 import {
@@ -89,8 +89,8 @@ export const TerraformVariablesContext = createContext<TerraformVariablesContext
 export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   // Initial data fetching...
   const { getValues } = useFormContext<TerraformGeneralData>()
-  const { organizationId = '', applicationId = '' } = useParams()
-  const { data: serviceResponse } = useService({ serviceId: applicationId })
+  const { organizationId = '', serviceId = '' } = useParams({ strict: false })
+  const { data: serviceResponse } = useService({ serviceId })
   const service = match(serviceResponse)
     .with({ serviceType: 'TERRAFORM' }, (s) => s)
     .otherwise(() => null)
