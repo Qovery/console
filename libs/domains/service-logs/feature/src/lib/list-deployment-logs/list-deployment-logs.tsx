@@ -27,9 +27,9 @@ import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
 import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-placeholder/deployment-logs-placeholder'
 import HeaderLogs from '../header-logs/header-logs'
-import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { useGenerateBuildUsageReport } from '../hooks/use-generate-build-usage-report/use-generate-build-usage-report'
+import { useServiceDeploymentHistory } from '../hooks/use-service-deployment-history/use-service-deployment-history'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
@@ -163,8 +163,9 @@ export function ListDeploymentLogs({
 
   const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId, suspense: true })
-  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({
+  const { data: deploymentHistory = [] } = useServiceDeploymentHistory({
     environmentId: environment.id,
+    serviceId,
     suspense: true,
   })
   const {
@@ -289,11 +290,10 @@ export function ListDeploymentLogs({
     [columnFilters]
   )
 
-  const isLastVersion = environmentDeploymentHistory?.[0]?.identifier.execution_id === executionId || !executionId
+  const isLastVersion = deploymentHistory?.[0]?.identifier.execution_id === executionId || !executionId
   const currentDeployment = executionId
-    ? environmentDeploymentHistory.find((d) => d.identifier.execution_id === executionId)
-    : environmentDeploymentHistory[0]
-
+    ? deploymentHistory.find((d) => d.identifier.execution_id === executionId)
+    : deploymentHistory[0]
   const isDeploymentProgressing = isLastVersion
     ? match(deploymentStatus?.state)
         .with(
@@ -326,7 +326,7 @@ export function ListDeploymentLogs({
 
   const isError = serviceStatus?.state?.includes('ERROR')
   function HeaderLogsComponent() {
-    const currentDeploymentHistory = environmentDeploymentHistory.find((d) => d.identifier.execution_id === executionId)
+    const currentDeploymentHistory = deploymentHistory.find((d) => d.identifier.execution_id === executionId)
 
     return (
       <HeaderLogs
@@ -336,6 +336,7 @@ export function ListDeploymentLogs({
         serviceStatus={serviceStatus}
         environmentStatus={environmentStatus}
         deploymentHistory={currentDeployment}
+        deploymentHistory={executionId ? currentDeploymentHistory : deploymentHistory[0]}
       >
         <div className="flex items-center gap-4">
           <DropdownMenu.Root>
@@ -351,7 +352,7 @@ export function ListDeploymentLogs({
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-80 overflow-y-auto">
-              {environmentDeploymentHistory.map((deployment) => (
+              {deploymentHistory.map((deployment) => (
                 <DropdownMenu.Item
                   asChild
                   key={deployment.identifier.execution_id}
@@ -400,7 +401,7 @@ export function ListDeploymentLogs({
                 environmentStatus={environmentStatus}
                 serviceStatus={serviceStatus}
                 itemsLength={logs.length}
-                environmentDeploymentHistory={environmentDeploymentHistory}
+                environmentDeploymentHistory={deploymentHistory}
                 preCheckStage={preCheckStage}
               />
             </div>
