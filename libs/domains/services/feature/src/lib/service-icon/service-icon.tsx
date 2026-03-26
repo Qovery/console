@@ -59,7 +59,7 @@ const EC2 = '/assets/devicon/ec2.svg'
 const Lambda = '/assets/devicon/lambda.svg'
 const S3 = '/assets/devicon/s3.svg'
 
-export const ServiceIcons = {
+const serviceIcons = {
   'app://qovery-console/lifecycle-job': { icon: '/assets/services/lifecycle-job.svg', title: 'LifecycleJob' },
   'app://qovery-console/cron-job': { icon: '/assets/services/cron-job.svg', title: 'CronJob' },
   'app://qovery-console/container': { icon: '/assets/services/application.svg', title: 'Container' },
@@ -126,6 +126,8 @@ export const ServiceIcons = {
   'app://qovery-console/windmill': { icon: Windmill, title: 'Windmill' },
   'app://qovery-console/lambda': { icon: Lambda, title: 'Lambda' },
   'app://qovery-console/s3': { icon: S3, title: 'S3' },
-} as const satisfies Record<string, ServiceIcon>
+} as const
 
-export type IconURI = keyof typeof ServiceIcons
+export type IconURI = keyof typeof serviceIcons
+
+export const ServiceIcons: Readonly<Record<IconURI, ServiceIcon>> = serviceIcons
