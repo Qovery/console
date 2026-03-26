@@ -4,8 +4,8 @@ import { FitAddon } from '@xterm/addon-fit'
 import { type ITerminalAddon } from '@xterm/xterm'
 import Color from 'color'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { match } from 'ts-pattern'
 import { XTerm } from 'react-xtermjs'
+import { match } from 'ts-pattern'
 import { Button, EmptyState, ExternalLink, Icon, LoaderSpinner, toast } from '@qovery/shared/ui'
 import { useTerminalReadiness } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
@@ -93,10 +93,7 @@ export function ServiceTerminal({
     .join(' ')
   const portForwardCommand = `qovery port-forward --organization ${organizationId} --project ${projectId} --environment ${environmentId} --service ${serviceId} --port <local-port:target-port>`
   const getShellCommand = useCallback(() => connectShellCommand, [connectShellCommand])
-  const getPortForwardCommand = useCallback(
-    () => portForwardCommand,
-    [portForwardCommand]
-  )
+  const getPortForwardCommand = useCallback(() => portForwardCommand, [portForwardCommand])
 
   const onOpenHandler = useCallback(
     (_: QueryClient, event: Event) => {
@@ -230,11 +227,7 @@ export function ServiceTerminal({
       <div className="flex h-full flex-1 flex-col bg-background p-3">
         <div className="relative min-h-0 flex-1">
           {terminalLaunchError ? (
-            <EmptyState
-              icon="terminal"
-              title="Unable to launch CLI"
-              description={terminalUnavailableDescription}
-            >
+            <EmptyState icon="terminal" title="Unable to launch CLI" description={terminalUnavailableDescription}>
               <Button size="md" color="neutral" onClick={onRetryCliLaunch}>
                 Relaunch
               </Button>

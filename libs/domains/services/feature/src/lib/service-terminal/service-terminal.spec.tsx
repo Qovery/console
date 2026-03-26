@@ -1,8 +1,8 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { renderWithProviders } from '@qovery/shared/util-tests'
+import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { ServiceTerminal, type ServiceTerminalProps } from './service-terminal'
 
 jest.mock('color', () => ({

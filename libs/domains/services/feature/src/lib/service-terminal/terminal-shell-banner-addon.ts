@@ -54,7 +54,10 @@ export class TerminalShellActionsAddon implements ITerminalAddon {
     return `${stylePrefix}${segment.text}${TerminalShellActionsAddon.ANSI_RESET}`
   }
 
-  private clampSegments(segments: TerminalBannerSegment[], maxWidth: number): {
+  private clampSegments(
+    segments: TerminalBannerSegment[],
+    maxWidth: number
+  ): {
     clippedSegments: TerminalBannerSegment[]
     trailingPadding: string
   } {
@@ -190,10 +193,7 @@ export class TerminalShellActionsAddon implements ITerminalAddon {
 
     const leftTitleLineWidth = 1
     const minimumRightTitleLineWidth = 1
-    const maxVisibleTitleLength = Math.max(
-      0,
-      lineContentWidth - leftTitleLineWidth - minimumRightTitleLineWidth - 2
-    )
+    const maxVisibleTitleLength = Math.max(0, lineContentWidth - leftTitleLineWidth - minimumRightTitleLineWidth - 2)
     const visibleTitle = bannerTitle.text.slice(0, maxVisibleTitleLength)
     const rightTitleLineWidth = Math.max(
       minimumRightTitleLineWidth,
