@@ -91,7 +91,9 @@ export function Breadcrumbs() {
         to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
         params: { organizationId, projectId, environmentId, serviceId: service.id },
       }).href,
-      prefix: <ServiceAvatar service={service} size="custom" className="h-5 w-5" />,
+      prefix: (
+        <ServiceAvatar service={service} size="custom" className="h-5 w-5" serviceAvatarRadius="sm" radius="none" />
+      ),
       suffix: <ServiceStateChip mode="running" environmentId={service.environment?.id} serviceId={service.id} />,
     }))
 

@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -6,8 +7,11 @@ import { type IconURI, ServiceIcons } from '../service-icon/service-icon'
 
 // XXX: Todo remove `job_type`
 // https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1427
+type ServiceAvatarRadius = 'none' | 'sm' | 'md' | 'full'
+
 export interface ServiceAvatarProps extends Omit<ComponentPropsWithoutRef<typeof Avatar>, 'fallback' | 'size'> {
   size?: ComponentPropsWithoutRef<typeof Avatar>['size'] | 'custom'
+  serviceAvatarRadius?: ServiceAvatarRadius
   service:
     | {
         icon_uri: string
@@ -22,7 +26,7 @@ export interface ServiceAvatarProps extends Omit<ComponentPropsWithoutRef<typeof
 }
 
 export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatarProps>(function ServiceAvatar(
-  { service, size, className, ...props },
+  { service, size, className, radius, serviceAvatarRadius = 'full', ...props },
   ref
 ) {
   const iconName = match(service)
@@ -40,6 +44,7 @@ export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatar
     <Avatar
       ref={ref}
       size={size}
+      radius={radius}
       className={className}
       fallback={
         serviceAvatar ? (
@@ -48,7 +53,11 @@ export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatar
             alt={service.serviceType}
             height="100%"
             width="100%"
-            className="max-h-full max-w-full rounded-full object-contain"
+            className={clsx(
+              'max-h-full max-w-full object-contain',
+              `rounded-${serviceAvatarRadius}`,
+              serviceAvatar.className
+            )}
           />
         ) : (
           <Icon name={iconName} height="100%" width="100%" />

@@ -108,8 +108,9 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <ServiceAvatar
-              border="solid"
               size="sm"
+              radius="none"
+              serviceAvatarRadius="md"
               service={
                 service.serviceType === 'JOB'
                   ? {
