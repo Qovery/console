@@ -21,7 +21,6 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { trimId } from '@qovery/shared/util-js'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
-import EnvironmentStagesFeature from './feature/environment-stages-feature/environment-stages-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
 import PreCheckLogsFeature from './feature/pre-check-logs-feature/pre-check-logs-feature'
 
@@ -232,28 +231,6 @@ export function PageEnvironmentLogs() {
     <div className="flex h-full flex-col">
       <ServiceStageIdsProvider>
         <Routes>
-          <Route
-            path={ENVIRONMENT_STAGES_URL()}
-            element={
-              <EnvironmentStagesFeature
-                environment={environment}
-                environmentStatus={environmentStatus}
-                deploymentStages={deploymentStages}
-                preCheckStage={preCheckStage}
-              />
-            }
-          />
-          <Route
-            path={ENVIRONMENT_STAGES_URL(':versionId')}
-            element={
-              <EnvironmentStagesFeature
-                environment={environment}
-                environmentStatus={environmentStatus}
-                deploymentStages={deploymentStages}
-                preCheckStage={preCheckStage}
-              />
-            }
-          />
           <Route
             path={ENVIRONMENT_PRE_CHECK_LOGS_URL(':versionId')}
             element={<PreCheckLogsFeature environment={environment} preCheckStage={preCheckStage} />}
