@@ -350,7 +350,7 @@ const TerraformVariablesRows = () => {
 
 const TerraformVariablesLoadingState = () => {
   return (
-    <div className="flex items-center justify-center border-b border-t border-neutral bg-surface-neutral p-4">
+    <div className="flex min-h-40 items-center justify-center border-b border-t border-neutral bg-surface-neutral">
       <div className="flex flex-col items-center gap-4 py-4">
         <LoaderSpinner classWidth="w-6" />
         <div className="flex flex-col items-center gap-1">
@@ -364,7 +364,7 @@ const TerraformVariablesLoadingState = () => {
 
 const TerraformVariablesEmptyState = () => {
   return (
-    <div className="flex items-center justify-center border-b border-t border-neutral bg-surface-neutral p-4">
+    <div className="flex min-h-40 items-center justify-center border-b border-t border-neutral bg-surface-neutral">
       <div className="flex flex-col items-center gap-2 py-4">
         <Icon iconName="key" iconStyle="regular" className="text-lg text-neutral-subtle" />
         <span className="text-center text-sm text-neutral-subtle">
