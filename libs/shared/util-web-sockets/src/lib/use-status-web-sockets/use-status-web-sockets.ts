@@ -3,12 +3,10 @@ import { type EnvironmentStatus, type EnvironmentStatusesWithStages } from 'qove
 import {
   type ApplicationStatusDto,
   type DatabaseStatusDto,
-  type ServiceActionDetailsDto,
   type ServiceStatusDto,
   type TerraformStatusDto,
 } from 'qovery-ws-typescript-axios'
 import { v7 as uuidv7 } from 'uuid'
-import { type RunningState } from '@qovery/shared/enums'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { queries } from '@qovery/state/util-queries'
@@ -93,13 +91,10 @@ export function useStatusWebSockets({
     onMessage(queryClient, message: ServiceStatusDto) {
       for (const env of message.environments) {
         // Setting the environment status only if it has changed
-        const currentEnvironmentStatus:
-          | { state: RunningState; triggered_action: ServiceActionDetailsDto | undefined }
-          | undefined = queryClient.getQueryData(queries.environments.runningStatus(env.id).queryKey)
-        if (env.state !== currentEnvironmentStatus?.state) {
-          queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => ({
-            state: env.state,
-          }))
+        const currentEnvironmentStatus = queryClient.getQueryData(queries.environments.runningStatus(env.id).queryKey)
+        const newEnvironmentStatus = { state: env.state, triggered_action: env.triggered_action }
+        if (!equal(newEnvironmentStatus, currentEnvironmentStatus)) {
+          queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => newEnvironmentStatus)
         }
 
         const services: (ApplicationStatusDto | DatabaseStatusDto | TerraformStatusDto)[] = [
