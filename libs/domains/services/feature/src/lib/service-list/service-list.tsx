@@ -752,7 +752,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         },
       }),
     ],
-    [columnHelper, organizationId, projectId, environmentId, navigate, checkRunningStatusClosed, environment]
+    [columnHelper, organizationId, projectId, environmentId, environment]
   )
 
   const table = useReactTable({
