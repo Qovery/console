@@ -1,7 +1,10 @@
 import { FormProvider, useForm } from 'react-hook-form'
+import {
+  TerraformVariablesContext,
+  type TerraformVariablesContextType,
+} from '@qovery/domains/service-terraform/feature'
+import { type TerraformGeneralData } from '@qovery/domains/services/feature'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
-import { type TerraformGeneralData } from '../terraform-configuration-settings/terraform-configuration-settings'
-import { TerraformVariablesContext, type TerraformVariablesContextType } from '../terraform-variables-context'
 import { TfvarsFilesPopover } from './terraform-tfvars-popover'
 
 const WrapperComponent = ({

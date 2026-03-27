@@ -49,13 +49,13 @@ export const isCustomVariable = (v: UIVariable) => {
 
 export const getSourceBadgeClassName = (variable: UIVariable) => {
   if (isCustomVariable(variable)) {
-    return 'text-[#65636D] bg-[#F2EFF3] border-[#D0CDD780]'
+    return 'text-neutral-subtle bg-surface-neutral-component border-neutral-component'
   }
   if (isVariableChanged(variable)) {
-    return 'text-[#AB6400] bg-[#FFF7C2] border-[#DC9B004D]'
+    return 'text-warning bg-surface-warning-component border-warning-subtle'
   }
   if (variable.source.includes('.tfvars')) {
-    return 'text-[#218358] bg-[#E6F6EB] border-[#008F3E33]'
+    return 'text-positive bg-surface-positive-component border-positive-subtle'
   }
-  return 'text-[#0D74CE] bg-[#E6F4FE] border-[#0083EB33]'
+  return 'text-info bg-surface-info-component border-info-subtle'
 }

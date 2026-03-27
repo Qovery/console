@@ -1,12 +1,12 @@
 import { type TfVarsFileResponse } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { type TerraformGeneralData } from '../terraform-configuration-settings/terraform-configuration-settings'
 import {
   CUSTOM_SOURCE,
   TerraformVariablesContext,
   type TerraformVariablesContextType,
-} from '../terraform-variables-context'
+} from '@qovery/domains/service-terraform/feature'
+import { type TerraformGeneralData } from '@qovery/domains/services/feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { TerraformVariablesTable } from './terraform-variables-table'
 
 const mockTfVarsFromRepo: TfVarsFileResponse[] = []
