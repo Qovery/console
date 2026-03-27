@@ -50,7 +50,7 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel, siz
           <Icon iconName="xmark" className="ml-2 text-sm" />
         </span>
       </Button>
-      <div className={selectedItem ? 'hidden' : ''}>
+      <div className={clsx({ hidden: selectedItem }, 'relative')}>
         <Icon
           iconName="magnifying-glass"
           className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle"

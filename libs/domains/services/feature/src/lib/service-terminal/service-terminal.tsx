@@ -187,29 +187,43 @@ export function ServiceTerminal({
   return (
     <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-none border-0 bg-background">
       <div className="flex h-16 justify-between border-b border-neutral p-4">
-        <div className="flex gap-2 [&_input]:w-[400px]">
+        <div className="flex gap-2 [&_input]:w-64">
           {runningStatuses && runningStatuses.pods.length > 0 && (
-            <InputSearch
-              value={selectedPod}
-              onChange={setSelectedPod}
-              data={runningStatuses.pods.map((pod) => pod.name)}
-              placeholder="Search by pod"
-              size="md"
-              trimLabel
-            />
+            <div className="relative">
+              <InputSearch
+                value={selectedPod}
+                onChange={setSelectedPod}
+                data={runningStatuses.pods.map((pod) => pod.name)}
+                placeholder="Select a pod to connect to"
+                size="md"
+                trimLabel
+              />
+              {!selectedPod && (
+                <div className="pointer-events-none absolute right-2.5 top-1/2 z-20 -translate-y-1/2 text-xs text-neutral-subtle">
+                  <Icon iconName="angle-down" />
+                </div>
+              )}
+            </div>
           )}
           {runningStatuses && selectedPod && (
-            <InputSearch
-              value={selectedContainer}
-              onChange={setSelectedContainer}
-              data={
-                runningStatuses.pods
-                  .find((pod) => selectedPod === pod?.name)
-                  ?.containers.map((container) => container?.name) || []
-              }
-              placeholder="Search by container"
-              size="md"
-            />
+            <div className="relative">
+              <InputSearch
+                value={selectedContainer}
+                onChange={setSelectedContainer}
+                data={
+                  runningStatuses.pods
+                    .find((pod) => selectedPod === pod?.name)
+                    ?.containers.map((container) => container?.name) || []
+                }
+                placeholder="Select a container to connect to"
+                size="md"
+              />
+              {!selectedContainer && (
+                <div className="pointer-events-none absolute right-2.5 top-1/2 z-20 -translate-y-1/2 text-xs text-neutral-subtle">
+                  <Icon iconName="angle-down" iconStyle="solid" />
+                </div>
+              )}
+            </div>
           )}
         </div>
         <ExternalLink

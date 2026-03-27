@@ -5,6 +5,8 @@ import { renderWithProviders } from '@qovery/shared/util-tests'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { ServiceTerminal, type ServiceTerminalProps } from './service-terminal'
 
+const mockUseRunningStatus = jest.fn()
+
 jest.mock('color', () => ({
   __esModule: true,
   default: () => ({
@@ -17,7 +19,7 @@ jest.mock('@qovery/state/util-queries', () => ({
 }))
 
 jest.mock('../..', () => ({
-  useRunningStatus: () => ({ data: { pods: [], state: 'STOPPED' }, isLoading: false }),
+  useRunningStatus: (...args: unknown[]) => mockUseRunningStatus(...args),
 }))
 
 const props: ServiceTerminalProps = {
@@ -43,6 +45,16 @@ const getLatestWsSubscriptionConfig = (): Parameters<typeof useReactQueryWsSubsc
 describe('ServiceTerminal', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseRunningStatus.mockReturnValue({
+      data: {
+        pods: [
+          { name: 'pod-1', containers: [{ name: 'container-1' }] },
+          { name: 'pod-2', containers: [{ name: 'container-2' }] },
+        ],
+        state: 'STOPPED',
+      },
+      isLoading: false,
+    })
   })
 
   it('should match snapshot', () => {
@@ -83,5 +95,17 @@ describe('ServiceTerminal', () => {
       expect(screen.queryByText('Unable to launch CLI')).not.toBeInTheDocument()
       expect(useReactQueryWsSubscriptionMock).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: true }))
     })
+  })
+
+  it('should show pod and container placeholders', async () => {
+    const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
+
+    expect(screen.getByPlaceholderText('Select a pod to connect to')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByPlaceholderText('Select a pod to connect to'))
+    const [firstPodOption] = screen.getAllByRole('option')
+    await userEvent.click(firstPodOption)
+
+    expect(screen.getByPlaceholderText('Select a container to connect to')).toBeInTheDocument()
   })
 })
