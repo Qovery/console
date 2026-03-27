@@ -7,13 +7,12 @@ import {
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
-import { type Dispatch, type PropsWithChildren, type SetStateAction } from 'react'
+import { type PropsWithChildren } from 'react'
 import { EnvironmentActionToolbar, useDeploymentHistory } from '@qovery/domains/environments/feature'
 import {
   Button,
   DropdownMenu,
   Icon,
-  InputToggle,
   Link,
   LoaderSpinner,
   StageStatusChip,
@@ -27,8 +26,6 @@ import { HeaderEnvironmentStages } from '../header-environment-stages/header-env
 export interface EnvironmentStagesProps extends PropsWithChildren {
   environment: Environment
   environmentStatus: EnvironmentStatus
-  hideSkipped: boolean
-  setHideSkipped: Dispatch<SetStateAction<boolean>>
   deploymentStages?: DeploymentStageWithServicesStatuses[]
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
   deploymentHistory?: DeploymentHistoryEnvironmentV2
@@ -41,8 +38,6 @@ export function EnvironmentStages({
   deploymentStages,
   deploymentHistory,
   preCheckStage,
-  hideSkipped,
-  setHideSkipped,
   banner,
   children,
 }: EnvironmentStagesProps) {
@@ -119,16 +114,6 @@ export function EnvironmentStages({
         </div>
       </HeaderEnvironmentStages>
       <hr className="mb-4 mt-2 w-full border-neutral" />
-      <div className="flex items-center justify-end gap-4 text-sm font-medium text-neutral">
-        <InputToggle
-          name="skipped"
-          value={hideSkipped}
-          onChange={setHideSkipped}
-          small
-          title="Hide skipped"
-          className="flex-row-reverse gap-2"
-        />
-      </div>
       <div className="flex justify-center">
         <div className="relative h-full w-full">
           {banner}

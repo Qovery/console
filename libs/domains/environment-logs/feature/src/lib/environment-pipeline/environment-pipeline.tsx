@@ -60,8 +60,6 @@ function PipelineContent({
     suspense: true,
   })
 
-  const [hideSkipped, setHideSkipped] = useState<boolean>(true)
-
   if (!environment || !environmentStatus) {
     // Suspend until WS data arrives.
     // The parent Pipeline component will re-render this component once setEnvironmentStatus is called.
@@ -80,8 +78,6 @@ function PipelineContent({
         environmentStatus={environmentStatus}
         deploymentStages={deploymentStages}
         preCheckStage={preCheckStage}
-        hideSkipped={hideSkipped}
-        setHideSkipped={setHideSkipped}
         deploymentHistory={deploymentHistory}
       >
         {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
@@ -90,34 +86,24 @@ function PipelineContent({
             const stageTotalDurationSec = s.stage?.steps?.total_duration_sec ?? 0
             const stageName = s?.stage?.name || ''
 
-            if (hideSkipped && s?.stage?.status === 'SKIPPED') return null
+            if (s?.stage?.status === 'SKIPPED') return null
 
             return (
               <Fragment key={s.stage?.id}>
-                <div
-                  className={clsx(
-                    'h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral bg-surface-neutral',
-                    {
-                      'text-neutral': s?.stage?.status !== 'SKIPPED',
-                      'text-neutral-subtle': s?.stage?.status === 'SKIPPED',
-                    }
-                  )}
-                >
+                <div className="h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral bg-surface-neutral text-neutral">
                   <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral px-3 py-2.5">
                     <Indicator
                       align="end"
                       side="right"
                       content={
-                        s?.stage?.status !== 'SKIPPED' && (
-                          <Tooltip content={upperCaseFirstLetter(deploymentHistory?.trigger_action)}>
-                            <span>
-                              <TriggerActionIcon
-                                triggerAction={deploymentHistory?.trigger_action}
-                                className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface-neutral text-xs text-neutral-subtle"
-                              />
-                            </span>
-                          </Tooltip>
-                        )
+                        <Tooltip content={upperCaseFirstLetter(deploymentHistory?.trigger_action)}>
+                          <span>
+                            <TriggerActionIcon
+                              triggerAction={deploymentHistory?.trigger_action}
+                              className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface-neutral text-xs text-neutral-subtle"
+                            />
+                          </span>
+                        </Tooltip>
                       }
                     >
                       <Tooltip content={upperCaseFirstLetter(s.stage?.status)}>
@@ -154,7 +140,7 @@ function PipelineContent({
                         // NOTE: This one is necessary to catch edge case with delete service because we don't have information in the service list and environment status (except their id)
                         const serviceFromDeploymentHistoryId = getServiceFromDeploymentHistoryId(service.id!)
 
-                        if (hideSkipped && !service.is_part_last_deployment) return null
+                        if (!service.is_part_last_deployment) return null
                         if (!fullService)
                           return (
                             <div
@@ -170,28 +156,6 @@ function PipelineContent({
 
                         const serviceItemClassName =
                           'flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2'
-
-                        if (!service.is_part_last_deployment) {
-                          return (
-                            <div key={service?.id} className={clsx(serviceItemClassName, 'text-neutral-subtle')}>
-                              <ServiceAvatar
-                                service={fullService}
-                                border="solid"
-                                size="sm"
-                                className="border-neutral opacity-50"
-                              />
-                              <span className="flex flex-col gap-0.5 text-sm">
-                                <Truncate text={fullService.name} truncateLimit={16} />
-                                {serviceTotalDurationSec && (
-                                  <span className="text-xs">
-                                    {Math.floor(serviceTotalDurationSec / 60)}m {serviceTotalDurationSec % 60}s
-                                  </span>
-                                )}
-                              </span>
-                              <StatusChip className="ml-auto" status="SKIPPED" />
-                            </div>
-                          )
-                        }
 
                         return (
                           <Link
