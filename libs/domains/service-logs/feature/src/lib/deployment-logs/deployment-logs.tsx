@@ -21,8 +21,8 @@ const WebSocketListenerMemo = memo(MetricsWebSocketListener)
 
 function Loader() {
   return (
-    <div className="flex h-[calc(100vh-208px)] flex-col">
-      <div className="flex h-12 items-center gap-[30px] border-b border-neutral px-4">
+    <div className="flex h-[calc(100vh-125px)] flex-col">
+      <div className="flex h-12 items-center gap-3 border-b border-neutral px-4">
         <Skeleton width={105} height={28} />
         <Skeleton width={124} height={28} />
         <Skeleton width={80} height={28} />
@@ -118,11 +118,11 @@ export function DeploymentLogs() {
   })
 
   useEffect(() => {
-    // Reset local state when URL parameters change
+    // Reset page-level deployment state only when the overall scope changes.
     setDeploymentStages(undefined)
     setEnvironmentStatus(undefined)
     setPreCheckStage(undefined)
-  }, [organizationId, projectId, environmentId, executionId])
+  }, [organizationId, projectId, environmentId])
 
   return (
     <div>

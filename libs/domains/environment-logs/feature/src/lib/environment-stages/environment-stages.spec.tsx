@@ -75,8 +75,6 @@ describe('EnvironmentStages', () => {
       state: 'RUNNING',
       last_deployment_id: 'exec-1',
     },
-    hideSkipped: false,
-    setHideSkipped: jest.fn(),
     deploymentStages: [],
     preCheckStage: {
       status: 'SUCCESS',
@@ -92,6 +90,7 @@ describe('EnvironmentStages', () => {
   it('renders pre-check stage when preCheckStage is provided', () => {
     renderWithProviders(<EnvironmentStages {...defaultProps} />)
     expect(screen.getByText('Pre-check')).toBeInTheDocument()
+    expect(screen.queryByText('Hide skipped')).not.toBeInTheDocument()
   })
 
   it('renders children when deploymentStages is provided', () => {

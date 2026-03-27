@@ -4,18 +4,20 @@ import { useDeploymentStatus, useLinks, useService } from '@qovery/domains/servi
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
+import { useServiceDeploymentHistory } from '../hooks/use-service-deployment-history/use-service-deployment-history'
 import { ListDeploymentLogs } from './list-deployment-logs'
 
 window.HTMLElement.prototype.scroll = jest.fn()
 
 jest.mock('../hooks/use-deployment-logs/use-deployment-logs')
+jest.mock('../hooks/use-service-deployment-history/use-service-deployment-history')
 jest.mock('@qovery/domains/services/feature')
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useSearch: () => ({}),
   useNavigate: () => jest.fn(),
-  useParams: () => ({ organizationId: '1' }),
+  useParams: () => ({ organizationId: '1', projectId: '2', serviceId: 'service-1', executionId: '4' }),
   useLocation: () => ({ pathname: '/', search: '', hash: '' }),
   useRouter: () => ({
     buildLocation: () => ({ href: '/' }),
@@ -33,23 +35,6 @@ jest.mock('../hooks/use-generate-build-usage-report/use-generate-build-usage-rep
     isLoading: false,
   }),
 }))
-
-jest.mock('../hooks/use-deployment-history/use-deployment-history', () => ({
-  ...jest.requireActual('../hooks/use-deployment-history/use-deployment-history'),
-  useDeploymentHistory: () => ({
-    data: [
-      {
-        identifier: {
-          execution_id: '4',
-        },
-        auditing_data: {
-          created_at: '2024-09-18T07:03:29.819774Z',
-        },
-      },
-    ],
-  }),
-}))
-
 describe('ListDeploymentLogs', () => {
   const mockEnvironment = environmentFactoryMock(1)[0]
 
@@ -113,6 +98,31 @@ describe('ListDeploymentLogs', () => {
   ]
 
   beforeEach(() => {
+    useServiceDeploymentHistory.mockReturnValue({
+      data: [
+        {
+          identifier: {
+            execution_id: '4',
+          },
+          auditing_data: {
+            created_at: '2024-09-18T07:03:29.819774Z',
+          },
+          status: 'SUCCESS',
+          stages: [
+            {
+              services: [
+                {
+                  identifier: {
+                    service_id: 'service-1',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ] as DeploymentHistoryEnvironmentV2[],
+    })
+
     useDeploymentLogs.mockReturnValue({
       data: mockLogs,
       pauseLogs: false,

@@ -60,8 +60,6 @@ function PipelineContent({
     suspense: true,
   })
 
-  const [hideSkipped, setHideSkipped] = useState<boolean>(true)
-
   if (!environment || !environmentStatus) {
     // Suspend until WS data arrives.
     // The parent Pipeline component will re-render this component once setEnvironmentStatus is called.
@@ -80,8 +78,6 @@ function PipelineContent({
         environmentStatus={environmentStatus}
         deploymentStages={deploymentStages}
         preCheckStage={preCheckStage}
-        hideSkipped={hideSkipped}
-        setHideSkipped={setHideSkipped}
         deploymentHistory={deploymentHistory}
       >
         {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
@@ -90,34 +86,24 @@ function PipelineContent({
             const stageTotalDurationSec = s.stage?.steps?.total_duration_sec ?? 0
             const stageName = s?.stage?.name || ''
 
-            if (hideSkipped && s?.stage?.status === 'SKIPPED') return null
+            if (s?.stage?.status === 'SKIPPED') return null
 
             return (
               <Fragment key={s.stage?.id}>
-                <div
-                  className={clsx(
-                    'h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral bg-surface-neutral',
-                    {
-                      'text-neutral-50': s?.stage?.status !== 'SKIPPED',
-                      'text-neutral-300': s?.stage?.status === 'SKIPPED',
-                    }
-                  )}
-                >
+                <div className="h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral bg-surface-neutral text-neutral">
                   <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral px-3 py-2.5">
                     <Indicator
                       align="end"
                       side="right"
                       content={
-                        s?.stage?.status !== 'SKIPPED' && (
-                          <Tooltip content={upperCaseFirstLetter(deploymentHistory?.trigger_action)}>
-                            <span>
-                              <TriggerActionIcon
-                                triggerAction={deploymentHistory?.trigger_action}
-                                className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface-neutral text-xs text-neutral-subtle"
-                              />
-                            </span>
-                          </Tooltip>
-                        )
+                        <Tooltip content={upperCaseFirstLetter(deploymentHistory?.trigger_action)}>
+                          <span>
+                            <TriggerActionIcon
+                              triggerAction={deploymentHistory?.trigger_action}
+                              className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface-neutral text-xs text-neutral-subtle"
+                            />
+                          </span>
+                        </Tooltip>
                       }
                     >
                       <Tooltip content={upperCaseFirstLetter(s.stage?.status)}>
@@ -154,19 +140,22 @@ function PipelineContent({
                         // NOTE: This one is necessary to catch edge case with delete service because we don't have information in the service list and environment status (except their id)
                         const serviceFromDeploymentHistoryId = getServiceFromDeploymentHistoryId(service.id!)
 
-                        if (hideSkipped && !service.is_part_last_deployment) return null
+                        if (!service.is_part_last_deployment) return null
                         if (!fullService)
                           return (
                             <div
                               key={service?.id}
-                              className="bg-neutral flex w-full items-center gap-2.5 rounded border border-neutral px-2.5 py-2"
+                              className="flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2"
                             >
-                              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral text-neutral-250">
+                              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral text-neutral-subtle">
                                 <Icon iconName="trash-can-xmark" iconStyle="solid" />
                               </span>
                               <span className="text-sm">{serviceFromDeploymentHistoryId?.identifier.name}</span>
                             </div>
                           )
+
+                        const serviceItemClassName =
+                          'flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2'
 
                         return (
                           <Link
@@ -180,20 +169,11 @@ function PipelineContent({
                               executionId: deploymentHistory?.identifier.execution_id ?? '',
                             }}
                             className={clsx(
-                              'flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2 text-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle hover:text-neutral',
-                              {
-                                'text-neutral-300': !service.is_part_last_deployment,
-                              }
+                              serviceItemClassName,
+                              'text-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle hover:text-neutral'
                             )}
                           >
-                            <ServiceAvatar
-                              service={fullService}
-                              border="solid"
-                              size="sm"
-                              className={clsx('border-neutral', {
-                                'opacity-50': !service.is_part_last_deployment,
-                              })}
-                            />
+                            <ServiceAvatar service={fullService} border="solid" size="sm" className="border-neutral" />
                             <span className="flex flex-col gap-0.5 text-sm">
                               <Truncate text={fullService.name} truncateLimit={16} />
                               {serviceTotalDurationSec && (
@@ -202,10 +182,7 @@ function PipelineContent({
                                 </span>
                               )}
                             </span>
-                            <StatusChip
-                              className="ml-auto"
-                              status={!service.is_part_last_deployment ? 'SKIPPED' : service.state}
-                            />
+                            <StatusChip className="ml-auto" status={service.state} />
                           </Link>
                         )
                       })
@@ -220,7 +197,7 @@ function PipelineContent({
                 <div className="mt-4 w-4 last:hidden">
                   <svg xmlns="http://www.w3.org/2000/svg" width="17" height="9" fill="none" viewBox="0 0 17 9">
                     <path
-                      fill="var(--neutral-6)"
+                      className="fill-surface-neutral-component"
                       d="M16.092 4.5L8.592.17v8.66l7.5-4.33zm-16 .75h9.25v-1.5H.092v1.5z"
                     ></path>
                   </svg>

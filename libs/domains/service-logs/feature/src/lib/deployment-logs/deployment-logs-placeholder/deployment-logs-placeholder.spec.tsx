@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DeploymentLogsPlaceholder, type DeploymentLogsPlaceholderProps } from './deployment-logs-placeholder'
@@ -9,14 +10,20 @@ jest.mock('@qovery/domains/services/feature', () => ({
   useService: () => ({ data: mockApplication }),
 }))
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({
     organizationId: 'org-123',
     projectId: 'proj-123',
     environmentId: 'env-123',
     serviceId: 'serv-123',
+    executionId: 'exec-1',
   }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+    <a {...props} href={`${props.to}`}>
+      {children}
+    </a>
+  ),
 }))
 
 describe('DeploymentLogsPlaceholder', () => {
@@ -27,11 +34,17 @@ describe('DeploymentLogsPlaceholder', () => {
     environment: mockEnvironment,
   }
 
-  it('should render deployment history', () => {
+  it('should render loader while deployment logs are still loading', () => {
     renderWithProviders(
       <DeploymentLogsPlaceholder
         itemsLength={1}
         environment={mockEnvironment}
+        serviceStatus={{
+          id: 'serv-123',
+          state: 'BUILDING',
+          service_deployment_status: 'OUT_OF_DATE',
+          is_part_last_deployment: true,
+        }}
         environmentDeploymentHistory={[
           {
             identifier: {
@@ -70,16 +83,16 @@ describe('DeploymentLogsPlaceholder', () => {
       />
     )
 
-    expect(screen.getByText('Last deployment logs')).toBeInTheDocument()
-    // TODO new-nav : Route not yet created
-    // expect(screen.getByText('exec-...c-1')).toBeInTheDocument()
+    expect(screen.getByText('Deployment logs are loading…')).toBeInTheDocument()
   })
 
   it('should render "No history deployment available"', () => {
     props.itemsLength = 1
     renderWithProviders(<DeploymentLogsPlaceholder {...props} />)
 
-    expect(screen.getByText('No history deployment available for this service.')).toBeInTheDocument()
+    expect(
+      screen.getByText(`No history deployment available for this service ${mockApplication.name}.`)
+    ).toBeInTheDocument()
   })
 
   it('should render spinner', () => {
@@ -114,9 +127,8 @@ describe('DeploymentLogsPlaceholder', () => {
       />
     )
 
-    expect(
-      screen.getByText('This service was deployed more than 30 days ago and thus no deployment logs are available.')
-    ).toBeInTheDocument()
+    expect(screen.getByText("Deployment logs are no longer available due to the deployment's age.")).toBeInTheDocument()
+    expect(screen.getByText('No logs to display.')).toBeInTheDocument()
   })
 
   it('should render queued state', () => {
@@ -172,9 +184,7 @@ describe('DeploymentLogsPlaceholder', () => {
     )
 
     expect(screen.getByText('An error occurred during deployment of another service.')).toBeInTheDocument()
-    // TODO new-nav : Route not yet created
-    // const pipelineLink = screen.getByText('Open pipeline')
-    // expect(pipelineLink).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /open pipeline/i })).toBeInTheDocument()
   })
 
   it('should render precheck error state', () => {
@@ -201,7 +211,6 @@ describe('DeploymentLogsPlaceholder', () => {
     )
 
     expect(screen.getByText('An error occurred during the precheck step.')).toBeInTheDocument()
-    // TODO new-nav : Route not yet created
-    // expect(screen.getByText('Open precheck')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /open precheck/i })).toBeInTheDocument()
   })
 })

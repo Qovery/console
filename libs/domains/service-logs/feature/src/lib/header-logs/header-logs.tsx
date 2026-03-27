@@ -1,11 +1,5 @@
 import { useParams, useRouter, useSearch } from '@tanstack/react-router'
-import {
-  DatabaseModeEnum,
-  type DeploymentHistoryEnvironmentV2,
-  type Environment,
-  type EnvironmentStatus,
-  type Status,
-} from 'qovery-typescript-axios'
+import { DatabaseModeEnum, type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import {
@@ -26,7 +20,6 @@ export interface HeaderLogsProps extends PropsWithChildren {
   environment: Environment
   serviceStatus: Status
   environmentStatus?: EnvironmentStatus
-  deploymentHistory?: DeploymentHistoryEnvironmentV2
 }
 
 export function HeaderLogs({
