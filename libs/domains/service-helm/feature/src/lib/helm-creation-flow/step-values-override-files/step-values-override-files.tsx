@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
+import { type FormEventHandler, useEffect } from 'react'
 import { Controller, FormProvider, type UseFormReturn } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import {
   GitBranchSettings,
@@ -8,12 +8,14 @@ import {
   GitPublicRepositorySettings,
   GitRepositorySetting,
 } from '@qovery/domains/organizations/feature'
-import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting, buildHelmSourceFromGeneralData } from '@qovery/domains/services/feature'
-import { SERVICES_HELM_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_VALUES_STEP_2_URL } from '@qovery/shared/routes'
 import { Button, Callout, FunnelFlowBody, Icon, InputText } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { useHelmCreateContext } from '../page-helm-create-feature'
+import {
+  type HelmValuesFileData,
+  ValuesOverrideFilesSetting,
+} from '../../values-override-files-setting/values-override-files-setting'
+import { ValuesOverrideYamlSettingBase } from '../../values-override-yaml-setting/values-override-yaml-setting'
+import { useHelmCreateContext } from '../helm-creation-flow'
 
 function GitPathsSettings({ methods }: { methods: UseFormReturn<HelmValuesFileData> }) {
   return (
@@ -39,25 +41,24 @@ function GitPathsSettings({ methods }: { methods: UseFormReturn<HelmValuesFileDa
   )
 }
 
-export function StepValuesOverrideFilesFeature() {
-  useDocumentTitle('General - Values override as file')
-
+export function HelmStepValuesOverrideFile() {
+  const navigate = useNavigate()
+  const search = useSearch({ strict: false })
+  const { organizationId = '', environmentId = '' } = useParams({ strict: false })
   const { generalForm, valuesOverrideFileForm, setCurrentStep, creationFlowUrl } = useHelmCreateContext()
-  const { organizationId = '' } = useParams()
 
   const generalData = generalForm.getValues()
-
   const source = buildHelmSourceFromGeneralData(generalData)
-
-  const navigate = useNavigate()
 
   useEffect(() => {
     setCurrentStep(2)
   }, [setCurrentStep])
 
-  const onSubmit = valuesOverrideFileForm.handleSubmit(() => {
-    if (watchFieldIsPublicRepository) generalForm.setValue('auto_deploy', false)
-    navigate(creationFlowUrl + SERVICES_HELM_CREATION_VALUES_STEP_2_URL)
+  const handleSubmit: FormEventHandler<HTMLFormElement> = valuesOverrideFileForm.handleSubmit((data) => {
+    valuesOverrideFileForm.reset({
+      ...data,
+      auto_deploy: data.is_public_repository ? false : data.auto_deploy,
+    })
   })
 
   const watchFieldType = valuesOverrideFileForm.watch('type')
@@ -66,18 +67,6 @@ export function StepValuesOverrideFilesFeature() {
   const watchFieldGitRepository = valuesOverrideFileForm.watch('git_repository')
   const watchFieldGitBranch = valuesOverrideFileForm.watch('branch')
   const watchFieldIsPublicRepository = valuesOverrideFileForm.watch('is_public_repository')
-
-  const disabledContinueButton = match(watchFieldType)
-    .with('GIT_REPOSITORY', () => {
-      const { provider, git_repository, branch, paths } = valuesOverrideFileForm.watch()
-      return !provider || !git_repository || !branch || !paths
-    })
-    .with('YAML', () => {
-      const { content } = valuesOverrideFileForm.watch()
-      return !content
-    })
-    .with('NONE', () => false)
-    .exhaustive()
 
   const gitRepositorySettings = (
     <>
@@ -118,34 +107,47 @@ export function StepValuesOverrideFilesFeature() {
           {generalData.source_provider === 'HELM_REPOSITORY' && watchFieldGitProvider && watchFieldGitRepository && (
             <AutoDeploySetting source="GIT" className="mt-3" />
           )}
-          {generalData.source_provider === 'GIT' && (
-            <>
-              {generalData.auto_deploy ? (
-                <Callout.Root color="sky" className="mt-3">
-                  <Callout.Icon>
-                    <Icon iconName="circle-info" iconStyle="regular" />
-                  </Callout.Icon>
-
-                  <Callout.Text>
-                    <Callout.TextHeading>Auto-deploy is activated</Callout.TextHeading>
-                    The service will be automatically updated on every new commit on the branch.
-                  </Callout.Text>
-                </Callout.Root>
-              ) : (
-                <Callout.Root color="sky" className="mt-3">
-                  <Callout.Icon>
-                    <Icon iconName="circle-info" iconStyle="regular" />
-                  </Callout.Icon>
-                  <Callout.Text>
-                    <Callout.TextHeading>Auto-deploy is not activated</Callout.TextHeading>
-                  </Callout.Text>
-                </Callout.Root>
-              )}
-            </>
-          )}
+          {generalData.source_provider === 'GIT' &&
+            (generalData.auto_deploy ? (
+              <Callout.Root color="sky" className="mt-3">
+                <Callout.Icon>
+                  <Icon iconName="circle-info" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>Auto-deploy is activated</Callout.TextHeading>
+                  The service will be automatically updated on every new commit on the branch.
+                </Callout.Text>
+              </Callout.Root>
+            ) : (
+              <Callout.Root color="sky" className="mt-3">
+                <Callout.Icon>
+                  <Icon iconName="circle-info" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>Auto-deploy is not activated</Callout.TextHeading>
+                </Callout.Text>
+              </Callout.Root>
+            ))}
         </>
       )}
     </>
+  )
+
+  const isContinueDisabled = match(watchFieldType)
+    .with('GIT_REPOSITORY', () => true)
+    .with('YAML', () => true)
+    .with('NONE', () => true)
+    .exhaustive()
+
+  const yamlSetting = (
+    <ValuesOverrideYamlSettingBase
+      content={valuesOverrideFileForm.getValues('content')}
+      environmentId={environmentId}
+      onSubmit={(value) => {
+        valuesOverrideFileForm.setValue('content', value)
+      }}
+      source={source}
+    />
   )
 
   return (
@@ -156,28 +158,36 @@ export function StepValuesOverrideFilesFeature() {
           watchFieldType={watchFieldType}
           source={source}
           gitRepositorySettings={gitRepositorySettings}
-          onSubmit={onSubmit}
+          onSubmit={handleSubmit}
+          yamlSetting={yamlSetting}
         >
+          <Callout.Root color="sky">
+            <Callout.Icon>
+              <Icon iconName="circle-info" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>Next steps are not migrated yet</Callout.TextHeading>
+              You can already configure the Helm chart source and the values override file in console-v5. The remaining
+              creation steps will be added in a later iteration.
+            </Callout.Text>
+          </Callout.Root>
+
           <div className="flex justify-between">
             <Button
               type="button"
               size="lg"
               variant="plain"
               color="neutral"
-              onClick={() => navigate(creationFlowUrl + SERVICES_HELM_CREATION_GENERAL_URL)}
+              onClick={() => navigate({ to: `${creationFlowUrl}/general`, search })}
             >
               Back
             </Button>
-            <div className="flex gap-3">
-              <Button type="submit" size="lg" disabled={disabledContinueButton}>
-                Continue
-              </Button>
-            </div>
+            <Button type="submit" size="lg" disabled={isContinueDisabled}>
+              Continue
+            </Button>
           </div>
         </ValuesOverrideFilesSetting>
       </FormProvider>
     </FunnelFlowBody>
   )
 }
-
-export default StepValuesOverrideFilesFeature

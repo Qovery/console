@@ -7,8 +7,6 @@ import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import {
   SERVICES_CRONJOB_CREATION_URL,
-  SERVICES_HELM_CREATION_URL,
-  SERVICES_HELM_TEMPLATE_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
   SERVICES_TERRAFORM_CREATION_URL,
@@ -170,9 +168,8 @@ function Card({
 /** Types listed in CREATE_FLOW_SLUG_BY_TYPE use /service/create/:flowSlug?template=; others use legacy URLs until migrated. */
 const servicePathSuffix = (type: ServiceType, parentSlug: string, slug: string) =>
   match(type)
-    .with('APPLICATION', 'CONTAINER', 'DATABASE', () => buildCreateFlowPathForType(type, parentSlug, slug))
+    .with('APPLICATION', 'CONTAINER', 'DATABASE', 'HELM', () => buildCreateFlowPathForType(type, parentSlug, slug))
     .with('LIFECYCLE_JOB', () => SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(parentSlug, slug))
-    .with('HELM', () => SERVICES_HELM_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('JOB', 'CRON_JOB', () => undefined)
     .with('TERRAFORM', () => undefined)
     .otherwise(() => buildCreateFlowPathForType(type, parentSlug, slug))
@@ -576,7 +573,7 @@ export function ServiceNew({
         title: 'Helm',
         description: 'Deploy a Helm Chart on your Kubernetes cluster.',
         icon: <Icon name="HELM" width={32} height={32} />,
-        link: getServicesPath(organizationId, projectId, environmentId, SERVICES_HELM_CREATION_URL),
+        link: getServicesPath(organizationId, projectId, environmentId, getCreateFlowPath('helm')),
         cloud_provider: cloudProvider,
       },
       ...(isTerraformFeatureFlag

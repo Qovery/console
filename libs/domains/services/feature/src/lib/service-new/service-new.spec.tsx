@@ -108,4 +108,24 @@ describe('ServiceNew', () => {
       ).toBeInTheDocument()
     })
   })
+
+  it('should link helm entries to the v5 helm create flow', async () => {
+    const { container, userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    expect(
+      container.querySelector('a[href="/organization/org-1/project/project-1/environment/env-1/service/create/helm"]')
+    ).toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('Apache Kafka'))
+
+    await waitFor(() => {
+      expect(
+        container.querySelector(
+          'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/helm?template=apachekafka"]'
+        )
+      ).toBeInTheDocument()
+    })
+  })
 })

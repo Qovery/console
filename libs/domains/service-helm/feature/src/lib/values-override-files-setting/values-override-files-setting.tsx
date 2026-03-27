@@ -33,6 +33,7 @@ export interface ValuesOverrideFilesSettingProps {
   gitRepositorySettings: ReactNode
   onSubmit: () => void
   isSetting?: boolean
+  yamlSetting?: ReactNode
 }
 
 export function ValuesOverrideFilesSetting({
@@ -43,6 +44,7 @@ export function ValuesOverrideFilesSetting({
   gitRepositorySettings,
   onSubmit,
   isSetting,
+  yamlSetting,
 }: PropsWithChildren<ValuesOverrideFilesSettingProps>) {
   return (
     <Section>
@@ -141,14 +143,16 @@ export function ValuesOverrideFilesSetting({
               and can be updated later within the settings but no history will be retained.
             </p>
             <div className="flex flex-col gap-3">
-              <ValuesOverrideYamlSetting
-                content={methods.getValues('content')}
-                onSubmit={(value) => {
-                  methods.setValue('content', value)
-                  isSetting && onSubmit()
-                }}
-                source={source}
-              />
+              {yamlSetting ?? (
+                <ValuesOverrideYamlSetting
+                  content={methods.getValues('content')}
+                  onSubmit={(value) => {
+                    methods.setValue('content', value)
+                    isSetting && onSubmit()
+                  }}
+                  source={source}
+                />
+              )}
             </div>
           </Section>
         )}
