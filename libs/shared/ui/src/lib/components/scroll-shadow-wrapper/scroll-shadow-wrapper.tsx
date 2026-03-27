@@ -4,10 +4,11 @@ export interface ScrollShadowWrapperProps {
   children: ReactNode
   className?: string
   style?: CSSProperties
+  hideSides?: boolean
 }
 
 export function ScrollShadowWrapper(props: ScrollShadowWrapperProps) {
-  const { children, className = '', style = {} } = props
+  const { children, className = '', style = {}, hideSides = false } = props
 
   const [scrollTop, setScrollTop] = useState(0)
   const [scrollHeight, setScrollHeight] = useState(0)
@@ -52,19 +53,23 @@ export function ScrollShadowWrapper(props: ScrollShadowWrapperProps) {
       className={`relative overflow-y-auto pr-[1px] ${className}`}
       onScroll={onScrollHandler}
     >
-      <div
-        data-testid="scroll-shadow-top"
-        className={`pointer-events-none sticky top-0 z-overlay -mb-4 h-5 w-full bg-scroll-shadow-up transition-opacity duration-300 ${
-          getVisibleSides().top ? 'opacity-100' : 'opacity-0'
-        }`}
-      />
+      {!hideSides && (
+        <div
+          data-testid="scroll-shadow-top"
+          className={`pointer-events-none sticky top-0 z-overlay -mb-4 h-5 w-full bg-scroll-shadow-up transition-opacity duration-300 ${
+            getVisibleSides().top ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+      )}
       {children}
-      <div
-        data-testid="scroll-shadow-bottom"
-        className={`pointer-events-none sticky bottom-0 z-overlay -mt-4 h-5 w-full rotate-180 bg-scroll-shadow-bottom transition-opacity duration-300 ${
-          getVisibleSides().bottom ? 'opacity-100' : 'opacity-0'
-        }`}
-      />
+      {!hideSides && (
+        <div
+          data-testid="scroll-shadow-bottom"
+          className={`pointer-events-none sticky bottom-0 z-overlay -mt-4 h-5 w-full rotate-180 bg-scroll-shadow-bottom transition-opacity duration-300 ${
+            getVisibleSides().bottom ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+      )}
     </div>
   )
 }

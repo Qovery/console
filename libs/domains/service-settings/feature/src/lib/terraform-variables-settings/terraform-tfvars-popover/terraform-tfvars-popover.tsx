@@ -1,6 +1,7 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
+import clsx from 'clsx'
 import { Reorder } from 'framer-motion'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { type TfVarsFile, useTerraformVariablesContext } from '@qovery/domains/service-terraform/feature'
 import {
   Button,
@@ -14,7 +15,6 @@ import {
   Skeleton,
   Tooltip,
 } from '@qovery/shared/ui'
-import { twMerge } from '@qovery/shared/util-js'
 
 const TfvarItem = ({
   file,
@@ -41,13 +41,21 @@ const TfvarItem = ({
     [tfVarFiles, file.source, setTfVarFiles]
   )
 
+  const isLastItem = useMemo(() => index === tfVarFiles.length - 1, [index, tfVarFiles.length])
+
   useEffect(() => {
     setCurrentIndex(index.toString())
   }, [index])
 
   return (
     <div
-      className="grid w-full grid-cols-[1fr_70px] items-center justify-between bg-surface-neutral px-4 py-3"
+      className={clsx(
+        'relative grid w-full grid-cols-[1fr_70px] items-center justify-between rounded-b-md bg-surface-neutral px-4 py-3',
+        {
+          'rounded-none after:absolute after:bottom-0 after:h-[1px] after:w-full after:bg-surface-neutral-componentActive':
+            !isLastItem,
+        }
+      )}
       onMouseEnter={() => setHoveredRow(file.source)}
       onMouseLeave={() => setHoveredRow(undefined)}
     >
@@ -239,16 +247,16 @@ export const TfvarsFilesPopover = () => {
               ))}
             </>
           ) : tfVarFiles.length > 0 ? (
-            <ScrollShadowWrapper className="max-h-[300px]">
+            <ScrollShadowWrapper hideSides className="max-h-[300px]">
               <Reorder.Group axis="y" values={tfVarFiles} onReorder={onReorder}>
                 {tfVarFiles?.map((file, index) => (
                   <Reorder.Item
                     key={file.source}
                     value={file}
-                    initial={{ cursor: 'grab' }}
+                    initial={{ cursor: 'grab', borderColor: 'var(--brand-6)' }}
                     exit={{ cursor: 'grab' }}
-                    whileDrag={{ cursor: 'grabbing', borderColor: 'var(--brand-6)', borderWidth: '2px' }}
-                    className="flex w-full items-center border-b border-neutral last:border-b-0"
+                    whileDrag={{ cursor: 'grabbing', borderWidth: '2px' }}
+                    className="flex w-full items-center"
                     data-testid="tfvar-item"
                   >
                     <TfvarItem key={file.source} file={file} index={index} onIndexChange={onIndexChange} />
