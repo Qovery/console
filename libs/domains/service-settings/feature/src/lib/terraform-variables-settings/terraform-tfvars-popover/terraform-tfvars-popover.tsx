@@ -247,7 +247,7 @@ export const TfvarsFilesPopover = () => {
               ))}
             </>
           ) : tfVarFiles.length > 0 ? (
-            <ScrollShadowWrapper hideSides className="max-h-[300px]">
+            <div className="max-h-[300px]">
               <Reorder.Group axis="y" values={tfVarFiles} onReorder={onReorder}>
                 {tfVarFiles?.map((file, index) => (
                   <Reorder.Item
@@ -263,7 +263,7 @@ export const TfvarsFilesPopover = () => {
                   </Reorder.Item>
                 ))}
               </Reorder.Group>
-            </ScrollShadowWrapper>
+            </div>
           ) : null}
         </div>
       </Popover.Content>
