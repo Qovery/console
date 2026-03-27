@@ -1,5 +1,5 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
-import { type FormEventHandler, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Controller, FormProvider, type UseFormReturn } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import {
@@ -36,7 +36,9 @@ function GitPathsSettings({ methods }: { methods: UseFormReturn<HelmValuesFileDa
           />
         )}
       />
-      <p className="ml-4 mt-1 text-xs text-neutral-350">Specify multiple paths by separating them with a semi-colon</p>
+      <p className="ml-4 mt-1 text-xs text-neutral-subtle">
+        Specify multiple paths by separating them with a semi-colon
+      </p>
     </div>
   )
 }
@@ -44,7 +46,7 @@ function GitPathsSettings({ methods }: { methods: UseFormReturn<HelmValuesFileDa
 export function HelmStepValuesOverrideFile() {
   const navigate = useNavigate()
   const search = useSearch({ strict: false })
-  const { organizationId = '', environmentId = '' } = useParams({ strict: false })
+  const { organizationId = '' } = useParams({ strict: false })
   const { generalForm, valuesOverrideFileForm, setCurrentStep, creationFlowUrl } = useHelmCreateContext()
 
   const generalData = generalForm.getValues()
@@ -54,7 +56,7 @@ export function HelmStepValuesOverrideFile() {
     setCurrentStep(2)
   }, [setCurrentStep])
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = valuesOverrideFileForm.handleSubmit((data) => {
+  const handleSubmit = valuesOverrideFileForm.handleSubmit((data) => {
     valuesOverrideFileForm.reset({
       ...data,
       auto_deploy: data.is_public_repository ? false : data.auto_deploy,
@@ -142,7 +144,6 @@ export function HelmStepValuesOverrideFile() {
   const yamlSetting = (
     <ValuesOverrideYamlSettingBase
       content={valuesOverrideFileForm.getValues('content')}
-      environmentId={environmentId}
       onSubmit={(value) => {
         valuesOverrideFileForm.setValue('content', value)
       }}
