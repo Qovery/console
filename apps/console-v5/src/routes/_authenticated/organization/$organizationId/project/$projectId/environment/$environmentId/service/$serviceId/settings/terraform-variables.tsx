@@ -83,7 +83,7 @@ const TerraformVariablesWrapper = () => {
         title="Terraform variables"
         description="Select .tfvars files and configure variable values for your Terraform deployment"
       />
-      <div className="max-w-content-with-navigation-left">
+      <div className="w-full">
         <FormProvider {...methods}>
           <TerraformVariablesProvider>
             <TerraformVariablesSettingsForm />

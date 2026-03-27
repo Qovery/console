@@ -57,5 +57,5 @@ export const getSourceBadgeClassName = (variable: UIVariable) => {
   if (variable.source.includes('.tfvars')) {
     return 'text-positive bg-surface-positive-component border-positive-subtle'
   }
-  return 'text-[#0D74CE] bg-[#E6F4FE] border-[#0083EB33]'
+  return 'text-info bg-surface-info-component border-info-subtle'
 }

@@ -47,7 +47,7 @@ const TfvarItem = ({
 
   return (
     <div
-      className="grid w-full grid-cols-[1fr_70px] items-center justify-between border-b border-neutral px-4 py-3 last:border-b-0 "
+      className="grid w-full grid-cols-[1fr_70px] items-center justify-between bg-surface-neutral px-4 py-3"
       onMouseEnter={() => setHoveredRow(file.source)}
       onMouseLeave={() => setHoveredRow(undefined)}
     >
@@ -142,7 +142,7 @@ export const TfvarsFilesPopover = () => {
               side="left"
               content={
                 <span
-                  className="relative right-0 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-surface-brand-solid text-sm font-bold leading-[0] text-neutralInvert"
+                  className="absolute -left-1.5 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert"
                   data-testid="enabled-files-count"
                 >
                   {enabledFilesCount}
@@ -161,13 +161,7 @@ export const TfvarsFilesPopover = () => {
               </Button>
             </Indicator>
           ) : (
-            <Button
-              size="md"
-              variant="solid"
-              className="gap-1.5 px-[13px]"
-              type="button"
-              data-testid="open-tfvars-files-button"
-            >
+            <Button size="md" variant="solid" className="gap-1.5" type="button" data-testid="open-tfvars-files-button">
               <Icon iconName="file-lines" iconStyle="regular" />
               .tfvars files
             </Button>
@@ -205,11 +199,11 @@ export const TfvarsFilesPopover = () => {
               </div>
             ) : (
               <button
-                className="absolute right-0 top-0 flex h-full w-9 items-center justify-center"
+                className="absolute right-0 top-0 flex h-full w-9 items-center justify-center text-neutral-subtle hover:text-neutral"
                 type="button"
                 onClick={submitNewPath}
               >
-                <Icon iconName="plus" className="text-lg font-normal leading-4 text-neutral-subtle" />
+                <Icon iconName="plus" className="text-sm" />
               </button>
             )}
           </div>
@@ -253,8 +247,8 @@ export const TfvarsFilesPopover = () => {
                     value={file}
                     initial={{ cursor: 'grab' }}
                     exit={{ cursor: 'grab' }}
-                    whileDrag={{ cursor: 'grabbing', borderColor: '#642DFF', borderWidth: '2px' }}
-                    className={twMerge('flex w-full items-center border-b border-neutral')}
+                    whileDrag={{ cursor: 'grabbing', borderColor: 'var(--brand-6)', borderWidth: '2px' }}
+                    className={twMerge('flex w-full items-center border-b border-neutral last:border-b-0')}
                     data-testid="tfvar-item"
                   >
                     <TfvarItem key={file.source} file={file} index={index} onIndexChange={onIndexChange} />

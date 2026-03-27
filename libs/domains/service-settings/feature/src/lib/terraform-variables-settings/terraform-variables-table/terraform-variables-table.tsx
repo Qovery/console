@@ -326,7 +326,7 @@ const TerraformVariablesRows = () => {
 
   return (
     <div className="flex flex-col items-center justify-center border-t border-neutral">
-      <div className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_52px] items-center border-b border-neutral bg-surface-neutral">
+      <div className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_52px] items-center border-b border-neutral bg-surface-neutral-subtle">
         <div className="flex h-full items-center justify-center border-r border-neutral">
           <Checkbox
             disabled={!isSelectAllCheckboxEnabled}
@@ -394,7 +394,7 @@ export const TerraformVariablesTable = () => {
   }, [addVariable])
 
   return (
-    <div className="flex flex-col rounded-lg border border-neutral">
+    <div className="flex flex-col rounded-lg border border-neutral bg-surface-neutral">
       <div className="flex items-center justify-between px-4 py-3">
         <span className="text-sm font-medium text-neutral">Variable configuration</span>
         <TfvarsFilesPopover />
