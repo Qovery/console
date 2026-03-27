@@ -1,3 +1,4 @@
+import equal from 'fast-deep-equal'
 import { type EnvironmentStatus, type EnvironmentStatusesWithStages } from 'qovery-typescript-axios'
 import {
   type ApplicationStatusDto,
@@ -114,7 +115,7 @@ export function useStatusWebSockets({
           const currentServiceStatus = queryClient.getQueryData(
             queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey
           )
-          if (JSON.stringify(serviceRunningStatus) !== JSON.stringify(currentServiceStatus)) {
+          if (!equal(serviceRunningStatus, currentServiceStatus)) {
             queryClient.setQueryData(
               queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey,
               () => serviceRunningStatus
