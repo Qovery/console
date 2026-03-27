@@ -20,6 +20,9 @@ import {
 } from 'qovery-typescript-axios'
 import { Fragment, useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
+// This import introduces a circular dependency with @qovery/shared/devops-copilot/feature.
+// Keep in mind for future refactoring if possible.
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
@@ -494,15 +497,7 @@ export function EnvironmentDeploymentList() {
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
-              <Table.Row
-                onClick={() => handleRowClick(row)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleRowClick(row)
-                }}
-                tabIndex={0}
-                role="link"
-                className="h-[68px] divide-x divide-neutral hover:cursor-pointer hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle"
-              >
+              <Table.Row className="h-[68px] divide-x divide-neutral">
                 {row.getVisibleCells().map((cell) => (
                   <Table.Cell
                     key={cell.id}
