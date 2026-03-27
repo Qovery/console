@@ -23,7 +23,7 @@ const AccordionTrigger = forwardRef<ElementRef<typeof AccordionPrimitive.Trigger
   ({ children, className, ...props }, forwardedRef) => (
     <AccordionPrimitive.Trigger
       className={twMerge(
-        'group flex min-h-14 cursor-default items-center gap-5 bg-white px-5 text-sm outline-none',
+        'group flex min-h-14 cursor-default items-center gap-5 bg-surface-neutral px-5 text-sm outline-none',
         className
       )}
       {...props}
@@ -45,7 +45,7 @@ const AccordionContent = forwardRef<ElementRef<typeof AccordionPrimitive.Content
   ({ children, className, ...props }, forwardedRef) => (
     <AccordionPrimitive.Content
       className={twMerge(
-        'data-[state=closed]:slidein-up-sm-faded overflow-hidden data-[state=open]:animate-slidein-down-sm-faded',
+        'data-[state=closed]:slidein-up-sm-faded overflow-hidden bg-surface-neutral data-[state=open]:animate-slidein-down-sm-faded',
         className
       )}
       {...props}
