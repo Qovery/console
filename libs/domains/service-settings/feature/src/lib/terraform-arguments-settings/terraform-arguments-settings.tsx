@@ -1,5 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { type Terraform } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
@@ -73,9 +74,8 @@ const commands = [
   },
 ]
 
-export function TerraformArgumentsSettings() {
-  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
-  const { data: service } = useService({ serviceId })
+const TerraformArgumentsSettingsContent = ({ service }: { service: Terraform }) => {
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
     organizationId,
     projectId,
@@ -95,29 +95,25 @@ export function TerraformArgumentsSettings() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    console.log('data', data)
-    console.log('service', service)
-    if (!service || !data) return
+    if (!data) return
 
-    if (service.serviceType === 'TERRAFORM') {
-      const payload = buildEditServicePayload({
-        service,
-        request: {
-          action_extra_arguments: {
-            init: data['init'] ?? [],
-            validate: data['validate'] ?? [],
-            plan: data['plan'] ?? [],
-            apply: data['apply'] ?? [],
-            destroy: data['destroy'] ?? [],
-          },
+    const payload = buildEditServicePayload({
+      service,
+      request: {
+        action_extra_arguments: {
+          init: data['init'] ?? [],
+          validate: data['validate'] ?? [],
+          plan: data['plan'] ?? [],
+          apply: data['apply'] ?? [],
+          destroy: data['destroy'] ?? [],
         },
-      })
+      },
+    })
 
-      editService({
-        serviceId: service.id,
-        payload,
-      })
-    }
+    editService({
+      serviceId: service.id,
+      payload,
+    })
   })
 
   return (
@@ -135,7 +131,7 @@ export function TerraformArgumentsSettings() {
             </div>
 
             {commands.map((command) => (
-              <div key={command.name} className="space-y-4 rounded border border-neutral bg-surface-neutral p-4">
+              <div key={command.name} className="space-y-4 rounded-lg border border-neutral bg-surface-neutral p-4">
                 <div className="space-y-1">
                   <p className="text-sm font-medium capitalize text-neutral">{command.name}</p>
                   <p className="text-sm text-neutral-subtle">{command.description}</p>
@@ -191,4 +187,13 @@ export function TerraformArgumentsSettings() {
       </Section>
     </FormProvider>
   )
+}
+
+export function TerraformArgumentsSettings() {
+  const { serviceId = '' } = useParams({ strict: false })
+  const { data: service } = useService({ serviceId, suspense: true })
+
+  if (service?.serviceType !== 'TERRAFORM') return null
+
+  return <TerraformArgumentsSettingsContent service={service} />
 }
