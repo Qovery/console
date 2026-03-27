@@ -4,6 +4,7 @@ import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { TerraformVariablesTable } from '@qovery/domains/service-settings/feature'
 import { TerraformVariablesProvider, useTerraformVariablesContext } from '@qovery/domains/service-terraform/feature'
+import { type Terraform } from '@qovery/domains/services/data-access'
 import { type TerraformGeneralData, useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, LoaderSpinner, Section } from '@qovery/shared/ui'
@@ -21,11 +22,10 @@ const TerraformVariablesLoader = () => (
   </div>
 )
 
-const TerraformVariablesSettingsForm = () => {
-  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = Route.useParams()
+const TerraformVariablesSettingsForm = ({ service }: { service: Terraform }) => {
+  const { organizationId = '', projectId = '', environmentId = '' } = Route.useParams()
   const { handleSubmit } = useFormContext<TerraformGeneralData>()
   const { serializeForApi, tfVarFiles, errors } = useTerraformVariablesContext()
-  const { data: service } = useService({ serviceId })
 
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
     organizationId,
@@ -50,7 +50,7 @@ const TerraformVariablesSettingsForm = () => {
       },
     })
     editService({
-      serviceId,
+      serviceId: service.id,
       payload,
     })
   })
@@ -67,9 +67,7 @@ const TerraformVariablesSettingsForm = () => {
   )
 }
 
-const TerraformVariablesWrapper = () => {
-  const { serviceId } = useParams({ strict: false })
-  const { data: service } = useService({ serviceId })
+const TerraformVariablesContent = ({ service }: { service: Terraform }) => {
   const methods = useForm<TerraformGeneralData>({
     mode: 'onChange',
     defaultValues: match(service)
@@ -86,12 +84,23 @@ const TerraformVariablesWrapper = () => {
       <div className="w-full">
         <FormProvider {...methods}>
           <TerraformVariablesProvider>
-            <TerraformVariablesSettingsForm />
+            <TerraformVariablesSettingsForm service={service} />
           </TerraformVariablesProvider>
         </FormProvider>
       </div>
     </Section>
   )
+}
+
+const TerraformVariablesWrapper = () => {
+  const { serviceId } = useParams({ strict: false })
+  const { data: service } = useService({ serviceId })
+
+  if (service?.serviceType !== 'TERRAFORM') {
+    return null
+  }
+
+  return <TerraformVariablesContent service={service} />
 }
 
 function RouteComponent() {
