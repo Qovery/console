@@ -1,8 +1,8 @@
+import { useParams } from '@tanstack/react-router'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
-import { NeedHelp } from '@qovery/shared/assistant/feature'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Heading, Icon, InputText, Section } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
@@ -15,8 +15,10 @@ const commands = [
     hint: (
       <div>
         Example:{' '}
-        <code className="rounded bg-neutral-150 px-1 py-0.5 text-2xs text-neutral-350">-lock=false -upgrade</code>.
-        Arguments are separated by a space.
+        <code className="rounded bg-surface-neutral-component px-1 py-0.5 text-2xs text-neutral-subtle">
+          -lock=false -upgrade
+        </code>
+        . Arguments are separated by a space.
       </div>
     ),
   },
@@ -25,9 +27,10 @@ const commands = [
     description: 'Check whether the configuration is valid.',
     hint: (
       <div>
-        Example: <code className="rounded bg-neutral-150 px-1 py-0.5 text-2xs text-neutral-350">-json</code> or{' '}
-        <code className="rounded bg-neutral-150 px-1 py-0.5 text-2xs text-neutral-350">-no-color</code>. Arguments are
-        separated by a space.
+        Example:{' '}
+        <code className="rounded bg-surface-neutral-component px-1 py-0.5 text-2xs text-neutral-subtle">-json</code> or{' '}
+        <code className="rounded bg-surface-neutral-component px-1 py-0.5 text-2xs text-neutral-subtle">-no-color</code>
+        . Arguments are separated by a space.
       </div>
     ),
   },
@@ -36,8 +39,11 @@ const commands = [
     description: 'Show changes required by the current configuration.',
     hint: (
       <div>
-        Example: <code className="rounded bg-neutral-150 px-1 py-0.5 text-2xs text-neutral-350">-refresh=false</code>.
-        Arguments are separated by a space.
+        Example:{' '}
+        <code className="rounded bg-surface-neutral-component px-1 py-0.5 text-2xs text-neutral-subtle">
+          -refresh=false
+        </code>
+        . Arguments are separated by a space.
       </div>
     ),
   },
@@ -46,8 +52,11 @@ const commands = [
     description: 'Create or update infrastructure.',
     hint: (
       <div>
-        Example: <code className="rounded bg-neutral-150 px-1 py-0.5 text-2xs text-neutral-350">-auto-approve</code>.
-        Arguments are separated by a space.
+        Example:{' '}
+        <code className="rounded bg-surface-neutral-component px-1 py-0.5 text-2xs text-neutral-subtle">
+          -auto-approve
+        </code>
+        . Arguments are separated by a space.
       </div>
     ),
   },
@@ -56,16 +65,17 @@ const commands = [
     description: 'Destroy previously-created infrastructure.',
     hint: (
       <div>
-        Example: <code className="rounded bg-neutral-150 px-1 py-0.5 text-2xs text-neutral-350">-target</code>.
+        Example:{' '}
+        <code className="rounded bg-surface-neutral-component px-1 py-0.5 text-2xs text-neutral-subtle">-target</code>.
         Arguments are separated by a space.
       </div>
     ),
   },
 ]
 
-export function PageSettingsTerraformArgumentsFeature() {
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
-  const { data: service } = useService({ serviceId: applicationId })
+export function TerraformArgumentsSettings() {
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { data: service } = useService({ serviceId })
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
     organizationId,
     projectId,
@@ -85,6 +95,8 @@ export function PageSettingsTerraformArgumentsFeature() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
+    console.log('data', data)
+    console.log('service', service)
     if (!service || !data) return
 
     if (service.serviceType === 'TERRAFORM') {
@@ -109,26 +121,24 @@ export function PageSettingsTerraformArgumentsFeature() {
   })
 
   return (
-    <div className="flex w-full max-w-content-with-navigation-left flex-col p-8">
-      <FormProvider {...methods}>
-        <div className="space-y-10">
-          <Section className="space-y-2">
-            <Heading level={1}>Terraform arguments</Heading>
-            <p className="text-sm text-neutral-350">Configure the arguments passed to each Terraform command.</p>
-            <NeedHelp />
-          </Section>
-
+    <FormProvider {...methods}>
+      <Section className="px-8 pb-8 pt-6">
+        <SettingsHeading
+          title="Terraform arguments"
+          description="Configure the arguments passed to each Terraform command."
+        />
+        <div className="max-w-content-with-navigation-left space-y-10">
           <Section className="gap-4">
             <div className="space-y-1">
               <Heading level={2}>Commands</Heading>
-              <p className="text-sm text-neutral-350">Specify additional arguments for each Terraform command.</p>
+              <p className="text-sm text-neutral-subtle">Specify additional arguments for each Terraform command.</p>
             </div>
 
             {commands.map((command) => (
-              <div key={command.name} className="space-y-4 rounded border border-neutral-250 bg-neutral-100 p-4">
+              <div key={command.name} className="space-y-4 rounded border border-neutral bg-surface-neutral p-4">
                 <div className="space-y-1">
-                  <p className="text-sm font-medium capitalize text-neutral-400">{command.name}</p>
-                  <p className="text-sm text-neutral-350">{command.description}</p>
+                  <p className="text-sm font-medium capitalize text-neutral">{command.name}</p>
+                  <p className="text-sm text-neutral-subtle">{command.description}</p>
                 </div>
                 <Controller
                   name={`${command.name}`}
@@ -151,7 +161,7 @@ export function PageSettingsTerraformArgumentsFeature() {
                         >
                           <button
                             className={twMerge(
-                              'flex items-center justify-center border-none bg-transparent px-1 text-neutral-350 hover:text-neutral-400'
+                              'flex items-center justify-center border-none bg-transparent px-1 text-neutral-subtle hover:text-neutral'
                             )}
                             type="button"
                           >
@@ -178,7 +188,7 @@ export function PageSettingsTerraformArgumentsFeature() {
             </Button>
           </div>
         </div>
-      </FormProvider>
-    </div>
+      </Section>
+    </FormProvider>
   )
 }

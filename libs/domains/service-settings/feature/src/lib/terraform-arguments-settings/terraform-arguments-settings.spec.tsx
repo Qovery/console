@@ -1,11 +1,27 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { type ReactNode } from 'react'
 import * as servicesDomain from '@qovery/domains/services/feature'
 import { terraformFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { PageSettingsTerraformArgumentsFeature } from './page-settings-terraform-arguments-feature'
+import { TerraformArgumentsSettings } from './terraform-arguments-settings'
 
 const useServiceSpy = jest.spyOn(servicesDomain, 'useService') as jest.Mock
 const useEditServiceSpy = jest.spyOn(servicesDomain, 'useEditService') as jest.Mock
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: '1' }),
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
+  }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+    <a {...props} href={`${props.to}`}>
+      {children}
+    </a>
+  ),
+}))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
   ...jest.requireActual('@qovery/domains/variables/feature'),
@@ -41,12 +57,12 @@ describe('PageSettingsTerraformArgumentsFeature', () => {
   })
 
   it('should render', () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<PageSettingsTerraformArgumentsFeature />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<TerraformArgumentsSettings />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should correctly submit the form', async () => {
-    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<PageSettingsTerraformArgumentsFeature />))
+    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<TerraformArgumentsSettings />))
     const submitButton = screen.getByText('Save')
     const inputLabelForApply = screen.getByText('Arguments for apply')
     const inputLabelForDestroy = screen.getByText('Arguments for destroy')
@@ -89,7 +105,7 @@ describe('PageSettingsTerraformArgumentsFeature', () => {
   })
 
   it('should render variable interpolation wand button for each command', () => {
-    renderWithProviders(wrapWithReactHookForm(<PageSettingsTerraformArgumentsFeature />))
+    renderWithProviders(wrapWithReactHookForm(<TerraformArgumentsSettings />))
 
     // Check that the wand button appears for each terraform command
     const wandButtons = screen.getAllByTestId('dropdown-variable')
@@ -97,7 +113,7 @@ describe('PageSettingsTerraformArgumentsFeature', () => {
   })
 
   it('should add variable interpolation to empty input when wand is clicked', async () => {
-    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<PageSettingsTerraformArgumentsFeature />))
+    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<TerraformArgumentsSettings />))
 
     const inputLabelForPlan = screen.getByText('Arguments for plan')
     const inputForPlan = inputLabelForPlan.closest('div')?.querySelector('input')
@@ -114,7 +130,7 @@ describe('PageSettingsTerraformArgumentsFeature', () => {
   })
 
   it('should append variable interpolation to existing input when wand is clicked', async () => {
-    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<PageSettingsTerraformArgumentsFeature />))
+    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<TerraformArgumentsSettings />))
 
     // Get the input for init command (which has default value '-auto-approve')
     const inputLabelForInit = screen.getByText('Arguments for init')
@@ -133,7 +149,7 @@ describe('PageSettingsTerraformArgumentsFeature', () => {
   })
 
   it('should correctly submit form with variable interpolation', async () => {
-    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<PageSettingsTerraformArgumentsFeature />))
+    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<TerraformArgumentsSettings />))
 
     // Get the apply input and add a variable using the wand
     const inputLabelForApply = screen.getByText('Arguments for apply')
