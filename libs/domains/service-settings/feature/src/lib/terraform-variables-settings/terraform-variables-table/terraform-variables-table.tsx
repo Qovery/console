@@ -1,3 +1,4 @@
+import { clsx } from 'clsx'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
@@ -43,7 +44,7 @@ const SourceCell = ({ variable }: { variable: UIVariable }) => {
 
   return (
     <div
-      className="no-scrollbar inline-flex h-full items-center overflow-y-auto border-r border-neutral px-2 lg:px-4 "
+      className="no-scrollbar inline-flex h-full items-center overflow-y-auto border-r border-neutral px-4"
       ref={sourceCellRef}
     >
       <Badge className={twMerge(getSourceBadgeClassName(variable), 'font-medium')} variant="surface">
@@ -92,16 +93,11 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
   return (
     <div className="w-full border-b border-neutral">
       <div
-        className={twMerge(
-          'grid min-h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_52px] items-center',
-          hoveredRow
-            ? hoveredRow === variable.source
-              ? 'bg-surface-neutral-component'
-              : 'bg-surface-neutral'
-            : 'bg-surface-neutral',
-          isRowSelected(variable.id) && 'bg-surface-neutral-componentActive hover:bg-surface-neutral-componentActive',
-          isMultiline && 'min-h-auto'
-        )}
+        className={clsx('grid min-h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_52px] items-center bg-surface-neutral', {
+          'bg-surface-neutral-component': hoveredRow === variable.source,
+          'bg-surface-neutral-componentActive hover:bg-surface-neutral-componentActive': isRowSelected(variable.id),
+          'min-h-auto': isMultiline,
+        })}
       >
         <div className="flex h-full items-center justify-center border-r border-neutral">
           <Checkbox

@@ -248,7 +248,7 @@ export const TfvarsFilesPopover = () => {
                     initial={{ cursor: 'grab' }}
                     exit={{ cursor: 'grab' }}
                     whileDrag={{ cursor: 'grabbing', borderColor: 'var(--brand-6)', borderWidth: '2px' }}
-                    className={twMerge('flex w-full items-center border-b border-neutral last:border-b-0')}
+                    className="flex w-full items-center border-b border-neutral last:border-b-0"
                     data-testid="tfvar-item"
                   >
                     <TfvarItem key={file.source} file={file} index={index} onIndexChange={onIndexChange} />
