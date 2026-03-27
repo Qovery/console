@@ -77,7 +77,7 @@ const serviceIcons = {
   'app://qovery-console/angular': { icon: Angular, title: 'Angular' },
   'app://qovery-console/aws': { icon: AWS, title: 'AWS' },
   'app://qovery-console/azure': { icon: Azure, title: 'Azure' },
-  'app://qovery-console/bash': { icon: Bash, title: 'Bash' },
+  'app://qovery-console/bash': { icon: Bash, title: 'Bash', className: 'dark:invert' },
   'app://qovery-console/cloudflare': { icon: Cloudflare, title: 'Cloudflare' },
   'app://qovery-console/couchbase': { icon: Couchbase, title: 'Couchbase' },
   'app://qovery-console/docker': { icon: Docker, title: 'Docker' },
