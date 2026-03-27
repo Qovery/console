@@ -135,8 +135,6 @@ export function EnvironmentStagesFeature({
         environmentStatus={environmentStatus}
         deploymentStages={deploymentStages}
         preCheckStage={preCheckStage}
-        hideSkipped={hideSkipped}
-        setHideSkipped={setHideSkipped}
         deploymentHistory={deploymentHistory}
         banner={
           hasError ? (
