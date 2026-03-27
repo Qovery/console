@@ -113,7 +113,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
         {/* Variable name cell */}
         <div
           className={twMerge(
-            'h-full border-r border-neutral transition-all duration-100',
+            'h-full border-r border-neutral',
             isCustomVariable(variable) && 'hover:bg-surface-neutral-component',
             isCellFocused('key') && 'bg-surface-neutral-component hover:bg-surface-neutral-component'
           )}
@@ -180,7 +180,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
           <div
             className={twMerge(
               // Ensure the pseudo-element is behind by using after:-z-10
-              'relative z-0 flex h-full w-full items-center border border-transparent after:pointer-events-none after:absolute after:-left-[1px] after:-top-[1px] after:bottom-0 after:right-0 after:-z-10 after:h-[calc(100%+2px)] after:w-[calc(100%+2px)] after:transition-all after:duration-100 group-hover:after:bg-surface-neutral-component',
+              'relative z-0 flex h-full w-full items-center border border-transparent after:pointer-events-none after:absolute after:-left-[1px] after:-top-[1px] after:bottom-0 after:right-0 after:-z-10 after:h-[calc(100%+2px)] after:w-[calc(100%+2px)] group-hover:after:bg-surface-neutral-component',
               isCellFocused('value') &&
                 'after:bg-surface-neutral-component group-hover:after:bg-surface-neutral-component',
               !isSecretPlaceholder && 'cursor-text',
@@ -189,7 +189,14 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
             onClick={onValueCellClick}
           >
             {isSecretPlaceholder && (
-              <div className="absolute left-0 top-0 flex h-full w-full cursor-default items-center gap-2 bg-surface-neutral px-4 transition-all duration-100 group-hover:bg-surface-neutral-component">
+              <div
+                className={twMerge(
+                  'absolute left-0 top-0 flex h-full w-full cursor-default items-center gap-2 bg-surface-neutral px-4 group-hover:bg-surface-neutral-component',
+                  hoveredRow === variable.source &&
+                    'bg-surface-neutral-component group-hover:bg-surface-neutral-component',
+                  isRowSelected(variable.id) && 'bg-surface-neutral-componentActive'
+                )}
+              >
                 <span className="text-xs text-neutral" data-testid="hide_value_secret">
                   ● ● ● ● ● ● ● ●
                 </span>
@@ -214,7 +221,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
             />
             <div
               className={twMerge(
-                'absolute right-0 top-0 mr-3 flex h-full translate-x-1 items-center gap-1 pl-3 opacity-0 transition-all duration-100 group-hover:bg-surface-neutral-component',
+                'absolute right-0 top-0 mr-3 flex h-full translate-x-1 items-center gap-1 pl-3 opacity-0 group-hover:bg-surface-neutral-component',
                 isCellFocused('value') && 'bg-surface-neutral-component group-hover:bg-surface-neutral-component',
                 isCellHovered && 'translate-x-0 opacity-100',
                 isVariablePopoverOpen &&
