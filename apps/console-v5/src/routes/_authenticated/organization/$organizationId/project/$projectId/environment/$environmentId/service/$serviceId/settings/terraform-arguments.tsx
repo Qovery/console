@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { TerraformArgumentsSettings } from '@qovery/domains/service-settings/feature'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/terraform-arguments'
@@ -7,5 +8,5 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  return <div className="px-10 py-7">Terraform arguments</div>
+  return <TerraformArgumentsSettings />
 }

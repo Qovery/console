@@ -8,3 +8,4 @@ export * from './lib/application-container-storage-settings/application-containe
 export * from './lib/service-domain-settings/service-domain-settings/service-domain-settings'
 export * from './lib/service-deployment-restrictions-settings/service-deployment-restrictions-settings/service-deployment-restrictions-settings'
 export * from './lib/terraform-configuration-settings/terraform-configuration-settings'
+export * from './lib/terraform-arguments-settings/terraform-arguments-settings'
