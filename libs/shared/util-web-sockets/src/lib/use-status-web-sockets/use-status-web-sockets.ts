@@ -92,7 +92,7 @@ export function useStatusWebSockets({
       for (const env of message.environments) {
         // Setting the environment status only if it has changed
         const currentEnvironmentStatus = queryClient.getQueryData(queries.environments.runningStatus(env.id).queryKey)
-        const newEnvironmentStatus = { state: env.state, triggered_action: env.triggered_action }
+        const newEnvironmentStatus = { state: env.state }
         if (!equal(newEnvironmentStatus, currentEnvironmentStatus)) {
           queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => newEnvironmentStatus)
         }
