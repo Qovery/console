@@ -309,8 +309,8 @@ export function CreateEditDeploymentRule(props: CreateEditDeploymentRuleProps) {
                       <Icon iconName="circle-info" iconStyle="regular" />
                     </Callout.Icon>
                     <Callout.Text className="text-info">
-                      If a service using external secrets is ran on another cluster Qovery will automatically detach those
-                      secrets.
+                      If a service using external secrets is ran on another cluster Qovery will automatically detach
+                      those secrets.
                     </Callout.Text>
                   </Callout.Root>
                 </BlockContent>
