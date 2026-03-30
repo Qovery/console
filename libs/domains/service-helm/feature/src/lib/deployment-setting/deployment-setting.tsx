@@ -45,7 +45,7 @@ export function DeploymentSetting() {
         </p>
       </div>
       {((watchCmdArguments && watchChartName && watchVersion) || watchBranch) && (
-        <div className="flex h-[52px] flex-col justify-center rounded-md border border-neutral bg-surface-neutral-subtle px-3 py-2">
+        <div className="flex min-h-[52px] flex-col justify-center rounded-md border border-neutral bg-surface-neutral-subtle px-3 py-2">
           <span className="select-none text-xs text-neutral-subtle">Helm install format:</span>
           {!watchBranch ? (
             <span className="break-words text-sm text-neutral-subtle">

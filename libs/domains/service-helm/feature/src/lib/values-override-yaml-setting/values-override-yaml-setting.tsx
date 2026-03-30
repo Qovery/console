@@ -1,5 +1,5 @@
+import { useParams } from '@tanstack/react-router'
 import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
-import { useParams } from 'react-router'
 import { CodeEditorInlineSetting, useModal } from '@qovery/shared/ui'
 import ValuesOverrideYamlModal from '../values-override-yaml-modal/values-override-yaml-modal'
 
@@ -11,7 +11,7 @@ export interface ValuesOverrideYamlSettingBaseProps {
 
 export function ValuesOverrideYamlSettingBase({ onSubmit, content, source }: ValuesOverrideYamlSettingBaseProps) {
   const { openModal, closeModal } = useModal()
-  const { environmentId = '' } = useParams()
+  const { environmentId = '' } = useParams({ strict: false })
 
   const openModalValuesOverrideYaml = () => {
     openModal({

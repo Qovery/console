@@ -84,7 +84,6 @@ describe('HelmStepValuesOverrideArguments', () => {
       </HelmCreateContext.Provider>
     )
 
-    expect(screen.getByText('Next steps are not migrated yet')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
   })

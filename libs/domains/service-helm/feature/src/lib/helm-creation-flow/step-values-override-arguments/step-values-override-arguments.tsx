@@ -32,17 +32,6 @@ export function HelmStepValuesOverrideArguments() {
           source={source}
           environmentId={environmentId}
         >
-          <Callout.Root color="sky" className="mt-10">
-            <Callout.Icon>
-              <Icon iconName="circle-info" iconStyle="regular" />
-            </Callout.Icon>
-            <Callout.Text>
-              <Callout.TextHeading>Next steps are not migrated yet</Callout.TextHeading>
-              You can already configure the Helm chart source and both values override methods in console-v5. The
-              remaining creation steps will be added in a later iteration.
-            </Callout.Text>
-          </Callout.Root>
-
           <div className="mt-10 flex justify-between">
             <Button
               type="button"

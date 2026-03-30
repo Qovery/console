@@ -73,7 +73,6 @@ function RowBase({
               name={field.name}
               onChange={field.onChange}
               defaultValue={field.value}
-              inputClassName="bg-neutral-50"
               items={[
                 {
                   label: '--set',
@@ -141,7 +140,7 @@ function RowBase({
           color="neutral"
           variant="outline"
           type="button"
-          className="h-[36px] w-full"
+          className="h-[36px] w-[36px]"
           onClick={() => remove(index)}
         >
           <Icon iconName="trash" />
@@ -159,7 +158,7 @@ function RowBase({
               environmentId={environmentId}
               language="json"
               height="496px"
-              className="mt-3 overflow-hidden rounded border border-neutral-250"
+              className="mt-3 overflow-hidden rounded border border-neutral"
               value={field.value}
               onChange={field.onChange}
             />
