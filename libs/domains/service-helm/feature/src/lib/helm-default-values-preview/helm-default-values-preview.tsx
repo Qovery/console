@@ -1,3 +1,4 @@
+import { type HistoryState } from '@tanstack/history'
 import { Navigate, useSearch } from '@tanstack/react-router'
 import { type HelmDefaultValuesRequest } from 'qovery-typescript-axios'
 import { PREVIEW_CODE } from '@qovery/shared/routes'
@@ -75,6 +76,8 @@ export function HelmDefaultValuesPreview() {
     return <LoadingScreen />
   }
 
+  const previewCodeState = { code: defaultValues ?? '' } as HistoryState
+
   return (
     <Navigate
       to={PREVIEW_CODE}
@@ -84,7 +87,7 @@ export function HelmDefaultValuesPreview() {
         title: 'Default values.yaml',
         description: 'Read-only preview of the values shipped with the selected Helm source.',
       }}
-      state={{ code: defaultValues ?? '' }}
+      state={previewCodeState}
     />
   )
 }
