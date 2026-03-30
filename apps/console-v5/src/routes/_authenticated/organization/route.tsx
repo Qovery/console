@@ -226,6 +226,13 @@ const SERVICE_TABS_ARGO: NavigationTab[] = [
       '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
   },
   {
+    id: 'cloud-shell',
+    label: 'Cloud shell',
+    iconName: 'terminal',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell',
+  },
+  {
     id: 'manifest',
     label: 'Manifest',
     iconName: 'file-lines',

@@ -41,12 +41,13 @@ import {
 const { Table } = TablePrimitives
 type ServiceListRows = ReturnType<typeof useServices>['data']
 type ServiceListRow = ServiceListRows[number]
+type ArgoCdServiceStatus = 'Synced' | 'Out of sync'
 
 export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
   environment: Environment
   enableSelection?: boolean
   servicesOverride?: ServiceListRows
-  argocdStatusByServiceId?: Record<string, 'Synced' | 'Out of sync'>
+  argocdStatusByServiceId?: Record<string, ArgoCdServiceStatus>
   argocdOperationByServiceId?: Record<string, string>
   argocdTargetVersionByServiceId?: Record<string, { primary: string; secondary: string }>
   argocdLastDeploymentByServiceId?: Record<string, string>
@@ -195,6 +196,7 @@ export function ServiceList({
                 service={info.row.original}
                 environment={environment}
                 argocdOperationLabelOverride={argocdOperationByServiceId?.[info.row.original.id]}
+                argocdStatusLabelOverride={argocdStatusByServiceId?.[info.row.original.id]}
               />
             </div>
           )

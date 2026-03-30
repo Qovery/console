@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { within } from '@testing-library/react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceList, type ServiceListProps } from './service-list'
 
@@ -489,5 +490,41 @@ describe('ServiceList', () => {
   it('should hide selection checkboxes when selection is disabled', () => {
     renderWithProviders(<ServiceList {...serviceListProps} enableSelection={false} />)
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+  })
+
+  it('should display force sync action for out of sync argocd services', async () => {
+    const { userEvent } = renderWithProviders(
+      <ServiceList
+        {...serviceListProps}
+        argocdOperationByServiceId={{ '037c9e87-e098-4970-8b1f-9a5ffe9e4b89': 'No operation detected' }}
+        argocdStatusByServiceId={{ '037c9e87-e098-4970-8b1f-9a5ffe9e4b89': 'Out of sync' }}
+      />
+    )
+
+    const serviceRow = screen.getByText(/front-end/i).closest('tr')
+    expect(serviceRow).toBeTruthy()
+    if (!serviceRow) return
+
+    await userEvent.click(within(serviceRow).getByLabelText(/more actions/i))
+
+    expect(await screen.findByRole('menuitem', { name: /force sync/i })).toBeInTheDocument()
+  })
+
+  it('should not display force sync action for synced argocd services', async () => {
+    const { userEvent } = renderWithProviders(
+      <ServiceList
+        {...serviceListProps}
+        argocdOperationByServiceId={{ '037c9e87-e098-4970-8b1f-9a5ffe9e4b89': 'No operation detected' }}
+        argocdStatusByServiceId={{ '037c9e87-e098-4970-8b1f-9a5ffe9e4b89': 'Synced' }}
+      />
+    )
+
+    const serviceRow = screen.getByText(/front-end/i).closest('tr')
+    expect(serviceRow).toBeTruthy()
+    if (!serviceRow) return
+
+    await userEvent.click(within(serviceRow).getByLabelText(/more actions/i))
+
+    expect(screen.queryByRole('menuitem', { name: /force sync/i })).not.toBeInTheDocument()
   })
 })

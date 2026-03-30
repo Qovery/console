@@ -14,12 +14,13 @@ export function ServiceNameCell({
   service,
   environment,
   argocdOperationLabelOverride,
+  argocdStatusLabelOverride,
 }: {
   service: AnyService
   environment: Environment
   argocdOperationLabelOverride?: string
+  argocdStatusLabelOverride?: 'Synced' | 'Out of sync'
 }) {
-  const navigate = useNavigate()
   const [, copyToClipboard] = useCopyToClipboard()
   const isArgoCdOverride = argocdOperationLabelOverride !== undefined
   const { data: deploymentStatus } = useDeploymentStatus({
@@ -74,6 +75,7 @@ export function ServiceNameCell({
   }
 
   if (argocdOperationLabelOverride) {
+    const isOutOfSync = argocdStatusLabelOverride === 'Out of sync'
     const serviceAvatar = {
       ...service,
       icon_uri: 'app://qovery-console/argocd',
@@ -90,7 +92,7 @@ export function ServiceNameCell({
           </span>
         </span>
         <div className="flex shrink-0 items-center gap-1.5">
-          <Tooltip content="Restart">
+          <Tooltip content="Rollout">
             <Button variant="outline" color="neutral" size="sm" iconOnly onClick={(e) => e.stopPropagation()}>
               <Icon iconName="rotate-right" />
             </Button>
@@ -116,11 +118,21 @@ export function ServiceNameCell({
           </Tooltip>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button variant="outline" color="neutral" size="sm" iconOnly onClick={(e) => e.stopPropagation()}>
+              <Button
+                variant="outline"
+                color="neutral"
+                size="sm"
+                iconOnly
+                aria-label="More actions"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Icon iconName="ellipsis-v" />
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="end" onClick={(e) => e.stopPropagation()}>
+              {isOutOfSync && (
+                <DropdownMenu.Item icon={<Icon iconName="rotate-right" />}>Force sync</DropdownMenu.Item>
+              )}
               <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
                 <Link
                   className="gap-0"

@@ -386,7 +386,7 @@ function MenuManageDeployment({
                 .otherwise(() => (
                   <Icon iconName={variant === 'header' && isArgoCdService ? 'rotate-right' : 'rocket'} />
                 ))}
-              {variant === 'header' && <span>{isArgoCdService ? 'Restart' : 'Deploy'}</span>}
+              {variant === 'header' && <span>{isArgoCdService ? 'Rollout' : 'Deploy'}</span>}
             </div>
           </Tooltip>
         </Button>
@@ -485,7 +485,7 @@ function MenuManageDeployment({
                   icon={<Icon iconName="rotate-right" />}
                   onSelect={() => restartService({ serviceId: service.id, serviceType: service.serviceType })}
                 >
-                  Restart Service
+                  {isArgoCdService ? 'Rollout' : 'Restart Service'}
                 </DropdownMenu.Item>
               )}
               {service.serviceType === 'JOB' &&
