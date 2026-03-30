@@ -50,7 +50,7 @@ export function HeaderPreCheckLogs({ preCheckStage, children }: HeaderPreCheckLo
           </svg>
           <Tooltip side="bottom" content={<span>Execution id: {deploymentId}</span>}>
             <span className="flex items-center gap-1.5 truncate">
-              <Icon iconName="code" iconStyle="regular" className="text-base text-neutral-subtle" />
+              <Icon iconName="code" iconStyle="regular" className="text-sm text-neutral-subtle" />
               <span className="font-normal text-neutral">{trimId(deploymentId)}</span>
             </span>
           </Tooltip>

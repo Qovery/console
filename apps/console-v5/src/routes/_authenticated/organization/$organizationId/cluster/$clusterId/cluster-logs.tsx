@@ -47,8 +47,13 @@ function RouteComponent() {
         </div>
       ) : isLogsFetched && logs.length > 0 ? (
         <>
-          <div className="flex h-11 min-h-11 w-full items-center justify-end border-b border-neutral bg-surface-neutral-subtle px-1">
-            <ClusterHeaderLogs data={logs} refScrollSection={refScrollSection} />
+          <div className="flex h-11 min-h-11 w-full items-center border-b border-neutral bg-background">
+            <ClusterHeaderLogs
+              cluster={cluster}
+              clusterStatus={clusterStatus}
+              data={logs}
+              refScrollSection={refScrollSection}
+            />
           </div>
           <ClusterLogsList logs={logs} firstDate={firstDate} refScrollSection={refScrollSection} />
         </>
