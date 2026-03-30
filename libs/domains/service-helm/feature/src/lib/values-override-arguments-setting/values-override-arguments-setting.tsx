@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useState } from 'react'
 import {
@@ -7,7 +8,6 @@ import {
   useFieldArray,
   useFormContext,
 } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { CodeEditorVariable, FieldVariableSuggestion } from '@qovery/domains/variables/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { HELM_DEFAULT_VALUES } from '@qovery/shared/routes'
@@ -38,21 +38,9 @@ export interface ValuesOverrideArgumentsSettingBaseProps extends PropsWithChildr
   methods: UseFormReturn<HelmValuesArgumentsData>
   onSubmit: () => void
   isSetting?: boolean
-  environmentId: string
 }
 
-export interface ValuesOverrideArgumentsSettingProps
-  extends Omit<ValuesOverrideArgumentsSettingBaseProps, 'environmentId'> {}
-
-function RowBase({
-  index,
-  remove,
-  environmentId,
-}: {
-  index: number
-  remove: UseFieldArrayRemove
-  environmentId: string
-}) {
+function Row({ index, remove, environmentId }: { index: number; remove: UseFieldArrayRemove; environmentId: string }) {
   const { watch, control } = useFormContext<HelmValuesArgumentsData>()
 
   const [openEditor, setOpenEditor] = useState(true)
@@ -169,14 +157,15 @@ function RowBase({
   )
 }
 
-export function ValuesOverrideArgumentsSettingBase({
+export function ValuesOverrideArgumentsSetting({
   methods,
   children,
   onSubmit,
   source,
-  environmentId,
   isSetting = false,
 }: ValuesOverrideArgumentsSettingBaseProps) {
+  const { environmentId = '' } = useParams({ strict: false })
+
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
     name: 'arguments',
@@ -288,7 +277,7 @@ export function ValuesOverrideArgumentsSettingBase({
               <span></span>
             </li>
             {fields.map((field, index) => (
-              <RowBase key={field.id} index={index} remove={remove} environmentId={environmentId} />
+              <Row key={field.id} index={index} remove={remove} environmentId={environmentId} />
             ))}
           </ul>
         ) : (
@@ -298,12 +287,6 @@ export function ValuesOverrideArgumentsSettingBase({
       </form>
     </Section>
   )
-}
-
-export function ValuesOverrideArgumentsSetting(props: ValuesOverrideArgumentsSettingProps) {
-  const { environmentId = '' } = useParams()
-
-  return <ValuesOverrideArgumentsSettingBase {...props} environmentId={environmentId} />
 }
 
 export default ValuesOverrideArgumentsSetting

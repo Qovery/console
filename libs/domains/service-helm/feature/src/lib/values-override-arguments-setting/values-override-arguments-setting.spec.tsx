@@ -2,9 +2,15 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import {
   ValuesOverrideArgumentsSetting,
-  ValuesOverrideArgumentsSettingBase,
-  type ValuesOverrideArgumentsSettingProps,
+  type ValuesOverrideArgumentsSettingBaseProps,
 } from './values-override-arguments-setting'
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({
+    environmentId: 'env-1',
+  }),
+}))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
   CodeEditorVariable: ({ value, onChange }: { value?: string; onChange?: (value?: string) => void }) => (
@@ -17,7 +23,7 @@ jest.mock('@qovery/domains/variables/feature', () => ({
 }))
 
 describe('ValuesOverrideArgumentsSetting', () => {
-  const props: ValuesOverrideArgumentsSettingProps = {
+  const props: ValuesOverrideArgumentsSettingBaseProps = {
     onSubmit: jest.fn(),
     source: {
       git_repository: {
@@ -39,7 +45,6 @@ describe('ValuesOverrideArgumentsSetting', () => {
         isDirty: false,
         isValid: false,
         isSubmitting: false,
-        touched: {},
         submitCount: 0,
       },
     },
@@ -76,7 +81,7 @@ describe('ValuesOverrideArgumentsSetting', () => {
 
   it('should match snapshot for the v5-compatible base component', () => {
     const { baseElement } = renderWithProviders(
-      wrapWithReactHookForm(<ValuesOverrideArgumentsSettingBase {...props} environmentId="env-1" />, {
+      wrapWithReactHookForm(<ValuesOverrideArgumentsSetting {...props} />, {
         defaultValues: {
           arguments: [
             {

@@ -4,17 +4,6 @@ import { ServiceList, type ServiceListProps } from './service-list'
 
 let mockDeploymentStagesData: unknown = undefined
 
-jest.mock('./service-list-cells', () => ({
-  ServiceNameCell: ({ service }: { service: { name: string } }) => <span>{service.name}</span>,
-  ServiceRunningStatusCell: ({ service }: { service: { runningStatus?: { stateLabel?: string } } }) => (
-    <span>{service.runningStatus?.stateLabel ?? '-'}</span>
-  ),
-  ServiceVersionCell: () => <span>Version</span>,
-  ServiceLastDeploymentCell: ({ service }: { service: { deploymentStatus?: { last_deployment_date?: string } } }) => (
-    <span>{service.deploymentStatus?.last_deployment_date ?? '-'}</span>
-  ),
-}))
-
 jest.mock('../hooks/use-list-deployment-stages/use-list-deployment-stages', () => ({
   useListDeploymentStages: () => ({ data: mockDeploymentStagesData }),
 }))
