@@ -103,7 +103,7 @@ function CloneMigrationHelperModal({
     Boolean(selectedAction) && (!hasMultipleTargets || selectedAction !== 'migrate' || Boolean(targetId))
 
   const cardBase =
-    'flex w-full items-center gap-3 rounded-lg bg-background p-3 text-left outline outline-1 focus:outline focus:outline-1 shadow-[0_0_4px_0_rgba(0,0,0,0.01),0_2px_3px_0_rgba(0,0,0,0.02)]'
+    'flex w-full items-center gap-3 rounded-lg bg-surface-neutral p-3 text-left outline outline-1 focus:outline focus:outline-1 shadow-[0_0_4px_0_rgba(0,0,0,0.01),0_2px_3px_0_rgba(0,0,0,0.02)]'
   const iconBase = 'flex h-10 w-10 items-center justify-center rounded-md'
 
   return (

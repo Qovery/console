@@ -10,7 +10,14 @@ interface BuiltInTabProps {
   toasterCallback: () => void
 }
 
-export function BuiltInTab({ scope, organizationId, projectId, environmentId, serviceId, toasterCallback }: BuiltInTabProps) {
+export function BuiltInTab({
+  scope,
+  organizationId,
+  projectId,
+  environmentId,
+  serviceId,
+  toasterCallback,
+}: BuiltInTabProps) {
   const onCreateVariableToast = () =>
     toast(
       'SUCCESS',

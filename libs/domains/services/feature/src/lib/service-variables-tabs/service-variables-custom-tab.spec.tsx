@@ -1,8 +1,5 @@
 import { type ReactNode } from 'react'
-import {
-  useVariables,
-  VariableList,
-} from '@qovery/domains/variables/feature'
+import { VariableList, useVariables } from '@qovery/domains/variables/feature'
 import { useModal } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { CustomTab } from './service-variables-custom-tab'

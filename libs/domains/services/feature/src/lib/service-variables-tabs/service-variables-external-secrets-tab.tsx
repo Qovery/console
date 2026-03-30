@@ -606,9 +606,7 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
           },
           customFilterValue: ({ filterValue }) => (
             <span className="flex items-center gap-1">
-              {filterValue
-                .map((value) => STATUS_LABELS[value as SyncStatus] ?? value)
-                .join(', ')}
+              {filterValue.map((value) => STATUS_LABELS[value as SyncStatus] ?? value).join(', ')}
             </span>
           ),
         },
@@ -753,7 +751,13 @@ export function ExternalSecretsTab({ selectedCaseId = 'filled' }: ExternalSecret
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <Button color="neutral" variant="outline" size="md" className="gap-2" onClick={() => handleCheckReferences()}>
+            <Button
+              color="neutral"
+              variant="outline"
+              size="md"
+              className="gap-2"
+              onClick={() => handleCheckReferences()}
+            >
               <Icon iconName="rotate" iconStyle="regular" />
               Check references
             </Button>

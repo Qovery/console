@@ -85,10 +85,7 @@ function emptyState({
   )
 }
 
-function mapModalDataToVariable(
-  data: CreateUpdateVariableModalSubmitData,
-  current?: VariableData
-): VariableData {
+function mapModalDataToVariable(data: CreateUpdateVariableModalSubmitData, current?: VariableData): VariableData {
   return {
     variable: data.key,
     value: data.value ?? '',
@@ -158,7 +155,12 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
 
   const serviceScope = generalForm.getValues('serviceType') === 'APPLICATION' ? 'APPLICATION' : 'CONTAINER'
 
-  const { fields: variables, append: appendVariable, remove: removeVariable, update: updateVariable } = useFieldArray({
+  const {
+    fields: variables,
+    append: appendVariable,
+    remove: removeVariable,
+    update: updateVariable,
+  } = useFieldArray({
     control: variablesForm.control,
     name: 'variables',
   })
