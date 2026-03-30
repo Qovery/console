@@ -2,6 +2,9 @@ import type { ReactNode } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ServiceNew } from './service-new'
 
+const mockShowPylonForm = jest.fn()
+const mockShowChat = jest.fn()
+
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
 }))
@@ -31,10 +34,14 @@ jest.mock('@qovery/shared/ui', () => {
 
 jest.mock('@qovery/shared/util-hooks', () => ({
   ...jest.requireActual('@qovery/shared/util-hooks'),
-  useSupportChat: () => ({ showPylonForm: jest.fn() }),
+  useSupportChat: () => ({ showPylonForm: mockShowPylonForm, showChat: mockShowChat }),
 }))
 
 describe('ServiceNew', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
@@ -67,11 +74,41 @@ describe('ServiceNew', () => {
     renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
+    expect(screen.getByRole('heading', { name: 'Integrations' })).toBeInTheDocument()
+    expect(screen.getByText('Want more integrations?')).toBeInTheDocument()
+    expect(screen.getByText('Tell us about which integration you would like to see in the future')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Data & Storage' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Back-end' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Front-end' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'IAC' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'More template' })).toBeInTheDocument()
+  })
+
+  it('should link the ArgoCD integration card with the environment cluster context', () => {
+    const { container } = renderWithProviders(
+      <ServiceNew
+        organizationId="org-1"
+        projectId="project-1"
+        environmentId="env-1"
+        clusterId="cluster-1"
+        availableTemplates={[]}
+      />
+    )
+
+    expect(screen.getByText('ArgoCD')).toBeInTheDocument()
+    expect(
+      container.querySelector('a[href="/organization/org-1/settings/argocd-integration?clusterId=cluster-1"]')
+    ).toBeInTheDocument()
+  })
+
+  it('should open support chat when clicking on Want more integrations card', async () => {
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    await userEvent.click(screen.getByText('Want more integrations?'))
+
+    expect(mockShowChat).toHaveBeenCalledTimes(1)
   })
 
   it('should link database entries to the database create flow', async () => {

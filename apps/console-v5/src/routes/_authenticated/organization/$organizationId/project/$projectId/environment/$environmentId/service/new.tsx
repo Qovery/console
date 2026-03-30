@@ -40,6 +40,7 @@ function ServiceNewContent() {
         organizationId={organizationId}
         projectId={projectId}
         environmentId={environmentId}
+        clusterId={environment?.cluster_id}
         cloudProvider={cloudProvider}
         availableTemplates={availableTemplates}
       />

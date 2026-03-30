@@ -33,6 +33,14 @@ const getEnvironmentBasePath = (organizationId: string, projectId: string, envir
 const getServicesPath = (organizationId: string, projectId: string, environmentId: string, subPath: string) =>
   `${getEnvironmentBasePath(organizationId, projectId, environmentId)}${subPath}`
 
+const getArgoCdIntegrationsPath = (organizationId: string, clusterId?: string) => {
+  const path = `/organization/${organizationId}/settings/argocd-integration`
+
+  if (!clusterId) return path
+
+  return `${path}?clusterId=${encodeURIComponent(clusterId)}`
+}
+
 const CREATE_FLOW_SLUG_BY_TYPE: Partial<Record<ServiceType, string>> = {
   APPLICATION: 'application',
   CONTAINER: 'container',
@@ -102,19 +110,22 @@ function Card({
   onClick,
   disabledCTA,
   badge,
+  cardClassName,
 }: {
   title: string
   description: string
-  icon: ReactElement
+  icon?: ReactElement
   link?: string
   onClick?: () => void
   disabledCTA?: ReactElement
   badge?: string
+  cardClassName?: string
 }) {
   const Wrapper = ({ children }: { children: ReactElement }) => {
     const className = twMerge(
       'flex cursor-pointer items-center justify-between gap-5 rounded border border-neutral px-5 py-4 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)]',
-      disabledCTA ? 'border-neutral bg-surface-neutral-subtle' : 'hover:bg-surface-neutral-subtle'
+      disabledCTA ? 'border-neutral bg-surface-neutral-subtle' : 'hover:bg-surface-neutral-subtle',
+      cardClassName
     )
 
     if (onClick) {
@@ -160,7 +171,7 @@ function Card({
           </div>
           {disabledCTA}
         </div>
-        {icon}
+        {icon ? icon : null}
       </>
     </Wrapper>
   )
@@ -499,18 +510,20 @@ function SectionByTag({
 type ServiceBlock = {
   title: string
   description: string
-  icon: ReactElement
+  icon?: ReactElement
   cloud_provider?: CloudProviderEnum | string
   link?: string
   onClick?: () => void
   disabledCTA?: ReactElement
   badge?: string
+  cardClassName?: string
 }
 
 export interface ServiceNewProps {
   organizationId: string
   projectId: string
   environmentId: string
+  clusterId?: string
   /** From environment.cloud_provider.provider (may be string from API) */
   cloudProvider?: CloudProviderEnum | string
   availableTemplates?: LifecycleTemplateListResponseResultsInner[]
@@ -520,11 +533,12 @@ export function ServiceNew({
   organizationId,
   projectId,
   environmentId,
+  clusterId,
   cloudProvider,
   availableTemplates = [],
 }: ServiceNewProps) {
   const isTerraformFeatureFlag = Boolean(useFeatureFlagEnabled('terraform'))
-  const { showPylonForm } = useSupportChat()
+  const { showPylonForm, showChat } = useSupportChat()
 
   const serviceEmpty: ServiceBlock[] = useMemo(
     () => [
@@ -598,12 +612,39 @@ export function ServiceNew({
     [cloudProvider, organizationId, projectId, environmentId, isTerraformFeatureFlag, showPylonForm]
   )
 
+  const integrations: ServiceBlock[] = useMemo(
+    () => [
+      {
+        title: 'ArgoCD',
+        description: 'Import and visualize any ArgoCD services directly onto Qovery.',
+        icon: (
+          <img
+            className="select-none"
+            width={32}
+            height={32}
+            src={ServiceIcons['app://qovery-console/argocd'].icon}
+            alt="ArgoCD"
+          />
+        ),
+        link: getArgoCdIntegrationsPath(organizationId, clusterId),
+      },
+      {
+        title: 'Want more integrations?',
+        description: 'Tell us about which integration you would like to see in the future',
+        onClick: () => showChat(),
+        cardClassName: 'bg-surface-neutral-subtle [box-shadow:none] hover:bg-surface-neutral-subtle',
+      },
+    ],
+    [organizationId, clusterId, showChat]
+  )
+
   const [searchInput, setSearchInput] = useState('')
+  const searchableServices = [...serviceEmpty, ...integrations, ...serviceTemplates]
 
   const filterService = ({ title }: { title: string }) => title.toLowerCase().includes(searchInput.toLowerCase())
 
   const handleSearchInputChange = (value: string) => {
-    if ([...serviceEmpty, ...serviceTemplates].filter(filterService).length === 0) {
+    if (searchableServices.filter(filterService).length === 0) {
       posthog.capture('search-service', {
         qoveryServiceType: 'INPUT_SEARCH',
         searchValue: value,
@@ -674,6 +715,18 @@ export function ServiceNew({
               <div className="grid grid-cols-3 gap-4">
                 {serviceEmpty.map((service) => (
                   <Card key={service.title} {...service} />
+                ))}
+              </div>
+            </Section>
+            <Section>
+              <Heading className="mb-1">Integrations</Heading>
+              <p className="mb-5 text-xs text-neutral-subtle">
+                Existing services running on other stacks that can be imported for better integration with Qovery
+                services.
+              </p>
+              <div className="grid grid-cols-3 gap-4">
+                {integrations.map((integration) => (
+                  <Card key={integration.title} {...integration} />
                 ))}
               </div>
             </Section>
@@ -756,7 +809,7 @@ export function ServiceNew({
               onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
             />
           </>
-        ) : [...serviceEmpty, ...serviceTemplates]
+        ) : searchableServices
             .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
             .filter(filterService).length > 0 ? (
           <Section>
@@ -765,7 +818,7 @@ export function ServiceNew({
               Find the service you need to kickstart your next project.
             </p>
             <div className="grid grid-cols-3 gap-4">
-              {[...serviceEmpty, ...serviceTemplates]
+              {searchableServices
                 .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
                 .filter(filterService)
                 .map((service) => (
