@@ -1,7 +1,5 @@
-import { Navigate as TanstackNavigate, useSearch } from '@tanstack/react-router'
+import { Navigate, useSearch } from '@tanstack/react-router'
 import { type HelmDefaultValuesRequest } from 'qovery-typescript-axios'
-import { type ReactNode } from 'react'
-import { Navigate as ReactRouterNavigate, useLocation } from 'react-router-dom'
 import { PREVIEW_CODE } from '@qovery/shared/routes'
 import { EmptyState, LoadingScreen } from '@qovery/shared/ui'
 import { useHelmDefaultValues } from '../hooks/use-helm-default-values/use-helm-default-values'
@@ -19,14 +17,6 @@ export interface PreviewCodeNavigationState {
 }
 
 type HelmDefaultValuesPreviewPayloadInput = HelmDefaultValuesPreviewPayload | string | null | undefined
-
-export interface HelmDefaultValuesPreviewBaseProps {
-  payload?: HelmDefaultValuesPreviewPayloadInput
-  navigate: (state: PreviewCodeNavigationState) => ReactNode
-}
-
-const PREVIEW_TITLE = 'Default values.yaml'
-const PREVIEW_DESCRIPTION = 'Read-only preview of the values shipped with the selected Helm source.'
 
 function isHelmDefaultValuesPreviewPayload(value: unknown): value is HelmDefaultValuesPreviewPayload {
   return (
@@ -58,16 +48,8 @@ function parsePayload(payload?: HelmDefaultValuesPreviewPayloadInput): HelmDefau
   }
 }
 
-function buildPreviewState(defaultValues?: string): PreviewCodeNavigationState {
-  return {
-    code: defaultValues ?? '',
-    language: 'yaml',
-    title: PREVIEW_TITLE,
-    description: PREVIEW_DESCRIPTION,
-  }
-}
-
-export function HelmDefaultValuesPreviewBase({ payload, navigate }: HelmDefaultValuesPreviewBaseProps) {
+export function HelmDefaultValuesPreview() {
+  const { payload } = useSearch({ strict: false }) as { payload?: HelmDefaultValuesPreviewPayloadInput }
   const parsedPayload = parsePayload(payload)
 
   const { data: defaultValues, isLoading } = useHelmDefaultValues({
@@ -93,31 +75,16 @@ export function HelmDefaultValuesPreviewBase({ payload, navigate }: HelmDefaultV
     return <LoadingScreen />
   }
 
-  return navigate(buildPreviewState(defaultValues))
-}
-
-export function HelmDefaultValuesPreview() {
-  const { search } = useLocation()
-  const params = new URLSearchParams(search)
-  const payload = params.get('payload')
-
   return (
-    <HelmDefaultValuesPreviewBase
-      payload={payload}
-      navigate={(state) => <ReactRouterNavigate to={PREVIEW_CODE} replace state={state} />}
-    />
-  )
-}
-
-export function HelmDefaultValuesPreviewV5() {
-  const { payload } = useSearch({ strict: false })
-
-  return (
-    <HelmDefaultValuesPreviewBase
-      payload={payload}
-      navigate={({ code, ...search }) => (
-        <TanstackNavigate to={PREVIEW_CODE} replace search={search} state={{ code }} />
-      )}
+    <Navigate
+      to={PREVIEW_CODE}
+      replace
+      search={{
+        language: 'yaml',
+        title: 'Default values.yaml',
+        description: 'Read-only preview of the values shipped with the selected Helm source.',
+      }}
+      state={{ code: defaultValues ?? '' }}
     />
   )
 }

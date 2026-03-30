@@ -3,18 +3,21 @@ import { useParams } from 'react-router-dom'
 import { CodeEditorInlineSetting, useModal } from '@qovery/shared/ui'
 import ValuesOverrideYamlModal from '../values-override-yaml-modal/values-override-yaml-modal'
 
-export interface ValuesOverrideYamlSettingBaseProps {
+export interface ValuesOverrideYamlSettingProps {
   source: HelmRequestAllOfSource
   onSubmit: (value?: string) => void
   content?: string
-  environmentId?: string
+}
+
+export interface ValuesOverrideYamlSettingBaseProps extends ValuesOverrideYamlSettingProps {
+  environmentId: string
 }
 
 export function ValuesOverrideYamlSettingBase({
+  environmentId,
   onSubmit,
   content,
   source,
-  environmentId = '',
 }: ValuesOverrideYamlSettingBaseProps) {
   const { openModal, closeModal } = useModal()
 
@@ -49,23 +52,10 @@ export function ValuesOverrideYamlSettingBase({
   )
 }
 
-export interface ValuesOverrideYamlSettingProps {
-  source: HelmRequestAllOfSource
-  onSubmit: (value?: string) => void
-  content?: string
-}
-
-export function ValuesOverrideYamlSetting({ onSubmit, content, source }: ValuesOverrideYamlSettingProps) {
+export function ValuesOverrideYamlSetting(props: ValuesOverrideYamlSettingProps) {
   const { environmentId = '' } = useParams()
 
-  return (
-    <ValuesOverrideYamlSettingBase
-      content={content}
-      source={source}
-      onSubmit={onSubmit}
-      environmentId={environmentId}
-    />
-  )
+  return <ValuesOverrideYamlSettingBase environmentId={environmentId} {...props} />
 }
 
 export default ValuesOverrideYamlSetting

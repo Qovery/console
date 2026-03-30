@@ -14,7 +14,6 @@ import {
   useNavigationType,
 } from 'react-router-dom'
 import { KubeconfigPreview } from '@qovery/domains/clusters/feature'
-import { HelmDefaultValuesPreview } from '@qovery/domains/service-helm/feature'
 import { DarkModeEnabler, Layout } from '@qovery/pages/layout'
 import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
 import { AssistantContext } from '@qovery/shared/assistant/feature'
@@ -22,7 +21,7 @@ import { useAuth, useInviteMember } from '@qovery/shared/auth'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/feature'
 import { ProtectedRoute } from '@qovery/shared/router'
-import { HELM_DEFAULT_VALUES, KUBECONFIG, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
+import { KUBECONFIG, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { useCaptureUtmParams, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { DEVOPS_COPILOT_API_BASE_URL } from '@qovery/shared/util-node-env'
@@ -126,7 +125,6 @@ export function App() {
             <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />
             <Route path={LOGOUT_URL} element={<PageLogoutFeature />} />
             <Route path={PREVIEW_CODE} element={<PreviewCode />} />
-            <Route path={HELM_DEFAULT_VALUES} element={<HelmDefaultValuesPreview />} />
             <Route path={KUBECONFIG} element={<KubeconfigPreview />} />
             {ROUTER.map((route) =>
               route.layout ? (

@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
-import { HelmDefaultValuesPreviewV5 } from '@qovery/domains/service-helm/feature'
+import { HelmDefaultValuesPreview } from '@qovery/domains/service-helm/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 const helmDefaultValuesSearchSchema = z.object({
@@ -23,5 +23,5 @@ export const Route = createFileRoute('/_authenticated/helm-default-values')({
 function HelmDefaultValues() {
   useDocumentTitle('Default values.yaml')
 
-  return <HelmDefaultValuesPreviewV5 />
+  return <HelmDefaultValuesPreview />
 }
