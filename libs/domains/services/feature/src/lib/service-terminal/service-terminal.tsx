@@ -145,7 +145,7 @@ export function ServiceTerminal({
       match(runningStatuses?.state)
         .with('STOPPED', () => "We could not launch the CLI for this service because it's stopped.")
         .with('ERROR', () => "We could not launch the CLI for this service because it's in error.")
-        .otherwise(() => "We could not launch the CLI for this service because it's not running."),
+        .otherwise(() => 'The CLI is currently unavailable for this service.'),
     [runningStatuses?.state]
   )
 

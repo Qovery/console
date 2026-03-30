@@ -78,6 +78,30 @@ describe('ServiceTerminal', () => {
     expect(useReactQueryWsSubscriptionMock).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: false }))
   })
 
+  it('should show a generic unavailable message when service state is not stopped or in error', () => {
+    mockUseRunningStatus.mockReturnValue({
+      data: {
+        pods: [
+          { name: 'pod-1', containers: [{ name: 'container-1' }] },
+          { name: 'pod-2', containers: [{ name: 'container-2' }] },
+        ],
+        state: 'RUNNING',
+      },
+      isLoading: false,
+    })
+
+    renderWithProviders(<ServiceTerminal {...props} />)
+
+    act(() => {
+      getLatestWsSubscriptionConfig().onClose?.(
+        {} as QueryClient,
+        new CloseEvent('close', { code: 1000, reason: 'No pod exists for this application.' })
+      )
+    })
+
+    expect(screen.getByText('The CLI is currently unavailable for this service.')).toBeInTheDocument()
+  })
+
   it('should restart terminal launch flow when retrying from empty state', async () => {
     const user = userEvent.setup()
     renderWithProviders(<ServiceTerminal {...props} />)
