@@ -37,9 +37,6 @@ type SecretManagerIntegrationFormValues = {
 const AUTOMATIC_INTEGRATION_DISABLED_TOOLTIP =
   'Automatic integration is unavailable because an STS manual integration is already configured.'
 
-const STATIC_CREDENTIALS_DISABLED_TOOLTIP =
-  'Static credentials are the only available option while automatic integration is configured'
-
 export interface SecretManagerIntegrationModalProps {
   option: SecretManagerOption
   regionOptions: Array<{ label: string; value: string; icon?: JSX.Element }>
@@ -65,15 +62,25 @@ export function SecretManagerIntegrationModal({
 }: SecretManagerIntegrationModalProps) {
   const isAwsCluster = clusterProvider === 'AWS'
   const isAwsIntegration = option.icon === 'AWS'
-  const isAwsAutomaticIntegrationBlockedByExistingRoleArn =
-    isAwsCluster && isAwsIntegration && hasAwsManualStsIntegrationConfigured
-  const isAwsStaticCredentialsBlockedByExistingAutomatic =
-    isAwsCluster && isAwsIntegration && hasAwsAutomaticIntegrationConfigured
+  const hasConfiguredAwsAutomaticIntegration = isAwsCluster && isAwsIntegration && hasAwsAutomaticIntegrationConfigured
+  const hasConfiguredAwsManualStsIntegration = isAwsCluster && isAwsIntegration && hasAwsManualStsIntegrationConfigured
+  const blockedAwsIntegrationLabel = hasConfiguredAwsAutomaticIntegration
+    ? 'Automatic'
+    : hasConfiguredAwsManualStsIntegration
+      ? 'Assume role'
+      : undefined
+  const isEditingAwsManualStsIntegration =
+    mode === 'edit' && initialValues?.authentication === 'Manual' && initialValues?.authType === 'sts'
+  const shouldForceStaticCredentials = Boolean(blockedAwsIntegrationLabel) && !isEditingAwsManualStsIntegration
+  const shouldForceStsCredentials = isEditingAwsManualStsIntegration
+  const showAutomaticTabFirst = !blockedAwsIntegrationLabel
+  const disabledIntegrationTooltip =
+    shouldForceStaticCredentials && blockedAwsIntegrationLabel
+      ? `Static credentials are the only available option while ${blockedAwsIntegrationLabel} integration is configured`
+      : AUTOMATIC_INTEGRATION_DISABLED_TOOLTIP
 
   const [activeTab, setActiveTab] = useState<IntegrationTab>(() =>
-    initialValues?.authentication === 'Manual' || isAwsAutomaticIntegrationBlockedByExistingRoleArn
-      ? 'manual'
-      : 'automatic'
+    initialValues?.authentication === 'Manual' || Boolean(blockedAwsIntegrationLabel) ? 'manual' : 'automatic'
   )
   const methods = useForm<SecretManagerIntegrationFormValues>({
     mode: 'onChange',
@@ -90,13 +97,13 @@ export function SecretManagerIntegrationModal({
 
   const authenticationOptions = useMemo(
     () =>
-      isAwsStaticCredentialsBlockedByExistingAutomatic
+      shouldForceStaticCredentials
         ? [{ label: 'Static credentials', value: 'static' }]
         : [
             { label: 'Assume role via STS', value: 'sts' },
             { label: 'Static credentials', value: 'static' },
           ],
-    [isAwsStaticCredentialsBlockedByExistingAutomatic]
+    [shouldForceStaticCredentials]
   )
 
   const authenticationType = methods.watch('authenticationType')
@@ -107,9 +114,6 @@ export function SecretManagerIntegrationModal({
   const isManualOnlyGcpIntegration = isGcpSecretManagerOnAws
   const isManualOnlyAwsIntegration = isAwsSecretManagerOnGcp
   const isGcpManualTabOnGcpSecretManager = option.value === 'gcp-secret' && isGcpCluster && activeTab === 'manual'
-  const shouldForceStaticCredentials = isAwsStaticCredentialsBlockedByExistingAutomatic
-  const shouldForceStsCredentials = isAwsAutomaticIntegrationBlockedByExistingRoleArn
-  const showAutomaticTabFirst = !isAwsAutomaticIntegrationBlockedByExistingRoleArn
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     accept: { 'application/json': ['.json'] },
@@ -331,7 +335,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
 
               if (shouldForceStaticCredentials) {
                 return (
-                  <Tooltip content={STATIC_CREDENTIALS_DISABLED_TOOLTIP}>
+                  <Tooltip content={disabledIntegrationTooltip}>
                     <div className="w-full">{authenticationTypeSelect}</div>
                   </Tooltip>
                 )
@@ -552,7 +556,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                     <Icon iconName="hammer" iconStyle="regular" />
                     Manual integration
                   </Navbar.Item>
-                  <Tooltip content={AUTOMATIC_INTEGRATION_DISABLED_TOOLTIP}>
+                  <Tooltip content={disabledIntegrationTooltip}>
                     <Navbar.Item
                       id="automatic"
                       aria-disabled

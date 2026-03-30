@@ -32,6 +32,10 @@ function RouteComponent() {
     options: EXTERNAL_SECRETS_USE_CASES,
     defaultCaseId: 'filled',
   })
+  const hasClusterSecretManagerConfigured =
+    selectedCaseId === 'filled' ||
+    selectedCaseId === 'empty' ||
+    selectedCaseId === 'secret-manager-addon-not-redeployed'
 
   const { data: service } = useService({
     environmentId,
@@ -113,6 +117,7 @@ function RouteComponent() {
                     environmentId={environmentId}
                     serviceId={serviceId}
                     toasterCallback={toasterCallback}
+                    hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
                   />
                 )}
                 {activeTab === 'external-secrets' && (
