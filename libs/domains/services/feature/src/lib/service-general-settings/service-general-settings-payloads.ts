@@ -45,6 +45,8 @@ export interface HelmGeneralData
   chart_version?: string
   arguments: string
   timeout_sec: string | number
+  labels_groups?: string[]
+  annotations_groups?: string[]
 }
 
 export function buildHelmSourceFromGeneralData(data: HelmGeneralData): HelmRequestAllOfSource {

@@ -111,7 +111,13 @@ describe('ServiceNew', () => {
 
   it('should link helm entries to the v5 helm create flow', async () => {
     const { container, userEvent } = renderWithProviders(
-      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+      <ServiceNew
+        organizationId="org-1"
+        projectId="project-1"
+        environmentId="env-1"
+        cloudProvider="AWS"
+        availableTemplates={[]}
+      />
     )
 
     expect(

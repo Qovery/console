@@ -6,6 +6,8 @@ import { type HelmValuesFileData } from '../../values-override-files-setting/val
 import { HelmCreateContext } from '../helm-creation-flow'
 import { HelmStepValuesOverrideArguments } from './step-values-override-arguments'
 
+const mockNavigate = jest.fn()
+
 jest.mock('@qovery/domains/variables/feature', () => ({
   CodeEditorVariable: ({ value, onChange }: { value?: string; onChange?: (value?: string) => void }) => (
     <textarea data-testid="code-editor-variable" value={value} onChange={(event) => onChange?.(event.target.value)} />
@@ -23,12 +25,16 @@ jest.mock('@tanstack/react-router', () => ({
     projectId: 'proj-1',
     environmentId: 'env-1',
   }),
-  useNavigate: () => jest.fn(),
+  useNavigate: () => mockNavigate,
   useSearch: () => ({}),
 }))
 
 describe('HelmStepValuesOverrideArguments', () => {
-  it('renders the terminal provisional step with a disabled continue button', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('lets the user continue to the summary step with an empty arguments list', async () => {
     const { result: generalForm } = renderHook(() =>
       useForm<HelmGeneralData>({
         mode: 'onChange',
@@ -69,7 +75,7 @@ describe('HelmStepValuesOverrideArguments', () => {
       })
     )
 
-    renderWithProviders(
+    const { userEvent } = renderWithProviders(
       <HelmCreateContext.Provider
         value={{
           currentStep: 3,
@@ -85,6 +91,15 @@ describe('HelmStepValuesOverrideArguments', () => {
     )
 
     expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
+
+    const continueButton = screen.getByRole('button', { name: 'Continue' })
+    expect(continueButton).toBeEnabled()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      search: {},
+      to: '/create/helm/summary',
+    })
   })
 })

@@ -116,6 +116,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideFileRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideArgumentsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/general'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources'
@@ -989,6 +990,15 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
         AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRoute,
     } as any,
   )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRouteImport.update(
+    {
+      id: '/summary',
+      path: '/summary',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmGeneralRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmGeneralRouteImport.update(
     {
@@ -1405,6 +1415,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseResourcesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmGeneralRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideArgumentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideFileRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsIndexRoute
@@ -1531,6 +1542,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseResourcesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmGeneralRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideArgumentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideFileRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsIndexRoute
@@ -1673,6 +1685,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseResourcesRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseSummaryRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmGeneralRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideArgumentsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideFileRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsIndexRoute
@@ -1815,6 +1828,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/general'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments'
@@ -1941,6 +1955,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/general'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments'
@@ -2082,6 +2097,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/general'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/'
@@ -2853,6 +2869,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideArgumentsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRoute
     }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary'
+      path: '/summary'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRoute
+    }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/general': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/general'
       path: '/general'
@@ -3466,6 +3489,7 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
 
 interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmGeneralRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideArgumentsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideArgumentsRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideFileRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideFileRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmIndexRoute
@@ -3475,6 +3499,8 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
   {
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmGeneralRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmGeneralRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideArgumentsRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideArgumentsRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideFileRoute:

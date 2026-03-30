@@ -33,6 +33,7 @@ export const helmCreationSteps: { title: string }[] = [
   { title: 'General data' },
   { title: 'Values override as file' },
   { title: 'Values override as arguments' },
+  { title: 'Summary' },
 ]
 
 export interface HelmCreationFlowProps extends PropsWithChildren {

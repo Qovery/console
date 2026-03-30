@@ -2,7 +2,7 @@ import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { buildHelmSourceFromGeneralData } from '@qovery/domains/services/feature'
-import { Button, Callout, FunnelFlowBody, Icon } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody } from '@qovery/shared/ui'
 import { ValuesOverrideArgumentsSettingBase } from '../../values-override-arguments-setting/values-override-arguments-setting'
 import { useHelmCreateContext } from '../helm-creation-flow'
 
@@ -21,7 +21,11 @@ export function HelmStepValuesOverrideArguments() {
 
   const handleSubmit = valuesOverrideArgumentsForm.handleSubmit((data) => {
     valuesOverrideArgumentsForm.reset(data)
+    navigate({ to: `${creationFlowUrl}/summary`, search })
   })
+
+  const watchArguments = valuesOverrideArgumentsForm.watch('arguments') ?? []
+  const isContinueDisabled = watchArguments.length > 0 && !valuesOverrideArgumentsForm.formState.isValid
 
   return (
     <FunnelFlowBody>
@@ -42,7 +46,7 @@ export function HelmStepValuesOverrideArguments() {
             >
               Back
             </Button>
-            <Button type="submit" size="lg" disabled>
+            <Button type="submit" size="lg" disabled={isContinueDisabled}>
               Continue
             </Button>
           </div>

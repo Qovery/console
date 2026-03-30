@@ -46,7 +46,7 @@ function GitPathsSettings({ methods }: { methods: UseFormReturn<HelmValuesFileDa
 export function HelmStepValuesOverrideFile() {
   const navigate = useNavigate()
   const search = useSearch({ strict: false })
-  const { organizationId = '' } = useParams({ strict: false })
+  const { organizationId = '', environmentId = '' } = useParams({ strict: false })
   const { generalForm, valuesOverrideFileForm, setCurrentStep, creationFlowUrl } = useHelmCreateContext()
 
   const generalData = generalForm.getValues()
@@ -152,6 +152,7 @@ export function HelmStepValuesOverrideFile() {
   const yamlSetting = (
     <ValuesOverrideYamlSettingBase
       content={valuesOverrideFileForm.getValues('content')}
+      environmentId={environmentId}
       onSubmit={(value) => {
         valuesOverrideFileForm.setValue('content', value)
       }}

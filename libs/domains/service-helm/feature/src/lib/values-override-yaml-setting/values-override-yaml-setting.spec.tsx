@@ -1,9 +1,10 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ValuesOverrideYamlSetting, ValuesOverrideYamlSettingBase } from './values-override-yaml-setting'
 
-const openModal = jest.fn()
+const mockOpenModal = jest.fn()
 
-jest.mock('react-router', () => ({
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({
     environmentId: 'env-from-router',
   }),
@@ -12,7 +13,7 @@ jest.mock('react-router', () => ({
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
   useModal: () => ({
-    openModal,
+    openModal: mockOpenModal,
     closeModal: jest.fn(),
   }),
   CodeEditorInlineSetting: ({ onOpenModal }: { onOpenModal: () => void }) => (
@@ -29,7 +30,7 @@ jest.mock('../values-override-yaml-modal/values-override-yaml-modal', () => ({
 
 describe('ValuesOverrideYamlSetting', () => {
   beforeEach(() => {
-    openModal.mockClear()
+    mockOpenModal.mockClear()
   })
 
   it('should use the provided environmentId when opening the modal', async () => {
@@ -51,8 +52,8 @@ describe('ValuesOverrideYamlSetting', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Open YAML modal' }))
 
-    expect(openModal).toHaveBeenCalledTimes(1)
-    expect(openModal.mock.calls[0][0].content.props.environmentId).toBe('env-from-prop')
+    expect(mockOpenModal).toHaveBeenCalledTimes(1)
+    expect(mockOpenModal.mock.calls[0][0].content.props.environmentId).toBe('env-from-prop')
   })
 
   it('should fallback to router params when environmentId is not provided', async () => {
@@ -72,7 +73,7 @@ describe('ValuesOverrideYamlSetting', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Open YAML modal' }))
 
-    expect(openModal).toHaveBeenCalledTimes(1)
-    expect(openModal.mock.calls[0][0].content.props.environmentId).toBe('env-from-router')
+    expect(mockOpenModal).toHaveBeenCalledTimes(1)
+    expect(mockOpenModal.mock.calls[0][0].content.props.environmentId).toBe('env-from-router')
   })
 })
