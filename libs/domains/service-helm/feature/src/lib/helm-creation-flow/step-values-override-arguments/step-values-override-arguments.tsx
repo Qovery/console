@@ -1,15 +1,14 @@
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { buildHelmSourceFromGeneralData } from '@qovery/domains/services/feature'
 import { Button, FunnelFlowBody } from '@qovery/shared/ui'
-import { ValuesOverrideArgumentsSettingBase } from '../../values-override-arguments-setting/values-override-arguments-setting'
+import { ValuesOverrideArgumentsSetting } from '../../values-override-arguments-setting/values-override-arguments-setting'
 import { useHelmCreateContext } from '../helm-creation-flow'
 
 export function HelmStepValuesOverrideArguments() {
   const navigate = useNavigate()
   const search = useSearch({ strict: false })
-  const { environmentId = '' } = useParams({ strict: false })
   const { generalForm, valuesOverrideArgumentsForm, setCurrentStep, creationFlowUrl } = useHelmCreateContext()
 
   const generalData = generalForm.getValues()
@@ -30,12 +29,7 @@ export function HelmStepValuesOverrideArguments() {
   return (
     <FunnelFlowBody>
       <FormProvider {...valuesOverrideArgumentsForm}>
-        <ValuesOverrideArgumentsSettingBase
-          methods={valuesOverrideArgumentsForm}
-          onSubmit={handleSubmit}
-          source={source}
-          environmentId={environmentId}
-        >
+        <ValuesOverrideArgumentsSetting methods={valuesOverrideArgumentsForm} onSubmit={handleSubmit} source={source}>
           <div className="mt-10 flex justify-between">
             <Button
               type="button"
@@ -50,7 +44,7 @@ export function HelmStepValuesOverrideArguments() {
               Continue
             </Button>
           </div>
-        </ValuesOverrideArgumentsSettingBase>
+        </ValuesOverrideArgumentsSetting>
       </FormProvider>
     </FunnelFlowBody>
   )
