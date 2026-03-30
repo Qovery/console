@@ -4,6 +4,7 @@ import { type UseFormReturn, useForm } from 'react-hook-form'
 import { type HelmGeneralData } from '@qovery/domains/services/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { FunnelFlow } from '@qovery/shared/ui'
+import { type HelmValuesArgumentsData } from '../values-override-arguments-setting/values-override-arguments-setting'
 import { type HelmValuesFileData } from '../values-override-files-setting/values-override-files-setting'
 import { findHelmTemplateMatch } from './helm-create-utils/helm-create-utils'
 
@@ -13,6 +14,7 @@ export interface HelmCreateContextInterface {
   creationFlowUrl: string
   generalForm: UseFormReturn<HelmGeneralData>
   valuesOverrideFileForm: UseFormReturn<HelmValuesFileData>
+  valuesOverrideArgumentsForm: UseFormReturn<HelmValuesArgumentsData>
 }
 
 export const HelmCreateContext = createContext<HelmCreateContextInterface | undefined>(undefined)
@@ -27,7 +29,11 @@ export const useHelmCreateContext = () => {
   return helmCreateContext
 }
 
-export const helmCreationSteps: { title: string }[] = [{ title: 'General data' }, { title: 'Values override as file' }]
+export const helmCreationSteps: { title: string }[] = [
+  { title: 'General data' },
+  { title: 'Values override as file' },
+  { title: 'Values override as arguments' },
+]
 
 export interface HelmCreationFlowProps extends PropsWithChildren {
   creationFlowUrl: string
@@ -60,6 +66,13 @@ export function HelmCreationFlow({ children, creationFlowUrl }: HelmCreationFlow
     mode: 'onChange',
   })
 
+  const valuesOverrideArgumentsForm = useForm<HelmValuesArgumentsData>({
+    defaultValues: {
+      arguments: [],
+    },
+    mode: 'onChange',
+  })
+
   return (
     <HelmCreateContext.Provider
       value={{
@@ -68,6 +81,7 @@ export function HelmCreationFlow({ children, creationFlowUrl }: HelmCreationFlow
         creationFlowUrl,
         generalForm,
         valuesOverrideFileForm,
+        valuesOverrideArgumentsForm,
       }}
     >
       <FunnelFlow

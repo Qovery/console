@@ -61,6 +61,8 @@ export function HelmStepValuesOverrideFile() {
       ...data,
       auto_deploy: data.is_public_repository ? false : data.auto_deploy,
     })
+
+    navigate({ to: `${creationFlowUrl}/values-override-arguments`, search })
   })
 
   const watchFieldType = valuesOverrideFileForm.watch('type')
@@ -136,9 +138,15 @@ export function HelmStepValuesOverrideFile() {
   )
 
   const isContinueDisabled = match(watchFieldType)
-    .with('GIT_REPOSITORY', () => true)
-    .with('YAML', () => true)
-    .with('NONE', () => true)
+    .with('GIT_REPOSITORY', () => {
+      const { provider, git_repository, branch, paths } = valuesOverrideFileForm.watch()
+      return !provider || !git_repository || !branch || !paths
+    })
+    .with('YAML', () => {
+      const { content } = valuesOverrideFileForm.watch()
+      return !content
+    })
+    .with('NONE', () => false)
     .exhaustive()
 
   const yamlSetting = (
@@ -162,17 +170,6 @@ export function HelmStepValuesOverrideFile() {
           onSubmit={handleSubmit}
           yamlSetting={yamlSetting}
         >
-          <Callout.Root color="sky">
-            <Callout.Icon>
-              <Icon iconName="circle-info" iconStyle="regular" />
-            </Callout.Icon>
-            <Callout.Text>
-              <Callout.TextHeading>Next steps are not migrated yet</Callout.TextHeading>
-              You can already configure the Helm chart source and the values override file in console-v5. The remaining
-              creation steps will be added in a later iteration.
-            </Callout.Text>
-          </Callout.Root>
-
           <div className="flex justify-between">
             <Button
               type="button"

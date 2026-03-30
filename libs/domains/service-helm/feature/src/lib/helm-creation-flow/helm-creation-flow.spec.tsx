@@ -22,12 +22,14 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 
 function ContextConsumer() {
-  const { currentStep, creationFlowUrl, generalForm, valuesOverrideFileForm } = useHelmCreateContext()
+  const { currentStep, creationFlowUrl, generalForm, valuesOverrideFileForm, valuesOverrideArgumentsForm } =
+    useHelmCreateContext()
 
   return (
     <div data-testid="context-consumer">
       step={currentStep} url={creationFlowUrl} name={generalForm.getValues('name')} icon=
-      {generalForm.getValues('icon_uri')} valuesType={valuesOverrideFileForm.getValues('type')}
+      {generalForm.getValues('icon_uri')} valuesType={valuesOverrideFileForm.getValues('type')} argumentsCount=
+      {valuesOverrideArgumentsForm.getValues('arguments').length}
     </div>
   )
 }
@@ -46,5 +48,6 @@ describe('HelmCreationFlow', () => {
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('name=kubecost')
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('icon=app://qovery-console/kubecost')
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('valuesType=GIT_REPOSITORY')
+    expect(screen.getByTestId('context-consumer')).toHaveTextContent('argumentsCount=0')
   })
 })
