@@ -574,10 +574,10 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
         {mode === 'CREATE' && type === 'VALUE' && watchIsSecret && hasClusterSecretManagerConfigured && (
           <Callout.Root color="yellow" className="mb-3">
             <Callout.Icon>
-              <Icon iconName="info-circle" iconStyle="regular" />
+              <Icon iconName="exclamation-triangle" iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text>
-              You have external secrets configured on this cluster. Are you sure you want to add a Qovery secret?
+              Are you sure you want to create a Qovery secret? External secrets are already configured on this cluster.
             </Callout.Text>
           </Callout.Root>
         )}
