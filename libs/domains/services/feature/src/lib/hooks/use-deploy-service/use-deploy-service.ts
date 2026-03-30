@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { mutations } from '@qovery/domains/services/data-access'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 
@@ -67,8 +66,13 @@ export function useDeployService({
           undefined,
           () =>
             navigate({
-              // TODO new-nav: This should redirect to the deployment details page that we don't have yet (should redirect to '/stages' aka pipeline view, but without the executionId)
-              to: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL(),
+              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId',
+              params: {
+                organizationId,
+                projectId,
+                environmentId,
+                deploymentId: 'latest',
+              },
             }),
           undefined,
           'See deployment logs'
