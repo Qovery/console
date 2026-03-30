@@ -9,6 +9,7 @@ export type VariablesActionToolbarProps = {
   onImportEnvFile?: () => void
   importEnvFileAccess?: 'button' | 'dropdown'
   showDopplerButton?: boolean
+  hasClusterSecretManagerConfigured?: boolean
 } & (
   | {
       scope: Extract<Scope, 'PROJECT'>
@@ -32,6 +33,7 @@ export function VariablesActionToolbar({
   onImportEnvFile,
   importEnvFileAccess = 'button',
   showDopplerButton = false,
+  hasClusterSecretManagerConfigured = false,
   ...props
 }: VariablesActionToolbarProps) {
   const { openModal, closeModal } = useModal()
@@ -47,6 +49,7 @@ export function VariablesActionToolbar({
           mode="CREATE"
           onSubmit={onCreateVariable}
           isFile={isFile}
+          hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
           {...props}
         />
       ),

@@ -71,6 +71,7 @@ export type CreateUpdateVariableModalProps = {
   mode: 'CREATE' | 'UPDATE'
   type: keyof typeof APIVariableTypeEnum
   isFile?: boolean
+  hasClusterSecretManagerConfigured?: boolean
 } & (
   | {
       scope: Extract<Scope, 'PROJECT'>
@@ -90,7 +91,17 @@ export type CreateUpdateVariableModalProps = {
 )
 
 export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps) {
-  const { scope, closeModal, onSubmit, onSubmitLocal, variable, mode, type, isFile } = props
+  const {
+    scope,
+    closeModal,
+    onSubmit,
+    onSubmitLocal,
+    variable,
+    mode,
+    type,
+    isFile,
+    hasClusterSecretManagerConfigured = false,
+  } = props
   const _isFile = (variable && environmentVariableFile(variable)) || (isFile ?? false)
   const { enableAlertClickOutside } = useModal()
   const [loading, setLoading] = useState(false)
@@ -169,6 +180,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
   const valueEditorLanguage = getValueEditorLanguage({ isFile: _isFile, mountPath: watchMountPath })
   const valueEditorServiceId = 'serviceId' in props && isValueEditorScope(watchScope) ? props.serviceId : undefined
   const valueEditorScope = isValueEditorScope(watchScope) ? watchScope : undefined
+  const watchIsSecret = methods.watch('isSecret')
 
   const _onSubmit = methods.handleSubmit(async (data) => {
     const cloneData = { ...data }
@@ -557,6 +569,17 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               )}
             />
           </div>
+        )}
+
+        {mode === 'CREATE' && type === 'VALUE' && watchIsSecret && hasClusterSecretManagerConfigured && (
+          <Callout.Root color="yellow" className="mb-3">
+            <Callout.Icon>
+              <Icon iconName="info-circle" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              You have external secrets configured on this cluster. Are you sure you want to add a Qovery secret?
+            </Callout.Text>
+          </Callout.Root>
         )}
 
         {scope === 'APPLICATION' && watchScope !== 'APPLICATION' && (

@@ -1,9 +1,9 @@
 import {
   CreateUpdateVariableModal,
   ImportEnvironmentVariableModalFeature,
-  useVariables,
   VariableList,
   VariablesActionToolbar,
+  useVariables,
 } from '@qovery/domains/variables/feature'
 import { Button, DropdownMenu, EmptyState, Icon, toast, useModal } from '@qovery/shared/ui'
 
@@ -14,9 +14,18 @@ interface CustomTabProps {
   environmentId: string
   serviceId: string
   toasterCallback: () => void
+  hasClusterSecretManagerConfigured?: boolean
 }
 
-export function CustomTab({ scope, organizationId, projectId, environmentId, serviceId, toasterCallback }: CustomTabProps) {
+export function CustomTab({
+  scope,
+  organizationId,
+  projectId,
+  environmentId,
+  serviceId,
+  toasterCallback,
+  hasClusterSecretManagerConfigured = false,
+}: CustomTabProps) {
   const { openModal, closeModal } = useModal()
   const { data: variables = [], isLoading: isVariablesLoading } = useVariables({
     parentId: serviceId,
@@ -43,6 +52,7 @@ export function CustomTab({ scope, organizationId, projectId, environmentId, ser
           mode="CREATE"
           onSubmit={onCreateVariableToast}
           isFile={isFile}
+          hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
           scope={scope}
           projectId={projectId}
           environmentId={environmentId}
@@ -80,7 +90,7 @@ export function CustomTab({ scope, organizationId, projectId, environmentId, ser
           className="rounded-none border-0 bg-transparent py-12"
         >
           <div className="flex items-center gap-2">
-              <DropdownMenu.Root>
+            <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
                 <Button color="neutral" variant="solid" size="md" className="gap-1.5">
                   <Icon iconName="circle-plus" iconStyle="regular" />
@@ -139,6 +149,7 @@ export function CustomTab({ scope, organizationId, projectId, environmentId, ser
           environmentId={environmentId}
           serviceId={serviceId}
           onCreateVariable={onCreateVariableToast}
+          hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
         />
       }
       scope={scope}

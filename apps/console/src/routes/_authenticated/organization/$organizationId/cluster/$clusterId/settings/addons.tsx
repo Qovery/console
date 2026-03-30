@@ -1,3 +1,4 @@
+import { type CheckedState } from '@radix-ui/react-checkbox'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { type CloudProvider, type ClusterRegion, ServiceTypeEnum } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
@@ -15,6 +16,7 @@ import { useUserRole } from '@qovery/shared/iam/feature'
 import {
   Badge,
   Button,
+  Checkbox,
   DropdownMenu,
   Icon,
   IconFlag,
@@ -189,6 +191,7 @@ function SecretManagerDeletionHelperModal({
 }) {
   const [selectedAction, setSelectedAction] = useState<DeletionAction | null>(null)
   const [targetId, setTargetId] = useState('')
+  const [autoDeployImpactedServices, setAutoDeployImpactedServices] = useState<CheckedState>(false)
 
   const hasOtherManagers = otherManagers.length > 0
   const hasMultipleManagers = otherManagers.length > 1
@@ -208,19 +211,19 @@ function SecretManagerDeletionHelperModal({
     Boolean(selectedAction) && (!hasMultipleManagers || selectedAction !== 'migrate' || Boolean(targetId))
 
   const cardBase =
-    'flex w-full items-center gap-3 rounded-lg bg-background p-3 text-left outline outline-1 focus:outline focus:outline-1 shadow-[0_0_4px_0_rgba(0,0,0,0.01),0_2px_3px_0_rgba(0,0,0,0.02)]'
+    'flex w-full items-center gap-3 rounded-lg bg-surface-neutral p-3 text-left outline outline-1 focus:outline focus:outline-1 shadow-[0_0_4px_0_rgba(0,0,0,0.01),0_2px_3px_0_rgba(0,0,0,0.02)]'
   const iconBase = 'flex h-10 w-10 items-center justify-center rounded-md'
 
   return (
     <div className="relative flex flex-col">
       <div className="px-5 pt-5">
-        <h2 className="text-lg font-medium text-neutral">Deletion helper</h2>
+        <h2 className="text-lg font-medium text-neutral">Choose how to handle existing secrets</h2>
         <p className="mt-1 text-sm text-neutral-subtle">
-          "{integration.name}" is currently used by {integration.usedByServices ?? 0} services. Choose what you want to
-          do with the linked external secrets before before deleting it.
+          "{integration.name}" is currently used by {integration.usedByServices ?? 0} services. To finalize the
+          deletion, you'll need to redeploy all impacted services before deploying your cluster.
         </p>
       </div>
-      <div className="flex flex-col gap-2 px-5 py-5">
+      <div className="flex flex-col gap-3 px-5 py-5">
         {hasOtherManagers && hasMultipleManagers ? (
           <div className="flex flex-col gap-0 rounded-lg border border-neutral bg-surface-neutral-subtle">
             <button
@@ -241,7 +244,7 @@ function SecretManagerDeletionHelperModal({
               >
                 <Icon iconName="right-left" className={selectedAction === 'migrate' ? 'text-brand' : undefined} />
               </div>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-medium text-neutral">Migrate to another secret manager</span>
                 <span className="text-xs text-neutral-subtle">
                   Migration to one of your other secret manager detected
@@ -281,7 +284,7 @@ function SecretManagerDeletionHelperModal({
               >
                 <Icon iconName="right-left" className={selectedAction === 'migrate' ? 'text-brand' : undefined} />
               </div>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-medium text-neutral">Migrate to detected secret manager</span>
                 <span className="text-xs text-neutral-subtle">References will point to "{otherManagers[0]?.name}"</span>
               </div>
@@ -305,7 +308,7 @@ function SecretManagerDeletionHelperModal({
           >
             <Icon iconName="link-broken" className={selectedAction === 'detach' ? 'text-brand' : undefined} />
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-0.5">
             <span className="text-sm font-medium text-neutral">Detach all references</span>
             <span className="text-xs text-neutral-subtle">Empty external secrets to be remapped later</span>
           </div>
@@ -327,11 +330,24 @@ function SecretManagerDeletionHelperModal({
           >
             <Icon iconName="lock-keyhole" className={selectedAction === 'convert' ? 'text-brand' : undefined} />
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-0.5">
             <span className="text-sm font-medium text-neutral">Convert to empty Qovery secrets</span>
             <span className="text-xs text-neutral-subtle">Conversion to empty qovery secrets for manual migration</span>
           </div>
         </button>
+
+        <div className="mt-1 flex items-start gap-2">
+          <Checkbox
+            id="auto-deploy-impacted-services"
+            name="auto-deploy-impacted-services"
+            checked={autoDeployImpactedServices}
+            onCheckedChange={setAutoDeployImpactedServices}
+            className="mt-0.5 shrink-0"
+          />
+          <label htmlFor="auto-deploy-impacted-services" className="text-sm text-neutral">
+            Automatically deploy impacted services
+          </label>
+        </div>
       </div>
       <div className="flex items-center justify-end gap-3 border-t border-neutral px-5 py-4">
         <Button type="button" variant="plain" color="neutral" size="lg" onClick={onClose}>

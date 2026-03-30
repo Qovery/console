@@ -109,10 +109,10 @@ function CloneMigrationHelperModal({
   return (
     <div className="relative flex flex-col">
       <div className="px-5 pt-5">
-        <h2 className="text-lg font-medium text-neutral">Migration helper</h2>
+        <h2 className="text-lg font-medium text-neutral">Choose how to migrate existing secrets</h2>
         <p className="mt-1 text-sm text-neutral-subtle">
           You’re about to clone a environment that contains external secrets from a secret manager on a new cluster.
-          Please choose you’re preferred options.
+          Please choose your preferred options.
         </p>
       </div>
       <div className="flex flex-col gap-2 px-5 py-5">
@@ -141,7 +141,7 @@ function CloneMigrationHelperModal({
                     className={selectedAction === 'migrate' ? 'text-brand' : undefined}
                   />
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-0.5">
                   <span className="text-sm font-medium text-neutral">Migrate to another secret manager</span>
                   <span className="text-xs text-neutral-subtle">
                     Migration to one of your other secret manager detected
@@ -168,7 +168,7 @@ function CloneMigrationHelperModal({
               <div className={`${iconBase} bg-surface-neutral-component`}>
                 <Icon iconName="right-left" iconStyle="regular" />
               </div>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-medium text-neutral">Migrate to another secret manager</span>
                 <span className="text-xs text-neutral-subtle">
                   Migration to one of your other secret manager detected
@@ -197,7 +197,7 @@ function CloneMigrationHelperModal({
                 className={selectedAction === 'migrate' ? 'text-brand' : undefined}
               />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-0.5">
               <span className="text-sm font-medium text-neutral">Migrate to detected secret manager</span>
               <span className="text-xs text-neutral-subtle">
                 Migration to “
@@ -227,7 +227,7 @@ function CloneMigrationHelperModal({
               className={selectedAction === 'detach' ? 'text-brand' : undefined}
             />
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-0.5">
             <span className="text-sm font-medium text-neutral">Detach all references</span>
             <span className="text-xs text-neutral-subtle">Empty external secrets to be remapped later</span>
           </div>
@@ -253,7 +253,7 @@ function CloneMigrationHelperModal({
               className={selectedAction === 'convert' ? 'text-brand' : undefined}
             />
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-0.5">
             <span className="text-sm font-medium text-neutral">Convert to empty Qovery secrets</span>
             <span className="text-xs text-neutral-subtle">Conversion to empty qovery secrets for manual migration</span>
           </div>
@@ -314,7 +314,7 @@ function CloneMigrationTableModal({
   return (
     <div className="relative flex flex-col">
       <div className="px-5 pt-5">
-        <h2 className="text-lg font-medium text-neutral">Migration helper</h2>
+        <h2 className="text-lg font-medium text-neutral">Choose how to migrate existing secrets</h2>
         <p className="mt-1 text-sm text-neutral-subtle">
           You’re about to clone a environment that contains external secrets from a secret manager on a new cluster. For
           each detected secret manager please choose you’re preferred option.
