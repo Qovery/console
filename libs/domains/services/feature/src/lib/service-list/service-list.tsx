@@ -11,6 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import clsx from 'clsx'
 import { type Environment } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
@@ -21,23 +22,17 @@ import {
   Icon,
   Link,
   Skeleton,
+  StatusChip,
   TableFilter,
   TablePrimitives,
   Tooltip,
-  Truncate,
 } from '@qovery/shared/ui'
-import { twMerge } from '@qovery/shared/util-js'
+import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
 import { useServices } from '../hooks/use-services/use-services'
-import { ServiceAvatar } from '../service-avatar/service-avatar'
+import { ServiceActions } from '../service-actions/service-actions'
 import { ServiceListActionBar } from './service-list-action-bar'
-import {
-  ServiceLastDeploymentCell,
-  ServiceNameCell,
-  ServiceRunningStatusCell,
-  ServiceVersionCell,
-} from './service-list-cells'
-import { ServiceRow } from './service-row/service-row'
+import { ServiceLastDeploymentCell, ServiceNameCell, ServiceVersionCell } from './service-list-cells'
 
 const { Table } = TablePrimitives
 
@@ -45,11 +40,7 @@ export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
   environment: Environment
 }
 
-export const gridLayoutClassName =
-  'grid w-full grid-cols-[minmax(250px,1.5fr)_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]'
-
 export function ServiceList({ className, containerClassName, environment, ...props }: ServiceListProps) {
-  const clusterId = environment.cluster_id || ''
   const environmentId = environment.id || ''
   const organizationId = environment.organization.id || ''
   const projectId = environment.project.id || ''
@@ -74,8 +65,19 @@ export function ServiceList({ className, containerClassName, environment, ...pro
     return map
   }, [deploymentStages])
 
+  const actualServices = useMemo(() => {
+    return services.map((service) => {
+      return {
+        ...service,
+        status: match(service)
+          .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, () => service.deploymentStatus?.state)
+          .otherwise(() => service.runningStatus?.state),
+      }
+    })
+  }, [services])
+
   const sortedServices = useMemo(() => {
-    return [...services].sort((a, b) => {
+    return [...actualServices].sort((a, b) => {
       const aIsSkipped = skippedServicesMap.get(a.id) || false
       const bIsSkipped = skippedServicesMap.get(b.id) || false
 
@@ -85,9 +87,9 @@ export function ServiceList({ className, containerClassName, environment, ...pro
 
       return 0
     })
-  }, [services, skippedServicesMap])
+  }, [actualServices, skippedServicesMap])
 
-  const columnHelper = createColumnHelper<(typeof services)[number]>()
+  const columnHelper = createColumnHelper<(typeof actualServices)[number]>()
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -144,49 +146,35 @@ export function ServiceList({ className, containerClassName, environment, ...pro
       }),
       columnHelper.accessor('name', {
         header: 'Service',
-        enableColumnFilter: true,
-        enableSorting: false,
-        filterFn: 'arrIncludesSome',
+        enableColumnFilter: false,
+        enableSorting: true,
         size: 57,
-        meta: {
-          customFacetEntry({ value, row }) {
-            const service = row?.original
-            const serviceType = service?.serviceType
-            if (!serviceType) {
-              return null
-            }
-            return (
-              <span className="flex items-center gap-2 text-sm font-medium">
-                <ServiceAvatar service={service} size="xs" />
-                <Truncate text={value} truncateLimit={20} />
-              </span>
-            )
-          },
-        },
         cell: (info) => {
           return (
-            <div className="min-w-[400px] flex-1">
+            <div>
               <ServiceNameCell service={info.row.original} environment={environment} />
             </div>
           )
         },
       }),
-      columnHelper.accessor('runningStatus.stateLabel', {
-        id: 'runningStatus',
-        header: 'Service status',
-        enableColumnFilter: true,
+      columnHelper.accessor('status', {
+        header: () => null,
+        enableColumnFilter: false,
         enableSorting: false,
-        filterFn: 'arrIncludesSome',
-        size: 15,
-        cell: (info) => (
-          <ServiceRunningStatusCell
-            service={info.row.original}
-            environment={environment}
-            organizationId={organizationId}
-            projectId={projectId}
-            clusterId={clusterId}
-          />
-        ),
+        cell: (info) => {
+          const serviceStatus = match(info.row.original)
+            .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, () => info.row.original.deploymentStatus?.state)
+            .otherwise(() => info.row.original.runningStatus?.state)
+
+          return <StatusChip status={serviceStatus} />
+        },
+      }),
+      columnHelper.display({
+        id: 'last_deployment',
+        header: 'Last deployment',
+        enableColumnFilter: false,
+        enableSorting: false,
+        cell: (info) => <ServiceLastDeploymentCell service={info.row.original} environment={environment} />,
       }),
       columnHelper.accessor('version', {
         header: 'Target version',
@@ -199,24 +187,21 @@ export function ServiceList({ className, containerClassName, environment, ...pro
           )
         },
       }),
-      columnHelper.accessor('deploymentStatus.last_deployment_date', {
-        header: 'Last deployment',
+      columnHelper.display({
+        id: 'actions',
+        header: 'Actions',
         enableColumnFilter: false,
-        enableSorting: true,
-        size: 3,
+        enableSorting: false,
         cell: (info) => {
           return (
-            <ServiceLastDeploymentCell
-              service={info.row.original}
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-            />
+            <div className="flex h-full items-center" onClick={(e) => e.stopPropagation()}>
+              <ServiceActions serviceId={info.row.original.id} environment={environment} />
+            </div>
           )
         },
       }),
     ],
-    [columnHelper, environment, clusterId, organizationId, projectId, environmentId]
+    [columnHelper, environment, organizationId, projectId]
   )
 
   const table = useReactTable({
@@ -246,13 +231,15 @@ export function ServiceList({ className, containerClassName, environment, ...pro
 
   const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
 
-  const statusFacetedUniqueValues = Array.from(
-    table.getColumn('runningStatus')?.getFacetedUniqueValues().entries() ?? []
-  )
+  const statusFacetedUniqueValues = Array.from(table.getColumn('status')?.getFacetedUniqueValues().entries() ?? [])
 
   if (services.length === 0) {
     return (
-      <EmptyState title="No service found" description="You can create a service from the button on the top">
+      <EmptyState
+        title="No service found"
+        description="You can create a service from the button on the top"
+        className="border-none"
+      >
         <Link
           as="button"
           size="md"
@@ -269,33 +256,6 @@ export function ServiceList({ className, containerClassName, environment, ...pro
   }
 
   return (
-    <Table.Root className="w-full" containerClassName="rounded-none border-none">
-      <Table.Header>
-        <Table.Row className={twMerge('w-full items-center text-xs', gridLayoutClassName)}>
-          <Table.ColumnHeaderCell className="flex h-9 items-center text-neutral-subtle">Service</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
-            Last deployment
-          </Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
-            Target version
-          </Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell className="flex h-9 items-center justify-end border-l border-neutral text-left text-neutral-subtle">
-            Actions
-          </Table.ColumnHeaderCell>
-        </Table.Row>
-      </Table.Header>
-
-      <Table.Body className="divide-y divide-neutral">
-        {table.getRowModel().rows.map((row) => (
-          <Fragment key={row.id}>
-            <ServiceRow service={row.original} environment={environment} />
-          </Fragment>
-        ))}
-      </Table.Body>
-    </Table.Root>
-  )
-
-  return (
     <div>
       <div className="flex gap-2 px-4 py-2">
         {statusFacetedUniqueValues.some(([value]) => value === undefined) ? (
@@ -303,7 +263,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         ) : (
           statusFacetedUniqueValues.map(([value, count]: [string, number]) => (
             <Badge key={value}>
-              {count} {value}
+              {count} {upperCaseFirstLetter(value)}
             </Badge>
           ))
         )}
@@ -322,9 +282,9 @@ export function ServiceList({ className, containerClassName, environment, ...pro
               <Table.Row key={headerGroup.id}>
                 {headerGroup.headers.map((header, i) => (
                   <Table.ColumnHeaderCell
-                    className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r border-neutral pl-0' : ''} font-medium`}
                     key={header.id}
-                    style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
+                    className={clsx('relative', { 'border-r border-neutral last:border-r-0': i !== 0 && i !== 1 })}
+                    style={{ width: i === 0 || i === 2 ? '20px' : `${header.getSize()}%` }}
                   >
                     {header.column.getCanFilter() ? (
                       <TableFilter column={header.column} />
@@ -367,8 +327,8 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                   {row.getVisibleCells().map((cell, i) => (
                     <Table.Cell
                       key={cell.id}
-                      className={`px-6 ${i === 1 ? 'border-r border-neutral pl-0' : ''} first:relative`}
-                      style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
+                      className={clsx('relative', { 'border-r border-neutral last:border-r-0': i !== 0 && i !== 1 })}
+                      style={{ width: i === 0 || i === 2 ? '20px' : `${cell.column.getSize()}%` }}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </Table.Cell>
