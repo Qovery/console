@@ -479,7 +479,12 @@ export function VariableList({
           },
         },
         cell: (info) => {
-          return <span className="text-sm font-medium capitalize">{info.getValue().toLowerCase()}</span>
+          const scopeLabel = info.getValue()
+          return (
+            <span className="text-sm font-medium capitalize">
+              {scopeLabel === 'Service' ? scopeLabel : scopeLabel.toLowerCase()}
+            </span>
+          )
         },
       }),
       columnHelper.accessor('updated_at', {
