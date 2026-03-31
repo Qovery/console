@@ -111,7 +111,7 @@ export function ValuesOverrideFilesSetting({
           <Controller
             name="type"
             control={methods.control}
-            defaultValue="GIT_REPOSITORY"
+            defaultValue="NONE"
             render={({ field }) => (
               <InputSelect
                 label="File source"

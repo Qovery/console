@@ -47,7 +47,7 @@ describe('HelmCreationFlow', () => {
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('url=/create/helm')
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('name=kubecost')
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('icon=app://qovery-console/kubecost')
-    expect(screen.getByTestId('context-consumer')).toHaveTextContent('valuesType=GIT_REPOSITORY')
+    expect(screen.getByTestId('context-consumer')).toHaveTextContent('valuesType=NONE')
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('argumentsCount=0')
   })
 })

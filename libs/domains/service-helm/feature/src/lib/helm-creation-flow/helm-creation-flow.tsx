@@ -62,7 +62,7 @@ export function HelmCreationFlow({ children, creationFlowUrl }: HelmCreationFlow
 
   const valuesOverrideFileForm = useForm<HelmValuesFileData>({
     defaultValues: {
-      type: 'GIT_REPOSITORY',
+      type: 'NONE',
     },
     mode: 'onChange',
   })

@@ -73,7 +73,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
                     <span
                       class="mr-1 text-sm text-neutral"
                     >
-                      Git repository
+                      None
                     </span>
                     <input
                       aria-autocomplete="list"
@@ -116,13 +116,13 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
                 <input
                   name="File source"
                   type="hidden"
-                  value="GIT_REPOSITORY"
+                  value="NONE"
                 />
               </div>
               <input
                 name="File source"
                 type="hidden"
-                value="GIT_REPOSITORY"
+                value="NONE"
               />
               <div
                 class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
@@ -235,7 +235,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
                     <span
                       class="mr-1 text-sm text-neutral"
                     >
-                      Git repository
+                      None
                     </span>
                     <input
                       aria-autocomplete="list"
@@ -278,13 +278,13 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
                 <input
                   name="File source"
                   type="hidden"
-                  value="GIT_REPOSITORY"
+                  value="NONE"
                 />
               </div>
               <input
                 name="File source"
                 type="hidden"
-                value="GIT_REPOSITORY"
+                value="NONE"
               />
               <div
                 class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
@@ -376,7 +376,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
                     <span
                       class="mr-1 text-sm text-neutral"
                     >
-                      Git repository
+                      None
                     </span>
                     <input
                       aria-autocomplete="list"
@@ -419,13 +419,13 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
                 <input
                   name="File source"
                   type="hidden"
-                  value="GIT_REPOSITORY"
+                  value="NONE"
                 />
               </div>
               <input
                 name="File source"
                 type="hidden"
-                value="GIT_REPOSITORY"
+                value="NONE"
               />
               <div
                 class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
