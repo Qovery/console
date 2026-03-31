@@ -2,9 +2,11 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { Navigate, createFileRoute } from '@tanstack/react-router'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { queries } from '@qovery/state/util-queries'
+import { NotFoundPage } from '../app/components/not-found-page/not-found-page'
 
 export const Route = createFileRoute('/')({
   component: Index,
+  notFoundComponent: NotFoundPage,
   loader: async ({ context }) => {
     // Preload data (organizations) without waiting for the queries to complete
     if (context.auth.isAuthenticated) {
@@ -32,13 +34,5 @@ function Index() {
     )
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" search={{ redirect: '/' }} />
-  }
-
-  return (
-    <div className="p-2">
-      <h3 className="text-neutral">Welcome Home!</h3>
-    </div>
-  )
+  return <Navigate to="/login" search={{ redirect: '/' }} />
 }
