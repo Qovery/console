@@ -141,7 +141,7 @@ function Card({
     }
 
     return (
-      // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
+      // @ts-ignore TODO new-nav: Route strings need to be updated using the next typed routes
       <Link to={link} className={className}>
         {children}
       </Link>
@@ -257,7 +257,7 @@ function CardOption({
 
   return (
     <Link
-      // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
+      // @ts-ignore TODO new-nav: Route strings need to be updated using the next typed routes
       to={to}
       className="flex items-start gap-3 rounded-sm border border-neutral bg-surface-neutral-component p-3 transition hover:bg-surface-neutral-componentHover"
       onClick={() =>
@@ -430,7 +430,7 @@ function CardService({
 
   return (
     <Link
-      // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
+      // @ts-ignore TODO new-nav: Route strings need to be updated using the next typed routes
       to={to}
       className="flex gap-6 rounded border border-neutral p-5 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-surface-neutral-subtle"
       onClick={() =>
@@ -517,6 +517,7 @@ type ServiceBlock = {
   disabledCTA?: ReactElement
   badge?: string
   cardClassName?: string
+  searchable?: boolean
 }
 
 export interface ServiceNewProps {
@@ -633,15 +634,24 @@ export function ServiceNew({
         description: 'Tell us about which integration you would like to see in the future',
         onClick: () => showChat(),
         cardClassName: 'bg-surface-neutral-subtle [box-shadow:none] hover:bg-surface-neutral-subtle',
+        searchable: false,
       },
     ],
     [organizationId, clusterId, showChat]
   )
 
   const [searchInput, setSearchInput] = useState('')
-  const searchableServices = [...serviceEmpty, ...integrations, ...serviceTemplates]
+  const searchableServiceBlocks = [...serviceEmpty, ...integrations].filter((service) => service.searchable !== false)
+  const searchableServices = [...searchableServiceBlocks, ...serviceTemplates]
 
   const filterService = ({ title }: { title: string }) => title.toLowerCase().includes(searchInput.toLowerCase())
+  const filteredSearchableServiceBlocks = searchableServiceBlocks
+    .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
+    .filter(filterService)
+  const filteredSearchableTemplates = serviceTemplates
+    .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
+    .filter(filterService)
+  const hasSearchResults = filteredSearchableServiceBlocks.length + filteredSearchableTemplates.length > 0
 
   const handleSearchInputChange = (value: string) => {
     if (searchableServices.filter(filterService).length === 0) {
@@ -809,31 +819,29 @@ export function ServiceNew({
               onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
             />
           </>
-        ) : searchableServices
-            .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
-            .filter(filterService).length > 0 ? (
+        ) : hasSearchResults ? (
           <Section>
             <Heading className="mb-1">Search results</Heading>
             <p className="mb-5 text-xs text-neutral-subtle">
               Find the service you need to kickstart your next project.
             </p>
             <div className="grid grid-cols-3 gap-4">
-              {searchableServices
-                .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
-                .filter(filterService)
-                .map((service) => (
-                  <CardService
-                    key={service.title}
-                    availableTemplates={availableTemplates}
-                    organizationId={organizationId}
-                    projectId={projectId}
-                    environmentId={environmentId}
-                    cloudProvider={cloudProvider}
-                    isTerraformFeatureFlag={isTerraformFeatureFlag}
-                    onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
-                    {...service}
-                  />
-                ))}
+              {filteredSearchableServiceBlocks.map((service) => (
+                <Card key={service.title} {...service} />
+              ))}
+              {filteredSearchableTemplates.map((service) => (
+                <CardService
+                  key={service.title}
+                  availableTemplates={availableTemplates}
+                  organizationId={organizationId}
+                  projectId={projectId}
+                  environmentId={environmentId}
+                  cloudProvider={cloudProvider}
+                  isTerraformFeatureFlag={isTerraformFeatureFlag}
+                  onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
+                  {...service}
+                />
+              ))}
             </div>
           </Section>
         ) : (

@@ -111,6 +111,16 @@ describe('ServiceNew', () => {
     expect(mockShowChat).toHaveBeenCalledTimes(1)
   })
 
+  it('should exclude Want more integrations card from search results', async () => {
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    await userEvent.type(screen.getByPlaceholderText('Search…'), 'integrations')
+
+    expect(screen.queryByText('Want more integrations?')).not.toBeInTheDocument()
+  })
+
   it('should link database entries to the database create flow', async () => {
     const { container, userEvent } = renderWithProviders(
       <ServiceNew
