@@ -22,6 +22,7 @@ exports[`LastCommit should match snapshot 1`] = `
         </button>
       </span>
       <button
+        aria-label="Deploy from another version"
         class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
         data-state="closed"
         type="button"

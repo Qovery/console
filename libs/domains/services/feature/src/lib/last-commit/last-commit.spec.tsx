@@ -1,3 +1,4 @@
+import { screen } from '@testing-library/react'
 import { type ApplicationGitRepository, GitProviderEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
@@ -50,5 +51,13 @@ describe('LastCommit', () => {
   it('should match snapshot', () => {
     const { baseElement } = renderWithProviders(<LastCommit gitRepository={gitRepository} service={mockApplication} />)
     expect(baseElement).toMatchSnapshot()
+  })
+
+  it('should hide the deploy from another version button when disabled', () => {
+    renderWithProviders(
+      <LastCommit gitRepository={gitRepository} service={mockApplication} showDeployFromAnotherVersionButton={false} />
+    )
+
+    expect(screen.queryByRole('button', { name: /deploy from another version/i })).not.toBeInTheDocument()
   })
 })
