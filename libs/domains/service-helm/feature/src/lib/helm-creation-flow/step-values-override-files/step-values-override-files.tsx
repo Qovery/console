@@ -111,27 +111,17 @@ export function HelmStepValuesOverrideFile() {
           {generalData.source_provider === 'HELM_REPOSITORY' && watchFieldGitProvider && watchFieldGitRepository && (
             <AutoDeploySetting source="GIT" className="mt-3" />
           )}
-          {generalData.source_provider === 'GIT' &&
-            (generalData.auto_deploy ? (
-              <Callout.Root color="sky" className="mt-3">
-                <Callout.Icon>
-                  <Icon iconName="circle-info" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text>
-                  <Callout.TextHeading>Auto-deploy is activated</Callout.TextHeading>
-                  The service will be automatically updated on every new commit on the branch.
-                </Callout.Text>
-              </Callout.Root>
-            ) : (
-              <Callout.Root color="sky" className="mt-3">
-                <Callout.Icon>
-                  <Icon iconName="circle-info" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text>
-                  <Callout.TextHeading>Auto-deploy is not activated</Callout.TextHeading>
-                </Callout.Text>
-              </Callout.Root>
-            ))}
+          {generalData.source_provider === 'GIT' && generalData.auto_deploy && (
+            <Callout.Root color="sky" className="mt-3">
+              <Callout.Icon>
+                <Icon iconName="circle-info" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>Auto-deploy is activated</Callout.TextHeading>
+                The service will be automatically updated on every new commit on the branch.
+              </Callout.Text>
+            </Callout.Root>
+          )}
         </>
       )}
     </>
