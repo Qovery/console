@@ -15,10 +15,14 @@ interface TerminalBannerSegment {
   text: string
 }
 
+/**
+ * Renders the terminal onboarding banner and handles copying a command to the
+ * clipboard when a "[copy command]" link is clicked.
+ */
 export class TerminalShellActionsAddon implements ITerminalAddon {
   private static readonly COPY_COMMAND_LABEL = '[copy command]'
-  private static readonly FIRST_COMMAND_TITLE = '1. Use $ qovery shell'
-  private static readonly SECOND_COMMAND_TITLE = '2. Use $ qovery port-forward'
+  private static readonly FIRST_COMMAND_TITLE = '1. Use $ qovery shell in your local terminal'
+  private static readonly SECOND_COMMAND_TITLE = '2. Use $ qovery port-forward in your local terminal'
   private static readonly LOOKBACK_LINE_COUNT = 6
 
   private linkProviderDisposable?: IDisposable
@@ -45,6 +49,7 @@ export class TerminalShellActionsAddon implements ITerminalAddon {
     return `\u001b[38;2;${r};${g};${b}m`
   }
 
+  // Applies ANSI styles to a text segment before writing it inside the banner box.
   private formatSegment(segment: TerminalBannerSegment): string {
     const stylePrefix = `${segment.bold ? TerminalShellActionsAddon.ANSI_BOLD : ''}${segment.color ? this.toAnsiColor(segment.color) : ''}`
     if (!stylePrefix) {
@@ -54,6 +59,7 @@ export class TerminalShellActionsAddon implements ITerminalAddon {
     return `${stylePrefix}${segment.text}${TerminalShellActionsAddon.ANSI_RESET}`
   }
 
+  // Truncates segments to a single-line width and pads the remainder to keep box alignment.
   private clampSegments(
     segments: TerminalBannerSegment[],
     maxWidth: number
@@ -87,6 +93,7 @@ export class TerminalShellActionsAddon implements ITerminalAddon {
     }
   }
 
+  // Splits long segments across multiple lines so content fits within the banner box width.
   private wrapSegments(segments: TerminalBannerSegment[], maxWidth: number): TerminalBannerSegment[][] {
     if (!segments.some((segment) => segment.text.length > 0)) {
       return [[{ text: '' }]]
@@ -150,6 +157,7 @@ export class TerminalShellActionsAddon implements ITerminalAddon {
     return undefined
   }
 
+  // draws the banner on the terminal
   private writeBanner(terminal: Terminal): void {
     const horizontalPadding = 1
     const maxContentWidth = Math.max(1, terminal.cols - 4 - horizontalPadding * 2)

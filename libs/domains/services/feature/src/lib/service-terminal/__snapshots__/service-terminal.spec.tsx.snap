@@ -7,10 +7,10 @@ exports[`ServiceTerminal should match snapshot 1`] = `
       class="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-none border-0 bg-background"
     >
       <div
-        class="flex h-16 justify-between border-b border-neutral p-4"
+        class="flex h-14 justify-between border-b border-neutral p-3"
       >
         <div
-          class="flex gap-2 [&_input]:w-64"
+          class="flex gap-2 [&_input]:w-72"
         >
           <div
             class="relative"
@@ -42,7 +42,7 @@ exports[`ServiceTerminal should match snapshot 1`] = `
                   aria-expanded="false"
                   aria-labelledby="downshift-:r6:-label"
                   autocomplete="off"
-                  class="w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color] h-8"
+                  class="h-8 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-sm placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color]"
                   id="downshift-:r6:-input"
                   placeholder="Select a pod to connect to"
                   role="combobox"
@@ -54,15 +54,16 @@ exports[`ServiceTerminal should match snapshot 1`] = `
               >
                 <ul
                   aria-labelledby="downshift-:r6:-label"
+                  class="m-0 list-none p-0"
                   id="downshift-:r6:-menu"
                   role="listbox"
                 >
                   <p
-                    class="flex w-full flex-col py-2 text-center text-xs text-neutral-subtle"
+                    class="flex w-full flex-col items-center py-2 text-center text-xs text-neutral-subtle"
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-regular fa-wave-pulse mb-1 block"
+                      class="fa-regular fa-wave-pulse mb-1"
                     />
                     No results found
                   </p>
@@ -93,13 +94,13 @@ exports[`ServiceTerminal should match snapshot 1`] = `
         </a>
       </div>
       <div
-        class="flex h-full flex-1 flex-col bg-background p-3"
+        class="flex h-full flex-1 flex-col bg-background px-3 pt-5"
       >
         <div
           class="relative min-h-0 flex-1"
         >
           <div
-            class="flex h-40 items-start justify-center p-5"
+            class="absolute inset-0 flex items-start justify-center border-neutral bg-background pt-3"
           >
             <div
               class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "

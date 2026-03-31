@@ -16,6 +16,9 @@ import { TerminalShellActionsAddon } from './terminal-shell-banner-addon'
 
 const MemoizedXTerm = memo(XTerm)
 
+const buildCommand = (...parts: Array<string | undefined>): string =>
+  parts.filter((part): part is string => Boolean(part)).join(' ')
+
 export interface ServiceTerminalProps {
   organizationId: string
   clusterId: string
@@ -40,6 +43,7 @@ export function ServiceTerminal({
   const isTerminalSubscriptionEnabled = terminalLaunchError === null
   const { attachWebSocket, detachWebSocket, isTerminalReady, resetTerminalReadiness } = useTerminalReadiness()
   const showDelayedLoader = !isTerminalReady
+  const showLoader = isTerminalLoading || showDelayedLoader
   const fitAddon = addons[0] as FitAddon | undefined
 
   const getCssVariableHex = (variableName: string): string => {
@@ -84,14 +88,21 @@ export function ServiceTerminal({
   const selectedOrDefaultPodName = selectedPod ?? runningStatuses?.pods[0]?.name
   const selectedOrDefaultContainerName =
     selectedContainer ?? runningStatuses?.pods.find((pod) => pod.name === selectedOrDefaultPodName)?.containers[0]?.name
-  const connectShellCommand = [
+  const connectShellCommand = buildCommand(
     `qovery shell https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${environmentId}/application/${serviceId}`,
     selectedOrDefaultPodName ? `--pod=${selectedOrDefaultPodName}` : undefined,
-    selectedOrDefaultContainerName ? `--container=${selectedOrDefaultContainerName}` : undefined,
-  ]
-    .filter((commandPart): commandPart is string => Boolean(commandPart))
-    .join(' ')
-  const portForwardCommand = `qovery port-forward --organization ${organizationId} --project ${projectId} --environment ${environmentId} --service ${serviceId} --port <local-port:target-port>`
+    selectedOrDefaultContainerName ? `--container=${selectedOrDefaultContainerName}` : undefined
+  )
+  const portForwardCommand = buildCommand(
+    'qovery port-forward',
+    `--organization ${organizationId}`,
+    `--project ${projectId}`,
+    `--environment ${environmentId}`,
+    `--service ${serviceId}`,
+    '--port <local-port:target-port>'
+  )
+  // Keep it as a callback so the banner copy action resolves the latest command at click time, necesssary
+  // to allow users to use those commands in their private terminal without having to go through the documentation
   const getShellCommand = useCallback(() => connectShellCommand, [connectShellCommand])
   const getPortForwardCommand = useCallback(() => portForwardCommand, [portForwardCommand])
 
@@ -186,8 +197,8 @@ export function ServiceTerminal({
 
   return (
     <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-none border-0 bg-background">
-      <div className="flex h-16 justify-between border-b border-neutral p-4">
-        <div className="flex gap-2 [&_input]:w-64">
+      <div className="flex h-14 justify-between border-b border-neutral p-3">
+        <div className="flex gap-2 [&_input]:w-72">
           {runningStatuses && runningStatuses.pods.length > 0 && (
             <div className="relative">
               <InputSearch
@@ -195,7 +206,6 @@ export function ServiceTerminal({
                 onChange={setSelectedPod}
                 data={runningStatuses.pods.map((pod) => pod.name)}
                 placeholder="Select a pod to connect to"
-                size="md"
                 trimLabel
               />
               {!selectedPod && (
@@ -216,7 +226,6 @@ export function ServiceTerminal({
                     ?.containers.map((container) => container?.name) || []
                 }
                 placeholder="Select a container to connect to"
-                size="md"
               />
               {!selectedContainer && (
                 <div className="pointer-events-none absolute right-2.5 top-1/2 z-20 -translate-y-1/2 text-xs text-neutral-subtle">
@@ -238,7 +247,7 @@ export function ServiceTerminal({
           CLI docs
         </ExternalLink>
       </div>
-      <div className="flex h-full flex-1 flex-col bg-background p-3">
+      <div className="flex h-full flex-1 flex-col bg-background px-3 pt-5">
         <div className="relative min-h-0 flex-1">
           {terminalLaunchError ? (
             <EmptyState icon="terminal" title="Unable to launch CLI" description={terminalUnavailableDescription}>
@@ -246,15 +255,11 @@ export function ServiceTerminal({
                 Relaunch
               </Button>
             </EmptyState>
-          ) : isTerminalLoading ? (
-            <div className="flex h-40 items-start justify-center p-5">
-              <LoaderSpinner />
-            </div>
           ) : (
             <>
-              <MemoizedXTerm className="h-full" addons={addons} options={terminalOptions} />
-              {showDelayedLoader && (
-                <div className="absolute inset-0 flex items-start justify-center border-neutral bg-background pt-7">
+              {!isTerminalLoading && <MemoizedXTerm className="h-full" addons={addons} options={terminalOptions} />}
+              {showLoader && (
+                <div className="absolute inset-0 flex items-start justify-center border-neutral bg-background pt-3">
                   <LoaderSpinner />
                 </div>
               )}

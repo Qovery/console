@@ -7,15 +7,13 @@ export interface InputSearchProps {
   data: string[]
   onChange: (value?: string) => void
   placeholder: string
-  size?: 'sm' | 'md'
   value?: string
   trimLabel?: boolean
 }
 
-export function InputSearch({ data, value, onChange, placeholder, trimLabel, size = 'sm' }: InputSearchProps) {
+export function InputSearch({ data, value, onChange, placeholder, trimLabel }: InputSearchProps) {
   const [items, setItems] = useState(data)
   const inputRef = useRef<HTMLInputElement>(null)
-  const buttonSize = size === 'md' ? 'md' : 'sm'
 
   // https://github.com/radix-ui/primitives/issues/1342
   // We are waiting for radix combobox primitives
@@ -36,7 +34,7 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel, siz
       <Button
         color="neutral"
         variant="surface"
-        size={buttonSize}
+        size="md"
         className={!selectedItem ? 'hidden' : ''}
         onClick={() => {
           reset()
@@ -57,10 +55,7 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel, siz
         />
         <input
           placeholder={placeholder}
-          className={clsx(
-            'w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color]',
-            size === 'md' ? 'h-8' : 'h-7'
-          )}
+          className="h-8 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-sm placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color]"
           {...getInputProps({ ref: inputRef })}
         />
       </div>
@@ -72,7 +67,7 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel, siz
           }
         )}
       >
-        <ul {...getMenuProps()}>
+        <ul className="m-0 list-none p-0" {...getMenuProps()}>
           {isOpen && items.length > 0 ? (
             items.map((v, index) => (
               <li
@@ -90,8 +85,8 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel, siz
               </li>
             ))
           ) : (
-            <p className="flex w-full flex-col py-2 text-center text-xs text-neutral-subtle">
-              <Icon iconName="wave-pulse" className="mb-1 block" />
+            <p className="flex w-full flex-col items-center py-2 text-center text-xs text-neutral-subtle">
+              <Icon iconName="wave-pulse" className="mb-1" />
               No results found
             </p>
           )}
