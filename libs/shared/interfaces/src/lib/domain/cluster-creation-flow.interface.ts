@@ -59,13 +59,6 @@ export interface ClusterResourcesData {
   infrastructure_charts_parameters?: ClusterInfrastructureChartsParameters
 }
 
-// XXX: Necessary to have `eks_subnets` for Karpenter migration
-export interface ClusterResourcesEdit extends ClusterResourcesData {
-  aws_existing_vpc?: {
-    eks_subnets?: Subnets[]
-  }
-}
-
 export type Subnets = {
   A: string
   B: string
