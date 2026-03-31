@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
 import { within } from '@testing-library/react'
+import type { ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceList, type ServiceListProps } from './service-list'
 

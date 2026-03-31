@@ -130,9 +130,7 @@ export function ServiceNameCell({
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="end" onClick={(e) => e.stopPropagation()}>
-              {isOutOfSync && (
-                <DropdownMenu.Item icon={<Icon iconName="rotate-right" />}>Force sync</DropdownMenu.Item>
-              )}
+              {isOutOfSync && <DropdownMenu.Item icon={<Icon iconName="rotate-right" />}>Force sync</DropdownMenu.Item>}
               <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
                 <Link
                   className="gap-0"

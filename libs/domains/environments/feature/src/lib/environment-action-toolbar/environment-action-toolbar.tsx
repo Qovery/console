@@ -30,11 +30,7 @@ import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
 type ActionToolbarVariant = 'default' | 'header'
 
-function ArgoCdHybridDeployInfoModal({
-  onUnderstood,
-}: {
-  onUnderstood: () => void
-}) {
+function ArgoCdHybridDeployInfoModal({ onUnderstood }: { onUnderstood: () => void }) {
   return (
     <div className="p-5">
       <h2 className="h4 mb-2 max-w-sm text-neutral">Environment actions will only affect Qovery services</h2>

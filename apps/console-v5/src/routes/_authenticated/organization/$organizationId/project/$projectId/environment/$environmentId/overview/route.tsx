@@ -191,7 +191,9 @@ function RouteComponent() {
   const argoCdServices = services.filter((service) =>
     isFakeArgoCdService({ environmentId: splitSeed, serviceId: service.id })
   )
-  const qoveryServices = services.filter((service) => !argoCdServices.some((argoCdService) => argoCdService.id === service.id))
+  const qoveryServices = services.filter(
+    (service) => !argoCdServices.some((argoCdService) => argoCdService.id === service.id)
+  )
   const argocdStatusByServiceId = getArgoCdStatusByServiceId(argoCdServices, splitSeed)
   const argocdOperationByServiceId = getArgoCdOperationByServiceId(argoCdServices)
 

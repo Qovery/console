@@ -67,7 +67,7 @@ export interface ServiceHeaderProps {
 
 function ArgoCdTag() {
   return (
-    <span className="border-argocd bg-surface-argocd-subtle text-argocd inline-flex h-5 items-center justify-center rounded px-1 py-0.5 font-code text-xs font-bold uppercase leading-none retina:border-[0.5px]">
+    <span className="inline-flex h-5 items-center justify-center rounded border-argocd bg-surface-argocd-subtle px-1 py-0.5 font-code text-xs font-bold uppercase leading-none text-argocd retina:border-[0.5px]">
       ARGOCD
     </span>
   )

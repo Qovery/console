@@ -198,7 +198,8 @@ function RouteComponent() {
 
   const selectedResource = useMemo(
     () =>
-      MANIFEST_RESOURCES_WITH_IDS.find((resource) => resource.id === selectedResourceId) ?? MANIFEST_RESOURCES_WITH_IDS[0],
+      MANIFEST_RESOURCES_WITH_IDS.find((resource) => resource.id === selectedResourceId) ??
+      MANIFEST_RESOURCES_WITH_IDS[0],
     [selectedResourceId]
   )
 

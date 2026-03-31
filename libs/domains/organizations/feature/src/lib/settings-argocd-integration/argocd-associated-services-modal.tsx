@@ -94,8 +94,7 @@ const filterProjects = (projects: FakeProject[], searchValue?: string): FakeProj
     const environments = project.environments.reduce<FakeEnvironment[]>((environmentsAcc, environment) => {
       const environmentMatches = environment.environment_name.toLowerCase().includes(search)
       const services = environment.services.filter(
-        (service) =>
-          projectMatches || environmentMatches || service.service_name.toLowerCase().includes(search)
+        (service) => projectMatches || environmentMatches || service.service_name.toLowerCase().includes(search)
       )
 
       if (services.length > 0) {
@@ -142,7 +141,11 @@ export function ArgoCdAssociatedServicesModal({
         onChange={(value) => setSearchValue(value)}
       />
       {filteredProjects.length > 0 ? (
-        <TreeView.Root type="single" collapsible className="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2">
+        <TreeView.Root
+          type="single"
+          collapsible
+          className="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2"
+        >
           {filteredProjects.map((project) => (
             <TreeView.Item key={project.project_id} value={project.project_name}>
               <TreeView.Trigger>{project.project_name}</TreeView.Trigger>

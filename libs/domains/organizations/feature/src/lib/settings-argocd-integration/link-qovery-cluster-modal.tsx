@@ -80,9 +80,8 @@ export function LinkQoveryClusterModal({
     <div className="p-6">
       <h2 className="h4 mb-2 max-w-sm text-neutral">Link to Qovery cluster</h2>
       <p className="mb-6 text-sm text-neutral-subtle">
-        Select the Qovery cluster that corresponds to{' '}
-        <span className="text-neutral">{argoCdClusterName}</span>. Qovery will display the{' '}
-        <span className="text-neutral">{servicesDetected} detected services</span> across{' '}
+        Select the Qovery cluster that corresponds to <span className="text-neutral">{argoCdClusterName}</span>. Qovery
+        will display the <span className="text-neutral">{servicesDetected} detected services</span> across{' '}
         <span className="text-neutral">{environmentsDetected} environments</span>.
       </p>
 
