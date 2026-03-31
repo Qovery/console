@@ -36,12 +36,15 @@
   color: var(--accent-11);
 }
 
-.monaco-editor .mtk5 {
-  color: var(--info-11);
+.monaco-editor .mtk5,
+.monaco-editor .mtk6,
+.monaco-editor .mtk1,
+.monaco-editor .bracket-highlighting-0 {
+  color: var(--info-11) !important;
 }
 
-.monaco-editor .mtk1 {
-  color: var(--neutral-11);
+.monaco-editor .sticky-widget .sticky-line-content:hover {
+  background-color: var(--neutral-3) !important;
 }
 
 .monaco-editor .lines-content .core-guide-indent {
