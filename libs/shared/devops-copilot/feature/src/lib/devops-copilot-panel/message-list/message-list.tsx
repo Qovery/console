@@ -108,10 +108,7 @@ export function MessageList({
       )}
       <div className="sticky bottom-0 left-full z-10 ml-[-40px] w-fit">
         {!isAtBottom && (
-          <Button
-            onClick={handleScrollToBottom}
-            className="m-2 flex aspect-square items-center justify-center rounded-full"
-          >
+          <Button onClick={handleScrollToBottom} className="m-2" radius="full" iconOnly>
             <Icon iconName="arrow-down" iconStyle="light" />
           </Button>
         )}
