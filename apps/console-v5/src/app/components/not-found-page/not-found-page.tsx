@@ -56,7 +56,7 @@ export function NotFoundPage({ data, error }: NotFoundPageProps) {
             Go to home
           </Link>
         ) : (
-          <Link as="button" to="/login" search={{ redirect: '/' }} size="lg" className="mt-6 gap-2">
+          <Link as="button" to="/login" search={{ redirect: '/' }} size="md" className="mt-6 gap-2">
             Go to login
           </Link>
         )}
