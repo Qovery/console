@@ -108,11 +108,13 @@ export function CardInstanceStatus({
     <>
       <Section className="w-full cursor-default rounded-lg border border-neutral bg-surface-neutral">
         <div className="flex items-center justify-between px-5 pt-4">
-          <div className="flex items-center gap-1.5">
-            <Heading weight="medium">{title}</Heading>
+          <div className="flex items-center gap-1">
+            <Heading weight="medium" level={3}>
+              {title}
+            </Heading>
             <Tooltip content={description}>
               <span>
-                <Icon iconName="circle-info" iconStyle="regular" className="text-sm text-neutral-subtle" />
+                <Icon iconName="circle-info" iconStyle="regular" className="text-xs text-neutral-subtle" />
               </span>
             </Tooltip>
           </div>

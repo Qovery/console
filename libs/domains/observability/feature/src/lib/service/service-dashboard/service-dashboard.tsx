@@ -355,7 +355,9 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
         </Section>
         {hasPublicPort && (
           <Section className="gap-4">
-            <Heading weight="medium">Network</Heading>
+            <Heading weight="medium" level={2}>
+              Network
+            </Heading>
             <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
               <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
                 <NetworkRequestStatusChart
@@ -386,7 +388,9 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
         )}
         {hasOnlyPrivatePorts && (
           <Section className="gap-4">
-            <Heading weight="medium">Network</Heading>
+            <Heading weight="medium" level={2}>
+              Network
+            </Heading>
             <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
               <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
                 <PrivateNetworkRequestStatusChart
