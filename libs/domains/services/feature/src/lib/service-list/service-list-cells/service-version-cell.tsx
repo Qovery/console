@@ -34,49 +34,58 @@ type ServiceVersionCellProps = {
 export function ServiceVersionCell({ service, organizationId, projectId }: ServiceVersionCellProps) {
   const gitInfo = (service: Application | Job | Helm | Terraform, gitRepository?: ApplicationGitRepository) =>
     gitRepository && (
-      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-        <div className="flex w-44 flex-col gap-1.5">
-          <span className="flex items-center gap-2 text-neutral-subtle">
-            <Icon className="h-3 w-3 text-inherit" name={gitRepository.provider} />
-            <ExternalLink
-              href={gitRepository.url}
-              underline
-              color="neutral"
-              size="ssm"
-              withIcon={false}
-              className="font-normal"
-            >
-              <Truncate text={gitRepository.name} truncateLimit={20} />
-            </ExternalLink>
-          </span>
-          {gitRepository.branch && gitRepository.url && (
-            <span className="flex items-center gap-2 text-neutral-subtle">
-              <Icon className="h-3 w-3 text-inherit" iconName="code-branch" iconStyle="regular" />
+      <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-1">
+          <div className="flex w-44 flex-col gap-0.5">
+            <span className="flex items-center gap-2 text-neutral">
+              <Icon className="h-3 w-3 text-inherit" name={gitRepository.provider} />
               <ExternalLink
-                href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
+                href={gitRepository.url}
                 underline
                 color="neutral"
                 size="ssm"
                 withIcon={false}
                 className="font-normal"
               >
-                <Truncate text={gitRepository.branch} truncateLimit={20} />
+                <Truncate text={gitRepository.name} truncateLimit={20} />
               </ExternalLink>
             </span>
-          )}
+            {gitRepository.branch && gitRepository.url && (
+              <span className="flex items-center gap-2 text-neutral-subtle">
+                <Icon className="h-3 w-3 text-inherit" iconName="code-branch" iconStyle="regular" />
+                <ExternalLink
+                  href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
+                  underline
+                  color="neutral"
+                  size="ssm"
+                  withIcon={false}
+                  className="font-normal"
+                >
+                  <Truncate text={gitRepository.branch} truncateLimit={20} />
+                </ExternalLink>
+              </span>
+            )}
+          </div>
+          <LastCommit
+            organizationId={organizationId}
+            projectId={projectId}
+            gitRepository={gitRepository}
+            service={service}
+          />
         </div>
-        <LastCommit
-          organizationId={organizationId}
-          projectId={projectId}
-          gitRepository={gitRepository}
-          service={service}
-        />
+        {'auto_deploy' in service && service.auto_deploy && (
+          <Tooltip content="Auto-deploy">
+            <span>
+              <Icon className="text-xs text-neutral-subtle" iconName="arrows-rotate" />
+            </span>
+          </Tooltip>
+        )}
       </div>
     )
   const containerInfo = (containerImage?: Pick<ContainerResponse, 'image_name' | 'tag' | 'registry'>) =>
     containerImage && (
       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-        <div className="flex w-44 flex-col gap-1.5">
+        <div className="flex w-44 flex-col gap-0.5">
           <span className="flex items-center gap-2 text-neutral">
             <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
             <Tooltip
@@ -119,7 +128,7 @@ export function ServiceVersionCell({ service, organizationId, projectId }: Servi
 
   const datasourceInfo = (datasource?: Pick<Database, 'accessibility' | 'mode' | 'type' | 'version'>) =>
     datasource && (
-      <div className="flex flex-col gap-1.5 text-ssm text-neutral">
+      <div className="flex flex-col gap-0.5 text-ssm text-neutral">
         <span className="flex items-center gap-2">
           <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
           {datasource.type.toLowerCase().replace('sql', 'SQL').replace('db', 'DB')}

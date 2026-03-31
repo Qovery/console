@@ -47,9 +47,9 @@ const EnvironmentLastDeploymentSkeleton = () => {
         <div className="flex items-center gap-6">
           <Skeleton width={83} height={20} />
           <div className="flex gap-1.5">
-            <Skeleton width={24} height={24} />
-            <Skeleton width={24} height={24} />
-            <Skeleton width={24} height={24} />
+            <Skeleton width={24} height={20} />
+            <Skeleton width={24} height={20} />
+            <Skeleton width={24} height={20} />
           </div>
           <Skeleton width={74} height={20} />
         </div>

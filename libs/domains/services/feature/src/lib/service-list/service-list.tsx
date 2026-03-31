@@ -37,12 +37,16 @@ import {
   ServiceRunningStatusCell,
   ServiceVersionCell,
 } from './service-list-cells'
+import { ServiceRow } from './service-row/service-row'
 
 const { Table } = TablePrimitives
 
 export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
   environment: Environment
 }
+
+export const gridLayoutClassName =
+  'grid w-full grid-cols-[minmax(250px,1.5fr)_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]'
 
 export function ServiceList({ className, containerClassName, environment, ...props }: ServiceListProps) {
   const clusterId = environment.cluster_id || ''
@@ -248,24 +252,48 @@ export function ServiceList({ className, containerClassName, environment, ...pro
 
   if (services.length === 0) {
     return (
-      <EmptyState
-        title="No service found"
-        description="You can create a service from the button on the top"
-        className="mt-2 rounded-t-sm bg-white pt-10"
-      >
+      <EmptyState title="No service found" description="You can create a service from the button on the top">
         <Link
           as="button"
-          size="lg"
-          className="mt-5 gap-2"
+          size="md"
+          color="neutral"
+          className="gap-2"
           to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
           params={{ organizationId, projectId, environmentId }}
         >
-          New service
           <Icon iconName="circle-plus" iconStyle="regular" />
+          New service
         </Link>
       </EmptyState>
     )
   }
+
+  return (
+    <Table.Root className="w-full" containerClassName="rounded-none border-none">
+      <Table.Header>
+        <Table.Row className={twMerge('w-full items-center text-xs', gridLayoutClassName)}>
+          <Table.ColumnHeaderCell className="flex h-9 items-center text-neutral-subtle">Service</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+            Last deployment
+          </Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+            Target version
+          </Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell className="flex h-9 items-center justify-end border-l border-neutral text-left text-neutral-subtle">
+            Actions
+          </Table.ColumnHeaderCell>
+        </Table.Row>
+      </Table.Header>
+
+      <Table.Body className="divide-y divide-neutral">
+        {table.getRowModel().rows.map((row) => (
+          <Fragment key={row.id}>
+            <ServiceRow service={row.original} environment={environment} />
+          </Fragment>
+        ))}
+      </Table.Body>
+    </Table.Root>
+  )
 
   return (
     <div>

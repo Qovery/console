@@ -56,7 +56,7 @@ export function StatusChip({
   variant = 'default',
 }: StatusChipProps) {
   const iconClass = twMerge('h-full w-full', variant === 'monochrome' && 'text-neutral-subtle')
-  const wrapperClassName = twMerge('h-[14px] w-[14px]', className)
+  const wrapperClassName = twMerge('inline-flex h-[14px] w-[14px] items-center justify-center', className)
 
   if (!status)
     return (
