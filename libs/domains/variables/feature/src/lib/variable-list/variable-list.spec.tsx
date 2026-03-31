@@ -223,6 +223,13 @@ describe('VariableList', () => {
     expect(within(builtInSection as HTMLElement).getAllByRole('row')).toHaveLength(2)
     expect(screen.getAllByTestId('doppler-tag')).toHaveLength(1)
   })
+  it('should display Service for service-backed scope values', () => {
+    renderWithProviders(<VariableList {...variableListProps} />)
+    const row = screen.getByText('grafana_config').closest('tr')
+    expect(row).toBeTruthy()
+    expect(within(row as HTMLElement).getByText('Service')).toBeInTheDocument()
+    expect(within(row as HTMLElement).queryByText('application')).not.toBeInTheDocument()
+  })
   it('should filter variables by name', async () => {
     const { userEvent } = renderWithProviders(<VariableList {...variableListProps} />)
     const customSection = screen.getByRole('heading', { name: /custom variables/i }).closest('section')

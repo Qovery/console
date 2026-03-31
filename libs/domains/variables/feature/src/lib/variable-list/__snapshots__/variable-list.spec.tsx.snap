@@ -549,7 +549,7 @@ exports[`VariableList should match snapshot 1`] = `
                   <span
                     class="text-sm font-medium capitalize"
                   >
-                    application
+                    Service
                   </span>
                 </td>
                 <td
@@ -856,7 +856,7 @@ exports[`VariableList should match snapshot 1`] = `
                   <span
                     class="text-sm font-medium capitalize"
                   >
-                    application
+                    Service
                   </span>
                 </td>
                 <td
@@ -1106,7 +1106,7 @@ exports[`VariableList should match snapshot 1`] = `
                   <span
                     class="text-sm font-medium capitalize"
                   >
-                    application
+                    Service
                   </span>
                 </td>
                 <td
