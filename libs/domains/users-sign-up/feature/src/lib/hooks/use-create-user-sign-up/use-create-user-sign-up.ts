@@ -10,6 +10,7 @@ function getUtmParams() {
     utm_campaign: localStorage.getItem('utm_campaign'),
     utm_term: localStorage.getItem('utm_term'),
     utm_content: localStorage.getItem('utm_content'),
+    utm_landing_page: localStorage.getItem('utm_landing_page'),
     gclid: localStorage.getItem('gclid'),
   }
 }
