@@ -146,11 +146,10 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                           <Tooltip content="Manage Deployment">
                             <div className="flex h-full w-full items-center justify-center">
                               {match(state)
-                                .with('QUEUED', () => <Icon iconName="clock" iconStyle="regular" className="mr-3" />)
+                                .with('QUEUED', () => <Icon iconName="clock" iconStyle="regular" />)
                                 .otherwise(() => (
-                                  <Icon iconName="loader" className="mr-3 animate-spin" />
+                                  <Icon iconName="loader" className="animate-spin" />
                                 ))}
-                              <Icon iconName="chevron-down" />
                             </div>
                           </Tooltip>
                         </Button>
