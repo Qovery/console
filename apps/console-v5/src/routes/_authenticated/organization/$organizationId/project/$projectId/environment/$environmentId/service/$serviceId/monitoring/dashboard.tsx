@@ -3,7 +3,7 @@ import { createFileRoute, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { useCallback, useEffect, useMemo } from 'react'
 import { match } from 'ts-pattern'
-import { useCluster } from '@qovery/domains/clusters/feature'
+import { useCluster, useClusterRunningStatus, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
   EnableObservabilityButtonContactUs,
@@ -32,6 +32,16 @@ function RouteComponent() {
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: serviceStatus } = useDeploymentStatus({ environmentId, serviceId })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
+
+  const { data: clusterRunningStatus } = useClusterRunningStatus({
+    organizationId: environment?.organization.id ?? '',
+    clusterId: environment?.cluster_id ?? '',
+  })
+  const { data: clusterStatus } = useClusterStatus({
+    organizationId: environment?.organization.id ?? '',
+    clusterId: environment?.cluster_id ?? '',
+    enabled: Boolean(environment?.cluster_id),
+  })
   const { data: cluster } = useCluster({
     organizationId: environment?.organization.id ?? '',
     clusterId: environment?.cluster_id ?? '',
@@ -52,9 +62,12 @@ function RouteComponent() {
     [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]
   )
 
+  const isClusterRunning = useMemo(() => clusterStatus?.is_deployed === true, [clusterStatus?.is_deployed])
+
+  // If the cluster is running and the service stopped we can display the charts
   const noMetricsAvailable = useMemo(
-    () => serviceStatus?.state === 'STOPPED' || serviceStatus?.state === 'READY',
-    [serviceStatus?.state]
+    () => serviceStatus?.state === 'READY' || (serviceStatus?.state === 'STOPPED' && !isClusterRunning),
+    [isClusterRunning, serviceStatus?.state]
   )
 
   const setDashboardQueryParams = useCallback(
@@ -138,7 +151,9 @@ function PlaceholderCard({
       <div className="flex flex-col justify-between gap-0.5">
         <div className="flex items-center justify-between gap-2.5">
           <div className="flex items-center gap-2.5">
-            <Heading weight="medium">{title}</Heading>
+            <Heading weight="medium" level={2}>
+              {title}
+            </Heading>
             {status && (
               <Tooltip content="Default threshold is 250ms for percentiles">
                 <Badge color={status === 'RED' ? 'red' : 'green'} size="base">
