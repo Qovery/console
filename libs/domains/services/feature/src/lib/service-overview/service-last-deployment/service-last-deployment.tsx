@@ -132,7 +132,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
     showGitCommit && gitRepository && service ? (
       <span className="pointer-events-auto inline-flex items-center gap-2.5">
         <DotSeparator />
-        <span className="flex items-center gap-2.5" onClick={preventParentLinkNavigation}>
+        <span className="flex items-center gap-2.5 font-normal" onClick={preventParentLinkNavigation}>
           <LastCommit
             organizationId={organizationId}
             projectId={projectId}

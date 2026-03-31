@@ -15,7 +15,7 @@ import {
   StatusChip,
   Tooltip,
 } from '@qovery/shared/ui'
-import { dateUTCString, formatDurationMinutesSeconds } from '@qovery/shared/util-dates'
+import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { DropdownServices } from '../environment-deployment-list/dropdown-services/dropdown-services'
 import { isDeploymentHistory } from '../environment-deployment-list/environment-deployment-list'
 import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy-environment'
@@ -71,6 +71,17 @@ const EnvironmentLastDeploymentContent = () => {
     [deploymentHistory]
   )
   const trigger_action = useMemo(() => lastDeployment?.trigger_action || 'UNKNOWN', [lastDeployment])
+  const deploymentStartedLabel = useMemo(
+    () =>
+      match(lastDeployment?.status)
+        .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', () => 'Running since')
+        .otherwise(() => undefined),
+    [lastDeployment?.status]
+  )
+  const deploymentRelativeTime = useMemo(
+    () => (lastDeployment ? `${timeAgo(new Date(lastDeployment.auditing_data.created_at))} ago` : ''),
+    [lastDeployment]
+  )
 
   const logsLink = useLinkProps({
     to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments',
@@ -150,9 +161,9 @@ const EnvironmentLastDeploymentContent = () => {
               )}
               <DotSeparator />
               <div className="text-neutral-subtle">
-                Lasted{' '}
+                {deploymentStartedLabel ? `${deploymentStartedLabel} ` : ''}
                 <Tooltip content={dateUTCString(lastDeployment.auditing_data.created_at)}>
-                  <span>{formatDurationMinutesSeconds(lastDeployment.total_duration ?? '')}</span>
+                  <span>{deploymentRelativeTime}</span>
                 </Tooltip>
               </div>
             </div>
