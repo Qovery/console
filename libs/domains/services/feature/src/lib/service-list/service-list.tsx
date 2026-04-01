@@ -42,7 +42,7 @@ export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
 }
 
 export const tableGridLayoutClassName =
-  'grid w-full grid-cols-[48px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]'
+  'grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]'
 
 export const ServiceListSkeleton = () => {
   return (
@@ -153,8 +153,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         enableColumnFilter: false,
         enableSorting: false,
         header: ({ table }) => (
-          <div className="h-5">
-            {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
+          <div className="flex h-full w-full items-center pl-4">
             <Checkbox
               checked={
                 table.getIsSomeRowsSelected()
@@ -188,15 +187,17 @@ export function ServiceList({ className, containerClassName, environment, ...pro
           )
 
           return (
-            <label className="absolute inset-y-0 left-0 flex items-center p-4" onClick={(e) => e.stopPropagation()}>
-              {isDisabled ? (
-                <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
-                  <span>{checkbox}</span>
-                </Tooltip>
-              ) : (
-                checkbox
-              )}
-            </label>
+            <div className="flex h-full w-full items-center pl-4">
+              <label onClick={(e) => e.stopPropagation()}>
+                {isDisabled ? (
+                  <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
+                    <span>{checkbox}</span>
+                  </Tooltip>
+                ) : (
+                  checkbox
+                )}
+              </label>
+            </div>
           )
         },
       }),
@@ -346,9 +347,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                 {headerGroup.headers.map((header, i) => (
                   <Table.ColumnHeaderCell
                     key={header.id}
-                    className={clsx('relative flex items-center', {
-                      'border-r border-neutral last:border-r-0': i !== 0 && i !== 1,
-                    })}
+                    className={twMerge('relative flex items-center', i === 1 || i === 0 ? 'border-none p-0' : '')}
                   >
                     {header.column.getCanFilter() ? (
                       <TableFilter column={header.column} />
@@ -391,9 +390,10 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                   {row.getVisibleCells().map((cell, i) => (
                     <Table.Cell
                       key={cell.id}
-                      className={clsx('relative flex items-center px-4', {
-                        'border-r border-neutral last:border-r-0': i !== 0 && i !== 1,
-                      })}
+                      className={twMerge(
+                        'relative flex items-center border-r border-neutral last:border-r-0',
+                        i === 1 || i === 0 ? 'border-none p-0' : ''
+                      )}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </Table.Cell>
