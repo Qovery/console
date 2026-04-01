@@ -347,77 +347,75 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
   }
 
   return (
-    <div className="sticky bottom-4">
-      <div className="relative">
+    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-overlay flex justify-center px-4">
+      <div
+        className={twMerge(
+          'w-full max-w-[500px]',
+          hasSelection ? 'pointer-events-auto' : 'pointer-events-none h-0 overflow-hidden'
+        )}
+      >
         <div
           className={twMerge(
-            'absolute bottom-4 left-1/2 w-[448px] -translate-x-1/2',
-            hasSelection ? '' : 'h-0 overflow-hidden'
+            'flex items-center justify-between rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-sm font-medium text-neutralInvert shadow-xl',
+            hasSelection ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
           )}
         >
-          <div
-            className={twMerge(
-              'flex h-[52px] items-center justify-between rounded bg-neutral-500 pl-5 pr-2 text-xs font-medium text-white shadow-xl',
-              hasSelection ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
-            )}
-          >
-            <span>
-              {selectedRows.length} selected {pluralize(selectedRows.length, 'service')}
-            </span>
-            <button className="h-8 px-3 underline" type="button" onClick={() => resetRowSelection()}>
-              Deselect
-            </button>
-            <div className="flex gap-3">
-              <Tooltip content="No deployable services" disabled={deployableServices.length !== 0}>
-                <Button
-                  color="brand"
-                  size="md"
-                  className="items-center gap-2"
-                  onClick={() => handleDeployAllServices()}
-                  disabled={deployableServices.length === 0}
-                >
-                  Deploy selected <Icon iconName="play" />
+          <span className="truncate">
+            {selectedRows.length} selected {pluralize(selectedRows.length, 'service')}
+          </span>
+          <button className="h-8 px-3 underline" type="button" onClick={() => resetRowSelection()}>
+            Deselect
+          </button>
+          <div className="flex gap-3">
+            <Tooltip content="No deployable services" disabled={deployableServices.length !== 0}>
+              <Button
+                color="brand"
+                size="md"
+                className="items-center gap-2"
+                onClick={() => handleDeployAllServices()}
+                disabled={deployableServices.length === 0}
+              >
+                Deploy selected <Icon iconName="play" />
+              </Button>
+            </Tooltip>
+            <DropdownMenu.Root modal={false}>
+              <DropdownMenu.Trigger asChild>
+                <Button color="neutral" size="md" variant="surface" className="items-center gap-2">
+                  More <Icon iconName="angle-down" />
                 </Button>
-              </Tooltip>
-              <DropdownMenu.Root modal={false}>
-                <DropdownMenu.Trigger asChild>
-                  <Button color="neutral" size="md" variant="surface" className="items-center gap-2">
-                    More <Icon iconName="angle-down" />
-                  </Button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <Tooltip content="No restartable services" disabled={restartableServices.length !== 0}>
-                    <DropdownMenu.Item
-                      icon={<Icon iconName="rotate-right" />}
-                      onSelect={handleRestartAllServices}
-                      disabled={restartableServices.length === 0}
-                    >
-                      Restart selected
-                    </DropdownMenu.Item>
-                  </Tooltip>
-                  <Tooltip content="No stoppable services" disabled={stoppableServices.length !== 0}>
-                    <DropdownMenu.Item
-                      icon={<Icon iconName="circle-stop" />}
-                      onSelect={handleStopAllServices}
-                      disabled={stoppableServices.length === 0}
-                    >
-                      Stop selected
-                    </DropdownMenu.Item>
-                  </Tooltip>
-                  <DropdownMenu.Separator />
-                  <Tooltip content="No deletable services" disabled={deletableServices.length !== 0}>
-                    <DropdownMenu.Item
-                      color="red"
-                      icon={<Icon iconName="trash" />}
-                      onSelect={handleDeleteAllServices}
-                      disabled={deletableServices.length === 0}
-                    >
-                      Remove selected
-                    </DropdownMenu.Item>
-                  </Tooltip>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-            </div>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                <Tooltip content="No restartable services" disabled={restartableServices.length !== 0}>
+                  <DropdownMenu.Item
+                    icon={<Icon iconName="rotate-right" />}
+                    onSelect={handleRestartAllServices}
+                    disabled={restartableServices.length === 0}
+                  >
+                    Restart selected
+                  </DropdownMenu.Item>
+                </Tooltip>
+                <Tooltip content="No stoppable services" disabled={stoppableServices.length !== 0}>
+                  <DropdownMenu.Item
+                    icon={<Icon iconName="circle-stop" />}
+                    onSelect={handleStopAllServices}
+                    disabled={stoppableServices.length === 0}
+                  >
+                    Stop selected
+                  </DropdownMenu.Item>
+                </Tooltip>
+                <DropdownMenu.Separator />
+                <Tooltip content="No deletable services" disabled={deletableServices.length !== 0}>
+                  <DropdownMenu.Item
+                    color="red"
+                    icon={<Icon iconName="trash" />}
+                    onSelect={handleDeleteAllServices}
+                    disabled={deletableServices.length === 0}
+                  >
+                    Remove selected
+                  </DropdownMenu.Item>
+                </Tooltip>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           </div>
         </div>
       </div>
