@@ -21,6 +21,7 @@ import {
   EmptyState,
   Icon,
   Link,
+  Section,
   Skeleton,
   StatusChip,
   TableFilter,
@@ -38,6 +39,55 @@ const { Table } = TablePrimitives
 
 export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
   environment: Environment
+}
+
+export const tableGridLayoutClassName =
+  'grid w-full grid-cols-[48px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]'
+
+export const ServiceListSkeleton = () => {
+  return (
+    <div>
+      <div className="flex gap-2 px-3.5 py-2">
+        <Skeleton height={24} width={80} />
+        <Skeleton height={24} width={90} />
+      </div>
+      <hr className="w-full border-neutral" />
+      <div className="flex flex-col gap-8">
+        <Section className="flex flex-col gap-3.5">
+          <Table.Root className="w-full" containerClassName="rounded-lg border-none">
+            <Table.Header>
+              <Table.Row className={tableGridLayoutClassName}>
+                {[...Array(6)].map((_, index) => (
+                  <Table.ColumnHeaderCell key={index} className="first:border-r">
+                    {/* <Skeleton height={16} width={100} /> */}
+                  </Table.ColumnHeaderCell>
+                ))}
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {[...Array(3)].map((_, index) => (
+                <Table.Row key={index} className={tableGridLayoutClassName}>
+                  {[...Array(6)].map((_, index) => (
+                    <Table.Cell key={index} className="flex h-14 items-center first:border-r">
+                      {index === 0 ? (
+                        <div className="flex items-center justify-between">
+                          <Skeleton height={16} width={16} />
+                        </div>
+                      ) : index === 2 ? (
+                        <Skeleton height={16} width={16} rounded />
+                      ) : (
+                        <Skeleton height={24} width={120} />
+                      )}
+                    </Table.Cell>
+                  ))}
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Root>
+        </Section>
+      </div>
+    </div>
+  )
 }
 
 export function ServiceList({ className, containerClassName, environment, ...props }: ServiceListProps) {
@@ -180,7 +230,6 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         header: 'Target version',
         enableColumnFilter: false,
         enableSorting: false,
-        size: 30,
         cell: (info) => {
           return (
             <ServiceVersionCell service={info.row.original} organizationId={organizationId} projectId={projectId} />
@@ -279,12 +328,13 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         >
           <Table.Header className="border-t border-neutral">
             {table.getHeaderGroups().map((headerGroup) => (
-              <Table.Row key={headerGroup.id}>
+              <Table.Row key={headerGroup.id} className={twMerge('w-full', tableGridLayoutClassName)}>
                 {headerGroup.headers.map((header, i) => (
                   <Table.ColumnHeaderCell
                     key={header.id}
-                    className={clsx('relative', { 'border-r border-neutral last:border-r-0': i !== 0 && i !== 1 })}
-                    style={{ width: i === 0 || i === 2 ? '20px' : `${header.getSize()}%` }}
+                    className={clsx('relative flex items-center', {
+                      'border-r border-neutral last:border-r-0': i !== 0 && i !== 1,
+                    })}
                   >
                     {header.column.getCanFilter() ? (
                       <TableFilter column={header.column} />
@@ -316,7 +366,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
                 <Table.Row
-                  className={twMerge('h-[68px] ')}
+                  className={twMerge('w-full cursor-pointer hover:bg-surface-neutral-subtle', tableGridLayoutClassName)}
                   onClick={() => {
                     navigate({
                       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
@@ -327,8 +377,9 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                   {row.getVisibleCells().map((cell, i) => (
                     <Table.Cell
                       key={cell.id}
-                      className={clsx('relative', { 'border-r border-neutral last:border-r-0': i !== 0 && i !== 1 })}
-                      style={{ width: i === 0 || i === 2 ? '20px' : `${cell.column.getSize()}%` }}
+                      className={clsx('relative flex items-center px-4', {
+                        'border-r border-neutral last:border-r-0': i !== 0 && i !== 1,
+                      })}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </Table.Cell>
