@@ -916,7 +916,7 @@ export function ServiceActions({
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
 
   if (!service || !deploymentStatus)
-    return <Skeleton height={variant === 'default' ? 36 : 28} width={variant === 'default' ? 184 : 67} />
+    return <Skeleton height={variant === 'default' ? 26 : 28} width={variant === 'default' ? 96 : 67} />
 
   return (
     <div className={twMerge('flex items-center gap-1.5', variant === 'header' && 'flex-row-reverse gap-2')}>
