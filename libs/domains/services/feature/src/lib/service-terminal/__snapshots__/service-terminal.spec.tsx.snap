@@ -7,22 +7,106 @@ exports[`ServiceTerminal should match snapshot 1`] = `
       class="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-none border-0 bg-background"
     >
       <div
-        class="flex h-11 justify-between border-b border-neutral px-4 py-2"
+        class="flex h-14 justify-between border-b border-neutral p-3"
       >
         <div
-          class="flex gap-2"
-        />
-      </div>
-      <div
-        class="relative h-full min-h-[248px] flex-1 border-neutral bg-background px-4 py-2"
-      >
-        <div
-          class="flex h-40 items-start justify-center p-5"
+          class="flex gap-2 [&_input]:w-72"
         >
           <div
-            class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
-            data-testid="spinner"
+            class="relative"
+          >
+            <div
+              class="relative z-10"
+            >
+              <button
+                class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral hidden"
+              >
+                <span>
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-xmark ml-2 text-sm"
+                  />
+                </span>
+              </button>
+              <div
+                class="relative"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle"
+                />
+                <input
+                  aria-activedescendant=""
+                  aria-autocomplete="list"
+                  aria-controls="downshift-:r6:-menu"
+                  aria-expanded="false"
+                  aria-labelledby="downshift-:r6:-label"
+                  autocomplete="off"
+                  class="h-8 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-sm placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color]"
+                  id="downshift-:r6:-input"
+                  placeholder="Select a pod to connect to"
+                  role="combobox"
+                  value=""
+                />
+              </div>
+              <div
+                class="mt-1 max-h-40 w-full min-w-56 overflow-y-auto rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] hidden"
+              >
+                <ul
+                  aria-labelledby="downshift-:r6:-label"
+                  class="m-0 list-none p-0"
+                  id="downshift-:r6:-menu"
+                  role="listbox"
+                >
+                  <p
+                    class="flex w-full flex-col items-center py-2 text-center text-xs text-neutral-subtle"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-regular fa-wave-pulse mb-1"
+                    />
+                    No results found
+                  </p>
+                </ul>
+              </div>
+            </div>
+            <div
+              class="pointer-events-none absolute right-2.5 top-1/2 z-20 -translate-y-1/2 text-xs text-neutral-subtle"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-angle-down "
+              />
+            </div>
+          </div>
+        </div>
+        <a
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral gap-1.5"
+          href="https://www.qovery.com/docs/cli/overview"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <i
+            aria-hidden="true"
+            class="fa-regular fa-book "
           />
+          CLI docs
+        </a>
+      </div>
+      <div
+        class="flex h-full flex-1 flex-col bg-background px-3 pt-5"
+      >
+        <div
+          class="relative min-h-0 flex-1"
+        >
+          <div
+            class="absolute inset-0 flex items-start justify-center border-neutral bg-background pt-3"
+          >
+            <div
+              class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
+              data-testid="spinner"
+            />
+          </div>
         </div>
       </div>
     </div>

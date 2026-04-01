@@ -34,6 +34,7 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
       <Button
         color="neutral"
         variant="surface"
+        size="md"
         className={!selectedItem ? 'hidden' : ''}
         onClick={() => {
           reset()
@@ -47,11 +48,14 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
           <Icon iconName="xmark" className="ml-2 text-sm" />
         </span>
       </Button>
-      <div className={selectedItem ? 'hidden' : ''}>
-        <Icon iconName="magnifying-glass" className="absolute left-2.5 top-1.5 text-xs text-neutral-subtle" />
+      <div className={clsx({ hidden: selectedItem }, 'relative')}>
+        <Icon
+          iconName="magnifying-glass"
+          className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle"
+        />
         <input
           placeholder={placeholder}
-          className="h-7 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color]"
+          className="h-8 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-sm placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color]"
           {...getInputProps({ ref: inputRef })}
         />
       </div>
@@ -63,7 +67,7 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
           }
         )}
       >
-        <ul {...getMenuProps()}>
+        <ul className="m-0 list-none p-0" {...getMenuProps()}>
           {isOpen && items.length > 0 ? (
             items.map((v, index) => (
               <li
@@ -81,8 +85,8 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
               </li>
             ))
           ) : (
-            <p className="flex w-full flex-col py-2 text-center text-xs text-neutral-subtle">
-              <Icon iconName="wave-pulse" className="mb-1 block" />
+            <p className="flex w-full flex-col items-center py-2 text-center text-xs text-neutral-subtle">
+              <Icon iconName="wave-pulse" className="mb-1" />
               No results found
             </p>
           )}
