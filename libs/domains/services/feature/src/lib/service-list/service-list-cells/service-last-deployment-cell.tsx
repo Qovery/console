@@ -23,15 +23,17 @@ export function ServiceLastDeploymentCell({ service, environment }: ServiceLastD
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             {deploymentStatus?.status_details?.status === 'ERROR' && (
-              <DevopsCopilotTroubleshootTrigger
-                source="service-deployment-list"
-                deploymentId={deploymentStatus?.execution_id}
-                message={
-                  deploymentStatus?.execution_id
-                    ? `Why did my deployment fail? (execution id: ${deploymentStatus?.execution_id})`
-                    : 'Why did my deployment fail?'
-                }
-              />
+              <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+                <DevopsCopilotTroubleshootTrigger
+                  source="service-deployment-list"
+                  deploymentId={deploymentStatus?.execution_id}
+                  message={
+                    deploymentStatus?.execution_id
+                      ? `Why did my deployment fail? (execution id: ${deploymentStatus?.execution_id})`
+                      : 'Why did my deployment fail?'
+                  }
+                />
+              </div>
             )}
             <StatusChip status={deploymentStatus?.status_details?.status} variant="monochrome" />
           </div>
