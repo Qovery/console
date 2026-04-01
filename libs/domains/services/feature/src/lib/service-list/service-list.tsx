@@ -28,7 +28,7 @@ import {
   TablePrimitives,
   Tooltip,
 } from '@qovery/shared/ui'
-import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { twMerge } from '@qovery/shared/util-js'
 import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
 import { useServices } from '../hooks/use-services/use-services'
 import { ServiceActions } from '../service-actions/service-actions'
