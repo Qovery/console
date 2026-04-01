@@ -379,7 +379,10 @@ export function ServiceList({ className, containerClassName, environment, ...pro
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
                 <Table.Row
-                  className={twMerge('w-full cursor-pointer hover:bg-surface-neutral-subtle', tableGridLayoutClassName)}
+                  className={twMerge(
+                    'h-16 w-full cursor-pointer hover:bg-surface-neutral-subtle',
+                    tableGridLayoutClassName
+                  )}
                   onClick={() => {
                     navigate({
                       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
@@ -391,7 +394,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                     <Table.Cell
                       key={cell.id}
                       className={twMerge(
-                        'relative flex items-center border-r border-neutral last:border-r-0',
+                        'relative flex h-full items-center border-r border-neutral last:border-r-0',
                         i === 1 || i === 0 ? 'border-none p-0' : ''
                       )}
                     >
