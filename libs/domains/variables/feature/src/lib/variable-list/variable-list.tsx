@@ -14,7 +14,7 @@ import {
 import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
 import { Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { ExternalServiceEnum, IconEnum } from '@qovery/shared/enums'
+import { ExternalServiceEnum, IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
 import {
   Button,
@@ -36,6 +36,7 @@ import {
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import {
   environmentVariableFile,
+  generateScopeLabel,
   getEnvironmentVariableFileMountPath,
   pluralize,
   twMerge,
@@ -50,6 +51,28 @@ import { VariableListSkeleton } from './variable-list-skeleton'
 const { Table } = TablePrimitives
 
 type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
+
+function isServiceScopeServiceType(serviceType: VariableResponse['service_type']): boolean {
+  return match(serviceType)
+    .with(
+      ServiceTypeEnum.APPLICATION,
+      ServiceTypeEnum.CONTAINER,
+      ServiceTypeEnum.DATABASE,
+      ServiceTypeEnum.HELM,
+      ServiceTypeEnum.JOB,
+      ServiceTypeEnum.TERRAFORM,
+      () => true
+    )
+    .otherwise(() => false)
+}
+
+function getVariableScopeLabel(variable: VariableResponse): string {
+  if (isServiceScopeServiceType(variable.service_type)) {
+    return 'Service'
+  }
+
+  return generateScopeLabel(variable.scope)
+}
 
 export type VariableListProps = {
   className?: string
@@ -238,7 +261,7 @@ export function VariableList({
                   {variable.owned_by === ExternalServiceEnum.DOPPLER && (
                     <span
                       data-testid="doppler-tag"
-                      className="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral-50"
+                      className="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral"
                     >
                       {variable.owned_by}
                     </span>
@@ -436,7 +459,8 @@ export function VariableList({
             },
           }),
         ]),
-      columnHelper.accessor('scope', {
+      columnHelper.accessor(getVariableScopeLabel, {
+        id: 'scope',
         header: 'Scope',
         enableColumnFilter: true,
         filterFn: 'arrIncludesSome',
@@ -455,7 +479,12 @@ export function VariableList({
           },
         },
         cell: (info) => {
-          return <span className="text-sm font-medium capitalize">{info.getValue().toLowerCase()}</span>
+          const scopeLabel = info.getValue()
+          return (
+            <span className="text-sm font-medium capitalize">
+              {scopeLabel === 'Service' ? scopeLabel : scopeLabel.toLowerCase()}
+            </span>
+          )
         },
       }),
       columnHelper.accessor('updated_at', {

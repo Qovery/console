@@ -549,7 +549,7 @@ exports[`VariableList should match snapshot 1`] = `
                   <span
                     class="text-sm font-medium capitalize"
                   >
-                    application
+                    Service
                   </span>
                 </td>
                 <td
@@ -856,7 +856,7 @@ exports[`VariableList should match snapshot 1`] = `
                   <span
                     class="text-sm font-medium capitalize"
                   >
-                    application
+                    Service
                   </span>
                 </td>
                 <td
@@ -903,7 +903,7 @@ exports[`VariableList should match snapshot 1`] = `
                         class="flex items-center truncate"
                       >
                         <span
-                          class="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral-50"
+                          class="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral"
                           data-testid="doppler-tag"
                         >
                           DOPPLER
@@ -1106,7 +1106,7 @@ exports[`VariableList should match snapshot 1`] = `
                   <span
                     class="text-sm font-medium capitalize"
                   >
-                    application
+                    Service
                   </span>
                 </td>
                 <td
