@@ -4,7 +4,7 @@ exports[`ServiceList should match snapshot 1`] = `
 <div>
   <div>
     <div
-      class="flex gap-2 px-4 py-2"
+      class="flex gap-2 bg-surface-neutral px-4 py-2"
     >
       <div
         aria-busy="true"
@@ -432,7 +432,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   <div
                     aria-busy="true"
                     class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded"
-                    style="width: 184px; height: 36px;"
+                    style="width: 96px; height: 26px;"
                   />
                 </div>
               </td>
@@ -784,7 +784,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   <div
                     aria-busy="true"
                     class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded"
-                    style="width: 184px; height: 36px;"
+                    style="width: 96px; height: 26px;"
                   />
                 </div>
               </td>
@@ -1456,7 +1456,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   <div
                     aria-busy="true"
                     class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded"
-                    style="width: 184px; height: 36px;"
+                    style="width: 96px; height: 26px;"
                   />
                 </div>
               </td>
@@ -1921,7 +1921,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   <div
                     aria-busy="true"
                     class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded"
-                    style="width: 184px; height: 36px;"
+                    style="width: 96px; height: 26px;"
                   />
                 </div>
               </td>
