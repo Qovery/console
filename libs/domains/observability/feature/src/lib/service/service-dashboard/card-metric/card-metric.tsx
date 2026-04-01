@@ -66,11 +66,13 @@ export function CardMetric({
       )}
       {...props}
     >
-      <div className="flex flex-col justify-between gap-0.5">
+      <div className="flex flex-col justify-between">
         <div className="flex items-center justify-between gap-2.5">
           <div className="flex items-center gap-2.5">
             <Skeleton className="items-center gap-1.5" show={isLoading} width={170} height={16}>
-              <Heading weight="medium">{title}</Heading>
+              <Heading weight="medium" level={3}>
+                {title}
+              </Heading>
               {status && (
                 <Tooltip content="Default threshold is 250ms for percentiles">
                   <Badge className="ml-1.5 gap-1 font-medium" color={status === 'RED' ? 'red' : 'green'} size="base">

@@ -1,7 +1,7 @@
 import { Outlet } from '@tanstack/react-router'
 import { createFileRoute, useMatchRoute, useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
-import { useCluster } from '@qovery/domains/clusters/feature'
+import { useCluster, useClusterRunningStatusSocket } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ErrorBoundary, LoaderSpinner, Sidebar } from '@qovery/shared/ui'
 
@@ -54,6 +54,11 @@ function RouteComponent() {
   }
 
   const LINKS_MONITORING = hasAlerting ? [dashboardLink, alertsLink] : [dashboardLink]
+
+  useClusterRunningStatusSocket({
+    organizationId: environment?.organization.id ?? '',
+    clusterId: environment?.cluster_id ?? '',
+  })
 
   return (
     <div className="flex min-h-0 flex-1">

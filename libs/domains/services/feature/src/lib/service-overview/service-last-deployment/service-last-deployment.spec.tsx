@@ -1,8 +1,10 @@
+import { act } from '@testing-library/react'
 import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceLastDeployment } from './service-last-deployment'
 
 const mockUseDeploymentHistory = jest.fn()
+const mockLastCommit = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -14,7 +16,10 @@ jest.mock('../../hooks/use-deployment-history/use-deployment-history', () => ({
 }))
 
 jest.mock('../../last-commit/last-commit', () => ({
-  LastCommit: () => <span>mock-last-commit</span>,
+  LastCommit: (props: unknown) => {
+    mockLastCommit(props)
+    return <button type="button">mock-last-commit</button>
+  },
 }))
 
 jest.mock('../../last-commit-author/last-commit-author', () => ({
@@ -24,7 +29,7 @@ jest.mock('../../last-commit-author/last-commit-author', () => ({
 jest.mock('@qovery/shared/util-dates', () => ({
   ...jest.requireActual('@qovery/shared/util-dates'),
   dateUTCString: () => 'mocked-date',
-  timeAgo: () => 'mocked-time-ago',
+  timeAgo: () => 'mocked-time',
 }))
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -59,6 +64,21 @@ const baseDeployment = {
   total_duration: 'PT16.503S',
 }
 
+const serviceWithGitRepository = {
+  id: 'service-123',
+  name: 'my-app',
+  serviceType: 'APPLICATION',
+  environment: { id: 'env-1' },
+  git_repository: {
+    provider: 'GITHUB',
+    owner: 'qovery',
+    url: 'https://github.com/Qovery/console',
+    name: 'Qovery/console',
+    branch: 'main',
+    root_path: '/',
+  },
+}
+
 describe('ServiceLastDeployment', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -88,33 +108,92 @@ describe('ServiceLastDeployment', () => {
     expect(screen.getByRole('button', { name: 'v1.2.3' })).toBeInTheDocument()
   })
 
+  it('prevents the deployment link navigation when clicking the version pill', () => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [baseDeployment],
+      isFetched: true,
+    })
+
+    renderWithProviders(<ServiceLastDeployment serviceId="service-123" serviceType="APPLICATION" />)
+
+    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true })
+
+    act(() => {
+      screen.getByRole('button', { name: 'v1.2.3' }).dispatchEvent(clickEvent)
+    })
+
+    expect(clickEvent.defaultPrevented).toBe(true)
+  })
+
   it('renders commit block when service has a git repository', () => {
     mockUseDeploymentHistory.mockReturnValue({
       data: [baseDeployment],
       isFetched: true,
     })
 
-    const service = {
-      id: 'service-123',
-      name: 'my-app',
-      serviceType: 'APPLICATION',
-      environment: { id: 'env-1' },
-      git_repository: {
-        provider: 'GITHUB',
-        owner: 'qovery',
-        url: 'https://github.com/Qovery/console',
-        name: 'Qovery/console',
-        branch: 'main',
-        root_path: '/',
-      },
-    }
-
     renderWithProviders(
-      <ServiceLastDeployment serviceId="service-123" serviceType="APPLICATION" service={service as never} />
+      <ServiceLastDeployment
+        serviceId="service-123"
+        serviceType="APPLICATION"
+        service={serviceWithGitRepository as never}
+      />
     )
 
     expect(screen.getByText('mock-last-commit')).toBeInTheDocument()
     expect(screen.getByText('mock-last-commit-author')).toBeInTheDocument()
+    expect(screen.getByText('mocked-time ago')).toBeInTheDocument()
+    expect(screen.queryByText(/Running since/i)).not.toBeInTheDocument()
+    expect(mockLastCommit).toHaveBeenCalledWith(expect.objectContaining({ showDeployFromAnotherVersionButton: false }))
+  })
+
+  it('prevents the deployment link navigation when clicking the last commit button', () => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [baseDeployment],
+      isFetched: true,
+    })
+
+    renderWithProviders(
+      <ServiceLastDeployment
+        serviceId="service-123"
+        serviceType="APPLICATION"
+        service={serviceWithGitRepository as never}
+      />
+    )
+
+    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true })
+
+    act(() => {
+      screen.getByRole('button', { name: 'mock-last-commit' }).dispatchEvent(clickEvent)
+    })
+
+    expect(clickEvent.defaultPrevented).toBe(true)
+  })
+
+  it('renders a running since label when the deployment is ongoing', () => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [
+        {
+          ...baseDeployment,
+          status_details: {
+            ...baseDeployment.status_details,
+            status: 'ONGOING',
+          },
+        },
+      ],
+      isFetched: true,
+    })
+
+    renderWithProviders(
+      <ServiceLastDeployment
+        serviceId="service-123"
+        serviceType="APPLICATION"
+        service={serviceWithGitRepository as never}
+      />
+    )
+
+    expect(
+      screen.getByText((_, element) => element?.textContent === 'Running since mocked-time ago')
+    ).toBeInTheDocument()
   })
 
   it('renders the AI diagnostic panel only when the last deployment failed', () => {

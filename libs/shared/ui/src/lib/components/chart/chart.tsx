@@ -34,7 +34,7 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
       role="region"
       aria-label="Interactive chart"
       className={twMerge(
-        '[&_.recharts-cartesian-grid-horizontal_line]:stroke-opacity-35 [&_.recharts-cartesian-grid-vertical_line]:stroke-opacity-35 relative flex h-[300px] justify-center text-xs focus:outline-none [&_.recharts-cartesian-grid-horizontal_line]:stroke-neutral-strong [&_.recharts-cartesian-grid-vertical_line]:stroke-neutral-strong [&_.recharts-xAxis_.recharts-cartesian-axis-line]:stroke-neutral-strong [&_.recharts-xAxis_.recharts-cartesian-axis-tick-line]:stroke-neutral-strong [&_.recharts-xAxis_.recharts-cartesian-axis-tick-value]:fill-neutral-strong [&_.recharts-yAxis_.recharts-cartesian-axis-tick-value]:fill-neutral-subtle',
+        '[&_.recharts-cartesian-grid-horizontal_line]:stroke-opacity-35 [&_.recharts-cartesian-grid-vertical_line]:stroke-opacity-35 relative flex h-[300px] justify-center text-xs focus:outline-none [&_.recharts-xAxis_.recharts-cartesian-axis-line]:stroke-neutral-strong [&_.recharts-xAxis_.recharts-cartesian-axis-tick-line]:stroke-neutral-strong [&_.recharts-xAxis_.recharts-cartesian-axis-tick-value]:fill-neutral-subtle [&_.recharts-yAxis_.recharts-cartesian-axis-tick-value]:fill-neutral-subtle',
         className
       )}
       {...htmlProps}

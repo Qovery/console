@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type MouseEvent, useState } from 'react'
 import { type Application, type Helm, type Job, type Terraform } from '@qovery/domains/services/data-access'
@@ -11,9 +12,16 @@ export interface LastCommitProps {
   projectId: string
   service: Pick<Application | Job | Helm | Terraform, 'id' | 'name' | 'serviceType' | 'environment'>
   gitRepository: ApplicationGitRepository
+  showDeployFromAnotherVersionButton?: boolean
 }
 
-export function LastCommit({ organizationId, projectId, service, gitRepository }: LastCommitProps) {
+export function LastCommit({
+  organizationId,
+  projectId,
+  service,
+  gitRepository,
+  showDeployFromAnotherVersionButton = true,
+}: LastCommitProps) {
   const [hover, setHover] = useState(false)
 
   const {
@@ -83,7 +91,9 @@ export function LastCommit({ organizationId, projectId, service, gitRepository }
               variant="outline"
               color="neutral"
               size="xs"
-              className="gap-1 rounded-r-none border-r-0 pl-1"
+              className={clsx('gap-1 pl-1', {
+                'rounded-r-none border-r-0': showDeployFromAnotherVersionButton,
+              })}
               onMouseEnter={() => setHover(true)}
               onMouseLeave={() => setHover(false)}
             >
@@ -93,20 +103,23 @@ export function LastCommit({ organizationId, projectId, service, gitRepository }
           </CopyToClipboard>
         </span>
       </Tooltip>
-      <Tooltip content={delta > 0 ? `You have ${delta} commits ahead` : 'Deploy from another version'}>
-        <Button
-          type="button"
-          variant={delta > 0 ? 'solid' : 'outline'}
-          color={delta > 0 ? 'brand' : 'neutral'}
-          size="xs"
-          className="w-7 justify-center gap-1 rounded-l-none px-1.5"
-          onClick={deployCommitVersion}
-        >
-          <span className="flex h-full items-center justify-center">
-            <Icon iconName="clock-rotate-left" />
-          </span>
-        </Button>
-      </Tooltip>
+      {showDeployFromAnotherVersionButton && (
+        <Tooltip content={delta > 0 ? `You have ${delta} commits ahead` : 'Deploy from another version'}>
+          <Button
+            type="button"
+            aria-label="Deploy from another version"
+            variant={delta > 0 ? 'solid' : 'outline'}
+            color={delta > 0 ? 'brand' : 'neutral'}
+            size="xs"
+            className="w-7 justify-center gap-1 rounded-l-none px-1.5"
+            onClick={deployCommitVersion}
+          >
+            <span className="flex h-full items-center justify-center">
+              <Icon iconName="clock-rotate-left" />
+            </span>
+          </Button>
+        </Tooltip>
+      )}
     </span>
   )
 }

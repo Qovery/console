@@ -274,7 +274,9 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
         {label && (
           <div className="flex w-full justify-between gap-1 p-4 pb-0">
             <div>
-              <Heading className="flex items-center">{label}</Heading>
+              <Heading level={3} className="flex items-center">
+                {label}
+              </Heading>
               <p className="max-w-2/3 text-ssm text-neutral-subtle">{description}</p>
             </div>
             <div className="flex gap-1">

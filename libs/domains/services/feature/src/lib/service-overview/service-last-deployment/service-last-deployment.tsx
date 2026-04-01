@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
-import { Suspense, useContext } from 'react'
+import { type MouseEvent, Suspense, useContext } from 'react'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
@@ -91,24 +91,38 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
     )
   }
 
+  const deploymentStartedLabel = match(lastDeployment.status_details.status)
+    .with('ONGOING', 'CANCELING', () => 'Running since')
+    .otherwise(() => undefined)
+  const deploymentRelativeTime = `${timeAgo(new Date(lastDeployment.auditing_data.created_at))} ago`
+
+  const preventParentLinkNavigation = (event: MouseEvent<HTMLElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+
   const versionPill = isDeploymentHistory(lastDeployment)
     ? match(lastDeployment.details)
         .with({ repository: P.select({ chart_name: P.string, chart_version: P.string }) }, ({ chart_version }) => (
           <Tooltip content={`Chart version: ${chart_version}`}>
-            <Button type="button" variant="surface" color="neutral" size="xs" className="gap-1">
-              <Icon iconName="code-commit" className="w-4" />
-              {chart_version.length >= 18 ? `${chart_version.slice(0, 15)}…` : chart_version}
-            </Button>
+            <span className="inline-flex" onClick={preventParentLinkNavigation}>
+              <Button type="button" variant="surface" color="neutral" size="xs" className="gap-1">
+                <Icon iconName="code-commit" className="w-4" />
+                {chart_version.length >= 18 ? `${chart_version.slice(0, 15)}…` : chart_version}
+              </Button>
+            </span>
           </Tooltip>
         ))
         .with({ image_name: P.string, tag: P.string }, ({ tag }) => (
           <Tooltip content={`Image tag: ${tag}`}>
-            <CopyToClipboard text={tag} className="inline-flex justify-center">
-              <Button type="button" variant="surface" color="neutral" size="xs" className="gap-1">
-                <Icon iconName="code-commit" className="w-4" />
-                {tag.length >= 8 ? `${tag.slice(0, 8)}…` : tag}
-              </Button>
-            </CopyToClipboard>
+            <span className="inline-flex" onClick={preventParentLinkNavigation}>
+              <CopyToClipboard text={tag} className="inline-flex justify-center">
+                <Button type="button" variant="surface" color="neutral" size="xs" className="gap-1">
+                  <Icon iconName="code-commit" className="w-4" />
+                  {tag.length >= 8 ? `${tag.slice(0, 8)}…` : tag}
+                </Button>
+              </CopyToClipboard>
+            </span>
           </Tooltip>
         ))
         .otherwise(() => null)
@@ -118,20 +132,21 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
     showGitCommit && gitRepository && service ? (
       <span className="pointer-events-auto inline-flex items-center gap-2.5">
         <DotSeparator />
-        <span className="flex items-center gap-2.5">
+        <span className="flex items-center gap-2.5 font-normal" onClick={preventParentLinkNavigation}>
           <LastCommit
             organizationId={organizationId}
             projectId={projectId}
             gitRepository={gitRepository}
             service={service as LastCommitProps['service']}
+            showDeployFromAnotherVersionButton={false}
           />
-          {'created_at' in (lastDeployment.auditing_data ?? {}) && lastDeployment.auditing_data.created_at && (
+          {'updated_at' in (lastDeployment.auditing_data ?? {}) && lastDeployment.auditing_data.created_at && (
             <>
               <DotSeparator />
               <span className="text-neutral-subtle">
-                Lasted{' '}
+                {deploymentStartedLabel ? `${deploymentStartedLabel} ` : ''}
                 <Tooltip content={dateUTCString(lastDeployment.auditing_data.created_at)}>
-                  <span>{timeAgo(new Date(lastDeployment.auditing_data.created_at))}</span>
+                  <span>{deploymentRelativeTime}</span>
                 </Tooltip>
               </span>
             </>
