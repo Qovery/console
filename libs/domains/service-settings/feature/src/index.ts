@@ -10,3 +10,4 @@ export * from './lib/service-deployment-restrictions-settings/service-deployment
 export * from './lib/terraform-configuration-settings/terraform-configuration-settings'
 export * from './lib/terraform-arguments-settings/terraform-arguments-settings'
 export * from './lib/terraform-variables-settings/terraform-variables-table/terraform-variables-table'
+export * from './lib/helm-networking-settings/helm-networking-settings'
