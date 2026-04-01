@@ -8,12 +8,10 @@ import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { ErrorBoundary, Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
-import { NotFoundPage } from '../../../app/components/not-found-page/not-found-page'
 import { type FileRouteTypes } from '../../../routeTree.gen'
 
 export const Route = createFileRoute('/_authenticated/organization')({
   component: OrganizationRoute,
-  notFoundComponent: NotFoundPage,
   loader: async ({ context }) => {
     // Preload data (organizations) without waiting for the queries to complete
     context.queryClient.prefetchQuery({
