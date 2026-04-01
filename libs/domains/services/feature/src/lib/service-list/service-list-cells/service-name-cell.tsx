@@ -11,7 +11,7 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
   return (
     <div className="flex h-full items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5">
           <ServiceTemplateIndicator service={service} size="sm">
             <ServiceAvatar service={service} size="custom" className="h-5 w-5" serviceAvatarRadius="sm" radius="none" />
           </ServiceTemplateIndicator>
