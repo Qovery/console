@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type MouseEvent, useState } from 'react'
 import { type Application, type Helm, type Job, type Terraform } from '@qovery/domains/services/data-access'
@@ -90,7 +91,9 @@ export function LastCommit({
               variant="outline"
               color="neutral"
               size="xs"
-              className={showDeployFromAnotherVersionButton ? 'gap-1 rounded-r-none border-r-0 pl-1' : 'gap-1 pl-1'}
+              className={clsx('gap-1 pl-1', {
+                'rounded-r-none border-r-0': showDeployFromAnotherVersionButton,
+              })}
               onMouseEnter={() => setHover(true)}
               onMouseLeave={() => setHover(false)}
             >
