@@ -6194,7 +6194,7 @@ __metadata:
     use-query-params: 2.2.1
     uuid: 11.1.0
     vite: 8.0.3
-    vite-plugin-static-copy: 4.0.0
+    vite-plugin-static-copy: 3.1.4
     vitest: 3.0.0
     webpack: 5.101.3
     webpack-cli: 5.1.4
@@ -24275,7 +24275,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-map@npm:^7.0.4":
+"p-map@npm:^7.0.3":
   version: 7.0.4
   resolution: "p-map@npm:7.0.4"
   checksum: 4be2097e942f2fd3a4f4b0c6585c721f23851de8ad6484d20c472b3ea4937d5cd9a59914c832b1bceac7bf9d149001938036b82a52de0bc381f61ff2d35d26a5
@@ -31082,17 +31082,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-static-copy@npm:4.0.0":
-  version: 4.0.0
-  resolution: "vite-plugin-static-copy@npm:4.0.0"
+"vite-plugin-static-copy@npm:3.1.4":
+  version: 3.1.4
+  resolution: "vite-plugin-static-copy@npm:3.1.4"
   dependencies:
     chokidar: ^3.6.0
-    p-map: ^7.0.4
+    p-map: ^7.0.3
     picocolors: ^1.1.1
     tinyglobby: ^0.2.15
   peerDependencies:
-    vite: ^6.0.0 || ^7.0.0 || ^8.0.0
-  checksum: e763647a6b9ede2ad29d19e709fde3a0d43bb8ba0256e3ce2741fb0a8b9c8cc8523fd838541f213a226d0eb05d1ef70f879a0e402f70a92b66371ad8eaf1c07b
+    vite: ^5.0.0 || ^6.0.0 || ^7.0.0
+  checksum: c6f5a2dba4da2a52c6a84310721d98af9e3bd0b1a5ff5e463724334c056e64c1c1735a2ca9f3bc30c1c51e49de512c42e1d2bf23c1e13f05293eaf44dc2b9e87
   languageName: node
   linkType: hard
 
