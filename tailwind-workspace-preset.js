@@ -140,6 +140,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],
+        brand: ['ReplicaLL', 'Roboto', 'Helvetica', 'sans-serif'],
         code: ['Hack', 'sans-serif'],
         icons: ['FontAwesome'],
       },
