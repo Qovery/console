@@ -24,10 +24,11 @@ exports[`ServiceList should match snapshot 1`] = `
           <thead
             class="border-t border-neutral"
           >
-            <tr>
+            <tr
+              class="grid w-full grid-cols-[48px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
+            >
               <th
-                class="h-11 border-neutral px-4 text-left font-code font-normal relative"
-                style="width: 20px;"
+                class="h-11 border-neutral px-4 text-left font-code font-normal relative flex items-center"
               >
                 <div
                   class="h-5"
@@ -43,8 +44,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </th>
               <th
-                class="h-11 border-neutral px-4 text-left font-code font-normal relative"
-                style="width: 57%;"
+                class="h-11 border-neutral px-4 text-left font-code font-normal relative flex items-center"
               >
                 <button
                   class="flex items-center gap-1 truncate cursor-pointer select-none"
@@ -54,24 +54,20 @@ exports[`ServiceList should match snapshot 1`] = `
                 </button>
               </th>
               <th
-                class="h-11 px-4 text-left font-code font-normal relative border-r border-neutral last:border-r-0"
-                style="width: 20px;"
+                class="h-11 px-4 text-left font-code font-normal relative flex items-center border-r border-neutral last:border-r-0"
               />
               <th
-                class="h-11 px-4 text-left font-code font-normal relative border-r border-neutral last:border-r-0"
-                style="width: 9007199254740991%;"
+                class="h-11 px-4 text-left font-code font-normal relative flex items-center border-r border-neutral last:border-r-0"
               >
                 Last deployment
               </th>
               <th
-                class="h-11 px-4 text-left font-code font-normal relative border-r border-neutral last:border-r-0"
-                style="width: 30%;"
+                class="h-11 px-4 text-left font-code font-normal relative flex items-center border-r border-neutral last:border-r-0"
               >
                 Target version
               </th>
               <th
-                class="h-11 px-4 text-left font-code font-normal relative border-r border-neutral last:border-r-0"
-                style="width: 9007199254740991%;"
+                class="h-11 px-4 text-left font-code font-normal relative flex items-center border-r border-neutral last:border-r-0"
               >
                 Actions
               </th>
@@ -81,11 +77,10 @@ exports[`ServiceList should match snapshot 1`] = `
             class="divide-y divide-neutral"
           >
             <tr
-              class="h-[68px]"
+              class="cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[48px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
             >
               <td
-                class="h-14 border-neutral px-4 py-0 relative"
-                style="width: 20px;"
+                class="h-14 border-neutral py-0 relative flex items-center px-4"
               >
                 <label
                   class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -101,8 +96,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </label>
               </td>
               <td
-                class="h-14 border-neutral px-4 py-0 relative"
-                style="width: 57%;"
+                class="h-14 border-neutral py-0 relative flex items-center px-4"
               >
                 <div>
                   <div
@@ -244,8 +238,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 20px;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -281,8 +274,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 9007199254740991%;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex h-full w-full items-center"
@@ -334,8 +326,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 30%;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex items-center gap-3"
@@ -433,8 +424,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 9007199254740991%;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex h-full items-center"
@@ -448,11 +438,10 @@ exports[`ServiceList should match snapshot 1`] = `
               </td>
             </tr>
             <tr
-              class="h-[68px]"
+              class="cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[48px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
             >
               <td
-                class="h-14 border-neutral px-4 py-0 relative"
-                style="width: 20px;"
+                class="h-14 border-neutral py-0 relative flex items-center px-4"
               >
                 <label
                   class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -468,8 +457,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </label>
               </td>
               <td
-                class="h-14 border-neutral px-4 py-0 relative"
-                style="width: 57%;"
+                class="h-14 border-neutral py-0 relative flex items-center px-4"
               >
                 <div>
                   <div
@@ -611,8 +599,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 20px;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -648,8 +635,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 9007199254740991%;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex h-full w-full items-center"
@@ -701,8 +687,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 30%;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex items-center gap-1"
@@ -791,8 +776,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 9007199254740991%;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex h-full items-center"
@@ -806,11 +790,10 @@ exports[`ServiceList should match snapshot 1`] = `
               </td>
             </tr>
             <tr
-              class="h-[68px]"
+              class="cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[48px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
             >
               <td
-                class="h-14 border-neutral px-4 py-0 relative"
-                style="width: 20px;"
+                class="h-14 border-neutral py-0 relative flex items-center px-4"
               >
                 <label
                   class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -826,8 +809,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </label>
               </td>
               <td
-                class="h-14 border-neutral px-4 py-0 relative"
-                style="width: 57%;"
+                class="h-14 border-neutral py-0 relative flex items-center px-4"
               >
                 <div>
                   <div
@@ -1271,8 +1253,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 20px;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -1308,8 +1289,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 9007199254740991%;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex h-full w-full items-center"
@@ -1361,8 +1341,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 30%;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex items-center gap-3"
@@ -1469,8 +1448,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 9007199254740991%;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex h-full items-center"
@@ -1484,11 +1462,10 @@ exports[`ServiceList should match snapshot 1`] = `
               </td>
             </tr>
             <tr
-              class="h-[68px]"
+              class="cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[48px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
             >
               <td
-                class="h-14 border-neutral px-4 py-0 relative"
-                style="width: 20px;"
+                class="h-14 border-neutral py-0 relative flex items-center px-4"
               >
                 <label
                   class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -1504,8 +1481,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </label>
               </td>
               <td
-                class="h-14 border-neutral px-4 py-0 relative"
-                style="width: 57%;"
+                class="h-14 border-neutral py-0 relative flex items-center px-4"
               >
                 <div>
                   <div
@@ -1742,8 +1718,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 20px;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -1779,8 +1754,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 9007199254740991%;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex h-full w-full items-center"
@@ -1832,8 +1806,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 30%;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex items-center gap-3"
@@ -1940,8 +1913,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 px-4 py-0 relative border-r border-neutral last:border-r-0"
-                style="width: 9007199254740991%;"
+                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex h-full items-center"
@@ -1958,57 +1930,55 @@ exports[`ServiceList should match snapshot 1`] = `
         </table>
       </div>
       <div
-        class="sticky bottom-4"
+        class="pointer-events-none fixed inset-x-0 bottom-4 z-overlay flex justify-center px-4"
       >
         <div
-          class="relative"
+          class="w-full max-w-[500px] pointer-events-none h-0 overflow-hidden"
         >
           <div
-            class="absolute bottom-4 left-1/2 w-[448px] -translate-x-1/2 h-0 overflow-hidden"
+            class="flex items-center justify-between rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-sm font-medium text-neutralInvert shadow-xl animate-action-bar-fade-out"
           >
-            <div
-              class="flex h-[52px] items-center justify-between rounded bg-neutral-500 pl-5 pr-2 text-xs font-medium text-white shadow-xl animate-action-bar-fade-out"
+            <span
+              class="truncate"
             >
-              <span>
-                0
-                 selected 
-                service
-              </span>
+              0
+               selected 
+              service
+            </span>
+            <button
+              class="h-8 px-3 underline"
+              type="button"
+            >
+              Deselect
+            </button>
+            <div
+              class="flex gap-3"
+            >
               <button
-                class="h-8 px-3 underline"
+                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-8 px-2.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert items-center gap-2"
+                data-state="closed"
+                disabled=""
+              >
+                Deploy selected 
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-play "
+                />
+              </button>
+              <button
+                aria-expanded="false"
+                aria-haspopup="menu"
+                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral items-center gap-2"
+                data-state="closed"
+                id="radix-:r2o:"
                 type="button"
               >
-                Deselect
+                More 
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-angle-down "
+                />
               </button>
-              <div
-                class="flex gap-3"
-              >
-                <button
-                  class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-8 px-2.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert items-center gap-2"
-                  data-state="closed"
-                  disabled=""
-                >
-                  Deploy selected 
-                  <i
-                    aria-hidden="true"
-                    class="fa-regular fa-play "
-                  />
-                </button>
-                <button
-                  aria-expanded="false"
-                  aria-haspopup="menu"
-                  class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral items-center gap-2"
-                  data-state="closed"
-                  id="radix-:r2o:"
-                  type="button"
-                >
-                  More 
-                  <i
-                    aria-hidden="true"
-                    class="fa-regular fa-angle-down "
-                  />
-                </button>
-              </div>
             </div>
           </div>
         </div>

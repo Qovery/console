@@ -7,12 +7,14 @@ exports[`ServiceListActionBar should match snapshot 1`] = `
       class="pointer-events-none fixed inset-x-0 bottom-4 z-overlay flex justify-center px-4"
     >
       <div
-        class="w-full max-w-[448px] pointer-events-auto"
+        class="w-full max-w-[500px] pointer-events-auto"
       >
         <div
-          class="flex h-[52px] items-center justify-between rounded bg-neutral-500 pl-5 pr-2 text-xs font-medium text-white shadow-xl animate-action-bar-fade-in"
+          class="flex items-center justify-between rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-sm font-medium text-neutralInvert shadow-xl animate-action-bar-fade-in"
         >
-          <span>
+          <span
+            class="truncate"
+          >
             1
              selected 
             service
