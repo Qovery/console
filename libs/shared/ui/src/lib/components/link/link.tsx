@@ -15,6 +15,7 @@ export const linkVariants = cva(
         red: ['text-negative', 'hover:text-negative-hover'],
         sky: ['text-info', 'hover:text-info-hover'],
         neutral: ['text-neutral', 'hover:text-neutral-subtle'],
+        subtle: ['text-neutral-subtle', 'hover:text-neutral'],
       },
       size: {
         xs: ['text-xs'],
