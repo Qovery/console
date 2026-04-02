@@ -104,7 +104,7 @@ export function NeedRedeployFlag() {
     if (service?.serviceType === 'DATABASE' && service.mode === 'MANAGED') {
       handleDatabaseDeployModal()
     } else {
-      mutationDeployService()
+      mutationDeployService(false)
     }
   }
 

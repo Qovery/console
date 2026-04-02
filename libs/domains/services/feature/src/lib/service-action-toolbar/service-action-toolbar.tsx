@@ -141,11 +141,7 @@ function MenuManageDeployment({
     displayYellowColor && tooltipService('Configuration has changed and needs to be applied')
 
   const mutationDeploy = (applyImmediately = false) => {
-    if (service.serviceType === 'DATABASE') {
-      deployService({ serviceId: service.id, serviceType: service.serviceType, applyImmediately })
-    } else {
-      deployService({ serviceId: service.id, serviceType: service.serviceType })
-    }
+    deployService({ serviceId: service.id, serviceType: service.serviceType, applyImmediately })
   }
 
   const mutationTerraformAction = (
@@ -450,7 +446,7 @@ function MenuManageDeployment({
     if (service.serviceType === 'DATABASE' && service.mode === 'MANAGED') {
       handleDatabaseDeployModal()
     } else {
-      mutationDeploy()
+      mutationDeploy(false)
     }
   }
 
