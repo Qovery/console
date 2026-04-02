@@ -1,40 +1,75 @@
+import { type Environment } from 'qovery-typescript-axios'
+import { PropsWithChildren, useCallback } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { Icon, Link, Tooltip } from '@qovery/shared/ui'
-import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
-import useDeploymentStatus from '../../hooks/use-deployment-status/use-deployment-status'
+import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
+import { DeploymentAction, Link, StatusChip } from '@qovery/shared/ui'
+import { useServiceDeploymentAndRunningStatuses } from '../../hooks/use-service-deployment-and-running-statuses/use-service-deployment-and-running-statuses'
 
 type ServiceLastDeploymentCellProps = {
   service: AnyService
-  organizationId: string
-  projectId: string
-  environmentId: string
+  environment: Environment
 }
 
-export function ServiceLastDeploymentCell({
-  service,
-  organizationId,
-  projectId,
-  environmentId,
-}: ServiceLastDeploymentCellProps) {
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environmentId, serviceId: service.id })
-  const date = deploymentStatus?.last_deployment_date
+export function ServiceLastDeploymentCell({ service, environment }: ServiceLastDeploymentCellProps) {
+  const {
+    data: { deploymentStatus },
+  } = useServiceDeploymentAndRunningStatuses({ environmentId: environment.id, service })
+  const subAction = deploymentStatus?.status_details?.sub_action
+  const triggerAction = subAction !== 'NONE' ? subAction : deploymentStatus?.status_details?.action
 
-  return date ? (
-    <Link
-      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
-      params={{ organizationId, projectId, environmentId, serviceId: service.id }}
-      search={{
-        deploymentId: deploymentStatus?.execution_id,
-      }}
-      className="group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-subtle hover:translate-x-0 hover:text-neutral"
-      onClick={(event) => event.stopPropagation()}
-    >
-      <Tooltip content={dateUTCString(date)} delayDuration={200}>
-        <span className="whitespace-nowrap text-ssm font-normal">{timeAgo(new Date(date))}</span>
-      </Tooltip>
-      <Icon iconName="arrow-up-right" iconStyle="regular" className="text-ssm opacity-0 group-hover:opacity-100" />
-    </Link>
+  const WrappingLink = useCallback(
+    ({ children }: PropsWithChildren) => {
+      return (
+        <Link
+          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+          params={{
+            organizationId: environment.organization.id,
+            projectId: environment.project.id,
+            environmentId: environment.id,
+            serviceId: service.id,
+            executionId: deploymentStatus?.execution_id ?? '',
+          }}
+          underline
+          color="neutral"
+          className="flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
+          onClick={(e) => {
+            e.stopPropagation()
+          }}
+        >
+          {children}
+        </Link>
+      )
+    },
+    [environment, service, deploymentStatus?.execution_id]
+  )
+
+  return deploymentStatus?.state === 'READY' ? (
+    <span className="text-sm font-normal text-neutral-subtle">Never been deployed</span>
   ) : (
-    <span className="block w-full text-right">-</span>
+    <div className="flex w-full items-center justify-between gap-4">
+      <WrappingLink>
+        <DeploymentAction status={triggerAction} />
+      </WrappingLink>
+      <div>
+        <div className="flex items-center gap-2">
+          {deploymentStatus?.status_details?.status === 'ERROR' && (
+            <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+              <DevopsCopilotTroubleshootTrigger
+                source="service-deployment-list"
+                deploymentId={deploymentStatus?.execution_id}
+                message={
+                  deploymentStatus?.execution_id
+                    ? `Why did my deployment fail? (execution id: ${deploymentStatus?.execution_id})`
+                    : 'Why did my deployment fail?'
+                }
+              />
+            </div>
+          )}
+          <WrappingLink>
+            <StatusChip status={deploymentStatus?.status_details?.status} variant="monochrome" />
+          </WrappingLink>
+        </div>
+      </div>
+    </div>
   )
 }

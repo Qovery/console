@@ -424,13 +424,6 @@ describe('ServiceList', () => {
     const rows = screen.getAllByRole('row')
     expect(rows).toHaveLength(5)
   })
-  it('should filter services by name', async () => {
-    const { userEvent } = renderWithProviders(<ServiceList {...serviceListProps} />)
-    await userEvent.click(screen.getAllByRole('button', { name: /service/i })[0])
-    await userEvent.click(screen.getByRole('menuitem', { name: /front-end/i }))
-    const rows = screen.getAllByRole('row')
-    expect(rows).toHaveLength(2)
-  }, 10000)
   it('should navigate to service on row click', async () => {
     const { userEvent } = renderWithProviders(<ServiceList {...serviceListProps} />)
     const rows = screen.getAllByRole('row')

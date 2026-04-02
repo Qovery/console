@@ -11,8 +11,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import clsx from 'clsx'
 import { type Environment } from 'qovery-typescript-axios'
-import { type ComponentProps, Fragment, useMemo, useState } from 'react'
+import { type ComponentProps, Fragment, useCallback, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import {
   Badge,
@@ -20,23 +21,19 @@ import {
   EmptyState,
   Icon,
   Link,
+  Section,
   Skeleton,
+  StatusChip,
   TableFilter,
   TablePrimitives,
   Tooltip,
-  Truncate,
 } from '@qovery/shared/ui'
-import { twMerge } from '@qovery/shared/util-js'
+import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
 import { useServices } from '../hooks/use-services/use-services'
-import { ServiceAvatar } from '../service-avatar/service-avatar'
+import { ServiceActions } from '../service-actions/service-actions'
 import { ServiceListActionBar } from './service-list-action-bar'
-import {
-  ServiceLastDeploymentCell,
-  ServiceNameCell,
-  ServiceRunningStatusCell,
-  ServiceVersionCell,
-} from './service-list-cells'
+import { ServiceLastDeploymentCell, ServiceNameCell, ServiceVersionCell } from './service-list-cells'
 
 const { Table } = TablePrimitives
 
@@ -44,8 +41,62 @@ export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
   environment: Environment
 }
 
+export const tableGridLayoutClassName =
+  'grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]'
+
+export const ServiceListSkeleton = () => {
+  return (
+    <div>
+      <div className="flex gap-2 px-3.5 py-2">
+        <Skeleton height={24} width={80} />
+        <Skeleton height={24} width={90} />
+      </div>
+      <hr className="w-full border-neutral" />
+      <div className="flex flex-col gap-8">
+        <Section className="flex flex-col gap-3.5">
+          <Table.Root className="w-full" containerClassName="rounded-lg border-none">
+            <Table.Header>
+              <Table.Row className={tableGridLayoutClassName}>
+                {[...Array(6)].map((_, index) => (
+                  <Table.ColumnHeaderCell key={index} className="flex items-center first:border-r">
+                    {index === 0 ? (
+                      <div className="flex items-center justify-between">
+                        <Skeleton height={16} width={16} />
+                      </div>
+                    ) : index === 2 ? null : (
+                      <Skeleton height={14} width={120} />
+                    )}
+                  </Table.ColumnHeaderCell>
+                ))}
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {[...Array(3)].map((_, index) => (
+                <Table.Row key={index} className={tableGridLayoutClassName}>
+                  {[...Array(6)].map((_, index) => (
+                    <Table.Cell key={index} className="flex h-14 items-center first:border-r">
+                      {index === 0 ? (
+                        <div className="flex items-center justify-between">
+                          <Skeleton height={16} width={16} />
+                        </div>
+                      ) : index === 2 ? (
+                        <Skeleton height={16} width={16} rounded />
+                      ) : (
+                        <Skeleton height={24} width={120} />
+                      )}
+                    </Table.Cell>
+                  ))}
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Root>
+        </Section>
+      </div>
+    </div>
+  )
+}
+
 export function ServiceList({ className, containerClassName, environment, ...props }: ServiceListProps) {
-  const clusterId = environment.cluster_id || ''
   const environmentId = environment.id || ''
   const organizationId = environment.organization.id || ''
   const projectId = environment.project.id || ''
@@ -70,8 +121,19 @@ export function ServiceList({ className, containerClassName, environment, ...pro
     return map
   }, [deploymentStages])
 
+  const actualServices = useMemo(() => {
+    return services.map((service) => {
+      return {
+        ...service,
+        status: match(service)
+          .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, () => service.deploymentStatus?.state)
+          .otherwise(() => service.runningStatus?.state),
+      }
+    })
+  }, [services])
+
   const sortedServices = useMemo(() => {
-    return [...services].sort((a, b) => {
+    return [...actualServices].sort((a, b) => {
       const aIsSkipped = skippedServicesMap.get(a.id) || false
       const bIsSkipped = skippedServicesMap.get(b.id) || false
 
@@ -81,9 +143,9 @@ export function ServiceList({ className, containerClassName, environment, ...pro
 
       return 0
     })
-  }, [services, skippedServicesMap])
+  }, [actualServices, skippedServicesMap])
 
-  const columnHelper = createColumnHelper<(typeof services)[number]>()
+  const columnHelper = createColumnHelper<(typeof actualServices)[number]>()
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -91,8 +153,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         enableColumnFilter: false,
         enableSorting: false,
         header: ({ table }) => (
-          <div className="h-5">
-            {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
+          <div className="flex h-full w-full items-center pl-4">
             <Checkbox
               checked={
                 table.getIsSomeRowsSelected()
@@ -113,106 +174,89 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         cell: ({ row }) => {
           const isDisabled = !row.getCanSelect()
           const checkbox = (
-            <Checkbox
-              checked={row.getIsSelected()}
-              disabled={isDisabled}
-              onCheckedChange={(checked) => {
-                if (checked === 'indeterminate') {
-                  return
-                }
-                row.toggleSelected(checked)
-              }}
-            />
+            <div className="h-4">
+              {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
+              <Checkbox
+                checked={row.getIsSelected()}
+                disabled={isDisabled}
+                onCheckedChange={(checked) => {
+                  if (checked === 'indeterminate') {
+                    return
+                  }
+                  row.toggleSelected(checked)
+                }}
+              />
+            </div>
           )
 
           return (
-            <label className="absolute inset-y-0 left-0 flex items-center p-4" onClick={(e) => e.stopPropagation()}>
-              {isDisabled ? (
-                <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
-                  <span>{checkbox}</span>
-                </Tooltip>
-              ) : (
-                checkbox
-              )}
-            </label>
+            <div className="flex h-full w-full items-center pl-4">
+              <label onClick={(e) => e.stopPropagation()}>
+                {isDisabled ? (
+                  <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
+                    <span>{checkbox}</span>
+                  </Tooltip>
+                ) : (
+                  checkbox
+                )}
+              </label>
+            </div>
           )
         },
       }),
       columnHelper.accessor('name', {
         header: 'Service',
-        enableColumnFilter: true,
-        enableSorting: false,
-        filterFn: 'arrIncludesSome',
+        enableColumnFilter: false,
+        enableSorting: true,
         size: 57,
-        meta: {
-          customFacetEntry({ value, row }) {
-            const service = row?.original
-            const serviceType = service?.serviceType
-            if (!serviceType) {
-              return null
-            }
-            return (
-              <span className="flex items-center gap-2 text-sm font-medium">
-                <ServiceAvatar service={service} size="xs" />
-                <Truncate text={value} truncateLimit={20} />
-              </span>
-            )
-          },
-        },
         cell: (info) => {
-          return (
-            <div className="min-w-[400px] flex-1">
-              <ServiceNameCell service={info.row.original} environment={environment} />
-            </div>
-          )
+          return <ServiceNameCell service={info.row.original} environment={environment} />
         },
       }),
-      columnHelper.accessor('runningStatus.stateLabel', {
-        id: 'runningStatus',
-        header: 'Service status',
-        enableColumnFilter: true,
+      columnHelper.accessor('status', {
+        header: () => null,
+        enableColumnFilter: false,
         enableSorting: false,
-        filterFn: 'arrIncludesSome',
-        size: 15,
-        cell: (info) => (
-          <ServiceRunningStatusCell
-            service={info.row.original}
-            environment={environment}
-            organizationId={organizationId}
-            projectId={projectId}
-            clusterId={clusterId}
-          />
-        ),
+        cell: (info) => {
+          const serviceStatus = match(info.row.original)
+            .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, () => info.row.original.deploymentStatus?.state)
+            .otherwise(() => info.row.original.runningStatus?.state)
+
+          return <StatusChip status={serviceStatus} />
+        },
+      }),
+      columnHelper.display({
+        id: 'last_deployment',
+        header: 'Last deployment',
+        enableColumnFilter: false,
+        enableSorting: false,
+        cell: (info) => <ServiceLastDeploymentCell service={info.row.original} environment={environment} />,
       }),
       columnHelper.accessor('version', {
         header: 'Target version',
         enableColumnFilter: false,
         enableSorting: false,
-        size: 30,
         cell: (info) => {
           return (
             <ServiceVersionCell service={info.row.original} organizationId={organizationId} projectId={projectId} />
           )
         },
       }),
-      columnHelper.accessor('deploymentStatus.last_deployment_date', {
-        header: 'Last deployment',
+      columnHelper.display({
+        id: 'actions',
+        header: 'Actions',
         enableColumnFilter: false,
-        enableSorting: true,
-        size: 3,
+        enableSorting: false,
         cell: (info) => {
           return (
-            <ServiceLastDeploymentCell
-              service={info.row.original}
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-            />
+            <div className="flex h-full items-center" onClick={(e) => e.stopPropagation()}>
+              <ServiceActions serviceId={info.row.original.id} environment={environment} />
+            </div>
           )
         },
       }),
     ],
-    [columnHelper, environment, clusterId, organizationId, projectId, environmentId]
+    [columnHelper, environment, organizationId, projectId]
   )
 
   const table = useReactTable({
@@ -242,43 +286,71 @@ export function ServiceList({ className, containerClassName, environment, ...pro
 
   const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
 
-  const statusFacetedUniqueValues = Array.from(
-    table.getColumn('runningStatus')?.getFacetedUniqueValues().entries() ?? []
-  )
+  const statusFacetedUniqueValues = Array.from(table.getColumn('status')?.getFacetedUniqueValues().entries() ?? [])
+
+  const ServicesBadges = useCallback(() => {
+    const getLabel = (value: string, count: number) => {
+      const statusLabel = value.toLowerCase()
+
+      return match(value)
+        .with('RUNNING', 'STOPPED', () => `${count} ${statusLabel}`)
+        .with('ERROR', () => `${count} in error`)
+        .otherwise(() => `${count} ${pluralize(count, statusLabel)}`)
+    }
+
+    return statusFacetedUniqueValues.some(([value]) => value === undefined) ? (
+      <Skeleton height={24} width={70} />
+    ) : (
+      statusFacetedUniqueValues.map(([value, count]: [string, number]) => (
+        <Badge
+          key={value}
+          variant="surface"
+          color={match(value)
+            .with('RUNNING', () => 'green' as const)
+            .with('ERROR', () => 'red' as const)
+            .otherwise(() => 'neutral' as const)}
+          className="text-ssm font-medium"
+        >
+          {getLabel(value, count)}
+        </Badge>
+      ))
+    )
+  }, [statusFacetedUniqueValues])
 
   if (services.length === 0) {
     return (
       <EmptyState
         title="No service found"
         description="You can create a service from the button on the top"
-        className="mt-2 rounded-t-sm bg-white pt-10"
+        className="border-none"
+        icon="wave-pulse"
       >
         <Link
           as="button"
-          size="lg"
-          className="mt-5 gap-2"
+          size="md"
+          color="neutral"
+          className="gap-1.5"
           to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
           params={{ organizationId, projectId, environmentId }}
         >
-          New service
           <Icon iconName="circle-plus" iconStyle="regular" />
+          New service
         </Link>
       </EmptyState>
     )
   }
 
+  const handleNavigateToService = (serviceId: string) => {
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+      params: { organizationId, projectId, environmentId, serviceId },
+    })
+  }
+
   return (
     <div>
-      <div className="flex gap-2 px-4 py-2">
-        {statusFacetedUniqueValues.some(([value]) => value === undefined) ? (
-          <Skeleton height={24} width={70} />
-        ) : (
-          statusFacetedUniqueValues.map(([value, count]: [string, number]) => (
-            <Badge key={value}>
-              {count} {value}
-            </Badge>
-          ))
-        )}
+      <div className="flex gap-2 bg-surface-neutral px-4 py-2">
+        <ServicesBadges />
       </div>
       <div className="flex grow flex-col justify-between">
         <Table.Root
@@ -291,12 +363,14 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         >
           <Table.Header className="border-t border-neutral">
             {table.getHeaderGroups().map((headerGroup) => (
-              <Table.Row key={headerGroup.id}>
+              <Table.Row key={headerGroup.id} className={`h-9 w-full ${tableGridLayoutClassName}`}>
                 {headerGroup.headers.map((header, i) => (
                   <Table.ColumnHeaderCell
-                    className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r border-neutral pl-0' : ''} font-medium`}
                     key={header.id}
-                    style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
+                    className={twMerge(
+                      'relative flex h-full items-center border-r border-neutral last:border-r-0',
+                      i === 1 || i === 0 ? 'border-none p-0' : ''
+                    )}
                   >
                     {header.column.getCanFilter() ? (
                       <TableFilter column={header.column} />
@@ -328,19 +402,19 @@ export function ServiceList({ className, containerClassName, environment, ...pro
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
                 <Table.Row
-                  className={twMerge('h-[68px] ')}
-                  onClick={() => {
-                    navigate({
-                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
-                      params: { organizationId, projectId, environmentId, serviceId: row.original.id },
-                    })
+                  className={`h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle ${tableGridLayoutClassName}`}
+                  tabIndex={0}
+                  onClick={() => handleNavigateToService(row.original.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleNavigateToService(row.original.id)
                   }}
                 >
                   {row.getVisibleCells().map((cell, i) => (
                     <Table.Cell
                       key={cell.id}
-                      className={`px-6 ${i === 1 ? 'border-r border-neutral pl-0' : ''} first:relative`}
-                      style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
+                      className={clsx('relative flex h-full items-center border-r border-neutral last:border-r-0', {
+                        'border-none p-0': i === 1 || i === 0,
+                      })}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </Table.Cell>
