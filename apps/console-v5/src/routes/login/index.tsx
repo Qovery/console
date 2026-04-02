@@ -1,5 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { type AnimationEvent, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { useAuth0Error } from '@qovery/pages/login'
@@ -8,13 +9,19 @@ import { IconEnum } from '@qovery/shared/enums'
 import { Button, Icon, InputText, Link } from '@qovery/shared/ui'
 
 const LAST_USED_LOGIN_COOKIE_KEY = 'lastUsedLogin'
-// Time each testimonial stays fully visible before starting exit animation.
-const TESTIMONIAL_DISPLAY_DURATION_MS = 5200
-// Enter from below + fade in.
-const TESTIMONIAL_ENTER_ANIMATION_CLASS = 'animate-[500ms_ease-out_0s_slidein-up-md,500ms_ease-out_0s_fadein]'
-// Exit to top + fade out.
-const TESTIMONIAL_EXIT_ANIMATION_CLASS =
-  'animate-[400ms_cubic-bezier(0.55,_0.085,_0.68,_0.53)_0s_slideout-up-md,400ms_cubic-bezier(0.55,_0.085,_0.68,_0.53)_0s_fadeout]'
+
+const CUBIC_BEZIER_EASE = [0.65, 0.05, 0.36, 1] as const
+const SCREEN_STACK_MOVE_DURATION_S = 0.6
+const SCREEN_STACK_REST_DURATION_S = 0.45
+const SCREEN_STACK_OFFSET_PX = 16
+const SCREEN_STACK_MIDDLE_OPACITY = 0.9
+const SCREEN_STACK_BACK_OPACITY = 0.45
+const PRODUCT_SHOTS = [
+  '/assets/login/product-shots/Deployed%20and%20running.jpg',
+  '/assets/login/product-shots/%5BProject%5D%20Overview.jpg',
+  '/assets/login/product-shots/%5BApplication%5D%20Monitoring.jpg',
+  '/assets/login/product-shots/%5BApplication%5D%20Service%20logs.jpg',
+]
 
 const TESTIMONIALS = [
   <>
@@ -70,6 +77,15 @@ const TESTIMONIALS = [
     </span>
   </>,
 ]
+
+function shuffleArray<T>(values: T[]) {
+  const shuffled = [...values]
+  for (let i = shuffled.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
 
 const loginSearchParamsSchema = z.object({
   redirect: z.string().optional(),
@@ -137,7 +153,17 @@ export function Login() {
   // Testimonial animation state.
   const [testimonialIndex, setTestimonialIndex] = useState(0)
   const [isTestimonialFadingOut, setIsTestimonialFadingOut] = useState(false)
+  const [isTestimonialInstantReset, setIsTestimonialInstantReset] = useState(true)
+  const [shuffledTestimonials] = useState(() => shuffleArray(TESTIMONIALS))
   const testimonialTimeoutRef = useRef<number | undefined>()
+
+  // Screenshot stack animation state.
+  const [frontShotIndex, setFrontShotIndex] = useState(() =>
+    PRODUCT_SHOTS.length > 0 ? Math.floor(Math.random() * PRODUCT_SHOTS.length) : 0
+  )
+  const [isScreenStackExiting, setIsScreenStackExiting] = useState(false)
+  const [isScreenStackInstantReset, setIsScreenStackInstantReset] = useState(true)
+  const screenStackTimeoutRef = useRef<number | undefined>()
 
   const methods = useForm({
     mode: 'onChange',
@@ -158,37 +184,64 @@ export function Login() {
     clearTestimonialTimeout()
     testimonialTimeoutRef.current = window.setTimeout(() => {
       setIsTestimonialFadingOut(true)
-    }, TESTIMONIAL_DISPLAY_DURATION_MS)
+    }, 5200)
   }
 
   // Animation lifecycle:
-  // 1) Enter animation ends -> schedule delayed exit.
-  // 2) Exit animation ends -> swap testimonial and start next enter.
-  const handleTestimonialAnimationEnd = (event: AnimationEvent<HTMLDivElement>) => {
-    if (event.target !== event.currentTarget) {
-      return
-    }
-
-    if (isTestimonialFadingOut && event.animationName !== 'fadeout') {
-      return
-    }
-
-    if (!isTestimonialFadingOut && event.animationName !== 'fadein') {
-      return
-    }
-
+  // 1) Visible animation completes -> schedule delayed exit.
+  // 2) Exit animation completes -> swap testimonial and start next enter.
+  const handleTestimonialAnimationComplete = () => {
     if (isTestimonialFadingOut) {
-      setTestimonialIndex((previous) => (previous + 1) % TESTIMONIALS.length)
+      setTestimonialIndex((previous) =>
+        shuffledTestimonials.length > 0 ? (previous + 1) % shuffledTestimonials.length : 0
+      )
       setIsTestimonialFadingOut(false)
       return
+    }
+
+    if (isTestimonialInstantReset) {
+      setIsTestimonialInstantReset(false)
     }
 
     scheduleTestimonialFadeOut()
   }
 
-  const testimonialAnimationClass = isTestimonialFadingOut
-    ? TESTIMONIAL_EXIT_ANIMATION_CLASS
-    : TESTIMONIAL_ENTER_ANIMATION_CLASS
+  const clearScreenStackTimeout = () => {
+    if (screenStackTimeoutRef.current) {
+      window.clearTimeout(screenStackTimeoutRef.current)
+    }
+  }
+
+  const scheduleScreenStackExit = () => {
+    clearScreenStackTimeout()
+    screenStackTimeoutRef.current = window.setTimeout(() => {
+      setIsScreenStackExiting(true)
+    }, 8000)
+  }
+
+  const getScreenStackRestTransitionDuration = () => {
+    if (isScreenStackInstantReset) return 0
+    return SCREEN_STACK_REST_DURATION_S
+  }
+
+  // The front layer drives the stack cycle:
+  // - when exit ends, swap the front image and reset instantly to rest positions;
+  // - when rest settles, schedule next exit.
+  const handleScreenStackFrontAnimationComplete = () => {
+    if (isScreenStackExiting) {
+      setFrontShotIndex((previous) => (PRODUCT_SHOTS.length > 0 ? (previous + 1) % PRODUCT_SHOTS.length : 0))
+      setIsScreenStackInstantReset(true)
+      setIsScreenStackExiting(false)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsScreenStackInstantReset(false)
+          scheduleScreenStackExit()
+        })
+      })
+      return
+    }
+    scheduleScreenStackExit()
+  }
 
   const onClickAuthLogin = async (provider: string, lastUsedProvider = provider) => {
     setLoading({
@@ -419,12 +472,27 @@ export function Login() {
               </p>
             </div>
 
-            <div
-              className={`flex items-center justify-center gap-3 px-4 py-4 text-sm text-neutral-subtle [animation-fill-mode:both] ${testimonialAnimationClass}`}
-              onAnimationEnd={handleTestimonialAnimationEnd}
+            <motion.div
+              key={testimonialIndex}
+              initial={{ opacity: 0, y: 8 }}
+              animate={
+                isTestimonialFadingOut
+                  ? {
+                      opacity: 0,
+                      y: -8,
+                      transition: { duration: 0.4, ease: [0.55, 0.085, 0.68, 0.53] },
+                    }
+                  : {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: isTestimonialInstantReset ? 0 : 0.5, ease: 'easeOut' },
+                    }
+              }
+              onAnimationComplete={handleTestimonialAnimationComplete}
+              className="flex items-center justify-center gap-3 px-4 py-4 text-sm text-neutral-subtle"
             >
-              {TESTIMONIALS[testimonialIndex]}
-            </div>
+              {shuffledTestimonials[testimonialIndex]}
+            </motion.div>
           </div>
         </div>
 
@@ -438,13 +506,110 @@ export function Login() {
 
           <div className="absolute inset-0 z-10 [-webkit-mask-image:radial-gradient(225.19%_100%_at_50%_0%,#D9D9D9_72%,rgba(217,217,217,0)_88%)] [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:100%_100%] [mask-image:radial-gradient(225.19%_100%_at_50%_0%,#D9D9D9_72%,rgba(217,217,217,0)_88%)] [mask-repeat:no-repeat] [mask-size:100%_100%]">
             <div className="relative ml-32 mt-12 aspect-[2940/2080] h-[80%] skew-x-[15deg]">
-              <div className="absolute inset-0 -translate-x-8 translate-y-8 rounded-2xl bg-surface-neutral opacity-45 shadow-[0_0_25px_0_rgba(0,0,0,0.04),0_2px_5px_0_rgba(0,0,0,0.02)]" />
-              <div className="absolute inset-0 -translate-x-4 translate-y-4 rounded-2xl bg-surface-neutral opacity-90 shadow-[0_0_25px_0_rgba(0,0,0,0.04),0_2px_5px_0_rgba(0,0,0,0.02)]" />
-              <img
-                src="/assets/login/product-shots/Deployed%20and%20running.jpg"
+              {/* Framer Motion stack choreography:
+                  1) Front exits to top-right and fades out.
+                  2) Next screenshot fades in on the same path while the white middle layer is promoted.
+                  3) White back layer is promoted to middle (offset -32,+32 -> -16,+16, opacity -> 0.9).
+                  4) White incoming layer appears (offset -48,+48 -> -32,+32, opacity 0 -> 0.45).
+                  Only the front slot renders a screenshot. */}
+              <motion.img
+                src={PRODUCT_SHOTS[frontShotIndex]}
                 alt=""
                 aria-hidden
-                className="relative h-full rounded-2xl shadow-[0_0_25px_0_rgba(0,0,0,0.04),0_2px_5px_0_rgba(0,0,0,0.02)]"
+                initial={{ x: 0, y: 0, opacity: 0 }}
+                animate={
+                  isScreenStackExiting
+                    ? {
+                        x: SCREEN_STACK_OFFSET_PX,
+                        y: -SCREEN_STACK_OFFSET_PX,
+                        opacity: 0,
+                        transition: { duration: SCREEN_STACK_MOVE_DURATION_S, ease: CUBIC_BEZIER_EASE },
+                      }
+                    : {
+                        x: 0,
+                        y: 0,
+                        opacity: 1,
+                        transition: {
+                          duration: getScreenStackRestTransitionDuration(),
+                          ease: CUBIC_BEZIER_EASE,
+                        },
+                      }
+                }
+                onAnimationComplete={handleScreenStackFrontAnimationComplete}
+                className="absolute left-0 top-0 z-40 h-full rounded-2xl shadow-[0_0_25px_0_rgba(0,0,0,0.04),0_2px_5px_0_rgba(0,0,0,0.02)]"
+              />
+              {isScreenStackExiting && (
+                <motion.img
+                  key={`incoming-front-${frontShotIndex}`}
+                  src={PRODUCT_SHOTS[(frontShotIndex + 1) % PRODUCT_SHOTS.length]}
+                  alt=""
+                  aria-hidden
+                  initial={{ x: -SCREEN_STACK_OFFSET_PX, y: SCREEN_STACK_OFFSET_PX, opacity: 0 }}
+                  animate={{
+                    x: 0,
+                    y: 0,
+                    opacity: 1,
+                    transition: { duration: SCREEN_STACK_MOVE_DURATION_S, ease: CUBIC_BEZIER_EASE },
+                  }}
+                  className="absolute left-0 top-0 z-[35] h-full rounded-2xl"
+                />
+              )}
+              <motion.div
+                initial={{ x: -SCREEN_STACK_OFFSET_PX, y: SCREEN_STACK_OFFSET_PX, opacity: SCREEN_STACK_MIDDLE_OPACITY }}
+                animate={
+                  isScreenStackExiting
+                    ? {
+                        x: 0,
+                        y: 0,
+                        opacity: 1,
+                        transition: { duration: SCREEN_STACK_MOVE_DURATION_S, ease: CUBIC_BEZIER_EASE },
+                      }
+                    : {
+                        x: -SCREEN_STACK_OFFSET_PX,
+                        y: SCREEN_STACK_OFFSET_PX,
+                        opacity: SCREEN_STACK_MIDDLE_OPACITY,
+                        transition: { duration: getScreenStackRestTransitionDuration(), ease: CUBIC_BEZIER_EASE },
+                      }
+                }
+                className="absolute left-0 top-0 z-30 h-full w-full rounded-2xl bg-surface-neutral shadow-[0_0_25px_0_rgba(0,0,0,0.04),0_2px_5px_0_rgba(0,0,0,0.02)]"
+              />
+              <motion.div
+                initial={{ x: -2 * SCREEN_STACK_OFFSET_PX, y: 2 * SCREEN_STACK_OFFSET_PX, opacity: SCREEN_STACK_BACK_OPACITY }}
+                animate={
+                  isScreenStackExiting
+                    ? {
+                        x: -SCREEN_STACK_OFFSET_PX,
+                        y: SCREEN_STACK_OFFSET_PX,
+                        opacity: SCREEN_STACK_MIDDLE_OPACITY,
+                        transition: { duration: SCREEN_STACK_MOVE_DURATION_S, ease: CUBIC_BEZIER_EASE },
+                      }
+                    : {
+                        x: -2 * SCREEN_STACK_OFFSET_PX,
+                        y: 2 * SCREEN_STACK_OFFSET_PX,
+                        opacity: SCREEN_STACK_BACK_OPACITY,
+                        transition: { duration: getScreenStackRestTransitionDuration(), ease: CUBIC_BEZIER_EASE },
+                      }
+                }
+                className="absolute left-0 top-0 z-20 h-full w-full rounded-2xl bg-surface-neutral shadow-[0_0_25px_0_rgba(0,0,0,0.04),0_2px_5px_0_rgba(0,0,0,0.02)]"
+              />
+              <motion.div
+                initial={{ x: -3 * SCREEN_STACK_OFFSET_PX, y: 3 * SCREEN_STACK_OFFSET_PX, opacity: 0 }}
+                animate={
+                  isScreenStackExiting
+                    ? {
+                        x: -2 * SCREEN_STACK_OFFSET_PX,
+                        y: 2 * SCREEN_STACK_OFFSET_PX,
+                        opacity: SCREEN_STACK_BACK_OPACITY,
+                        transition: { duration: SCREEN_STACK_MOVE_DURATION_S, ease: CUBIC_BEZIER_EASE },
+                      }
+                    : {
+                        x: -3 * SCREEN_STACK_OFFSET_PX,
+                        y: 3 * SCREEN_STACK_OFFSET_PX,
+                        opacity: 0,
+                        transition: { duration: getScreenStackRestTransitionDuration(), ease: CUBIC_BEZIER_EASE },
+                      }
+                }
+                className="absolute left-0 top-0 z-10 h-full w-full rounded-2xl bg-surface-neutral shadow-[0_0_25px_0_rgba(0,0,0,0.04),0_2px_5px_0_rgba(0,0,0,0.02)]"
               />
             </div>
           </div>
