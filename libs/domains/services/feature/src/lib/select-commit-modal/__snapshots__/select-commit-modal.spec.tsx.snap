@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SelectCommitModal should match snapshot 1`] = `
 <div>
@@ -96,7 +96,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   class="text-neutral-350 dark:text-neutral-50"
                 >
                   committed 
-                  1904 years
+                  1905 years
                    ago
                 </span>
               </div>
