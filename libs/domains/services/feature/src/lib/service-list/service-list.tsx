@@ -207,11 +207,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         enableSorting: true,
         size: 57,
         cell: (info) => {
-          return (
-            <div>
-              <ServiceNameCell service={info.row.original} environment={environment} />
-            </div>
-          )
+          return <ServiceNameCell service={info.row.original} environment={environment} />
         },
       }),
       columnHelper.accessor('status', {

@@ -1,7 +1,7 @@
 import { type Environment } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { Button, Icon, Link, Tooltip } from '@qovery/shared/ui'
+import { Button, Icon, Tooltip } from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
 import ServiceLinksPopover from '../../service-links-popover/service-links-popover'
@@ -9,32 +9,27 @@ import ServiceTemplateIndicator from '../../service-template-indicator/service-t
 
 export function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
   return (
-    <div className="flex h-full items-center justify-between">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2.5">
-          <ServiceTemplateIndicator service={service} size="sm">
-            <ServiceAvatar service={service} size="custom" className="h-5 w-5" serviceAvatarRadius="sm" radius="none" />
-          </ServiceTemplateIndicator>
+    <div className="flex h-full min-w-0 max-w-full items-center justify-between overflow-hidden">
+      <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden text-sm font-medium">
+          <span className="shrink-0">
+            <ServiceTemplateIndicator service={service} size="sm">
+              <ServiceAvatar
+                service={service}
+                size="custom"
+                className="h-5 w-5"
+                serviceAvatarRadius="sm"
+                radius="none"
+              />
+            </ServiceTemplateIndicator>
+          </span>
           {match(service)
             .with({ serviceType: 'DATABASE' }, (db) => {
               return (
-                <span className="flex min-w-0 shrink flex-col truncate">
-                  <span className="flex items-center gap-1.5">
+                <span className="flex min-w-0 flex-1 flex-col overflow-hidden">
+                  <span className="flex min-w-0 items-center gap-1.5">
                     <Tooltip content={db.name}>
-                      <Link
-                        className="inline max-w-max truncate"
-                        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
-                        params={{
-                          organizationId: environment.organization.id,
-                          projectId: environment.project.id,
-                          environmentId: environment.id,
-                          serviceId: service.id,
-                        }}
-                        underline
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {db.name}
-                      </Link>
+                      <span className="block min-w-0 truncate">{db.name}</span>
                     </Tooltip>
                   </span>
                 </span>
@@ -60,26 +55,13 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
                 .exhaustive()
 
               return (
-                <span className="flex min-w-0 shrink flex-col truncate">
-                  <span className="flex items-center gap-1.5">
+                <span className="flex min-w-0 flex-1 flex-col overflow-hidden">
+                  <span className="flex min-w-0 items-center gap-1.5">
                     <Tooltip content={service.name}>
-                      <Link
-                        className="inline max-w-max truncate"
-                        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
-                        params={{
-                          organizationId: environment.organization.id,
-                          projectId: environment.project.id,
-                          environmentId: environment.id,
-                          serviceId: service.id,
-                        }}
-                        underline
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {service.name}
-                      </Link>
+                      <span className="block min-w-0 flex-1 truncate">{service.name}</span>
                     </Tooltip>
                     <Tooltip content={schedule}>
-                      <span className="truncate text-sm font-normal text-neutral-subtle">
+                      <span className="shrink-0 truncate text-sm font-normal text-neutral-subtle">
                         <Icon iconName="info-circle" iconStyle="regular" />
                       </span>
                     </Tooltip>
@@ -88,28 +70,15 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
               )
             })
             .otherwise(() => (
-              <span className="flex min-w-0 shrink flex-col truncate">
+              <span className="flex min-w-0 flex-1 flex-col overflow-hidden">
                 <Tooltip content={service.name}>
-                  <Link
-                    className="inline max-w-max truncate"
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
-                    params={{
-                      organizationId: environment.organization.id,
-                      projectId: environment.project.id,
-                      environmentId: environment.id,
-                      serviceId: service.id,
-                    }}
-                    underline
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {service.name}
-                  </Link>
+                  <span className="block min-w-0 truncate">{service.name}</span>
                 </Tooltip>
               </span>
             ))}
         </div>
 
-        <div onClick={(e) => e.stopPropagation()}>
+        <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
           <ServiceLinksPopover
             organizationId={environment.organization.id}
             projectId={environment.project.id}
