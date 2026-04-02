@@ -65,6 +65,7 @@ const serviceIcons = {
   'app://qovery-console/container': { icon: '/assets/services/application.svg', title: 'Container' },
   'app://qovery-console/database': { icon: '/assets/services/database.svg', title: 'Database' },
   'app://qovery-console/helm': { icon: '/assets/services/helm.svg', title: 'Helm' },
+  'app://qovery-console/argocd': { icon: '/assets/services/argocd.svg', title: 'ArgoCD' },
   'app://qovery-console/application': {
     icon: '/assets/services/application.svg',
     title: 'Application',

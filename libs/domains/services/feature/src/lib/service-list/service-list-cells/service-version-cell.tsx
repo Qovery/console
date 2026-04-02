@@ -29,9 +29,19 @@ type ServiceVersionCellProps = {
   service: AnyService
   organizationId: string
   projectId: string
+  versionOverride?: { primary: string; secondary: string }
 }
 
-export function ServiceVersionCell({ service, organizationId, projectId }: ServiceVersionCellProps) {
+export function ServiceVersionCell({ service, organizationId, projectId, versionOverride }: ServiceVersionCellProps) {
+  if (versionOverride) {
+    return (
+      <div className="flex flex-col text-sm text-neutral">
+        <span className="truncate">{versionOverride.primary}</span>
+        <span className="truncate">{versionOverride.secondary}</span>
+      </div>
+    )
+  }
+
   const gitInfo = (service: Application | Job | Helm | Terraform, gitRepository?: ApplicationGitRepository) =>
     gitRepository && (
       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>

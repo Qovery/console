@@ -55,6 +55,12 @@ function RouteComponent() {
     icon: 'box' as const,
   }
 
+  const argoCdIntegrationLink = {
+    title: 'ArgoCD integration',
+    to: `${pathSettings}/argocd-integration`,
+    icon: 'link' as const,
+  }
+
   const helmRepositoriesLink = {
     title: 'Helm repositories',
     to: `${pathSettings}/helm-repositories`,
@@ -103,6 +109,7 @@ function RouteComponent() {
     teamLink,
     billingPlansLink,
     labelsAnnotationsLink,
+    argoCdIntegrationLink,
     containerRegistriesLink,
     helmRepositoriesLink,
     cloudCredentialsLink,

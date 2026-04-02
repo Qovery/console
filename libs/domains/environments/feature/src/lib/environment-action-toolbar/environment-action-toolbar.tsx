@@ -30,13 +30,34 @@ import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
 type ActionToolbarVariant = 'default' | 'header'
 
+function ArgoCdHybridDeployInfoModal({ onUnderstood }: { onUnderstood: () => void }) {
+  return (
+    <div className="p-5">
+      <h2 className="h4 mb-2 max-w-sm text-neutral">Environment actions will only affect Qovery services</h2>
+      <p className="mb-6 text-sm text-neutral-subtle">
+        This environment contains both Qovery and ArgoCD services. Bulk actions such as deploy, redeploy, or restart
+        only apply to Qovery services. ArgoCD services are managed and deployed through ArgoCD.
+      </p>
+      <div className="flex">
+        <Button size="lg" onClick={onUnderstood}>
+          Understood!
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 export function MenuManageDeployment({
   environment,
   deploymentStatus,
+  redeployTooltip,
+  requireArgoCdHybridAck = false,
   variant = 'default',
 }: {
   environment: Environment
   deploymentStatus: EnvironmentStatus
+  redeployTooltip?: string
+  requireArgoCdHybridAck?: boolean
   variant?: ActionToolbarVariant
 }) {
   const state = deploymentStatus.state
@@ -48,11 +69,16 @@ export function MenuManageDeployment({
       <Icon iconName="circle-exclamation" iconStyle="regular" />
     </Tooltip>
   )
+  const tooltipInfo = (content: string) => (
+    <Tooltip side="bottom" content={content}>
+      <Icon iconName="circle-info" iconStyle="regular" />
+    </Tooltip>
+  )
 
   const tooltipEnvironmentNeedUpdate =
     displayYellowColor && tooltipService('Environment has changed and needs to be applied')
 
-  const { openModal } = useModal()
+  const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
   const logsLink =
@@ -72,19 +98,46 @@ export function MenuManageDeployment({
   // https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1416
   const { data: services = [] } = useServices({ environmentId: environment.id })
 
-  const mutationDeploy = () =>
+  const executeDeploy = () =>
     deployEnvironment({
       environmentId: environment.id,
     })
 
-  const mutationRedeploy = () => {
-    openModalConfirmation({
-      mode: environment.mode,
-      title: 'Confirm redeploy',
-      description: 'To confirm the redeploy of your environment, please type the name:',
-      name: environment.name,
-      action: () => deployEnvironment({ environmentId: environment.id }),
+  const withArgoCdHybridInfoModal = (action: () => void) => {
+    if (!requireArgoCdHybridAck) {
+      action()
+      return
+    }
+
+    openModal({
+      content: (
+        <ArgoCdHybridDeployInfoModal
+          onUnderstood={() => {
+            closeModal()
+            action()
+          }}
+        />
+      ),
+      options: {
+        width: 488,
+      },
     })
+  }
+
+  const mutationDeploy = () => {
+    withArgoCdHybridInfoModal(executeDeploy)
+  }
+
+  const mutationRedeploy = () => {
+    withArgoCdHybridInfoModal(() =>
+      openModalConfirmation({
+        mode: environment.mode,
+        title: 'Confirm redeploy',
+        description: 'To confirm the redeploy of your environment, please type the name:',
+        name: environment.name,
+        action: () => deployEnvironment({ environmentId: environment.id }),
+      })
+    )
   }
 
   const mutationStop = () => {
@@ -95,27 +148,31 @@ export function MenuManageDeployment({
         (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
     )
 
-    openModalConfirmation({
-      mode: environment.mode,
-      title: 'Confirm stop',
-      description: 'To confirm the stopping of your environment, please type the name:',
-      warning: hasDatabase
-        ? "RDS instances are automatically restarted by AWS after 7 days. After 7 days, Qovery won't pause it again for you."
-        : null,
-      name: environment.name,
-      action: () => stopEnvironment({ environmentId: environment.id }),
-    })
+    withArgoCdHybridInfoModal(() =>
+      openModalConfirmation({
+        mode: environment.mode,
+        title: 'Confirm stop',
+        description: 'To confirm the stopping of your environment, please type the name:',
+        warning: hasDatabase
+          ? "RDS instances are automatically restarted by AWS after 7 days. After 7 days, Qovery won't pause it again for you."
+          : null,
+        name: environment.name,
+        action: () => stopEnvironment({ environmentId: environment.id }),
+      })
+    )
   }
 
   const mutationUninstall = () => {
-    openModalConfirmation({
-      mode: 'PRODUCTION',
-      title: 'Confirm uninstall',
-      description: 'To confirm the uninstall of your environment, please type the name:',
-      warning: 'Uninstall delete all compute and data of your service',
-      name: environment.name,
-      action: () => uninstallEnvironment({ environmentId: environment.id }),
-    })
+    withArgoCdHybridInfoModal(() =>
+      openModalConfirmation({
+        mode: 'PRODUCTION',
+        title: 'Confirm uninstall',
+        description: 'To confirm the uninstall of your environment, please type the name:',
+        warning: 'Uninstall delete all compute and data of your service',
+        name: environment.name,
+        action: () => uninstallEnvironment({ environmentId: environment.id }),
+      })
+    )
   }
 
   const mutationCancelDeployment = () => {
@@ -130,12 +187,14 @@ export function MenuManageDeployment({
   }
 
   const openUpdateAllModal = () => {
-    openModal({
-      content: <UpdateAllModal environment={environment} />,
-      options: {
-        width: 676,
-      },
-    })
+    withArgoCdHybridInfoModal(() =>
+      openModal({
+        content: <UpdateAllModal environment={environment} />,
+        options: {
+          width: 676,
+        },
+      })
+    )
   }
 
   return (
@@ -196,7 +255,7 @@ export function MenuManageDeployment({
           >
             <div className="flex w-full items-center justify-between">
               Redeploy
-              {tooltipEnvironmentNeedUpdate}
+              {redeployTooltip ? tooltipInfo(redeployTooltip) : tooltipEnvironmentNeedUpdate}
             </div>
           </DropdownMenu.Item>
         )}
@@ -246,10 +305,12 @@ export function MenuManageDeployment({
 export function MenuOtherActions({
   state,
   environment,
+  isArgoCdHybrid = false,
   variant = 'default',
 }: {
   state: StateEnum
   environment: Environment
+  isArgoCdHybrid?: boolean
   variant?: ActionToolbarVariant
 }) {
   const { openModal, closeModal } = useModal()
@@ -281,6 +342,7 @@ export function MenuOtherActions({
           projectId={environment.project.id}
           organizationId={environment.organization.id}
           environmentToClone={environment}
+          isArgoCdHybrid={isArgoCdHybrid}
         />
       ),
       options: {
@@ -340,6 +402,82 @@ export function MenuOtherActions({
             </DropdownMenu.Item>
           </>
         )}
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  )
+}
+
+export function MenuArgoCdOnlyActions({
+  environment,
+  variant = 'default',
+}: {
+  environment: Environment
+  variant?: ActionToolbarVariant
+}) {
+  const { openModal } = useModal()
+  const [, copyToClipboard] = useCopyToClipboard()
+  const copyContent = `Cluster ID: ${environment.cluster_id}\nOrganization ID: ${environment.organization.id}\nProject ID: ${environment.project.id}\nEnvironment ID: ${environment.id}`
+
+  const openTerraformExportModal = () => {
+    openModal({
+      content: <TerraformExportModal environmentId={environment.id} />,
+    })
+  }
+
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <Button
+          aria-label="Other actions"
+          color="neutral"
+          size={variant === 'header' ? 'md' : 'sm'}
+          iconOnly
+          variant="outline"
+        >
+          <Tooltip content="Other actions">
+            <div className="flex h-full w-full items-center justify-center">
+              <Icon iconName="ellipsis-v" iconStyle="solid" />
+            </div>
+          </Tooltip>
+        </Button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content>
+        <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
+          <Link
+            className="gap-0"
+            to="/organization/$organizationId/audit-logs"
+            params={{
+              organizationId: environment.organization.id,
+            }}
+            search={{
+              targetType: OrganizationEventTargetType.ENVIRONMENT,
+              projectId: environment.project.id,
+              targetId: environment.id,
+            }}
+          >
+            See audit logs
+          </Link>
+        </DropdownMenu.Item>
+        <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(copyContent)}>
+          Copy identifier
+        </DropdownMenu.Item>
+        <DropdownMenu.Item icon={<Icon iconName="file-export" />} onSelect={openTerraformExportModal}>
+          Export as Terraform
+        </DropdownMenu.Item>
+        <DropdownMenu.Separator />
+        <DropdownMenu.Item
+          icon={<Icon iconName="trash-can" />}
+          color="neutral"
+          disabled
+          className="cursor-not-allowed data-[highlighted]:bg-transparent"
+        >
+          <div className="flex w-full items-center justify-between">
+            Delete environment
+            <Tooltip side="bottom" content="ArgoCD environment can only be deleted by revoking the integration">
+              <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-disabled" />
+            </Tooltip>
+          </div>
+        </DropdownMenu.Item>
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   )

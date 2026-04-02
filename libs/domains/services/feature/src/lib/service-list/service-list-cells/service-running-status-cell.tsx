@@ -14,6 +14,7 @@ type ServiceRunningStatusCellProps = {
   projectId: string
   environment: Environment
   clusterId: string
+  statusLabelOverride?: 'Synced' | 'Out of sync'
 }
 
 export function ServiceRunningStatusCell({
@@ -22,15 +23,31 @@ export function ServiceRunningStatusCell({
   projectId,
   environment,
   clusterId,
+  statusLabelOverride,
 }: ServiceRunningStatusCellProps) {
-  const { data } = useServiceDeploymentAndRunningStatuses({ environmentId: environment.id, service })
+  const hasStatusOverride = Boolean(statusLabelOverride)
+  const { data } = useServiceDeploymentAndRunningStatuses({
+    environmentId: hasStatusOverride ? '' : environment.id,
+    service: hasStatusOverride ? undefined : service,
+  })
   const { runningStatus, deploymentStatus } = data
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
 
   const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
-    clusterId,
-    environmentId: environment.id,
+    clusterId: hasStatusOverride ? '' : clusterId,
+    environmentId: hasStatusOverride ? '' : environment.id,
   })
+
+  if (statusLabelOverride) {
+    return (
+      <div className="min-w-40">
+        <span className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-neutral px-3 py-1 text-sm text-neutral">
+          <StatusChip status={statusLabelOverride === 'Out of sync' ? 'WARNING' : 'DEPLOYED'} />
+          {statusLabelOverride}
+        </span>
+      </div>
+    )
+  }
 
   const Wrapper = ({ children }: PropsWithChildren) => <div className="min-w-40">{children}</div>
 

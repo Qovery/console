@@ -1,4 +1,5 @@
 import { Outlet, createFileRoute, useParams } from '@tanstack/react-router'
+import { getFakeArgoCdMode } from '@qovery/domains/environments/feature'
 import { Sidebar } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
@@ -10,6 +11,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { organizationId, projectId, environmentId } = useParams({ strict: false })
   const pathSettings = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/settings`
+  const argoCdMode = getFakeArgoCdMode(environmentId ?? '')
 
   const generalLink = {
     title: 'General',
@@ -35,7 +37,12 @@ function RouteComponent() {
     icon: 'skull' as const,
   }
 
-  const LINKS_SETTINGS = [generalLink, deploymentRulesLink, previewEnvironmentsLink, dangerZoneLink]
+  const LINKS_SETTINGS =
+    argoCdMode === 'argocd-only'
+      ? [generalLink, deploymentRulesLink]
+      : argoCdMode === 'hybrid'
+        ? [generalLink, deploymentRulesLink, previewEnvironmentsLink]
+        : [generalLink, deploymentRulesLink, previewEnvironmentsLink, dangerZoneLink]
 
   return (
     <div className="flex min-h-0 flex-1">

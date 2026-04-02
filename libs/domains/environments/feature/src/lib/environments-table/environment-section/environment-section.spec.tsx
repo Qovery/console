@@ -32,9 +32,19 @@ jest.mock('../../hooks/use-environments/use-environments', () => ({
   }),
 }))
 
+jest.mock('../../fake-argocd-mode/fake-argocd-mode', () => ({
+  getFakeArgoCdMode: () => 'hybrid',
+}))
+
 jest.mock('../../environment-action-toolbar/environment-action-toolbar', () => ({
   MenuManageDeployment: () => <button type="button">Manage deployment</button>,
   MenuOtherActions: () => <button type="button">Delete environment</button>,
+  MenuArgoCdOnlyActions: () => <button type="button">ArgoCD other actions</button>,
+}))
+
+jest.mock('../../environment-state-chip/environment-state-chip', () => ({
+  __esModule: true,
+  default: () => <span>Status</span>,
 }))
 
 const overview: EnvironmentOverviewResponse = {

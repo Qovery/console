@@ -36,3 +36,4 @@ export * from './lib/settings-preview-environments/settings-preview-environments
 export * from './lib/settings-danger-zone/settings-danger-zone'
 export * from './lib/environment-deployment-list/environment-deployment-list-skeleton'
 export * from './lib/environment-last-deployment-section/environment-last-deployment-section'
+export * from './lib/fake-argocd-mode/fake-argocd-mode'

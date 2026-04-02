@@ -9,6 +9,7 @@ export const SETTINGS_CREDENTIALS_URL = '/credentials'
 export const SETTINGS_MEMBERS_URL = '/members'
 export const SETTINGS_ROLES_URL = '/roles'
 export const SETTINGS_LABELS_ANNOTATIONS_URL = '/labels-annotations'
+export const SETTINGS_ARGOCD_INTEGRATION_URL = '/argocd-integration'
 
 export const SETTINGS_ROLES_EDIT_URL = (roleId = ':roleId') => `/roles/edit/${roleId}`
 export const SETTINGS_BILLING_URL = '/billing-detail'

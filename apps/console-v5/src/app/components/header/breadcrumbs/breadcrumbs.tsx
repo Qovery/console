@@ -1,7 +1,7 @@
 import { useParams, useRouter } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { ClusterAvatar, useClusters } from '@qovery/domains/clusters/feature'
-import { EnvironmentMode, useEnvironments } from '@qovery/domains/environments/feature'
+import { EnvironmentMode, isFakeArgoCdService, useEnvironments } from '@qovery/domains/environments/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { ServiceAvatar, ServiceStateChip, useServices } from '@qovery/domains/services/feature'
@@ -84,18 +84,29 @@ export function Breadcrumbs() {
 
   const serviceItems: BreadcrumbItemData[] = services
     .sort((a, b) => a.name.trim().localeCompare(b.name.trim()))
-    .map((service) => ({
-      id: service.id,
-      label: service.name,
-      path: buildLocation({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
-        params: { organizationId, projectId, environmentId, serviceId: service.id },
-      }).href,
-      prefix: (
-        <ServiceAvatar service={service} size="custom" className="h-5 w-5" serviceAvatarRadius="sm" radius="none" />
-      ),
-      suffix: <ServiceStateChip mode="running" environmentId={service.environment?.id} serviceId={service.id} />,
-    }))
+    .map((service) => {
+      const serviceEnvironmentId = service.environment?.id ?? environmentId
+      const isArgoCdService =
+        Boolean(serviceEnvironmentId) &&
+        isFakeArgoCdService({
+          environmentId: serviceEnvironmentId,
+          serviceId: service.id,
+        })
+      const serviceAvatar = isArgoCdService ? { ...service, icon_uri: 'app://qovery-console/argocd' } : service
+
+      return {
+        id: service.id,
+        label: service.name,
+        path: buildLocation({
+          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+          params: { organizationId, projectId, environmentId, serviceId: service.id },
+        }).href,
+        prefix: (
+          <ServiceAvatar service={service} size="custom" className="h-5 w-5" serviceAvatarRadius="sm" radius="none" />
+        ),
+        suffix: <ServiceStateChip mode="running" environmentId={service.environment?.id} serviceId={service.id} />,
+      }
+    })
 
   const currentCluster = useMemo(
     () => clusterItems.find((cluster) => cluster.id === clusterId),

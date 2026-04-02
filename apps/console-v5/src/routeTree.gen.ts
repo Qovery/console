@@ -40,6 +40,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdSettingsContainerRegist
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/cloud-credentials'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing-summary'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing-details'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRouteImport } from './routes/_authenticated/organization/$organizationId/settings/argocd-integration'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsApiTokenRouteImport } from './routes/_authenticated/organization/$organizationId/settings/api-token'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRouteImport } from './routes/_authenticated/organization/$organizationId/settings/ai-copilot'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterNewRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/new'
@@ -99,6 +100,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/route'
@@ -346,6 +348,15 @@ const AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute =
     {
       id: '/billing-details',
       path: '/billing-details',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRouteImport.update(
+    {
+      id: '/argocd-integration',
+      path: '/argocd-integration',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
     } as any,
@@ -843,6 +854,14 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
       getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
     } as any,
   )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRouteImport.update(
+    {
+      id: '/project/$projectId/environment/$environmentId/service/$serviceId/manifest',
+      path: '/project/$projectId/environment/$environmentId/service/$serviceId/manifest',
+      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRouteImport.update(
     {
@@ -1237,6 +1256,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/cluster/new': typeof AuthenticatedOrganizationOrganizationIdClusterNewRoute
   '/organization/$organizationId/settings/ai-copilot': typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
   '/organization/$organizationId/settings/api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
+  '/organization/$organizationId/settings/argocd-integration': typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
   '/organization/$organizationId/settings/billing-details': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
   '/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   '/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
@@ -1304,6 +1324,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdVariablesRoute
@@ -1366,6 +1387,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/cluster/new': typeof AuthenticatedOrganizationOrganizationIdClusterNewRoute
   '/organization/$organizationId/settings/ai-copilot': typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
   '/organization/$organizationId/settings/api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
+  '/organization/$organizationId/settings/argocd-integration': typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
   '/organization/$organizationId/settings/billing-details': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
   '/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   '/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
@@ -1424,6 +1446,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdVariablesRoute
@@ -1492,6 +1515,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/cluster/new': typeof AuthenticatedOrganizationOrganizationIdClusterNewRoute
   '/_authenticated/organization/$organizationId/settings/ai-copilot': typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
   '/_authenticated/organization/$organizationId/settings/api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
+  '/_authenticated/organization/$organizationId/settings/argocd-integration': typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
   '/_authenticated/organization/$organizationId/settings/billing-details': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
   '/_authenticated/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   '/_authenticated/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
@@ -1559,6 +1583,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdVariablesRoute
@@ -1627,6 +1652,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/new'
     | '/organization/$organizationId/settings/ai-copilot'
     | '/organization/$organizationId/settings/api-token'
+    | '/organization/$organizationId/settings/argocd-integration'
     | '/organization/$organizationId/settings/billing-details'
     | '/organization/$organizationId/settings/billing-summary'
     | '/organization/$organizationId/settings/cloud-credentials'
@@ -1694,6 +1720,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables'
@@ -1756,6 +1783,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/new'
     | '/organization/$organizationId/settings/ai-copilot'
     | '/organization/$organizationId/settings/api-token'
+    | '/organization/$organizationId/settings/argocd-integration'
     | '/organization/$organizationId/settings/billing-details'
     | '/organization/$organizationId/settings/billing-summary'
     | '/organization/$organizationId/settings/cloud-credentials'
@@ -1814,6 +1842,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/settings'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables'
@@ -1881,6 +1910,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/cluster/new'
     | '/_authenticated/organization/$organizationId/settings/ai-copilot'
     | '/_authenticated/organization/$organizationId/settings/api-token'
+    | '/_authenticated/organization/$organizationId/settings/argocd-integration'
     | '/_authenticated/organization/$organizationId/settings/billing-details'
     | '/_authenticated/organization/$organizationId/settings/billing-summary'
     | '/_authenticated/organization/$organizationId/settings/cloud-credentials'
@@ -1948,6 +1978,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables'
@@ -2216,6 +2247,13 @@ declare module '@tanstack/react-router' {
       path: '/billing-details'
       fullPath: '/organization/$organizationId/settings/billing-details'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/argocd-integration': {
+      id: '/_authenticated/organization/$organizationId/settings/argocd-integration'
+      path: '/argocd-integration'
+      fullPath: '/organization/$organizationId/settings/argocd-integration'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/settings/api-token': {
@@ -2631,6 +2669,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
     }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
+      path: '/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell'
       path: '/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell'
@@ -2955,6 +3000,7 @@ const AuthenticatedOrganizationOrganizationIdAlertsRouteRouteWithChildren =
 interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
   AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
+  AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
   AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
   AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
@@ -2977,6 +3023,8 @@ const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: Authent
       AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute,
     AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute:
       AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute,
     AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute:
       AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute,
     AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute:
@@ -3346,6 +3394,7 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdVariablesRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdVariablesRoute
@@ -3424,6 +3473,8 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdManifestRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdOverviewRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdServiceLogsRoute:
