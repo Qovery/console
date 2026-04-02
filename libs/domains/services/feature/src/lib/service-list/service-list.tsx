@@ -307,6 +307,13 @@ export function ServiceList({ className, containerClassName, environment, ...pro
     )
   }
 
+  const handleNavigateToService = (serviceId: string) => {
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+      params: { organizationId, projectId, environmentId, serviceId },
+    })
+  }
+
   return (
     <div>
       <div className="flex gap-2 bg-surface-neutral px-4 py-2">
@@ -379,11 +386,11 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                     'h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle',
                     tableGridLayoutClassName
                   )}
-                  onClick={() => {
-                    navigate({
-                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
-                      params: { organizationId, projectId, environmentId, serviceId: row.original.id },
-                    })
+                  tabIndex={0}
+                  role="link"
+                  onClick={() => handleNavigateToService(row.original.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleNavigateToService(row.original.id)
                   }}
                 >
                   {row.getVisibleCells().map((cell, i) => (
