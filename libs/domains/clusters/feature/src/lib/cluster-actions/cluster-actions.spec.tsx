@@ -1,4 +1,10 @@
-import { ClusterDeploymentStatusEnum, ClusterStateEnum, type ClusterStatus } from 'qovery-typescript-axios'
+import {
+  ClusterDeploymentStatusEnum,
+  ClusterStateEnum,
+  type ClusterStatus,
+  GitProviderEnum,
+  KubernetesEnum,
+} from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -66,5 +72,57 @@ describe('ClusterActions', () => {
     await userEvent.click(buttonOtherActions)
 
     expect(baseElement).toMatchSnapshot()
+  })
+
+  it('should show "Update another version" for EKS Anywhere clusters with git source', async () => {
+    const eksAnywhereCluster = {
+      ...clusterFactoryMock(1)[0],
+      deployment_status: ClusterDeploymentStatusEnum.UP_TO_DATE,
+      kubernetes: KubernetesEnum.PARTIALLY_MANAGED,
+      infrastructure_charts_parameters: {
+        eks_anywhere_parameters: {
+          git_repository: {
+            url: 'https://github.com/Qovery/k8s-event-logger.git',
+            branch: 'main',
+            commit_id: '1234567',
+            git_token_id: 'token-id',
+            provider: GitProviderEnum.GITHUB,
+          },
+          yaml_file_path: '/cluster.yaml',
+        },
+      },
+    }
+
+    const { userEvent } = renderWithProviders(
+      <ClusterActions cluster={eksAnywhereCluster} organizationId="1" clusterStatus={mockClusterStatus} />,
+      {
+        container: document.body,
+      }
+    )
+
+    const buttonManageDeployment = screen.getByLabelText(/manage deployment/i)
+    await userEvent.click(buttonManageDeployment)
+
+    expect(screen.getByText('Update another version')).toBeInTheDocument()
+  })
+
+  it('should not show "Update another version" without EKS Anywhere git source', async () => {
+    const eksAnywhereCluster = {
+      ...clusterFactoryMock(1)[0],
+      deployment_status: ClusterDeploymentStatusEnum.UP_TO_DATE,
+      kubernetes: KubernetesEnum.PARTIALLY_MANAGED,
+    }
+
+    const { userEvent } = renderWithProviders(
+      <ClusterActions cluster={eksAnywhereCluster} organizationId="1" clusterStatus={mockClusterStatus} />,
+      {
+        container: document.body,
+      }
+    )
+
+    const buttonManageDeployment = screen.getByLabelText(/manage deployment/i)
+    await userEvent.click(buttonManageDeployment)
+
+    expect(screen.queryByText('Update another version')).not.toBeInTheDocument()
   })
 })
