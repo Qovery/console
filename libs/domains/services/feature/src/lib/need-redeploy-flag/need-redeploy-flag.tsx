@@ -1,8 +1,8 @@
-import { twMerge } from 'libs/shared/util-js/src/lib/custom-tw-merge'
 import { ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Banner, Button, Icon, Tooltip } from '@qovery/shared/ui'
+import { Banner, useModal } from '@qovery/shared/ui'
+import { useDatabaseDeployModal } from '../database-deploy-modal/use-database-deploy-modal/use-database-deploy-modal'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useService } from '../hooks/use-service/use-service'
@@ -10,6 +10,8 @@ import { useService } from '../hooks/use-service/use-service'
 export function NeedRedeployFlag() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '', databaseId = '' } = useParams()
   const navigate = useNavigate()
+  const { closeModal } = useModal()
+  const { openDatabaseDeployModal } = useDatabaseDeployModal()
 
   const { data: service } = useService({ environmentId, serviceId: applicationId || databaseId })
 
@@ -25,8 +27,6 @@ export function NeedRedeployFlag() {
 
   if (!serviceDeploymentStatus) return null
 
-  const renderRedeployImmediately = service?.serviceType === 'DATABASE' && service.mode === 'MANAGED'
-
   const serviceDeploymentStatusState =
     serviceDeploymentStatus?.service_deployment_status ?? ServiceDeploymentStatusEnum.NEVER_DEPLOYED
 
@@ -35,9 +35,9 @@ export function NeedRedeployFlag() {
   const buttonLabel =
     (serviceDeploymentStatusState === ServiceDeploymentStatusEnum.OUT_OF_DATE ? 'Redeploy' : 'Deploy') + ' now'
 
-  const mutationDeployService = () => {
+  const mutationDeployService = (applyImmediately = false) => {
     if (service) {
-      deployService({ serviceId: service.id, serviceType: service.serviceType })
+      deployService({ serviceId: service.id, serviceType: service.serviceType, applyImmediately })
       navigate(
         ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
           DEPLOYMENT_LOGS_VERSION_URL(service.id, 'latest')
@@ -45,46 +45,80 @@ export function NeedRedeployFlag() {
     }
   }
 
+  const handleDatabaseDeployModal = () => {
+    openDatabaseDeployModal({
+      title: `Deploy database`,
+      description: 'Choose when to deploy and apply your changes',
+      entities: [],
+      submitButtonText: 'Confirm',
+      actions: [
+        {
+          id: 'next',
+          title: 'Next maintenance window',
+          description: (
+            <div className="flex flex-col gap-2 text-neutral-350">
+              Redeploy your database and apply changes during the next maintenance window.
+            </div>
+          ),
+          icon: 'calendar-clock',
+          color: 'brand',
+          callback: async () => {
+            try {
+              mutationDeployService(false)
+              closeModal()
+            } catch (error) {
+              console.error(error)
+            }
+          },
+        },
+        {
+          id: 'immediately',
+          title: 'Immediately',
+          description: (
+            <div className="flex flex-col gap-2 text-neutral-350">
+              <div className="flex flex-col gap-1">
+                <span>Redeploy your database and apply changes immediately.</span>
+                <p>
+                  <span className="font-bold">Be careful, </span>
+                  <span>your database may be unavailable for a few minutes during this process.</span>
+                </p>
+              </div>
+            </div>
+          ),
+          icon: 'timer',
+          color: 'red',
+          callback: async () => {
+            try {
+              mutationDeployService(true)
+              closeModal()
+            } catch (error) {
+              console.error(error)
+            }
+          },
+        },
+      ],
+    })
+  }
+
+  const handleDeploy = () => {
+    if (service?.serviceType === 'DATABASE' && service.mode === 'MANAGED') {
+      handleDatabaseDeployModal()
+    } else {
+      mutationDeployService()
+    }
+  }
+
   return (
-    <Banner
-      color="yellow"
-      // buttonIconRight="rotate-right"
-      // buttonLabel={buttonLabel}
-      // onClickButton={mutationDeployService}
-    >
-      <div className="flex items-center gap-4">
-        {serviceDeploymentStatusState === ServiceDeploymentStatusEnum.NEVER_DEPLOYED ? (
-          <p>This service is not running</p>
-        ) : (
-          <p>
-            This service needs to be{' '}
-            {serviceDeploymentStatusState === ServiceDeploymentStatusEnum.OUT_OF_DATE ? 'redeployed' : 'deployed'} to
-            apply the configuration changes
-          </p>
-        )}
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            className="gap-1 !bg-yellow-600/50 !text-yellow-900 hover:!bg-yellow-600/75"
-            onClick={mutationDeployService}
-          >
-            {buttonLabel}
-            <Icon iconName="rotate-right" />
-          </Button>
-          {renderRedeployImmediately && (
-            <Tooltip content="Apply changes immediately (do not wait for the next maintenance window)">
-              <Button
-                type="button"
-                className="gap-1 !bg-yellow-600/50 !text-yellow-900 hover:!bg-yellow-600/75"
-                onClick={mutationDeployService}
-              >
-                Deploy and apply now
-                <Icon iconName="rotate-right" />
-              </Button>
-            </Tooltip>
-          )}
-        </div>
-      </div>
+    <Banner color="yellow" buttonIconRight="rotate-right" buttonLabel={buttonLabel} onClickButton={handleDeploy}>
+      {serviceDeploymentStatusState === ServiceDeploymentStatusEnum.NEVER_DEPLOYED ? (
+        <p>This service is not running</p>
+      ) : (
+        <p>
+          This service needs to be{' '}
+          {serviceDeploymentStatusState === ServiceDeploymentStatusEnum.OUT_OF_DATE ? 'redeployed' : 'deployed'} to
+          apply the configuration changes
+        </p>
+      )}
     </Banner>
   )
 }

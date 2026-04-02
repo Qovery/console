@@ -46,7 +46,6 @@ import {
   DropdownMenu,
   Icon,
   Link,
-  ModalConfirmation,
   Skeleton,
   Tooltip,
   useModal,
@@ -63,6 +62,7 @@ import {
   urlCodeEditor,
 } from '@qovery/shared/util-js'
 import { ConfirmationCancelLifecycleModal } from '../confirmation-cancel-lifecycle-modal/confirmation-cancel-lifecycle-modal'
+import useDatabaseDeployModal from '../database-deploy-modal/use-database-deploy-modal/use-database-deploy-modal'
 import { ForceUnlockModal } from '../force-unlock-modal/force-unlock-modal'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 import { useDeleteService } from '../hooks/use-delete-service/use-delete-service'
@@ -95,7 +95,7 @@ function MenuManageDeployment({
 }) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const { openServiceRemoveModal } = useServiceRemoveModal()
+  const { openDatabaseDeployModal } = useDatabaseDeployModal()
 
   const { data: runningState } = useRunningStatus({ environmentId: environment.id, serviceId: service.id })
   const { mutate: deployService } = useDeployService({
@@ -391,40 +391,19 @@ function MenuManageDeployment({
     })
   }
 
-  const openRedeployDatabaseModal = () => {
-    openServiceRemoveModal({
-      title: `Deploy database and apply changes`,
-      description: 'Choose how to deploy your changes',
+  const handleDatabaseDeployModal = () => {
+    openDatabaseDeployModal({
+      title: `Deploy database`,
+      description: 'Choose when to deploy and apply your changes',
       entities: [],
+      submitButtonText: 'Confirm',
       actions: [
         {
           id: 'next',
           title: 'Next maintenance window',
           description: (
             <div className="flex flex-col gap-2 text-neutral-350">
-              <div className="flex flex-col gap-1">
-                <span>Redeploy your database and apply changes during the next maintenance window.</span>
-              </div>
-
-              {/* <span>
-                Stop and remove the services but keep all Qovery configuration, data and settings.
-                <br />
-                You can easily reinstall or redeploy later with the same configuration.
-              </span>
-              <div>
-                <span className="font-medium text-neutral-400">What's deleted:</span>
-                <ul className="list-disc pl-4">
-                  <li>All services data</li>
-                </ul>
-              </div>
-              <div>
-                <span className="font-medium text-neutral-400">What's kept:</span>
-                <ul className="list-disc pl-4">
-                  <li>Qovery configuration</li>
-                  <li>Environment variables</li>
-                  <li>Network settings</li>
-                </ul>
-              </div> */}
+              Redeploy your database and apply changes during the next maintenance window.
             </div>
           ),
           icon: 'calendar-clock',
@@ -444,26 +423,12 @@ function MenuManageDeployment({
           description: (
             <div className="flex flex-col gap-2 text-neutral-350">
               <div className="flex flex-col gap-1">
-                <span>
-                  Redeploy your database and apply changes immediately, without waiting for the next maintenance window.
-                </span>
-                <span>Your database may be unavailable for a few minutes during this process.</span>
+                <span>Redeploy your database and apply changes immediately.</span>
+                <p>
+                  <span className="font-bold">Be careful, </span>
+                  <span>your database may be unavailable for a few minutes during this process.</span>
+                </p>
               </div>
-              {/* <span>
-                    Permanently remove the services and all associated data.
-                    <br />
-                    This action cannot be undone.
-                  </span>
-                  <div>
-                    <span className="font-medium text-neutral-400">What's deleted:</span>
-                    <ul className="list-disc pl-4">
-                      <li>All services data</li>
-                      <li>Qovery configuration</li>
-                      <li>Logs and history</li>
-                      <li>Environment variables</li>
-                      <li>Network settings</li>
-                    </ul>
-                  </div> */}
             </div>
           ),
           icon: 'timer',
@@ -478,27 +443,15 @@ function MenuManageDeployment({
           },
         },
       ],
-      isDelete: true,
     })
-    // openModalConfirmation({
-    //   mode: EnvironmentModeEnum.PRODUCTION,
-    //   title: 'Deploy and apply immediately',
-    //   description: (
-    //     <div className="flex flex-col gap-1">
-    //       <span>
-    //         This will redeploy your database and apply changes immediately, without waiting for the next maintenance
-    //         window.
-    //       </span>
-    //       <span>Your database may be unavailable for a few minutes during this process.</span>
-    //       <span>To confirm, type "immediately". This action cannot be undone.</span>
-    //     </div>
-    //   ),
-    //   confirmationMethod: 'action',
-    //   confirmationAction: 'immediately',
-    //   action: () => {
-    //     console.log('Destroying service with id:', service.id)
-    //   },
-    // })
+  }
+
+  const handleDeploy = () => {
+    if (service.serviceType === 'DATABASE' && service.mode === 'MANAGED') {
+      handleDatabaseDeployModal()
+    } else {
+      mutationDeploy()
+    }
   }
 
   return (
@@ -580,7 +533,7 @@ function MenuManageDeployment({
               {isDeployAvailable(state) && (
                 <DropdownMenu.Item
                   icon={<Icon iconName="play" />}
-                  onSelect={openRedeployDatabaseModal}
+                  onSelect={handleDeploy}
                   className="relative"
                   color={displayYellowColor ? 'yellow' : 'brand'}
                 >
