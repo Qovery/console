@@ -78,7 +78,7 @@ import { SelectCommitModal } from '../select-commit-modal/select-commit-modal'
 import { SelectVersionModal } from '../select-version-modal/select-version-modal'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
-import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
+import { useServiceRemoveModal } from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
 
 type ActionToolbarVariant = 'default' | 'deployment'
 
@@ -95,6 +95,7 @@ function MenuManageDeployment({
 }) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
+  const { openServiceRemoveModal } = useServiceRemoveModal()
 
   const { data: runningState } = useRunningStatus({ environmentId: environment.id, serviceId: service.id })
   const { mutate: deployService } = useDeployService({
@@ -390,26 +391,114 @@ function MenuManageDeployment({
     })
   }
 
-  const openImmediatelyRedeployDatabaseModal = () => {
-    openModalConfirmation({
-      mode: EnvironmentModeEnum.PRODUCTION,
-      title: 'Deploy and apply immediately',
-      description: (
-        <div className="flex flex-col gap-1">
-          <span>
-            This will redeploy your database and apply changes immediately, without waiting for the next maintenance
-            window.
-          </span>
-          <span>Your database may be unavailable for a few minutes during this process.</span>
-          <span>To confirm, type "immediately". This action cannot be undone.</span>
-        </div>
-      ),
-      confirmationMethod: 'action',
-      confirmationAction: 'immediately',
-      action: () => {
-        console.log('Destroying service with id:', service.id)
-      },
+  const openRedeployDatabaseModal = () => {
+    openServiceRemoveModal({
+      title: `Deploy database and apply changes`,
+      description: 'Choose how to deploy your changes',
+      entities: [],
+      actions: [
+        {
+          id: 'next',
+          title: 'Next maintenance window',
+          description: (
+            <div className="flex flex-col gap-2 text-neutral-350">
+              <div className="flex flex-col gap-1">
+                <span>Redeploy your database and apply changes during the next maintenance window.</span>
+              </div>
+
+              {/* <span>
+                Stop and remove the services but keep all Qovery configuration, data and settings.
+                <br />
+                You can easily reinstall or redeploy later with the same configuration.
+              </span>
+              <div>
+                <span className="font-medium text-neutral-400">What's deleted:</span>
+                <ul className="list-disc pl-4">
+                  <li>All services data</li>
+                </ul>
+              </div>
+              <div>
+                <span className="font-medium text-neutral-400">What's kept:</span>
+                <ul className="list-disc pl-4">
+                  <li>Qovery configuration</li>
+                  <li>Environment variables</li>
+                  <li>Network settings</li>
+                </ul>
+              </div> */}
+            </div>
+          ),
+          icon: 'calendar-clock',
+          color: 'brand',
+          callback: async () => {
+            try {
+              mutationDeploy(false)
+              closeModal()
+            } catch (error) {
+              console.error(error)
+            }
+          },
+        },
+        {
+          id: 'immediately',
+          title: 'Immediately',
+          description: (
+            <div className="flex flex-col gap-2 text-neutral-350">
+              <div className="flex flex-col gap-1">
+                <span>
+                  Redeploy your database and apply changes immediately, without waiting for the next maintenance window.
+                </span>
+                <span>Your database may be unavailable for a few minutes during this process.</span>
+              </div>
+              {/* <span>
+                    Permanently remove the services and all associated data.
+                    <br />
+                    This action cannot be undone.
+                  </span>
+                  <div>
+                    <span className="font-medium text-neutral-400">What's deleted:</span>
+                    <ul className="list-disc pl-4">
+                      <li>All services data</li>
+                      <li>Qovery configuration</li>
+                      <li>Logs and history</li>
+                      <li>Environment variables</li>
+                      <li>Network settings</li>
+                    </ul>
+                  </div> */}
+            </div>
+          ),
+          icon: 'timer',
+          color: 'red',
+          callback: async () => {
+            try {
+              mutationDeploy(true)
+              closeModal()
+            } catch (error) {
+              console.error(error)
+            }
+          },
+        },
+      ],
+      isDelete: true,
     })
+    // openModalConfirmation({
+    //   mode: EnvironmentModeEnum.PRODUCTION,
+    //   title: 'Deploy and apply immediately',
+    //   description: (
+    //     <div className="flex flex-col gap-1">
+    //       <span>
+    //         This will redeploy your database and apply changes immediately, without waiting for the next maintenance
+    //         window.
+    //       </span>
+    //       <span>Your database may be unavailable for a few minutes during this process.</span>
+    //       <span>To confirm, type "immediately". This action cannot be undone.</span>
+    //     </div>
+    //   ),
+    //   confirmationMethod: 'action',
+    //   confirmationAction: 'immediately',
+    //   action: () => {
+    //     console.log('Destroying service with id:', service.id)
+    //   },
+    // })
   }
 
   return (
@@ -491,23 +580,12 @@ function MenuManageDeployment({
               {isDeployAvailable(state) && (
                 <DropdownMenu.Item
                   icon={<Icon iconName="play" />}
-                  onSelect={() => mutationDeploy(false)}
+                  onSelect={openRedeployDatabaseModal}
                   className="relative"
                   color={displayYellowColor ? 'yellow' : 'brand'}
                 >
                   Deploy
                   {tooltipServiceNeedUpdate}
-                </DropdownMenu.Item>
-              )}
-              {isDeployAvailable(state) && service.serviceType === 'DATABASE' && service.mode === 'MANAGED' && (
-                <DropdownMenu.Item
-                  icon={<Icon iconName="play" />}
-                  onSelect={openImmediatelyRedeployDatabaseModal}
-                  className="relative"
-                  color={displayYellowColor ? 'yellow' : 'brand'}
-                >
-                  Deploy and apply now
-                  {tooltipService('Apply changes immediately (do not wait for the next maintenance window)')}
                 </DropdownMenu.Item>
               )}
               {isRedeployAvailable(state) && (
