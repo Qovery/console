@@ -1,7 +1,7 @@
 import { Navigate, useSearchParams } from 'react-router-dom'
 import { LOGIN_URL } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
-import useRedirectIfLogged from '../../hooks/use-redirect-if-logged/use-redirect-if-logged'
+import useRedirectIfLogged from '../hooks/use-redirect-if-logged/use-redirect-if-logged'
 
 export function PageRedirectLogin() {
   const [searchParams] = useSearchParams()
