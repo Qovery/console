@@ -17,7 +17,7 @@ export function ServiceLastDeploymentCell({ service, environment }: ServiceLastD
   const triggerAction = subAction !== 'NONE' ? subAction : deploymentStatus?.status_details?.action
 
   return deploymentStatus?.state === 'READY' ? (
-    <span className="text-sm font-medium text-neutral-subtle">Never been deployed</span>
+    <span className="text-sm font-normal text-neutral-subtle">Never been deployed</span>
   ) : (
     <Link
       to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
@@ -30,7 +30,7 @@ export function ServiceLastDeploymentCell({ service, environment }: ServiceLastD
       }}
       underline
       color="neutral"
-      className="flex h-full w-full items-center justify-between hover:text-neutral"
+      className="flex h-full w-full items-center justify-between font-normal hover:text-neutral"
       onClick={(e) => {
         e.stopPropagation()
       }}
