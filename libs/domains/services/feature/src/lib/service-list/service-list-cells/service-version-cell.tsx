@@ -34,8 +34,8 @@ type ServiceVersionCellProps = {
 export function ServiceVersionCell({ service, organizationId, projectId }: ServiceVersionCellProps) {
   const gitInfo = (service: Application | Job | Helm | Terraform, gitRepository?: ApplicationGitRepository) =>
     gitRepository && (
-      <div className="flex w-full min-w-0 items-center justify-between gap-3">
-        <div className="min-w-0 flex-1" onClick={(e) => e.stopPropagation()}>
+      <div className="flex w-full min-w-0 items-center justify-between gap-3" onClick={(e) => e.stopPropagation()}>
+        <div className="min-w-0 flex-1">
           <div className="flex min-w-0 flex-col gap-0.5">
             <div className="flex min-w-0 items-center gap-2 text-neutral">
               <Icon className="h-3 w-3 shrink-0 text-inherit" name={gitRepository.provider} />
