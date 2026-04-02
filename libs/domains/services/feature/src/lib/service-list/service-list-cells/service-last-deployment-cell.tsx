@@ -16,7 +16,9 @@ export function ServiceLastDeploymentCell({ service, environment }: ServiceLastD
   const subAction = deploymentStatus?.status_details?.sub_action
   const triggerAction = subAction !== 'NONE' ? subAction : deploymentStatus?.status_details?.action
 
-  return (
+  return deploymentStatus?.state === 'READY' ? (
+    <span className="text-sm font-medium text-neutral-subtle">Never been deployed</span>
+  ) : (
     <Link
       to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
       params={{

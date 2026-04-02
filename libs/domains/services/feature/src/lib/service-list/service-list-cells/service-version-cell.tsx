@@ -19,7 +19,7 @@ import {
   isJobContainerSource,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import { ExternalLink, Icon, Tooltip, Truncate } from '@qovery/shared/ui'
+import { ExternalLink, Icon, Tooltip } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 import LastCommit from '../../last-commit/last-commit'
@@ -34,153 +34,155 @@ type ServiceVersionCellProps = {
 export function ServiceVersionCell({ service, organizationId, projectId }: ServiceVersionCellProps) {
   const gitInfo = (service: Application | Job | Helm | Terraform, gitRepository?: ApplicationGitRepository) =>
     gitRepository && (
-      <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center gap-1">
-          <div className="flex w-44 flex-col gap-0.5">
-            <span className="flex items-center gap-2 text-neutral">
-              <Icon className="h-3 w-3 text-inherit" name={gitRepository.provider} />
+      <div className="flex w-full min-w-0 items-center justify-between gap-3">
+        <div className="min-w-0 flex-1" onClick={(e) => e.stopPropagation()}>
+          <div className="flex min-w-0 flex-col gap-0.5">
+            <div className="flex min-w-0 items-center gap-2 text-neutral">
+              <Icon className="h-3 w-3 shrink-0 text-inherit" name={gitRepository.provider} />
               <ExternalLink
                 href={gitRepository.url}
                 underline
                 color="neutral"
                 size="ssm"
                 withIcon={false}
-                className="font-normal"
+                className="min-w-0 flex-1 overflow-hidden font-normal"
               >
-                <Truncate text={gitRepository.name} truncateLimit={20} />
+                <span className="min-w-0 truncate" title={gitRepository.name}>
+                  {gitRepository.name}
+                </span>
               </ExternalLink>
-            </span>
+            </div>
             {gitRepository.branch && gitRepository.url && (
-              <span className="flex items-center gap-2 text-neutral-subtle">
-                <Icon className="h-3 w-3 text-inherit" iconName="code-branch" iconStyle="regular" />
+              <div className="flex min-w-0 items-center gap-2 text-neutral-subtle">
+                <Icon className="h-3 w-3 shrink-0 text-inherit" iconName="code-branch" iconStyle="regular" />
                 <ExternalLink
                   href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
                   underline
                   color="neutral"
                   size="ssm"
                   withIcon={false}
-                  className="font-normal"
+                  className="min-w-0 flex-1 overflow-hidden font-normal"
                 >
-                  <Truncate text={gitRepository.branch} truncateLimit={20} />
+                  <span className="min-w-0 truncate" title={gitRepository.branch}>
+                    {gitRepository.branch}
+                  </span>
                 </ExternalLink>
-              </span>
+              </div>
             )}
           </div>
+        </div>
+        <div className="flex items-center gap-2">
           <LastCommit
             organizationId={organizationId}
             projectId={projectId}
             gitRepository={gitRepository}
             service={service}
           />
+          {'auto_deploy' in service && service.auto_deploy && (
+            <Tooltip content="Auto-deploy">
+              <span>
+                <Icon className="text-xs text-neutral-subtle" iconName="arrows-rotate" />
+              </span>
+            </Tooltip>
+          )}
         </div>
-        {'auto_deploy' in service && service.auto_deploy && (
-          <Tooltip content="Auto-deploy">
-            <span>
-              <Icon className="text-xs text-neutral-subtle" iconName="arrows-rotate" />
-            </span>
-          </Tooltip>
-        )}
       </div>
     )
   const containerInfo = (containerImage?: Pick<ContainerResponse, 'image_name' | 'tag' | 'registry'>) =>
     containerImage && (
-      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-        <div className="flex w-44 flex-col gap-0.5">
-          <span className="flex items-center gap-2 text-neutral">
-            <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
+      <div className="flex w-full min-w-0 items-center gap-1 text-ssm" onClick={(e) => e.stopPropagation()}>
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="flex min-w-0 items-center gap-2 text-neutral">
+            <Icon className="shrink-0" width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
             <Tooltip
+              classNameTrigger="min-w-0 flex-1 overflow-hidden"
               content={
                 <span className="text-center">
-                  {containerImage.registry.name.length >= 20 && (
-                    <>
-                      {containerImage.registry.name} <br />
-                    </>
-                  )}{' '}
+                  {containerImage.registry.name}
+                  <br />
                   {containerImage.registry.url}
                 </span>
               }
             >
-              <span className="text-neutral">
-                {containerImage.registry.name.length >= 20 ? (
-                  <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={20} />
-                ) : (
-                  containerImage.registry.name.toLowerCase()
-                )}
+              <span className="truncate text-neutral" title={containerImage.registry.name}>
+                {containerImage.registry.name.toLowerCase()}
               </span>
             </Tooltip>
           </span>
-          <span className="flex items-center gap-2 text-neutral">
-            <Icon width={16} name={IconEnum.CONTAINER} />
-            <Truncate text={`${containerImage.image_name}`} truncateLimit={20} />
+          <span className="flex min-w-0 items-center gap-2 text-neutral">
+            <Icon className="shrink-0" width={16} name={IconEnum.CONTAINER} />
+            <span className="min-w-0 flex-1 truncate" title={containerImage.image_name}>
+              {containerImage.image_name}
+            </span>
           </span>
         </div>
         {(service.serviceType === 'CONTAINER' ||
           (service.serviceType === 'JOB' && isJobContainerSource(service.source))) && (
-          <LastVersion
-            organizationId={organizationId}
-            projectId={projectId}
-            service={service}
-            version={containerImage.tag}
-          />
+          <div className="shrink-0">
+            <LastVersion
+              organizationId={organizationId}
+              projectId={projectId}
+              service={service}
+              version={containerImage.tag}
+            />
+          </div>
         )}
       </div>
     )
 
   const datasourceInfo = (datasource?: Pick<Database, 'accessibility' | 'mode' | 'type' | 'version'>) =>
     datasource && (
-      <div className="flex flex-col gap-0.5 text-ssm text-neutral">
-        <span className="flex items-center gap-2">
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5 text-ssm">
+        <div className="flex min-w-0 items-center gap-2 text-neutral">
           <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
-          {datasource.type.toLowerCase().replace('sql', 'SQL').replace('db', 'DB')}
-        </span>
-        <span className="flex items-center gap-2">
-          <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />v
-          {datasource.version}
-        </span>
+          <span className="min-w-0 flex-1 truncate">
+            {datasource.type.toLowerCase().replace('sql', 'SQL').replace('db', 'DB')}
+          </span>
+        </div>
+        <div className="flex min-w-0 items-center gap-2 text-neutral">
+          <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
+          <span className="min-w-0 flex-1 truncate">v{datasource.version}</span>
+        </div>
       </div>
     )
 
   const helmInfo = (helmRepository?: HelmSourceRepositoryResponse) =>
     helmRepository && (
-      <div className="flex items-center gap-1">
-        <div className="flex w-44 flex-col gap-1.5" onClick={(e) => e.stopPropagation()}>
-          <span className="flex gap-2">
-            <Icon width={12} name={IconEnum.HELM_OFFICIAL} />
+      <div className="flex w-full min-w-0 items-center gap-1" onClick={(e) => e.stopPropagation()}>
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5 text-ssm">
+          <span className="flex min-w-0 items-center gap-2 text-neutral">
+            <Icon className="shrink-0" width={12} name={IconEnum.HELM_OFFICIAL} />
             <Tooltip
+              classNameTrigger="min-w-0 flex-1 overflow-hidden"
               content={
                 <span className="text-center">
-                  {helmRepository.repository?.name.length > 20 && (
-                    <>
-                      {helmRepository.repository?.name} <br />
-                    </>
-                  )}
+                  {helmRepository.repository?.name}
+                  <br />
                   {helmRepository.repository?.url}
                 </span>
               }
             >
-              <span className="text-neutral">
-                {helmRepository.repository?.name.length > 20 ? (
-                  <Truncate text={helmRepository.repository?.name.toLowerCase()} truncateLimit={20} />
-                ) : (
-                  helmRepository.repository?.name.toLowerCase()
-                )}
+              <span className="truncate text-neutral" title={helmRepository.repository?.name}>
+                {helmRepository.repository?.name?.toLowerCase()}
               </span>
             </Tooltip>
           </span>
-          <div className="flex gap-2">
-            <Icon width={12} name={IconEnum.HELM_OFFICIAL} />
-            <span className="text-neutral">
-              <Truncate text={helmRepository.chart_name} truncateLimit={20} />
+          <span className="flex min-w-0 items-center gap-2 text-neutral">
+            <Icon className="shrink-0" width={12} name={IconEnum.HELM_OFFICIAL} />
+            <span className="min-w-0 flex-1 truncate" title={helmRepository.chart_name}>
+              {helmRepository.chart_name}
             </span>
-          </div>
+          </span>
         </div>
         {service.serviceType === 'HELM' && (
-          <LastVersion
-            organizationId={organizationId}
-            projectId={projectId}
-            service={service}
-            version={helmRepository.chart_version}
-          />
+          <div className="shrink-0">
+            <LastVersion
+              organizationId={organizationId}
+              projectId={projectId}
+              service={service}
+              version={helmRepository.chart_version}
+            />
+          </div>
         )}
       </div>
     )

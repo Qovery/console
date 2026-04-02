@@ -323,9 +323,9 @@ export function ServiceList({ className, containerClassName, environment, ...pro
               variant="surface"
               color={match(value)
                 .with('RUNNING', () => 'green' as const)
-                .with('STOPPED', () => 'sky' as const)
                 .with('ERROR', () => 'red' as const)
                 .otherwise(() => 'neutral' as const)}
+              className="text-ssm font-medium"
             >
               {count} {value.toLowerCase()}
             </Badge>
