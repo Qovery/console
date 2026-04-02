@@ -174,16 +174,19 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         cell: ({ row }) => {
           const isDisabled = !row.getCanSelect()
           const checkbox = (
-            <Checkbox
-              checked={row.getIsSelected()}
-              disabled={isDisabled}
-              onCheckedChange={(checked) => {
-                if (checked === 'indeterminate') {
-                  return
-                }
-                row.toggleSelected(checked)
-              }}
-            />
+            <div className="h-4">
+              {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
+              <Checkbox
+                checked={row.getIsSelected()}
+                disabled={isDisabled}
+                onCheckedChange={(checked) => {
+                  if (checked === 'indeterminate') {
+                    return
+                  }
+                  row.toggleSelected(checked)
+                }}
+              />
+            </div>
           )
 
           return (
