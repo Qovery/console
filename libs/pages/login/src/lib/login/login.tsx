@@ -97,6 +97,7 @@ const TESTIMONIALS = [
   </>,
 ]
 
+// shuffling testimonials and product images order on refresh
 function shuffleArray<T>(values: T[]) {
   const shuffled = [...values]
   for (let i = shuffled.length - 1; i > 0; i -= 1) {
@@ -106,6 +107,7 @@ function shuffleArray<T>(values: T[]) {
   return shuffled
 }
 
+// to store and display the last used badge
 function getCookieValue(key: string): string | undefined {
   if (typeof document === 'undefined') {
     return undefined
@@ -268,20 +270,24 @@ export function Login() {
 
   return (
     <div data-theme="light" className="relative min-h-screen w-screen overflow-x-hidden bg-background-secondary">
-      <Link href="https://www.qovery.com" color="subtle" className="absolute left-4 top-4 z-20 lg:left-6 lg:top-5">
+      <Link
+        href="https://www.qovery.com"
+        color="subtle"
+        className="pointer-events-auto absolute left-4 top-4 z-30 lg:left-6 lg:top-5"
+      >
         <Icon iconName="arrow-left" />
         Back to website
       </Link>
 
       <div className="relative mx-auto flex min-h-screen w-full lg:h-screen">
         <div className="relative z-20 flex w-full items-center justify-center px-2 sm:px-16 lg:flex-[1_1_0%] lg:px-8">
-          <div className="w-full max-w-[480px] rounded-2xl border border-neutral bg-surface-neutral-subtle shadow-[0_2px_5px_0_rgba(0,0,0,0.02),0_0_24px_0_rgba(0,0,0,0.04)]">
+          <div className="w-full max-w-[480px] rounded-2xl border border-neutral bg-surface-neutral-subtle shadow-[0_2px_5px_0_rgba(0,0,0,0.02),0_0_24px_0_rgba(0,0,0,0.04)] lg:min-w-[480px]">
             <div className="rounded-2xl bg-background px-4 pb-4 pt-9 outline outline-[1px] outline-neutral sm:px-8 sm:pb-6">
               <img className="mx-auto mb-9 h-8" src="/assets/logos/logo-black.svg" alt="Qovery logo black" />
 
               {!displayInvitation ? (
                 <h1
-                  className={`font-brand text-center text-2xl font-normal leading-[32px] text-neutral sm:text-[28px] sm:leading-[36px] ${ssoFormVisible ? 'mb-2' : 'mb-8'}`}
+                  className={`text-center font-brand text-2xl font-normal leading-[32px] text-neutral sm:text-[28px] sm:leading-[36px] ${ssoFormVisible ? 'mb-2' : 'mb-8'}`}
                 >
                   {ssoFormVisible ? 'Enterprise singe sign-on' : 'Connect to your workspace'}
                 </h1>
