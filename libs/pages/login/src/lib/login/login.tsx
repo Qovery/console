@@ -287,7 +287,7 @@ export function Login() {
 
               {!displayInvitation ? (
                 <h1
-                  className={`font-brand text-center text-2xl font-normal leading-[32px] text-neutral sm:text-[28px] sm:leading-[36px] ${ssoFormVisible ? 'mb-2' : 'mb-8'}`}
+                  className={`text-center font-brand text-2xl font-normal leading-[32px] text-neutral sm:text-[28px] sm:leading-[36px] ${ssoFormVisible ? 'mb-2' : 'mb-8'}`}
                 >
                   {ssoFormVisible ? 'Enterprise single sign-on' : 'Connect to your workspace'}
                 </h1>
