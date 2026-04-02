@@ -29,7 +29,7 @@ function TestComponent({ isSettings }: { isSettings?: boolean }) {
       backend: { kubernetes: {} },
       use_cluster_credentials: true,
       auto_deploy: false,
-      job_resources: { cpu_milli: 100, ram_mib: 256, storage_gib: 1 },
+      job_resources: { cpu_milli: 100, ram_mib: 256, storage_gib: 5 },
       arguments: '',
       timeout_sec: '300',
       dockerfile_fragment_source: 'none',

@@ -27,7 +27,7 @@ const generalDataDefaultValues: TerraformGeneralData = {
   job_resources: {
     cpu_milli: 500,
     ram_mib: 256,
-    storage_gib: 1,
+    storage_gib: 5,
   },
   source_provider: 'GIT',
   repository: 'Qovery/github',

@@ -51,7 +51,7 @@ export const terraformFactoryMock = (howMany: number): Terraform[] =>
     job_resources: {
       cpu_milli: 500,
       ram_mib: 512,
-      storage_gib: 1,
+      storage_gib: 5,
       gpu: 0,
     },
     use_cluster_credentials: true,
