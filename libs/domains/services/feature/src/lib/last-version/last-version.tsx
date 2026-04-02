@@ -117,7 +117,7 @@ export function LastVersion({ organizationId, projectId, service, version }: Las
 
   return (
     <span className="flex">
-      <Badge variant="outline" className="min-w-7 max-w-[81px] rounded-r-none border-r-0">
+      <Badge variant="outline" className="min-w-7 max-w-[81px] rounded-r-none border-r-0 bg-surface-neutral">
         <span className="flex h-full w-full items-center justify-center truncate">
           <Truncate text={version} truncateLimit={8} />
         </span>
