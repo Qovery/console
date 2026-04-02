@@ -7,7 +7,7 @@ exports[`LastVersion should match snapshot 1`] = `
       class="flex"
     >
       <span
-        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md min-w-7 max-w-[81px] rounded-r-none border-r-0"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md min-w-7 max-w-[81px] rounded-r-none border-r-0 bg-surface-neutral"
       >
         <span
           class="flex h-full w-full items-center justify-center truncate"

@@ -391,7 +391,6 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                 <Table.Row
                   className={`h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle ${tableGridLayoutClassName}`}
                   tabIndex={0}
-                  role="link"
                   onClick={() => handleNavigateToService(row.original.id)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleNavigateToService(row.original.id)
