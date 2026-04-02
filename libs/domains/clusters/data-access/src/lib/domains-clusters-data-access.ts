@@ -1,4 +1,5 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
+import { type AxiosInstance } from 'axios'
 import {
   type ClusterAdvancedSettings,
   type ClusterCloudProviderInfoRequest,
@@ -6,12 +7,20 @@ import {
   type ClusterRequest,
   type ClusterRoutingTableRequest,
   ClustersApi,
+  type CommitResponseList,
+  type EksAnywhereCommitResponse,
   OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
 import { type ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
 
 const clusterApi = new ClustersApi()
 const organizationApi = new OrganizationMainCallsApi()
+type ClusterApiWithFallback = Partial<Pick<ClustersApi, 'listEksAnywhereCommits' | 'updateEksAnywhereCommit'>> & {
+  axios: AxiosInstance
+  basePath: string
+}
+const clusterApiWithFallback = clusterApi as ClusterApiWithFallback
+const getClusterApiBasePath = () => clusterApiWithFallback.basePath.replace(/\/+$/, '')
 
 export const clusters = createQueryKeys('clusters', {
   list: ({ organizationId }: { organizationId: string }) => ({
@@ -33,6 +42,18 @@ export const clusters = createQueryKeys('clusters', {
     async queryFn() {
       const response = await clusterApi.getClusterStatus(organizationId, clusterId)
       return response.data
+    },
+  }),
+  eksAnywhereCommits: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      const response =
+        typeof clusterApiWithFallback.listEksAnywhereCommits === 'function'
+          ? await clusterApiWithFallback.listEksAnywhereCommits(organizationId, clusterId)
+          : await clusterApiWithFallback.axios.get<CommitResponseList>(
+              `${getClusterApiBasePath()}/organization/${encodeURIComponent(organizationId)}/cluster/${encodeURIComponent(clusterId)}/eks-anywhere/commits`
+            )
+      return response.data.results ?? []
     },
   }),
   routingTable: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
@@ -146,6 +167,24 @@ export const mutations = {
     dryRun?: boolean
   }) {
     const response = await clusterApi.deployCluster(organizationId, clusterId, dryRun)
+    return response.data
+  },
+  async updateEksAnywhereCommit({
+    organizationId,
+    clusterId,
+    commitId,
+  }: {
+    organizationId: string
+    clusterId: string
+    commitId: string
+  }) {
+    const response =
+      typeof clusterApiWithFallback.updateEksAnywhereCommit === 'function'
+        ? await clusterApiWithFallback.updateEksAnywhereCommit(organizationId, clusterId, { commit_id: commitId })
+        : await clusterApiWithFallback.axios.put<EksAnywhereCommitResponse>(
+            `${getClusterApiBasePath()}/organization/${encodeURIComponent(organizationId)}/cluster/${encodeURIComponent(clusterId)}/eks-anywhere/commit`,
+            { commit_id: commitId }
+          )
     return response.data
   },
   async stopCluster({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {

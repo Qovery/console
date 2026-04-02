@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import {
   type Cluster,
@@ -17,6 +18,7 @@ import {
   isStopAvailable,
   isUpdateAvailable,
 } from '@qovery/shared/util-js'
+import { queries } from '@qovery/state/util-queries'
 import { ClusterAccessModal } from '../cluster-access-modal/cluster-access-modal'
 import { ClusterDeleteModal } from '../cluster-delete-modal/cluster-delete-modal'
 import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
@@ -25,7 +27,9 @@ import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
+import { useUpdateEksAnywhereCommit } from '../hooks/use-update-eks-anywhere-commit/use-update-eks-anywhere-commit'
 import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-cluster'
+import { SelectEksAnywhereCommitModal } from './select-eks-anywhere-commit-modal'
 
 type ActionToolbarVariant = 'default' | 'header' | 'card'
 
@@ -39,10 +43,12 @@ function MenuManageDeployment({
   variant?: ActionToolbarVariant
 }) {
   const { openModalConfirmation } = useModalConfirmation()
-  const { openModal } = useModal()
+  const queryClient = useQueryClient()
+  const { openModal, closeModal } = useModal()
   const { mutate: deployCluster } = useDeployCluster()
   const { mutate: stopCluster } = useStopCluster()
   const { mutate: upgradeCluster } = useUpgradeCluster({ organizationId: cluster.organization.id })
+  const { mutate: updateEksAnywhereCommit } = useUpdateEksAnywhereCommit()
   const hasTextActionButton = variant === 'header'
   const actionButtonSize = variant === 'default' ? 'sm' : 'md'
 
@@ -61,6 +67,12 @@ function MenuManageDeployment({
     clusterStatus.status === 'DEPLOYED' &&
     cluster.kubernetes !== 'PARTIALLY_MANAGED'
   const clusterNeedUpdate = cluster.deployment_status !== 'UP_TO_DATE' && clusterStatus.status !== 'STOPPED'
+  const isEksAnywhereCluster = cluster.kubernetes === 'PARTIALLY_MANAGED'
+  const hasEksAnywhereGitRepository = Boolean(
+    cluster.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository?.url
+  )
+  const eksAnywhereCurrentCommitId =
+    cluster.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository?.commit_id
   const actionButtonVariant = hasTextActionButton ? 'solid' : 'outline'
   const actionButtonColor =
     clusterNeedUpdate || k8sUpdateAvailable ? 'yellow' : hasTextActionButton ? 'brand' : 'neutral'
@@ -82,6 +94,45 @@ function MenuManageDeployment({
   const mutationUpdate = () => {
     openModal({
       content: <ClusterUpdateModal cluster={cluster} />,
+    })
+  }
+  const mutationUpdateEksAnywhereVersion = () => {
+    queryClient.removeQueries({
+      queryKey: queries.clusters.eksAnywhereCommits({ organizationId: cluster.organization.id, clusterId: cluster.id })
+        .queryKey,
+    })
+
+    openModal({
+      content: (
+        <SelectEksAnywhereCommitModal
+          title="Update another version"
+          description="Select the commit id you want to use."
+          submitLabel="Update"
+          organizationId={cluster.organization.id}
+          clusterId={cluster.id}
+          currentCommitId={eksAnywhereCurrentCommitId}
+          onCancel={() => closeModal()}
+          onSubmit={(commitId) => {
+            if (commitId === eksAnywhereCurrentCommitId) {
+              closeModal()
+              mutationUpdate()
+              return
+            }
+
+            updateEksAnywhereCommit({
+              organizationId: cluster.organization.id,
+              clusterId: cluster.id,
+              commitId,
+            })
+            closeModal()
+          }}
+        >
+          <p>
+            For <strong className="font-medium text-neutral">{cluster.name}</strong>
+          </p>
+        </SelectEksAnywhereCommitModal>
+      ),
+      options: { width: 596 },
     })
   }
 
@@ -136,6 +187,20 @@ function MenuManageDeployment({
         {tooltipClusterNeedUpdate}
       </DropdownMenu.Item>
     ),
+    isEksAnywhereCluster &&
+      hasEksAnywhereGitRepository &&
+      (isDeployAvailable(clusterStatus.status) || isRedeployAvailable(clusterStatus.status)) && (
+        <DropdownMenu.Item
+          key="1bis"
+          icon={<Icon iconName="rotate-right" />}
+          onSelect={mutationUpdateEksAnywhereVersion}
+          className="relative"
+          color={clusterNeedUpdate ? 'yellow' : 'brand'}
+        >
+          Update another version
+          {tooltipClusterNeedUpdate}
+        </DropdownMenu.Item>
+      ),
     cluster.cloud_provider !== 'GCP' &&
       cluster.cloud_provider !== 'AZURE' &&
       isStopAvailable(clusterStatus.status) &&

@@ -1,0 +1,196 @@
+import * as Dialog from '@radix-ui/react-dialog'
+import { clsx } from 'clsx'
+import { type Commit } from 'qovery-typescript-axios'
+import { type ReactNode, useMemo, useState } from 'react'
+import {
+  Button,
+  Icon,
+  InputSearch,
+  LegacyAvatar,
+  LegacyAvatarStyle,
+  RadioGroup,
+  ScrollShadowWrapper,
+  TagCommit,
+} from '@qovery/shared/ui'
+import { dateToFormat, timeAgo } from '@qovery/shared/util-dates'
+import { pluralize, twMerge } from '@qovery/shared/util-js'
+import { useEksAnywhereCommits } from '../hooks/use-eks-anywhere-commits/use-eks-anywhere-commits'
+
+export interface SelectEksAnywhereCommitModalProps {
+  title: string
+  description: string
+  submitLabel: string
+  organizationId: string
+  clusterId: string
+  currentCommitId?: string
+  children?: ReactNode
+  onCancel: () => void
+  onSubmit: (targetCommitId: string) => void
+}
+
+export function SelectEksAnywhereCommitModal({
+  title,
+  description,
+  submitLabel,
+  organizationId,
+  clusterId,
+  currentCommitId,
+  children,
+  onCancel,
+  onSubmit,
+}: SelectEksAnywhereCommitModalProps) {
+  const { data: commits, isLoading, isError, error } = useEksAnywhereCommits({ organizationId, clusterId })
+
+  const [search, setSearch] = useState('')
+  const [targetCommitId, setTargetCommitId] = useState<string | undefined>(currentCommitId)
+
+  const commitsByDay = useMemo(
+    () =>
+      (commits ?? []).reduce<Record<string, Commit[]>>((acc, obj) => {
+        const key = new Date(obj.created_at).toISOString().slice(0, 10)
+        if (!acc[key]) {
+          acc[key] = []
+        }
+        acc[key].push(obj)
+        return acc
+      }, {}),
+    [commits]
+  )
+
+  const filterCommits: Record<string, Commit[]> = Object.fromEntries(
+    Object.entries(commitsByDay)
+      .map(([date, commitsForDate]) => {
+        return [
+          date,
+          commitsForDate.filter(
+            (commit) =>
+              commit.message.toLowerCase().includes(search.toLowerCase()) ||
+              commit.git_commit_id.toLowerCase().includes(search.toLowerCase())
+          ),
+        ]
+      })
+      .filter(([, commitsForDate]) => commitsForDate.length)
+  )
+  const hasSelectedCommitInResults = Object.values(filterCommits).some((commitsForDate) =>
+    commitsForDate.some((commit) => commit.git_commit_id === targetCommitId)
+  )
+
+  return (
+    <div className="flex flex-col gap-6 p-5">
+      <div className="flex flex-col gap-2 text-sm">
+        <Dialog.Title asChild>
+          <h2 className="h4 max-w-sm truncate text-neutral">{title}</h2>
+        </Dialog.Title>
+        <Dialog.Description className="text-neutral-subtle">{description}</Dialog.Description>
+        {children}
+      </div>
+
+      <InputSearch placeholder="Search by commit message or commit id" onChange={setSearch} />
+
+      {isError ? (
+        <div className="px-3 py-6 pb-[60px] text-center">
+          <Icon iconName="triangle-exclamation" className="text-warning" />
+          <p className="mt-1 text-xs font-medium text-neutral">Unable to load commits</p>
+          {error instanceof Error && <p className="mt-1 text-xs text-neutral-subtle">{error.message}</p>}
+        </div>
+      ) : isLoading || Object.keys(filterCommits).length > 0 ? (
+        <RadioGroup.Root value={targetCommitId} onValueChange={setTargetCommitId}>
+          <ScrollShadowWrapper className="max-h-[50vh] pb-[60px]">
+            {Object.entries(filterCommits).map(([date, commitsForDate]) => (
+              <div key={date} className="pl-2">
+                <div className="relative pl-5 text-sm font-medium text-neutral-subtle">
+                  <Icon iconName="code-commit" className="absolute left-0 top-1 -translate-x-1/2 text-neutral-subtle" />
+                  {pluralize(commitsForDate.length, 'Commit')} on {dateToFormat(date, 'MMM dd, yyyy')}
+                </div>
+                <div className="border-l border-neutral pb-5 pl-5 pt-3">
+                  {commitsForDate.map(
+                    (
+                      { author_name, author_avatar_url, commit_page_url, created_at, git_commit_id, message },
+                      index
+                    ) => {
+                      const isSelected = targetCommitId === git_commit_id
+                      const isSelectedSiblings =
+                        targetCommitId && commitsForDate[index - 1]?.git_commit_id === targetCommitId
+                      const isCurrentVersion = currentCommitId === git_commit_id
+
+                      return (
+                        <label
+                          key={git_commit_id}
+                          className={twMerge(
+                            '-mt-px flex w-full flex-row gap-3 border border-neutral p-3 first:rounded-t-md last:rounded-b-md',
+                            'cursor-pointer',
+                            isCurrentVersion ? 'bg-surface-neutral-subtle' : '',
+                            clsx({
+                              'border-surface-brand-solid bg-surface-brand-component': isSelected,
+                              'border-t-transparent': isSelectedSiblings,
+                            })
+                          )}
+                        >
+                          <div>
+                            <RadioGroup.Item value={git_commit_id} variant={isCurrentVersion ? 'check' : 'default'} />
+                          </div>
+                          <div className="flex min-w-0 flex-1 flex-col items-start gap-1 text-sm">
+                            <a
+                              href={commit_page_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className={twMerge(
+                                'max-w-full truncate font-medium text-neutral',
+                                clsx({
+                                  'text-brand': isCurrentVersion,
+                                })
+                              )}
+                            >
+                              {message}
+                            </a>
+                            <span className="text-neutral-subtle">committed {timeAgo(new Date(created_at))} ago</span>
+                          </div>
+                          <div className="flex flex-col items-end gap-2">
+                            <div className="flex items-center gap-1.5">
+                              <LegacyAvatar
+                                size={28}
+                                style={LegacyAvatarStyle.STROKED}
+                                firstName={author_name}
+                                url={author_avatar_url}
+                              />
+                              <TagCommit commitId={git_commit_id} />
+                            </div>
+                            <span className={clsx('text-xs', isCurrentVersion ? 'text-brand' : '')}>
+                              {isCurrentVersion ? 'Current version' : isSelected ? 'Selected version' : <>&nbsp;</>}
+                            </span>
+                          </div>
+                        </label>
+                      )
+                    }
+                  )}
+                </div>
+              </div>
+            ))}
+          </ScrollShadowWrapper>
+        </RadioGroup.Root>
+      ) : (
+        <div className="px-3 py-6 pb-[60px] text-center">
+          <Icon iconName="wave-pulse" className="text-neutral" />
+          <p className="mt-1 text-xs font-medium text-neutral">No result for this search</p>
+        </div>
+      )}
+      <div className="absolute bottom-0 left-0 flex w-full justify-end gap-3 rounded-b-md bg-background p-5">
+        <Button variant="outline" color="neutral" size="lg" onClick={() => onCancel()}>
+          Cancel
+        </Button>
+        <Button
+          disabled={!targetCommitId || !hasSelectedCommitInResults}
+          size="lg"
+          onClick={() => {
+            if (!targetCommitId) return
+            onSubmit(targetCommitId)
+          }}
+        >
+          {submitLabel}
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+export default SelectEksAnywhereCommitModal
