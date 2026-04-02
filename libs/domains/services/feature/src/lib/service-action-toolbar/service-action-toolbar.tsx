@@ -46,6 +46,7 @@ import {
   DropdownMenu,
   Icon,
   Link,
+  ModalConfirmation,
   Skeleton,
   Tooltip,
   useModal,
@@ -138,7 +139,14 @@ function MenuManageDeployment({
   const tooltipServiceNeedUpdate =
     displayYellowColor && tooltipService('Configuration has changed and needs to be applied')
 
-  const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
+  const mutationDeploy = (applyImmediately = false) => {
+    if (service.serviceType === 'DATABASE') {
+      deployService({ serviceId: service.id, serviceType: service.serviceType, applyImmediately })
+    } else {
+      deployService({ serviceId: service.id, serviceType: service.serviceType })
+    }
+  }
+
   const mutationTerraformAction = (
     action: 'plan' | 'plan_and_apply' | 'destroy' | 'force_unlock' | 'migrate_state'
   ) => {
@@ -382,6 +390,28 @@ function MenuManageDeployment({
     })
   }
 
+  const openImmediatelyRedeployDatabaseModal = () => {
+    openModalConfirmation({
+      mode: EnvironmentModeEnum.PRODUCTION,
+      title: 'Deploy and apply immediately',
+      description: (
+        <div className="flex flex-col gap-1">
+          <span>
+            This will redeploy your database and apply changes immediately, without waiting for the next maintenance
+            window.
+          </span>
+          <span>Your database may be unavailable for a few minutes during this process.</span>
+          <span>To confirm, type "immediately". This action cannot be undone.</span>
+        </div>
+      ),
+      confirmationMethod: 'action',
+      confirmationAction: 'immediately',
+      action: () => {
+        console.log('Destroying service with id:', service.id)
+      },
+    })
+  }
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -461,12 +491,23 @@ function MenuManageDeployment({
               {isDeployAvailable(state) && (
                 <DropdownMenu.Item
                   icon={<Icon iconName="play" />}
-                  onSelect={mutationDeploy}
+                  onSelect={() => mutationDeploy(false)}
                   className="relative"
                   color={displayYellowColor ? 'yellow' : 'brand'}
                 >
                   Deploy
                   {tooltipServiceNeedUpdate}
+                </DropdownMenu.Item>
+              )}
+              {isDeployAvailable(state) && service.serviceType === 'DATABASE' && service.mode === 'MANAGED' && (
+                <DropdownMenu.Item
+                  icon={<Icon iconName="play" />}
+                  onSelect={openImmediatelyRedeployDatabaseModal}
+                  className="relative"
+                  color={displayYellowColor ? 'yellow' : 'brand'}
+                >
+                  Deploy and apply now
+                  {tooltipService('Apply changes immediately (do not wait for the next maintenance window)')}
                 </DropdownMenu.Item>
               )}
               {isRedeployAvailable(state) && (
