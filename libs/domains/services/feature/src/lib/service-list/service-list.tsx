@@ -376,7 +376,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
               <Fragment key={row.id}>
                 <Table.Row
                   className={twMerge(
-                    'h-16 w-full cursor-pointer hover:bg-surface-neutral-subtle',
+                    'h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle',
                     tableGridLayoutClassName
                   )}
                   onClick={() => {
