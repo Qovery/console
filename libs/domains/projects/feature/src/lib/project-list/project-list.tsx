@@ -65,7 +65,7 @@ export function ProjectList() {
             return (
               <div
                 key={project.id}
-                className="group relative rounded-lg border border-neutral bg-surface-neutral p-4 text-left text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle"
+                className="group relative rounded-lg border border-neutral bg-surface-neutral p-4 text-left text-sm text-neutral transition-colors focus-within:bg-surface-neutral-subtle hover:bg-surface-neutral-subtle"
               >
                 <Link
                   to="/organization/$organizationId/project/$projectId/overview"
@@ -73,26 +73,25 @@ export function ProjectList() {
                   aria-label={`Open project ${project.name}`}
                   className="absolute inset-0 rounded-lg"
                 />
-                <div className="pointer-events-none relative z-10 flex items-center justify-between gap-3">
+                <div className="pointer-events-none relative flex items-center justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1">
                       <p className="truncate font-medium">{project.name}</p>
                       <Button
                         type="button"
                         variant="plain"
-                        color={isFavorite ? 'yellow' : 'neutral'}
                         size="xs"
-                        iconOnly
                         aria-label={`${isFavorite ? 'Remove' : 'Add'} ${project.name} ${isFavorite ? 'from' : 'to'} favorites`}
                         aria-pressed={isFavorite}
                         className="pointer-events-auto h-5 w-5 rounded-sm"
                         onClick={() => toggleFavoriteProject(project)}
+                        iconOnly
                       >
                         <Icon
                           iconName="star"
                           iconStyle={isFavorite ? 'solid' : 'regular'}
                           className={twMerge(
-                            clsx('text-sm transition-colors', {
+                            clsx('text-ssm transition-colors', {
                               'text-neutral-disabled group-hover:text-neutral-subtle': !isFavorite,
                               'text-warning': isFavorite,
                             })
