@@ -10,9 +10,9 @@ import ServiceTemplateIndicator from '../../service-template-indicator/service-t
 export function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
   return (
     <div className="flex h-full min-w-0 max-w-full items-center justify-between overflow-hidden">
-      <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
-        <div className="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden text-sm font-medium">
-          <ServiceTemplateIndicator service={service} size="sm">
+      <div className="flex h-full min-w-0 flex-1 items-center gap-3">
+        <div className="flex h-full items-center gap-2.5 overflow-hidden text-sm font-medium">
+          <ServiceTemplateIndicator service={service} size="sm" side="bottom" align="end">
             <ServiceAvatar service={service} size="custom" className="h-5 w-5" serviceAvatarRadius="sm" radius="none" />
           </ServiceTemplateIndicator>
           {match(service)
