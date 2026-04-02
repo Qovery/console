@@ -404,10 +404,9 @@ function MenuManageDeployment({
           ),
           icon: 'calendar-clock',
           color: 'brand',
-          callback: async () => {
+          callback: () => {
             try {
               mutationDeploy(false)
-              closeModal()
             } catch (error) {
               console.error(error)
             }
@@ -428,11 +427,10 @@ function MenuManageDeployment({
             </div>
           ),
           icon: 'timer',
-          color: 'red',
-          callback: async () => {
+          color: 'brand',
+          callback: () => {
             try {
               mutationDeploy(true)
-              closeModal()
             } catch (error) {
               console.error(error)
             }

@@ -62,10 +62,9 @@ export function NeedRedeployFlag() {
           ),
           icon: 'calendar-clock',
           color: 'brand',
-          callback: async () => {
+          callback: () => {
             try {
               mutationDeployService(false)
-              closeModal()
             } catch (error) {
               console.error(error)
             }
@@ -86,11 +85,10 @@ export function NeedRedeployFlag() {
             </div>
           ),
           icon: 'timer',
-          color: 'red',
-          callback: async () => {
+          color: 'brand',
+          callback: () => {
             try {
               mutationDeployService(true)
-              closeModal()
             } catch (error) {
               console.error(error)
             }

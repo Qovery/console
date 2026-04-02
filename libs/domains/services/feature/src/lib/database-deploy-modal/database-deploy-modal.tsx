@@ -1,6 +1,6 @@
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Button, Icon, InputTextSmall, RadioGroup, useModal } from '@qovery/shared/ui'
+import { Button, Icon, RadioGroup, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { type ActionItem, type DatabaseDeployModalData } from './use-database-deploy-modal/use-database-deploy-modal'
 
@@ -76,7 +76,7 @@ export function DatabaseDeployModal({
                         )}
                         <span className="font-medium text-neutral-400">{action.title}</span>
                       </div>
-                      <span className="inline-block text-sm text-neutral-350">{action.description}</span>
+                      <div className="inline-block text-sm text-neutral-350">{action.description}</div>
                     </label>
                   ))}
                 </RadioGroup.Root>
@@ -94,7 +94,7 @@ export function DatabaseDeployModal({
           <Button
             type="submit"
             size="lg"
-            color={!submitButtonText && selectedAction?.color ? selectedAction?.color : 'brand'}
+            color={selectedAction?.color ? selectedAction?.color : 'brand'}
             disabled={!isValid}
           >
             {submitButtonText ?? selectedAction?.title}
