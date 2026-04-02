@@ -28,7 +28,7 @@ import {
   TablePrimitives,
   Tooltip,
 } from '@qovery/shared/ui'
-import { twMerge } from '@qovery/shared/util-js'
+import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
 import { useServices } from '../hooks/use-services/use-services'
 import { ServiceActions } from '../service-actions/service-actions'
@@ -295,7 +295,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
       return match(value)
         .with('RUNNING', 'STOPPED', () => `${count} ${statusLabel}`)
         .with('ERROR', () => `${count} in error`)
-        .otherwise(() => `${count} ${statusLabel}${count > 1 ? 's' : ''}`)
+        .otherwise(() => `${count} ${pluralize(count, statusLabel)}`)
     }
 
     return statusFacetedUniqueValues.some(([value]) => value === undefined) ? (
