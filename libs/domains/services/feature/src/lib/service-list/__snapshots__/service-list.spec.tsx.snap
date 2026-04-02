@@ -25,13 +25,13 @@ exports[`ServiceList should match snapshot 1`] = `
             class="border-t border-neutral"
           >
             <tr
-              class="grid w-full grid-cols-[48px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
+              class="grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
             >
               <th
-                class="h-11 border-neutral px-4 text-left font-code font-normal relative flex items-center"
+                class="h-11 border-neutral text-left font-code font-normal relative flex items-center border-none p-0"
               >
                 <div
-                  class="h-5"
+                  class="flex h-full w-full items-center pl-4"
                 >
                   <button
                     aria-checked="false"
@@ -44,7 +44,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </th>
               <th
-                class="h-11 border-neutral px-4 text-left font-code font-normal relative flex items-center"
+                class="h-11 border-neutral text-left font-code font-normal relative flex items-center border-none p-0"
               >
                 <button
                   class="flex items-center gap-1 truncate cursor-pointer select-none"
@@ -54,20 +54,20 @@ exports[`ServiceList should match snapshot 1`] = `
                 </button>
               </th>
               <th
-                class="h-11 px-4 text-left font-code font-normal relative flex items-center border-r border-neutral last:border-r-0"
+                class="h-11 border-neutral px-4 text-left font-code font-normal relative flex items-center"
               />
               <th
-                class="h-11 px-4 text-left font-code font-normal relative flex items-center border-r border-neutral last:border-r-0"
+                class="h-11 border-neutral px-4 text-left font-code font-normal relative flex items-center"
               >
                 Last deployment
               </th>
               <th
-                class="h-11 px-4 text-left font-code font-normal relative flex items-center border-r border-neutral last:border-r-0"
+                class="h-11 border-neutral px-4 text-left font-code font-normal relative flex items-center"
               >
                 Target version
               </th>
               <th
-                class="h-11 px-4 text-left font-code font-normal relative flex items-center border-r border-neutral last:border-r-0"
+                class="h-11 border-neutral px-4 text-left font-code font-normal relative flex items-center"
               >
                 Actions
               </th>
@@ -77,36 +77,40 @@ exports[`ServiceList should match snapshot 1`] = `
             class="divide-y divide-neutral"
           >
             <tr
-              class="cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[48px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
+              class="h-16 cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
             >
               <td
-                class="h-14 border-neutral py-0 relative flex items-center px-4"
+                class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
               >
-                <label
-                  class="absolute inset-y-0 left-0 flex items-center p-4"
+                <div
+                  class="flex h-full w-full items-center pl-4"
                 >
-                  <button
-                    aria-checked="false"
-                    class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
-                    data-state="unchecked"
-                    role="checkbox"
-                    type="button"
-                    value="on"
-                  />
-                </label>
+                  <label>
+                    <button
+                      aria-checked="false"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      data-state="unchecked"
+                      role="checkbox"
+                      type="button"
+                      value="on"
+                    />
+                  </label>
+                </div>
               </td>
               <td
-                class="h-14 border-neutral py-0 relative flex items-center px-4"
+                class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
               >
-                <div>
+                <div
+                  class="flex h-full min-w-0 max-w-full items-center justify-between overflow-hidden"
+                >
                   <div
-                    class="flex h-full items-center justify-between"
+                    class="flex min-w-0 flex-1 items-center gap-3 overflow-hidden"
                   >
                     <div
-                      class="flex items-center gap-3"
+                      class="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden text-sm font-medium"
                     >
-                      <div
-                        class="flex items-center gap-3"
+                      <span
+                        class="shrink-0"
                       >
                         <span
                           class="flex items-center justify-center h-5 w-5"
@@ -204,42 +208,42 @@ exports[`ServiceList should match snapshot 1`] = `
                             </svg>
                           </span>
                         </span>
+                      </span>
+                      <span
+                        class="flex min-w-0 flex-1 flex-col overflow-hidden"
+                      >
                         <span
-                          class="flex min-w-0 shrink flex-col truncate"
-                        >
-                          <a
-                            class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm hover:underline inline max-w-max truncate"
-                            data-state="closed"
-                            params="[object Object]"
-                            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
-                          >
-                            FRONT-END
-                          </a>
-                        </span>
-                      </div>
-                      <div>
-                        <button
-                          aria-controls="radix-:r1k:"
-                          aria-expanded="false"
-                          aria-haspopup="dialog"
-                          aria-label="Links"
-                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 rounded-full justify-center px-0 w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                          class="block min-w-0 truncate"
                           data-state="closed"
-                          type="button"
                         >
-                          <i
-                            aria-hidden="true"
-                            class="fa-regular fa-link "
-                            data-state="closed"
-                          />
-                        </button>
-                      </div>
+                          FRONT-END
+                        </span>
+                      </span>
+                    </div>
+                    <div
+                      class="shrink-0"
+                    >
+                      <button
+                        aria-controls="radix-:r1g:"
+                        aria-expanded="false"
+                        aria-haspopup="dialog"
+                        aria-label="Links"
+                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 rounded-full justify-center px-0 w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                        data-state="closed"
+                        type="button"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-link "
+                          data-state="closed"
+                        />
+                      </button>
                     </div>
                   </div>
                 </div>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -275,74 +279,72 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
-                <div
-                  class="flex h-full w-full items-center"
+                <a
+                  class="cursor-pointer transition duration-100 font-medium gap-1 text-neutral text-sm hover:underline flex h-full w-full items-center justify-between hover:text-neutral"
+                  params="[object Object]"
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                 >
                   <div
-                    class="flex w-full items-center justify-between"
+                    class="flex items-center justify-between gap-4"
                   >
                     <div
-                      class="flex items-center justify-between gap-4"
+                      class="flex items-center gap-2"
                     >
                       <div
-                        class="flex items-center gap-2"
+                        class="h-[14px] w-[14px]"
+                        data-state="closed"
                       >
-                        <div
-                          class="h-[14px] w-[14px]"
-                          data-state="closed"
+                        <svg
+                          class="h-full w-full text-neutral-subtle"
+                          fill="none"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
-                          <svg
-                            class="h-full w-full text-neutral-subtle"
-                            fill="none"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
+                          <g
+                            clip-path="url(#clip0_5424_5935)"
                           >
-                            <g
-                              clip-path="url(#clip0_5424_5935)"
+                            <path
+                              d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                              fill="currentColor"
+                            />
+                          </g>
+                          <defs>
+                            <clippath
+                              id="clip0_5424_5935"
                             >
                               <path
-                                d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                                fill="currentColor"
+                                d="M0 0H24V24H0z"
+                                fill="#fff"
                               />
-                            </g>
-                            <defs>
-                              <clippath
-                                id="clip0_5424_5935"
-                              >
-                                <path
-                                  d="M0 0H24V24H0z"
-                                  fill="#fff"
-                                />
-                              </clippath>
-                            </defs>
-                          </svg>
-                        </div>
+                            </clippath>
+                          </defs>
+                        </svg>
                       </div>
                     </div>
                   </div>
-                </div>
+                </a>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
                 <div
-                  class="flex items-center gap-3"
+                  class="flex w-full min-w-0 items-center justify-between gap-3"
                 >
                   <div
-                    class="flex items-center gap-1"
+                    class="min-w-0 flex-1"
                   >
                     <div
-                      class="flex w-44 flex-col gap-0.5"
+                      class="flex min-w-0 flex-col gap-0.5"
                     >
-                      <span
-                        class="flex items-center gap-2 text-neutral"
+                      <div
+                        class="flex min-w-0 items-center gap-2 text-neutral"
                       >
                         <svg
-                          class="svg-icon shrink-0 h-3 w-3 text-inherit"
+                          class="svg-icon h-3 w-3 shrink-0 text-inherit"
                           name="GITHUB"
                           viewBox="0 0 24 24"
                           width="1.5rem"
@@ -355,38 +357,45 @@ exports[`ServiceList should match snapshot 1`] = `
                           />
                         </svg>
                         <a
-                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline font-normal"
+                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline min-w-0 flex-1 overflow-hidden font-normal"
                           href="https://github.com/acarranoqovery/javascript-tetris.git"
                           rel="noopener noreferrer"
                           target="_blank"
                         >
                           <span
-                            class=""
-                            data-state="closed"
-                            data-testid="truncate-text"
+                            class="min-w-0 truncate"
+                            title="acarranoqovery/javascript-tetris"
                           >
-                            acarranoqovery/javas
-                            …
+                            acarranoqovery/javascript-tetris
                           </span>
                         </a>
-                      </span>
-                      <span
-                        class="flex items-center gap-2 text-neutral-subtle"
+                      </div>
+                      <div
+                        class="flex min-w-0 items-center gap-2 text-neutral-subtle"
                       >
                         <i
                           aria-hidden="true"
-                          class="fa-regular fa-code-branch h-3 w-3 text-inherit"
+                          class="fa-regular fa-code-branch h-3 w-3 shrink-0 text-inherit"
                         />
                         <a
-                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline font-normal"
+                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline min-w-0 flex-1 overflow-hidden font-normal"
                           href="https://github.com/acarranoqovery/javascript-tetris/tree/master/"
                           rel="noopener noreferrer"
                           target="_blank"
                         >
-                          master
+                          <span
+                            class="min-w-0 truncate"
+                            title="master"
+                          >
+                            master
+                          </span>
                         </a>
-                      </span>
+                      </div>
                     </div>
+                  </div>
+                  <div
+                    class="flex items-center gap-2"
+                  >
                     <span
                       class="flex"
                     >
@@ -425,7 +434,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex h-full items-center"
@@ -439,36 +448,40 @@ exports[`ServiceList should match snapshot 1`] = `
               </td>
             </tr>
             <tr
-              class="cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[48px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
+              class="h-16 cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
             >
               <td
-                class="h-14 border-neutral py-0 relative flex items-center px-4"
+                class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
               >
-                <label
-                  class="absolute inset-y-0 left-0 flex items-center p-4"
+                <div
+                  class="flex h-full w-full items-center pl-4"
                 >
-                  <button
-                    aria-checked="false"
-                    class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
-                    data-state="unchecked"
-                    role="checkbox"
-                    type="button"
-                    value="on"
-                  />
-                </label>
+                  <label>
+                    <button
+                      aria-checked="false"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      data-state="unchecked"
+                      role="checkbox"
+                      type="button"
+                      value="on"
+                    />
+                  </label>
+                </div>
               </td>
               <td
-                class="h-14 border-neutral py-0 relative flex items-center px-4"
+                class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
               >
-                <div>
+                <div
+                  class="flex h-full min-w-0 max-w-full items-center justify-between overflow-hidden"
+                >
                   <div
-                    class="flex h-full items-center justify-between"
+                    class="flex min-w-0 flex-1 items-center gap-3 overflow-hidden"
                   >
                     <div
-                      class="flex items-center gap-3"
+                      class="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden text-sm font-medium"
                     >
-                      <div
-                        class="flex items-center gap-3"
+                      <span
+                        class="shrink-0"
                       >
                         <span
                           class="flex items-center justify-center h-5 w-5"
@@ -566,42 +579,42 @@ exports[`ServiceList should match snapshot 1`] = `
                             </svg>
                           </span>
                         </span>
+                      </span>
+                      <span
+                        class="flex min-w-0 flex-1 flex-col overflow-hidden"
+                      >
                         <span
-                          class="flex min-w-0 shrink flex-col truncate"
-                        >
-                          <a
-                            class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm hover:underline inline max-w-max truncate"
-                            data-state="closed"
-                            params="[object Object]"
-                            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
-                          >
-                            back-end-A
-                          </a>
-                        </span>
-                      </div>
-                      <div>
-                        <button
-                          aria-controls="radix-:r1s:"
-                          aria-expanded="false"
-                          aria-haspopup="dialog"
-                          aria-label="Links"
-                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 rounded-full justify-center px-0 w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                          class="block min-w-0 truncate"
                           data-state="closed"
-                          type="button"
                         >
-                          <i
-                            aria-hidden="true"
-                            class="fa-regular fa-link "
-                            data-state="closed"
-                          />
-                        </button>
-                      </div>
+                          back-end-A
+                        </span>
+                      </span>
+                    </div>
+                    <div
+                      class="shrink-0"
+                    >
+                      <button
+                        aria-controls="radix-:r1n:"
+                        aria-expanded="false"
+                        aria-haspopup="dialog"
+                        aria-label="Links"
+                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 rounded-full justify-center px-0 w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                        data-state="closed"
+                        type="button"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-link "
+                          data-state="closed"
+                        />
+                      </button>
                     </div>
                   </div>
                 </div>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -637,71 +650,69 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
-                <div
-                  class="flex h-full w-full items-center"
+                <a
+                  class="cursor-pointer transition duration-100 font-medium gap-1 text-neutral text-sm hover:underline flex h-full w-full items-center justify-between hover:text-neutral"
+                  params="[object Object]"
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                 >
                   <div
-                    class="flex w-full items-center justify-between"
+                    class="flex items-center justify-between gap-4"
                   >
                     <div
-                      class="flex items-center justify-between gap-4"
+                      class="flex items-center gap-2"
                     >
                       <div
-                        class="flex items-center gap-2"
+                        class="h-[14px] w-[14px]"
+                        data-state="closed"
                       >
-                        <div
-                          class="h-[14px] w-[14px]"
-                          data-state="closed"
+                        <svg
+                          class="h-full w-full text-neutral-subtle"
+                          fill="none"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
-                          <svg
-                            class="h-full w-full text-neutral-subtle"
-                            fill="none"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
+                          <g
+                            clip-path="url(#clip0_5424_5935)"
                           >
-                            <g
-                              clip-path="url(#clip0_5424_5935)"
+                            <path
+                              d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                              fill="currentColor"
+                            />
+                          </g>
+                          <defs>
+                            <clippath
+                              id="clip0_5424_5935"
                             >
                               <path
-                                d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                                fill="currentColor"
+                                d="M0 0H24V24H0z"
+                                fill="#fff"
                               />
-                            </g>
-                            <defs>
-                              <clippath
-                                id="clip0_5424_5935"
-                              >
-                                <path
-                                  d="M0 0H24V24H0z"
-                                  fill="#fff"
-                                />
-                              </clippath>
-                            </defs>
-                          </svg>
-                        </div>
+                            </clippath>
+                          </defs>
+                        </svg>
                       </div>
                     </div>
                   </div>
-                </div>
+                </a>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
                 <div
-                  class="flex items-center gap-1"
+                  class="flex w-full min-w-0 items-center gap-1 text-ssm"
                 >
                   <div
-                    class="flex w-44 flex-col gap-0.5"
+                    class="flex min-w-0 flex-1 flex-col gap-0.5"
                   >
                     <span
-                      class="flex items-center gap-2 text-neutral"
+                      class="flex min-w-0 items-center gap-2 text-neutral"
                     >
                       <svg
-                        class="shrink-0 "
+                        class="shrink-0 shrink-0"
                         fill="none"
                         height="16"
                         name="DOCKER"
@@ -715,17 +726,18 @@ exports[`ServiceList should match snapshot 1`] = `
                         />
                       </svg>
                       <span
-                        class="text-neutral"
+                        class="min-w-0 flex-1 overflow-hidden truncate text-neutral"
                         data-state="closed"
+                        title="DockerHub Public"
                       >
                         dockerhub public
                       </span>
                     </span>
                     <span
-                      class="flex items-center gap-2 text-neutral"
+                      class="flex min-w-0 items-center gap-2 text-neutral"
                     >
                       <svg
-                        class="shrink-0 "
+                        class="shrink-0 shrink-0"
                         fill="none"
                         name="CONTAINER"
                         viewBox="0 0 24 24"
@@ -739,46 +751,48 @@ exports[`ServiceList should match snapshot 1`] = `
                         />
                       </svg>
                       <span
-                        class=""
-                        data-state="closed"
-                        data-testid="truncate-text"
+                        class="min-w-0 flex-1 truncate"
+                        title="stefanprodan/podinfo"
                       >
                         stefanprodan/podinfo
-                        …
                       </span>
                     </span>
                   </div>
-                  <span
-                    class="flex"
+                  <div
+                    class="shrink-0"
                   >
                     <span
-                      class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md min-w-7 max-w-[81px] rounded-r-none border-r-0"
+                      class="flex"
                     >
                       <span
-                        class="flex h-full w-full items-center justify-center truncate"
+                        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md min-w-7 max-w-[81px] rounded-r-none border-r-0"
                       >
-                        6.5.2
+                        <span
+                          class="flex h-full w-full items-center justify-center truncate"
+                        >
+                          6.5.2
+                        </span>
                       </span>
+                      <button
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
+                        data-state="closed"
+                        type="button"
+                      >
+                        <span
+                          class="flex h-full items-center justify-center"
+                        >
+                          <i
+                            aria-hidden="true"
+                            class="fa-regular fa-clock-rotate-left "
+                          />
+                        </span>
+                      </button>
                     </span>
-                    <button
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center gap-1 rounded-l-none px-1.5"
-                      data-state="closed"
-                      type="button"
-                    >
-                      <span
-                        class="flex h-full items-center justify-center"
-                      >
-                        <i
-                          aria-hidden="true"
-                          class="fa-regular fa-clock-rotate-left "
-                        />
-                      </span>
-                    </button>
-                  </span>
+                  </div>
                 </div>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex h-full items-center"
@@ -792,36 +806,40 @@ exports[`ServiceList should match snapshot 1`] = `
               </td>
             </tr>
             <tr
-              class="cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[48px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
+              class="h-16 cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
             >
               <td
-                class="h-14 border-neutral py-0 relative flex items-center px-4"
+                class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
               >
-                <label
-                  class="absolute inset-y-0 left-0 flex items-center p-4"
+                <div
+                  class="flex h-full w-full items-center pl-4"
                 >
-                  <button
-                    aria-checked="false"
-                    class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
-                    data-state="unchecked"
-                    role="checkbox"
-                    type="button"
-                    value="on"
-                  />
-                </label>
+                  <label>
+                    <button
+                      aria-checked="false"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      data-state="unchecked"
+                      role="checkbox"
+                      type="button"
+                      value="on"
+                    />
+                  </label>
+                </div>
               </td>
               <td
-                class="h-14 border-neutral py-0 relative flex items-center px-4"
+                class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
               >
-                <div>
+                <div
+                  class="flex h-full min-w-0 max-w-full items-center justify-between overflow-hidden"
+                >
                   <div
-                    class="flex h-full items-center justify-between"
+                    class="flex min-w-0 flex-1 items-center gap-3 overflow-hidden"
                   >
                     <div
-                      class="flex items-center gap-3"
+                      class="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden text-sm font-medium"
                     >
-                      <div
-                        class="flex items-center gap-3"
+                      <span
+                        class="shrink-0"
                       >
                         <span
                           class="flex items-center justify-center h-5 w-5"
@@ -1208,55 +1226,55 @@ exports[`ServiceList should match snapshot 1`] = `
                             </svg>
                           </span>
                         </span>
+                      </span>
+                      <span
+                        class="flex min-w-0 flex-1 flex-col overflow-hidden"
+                      >
                         <span
-                          class="flex min-w-0 shrink flex-col truncate"
+                          class="flex min-w-0 items-center gap-1.5"
                         >
                           <span
-                            class="flex items-center gap-1.5"
+                            class="block min-w-0 flex-1 truncate"
+                            data-state="closed"
                           >
-                            <a
-                              class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm hover:underline inline max-w-max truncate"
-                              data-state="closed"
-                              params="[object Object]"
-                              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
-                            >
-                              CRONJOB
-                            </a>
-                            <span
-                              class="truncate text-sm font-normal"
-                              data-state="closed"
-                            >
-                              <i
-                                aria-hidden="true"
-                                class="fa-regular fa-info-circle "
-                              />
-                            </span>
+                            CRONJOB
+                          </span>
+                          <span
+                            class="shrink-0 truncate text-sm font-normal text-neutral-subtle"
+                            data-state="closed"
+                          >
+                            <i
+                              aria-hidden="true"
+                              class="fa-regular fa-info-circle "
+                            />
                           </span>
                         </span>
-                      </div>
-                      <div>
-                        <button
-                          aria-controls="radix-:r25:"
-                          aria-expanded="false"
-                          aria-haspopup="dialog"
-                          aria-label="Links"
-                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 rounded-full justify-center px-0 w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                      </span>
+                    </div>
+                    <div
+                      class="shrink-0"
+                    >
+                      <button
+                        aria-controls="radix-:r1v:"
+                        aria-expanded="false"
+                        aria-haspopup="dialog"
+                        aria-label="Links"
+                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 rounded-full justify-center px-0 w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                        data-state="closed"
+                        type="button"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-link "
                           data-state="closed"
-                          type="button"
-                        >
-                          <i
-                            aria-hidden="true"
-                            class="fa-regular fa-link "
-                            data-state="closed"
-                          />
-                        </button>
-                      </div>
+                        />
+                      </button>
                     </div>
                   </div>
                 </div>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -1292,74 +1310,72 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
-                <div
-                  class="flex h-full w-full items-center"
+                <a
+                  class="cursor-pointer transition duration-100 font-medium gap-1 text-neutral text-sm hover:underline flex h-full w-full items-center justify-between hover:text-neutral"
+                  params="[object Object]"
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                 >
                   <div
-                    class="flex w-full items-center justify-between"
+                    class="flex items-center justify-between gap-4"
                   >
                     <div
-                      class="flex items-center justify-between gap-4"
+                      class="flex items-center gap-2"
                     >
                       <div
-                        class="flex items-center gap-2"
+                        class="h-[14px] w-[14px]"
+                        data-state="closed"
                       >
-                        <div
-                          class="h-[14px] w-[14px]"
-                          data-state="closed"
+                        <svg
+                          class="h-full w-full text-neutral-subtle"
+                          fill="none"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
-                          <svg
-                            class="h-full w-full text-neutral-subtle"
-                            fill="none"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
+                          <g
+                            clip-path="url(#clip0_5424_5935)"
                           >
-                            <g
-                              clip-path="url(#clip0_5424_5935)"
+                            <path
+                              d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                              fill="currentColor"
+                            />
+                          </g>
+                          <defs>
+                            <clippath
+                              id="clip0_5424_5935"
                             >
                               <path
-                                d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                                fill="currentColor"
+                                d="M0 0H24V24H0z"
+                                fill="#fff"
                               />
-                            </g>
-                            <defs>
-                              <clippath
-                                id="clip0_5424_5935"
-                              >
-                                <path
-                                  d="M0 0H24V24H0z"
-                                  fill="#fff"
-                                />
-                              </clippath>
-                            </defs>
-                          </svg>
-                        </div>
+                            </clippath>
+                          </defs>
+                        </svg>
                       </div>
                     </div>
                   </div>
-                </div>
+                </a>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
                 <div
-                  class="flex items-center gap-3"
+                  class="flex w-full min-w-0 items-center justify-between gap-3"
                 >
                   <div
-                    class="flex items-center gap-1"
+                    class="min-w-0 flex-1"
                   >
                     <div
-                      class="flex w-44 flex-col gap-0.5"
+                      class="flex min-w-0 flex-col gap-0.5"
                     >
-                      <span
-                        class="flex items-center gap-2 text-neutral"
+                      <div
+                        class="flex min-w-0 items-center gap-2 text-neutral"
                       >
                         <svg
-                          class="svg-icon shrink-0 h-3 w-3 text-inherit"
+                          class="svg-icon h-3 w-3 shrink-0 text-inherit"
                           name="GITHUB"
                           viewBox="0 0 24 24"
                           width="1.5rem"
@@ -1372,38 +1388,45 @@ exports[`ServiceList should match snapshot 1`] = `
                           />
                         </svg>
                         <a
-                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline font-normal"
+                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline min-w-0 flex-1 overflow-hidden font-normal"
                           href="https://github.com/acarranoqovery/test_script.git"
                           rel="noopener noreferrer"
                           target="_blank"
                         >
                           <span
-                            class=""
-                            data-state="closed"
-                            data-testid="truncate-text"
+                            class="min-w-0 truncate"
+                            title="acarranoqovery/test_script"
                           >
-                            acarranoqovery/test_
-                            …
+                            acarranoqovery/test_script
                           </span>
                         </a>
-                      </span>
-                      <span
-                        class="flex items-center gap-2 text-neutral-subtle"
+                      </div>
+                      <div
+                        class="flex min-w-0 items-center gap-2 text-neutral-subtle"
                       >
                         <i
                           aria-hidden="true"
-                          class="fa-regular fa-code-branch h-3 w-3 text-inherit"
+                          class="fa-regular fa-code-branch h-3 w-3 shrink-0 text-inherit"
                         />
                         <a
-                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline font-normal"
+                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline min-w-0 flex-1 overflow-hidden font-normal"
                           href="https://github.com/acarranoqovery/test_script/tree/main/"
                           rel="noopener noreferrer"
                           target="_blank"
                         >
-                          main
+                          <span
+                            class="min-w-0 truncate"
+                            title="main"
+                          >
+                            main
+                          </span>
                         </a>
-                      </span>
+                      </div>
                     </div>
+                  </div>
+                  <div
+                    class="flex items-center gap-2"
+                  >
                     <span
                       class="flex"
                     >
@@ -1438,20 +1461,20 @@ exports[`ServiceList should match snapshot 1`] = `
                         </span>
                       </button>
                     </span>
+                    <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-arrows-rotate text-xs text-neutral-subtle"
+                      />
+                    </span>
                   </div>
-                  <span
-                    class=""
-                    data-state="closed"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-arrows-rotate text-xs text-neutral-subtle"
-                    />
-                  </span>
                 </div>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex h-full items-center"
@@ -1465,36 +1488,40 @@ exports[`ServiceList should match snapshot 1`] = `
               </td>
             </tr>
             <tr
-              class="cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[48px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
+              class="h-16 cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
             >
               <td
-                class="h-14 border-neutral py-0 relative flex items-center px-4"
+                class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
               >
-                <label
-                  class="absolute inset-y-0 left-0 flex items-center p-4"
+                <div
+                  class="flex h-full w-full items-center pl-4"
                 >
-                  <button
-                    aria-checked="false"
-                    class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
-                    data-state="unchecked"
-                    role="checkbox"
-                    type="button"
-                    value="on"
-                  />
-                </label>
+                  <label>
+                    <button
+                      aria-checked="false"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      data-state="unchecked"
+                      role="checkbox"
+                      type="button"
+                      value="on"
+                    />
+                  </label>
+                </div>
               </td>
               <td
-                class="h-14 border-neutral py-0 relative flex items-center px-4"
+                class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
               >
-                <div>
+                <div
+                  class="flex h-full min-w-0 max-w-full items-center justify-between overflow-hidden"
+                >
                   <div
-                    class="flex h-full items-center justify-between"
+                    class="flex min-w-0 flex-1 items-center gap-3 overflow-hidden"
                   >
                     <div
-                      class="flex items-center gap-3"
+                      class="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden text-sm font-medium"
                     >
-                      <div
-                        class="flex items-center gap-3"
+                      <span
+                        class="shrink-0"
                       >
                         <span
                           class="flex items-center justify-center h-5 w-5"
@@ -1674,55 +1701,55 @@ exports[`ServiceList should match snapshot 1`] = `
                             </svg>
                           </span>
                         </span>
+                      </span>
+                      <span
+                        class="flex min-w-0 flex-1 flex-col overflow-hidden"
+                      >
                         <span
-                          class="flex min-w-0 shrink flex-col truncate"
+                          class="flex min-w-0 items-center gap-1.5"
                         >
                           <span
-                            class="flex items-center gap-1.5"
+                            class="block min-w-0 flex-1 truncate"
+                            data-state="closed"
                           >
-                            <a
-                              class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-info hover:text-info-hover text-sm hover:underline inline max-w-max truncate"
-                              data-state="closed"
-                              params="[object Object]"
-                              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
-                            >
-                              seed_script
-                            </a>
-                            <span
-                              class="truncate text-sm font-normal"
-                              data-state="closed"
-                            >
-                              <i
-                                aria-hidden="true"
-                                class="fa-regular fa-info-circle "
-                              />
-                            </span>
+                            seed_script
+                          </span>
+                          <span
+                            class="shrink-0 truncate text-sm font-normal text-neutral-subtle"
+                            data-state="closed"
+                          >
+                            <i
+                              aria-hidden="true"
+                              class="fa-regular fa-info-circle "
+                            />
                           </span>
                         </span>
-                      </div>
-                      <div>
-                        <button
-                          aria-controls="radix-:r2f:"
-                          aria-expanded="false"
-                          aria-haspopup="dialog"
-                          aria-label="Links"
-                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 rounded-full justify-center px-0 w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                      </span>
+                    </div>
+                    <div
+                      class="shrink-0"
+                    >
+                      <button
+                        aria-controls="radix-:r28:"
+                        aria-expanded="false"
+                        aria-haspopup="dialog"
+                        aria-label="Links"
+                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 rounded-full justify-center px-0 w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                        data-state="closed"
+                        type="button"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-link "
                           data-state="closed"
-                          type="button"
-                        >
-                          <i
-                            aria-hidden="true"
-                            class="fa-regular fa-link "
-                            data-state="closed"
-                          />
-                        </button>
-                      </div>
+                        />
+                      </button>
                     </div>
                   </div>
                 </div>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
                 <div
                   class="h-[14px] w-[14px]"
@@ -1758,74 +1785,72 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
-                <div
-                  class="flex h-full w-full items-center"
+                <a
+                  class="cursor-pointer transition duration-100 font-medium gap-1 text-neutral text-sm hover:underline flex h-full w-full items-center justify-between hover:text-neutral"
+                  params="[object Object]"
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                 >
                   <div
-                    class="flex w-full items-center justify-between"
+                    class="flex items-center justify-between gap-4"
                   >
                     <div
-                      class="flex items-center justify-between gap-4"
+                      class="flex items-center gap-2"
                     >
                       <div
-                        class="flex items-center gap-2"
+                        class="h-[14px] w-[14px]"
+                        data-state="closed"
                       >
-                        <div
-                          class="h-[14px] w-[14px]"
-                          data-state="closed"
+                        <svg
+                          class="h-full w-full text-neutral-subtle"
+                          fill="none"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
-                          <svg
-                            class="h-full w-full text-neutral-subtle"
-                            fill="none"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
+                          <g
+                            clip-path="url(#clip0_5424_5935)"
                           >
-                            <g
-                              clip-path="url(#clip0_5424_5935)"
+                            <path
+                              d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                              fill="currentColor"
+                            />
+                          </g>
+                          <defs>
+                            <clippath
+                              id="clip0_5424_5935"
                             >
                               <path
-                                d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                                fill="currentColor"
+                                d="M0 0H24V24H0z"
+                                fill="#fff"
                               />
-                            </g>
-                            <defs>
-                              <clippath
-                                id="clip0_5424_5935"
-                              >
-                                <path
-                                  d="M0 0H24V24H0z"
-                                  fill="#fff"
-                                />
-                              </clippath>
-                            </defs>
-                          </svg>
-                        </div>
+                            </clippath>
+                          </defs>
+                        </svg>
                       </div>
                     </div>
                   </div>
-                </div>
+                </a>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
                 <div
-                  class="flex items-center gap-3"
+                  class="flex w-full min-w-0 items-center justify-between gap-3"
                 >
                   <div
-                    class="flex items-center gap-1"
+                    class="min-w-0 flex-1"
                   >
                     <div
-                      class="flex w-44 flex-col gap-0.5"
+                      class="flex min-w-0 flex-col gap-0.5"
                     >
-                      <span
-                        class="flex items-center gap-2 text-neutral"
+                      <div
+                        class="flex min-w-0 items-center gap-2 text-neutral"
                       >
                         <svg
-                          class="svg-icon shrink-0 h-3 w-3 text-inherit"
+                          class="svg-icon h-3 w-3 shrink-0 text-inherit"
                           name="GITHUB"
                           viewBox="0 0 24 24"
                           width="1.5rem"
@@ -1838,38 +1863,45 @@ exports[`ServiceList should match snapshot 1`] = `
                           />
                         </svg>
                         <a
-                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline font-normal"
+                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline min-w-0 flex-1 overflow-hidden font-normal"
                           href="https://github.com/acarranoqovery/test_script.git"
                           rel="noopener noreferrer"
                           target="_blank"
                         >
                           <span
-                            class=""
-                            data-state="closed"
-                            data-testid="truncate-text"
+                            class="min-w-0 truncate"
+                            title="acarranoqovery/test_script"
                           >
-                            acarranoqovery/test_
-                            …
+                            acarranoqovery/test_script
                           </span>
                         </a>
-                      </span>
-                      <span
-                        class="flex items-center gap-2 text-neutral-subtle"
+                      </div>
+                      <div
+                        class="flex min-w-0 items-center gap-2 text-neutral-subtle"
                       >
                         <i
                           aria-hidden="true"
-                          class="fa-regular fa-code-branch h-3 w-3 text-inherit"
+                          class="fa-regular fa-code-branch h-3 w-3 shrink-0 text-inherit"
                         />
                         <a
-                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline font-normal"
+                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline min-w-0 flex-1 overflow-hidden font-normal"
                           href="https://github.com/acarranoqovery/test_script/tree/main/"
                           rel="noopener noreferrer"
                           target="_blank"
                         >
-                          main
+                          <span
+                            class="min-w-0 truncate"
+                            title="main"
+                          >
+                            main
+                          </span>
                         </a>
-                      </span>
+                      </div>
                     </div>
+                  </div>
+                  <div
+                    class="flex items-center gap-2"
+                  >
                     <span
                       class="flex"
                     >
@@ -1904,20 +1936,20 @@ exports[`ServiceList should match snapshot 1`] = `
                         </span>
                       </button>
                     </span>
+                    <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-arrows-rotate text-xs text-neutral-subtle"
+                      />
+                    </span>
                   </div>
-                  <span
-                    class=""
-                    data-state="closed"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-arrows-rotate text-xs text-neutral-subtle"
-                    />
-                  </span>
                 </div>
               </td>
               <td
-                class="h-14 py-0 relative flex items-center px-4 border-r border-neutral last:border-r-0"
+                class="px-4 py-0 relative flex h-full items-center border-r border-neutral last:border-r-0"
               >
                 <div
                   class="flex h-full items-center"
@@ -1974,7 +2006,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 aria-haspopup="menu"
                 class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral items-center gap-2"
                 data-state="closed"
-                id="radix-:r2o:"
+                id="radix-:r2g:"
                 type="button"
               >
                 More 
