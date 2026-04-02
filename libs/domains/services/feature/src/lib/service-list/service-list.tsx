@@ -291,12 +291,13 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         title="No service found"
         description="You can create a service from the button on the top"
         className="border-none"
+        icon="wave-pulse"
       >
         <Link
           as="button"
           size="md"
           color="neutral"
-          className="gap-2"
+          className="gap-1.5"
           to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
           params={{ organizationId, projectId, environmentId }}
         >
