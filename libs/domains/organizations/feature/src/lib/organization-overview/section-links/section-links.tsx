@@ -1,6 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { Heading, Icon, Section } from '@qovery/shared/ui'
+import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 
 const LINKS: {
@@ -23,48 +24,72 @@ const LINKS: {
   },
   {
     title: 'Give feedback',
-    url: 'https://www.qovery.com/feedback',
+    url: 'https://roadmap.qovery.com/',
     color: 'red',
     icon: 'message',
   },
 ]
 
 export function SectionLinks() {
+  const { showChat } = useSupportChat()
+
   return (
     <Section className="flex flex-col gap-3">
       <Heading className="flex items-center gap-2">
         <Icon iconName="link" className="text-sm text-neutral-subtle" />
         Useful links
       </Heading>
-      {LINKS.map((link) => (
-        <a
-          key={link.url}
-          href={link.url}
-          title={link.title}
-          target="_blank"
-          rel="noreferrer"
-          className="group flex justify-between gap-2 rounded-lg border border-neutral p-4 text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle"
-        >
-          <p className="flex items-center gap-3">
-            <span
-              className={twMerge(
-                clsx('flex h-7 w-7 min-w-7 items-center justify-center rounded', {
-                  'bg-surface-info-component text-info': link.color === 'blue',
-                  'bg-surface-warning-component text-warning': link.color === 'yellow',
-                  'bg-surface-accent1-component text-accent1': link.color === 'red',
-                })
-              )}
+      {LINKS.map((link) => {
+        const content = (
+          <>
+            <p className="flex items-center gap-3">
+              <span
+                className={twMerge(
+                  clsx('flex h-7 w-7 min-w-7 items-center justify-center rounded', {
+                    'bg-surface-info-component text-info': link.color === 'blue',
+                    'bg-surface-warning-component text-warning': link.color === 'yellow',
+                    'bg-surface-accent1-component text-accent1': link.color === 'red',
+                  })
+                )}
+              >
+                <Icon iconName={link.icon} className="text-sm" />
+              </span>
+              <span>{link.title}</span>
+            </p>
+            <Icon
+              iconName="angle-right"
+              className="text-base text-neutral-subtle transition-colors group-hover:text-neutral"
+            />
+          </>
+        )
+
+        if (link.title === 'Support') {
+          return (
+            <button
+              key={link.title}
+              type="button"
+              title={link.title}
+              onClick={showChat}
+              className="group flex justify-between gap-2 rounded-lg border border-neutral p-4 text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle"
             >
-              <Icon iconName={link.icon} className="text-sm" />
-            </span>
-            <span>{link.title}</span>
-          </p>
-          <Icon
-            iconName="angle-right"
-            className="text-base text-neutral-subtle transition-colors group-hover:text-neutral"
-          />
-        </a>
-      ))}
+              {content}
+            </button>
+          )
+        }
+
+        return (
+          <a
+            key={link.url}
+            href={link.url}
+            title={link.title}
+            target="_blank"
+            rel="noreferrer"
+            className="group flex justify-between gap-2 rounded-lg border border-neutral p-4 text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle"
+          >
+            {content}
+          </a>
+        )
+      })}
     </Section>
   )
 }
