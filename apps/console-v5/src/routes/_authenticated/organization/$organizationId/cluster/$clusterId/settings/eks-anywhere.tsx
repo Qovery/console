@@ -24,9 +24,11 @@ function RouteComponent() {
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
-  const [gitDisabled, setGitDisabled] = useState(true)
+  const [isGitEditing, setIsGitEditing] = useState(false)
   const currentGitRepository = cluster?.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository
   const currentRepository = getEksAnywhereGitFormValues(cluster).repository
+  const hasConfiguredInfrastructureChartsSource = Boolean(currentGitRepository?.url && currentRepository)
+  const gitDisabled = hasConfiguredInfrastructureChartsSource && !isGitEditing
 
   const methods = useForm<ClusterEksSettingsFormData>({
     mode: 'onChange',
@@ -55,7 +57,7 @@ function RouteComponent() {
   })
 
   const editGitSettings = () => {
-    setGitDisabled(false)
+    setIsGitEditing(true)
     methods.setValue('provider', currentGitRepository?.provider)
     methods.setValue('repository', undefined)
   }
@@ -66,9 +68,9 @@ function RouteComponent() {
         ...cluster,
         ...getEksAnywhereGitFormValues(cluster),
       })
-      setGitDisabled(true)
+      setIsGitEditing(false)
     }
-  }, [cluster, isClusterLoading, methods, currentGitRepository?.provider])
+  }, [cluster, isClusterLoading, methods])
 
   if (isClusterLoading) {
     return (
