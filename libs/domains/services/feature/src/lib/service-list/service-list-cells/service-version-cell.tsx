@@ -45,7 +45,7 @@ export function ServiceVersionCell({ service, organizationId, projectId }: Servi
                 color="neutral"
                 size="ssm"
                 withIcon={false}
-                className="min-w-0 flex-1 overflow-hidden font-normal"
+                className="min-w-0 flex-1 font-normal"
               >
                 <span className="min-w-0 truncate" title={gitRepository.name}>
                   {gitRepository.name}

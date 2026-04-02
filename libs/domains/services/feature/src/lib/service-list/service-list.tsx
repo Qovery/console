@@ -347,7 +347,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         >
           <Table.Header className="border-t border-neutral">
             {table.getHeaderGroups().map((headerGroup) => (
-              <Table.Row key={headerGroup.id} className={twMerge('h-9 w-full', tableGridLayoutClassName)}>
+              <Table.Row key={headerGroup.id} className={`h-9 w-full ${tableGridLayoutClassName}`}>
                 {headerGroup.headers.map((header, i) => (
                   <Table.ColumnHeaderCell
                     key={header.id}
@@ -386,10 +386,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
                 <Table.Row
-                  className={twMerge(
-                    'h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle',
-                    tableGridLayoutClassName
-                  )}
+                  className={`h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle ${tableGridLayoutClassName}`}
                   tabIndex={0}
                   role="link"
                   onClick={() => handleNavigateToService(row.original.id)}
@@ -400,10 +397,9 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                   {row.getVisibleCells().map((cell, i) => (
                     <Table.Cell
                       key={cell.id}
-                      className={twMerge(
-                        'relative flex h-full items-center border-r border-neutral last:border-r-0',
-                        i === 1 || i === 0 ? 'border-none p-0' : ''
-                      )}
+                      className={clsx('relative flex h-full items-center border-r border-neutral last:border-r-0', {
+                        'border-none p-0': i === 1 || i === 0,
+                      })}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </Table.Cell>
