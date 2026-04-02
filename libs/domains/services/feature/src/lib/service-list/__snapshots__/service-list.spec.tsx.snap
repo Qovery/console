@@ -365,7 +365,7 @@ exports[`ServiceList should match snapshot 1`] = `
                           />
                         </svg>
                         <a
-                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline min-w-0 flex-1 font-normal"
+                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral text-ssm hover:underline min-w-0 flex-1 font-normal"
                           href="https://github.com/acarranoqovery/javascript-tetris.git"
                           rel="noopener noreferrer"
                           target="_blank"
@@ -386,7 +386,7 @@ exports[`ServiceList should match snapshot 1`] = `
                           class="fa-regular fa-code-branch h-3 w-3 shrink-0 text-inherit"
                         />
                         <a
-                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline min-w-0 flex-1 overflow-hidden font-normal"
+                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral text-ssm hover:underline min-w-0 flex-1 overflow-hidden font-normal"
                           href="https://github.com/acarranoqovery/javascript-tetris/tree/master/"
                           rel="noopener noreferrer"
                           target="_blank"
@@ -1412,7 +1412,7 @@ exports[`ServiceList should match snapshot 1`] = `
                           />
                         </svg>
                         <a
-                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline min-w-0 flex-1 font-normal"
+                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral text-ssm hover:underline min-w-0 flex-1 font-normal"
                           href="https://github.com/acarranoqovery/test_script.git"
                           rel="noopener noreferrer"
                           target="_blank"
@@ -1433,7 +1433,7 @@ exports[`ServiceList should match snapshot 1`] = `
                           class="fa-regular fa-code-branch h-3 w-3 shrink-0 text-inherit"
                         />
                         <a
-                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline min-w-0 flex-1 overflow-hidden font-normal"
+                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral text-ssm hover:underline min-w-0 flex-1 overflow-hidden font-normal"
                           href="https://github.com/acarranoqovery/test_script/tree/main/"
                           rel="noopener noreferrer"
                           target="_blank"
@@ -1895,7 +1895,7 @@ exports[`ServiceList should match snapshot 1`] = `
                           />
                         </svg>
                         <a
-                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline min-w-0 flex-1 font-normal"
+                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral text-ssm hover:underline min-w-0 flex-1 font-normal"
                           href="https://github.com/acarranoqovery/test_script.git"
                           rel="noopener noreferrer"
                           target="_blank"
@@ -1916,7 +1916,7 @@ exports[`ServiceList should match snapshot 1`] = `
                           class="fa-regular fa-code-branch h-3 w-3 shrink-0 text-inherit"
                         />
                         <a
-                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral-subtle text-ssm hover:underline min-w-0 flex-1 overflow-hidden font-normal"
+                          class="cursor-pointer transition duration-100 inline-flex items-center gap-1 text-neutral hover:text-neutral text-ssm hover:underline min-w-0 flex-1 overflow-hidden font-normal"
                           href="https://github.com/acarranoqovery/test_script/tree/main/"
                           rel="noopener noreferrer"
                           target="_blank"

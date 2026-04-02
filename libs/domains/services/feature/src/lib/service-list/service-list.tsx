@@ -13,7 +13,7 @@ import {
 } from '@tanstack/react-table'
 import clsx from 'clsx'
 import { type Environment } from 'qovery-typescript-axios'
-import { type ComponentProps, Fragment, useMemo, useState } from 'react'
+import { type ComponentProps, Fragment, useCallback, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import {
   Badge,
@@ -288,6 +288,35 @@ export function ServiceList({ className, containerClassName, environment, ...pro
 
   const statusFacetedUniqueValues = Array.from(table.getColumn('status')?.getFacetedUniqueValues().entries() ?? [])
 
+  const ServicesBadges = useCallback(() => {
+    const getLabel = (value: string, count: number) => {
+      const statusLabel = value.toLowerCase()
+
+      return match(value)
+        .with('RUNNING', 'STOPPED', () => `${count} ${statusLabel}`)
+        .with('ERROR', () => `${count} in error`)
+        .otherwise(() => `${count} ${statusLabel}${count > 1 ? 's' : ''}`)
+    }
+
+    return statusFacetedUniqueValues.some(([value]) => value === undefined) ? (
+      <Skeleton height={24} width={70} />
+    ) : (
+      statusFacetedUniqueValues.map(([value, count]: [string, number]) => (
+        <Badge
+          key={value}
+          variant="surface"
+          color={match(value)
+            .with('RUNNING', () => 'green' as const)
+            .with('ERROR', () => 'red' as const)
+            .otherwise(() => 'neutral' as const)}
+          className="text-ssm font-medium"
+        >
+          {getLabel(value, count)}
+        </Badge>
+      ))
+    )
+  }, [statusFacetedUniqueValues])
+
   if (services.length === 0) {
     return (
       <EmptyState
@@ -321,23 +350,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
   return (
     <div>
       <div className="flex gap-2 bg-surface-neutral px-4 py-2">
-        {statusFacetedUniqueValues.some(([value]) => value === undefined) ? (
-          <Skeleton height={24} width={70} />
-        ) : (
-          statusFacetedUniqueValues.map(([value, count]: [string, number]) => (
-            <Badge
-              key={value}
-              variant="surface"
-              color={match(value)
-                .with('RUNNING', () => 'green' as const)
-                .with('ERROR', () => 'red' as const)
-                .otherwise(() => 'neutral' as const)}
-              className="text-ssm font-medium"
-            >
-              {count} {value.toLowerCase()}
-            </Badge>
-          ))
-        )}
+        <ServicesBadges />
       </div>
       <div className="flex grow flex-col justify-between">
         <Table.Root
