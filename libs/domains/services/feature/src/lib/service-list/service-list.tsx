@@ -346,11 +346,14 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         >
           <Table.Header className="border-t border-neutral">
             {table.getHeaderGroups().map((headerGroup) => (
-              <Table.Row key={headerGroup.id} className={twMerge('w-full', tableGridLayoutClassName)}>
+              <Table.Row key={headerGroup.id} className={twMerge('h-9 w-full', tableGridLayoutClassName)}>
                 {headerGroup.headers.map((header, i) => (
                   <Table.ColumnHeaderCell
                     key={header.id}
-                    className={twMerge('relative flex items-center', i === 1 || i === 0 ? 'border-none p-0' : '')}
+                    className={twMerge(
+                      'relative flex h-full items-center border-r border-neutral last:border-r-0',
+                      i === 1 || i === 0 ? 'border-none p-0' : ''
+                    )}
                   >
                     {header.column.getCanFilter() ? (
                       <TableFilter column={header.column} />
