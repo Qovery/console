@@ -86,7 +86,7 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
             serviceId={service.id}
             align="start"
           >
-            <Button variant="outline" color="neutral" radius="full" iconOnly aria-label="Links">
+            <Button variant="outline" color="neutral" radius="full" iconOnly aria-label="Links" size="xs">
               <Tooltip content="Links">
                 <Icon iconName="link" iconStyle="regular" />
               </Tooltip>
