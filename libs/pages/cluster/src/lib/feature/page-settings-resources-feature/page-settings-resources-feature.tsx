@@ -7,19 +7,10 @@ import {
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { SCW_CONTROL_PLANE_FEATURE_ID } from '@qovery/domains/cloud-providers/feature'
-import {
-  ClusterMigrationModal,
-  useCluster,
-  useEditCluster,
-  useUpdateKarpenterPrivateFargate,
-} from '@qovery/domains/clusters/feature'
-import { type ClusterResourcesEdit, type SCWControlPlaneFeatureType } from '@qovery/shared/interfaces'
+import { ClusterMigrationModal, useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
+import { type ClusterResourcesData, type SCWControlPlaneFeatureType } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { PageSettingsResources } from '../../ui/page-settings-resources/page-settings-resources'
-
-function getValueByKey(key: string, data: { [key: string]: string }[] = []): string[] {
-  return data.filter((obj) => key in obj).map((obj) => obj[key])
-}
 
 export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
   const payload = {
@@ -99,7 +90,7 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
 
   const { openModal, closeModal } = useModal()
 
-  const methods = useForm<ClusterResourcesEdit>({
+  const methods = useForm<ClusterResourcesData>({
     mode: 'onChange',
     defaultValues: {
       cluster_type: cluster.kubernetes,
@@ -125,10 +116,9 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
     },
   })
   const { mutate: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
-  const { mutateAsync: updateKarpenterPrivateFargate } = useUpdateKarpenterPrivateFargate()
 
-  const onSubmit = methods.handleSubmit(async (data) => {
-    const updateCluster = async () => {
+  const onSubmit = methods.handleSubmit((data) => {
+    const updateCluster = () => {
       const cloneCluster = handleSubmit(data, cluster)
       editCluster({
         clusterId: cluster.id,
@@ -137,35 +127,14 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
       })
     }
 
-    const updateClusterKarpenterSubnets = async () => {
-      if (data?.aws_existing_vpc?.eks_subnets) {
-        try {
-          await updateKarpenterPrivateFargate({
-            organizationId: cluster.organization.id,
-            clusterId: cluster.id,
-            clusterKarpenterPrivateSubnetIdsPutRequest: {
-              eks_karpenter_fargate_subnets_zone_a_ids: getValueByKey('A', data?.aws_existing_vpc?.eks_subnets)!,
-              eks_karpenter_fargate_subnets_zone_b_ids: getValueByKey('B', data?.aws_existing_vpc?.eks_subnets)!,
-              eks_karpenter_fargate_subnets_zone_c_ids: getValueByKey('C', data?.aws_existing_vpc?.eks_subnets)!,
-            },
-          })
-          await updateCluster()
-        } catch (error) {
-          console.error(error)
-        }
-      } else {
-        await updateCluster()
-      }
-    }
-
     if (data && cluster) {
       const hasKarpenterFeature = cluster.features?.some((f) => f.id === 'KARPENTER')
       if (data.karpenter?.enabled === !hasKarpenterFeature) {
         openModal({
-          content: <ClusterMigrationModal onClose={closeModal} onSubmit={updateClusterKarpenterSubnets} />,
+          content: <ClusterMigrationModal onClose={closeModal} onSubmit={updateCluster} />,
         })
       } else {
-        await updateClusterKarpenterSubnets()
+        updateCluster()
       }
     }
   })
