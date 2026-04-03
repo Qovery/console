@@ -28,7 +28,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
             >
               <div>
                 <p
-                  class="text-sm text-neutral-350"
+                  class="text-sm text-neutral-subtle"
                 >
                   Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
                 </p>
@@ -36,7 +36,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                   aria-controls="radix-:rd:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+                  class="hover:text-brandHover cursor-pointer text-sm font-medium text-brand transition"
                   data-state="closed"
                   type="button"
                 >
@@ -156,7 +156,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                   Override from repository
                 </h2>
                 <p
-                  class="mb-6 text-sm text-neutral-350"
+                  class="mb-6 text-sm text-neutral-subtle"
                 >
                   Specify the repository and the path containing the override yaml file to be passed via the “-f” helm argument. More than one file can be used as override by adding them in the path field separated by a semi-colon. If you don’t have a repository, you can set the override manually or via a raw YAML file.
                 </p>
@@ -213,7 +213,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                     </p>
                   </div>
                   <div
-                    class="flex flex-row gap-x-4 p-4 border rounded text-sm border-info-component bg-surface-info-subtle text-info mt-3"
+                    class="flex flex-row gap-x-4 p-4 border rounded text-sm items-center border-info-component bg-surface-info-subtle text-info mt-3"
                     data-accent-color="sky"
                   >
                     <div
@@ -293,7 +293,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
             >
               <div>
                 <p
-                  class="text-sm text-neutral-350"
+                  class="text-sm text-neutral-subtle"
                 >
                   Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
                 </p>
@@ -301,7 +301,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                   aria-controls="radix-:rk:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+                  class="hover:text-brandHover cursor-pointer text-sm font-medium text-brand transition"
                   data-state="closed"
                   type="button"
                 >
@@ -421,7 +421,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                   Override with raw Yaml
                 </h2>
                 <p
-                  class="mb-6 text-sm text-neutral-350"
+                  class="mb-6 text-sm text-neutral-subtle"
                 >
                   You can define here the YAML containing the overrides you want to apply. The YAML will be stored by Qovery and can be updated later within the settings but no history will be retained.
                 </p>
@@ -441,7 +441,8 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                         Raw YAML
                       </h2>
                       <button
-                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral aspect-square justify-center p-0 hover:text-neutral-400"
+                        aria-label="Edit Raw YAML"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral justify-center p-0"
                         type="button"
                       >
                         <i

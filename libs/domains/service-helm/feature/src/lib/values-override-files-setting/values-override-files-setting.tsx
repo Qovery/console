@@ -33,6 +33,7 @@ export interface ValuesOverrideFilesSettingProps {
   gitRepositorySettings: ReactNode
   onSubmit: () => void
   isSetting?: boolean
+  yamlSetting?: ReactNode
 }
 
 export function ValuesOverrideFilesSetting({
@@ -43,6 +44,7 @@ export function ValuesOverrideFilesSetting({
   gitRepositorySettings,
   onSubmit,
   isSetting,
+  yamlSetting,
 }: PropsWithChildren<ValuesOverrideFilesSettingProps>) {
   return (
     <Section>
@@ -58,18 +60,18 @@ export function ValuesOverrideFilesSetting({
       <form className="space-y-10" onSubmit={onSubmit}>
         {!isSetting && (
           <div>
-            <p className="text-sm text-neutral-350">
+            <p className="text-sm text-neutral-subtle">
               Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It
               is highly recommended to store the override file(s) in a git repository.
             </p>
             <Popover.Root>
               <Popover.Trigger>
-                <span className="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600">
+                <span className="hover:text-brandHover cursor-pointer text-sm font-medium text-brand transition">
                   How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
                 </span>
               </Popover.Trigger>
-              <Popover.Content side="left" className="relative text-sm text-neutral-350" style={{ width: 440 }}>
-                <h6 className="mb-2 font-medium text-neutral-400">How it works</h6>
+              <Popover.Content side="left" className="relative text-sm text-neutral-subtle" style={{ width: 440 }}>
+                <h6 className="mb-2 font-medium text-neutral">How it works</h6>
                 <ul className="list-disc pl-4">
                   <li>
                     Your helm chart might have already a variables.yaml file with some basic configuration. In this
@@ -98,7 +100,7 @@ export function ValuesOverrideFilesSetting({
                 </ExternalLink>
                 <Popover.Close className="absolute right-4 top-4">
                   <button type="button">
-                    <Icon iconName="xmark" className="text-lg leading-4 text-neutral-400" />
+                    <Icon iconName="xmark" className="text-sm" />
                   </button>
                 </Popover.Close>
               </Popover.Content>
@@ -109,7 +111,7 @@ export function ValuesOverrideFilesSetting({
           <Controller
             name="type"
             control={methods.control}
-            defaultValue="GIT_REPOSITORY"
+            defaultValue="NONE"
             render={({ field }) => (
               <InputSelect
                 label="File source"
@@ -136,19 +138,21 @@ export function ValuesOverrideFilesSetting({
         {watchFieldType === 'YAML' && (
           <Section>
             <Heading className="mb-2">Override with raw Yaml</Heading>
-            <p className="mb-6 text-sm text-neutral-350">
+            <p className="mb-6 text-sm text-neutral-subtle">
               You can define here the YAML containing the overrides you want to apply. The YAML will be stored by Qovery
               and can be updated later within the settings but no history will be retained.
             </p>
             <div className="flex flex-col gap-3">
-              <ValuesOverrideYamlSetting
-                content={methods.getValues('content')}
-                onSubmit={(value) => {
-                  methods.setValue('content', value)
-                  isSetting && onSubmit()
-                }}
-                source={source}
-              />
+              {yamlSetting ?? (
+                <ValuesOverrideYamlSetting
+                  content={methods.getValues('content')}
+                  onSubmit={(value) => {
+                    methods.setValue('content', value)
+                    isSetting && onSubmit()
+                  }}
+                  source={source}
+                />
+              )}
             </div>
           </Section>
         )}
@@ -156,7 +160,7 @@ export function ValuesOverrideFilesSetting({
         {watchFieldType === 'GIT_REPOSITORY' && (
           <Section>
             <Heading className="mb-2">Override from repository</Heading>
-            <p className="mb-6 text-sm text-neutral-350">
+            <p className="mb-6 text-sm text-neutral-subtle">
               Specify the repository and the path containing the override yaml file to be passed via the “-f” helm
               argument. More than one file can be used as override by adding them in the path field separated by a
               semi-colon. If you don’t have a repository, you can set the override manually or via a raw YAML file.

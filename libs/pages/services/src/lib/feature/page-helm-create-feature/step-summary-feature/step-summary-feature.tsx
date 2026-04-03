@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useHelmRepositories } from '@qovery/domains/organizations/feature'
 import { type ArgumentTypes, useCreateHelmService } from '@qovery/domains/service-helm/feature'
-import { useDeployService } from '@qovery/domains/services/feature'
+import { buildHelmSourceFromGeneralData, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_GENERAL_URL,
@@ -46,25 +46,7 @@ export function StepSummaryFeature() {
       setIsLoadingCreate(true)
     }
 
-    const source = match(generalData.source_provider)
-      .with('GIT', () => {
-        return {
-          git_repository: {
-            url: generalData.git_repository?.url ?? generalData.repository ?? '',
-            branch: generalData.branch,
-            root_path: generalData.root_path,
-            git_token_id: generalData.git_token_id,
-          },
-        }
-      })
-      .with('HELM_REPOSITORY', () => ({
-        helm_repository: {
-          repository: generalData.repository,
-          chart_name: generalData.chart_name,
-          chart_version: generalData.chart_version,
-        },
-      }))
-      .exhaustive()
+    const source = buildHelmSourceFromGeneralData(generalData)
 
     const valuesOverrideFile = match(valuesOverrideFileData.type)
       .with('GIT_REPOSITORY', () => {

@@ -45,6 +45,36 @@ export interface HelmGeneralData
   chart_version?: string
   arguments: string
   timeout_sec: string | number
+  labels_groups?: string[]
+  annotations_groups?: string[]
+}
+
+export function buildHelmSourceFromGeneralData(data: HelmGeneralData): HelmRequestAllOfSource {
+  return match(data.source_provider)
+    .with('GIT', (): HelmRequestAllOfSourceOneOf => {
+      return {
+        git_repository: {
+          url: match(data.is_public_repository)
+            .with(true, () => data.repository ?? '')
+            .with(false, undefined, () => data.git_repository?.url ?? '')
+            .exhaustive(),
+          branch: data.branch,
+          root_path: data.root_path,
+          git_token_id: data.git_token_id,
+        },
+      }
+    })
+    .with(
+      'HELM_REPOSITORY',
+      (): HelmRequestAllOfSourceOneOf1 => ({
+        helm_repository: {
+          repository: data.repository,
+          chart_name: data.chart_name,
+          chart_version: data.chart_version,
+        },
+      })
+    )
+    .exhaustive()
 }
 
 export interface TerraformGeneralData extends Omit<TerraformRequest, 'auto_deploy_config'> {
@@ -226,32 +256,7 @@ export const handleJobSubmit = (
 }
 
 export const handleHelmSubmit = (data: HelmGeneralData, helm: Helm): HelmRequest => {
-  const sourceProvider: 'HELM_REPOSITORY' | 'GIT' = data.source_provider
-  const source: HelmRequestAllOfSource = match(sourceProvider)
-    .with('GIT', (): HelmRequestAllOfSourceOneOf => {
-      return {
-        git_repository: {
-          url: match(data.is_public_repository)
-            .with(true, () => data.repository ?? '')
-            .with(false, undefined, () => data.git_repository?.url ?? '')
-            .exhaustive(),
-          branch: data.branch,
-          root_path: data.root_path,
-          git_token_id: data.git_token_id,
-        },
-      }
-    })
-    .with(
-      'HELM_REPOSITORY',
-      (): HelmRequestAllOfSourceOneOf1 => ({
-        helm_repository: {
-          repository: data.repository,
-          chart_name: data.chart_name,
-          chart_version: data.chart_version,
-        },
-      })
-    )
-    .exhaustive()
+  const source = buildHelmSourceFromGeneralData(data)
 
   const timeoutSec = Number.parseInt(String(data.timeout_sec), 10)
 
