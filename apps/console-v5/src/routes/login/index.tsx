@@ -202,6 +202,7 @@ function RouteComponent() {
       ssoDomain: '',
     },
   })
+  const ssoDomain = methods.watch('ssoDomain', '')
 
   const handleTestimonialAnimationComplete = () => {
     if (isTestimonialExiting) {
@@ -229,6 +230,9 @@ function RouteComponent() {
     setLastUsedLogin(lastUsedProvider)
 
     try {
+      // XXX: Cleanup legacy jwtToken cookie which can cause RequestHeaderSectionTooLarge problems
+      // https://qovery.atlassian.net/browse/FRT-1086
+      // https://github.com/Qovery/console/pull/1188
       if (document.cookie.split(';').some((item) => item.trim().startsWith('jwtToken='))) {
         document.cookie = 'jwtToken=; Max-Age=-99999999; domain=.qovery.com'
       }
@@ -245,7 +249,7 @@ function RouteComponent() {
 
   return (
     <div data-theme="light" className="relative min-h-screen w-screen overflow-x-hidden bg-background-secondary">
-      <Link href="https://www.qovery.com" color="subtle" className="pointer-events-auto absolute left-4 top-4 z-30">
+      <Link href="https://www.qovery.com" color="subtle" className="pointer-events-auto absolute left-4 top-4 z-modal">
         <Icon iconName="arrow-left" />
         Back to website
       </Link>
@@ -258,7 +262,7 @@ function RouteComponent() {
 
               <h1
                 className={clsx(
-                  'text-center font-brand text-[24px] font-normal leading-8 text-neutral',
+                  'text-center font-brand text-2xl font-normal leading-8 text-neutral',
                   ssoFormVisible ? 'mb-2' : 'mb-6'
                 )}
               >
@@ -392,6 +396,7 @@ function RouteComponent() {
                           onBlur={field.onBlur}
                           error={error?.message}
                           className="[&_.input--small]:h-10 [&_.input--small]:min-h-10"
+                          autoFocus
                         />
                       )}
                     />
@@ -403,7 +408,7 @@ function RouteComponent() {
                         size="lg"
                         className="relative w-full justify-center"
                         onClick={methods.handleSubmit(validateAndConnect)}
-                        disabled={!methods.formState.isValid}
+                        disabled={ssoDomain.trim().length === 0 || !methods.formState.isValid}
                       >
                         Connect
                       </Button>
@@ -467,7 +472,7 @@ function RouteComponent() {
           </div>
         </div>
 
-        <div className="relative z-0 hidden lg:block lg:h-screen lg:max-w-[1280px] lg:flex-[2_1_0%]">
+        <div className="pointer-events-none relative hidden lg:block lg:h-screen lg:max-w-[1280px] lg:flex-[2_1_0%]">
           <img
             src="/assets/login/onboarding-background.svg"
             alt=""
@@ -567,7 +572,7 @@ function RouteComponent() {
             </div>
           </div>
 
-          <div className="pointer-events-none absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-6">
+          <div className="pointer-events-none absolute bottom-8 left-1/2 z-dropdown flex -translate-x-1/2 items-center gap-6">
             <img src="/assets/login/compliance-logos/soc2.png" alt="SOC 2 logo" className="h-12 w-12 object-contain" />
             <img src="/assets/login/compliance-logos/hipaa.png" alt="HIPAA logo" className="h-12 w-12 object-contain" />
             <img

@@ -150,7 +150,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                                 .otherwise(() => (
                                   <Icon iconName="loader" className="mr-3 animate-spin" />
                                 ))}
-                              <Icon iconName="chevron-down" />
                             </div>
                           </Tooltip>
                         </Button>
