@@ -20,7 +20,7 @@ type ClusterApiWithFallback = Partial<Pick<ClustersApi, 'listEksAnywhereCommits'
   axios: AxiosInstance
   basePath: string
 }
-const clusterApiWithFallback = clusterApi as ClusterApiWithFallback
+const clusterApiWithFallback = clusterApi as unknown as ClusterApiWithFallback
 const getClusterApiBasePath = () => clusterApiWithFallback.basePath.replace(/\/+$/, '')
 
 export const clusters = createQueryKeys('clusters', {
