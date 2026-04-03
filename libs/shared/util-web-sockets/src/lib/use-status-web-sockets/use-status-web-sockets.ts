@@ -1,4 +1,5 @@
 import equal from 'fast-deep-equal'
+import { type QueryClient } from '@tanstack/react-query'
 import { type EnvironmentStatus, type EnvironmentStatusesWithStages } from 'qovery-typescript-axios'
 import {
   type ApplicationStatusDto,
@@ -6,6 +7,7 @@ import {
   type ServiceStatusDto,
   type TerraformStatusDto,
 } from 'qovery-ws-typescript-axios'
+import { useCallback, useState } from 'react'
 import { v7 as uuidv7 } from 'uuid'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -31,20 +33,10 @@ export function useStatusWebSockets({
   environmentId,
   versionId,
 }: UseStatusWebSocketsProps) {
-  const externalRequestId = uuidv7()
+  const [externalRequestId] = useState(() => uuidv7())
 
-  useReactQueryWsSubscription({
-    url: QOVERY_WS + '/deployment/status',
-    urlSearchParams: {
-      organization: organizationId,
-      environment: environmentId,
-      cluster: clusterId,
-      project: projectId,
-      version: versionId,
-    },
-    enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
-    shouldReconnect: true,
-    onMessage(queryClient, message: WSDeploymentStatus) {
+  const onDeploymentStatusMessage = useCallback(
+    (queryClient: QueryClient, message: WSDeploymentStatus) => {
       if (environmentId) {
         queryClient.setQueryData(
           queries.environments.deploymentStatus(environmentId).queryKey,
@@ -75,20 +67,11 @@ export function useStatusWebSockets({
         }
       }
     },
-  })
+    [environmentId]
+  )
 
-  useReactQueryWsSubscription({
-    url: QOVERY_WS + '/service/status',
-    urlSearchParams: {
-      organization: organizationId,
-      environment: environmentId,
-      cluster: clusterId,
-      project: projectId,
-      external_request_id: externalRequestId,
-    },
-    // NOTE: projectId is not required by the API but it limits WS messages when cluster handles my environments / services
-    enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
-    onMessage(queryClient, message: ServiceStatusDto) {
+  const onServiceStatusMessage = useCallback(
+    (queryClient: QueryClient, message: ServiceStatusDto) => {
       for (const env of message.environments) {
         // Setting the environment status only if it has changed
         const currentEnvironmentStatus = queryClient.getQueryData(queries.environments.runningStatus(env.id).queryKey)
@@ -119,6 +102,35 @@ export function useStatusWebSockets({
         }
       }
     },
+    []
+  )
+
+  useReactQueryWsSubscription({
+    url: QOVERY_WS + '/deployment/status',
+    urlSearchParams: {
+      organization: organizationId,
+      environment: environmentId,
+      cluster: clusterId,
+      project: projectId,
+      version: versionId,
+    },
+    enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
+    shouldReconnect: true,
+    onMessage: onDeploymentStatusMessage,
+  })
+
+  useReactQueryWsSubscription({
+    url: QOVERY_WS + '/service/status',
+    urlSearchParams: {
+      organization: organizationId,
+      environment: environmentId,
+      cluster: clusterId,
+      project: projectId,
+      external_request_id: externalRequestId,
+    },
+    // NOTE: projectId is not required by the API but it limits WS messages when cluster handles my environments / services
+    enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
+    onMessage: onServiceStatusMessage,
   })
 }
 
