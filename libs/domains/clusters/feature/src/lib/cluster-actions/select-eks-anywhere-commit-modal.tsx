@@ -43,6 +43,7 @@ export function SelectEksAnywhereCommitModal({
 
   const [search, setSearch] = useState('')
   const [targetCommitId, setTargetCommitId] = useState<string | undefined>(currentCommitId)
+  const normalizedSearch = search.toLowerCase()
 
   const commitsByDay = useMemo(
     () =>
@@ -57,22 +58,30 @@ export function SelectEksAnywhereCommitModal({
     [commits]
   )
 
-  const filterCommits: Record<string, Commit[]> = Object.fromEntries(
-    Object.entries(commitsByDay)
-      .map(([date, commitsForDate]) => {
-        return [
-          date,
-          commitsForDate.filter(
-            (commit) =>
-              commit.message.toLowerCase().includes(search.toLowerCase()) ||
-              commit.git_commit_id.toLowerCase().includes(search.toLowerCase())
-          ),
-        ]
-      })
-      .filter(([, commitsForDate]) => commitsForDate.length)
+  const filterCommits = useMemo<Record<string, Commit[]>>(
+    () =>
+      Object.fromEntries(
+        Object.entries(commitsByDay)
+          .map(([date, commitsForDate]) => {
+            return [
+              date,
+              commitsForDate.filter(
+                (commit) =>
+                  commit.message.toLowerCase().includes(normalizedSearch) ||
+                  commit.git_commit_id.toLowerCase().includes(normalizedSearch)
+              ),
+            ]
+          })
+          .filter(([, commitsForDate]) => commitsForDate.length)
+      ),
+    [commitsByDay, normalizedSearch]
   )
-  const hasSelectedCommitInResults = Object.values(filterCommits).some((commitsForDate) =>
-    commitsForDate.some((commit) => commit.git_commit_id === targetCommitId)
+  const hasSelectedCommitInResults = useMemo(
+    () =>
+      Object.values(filterCommits).some((commitsForDate) =>
+        commitsForDate.some((commit) => commit.git_commit_id === targetCommitId)
+      ),
+    [filterCommits, targetCommitId]
   )
 
   return (

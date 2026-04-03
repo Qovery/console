@@ -73,6 +73,10 @@ function MenuManageDeployment({
   )
   const eksAnywhereCurrentCommitId =
     cluster.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository?.commit_id
+  const canUpdateEksAnywhereVersion =
+    isEksAnywhereCluster &&
+    hasEksAnywhereGitRepository &&
+    (isDeployAvailable(clusterStatus.status) || isRedeployAvailable(clusterStatus.status))
   const actionButtonVariant = hasTextActionButton ? 'solid' : 'outline'
   const actionButtonColor =
     clusterNeedUpdate || k8sUpdateAvailable ? 'yellow' : hasTextActionButton ? 'brand' : 'neutral'
@@ -187,20 +191,18 @@ function MenuManageDeployment({
         {tooltipClusterNeedUpdate}
       </DropdownMenu.Item>
     ),
-    isEksAnywhereCluster &&
-      hasEksAnywhereGitRepository &&
-      (isDeployAvailable(clusterStatus.status) || isRedeployAvailable(clusterStatus.status)) && (
-        <DropdownMenu.Item
-          key="1bis"
-          icon={<Icon iconName="rotate-right" />}
-          onSelect={mutationUpdateEksAnywhereVersion}
-          className="relative"
-          color={clusterNeedUpdate ? 'yellow' : 'brand'}
-        >
-          Update another version
-          {tooltipClusterNeedUpdate}
-        </DropdownMenu.Item>
-      ),
+    canUpdateEksAnywhereVersion && (
+      <DropdownMenu.Item
+        key="1bis"
+        icon={<Icon iconName="rotate-right" />}
+        onSelect={mutationUpdateEksAnywhereVersion}
+        className="relative"
+        color={clusterNeedUpdate ? 'yellow' : 'brand'}
+      >
+        Update another version
+        {tooltipClusterNeedUpdate}
+      </DropdownMenu.Item>
+    ),
     cluster.cloud_provider !== 'GCP' &&
       cluster.cloud_provider !== 'AZURE' &&
       isStopAvailable(clusterStatus.status) &&

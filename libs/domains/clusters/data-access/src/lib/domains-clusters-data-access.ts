@@ -21,6 +21,10 @@ type ClusterApiWithFallback = Partial<Pick<ClustersApi, 'listEksAnywhereCommits'
 }
 const clusterApiWithFallback = clusterApi as unknown as ClusterApiWithFallback
 const getClusterApiBasePath = () => clusterApiWithFallback.basePath.replace(/\/+$/, '')
+const getEksAnywhereCommitsPath = (organizationId: string, clusterId: string) =>
+  `${getClusterApiBasePath()}/organization/${encodeURIComponent(organizationId)}/cluster/${encodeURIComponent(clusterId)}/eks-anywhere/commits`
+const getEksAnywhereCommitPath = (organizationId: string, clusterId: string) =>
+  `${getClusterApiBasePath()}/organization/${encodeURIComponent(organizationId)}/cluster/${encodeURIComponent(clusterId)}/eks-anywhere/commit`
 
 export const clusters = createQueryKeys('clusters', {
   list: ({ organizationId }: { organizationId: string }) => ({
@@ -47,11 +51,12 @@ export const clusters = createQueryKeys('clusters', {
   eksAnywhereCommits: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
     queryKey: [organizationId, clusterId],
     async queryFn() {
+      const listEksAnywhereCommits = clusterApiWithFallback.listEksAnywhereCommits
       const response =
-        typeof clusterApiWithFallback.listEksAnywhereCommits === 'function'
-          ? await clusterApiWithFallback.listEksAnywhereCommits(organizationId, clusterId)
+        typeof listEksAnywhereCommits === 'function'
+          ? await listEksAnywhereCommits(organizationId, clusterId)
           : await clusterApiWithFallback.axios.get<CommitResponseList>(
-              `${getClusterApiBasePath()}/organization/${encodeURIComponent(organizationId)}/cluster/${encodeURIComponent(clusterId)}/eks-anywhere/commits`
+              getEksAnywhereCommitsPath(organizationId, clusterId)
             )
       return response.data.results ?? []
     },
@@ -178,11 +183,12 @@ export const mutations = {
     clusterId: string
     commitId: string
   }) {
+    const updateEksAnywhereCommit = clusterApiWithFallback.updateEksAnywhereCommit
     const response =
-      typeof clusterApiWithFallback.updateEksAnywhereCommit === 'function'
-        ? await clusterApiWithFallback.updateEksAnywhereCommit(organizationId, clusterId, { commit_id: commitId })
+      typeof updateEksAnywhereCommit === 'function'
+        ? await updateEksAnywhereCommit(organizationId, clusterId, { commit_id: commitId })
         : await clusterApiWithFallback.axios.put<EksAnywhereCommitResponse>(
-            `${getClusterApiBasePath()}/organization/${encodeURIComponent(organizationId)}/cluster/${encodeURIComponent(clusterId)}/eks-anywhere/commit`,
+            getEksAnywhereCommitPath(organizationId, clusterId),
             { commit_id: commitId }
           )
     return response.data
