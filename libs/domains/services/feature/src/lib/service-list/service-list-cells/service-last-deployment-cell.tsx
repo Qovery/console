@@ -1,8 +1,9 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { PropsWithChildren, useCallback } from 'react'
+import { type PropsWithChildren, useCallback } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
 import { DeploymentAction, Link, StatusChip } from '@qovery/shared/ui'
+import { timeAgo } from '@qovery/shared/util-dates'
 import { useServiceDeploymentAndRunningStatuses } from '../../hooks/use-service-deployment-and-running-statuses/use-service-deployment-and-running-statuses'
 
 type ServiceLastDeploymentCellProps = {
@@ -29,7 +30,6 @@ export function ServiceLastDeploymentCell({ service, environment }: ServiceLastD
             serviceId: service.id,
             executionId: deploymentStatus?.execution_id ?? '',
           }}
-          underline
           color="neutral"
           className="flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
           onClick={(e) => {
@@ -48,7 +48,14 @@ export function ServiceLastDeploymentCell({ service, environment }: ServiceLastD
   ) : (
     <div className="flex w-full items-center justify-between gap-4">
       <WrappingLink>
-        <DeploymentAction status={triggerAction} />
+        <div className="group flex items-center gap-2">
+          <DeploymentAction status={triggerAction} textClassName="group-hover:underline" />
+          {deploymentStatus?.last_deployment_date && (
+            <span className="font-normal text-neutral-subtle group-hover:text-neutral-subtle group-hover:underline">
+              {timeAgo(new Date(deploymentStatus.last_deployment_date))} ago
+            </span>
+          )}
+        </div>
       </WrappingLink>
       <div>
         <div className="flex items-center gap-2">
