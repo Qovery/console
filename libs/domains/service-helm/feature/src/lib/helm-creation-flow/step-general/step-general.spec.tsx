@@ -3,8 +3,6 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { HelmCreationFlow } from '../helm-creation-flow'
 import { HelmStepGeneral } from './step-general'
 
-const mockOnSubmit = jest.fn()
-
 jest.mock('@qovery/shared/assistant/feature', () => ({
   AssistantTrigger: () => null,
 }))
@@ -43,7 +41,6 @@ jest.mock('@qovery/shared/ui', () => ({
 const defaultProps = {
   labelSetting: <div data-testid="label-setting">Labels</div>,
   annotationSetting: <div data-testid="annotation-setting">Annotations</div>,
-  onSubmit: mockOnSubmit,
 }
 
 function renderStepGeneral() {
@@ -55,10 +52,6 @@ function renderStepGeneral() {
 }
 
 describe('HelmStepGeneral', () => {
-  beforeEach(() => {
-    mockOnSubmit.mockClear()
-  })
-
   it('renders the general helm form', () => {
     renderStepGeneral()
 

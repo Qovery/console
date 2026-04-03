@@ -1,5 +1,5 @@
 import * as Collapsible from '@radix-ui/react-collapsible'
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { type FormEventHandler, type ReactNode, useEffect, useState } from 'react'
 import { FormProvider } from 'react-hook-form'
 import {
@@ -8,7 +8,7 @@ import {
   GitPublicRepositorySettings,
   GitRepositorySetting,
 } from '@qovery/domains/organizations/feature'
-import { AutoDeploySetting, GeneralSetting, type HelmGeneralData } from '@qovery/domains/services/feature'
+import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
 import { Button, Callout, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
 import { DeploymentSetting } from '../../deployment-setting/deployment-setting'
 import { SourceSetting } from '../../source-setting/source-setting'
@@ -17,13 +17,13 @@ import { useHelmCreateContext } from '../helm-creation-flow'
 export interface HelmStepGeneralProps {
   labelSetting: ReactNode
   annotationSetting: ReactNode
-  onSubmit: (data: HelmGeneralData) => void
 }
 
-export function HelmStepGeneral({ onSubmit, labelSetting, annotationSetting }: HelmStepGeneralProps) {
+export function HelmStepGeneral({ labelSetting, annotationSetting }: HelmStepGeneralProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
-  const { generalForm, setCurrentStep } = useHelmCreateContext()
+  const search = useSearch({ strict: false })
+  const { generalForm, setCurrentStep, creationFlowUrl } = useHelmCreateContext()
   const [openExtraAttributes, setOpenExtraAttributes] = useState(false)
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export function HelmStepGeneral({ onSubmit, labelSetting, annotationSetting }: H
     }
 
     methods.reset(nextData)
-    onSubmit(nextData)
+    navigate({ to: `${creationFlowUrl}/values-override-file`, search })
   })
 
   return (
