@@ -28,7 +28,7 @@ exports[`ServiceList should match snapshot 1`] = `
               class="h-9 w-full grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]"
             >
               <th
-                class="text-left font-code font-normal relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
+                class="text-left font-code font-normal relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0 border-none p-0"
               >
                 <div
                   class="flex h-full w-full items-center pl-4"
@@ -44,7 +44,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </th>
               <th
-                class="text-left font-code font-normal relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
+                class="text-left font-code font-normal relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0 border-none p-0"
               >
                 <button
                   class="flex items-center gap-1 truncate cursor-pointer select-none"
@@ -54,20 +54,20 @@ exports[`ServiceList should match snapshot 1`] = `
                 </button>
               </th>
               <th
-                class="px-4 text-left font-code font-normal relative flex h-full items-center border-r border-neutral last:border-r-0"
+                class="px-4 text-left font-code font-normal relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0"
               />
               <th
-                class="px-4 text-left font-code font-normal relative flex h-full items-center border-r border-neutral last:border-r-0"
+                class="px-4 text-left font-code font-normal relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0"
               >
                 Last deployment
               </th>
               <th
-                class="px-4 text-left font-code font-normal relative flex h-full items-center border-r border-neutral last:border-r-0"
+                class="px-4 text-left font-code font-normal relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0"
               >
                 Target version
               </th>
               <th
-                class="px-4 text-left font-code font-normal relative flex h-full items-center border-r border-neutral last:border-r-0"
+                class="px-4 text-left font-code font-normal relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0"
               >
                 Actions
               </th>

@@ -144,13 +144,11 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                       <DropdownMenu.Trigger asChild>
                         <Button aria-label="Manage Deployment" color="neutral" size="md" variant="outline" iconOnly>
                           <Tooltip content="Manage Deployment">
-                            <div className="flex h-full w-full items-center justify-center">
-                              {match(state)
-                                .with('QUEUED', () => <Icon iconName="clock" iconStyle="regular" />)
-                                .otherwise(() => (
-                                  <Icon iconName="loader" className="animate-spin" />
-                                ))}
-                            </div>
+                            {match(state)
+                              .with('QUEUED', () => <Icon iconName="clock" iconStyle="regular" />)
+                              .otherwise(() => (
+                                <Icon iconName="loader" className="animate-spin" />
+                              ))}
                           </Tooltip>
                         </Button>
                       </DropdownMenu.Trigger>

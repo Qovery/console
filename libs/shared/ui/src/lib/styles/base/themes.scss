@@ -1,5 +1,6 @@
 :root[data-theme='light'],
-:root.light {
+:root.light,
+[data-theme='light'] {
   color-scheme: light;
 
   /* Background */
@@ -128,7 +129,8 @@
 }
 
 :root[data-theme='dark'],
-:root.dark {
+:root.dark,
+[data-theme='dark'] {
   color-scheme: dark;
 
   /* Background */

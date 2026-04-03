@@ -368,7 +368,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                   <Table.ColumnHeaderCell
                     key={header.id}
                     className={twMerge(
-                      'relative flex h-full items-center border-r border-neutral last:border-r-0',
+                      'relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0',
                       i === 1 || i === 0 ? 'border-none p-0' : ''
                     )}
                   >

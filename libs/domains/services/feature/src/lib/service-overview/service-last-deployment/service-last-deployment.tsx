@@ -3,7 +3,7 @@ import posthog from 'posthog-js'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type MouseEvent, Suspense, useContext } from 'react'
 import { P, match } from 'ts-pattern'
-import { type AnyService } from '@qovery/domains/services/data-access'
+import { type AnyService, type ServiceType } from '@qovery/domains/services/data-access'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import {
@@ -18,10 +18,13 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
+import { useDeployService } from '../../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentHistory } from '../../hooks/use-deployment-history/use-deployment-history'
 import { LastCommitAuthor, type LastCommitAuthorProps } from '../../last-commit-author/last-commit-author'
 import { LastCommit, type LastCommitProps } from '../../last-commit/last-commit'
 import { isDeploymentHistory } from '../../service-deployment-list/service-deployment-list'
+
+type DeployServiceType = Exclude<ServiceType, 'CRON_JOB' | 'LIFECYCLE_JOB'>
 
 const DotSeparator = () => (
   <svg
@@ -62,6 +65,11 @@ export function ServiceLastDeploymentSkeleton() {
 
 function ServiceLastDeploymentContent({ serviceId, serviceType, service }: ServiceLastDeploymentProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const { mutate: deployService } = useDeployService({
+    organizationId,
+    projectId,
+    environmentId,
+  })
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
   const { data: deploymentHistory = [] } = useDeploymentHistory({
     serviceId,
@@ -83,7 +91,24 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
         title="Application has never been deployed"
         description="Deploy the application first"
       >
-        <Button className="gap-1" color="neutral" variant="outline" size="md">
+        <Button
+          className="gap-1"
+          color="neutral"
+          variant="outline"
+          size="md"
+          onClick={() => {
+            if (serviceType === undefined) {
+              return
+            }
+            deployService({
+              serviceId,
+              serviceType: match(serviceType)
+                .with('APPLICATION', 'CONTAINER', 'DATABASE', 'JOB', 'HELM', 'TERRAFORM', (st): DeployServiceType => st)
+                .with('CRON_JOB', 'LIFECYCLE_JOB', (): DeployServiceType => 'JOB')
+                .exhaustive(),
+            })
+          }}
+        >
           <Icon iconName="rocket" />
           Deploy now
         </Button>
