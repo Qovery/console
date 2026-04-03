@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import {
@@ -19,9 +19,15 @@ export function PageSettingsEKSAnywhereFeature() {
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
   const [isGitEditing, setIsGitEditing] = useState(false)
   const currentGitRepository = cluster?.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository
-  const currentRepository = getEksAnywhereGitFormValues(cluster).repository
-  const hasConfiguredInfrastructureChartsSource = Boolean(currentGitRepository?.url && currentRepository)
-  const gitDisabled = hasConfiguredInfrastructureChartsSource && !isGitEditing
+  const currentRepository = useMemo(() => getEksAnywhereGitFormValues(cluster).repository, [cluster])
+  const hasConfiguredInfrastructureChartsSource = useMemo(
+    () => Boolean(currentGitRepository?.url && currentRepository),
+    [currentGitRepository?.url, currentRepository]
+  )
+  const gitDisabled = useMemo(
+    () => hasConfiguredInfrastructureChartsSource && !isGitEditing,
+    [hasConfiguredInfrastructureChartsSource, isGitEditing]
+  )
 
   const methods = useForm<ClusterEksSettingsFormData>({
     mode: 'onChange',
