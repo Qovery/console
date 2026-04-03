@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -17,6 +17,14 @@ const SCREEN_STACK_HOLD_DURATION_S = 8
 const SCREEN_STACK_OFFSET_PX = 16
 const SCREEN_STACK_MIDDLE_OPACITY = 0.9
 const SCREEN_STACK_BACK_OPACITY = 0.45
+const LOGIN_PANEL_LAYOUT_TRANSITION = {
+  duration: 0.28,
+  ease: [0.22, 1, 0.36, 1],
+} as const
+const LOGIN_PANEL_CONTENT_TRANSITION = {
+  duration: 0.18,
+  ease: 'easeOut',
+} as const
 const PRODUCT_SHOTS = [
   '/assets/login/product-shots/deployed-and-running.jpg',
   '/assets/login/product-shots/project-overview.jpg',
@@ -256,8 +264,16 @@ function RouteComponent() {
 
       <div className="relative mx-auto flex min-h-screen w-full lg:h-screen">
         <div className="relative z-20 flex w-full items-center justify-center px-2 sm:px-16 lg:flex-[1_1_0%] lg:px-8">
-          <div className="w-full max-w-[480px] rounded-2xl border border-neutral bg-surface-neutral-subtle shadow-[0_2px_5px_0_rgba(0,0,0,0.02),0_0_24px_0_rgba(0,0,0,0.04)] lg:min-w-[480px]">
-            <div className="rounded-2xl bg-background px-4 pb-4 pt-8 outline outline-[1px] outline-neutral sm:px-8 sm:pb-6">
+          <motion.div
+            layout
+            transition={LOGIN_PANEL_LAYOUT_TRANSITION}
+            className="w-full max-w-[480px] rounded-2xl border border-neutral bg-surface-neutral-subtle shadow-[0_2px_5px_0_rgba(0,0,0,0.02),0_0_24px_0_rgba(0,0,0,0.04)] lg:min-w-[480px]"
+          >
+            <motion.div
+              layout
+              transition={LOGIN_PANEL_LAYOUT_TRANSITION}
+              className="relative rounded-2xl bg-background px-4 pb-4 pt-8 outline outline-[1px] outline-neutral sm:px-8 sm:pb-6"
+            >
               <img className="mx-auto mb-8 h-6" src="/assets/logos/logo-black.svg" alt="Qovery logo black" />
 
               <h1
@@ -269,165 +285,194 @@ function RouteComponent() {
                 {ssoFormVisible ? 'Enterprise single sign-on' : 'Connect to your workspace'}
               </h1>
 
-              {ssoFormVisible && (
-                <p className="mb-6 text-center text-base text-neutral-subtle">
-                  Enter your company domain to connect with SSO
-                </p>
-              )}
-
-              {!ssoFormVisible ? (
-                <div className="flex flex-col gap-2.5">
-                  <Button
-                    variant="outline"
-                    color="neutral"
-                    size="lg"
-                    className="relative w-full justify-center"
-                    onClick={() => onClickAuthLogin(AuthEnum.GOOGLE_SSO)}
-                    loading={loading?.provider === AuthEnum.GOOGLE_SSO ? loading.active : false}
+              <AnimatePresence initial={false} mode="popLayout">
+                {ssoFormVisible ? (
+                  <motion.div
+                    key="sso-login"
+                    layout
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={LOGIN_PANEL_CONTENT_TRANSITION}
+                    className="overflow-hidden"
                   >
-                    <Icon
-                      width="16"
-                      className={clsx(
-                        'mr-2 text-neutral-subtle',
-                        loading?.provider === AuthEnum.GOOGLE_SSO && 'opacity-0'
-                      )}
-                      name={IconEnum.GOOGLE}
-                    />
-                    Continue with Google
-                    <LastUsedBadge visible={lastUsedLoginAtPageLoad === AuthEnum.GOOGLE_SSO} />
-                  </Button>
-
-                  <Button
-                    variant="solid"
-                    color="neutral"
-                    size="lg"
-                    className="relative w-full justify-center"
-                    onClick={() => onClickAuthLogin(AuthEnum.GITHUB)}
-                    loading={loading?.provider === AuthEnum.GITHUB ? loading.active : false}
-                  >
-                    <Icon
-                      width="16"
-                      className={clsx('mr-2 text-neutralInvert', loading?.provider === AuthEnum.GITHUB && 'opacity-0')}
-                      fill="currentColor"
-                      name={IconEnum.GITHUB_WHITE}
-                    />
-                    Continue with Github
-                    <LastUsedBadge visible={lastUsedLoginAtPageLoad === AuthEnum.GITHUB} />
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    color="neutral"
-                    size="lg"
-                    className="relative w-full justify-center"
-                    onClick={() => {
-                      setLastUsedLogin('saml_sso')
-                      setSsoFormVisible(true)
-                      setAuth0Error(null)
-                    }}
-                  >
-                    <Icon iconName="lock" className="mr-1.5 text-sm text-neutral-subtle" />
-                    Continue with SAML SSO
-                    <LastUsedBadge visible={lastUsedLoginAtPageLoad === 'saml_sso'} />
-                  </Button>
-
-                  <div className="my-2 flex items-center gap-4">
-                    <div className="h-px flex-1 bg-surface-neutral-component" />
-                    <span className="font-code text-xs uppercase tracking-wide text-neutral-subtle">OR</span>
-                    <div className="h-px flex-1 bg-surface-neutral-component" />
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2.5">
-                    <Button
-                      variant="outline"
-                      color="neutral"
-                      size="lg"
-                      className="relative justify-center"
-                      onClick={() => onClickAuthLogin(AuthEnum.BITBUCKET)}
-                      loading={loading?.provider === AuthEnum.BITBUCKET ? loading.active : false}
+                    <motion.p
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0, transition: { duration: 0.14, ease: 'easeOut' } }}
+                      exit={{ opacity: 0, y: -4, transition: { duration: 0.08, ease: 'easeIn' } }}
+                      className="mb-6 text-center text-base text-neutral-subtle"
                     >
-                      <Icon width="20" fill="currentColor" name={IconEnum.BITBUCKET} />
-                      <LastUsedBadge visible={lastUsedLoginAtPageLoad === AuthEnum.BITBUCKET} />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      color="neutral"
-                      size="lg"
-                      className="relative justify-center"
-                      onClick={() => onClickAuthLogin(AuthEnum.GITLAB)}
-                      loading={loading?.provider === AuthEnum.GITLAB ? loading.active : false}
-                    >
-                      <Icon width="20" fill="currentColor" name={IconEnum.GITLAB} />
-                      <LastUsedBadge visible={lastUsedLoginAtPageLoad === AuthEnum.GITLAB} />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      color="neutral"
-                      size="lg"
-                      className="relative justify-center"
-                      onClick={() => onClickAuthLogin(AuthEnum.MICROSOFT)}
-                      loading={loading?.provider === AuthEnum.MICROSOFT ? loading.active : false}
-                    >
-                      <Icon width="20" fill="currentColor" name={IconEnum.MICROSOFT} />
-                      <LastUsedBadge visible={lastUsedLoginAtPageLoad === AuthEnum.MICROSOFT} />
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <FormProvider {...methods}>
-                  <div className="flex flex-col">
-                    <Controller
-                      name="ssoDomain"
-                      control={methods.control}
-                      rules={{
-                        required: 'Please enter a domain.',
-                        pattern: {
-                          value: /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/,
-                          message: 'Invalid domain format',
-                        },
-                      }}
-                      render={({ field, fieldState: { error } }) => (
-                        <InputTextSmall
-                          label="Company domain"
-                          placeholder="Enter your domain (e.g., company.com)"
-                          name={field.name}
-                          value={field.value}
-                          onChange={field.onChange}
-                          onBlur={field.onBlur}
-                          error={error?.message}
-                          className="[&_.input--small]:h-10 [&_.input--small]:min-h-10"
-                          autoFocus
+                      Enter your company domain to connect with SSO
+                    </motion.p>
+
+                    <FormProvider {...methods}>
+                      <div className="flex flex-col">
+                        <Controller
+                          name="ssoDomain"
+                          control={methods.control}
+                          rules={{
+                            required: 'Please enter a domain.',
+                            pattern: {
+                              value:
+                                /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/,
+                              message: 'Invalid domain format',
+                            },
+                          }}
+                          render={({ field, fieldState: { error } }) => (
+                            <InputTextSmall
+                              label="Company domain"
+                              placeholder="Enter your domain (e.g., company.com)"
+                              name={field.name}
+                              value={field.value}
+                              onChange={field.onChange}
+                              onBlur={field.onBlur}
+                              error={error?.message}
+                              className="[&_.input--small]:h-10 [&_.input--small]:min-h-10"
+                              autoFocus
+                            />
+                          )}
                         />
-                      )}
-                    />
-                    <div className="mt-2 flex flex-col gap-2">
+                        <div className="mt-2 flex flex-col gap-2">
+                          <Button
+                            type="submit"
+                            variant="solid"
+                            color="brand"
+                            size="lg"
+                            className="relative w-full justify-center"
+                            onClick={methods.handleSubmit(validateAndConnect)}
+                            disabled={ssoDomain.trim().length === 0 || !methods.formState.isValid}
+                          >
+                            Connect
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setSsoFormVisible(false)
+                              methods.reset()
+                            }}
+                            variant="plain"
+                            color="neutral"
+                            size="lg"
+                            className="w-full justify-center"
+                          >
+                            Change login method
+                          </Button>
+                        </div>
+                      </div>
+                    </FormProvider>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="login-providers"
+                    layout
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={LOGIN_PANEL_CONTENT_TRANSITION}
+                    className="overflow-visible"
+                  >
+                    <div className="flex flex-col gap-2.5">
                       <Button
-                        type="submit"
-                        variant="solid"
-                        color="brand"
-                        size="lg"
-                        className="relative w-full justify-center"
-                        onClick={methods.handleSubmit(validateAndConnect)}
-                        disabled={ssoDomain.trim().length === 0 || !methods.formState.isValid}
-                      >
-                        Connect
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setSsoFormVisible(false)
-                          methods.reset()
-                        }}
-                        variant="plain"
+                        variant="outline"
                         color="neutral"
                         size="lg"
-                        className="w-full justify-center"
+                        className="relative w-full justify-center"
+                        onClick={() => onClickAuthLogin(AuthEnum.GOOGLE_SSO)}
+                        loading={loading?.provider === AuthEnum.GOOGLE_SSO ? loading.active : false}
                       >
-                        Change login method
+                        <Icon
+                          width="16"
+                          className={clsx(
+                            'mr-2 text-neutral-subtle',
+                            loading?.provider === AuthEnum.GOOGLE_SSO && 'opacity-0'
+                          )}
+                          name={IconEnum.GOOGLE}
+                        />
+                        Continue with Google
+                        <LastUsedBadge visible={lastUsedLoginAtPageLoad === AuthEnum.GOOGLE_SSO} />
                       </Button>
+
+                      <Button
+                        variant="solid"
+                        color="neutral"
+                        size="lg"
+                        className="relative w-full justify-center"
+                        onClick={() => onClickAuthLogin(AuthEnum.GITHUB)}
+                        loading={loading?.provider === AuthEnum.GITHUB ? loading.active : false}
+                      >
+                        <Icon
+                          width="16"
+                          className={clsx(
+                            'mr-2 text-neutralInvert',
+                            loading?.provider === AuthEnum.GITHUB && 'opacity-0'
+                          )}
+                          fill="currentColor"
+                          name={IconEnum.GITHUB_WHITE}
+                        />
+                        Continue with Github
+                        <LastUsedBadge visible={lastUsedLoginAtPageLoad === AuthEnum.GITHUB} />
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        color="neutral"
+                        size="lg"
+                        className="relative w-full justify-center"
+                        onClick={() => {
+                          setLastUsedLogin('saml_sso')
+                          setSsoFormVisible(true)
+                          setAuth0Error(null)
+                        }}
+                      >
+                        <Icon iconName="lock" className="mr-1.5 text-sm text-neutral-subtle" />
+                        Continue with SAML SSO
+                        <LastUsedBadge visible={lastUsedLoginAtPageLoad === 'saml_sso'} />
+                      </Button>
+
+                      <div className="my-2 flex items-center gap-4">
+                        <div className="h-px flex-1 bg-surface-neutral-component" />
+                        <span className="font-code text-xs uppercase tracking-wide text-neutral-subtle">OR</span>
+                        <div className="h-px flex-1 bg-surface-neutral-component" />
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-2.5">
+                        <Button
+                          variant="outline"
+                          color="neutral"
+                          size="lg"
+                          className="relative justify-center"
+                          onClick={() => onClickAuthLogin(AuthEnum.BITBUCKET)}
+                          loading={loading?.provider === AuthEnum.BITBUCKET ? loading.active : false}
+                        >
+                          <Icon width="20" fill="currentColor" name={IconEnum.BITBUCKET} />
+                          <LastUsedBadge visible={lastUsedLoginAtPageLoad === AuthEnum.BITBUCKET} />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          color="neutral"
+                          size="lg"
+                          className="relative justify-center"
+                          onClick={() => onClickAuthLogin(AuthEnum.GITLAB)}
+                          loading={loading?.provider === AuthEnum.GITLAB ? loading.active : false}
+                        >
+                          <Icon width="20" fill="currentColor" name={IconEnum.GITLAB} />
+                          <LastUsedBadge visible={lastUsedLoginAtPageLoad === AuthEnum.GITLAB} />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          color="neutral"
+                          size="lg"
+                          className="relative justify-center"
+                          onClick={() => onClickAuthLogin(AuthEnum.MICROSOFT)}
+                          loading={loading?.provider === AuthEnum.MICROSOFT ? loading.active : false}
+                        >
+                          <Icon width="20" fill="currentColor" name={IconEnum.MICROSOFT} />
+                          <LastUsedBadge visible={lastUsedLoginAtPageLoad === AuthEnum.MICROSOFT} />
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                </FormProvider>
-              )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {auth0Error && (
                 <div className="mt-4 rounded-md border border-negative-component bg-surface-negative-subtle p-3">
@@ -446,7 +491,7 @@ function RouteComponent() {
                   Privacy Policy
                 </Link>
               </p>
-            </div>
+            </motion.div>
 
             <motion.div
               key={testimonialIndex}
@@ -469,7 +514,7 @@ function RouteComponent() {
             >
               {shuffledTestimonials[testimonialIndex]}
             </motion.div>
-          </div>
+          </motion.div>
         </div>
 
         <div className="pointer-events-none relative hidden lg:block lg:h-screen lg:max-w-[1280px] lg:flex-[2_1_0%]">
