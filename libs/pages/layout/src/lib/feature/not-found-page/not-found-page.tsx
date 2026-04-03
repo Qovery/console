@@ -1,5 +1,4 @@
 import { useOrganizations } from '@qovery/domains/organizations/feature'
-import { ORGANIZATION_URL, USER_URL } from '@qovery/shared/routes'
 import { Heading, Icon, Link, Section } from '@qovery/shared/ui'
 import { type SerializedError } from '@qovery/shared/utils'
 
@@ -20,15 +19,23 @@ export function NotFoundPage({ error }: { error?: unknown }) {
           <Heading className="font-medium text-neutral-400">{errorTyped?.name ?? errorTyped?.code}</Heading>
           <p className="text-sm text-neutral-350">{errorTyped?.message ?? 'Not found'}</p>
         </div>
-        <Link
-          as="button"
-          to={organizations?.length > 0 ? ORGANIZATION_URL(organizations[0].id) : USER_URL}
-          size="md"
-          className="flex gap-2"
-        >
-          Go to correct URL
-          <Icon iconName="arrow-right" />
-        </Link>
+        {organizations?.length > 0 ? (
+          <Link
+            as="button"
+            to="/organization/$organizationId"
+            params={{ organizationId: organizations[0].id }}
+            size="md"
+            className="flex gap-2"
+          >
+            Go to correct URL
+            <Icon iconName="arrow-right" />
+          </Link>
+        ) : (
+          <Link as="button" to="/" size="md" className="flex gap-2">
+            Go to correct URL
+            <Icon iconName="arrow-right" />
+          </Link>
+        )}
       </div>
     </Section>
   )

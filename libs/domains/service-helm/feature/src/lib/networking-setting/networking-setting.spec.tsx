@@ -12,12 +12,16 @@ jest.mock('../hooks/use-kubernetes-services/use-kubernetes-services', () => ({
 
 describe('NetworkingSetting', () => {
   it('should match snapshot in empty state', () => {
-    const { baseElement } = renderWithProviders(<NetworkingSetting ports={[]} onUpdatePorts={jest.fn()} />)
+    const { baseElement } = renderWithProviders(
+      <NetworkingSetting helmId="helm-1" ports={[]} onUpdatePorts={jest.fn()} />
+    )
     expect(baseElement).toMatchSnapshot()
   })
+
   it('should match snapshot with ports', () => {
     const { baseElement } = renderWithProviders(
       <NetworkingSetting
+        helmId="helm-1"
         ports={[
           {
             internal_port: 1234,
@@ -41,9 +45,12 @@ describe('NetworkingSetting', () => {
     )
     expect(baseElement).toMatchSnapshot()
   })
+
   it('should add port', async () => {
     const onUpdatePorts = jest.fn()
-    const { userEvent } = renderWithProviders(<NetworkingSetting ports={[]} onUpdatePorts={onUpdatePorts} />)
+    const { userEvent } = renderWithProviders(
+      <NetworkingSetting helmId="helm-1" ports={[]} onUpdatePorts={onUpdatePorts} />
+    )
 
     await userEvent.click(screen.getByText(/add port/i))
 
@@ -69,10 +76,12 @@ describe('NetworkingSetting', () => {
       },
     ])
   })
+
   it('should edit port', async () => {
     const onUpdatePorts = jest.fn()
     const { userEvent } = renderWithProviders(
       <NetworkingSetting
+        helmId="helm-1"
         ports={[
           {
             internal_port: 1234,
@@ -138,6 +147,7 @@ describe('NetworkingSetting', () => {
     const onUpdatePorts = jest.fn()
     const { userEvent } = renderWithProviders(
       <NetworkingSetting
+        helmId="helm-1"
         ports={[
           {
             internal_port: 1234,

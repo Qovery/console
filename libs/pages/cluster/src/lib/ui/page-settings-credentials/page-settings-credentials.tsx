@@ -1,7 +1,8 @@
 import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { ClusterCredentialsSettingsFeature, SettingsHeading } from '@qovery/shared/console-shared'
+import { ClusterCredentialsSettings } from '@qovery/domains/clusters/feature'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { BlockContent, Button, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsCredentialsProps {
@@ -20,7 +21,7 @@ export function PageSettingsCredentials(props: PageSettingsCredentialsProps) {
         <SettingsHeading title="Credentials" />
         <form onSubmit={onSubmit}>
           <BlockContent title="Configured credentials">
-            <ClusterCredentialsSettingsFeature cloudProvider={cloudProvider} isSetting={true} />
+            <ClusterCredentialsSettings cloudProvider={cloudProvider} isSetting={true} />
           </BlockContent>
           <div className="flex justify-end">
             <Button data-testid="submit-button" type="submit" size="lg" loading={loading} disabled={!formState.isValid}>

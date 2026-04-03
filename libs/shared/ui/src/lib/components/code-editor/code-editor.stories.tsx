@@ -24,7 +24,7 @@ const Story: Meta<typeof CodeEditor> = {
   title: 'CodeEditor',
   decorators: [
     (Story) => (
-      <div style={{ background: 'white', padding: '3em' }}>
+      <div style={{ background: 'bg-background', padding: '3em' }}>
         <Story />
       </div>
     ),

@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { type ReactElement, useEffect, useMemo, useState } from 'react'
 import { type TerraformResource } from '@qovery/domains/service-terraform/data-access'
 import { Icon, TreeView } from '@qovery/shared/ui'
@@ -63,8 +64,8 @@ export function ResourceTreeList({
   if (resources.length === 0) {
     return (
       <div className="px-3 pb-8 pt-6 text-center">
-        <Icon iconName="wave-pulse" className="text-neutral-350" />
-        <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
+        <Icon iconName="wave-pulse" className="text-neutral" />
+        <p className="mt-1 text-xs font-medium text-neutral">No result for this search</p>
       </div>
     )
   }
@@ -72,9 +73,9 @@ export function ResourceTreeList({
   if (searchQuery && !hasMatches) {
     return (
       <div className="px-3 py-8 text-center">
-        <Icon iconName="search" className="text-neutral-350" />
-        <p className="mt-1 text-xs font-medium text-neutral-350">No resources match</p>
-        <p className="mt-1 text-xs text-neutral-350">No resources found for ${searchQuery}</p>
+        <Icon iconName="search" className="text-neutral" />
+        <p className="mt-1 text-xs font-medium text-neutral">No resources match</p>
+        <p className="mt-1 text-xs text-neutral-subtle">No resources found for: {searchQuery}</p>
       </div>
     )
   }
@@ -87,7 +88,7 @@ export function ResourceTreeList({
             <TreeView.Trigger>
               <span className="flex-1 text-sm">
                 {group.displayName}
-                <span className="ml-2 text-xs text-neutral-350">({group.resources.length})</span>
+                <span className="ml-2 text-xs text-neutral-subtle">({group.resources.length})</span>
               </span>
             </TreeView.Trigger>
             <TreeView.Content>
@@ -96,24 +97,19 @@ export function ResourceTreeList({
                   const matches = resourceMatchMap.get(resource.id) ?? true
                   const isSelected = selectedResourceId === resource.id
 
-                  function getButtonClassName(): string {
-                    const base =
-                      'w-full cursor-pointer rounded h-8 px-2 gap-2 text-sm transition-colors flex items-center mb-1'
-                    if (isSelected) {
-                      return `${base} bg-brand-50 text-brand-500`
-                    }
-                    if (matches) {
-                      return `${base} text-neutral-350 hover:bg-neutral-100`
-                    }
-                    return `${base} text-neutral-250 hover:bg-neutral-100`
-                  }
-
                   return (
                     <li key={resource.id}>
                       <button
                         type="button"
                         onClick={() => onSelectResource(resource.id)}
-                        className={getButtonClassName()}
+                        className={clsx(
+                          'mb-1 flex h-8 w-full cursor-pointer items-center gap-2 rounded px-2 text-sm transition-colors',
+                          isSelected && 'bg-surface-brand-subtle text-brand',
+                          !isSelected &&
+                            (matches
+                              ? 'text-neutral-subtle hover:bg-surface-neutral-subtle'
+                              : 'text-neutral-disabled hover:bg-surface-neutral-subtle')
+                        )}
                       >
                         <Icon iconName="file" className="fa-regular text-xs" />
                         <span className="truncate">{resource.name}</span>

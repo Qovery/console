@@ -78,13 +78,13 @@ export function ValuesOverrideYamlModal({
             className="mb-0 rounded-l-none"
             classNameContent="p-0"
             headRight={
-              <CopyToClipboardButtonIcon className="text-xs hover:text-neutral-400" content={helmDefaultValues!} />
+              <CopyToClipboardButtonIcon className="text-xs hover:text-neutral-subtle" content={helmDefaultValues!} />
             }
           >
             {isErrorHelmDefaultValues && (
               <div className="px-5 py-14 text-center">
-                <Icon iconName="wave-pulse" className="text-neutral-350" />
-                <p className="mb-3 mt-1 text-xs font-medium text-neutral-350">No default values.yaml available</p>
+                <Icon iconName="wave-pulse" className="text-neutral" />
+                <p className="mb-3 mt-1 text-xs font-medium text-neutral-subtle">No default values.yaml available</p>
               </div>
             )}
             {isLoadingHelmDefaultValues && (

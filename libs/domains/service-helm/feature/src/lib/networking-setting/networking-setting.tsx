@@ -153,7 +153,7 @@ export function NetworkingSetting({
               const { service_name, internal_port, protocol, namespace, name } = port
               return (
                 <div
-                  className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
+                  className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 p-4 last:border-0"
                   key={name}
                 >
                   <div className="flex flex-col">

@@ -29,20 +29,20 @@ export function StatusFooter({ isReadOnly, status }: StatusFooterProps) {
 
   return (
     <div className="flex w-full items-center justify-between">
-      <div className="inline-flex items-center gap-2 text-xs text-neutral-350 dark:text-neutral-250">
+      <div className="inline-flex items-center gap-2 text-xs text-neutral-subtle">
         <span>{isReadOnly ? 'Read-only mode' : 'Read-write mode'}</span>
         <Tooltip
           content={isReadOnly ? "Your Copilot can't make any changes" : 'It can perform actions'}
           classNameContent="z-10"
         >
           <button type="button">
-            <Icon iconName="circle-info" className="text-neutral-350 dark:text-neutral-250" />
+            <Icon iconName="circle-info" className="text-neutral-subtle" />
           </button>
         </Tooltip>
       </div>
       {statusText && statusColor ? (
         <a
-          className="inline-flex max-w-max animate-[fadein_0.22s_ease-in-out_forwards_0.20s] items-center gap-2 text-xs text-neutral-350 opacity-0 transition hover:text-neutral-600 dark:text-neutral-250"
+          className="inline-flex max-w-max animate-[fadein_0.22s_ease-in-out_forwards_0.20s] items-center gap-2 text-xs text-neutral-subtle opacity-0 transition hover:text-neutral"
           href={QOVERY_STATUS_URL}
           target="_blank"
           rel="noopener noreferrer"

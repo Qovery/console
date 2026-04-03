@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { EnvironmentDeploymentList } from './environment-deployment-list'
 
@@ -9,7 +10,7 @@ const mockEnvironment = {
   mode: 'DEVELOPMENT',
 }
 
-const mockDeploymentHistory = [
+const defaultDeploymentHistory = [
   {
     identifier: {
       execution_id: 'exec-123',
@@ -54,7 +55,7 @@ const mockDeploymentHistory = [
   },
 ]
 
-const mockDeploymentQueue = [
+const defaultDeploymentQueue = [
   {
     trigger_action: 'DEPLOY',
     stages: [
@@ -79,6 +80,9 @@ const mockDeploymentQueue = [
   },
 ]
 
+let mockDeploymentHistory = defaultDeploymentHistory
+let mockDeploymentQueue = defaultDeploymentQueue
+
 jest.mock('../hooks/use-environment/use-environment', () => ({
   useEnvironment: () => ({
     data: mockEnvironment,
@@ -100,24 +104,51 @@ jest.mock('../hooks/use-deployment-queue/use-deployment-queue', () => ({
   }),
 }))
 
+jest.mock('@tanstack/react-router', () => {
+  return {
+    useParams: () => ({ organizationId: '1' }),
+    useNavigate: () => jest.fn(),
+    useLocation: () => ({ pathname: '/', search: '' }),
+    useRouter: () => ({
+      buildLocation: () => ({ href: '/' }),
+    }),
+    Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+  }
+})
+
 describe('EnvironmentDeploymentList', () => {
-  it('should render the deployment list', async () => {
-    renderWithProviders(<EnvironmentDeploymentList environmentId="env-123" />)
+  beforeEach(() => {
+    mockDeploymentHistory = defaultDeploymentHistory
+    mockDeploymentQueue = defaultDeploymentQueue
+  })
+
+  it('should render columns and deployment data', async () => {
+    renderWithProviders(<EnvironmentDeploymentList />)
 
     expect(screen.getByText('Date')).toBeInTheDocument()
-    expect(screen.getByText('Status deployment')).toBeInTheDocument()
+    expect(screen.getByText('Status')).toBeInTheDocument()
     expect(screen.getByText('Pipeline')).toBeInTheDocument()
     expect(screen.getByText('Duration')).toBeInTheDocument()
     expect(screen.getByText('Trigger by')).toBeInTheDocument()
 
     expect(screen.getByText('exec-123')).toBeInTheDocument()
     expect(screen.getAllByText('Deploy')[0]).toBeInTheDocument()
-    expect(screen.getByText('Success')).toBeInTheDocument()
+    expect(screen.getAllByText('User')[0]).toBeInTheDocument()
   })
 
   it('should render the queue item', async () => {
-    renderWithProviders(<EnvironmentDeploymentList environmentId="env-123" />)
+    renderWithProviders(<EnvironmentDeploymentList />)
 
     expect(screen.getAllByText('In queue...')[0]).toBeInTheDocument()
+  })
+
+  it('should render empty state when no deployment data is available', async () => {
+    mockDeploymentHistory = []
+    mockDeploymentQueue = []
+
+    renderWithProviders(<EnvironmentDeploymentList />)
+
+    expect(screen.getByText('No deployment started')).toBeInTheDocument()
+    expect(screen.getByText('Manage the deployments from the overview tab')).toBeInTheDocument()
   })
 })

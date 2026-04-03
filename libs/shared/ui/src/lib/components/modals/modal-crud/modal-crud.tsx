@@ -50,13 +50,13 @@ export function ModalCrud(props: ModalCrudProps) {
 
   return (
     <div className="p-5" ref={forwardRef}>
-      <h2 className="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50">{title}</h2>
-      {description && <p className="mt-2 text-sm text-neutral-350 dark:text-neutral-50">{description}</p>}
+      <h2 className="h4 max-w-sm truncate text-neutral">{title}</h2>
+      {description && <p className="mt-2 text-sm text-neutral-subtle">{description}</p>}
       {forServiceName && (
-        <div className="mt-4 flex items-center justify-between text-sm text-neutral-400 dark:text-neutral-50">
+        <div className="mt-4 flex items-center justify-between text-sm text-neutral-subtle">
           <p>
             For{' '}
-            <strong className="font-medium text-neutral-400 dark:text-neutral-50">
+            <strong className="font-medium">
               <Truncate truncateLimit={60} text={forServiceName} />
             </strong>
           </p>
@@ -67,17 +67,17 @@ export function ModalCrud(props: ModalCrudProps) {
           <Popover.Trigger>
             <button
               type="button"
-              className="mt-2 cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+              className="hover:text-brandHover mt-2 cursor-pointer text-sm font-medium text-brand transition"
             >
               Show how it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
             </button>
           </Popover.Trigger>
-          <Popover.Content side="left" className="relative text-sm text-neutral-350" style={{ width: 440 }}>
-            <h6 className="mb-2 font-medium text-neutral-400">How it works</h6>
+          <Popover.Content side="left" className="relative z-50 text-sm text-neutral-subtle" style={{ width: 440 }}>
+            <h6 className="mb-2 font-medium text-neutral">How it works</h6>
             {howItWorks}
             <Popover.Close className="absolute right-4 top-4">
               <button type="button">
-                <Icon name="icon-solid-xmark text-lg leading-4 font-thin text-neutral-400" />
+                <Icon iconName="xmark" className="text-sm" />
               </button>
             </Popover.Close>
           </Popover.Content>

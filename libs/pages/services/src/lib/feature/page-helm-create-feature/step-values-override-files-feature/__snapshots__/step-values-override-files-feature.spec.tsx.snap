@@ -9,7 +9,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
       class="flex w-full overflow-auto"
     >
       <section
-        class="w-full bg-white pt-14 overflow-auto"
+        class="w-full bg-background pt-14 overflow-auto"
       >
         <div
           class="relative mx-auto px-8 pb-14 max-w-content-with-navigation-left"
@@ -19,7 +19,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
             class="flex flex-col"
           >
             <h1
-              class="text-neutral-400 text-xl font-bold mb-2"
+              class="text-neutral text-2xl font-medium mb-2"
             >
               Values override as file
             </h1>
@@ -28,7 +28,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
             >
               <div>
                 <p
-                  class="text-sm text-neutral-350"
+                  class="text-sm text-neutral-subtle"
                 >
                   Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
                 </p>
@@ -36,7 +36,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                   aria-controls="radix-:rd:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+                  class="hover:text-brandHover cursor-pointer text-sm font-medium text-brand transition"
                   data-state="closed"
                   type="button"
                 >
@@ -54,7 +54,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                   class=""
                 >
                   <div
-                    class="input input--select    "
+                    class="input input--select"
                     data-testid="select"
                   >
                     <label
@@ -83,7 +83,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                           class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                         >
                           <span
-                            class="mr-1 text-sm text-neutral-400"
+                            class="mr-1 text-sm text-neutral"
                           >
                             Git repository
                           </span>
@@ -139,9 +139,9 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                     <div
                       class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
                     >
-                      <span
-                        class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-                        role="img"
+                      <i
+                        aria-hidden="true"
+                        class="fa-solid fa-angle-down text-sm text-neutral-subtle"
                       />
                     </div>
                   </div>
@@ -151,12 +151,12 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                 class="flex flex-col"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold mb-2"
+                  class="text-neutral text-base font-medium mb-2"
                 >
                   Override from repository
                 </h2>
                 <p
-                  class="mb-6 text-sm text-neutral-350"
+                  class="mb-6 text-sm text-neutral-subtle"
                 >
                   Specify the repository and the path containing the override yaml file to be passed via the “-f” helm argument. More than one file can be used as override by adding them in the path field separated by a semi-colon. If you don’t have a repository, you can set the override manually or via a raw YAML file.
                 </p>
@@ -164,128 +164,14 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                   class="flex flex-col gap-3"
                 >
                   <div
-                    class=""
-                  >
-                    <div
-                      class="input input--select    "
-                      data-testid="select"
-                    >
-                      <label
-                        class="top-1.5 translate-y-2 text-sm"
-                        for="Git account"
-                      >
-                        Git account
-                      </label>
-                      <div
-                        class=" css-b62m3t-container"
-                      >
-                        <span
-                          class="css-1f43avz-a11yText-A11yText"
-                          id="react-select-4-live-region"
-                        />
-                        <span
-                          aria-atomic="false"
-                          aria-live="polite"
-                          aria-relevant="additions text"
-                          class="css-1f43avz-a11yText-A11yText"
-                        />
-                        <div
-                          class="input-select__control css-13cymwt-control"
-                        >
-                          <div
-                            class="input-select__value-container css-1fdsijx-ValueContainer"
-                          >
-                            <div
-                              class="input-select__placeholder css-1jqq78o-placeholder"
-                              id="react-select-4-placeholder"
-                            >
-                              Select...
-                            </div>
-                            <div
-                              class="input-select__input-container css-qbdosj-Input"
-                              data-value=""
-                            >
-                              <input
-                                aria-autocomplete="list"
-                                aria-describedby="react-select-4-placeholder"
-                                aria-expanded="false"
-                                aria-haspopup="true"
-                                autocapitalize="none"
-                                autocomplete="off"
-                                autocorrect="off"
-                                class="input-select__input"
-                                id="Git account"
-                                role="combobox"
-                                spellcheck="false"
-                                style="color: inherit; background: 0px; opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
-                                tabindex="0"
-                                type="text"
-                                value=""
-                              />
-                            </div>
-                          </div>
-                          <div
-                            class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
-                          >
-                            <span
-                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
-                            />
-                            <div
-                              aria-hidden="true"
-                              class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
-                            >
-                              <svg
-                                aria-hidden="true"
-                                class="css-tj5bde-Svg"
-                                focusable="false"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                width="20"
-                              >
-                                <path
-                                  d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                                />
-                              </svg>
-                            </div>
-                          </div>
-                        </div>
-                        <input
-                          name="Git account"
-                          type="hidden"
-                          value=""
-                        />
-                      </div>
-                      <input
-                        name="Git account"
-                        type="hidden"
-                        value=""
-                      />
-                      <div
-                        class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
-                      >
-                        <span
-                          class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-                          role="img"
-                        />
-                      </div>
-                    </div>
-                  </div>
+                    data-testid="git-provider-setting"
+                  />
                   <div
-                    class="flex justify-center"
-                  >
-                    <div
-                      class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
-                      data-testid="spinner"
-                    />
-                  </div>
+                    data-testid="git-repository-setting"
+                  />
                   <div
-                    class="flex justify-center"
-                  >
-                    <div
-                      class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
-                      data-testid="spinner"
-                    />
-                  </div>
+                    data-testid="git-branch-settings"
+                  />
                   <div>
                     <div
                       class=""
@@ -296,19 +182,20 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                       >
                         <div
                           aria-label="input-container"
-                          class="input    input--label-up "
+                          class="input group input--label-up"
                         >
                           <div
                             class=""
                           >
                             <label
-                              class="translate-y-2 text-sm"
+                              class="input__label translate-y-2 text-sm"
                               for="Overrides path"
                             >
                               Overrides path
                             </label>
                             <input
-                              class="input__value "
+                              autocomplete="off"
+                              class="input__value"
                               data-testid="input-text"
                               id="Overrides path"
                               name="paths"
@@ -326,11 +213,11 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                     </p>
                   </div>
                   <div
-                    class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 mt-3"
+                    class="flex flex-row gap-x-4 p-4 border rounded text-sm items-center border-info-component bg-surface-info-subtle text-info mt-3"
                     data-accent-color="sky"
                   >
                     <div
-                      class="-order-2 text-lg leading-6"
+                      class="-order-2 text-base leading-6"
                     >
                       <i
                         aria-hidden="true"
@@ -338,7 +225,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                       />
                     </div>
                     <div
-                      class="-order-1 mr-auto gap-x-3 text-neutral-400"
+                      class="-order-1 mr-auto gap-x-4 text-neutral"
                     >
                       <span
                         class="block font-medium leading-6"
@@ -353,7 +240,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                 class="flex justify-between"
               >
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
                   type="button"
                 >
                   Back
@@ -362,7 +249,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                   class="flex gap-3"
                 >
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
                     type="submit"
                   >
                     Continue
@@ -387,7 +274,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
       class="flex w-full overflow-auto"
     >
       <section
-        class="w-full bg-white pt-14 overflow-auto"
+        class="w-full bg-background pt-14 overflow-auto"
       >
         <div
           class="relative mx-auto px-8 pb-14 max-w-content-with-navigation-left"
@@ -397,7 +284,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
             class="flex flex-col"
           >
             <h1
-              class="text-neutral-400 text-xl font-bold mb-2"
+              class="text-neutral text-2xl font-medium mb-2"
             >
               Values override as file
             </h1>
@@ -406,7 +293,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
             >
               <div>
                 <p
-                  class="text-sm text-neutral-350"
+                  class="text-sm text-neutral-subtle"
                 >
                   Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
                 </p>
@@ -414,7 +301,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                   aria-controls="radix-:rk:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+                  class="hover:text-brandHover cursor-pointer text-sm font-medium text-brand transition"
                   data-state="closed"
                   type="button"
                 >
@@ -432,7 +319,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                   class=""
                 >
                   <div
-                    class="input input--select    "
+                    class="input input--select"
                     data-testid="select"
                   >
                     <label
@@ -446,7 +333,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                     >
                       <span
                         class="css-1f43avz-a11yText-A11yText"
-                        id="react-select-5-live-region"
+                        id="react-select-4-live-region"
                       />
                       <span
                         aria-atomic="false"
@@ -461,7 +348,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                           class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                         >
                           <span
-                            class="mr-1 text-sm text-neutral-400"
+                            class="mr-1 text-sm text-neutral"
                           >
                             Raw YAML
                           </span>
@@ -517,9 +404,9 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                     <div
                       class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
                     >
-                      <span
-                        class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-                        role="img"
+                      <i
+                        aria-hidden="true"
+                        class="fa-solid fa-angle-down text-sm text-neutral-subtle"
                       />
                     </div>
                   </div>
@@ -529,12 +416,12 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                 class="flex flex-col"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold mb-2"
+                  class="text-neutral text-base font-medium mb-2"
                 >
                   Override with raw Yaml
                 </h2>
                 <p
-                  class="mb-6 text-sm text-neutral-350"
+                  class="mb-6 text-sm text-neutral-subtle"
                 >
                   You can define here the YAML containing the overrides you want to apply. The YAML will be stored by Qovery and can be updated later within the settings but no history will be retained.
                 </p>
@@ -542,24 +429,25 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                   class="flex flex-col gap-3"
                 >
                   <div
-                    class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
+                    class="mb-5 rounded border border-neutral bg-surface-neutral-subtle w-full"
                     data-testid="block-content"
                   >
                     <div
-                      class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
+                      class="flex h-9 items-center justify-between border-b border-neutral px-4"
                     >
                       <h2
-                        class="text-ssm font-medium text-neutral-400"
+                        class="text-ssm font-medium text-neutral"
                       >
                         Raw YAML
                       </h2>
                       <button
-                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-xs h-6 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none aspect-square justify-center p-0 hover:text-neutral-400"
+                        aria-label="Edit Raw YAML"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 rounded w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral justify-center p-0"
                         type="button"
                       >
                         <i
                           aria-hidden="true"
-                          class="fa-solid fa-pen "
+                          class="fa-regular fa-pen "
                         />
                       </button>
                     </div>
@@ -573,7 +461,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                           style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
                         >
                           <div
-                            class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                            class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
                             data-testid="spinner"
                           />
                         </div>
@@ -589,7 +477,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                 class="flex justify-between"
               >
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
                   type="button"
                 >
                   Back
@@ -598,7 +486,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                   class="flex gap-3"
                 >
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
                     type="submit"
                   >
                     Continue

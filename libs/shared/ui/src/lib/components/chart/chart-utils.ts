@@ -59,7 +59,7 @@ export function createXAxisConfig(
     tickCount?: number
   } = {}
 ): Omit<XAxisConfig, 'tickFormatter'> {
-  const { axisLineColor = 'var(--color-neutral-200)', tickColor = 'var(--color-neutral-350)', tickCount = 6 } = options
+  const { axisLineColor = 'var(--neutral-9)', tickColor = 'var(--neutral-9)', tickCount = 6 } = options
 
   return {
     dataKey: 'timestamp',

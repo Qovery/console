@@ -1,8 +1,9 @@
+import { useNavigate, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { useState } from 'react'
-import { useQueryParams } from 'use-query-params'
+import { useCallback, useState } from 'react'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { type ServiceLogsParams } from '@qovery/shared/router'
 import {
   Ansi,
   Badge,
@@ -17,7 +18,7 @@ import {
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { usePodColor } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
-import { queryParamsServiceLogs, useServiceLogsContext } from '../service-logs-context/service-logs-context'
+import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
 import './style.scss'
 
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -32,7 +33,9 @@ export interface RowServiceLogsProps {
 }
 
 export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, service }: RowServiceLogsProps) {
-  const [, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
+
   const [isExpanded, setIsExpanded] = useState(false)
 
   const serviceType = service?.serviceType
@@ -46,19 +49,33 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
   const getColorByPod = usePodColor()
   const timestamp = Number(log.timestamp)
 
+  const setQueryParams = useCallback(
+    (searchParams: ServiceLogsParams) => {
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+        params: {
+          organizationId,
+          projectId,
+          environmentId,
+          serviceId,
+        },
+        search: searchParams,
+      })
+    },
+    [navigate, organizationId, projectId, environmentId, serviceId]
+  )
+
   const renderHighlightedMessage = (message: string, searchTerm: string | null | undefined) => {
     if (!searchTerm || !message.includes(searchTerm)) {
       return (
-        <Ansi className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral-50">
-          {message}
-        </Ansi>
+        <Ansi className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral">{message}</Ansi>
       )
     }
 
     const parts = message.split(new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'))
 
     return (
-      <span className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral-50">
+      <span className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral">
         {parts.map((part, index) => {
           if (part.toLowerCase() === searchTerm.toLowerCase()) {
             return (
@@ -87,8 +104,8 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
       <Table.Row
         onClick={() => !isNginx && !isEnvoy && setIsExpanded(!isExpanded)}
         className={twMerge(
-          clsx('sl-row sl-row-appear group relative mt-0.5 cursor-pointer text-xs', {
-            'bg-red-500/10': isErrorOrCritical,
+          clsx('sl-row sl-row-appear group relative mt-0.5 cursor-pointer bg-surface-neutral text-xs', {
+            'bg-surface-negative-component': isErrorOrCritical,
           })
         )}
       >
@@ -96,18 +113,19 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
           <Tooltip content={levelLowercase} disabled={!log.level || levelLowercase === 'unknown'}>
             <span
               className={twMerge(
-                clsx('absolute left-0.5 top-0 block h-full w-1 bg-neutral-500', {
-                  'bg-sky-500': levelLowercase === 'info',
-                  'bg-yellow-500': levelLowercase === 'warning',
-                  'bg-red-500 hover:bg-red-400 group-hover:bg-red-400': isErrorOrCritical,
-                  'bg-red-400': isExpanded && isErrorOrCritical,
+                clsx('absolute left-0.5 top-0 block h-full w-1 bg-surface-neutral-componentHover', {
+                  'bg-surface-info-solid': levelLowercase === 'info',
+                  'bg-surface-warning-solid': levelLowercase === 'warning',
+                  'bg-surface-negative-solid hover:bg-surface-negative-subtle group-hover:bg-surface-negative-subtle':
+                    isErrorOrCritical,
+                  'bg-surface-negative-subtle': isExpanded && isErrorOrCritical,
                 })
               )}
             />
           </Tooltip>
           {!isNginx && !isEnvoy && (
             <span className="flex h-3 w-3 items-center justify-center">
-              <Icon className="text-neutral-300" iconName={isExpanded ? 'chevron-down' : 'chevron-right'} />
+              <Icon className="text-neutral-subtle" iconName={isExpanded ? 'chevron-down' : 'chevron-right'} />
             </span>
           )}
           {isNginx ? (
@@ -122,7 +140,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
             <Tooltip content={log.instance} delayDuration={300}>
               <Button
                 type="button"
-                variant="surface"
+                variant="outline"
                 color="neutral"
                 size="xs"
                 className="h-5 gap-1.5 px-1.5 font-code"
@@ -140,7 +158,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
             </Tooltip>
           )}
         </Table.Cell>
-        <Table.Cell className="h-min min-h-7 select-none whitespace-nowrap px-1.5 align-baseline font-code font-bold text-neutral-300">
+        <Table.Cell className="h-min min-h-7 select-none whitespace-nowrap px-1.5 align-baseline font-code font-bold text-neutral-subtle">
           <span title={dateUTCString(timestamp)} className="inline-block whitespace-nowrap">
             {dateFullFormat(timestamp, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
           </span>
@@ -175,13 +193,13 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
             clsx(
               'sl-expanded relative -top-0.5 h-[calc(100%+2px)] text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:content-[""]',
               {
-                'bg-red-500/10': isErrorOrCritical,
+                'bg-surface-negative-subtle': isErrorOrCritical,
               }
             )
           )}
         >
           <Table.Cell className="py-4 pl-1" colSpan={hasMultipleContainers ? 5 : 4}>
-            <div className="w-full rounded border border-neutral-400 bg-transparent px-4 py-2">
+            <div className="w-full rounded border border-neutral bg-transparent px-4 py-2">
               <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0 text-xs">
                 {log.level && levelLowercase !== 'warning' && (
                   <>

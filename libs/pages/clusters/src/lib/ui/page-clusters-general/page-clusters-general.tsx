@@ -48,8 +48,8 @@ export function PageClustersGeneral({ loading, clusters, clusterStatuses }: Page
             clusters?.length === 0 && (
               <EmptyState title="Create your first cluster">
                 <Link as="button" to={goToCreateCluster} className="mt-4 items-center gap-2" size="md">
-                  New Cluster
                   <Icon iconName="circle-plus" iconStyle="regular" />
+                  New Cluster
                 </Link>
               </EmptyState>
             )

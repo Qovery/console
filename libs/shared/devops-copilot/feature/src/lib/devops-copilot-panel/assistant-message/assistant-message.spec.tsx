@@ -152,7 +152,7 @@ describe('AssistantMessage', () => {
       render(<AssistantMessage {...defaultProps} plan={completedPlan} showPlans={{ 'msg-1': true }} />)
 
       const completedDescription = screen.getByText('Completed step')
-      expect(completedDescription).toHaveClass('text-neutral-400')
+      expect(completedDescription).toHaveClass('text-neutral-subtle')
     })
 
     it('should not apply neutral color to in-progress step description', () => {
@@ -163,7 +163,7 @@ describe('AssistantMessage', () => {
       render(<AssistantMessage {...defaultProps} plan={inProgressPlan} showPlans={{ 'msg-1': true }} />)
 
       const inProgressDescription = screen.getByText('In progress step')
-      expect(inProgressDescription).not.toHaveClass('text-neutral-400')
+      expect(inProgressDescription).not.toHaveClass('text-neutral-subtle')
     })
   })
 

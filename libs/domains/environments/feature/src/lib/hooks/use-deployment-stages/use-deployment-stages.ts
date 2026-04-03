@@ -3,9 +3,10 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseDeploymentStagesProps {
   environmentId?: string
+  suspense?: boolean
 }
 
-export function useDeploymentStages({ environmentId }: UseDeploymentStagesProps) {
+export function useDeploymentStages({ environmentId, suspense = false }: UseDeploymentStagesProps) {
   return useQuery({
     // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
     ...queries.environments.deploymentStages(environmentId!!),
@@ -14,6 +15,7 @@ export function useDeploymentStages({ environmentId }: UseDeploymentStagesProps)
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     staleTime: Infinity,
+    suspense,
   })
 }
 

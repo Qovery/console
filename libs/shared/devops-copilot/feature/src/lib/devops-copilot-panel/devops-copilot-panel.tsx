@@ -5,13 +5,13 @@ import mermaid from 'mermaid'
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { type CSSProperties, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { useContextualDocLinks } from '@qovery/shared/assistant/feature'
+import { useQoveryContext } from '@qovery/shared/devops-copilot/context'
 import { Button, Callout, Icon } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { DevopsCopilotContext } from '../devops-copilot-context/devops-copilot-context'
 import { useAICopilotConfig } from '../hooks/use-ai-copilot-config/use-ai-copilot-config'
-import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
-import { useQoveryContext } from '../hooks/use-qovery-context/use-qovery-context'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
 import { useThreadState } from '../hooks/use-thread-state/use-thread-state'
 import { useThreads } from '../hooks/use-threads/use-threads'
@@ -68,11 +68,12 @@ export type CopilotContextData = {
 export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) {
   const controllerRef = useRef<AbortController | null>(null)
   const STORAGE_KEY = 'assistant-panel-size'
-  const { data } = useQoveryStatus()
+  const { devopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
+  const isPanelActive = devopsCopilotOpen
+  const { data } = useQoveryStatus(isPanelActive)
   const docLinks = useContextualDocLinks()
   const { context, current } = useQoveryContext()
   const { user, getAccessTokenSilently } = useAuth0()
-  const { sendMessageRef } = useContext(DevopsCopilotContext)
 
   const organizationId = context?.organization?.id ?? ''
 
@@ -91,6 +92,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [loadingText, setLoadingText] = useState('Loading...')
   const { data: readOnlyData } = useAICopilotConfig({
     organizationId,
+    enabled: isPanelActive,
   })
 
   const [isReadOnly, setIsReadOnly] = useState(true)
@@ -106,7 +108,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     error: errorThreads,
     isLoading: isLoadingThreads,
     refetchThreads,
-  } = useThreads({ organizationId, owner: user?.sub ?? '' })
+  } = useThreads({ organizationId, owner: user?.sub ?? '', enabled: isPanelActive })
 
   useEffect(() => {
     if (threadId && threads.length > 0) {
@@ -120,6 +122,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const { thread, setThread } = useThreadState({
     organizationId,
     threadId,
+    enabled: isPanelActive,
   })
 
   const handleVote = useVoteHandler({
@@ -167,6 +170,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const handleOnClose = useCallback(() => {
     onClose()
     setInputMessage('')
+    setExpand(false)
   }, [onClose])
 
   const adjustTextareaHeight = useCallback(
@@ -318,18 +322,12 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   })
 
   return (
-    <Dialog.Root
-      open={true}
-      modal={expand}
-      onOpenChange={() => {
-        document.body.style.pointerEvents = 'initial'
-      }}
-    >
+    <Dialog.Root open={true} modal={expand}>
       <Dialog.Portal>
         {expand && (
           <Dialog.Overlay
             style={style}
-            className="absolute left-0 top-0 z-0 h-screen w-screen animate-[fadein_0.22s_ease-in-out_forwards_0.05s] bg-black/50 opacity-0 backdrop-blur-[2px] "
+            className="absolute left-0 top-0 z-overlay h-screen w-screen animate-[fadein_0.22s_ease-in-out_forwards_0.05s] bg-background-overlay opacity-0 backdrop-blur-[1px]"
             onClick={handleOnClose}
           />
         )}
@@ -337,17 +335,19 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
           ref={panelRef}
           className={twMerge(
             clsx(
-              'fixed bottom-2 right-2 z-10 flex overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
+              'fixed bottom-2 right-2 z-modal flex overflow-hidden rounded-xl border border-neutral bg-background shadow-[0_16px_70px_rgba(0,0,0,0.2)]',
               {
                 'left-4 top-4 animate-[scalein_0.22s_ease_both] opacity-0': expand,
                 'animate-slidein-up-sm-faded': !expand,
-                'border-2 border-brand-500': !expand && isResizing,
+                '!outline-none !outline-2 !outline-brand-strong': !expand && isResizing,
               }
             )
           )}
           style={style}
         >
-          {!expand && <div className="absolute left-1 top-1 z-10 cursor-nw-resize p-1" onMouseDown={startResize} />}
+          {!expand && (
+            <div className="absolute left-1 top-1 z-dropdown cursor-nw-resize p-1" onMouseDown={startResize} />
+          )}
           {expand && (
             <DevopsCopilotHistory
               data={{
@@ -397,9 +397,9 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   </div>
                 )}
                 {thread.length === 0 && (
-                  <span className="mx-auto w-full max-w-[430px] animate-[fadein_0.22s_ease-in-out_forwards_0.05s] py-4 text-center text-ssm opacity-0">
-                    I'm your <span className="font-medium text-brand-500">DevOps AI Copilot</span> - I can help you to
-                    fix your deployments, optimize your infrastructure costs, audit your security and do everything you
+                  <span className="mx-auto w-full max-w-[430px] animate-[fadein_0.22s_ease-in-out_forwards_0.05s] py-4 text-center text-ssm text-neutral-subtle opacity-0">
+                    I'm your <span className="font-medium text-brand">DevOps AI Copilot</span> - I can help you to fix
+                    your deployments, optimize your infrastructure costs, audit your security and do everything you
                     would expect from a complete DevOps Engineering team.
                   </span>
                 )}
@@ -407,8 +407,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   scrollAreaRef={scrollAreaRef}
                   expand={expand}
                   thread={thread}
-                  docLinks={docLinks}
-                  isCopilotEnabled={isCopilotEnabled}
                   onSuggestionClick={(label) => {
                     setInputMessage(label)
                     handleSendMessage(label)
@@ -433,10 +431,10 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                 >
                   {thread.length === 0 && docLinks.length > 0 && !expand && isCopilotEnabled && (
                     <div className="flex animate-[fadein_0.22s_ease-in-out_forwards_0.10s] flex-col gap-2 opacity-0">
-                      <span className="text-[11px] font-semibold text-neutral-400 dark:text-white">
+                      <span className="text-[11px] font-semibold text-neutral-subtle">
                         Ask for a contextual suggestion:
                       </span>
-                      <div className="flex flex-col gap-2 text-neutral-400">
+                      <div className="flex flex-col gap-2 text-neutral-subtle">
                         {docLinks.map(({ label, link }) => (
                           <Button
                             key={`${label}${link}`}
@@ -496,7 +494,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                 </div>
               </div>
             ) : (
-              <EnableCopilotScreen organizationId={context?.organization?.id} onClose={handleOnClose} />
+              <EnableCopilotScreen organizationId={context?.organization?.id ?? ''} onClose={handleOnClose} />
             )}
           </div>
         </Dialog.Content>

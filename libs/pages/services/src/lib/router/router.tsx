@@ -1,15 +1,5 @@
 import {
   type Route,
-  SERVICES_CREATION_GENERAL_URL,
-  SERVICES_CREATION_HEALTHCHECKS_URL,
-  SERVICES_CREATION_PORTS_URL,
-  SERVICES_CREATION_POST_URL,
-  SERVICES_CREATION_RESOURCES_URL,
-  SERVICES_CREATION_VARIABLES_URL,
-  SERVICES_DATABASE_CREATION_GENERAL_URL,
-  SERVICES_DATABASE_CREATION_POST_URL,
-  SERVICES_DATABASE_CREATION_RESOURCES_URL,
-  SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_GENERAL_URL,
   SERVICES_HELM_CREATION_SUMMARY_URL,
@@ -22,10 +12,7 @@ import {
   SERVICES_JOB_CREATION_POST_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_JOB_CREATION_VARIABLE_URL,
-  SERVICES_NEW_URL,
   SERVICES_SETTINGS_DANGER_ZONE_URL,
-  SERVICES_SETTINGS_GENERAL_URL,
-  SERVICES_SETTINGS_PIPELINE_URL,
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
   SERVICES_SETTINGS_RULES_URL,
   SERVICES_SETTINGS_URL,
@@ -35,16 +22,6 @@ import {
   SERVICES_TERRAFORM_CREATION_SUMMARY_URL,
   SERVICES_VARIABLES_URL,
 } from '@qovery/shared/routes'
-import { StepGeneralFeature as ApplicationStepGeneralFeature } from '../feature/page-application-create-feature/step-general-feature/step-general-feature'
-import { StepHealthchecksFeature as ApplicationStepHealthchecksFeature } from '../feature/page-application-create-feature/step-healthchecks-feature/step-healthchecks-feature'
-import { StepPortFeature as ApplicationStepPortFeature } from '../feature/page-application-create-feature/step-port-feature/step-port-feature'
-import { StepResourcesFeature as ApplicationStepResourcesFeature } from '../feature/page-application-create-feature/step-resources-feature/step-resources-feature'
-import { StepSummaryFeature as ApplicationStepSummaryFeature } from '../feature/page-application-create-feature/step-summary-feature/step-summary-feature'
-import { StepVariableFeature as ApplicationStepVariablesFeature } from '../feature/page-application-create-feature/step-variable-feature/step-variable-feature'
-import { StepGeneralFeature as DatabaseStepGeneralFeature } from '../feature/page-database-create-feature/step-general-feature/step-general-feature'
-import { StepResourcesFeature as DatabaseStepResourcesFeature } from '../feature/page-database-create-feature/step-resources-feature/step-resources-feature'
-import { StepSummaryFeature as DatabaseStepSummaryFeature } from '../feature/page-database-create-feature/step-summary-feature/step-summary-feature'
-import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import { StepGeneralFeature as HelmStepGeneralFeature } from '../feature/page-helm-create-feature/step-general-feature/step-general-feature'
 import { StepSummaryFeature as HelmStepSummaryFeature } from '../feature/page-helm-create-feature/step-summary-feature/step-summary-feature'
@@ -57,12 +34,9 @@ import StepIntroductionFeature from '../feature/page-job-create-feature/step-int
 import { StepResourcesFeature } from '../feature/page-job-create-feature/step-resources-feature/step-resources-feature'
 import { StepSummaryFeature } from '../feature/page-job-create-feature/step-summary-feature/step-summary-feature'
 import { StepVariableFeature } from '../feature/page-job-create-feature/step-variable-feature/step-variable-feature'
-import { PageNewFeature } from '../feature/page-new-feature/page-new-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
-import PageSettingsDeploymentPipelineFeature from '../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
 import PageSettingsDeploymentRulesFeature from '../feature/page-settings-deployment-rules-feature/page-settings-deployment-rules-feature'
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
-import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import PageSettingsPreviewEnvironmentsFeature from '../feature/page-settings-preview-environments-feature/page-settings-preview-environments-feature'
 import { StepConfigurationFeature as TerraformStepConfigurationFeature } from '../feature/page-terraform-create-feature/step-configuration-feature/step-configuration-feature'
 import { StepGeneralFeature as TerraformStepGeneralFeature } from '../feature/page-terraform-create-feature/step-general-feature/step-general-feature'
@@ -77,14 +51,6 @@ export const ROUTER_SERVICES: Route[] = [
     component: (
       <Container>
         <PageGeneralFeature />
-      </Container>
-    ),
-  },
-  {
-    path: SERVICES_DEPLOYMENTS_URL,
-    component: (
-      <Container>
-        <PageDeploymentsFeature />
       </Container>
     ),
   },
@@ -104,24 +70,12 @@ export const ROUTER_SERVICES: Route[] = [
       </Container>
     ),
   },
-  {
-    path: SERVICES_NEW_URL,
-    component: <PageNewFeature />,
-  },
 ]
 
 export const ROUTER_ENVIRONMENTS_SETTINGS: Route[] = [
   {
-    path: SERVICES_SETTINGS_GENERAL_URL,
-    component: <PageSettingsGeneralFeature />,
-  },
-  {
     path: SERVICES_SETTINGS_RULES_URL,
     component: <PageSettingsDeploymentRulesFeature />,
-  },
-  {
-    path: SERVICES_SETTINGS_PIPELINE_URL,
-    component: <PageSettingsDeploymentPipelineFeature />,
   },
   {
     path: SERVICES_SETTINGS_PREVIEW_ENV_URL,
@@ -133,47 +87,7 @@ export const ROUTER_ENVIRONMENTS_SETTINGS: Route[] = [
   },
 ]
 
-export const ROUTER_SERVICE_CREATION: Route[] = [
-  {
-    path: SERVICES_CREATION_GENERAL_URL,
-    component: <ApplicationStepGeneralFeature />,
-  },
-  {
-    path: SERVICES_CREATION_RESOURCES_URL,
-    component: <ApplicationStepResourcesFeature />,
-  },
-  {
-    path: SERVICES_CREATION_PORTS_URL,
-    component: <ApplicationStepPortFeature />,
-  },
-  {
-    path: SERVICES_CREATION_HEALTHCHECKS_URL,
-    component: <ApplicationStepHealthchecksFeature />,
-  },
-  {
-    path: SERVICES_CREATION_POST_URL,
-    component: <ApplicationStepSummaryFeature />,
-  },
-  {
-    path: SERVICES_CREATION_VARIABLES_URL,
-    component: <ApplicationStepVariablesFeature />,
-  },
-]
-
-export const ROUTER_SERVICE_DATABASE_CREATION: Route[] = [
-  {
-    path: SERVICES_DATABASE_CREATION_GENERAL_URL,
-    component: <DatabaseStepGeneralFeature />,
-  },
-  {
-    path: SERVICES_DATABASE_CREATION_RESOURCES_URL,
-    component: <DatabaseStepResourcesFeature />,
-  },
-  {
-    path: SERVICES_DATABASE_CREATION_POST_URL,
-    component: <DatabaseStepSummaryFeature />,
-  },
-]
+export const ROUTER_SERVICE_CREATION: Route[] = []
 
 export const ROUTER_SERVICE_JOB_CREATION: Route[] = [
   {

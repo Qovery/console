@@ -1,5 +1,5 @@
 export const ChartLoader = () => (
-  <div className="flex h-8 w-8 items-center justify-center rounded-md border border-neutral-200 bg-white p-2 text-base text-neutral-350">
+  <div className="flex h-8 w-8 items-center justify-center rounded-md border border-neutral bg-surface-neutral-subtle p-2 text-base text-neutral">
     <svg
       className="animate-spin"
       xmlns="http://www.w3.org/2000/svg"
@@ -23,8 +23,8 @@ export const ChartLoader = () => (
           y2="0.292"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#7062F5"></stop>
-          <stop offset="1" stopColor="#7A40BD"></stop>
+          <stop stopColor="var(--brand-9)"></stop>
+          <stop offset="1" stopColor="var(--brand-11)"></stop>
         </linearGradient>
         <clipPath id="clip0_30873_52093">
           <path fill="#fff" d="M0 0h20v20H0z"></path>

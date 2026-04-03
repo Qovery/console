@@ -1,17 +1,32 @@
+import { type ReactNode } from 'react'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import ListServiceLogs from './list-service-logs'
 
 window.HTMLElement.prototype.scroll = jest.fn()
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useParams: () => ({
-    organizationId: '000',
-    projectId: '111',
-    environmentId: '222',
-    serviceId: '333',
-  }),
-}))
+jest.mock('@tanstack/react-router', () => {
+  const mockSearch = {}
+  const mockParams = { organizationId: '000', projectId: '111', environmentId: '222', serviceId: '333' }
+  return {
+    ...jest.requireActual('@tanstack/react-router'),
+    getRouteApi: () => ({
+      useParams: () => mockParams,
+      useSearch: () => mockSearch,
+    }),
+    useSearch: () => mockSearch,
+    useNavigate: () => jest.fn(),
+    useParams: () => mockParams,
+    useLocation: () => ({ pathname: '/', search: '' }),
+    useRouter: () => ({
+      buildLocation: () => ({ href: '/' }),
+    }),
+    Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+      <a {...props} href={`${props.to}`}>
+        {children}
+      </a>
+    ),
+  }
+})
 
 describe('ListServiceLogs', () => {
   it('should render successfully', () => {

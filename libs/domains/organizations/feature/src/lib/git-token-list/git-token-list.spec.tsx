@@ -11,6 +11,11 @@ jest.mock('../hooks/use-git-tokens/use-git-tokens', () => {
   }
 })
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: '0000-0000-0000' }),
+}))
+
 describe('GitTokenList', () => {
   beforeEach(() => {
     jest.spyOn(utilDates, 'timeAgo').mockReturnValue('1 month')

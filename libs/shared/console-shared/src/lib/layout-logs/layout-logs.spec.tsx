@@ -1,7 +1,17 @@
 import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import { clusterLogFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { LayoutLogs, type LayoutLogsProps } from './layout-logs'
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({ buildLocation: () => ({ href: '/' }) }),
+  useParams: () => ({ organizationId: '1' }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+}))
 
 describe('LayoutLogs', () => {
   const props: LayoutLogsProps = {
