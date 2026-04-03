@@ -32,13 +32,5 @@ function Index() {
     )
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" search={{ redirect: '/' }} />
-  }
-
-  return (
-    <div className="p-2">
-      <h3 className="text-neutral">Welcome Home!</h3>
-    </div>
-  )
+  return <Navigate to="/login" search={{ redirect: '/' }} />
 }

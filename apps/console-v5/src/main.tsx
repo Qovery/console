@@ -28,6 +28,7 @@ import { useAuthInterceptor } from '@qovery/shared/utils'
 // TODO: Improve this import to use the shared/ui package
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import '../../../libs/shared/ui/src/lib/styles/main.scss'
+import { NotFoundPage } from './app/components/not-found-page/not-found-page'
 import { ThemeProvider } from './app/components/theme-provider/theme-provider'
 import { Auth0Wrapper, useAuth0Context } from './auth/auth0'
 // Import the generated route tree
@@ -157,7 +158,11 @@ function App() {
   }, [auth.user])
 
   // Create a new router instance
-  const router = createRouter({ routeTree, context: { auth, queryClient } })
+  const router = createRouter({
+    routeTree,
+    context: { auth, queryClient },
+    defaultNotFoundComponent: NotFoundPage,
+  })
 
   useAuthInterceptor(axios, QOVERY_API)
   useAuthInterceptor(devopsCopilotAxios, DEVOPS_COPILOT_API_BASE_URL)
