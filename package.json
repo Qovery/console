@@ -15,7 +15,6 @@
     "sync-changelog": "node scripts/sync-changelog.mjs",
     "build-v5": "nx build console-v5",
     "preview-v5": "nx preview console-v5",
-    "test:sync-changelog": "node --test scripts/sync-changelog.spec.mjs",
     "test": "nx run-many --all --target=test --parallel",
     "lint": "nx run-many --all --target=lint --parallel",
     "prepare": "husky install",
