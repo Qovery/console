@@ -311,7 +311,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   return (
     <Dialog.Root
       open={true}
-      modal={expand}
+      modal={false}
       onOpenChange={() => {
         document.body.style.pointerEvents = 'initial'
       }}
