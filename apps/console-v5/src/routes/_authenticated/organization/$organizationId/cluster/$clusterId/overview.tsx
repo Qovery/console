@@ -165,7 +165,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
               {cluster?.kubernetes !== 'SELF_MANAGED' && (
                 <>
                   <Skeleton width={120} height={22} show={!cluster}>
-                    {cluster?.version && (
+                    {cluster?.kubernetes !== 'PARTIALLY_MANAGED' && cluster?.version && (
                       <Badge color="neutral" variant="surface">
                         {cluster?.version}
                       </Badge>
