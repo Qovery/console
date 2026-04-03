@@ -39,45 +39,23 @@ export function useDeployService({
         queryKey: queries.services.list(environmentId).queryKey,
       })
 
-      if (data.deployment_request_id) {
-        toast(
-          'SUCCESS',
-          'Your service is queuing',
-          undefined,
-          () =>
-            navigate({
-              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
-              params: {
-                organizationId,
-                projectId,
-                environmentId,
-                serviceId: data.id,
-              },
-            }),
-          undefined,
-          'See deployment queue'
-        )
-      } else {
-        // XXX: Waiting for the fix of https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1434
-        // to implement the correct deployment redirection using `execution_id`
-        toast(
-          'SUCCESS',
-          'Your service is deploying',
-          undefined,
-          () =>
-            navigate({
-              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId',
-              params: {
-                organizationId,
-                projectId,
-                environmentId,
-                deploymentId: 'latest',
-              },
-            }),
-          undefined,
-          'See deployment logs'
-        )
-      }
+      toast(
+        'SUCCESS',
+        'Your service is queuing',
+        undefined,
+        () =>
+          navigate({
+            to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
+            params: {
+              organizationId,
+              projectId,
+              environmentId,
+              serviceId: data.id,
+            },
+          }),
+        undefined,
+        'See deployment queue'
+      )
     },
     meta: {
       notifyOnError: true,
