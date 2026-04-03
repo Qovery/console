@@ -18,6 +18,7 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
+import { useDeployService } from '../../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentHistory } from '../../hooks/use-deployment-history/use-deployment-history'
 import { LastCommitAuthor, type LastCommitAuthorProps } from '../../last-commit-author/last-commit-author'
 import { LastCommit, type LastCommitProps } from '../../last-commit/last-commit'
@@ -62,6 +63,11 @@ export function ServiceLastDeploymentSkeleton() {
 
 function ServiceLastDeploymentContent({ serviceId, serviceType, service }: ServiceLastDeploymentProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const { mutate: deployService } = useDeployService({
+    organizationId,
+    projectId,
+    environmentId,
+  })
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
   const { data: deploymentHistory = [] } = useDeploymentHistory({
     serviceId,
@@ -83,7 +89,13 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
         title="Application has never been deployed"
         description="Deploy the application first"
       >
-        <Button className="gap-1" color="neutral" variant="outline" size="md">
+        <Button
+          className="gap-1"
+          color="neutral"
+          variant="outline"
+          size="md"
+          onClick={() => deployService({ serviceId, serviceType })}
+        >
           <Icon iconName="rocket" />
           Deploy now
         </Button>
