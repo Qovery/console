@@ -528,7 +528,7 @@ function RouteComponent() {
           <div className="absolute inset-0 z-10 [-webkit-mask-image:radial-gradient(225.19%_100%_at_50%_0%,#D9D9D9_72%,rgba(217,217,217,0)_88%)] [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:100%_100%] [mask-image:radial-gradient(225.19%_100%_at_50%_0%,#D9D9D9_72%,rgba(217,217,217,0)_88%)] [mask-repeat:no-repeat] [mask-size:100%_100%]">
             <div
               key={screenStackCycleKey}
-              className="relative ml-32 mt-12 aspect-[2940/2080] h-[80%] skew-x-[15deg] select-none"
+              className="relative ml-32 mt-12 aspect-[2940/2080] h-[80%] skew-x-[15deg] select-none lg:ml-52"
             >
               <motion.img
                 src={PRODUCT_SHOTS[frontShotIndex]}
