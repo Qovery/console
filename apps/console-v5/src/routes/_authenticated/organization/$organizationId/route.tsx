@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import { Outlet, createFileRoute, useMatches } from '@tanstack/react-router'
 import { ClusterStateEnum as ClusterState, type ClusterStateEnum } from 'qovery-typescript-axios'
 import { Suspense, useMemo } from 'react'
@@ -54,6 +55,10 @@ function RouteComponent() {
   const { data: clusters } = useClusters({ organizationId })
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
   const { data: environment } = useEnvironment({ environmentId })
+  const { data: projectEnvironments } = useQuery({
+    ...queries.environments.list({ projectId }),
+    enabled: Boolean(organizationId) && Boolean(projectId) && !environmentId,
+  })
 
   const clustersForStatusWebSockets = useMemo(() => {
     if (environmentId) {
@@ -62,8 +67,17 @@ function RouteComponent() {
       }
       return []
     }
+    if (projectId) {
+      if (!projectEnvironments?.length) {
+        return []
+      }
+      const uniqueClusterIds = [
+        ...new Set(projectEnvironments.map((env) => env.cluster_id).filter((clusterId) => Boolean(clusterId))),
+      ]
+      return uniqueClusterIds.map((id) => ({ id }))
+    }
     return clusters ?? []
-  }, [environmentId, environment, clusters])
+  }, [environmentId, environment, clusters, projectId, projectEnvironments])
 
   const deployingClusters = useMemo(() => {
     if (!clusters || !clusterStatuses) return []
@@ -81,7 +95,8 @@ function RouteComponent() {
 
       {
         /**
-         * WebSocket API requires a clusterId. When viewing an environment, scope to that environment's cluster, otherwise subscribe once per cluster in the organization.
+         * WebSocket API requires a clusterId. Scope listeners: single cluster on an environment page,
+         * project's environment clusters on project routes, otherwise every cluster in the organization.
          */
         clustersForStatusWebSockets.map(
           ({ id }) =>
