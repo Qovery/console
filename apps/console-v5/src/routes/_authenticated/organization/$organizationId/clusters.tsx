@@ -15,10 +15,20 @@ const Clusters = () => {
 
   if (clusters.length === 0) {
     return (
-      <EmptyState title="Create your first cluster">
-        <Link to="/" as="button" className="mt-4 items-center gap-2" size="md">
+      <EmptyState
+        icon="cube"
+        title="Create your first cluster"
+        description="Create a cluster on your cloud provider to be able to deploy apps later"
+      >
+        <Link
+          to="/organization/$organizationId/cluster/new"
+          params={{ organizationId }}
+          as="button"
+          className="items-center gap-2"
+          size="md"
+        >
           <Icon iconName="circle-plus" iconStyle="regular" />
-          New Cluster
+          Add Cluster
         </Link>
       </EmptyState>
     )
