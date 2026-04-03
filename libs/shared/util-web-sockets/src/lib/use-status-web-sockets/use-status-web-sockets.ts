@@ -5,6 +5,7 @@ import {
   type ServiceStatusDto,
   type TerraformStatusDto,
 } from 'qovery-ws-typescript-axios'
+import { useState } from 'react'
 import { v7 as uuidv7 } from 'uuid'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -30,7 +31,7 @@ export function useStatusWebSockets({
   environmentId,
   versionId,
 }: UseStatusWebSocketsProps) {
-  const externalRequestId = uuidv7()
+  const [externalRequestId] = useState(() => uuidv7())
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/status',
