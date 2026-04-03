@@ -1,8 +1,8 @@
 [
   {
     "name": "Qovery Changelogs",
-    "summary": "We're super excited to announce new features and improvements: NGINX Ingress migration update, Road to Kubernetes 1.34 and 1.35, Terraform improvements",
-    "url": "https://www.qovery.com/changelog/2026-03-11",
-    "firstPublishedAt": "2026-03-11T00:00:00.000Z"
+    "summary": "We're super excited to announce new features and improvements: NGINX Ingress migration update, MCP updates, AI Copilot Deployment troubleshoot, Build dashboard",
+    "url": "https://www.qovery.com/changelog/2026-03-25",
+    "firstPublishedAt": "2026-03-25T00:00:00.000Z"
   }
 ]

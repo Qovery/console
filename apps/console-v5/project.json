@@ -5,8 +5,20 @@
   "projectType": "application",
   "tags": [],
   "targets": {
+    "sync-changelog": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node scripts/sync-changelog.mjs",
+        "cwd": ".",
+        "env": {
+          "QOVERY_CHANGELOG_SYNC_STRICT": "true"
+        }
+      }
+    },
     "build": {
       "executor": "@nx/vite:build",
+      "dependsOn": ["sync-changelog", "^build"],
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
