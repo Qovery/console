@@ -1,15 +1,29 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
+import * as Dialog from '@radix-ui/react-dialog'
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Button, Icon, RadioGroup, useModal } from '@qovery/shared/ui'
+import { Button, Heading, Icon, RadioGroup, Section, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import { type ActionItem, type DatabaseDeployModalData } from './use-database-deploy-modal/use-database-deploy-modal'
+
+type DatabaseDeployModalData = {
+  action: string
+  name: string
+}
+
+interface ActionItem {
+  id: string // Also used as the text the user has to type to confirm
+  title: string
+  callback: (data: DatabaseDeployModalData) => void
+  description?: ReactNode
+  icon?: IconName
+  color?: 'brand' | 'red' | 'yellow' | 'green' | 'neutral'
+}
 
 export interface DatabaseDeployModalProps extends PropsWithChildren {
   title: string
   description?: ReactNode
   actions: ActionItem[]
   name?: string
-  entities?: ReactNode[]
   submitButtonText?: string
 }
 
@@ -18,7 +32,6 @@ export function DatabaseDeployModal({
   description,
   actions,
   children,
-  entities,
   submitButtonText,
 }: DatabaseDeployModalProps) {
   const {
@@ -46,12 +59,15 @@ export function DatabaseDeployModal({
   })
 
   return (
-    <div className="p-6">
-      <h2 className="h4 mb-1 max-w-sm text-neutral-400 dark:text-neutral-50">{title}</h2>
-      <div className="mb-4">
-        {description && <div className="text-sm text-neutral-350 dark:text-neutral-50">{description}</div>}
-        {entities && <div className="mt-1 flex gap-1.5">{entities.map((entity) => entity)}</div>}
-      </div>
+    <Section className="p-5">
+      <Dialog.Title asChild>
+        <Heading level={1} className="text-neutral mb-2 max-w-sm text-2xl">
+          {title}
+        </Heading>
+      </Dialog.Title>
+      <Dialog.Description className="mb-6 text-sm text-neutral-350 dark:text-neutral-50">
+        {description}
+      </Dialog.Description>
 
       <form onSubmit={onSubmit} className="space-y-6">
         <div className="flex flex-col gap-5">
@@ -101,7 +117,7 @@ export function DatabaseDeployModal({
           </Button>
         </div>
       </form>
-    </div>
+    </Section>
   )
 }
 

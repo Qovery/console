@@ -62,7 +62,7 @@ import {
   urlCodeEditor,
 } from '@qovery/shared/util-js'
 import { ConfirmationCancelLifecycleModal } from '../confirmation-cancel-lifecycle-modal/confirmation-cancel-lifecycle-modal'
-import useDatabaseDeployModal from '../database-deploy-modal/use-database-deploy-modal/use-database-deploy-modal'
+import { DatabaseDeployModal } from '../database-deploy-modal/database-deploy-modal'
 import { ForceUnlockModal } from '../force-unlock-modal/force-unlock-modal'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 import { useDeleteService } from '../hooks/use-delete-service/use-delete-service'
@@ -95,7 +95,6 @@ function MenuManageDeployment({
 }) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const { openDatabaseDeployModal } = useDatabaseDeployModal()
 
   const { data: runningState } = useRunningStatus({ environmentId: environment.id, serviceId: service.id })
   const { mutate: deployService } = useDeployService({
@@ -388,55 +387,61 @@ function MenuManageDeployment({
   }
 
   const handleDatabaseDeployModal = () => {
-    openDatabaseDeployModal({
-      title: `Deploy database`,
-      description: 'Choose when to deploy and apply your changes',
-      entities: [],
-      submitButtonText: 'Confirm',
-      actions: [
-        {
-          id: 'next',
-          title: 'Next maintenance window',
-          description: (
-            <div className="flex flex-col gap-2 text-neutral-350">
-              Redeploy your database and apply changes during the next maintenance window.
-            </div>
-          ),
-          icon: 'calendar-clock',
-          color: 'brand',
-          callback: () => {
-            try {
-              mutationDeploy(false)
-            } catch (error) {
-              console.error(error)
-            }
-          },
-        },
-        {
-          id: 'immediately',
-          title: 'Immediately',
-          description: (
-            <div className="flex flex-col gap-2 text-neutral-350">
-              <div className="flex flex-col gap-1">
-                <span>Redeploy your database and apply changes immediately.</span>
-                <p>
-                  <span className="font-bold">Be careful, </span>
-                  <span>your database may be unavailable for a few minutes during this process.</span>
-                </p>
-              </div>
-            </div>
-          ),
-          icon: 'timer',
-          color: 'brand',
-          callback: () => {
-            try {
-              mutationDeploy(true)
-            } catch (error) {
-              console.error(error)
-            }
-          },
-        },
-      ],
+    openModal({
+      content: (
+        <DatabaseDeployModal
+          title="Deploy database"
+          description="Choose when to deploy and apply your changes"
+          actions={[
+            {
+              id: 'next',
+              title: 'Next maintenance window',
+              description: (
+                <div className="flex flex-col gap-2 text-neutral-350">
+                  Redeploy your database and apply changes during the next maintenance window.
+                </div>
+              ),
+              icon: 'calendar-clock',
+              color: 'brand',
+              callback: () => {
+                try {
+                  mutationDeploy(false)
+                } catch (error) {
+                  console.error(error)
+                }
+              },
+            },
+            {
+              id: 'immediately',
+              title: 'Immediately',
+              description: (
+                <div className="flex flex-col gap-2 text-neutral-350">
+                  <div className="flex flex-col gap-1">
+                    <span>Redeploy your database and apply changes immediately.</span>
+                    <p>
+                      <span className="font-bold">Be careful, </span>
+                      <span>your database may be unavailable for a few minutes during this process.</span>
+                    </p>
+                  </div>
+                </div>
+              ),
+              icon: 'timer',
+              color: 'brand',
+              callback: () => {
+                try {
+                  mutationDeploy(true)
+                } catch (error) {
+                  console.error(error)
+                }
+              },
+            },
+          ]}
+          submitButtonText="Confirm"
+        />
+      ),
+      options: {
+        width: 740,
+      },
     })
   }
 
