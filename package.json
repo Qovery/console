@@ -67,7 +67,7 @@
     "jwt-decode": "4.0.0",
     "mermaid": "11.6.0",
     "monaco-editor": "0.53.0",
-    "posthog-js": "1.260.1",
+    "posthog-js": "1.345.1",
     "qovery-typescript-axios": "1.1.852",
     "react": "18.3.1",
     "react-country-flag": "3.0.2",
@@ -93,9 +93,6 @@
     "ts-pattern": "5.0.5",
     "tslib": "2.8.1",
     "use-query-params": "2.2.1"
-  },
-  "resolutions": {
-    "posthog-js@1.260.1": "patch:posthog-js@npm%3A1.260.1#./.yarn/patches/posthog-js-npm-1.260.1-ec574bf323.patch"
   },
   "devDependencies": {
     "@babel/core": "7.28.4",
@@ -231,5 +228,8 @@
         "@semantic-release/github"
       ]
     ]
+  },
+  "resolutions": {
+    "posthog-js@1.345.1": "patch:posthog-js@npm%3A1.345.1#./.yarn/patches/posthog-js-npm-1.345.1-3f218a6564.patch"
   }
 }

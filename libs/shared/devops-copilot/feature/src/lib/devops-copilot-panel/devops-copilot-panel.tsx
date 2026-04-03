@@ -22,7 +22,6 @@ import { Header } from './header/header'
 import { useMessageSubmission } from './hooks/use-message-submission/use-message-submission'
 import { usePanelResize } from './hooks/use-panel-resize/use-panel-resize'
 import { useStreamingAnimation } from './hooks/use-streaming-animation/use-streaming-animation'
-import { useVoteHandler } from './hooks/use-vote-handler/use-vote-handler'
 import { Input } from './input/input'
 import { MessageList } from './message-list/message-list'
 import { StatusFooter } from './status-footer/status-footer'
@@ -120,14 +119,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const { thread, setThread } = useThreadState({
     organizationId,
     threadId,
-  })
-
-  const handleVote = useVoteHandler({
-    thread,
-    setThread,
-    userId: user?.sub ?? '',
-    withContext,
-    context,
   })
 
   const { handleSendMessage, lastSubmitResult } = useMessageSubmission({
@@ -423,7 +414,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   threadId={threadId}
                   pendingThreadId={pendingThreadId.current}
                   renderStreamingMessageWithMermaid={renderStreamingMessageWithMermaid}
-                  handleVote={handleVote}
                   isAtBottom={isAtBottom}
                 />
                 <div
