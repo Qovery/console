@@ -13,15 +13,19 @@ import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
 import { useNamespace } from '../../hooks/use-namespace/use-namespace'
 import { usePodCount } from '../../hooks/use-pod-count/use-pod-count'
 import { usePodNames } from '../../hooks/use-pod-names/use-pod-names'
+import { LazyChart } from '../../lazy-chart/lazy-chart'
 import { DashboardProvider, useDashboardContext } from '../../util-filter/dashboard-context'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
+import { CardNodeEvents } from './card-node-events/card-node-events'
+import { CardNodeStatus } from './card-node-status/card-node-status'
 import { CardPercentile99 } from './card-percentile-99/card-percentile-99'
 import { CardPrivateHTTPErrors } from './card-private-http-errors/card-private-http-errors'
 import { CardPrivatePercentile99 } from './card-private-percentile-99/card-private-percentile-99'
 import { CardStorage } from './card-storage/card-storage'
 import { CpuChart } from './cpu-chart/cpu-chart'
+import { CpuThrottlingChart } from './cpu-throttling-chart/cpu-throttling-chart'
 import { DiskChart } from './disk-chart/disk-chart'
 import { MemoryChart } from './memory-chart/memory-chart'
 import { NetworkRequestDurationChart } from './network-request-duration-chart/network-request-duration-chart'
@@ -292,121 +296,144 @@ function ServiceDashboardContent() {
             </div>
           </div>
         </Section>
-        <Section className="gap-4">
-          <div className="flex items-center justify-between gap-2">
-            <Heading weight="medium">Resources</Heading>
-            {!resourcesModeLoading && resourcesMode && (
-              <Tooltip
-                content={
-                  resourcesMode === 'aggregate'
-                    ? 'Used when more than 10 pods are displayed. Zoom in to see pod-level metrics'
-                    : 'Showing metrics for individual pods. Aggregated view is available when more than 10 pods are displayed'
-                }
-              >
-                <Badge
-                  variant="surface"
-                  color={resourcesMode === 'aggregate' ? 'sky' : 'purple'}
-                  radius="full"
-                  size="sm"
-                  className="h-6 gap-1 text-ssm"
+        <LazyChart>
+          <Section className="gap-4">
+            <Heading weight="medium">Node infrastructure</Heading>
+            <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
+              <CardNodeStatus clusterId={environment.cluster_id} serviceId={serviceId} />
+              <CardNodeEvents clusterId={environment.cluster_id} />
+            </div>
+          </Section>
+        </LazyChart>
+        <LazyChart>
+          <Section className="gap-4">
+            <div className="flex items-center justify-between gap-2">
+              <Heading weight="medium">Resources</Heading>
+              {!resourcesModeLoading && resourcesMode && (
+                <Tooltip
+                  content={
+                    resourcesMode === 'aggregate'
+                      ? 'Used when more than 10 pods are displayed. Zoom in to see pod-level metrics'
+                      : 'Showing metrics for individual pods. Aggregated view is available when more than 10 pods are displayed'
+                  }
                 >
-                  <Icon iconName="circle-info" iconStyle="regular" className="text-ssm" />
-                  <span className="font-medium">
-                    {resourcesMode === 'aggregate' ? 'Aggregated view' : 'Pod-level view'}
-                  </span>
-                </Badge>
-              </Tooltip>
-            )}
-          </div>
-          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <CpuChart
-                clusterId={environment.cluster_id}
-                serviceId={serviceId}
-                containerName={containerName}
-                podNames={podNames}
-                podCountData={{ podCount, isResolved: isFetchedPodCount }}
-              />
+                  <Badge
+                    variant="surface"
+                    color={resourcesMode === 'aggregate' ? 'sky' : 'purple'}
+                    radius="full"
+                    size="sm"
+                    className="h-6 gap-1 text-ssm"
+                  >
+                    <Icon iconName="circle-info" iconStyle="regular" className="text-ssm" />
+                    <span className="font-medium">
+                      {resourcesMode === 'aggregate' ? 'Aggregated view' : 'Pod-level view'}
+                    </span>
+                  </Badge>
+                </Tooltip>
+              )}
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <MemoryChart
-                clusterId={environment.cluster_id}
-                serviceId={serviceId}
-                containerName={containerName}
-                podNames={podNames}
-                podCountData={{ podCount, isResolved: isFetchedPodCount }}
-              />
-            </div>
-            {hasStorage && (
+            <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
               <div className="overflow-hidden rounded border border-neutral-250">
-                <DiskChart
+                <CpuChart
+                  clusterId={environment.cluster_id}
+                  serviceId={serviceId}
+                  containerName={containerName}
+                  podNames={podNames}
+                  podCountData={{ podCount, isResolved: isFetchedPodCount }}
+                />
+              </div>
+              <div className="overflow-hidden rounded border border-neutral-250">
+                <MemoryChart
+                  clusterId={environment.cluster_id}
+                  serviceId={serviceId}
+                  containerName={containerName}
+                  podNames={podNames}
+                  podCountData={{ podCount, isResolved: isFetchedPodCount }}
+                />
+              </div>
+              {hasStorage && (
+                <div className="overflow-hidden rounded border border-neutral-250">
+                  <DiskChart
+                    clusterId={environment.cluster_id}
+                    serviceId={serviceId}
+                    containerName={containerName}
+                    podNames={podNames}
+                  />
+                </div>
+              )}
+              <div className="overflow-hidden rounded border border-neutral-250">
+                <CpuThrottlingChart
                   clusterId={environment.cluster_id}
                   serviceId={serviceId}
                   containerName={containerName}
                   podNames={podNames}
                 />
               </div>
-            )}
-          </div>
-        </Section>
-        {hasPublicPort && (
-          <Section className="gap-4">
-            <Heading weight="medium">Network</Heading>
-            <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-              <div className="overflow-hidden rounded border border-neutral-250">
-                <NetworkRequestStatusChart
-                  clusterId={environment.cluster_id}
-                  serviceId={serviceId}
-                  ingressName={ingressName}
-                  httpRouteName={httpRouteName}
-                />
-              </div>
-              <div className="overflow-hidden rounded border border-neutral-250">
-                <NetworkRequestDurationChart
-                  clusterId={environment.cluster_id}
-                  serviceId={serviceId}
-                  ingressName={ingressName}
-                  httpRouteName={httpRouteName}
-                />
-              </div>
-              <div className="overflow-hidden rounded border border-neutral-250">
-                <NetworkRequestSizeChart
-                  clusterId={environment.cluster_id}
-                  serviceId={serviceId}
-                  ingressName={ingressName}
-                  httpRouteName={httpRouteName}
-                />
-              </div>
             </div>
           </Section>
+        </LazyChart>
+        {hasPublicPort && (
+          <LazyChart>
+            <Section className="gap-4">
+              <Heading weight="medium">Network</Heading>
+              <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
+                <div className="overflow-hidden rounded border border-neutral-250">
+                  <NetworkRequestStatusChart
+                    clusterId={environment.cluster_id}
+                    serviceId={serviceId}
+                    ingressName={ingressName}
+                    httpRouteName={httpRouteName}
+                  />
+                </div>
+                <div className="overflow-hidden rounded border border-neutral-250">
+                  <NetworkRequestDurationChart
+                    clusterId={environment.cluster_id}
+                    serviceId={serviceId}
+                    ingressName={ingressName}
+                    httpRouteName={httpRouteName}
+                  />
+                </div>
+                <div className="overflow-hidden rounded border border-neutral-250">
+                  <NetworkRequestSizeChart
+                    clusterId={environment.cluster_id}
+                    serviceId={serviceId}
+                    ingressName={ingressName}
+                    httpRouteName={httpRouteName}
+                  />
+                </div>
+              </div>
+            </Section>
+          </LazyChart>
         )}
         {hasOnlyPrivatePorts && (
-          <Section className="gap-4">
-            <Heading weight="medium">Network</Heading>
-            <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-              <div className="overflow-hidden rounded border border-neutral-250">
-                <PrivateNetworkRequestStatusChart
-                  clusterId={environment.cluster_id}
-                  serviceId={serviceId}
-                  containerName={containerName}
-                />
+          <LazyChart>
+            <Section className="gap-4">
+              <Heading weight="medium">Network</Heading>
+              <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
+                <div className="overflow-hidden rounded border border-neutral-250">
+                  <PrivateNetworkRequestStatusChart
+                    clusterId={environment.cluster_id}
+                    serviceId={serviceId}
+                    containerName={containerName}
+                  />
+                </div>
+                <div className="overflow-hidden rounded border border-neutral-250">
+                  <PrivateNetworkRequestDurationChart
+                    clusterId={environment.cluster_id}
+                    serviceId={serviceId}
+                    containerName={containerName}
+                  />
+                </div>
+                <div className="overflow-hidden rounded border border-neutral-250">
+                  <PrivateNetworkRequestSizeChart
+                    clusterId={environment.cluster_id}
+                    serviceId={serviceId}
+                    containerName={containerName}
+                  />
+                </div>
               </div>
-              <div className="overflow-hidden rounded border border-neutral-250">
-                <PrivateNetworkRequestDurationChart
-                  clusterId={environment.cluster_id}
-                  serviceId={serviceId}
-                  containerName={containerName}
-                />
-              </div>
-              <div className="overflow-hidden rounded border border-neutral-250">
-                <PrivateNetworkRequestSizeChart
-                  clusterId={environment.cluster_id}
-                  serviceId={serviceId}
-                  containerName={containerName}
-                />
-              </div>
-            </div>
-          </Section>
+            </Section>
+          </LazyChart>
         )}
       </div>
     </div>

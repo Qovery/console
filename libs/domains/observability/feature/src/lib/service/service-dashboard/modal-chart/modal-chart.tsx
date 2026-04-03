@@ -1,8 +1,8 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { type PropsWithChildren } from 'react'
 import { Button, Heading, Icon, InputSelectSmall, Section } from '@qovery/shared/ui'
-import { SelectTimeRange } from '../service/service-dashboard/select-time-range/select-time-range'
-import { useDashboardContext } from '../util-filter/dashboard-context'
+import { useDashboardContext } from '../../../util-filter/dashboard-context'
+import { SelectTimeRange } from '../select-time-range/select-time-range'
 
 interface ModalChartProps extends PropsWithChildren {
   title: string
