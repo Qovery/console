@@ -62,15 +62,6 @@ export const environments = createQueryKeys('environments', {
       )
     },
   }),
-  // TODO [To update once rust-backed will be deployed]: To remove
-  // NOTE: Value is set by WebSocket
-  checkRunningStatusClosed: (clusterId: string) => ({
-    queryKey: [clusterId],
-    queryFn() {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      return new Promise<{ clusterId: string; reason: string }>(() => {})
-    },
-  }),
   details: ({ environmentId }: { environmentId: string }) => ({
     queryKey: [environmentId],
     async queryFn() {

@@ -40,7 +40,6 @@ import {
 import {
   APPLICATION_GENERAL_URL,
   APPLICATION_URL,
-  CLUSTER_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
@@ -74,7 +73,6 @@ import {
   twMerge,
   upperCaseFirstLetter,
 } from '@qovery/shared/util-js'
-import { useCheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
 import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommit } from '../last-commit/last-commit'
@@ -334,10 +332,6 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
   } = environment
   const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
   const { data: deploymentStages } = useListDeploymentStages({ environmentId })
-  const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
-    clusterId,
-    environmentId,
-  })
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const navigate = useNavigate()
@@ -494,27 +488,6 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             .with({ sub_action: ServiceSubActionDto.NONE }, () => info.getValue())
             .with(undefined, () => info.getValue())
             .exhaustive()
-
-          // TODO [To update once rust-backed will be deployed]: Remove this workaround
-          if (checkRunningStatusClosed) {
-            return (
-              <Tooltip content="See cluster">
-                <Link
-                  as="button"
-                  to={CLUSTER_URL(organizationId, environment.cluster_id)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="gap-2 whitespace-nowrap text-sm"
-                  size="md"
-                  color="neutral"
-                  variant="outline"
-                  radius="full"
-                >
-                  <StatusChip status="UNAVAILABLE" />
-                  Status unavailable
-                </Link>
-              </Tooltip>
-            )
-          }
 
           const serviceStatus = match(service)
             .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, (s) => s.deploymentStatus?.state)
@@ -779,7 +752,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         },
       }),
     ],
-    [columnHelper, organizationId, projectId, environmentId, navigate, checkRunningStatusClosed, environment]
+    [columnHelper, organizationId, projectId, environmentId, environment]
   )
 
   const table = useReactTable({

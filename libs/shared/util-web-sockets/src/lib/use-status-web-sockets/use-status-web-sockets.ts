@@ -1,3 +1,5 @@
+import equal from 'fast-deep-equal'
+import { type QueryClient } from '@tanstack/react-query'
 import { type EnvironmentStatus, type EnvironmentStatusesWithStages } from 'qovery-typescript-axios'
 import {
   type ApplicationStatusDto,
@@ -5,6 +7,7 @@ import {
   type ServiceStatusDto,
   type TerraformStatusDto,
 } from 'qovery-ws-typescript-axios'
+import { useCallback, useState } from 'react'
 import { v7 as uuidv7 } from 'uuid'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -30,20 +33,10 @@ export function useStatusWebSockets({
   environmentId,
   versionId,
 }: UseStatusWebSocketsProps) {
-  const externalRequestId = uuidv7()
+  const [externalRequestId] = useState(() => uuidv7())
 
-  useReactQueryWsSubscription({
-    url: QOVERY_WS + '/deployment/status',
-    urlSearchParams: {
-      organization: organizationId,
-      environment: environmentId,
-      cluster: clusterId,
-      project: projectId,
-      version: versionId,
-    },
-    enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
-    shouldReconnect: true,
-    onMessage(queryClient, message: WSDeploymentStatus) {
+  const onDeploymentStatusMessage = useCallback(
+    (queryClient: QueryClient, message: WSDeploymentStatus) => {
       if (environmentId) {
         queryClient.setQueryData(
           queries.environments.deploymentStatus(environmentId).queryKey,
@@ -74,6 +67,56 @@ export function useStatusWebSockets({
         }
       }
     },
+    [environmentId]
+  )
+
+  const onServiceStatusMessage = useCallback(
+    (queryClient: QueryClient, message: ServiceStatusDto) => {
+      for (const env of message.environments) {
+        // Setting the environment status only if it has changed
+        const currentEnvironmentStatus = queryClient.getQueryData(queries.environments.runningStatus(env.id).queryKey)
+        const newEnvironmentStatus = { state: env.state }
+        if (!equal(newEnvironmentStatus, currentEnvironmentStatus)) {
+          queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => newEnvironmentStatus)
+        }
+
+        const services: (ApplicationStatusDto | DatabaseStatusDto | TerraformStatusDto)[] = [
+          ...env.applications,
+          ...env.containers,
+          ...env.databases,
+          ...env.jobs,
+          ...env.helms,
+          ...env.terraform,
+        ]
+        for (const serviceRunningStatus of services) {
+          // Setting the service status only if it has changed
+          const currentServiceStatus = queryClient.getQueryData(
+            queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey
+          )
+          if (!equal(serviceRunningStatus, currentServiceStatus)) {
+            queryClient.setQueryData(
+              queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey,
+              () => serviceRunningStatus
+            )
+          }
+        }
+      }
+    },
+    []
+  )
+
+  useReactQueryWsSubscription({
+    url: QOVERY_WS + '/deployment/status',
+    urlSearchParams: {
+      organization: organizationId,
+      environment: environmentId,
+      cluster: clusterId,
+      project: projectId,
+      version: versionId,
+    },
+    enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
+    shouldReconnect: true,
+    onMessage: onDeploymentStatusMessage,
   })
 
   useReactQueryWsSubscription({
@@ -87,52 +130,7 @@ export function useStatusWebSockets({
     },
     // NOTE: projectId is not required by the API but it limits WS messages when cluster handles my environments / services
     enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
-    onMessage(queryClient, message: ServiceStatusDto) {
-      for (const env of message.environments) {
-        // TODO [To update once rust-backed will be deployed]: check against current value and update it only if it has changed (to avoid too many re-render)
-        queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => ({
-          state: env.state,
-        }))
-        // // NOTE: we have to force this reset change because of the way the socket works.
-        // // You can have information about an service (eg. if it's stopping)
-        // TODO [To update once rust-backed will be deployed]: Remove reset cache strategy
-        queryClient.resetQueries([...queries.services.runningStatus._def, env.id])
-        const services: (ApplicationStatusDto | DatabaseStatusDto | TerraformStatusDto)[] = [
-          ...env.applications,
-          ...env.containers,
-          ...env.databases,
-          ...env.jobs,
-          ...env.helms,
-          ...env.terraform,
-        ]
-        for (const serviceRunningStatus of services) {
-          // TODO [To update once rust-backed will be deployed]: check against current value and update it only if it has changed (to avoid too many re-render)
-          queryClient.setQueryData(
-            queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey,
-            () => serviceRunningStatus
-          )
-        }
-      }
-    },
-    onClose(queryClient, event: CloseEvent) {
-      // NOTE: API returns a string for the reason, which allows us to know if the status is available or not
-      // clusterId is required everywhere and environmentId is necessary for the service list
-      const isNotFound = event.reason.includes('NotFound') || event.reason.includes('not found')
-      if (isNotFound && clusterId) {
-        if (environmentId) {
-          queryClient.setQueryData(queries.services.checkRunningStatusClosed(clusterId, environmentId).queryKey, {
-            clusterId,
-            environmentId,
-            reason: event.reason,
-          })
-        } else {
-          queryClient.setQueryData(queries.environments.checkRunningStatusClosed(clusterId).queryKey, {
-            clusterId,
-            reason: event.reason,
-          })
-        }
-      }
-    },
+    onMessage: onServiceStatusMessage,
   })
 }
 
