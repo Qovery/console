@@ -12,10 +12,9 @@ import {
   ClusterResourcesSettings,
   useCluster,
   useEditCluster,
-  useUpdateKarpenterPrivateFargate,
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { type ClusterResourcesEdit, type SCWControlPlaneFeatureType } from '@qovery/shared/interfaces'
+import { type ClusterResourcesData, type SCWControlPlaneFeatureType } from '@qovery/shared/interfaces'
 import { Button, Section, useModal } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
@@ -23,10 +22,6 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
 })
-
-function getValueByKey(key: string, data: { [key: string]: string }[] = []): string[] {
-  return data.filter((obj) => key in obj).map((obj) => obj[key])
-}
 
 const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
   const payload = {
@@ -87,7 +82,6 @@ const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
 }
 
 function ClusterResourcesSettingsForm({ cluster }: { cluster: Cluster }) {
-  const { organizationId, clusterId } = useParams({ strict: false })
   const karpenterFeature = cluster.features?.find(
     (feature) => feature.id === 'KARPENTER'
   ) as ClusterFeatureKarpenterParametersResponse
@@ -97,7 +91,7 @@ function ClusterResourcesSettingsForm({ cluster }: { cluster: Cluster }) {
 
   const { openModal, closeModal } = useModal()
 
-  const methods = useForm<ClusterResourcesEdit>({
+  const methods = useForm<ClusterResourcesData>({
     mode: 'onChange',
     defaultValues: {
       cluster_type: cluster.kubernetes,
@@ -119,47 +113,25 @@ function ClusterResourcesSettingsForm({ cluster }: { cluster: Cluster }) {
     },
   })
   const { mutate: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
-  const { mutateAsync: updateKarpenterPrivateFargate } = useUpdateKarpenterPrivateFargate()
 
-  const onSubmit = methods.handleSubmit(async (data) => {
-    const updateCluster = async () => {
+  const onSubmit = methods.handleSubmit((data) => {
+    const updateCluster = () => {
       const cloneCluster = handleSubmit(data, cluster)
       editCluster({
         clusterId: cluster.id,
-        organizationId: organizationId || '',
+        organizationId: cluster.organization.id,
         clusterRequest: cloneCluster,
       })
-    }
-
-    const updateClusterKarpenterSubnets = async () => {
-      if (data?.aws_existing_vpc?.eks_subnets) {
-        try {
-          await updateKarpenterPrivateFargate({
-            organizationId: organizationId || '',
-            clusterId: clusterId || '',
-            clusterKarpenterPrivateSubnetIdsPutRequest: {
-              eks_karpenter_fargate_subnets_zone_a_ids: getValueByKey('A', data.aws_existing_vpc.eks_subnets),
-              eks_karpenter_fargate_subnets_zone_b_ids: getValueByKey('B', data.aws_existing_vpc.eks_subnets),
-              eks_karpenter_fargate_subnets_zone_c_ids: getValueByKey('C', data.aws_existing_vpc.eks_subnets),
-            },
-          })
-          await updateCluster()
-        } catch (error) {
-          console.error(error)
-        }
-      } else {
-        await updateCluster()
-      }
     }
 
     if (data && cluster) {
       const hasKarpenterFeature = cluster.features?.some((f) => f.id === 'KARPENTER')
       if (data.karpenter?.enabled === !hasKarpenterFeature) {
         openModal({
-          content: <ClusterMigrationModal onClose={closeModal} onSubmit={updateClusterKarpenterSubnets} />,
+          content: <ClusterMigrationModal onClose={closeModal} onSubmit={updateCluster} />,
         })
       } else {
-        await updateClusterKarpenterSubnets()
+        updateCluster()
       }
     }
   })

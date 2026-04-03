@@ -35,8 +35,7 @@ import {
   useModal,
 } from '@qovery/shared/ui'
 import { GpuResourcesSettings } from '../gpu-resources-settings/gpu-resources-settings'
-import { NodepoolsResourcesSettings } from '../nodepools-resources-settings/nodepools-resources-settings'
-import { ButtonPopoverSubnets } from './button-popover-subnets/button-popover-subnets'
+import NodepoolsResourcesSettings from '../nodepools-resources-settings/nodepools-resources-settings'
 import KarpenterImage from './karpenter-image.svg'
 import { listInstanceTypeFormatter } from './utils/list-instance-type-formatter'
 
@@ -142,8 +141,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
     props.cloudProvider,
   ])
 
-  const hasExistingVPC = Boolean(props.cluster?.features?.find((f) => f.id === 'EXISTING_VPC')?.value_object?.value)
-
   useEffect(() => {
     if (!props.fromDetail && props.isProduction && props.cloudProvider === 'AWS') {
       setValue('karpenter', {
@@ -212,35 +209,33 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   <div className="relative overflow-hidden">
                     <div className="p-4">
                       {props.fromDetail ? (
-                        <ButtonPopoverSubnets disabled={isKarpenter || hasExistingVPC}>
-                          <InputToggle
-                            className="max-w-[70%]"
-                            name={field.name}
-                            value={field.value}
-                            onChange={(e) => {
-                              const instanceType = cloudProviderInstanceTypes?.filter(
-                                (option) => option.name === watchInstanceType
+                        <InputToggle
+                          className="max-w-[70%]"
+                          name={field.name}
+                          value={field.value}
+                          onChange={(e) => {
+                            const instanceType = cloudProviderInstanceTypes?.filter(
+                              (option) => option.name === watchInstanceType
+                            )
+                            if (instanceType) {
+                              setValue(
+                                'karpenter.qovery_node_pools.requirements',
+                                convertToKarpenterRequirements(instanceType)
                               )
-                              if (instanceType) {
-                                setValue(
-                                  'karpenter.qovery_node_pools.requirements',
-                                  convertToKarpenterRequirements(instanceType)
-                                )
-                                setValue('karpenter.disk_size_in_gib', watchDiskSize)
-                                setValue(
-                                  'karpenter.default_service_architecture',
-                                  (instanceType[0]?.architecture ?? 'AMD64') as CpuArchitectureEnum
-                                )
-                              }
-                              field.onChange(e)
-                            }}
-                            title="Enable Karpenter"
-                            description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
-                            align="top"
-                            disabled={props.hasAlreadyKarpenter}
-                            small
-                          />
-                        </ButtonPopoverSubnets>
+                              setValue('karpenter.disk_size_in_gib', watchDiskSize)
+                              setValue(
+                                'karpenter.default_service_architecture',
+                                (instanceType[0]?.architecture ?? 'AMD64') as CpuArchitectureEnum
+                              )
+                            }
+                            field.onChange(e)
+                          }}
+                          title="Enable Karpenter"
+                          description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
+                          align="top"
+                          disabled={props.hasAlreadyKarpenter}
+                          small
+                        />
                       ) : (
                         <p className="mb-2 max-w-[70%] text-sm text-neutral-subtle">
                           Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time.
