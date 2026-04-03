@@ -24,7 +24,7 @@ import { hasGpuInstance } from '../utils/has-gpu-instance'
 function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clusterDeploymentStatus?: ClusterStatus }) {
   return match(clusterDeploymentStatus?.status)
     .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
-      <span className="text-ssm font-normal text-neutral-350">{upperCaseFirstLetter(s).replace('_', ' ')}...</span>
+      <span className="text-ssm font-normal text-neutral-subtle">{upperCaseFirstLetter(s).replace('_', ' ')}...</span>
     ))
     .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', 'DRY_RUN', (s) => (
       <LinkUI

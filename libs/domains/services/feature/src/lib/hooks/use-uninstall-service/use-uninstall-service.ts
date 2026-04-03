@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { mutations } from '@qovery/domains/services/data-access'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 
@@ -29,38 +28,23 @@ export function useUninstallService({
         queryKey: queries.services.deploymentHistory({ serviceId, serviceType }).queryKey,
       })
 
-      if (data.deployment_request_id) {
-        toast(
-          'SUCCESS',
-          'Your service is queuing',
-          undefined,
-          () =>
-            navigate({
-              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
-              params: {
-                organizationId,
-                projectId,
-                environmentId,
-                serviceId: data.id,
-              },
-            }),
-          undefined,
-          'See deployment queue'
-        )
-      } else {
-        // XXX: Waiting for the fix of https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1434
-        // to implement the correct deployment redirection using `execution_id`
-        toast(
-          'SUCCESS',
-          'Your service is uninstalling',
-          undefined,
-          () =>
-            // TODO new-nav: This should redirect to the deployment details page that we don't have yet (should redirect to '/stages' aka pipeline view, but without the executionId)
-            navigate({ to: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL() }),
-          undefined,
-          'See deployment logs'
-        )
-      }
+      toast(
+        'SUCCESS',
+        'Your service is queuing',
+        undefined,
+        () =>
+          navigate({
+            to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
+            params: {
+              organizationId,
+              projectId,
+              environmentId,
+              serviceId: data.id,
+            },
+          }),
+        undefined,
+        'See deployment queue'
+      )
     },
     meta: {
       notifyOnError: true,
