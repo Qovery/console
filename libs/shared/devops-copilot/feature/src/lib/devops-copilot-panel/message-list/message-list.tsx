@@ -28,7 +28,6 @@ export interface MessageListProps {
   threadId?: string
   pendingThreadId?: string
   renderStreamingMessageWithMermaid: typeof renderStreamingMessageWithMermaid
-  handleVote: (messageId: string, voteType: 'upvote' | 'downvote') => void
   isAtBottom: boolean
 }
 
@@ -49,7 +48,6 @@ export function MessageList({
   threadId,
   pendingThreadId,
   renderStreamingMessageWithMermaid,
-  handleVote,
   isAtBottom,
 }: MessageListProps) {
   const handleScrollToBottom = useCallback(() => {
@@ -95,7 +93,6 @@ export function MessageList({
               plan={plan}
               showPlans={showPlans}
               setShowPlans={setShowPlans}
-              handleVote={handleVote}
             />
           ))
           .exhaustive()
