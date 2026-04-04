@@ -28,7 +28,7 @@ function getValueByKey(key: string, data: { [key: string]: string }[] = []): str
 
 export function StepSummary({ organizationId }: StepSummaryProps) {
   const navigate = useNavigate()
-  const { generalData, kubeconfigData, resourcesData, featuresData, setCurrentStep, creationFlowUrl } =
+  const { generalData, kubeconfigData, resourcesData, featuresData, addonsData, setCurrentStep, creationFlowUrl } =
     useClusterContainerCreateContext()
   const { mutateAsync: createCluster, isLoading: isCreateClusterLoading } = useCreateCluster()
   const { mutateAsync: editCloudProviderInfo } = useEditCloudProviderInfo({ silently: true })
@@ -64,6 +64,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
     [navigate, creationFlowUrl]
   )
   const goToFeatures = useCallback(() => navigate({ to: `${creationFlowUrl}/features` }), [navigate, creationFlowUrl])
+  const goToAddons = useCallback(() => navigate({ to: `${creationFlowUrl}/addons` }), [navigate, creationFlowUrl])
   const goToGeneral = () => navigate({ to: `${creationFlowUrl}/general` })
   const goToResources = () => navigate({ to: `${creationFlowUrl}/resources` })
   const goToEksConfig = () => navigate({ to: `${creationFlowUrl}/eks` })
@@ -77,6 +78,13 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
       goToEksConfig()
       return
     }
+    if (generalData?.installation_type === 'MANAGED') {
+      return match(generalData?.cloud_provider)
+        .with('AWS', () => goToAddons())
+        .with('GCP', () => goToAddons())
+        .with('SCW', () => goToFeatures())
+        .otherwise(() => goToResources())
+    }
     return match(generalData?.cloud_provider)
       .with('AWS', () => goToFeatures())
       .with('GCP', () => goToFeatures())
@@ -85,7 +93,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
   }
 
   useEffect(() => {
-    if (!generalData?.name) {
+    if (!generalData) {
       navigate({ to: `${creationFlowUrl}/general` })
     }
   }, [creationFlowUrl, generalData, navigate])
@@ -362,10 +370,12 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           kubeconfigData={kubeconfigData}
           resourcesData={resourcesData}
           featuresData={featuresData}
+          addonsData={addonsData}
           detailInstanceType={detailInstanceType}
           goToResources={goToResources}
           goToGeneral={goToGeneral}
           goToFeatures={goToFeatures}
+          goToAddons={goToAddons}
           goToKubeconfig={goToKubeconfig}
           goToEksConfig={goToEksConfig}
         />

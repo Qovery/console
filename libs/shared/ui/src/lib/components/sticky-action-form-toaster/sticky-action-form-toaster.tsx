@@ -42,7 +42,7 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
   const submitButtonColorValue = submitButtonColor ?? 'green'
 
   return (
-    <div className={`sticky bottom-4 flex justify-center ${className} ${!visibleState ? 'mb-[52px]' : ''}`}>
+    <div className={`fixed inset-x-0 bottom-4 z-50 flex justify-center ${className} ${!visibleState ? 'hidden' : ''}`}>
       <div
         data-testid="sticky-action-form-toaster"
         className={`inline-flex items-center gap-10 rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-neutralInvert shadow-xl ${

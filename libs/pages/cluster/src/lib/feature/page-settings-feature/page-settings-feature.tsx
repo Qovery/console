@@ -88,8 +88,8 @@ export function PageSettingsFeature() {
           ...(eksAnywhereCluster ? [eksLink] : []),
           credentialsLink,
           ...(eksAnywhereCluster ? [] : [resourcesLink]),
-          imageRegistryLink,
           ...(eksAnywhereCluster ? [] : [networkLink]),
+          imageRegistryLink,
           advancedSettingsLink,
           dangerZoneLink,
         ]
@@ -107,8 +107,8 @@ export function PageSettingsFeature() {
     .with({ cloud_provider: 'GCP' }, () => [
       generalLink,
       credentialsLink,
-      imageRegistryLink,
       networkLink,
+      imageRegistryLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])

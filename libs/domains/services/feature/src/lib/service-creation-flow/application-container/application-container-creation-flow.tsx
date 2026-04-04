@@ -99,6 +99,7 @@ export function ApplicationContainerCreationFlow({
   const variablesForm = useForm<FlowVariableData>({
     defaultValues: {
       variables: [],
+      externalSecrets: [],
     },
     mode: 'onChange',
   })

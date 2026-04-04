@@ -54,8 +54,8 @@ describe('steps', () => {
 
     const result = steps(data)
 
-    expect(result).toHaveLength(4)
-    expect(result.map((s) => s.key)).toEqual(['general', 'resources', 'features', 'summary'])
+    expect(result).toHaveLength(5)
+    expect(result.map((s) => s.key)).toEqual(['general', 'resources', 'features', 'addons', 'summary'])
   })
 
   it('should return GCP managed steps', () => {
@@ -66,8 +66,8 @@ describe('steps', () => {
 
     const result = steps(data)
 
-    expect(result).toHaveLength(3)
-    expect(result.map((s) => s.key)).toEqual(['general', 'features', 'summary'])
+    expect(result).toHaveLength(4)
+    expect(result.map((s) => s.key)).toEqual(['general', 'features', 'addons', 'summary'])
   })
 
   it('should return self-managed steps', () => {

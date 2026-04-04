@@ -1,14 +1,20 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { match } from 'ts-pattern'
-import { useDeployService, useService } from '@qovery/domains/services/feature'
 import {
-  ImportEnvironmentVariableModalFeature,
-  VariableList,
-  VariablesActionToolbar,
-} from '@qovery/domains/variables/feature'
-import { Heading, LoaderSpinner, Section, toast, useModal } from '@qovery/shared/ui'
+  BuiltInTab,
+  CustomTab,
+  EXTERNAL_SECRETS_USE_CASES,
+  ExternalSecretsTab,
+  type ExternalSecretsUseCaseId,
+  useDeployService,
+  useService,
+} from '@qovery/domains/services/feature'
+import { Heading, Icon, LoaderSpinner, Navbar, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useUseCasePage } from '../../../../../../../../../../app/components/use-cases/use-case-context'
+
+type VariableTab = 'custom' | 'external-secrets' | 'built-in'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables'
@@ -19,6 +25,17 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   useDocumentTitle('Service - Variables')
+
+  const [activeTab, setActiveTab] = useState<VariableTab>('custom')
+  const { selectedCaseId } = useUseCasePage({
+    pageId: 'service-variables-external-secrets',
+    options: EXTERNAL_SECRETS_USE_CASES,
+    defaultCaseId: 'filled',
+  })
+  const hasClusterSecretManagerConfigured =
+    selectedCaseId === 'filled' ||
+    selectedCaseId === 'empty' ||
+    selectedCaseId === 'secret-manager-addon-not-redeployed'
 
   const { data: service } = useService({
     environmentId,
@@ -39,7 +56,6 @@ function RouteComponent() {
     projectId,
     environmentId,
   })
-  const { openModal, closeModal } = useModal()
 
   const toasterCallback = () => {
     if (!service?.serviceType) {
@@ -59,95 +75,67 @@ function RouteComponent() {
         </div>
       }
     >
-      <div className="container mx-auto flex min-h-page-container flex-col pt-6">
+      <div className="container mx-auto flex min-h-page-container flex-col pb-16 pt-6">
         <Section className="min-h-0 flex-1 gap-8">
           <div className="flex shrink-0 flex-col gap-6">
             <div className="flex justify-between">
               <Heading>Service variables</Heading>
-              {scope && (
-                <VariablesActionToolbar
-                  scope={scope}
-                  projectId={projectId}
-                  environmentId={environmentId}
-                  serviceId={serviceId}
-                  importEnvFileAccess="dropdown"
-                  onImportEnvFile={() =>
-                    openModal({
-                      content: (
-                        <ImportEnvironmentVariableModalFeature
-                          scope={scope}
-                          projectId={projectId}
-                          environmentId={environmentId}
-                          serviceId={serviceId}
-                          closeModal={closeModal}
-                          serviceType={service?.serviceType}
-                        />
-                      ),
-                      options: {
-                        width: 750,
-                      },
-                    })
-                  }
-                  onCreateVariable={() =>
-                    toast(
-                      'SUCCESS',
-                      'Creation success',
-                      'You need to redeploy your service for your changes to be applied.',
-                      toasterCallback,
-                      undefined,
-                      'Redeploy'
-                    )
-                  }
-                />
-              )}
             </div>
             <hr className="w-full border-neutral" />
           </div>
-          {scope && (
-            <div className="flex min-h-0 flex-1 flex-col gap-8">
-              <VariableList
-                scope={scope}
-                serviceId={serviceId}
-                organizationId={organizationId}
-                projectId={projectId}
-                environmentId={environmentId}
-                onCreateVariable={() => {
-                  toast(
-                    'SUCCESS',
-                    'Creation success',
-                    'You need to redeploy your service for your changes to be applied.',
-                    toasterCallback,
-                    undefined,
-                    'Redeploy'
-                  )
-                }}
-                onEditVariable={() => {
-                  toast(
-                    'SUCCESS',
-                    'Edition success',
-                    'You need to redeploy your service for your changes to be applied.',
-                    toasterCallback,
-                    undefined,
-                    'Redeploy'
-                  )
-                }}
-                onDeleteVariable={(variable) => {
-                  let name = variable.key
-                  if (name && name.length > 30) {
-                    name = name.substring(0, 30) + '...'
-                  }
-                  toast(
-                    'SUCCESS',
-                    'Deletion success',
-                    `${name} has been deleted. You need to redeploy your service for your changes to be applied.`,
-                    toasterCallback,
-                    undefined,
-                    'Redeploy'
-                  )
-                }}
-              />
+
+          {/* Tabs + content */}
+          <div className="flex flex-col">
+            {/* Tab strip — grey background */}
+            <div className="relative overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
+              <div className="bg-surface-neutral-subtle px-4 pb-2">
+                <Navbar.Root activeId={activeTab} className="relative">
+                  <Navbar.Item id="custom" onClick={() => setActiveTab('custom')}>
+                    <Icon iconName="sliders" iconStyle="regular" />
+                    Custom
+                  </Navbar.Item>
+                  <Navbar.Item id="external-secrets" onClick={() => setActiveTab('external-secrets')}>
+                    <Icon iconName="lock-keyhole" iconStyle="regular" />
+                    External secrets
+                  </Navbar.Item>
+                  <Navbar.Item id="built-in" onClick={() => setActiveTab('built-in')}>
+                    <Icon iconName="cube" iconStyle="regular" />
+                    Built-in
+                  </Navbar.Item>
+                </Navbar.Root>
+              </div>
             </div>
-          )}
+
+            {/* Tab content */}
+            <div className="relative -mt-2 rounded-lg">
+              <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+                {activeTab === 'custom' && scope && (
+                  <CustomTab
+                    scope={scope}
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    environmentId={environmentId}
+                    serviceId={serviceId}
+                    toasterCallback={toasterCallback}
+                    hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
+                  />
+                )}
+                {activeTab === 'external-secrets' && (
+                  <ExternalSecretsTab selectedCaseId={selectedCaseId as ExternalSecretsUseCaseId} />
+                )}
+                {activeTab === 'built-in' && scope && (
+                  <BuiltInTab
+                    scope={scope}
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    environmentId={environmentId}
+                    serviceId={serviceId}
+                    toasterCallback={toasterCallback}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
         </Section>
       </div>
     </Suspense>
