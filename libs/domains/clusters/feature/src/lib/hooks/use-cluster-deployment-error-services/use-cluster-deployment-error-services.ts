@@ -12,7 +12,6 @@ const DEPLOYMENT_ERROR_STATES = [
   'DELETE_ERROR',
   'STOP_ERROR',
   'RESTART_ERROR',
-  'INVALID_CREDENTIALS',
 ] as const satisfies Status['state'][]
 
 interface ClusterServiceDescriptor {
@@ -53,8 +52,10 @@ function getClusterServices(environments: ClusterEnvironmentResponse[]): Cluster
   )
 }
 
-function isDeploymentErrorState(state: Status['state'] | undefined): state is (typeof DEPLOYMENT_ERROR_STATES)[number] {
-  return state !== undefined && DEPLOYMENT_ERROR_STATES.includes(state)
+const deploymentErrorStatesSet = new Set<Status['state']>(DEPLOYMENT_ERROR_STATES)
+
+function isDeploymentErrorState(state: Status['state'] | undefined) {
+  return state !== undefined && deploymentErrorStatesSet.has(state)
 }
 
 function formatDeploymentStateLabel(state: Status['state']) {
@@ -87,33 +88,20 @@ export function useClusterDeploymentErrorServices({
 
   const { allErrorServices, errorServiceCount, errorServices, hiddenErrorServiceCount } = useMemo(() => {
     const allErrorServices = clusterServices
-      .map((service, index) => ({
-        ...service,
-        state: deploymentStates[index],
-      }))
-      .filter(({ state }): state is ClusterServiceDescriptor & { state: Status['state'] } =>
-        isDeploymentErrorState(state)
-      )
-      .map(
-        ({
-          environmentId,
-          environmentName,
-          projectId,
-          projectName,
-          serviceId,
-          serviceName,
-          state,
-        }): ClusterDeploymentErrorServiceItem => ({
-          environmentId,
-          environmentName,
-          projectId,
-          projectName,
-          serviceId,
-          serviceName,
+      .map((service, index): ClusterDeploymentErrorServiceItem | null => {
+        const state = deploymentStates[index]
+
+        if (state === undefined || !isDeploymentErrorState(state)) {
+          return null
+        }
+
+        return {
+          ...service,
           state,
           stateLabel: formatDeploymentStateLabel(state),
-        })
-      )
+        }
+      })
+      .filter((service): service is ClusterDeploymentErrorServiceItem => service !== null)
 
     return {
       allErrorServices,

@@ -72,7 +72,6 @@ describe('useClusterDeploymentErrorServices', () => {
 
     setServiceDeploymentState(queryClient, 'env-1', 'service-1', 'DEPLOYMENT_ERROR')
     setServiceDeploymentState(queryClient, 'env-1', 'service-2', 'BUILD_ERROR')
-    setServiceDeploymentState(queryClient, 'env-1', 'service-3', 'INVALID_CREDENTIALS')
     setServiceDeploymentState(queryClient, 'env-2', 'service-4', 'STOP_ERROR')
     setServiceDeploymentState(queryClient, 'env-2', 'service-5', 'DELETE_ERROR')
     setServiceDeploymentState(queryClient, 'env-3', 'service-6', 'RESTART_ERROR')
@@ -85,7 +84,7 @@ describe('useClusterDeploymentErrorServices', () => {
     )
 
     await waitFor(() => {
-      expect(result.current.errorServiceCount).toBe(6)
+      expect(result.current.errorServiceCount).toBe(5)
     })
 
     expect(result.current.serviceCount).toBe(6)
@@ -111,16 +110,6 @@ describe('useClusterDeploymentErrorServices', () => {
         stateLabel: 'Build error',
       },
       {
-        environmentId: 'env-1',
-        environmentName: 'Production',
-        projectId: 'project-1',
-        projectName: 'App',
-        serviceId: 'service-3',
-        serviceName: 'cron',
-        state: 'INVALID_CREDENTIALS',
-        stateLabel: 'Invalid credentials',
-      },
-      {
         environmentId: 'env-2',
         environmentName: 'Billing',
         projectId: 'project-2',
@@ -140,8 +129,18 @@ describe('useClusterDeploymentErrorServices', () => {
         state: 'DELETE_ERROR',
         stateLabel: 'Delete error',
       },
+      {
+        environmentId: 'env-3',
+        environmentName: 'Analytics',
+        projectId: 'project-3',
+        projectName: 'Data',
+        serviceId: 'service-6',
+        serviceName: 'etl',
+        state: 'RESTART_ERROR',
+        stateLabel: 'Restart error',
+      },
     ])
-    expect(result.current.hiddenErrorServiceCount).toBe(1)
+    expect(result.current.hiddenErrorServiceCount).toBe(0)
   })
 
   it('should ignore deployment statuses that are not errors', async () => {
