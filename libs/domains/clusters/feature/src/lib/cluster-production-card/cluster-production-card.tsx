@@ -133,9 +133,9 @@ export function ClusterProductionCard({ cluster, clusterStatus }: ClusterProduct
                             className="flex items-center justify-between gap-2 truncate rounded-md border border-transparent p-3 text-left text-ssm font-medium text-neutral hover:border-neutral hover:bg-surface-neutral-component"
                           >
                             <div className="flex items-center gap-2">
-                              <Truncate text={environmentName} truncateLimit={30} />
-                              <span className="text-surface-neutral-solid">/</span>
                               <Truncate text={projectName} truncateLimit={30} />{' '}
+                              <span className="text-surface-neutral-solid">/</span>
+                              <Truncate text={environmentName} truncateLimit={30} />
                               <span className="text-surface-neutral-solid">/</span>
                               <Truncate text={serviceName} truncateLimit={30} />
                             </div>
