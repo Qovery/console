@@ -1,5 +1,6 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Controller, type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { P, match } from 'ts-pattern'
@@ -25,10 +26,12 @@ import { CopyButton } from '@qovery/shared/ui'
 import { useClusterCloudProviderInfo } from '../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
 
 type ClusterCredentialsFormValues = {
-  type: 'STS' | 'STATIC'
+  type: 'STS' | 'STATIC' | 'EKS_ANYWHERE_VSPHERE_ROLE' | 'EKS_ANYWHERE_VSPHERE_STATIC'
   name: string
   access_key_id?: string
   secret_access_key?: string
+  vsphere_user?: string
+  vsphere_password?: string
   scaleway_organization_id?: string
   scaleway_project_id?: string
   scaleway_access_key?: string
@@ -42,12 +45,21 @@ type ClusterCredentialsFormValues = {
   id?: string
 }
 
+export type ClusterCredentialAuthType = ClusterCredentialsFormValues['type']
+const AWS_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = ['STS', 'STATIC']
+const EKS_ANYWHERE_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = [
+  'EKS_ANYWHERE_VSPHERE_ROLE',
+  'EKS_ANYWHERE_VSPHERE_STATIC',
+]
+
 export interface ClusterCredentialsModalProps {
   organizationId: string
   clusterId?: string
   onClose: (response?: ClusterCredentials) => void
   credential?: ClusterCredentials
   cloudProvider?: CloudProviderEnum
+  defaultCredentialType?: ClusterCredentialAuthType
+  allowedCredentialTypes?: ClusterCredentialAuthType[]
 }
 
 export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum) => {
@@ -57,24 +69,54 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
 
   return match(cloudProvider)
     .with('AWS', (cp) => {
-      if (data['type'] === 'STS') {
-        return {
+      return match(data['type'])
+        .with('STS', () => ({
           cloudProvider: cp,
           payload: {
             ...currentData,
+            type: 'AWS_ROLE' as const,
             role_arn: data['role_arn'],
           },
-        }
-      }
-
-      return {
-        cloudProvider: cp,
-        payload: {
-          ...currentData,
-          access_key_id: data['access_key_id'],
-          secret_access_key: data['secret_access_key'],
-        },
-      }
+        }))
+        .with('STATIC', () => ({
+          cloudProvider: cp,
+          payload: {
+            ...currentData,
+            type: 'AWS_STATIC' as const,
+            access_key_id: data['access_key_id'],
+            secret_access_key: data['secret_access_key'],
+          },
+        }))
+        .with('EKS_ANYWHERE_VSPHERE_ROLE', () => ({
+          cloudProvider: cp,
+          payload: {
+            ...currentData,
+            type: 'EKS_ANYWHERE_VSPHERE_ROLE' as const,
+            role_arn: data['role_arn'],
+            vsphere_user: data['vsphere_user'],
+            vsphere_password: data['vsphere_password'],
+          },
+        }))
+        .with('EKS_ANYWHERE_VSPHERE_STATIC', () => ({
+          cloudProvider: cp,
+          payload: {
+            ...currentData,
+            type: 'EKS_ANYWHERE_VSPHERE_STATIC' as const,
+            access_key_id: data['access_key_id'],
+            secret_access_key: data['secret_access_key'],
+            vsphere_user: data['vsphere_user'],
+            vsphere_password: data['vsphere_password'],
+          },
+        }))
+        .otherwise(() => ({
+          cloudProvider: cp,
+          payload: {
+            ...currentData,
+            type: 'AWS_STATIC' as const,
+            access_key_id: data['access_key_id'],
+            secret_access_key: data['secret_access_key'],
+          },
+        }))
     })
     .with('SCW', (cp) => ({
       cloudProvider: cp,
@@ -148,7 +190,10 @@ export function ClusterCredentialsModal({
   onClose,
   credential,
   cloudProvider = 'AWS',
+  defaultCredentialType,
+  allowedCredentialTypes,
 }: ClusterCredentialsModalProps) {
+  const isEksAnywhereEnabled = Boolean(useFeatureFlagEnabled('eks-anywhere'))
   const { enableAlertClickOutside } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -188,43 +233,76 @@ export function ClusterCredentialsModal({
   })
 
   const isEdit = !!credential
+  const inferredCredentialTypes = useMemo(
+    () =>
+      match(credential?.object_type)
+        .with('EKS_ANYWHERE_VSPHERE', () => EKS_ANYWHERE_CREDENTIAL_TYPES)
+        .with('AWS', 'AWS_ROLE', () => AWS_CREDENTIAL_TYPES)
+        .otherwise(() => AWS_CREDENTIAL_TYPES),
+    [credential?.object_type]
+  )
+  const awsAuthTypeOptions = useMemo(
+    () =>
+      (allowedCredentialTypes && allowedCredentialTypes.length > 0
+        ? allowedCredentialTypes
+        : isEdit
+          ? inferredCredentialTypes
+          : AWS_CREDENTIAL_TYPES
+      ).filter((type) =>
+        type === 'EKS_ANYWHERE_VSPHERE_ROLE' || type === 'EKS_ANYWHERE_VSPHERE_STATIC' ? isEksAnywhereEnabled : true
+      ),
+    [allowedCredentialTypes, inferredCredentialTypes, isEdit, isEksAnywhereEnabled]
+  )
+
+  const defaultType: ClusterCredentialsFormValues['type'] =
+    credential?.object_type === 'EKS_ANYWHERE_VSPHERE'
+      ? credential.role_arn
+        ? 'EKS_ANYWHERE_VSPHERE_ROLE'
+        : 'EKS_ANYWHERE_VSPHERE_STATIC'
+      : !isEdit && defaultCredentialType
+        ? defaultCredentialType
+        : credential?.object_type === 'AWS_ROLE' || (!isEdit && cloudProviderLocal === 'AWS')
+          ? 'STS'
+          : 'STATIC'
+  const initialType = awsAuthTypeOptions.includes(defaultType) ? defaultType : awsAuthTypeOptions[0] ?? 'STS'
 
   const methods = useForm<ClusterCredentialsFormValues>({
     mode: 'onChange',
-    defaultValues:
-      credential?.object_type === 'AWS_ROLE' || (!isEdit && cloudProviderLocal === 'AWS')
-        ? {
-            type: 'STS',
-            name: credential?.name || '',
-            role_arn: credential?.role_arn || '',
-          }
-        : {
-            type: 'STATIC',
-            name: credential?.name || '',
-            access_key_id: match(credential)
-              .with({ access_key_id: P.string }, (c) => c.access_key_id)
-              .otherwise(() => undefined),
-            scaleway_organization_id: match(credential)
-              .with({ scaleway_organization_id: P.string }, (c) => c.scaleway_organization_id)
-              .otherwise(() => undefined),
-            scaleway_project_id: match(credential)
-              .with({ scaleway_project_id: P.string }, (c) => c.scaleway_project_id)
-              .otherwise(() => undefined),
-            scaleway_access_key: match(credential)
-              .with({ scaleway_access_key: P.string }, (c) => c.scaleway_access_key)
-              .otherwise(() => undefined),
-            scaleway_secret_key: undefined,
-            gcp_credentials: undefined,
-            azure_tenant_id: match(credential)
-              .with({ azure_tenant_id: P.string }, (c) => c.azure_tenant_id)
-              .otherwise(() => undefined),
-            azure_subscription_id: match(credential)
-              .with({ azure_subscription_id: P.string }, (c) => c.azure_subscription_id)
-              .otherwise(() => undefined),
-            azure_application_id: match(credential)
-              .with({ azure_application_id: P.string }, (c) => c.azure_application_id)
-              .otherwise(() => undefined),
-          },
+    defaultValues: {
+      type: initialType,
+      name: credential?.name || '',
+      role_arn: match(credential)
+        .with({ role_arn: P.string }, (c) => c.role_arn)
+        .otherwise(() => undefined),
+      access_key_id: match(credential)
+        .with({ access_key_id: P.string }, (c) => c.access_key_id)
+        .otherwise(() => undefined),
+      vsphere_user: match(credential)
+        .with({ vsphere_user: P.string }, (c) => c.vsphere_user)
+        .otherwise(() => undefined),
+      vsphere_password: undefined,
+      secret_access_key: undefined,
+      scaleway_organization_id: match(credential)
+        .with({ scaleway_organization_id: P.string }, (c) => c.scaleway_organization_id)
+        .otherwise(() => undefined),
+      scaleway_project_id: match(credential)
+        .with({ scaleway_project_id: P.string }, (c) => c.scaleway_project_id)
+        .otherwise(() => undefined),
+      scaleway_access_key: match(credential)
+        .with({ scaleway_access_key: P.string }, (c) => c.scaleway_access_key)
+        .otherwise(() => undefined),
+      scaleway_secret_key: undefined,
+      gcp_credentials: undefined,
+      azure_tenant_id: match(credential)
+        .with({ azure_tenant_id: P.string }, (c) => c.azure_tenant_id)
+        .otherwise(() => undefined),
+      azure_subscription_id: match(credential)
+        .with({ azure_subscription_id: P.string }, (c) => c.azure_subscription_id)
+        .otherwise(() => undefined),
+      azure_application_id: match(credential)
+        .with({ azure_application_id: P.string }, (c) => c.azure_application_id)
+        .otherwise(() => undefined),
+    },
   })
 
   const isEditDirty = isEdit && methods.formState.isDirty
@@ -323,6 +401,10 @@ export function ClusterCredentialsModal({
   const watchType = methods.watch('type')
   const watchAzureApplicationId = methods.watch('azure_application_id')
   const watchAzureSubscriptionId = methods.watch('azure_subscription_id')
+  const isAwsStsCredential = watchType === 'STS'
+  const isAwsStaticCredential = watchType === 'STATIC'
+  const isEksAnywhereRoleCredential = watchType === 'EKS_ANYWHERE_VSPHERE_ROLE'
+  const isEksAnywhereStaticCredential = watchType === 'EKS_ANYWHERE_VSPHERE_STATIC'
 
   const submitLabel = isEdit
     ? 'Confirm'
@@ -350,7 +432,7 @@ export function ClusterCredentialsModal({
         description={
           <span className="flex gap-1">
             Follow these steps and give Qovery access to your {cloudProviderLocal} account.
-            {((watchType === 'STS' && cloudProviderLocal === 'AWS') || cloudProviderLocal === 'GCP') && (
+            {((isAwsStsCredential && cloudProviderLocal === 'AWS') || cloudProviderLocal === 'GCP') && (
               <ExternalLink
                 href={match(cloudProviderLocal)
                   .with('AWS', () => 'https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster')
@@ -388,15 +470,25 @@ export function ClusterCredentialsModal({
                   value={field.value}
                   label="Authentication type"
                   error={error?.message}
-                  options={[
-                    { label: 'Assume role via STS (preferred)', value: 'STS' },
-                    { label: 'Static credentials', value: 'STATIC' },
-                  ]}
+                  options={awsAuthTypeOptions.map((type) =>
+                    match(type)
+                      .with('STS', () => ({ label: 'Assume role via STS (preferred)', value: 'STS' }))
+                      .with('STATIC', () => ({ label: 'Static credentials', value: 'STATIC' }))
+                      .with('EKS_ANYWHERE_VSPHERE_ROLE', () => ({
+                        label: 'EKS Anywhere on vSphere role (preferred)',
+                        value: 'EKS_ANYWHERE_VSPHERE_ROLE',
+                      }))
+                      .with('EKS_ANYWHERE_VSPHERE_STATIC', () => ({
+                        label: 'EKS Anywhere on vSphere static',
+                        value: 'EKS_ANYWHERE_VSPHERE_STATIC',
+                      }))
+                      .exhaustive()
+                  )}
                 />
               )}
             />
           )}
-          {watchType === 'STATIC' && (
+          {(isAwsStaticCredential || isEksAnywhereStaticCredential) && (
             <>
               {cloudProviderLocal === 'AWS' && (
                 <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
@@ -453,7 +545,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
               )}
             </>
           )}
-          {watchType === 'STS' ? (
+          {isAwsStsCredential || isEksAnywhereRoleCredential ? (
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
                 <h2 className="text-sm font-medium text-neutral-400">1. Connect to your AWS Console</h2>
@@ -512,6 +604,53 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                     />
                   )}
                 />
+                {isEksAnywhereRoleCredential && (
+                  <>
+                    <Controller
+                      name="vsphere_user"
+                      control={methods.control}
+                      rules={{
+                        required: 'Please enter a vSphere user.',
+                      }}
+                      render={({ field, fieldState: { error } }) => (
+                        <InputText
+                          dataTestId="input-vsphere-user"
+                          name={field.name}
+                          onChange={field.onChange}
+                          value={field.value}
+                          label="vSphere user"
+                          error={error?.message}
+                        />
+                      )}
+                    />
+                    {isEditDirty && (
+                      <>
+                        <hr />
+                        <span className="text-sm text-neutral-350">Confirm your vSphere password</span>
+                      </>
+                    )}
+                    {(!isEdit || isEditDirty) && (
+                      <Controller
+                        name="vsphere_password"
+                        control={methods.control}
+                        rules={{
+                          required: 'Please enter a vSphere password.',
+                        }}
+                        render={({ field, fieldState: { error } }) => (
+                          <InputText
+                            dataTestId="input-vsphere-password"
+                            type="password"
+                            name={field.name}
+                            onChange={field.onChange}
+                            value={field.value}
+                            label="vSphere password"
+                            error={error?.message}
+                          />
+                        )}
+                      />
+                    )}
+                  </>
+                )}
                 <CalloutEdit isEdit={isEdit} organizationId={organizationId} clusterId={clusterId} />
               </div>
             </div>
@@ -541,7 +680,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   />
                 )}
               />
-              {cloudProviderLocal === 'AWS' && (
+              {(isAwsStaticCredential || isEksAnywhereStaticCredential) && cloudProviderLocal === 'AWS' && (
                 <>
                   <Controller
                     name="access_key_id"
@@ -585,6 +724,53 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                         />
                       )}
                     />
+                  )}
+                  {isEksAnywhereStaticCredential && (
+                    <>
+                      <Controller
+                        name="vsphere_user"
+                        control={methods.control}
+                        rules={{
+                          required: 'Please enter a vSphere user.',
+                        }}
+                        render={({ field, fieldState: { error } }) => (
+                          <InputText
+                            dataTestId="input-vsphere-user"
+                            name={field.name}
+                            onChange={field.onChange}
+                            value={field.value}
+                            label="vSphere user"
+                            error={error?.message}
+                          />
+                        )}
+                      />
+                      {isEditDirty && (
+                        <>
+                          <hr />
+                          <span className="text-sm text-neutral-350">Confirm your vSphere password</span>
+                        </>
+                      )}
+                      {(!isEdit || isEditDirty) && (
+                        <Controller
+                          name="vsphere_password"
+                          control={methods.control}
+                          rules={{
+                            required: 'Please enter a vSphere password.',
+                          }}
+                          render={({ field, fieldState: { error } }) => (
+                            <InputText
+                              dataTestId="input-vsphere-password"
+                              type="password"
+                              name={field.name}
+                              onChange={field.onChange}
+                              value={field.value}
+                              label="vSphere password"
+                              error={error?.message}
+                            />
+                          )}
+                        />
+                      )}
+                    </>
                   )}
                 </>
               )}
