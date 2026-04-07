@@ -16,6 +16,7 @@ const convertToCloudProviderEnum = (cloudProvider: ClusterCredentials['object_ty
   return match(cloudProvider)
     .with('AWS', () => CloudProviderEnum.AWS)
     .with('AWS_ROLE', () => CloudProviderEnum.AWS)
+    .with('EKS_ANYWHERE_VSPHERE', () => CloudProviderEnum.AWS)
     .with('AZURE', () => CloudProviderEnum.AZURE)
     .with('SCW', () => CloudProviderEnum.SCW)
     .with('OTHER', () => CloudProviderEnum.ON_PREMISE)

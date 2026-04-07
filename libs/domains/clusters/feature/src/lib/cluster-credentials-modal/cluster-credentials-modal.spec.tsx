@@ -92,6 +92,7 @@ describe('ClusterCredentialsModal', () => {
     expect(result).toEqual({
       cloudProvider: 'AWS',
       payload: {
+        type: 'AWS_ROLE',
         name: 'test-cred',
         role_arn: 'arn:aws:iam::123456789012:role/test-role',
       },

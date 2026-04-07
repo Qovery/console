@@ -60,6 +60,7 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
         return {
           cloudProvider: cp,
           payload: {
+            type: 'AWS_ROLE' as const,
             ...currentData,
             role_arn: data['role_arn'],
           },
@@ -69,6 +70,7 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
       return {
         cloudProvider: cp,
         payload: {
+          type: 'AWS_STATIC' as const,
           ...currentData,
           access_key_id: data['access_key_id'],
           secret_access_key: data['secret_access_key'],
