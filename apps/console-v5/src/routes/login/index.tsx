@@ -263,7 +263,7 @@ function RouteComponent() {
       </Link>
 
       <div className="relative mx-auto flex min-h-screen w-full lg:h-screen">
-        <div className="relative z-20 flex w-full items-center justify-center px-2 sm:px-16 lg:flex-[1_1_0%] lg:px-8">
+        <div className="relative z-modal flex w-full items-center justify-center px-2 sm:px-16 lg:flex-[1_1_0%] lg:px-10">
           <motion.div
             layout
             transition={LOGIN_PANEL_LAYOUT_TRANSITION}
@@ -528,7 +528,7 @@ function RouteComponent() {
           <div className="absolute inset-0 z-10 [-webkit-mask-image:radial-gradient(225.19%_100%_at_50%_0%,#D9D9D9_72%,rgba(217,217,217,0)_88%)] [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:100%_100%] [mask-image:radial-gradient(225.19%_100%_at_50%_0%,#D9D9D9_72%,rgba(217,217,217,0)_88%)] [mask-repeat:no-repeat] [mask-size:100%_100%]">
             <div
               key={screenStackCycleKey}
-              className="relative ml-32 mt-12 aspect-[2940/2080] h-[80%] skew-x-[15deg] select-none lg:ml-52"
+              className="relative top-1/2 -mt-10 ml-32 aspect-[2940/2080] h-[80%] max-h-[800px] -translate-y-1/2 skew-x-[15deg] select-none xl:ml-44 xl:max-h-[1200px] 2xl:ml-52"
             >
               <motion.img
                 src={PRODUCT_SHOTS[frontShotIndex]}

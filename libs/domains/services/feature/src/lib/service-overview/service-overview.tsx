@@ -71,7 +71,7 @@ function ServiceOverviewContent({
     return (
       <>
         <NeedRedeployFlag />
-        <Section className="flex flex-1 grow flex-col gap-6 overflow-auto px-8 pb-8 pt-6">
+        <Section className="flex flex-1 grow flex-col gap-6 overflow-auto pb-8 pt-6">
           <ServiceHeader environment={environment} serviceId={service.id} service={service} />
           {isDatabaseManaged ? (
             <div className="flex flex-col items-center gap-1 border border-neutral bg-surface-neutral-subtle py-10 text-sm text-neutral">
