@@ -7,8 +7,8 @@ import { EmptyState, Heading, Icon, Link, LogoIcon, Section, useModal } from '@q
 import { twMerge } from '@qovery/shared/util-js'
 import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
 import { ClusterProductionCard } from '../cluster-production-card/cluster-production-card'
-import useClusterStatuses from '../hooks/use-cluster-statuses/use-cluster-statuses'
-import useClusters from '../hooks/use-clusters/use-clusters'
+import { useClusterStatuses } from '../hooks/use-cluster-statuses/use-cluster-statuses'
+import { useClusters } from '../hooks/use-clusters/use-clusters'
 
 type ClusterOption = {
   highlight: boolean
