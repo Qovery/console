@@ -218,6 +218,33 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
               aria-checked="false"
               class="group inline-flex shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong mr-3 h-4 w-4"
               data-state="unchecked"
+              id="GATEWAY_API_ROUTES"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="scopes.GATEWAY_API_ROUTES"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <label
+              class="text-sm font-medium text-neutral"
+              for="GATEWAY_API_ROUTES"
+            >
+              GATEWAY_API_ROUTES
+            </label>
+          </div>
+          <div
+            class="mb-2 flex items-center last:mb-0"
+          >
+            <button
+              aria-checked="false"
+              class="group inline-flex shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong mr-3 h-4 w-4"
+              data-state="unchecked"
               id="HPA"
               role="checkbox"
               type="button"
