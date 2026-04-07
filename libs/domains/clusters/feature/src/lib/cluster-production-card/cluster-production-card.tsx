@@ -1,12 +1,14 @@
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import { useNavigate } from '@tanstack/react-router'
 import type { Cluster, ClusterStatus } from 'qovery-typescript-axios'
-import { type KeyboardEvent, type MouseEvent } from 'react'
+import { type KeyboardEvent, useMemo } from 'react'
 import { Icon, StatusChip, Truncate } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 import { ClusterRunningStatusIndicator } from '../cluster-running-status-indicator/cluster-running-status-indicator'
+import { useClusterDeploymentErrorServices } from '../hooks/use-cluster-deployment-error-services/use-cluster-deployment-error-services'
 import { useClusterRunningErrorServices } from '../hooks/use-cluster-running-error-services/use-cluster-running-error-services'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
+import { ClusterServiceDeploymentStatusSockets } from '../hooks/use-cluster-service-deployment-status-socket/cluster-service-deployment-status-sockets'
 import { ClusterServiceRunningStatusSockets } from '../hooks/use-cluster-service-running-status-socket/cluster-service-running-status-sockets'
 
 export interface ClusterProductionCardProps {
@@ -14,16 +16,57 @@ export interface ClusterProductionCardProps {
   clusterStatus?: ClusterStatus
 }
 
+const MAX_DISPLAYED_ISSUES = 20
+
 export function ClusterProductionCard({ cluster, clusterStatus }: ClusterProductionCardProps) {
   const navigate = useNavigate()
 
   useClusterRunningStatusSocket({ organizationId: cluster.organization.id, clusterId: cluster.id })
 
-  const { serviceCount, errorServiceCount, errorServices, hiddenErrorServiceCount } = useClusterRunningErrorServices({
+  const {
+    serviceCount,
+    allErrorServices: allRunningErrorServices,
+    errorServiceCount: runningErrorServiceCount,
+  } = useClusterRunningErrorServices({
     organizationId: cluster.organization.id,
     clusterId: cluster.id,
   })
-  const shouldShowSuccessState = serviceCount > 0 && errorServiceCount === 0 && clusterStatus?.status === 'DEPLOYED'
+  const { allErrorServices: allDeploymentErrorServices, errorServiceCount: deploymentErrorServiceCount } =
+    useClusterDeploymentErrorServices({
+      organizationId: cluster.organization.id,
+      clusterId: cluster.id,
+    })
+  const totalErrorCount = runningErrorServiceCount + deploymentErrorServiceCount
+
+  const { displayedErrorServices, hiddenErrorCount } = useMemo(() => {
+    const errorServices = [
+      ...allRunningErrorServices.map((service) => ({
+        ...service,
+        issueId: `${service.serviceId}-running`,
+        issueLabel: 'Error',
+        issueType: 'running' as const,
+      })),
+      ...allDeploymentErrorServices.map((service) => ({
+        ...service,
+        issueId: `${service.serviceId}-deployment`,
+        issueLabel: service.stateLabel,
+        issueType: 'deployment' as const,
+      })),
+    ].sort((left, right) => {
+      const scopeComparison = `${left.projectName}/${left.environmentName}/${left.serviceName}`.localeCompare(
+        `${right.projectName}/${right.environmentName}/${right.serviceName}`
+      )
+
+      return scopeComparison !== 0 ? scopeComparison : left.issueLabel.localeCompare(right.issueLabel)
+    })
+
+    return {
+      displayedErrorServices: errorServices.slice(0, MAX_DISPLAYED_ISSUES),
+      hiddenErrorCount: Math.max(errorServices.length - MAX_DISPLAYED_ISSUES, 0),
+    }
+  }, [allDeploymentErrorServices, allRunningErrorServices])
+
+  const shouldShowSuccessState = serviceCount > 0 && totalErrorCount === 0 && clusterStatus?.status === 'DEPLOYED'
 
   const navigateToOverview = () =>
     navigate({
@@ -64,6 +107,7 @@ export function ClusterProductionCard({ cluster, clusterStatus }: ClusterProduct
   return (
     <>
       <ClusterServiceRunningStatusSockets organizationId={cluster.organization.id} clusterId={cluster.id} />
+      <ClusterServiceDeploymentStatusSockets organizationId={cluster.organization.id} clusterId={cluster.id} />
 
       <div
         role="link"
@@ -97,8 +141,8 @@ export function ClusterProductionCard({ cluster, clusterStatus }: ClusterProduct
               </span>
             </div>
 
-            {errorServiceCount > 0 && (
-              <AccordionPrimitive.Root type="single" collapsible defaultValue="errors">
+            {totalErrorCount > 0 && (
+              <AccordionPrimitive.Root type="single" collapsible>
                 <AccordionPrimitive.Item
                   value="errors"
                   className="overflow-hidden rounded-md border border-neutral bg-surface-neutral-subtle text-ssm text-negative"
@@ -110,7 +154,7 @@ export function ClusterProductionCard({ cluster, clusterStatus }: ClusterProduct
                   >
                     <p className="flex items-center gap-1.5 font-medium text-negative">
                       <Icon iconName="circle-exclamation" iconStyle="solid" />
-                      {errorServiceCount} {pluralize(errorServiceCount, 'service', 'services')} in running error
+                      {totalErrorCount} {pluralize(totalErrorCount, 'issue', 'issues')} ongoing on your services
                     </p>
                     <Icon
                       iconName="chevron-down"
@@ -120,10 +164,20 @@ export function ClusterProductionCard({ cluster, clusterStatus }: ClusterProduct
 
                   <AccordionPrimitive.Content className="data-[state=closed]:slidein-up-sm-faded overflow-hidden data-[state=open]:animate-slidein-down-sm-faded">
                     <div className="flex flex-col px-3 pb-2">
-                      {errorServices.map(
-                        ({ environmentId, environmentName, projectId, projectName, serviceId, serviceName, state }) => (
+                      {displayedErrorServices.map(
+                        ({
+                          environmentId,
+                          environmentName,
+                          issueId,
+                          issueLabel,
+                          issueType,
+                          projectId,
+                          projectName,
+                          serviceId,
+                          serviceName,
+                        }) => (
                           <button
-                            key={serviceId}
+                            key={issueId}
                             type="button"
                             onClick={(event) => {
                               event.stopPropagation()
@@ -140,17 +194,20 @@ export function ClusterProductionCard({ cluster, clusterStatus }: ClusterProduct
                               <Truncate text={serviceName} truncateLimit={30} />
                             </div>
                             <span className="flex items-center gap-1.5 text-negative">
-                              <StatusChip status="ERROR" />
-                              Error
+                              {issueType === 'running' ? (
+                                <StatusChip status="ERROR" />
+                              ) : (
+                                <Icon iconName="rocket" iconStyle="regular" />
+                              )}
+                              {issueLabel}
                             </span>
                           </button>
                         )
                       )}
 
-                      {hiddenErrorServiceCount > 0 && (
+                      {hiddenErrorCount > 0 && (
                         <p className="text-ssm text-neutral-subtle">
-                          +{hiddenErrorServiceCount} more {pluralize(hiddenErrorServiceCount, 'service', 'services')} in
-                          error
+                          +{hiddenErrorCount} more {pluralize(hiddenErrorCount, 'issue', 'issues')}
                         </p>
                       )}
                     </div>

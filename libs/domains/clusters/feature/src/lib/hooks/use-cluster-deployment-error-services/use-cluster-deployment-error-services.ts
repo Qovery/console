@@ -1,10 +1,19 @@
-import { useQueries, useQuery } from '@tanstack/react-query'
-import { type ClusterEnvironmentResponse } from 'qovery-typescript-axios'
+import { useQueries } from '@tanstack/react-query'
+import { type ClusterEnvironmentResponse, type Status } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
 import { useEnvironmentsByCluster } from '../use-environments-by-cluster/use-environments-by-cluster'
 
-const MAX_DISPLAYED_ERROR_SERVICES = 5
+const MAX_DISPLAYED_ERROR_SERVICES = 20
+const DEPLOYMENT_ERROR_STATES = [
+  'BUILD_ERROR',
+  'DEPLOYMENT_ERROR',
+  'DELETE_ERROR',
+  'STOP_ERROR',
+  'RESTART_ERROR',
+  'INVALID_CREDENTIALS',
+] as const satisfies Status['state'][]
 
 interface ClusterServiceDescriptor {
   environmentId: string
@@ -15,16 +24,18 @@ interface ClusterServiceDescriptor {
   serviceName: string
 }
 
-export interface ClusterRunningErrorServiceItem {
+export interface ClusterDeploymentErrorServiceItem {
   environmentId: string
   environmentName: string
   projectId: string
   projectName: string
   serviceId: string
   serviceName: string
+  state: Status['state']
+  stateLabel: string
 }
 
-export interface UseClusterRunningErrorServicesProps {
+export interface UseClusterDeploymentErrorServicesProps {
   organizationId: string
   clusterId: string
 }
@@ -42,26 +53,28 @@ function getClusterServices(environments: ClusterEnvironmentResponse[]): Cluster
   )
 }
 
-export function useClusterRunningErrorServices({ organizationId, clusterId }: UseClusterRunningErrorServicesProps) {
+function isDeploymentErrorState(state: Status['state'] | undefined): state is (typeof DEPLOYMENT_ERROR_STATES)[number] {
+  return state !== undefined && DEPLOYMENT_ERROR_STATES.includes(state)
+}
+
+function formatDeploymentStateLabel(state: Status['state']) {
+  return upperCaseFirstLetter(state.replace(/_/g, ' '))
+}
+
+export function useClusterDeploymentErrorServices({
+  organizationId,
+  clusterId,
+}: UseClusterDeploymentErrorServicesProps) {
   const { data: environments = [] } = useEnvironmentsByCluster({
     organizationId,
     clusterId,
   })
 
-  const { data: checkRunningStatusClosed } = useQuery({
-    ...queries.environments.checkRunningStatusClosed(clusterId),
-    enabled: Boolean(clusterId),
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    staleTime: Infinity,
-  })
-
   const clusterServices = useMemo(() => getClusterServices(environments), [environments])
 
-  const runningStatusResults = useQueries({
+  const deploymentStatusResults = useQueries({
     queries: clusterServices.map(({ environmentId, serviceId }) => ({
-      ...queries.services.runningStatus(environmentId, serviceId),
+      ...queries.services.deploymentStatus(environmentId, serviceId),
       enabled: Boolean(environmentId) && Boolean(serviceId),
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -70,20 +83,17 @@ export function useClusterRunningErrorServices({ organizationId, clusterId }: Us
     })),
   })
 
-  const runningStates = runningStatusResults.map(({ data }) => data?.state)
+  const deploymentStates = deploymentStatusResults.map(({ data }) => data?.state)
 
   const { allErrorServices, errorServiceCount, errorServices, hiddenErrorServiceCount } = useMemo(() => {
-    if (checkRunningStatusClosed?.reason) {
-      return {
-        allErrorServices: [] as ClusterRunningErrorServiceItem[],
-        errorServiceCount: 0,
-        errorServices: [] as ClusterRunningErrorServiceItem[],
-        hiddenErrorServiceCount: 0,
-      }
-    }
-
     const allErrorServices = clusterServices
-      .filter((_, index) => runningStates[index] === 'ERROR')
+      .map((service, index) => ({
+        ...service,
+        state: deploymentStates[index],
+      }))
+      .filter(({ state }): state is ClusterServiceDescriptor & { state: Status['state'] } =>
+        isDeploymentErrorState(state)
+      )
       .map(
         ({
           environmentId,
@@ -92,13 +102,16 @@ export function useClusterRunningErrorServices({ organizationId, clusterId }: Us
           projectName,
           serviceId,
           serviceName,
-        }): ClusterRunningErrorServiceItem => ({
+          state,
+        }): ClusterDeploymentErrorServiceItem => ({
           environmentId,
           environmentName,
           projectId,
           projectName,
           serviceId,
           serviceName,
+          state,
+          stateLabel: formatDeploymentStateLabel(state),
         })
       )
 
@@ -108,7 +121,7 @@ export function useClusterRunningErrorServices({ organizationId, clusterId }: Us
       errorServices: allErrorServices.slice(0, MAX_DISPLAYED_ERROR_SERVICES),
       hiddenErrorServiceCount: Math.max(allErrorServices.length - MAX_DISPLAYED_ERROR_SERVICES, 0),
     }
-  }, [clusterServices, checkRunningStatusClosed?.reason, runningStates])
+  }, [clusterServices, deploymentStates])
 
   return {
     serviceCount: clusterServices.length,
