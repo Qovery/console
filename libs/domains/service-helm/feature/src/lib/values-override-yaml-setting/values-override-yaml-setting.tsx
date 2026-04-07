@@ -1,5 +1,5 @@
+import { useParams } from '@tanstack/react-router'
 import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
-import { useParams } from 'react-router-dom'
 import { CodeEditorInlineSetting, useModal } from '@qovery/shared/ui'
 import ValuesOverrideYamlModal from '../values-override-yaml-modal/values-override-yaml-modal'
 
@@ -53,7 +53,7 @@ export function ValuesOverrideYamlSettingBase({
 }
 
 export function ValuesOverrideYamlSetting(props: ValuesOverrideYamlSettingProps) {
-  const { environmentId = '' } = useParams()
+  const { environmentId = '' } = useParams({ strict: false })
 
   return <ValuesOverrideYamlSettingBase environmentId={environmentId} {...props} />
 }

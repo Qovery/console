@@ -12,7 +12,6 @@ import {
   EmptyState,
   ExternalLink,
   Icon,
-  InputTextSmall,
   Link,
   LoaderSpinner,
   Section,
