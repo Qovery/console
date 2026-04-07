@@ -6,20 +6,14 @@ import { Avatar, Icon } from '@qovery/shared/ui'
 export interface ClusterAvatarProps extends Omit<ComponentPropsWithoutRef<typeof Avatar>, 'fallback'> {
   cloudProvider?: CloudProviderEnum
   cluster?: Cluster
-  customIconSrc?: string
-  customIconAlt?: string
 }
 
 export const ClusterAvatar = forwardRef<ElementRef<typeof Avatar>, ClusterAvatarProps>(function ClusterAvatar(
-  { cluster, cloudProvider, customIconSrc, customIconAlt = 'Custom cloud provider', ...props },
+  { cluster, cloudProvider, ...props },
   ref
 ) {
   const localCloudProvider = cloudProvider ?? cluster?.cloud_provider
   const fallback = match({ cluster, localCloudProvider })
-    .when(
-      () => Boolean(customIconSrc),
-      () => <img src={customIconSrc} alt={customIconAlt} className="h-[65%] w-[65%] object-contain" />
-    )
     .with({ cluster: { is_demo: true } }, () => (
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50">
         <Icon iconName="laptop-code" className="text-sky-500" />

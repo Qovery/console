@@ -21,6 +21,7 @@ import DOIcon from './icons/do'
 import DockerIcon from './icons/docker'
 import DopplerIcon from './icons/doppler'
 import EKSIcon from './icons/eks'
+import EKSAnywhereIcon from './icons/eks-anywhere'
 import EnvironmentIcon from './icons/environment'
 import GCPIcon from './icons/gcp'
 import GcpArtifactRegistryIcon from './icons/gcp-artifact-registry'
@@ -162,6 +163,8 @@ export function Icon(props: IconProps | FontAwesomeIconProps) {
       return <MicrosoftIcon {...formattedProps} />
     case IconEnum.EKS:
       return <EKSIcon {...formattedProps} />
+    case IconEnum.EKS_ANYWHERE:
+      return <EKSAnywhereIcon {...formattedProps} />
     case IconEnum.ON_PREMISE:
     case IconEnum.ON_PREMISE_GRAY:
       return <KubernetesIcon {...formattedProps} />

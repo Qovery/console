@@ -45,7 +45,8 @@ type ClusterCredentialsFormValues = {
   id?: string
 }
 
-export type ClusterCredentialAuthType = ClusterCredentialsFormValues['type']
+type ClusterCredentialAuthType = ClusterCredentialsFormValues['type']
+export type ClusterCredentialsModalCloudProvider = CloudProviderEnum | 'AWS_EKS_ANYWHERE'
 const AWS_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = ['STS', 'STATIC']
 const EKS_ANYWHERE_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = [
   'EKS_ANYWHERE_VSPHERE_ROLE',
@@ -57,9 +58,7 @@ export interface ClusterCredentialsModalProps {
   clusterId?: string
   onClose: (response?: ClusterCredentials) => void
   credential?: ClusterCredentials
-  cloudProvider?: CloudProviderEnum
-  defaultCredentialType?: ClusterCredentialAuthType
-  allowedCredentialTypes?: ClusterCredentialAuthType[]
+  cloudProvider?: ClusterCredentialsModalCloudProvider
 }
 
 export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum) => {
@@ -190,8 +189,6 @@ export function ClusterCredentialsModal({
   onClose,
   credential,
   cloudProvider = 'AWS',
-  defaultCredentialType,
-  allowedCredentialTypes,
 }: ClusterCredentialsModalProps) {
   const isEksAnywhereEnabled = Boolean(useFeatureFlagEnabled('eks-anywhere'))
   const { enableAlertClickOutside } = useModal()
@@ -204,6 +201,8 @@ export function ClusterCredentialsModal({
   })
 
   const cloudProviderLocal = cloudProviderInfo?.cloud_provider ?? cloudProvider ?? 'AWS'
+  const isAwsMode = cloudProviderLocal === 'AWS' || cloudProviderLocal === 'AWS_EKS_ANYWHERE'
+  const apiCloudProvider: CloudProviderEnum = cloudProviderLocal === 'AWS_EKS_ANYWHERE' ? 'AWS' : cloudProviderLocal
 
   const { mutateAsync: createCloudProviderCredential, isLoading: isLoadingCreate } = useCreateCloudProviderCredential()
   const { mutateAsync: editCloudProviderCredential, isLoading: isLoadingEdit } = useEditCloudProviderCredential()
@@ -243,15 +242,15 @@ export function ClusterCredentialsModal({
   )
   const awsAuthTypeOptions = useMemo(
     () =>
-      (allowedCredentialTypes && allowedCredentialTypes.length > 0
-        ? allowedCredentialTypes
-        : isEdit
-          ? inferredCredentialTypes
+      (isEdit
+        ? inferredCredentialTypes
+        : cloudProviderLocal === 'AWS_EKS_ANYWHERE'
+          ? EKS_ANYWHERE_CREDENTIAL_TYPES
           : AWS_CREDENTIAL_TYPES
       ).filter((type) =>
         type === 'EKS_ANYWHERE_VSPHERE_ROLE' || type === 'EKS_ANYWHERE_VSPHERE_STATIC' ? isEksAnywhereEnabled : true
       ),
-    [allowedCredentialTypes, inferredCredentialTypes, isEdit, isEksAnywhereEnabled]
+    [cloudProviderLocal, inferredCredentialTypes, isEdit, isEksAnywhereEnabled]
   )
 
   const defaultType: ClusterCredentialsFormValues['type'] =
@@ -259,11 +258,9 @@ export function ClusterCredentialsModal({
       ? credential.role_arn
         ? 'EKS_ANYWHERE_VSPHERE_ROLE'
         : 'EKS_ANYWHERE_VSPHERE_STATIC'
-      : !isEdit && defaultCredentialType
-        ? defaultCredentialType
-        : credential?.object_type === 'AWS_ROLE' || (!isEdit && cloudProviderLocal === 'AWS')
-          ? 'STS'
-          : 'STATIC'
+      : credential?.object_type === 'AWS_ROLE' || (!isEdit && isAwsMode)
+        ? 'STS'
+        : 'STATIC'
   const initialType = awsAuthTypeOptions.includes(defaultType) ? defaultType : awsAuthTypeOptions[0] ?? 'STS'
 
   const methods = useForm<ClusterCredentialsFormValues>({
@@ -310,7 +307,7 @@ export function ClusterCredentialsModal({
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    const isAzureSubmitSuccessful = methods.formState.isSubmitSuccessful && cloudProviderLocal === 'AZURE'
+    const isAzureSubmitSuccessful = methods.formState.isSubmitSuccessful && apiCloudProvider === 'AZURE'
 
     // When Azure credential is submitted (second click on "Done"), we need to close the modal with the response so that it fills the form automatically
     if (isAzureSubmitSuccessful) {
@@ -334,7 +331,7 @@ export function ClusterCredentialsModal({
       return
     }
 
-    const credentials = handleSubmit(data, cloudProviderLocal)
+    const credentials = handleSubmit(data, apiCloudProvider)
 
     try {
       if (credential) {
@@ -350,10 +347,10 @@ export function ClusterCredentialsModal({
           ...credentials,
         })
 
-        match({ cloudProviderLocal, response })
+        match({ cloudProvider: apiCloudProvider, response })
           .with(
             {
-              cloudProviderLocal: 'AZURE',
+              cloudProvider: 'AZURE',
               response: { azure_application_id: P.string },
             },
             ({ response }) => {
@@ -386,7 +383,7 @@ export function ClusterCredentialsModal({
           try {
             await deleteCloudProviderCredential({
               organizationId,
-              cloudProvider: cloudProviderLocal,
+              cloudProvider: apiCloudProvider,
               credentialId: credential.id,
             })
             onClose()
@@ -408,17 +405,17 @@ export function ClusterCredentialsModal({
 
   const submitLabel = isEdit
     ? 'Confirm'
-    : match({ cloudProviderLocal, watchAzureApplicationId, watchAzureSubscriptionId })
+    : match({ cloudProvider: apiCloudProvider, watchAzureApplicationId, watchAzureSubscriptionId })
         .with(
           {
-            cloudProviderLocal: 'AZURE',
+            cloudProvider: 'AZURE',
             watchAzureApplicationId: P.not(P.string),
           },
           () => 'Next'
         )
         .with(
           {
-            cloudProviderLocal: 'AZURE',
+            cloudProvider: 'AZURE',
             watchAzureApplicationId: P.string,
           },
           () => 'Done'
@@ -431,16 +428,16 @@ export function ClusterCredentialsModal({
         title={`${isEdit ? `Edit` : 'Create new'} credential`}
         description={
           <span className="flex gap-1">
-            Follow these steps and give Qovery access to your {cloudProviderLocal} account.
-            {((isAwsStsCredential && cloudProviderLocal === 'AWS') || cloudProviderLocal === 'GCP') && (
+            Follow these steps and give Qovery access to your {apiCloudProvider} account.
+            {((isAwsStsCredential && isAwsMode) || apiCloudProvider === 'GCP') && (
               <ExternalLink
-                href={match(cloudProviderLocal)
+                href={match(apiCloudProvider)
                   .with('AWS', () => 'https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster')
                   .with(
                     'GCP',
                     () => 'https://www.qovery.com/docs/getting-started/installation/gcp#generate-installation-command'
                   )
-                  .exhaustive()}
+                  .otherwise(() => 'https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster')}
                 size="sm"
               >
                 Learn more
@@ -457,7 +454,7 @@ export function ClusterCredentialsModal({
         customLoader="Processing..."
       >
         <div className="flex flex-col gap-y-4">
-          {cloudProviderLocal === 'AWS' && (
+          {isAwsMode && (
             <Controller
               name="type"
               control={methods.control}
@@ -490,7 +487,7 @@ export function ClusterCredentialsModal({
           )}
           {(isAwsStaticCredential || isEksAnywhereStaticCredential) && (
             <>
-              {cloudProviderLocal === 'AWS' && (
+              {isAwsMode && (
                 <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
                   <h2 className="text-sm font-medium text-neutral-400">1. Create a user for Qovery</h2>
                   <p className="text-sm text-neutral-350">Follow the instructions available on this page</p>
@@ -680,7 +677,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   />
                 )}
               />
-              {(isAwsStaticCredential || isEksAnywhereStaticCredential) && cloudProviderLocal === 'AWS' && (
+              {(isAwsStaticCredential || isEksAnywhereStaticCredential) && isAwsMode && (
                 <>
                   <Controller
                     name="access_key_id"

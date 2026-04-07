@@ -7,18 +7,17 @@ import { match } from 'ts-pattern'
 import { useDeleteCloudProviderCredential } from '@qovery/domains/cloud-providers/feature'
 import {
   ClusterAvatar,
-  type ClusterCredentialAuthType,
   ClusterCredentialsModal,
+  type ClusterCredentialsModalCloudProvider,
   CredentialsListClustersModal,
 } from '@qovery/domains/clusters/feature'
 import { useOrganizationCredentials } from '@qovery/domains/organizations/feature'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
+import { IconEnum } from '@qovery/shared/enums'
 import { BlockContent, Heading, Section, Skeleton } from '@qovery/shared/ui'
 import { Button, DropdownMenu, Icon, Indicator, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
-
-const EKS_ANYWHERE_LOGO = '/assets/devicon/eks-anywhere.svg'
 
 const convertToCloudProviderEnum = (cloudProvider: ClusterCredentials['object_type']): CloudProviderEnum => {
   return match(cloudProvider)
@@ -30,6 +29,14 @@ const convertToCloudProviderEnum = (cloudProvider: ClusterCredentials['object_ty
     .with('OTHER', () => CloudProviderEnum.ON_PREMISE)
     .with('GCP', () => CloudProviderEnum.GCP)
     .exhaustive()
+}
+
+const convertToCredentialsModalCloudProvider = (
+  cloudProvider: ClusterCredentials['object_type']
+): ClusterCredentialsModalCloudProvider => {
+  return match(cloudProvider)
+    .with('EKS_ANYWHERE_VSPHERE', () => 'AWS_EKS_ANYWHERE' as const)
+    .otherwise(() => convertToCloudProviderEnum(cloudProvider))
 }
 
 type CredentialRowProps = {
@@ -47,13 +54,15 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
       key={credential.id}
     >
       <div className="grid grid-cols-[32px_1fr] gap-2">
-        <ClusterAvatar
-          cloudProvider={convertToCloudProviderEnum(credential.object_type)}
-          customIconSrc={credential.object_type === 'EKS_ANYWHERE_VSPHERE' ? EKS_ANYWHERE_LOGO : undefined}
-          customIconAlt={credential.object_type === 'EKS_ANYWHERE_VSPHERE' ? 'EKS Anywhere on vSphere' : undefined}
-          size="sm"
-          className="-ml-1.5"
-        />
+        {credential.object_type === 'EKS_ANYWHERE_VSPHERE' ? (
+          <Icon name={IconEnum.EKS_ANYWHERE} width={32} height={32} className="-ml-1.5" />
+        ) : (
+          <ClusterAvatar
+            cloudProvider={convertToCloudProviderEnum(credential.object_type)}
+            size="sm"
+            className="-ml-1.5"
+          />
+        )}
         <div className="flex flex-col justify-center">
           <span className="text-xs font-medium text-neutral-400">{credential.name}</span>
 
@@ -180,7 +189,7 @@ const PageOrganizationCredentials = () => {
             closeModal()
           }}
           credential={credential}
-          cloudProvider={convertToCloudProviderEnum(credential.object_type)}
+          cloudProvider={convertToCredentialsModalCloudProvider(credential.object_type)}
         />
       ),
       options: {
@@ -314,9 +323,7 @@ export function PageOrganizationCredentialsFeature() {
   type CloudProviderOption = {
     key: string
     label: string
-    cloudProvider: CloudProviderEnum
-    defaultCredentialType?: ClusterCredentialAuthType
-    allowedCredentialTypes?: ClusterCredentialAuthType[]
+    cloudProvider: ClusterCredentialsModalCloudProvider
     icon: ReactElement
   }
 
@@ -326,7 +333,6 @@ export function PageOrganizationCredentialsFeature() {
         key: CloudProviderEnum.AWS,
         label: 'AWS',
         cloudProvider: CloudProviderEnum.AWS,
-        allowedCredentialTypes: ['STS', 'STATIC'],
         icon: <Icon name={CloudProviderEnum.AWS} width={16} height={16} />,
       },
       {
@@ -352,10 +358,8 @@ export function PageOrganizationCredentialsFeature() {
             {
               key: 'AWS_EKS_ANYWHERE',
               label: 'EKS Anywhere on vSphere',
-              cloudProvider: CloudProviderEnum.AWS,
-              defaultCredentialType: 'EKS_ANYWHERE_VSPHERE_ROLE',
-              allowedCredentialTypes: ['EKS_ANYWHERE_VSPHERE_ROLE', 'EKS_ANYWHERE_VSPHERE_STATIC'],
-              icon: <img src={EKS_ANYWHERE_LOGO} alt="EKS Anywhere on vSphere" width={16} height={16} />,
+              cloudProvider: 'AWS_EKS_ANYWHERE',
+              icon: <Icon name={IconEnum.EKS_ANYWHERE} width={16} height={16} />,
             } satisfies CloudProviderOption,
           ]
         : []),
@@ -363,11 +367,7 @@ export function PageOrganizationCredentialsFeature() {
     [isEksAnywhereEnabled]
   )
 
-  const openClusterCredentialsModal = (
-    cloudProvider: CloudProviderEnum,
-    defaultCredentialType?: ClusterCredentialAuthType,
-    allowedCredentialTypes?: ClusterCredentialAuthType[]
-  ) => {
+  const openClusterCredentialsModal = (cloudProvider: ClusterCredentialsModalCloudProvider) => {
     openModal({
       content: (
         <ClusterCredentialsModal
@@ -381,8 +381,6 @@ export function PageOrganizationCredentialsFeature() {
             closeModal()
           }}
           cloudProvider={cloudProvider}
-          defaultCredentialType={defaultCredentialType}
-          allowedCredentialTypes={allowedCredentialTypes}
         />
       ),
       options: {
@@ -393,7 +391,7 @@ export function PageOrganizationCredentialsFeature() {
 
   const onSelectProvider = (option: CloudProviderOption) => {
     setIsCreateMenuOpen(false)
-    openClusterCredentialsModal(option.cloudProvider, option.defaultCredentialType, option.allowedCredentialTypes)
+    openClusterCredentialsModal(option.cloudProvider)
   }
 
   return (
