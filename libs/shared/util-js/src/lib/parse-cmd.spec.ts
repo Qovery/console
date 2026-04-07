@@ -61,6 +61,30 @@ describe('parseCmd function', () => {
     expect(result).toEqual(['run', '${incomplete'])
   })
 
+  it('should handle glob patterns without replacing them with "glob"', () => {
+    const cmd = 'find . -name *.txt'
+    const result = parseCmd(cmd)
+    expect(result).toEqual(['find', '.', '-name', '*.txt'])
+  })
+
+  it('should handle glob patterns with question mark', () => {
+    const cmd = 'ls file?.log'
+    const result = parseCmd(cmd)
+    expect(result).toEqual(['ls', 'file?.log'])
+  })
+
+  it('should handle glob patterns alongside shell operators', () => {
+    const cmd = 'rm *.log && echo done'
+    const result = parseCmd(cmd)
+    expect(result).toEqual(['rm', '*.log', '&&', 'echo', 'done'])
+  })
+
+  it('should preserve glob pattern in -c argument', () => {
+    const cmd = '-c *.json'
+    const result = parseCmd(cmd)
+    expect(result).toEqual(['-c', '*.json'])
+  })
+
   it('should handle complex arguments and operations together', () => {
     const cmd = 'docker run -v "/data:/mnt/data" -p 8080:80 nginx "arg arg" # start nginx container'
     const result = parseCmd(cmd)

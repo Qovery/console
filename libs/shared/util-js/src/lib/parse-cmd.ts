@@ -42,6 +42,9 @@ export const parseCmd = (cmd: string): string[] => {
         return placeholders[arg] || arg
       }
       if ('op' in arg) {
+        if (arg.op === 'glob' && 'pattern' in arg) {
+          return arg.pattern
+        }
         return arg.op
       }
       if ('comment' in arg) {
