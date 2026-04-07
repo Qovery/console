@@ -25,7 +25,7 @@ export interface SelectEksAnywhereCommitModalProps {
   currentCommitId?: string
   children?: ReactNode
   onCancel: () => void
-  onSubmit: (targetCommitId: string) => void
+  onSubmit: (targetCommitId: string) => void | Promise<void>
 }
 
 export function SelectEksAnywhereCommitModal({
@@ -39,7 +39,8 @@ export function SelectEksAnywhereCommitModal({
   onCancel,
   onSubmit,
 }: SelectEksAnywhereCommitModalProps) {
-  const { data: commits, isLoading, isError, error } = useEksAnywhereCommits({ organizationId, clusterId })
+  const { data, isLoading, isError, error } = useEksAnywhereCommits({ organizationId, clusterId })
+  const commits = (data ?? []) as Commit[]
 
   const [search, setSearch] = useState('')
   const [targetCommitId, setTargetCommitId] = useState<string | undefined>(currentCommitId)
@@ -47,12 +48,12 @@ export function SelectEksAnywhereCommitModal({
 
   const commitsByDay = useMemo(
     () =>
-      (commits ?? []).reduce<Record<string, Commit[]>>((acc, obj) => {
-        const key = new Date(obj.created_at).toISOString().slice(0, 10)
+      commits.reduce<Record<string, Commit[]>>((acc: Record<string, Commit[]>, commit: Commit) => {
+        const key = new Date(commit.created_at).toISOString().slice(0, 10)
         if (!acc[key]) {
           acc[key] = []
         }
-        acc[key].push(obj)
+        acc[key].push(commit)
         return acc
       }, {}),
     [commits]
@@ -60,20 +61,17 @@ export function SelectEksAnywhereCommitModal({
 
   const filterCommits = useMemo<Record<string, Commit[]>>(
     () =>
-      Object.fromEntries(
-        Object.entries(commitsByDay)
-          .map(([date, commitsForDate]) => {
-            return [
-              date,
-              commitsForDate.filter(
-                (commit) =>
-                  commit.message.toLowerCase().includes(normalizedSearch) ||
-                  commit.git_commit_id.toLowerCase().includes(normalizedSearch)
-              ),
-            ]
-          })
-          .filter(([, commitsForDate]) => commitsForDate.length)
-      ),
+      Object.entries(commitsByDay).reduce<Record<string, Commit[]>>((acc, [date, commitsForDate]) => {
+        const filteredCommits = commitsForDate.filter(
+          (commit) =>
+            commit.message.toLowerCase().includes(normalizedSearch) ||
+            commit.git_commit_id.toLowerCase().includes(normalizedSearch)
+        )
+        if (filteredCommits.length) {
+          acc[date] = filteredCommits
+        }
+        return acc
+      }, {}),
     [commitsByDay, normalizedSearch]
   )
   const hasSelectedCommitInResults = useMemo(

@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import {
   type Cluster,
@@ -18,7 +17,6 @@ import {
   isStopAvailable,
   isUpdateAvailable,
 } from '@qovery/shared/util-js'
-import { queries } from '@qovery/state/util-queries'
 import { ClusterAccessModal } from '../cluster-access-modal/cluster-access-modal'
 import { ClusterDeleteModal } from '../cluster-delete-modal/cluster-delete-modal'
 import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
@@ -43,12 +41,11 @@ function MenuManageDeployment({
   variant?: ActionToolbarVariant
 }) {
   const { openModalConfirmation } = useModalConfirmation()
-  const queryClient = useQueryClient()
   const { openModal, closeModal } = useModal()
   const { mutate: deployCluster } = useDeployCluster()
   const { mutate: stopCluster } = useStopCluster()
   const { mutate: upgradeCluster } = useUpgradeCluster({ organizationId: cluster.organization.id })
-  const { mutate: updateEksAnywhereCommit } = useUpdateEksAnywhereCommit()
+  const { mutateAsync: updateEksAnywhereCommit } = useUpdateEksAnywhereCommit()
   const hasTextActionButton = variant === 'header'
   const actionButtonSize = variant === 'default' ? 'sm' : 'md'
 
@@ -71,8 +68,10 @@ function MenuManageDeployment({
   const hasEksAnywhereGitRepository = Boolean(
     cluster.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository?.url
   )
-  const eksAnywhereCurrentCommitId =
-    cluster.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository?.commit_id
+  const eksAnywhereGitRepository = cluster.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository as
+    | { commit_id?: string; git_commit_id?: string }
+    | undefined
+  const eksAnywhereCurrentCommitId = eksAnywhereGitRepository?.commit_id ?? eksAnywhereGitRepository?.git_commit_id
   const canUpdateEksAnywhereVersion =
     isEksAnywhereCluster &&
     hasEksAnywhereGitRepository &&
@@ -101,11 +100,6 @@ function MenuManageDeployment({
     })
   }
   const mutationUpdateEksAnywhereVersion = () => {
-    queryClient.removeQueries({
-      queryKey: queries.clusters.eksAnywhereCommits({ organizationId: cluster.organization.id, clusterId: cluster.id })
-        .queryKey,
-    })
-
     openModal({
       content: (
         <SelectEksAnywhereCommitModal
@@ -116,19 +110,24 @@ function MenuManageDeployment({
           clusterId={cluster.id}
           currentCommitId={eksAnywhereCurrentCommitId}
           onCancel={() => closeModal()}
-          onSubmit={(commitId) => {
+          onSubmit={async (commitId) => {
             if (commitId === eksAnywhereCurrentCommitId) {
               closeModal()
               mutationUpdate()
               return
             }
 
-            updateEksAnywhereCommit({
-              organizationId: cluster.organization.id,
-              clusterId: cluster.id,
-              commitId,
-            })
-            closeModal()
+            try {
+              await updateEksAnywhereCommit({
+                organizationId: cluster.organization.id,
+                clusterId: cluster.id,
+                commitId,
+              })
+              closeModal()
+              mutationUpdate()
+            } catch {
+              // Error is handled by mutation notifyOnError.
+            }
           }}
         >
           <p>

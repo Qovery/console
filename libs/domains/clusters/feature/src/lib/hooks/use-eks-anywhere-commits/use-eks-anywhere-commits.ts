@@ -7,9 +7,7 @@ export interface UseEksAnywhereCommitsProps {
   enabled?: boolean
 }
 
-export function useEksAnywhereCommits(props: UseEksAnywhereCommitsProps) {
-  const { enabled = true, organizationId, clusterId } = props
-
+export function useEksAnywhereCommits({ enabled = true, organizationId, clusterId }: UseEksAnywhereCommitsProps) {
   return useQuery({
     ...queries.clusters.eksAnywhereCommits({ organizationId, clusterId }),
     enabled: enabled && Boolean(organizationId && clusterId),
