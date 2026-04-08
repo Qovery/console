@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type OrganizationCrendentialsResponseListResultsInner } from 'qovery-typescript-axios'
 import { useDeleteCloudProviderCredential } from '@qovery/domains/cloud-providers/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -13,6 +14,9 @@ jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: 'org-1' }),
 }))
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => false),
+}))
 
 describe('SettingsCloudCredentials', () => {
   const useOrganizationCredentialsMock = useOrganizationCredentials as jest.MockedFunction<
@@ -21,11 +25,13 @@ describe('SettingsCloudCredentials', () => {
   const useDeleteCloudProviderCredentialMock = useDeleteCloudProviderCredential as jest.MockedFunction<
     typeof useDeleteCloudProviderCredential
   >
+  const useFeatureFlagEnabledMock = useFeatureFlagEnabled as jest.MockedFunction<typeof useFeatureFlagEnabled>
 
   let mockCredentials: OrganizationCrendentialsResponseListResultsInner[] = []
 
   beforeEach(() => {
     mockCredentials = []
+    useFeatureFlagEnabledMock.mockReturnValue(false)
     useOrganizationCredentialsMock.mockReturnValue({
       data: mockCredentials,
     } as ReturnType<typeof useOrganizationCredentials>)
@@ -101,8 +107,46 @@ describe('SettingsCloudCredentials', () => {
     expect(screen.getByText('GCP')).toBeInTheDocument()
     expect(screen.getByText('Azure')).toBeInTheDocument()
     expect(screen.getByText('Scaleway')).toBeInTheDocument()
+    expect(screen.queryByText('EKS Anywhere on vSphere')).not.toBeInTheDocument()
 
     const awsItem = screen.getByText('AWS').closest('[role="menuitem"]')
     expect(awsItem).toHaveClass('text-neutral')
+  })
+
+  it('should render EKS Anywhere vSphere credentials only when the feature flag is enabled', () => {
+    mockCredentials = [
+      {
+        credential: {
+          id: '1',
+          name: 'Credential EKS Anywhere',
+          object_type: 'EKS_ANYWHERE_VSPHERE',
+          vsphere_user: 'administrator@vsphere.local',
+          role_arn: 'arn:aws:iam::123456789012:role/test-role',
+        },
+        clusters: [],
+      },
+    ]
+    useOrganizationCredentialsMock.mockReturnValue({
+      data: mockCredentials,
+    } as ReturnType<typeof useOrganizationCredentials>)
+
+    const { rerender } = renderWithProviders(<SettingsCloudCredentials />)
+
+    expect(screen.queryByText('Credential EKS Anywhere')).not.toBeInTheDocument()
+
+    useFeatureFlagEnabledMock.mockReturnValue(true)
+    rerender(<SettingsCloudCredentials />)
+
+    expect(screen.getByText('Credential EKS Anywhere')).toBeInTheDocument()
+  })
+
+  it('should show the EKS Anywhere create option when the feature flag is enabled', async () => {
+    useFeatureFlagEnabledMock.mockReturnValue(true)
+
+    const { userEvent } = renderWithProviders(<SettingsCloudCredentials />)
+
+    await userEvent.click(screen.getByText('New credential'))
+
+    expect(screen.getByText('EKS Anywhere on vSphere')).toBeInTheDocument()
   })
 })

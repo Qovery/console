@@ -1,11 +1,18 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { CloudProviderEnum, type ClusterCredentials, type CredentialCluster } from 'qovery-typescript-axios'
-import { Suspense, useMemo, useState } from 'react'
+import { type ReactElement, Suspense, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useDeleteCloudProviderCredential } from '@qovery/domains/cloud-providers/feature'
-import { ClusterAvatar, ClusterCredentialsModal, CredentialsListClustersModal } from '@qovery/domains/clusters/feature'
+import {
+  ClusterAvatar,
+  ClusterCredentialsModal,
+  type ClusterCredentialsModalCloudProvider,
+  CredentialsListClustersModal,
+} from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
+import { IconEnum } from '@qovery/shared/enums'
 import { BlockContent, Section, Skeleton } from '@qovery/shared/ui'
 import { Button, DropdownMenu, Icon, Indicator, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -16,11 +23,20 @@ const convertToCloudProviderEnum = (cloudProvider: ClusterCredentials['object_ty
   return match(cloudProvider)
     .with('AWS', () => CloudProviderEnum.AWS)
     .with('AWS_ROLE', () => CloudProviderEnum.AWS)
+    .with('EKS_ANYWHERE_VSPHERE', () => CloudProviderEnum.AWS)
     .with('AZURE', () => CloudProviderEnum.AZURE)
     .with('SCW', () => CloudProviderEnum.SCW)
     .with('OTHER', () => CloudProviderEnum.ON_PREMISE)
     .with('GCP', () => CloudProviderEnum.GCP)
     .exhaustive()
+}
+
+const convertToCredentialsModalCloudProvider = (
+  cloudProvider: ClusterCredentials['object_type']
+): ClusterCredentialsModalCloudProvider => {
+  return match(cloudProvider)
+    .with('EKS_ANYWHERE_VSPHERE', () => 'AWS_EKS_ANYWHERE' as const)
+    .otherwise(() => convertToCloudProviderEnum(cloudProvider))
 }
 
 type CredentialRowProps = {
@@ -38,11 +54,15 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
       key={credential.id}
     >
       <div className="grid grid-cols-[32px_1fr] gap-2">
-        <ClusterAvatar
-          cloudProvider={convertToCloudProviderEnum(credential.object_type)}
-          size="sm"
-          className="-ml-1.5"
-        />
+        {credential.object_type === 'EKS_ANYWHERE_VSPHERE' ? (
+          <Icon name={IconEnum.EKS_ANYWHERE} width={32} height={32} className="-ml-1.5" />
+        ) : (
+          <ClusterAvatar
+            cloudProvider={convertToCloudProviderEnum(credential.object_type)}
+            size="sm"
+            className="-ml-1.5"
+          />
+        )}
         <div className="flex flex-col justify-center">
           <span className="text-xs font-medium text-neutral">{credential.name}</span>
 
@@ -142,6 +162,7 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
 const PageOrganizationCredentials = () => {
   const { openModal, closeModal } = useModal()
   const { organizationId = '' } = useParams({ strict: false })
+  const isEksAnywhereEnabled = Boolean(useFeatureFlagEnabled('eks-anywhere'))
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteCloudProviderCredential } = useDeleteCloudProviderCredential()
 
@@ -149,8 +170,15 @@ const PageOrganizationCredentials = () => {
     organizationId,
   })
   const credentials = useMemo(
-    () => organizationCredentials.filter((item) => item.credential?.object_type !== 'OTHER'),
-    [organizationCredentials]
+    () =>
+      organizationCredentials.filter((item) => {
+        const objectType = item.credential?.object_type
+        if (!objectType) return false
+        if (objectType === 'OTHER') return false
+        if (objectType === 'EKS_ANYWHERE_VSPHERE' && !isEksAnywhereEnabled) return false
+        return true
+      }),
+    [organizationCredentials, isEksAnywhereEnabled]
   )
 
   const onEdit = (credential: ClusterCredentials) => {
@@ -162,7 +190,7 @@ const PageOrganizationCredentials = () => {
             closeModal()
           }}
           credential={credential}
-          cloudProvider={convertToCloudProviderEnum(credential.object_type)}
+          cloudProvider={convertToCredentialsModalCloudProvider(credential.object_type)}
         />
       ),
       options: {
@@ -219,7 +247,7 @@ const PageOrganizationCredentials = () => {
         clusters: clusters ?? [],
         onEdit: () => onEdit(credential),
         onOpen: () => onOpen(credential, clusters ?? []),
-        onDelete: !clusters || clusters.length === 0 ? () => onDelete(credential) : undefined, // Only show delete button if no clusters are associated
+        onDelete: !clusters || clusters.length === 0 ? () => onDelete(credential) : undefined,
       }
     })
     .filter((item) => item !== null)
@@ -296,29 +324,58 @@ export function SettingsCloudCredentials() {
   useDocumentTitle('Cloud Crendentials - Organization settings')
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
+  const isEksAnywhereEnabled = Boolean(useFeatureFlagEnabled('eks-anywhere'))
   const queryClient = useQueryClient()
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false)
 
-  const cloudProviderOptions = [
-    {
-      label: 'AWS',
-      value: CloudProviderEnum.AWS,
-    },
-    {
-      label: 'GCP',
-      value: CloudProviderEnum.GCP,
-    },
-    {
-      label: 'Azure',
-      value: CloudProviderEnum.AZURE,
-    },
-    {
-      label: 'Scaleway',
-      value: CloudProviderEnum.SCW,
-    },
-  ]
+  type CloudProviderOption = {
+    key: string
+    label: string
+    cloudProvider: ClusterCredentialsModalCloudProvider
+    icon: ReactElement
+  }
 
-  const openClusterCredentialsModal = (cloudProvider: CloudProviderEnum) => {
+  const cloudProviderOptions = useMemo<CloudProviderOption[]>(
+    () => [
+      {
+        key: CloudProviderEnum.AWS,
+        label: 'AWS',
+        cloudProvider: CloudProviderEnum.AWS,
+        icon: <Icon name={CloudProviderEnum.AWS} width={16} height={16} />,
+      },
+      {
+        key: CloudProviderEnum.GCP,
+        label: 'GCP',
+        cloudProvider: CloudProviderEnum.GCP,
+        icon: <Icon name={CloudProviderEnum.GCP} width={16} height={16} />,
+      },
+      {
+        key: CloudProviderEnum.AZURE,
+        label: 'Azure',
+        cloudProvider: CloudProviderEnum.AZURE,
+        icon: <Icon name={CloudProviderEnum.AZURE} width={16} height={16} />,
+      },
+      {
+        key: CloudProviderEnum.SCW,
+        label: 'Scaleway',
+        cloudProvider: CloudProviderEnum.SCW,
+        icon: <Icon name={CloudProviderEnum.SCW} width={16} height={16} />,
+      },
+      ...(isEksAnywhereEnabled
+        ? [
+            {
+              key: 'AWS_EKS_ANYWHERE',
+              label: 'EKS Anywhere on vSphere',
+              cloudProvider: 'AWS_EKS_ANYWHERE',
+              icon: <Icon name={IconEnum.EKS_ANYWHERE} width={16} height={16} />,
+            } satisfies CloudProviderOption,
+          ]
+        : []),
+    ],
+    [isEksAnywhereEnabled]
+  )
+
+  const openClusterCredentialsModal = (cloudProvider: ClusterCredentialsModalCloudProvider) => {
     openModal({
       content: (
         <ClusterCredentialsModal
@@ -340,9 +397,9 @@ export function SettingsCloudCredentials() {
     })
   }
 
-  const onSelectProvider = (cloudProvider: CloudProviderEnum) => {
+  const onSelectProvider = (option: CloudProviderOption) => {
     setIsCreateMenuOpen(false)
-    openClusterCredentialsModal(cloudProvider)
+    openClusterCredentialsModal(option.cloudProvider)
   }
 
   return (
@@ -361,10 +418,10 @@ export function SettingsCloudCredentials() {
             <DropdownMenu.Content align="end">
               {cloudProviderOptions.map((option) => (
                 <DropdownMenu.Item
-                  key={option.value}
+                  key={option.key}
                   color="neutral"
-                  icon={<Icon name={option.value} width={16} height={16} />}
-                  onClick={() => onSelectProvider(option.value)}
+                  icon={option.icon}
+                  onClick={() => onSelectProvider(option)}
                 >
                   {option.label}
                 </DropdownMenu.Item>

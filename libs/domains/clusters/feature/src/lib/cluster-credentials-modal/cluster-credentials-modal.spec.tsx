@@ -1,6 +1,8 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import * as useCreateCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
+import * as useDeleteCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import * as useEditCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import { getByText, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useClusterCloudProviderInfoHook from '../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
@@ -8,7 +10,12 @@ import ClusterCredentialsModal, { type ClusterCredentialsModalProps, handleSubmi
 
 jest.mock('@qovery/domains/cloud-providers/feature', () => ({
   useCreateCloudProviderCredential: jest.fn(),
+  useDeleteCloudProviderCredential: jest.fn(),
   useEditCloudProviderCredential: jest.fn(),
+}))
+
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => true),
 }))
 
 jest.mock('../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info', () => ({
@@ -18,7 +25,9 @@ jest.mock('../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-i
 let props: ClusterCredentialsModalProps
 
 const mockCreateCredential = jest.fn()
+const mockDeleteCredential = jest.fn()
 const mockEditCredential = jest.fn()
+const mockUseFeatureFlagEnabled = useFeatureFlagEnabled as jest.Mock
 
 describe('ClusterCredentialsModal', () => {
   beforeEach(() => {
@@ -29,9 +38,15 @@ describe('ClusterCredentialsModal', () => {
       cloudProvider: CloudProviderEnum.AWS,
     }
 
+    mockUseFeatureFlagEnabled.mockReturnValue(true)
+
     jest.spyOn(useCreateCloudProviderCredentialHook, 'useCreateCloudProviderCredential').mockReturnValue({
       mutateAsync: mockCreateCredential,
       isLoading: false,
+    })
+
+    jest.spyOn(useDeleteCloudProviderCredentialHook, 'useDeleteCloudProviderCredential').mockReturnValue({
+      mutateAsync: mockDeleteCredential,
     })
 
     jest.spyOn(useEditCloudProviderCredentialHook, 'useEditCloudProviderCredential').mockReturnValue({
@@ -75,7 +90,6 @@ describe('ClusterCredentialsModal', () => {
     await userEvent.type(roleArnInput, 'arn:aws:iam::123456789012:role/test-role')
     await userEvent.click(submitButton)
 
-    // Verify API was called
     expect(mockCreateCredential).toHaveBeenCalled()
     expect(props.onClose).toHaveBeenCalled()
   })
@@ -93,7 +107,56 @@ describe('ClusterCredentialsModal', () => {
       cloudProvider: 'AWS',
       payload: {
         name: 'test-cred',
+        type: 'AWS_ROLE',
         role_arn: 'arn:aws:iam::123456789012:role/test-role',
+      },
+    })
+  })
+
+  it('should format EKS Anywhere vSphere role credentials correctly with handleSubmit', () => {
+    const data = {
+      name: 'test-cred',
+      type: 'EKS_ANYWHERE_VSPHERE_ROLE',
+      role_arn: 'arn:aws:iam::123456789012:role/test-role',
+      vsphere_user: 'administrator@vsphere.local',
+      vsphere_password: 'super-secret',
+    }
+
+    const result = handleSubmit(data, CloudProviderEnum.AWS)
+
+    expect(result).toEqual({
+      cloudProvider: 'AWS',
+      payload: {
+        name: 'test-cred',
+        type: 'EKS_ANYWHERE_VSPHERE_ROLE',
+        role_arn: 'arn:aws:iam::123456789012:role/test-role',
+        vsphere_user: 'administrator@vsphere.local',
+        vsphere_password: 'super-secret',
+      },
+    })
+  })
+
+  it('should format EKS Anywhere vSphere static credentials correctly with handleSubmit', () => {
+    const data = {
+      name: 'test-cred',
+      type: 'EKS_ANYWHERE_VSPHERE_STATIC',
+      access_key_id: 'AKIA_TEST',
+      secret_access_key: 'secret',
+      vsphere_user: 'administrator@vsphere.local',
+      vsphere_password: 'super-secret',
+    }
+
+    const result = handleSubmit(data, CloudProviderEnum.AWS)
+
+    expect(result).toEqual({
+      cloudProvider: 'AWS',
+      payload: {
+        name: 'test-cred',
+        type: 'EKS_ANYWHERE_VSPHERE_STATIC',
+        access_key_id: 'AKIA_TEST',
+        secret_access_key: 'secret',
+        vsphere_user: 'administrator@vsphere.local',
+        vsphere_password: 'super-secret',
       },
     })
   })
@@ -124,6 +187,28 @@ describe('ClusterCredentialsModal', () => {
       await userEvent.click(submitButton)
 
       expect(mockEditCredential).toHaveBeenCalled()
+    })
+
+    it('should handle delete confirmation', async () => {
+      const { userEvent } = renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
+
+      const deleteButton = screen.getByTestId('delete-button')
+      await userEvent.click(deleteButton)
+
+      const confirmationInput = screen.getByTestId('input-value')
+      await userEvent.type(confirmationInput, 'delete')
+
+      const modalTitle = screen.getByText('Delete credential')
+      expect(modalTitle).toBeInTheDocument()
+
+      const confirmationModal = modalTitle.parentElement
+
+      if (confirmationModal) {
+        const confirmButton = getByText(confirmationModal, 'Confirm')
+        await userEvent.click(confirmButton)
+      }
+
+      expect(mockDeleteCredential).toHaveBeenCalled()
     })
   })
 })
