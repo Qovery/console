@@ -1,5 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { type FormEvent } from 'react'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
   ValuesOverrideArgumentsSetting,
   type ValuesOverrideArgumentsSettingBaseProps,
@@ -23,6 +24,8 @@ jest.mock('@qovery/domains/variables/feature', () => ({
 }))
 
 describe('ValuesOverrideArgumentsSetting', () => {
+  const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null)
+
   const props: ValuesOverrideArgumentsSettingBaseProps = {
     onSubmit: jest.fn(),
     source: {
@@ -95,5 +98,33 @@ describe('ValuesOverrideArgumentsSetting', () => {
     )
 
     expect(baseElement).toMatchSnapshot()
+  })
+
+  it('does not submit the parent form when opening default values in settings mode', async () => {
+    const onParentSubmit = jest.fn((event: FormEvent<HTMLFormElement>) => event.preventDefault())
+
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(
+        <form onSubmit={onParentSubmit}>
+          <ValuesOverrideArgumentsSetting {...props} isSetting />
+        </form>,
+        {
+          defaultValues: {
+            arguments: [
+              {
+                key: 'test',
+                type: '--set',
+                value: 'test',
+              },
+            ],
+          },
+        }
+      )
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: /See default values.yaml/i }))
+
+    expect(openSpy).toHaveBeenCalled()
+    expect(onParentSubmit).not.toHaveBeenCalled()
   })
 })

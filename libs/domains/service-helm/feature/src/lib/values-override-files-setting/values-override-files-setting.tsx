@@ -6,7 +6,6 @@ import {
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
-import { SettingsHeading } from '@qovery/shared/console-shared'
 import { ExternalLink, Heading, Icon, InputSelect, Popover, Section } from '@qovery/shared/ui'
 import ValuesOverrideYamlSetting from '../values-override-yaml-setting/values-override-yaml-setting'
 
@@ -46,130 +45,134 @@ export function ValuesOverrideFilesSetting({
   isSetting,
   yamlSetting,
 }: PropsWithChildren<ValuesOverrideFilesSettingProps>) {
-  return (
-    <Section>
-      {isSetting ? (
-        <SettingsHeading
-          title="Values override as file"
-          description="Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository."
-        />
-      ) : (
-        <Heading className="mb-2">Values override as file</Heading>
-      )}
+  const headerContent = !isSetting ? <Heading className="mb-2">Values override as file</Heading> : null
 
-      <form className="space-y-10" onSubmit={onSubmit}>
-        {!isSetting && (
-          <div>
-            <p className="text-sm text-neutral-subtle">
-              Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It
-              is highly recommended to store the override file(s) in a git repository.
-            </p>
-            <Popover.Root>
-              <Popover.Trigger>
-                <span className="hover:text-brandHover cursor-pointer text-sm font-medium text-brand transition">
-                  How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
-                </span>
-              </Popover.Trigger>
-              <Popover.Content side="left" className="relative text-sm text-neutral-subtle" style={{ width: 440 }}>
-                <h6 className="mb-2 font-medium text-neutral">How it works</h6>
-                <ul className="list-disc pl-4">
-                  <li>
-                    Your helm chart might have already a variables.yaml file with some basic configuration. In this
-                    section you can define your own overrides to customize the helm chart behaviour.
-                  </li>
-                  <li>
-                    You can define the overrides by selecting a YAML file from a git repository (preferred) or by
-                    passing a raw YAML file.
-                  </li>
-                  <li>
-                    If you don’t have a file, you can skip this step and instead define the values override directly as
-                    arguments (--set).
-                  </li>
-                  <li>
-                    You can use the Qovery environment variables as overrides by using the placeholder
-                    “qovery.env.ENV_VAR_NAME” (Example: qovery.env.DB_URL. Qovery will manage the replacement of those
-                    placeholders at deployment time.
-                  </li>
-                  <li>
-                    To let you access every Qovery functionality, additional Qovery labels and annotations are
-                    automatically injected in some of the Kubernetes objects deployed within your helm.
-                  </li>
-                </ul>
-                <ExternalLink href="https://www.qovery.com/docs/configuration/helm#values-override">
-                  Documentation
-                </ExternalLink>
-                <Popover.Close className="absolute right-4 top-4">
-                  <button type="button">
-                    <Icon iconName="xmark" className="text-sm" />
-                  </button>
-                </Popover.Close>
-              </Popover.Content>
-            </Popover.Root>
-          </div>
-        )}
-        <div className="flex flex-col gap-4">
-          <Controller
-            name="type"
-            control={methods.control}
-            defaultValue="NONE"
-            render={({ field }) => (
-              <InputSelect
-                label="File source"
-                value={field.value}
-                onChange={field.onChange}
-                options={[
-                  {
-                    label: 'Git repository',
-                    value: 'GIT_REPOSITORY',
-                  },
-                  {
-                    label: 'Raw YAML',
-                    value: 'YAML',
-                  },
-                  {
-                    label: 'None',
-                    value: 'NONE',
-                  },
-                ]}
+  const content = (
+    <>
+      {!isSetting ? (
+        <div>
+          <p className="text-sm text-neutral-subtle">
+            Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is
+            highly recommended to store the override file(s) in a git repository.
+          </p>
+          <Popover.Root>
+            <Popover.Trigger>
+              <span className="hover:text-brandHover cursor-pointer text-sm font-medium text-brand transition">
+                How it works <Icon className="text-xs" iconStyle="regular" iconName="circle-question" />
+              </span>
+            </Popover.Trigger>
+            <Popover.Content side="left" className="relative text-sm text-neutral-subtle" style={{ width: 440 }}>
+              <h6 className="mb-2 font-medium text-neutral">How it works</h6>
+              <ul className="list-disc pl-4">
+                <li>
+                  Your helm chart might have already a variables.yaml file with some basic configuration. In this
+                  section you can define your own overrides to customize the helm chart behaviour.
+                </li>
+                <li>
+                  You can define the overrides by selecting a YAML file from a git repository (preferred) or by passing
+                  a raw YAML file.
+                </li>
+                <li>
+                  If you don’t have a file, you can skip this step and instead define the values override directly as
+                  arguments (--set).
+                </li>
+                <li>
+                  You can use the Qovery environment variables as overrides by using the placeholder
+                  “qovery.env.ENV_VAR_NAME” (Example: qovery.env.DB_URL. Qovery will manage the replacement of those
+                  placeholders at deployment time.
+                </li>
+                <li>
+                  To let you access every Qovery functionality, additional Qovery labels and annotations are
+                  automatically injected in some of the Kubernetes objects deployed within your helm.
+                </li>
+              </ul>
+              <ExternalLink href="https://www.qovery.com/docs/configuration/helm#values-override">
+                Documentation
+              </ExternalLink>
+              <Popover.Close className="absolute right-4 top-4">
+                <button type="button">
+                  <Icon iconName="xmark" className="text-sm" />
+                </button>
+              </Popover.Close>
+            </Popover.Content>
+          </Popover.Root>
+        </div>
+      ) : null}
+      <div className="flex flex-col gap-4">
+        <Controller
+          name="type"
+          control={methods.control}
+          defaultValue="NONE"
+          render={({ field }) => (
+            <InputSelect
+              label="File source"
+              value={field.value}
+              onChange={field.onChange}
+              options={[
+                {
+                  label: 'Git repository',
+                  value: 'GIT_REPOSITORY',
+                },
+                {
+                  label: 'Raw YAML',
+                  value: 'YAML',
+                },
+                {
+                  label: 'None',
+                  value: 'NONE',
+                },
+              ]}
+            />
+          )}
+        />
+      </div>
+      {watchFieldType === 'YAML' && (
+        <Section>
+          <Heading className="mb-2">Override with raw Yaml</Heading>
+          <p className="mb-6 text-sm text-neutral-subtle">
+            You can define here the YAML containing the overrides you want to apply. The YAML will be stored by Qovery
+            and can be updated later within the settings but no history will be retained.
+          </p>
+          <div className="flex flex-col gap-3">
+            {yamlSetting ?? (
+              <ValuesOverrideYamlSetting
+                content={methods.getValues('content')}
+                onSubmit={(value) => {
+                  methods.setValue('content', value)
+                  isSetting && onSubmit()
+                }}
+                source={source}
               />
             )}
-          />
-        </div>
-        {watchFieldType === 'YAML' && (
-          <Section>
-            <Heading className="mb-2">Override with raw Yaml</Heading>
-            <p className="mb-6 text-sm text-neutral-subtle">
-              You can define here the YAML containing the overrides you want to apply. The YAML will be stored by Qovery
-              and can be updated later within the settings but no history will be retained.
-            </p>
-            <div className="flex flex-col gap-3">
-              {yamlSetting ?? (
-                <ValuesOverrideYamlSetting
-                  content={methods.getValues('content')}
-                  onSubmit={(value) => {
-                    methods.setValue('content', value)
-                    isSetting && onSubmit()
-                  }}
-                  source={source}
-                />
-              )}
-            </div>
-          </Section>
-        )}
+          </div>
+        </Section>
+      )}
 
-        {watchFieldType === 'GIT_REPOSITORY' && (
-          <Section>
-            <Heading className="mb-2">Override from repository</Heading>
-            <p className="mb-6 text-sm text-neutral-subtle">
-              Specify the repository and the path containing the override yaml file to be passed via the “-f” helm
-              argument. More than one file can be used as override by adding them in the path field separated by a
-              semi-colon. If you don’t have a repository, you can set the override manually or via a raw YAML file.
-            </p>
-            <div className="flex flex-col gap-3">{gitRepositorySettings}</div>
-          </Section>
-        )}
-        {children}
-      </form>
+      {watchFieldType === 'GIT_REPOSITORY' && (
+        <Section>
+          <Heading className="mb-2">Override from repository</Heading>
+          <p className="mb-6 text-sm text-neutral-subtle">
+            Specify the repository and the path containing the override yaml file to be passed via the “-f” helm
+            argument. More than one file can be used as override by adding them in the path field separated by a
+            semi-colon. If you don’t have a repository, you can set the override manually or via a raw YAML file.
+          </p>
+          <div className="flex flex-col gap-3">{gitRepositorySettings}</div>
+        </Section>
+      )}
+      {children}
+    </>
+  )
+
+  return (
+    <Section>
+      {headerContent}
+      {!isSetting ? (
+        <form className="space-y-10" onSubmit={onSubmit}>
+          {content}
+        </form>
+      ) : (
+        <div className="space-y-10">{content}</div>
+      )}
     </Section>
   )
 }
