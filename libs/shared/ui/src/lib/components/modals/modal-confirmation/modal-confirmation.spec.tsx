@@ -57,4 +57,17 @@ describe('ModalConfirmation', () => {
 
     expect(container).toMatchSnapshot()
   })
+
+  it('should disable submit while async callback is pending', async () => {
+    const callback = jest.fn(() => new Promise<void>(() => {}))
+    const { userEvent } = render(
+      <ModalConfirmation {...props} callback={callback} confirmationMethod="action" confirmationAction="delete" />
+    )
+
+    await userEvent.type(screen.getByPlaceholderText('Enter "delete"'), 'delete')
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+
+    expect(callback).toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled()
+  })
 })

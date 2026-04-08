@@ -6,7 +6,7 @@ import { ModalConfirmation } from '../modal-confirmation'
 export interface UseModalConfirmationProps {
   title: string
   description?: ReactNode
-  action: () => void
+  action: () => Promise<void> | void
   name?: string
   mode?: keyof typeof EnvironmentModeEnum | string | undefined
   warning?: ReactNode

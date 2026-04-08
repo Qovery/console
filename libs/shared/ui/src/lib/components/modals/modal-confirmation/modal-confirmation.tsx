@@ -1,4 +1,4 @@
-import { type PropsWithChildren, type ReactNode } from 'react'
+import { type PropsWithChildren, type ReactNode, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import Button from '../../button/button'
 import { Callout } from '../../callout/callout'
@@ -11,7 +11,7 @@ export interface ModalConfirmationProps extends PropsWithChildren {
   title: string
   description?: ReactNode
   name?: string
-  callback: () => void
+  callback: () => Promise<void> | void
   warning?: ReactNode
   placeholder?: string
   ctaButton?: string
@@ -35,11 +35,20 @@ export function ModalConfirmation({
 }: ModalConfirmationProps) {
   const { handleSubmit, control } = useForm()
   const { closeModal } = useModal()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     if (data) {
-      closeModal()
-      callback()
+      setIsSubmitting(true)
+      try {
+        await callback()
+        closeModal()
+      } catch {
+        // Errors are handled by the caller (notifications), keep the modal open for retry.
+        return
+      } finally {
+        setIsSubmitting(false)
+      }
     }
   })
 
@@ -109,14 +118,22 @@ export function ModalConfirmation({
           </Callout.Root>
         )}
         <div className="flex justify-end gap-3">
-          <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
+          <Button
+            type="button"
+            color="neutral"
+            variant="plain"
+            size="lg"
+            onClick={() => closeModal()}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button
             type="submit"
             size="lg"
             color={confirmationMethod === 'action' ? 'red' : 'brand'}
-            disabled={ctaButtonDisabled}
+            disabled={ctaButtonDisabled || isSubmitting}
+            loading={isSubmitting}
           >
             {ctaButton}
           </Button>

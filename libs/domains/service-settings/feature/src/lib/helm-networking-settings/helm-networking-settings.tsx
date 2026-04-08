@@ -20,10 +20,19 @@ import { isTryingToRemoveLastPublicPort } from '@qovery/shared/util-services'
 export interface HelmNetworkingSettingsProps extends PropsWithChildren {
   helmId: string
   ports: HelmPortRequestPortsInner[]
-  onUpdatePorts: (ports: HelmPortRequestPortsInner[]) => void
+  onAddPort: (port: HelmPortRequestPortsInner) => Promise<void>
+  onEditPort: (originalPort: HelmPortRequestPortsInner, port: HelmPortRequestPortsInner) => Promise<void>
+  onRemovePort: (port: HelmPortRequestPortsInner) => Promise<void>
 }
 
-export function HelmNetworkingSettings({ helmId, ports, onUpdatePorts, children }: HelmNetworkingSettingsProps) {
+export function HelmNetworkingSettings({
+  helmId,
+  ports,
+  onAddPort: onAddPortSubmit,
+  onEditPort: onEditPortSubmit,
+  onRemovePort: onRemovePortSubmit,
+  children,
+}: HelmNetworkingSettingsProps) {
   useDocumentTitle('Networking - Service settings')
   const { openModal, closeModal } = useModal()
   const { openModalMultiConfirmation } = useModalMultiConfirmation()
@@ -34,34 +43,38 @@ export function HelmNetworkingSettings({ helmId, ports, onUpdatePorts, children 
     serviceType: 'HELM',
   })
 
-  const onAddPort = () =>
+  const onAddPortClick = () =>
     openModal({
       content: (
         <NetworkingPortSettingModal
           helmId={helmId}
-          onSubmit={(port) => {
-            onUpdatePorts([...ports, port])
+          onSubmit={async (port) => {
+            await onAddPortSubmit(port)
             closeModal()
           }}
-          onClose={closeModal}
+          onClose={() => {
+            closeModal()
+          }}
         />
       ),
     })
-  const onEditPort = (originalPort: HelmPortRequestPortsInner) =>
+  const onEditPortClick = (originalPort: HelmPortRequestPortsInner) =>
     openModal({
       content: (
         <NetworkingPortSettingModal
           helmId={helmId}
           port={originalPort}
-          onSubmit={(port) => {
-            onUpdatePorts([...ports.filter((p) => p !== originalPort), port])
+          onSubmit={async (port) => {
+            await onEditPortSubmit(originalPort, port)
             closeModal()
           }}
-          onClose={closeModal}
+          onClose={() => {
+            closeModal()
+          }}
         />
       ),
     })
-  const onRemovePort = (port: HelmPortRequestPortsInner) => {
+  const onRemovePortClick = (port: HelmPortRequestPortsInner) => {
     const isTryingToRemoveLastPort = isTryingToRemoveLastPublicPort(ServiceType.HELM, ports, port, customDomains)
 
     isTryingToRemoveLastPort
@@ -77,15 +90,15 @@ export function HelmNetworkingSettings({ helmId, ports, onUpdatePorts, children 
             </p>
           ),
           checks: ['I understand this action is irreversible and will delete all linked domains'],
-          action: () => {
-            onUpdatePorts(ports.filter((p) => p !== port))
+          action: async () => {
+            await onRemovePortSubmit(port)
           },
         })
       : openModalConfirmation({
           title: 'Delete Port',
           confirmationMethod: 'action',
-          action: () => {
-            onUpdatePorts(ports.filter((p) => p !== port))
+          action: async () => {
+            await onRemovePortSubmit(port)
           },
         })
   }
@@ -97,7 +110,7 @@ export function HelmNetworkingSettings({ helmId, ports, onUpdatePorts, children 
           title="Networking"
           description="You can expose publicly over HTTP/gRPC the Kubernetes services deployed."
         >
-          <Button className="gap-2" size="md" variant="solid" color="brand" onClick={onAddPort}>
+          <Button className="gap-2" size="md" variant="solid" color="brand" onClick={onAddPortClick}>
             Add Port
             <Icon iconName="plus-circle" iconStyle="regular" />
           </Button>
@@ -128,7 +141,7 @@ export function HelmNetworkingSettings({ helmId, ports, onUpdatePorts, children 
                           variant="outline"
                           iconOnly
                           color="neutral"
-                          onClick={() => onEditPort(port)}
+                          onClick={() => onEditPortClick(port)}
                           type="button"
                           data-testid="edit-port"
                         >
@@ -139,7 +152,7 @@ export function HelmNetworkingSettings({ helmId, ports, onUpdatePorts, children 
                           variant="outline"
                           iconOnly
                           color="neutral"
-                          onClick={() => onRemovePort(port)}
+                          onClick={() => onRemovePortClick(port)}
                           type="button"
                           data-testid="remove-port"
                         >

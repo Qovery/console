@@ -227,7 +227,9 @@ function MenuManageDeployment({
           description:
             'Stopping a deployment for your service will stop the deployment of the whole environment. It may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the application:',
           name: service.name,
-          action: () => cancelBuild({ environmentId: environment.id }),
+          action: async () => {
+            await cancelBuild({ environmentId: environment.id })
+          },
         })
       )
   }
