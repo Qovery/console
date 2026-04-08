@@ -21,6 +21,40 @@
   @apply top-1 mt-2;
 }
 
+.input--inline {
+  min-height: 40px !important;
+  height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+
+  .input-select__control {
+    height: 40px !important;
+    min-height: 40px !important;
+    align-items: center !important;
+  }
+
+  .input-select__value-container {
+    margin-top: 0 !important;
+    top: 0 !important;
+    height: 100% !important;
+    align-items: center !important;
+    padding: 0 !important;
+  }
+
+  .input-select__single-value {
+    line-height: 1 !important;
+  }
+
+  .input-select__input-container {
+    margin: 0 !important;
+  }
+
+  .input-select__placeholder {
+    display: block !important;
+    @apply text-neutral-subtle;
+  }
+}
+
 .input--has-icon .input-select__control {
   padding-left: theme('spacing.8');
   transition-property: transform;
