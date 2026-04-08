@@ -443,7 +443,12 @@ function RouteComponent() {
                           onClick={() => onClickAuthLogin(AuthEnum.BITBUCKET)}
                           loading={loading?.provider === AuthEnum.BITBUCKET ? loading.active : false}
                         >
-                          <Icon width="20" fill="currentColor" name={IconEnum.BITBUCKET} />
+                          <Icon
+                            width="20"
+                            fill="currentColor"
+                            className={clsx(loading?.provider === AuthEnum.BITBUCKET ? 'opacity-0' : '')}
+                            name={IconEnum.BITBUCKET}
+                          />
                           <LastUsedBadge visible={lastUsedLoginAtPageLoad === AuthEnum.BITBUCKET} />
                         </Button>
                         <Button
@@ -454,7 +459,12 @@ function RouteComponent() {
                           onClick={() => onClickAuthLogin(AuthEnum.GITLAB)}
                           loading={loading?.provider === AuthEnum.GITLAB ? loading.active : false}
                         >
-                          <Icon width="20" fill="currentColor" name={IconEnum.GITLAB} />
+                          <Icon
+                            width="20"
+                            fill="currentColor"
+                            className={clsx(loading?.provider === AuthEnum.GITLAB ? 'opacity-0' : '')}
+                            name={IconEnum.GITLAB}
+                          />
                           <LastUsedBadge visible={lastUsedLoginAtPageLoad === AuthEnum.GITLAB} />
                         </Button>
                         <Button
@@ -465,7 +475,12 @@ function RouteComponent() {
                           onClick={() => onClickAuthLogin(AuthEnum.MICROSOFT)}
                           loading={loading?.provider === AuthEnum.MICROSOFT ? loading.active : false}
                         >
-                          <Icon width="20" fill="currentColor" name={IconEnum.MICROSOFT} />
+                          <Icon
+                            width="20"
+                            fill="currentColor"
+                            className={clsx(loading?.provider === AuthEnum.MICROSOFT ? 'opacity-0' : '')}
+                            name={IconEnum.MICROSOFT}
+                          />
                           <LastUsedBadge visible={lastUsedLoginAtPageLoad === AuthEnum.MICROSOFT} />
                         </Button>
                       </div>
