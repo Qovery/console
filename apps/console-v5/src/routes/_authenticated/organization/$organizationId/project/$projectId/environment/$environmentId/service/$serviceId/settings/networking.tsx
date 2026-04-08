@@ -58,7 +58,6 @@ const HelmNetworkingSettingsContent = () => {
           methods.setValue('ports', updatedPorts)
           onSubmit()
         }}
-        isSetting
       />
     </FormProvider>
   )

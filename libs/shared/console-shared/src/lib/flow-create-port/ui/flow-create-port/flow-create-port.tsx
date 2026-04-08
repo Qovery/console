@@ -158,7 +158,7 @@ export function FlowCreatePort({
             )}
           </BlockContent>
         ) : (
-          <EmptyState title="No port are set" description="Define a custom port for your application" />
+          <EmptyState title="No ports are set" description="Define a custom port for your application" />
         )}
       </div>
 

@@ -14,22 +14,17 @@ import {
   useModalConfirmation,
   useModalMultiConfirmation,
 } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { isTryingToRemoveLastPublicPort } from '@qovery/shared/util-services'
 
 export interface HelmNetworkingSettingsProps extends PropsWithChildren {
   helmId: string
   ports: HelmPortRequestPortsInner[]
   onUpdatePorts: (ports: HelmPortRequestPortsInner[]) => void
-  isSetting?: boolean
 }
 
-export function HelmNetworkingSettings({
-  helmId,
-  ports,
-  onUpdatePorts,
-  isSetting = false,
-  children,
-}: HelmNetworkingSettingsProps) {
+export function HelmNetworkingSettings({ helmId, ports, onUpdatePorts, children }: HelmNetworkingSettingsProps) {
+  useDocumentTitle('Networking - Service settings')
   const { openModal, closeModal } = useModal()
   const { openModalMultiConfirmation } = useModalMultiConfirmation()
   const { openModalConfirmation } = useModalConfirmation()
@@ -116,10 +111,10 @@ export function HelmNetworkingSettings({
                   const { service_name, internal_port, protocol, namespace, name } = port
                   return (
                     <div
-                      className="flex w-full items-center justify-between gap-3 border-b border-neutral p-4 last:border-0"
+                      className="flex w-full items-center justify-between gap-3 border-b border-neutral p-4 py-3 last:border-0"
                       key={name}
                     >
-                      <div className="flex flex-col">
+                      <div className="flex flex-col gap-0.5">
                         <span className="text-sm font-medium text-neutral">{service_name}</span>
                         <div className="flex flex-row gap-2 text-xs text-neutral-subtle">
                           <span>Service port: {internal_port}</span>
@@ -155,7 +150,7 @@ export function HelmNetworkingSettings({
                   )
                 })
               ) : (
-                <EmptyState title="No port are set." icon="wave-pulse" />
+                <EmptyState title="No ports are set." icon="wave-pulse" />
               )}
             </BlockContent>
             {children}
