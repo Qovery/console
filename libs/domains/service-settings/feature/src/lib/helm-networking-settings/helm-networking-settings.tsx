@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { type HelmPortRequestPortsInner } from 'qovery-typescript-axios'
 import { ServiceType } from 'qovery-ws-typescript-axios'
-import { type PropsWithChildren } from 'react'
+import { type PropsWithChildren, useMemo } from 'react'
 import { useCustomDomains } from '@qovery/domains/custom-domains/feature'
 import { NetworkingPortSettingModal } from '@qovery/domains/service-helm/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
@@ -36,6 +36,15 @@ export function HelmNetworkingSettings({ children }: HelmNetworkingSettingsProps
   })
 
   const ports: HelmPortRequestPortsInner[] = service?.ports ?? []
+
+  const sortedPorts = useMemo(() => {
+    const list = (service?.ports ?? []) as HelmPortRequestPortsInner[]
+    return [...list].sort(
+      (a, b) =>
+        (a.service_name ?? '').localeCompare(b.service_name ?? '', undefined, { sensitivity: 'base' }) ||
+        (a.name ?? '').localeCompare(b.name ?? '', undefined, { sensitivity: 'base' })
+    )
+  }, [service?.ports])
 
   const updatePorts = async (nextPorts: HelmPortRequestPortsInner[]) => {
     if (!service) {
@@ -141,8 +150,8 @@ export function HelmNetworkingSettings({ children }: HelmNetworkingSettingsProps
         <div className="max-w-content-with-navigation-left">
           <form className="w-full">
             <BlockContent title="Services exposed publicly" classNameContent="p-0">
-              {ports.length > 0 ? (
-                ports.map((port) => {
+              {sortedPorts.length > 0 ? (
+                sortedPorts.map((port) => {
                   const { service_name, internal_port, protocol, namespace, name } = port
                   return (
                     <div
