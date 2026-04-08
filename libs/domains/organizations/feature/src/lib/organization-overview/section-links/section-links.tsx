@@ -1,5 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
+import posthog from 'posthog-js'
+import { useCallback } from 'react'
 import { Heading, Icon, Section } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
@@ -32,6 +34,10 @@ const LINKS: {
 
 export function SectionLinks() {
   const { showChat } = useSupportChat()
+
+  const handleGiveFeedbackClick = useCallback(() => {
+    posthog.capture('feedback_button_clicked_new_navigation')
+  }, [])
 
   return (
     <Section className="flex flex-col gap-3">
@@ -70,6 +76,20 @@ export function SectionLinks() {
               type="button"
               title={link.title}
               onClick={showChat}
+              className="group flex justify-between gap-2 rounded-lg border border-neutral p-4 text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle"
+            >
+              {content}
+            </button>
+          )
+        }
+
+        if (link.title === 'Give feedback') {
+          return (
+            <button
+              key={link.title}
+              type="button"
+              title={link.title}
+              onClick={handleGiveFeedbackClick}
               className="group flex justify-between gap-2 rounded-lg border border-neutral p-4 text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle"
             >
               {content}
