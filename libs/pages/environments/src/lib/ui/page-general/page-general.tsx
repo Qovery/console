@@ -4,15 +4,17 @@ import { EnvironmentList } from '@qovery/domains/environments/feature'
 export interface PageGeneralProps {
   clusterAvailable: boolean
   project?: Project
+  cloneUseCaseId?: string
 }
 
-export function PageGeneral({ clusterAvailable, project }: PageGeneralProps) {
+export function PageGeneral({ clusterAvailable, project, cloneUseCaseId }: PageGeneralProps) {
   return (
     project && (
       <EnvironmentList
         className="border-b border-b-neutral-200"
         project={project}
         clusterAvailable={clusterAvailable ?? false}
+        cloneUseCaseId={cloneUseCaseId}
       />
     )
   )

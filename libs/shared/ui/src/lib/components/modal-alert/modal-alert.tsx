@@ -16,7 +16,7 @@ export function ModalAlert(props: ModalAlertProps) {
         <Dialog.Content
           data-testid="modal-alert"
           style={{ width: `470px`, top: '200px' }}
-          className="modal__content fixed left-1/2 top-[84px] z-modal rounded-md border border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)]"
+          className="modal__content fixed left-1/2 top-[84px] z-modal overflow-hidden rounded-md border border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)]"
         >
           <div className="max-h-[80vh] overflow-auto p-6">
             <h2 className="h4 mb-2 text-neutral">Discard changes?</h2>

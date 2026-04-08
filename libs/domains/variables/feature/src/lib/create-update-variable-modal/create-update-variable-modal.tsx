@@ -28,13 +28,26 @@ import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
 
 type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
 
+export interface CreateUpdateVariableModalSubmitData {
+  key: string
+  value?: string | null
+  description?: string
+  scope: Scope
+  isSecret: boolean
+  isFile: boolean
+  enable_interpolation_in_file?: boolean
+  mountPath?: string
+}
+
 export type CreateUpdateVariableModalProps = {
   closeModal: () => void
   onSubmit?: (variable?: VariableResponse | void) => void
+  onSubmitLocal?: (data: CreateUpdateVariableModalSubmitData) => void
   variable?: VariableResponse
   mode: 'CREATE' | 'UPDATE'
   type: keyof typeof APIVariableTypeEnum
   isFile?: boolean
+  hasClusterSecretManagerConfigured?: boolean
 } & (
   | {
       scope: Extract<Scope, 'PROJECT'>
@@ -54,7 +67,17 @@ export type CreateUpdateVariableModalProps = {
 )
 
 export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps) {
-  const { scope, closeModal, onSubmit, variable, mode, type, isFile } = props
+  const {
+    scope,
+    closeModal,
+    onSubmit,
+    onSubmitLocal,
+    variable,
+    mode,
+    type,
+    isFile,
+    hasClusterSecretManagerConfigured = false,
+  } = props
   const _isFile = (variable && environmentVariableFile(variable)) || (isFile ?? false)
   const { enableAlertClickOutside } = useModal()
   const [loading, setLoading] = useState(false)
@@ -128,6 +151,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
 
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
   const watchScope = methods.watch('scope')
+  const watchIsSecret = methods.watch('isSecret')
 
   const _onSubmit = methods.handleSubmit(async (data) => {
     const cloneData = { ...data }
@@ -137,6 +161,22 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
 
     if (!_isFile) {
       delete cloneData.mountPath
+    }
+
+    if (onSubmitLocal) {
+      onSubmitLocal({
+        key: cloneData.key,
+        value: cloneData.value,
+        description: cloneData.description,
+        scope: cloneData.scope,
+        isSecret: cloneData.isSecret,
+        isFile: _isFile,
+        enable_interpolation_in_file: cloneData.enable_interpolation_in_file,
+        mountPath: cloneData.mountPath ?? undefined,
+      })
+      onSubmit?.()
+      closeModal()
+      return
     }
 
     try {
@@ -474,6 +514,17 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               )}
             />
           </div>
+        )}
+
+        {mode === 'CREATE' && type === 'VALUE' && watchIsSecret && hasClusterSecretManagerConfigured && (
+          <Callout.Root color="yellow" className="mb-3">
+            <Callout.Icon>
+              <Icon iconName="exclamation-triangle" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              Are you sure you want to create a Qovery secret? External secrets are already configured on this cluster.
+            </Callout.Text>
+          </Callout.Root>
         )}
 
         {scope === 'APPLICATION' && watchScope !== 'APPLICATION' && (

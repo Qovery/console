@@ -116,6 +116,7 @@ export function PageJobCreateFeature() {
 
   const [variableData, setVariableData] = useState<FlowVariableData | undefined>({
     variables: [],
+    externalSecrets: [],
   })
 
   const navigate = useNavigate()

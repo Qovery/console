@@ -5,6 +5,7 @@ import { StepSummary, type StepSummaryProps } from './step-summary'
 const props: StepSummaryProps = {
   variableData: {
     variables: [],
+    externalSecrets: [],
   },
   generalData: {
     name: 'test',
