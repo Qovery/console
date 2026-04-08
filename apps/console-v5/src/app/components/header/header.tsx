@@ -1,8 +1,9 @@
+import posthog from 'posthog-js'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
-import { Suspense } from 'react'
+import { Suspense, useCallback } from 'react'
 import { SpotlightTrigger } from '@qovery/pages/layout'
 import { DevopsCopilotButton } from '@qovery/shared/devops-copilot/feature'
-import { LogoIcon } from '@qovery/shared/ui'
+import { Button, LogoIcon } from '@qovery/shared/ui'
 import { Breadcrumbs } from './breadcrumbs/breadcrumbs'
 import { UserMenu } from './user-menu/user-menu'
 
@@ -21,6 +22,9 @@ export function Separator() {
 
 export function Header() {
   const isDevopsCopilotEnabled = useFeatureFlagVariantKey('devops-copilot')
+  const handleFeedbackClick = useCallback(() => {
+    posthog.capture('feedback_button_clicked_new_navigation')
+  }, [])
 
   return (
     <header className="relative z-header w-full bg-background-secondary py-4 pl-3 pr-4">
@@ -32,6 +36,9 @@ export function Header() {
             <Breadcrumbs />
             <div className="ml-auto flex items-center gap-2">
               <SpotlightTrigger />
+              <Button onClick={handleFeedbackClick} variant="outline">
+                Feedback
+              </Button>
               {isDevopsCopilotEnabled && <DevopsCopilotButton />}
               <UserMenu />
             </div>
