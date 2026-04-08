@@ -6,22 +6,14 @@ import { pluralize } from '@qovery/shared/util-js'
 import CreateProjectModal from '../create-project-modal/create-project-modal'
 import { useFavoriteProjects } from '../hooks/use-favorite-projects/use-favorite-projects'
 import { useProjects } from '../hooks/use-projects/use-projects'
+import { sortProjectsByFavorite } from '../utils/sort-projects-by-favorite'
 
 export function ProjectList() {
   const { organizationId = '' }: { organizationId: string } = useParams({ strict: false })
   const { data: projects = [] } = useProjects({ organizationId, suspense: true })
   const { isProjectFavorite, toggleFavoriteProject } = useFavoriteProjects({ organizationId })
   const { openModal, closeModal } = useModal()
-  const sortedProjects = [...projects].sort((a, b) => {
-    const isProjectAFavorite = isProjectFavorite(a.id)
-    const isProjectBFavorite = isProjectFavorite(b.id)
-
-    if (isProjectAFavorite !== isProjectBFavorite) {
-      return isProjectAFavorite ? -1 : 1
-    }
-
-    return a.name.localeCompare(b.name)
-  })
+  const sortedProjects = sortProjectsByFavorite(projects, isProjectFavorite)
 
   const createProjectModal = () => {
     openModal({

@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { ClusterAvatar, useClusters } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode, useEnvironments } from '@qovery/domains/environments/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
-import { useProjects } from '@qovery/domains/projects/feature'
+import { sortProjectsByFavorite, useFavoriteProjects, useProjects } from '@qovery/domains/projects/feature'
 import { ServiceAvatar, ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { Avatar } from '@qovery/shared/ui'
 import { Separator } from '../header'
@@ -26,6 +26,7 @@ export function Breadcrumbs() {
   const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId, suspense: true })
   const { data: clusters = [] } = useClusters({ organizationId, suspense: true })
   const { data: projects = [] } = useProjects({ organizationId, suspense: true })
+  const { isProjectFavorite } = useFavoriteProjects({ organizationId })
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const { data: services = [] } = useServices({ environmentId, suspense: true })
 
@@ -59,16 +60,14 @@ export function Breadcrumbs() {
     }).href,
   }))
 
-  const projectItems: BreadcrumbItemData[] = projects
-    .sort((a, b) => a.name.trim().localeCompare(b.name.trim()))
-    .map((project) => ({
-      id: project.id,
-      label: project.name,
-      path: buildLocation({
-        to: '/organization/$organizationId/project/$projectId/overview',
-        params: { organizationId, projectId: project.id },
-      }).href,
-    }))
+  const projectItems: BreadcrumbItemData[] = sortProjectsByFavorite(projects, isProjectFavorite).map((project) => ({
+    id: project.id,
+    label: project.name,
+    path: buildLocation({
+      to: '/organization/$organizationId/project/$projectId/overview',
+      params: { organizationId, projectId: project.id },
+    }).href,
+  }))
 
   const environmentItems: BreadcrumbItemData[] = environments
     .sort((a, b) => a.name.trim().localeCompare(b.name.trim()))
