@@ -25,7 +25,9 @@ import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
+import { useUpdateEksAnywhereCommit } from '../hooks/use-update-eks-anywhere-commit/use-update-eks-anywhere-commit'
 import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-cluster'
+import { SelectEksAnywhereCommitModal } from './select-eks-anywhere-commit-modal'
 
 type ActionToolbarVariant = 'default' | 'header' | 'card'
 
@@ -39,10 +41,11 @@ function MenuManageDeployment({
   variant?: ActionToolbarVariant
 }) {
   const { openModalConfirmation } = useModalConfirmation()
-  const { openModal } = useModal()
+  const { openModal, closeModal } = useModal()
   const { mutate: deployCluster } = useDeployCluster()
   const { mutate: stopCluster } = useStopCluster()
   const { mutate: upgradeCluster } = useUpgradeCluster({ organizationId: cluster.organization.id })
+  const { mutateAsync: updateEksAnywhereCommit } = useUpdateEksAnywhereCommit()
   const hasTextActionButton = variant === 'header'
   const actionButtonSize = variant === 'default' ? 'sm' : 'md'
 
@@ -61,6 +64,18 @@ function MenuManageDeployment({
     clusterStatus.status === 'DEPLOYED' &&
     cluster.kubernetes !== 'PARTIALLY_MANAGED'
   const clusterNeedUpdate = cluster.deployment_status !== 'UP_TO_DATE' && clusterStatus.status !== 'STOPPED'
+  const isEksAnywhereCluster = cluster.kubernetes === 'PARTIALLY_MANAGED'
+  const hasEksAnywhereGitRepository = Boolean(
+    cluster.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository?.url
+  )
+  const eksAnywhereGitRepository = cluster.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository as
+    | { commit_id?: string; git_commit_id?: string }
+    | undefined
+  const eksAnywhereCurrentCommitId = eksAnywhereGitRepository?.commit_id ?? eksAnywhereGitRepository?.git_commit_id
+  const canUpdateEksAnywhereVersion =
+    isEksAnywhereCluster &&
+    hasEksAnywhereGitRepository &&
+    (isDeployAvailable(clusterStatus.status) || isRedeployAvailable(clusterStatus.status))
   const actionButtonVariant = hasTextActionButton ? 'solid' : 'outline'
   const actionButtonColor =
     clusterNeedUpdate || k8sUpdateAvailable ? 'yellow' : hasTextActionButton ? 'brand' : 'neutral'
@@ -82,6 +97,45 @@ function MenuManageDeployment({
   const mutationUpdate = () => {
     openModal({
       content: <ClusterUpdateModal cluster={cluster} />,
+    })
+  }
+  const mutationUpdateEksAnywhereVersion = () => {
+    openModal({
+      content: (
+        <SelectEksAnywhereCommitModal
+          title="Update another version"
+          description="Select the commit id you want to use."
+          submitLabel="Update"
+          organizationId={cluster.organization.id}
+          clusterId={cluster.id}
+          currentCommitId={eksAnywhereCurrentCommitId}
+          onCancel={() => closeModal()}
+          onSubmit={async (commitId) => {
+            if (commitId === eksAnywhereCurrentCommitId) {
+              closeModal()
+              mutationUpdate()
+              return
+            }
+
+            try {
+              await updateEksAnywhereCommit({
+                organizationId: cluster.organization.id,
+                clusterId: cluster.id,
+                commitId,
+              })
+              closeModal()
+              mutationUpdate()
+            } catch {
+              // Error is handled by mutation notifyOnError.
+            }
+          }}
+        >
+          <p>
+            For <strong className="font-medium text-neutral">{cluster.name}</strong>
+          </p>
+        </SelectEksAnywhereCommitModal>
+      ),
+      options: { width: 596 },
     })
   }
 
@@ -133,6 +187,18 @@ function MenuManageDeployment({
         color={clusterNeedUpdate ? 'yellow' : 'brand'}
       >
         Update
+        {tooltipClusterNeedUpdate}
+      </DropdownMenu.Item>
+    ),
+    canUpdateEksAnywhereVersion && (
+      <DropdownMenu.Item
+        key="1bis"
+        icon={<Icon iconName="rotate-right" />}
+        onSelect={mutationUpdateEksAnywhereVersion}
+        className="relative"
+        color={clusterNeedUpdate ? 'yellow' : 'brand'}
+      >
+        Update another version
         {tooltipClusterNeedUpdate}
       </DropdownMenu.Item>
     ),
