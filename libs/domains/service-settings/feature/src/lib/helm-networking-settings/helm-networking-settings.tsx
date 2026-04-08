@@ -1,8 +1,10 @@
+import { useParams } from '@tanstack/react-router'
 import { type HelmPortRequestPortsInner } from 'qovery-typescript-axios'
 import { ServiceType } from 'qovery-ws-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useCustomDomains } from '@qovery/domains/custom-domains/feature'
 import { NetworkingPortSettingModal } from '@qovery/domains/service-helm/feature'
+import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   BlockContent,
@@ -15,31 +17,51 @@ import {
   useModalMultiConfirmation,
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { isTryingToRemoveLastPublicPort } from '@qovery/shared/util-services'
+import { buildEditServicePayload, isTryingToRemoveLastPublicPort } from '@qovery/shared/util-services'
 
-export interface HelmNetworkingSettingsProps extends PropsWithChildren {
-  helmId: string
-  ports: HelmPortRequestPortsInner[]
-  onAddPort: (port: HelmPortRequestPortsInner) => Promise<void>
-  onEditPort: (originalPort: HelmPortRequestPortsInner, port: HelmPortRequestPortsInner) => Promise<void>
-  onRemovePort: (port: HelmPortRequestPortsInner) => Promise<void>
-}
+export interface HelmNetworkingSettingsProps extends PropsWithChildren {}
 
-export function HelmNetworkingSettings({
-  helmId,
-  ports,
-  onAddPort: onAddPortSubmit,
-  onEditPort: onEditPortSubmit,
-  onRemovePort: onRemovePortSubmit,
-  children,
-}: HelmNetworkingSettingsProps) {
+export function HelmNetworkingSettings({ children }: HelmNetworkingSettingsProps) {
   useDocumentTitle('Networking - Service settings')
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const { openModalMultiConfirmation } = useModalMultiConfirmation()
   const { openModalConfirmation } = useModalConfirmation()
 
+  const { data: service } = useService({ serviceId, serviceType: 'HELM', suspense: true })
+  const { mutateAsync: editService } = useEditService({
+    organizationId,
+    projectId,
+    environmentId,
+  })
+
+  const ports: HelmPortRequestPortsInner[] = service?.ports ?? []
+
+  const updatePorts = async (nextPorts: HelmPortRequestPortsInner[]) => {
+    if (!service) {
+      return
+    }
+
+    await editService({
+      serviceId,
+      payload: buildEditServicePayload({ service, request: { ports: nextPorts } }),
+    })
+  }
+
+  const onAddPortSubmit = async (port: HelmPortRequestPortsInner) => {
+    await updatePorts([...(service?.ports ?? []), port])
+  }
+
+  const onEditPortSubmit = async (originalPort: HelmPortRequestPortsInner, updatedPort: HelmPortRequestPortsInner) => {
+    await updatePorts([...(service?.ports ?? []).filter((port) => port !== originalPort), updatedPort])
+  }
+
+  const onRemovePortSubmit = async (portToRemove: HelmPortRequestPortsInner) => {
+    await updatePorts([...(service?.ports ?? []).filter((port) => port !== portToRemove)])
+  }
+
   const { data: customDomains } = useCustomDomains({
-    serviceId: helmId,
+    serviceId,
     serviceType: 'HELM',
   })
 
@@ -47,7 +69,7 @@ export function HelmNetworkingSettings({
     openModal({
       content: (
         <NetworkingPortSettingModal
-          helmId={helmId}
+          helmId={serviceId}
           onSubmit={async (port) => {
             await onAddPortSubmit(port)
             closeModal()
@@ -62,7 +84,7 @@ export function HelmNetworkingSettings({
     openModal({
       content: (
         <NetworkingPortSettingModal
-          helmId={helmId}
+          helmId={serviceId}
           port={originalPort}
           onSubmit={async (port) => {
             await onEditPortSubmit(originalPort, port)
