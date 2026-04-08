@@ -286,16 +286,20 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="flex w-full items-center justify-between gap-4"
                 >
                   <a
-                    class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm hover:underline flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
+                    class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
                     params="[object Object]"
                     to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
-                  />
+                  >
+                    <div
+                      class="group flex items-center gap-2"
+                    />
+                  </a>
                   <div>
                     <div
                       class="flex items-center gap-2"
                     >
                       <a
-                        class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm hover:underline flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
+                        class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
                         params="[object Object]"
                         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                       >
@@ -665,16 +669,20 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="flex w-full items-center justify-between gap-4"
                 >
                   <a
-                    class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm hover:underline flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
+                    class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
                     params="[object Object]"
                     to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
-                  />
+                  >
+                    <div
+                      class="group flex items-center gap-2"
+                    />
+                  </a>
                   <div>
                     <div
                       class="flex items-center gap-2"
                     >
                       <a
-                        class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm hover:underline flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
+                        class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
                         params="[object Object]"
                         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                       >
@@ -1333,16 +1341,20 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="flex w-full items-center justify-between gap-4"
                 >
                   <a
-                    class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm hover:underline flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
+                    class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
                     params="[object Object]"
                     to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
-                  />
+                  >
+                    <div
+                      class="group flex items-center gap-2"
+                    />
+                  </a>
                   <div>
                     <div
                       class="flex items-center gap-2"
                     >
                       <a
-                        class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm hover:underline flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
+                        class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
                         params="[object Object]"
                         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                       >
@@ -1816,16 +1828,20 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="flex w-full items-center justify-between gap-4"
                 >
                   <a
-                    class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm hover:underline flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
+                    class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
                     params="[object Object]"
                     to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
-                  />
+                  >
+                    <div
+                      class="group flex items-center gap-2"
+                    />
+                  </a>
                   <div>
                     <div
                       class="flex items-center gap-2"
                     >
                       <a
-                        class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm hover:underline flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
+                        class="cursor-pointer transition duration-100 gap-1 text-neutral text-sm flex h-full items-center justify-between py-1 font-normal hover:text-neutral"
                         params="[object Object]"
                         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                       >
