@@ -42,7 +42,7 @@ export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
 }
 
 export const tableGridLayoutClassName =
-  'grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(150px,1fr)_minmax(320px,1.24fr)_130px]'
+  'grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(250px,1fr)_minmax(320px,1.24fr)_130px]'
 
 export const ServiceListSkeleton = () => {
   return (
