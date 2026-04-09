@@ -40,7 +40,6 @@ import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { CreateCloneEnvironmentModal } from '../create-clone-environment-modal/create-clone-environment-modal'
 import { EnvironmentActionToolbar } from '../environment-action-toolbar/environment-action-toolbar'
 import { EnvironmentMode } from '../environment-mode/environment-mode'
-import { useCheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
 import { useEnvironments } from '../hooks/use-environments/use-environments'
 import { EnvironmentListSkeleton } from './environment-list-skeleton'
 
@@ -88,30 +87,6 @@ function EnvironmentStatusCell({
   runningStatus?: RunningState
   value?: string
 }) {
-  const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
-    clusterId: environment.cluster_id,
-  })
-  // TODO [To update once rust-backed will be deployed]: To remove
-  if (checkRunningStatusClosed) {
-    return (
-      <Tooltip content="See cluster">
-        <Link
-          as="button"
-          to={CLUSTER_URL(environment.organization.id, environment.cluster_id)}
-          onClick={(e) => e.stopPropagation()}
-          className="gap-2 whitespace-nowrap text-sm"
-          size="md"
-          color="neutral"
-          variant="outline"
-          radius="full"
-        >
-          <StatusChip status="UNAVAILABLE" />
-          Status unavailable
-        </Link>
-      </Tooltip>
-    )
-  }
-
   return (
     <Skeleton width={102} height={34} show={!value}>
       <Tooltip content="See overview">
