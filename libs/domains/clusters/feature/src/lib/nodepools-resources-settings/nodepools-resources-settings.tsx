@@ -1,11 +1,5 @@
 import { add, format, parse } from 'date-fns'
-import {
-  type Cluster,
-  type KarpenterDefaultNodePoolOverride,
-  type KarpenterGpuNodePoolOverride,
-  type KarpenterStableNodePoolOverride,
-  WeekdayEnum,
-} from 'qovery-typescript-axios'
+import { type Cluster, WeekdayEnum } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
@@ -72,7 +66,7 @@ export const formatWeekdays = (days: string[]): string => {
 
 export interface NodepoolsResourcesSettingsProps {
   cluster: Cluster
-  filter: 'default' | 'gpu'
+  filter: 'default' | 'gpu' | 'cronjob'
 }
 
 export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourcesSettingsProps) {
@@ -82,6 +76,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
   const watchStable = watch('karpenter.qovery_node_pools.stable_override')
   const watchDefault = watch('karpenter.qovery_node_pools.default_override')
   const watchGpu = watch('karpenter.qovery_node_pools.gpu_override')
+  const watchCronjob = watch('karpenter.qovery_node_pools.cronjob_override')
 
   const { start: startStable, end: endStable } = formatTimeRange(
     watchStable?.consolidation?.start_time,
@@ -90,6 +85,10 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
   const { start: startGpu, end: endGpu } = formatTimeRange(
     watchGpu?.consolidation?.start_time,
     watchGpu?.consolidation?.duration
+  )
+  const { start: startCronjob, end: endCronjob } = formatTimeRange(
+    watchCronjob?.consolidation?.start_time,
+    watchCronjob?.consolidation?.duration
   )
 
   return (
@@ -339,6 +338,88 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                         <>
                           <br />
                           <span>GPU limit: {watchGpu?.limits?.max_gpu} GPU</span>
+                        </>
+                      )}
+                    </span>
+                  ) : (
+                    <span>No limit</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))
+          .with('cronjob', () => (
+            <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-150 p-4 text-sm">
+              <div className="flex justify-between gap-10">
+                <div className="flex flex-col gap-1.5">
+                  <p className="font-medium text-neutral-400">Cronjob nodepool</p>
+                  <span className="text-ssm text-neutral-350">
+                    Dedicated to cronjob workloads. Cronjob pods are automatically scheduled on this nodepool when
+                    enabled. Consolidation can be configured independently from the default nodepool.
+                  </span>
+                </div>
+                <Button
+                  type="button"
+                  variant="surface"
+                  color="neutral"
+                  onClick={() =>
+                    openModal({
+                      content: (
+                        <NodepoolModal
+                          type="cronjob"
+                          cluster={cluster}
+                          onChange={(data) => {
+                            setValue('karpenter.qovery_node_pools.cronjob_override', {
+                              ...watchCronjob,
+                              ...data.cronjob_override,
+                            })
+                          }}
+                          defaultValues={watchCronjob}
+                        />
+                      ),
+                    })
+                  }
+                >
+                  <Icon iconName="pen" iconStyle="solid" />
+                </Button>
+              </div>
+              <div className="flex justify-between gap-4">
+                <div className="flex w-1/2 flex-col gap-1">
+                  <span className="text-neutral-350">Consolidation</span>
+                  <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
+                    {watchCronjob?.consolidation?.enabled ? (
+                      <span className="flex flex-col justify-center">
+                        <span className="flex gap-1.5">
+                          {formatWeekdays(watchCronjob?.consolidation?.days)},
+                          <Tooltip content={`Schedule (${cluster.region})`}>
+                            <span className="text-sm">
+                              <Icon iconName="circle-info" iconStyle="regular" />
+                            </span>
+                          </Tooltip>
+                        </span>
+                        <span>
+                          {startCronjob} to {endCronjob}
+                        </span>
+                        {watchCronjob?.consolidate_after && (
+                          <span className="text-neutral-350">Consolidate after: {watchCronjob.consolidate_after}</span>
+                        )}
+                      </span>
+                    ) : (
+                      <span>Disabled</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex w-1/2 flex-col gap-1">
+                  <span className="text-neutral-350">Resources limit</span>
+                  {watchCronjob?.limits?.enabled ? (
+                    <span>
+                      {watchCronjob.limits.max_cpu_in_vcpu && (
+                        <span>vCPU limit: {watchCronjob?.limits?.max_cpu_in_vcpu} vCPU; </span>
+                      )}
+                      {watchCronjob.limits.max_memory_in_gibibytes && (
+                        <>
+                          <br />
+                          <span>Memory limit: {watchCronjob?.limits?.max_memory_in_gibibytes} GiB</span>
                         </>
                       )}
                     </span>
