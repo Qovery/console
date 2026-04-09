@@ -18,7 +18,7 @@ export const Button = forwardRef<ElementRef<typeof ButtonPrimitive>, ButtonProps
       className={twMerge(loading ? 'pointer-events-none relative text-transparent' : '', className)}
     >
       {loading && <LoaderSpinner className="absolute left-0 right-0 m-auto" />}
-      {props.children}
+      <div className={loading ? 'opacity-0' : ''}>{props.children}</div>
     </ButtonPrimitive>
   )
 })

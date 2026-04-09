@@ -127,6 +127,7 @@ export function HelmNetworkingSettings({ children }: HelmNetworkingSettingsProps
         })
       : openModalConfirmation({
           title: 'Delete Port',
+          name: `port "${port.name}"`,
           confirmationMethod: 'action',
           action: async () => {
             await onRemovePortSubmit(port)
