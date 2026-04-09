@@ -1,8 +1,15 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type OrganizationCrendentialsResponseListResultsInner } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { PageOrganizationCredentialsFeature } from './page-organization-credentials-feature'
 
 let mockCredentials: OrganizationCrendentialsResponseListResultsInner[] = []
+const mockUseFeatureFlagEnabled = useFeatureFlagEnabled as jest.Mock
+
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => false),
+}))
+
 jest.mock('@qovery/domains/organizations/feature', () => {
   return {
     ...jest.requireActual('@qovery/domains/organizations/feature'),
@@ -14,6 +21,11 @@ jest.mock('@qovery/domains/organizations/feature', () => {
 })
 
 describe('PageOrganizationCredentialsFeature', () => {
+  beforeEach(() => {
+    mockCredentials = []
+    mockUseFeatureFlagEnabled.mockReturnValue(false)
+  })
+
   it('should render', () => {
     const { baseElement } = renderWithProviders(<PageOrganizationCredentialsFeature />)
     expect(baseElement).toBeTruthy()
@@ -129,6 +141,45 @@ describe('PageOrganizationCredentialsFeature', () => {
       const viewButton = row?.querySelector('button[data-testid="view-credential"]') // View button is the first button in the row
 
       expect(viewButton).toBeInTheDocument()
+    })
+
+    it('should hide EKS Anywhere vSphere credentials when feature flag is disabled', () => {
+      mockCredentials = [
+        {
+          credential: {
+            id: '1',
+            name: 'Credential EKS Anywhere',
+            object_type: 'EKS_ANYWHERE_VSPHERE',
+            vsphere_user: 'administrator@vsphere.local',
+            role_arn: 'arn:aws:iam::123456789012:role/test-role',
+          },
+          clusters: [],
+        },
+      ]
+
+      renderWithProviders(<PageOrganizationCredentialsFeature />)
+
+      expect(screen.queryByText('Credential EKS Anywhere')).not.toBeInTheDocument()
+    })
+
+    it('should display EKS Anywhere vSphere credentials when feature flag is enabled', () => {
+      mockUseFeatureFlagEnabled.mockReturnValue(true)
+      mockCredentials = [
+        {
+          credential: {
+            id: '1',
+            name: 'Credential EKS Anywhere',
+            object_type: 'EKS_ANYWHERE_VSPHERE',
+            vsphere_user: 'administrator@vsphere.local',
+            role_arn: 'arn:aws:iam::123456789012:role/test-role',
+          },
+          clusters: [],
+        },
+      ]
+
+      renderWithProviders(<PageOrganizationCredentialsFeature />)
+
+      expect(screen.getByText('Credential EKS Anywhere')).toBeInTheDocument()
     })
   })
 })

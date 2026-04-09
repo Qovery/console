@@ -57,7 +57,7 @@ export function PageTerraformCreateFeature() {
       job_resources: {
         cpu_milli: 500,
         ram_mib: 512,
-        storage_gib: 1,
+        storage_gib: 5,
       },
       terraform_variables_source: {
         tf_vars: [],

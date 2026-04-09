@@ -14,6 +14,7 @@ export interface CargoSignupPayload {
   utm_campaign?: string | null
   utm_term?: string | null
   utm_content?: string | null
+  utm_landing_page?: string | null
   gclid?: string | null
 }
 

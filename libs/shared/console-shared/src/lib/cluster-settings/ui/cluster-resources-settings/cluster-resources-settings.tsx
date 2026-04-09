@@ -36,7 +36,6 @@ import {
   useModal,
 } from '@qovery/shared/ui'
 import { listInstanceTypeFormatter } from '../../feature/cluster-resources-settings-feature/utils/list-instance-type-formatter'
-import { ButtonPopoverSubnets } from './button-popover-subnets/button-popover-subnets'
 import KarpenterImage from './karpenter-image.svg'
 
 export interface ClusterResourcesSettingsProps {
@@ -67,6 +66,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const isKarpenter = Boolean(props.cluster?.features?.find((f) => f.id === 'KARPENTER'))
 
   const [isGpuEnabled, setIsGpuEnabled] = useState(!!watchKarpenter?.qovery_node_pools?.gpu_override)
+  const [isCronjobEnabled, setIsCronjobEnabled] = useState(!!watchKarpenter?.qovery_node_pools?.cronjob_override)
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
     match(props.cloudProvider || CloudVendorEnum.AWS)
@@ -136,8 +136,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
     props.cloudProvider,
   ])
 
-  const hasExistingVPC = Boolean(props.cluster?.features?.find((f) => f.id === 'EXISTING_VPC')?.value_object?.value)
-
   useEffect(() => {
     if (!props.fromDetail && props.isProduction && props.cloudProvider === 'AWS') {
       setValue('karpenter', {
@@ -173,6 +171,17 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
     setIsGpuEnabled(value)
   }
 
+  const handleCronjobEnabledChange = (value: boolean) => {
+    if (!value) {
+      setValue('karpenter.qovery_node_pools.cronjob_override', undefined)
+    } else {
+      setValue('karpenter.qovery_node_pools.cronjob_override', {
+        ...watchKarpenter?.qovery_node_pools?.cronjob_override,
+      })
+    }
+    setIsCronjobEnabled(value)
+  }
+
   return (
     <div className="flex flex-col gap-10">
       {props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
@@ -206,35 +215,33 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   <div className="relative overflow-hidden">
                     <div className="p-4">
                       {props.fromDetail ? (
-                        <ButtonPopoverSubnets disabled={isKarpenter || hasExistingVPC}>
-                          <InputToggle
-                            className="max-w-[70%]"
-                            name={field.name}
-                            value={field.value}
-                            onChange={(e) => {
-                              const instanceType = cloudProviderInstanceTypes?.filter(
-                                (option) => option.name === watchInstanceType
+                        <InputToggle
+                          className="max-w-[70%]"
+                          name={field.name}
+                          value={field.value}
+                          onChange={(e) => {
+                            const instanceType = cloudProviderInstanceTypes?.filter(
+                              (option) => option.name === watchInstanceType
+                            )
+                            if (instanceType) {
+                              setValue(
+                                'karpenter.qovery_node_pools.requirements',
+                                convertToKarpenterRequirements(instanceType)
                               )
-                              if (instanceType) {
-                                setValue(
-                                  'karpenter.qovery_node_pools.requirements',
-                                  convertToKarpenterRequirements(instanceType)
-                                )
-                                setValue('karpenter.disk_size_in_gib', watchDiskSize)
-                                setValue(
-                                  'karpenter.default_service_architecture',
-                                  (instanceType[0]?.architecture ?? 'AMD64') as CpuArchitectureEnum
-                                )
-                              }
-                              field.onChange(e)
-                            }}
-                            title="Enable Karpenter"
-                            description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
-                            forceAlignTop
-                            disabled={props.hasAlreadyKarpenter}
-                            small
-                          />
-                        </ButtonPopoverSubnets>
+                              setValue('karpenter.disk_size_in_gib', watchDiskSize)
+                              setValue(
+                                'karpenter.default_service_architecture',
+                                (instanceType[0]?.architecture ?? 'AMD64') as CpuArchitectureEnum
+                              )
+                            }
+                            field.onChange(e)
+                          }}
+                          title="Enable Karpenter"
+                          description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
+                          forceAlignTop
+                          disabled={props.hasAlreadyKarpenter}
+                          small
+                        />
                       ) : (
                         <p className="mb-2 max-w-[70%] text-sm text-neutral-400">
                           Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time.
@@ -541,6 +548,48 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   )}
                   {watchKarpenterEnabled && props.cluster && (
                     <NodepoolsResourcesSettings cluster={props.cluster} filter="gpu" />
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </BlockContent>
+
+          <BlockContent title="Cronjob nodepools configuration" className="mb-0" classNameContent="p-0">
+            <div className="flex flex-col gap-3 p-4">
+              <InputToggle
+                value={isCronjobEnabled}
+                onChange={handleCronjobEnabledChange}
+                name="cronjob_enabled"
+                title="Enable cronjob nodepools"
+                description="Creates a dedicated nodepool for cronjob workloads with isolated nodes. Cronjob scaling will not impact long-running services on the default nodepool."
+                forceAlignTop
+                small
+              />
+              <Callout.Root color="sky">
+                <Callout.Icon>
+                  <Icon iconName="info-circle" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextDescription>
+                    After enabling or disabling this setting, we strongly recommend redeploying all your cron jobs to
+                    ensure they run with the correct node targeting. A fallback mechanism prevents pods from getting
+                    stuck, but redeploying guarantees optimal scheduling.
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
+            </div>
+
+            <AnimatePresence>
+              {isCronjobEnabled && (
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: 'auto' }}
+                  exit={{ height: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  className="overflow-hidden"
+                >
+                  {watchKarpenterEnabled && props.cluster && (
+                    <NodepoolsResourcesSettings cluster={props.cluster} filter="cronjob" />
                   )}
                 </motion.div>
               )}
