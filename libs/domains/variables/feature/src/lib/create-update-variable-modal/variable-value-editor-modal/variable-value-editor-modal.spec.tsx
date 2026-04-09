@@ -43,11 +43,12 @@ describe('VariableValueEditorModal', () => {
       />
     )
 
+    await screen.findByTestId('submit-button')
     await userEvent.clear(screen.getByTestId('mock-code-editor-variable'))
     await userEvent.type(screen.getByTestId('mock-code-editor-variable'), 'updated value')
 
     const fullscreenEditor = screen.getByTestId('value-full-screen-editor')
-    await userEvent.click(within(fullscreenEditor).getByRole('button', { name: /save/i }))
+    await userEvent.click(within(fullscreenEditor).getByTestId('submit-button'))
 
     expect(onSave).toHaveBeenCalledWith('updated value')
     expect(onOpenChange).toHaveBeenCalledWith(false)
@@ -69,6 +70,7 @@ describe('VariableValueEditorModal', () => {
       />
     )
 
+    await screen.findByTestId('cancel-button')
     const fullscreenEditor = screen.getByTestId('value-full-screen-editor')
     await userEvent.click(within(fullscreenEditor).getByRole('button', { name: /^cancel$/i }))
 
@@ -76,7 +78,7 @@ describe('VariableValueEditorModal', () => {
     expect(onOpenChange).toHaveBeenCalledWith(false)
   })
 
-  it('should render the variable code editor when environment context is provided', () => {
+  it('should render the variable code editor when environment context is provided', async () => {
     renderWithProviders(
       <VariableValueEditorModal
         open={true}
@@ -92,10 +94,11 @@ describe('VariableValueEditorModal', () => {
       />
     )
 
+    await screen.findByTestId('submit-button')
     expect(screen.getByTestId('mock-code-editor-variable')).toBeInTheDocument()
   })
 
-  it('should render the plain code editor when no environment context is provided', () => {
+  it('should render the plain code editor when no environment context is provided', async () => {
     renderWithProviders(
       <VariableValueEditorModal
         open={true}
@@ -108,6 +111,7 @@ describe('VariableValueEditorModal', () => {
       />
     )
 
+    await screen.findByTestId('submit-button')
     expect(screen.getByTestId('mock-code-editor')).toBeInTheDocument()
   })
 })
