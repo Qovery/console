@@ -168,9 +168,16 @@ export function Breadcrumbs() {
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="no-scrollbar flex min-w-0 items-center gap-2 overflow-x-auto whitespace-nowrap">
       {breadcrumbData.map((data, index) => (
-        <div key={data.item.id} className="flex items-center gap-2">
+        <div
+          key={data.item.id}
+          className={
+            index === breadcrumbData.length - 1
+              ? 'flex min-w-0 flex-1 items-center gap-2'
+              : 'flex shrink-0 items-center gap-2'
+          }
+        >
           <BreadcrumbItem item={data.item} items={data.items} isCurrentScope={index === breadcrumbData.length - 1} />
           {index < breadcrumbData.length - 1 && <Separator />}
         </div>
