@@ -5,36 +5,9 @@ import { type VariableScope } from '@qovery/domains/variables/data-access'
 import { Button, CodeEditor, Icon, ModalCrud } from '@qovery/shared/ui'
 import { CodeEditorVariable } from '../../code-editor-variable/code-editor-variable'
 
-export type VariableValueEditorModalScope = Extract<
-  VariableScope,
-  'APPLICATION' | 'CONTAINER' | 'JOB' | 'HELM' | 'TERRAFORM'
->
+type VariableValueEditorModalScope = Extract<VariableScope, 'APPLICATION' | 'CONTAINER' | 'JOB' | 'HELM' | 'TERRAFORM'>
 
 const VALUE_EDITOR_HEIGHT = 'calc(100vh - 238px)'
-
-export function isVariableValueEditorModalScope(
-  scope: VariableScope | undefined
-): scope is VariableValueEditorModalScope {
-  return ['APPLICATION', 'CONTAINER', 'JOB', 'HELM', 'TERRAFORM'].includes(scope ?? '')
-}
-
-export function getValueEditorLanguage({ isFile, mountPath }: { isFile: boolean; mountPath?: string }) {
-  if (!isFile || !mountPath) {
-    return 'plaintext'
-  }
-
-  const normalizedMountPath = mountPath.toLowerCase()
-
-  if (normalizedMountPath.endsWith('.yaml') || normalizedMountPath.endsWith('.yml')) {
-    return 'yaml'
-  }
-
-  if (normalizedMountPath.endsWith('.json')) {
-    return 'json'
-  }
-
-  return 'plaintext'
-}
 
 export interface VariableValueEditorModalProps {
   open: boolean

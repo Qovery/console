@@ -22,10 +22,6 @@ jest.mock('../dropdown-variable/dropdown-variable', () => ({
 jest.mock('./variable-value-editor-modal/variable-value-editor-modal', () => ({
   VariableValueEditorModal: ({ open }: { open: boolean }) =>
     open ? <div data-testid="mock-value-editor-modal" /> : null,
-  getValueEditorLanguage: jest.fn(() => 'plaintext'),
-  isVariableValueEditorModalScope: jest.fn((scope: string | undefined) =>
-    ['APPLICATION', 'CONTAINER', 'JOB', 'HELM', 'TERRAFORM'].includes(scope ?? '')
-  ),
 }))
 
 jest.mock('../hooks/use-create-variable/use-create-variable', () => ({

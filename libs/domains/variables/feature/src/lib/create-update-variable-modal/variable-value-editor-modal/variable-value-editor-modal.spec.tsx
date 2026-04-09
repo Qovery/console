@@ -1,5 +1,5 @@
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
-import { VariableValueEditorModal, getValueEditorLanguage } from './variable-value-editor-modal'
+import { VariableValueEditorModal } from './variable-value-editor-modal'
 
 jest.mock('@qovery/shared/ui', () => {
   const actual = jest.requireActual('@qovery/shared/ui')
@@ -113,22 +113,5 @@ describe('VariableValueEditorModal', () => {
 
     await screen.findByTestId('submit-button')
     expect(screen.getByTestId('mock-code-editor')).toBeInTheDocument()
-  })
-})
-
-describe('getValueEditorLanguage', () => {
-  it('should return yaml for yaml files', () => {
-    expect(getValueEditorLanguage({ isFile: true, mountPath: '/etc/config.yaml' })).toBe('yaml')
-    expect(getValueEditorLanguage({ isFile: true, mountPath: '/etc/config.yml' })).toBe('yaml')
-  })
-
-  it('should return json for json files', () => {
-    expect(getValueEditorLanguage({ isFile: true, mountPath: '/etc/config.json' })).toBe('json')
-  })
-
-  it('should return plaintext for non file values or unknown extensions', () => {
-    expect(getValueEditorLanguage({ isFile: false, mountPath: '/etc/config.yaml' })).toBe('plaintext')
-    expect(getValueEditorLanguage({ isFile: true, mountPath: '/etc/config.txt' })).toBe('plaintext')
-    expect(getValueEditorLanguage({ isFile: true })).toBe('plaintext')
   })
 })
