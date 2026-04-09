@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
+import { fireEvent, render } from '__tests__/utils/setup-jest'
+import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import ModalConfirmation, { type ModalConfirmationProps } from './modal-confirmation'
 
 describe('ModalConfirmation', () => {
@@ -37,7 +38,8 @@ describe('ModalConfirmation', () => {
 
   it('should match delete mode without description', () => {
     props.description = undefined
-    props.isDelete = true
+    props.confirmationMethod = 'action'
+    props.confirmationAction = 'delete'
 
     const { container } = render(<ModalConfirmation {...props} />)
 
@@ -45,8 +47,9 @@ describe('ModalConfirmation', () => {
   })
 
   it('should match delete mode with description', () => {
-    props.isDelete = true
-
+    props.confirmationMethod = 'action'
+    props.confirmationAction = 'delete'
+    props.description = 'my description'
     const { container } = render(<ModalConfirmation {...props} />)
 
     expect(container).toMatchSnapshot()
@@ -59,8 +62,14 @@ describe('ModalConfirmation', () => {
   })
 
   it('should disable submit while async callback is pending', async () => {
-    const callback = jest.fn(() => new Promise<void>(() => {}))
-    const { userEvent } = render(
+    let resolvePending!: () => void
+    const callback = jest.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolvePending = resolve
+        })
+    )
+    const { userEvent } = renderWithProviders(
       <ModalConfirmation {...props} callback={callback} confirmationMethod="action" confirmationAction="delete" />
     )
 
@@ -68,6 +77,12 @@ describe('ModalConfirmation', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
 
     expect(callback).toHaveBeenCalled()
-    expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled()
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled()
+    })
+
+    await act(async () => {
+      resolvePending()
+    })
   })
 })
