@@ -16,7 +16,8 @@ describe('AnnouncementBanner', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useLocalStorage as jest.Mock).mockReturnValue([[], mockSetDismissedMessages])
+    const localStorageMock = useLocalStorage as jest.Mock
+    localStorageMock.mockReturnValue([[], mockSetDismissedMessages])
   })
 
   it('should render nothing when banner list is empty', () => {
@@ -143,7 +144,8 @@ describe('AnnouncementBanner', () => {
   })
 
   it('should not show a banner already dismissed by id', () => {
-    ;(useLocalStorage as jest.Mock).mockReturnValue([['banner-id-already'], mockSetDismissedMessages])
+    const localStorageMock = useLocalStorage as jest.Mock
+    localStorageMock.mockReturnValue([['banner-id-already'], mockSetDismissedMessages])
     mockUseAnnouncementBanner.mockReturnValue([
       { id: 'banner-id-already', message: 'Already dismissed', variant: 'info', dismissible: true },
       { message: 'Still visible', variant: 'warning', dismissible: false },
@@ -156,7 +158,8 @@ describe('AnnouncementBanner', () => {
   })
 
   it('should not show a banner already dismissed by message in new localStorage key', () => {
-    ;(useLocalStorage as jest.Mock).mockReturnValue([['Already dismissed'], mockSetDismissedMessages])
+    const localStorageMock = useLocalStorage as jest.Mock
+    localStorageMock.mockReturnValue([['Already dismissed'], mockSetDismissedMessages])
     mockUseAnnouncementBanner.mockReturnValue([
       { message: 'Already dismissed', variant: 'info', dismissible: true },
       { message: 'Still visible', variant: 'warning', dismissible: true },
@@ -184,7 +187,8 @@ describe('AnnouncementBanner', () => {
   })
 
   it('should always show non-dismissible banners regardless of localStorage', () => {
-    ;(useLocalStorage as jest.Mock).mockReturnValue([['Non-dismissible message'], mockSetDismissedMessages])
+    const localStorageMock = useLocalStorage as jest.Mock
+    localStorageMock.mockReturnValue([['Non-dismissible message'], mockSetDismissedMessages])
     mockUseAnnouncementBanner.mockReturnValue([
       { message: 'Non-dismissible message', variant: 'warning', dismissible: false },
     ])
@@ -233,7 +237,8 @@ describe('AnnouncementBanner', () => {
   })
 
   it('should render nothing when all banners are dismissed', () => {
-    ;(useLocalStorage as jest.Mock).mockReturnValue([['banner-1', 'banner-2'], mockSetDismissedMessages])
+    const localStorageMock = useLocalStorage as jest.Mock
+    localStorageMock.mockReturnValue([['banner-1', 'banner-2'], mockSetDismissedMessages])
     mockUseAnnouncementBanner.mockReturnValue([
       { id: 'banner-1', message: 'Banner 1', variant: 'info', dismissible: true },
       { id: 'banner-2', message: 'Banner 2', variant: 'warning', dismissible: true },
