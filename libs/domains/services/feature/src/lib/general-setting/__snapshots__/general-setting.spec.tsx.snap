@@ -52,7 +52,7 @@ exports[`GeneralSetting should match snapshot 1`] = `
         class="input pb-0 pr-2"
       >
         <label
-          class="input__label translate-y-2 text-sm"
+          class="input__label pointer-events-none translate-y-2 text-sm"
           for="Description (optional)"
         >
           Description (optional)
