@@ -1,3 +1,4 @@
+import { Link, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { Suspense, useCallback } from 'react'
@@ -21,6 +22,7 @@ export function Separator() {
 }
 
 export function Header() {
+  const { organizationId = '' } = useParams({ strict: false })
   const isDevopsCopilotEnabled = useFeatureFlagVariantKey('devops-copilot')
   const handleFeedbackClick = useCallback(() => {
     posthog.capture('feedback_button_clicked_new_navigation')
@@ -30,7 +32,9 @@ export function Header() {
     <header className="relative z-header w-full bg-background-secondary py-4 pl-3 pr-4">
       <div className="flex items-center gap-3 md:gap-4">
         <div className="flex shrink-0 items-center gap-4">
-          <LogoIcon />
+          <Link to="/organization/$organizationId/overview" params={{ organizationId }}>
+            <LogoIcon />
+          </Link>
           <Separator />
         </div>
         <Suspense fallback={<div className="h-8 flex-1" />}>

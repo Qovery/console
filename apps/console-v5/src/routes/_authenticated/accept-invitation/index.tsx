@@ -1,22 +1,58 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
+import { z } from 'zod'
 import { AcceptInvitation, useInviteMember } from '@qovery/domains/onboarding/feature'
 
-export const Route = createFileRoute('/_authenticated/accept-invitation/')({
-  component: RouteComponent,
+const acceptInvitationSearchSchema = z.object({
+  inviteToken: z.string().optional(),
+  organization: z.string().optional(),
 })
 
-function RouteComponent() {
-  const { acceptInvitation, displayInvitation, checkTokenInStorage } = useInviteMember()
+export const Route = createFileRoute('/_authenticated/accept-invitation/')({
+  validateSearch: acceptInvitationSearchSchema,
+  component: AcceptInvitationRouteComponent,
+})
+
+export function AcceptInvitationRouteComponent() {
+  const {
+    acceptInvitation,
+    displayInvitation,
+    fetchInvitationDetail,
+    initializeInvitation,
+    inviteDetail,
+    isAcceptingInvitation,
+  } = useInviteMember()
   const navigate = useNavigate()
+  const search = Route.useSearch()
+
+  const inviteSearch = useMemo(() => {
+    const searchParams = new URLSearchParams()
+
+    if (search.inviteToken) {
+      searchParams.set('inviteToken', search.inviteToken)
+    }
+
+    if (search.organization) {
+      searchParams.set('organization', search.organization)
+    }
+
+    const searchString = searchParams.toString()
+    return searchString ? `?${searchString}` : ''
+  }, [search.inviteToken, search.organization])
 
   useEffect(() => {
-    checkTokenInStorage()
-  }, [checkTokenInStorage])
+    initializeInvitation(inviteSearch)
+  }, [initializeInvitation, inviteSearch])
 
   const onSubmit = async () => {
     await acceptInvitation()
   }
+
+  useEffect(() => {
+    if (displayInvitation) {
+      fetchInvitationDetail().then()
+    }
+  }, [displayInvitation, fetchInvitationDetail])
 
   useEffect(() => {
     if (displayInvitation === false) {
@@ -24,5 +60,5 @@ function RouteComponent() {
     }
   }, [displayInvitation, navigate])
 
-  return <AcceptInvitation onSubmit={onSubmit} />
+  return <AcceptInvitation inviteDetail={inviteDetail} loading={isAcceptingInvitation} onSubmit={onSubmit} />
 }
