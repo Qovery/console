@@ -1,7 +1,9 @@
 import { differenceInMinutes, isValid } from 'date-fns'
 import {
   type Cluster,
+  type KarpenterCronjobNodePoolOverride,
   type KarpenterDefaultNodePoolOverride,
+  type KarpenterGpuNodePoolOverride,
   type KarpenterNodePool,
   type KarpenterStableNodePoolOverride,
   WeekdayEnum,
@@ -11,7 +13,7 @@ import { P, match } from 'ts-pattern'
 import { Callout, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
-type OverridePrefix = 'stable_override' | 'default_override' | 'gpu_override'
+type OverridePrefix = 'stable_override' | 'default_override' | 'gpu_override' | 'cronjob_override'
 
 function LimitsFields({ prefix }: { prefix: OverridePrefix }) {
   const { control, watch } = useFormContext()
@@ -109,10 +111,14 @@ function LimitsFields({ prefix }: { prefix: OverridePrefix }) {
 }
 
 export interface NodepoolModalProps {
-  type: 'stable' | 'default' | 'gpu'
+  type: 'stable' | 'default' | 'gpu' | 'cronjob'
   cluster: Cluster
   onChange: (data: Omit<KarpenterNodePool, 'requirements'>) => void
-  defaultValues?: KarpenterStableNodePoolOverride | KarpenterDefaultNodePoolOverride
+  defaultValues?:
+    | KarpenterStableNodePoolOverride
+    | KarpenterDefaultNodePoolOverride
+    | KarpenterGpuNodePoolOverride
+    | KarpenterCronjobNodePoolOverride
 }
 
 const CPU_MIN = 6
@@ -148,6 +154,21 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
         limits: defaultValues?.limits,
         consolidate_after: defaultValues?.consolidate_after,
       },
+      cronjob_override: {
+        ...defaultValues,
+        ...{
+          consolidation: match(defaultValues)
+            .with({ consolidation: P.not(P.nullish) }, ({ consolidation }) => ({
+              ...consolidation,
+              start_time: consolidation.start_time.replace('PT', ''),
+              duration: consolidation.duration.replace('PT', ''),
+            }))
+            .otherwise(() => ({
+              start_time: '',
+              duration: '',
+            })),
+        },
+      },
     },
   })
 
@@ -155,6 +176,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
     .with('default', () => 'default_override' as const)
     .with('stable', () => 'stable_override' as const)
     .with('gpu', () => 'gpu_override' as const)
+    .with('cronjob', () => 'cronjob_override' as const)
     .exhaustive()
   const watchConsolidation = methods.watch(
     `${prefix === 'default_override' ? 'stable_override' : prefix}.consolidation.enabled`
@@ -215,6 +237,27 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
           consolidate_after: data.gpu_override?.consolidate_after,
         },
       }))
+      .with('cronjob', () => ({
+        cronjob_override: {
+          limits: {
+            enabled: data.cronjob_override?.limits?.enabled ?? false,
+            max_cpu_in_vcpu: data.cronjob_override?.limits?.max_cpu_in_vcpu ?? CPU_MIN,
+            max_memory_in_gibibytes: data.cronjob_override?.limits?.max_memory_in_gibibytes ?? MEMORY_MIN,
+            max_gpu: data.cronjob_override?.limits?.max_gpu ?? GPU_MIN,
+          },
+          consolidation: {
+            enabled: data.cronjob_override?.consolidation?.enabled ?? false,
+            days: data.cronjob_override?.consolidation?.days ?? [],
+            start_time: data.cronjob_override?.consolidation?.start_time
+              ? `PT${data.cronjob_override.consolidation.start_time}`
+              : '',
+            duration: data.cronjob_override?.consolidation?.duration
+              ? `PT${data.cronjob_override.consolidation.duration.toUpperCase()}`
+              : '',
+          },
+          consolidate_after: data.cronjob_override?.consolidate_after,
+        },
+      }))
       .exhaustive()
 
     onChange(payload)
@@ -234,6 +277,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
           .with('stable', () => 'Nodepool stable')
           .with('default', () => 'Nodepool default')
           .with('gpu', () => 'Nodepool gpu')
+          .with('cronjob', () => 'Nodepool cronjob')
           .exhaustive()}
         description={match(type)
           .with(
@@ -246,6 +290,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
             () => 'Designed to handle general workloads and serves as the foundation for deploying most applications.'
           )
           .with('gpu', () => 'Used for GPU workloads, such as machine learning and data processing.')
+          .with('cronjob', () => 'Dedicated to cronjob workloads, providing isolated nodes for scheduled tasks.')
           .exhaustive()}
         onSubmit={onSubmit}
         onClose={closeModal}
@@ -295,7 +340,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
               </div>
             </div>
           ))
-          .with('stable_override', 'gpu_override', (prefix) => (
+          .with('stable_override', 'gpu_override', 'cronjob_override', (prefix) => (
             <div className="flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
               <Controller
                 name={`${prefix}.consolidation.enabled`}
