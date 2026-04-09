@@ -28,21 +28,27 @@ export function Header() {
 
   return (
     <header className="relative z-header w-full bg-background-secondary py-4 pl-3 pr-4">
-      <div className="flex items-center gap-4">
-        <LogoIcon />
-        <Separator />
-        <Suspense fallback={<div className="h-8" />}>
-          <>
-            <Breadcrumbs />
-            <div className="ml-auto flex items-center gap-2">
-              <SpotlightTrigger />
+      <div className="flex items-center gap-3 md:gap-4">
+        <div className="flex shrink-0 items-center gap-4">
+          <LogoIcon />
+          <Separator />
+        </div>
+        <Suspense fallback={<div className="h-8 flex-1" />}>
+          <div className="flex min-w-0 flex-1 items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <Breadcrumbs />
+            </div>
+            <div className="ml-auto flex shrink-0 items-center gap-2">
+              <div className="hidden md:block">
+                <SpotlightTrigger />
+              </div>
               <Button onClick={handleFeedbackClick} variant="outline">
                 Feedback
               </Button>
               {isDevopsCopilotEnabled && <DevopsCopilotButton />}
               <UserMenu />
             </div>
-          </>
+          </div>
         </Suspense>
       </div>
     </header>

@@ -26,6 +26,14 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false }: Breadcru
   const [open, setOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
+  const labelClassName = twMerge(
+    clsx('block min-w-0 truncate', {
+      'max-w-44 md:max-w-64 lg:max-w-80': isCurrentScope,
+      'max-w-32 md:max-w-40 lg:max-w-52': !isCurrentScope,
+    })
+  )
+  const linkClassName =
+    'flex min-w-0 items-center gap-1.5 whitespace-nowrap rounded text-sm font-medium transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11'
 
   const filteredItems = useMemo(
     () => items?.filter((i) => i.label.toLowerCase().includes(searchQuery.toLowerCase())) || [],
@@ -86,39 +94,37 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false }: Breadcru
       <Link
         to={item.path}
         className={twMerge(
-          clsx(
-            'flex items-center gap-1.5 rounded text-sm font-medium transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
-            {
-              'text-neutral-subtle': !isCurrentScope,
-              'text-neutral': isCurrentScope,
-            }
-          )
+          clsx(linkClassName, {
+            'text-neutral-subtle': !isCurrentScope,
+            'text-neutral': isCurrentScope,
+          })
         )}
       >
-        {item.prefix}
-        <Truncate text={item.label} truncateLimit={30} />
-        {item.suffix}
+        {item.prefix && <div className="shrink-0">{item.prefix}</div>}
+        <span className={labelClassName}>
+          <Truncate text={item.label} truncateLimit={30} />
+        </span>
+        {item.suffix && <div className="shrink-0">{item.suffix}</div>}
       </Link>
     )
   }
 
   return (
-    <div className="flex items-center justify-between gap-1">
+    <div className="flex min-w-0 items-center gap-1">
       <Link
         to={item.path}
         className={twMerge(
-          clsx(
-            'flex items-center gap-1.5 rounded text-sm font-medium transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
-            {
-              'text-neutral-subtle': !isCurrentScope,
-              'text-neutral': isCurrentScope || open,
-            }
-          )
+          clsx(linkClassName, {
+            'text-neutral-subtle': !isCurrentScope,
+            'text-neutral': isCurrentScope || open,
+          })
         )}
       >
-        {item.prefix}
-        <Truncate text={item.label} truncateLimit={30} />
-        {item.suffix}
+        {item.prefix && <div className="shrink-0">{item.prefix}</div>}
+        <span className={labelClassName}>
+          <Truncate text={item.label} truncateLimit={30} />
+        </span>
+        {item.suffix && <div className="shrink-0">{item.suffix}</div>}
       </Link>
       <Popover.Root open={open} onOpenChange={handleOpenChange}>
         <Popover.Trigger>
@@ -129,7 +135,7 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false }: Breadcru
             iconOnly
             className={twMerge(
               clsx(
-                'relative text-neutral-disabled transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
+                'relative shrink-0 text-neutral-disabled transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
                 {
                   'text-neutral': open,
                 }
