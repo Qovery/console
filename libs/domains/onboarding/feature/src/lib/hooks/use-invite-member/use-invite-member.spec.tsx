@@ -1,18 +1,18 @@
 import { Wrapper } from '__tests__/utils/providers'
 import { type PropsWithChildren } from 'react'
-import { ACCEPT_INVITATION_URL, LOGIN_URL } from '@qovery/shared/routes'
 import { act, renderHook } from '@qovery/shared/util-tests'
 import { useInviteMember } from './use-invite-member'
 
 const mockUseNavigate = jest.fn()
 const mockUseLocation = jest.fn(() => ({ pathname: '/', search: '' }))
+const mockUseMatchRoute = jest.fn()
 const mockRefetchMemberInvitation = jest.fn()
 const mockRefetchOrganizations = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useNavigate: () => mockUseNavigate,
-  useLocation: () => mockUseLocation(),
+  useMatchRoute: () => mockUseMatchRoute,
 }))
 
 jest.mock('@qovery/domains/organizations/feature', () => ({
@@ -53,6 +53,9 @@ describe('useInviteMember Hook', () => {
     localStorage.clear()
     mockUseNavigate.mockClear()
     mockUseLocation.mockReturnValue({ pathname: '/', search: '' })
+    mockUseMatchRoute.mockImplementation(({ to, fuzzy }: { to: string; fuzzy?: boolean }) =>
+      fuzzy ? mockUseLocation().pathname.startsWith(to) : mockUseLocation().pathname === to
+    )
     mockRefetchMemberInvitation.mockClear()
     mockRefetchOrganizations.mockClear()
     window.history.pushState({}, 'Test page', '/')
@@ -104,7 +107,7 @@ describe('useInviteMember Hook', () => {
 
   it('should not redirect if we are already on login', async () => {
     mockUseLocation.mockReturnValue({
-      pathname: LOGIN_URL,
+      pathname: '/login',
       search: '',
     })
     localStorage.setItem('inviteToken', JSON.stringify('123'))
@@ -127,7 +130,7 @@ describe('useInviteMember Hook', () => {
 
   it('should not redirect if we are already on accept page', async () => {
     mockUseLocation.mockReturnValue({
-      pathname: ACCEPT_INVITATION_URL,
+      pathname: '/accept-invitation',
       search: '',
     })
     localStorage.setItem('inviteToken', JSON.stringify('123'))
@@ -168,7 +171,7 @@ describe('useInviteMember Hook', () => {
     localStorage.setItem('inviteOrganizationId', JSON.stringify('456'))
     mockUseLocation.mockReturnValue({
       search: '?inviteToken=123&organization=456',
-      pathname: ACCEPT_INVITATION_URL,
+      pathname: '/accept-invitation',
     })
     const { cleanInvitation } = renderHook(() => useInviteMember(), { wrapper: Wrapper }).result.current
 

@@ -1,10 +1,9 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useMatchRoute, useNavigate } from '@tanstack/react-router'
 import { type InviteMember } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { useAcceptInviteMember, useMemberInvitation, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { ACCEPT_INVITATION_URL, LOGIN_URL } from '@qovery/shared/routes'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 
 function getInviteParams(search = '') {
@@ -27,7 +26,7 @@ export function useInviteMember() {
     'inviteOrganizationId',
     undefined
   )
-  const { pathname } = useLocation()
+  const matchRoute = useMatchRoute()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth0()
   const { authLogout, getAccessTokenSilently } = useAuth()
@@ -72,10 +71,13 @@ export function useInviteMember() {
   const onSearchUpdate = useCallback(() => initializeInvitation(window.location.search), [initializeInvitation])
 
   const redirectToAcceptPageGuard = useCallback(() => {
-    if (displayInvitation && pathname.indexOf(ACCEPT_INVITATION_URL) === -1 && pathname.indexOf(LOGIN_URL) === -1) {
-      navigate({ to: ACCEPT_INVITATION_URL })
+    const isOnAcceptInvitationPage = matchRoute({ to: '/accept-invitation', fuzzy: true })
+    const isOnLoginPage = matchRoute({ to: '/login', fuzzy: true })
+
+    if (displayInvitation && !isOnAcceptInvitationPage && !isOnLoginPage) {
+      navigate({ to: '/accept-invitation' })
     }
-  }, [pathname, displayInvitation, navigate])
+  }, [displayInvitation, matchRoute, navigate])
 
   const cleanInvitation = () => {
     setStoredOrganizationId(undefined)
