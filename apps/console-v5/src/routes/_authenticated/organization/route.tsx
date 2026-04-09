@@ -8,6 +8,7 @@ import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { ErrorBoundary, Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
+import { OrganizationBanners } from '../../../app/components/organization-banners/organization-banners'
 import { type FileRouteTypes } from '../../../routeTree.gen'
 
 export const Route = createFileRoute('/_authenticated/organization')({
@@ -494,6 +495,7 @@ function OrganizationRoute() {
         {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
         <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-auto">
           <ErrorBoundary>
+            <OrganizationBanners />
             <Header />
 
             <Suspense fallback={<MainLoader />}>
