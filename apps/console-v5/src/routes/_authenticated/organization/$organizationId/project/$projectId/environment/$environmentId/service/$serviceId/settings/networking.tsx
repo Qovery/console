@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { HelmNetworkingSettings } from '@qovery/domains/service-settings/feature'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/networking'
@@ -7,5 +8,5 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  return <div className="px-10 py-7">Networking</div>
+  return <HelmNetworkingSettings />
 }

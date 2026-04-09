@@ -1,5 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import { type PropsWithChildren, type ReactNode } from 'react'
+import { type PropsWithChildren, type ReactNode, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import Button from '../../button/button'
 import { Callout } from '../../callout/callout'
@@ -12,7 +12,7 @@ import { Section } from '../../section/section'
 export interface ModalMultiConfirmationProps extends PropsWithChildren {
   title: string
   checks: string[]
-  callback: () => void
+  callback: () => Promise<void> | void
   description?: ReactNode
   warning?: ReactNode
   ctaButton?: string
@@ -29,6 +29,7 @@ export function ModalMultiConfirmation({
   children,
   checks,
 }: ModalMultiConfirmationProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const {
     handleSubmit,
     control,
@@ -36,10 +37,18 @@ export function ModalMultiConfirmation({
   } = useForm()
   const { closeModal } = useModal()
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     if (data) {
-      closeModal()
-      callback()
+      setIsSubmitting(true)
+      try {
+        await callback()
+        closeModal()
+      } catch {
+        // Errors are handled by the caller (notifications), keep the modal open for retry.
+        return
+      } finally {
+        setIsSubmitting(false)
+      }
     }
   })
 
@@ -99,10 +108,23 @@ export function ModalMultiConfirmation({
           </Callout.Root>
         )}
         <div className="flex justify-end gap-3">
-          <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
+          <Button
+            type="button"
+            color="neutral"
+            variant="plain"
+            size="lg"
+            onClick={() => closeModal()}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
-          <Button type="submit" size="lg" color={isDelete ? 'red' : 'brand'} disabled={!isValid}>
+          <Button
+            type="submit"
+            size="lg"
+            color={isDelete ? 'red' : 'brand'}
+            disabled={!isValid || isSubmitting}
+            loading={isSubmitting}
+          >
             {ctaButton}
           </Button>
         </div>

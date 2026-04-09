@@ -202,8 +202,8 @@ function ServiceDomainSettingsContent({
                 className="flex w-full items-center justify-between gap-2 border-b border-neutral px-4 py-3 last:border-0"
                 data-testid="form-row"
               >
-                <div className="flex flex-col">
-                  <h2 className="mb-1 flex text-xs font-medium text-neutral">Domain #{index + 1}</h2>
+                <div className="flex flex-col gap-0.5">
+                  <h2 className="flex text-sm font-medium text-neutral">Domain #{index + 1}</h2>
                   <p className="text-xs text-neutral-subtle">
                     URL: <span className="text-neutral">{customDomain.domain}</span>
                   </p>
