@@ -48,7 +48,7 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
   const inputActions = hasFocus ? 'input--focused' : ''
   const isDisabled = props.disabled ? 'input--disabled !border-neutral' : ''
   const labelClassName = twMerge(
-    'input__label',
+    'input__label pointer-events-none',
     hasFocus ? 'text-xs' : 'translate-y-2 text-sm',
     isLabelTransitionDisabled && '!transition-none'
   )
