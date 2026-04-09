@@ -65,6 +65,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const isKarpenter = Boolean(props.cluster?.features?.find((f) => f.id === 'KARPENTER'))
 
   const [isGpuEnabled, setIsGpuEnabled] = useState(!!watchKarpenter?.qovery_node_pools?.gpu_override)
+  const [isCronjobEnabled, setIsCronjobEnabled] = useState(!!watchKarpenter?.qovery_node_pools?.cronjob_override)
 
   // Set default cluster type based on cloud provider
   useEffect(() => {
@@ -174,6 +175,17 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       )
     }
     setIsGpuEnabled(value)
+  }
+
+  const handleCronjobEnabledChange = (value: boolean) => {
+    if (!value) {
+      setValue('karpenter.qovery_node_pools.cronjob_override', undefined)
+    } else {
+      setValue('karpenter.qovery_node_pools.cronjob_override', {
+        ...watchKarpenter?.qovery_node_pools?.cronjob_override,
+      })
+    }
+    setIsCronjobEnabled(value)
   }
 
   return (
@@ -542,6 +554,48 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   )}
                   {watchKarpenterEnabled && props.cluster && (
                     <NodepoolsResourcesSettings cluster={props.cluster} filter="gpu" />
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </BlockContent>
+
+          <BlockContent title="Cronjob nodepools configuration" className="mb-0" classNameContent="p-0">
+            <div className="flex flex-col gap-3 p-4">
+              <InputToggle
+                value={isCronjobEnabled}
+                onChange={handleCronjobEnabledChange}
+                name="cronjob_enabled"
+                title="Enable cronjob nodepools"
+                description="Creates a dedicated nodepool for cronjob workloads with isolated nodes. Cronjob scaling will not impact long-running services on the default nodepool."
+                align="top"
+                small
+              />
+              <Callout.Root color="sky">
+                <Callout.Icon>
+                  <Icon iconName="info-circle" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextDescription>
+                    After enabling or disabling this setting, we strongly recommend redeploying all your cron jobs to
+                    ensure they run with the correct node targeting. A fallback mechanism prevents pods from getting
+                    stuck, but redeploying guarantees optimal scheduling.
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
+            </div>
+
+            <AnimatePresence>
+              {isCronjobEnabled && (
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: 'auto' }}
+                  exit={{ height: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  className="overflow-hidden"
+                >
+                  {watchKarpenterEnabled && props.cluster && (
+                    <NodepoolsResourcesSettings cluster={props.cluster} filter="cronjob" />
                   )}
                 </motion.div>
               )}
