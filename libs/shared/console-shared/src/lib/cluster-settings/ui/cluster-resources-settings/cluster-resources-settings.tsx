@@ -563,7 +563,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 title="Enable cronjob nodepools"
                 description="Creates a dedicated nodepool for cronjob workloads with isolated nodes. Cronjob scaling will not impact long-running services on the default nodepool."
                 forceAlignTop
-                className="items-center"
                 small
               />
               <Callout.Root color="sky">
