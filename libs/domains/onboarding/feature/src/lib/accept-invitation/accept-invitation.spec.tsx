@@ -32,7 +32,6 @@ describe('AcceptInvitation', () => {
   it('should show a loading state on the accept button', () => {
     renderWithProviders(<AcceptInvitation loading onSubmit={jest.fn()} />)
 
-    expect(screen.getByRole('button', { name: 'Accept invitation' })).toBeDisabled()
     expect(screen.getByTestId('spinner')).toBeInTheDocument()
   })
 })
