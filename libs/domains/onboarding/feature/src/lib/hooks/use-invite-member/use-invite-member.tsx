@@ -4,7 +4,7 @@ import { type InviteMember } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { useAcceptInviteMember, useMemberInvitation, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { ACCEPT_INVITATION_URL, LOGIN_URL, LOGOUT_URL } from '@qovery/shared/routes'
+import { ACCEPT_INVITATION_URL, LOGIN_URL } from '@qovery/shared/routes'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 
 function getInviteParams(search = '') {
@@ -30,7 +30,7 @@ export function useInviteMember() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth0()
-  const { getAccessTokenSilently } = useAuth()
+  const { authLogout, getAccessTokenSilently } = useAuth()
   const { mutateAsync: mutateAcceptInviteMember } = useAcceptInviteMember()
   const { refetch: refetchMemberInvitation } = useMemberInvitation({ organizationId, inviteId, enabled: false })
   const { refetch: refetchOrganizations } = useOrganizations({
@@ -103,7 +103,7 @@ export function useInviteMember() {
           window.location.assign(`/`)
         })
 
-        navigate({ to: LOGOUT_URL })
+        void authLogout()
       }
     }
   }
