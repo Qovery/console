@@ -29,7 +29,7 @@ export function Header() {
   }, [])
 
   return (
-    <header className="z-header bg-background-secondary relative w-full py-4 pl-3 pr-4">
+    <header className="relative z-header w-full bg-background-secondary py-4 pl-3 pr-4">
       <div className="flex items-center gap-3 md:gap-4">
         <div className="flex shrink-0 items-center gap-4">
           <Link to="/organization/$organizationId/overview" params={{ organizationId }}>
