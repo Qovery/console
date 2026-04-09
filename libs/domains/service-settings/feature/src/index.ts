@@ -13,3 +13,4 @@ export * from './lib/terraform-variables-settings/terraform-variables-table/terr
 export * from './lib/helm-values-override-file-settings/helm-values-override-file-settings'
 export * from './lib/helm-values-override-arguments-settings/helm-values-override-arguments-settings'
 export * from './lib/helm-networking-settings/helm-networking-settings'
+export * from './lib/job-configuration/job-configuration'

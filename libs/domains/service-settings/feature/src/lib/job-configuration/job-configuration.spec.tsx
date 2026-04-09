@@ -2,7 +2,7 @@ import { type Job } from '@qovery/domains/services/data-access'
 import * as servicesDomain from '@qovery/domains/services/feature'
 import { cronjobFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import PageSettingsConfigureJobFeature from './page-settings-configure-job-feature'
+import { JobConfiguration } from './job-configuration'
 
 const useServiceSpy = jest.spyOn(servicesDomain, 'useService') as jest.Mock
 const useEditServiceSpy = jest.spyOn(servicesDomain, 'useEditService') as jest.Mock
@@ -10,6 +10,16 @@ const useEditServiceSpy = jest.spyOn(servicesDomain, 'useEditService') as jest.M
 const mockJobApplication = cronjobFactoryMock(1)[0] as Job
 const mockLifecycleJobApplication = lifecycleJobFactoryMock(1)[0] as Job
 const mockEditService = jest.fn()
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({
+    organizationId: 'org-1',
+    projectId: 'project-1',
+    environmentId: 'env-1',
+    serviceId: 'service-1',
+  }),
+}))
 
 describe('PageSettingsPortsFeature with CRON JOB service', () => {
   beforeEach(() => {
@@ -23,7 +33,7 @@ describe('PageSettingsPortsFeature with CRON JOB service', () => {
   })
 
   it('should call edit service with correct payload', async () => {
-    const { userEvent } = renderWithProviders(<PageSettingsConfigureJobFeature />)
+    const { userEvent } = renderWithProviders(<JobConfiguration />)
 
     const inputCron = screen.getByLabelText('Schedule - Cron expression')
     const inputNbRestarts = screen.getByLabelText('Number of restarts')
@@ -72,7 +82,7 @@ describe('PageSettingsPortsFeature with LIFECYCLE JOB service', () => {
     })
   })
   it('should call edit service with correct payload', async () => {
-    const { userEvent } = renderWithProviders(<PageSettingsConfigureJobFeature />)
+    const { userEvent } = renderWithProviders(<JobConfiguration />)
 
     const checkboxDelete = screen.getByLabelText('Delete')
     await userEvent.click(checkboxDelete)
