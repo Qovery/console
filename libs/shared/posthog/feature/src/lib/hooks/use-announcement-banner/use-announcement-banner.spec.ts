@@ -8,6 +8,8 @@ jest.mock('posthog-js', () => ({
   onFeatureFlags: jest.fn(),
 }))
 
+const BANNER_FLAG = 'banners-annoucement'
+
 describe('useAnnouncementBanner', () => {
   const mockIsFeatureEnabled = posthog.isFeatureEnabled as jest.MockedFunction<typeof posthog.isFeatureEnabled>
   const mockGetFeatureFlagPayload = posthog.getFeatureFlagPayload as jest.MockedFunction<
@@ -19,129 +21,142 @@ describe('useAnnouncementBanner', () => {
     jest.clearAllMocks()
   })
 
-  it('should return null when feature flag is disabled', () => {
+  it('should return empty array when feature flag is disabled', () => {
     mockIsFeatureEnabled.mockReturnValue(false)
 
     const { result } = renderHook(() => useAnnouncementBanner())
 
-    expect(result.current).toBeNull()
-    expect(mockIsFeatureEnabled).toHaveBeenCalledWith('banner_announcement')
+    expect(result.current).toEqual([])
+    expect(mockIsFeatureEnabled).toHaveBeenCalledWith(BANNER_FLAG)
   })
 
-  it('should return null when payload is null', () => {
+  it('should return empty array when payload is null', () => {
     mockIsFeatureEnabled.mockReturnValue(true)
     mockGetFeatureFlagPayload.mockReturnValue(null)
 
     const { result } = renderHook(() => useAnnouncementBanner())
 
-    expect(result.current).toBeNull()
+    expect(result.current).toEqual([])
   })
 
-  it('should return null when payload is not an object', () => {
+  it('should return empty array when payload is not an array', () => {
     mockIsFeatureEnabled.mockReturnValue(true)
-    mockGetFeatureFlagPayload.mockReturnValue('invalid payload' as never)
+    mockGetFeatureFlagPayload.mockReturnValue({ message: 'test', variant: 'info', dismissible: false } as never)
 
     const { result } = renderHook(() => useAnnouncementBanner())
 
-    expect(result.current).toBeNull()
+    expect(result.current).toEqual([])
   })
 
-  it('should return null when payload is missing required fields', () => {
+  it('should parse payload when returned as a JSON string', () => {
     mockIsFeatureEnabled.mockReturnValue(true)
-    mockGetFeatureFlagPayload.mockReturnValue({
-      message: 'Test message',
-    } as never)
+    mockGetFeatureFlagPayload.mockReturnValue(
+      JSON.stringify([{ id: 'banner-1', message: 'Parsed banner', variant: 'info', dismissible: false }]) as never
+    )
 
     const { result } = renderHook(() => useAnnouncementBanner())
 
-    expect(result.current).toBeNull()
+    expect(result.current).toHaveLength(1)
+    expect(result.current[0].message).toBe('Parsed banner')
+    expect(result.current[0].id).toBe('banner-1')
   })
 
-  it('should return null when variant is invalid', () => {
+  it('should return empty array when payload is an invalid JSON string', () => {
     mockIsFeatureEnabled.mockReturnValue(true)
-    mockGetFeatureFlagPayload.mockReturnValue({
-      message: 'Test message',
-      variant: 'invalid',
-      dismissible: true,
-    } as never)
+    mockGetFeatureFlagPayload.mockReturnValue('not valid json' as never)
 
     const { result } = renderHook(() => useAnnouncementBanner())
 
-    expect(result.current).toBeNull()
+    expect(result.current).toEqual([])
   })
 
-  it('should return banner data with info variant', () => {
+  it('should return empty array when payload is an empty array', () => {
     mockIsFeatureEnabled.mockReturnValue(true)
-    mockGetFeatureFlagPayload.mockReturnValue({
-      title: 'Info Title',
-      message: 'Info message',
-      variant: 'info',
-      dismissible: true,
-    })
+    mockGetFeatureFlagPayload.mockReturnValue([] as never)
 
     const { result } = renderHook(() => useAnnouncementBanner())
 
-    expect(result.current).toEqual({
-      title: 'Info Title',
-      message: 'Info message',
-      variant: 'info',
-      dismissible: true,
-    })
+    expect(result.current).toEqual([])
   })
 
-  it('should return banner data with warning variant', () => {
+  it('should return valid banners from array payload', () => {
     mockIsFeatureEnabled.mockReturnValue(true)
-    mockGetFeatureFlagPayload.mockReturnValue({
-      message: 'Warning message',
-      variant: 'warning',
-      dismissible: false,
-    })
+    mockGetFeatureFlagPayload.mockReturnValue([
+      { title: 'Kubernetes Upgrade', message: 'Upgrade available', variant: 'info', dismissible: true },
+      { message: 'Maintenance window', variant: 'warning', dismissible: false },
+    ] as never)
 
     const { result } = renderHook(() => useAnnouncementBanner())
 
-    expect(result.current).toEqual({
+    expect(result.current).toEqual([
+      {
+        title: 'Kubernetes Upgrade',
+        message: 'Upgrade available',
+        variant: 'info',
+        dismissible: true,
+        buttonLabel: undefined,
+        buttonUrl: undefined,
+      },
+      {
+        title: undefined,
+        message: 'Maintenance window',
+        variant: 'warning',
+        dismissible: false,
+        buttonLabel: undefined,
+        buttonUrl: undefined,
+      },
+    ])
+  })
+
+  it('should skip invalid items in the array', () => {
+    mockIsFeatureEnabled.mockReturnValue(true)
+    mockGetFeatureFlagPayload.mockReturnValue([
+      { message: 'Valid banner', variant: 'info', dismissible: false },
+      { message: 'Missing variant', dismissible: false },
+      null,
+      { message: 'Invalid variant', variant: 'unknown', dismissible: true },
+    ] as never)
+
+    const { result } = renderHook(() => useAnnouncementBanner())
+
+    expect(result.current).toHaveLength(1)
+    expect(result.current[0].message).toBe('Valid banner')
+  })
+
+  it('should return banner with optional buttonLabel and buttonUrl', () => {
+    mockIsFeatureEnabled.mockReturnValue(true)
+    mockGetFeatureFlagPayload.mockReturnValue([
+      {
+        message: 'New feature',
+        variant: 'info',
+        dismissible: false,
+        buttonLabel: 'Have a look',
+        buttonUrl: 'https://docs.qovery.com',
+      },
+    ] as never)
+
+    const { result } = renderHook(() => useAnnouncementBanner())
+
+    expect(result.current[0]).toEqual({
       title: undefined,
-      message: 'Warning message',
-      variant: 'warning',
+      message: 'New feature',
+      variant: 'info',
       dismissible: false,
+      buttonLabel: 'Have a look',
+      buttonUrl: 'https://docs.qovery.com',
     })
   })
 
-  it('should return banner data with error variant', () => {
+  it('should ignore non-string buttonLabel and buttonUrl', () => {
     mockIsFeatureEnabled.mockReturnValue(true)
-    mockGetFeatureFlagPayload.mockReturnValue({
-      title: 'Error Title',
-      message: 'Error message',
-      variant: 'error',
-      dismissible: true,
-    })
+    mockGetFeatureFlagPayload.mockReturnValue([
+      { message: 'Test', variant: 'info', dismissible: false, buttonLabel: 123, buttonUrl: true },
+    ] as never)
 
     const { result } = renderHook(() => useAnnouncementBanner())
 
-    expect(result.current).toEqual({
-      title: 'Error Title',
-      message: 'Error message',
-      variant: 'error',
-      dismissible: true,
-    })
-  })
-
-  it('should return banner data without title when title is not provided', () => {
-    mockIsFeatureEnabled.mockReturnValue(true)
-    mockGetFeatureFlagPayload.mockReturnValue({
-      message: 'Message only',
-      variant: 'info',
-      dismissible: false,
-    })
-
-    const { result } = renderHook(() => useAnnouncementBanner())
-
-    expect(result.current).toEqual({
-      title: undefined,
-      message: 'Message only',
-      variant: 'info',
-      dismissible: false,
-    })
+    expect(result.current[0].buttonLabel).toBeUndefined()
+    expect(result.current[0].buttonUrl).toBeUndefined()
   })
 
   it('should register feature flag listener', () => {
@@ -150,82 +165,5 @@ describe('useAnnouncementBanner', () => {
     renderHook(() => useAnnouncementBanner())
 
     expect(mockOnFeatureFlags).toHaveBeenCalled()
-  })
-
-  it('should return null when dismissible is not a boolean', () => {
-    mockIsFeatureEnabled.mockReturnValue(true)
-    mockGetFeatureFlagPayload.mockReturnValue({
-      message: 'Test message',
-      variant: 'info',
-      dismissible: 'true',
-    } as never)
-
-    const { result } = renderHook(() => useAnnouncementBanner())
-
-    expect(result.current).toBeNull()
-  })
-
-  it('should return banner data with optional buttonLabel and buttonUrl', () => {
-    mockIsFeatureEnabled.mockReturnValue(true)
-    mockGetFeatureFlagPayload.mockReturnValue({
-      message: 'New feature available',
-      variant: 'info',
-      dismissible: false,
-      buttonLabel: 'Learn more',
-      buttonUrl: 'https://docs.qovery.com',
-    })
-
-    const { result } = renderHook(() => useAnnouncementBanner())
-
-    expect(result.current).toEqual({
-      title: undefined,
-      message: 'New feature available',
-      variant: 'info',
-      dismissible: false,
-      buttonLabel: 'Learn more',
-      buttonUrl: 'https://docs.qovery.com',
-    })
-  })
-
-  it('should return banner data without button fields when not provided', () => {
-    mockIsFeatureEnabled.mockReturnValue(true)
-    mockGetFeatureFlagPayload.mockReturnValue({
-      message: 'Simple message',
-      variant: 'warning',
-      dismissible: true,
-    })
-
-    const { result } = renderHook(() => useAnnouncementBanner())
-
-    expect(result.current).toEqual({
-      title: undefined,
-      message: 'Simple message',
-      variant: 'warning',
-      dismissible: true,
-      buttonLabel: undefined,
-      buttonUrl: undefined,
-    })
-  })
-
-  it('should ignore non-string buttonLabel and buttonUrl', () => {
-    mockIsFeatureEnabled.mockReturnValue(true)
-    mockGetFeatureFlagPayload.mockReturnValue({
-      message: 'Test message',
-      variant: 'info',
-      dismissible: false,
-      buttonLabel: 123,
-      buttonUrl: true,
-    } as never)
-
-    const { result } = renderHook(() => useAnnouncementBanner())
-
-    expect(result.current).toEqual({
-      title: undefined,
-      message: 'Test message',
-      variant: 'info',
-      dismissible: false,
-      buttonLabel: undefined,
-      buttonUrl: undefined,
-    })
   })
 })
