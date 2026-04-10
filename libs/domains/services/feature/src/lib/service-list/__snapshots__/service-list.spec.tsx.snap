@@ -1458,6 +1458,15 @@ exports[`ServiceList should match snapshot 1`] = `
                     class="flex items-center gap-2"
                   >
                     <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-arrows-rotate text-xs text-neutral-subtle"
+                      />
+                    </span>
+                    <span
                       class="flex"
                     >
                       <span
@@ -1490,15 +1499,6 @@ exports[`ServiceList should match snapshot 1`] = `
                           />
                         </span>
                       </button>
-                    </span>
-                    <span
-                      class=""
-                      data-state="closed"
-                    >
-                      <i
-                        aria-hidden="true"
-                        class="fa-regular fa-arrows-rotate text-xs text-neutral-subtle"
-                      />
                     </span>
                   </div>
                 </div>
@@ -1943,6 +1943,15 @@ exports[`ServiceList should match snapshot 1`] = `
                     class="flex items-center gap-2"
                   >
                     <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-arrows-rotate text-xs text-neutral-subtle"
+                      />
+                    </span>
+                    <span
                       class="flex"
                     >
                       <span
@@ -1975,15 +1984,6 @@ exports[`ServiceList should match snapshot 1`] = `
                           />
                         </span>
                       </button>
-                    </span>
-                    <span
-                      class=""
-                      data-state="closed"
-                    >
-                      <i
-                        aria-hidden="true"
-                        class="fa-regular fa-arrows-rotate text-xs text-neutral-subtle"
-                      />
                     </span>
                   </div>
                 </div>
