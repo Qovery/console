@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Banner, Button, Icon } from '@qovery/shared/ui'
+import { BANNER_ICON_BUTTON_CLASSNAME, Banner, Button, Icon, bannerButtonVariants } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import {
@@ -17,13 +17,6 @@ const VARIANT_PRIORITY: Record<AnnouncementBannerPayload['variant'], number> = {
   error: 0,
   warning: 1,
   info: 2,
-}
-
-const CONTROL_BUTTON_CLASSNAME = 'flex h-7 w-7 items-center justify-center p-0'
-const CONTROL_BUTTON_COLOR_CLASSNAME: Record<'brand' | 'yellow' | 'red', string> = {
-  brand: 'bg-brand-400/50 hover:bg-brand-400/75 text-white',
-  yellow: 'bg-yellow-600/50 hover:bg-yellow-600/75 text-yellow-900',
-  red: 'bg-red-400 hover:bg-red-600 text-white',
 }
 
 const LEGACY_DISMISSED_KEY = 'announcement_banner_dismissed'
@@ -48,7 +41,7 @@ function getBannerKey(banner: AnnouncementBannerPayload): string {
 export function AnnouncementBanner() {
   const banners = useAnnouncementBanner()
   const [dismissedMessages, setDismissedMessages] = useLocalStorage<string[]>(DISMISSED_MESSAGES_KEY, [])
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [selectedBannerKey, setSelectedBannerKey] = useState<string>()
 
   function isBannerDismissed(banner: AnnouncementBannerPayload): boolean {
     const key = getBannerKey(banner)
@@ -60,30 +53,42 @@ export function AnnouncementBanner() {
     .filter((b) => !b.dismissible || !isBannerDismissed(b))
     .sort((a, b) => VARIANT_PRIORITY[a.variant] - VARIANT_PRIORITY[b.variant])
 
-  const safeIndex = Math.min(currentIndex, Math.max(0, visibleBanners.length - 1))
-
   if (visibleBanners.length === 0) return null
 
-  const banner = visibleBanners[safeIndex]
+  const selectedBannerIndex =
+    selectedBannerKey === undefined
+      ? -1
+      : visibleBanners.findIndex((visibleBanner) => getBannerKey(visibleBanner) === selectedBannerKey)
+  const currentIndex = selectedBannerIndex === -1 ? 0 : selectedBannerIndex
+  const banner = visibleBanners[currentIndex]
   const { title, message, variant, dismissible, buttonLabel, buttonUrl } = banner
+  const currentBannerKey = getBannerKey(banner)
   const color = VARIANT_TO_COLOR_MAP[variant]
   const hasActionButton = Boolean(buttonLabel && buttonUrl)
   const hasMultiple = visibleBanners.length > 1
   const usesBannerDismissButton = dismissible && !hasMultiple
-  const buttonColorClass = CONTROL_BUTTON_COLOR_CLASSNAME[color]
 
-  const handlePrev = () => setCurrentIndex((i) => (i - 1 + visibleBanners.length) % visibleBanners.length)
-  const handleNext = () => setCurrentIndex((i) => (i + 1) % visibleBanners.length)
+  const handlePrev = () => {
+    const previousIndex = (currentIndex - 1 + visibleBanners.length) % visibleBanners.length
+    setSelectedBannerKey(getBannerKey(visibleBanners[previousIndex]))
+  }
+
+  const handleNext = () => {
+    const nextIndex = (currentIndex + 1) % visibleBanners.length
+    setSelectedBannerKey(getBannerKey(visibleBanners[nextIndex]))
+  }
 
   const handleDismiss = () => {
-    const bannerKey = getBannerKey(banner)
-
-    if (!dismissedMessages?.includes(bannerKey)) {
-      setDismissedMessages([...(dismissedMessages ?? []), bannerKey])
+    if (visibleBanners.length === 1) {
+      setSelectedBannerKey(undefined)
+    } else if (currentIndex >= visibleBanners.length - 1) {
+      setSelectedBannerKey(getBannerKey(visibleBanners[currentIndex - 1]))
+    } else {
+      setSelectedBannerKey(getBannerKey(visibleBanners[currentIndex + 1]))
     }
 
-    if (safeIndex >= visibleBanners.length - 1) {
-      setCurrentIndex(Math.max(0, safeIndex - 1))
+    if (!dismissedMessages?.includes(currentBannerKey)) {
+      setDismissedMessages([...(dismissedMessages ?? []), currentBannerKey])
     }
   }
 
@@ -102,32 +107,32 @@ export function AnnouncementBanner() {
         <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center">
           <Button
             type="button"
-            className={twMerge(CONTROL_BUTTON_CLASSNAME, buttonColorClass)}
+            className={twMerge(BANNER_ICON_BUTTON_CLASSNAME, bannerButtonVariants({ color }))}
             onClick={handlePrev}
             aria-label="Previous"
           >
-            <Icon iconName="chevron-left" iconStyle="solid" />
+            <Icon iconName="chevron-left" />
           </Button>
           <span className="min-w-[28px] text-center text-xs">
-            {safeIndex + 1}/{visibleBanners.length}
+            {currentIndex + 1}/{visibleBanners.length}
           </span>
           <Button
             type="button"
-            className={twMerge(CONTROL_BUTTON_CLASSNAME, buttonColorClass)}
+            className={twMerge(BANNER_ICON_BUTTON_CLASSNAME, bannerButtonVariants({ color }))}
             onClick={handleNext}
             aria-label="Next"
           >
-            <Icon iconName="chevron-right" iconStyle="solid" />
+            <Icon iconName="chevron-right" />
           </Button>
           {dismissible && <div className="mx-3 h-4 w-px bg-current opacity-20" />}
           {dismissible && (
             <Button
               type="button"
-              className={twMerge(CONTROL_BUTTON_CLASSNAME, buttonColorClass)}
+              className={twMerge(BANNER_ICON_BUTTON_CLASSNAME, bannerButtonVariants({ color }))}
               onClick={handleDismiss}
               aria-label="Dismiss"
             >
-              <Icon iconName="xmark" iconStyle="solid" />
+              <Icon iconName="xmark" />
             </Button>
           )}
         </div>
