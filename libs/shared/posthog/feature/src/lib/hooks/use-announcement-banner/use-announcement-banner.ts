@@ -2,6 +2,7 @@ import posthog from 'posthog-js'
 import { useEffect, useState } from 'react'
 
 export interface AnnouncementBannerPayload {
+  id?: string
   title?: string
   message: string
   variant: 'info' | 'warning' | 'error'
@@ -10,45 +11,64 @@ export interface AnnouncementBannerPayload {
   buttonUrl?: string
 }
 
-export function useAnnouncementBanner() {
-  const [bannerData, setBannerData] = useState<AnnouncementBannerPayload | null>(null)
+const BANNER_FLAG = 'banners-annoucement'
+
+function validateBannerItem(item: unknown): AnnouncementBannerPayload | null {
+  if (!item || typeof item !== 'object' || Array.isArray(item)) return null
+
+  const p = item as Record<string, unknown>
+
+  if (
+    typeof p['message'] === 'string' &&
+    (p['variant'] === 'info' || p['variant'] === 'warning' || p['variant'] === 'error') &&
+    typeof p['dismissible'] === 'boolean'
+  ) {
+    return {
+      id: typeof p['id'] === 'string' ? p['id'] : undefined,
+      title: typeof p['title'] === 'string' ? p['title'] : undefined,
+      message: p['message'],
+      variant: p['variant'],
+      dismissible: p['dismissible'],
+      buttonLabel: typeof p['buttonLabel'] === 'string' ? p['buttonLabel'] : undefined,
+      buttonUrl: typeof p['buttonUrl'] === 'string' ? p['buttonUrl'] : undefined,
+    }
+  }
+
+  return null
+}
+
+export function useAnnouncementBanner(): AnnouncementBannerPayload[] {
+  const [banners, setBanners] = useState<AnnouncementBannerPayload[]>([])
 
   useEffect(() => {
     const checkBanner = () => {
-      const isEnabled = posthog.isFeatureEnabled('banner_announcement')
+      const isEnabled = posthog.isFeatureEnabled(BANNER_FLAG)
 
       if (!isEnabled) {
-        setBannerData(null)
+        setBanners([])
         return
       }
 
-      const payload = posthog.getFeatureFlagPayload('banner_announcement')
+      const rawPayload = posthog.getFeatureFlagPayload(BANNER_FLAG)
 
-      if (!payload || typeof payload !== 'object') {
-        setBannerData(null)
+      let payload: unknown = rawPayload
+      if (typeof rawPayload === 'string') {
+        try {
+          payload = JSON.parse(rawPayload)
+        } catch {
+          setBanners([])
+          return
+        }
+      }
+
+      if (!Array.isArray(payload)) {
+        setBanners([])
         return
       }
 
-      const typedPayload = payload as Record<string, unknown>
+      const validBanners = payload.map(validateBannerItem).filter((b): b is AnnouncementBannerPayload => b !== null)
 
-      if (
-        typeof typedPayload['message'] === 'string' &&
-        (typedPayload['variant'] === 'info' ||
-          typedPayload['variant'] === 'warning' ||
-          typedPayload['variant'] === 'error') &&
-        typeof typedPayload['dismissible'] === 'boolean'
-      ) {
-        setBannerData({
-          title: typeof typedPayload['title'] === 'string' ? typedPayload['title'] : undefined,
-          message: typedPayload['message'],
-          variant: typedPayload['variant'],
-          dismissible: typedPayload['dismissible'],
-          buttonLabel: typeof typedPayload['buttonLabel'] === 'string' ? typedPayload['buttonLabel'] : undefined,
-          buttonUrl: typeof typedPayload['buttonUrl'] === 'string' ? typedPayload['buttonUrl'] : undefined,
-        })
-      } else {
-        setBannerData(null)
-      }
+      setBanners(validBanners)
     }
 
     checkBanner()
@@ -56,5 +76,5 @@ export function useAnnouncementBanner() {
     posthog.onFeatureFlags(checkBanner)
   }, [])
 
-  return bannerData
+  return banners
 }
