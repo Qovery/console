@@ -69,9 +69,9 @@ export function StageStatusChip({ status, size = 'md', className = '' }: StageSt
         </svg>
         <span
           aria-label="loading"
-          className="absolute left-0 top-0 flex h-full w-full animate-spin items-center justify-center text-neutralInvert"
+          className="absolute left-0 top-0 flex h-full w-full animate-spin items-center justify-center p-0.5 text-neutralInvert"
         >
-          <Icon iconName="loader" />
+          <Icon iconName="loader" className={size === 'sm' ? 'text-xs' : 'text-sm'} />
         </span>
       </span>
     ))
