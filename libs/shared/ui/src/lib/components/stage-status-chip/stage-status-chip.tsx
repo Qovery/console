@@ -59,7 +59,7 @@ export function StageStatusChip({ status, size = 'md', className = '' }: StageSt
       </svg>
     ))
     .with('ONGOING', () => (
-      <span className="relative flex h-6 w-6 items-center justify-center">
+      <span className="relative flex h-full w-full items-center justify-center">
         <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 22 24">
           <path
             fill="var(--brand-9)"

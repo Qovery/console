@@ -12,10 +12,11 @@ import {
 import { useContext, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
-import { Button, Indicator, StageStatusChip, StatusChip, Tooltip, TriggerActionIcon, Truncate } from '@qovery/shared/ui'
+import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
+import { Indicator, StageStatusChip, StatusChip, Tooltip, TriggerActionIcon, Truncate } from '@qovery/shared/ui'
 import { Icon } from '@qovery/shared/ui'
 import { dateUTCString, formatDurationMinutesSeconds } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
