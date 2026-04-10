@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BANNER_ICON_BUTTON_CLASSNAME, Banner, Button, Icon, bannerButtonVariants } from '@qovery/shared/ui'
+import { Banner, Button, Icon, bannerButtonVariants } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import {
@@ -18,6 +18,8 @@ const VARIANT_PRIORITY: Record<AnnouncementBannerPayload['variant'], number> = {
   warning: 1,
   info: 2,
 }
+
+const BANNER_ICON_BUTTON_CLASSNAME = 'flex h-7 w-7 items-center justify-center p-0'
 
 const LEGACY_DISMISSED_KEY = 'announcement_banner_dismissed'
 const DISMISSED_MESSAGES_KEY = 'announcement_banners_dismissed'

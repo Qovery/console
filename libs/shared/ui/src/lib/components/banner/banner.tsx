@@ -18,8 +18,6 @@ const bannerVariants = cva('flex h-10 items-center justify-center text-sm font-m
 
 export type BannerColor = NonNullable<VariantProps<typeof bannerVariants>['color']>
 
-export const BANNER_ICON_BUTTON_CLASSNAME = 'flex h-7 w-7 items-center justify-center p-0'
-
 export const bannerButtonVariants = cva('', {
   variants: {
     color: {
@@ -60,8 +58,7 @@ export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>
         <Button
           type="button"
           className={twMerge(
-            'absolute right-2 top-1/2 -translate-y-1/2',
-            BANNER_ICON_BUTTON_CLASSNAME,
+            'absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center p-0',
             bannerButtonVariants({ color })
           )}
           onClick={onDismiss}
